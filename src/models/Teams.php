@@ -43,39 +43,11 @@ class Teams implements ReadableInterface, DestroyableInterface
     }
 
     /**
-     * Check if the team exists from the id
-     *
-     * @param int $id team id
-     * @return bool
+     * Make sure that the teams exist. Input can be an array of team name, id or orgid
+     * and the response is an array of teams, with id and name for each
+     * Input can come from external auth and reference an uncreated team
+     * so with this the team will be created on the fly (if it's allowed)
      */
-    public function isExisting(int $id): bool
-    {
-        $sql = 'SELECT id FROM teams WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return (bool) $req->fetch();
-    }
-
-    /**
-     * Transform a team name/orgid in the team id
-     *
-     * @param string $query name or orgid of the team
-     * @return int
-     */
-    public function getTeamIdFromNameOrOrgid(string $query): int
-    {
-        $sql = 'SELECT id FROM teams WHERE id = :query OR name = :query OR orgid = :query';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':query', $query);
-        $this->Db->execute($req);
-        $res = $req->fetchColumn();
-        if ($res === false) {
-            throw new ImproperActionException('Could not find team!');
-        }
-        return (int) $res;
-    }
-
     public function getTeamsFromIdOrNameOrOrgidArray(array $input): array
     {
         $res = array();
@@ -94,36 +66,11 @@ class Teams implements ReadableInterface, DestroyableInterface
         return $res;
     }
 
-    public function createTeamIfAllowed(string $name): int
-    {
-        $Config = new Config();
-        if ($Config->configArr['saml_team_create']) {
-            return $this->create($name);
-        }
-        throw new ImproperActionException('The administrator disabled team creation on SAML login. Contact your administrator for creating the team.');
-    }
-
-    /**
-     * Make sure that all the teams are existing
-     * If they do not exist, create them if it's allowed by sysadmin
-     *
-     * @param array<array-key, mixed> $teams
-     * @return array an array of teams id
-     */
-    public function validateTeams(array $teams): array
-    {
-        $teamIdArr = array();
-        foreach ($teams as $team) {
-            $teamIdArr[] = $this->getTeamIdFromNameOrOrgid($team['name'] ?? '');
-        }
-        return $teamIdArr;
-    }
-
     /**
      * Add one user to n teams
      *
      * @param int $userid
-     * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist coming from validateTeams
+     * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
      *
      * @return void
      */
@@ -146,7 +93,7 @@ class Teams implements ReadableInterface, DestroyableInterface
      * Remove a user from teams
      *
      * @param int $userid
-     * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist coming from validateTeams
+     * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
      *
      * @return void
      */
@@ -156,7 +103,6 @@ class Teams implements ReadableInterface, DestroyableInterface
         $UsersHelper = new UsersHelper($userid);
         if (count($UsersHelper->getTeamsFromUserid()) === 1) {
             return;
-            //throw new ImproperActionException('Cannot remove team from user in only one team!');
         }
         foreach ($teamIdArr as $teamId) {
             $sql = 'DELETE FROM users2teams WHERE `users_id` = :userid AND `teams_id` = :team';
@@ -373,5 +319,14 @@ class Teams implements ReadableInterface, DestroyableInterface
         $this->Db->execute($req);
 
         return (bool) $req->fetchColumn();
+    }
+
+    private function createTeamIfAllowed(string $name): int
+    {
+        $Config = new Config();
+        if ($Config->configArr['saml_team_create']) {
+            return $this->create($name);
+        }
+        throw new ImproperActionException('The administrator disabled team creation on login. Contact your administrator for creating the team beforehand.');
     }
 }

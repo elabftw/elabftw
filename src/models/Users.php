@@ -168,7 +168,7 @@ class Users
         if ($validated === 0) {
             $userInfo = array('email' => $email, 'name' => $firstname . ' ' . $lastname);
             $Email = new Email($Config, $this);
-            $Email->alertAdmin($teamIdArr[0], $userInfo);
+            $Email->alertAdmin($teams[0]['id'], $userInfo);
             $Email->alertUserNeedValidation($email);
             // set a flag to show correct message to user
             $this->needValidation = true;

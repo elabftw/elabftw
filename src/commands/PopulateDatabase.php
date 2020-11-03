@@ -152,8 +152,8 @@ class PopulateDatabase extends Command
             $email = $user['email'] ?? $Faker->safeEmail;
 
             $userid = $Users->create($email, array($user['team']), $firstname, $lastname, $password);
-            $team = $Teams->getTeamIdFromNameOrOrgid($user['team']);
-            $Users = new Users($userid, $team);
+            $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));
+            $Users = new Users($userid, (int) $team[0]['id']);
 
             if ($user['create_mfa_secret'] ?? false) {
                 // TODO
@@ -174,7 +174,9 @@ class PopulateDatabase extends Command
             if ($user['create_templates'] ?? false) {
                 $Templates = new Templates($Users);
                 for ($i = 0; $i < 100; $i++) {
-                    $Templates->create(new ParamsProcessor(array('name' => $Faker->sentence, 'template' => $Faker->realText(1000))));
+                    $Templates->create(new ParamsProcessor(
+                        array('name' => $Faker->sentence, 'template' => $Faker->realText(1000))
+                    ));
                 }
             }
         }

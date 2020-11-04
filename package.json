@@ -75,6 +75,7 @@
     "buildjs": "grunt ts && yarn build",
     "buildprofile": "webpack-cli --config builder.js --profile --json > stats.json",
     "clean": "rm -rf apidoc/html _srcdoc src/ts/*.js src/ts/*.js.map web/app/js/*bundle.js web/app/js/*.min.js web/app/css/*.min.css",
+    "full": "yarn phpcs && yarn jslint && yarn psalm && yarn phpstan && yarn test unit",
     "jslint": "eslint --ext .ts src/ts",
     "jslint-ci": "eslint --ext .ts --quiet src/ts",
     "phan": "phan --allow-polyfill-parser -k src/tools/phan-config.php",

@@ -14,7 +14,6 @@ use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use LdapRecord\Connection;
 
@@ -35,13 +34,13 @@ class LdapAuth implements AuthInterface
     /** @var AuthResponse $AuthResponse */
     private $AuthResponse;
 
-    /** @var string $baseDn */
-    private $baseDn;
+    /** @var array $configArr */
+    private $configArr;
 
-    public function __construct(Connection $connection, string $baseDn, string $email, string $password)
+    public function __construct(Connection $connection, array $configArr, string $email, string $password)
     {
         $this->connection = $connection;
-        $this->baseDn = $baseDn;
+        $this->configArr = $configArr;
         $this->email = Filter::sanitize($email);
         $this->password = $password;
         $this->AuthResponse = new AuthResponse('ldap');
@@ -49,10 +48,10 @@ class LdapAuth implements AuthInterface
 
     public function tryAuth(): AuthResponse
     {
-        $query = $this->connection->query()->setDn($this->baseDn);
+        $query = $this->connection->query()->setDn($this->configArr['ldap_base_dn']);
         $record = $query->findbyOrFail('mail', $this->email);
         $cn = $record['cn'][0];
-        if (!$this->connection->auth()->attempt('cn=' . $cn . ',' . $this->baseDn, $this->password)) {
+        if (!$this->connection->auth()->attempt('cn=' . $cn . ',' . $this->configArr['ldap_base_dn'], $this->password)) {
             throw new InvalidCredentialsException();
         }
         $Users = new Users();
@@ -61,17 +60,12 @@ class LdapAuth implements AuthInterface
         } catch (ResourceNotFoundException $e) {
             // the user doesn't exist yet in the db
             // GET FIRSTNAME AND LASTNAME
-            // TODO add options in config to select which attribute is used
-            $firstname = $record['givenname'][0];
-            $lastname = $record['sn'][0];
-
+            $firstname = $record[$this->configArr['ldap_firstname']][0];
+            $lastname = $record[$this->configArr['ldap_lastname']][0];
             // GET TEAMS
-            //$teams = $record['departmentNumber'];
-            // TODO for now:
-            $teams = array('Alpha');
+            $teams = $record[$this->configArr['ldap_team']][0];
             // CREATE USER (and force validation of user)
-            $userid = $Users->create($this->email, $teams, $firstname, $lastname, '', null, true);
-            $Users = new Users($userid);
+            $Users = new Users($Users->create($this->email, $teams, $firstname, $lastname, '', null, true));
         }
 
         $this->AuthResponse->userid = (int) $Users->userData['userid'];

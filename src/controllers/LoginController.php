@@ -150,7 +150,7 @@ class LoginController implements ControllerInterface
                     'use_tls' => (bool) $c['ldap_use_tls'],
                 );
                 $connection = new Connection($ldapConfig);
-                return new LdapAuth($connection, $c['base_dn'], $this->App->Request->request->get('email'), $this->App->Request->request->get('password'));
+                return new LdapAuth($connection, $c, $this->App->Request->request->get('email'), $this->App->Request->request->get('password'));
 
             // AUTH WITH LOCAL DATABASE
             case 'local':

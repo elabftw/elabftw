@@ -786,6 +786,15 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         </select>
 
 
+        <label for='ldap-team'>What attribute to look for the team name:</label>
+        <input class='form-control col-md-4' type='text' id='ldap-team' name='ldap_team' value='{{ App.Config.configArr.ldap_team }}' />
+
+        <label for='extauth-team-create'>Create team sent by server if it doesn't exist already:</label>
+        <select class='form-control col-md-4' id='extauth-team-create' name='saml_team_create'>
+            <option value='1'{{ App.Config.configArr.saml_team_create == '1' ? ' selected' }}>Yes</option>
+            <option value='0'{{ App.Config.configArr.saml_team_create == '0' ? ' selected' }}>No</option>
+        </select>
+
         <label for='extauth-team-default'>If no team attribute is found, to which team user is assigned?</label>
         <select class='form-control col-md-4' name='saml_team_default' id='extauth-team-default'>
           {% for team in teamsArr %}
@@ -794,12 +803,14 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>Throw error!</option>
         </select>
 
-        <label for='extauth-team-create'>Create team sent by server if it doesn't exist already:</label>
-        <select class='form-control col-md-4' id='extauth-team-create' name='saml_team_create'>
-            <option value='1'{{ App.Config.configArr.saml_team_create == '1' ? ' selected' }}>Yes</option>
-            <option value='0'{{ App.Config.configArr.saml_team_create == '0' ? ' selected' }}>No</option>
-        </select>
+        <label for='ldap-email'>What attribute to look for the email:</label>
+        <input class='form-control col-md-4' type='text' id='ldap-email' placeholder='mail' name='ldap_email' value='{{ App.Config.configArr.ldap_email }}' />
 
+        <label for='ldap-firstname'>What attribute to look for the firstname:</label>
+        <input class='form-control col-md-4' type='text' id='ldap-firstname' placeholder='givenname' name='ldap_firstname' value='{{ App.Config.configArr.ldap_firstname }}' />
+
+        <label for='ldap-lastname'>What attribute to look for the lastname:</label>
+        <input class='form-control col-md-4' type='text' id='ldap-lastname' placeholder='sn' name='ldap_lastname' value='{{ App.Config.configArr.ldap_lastname }}' />
 
         <div class='submitButtonDiv'>
           <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>

@@ -123,7 +123,7 @@ class Auth implements AuthInterface
         if ($this->Config->configArr['open_science']) {
             return 'open';
         }
-        throw new UnauthorizedException('Authentication required');
+        throw new UnauthorizedException();
     }
 
     private function getAuthService(string $authType): AuthInterface
@@ -148,7 +148,7 @@ class Auth implements AuthInterface
                 }
                 // no break
             default:
-                throw new UnauthorizedException('Authentication required');
+                throw new UnauthorizedException();
 
         }
     }

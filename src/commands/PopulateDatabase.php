@@ -156,9 +156,10 @@ class PopulateDatabase extends Command
             $Users = new Users($userid, (int) $team[0]['id']);
 
             if ($user['create_mfa_secret'] ?? false) {
-                // TODO
                 $MfaHelper = new MfaHelper($userid);
-                $mfaSecret = 'EXAMPLE2FASECRET234567ABCDEFGHIJ';
+                // use a fixed secret
+                $MfaHelper->secret = 'EXAMPLE2FASECRET234567ABCDEFGHIJ';
+                $MfaHelper->saveSecret();
             }
             if ($user['create_experiments'] ?? false) {
                 $Populate->generate(new Experiments($Users), $iterations);

@@ -14,6 +14,7 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\Db;
 use PDO;
 use RobThree\Auth\TwoFactorAuth;
+use RuntimeException;
 
 /**
  * Provide methods for multi/two-factor authentication
@@ -41,14 +42,14 @@ class MfaHelper
     /** @var int $userid */
     public $userid;
 
+    /** @var string|null $secret */
+    public $secret;
+
     /** @var Db $Db SQL Database */
     protected $Db;
 
     /** @var TwoFactorAuth $TwoFactorAuth PHP Class for handling two/multi-factor authentication */
     private $TwoFactorAuth;
-
-    /** @var string|null $secret */
-    private $secret;
 
     public function __construct(int $userid, ?string $secret = null)
     {
@@ -76,6 +77,9 @@ class MfaHelper
 
     public function saveSecret(): void
     {
+        if ($this->secret === null) {
+            throw new RuntimeException('No secret to save!');
+        }
         $this->toggleSecret($this->secret);
     }
 

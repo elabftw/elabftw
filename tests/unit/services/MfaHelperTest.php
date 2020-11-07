@@ -30,11 +30,12 @@ class MfaHelperTest extends \PHPUnit\Framework\TestCase
     {
         $secret = $this->MfaHelper->generateSecret();
         $this->assertEquals(strlen($secret), 32);
+        $this->MfaHelper->secret = $secret;
     }
 
     public function testSaveSecret()
     {
-        $this->MfaHelper->saveSecret($this->secret);
+        $this->MfaHelper->saveSecret();
     }
 
     public function testRemoveSecret()

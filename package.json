@@ -75,7 +75,7 @@
     "buildjs": "grunt ts && yarn build",
     "buildprofile": "webpack-cli --config builder.js --profile --json > stats.json",
     "clean": "rm -rf apidoc/html _srcdoc src/ts/*.js src/ts/*.js.map web/app/js/*bundle.js web/app/js/*.min.js web/app/css/*.min.css",
-    "coverage": "php vendor/bin/codecept run --skip acceptance --coverage --coverage-html",
+    "full": "yarn phpcs && yarn jslint && yarn psalm && yarn phpstan && yarn test unit",
     "jslint": "eslint --ext .ts src/ts",
     "jslint-ci": "eslint --ext .ts --quiet src/ts",
     "phan": "phan --allow-polyfill-parser -k src/tools/phan-config.php",
@@ -88,7 +88,8 @@
     "rector-dry": "docker run -v /home/ktr/.dev/elabftw:/project rector/rector:latest process /project/src --config /project/src/tools/rector.php --autoload-file /project/vendor/autoload.php --dry-run",
     "srcdoc": "phpDocumentor run --cache-folder /tmp -i ./cache -i ./uploads -d src/classes -d src/maps -d src/controllers -d src/exceptions -d src/interfaces -d src/models -d src/services -d src/traits -d web/app/controllers -t _srcdoc",
     "test": "tests/run.sh",
-    "unit": "php vendor/bin/codecept run unit",
+    "unit": "tests/run.sh unit",
+    "unit-ci": "php vendor/bin/codecept run unit",
     "vulns": "snyk test",
     "watchcss": "sass --watch src/scss/main.scss:web/app/css/elabftw.min.css",
     "watchjs": "grunt && webpack-cli --config builder.js --watch"

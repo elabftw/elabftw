@@ -20,7 +20,8 @@ use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use function substr;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * This is a super class holding various global objects
@@ -33,7 +34,7 @@ class App
     /** @var Request $Request the request */
     public $Request;
 
-    /** @var Session $Session the session */
+    /** @var SessionInterface $Session the session */
     public $Session;
 
     /** @var Config $Config the config stored in sql */
@@ -47,9 +48,6 @@ class App
 
     /** @var Users $Users instance of Users */
     public $Users;
-
-    /** @var Db $Db SQL Database */
-    public $Db;
 
     /** @var string $pageTitle the title for the current page */
     public $pageTitle = 'Lab manager';
@@ -66,26 +64,21 @@ class App
     /** @var array $teamConfigArr the config for the current team */
     public $teamConfigArr = array();
 
-    /**
-     * Constructor
-     *
-     * @param Request $request
-     * @param Session $session
-     * @param Config $config
-     * @param Logger $log
-     * @param Csrf $csrf
-     */
-    public function __construct(Request $request, Session $session, Config $config, Logger $log, Csrf $csrf)
+    /** @var Db $Db SQL Database */
+    protected $Db;
+
+    public function __construct(Request $request, SessionInterface $session, Config $config, Logger $log, Csrf $csrf)
     {
         $this->Request = $request;
         $this->Session = $session;
 
-        // Don't get 'ok' flashes during mfa
-        if (!$this->Session->has('mfa_secret')) {
-            $this->ok = $this->Session->getFlashBag()->get('ok');
+        $flashBag = $this->Session->getBag('flashes');
+        // add type check because SessionBagInterface doesn't have get(), only FlashBag has it
+        if ($flashBag instanceof FlashBag) {
+            $this->ok = $flashBag->get('ok');
+            $this->ko = $flashBag->get('ko');
+            $this->warning = $flashBag->get('warning');
         }
-        $this->ko = $this->Session->getFlashBag()->get('ko');
-        $this->warning = $this->Session->getFlashBag()->get('warning');
 
         $this->Config = $config;
         $this->Log = $log;

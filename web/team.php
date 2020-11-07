@@ -35,10 +35,6 @@ $Response = new Response();
 $Response->prepare($Request);
 
 try {
-    if ($App->Session->has('anon')) {
-        throw new IllegalActionException('Anon user tried accessing the team page');
-    }
-
     $Teams = new Teams($App->Users);
     $teamArr = $Teams->read();
     $teamsStats = $Teams->getStats((int) $App->Users->userData['team']);

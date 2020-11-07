@@ -26,6 +26,9 @@ trait EntityTrait
     /** @var array $entityData content of entity */
     public $entityData = array();
 
+    /** @var array $filters */
+    public $filters = array();
+
     /** @var Db $Db SQL Database */
     protected $Db;
 
@@ -43,7 +46,7 @@ trait EntityTrait
         }
         $this->id = $id;
         // prevent reusing of old data from previous id
-        unset($this->entityData);
-        unset($this->filters);
+        $this->entityData = array();
+        $this->filters = array();
     }
 }

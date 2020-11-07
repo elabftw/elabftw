@@ -30,7 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Admin panel');
+$App->pageTitle = _('Admin panel'); // @phan-suppress PhanTypeExepectedObjectPropAccessButGotNull
 $Response = new Response();
 $Response->prepare($Request);
 
@@ -48,7 +48,6 @@ try {
     $TeamGroups = new TeamGroups($App->Users);
     $Teams = new Teams($App->Users);
     $Templates = new Templates($App->Users);
-    $UsersHelper = new UsersHelper();
 
     $itemsTypesArr = $ItemsTypes->readAll();
     $statusArr = $Status->read();
@@ -66,6 +65,10 @@ try {
     if ($Request->query->has('q')) {
         $isSearching = true;
         $usersArr = $App->Users->readFromQuery(filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING), true);
+        foreach ($usersArr as &$user) {
+            $UsersHelper = new UsersHelper((int) $user['userid']);
+            $user['teams'] = $UsersHelper->getTeamsFromUserid();
+        }
     }
 
 
@@ -74,7 +77,6 @@ try {
 
     $template = 'admin.html';
     $renderArr = array(
-        'UsersHelper' => $UsersHelper,
         'allTeamUsersArr' => $allTeamUsersArr,
         'tagsArr' => $tagsArr,
         'fromSysconfig' => false,

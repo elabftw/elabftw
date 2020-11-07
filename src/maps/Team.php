@@ -86,6 +86,11 @@ class Team implements MapInterface
         $this->hydrate($this->read());
     }
 
+    final public function getId(): int
+    {
+        return $this->id;
+    }
+
     final public function setName(?string $setting): void
     {
         if ($setting === null) {

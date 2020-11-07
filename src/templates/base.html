@@ -8,7 +8,7 @@
 {% block body %}{% endblock %}
 
 <!-- TODOLIST (only for logged in users) -->
-{% if App.Session.get('auth') %}
+{% if App.Session.get('is_auth') and not App.Session.get('is_anon') %}
   {% include('todolist.html') %}
 {% endif %}
 

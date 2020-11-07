@@ -11,8 +11,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use Elabftw\Services\MpdfQrProvider;
-use RobThree\Auth\TwoFactorAuth;
+use Elabftw\Services\MfaHelper;
+use InvalidArgumentException;
+use function is_array;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -54,14 +55,18 @@ class MfaCode extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $secret = $input->getArgument('secret');
+        // remove spaces from input so we don't have to do it manually
+        $secret = str_replace(' ', '', $input->getArgument('secret'));
 
-        $TwoFactorAuth = new TwoFactorAuth('eLabFTW', 6, 30, 'sha1', new MpdfQrProvider());
-        $code = $TwoFactorAuth->getCode($secret);
+        if (is_array($secret)) {
+            throw new InvalidArgumentException();
+        }
+        $MfaHelper = new MfaHelper(0, $secret);
+        $code = $MfaHelper->getCode();
 
         $output->writeln(array(
             'Secret: ' . (string) $secret,
-            '2FA code: ' . (string) $code,
+            '2FA code: ' . $code,
         ));
 
         return 0;

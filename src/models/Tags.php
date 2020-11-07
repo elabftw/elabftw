@@ -198,10 +198,14 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
         $this->Db->execute($req);
 
         $idsToDelete = $req->fetchAll();
-
-        // loop on each tag that needs to be deduplicated and do the work
-        foreach ($idsToDelete as $idsList) {
-            $this->deduplicateFromIdsList($idsList['id_list']);
+        if ($idsToDelete === false) {
+            return 0;
+        }
+        if (!empty($idsToDelete)) {
+            // loop on each tag that needs to be deduplicated and do the work
+            foreach ($idsToDelete as $idsList) {
+                $this->deduplicateFromIdsList($idsList['id_list']);
+            }
         }
 
         return count($idsToDelete);

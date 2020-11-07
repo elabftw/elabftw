@@ -8,16 +8,20 @@
 
 namespace Elabftw\Elabftw;
 
+use function basename;
+use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
+use Elabftw\Services\LoginHelper;
 use Exception;
+use function in_array;
 use Monolog\Logger;
 use PDOException;
+use function setcookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -26,7 +30,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
  * It loads the config file, connects to the database,
  * includes functions and locale, tries to update the db schema and redirects anonymous visitors.
  */
-require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 $Request = Request::createFromGlobals();
 $Session = new Session();
@@ -36,7 +40,7 @@ $Request->setSession($Session);
 try {
     // CONFIG.PHP
     // Make sure config.php is readable
-    $configFilePath = \dirname(__DIR__, 2) . '/config.php';
+    $configFilePath = dirname(__DIR__, 2) . '/config.php';
     if (!is_readable($configFilePath)) {
         throw new ImproperActionException('The config file is missing! Did you run the installer?');
     }
@@ -59,100 +63,87 @@ try {
     //    \____\___|_|  |_.__/ \___|_|   \__,_|___/   //
     //                                                //
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
-    $Auth = new Auth($App->Request, $App->Session);
+    $Auth = new Auth($App);
+    if ($Auth->needAuth()) {
+        try {
+            // this will throw an UnauthorizedException if we don't have a valid auth
+            $AuthResponse = $Auth->tryAuth();
+            $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
+            $LoginHelper->login(false);
+        } catch (UnauthorizedException $e) {
+            // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
 
-    // autologin as anon if it's allowed by sysadmin
-    // don't do it if we have elabid in url
-    if ($App->Config->configArr['open_science'] && !$App->Request->query->has('elabid')) {
-        // only autologin on selected pages and if we are not authenticated with an account
-        $autoAnon = array('experiments.php', 'database.php', 'search.php');
-        if (\in_array(\basename($App->Request->getScriptName()), $autoAnon, true) && !$App->Request->getSession()->has('auth')) {
-            $Auth->loginAsAnon((int) $App->Config->configArr['open_team'] ?? 1);
-        }
-    }
+            // maybe we clicked an email link and we want to be redirected to the page upon successful login
+            // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
+            // don't store a redirect cookie if we have been logged out and the redirect is to a controller page
+            if (!stripos($App->Request->getRequestUri(), 'controllers')) {
+                $cookieOptions = array(
+                    'expires' => time() + 300,
+                    'path' => '/',
+                    'domain' => '',
+                    'secure' => true,
+                    'httponly' => true,
+                    'samesite' => 'Strict',
+                );
+                setcookie('redirect', $App->Request->getRequestUri(), $cookieOptions);
+            }
 
-    // autologin if there is elabid for an experiment in view mode
-    if ($App->Request->query->has('elabid')
-        && \basename($App->Request->getScriptName()) === 'experiments.php'
-        && $App->Request->query->get('mode') === 'view'
-        && !$App->Request->getSession()->has('auth')) {
-
-        // now we need to know in which team we autologin the user
-        $Experiments = new Experiments(new Users(), (int) $App->Request->query->get('id'));
-        $team = $Experiments->getTeamFromElabid($App->Request->query->get('elabid'));
-        $Auth->loginAsAnon($team);
-    }
-
-    if ($Auth->needAuth() && !$Auth->tryAuth()) {
-        // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
-
-        // maybe we clicked an email link and we want to be redirected to the page upon successful login
-        // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
-        // don't store a redirect cookie if we have been logged out and the redirect is to a controller page
-        if (!stripos($App->Request->getRequestUri(), 'controllers')) {
-            \setcookie('redirect', $App->Request->getRequestUri(), time() + 300, '/', '', true, true);
-        }
-
-        // used by ajax requests to detect a timed out session
-        header('X-Elab-Need-Auth: 1');
-        // don't send a GET app/logout.php if it's an ajax call because it messes up the jquery ajax
-        if ($App->Request->headers->get('X-Requested-With') != 'XMLHttpRequest') {
-            // NO DON'T USE  THE FULL URL HERE BECAUSE IF SERVER IS HTTP it will fail badly
-            header('Location: app/logout.php');
-        } else {
+            // used by ajax requests to detect a timed out session
+            header('X-Elab-Need-Auth: 1');
+            // don't send a GET app/logout.php if it's an ajax call because it messes up the jquery ajax
+            if ($App->Request->headers->get('X-Requested-With') != 'XMLHttpRequest') {
+                // NO DON'T USE  THE FULL URL HERE BECAUSE IF SERVER IS HTTP it will fail badly
+                header('Location: app/logout.php?keep_redirect=1');
+            }
             throw new UnauthorizedException(_('Your session expired.'));
         }
-        exit;
     }
 
-    // load the Users with a userid if we are auth
-    if ($App->Session->has('auth')) {
+    // load the Users with a userid if we are auth and not anon
+    if ($App->Session->has('is_auth') && $App->Session->get('userid') !== 0) {
         $App->loadUser(new Users(
-            (int) $App->Session->get('userid'),
-            (int) $App->Session->get('team')
+            $App->Session->get('userid'),
+            $App->Session->get('team'),
         ));
     }
 
     // ANONYMOUS
-    if ($App->Request->getSession()->has('anon')) {
+    if ($App->Session->get('is_anon') === 1) {
+        // anon user only has access to a subset of pages
+        $allowedPages = array('index.php', 'experiments.php', 'database.php', 'search.php', 'make.php');
+        if (!in_array(basename($App->Request->getScriptName()), $allowedPages, true)) {
+            throw new ImproperActionException('Anonymous user cannot access this page');
+        }
         $Users = new Users();
-        $Users->userData['team'] = $App->Request->getSession()->get('team');
+        $Users->userData['team'] = $App->Session->get('team');
         $App->loadUser($Users);
-        $App->Users->userData['team'] = $App->Request->getSession()->get('team');
+        // create a fake Users object with default data for anon user
+        $App->Users->userData['team'] = $App->Session->get('team');
         $App->Users->userData['limit_nb'] = 15;
         $App->Users->userData['anon'] = true;
         $App->Users->userData['fullname'] = 'Anon Ymous';
         $App->Users->userData['is_admin'] = 0;
         $App->Users->userData['is_sysadmin'] = 0;
+        $App->Users->userData['show_team'] = 1;
+        $App->Users->userData['show_team_templates'] = 0;
     }
 
-    // GET THE LANG
-    if ($App->Request->getSession()->has('auth')) {
-        // generate full Users object with current userid
+    // START i18n
+    // get the lang
+    if ($App->Session->has('is_auth') && $App->Session->get('userid') !== 0) {
         // set lang based on user pref
         $locale = $App->Users->userData['lang'] . '.utf8';
     } else {
         // load server configured lang if logged out
         $locale = $App->Config->configArr['lang'] . '.utf8';
     }
-    // CONFIGURE GETTEXT
+    // configure gettext
     $domain = 'messages';
     putenv("LC_ALL=$locale");
     setlocale(LC_ALL, $locale);
-    bindtextdomain($domain, \dirname(__DIR__, 2) . '/src/langs');
+    bindtextdomain($domain, dirname(__DIR__, 2) . '/src/langs');
     textdomain($domain);
     // END i18n
-
-    // Clean up after user initiated mfa activation but did not succeed/complete.
-    if ($App->Session->has('auth')
-        && $App->Session->has('enable_mfa')
-        && !(basename($App->Request->getScriptName()) === 'login.php'
-            || basename($App->Request->getScriptName()) === 'LoginController.php')
-    ) {
-        $Mfa = new Mfa($App->Request, $App->Session);
-        $location = $Mfa->cleanup(true);
-        $App->ko[] = _('Two Factor Authentication not enabled!');
-    }
 } catch (UnauthorizedException $e) {
     // do nothing here, controller will display the error
 } catch (ImproperActionException | InvalidSchemaException | Exception $e) {

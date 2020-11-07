@@ -43,7 +43,7 @@ class Populate
 
         printf("Generating %s \n", $Entity->type);
         for ($i = 0; $i <= $iter; $i++) {
-            $id = $Entity->create($tpl);
+            $id = $Entity->create(new ParamsProcessor(array('id' => $tpl)));
             $Entity->setId($id);
             // variable tag number
             $Tags = new Tags($Entity);

@@ -46,8 +46,8 @@ try {
         }
 
         $targetUser = new Users((int) $Request->request->get('userid'));
-        $UsersHelper = new UsersHelper();
-        $targetUserTeams = $UsersHelper->getTeamsIdFromUserid((int) $targetUser->userData['userid']);
+        $UsersHelper = new UsersHelper((int) $targetUser->userData['userid']);
+        $targetUserTeams = $UsersHelper->getTeamsIdFromUserid();
         // check we edit user of our team
         if (!in_array((string) $App->Users->userData['team'], $targetUserTeams, true) && !$App->Session->get('is_sysadmin')) {
             throw new IllegalActionException('User tried to edit user from other team.');

@@ -10,124 +10,69 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function count;
-use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCredentialsException;
-use Elabftw\Models\Teams;
+use function basename;
+use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Models\Config;
+use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
-use Elabftw\Services\UsersHelper;
-use function mb_strlen;
-use PDO;
-use function setcookie;
+use Elabftw\Services\AnonAuth;
+use Elabftw\Services\CookieAuth;
+use Elabftw\Services\SessionAuth;
+use function in_array;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Provide methods to login a user
  */
-class Auth
+class Auth implements AuthInterface
 {
-    /** @var SessionInterface $Session the current session */
-    public $Session;
+    /** @var Config $Config */
+    private $Config;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    /** @var SessionInterface $Session the current session */
+    private $Session;
 
     /** @var Request $Request current request */
     private $Request;
 
-    /** @var array $userData All the user data for a user */
-    private $userData = array();
-
-    /**
-     * Constructor
-     *
-     * @param Request $request
-     * @param SessionInterface $session
-     */
-    public function __construct(Request $request, SessionInterface $session)
+    public function __construct(App $app)
     {
-        $this->Db = Db::getConnection();
-        $this->Request = $request;
-        $this->Session = $session;
+        $this->Config = $app->Config;
+        $this->Request = $app->Request;
+        $this->Session = $app->Session;
     }
 
     /**
-     * Test email and password in the database
+     * Try to authenticate with session and cookie
+     *     ____          _
+     *    / ___|___ _ __| |__   ___ _ __ _   _ ___
+     *   | |   / _ \ '__| '_ \ / _ \ '__| | | / __|
+     *   | |___  __/ |  | |_) |  __/ |  | |_| \__ \
+     *    \____\___|_|  |_.__/ \___|_|   \__,_|___/
      *
-     * @param string $email
-     * @param string $password
-     * @return int userid
      */
-    public function checkCredentials(string $email, string $password): int
+    public function tryAuth(): AuthResponse
     {
-        $passwordHash = hash('sha512', $this->getSalt($email) . $password);
-
-        $sql = 'SELECT userid FROM users WHERE email = :email AND password = :passwordHash
-            AND validated = 1 AND archived = 0';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $email);
-        $req->bindParam(':passwordHash', $passwordHash);
-        $this->Db->execute($req);
-
-        if ($req->rowCount() !== 1) {
-            $this->increaseFailedAttempt();
-            throw new InvalidCredentialsException();
-        }
-
-        return (int) $req->fetchColumn();
+        $AuthService = $this->getAuthService($this->getAuthType());
+        return $AuthService->tryAuth();
     }
 
     /**
-     * actual login with userid and team
+     * Increase the failed attempts counter
      *
-     * @param int $userid
-     * @param int $team
-     * @param string $setCookie default on
      * @return void
      */
-    public function loginInTeam(int $userid, int $team, string $setCookie = 'on'): void
+    public function increaseFailedAttempt(): void
     {
-        $this->populateUserDataFromUserid($userid);
-        $this->populateSession($team);
-        if ($setCookie === 'on') {
-            $this->setToken($team);
+        if (!$this->Session->has('failed_attempt')) {
+            $this->Session->set('failed_attempt', 1);
+        } else {
+            $n = $this->Session->get('failed_attempt');
+            $n++;
+            $this->Session->set('failed_attempt', $n);
         }
-    }
-
-    /**
-     * Login with email and password
-     *
-     * @param int $userid
-     * @param string $rememberme default
-     * @return mixed Return true or an array with the teams where login is possible for display on the team selection page
-     */
-    public function login(int $userid, string $rememberme = 'on')
-    {
-        $this->Session->remove('failed_attempt');
-        $UsersHelper = new UsersHelper();
-        $teams = $UsersHelper->getTeamsFromUserid($userid);
-        if (count($teams) > 1) {
-            return $teams;
-        }
-        $this->loginInTeam($userid, (int) $teams[0]['id'], $rememberme);
-
-        return true;
-    }
-
-    /**
-     * Login anonymously in a team
-     *
-     * @param int $team
-     * @return void
-     */
-    public function loginAsAnon(int $team): void
-    {
-        $this->Session->set('anon', 1);
-        $this->Session->set('team', $team);
-
-        $this->Session->set('is_admin', 0);
-        $this->Session->set('is_sysadmin', 0);
     }
 
     /**
@@ -151,210 +96,60 @@ class Auth
             'ResetPasswordController.php',
         );
 
-        return !\in_array(\basename($this->Request->getScriptName()), $nologinArr, true);
+        return !in_array(basename($this->Request->getScriptName()), $nologinArr, true);
     }
 
-    /**
-     * Try to authenticate with session and cookie
-     *     ____          _
-     *    / ___|___ _ __| |__   ___ _ __ _   _ ___
-     *   | |   / _ \ '__| '_ \ / _ \ '__| | | / __|
-     *   | |___  __/ |  | |_) |  __/ |  | |_| \__ \
-     *    \____\___|_|  |_.__/ \___|_|   \__,_|___/
-     *
-     * @return bool true if we are authenticated
-     */
-    public function tryAuth(): bool
+    private function getAuthType(): string
     {
-        if ($this->Session->has('anon')) {
-            return true;
-        }
         // if we are already logged in with the session, skip everything
-        if ($this->Session->has('auth')) {
-            return true;
+        // same if we don't need to be authenticated
+        if ($this->Session->has('is_auth')) {
+            return 'session';
         }
 
-        // now try to login with the cookie
-        if ($this->loginWithCookie()) {
-            // successful login thanks to our cookie friend
-            $team = (int) $this->Request->cookies->filter('token_team', null, FILTER_SANITIZE_STRING);
-            $this->populateSession($team);
-            return true;
+        // try to login with the elabid for an experiment in view mode
+        if ($this->Request->query->has('elabid')
+            && basename($this->Request->getScriptName()) === 'experiments.php'
+            && $this->Request->query->get('mode') === 'view') {
+            return 'elabid';
         }
 
-        return false;
+        // try to login with the cookie if we have one in the request
+        if ($this->Request->cookies->has('token')) {
+            return 'cookie';
+        }
+
+        // autologin as anon if it's allowed by sysadmin
+        if ($this->Config->configArr['open_science']) {
+            return 'open';
+        }
+        throw new UnauthorizedException();
     }
 
-    public function getUseridFromEmail(string $email): int
+    private function getAuthService(string $authType): AuthInterface
     {
-        $sql = 'SELECT userid FROM users WHERE email = :email AND archived = 0 AND validated = 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $email);
-        $this->Db->execute($req);
-        if ($req->rowCount() !== 1) {
-            return 0;
+        switch ($authType) {
+            // AUTH WITH COOKIE
+            case 'cookie':
+                return new CookieAuth($this->Request->cookies->get('token'), $this->Request->cookies->get('token_team'));
+            case 'session':
+                return new SessionAuth();
+            case 'elabid':
+                // now we need to know in which team we autologin the user
+                $Experiments = new Experiments(new Users(), (int) $this->Request->query->get('id'));
+                $team = $Experiments->getTeamFromElabid($this->Request->query->get('elabid'));
+                return new AnonAuth($this->Config->configArr, $team);
+            case 'open':
+                // don't do it if we have elabid in url
+                // only autologin on selected pages and if we are not authenticated with an account
+                $autoAnon = array('experiments.php', 'database.php', 'search.php');
+                if (in_array(basename($this->Request->getScriptName()), $autoAnon, true)) {
+                    return new AnonAuth($this->Config->configArr, (int) ($this->Config->configArr['open_team'] ?? 1));
+                }
+                // no break
+            default:
+                throw new UnauthorizedException();
+
         }
-        return (int) $req->fetchColumn();
-    }
-
-    /**
-     * Increase the failed attempts counter
-     *
-     * @return void
-     */
-    public function increaseFailedAttempt(): void
-    {
-        if (!$this->Session->has('failed_attempt')) {
-            $this->Session->set('failed_attempt', 1);
-        } else {
-            $n = $this->Session->get('failed_attempt');
-            $n++;
-            $this->Session->set('failed_attempt', $n);
-        }
-    }
-
-    /**
-     * Get the salt for the user so we can generate a correct hash
-     *
-     * @param string $email
-     * @return string
-     */
-    private function getSalt(string $email): string
-    {
-        $sql = 'SELECT salt FROM users WHERE email = :email AND archived = 0';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $email);
-        $this->Db->execute($req);
-        $res = $req->fetchColumn();
-        if ($res === false || $res === null) {
-            $this->increaseFailedAttempt();
-            throw new ImproperActionException(_("Login failed. Either you mistyped your password or your account isn't activated yet."));
-        }
-        return (string) $res;
-    }
-
-    /**
-     * Login with the cookie
-     *
-     * @return bool true if token in cookie is found in database
-     */
-    private function loginWithCookie(): bool
-    {
-        // If user has a cookie; check cookie is valid
-        // the token is a sha256 sum: 64 char
-        if (!$this->Request->cookies->has('token') || mb_strlen($this->Request->cookies->get('token') ?? '') !== 64) {
-            return false;
-        }
-        $token = $this->Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
-
-
-        // Now compare current cookie with the token from SQL
-        $sql = 'SELECT userid FROM users WHERE token = :token LIMIT 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':token', $token);
-        $this->Db->execute($req);
-        if ($req->rowCount() !== 1) {
-            return false;
-        }
-        $userid = (int) $req->fetchColumn();
-        // make sure user is in team
-        $team = (int) $this->Request->cookies->filter('token_team', null, FILTER_SANITIZE_STRING);
-        $Teams = new Teams(new Users($userid));
-        if (!$Teams->isUserInTeam($userid, $team)) {
-            return false;
-        }
-        return $this->populateUserDataFromUserid($userid);
-    }
-
-    /**
-     * Update last login time of user
-     *
-     * @return void
-     */
-    private function updateLastLogin(): void
-    {
-        $sql = 'UPDATE users SET last_login = :last_login WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':last_login', \date('Y-m-d H:i:s'));
-        $req->bindParam(':userid', $this->userData['userid']);
-        $this->Db->execute($req);
-    }
-
-    /**
-     * Populate userData from userid
-     *
-     * @param int $userid
-     * @return bool
-     */
-    private function populateUserDataFromUserid(int $userid): bool
-    {
-        $sql = 'SELECT * FROM users WHERE userid = :userid AND archived = 0';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        if ($req->rowCount() === 1) {
-            // populate the userData
-            $this->userData = $req->fetch();
-            $this->updateLastLogin();
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Store userid and permissions in session
-     *
-     * @return void
-     */
-    private function populateSession(int $team): void
-    {
-        $this->Session->set('auth', 1);
-        $this->Session->set('userid', $this->userData['userid']);
-        $this->Session->set('team', $team);
-
-        // load permissions
-        $sql = 'SELECT * FROM `groups` WHERE id = :id LIMIT 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->userData['usergroup'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $group = $req->fetch(PDO::FETCH_ASSOC);
-        if (!is_array($group)) {
-            return;
-        }
-
-        $this->Session->set('is_admin', $group['is_admin']);
-        $this->Session->set('is_sysadmin', $group['is_sysadmin']);
-    }
-
-    /**
-     * Set a $_COOKIE['token'] and update the database with this token.
-     * Works only in HTTPS, valable for 1 month.
-     * 1 month = 60*60*24*30 =  2592000
-     *
-     * @param int $team
-     * @return void
-     */
-    private function setToken(int $team): void
-    {
-        $token = \hash('sha256', \bin2hex(\random_bytes(16)));
-
-        // create cookie for login
-        $cookieOptions = array(
-            'expires' => time() + 2592000,
-            'path' => '/',
-            'domain' => '',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'Lax',
-        );
-        setcookie('token', $token, $cookieOptions);
-        setcookie('token_team', (string) $team, $cookieOptions);
-
-        // Update the token in SQL
-        $sql = 'UPDATE users SET token = :token WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':token', $token);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
     }
 }

@@ -13,6 +13,7 @@
 
 return array(
     'target_php_version' => '7.3',
+    'max_literal_string_type_length' => 20000,
 
     // A list of directories that should be parsed for class and
     // method information. After excluding the directories
@@ -24,21 +25,7 @@ return array(
     'directory_list' => array(
         'src',
         'web',
-        'vendor/defuse/php-encryption',
-        'vendor/mpdf/mpdf',
-        'vendor/swiftmailer/swiftmailer',
-        'vendor/onelogin/php-saml',
-        'vendor/guzzlehttp/guzzle',
-        'vendor/symfony/http-foundation',
-        'vendor/twig/twig',
-        'vendor/twig/extensions',
-        'vendor/monolog/monolog',
-        'vendor/maennchen/zipstream-php',
-        'vendor/league/csv',
-        'vendor/mpdf/qrcode',
-        'vendor/symfony/console',
-        'vendor/symfony/process',
-        'vendor/league/commonmark',
+        'vendor',
     ),
 
     // A directory list that defines files that will be excluded
@@ -88,5 +75,7 @@ return array(
         'PhanUndeclaredConstant',
         'PhanUndeclaredExtendedClass',
         'PhanUndeclaredTypeThrowsType',
+        'PhanUnextractableAnnotationElementName',
+        'PhanUnextractableAnnotationSuffix',
     ),
 );

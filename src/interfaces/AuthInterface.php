@@ -10,15 +10,15 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
+use Elabftw\Elabftw\AuthResponse;
+
 /**
- * Interface for Experiments or Database
+ * Interface for auth services
  */
-interface CreateInterface
+interface AuthInterface
 {
     /**
-     * Create an item (exp or db)
-     *
-     * @return int
+     * Try to authenticate with email and password
      */
-    public function create(int $tpl): int;
+    public function tryAuth(): AuthResponse;
 }

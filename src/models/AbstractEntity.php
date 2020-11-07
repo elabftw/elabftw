@@ -18,6 +18,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
@@ -30,7 +31,7 @@ use PDO;
 /**
  * The mother class of Experiments and Database
  */
-abstract class AbstractEntity
+abstract class AbstractEntity implements CreatableInterface
 {
     use EntityTrait;
 
@@ -109,14 +110,6 @@ abstract class AbstractEntity
             $this->setId($id);
         }
     }
-
-    /**
-     * Create an empty entry
-     *
-     * @param int $tpl a template/category
-     * @return int the new id
-     */
-    //abstract public function create(int $tpl): int;
 
     /**
      * Duplicate an item
@@ -638,6 +631,7 @@ abstract class AbstractEntity
      * @param bool $getTags do we get the tags too?
      * @param bool $fullSelect select all the columns of entity
      * @return string
+     * @phan-suppress PhanPluginPrintfVariableFormatString
      */
     private function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false): string
     {

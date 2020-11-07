@@ -32,19 +32,31 @@
     <img src='app/img/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
   {% if App.Session.has('team_selection_required') %}
     <form method='post' action='app/controllers/LoginController.php'>
+      <input type='hidden' name='auth_type' value='team'>
       <!-- form key -->
       {{ App.Csrf.getHiddenInput|raw }}
       <div class='col-md-4 mx-auto mt-4 text-left form-group'>
         <label for='team_selection_select'>{{ 'Your account is linked to several teams. Select in which team you want to log in'|trans }}</label>
-        <select name='team_selection' id='team_selection_select' class='form-control'>
-          {% for teams in App.Session.get('team_selection') %}
-            <option value='{{ teams.id }}'>{{ teams.name }}</option>
+        <select name='selected_team' id='team_selection_select' class='form-control'>
+          {% for team in App.Session.get('team_selection') %}
+            <option value='{{ team.id }}'>{{ team.name }}</option>
           {% endfor %}
         </select>
       </div>
       <button type='submit' class='button btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
     </form>
-  {% else %}
+  {% elseif App.Request.server.get(App.Config.configArr.extauth_remote_user) %}
+    <!-- user is already authed with external auth, so just present a continue button
+      we don't autologin anymore -->
+      <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off'>
+        <!-- form key -->
+        {{ App.Csrf.getHiddenInput|raw }}
+        <input type='hidden' name='auth_type' value='external'>
+        <h2 class='mt-4'>{{ 'You are already authenticated'|trans }}</h2>
+        <br>
+        <button type='submit' class='button btn btn-primary' name='Submit'>{{ 'Continue'|trans }}</button>
+      </form>
+    {% else %}
 
     {% if showLocal %}
       <!-- Login form , the id is for an acceptance test -->
@@ -72,6 +84,21 @@
             <label for='rememberme' class='form-check-label'>{{ 'Remember me'|trans }}</label>
           </div>
         </div>
+
+        {% if App.Config.configArr.ldap_toggle %}
+        <!-- Select login type (local or ldap) -->
+        <div class='form-check form-check-inline'>
+          <input class='form-check-input' type='radio' name='auth_type' id='auth_type_local' value='local' checked>
+          <label class='form-check-label' for='auth_type_local'>{{ 'Local'|trans }}</label>
+        </div>
+        <div class='form-check form-check-inline'>
+          <input class='form-check-input' type='radio' name='auth_type' id='auth_type_ldap' value='ldap'>
+          <label class='form-check-label' for='auth_type_ldap'>LDAP</label>
+        </div>
+        {% else %}
+          <input type='hidden' name='auth_type' value='local'>
+        {% endif %}
+
         <!-- Login button -->
         <button type='submit' class='button btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
       </form>
@@ -86,10 +113,11 @@
       <h2>{{ 'Login through your institution'|trans }}</h2>
       <br>
       <form method='post' class='form-group' id='saml-login' action='app/controllers/LoginController.php' autocomplete='off'>
+        <input type='hidden' name='auth_type' value='saml'>
         {{ App.Csrf.getHiddenInput|raw }}
         <div class='form-group col-md-4 mx-auto'>
           <label for='idp_login_select'>{{ 'Select an identity provider'|trans }}</label>
-          <select name='saml_login' class='form-control' id='idp_login_select'>
+          <select name='idpId' class='form-control' id='idp_login_select'>
             {% for idp in idpsArr %}
               {% if idp.active %}
                 <option value='{{ idp.id }}'>{{ idp.name }}</option>
@@ -106,6 +134,7 @@
       <h2>{{ 'Login as anonymous visitor'|trans }}</h2>
       <br>
       <form method='post' class='form-group' id='anon-login' action='app/controllers/LoginController.php' autocomplete='off'>
+        <input type='hidden' name='auth_type' value='anon'>
         {{ App.Csrf.getHiddenInput|raw }}
         <div class='form-group mx-auto col-md-4'>
           <label for='anon_login_select'></label>

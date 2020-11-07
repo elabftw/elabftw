@@ -59,7 +59,7 @@ try {
     if ($Request->request->has('updateStart')) {
         $Scheduler->setId((int) $Request->request->get('id'));
         $eventArr = $Scheduler->readFromId();
-        if ($eventArr['userid'] === $App->Session->get('userid')) {
+        if ((int) $eventArr['userid'] === $App->Session->get('userid')) {
             $Scheduler->updateStart($Request->request->get('delta'));
         }
     }
@@ -67,7 +67,7 @@ try {
     if ($Request->request->has('updateEnd')) {
         $Scheduler->setId((int) $Request->request->get('id'));
         $eventArr = $Scheduler->readFromId();
-        if ($eventArr['userid'] === $App->Session->get('userid')) {
+        if ((int) $eventArr['userid'] === $App->Session->get('userid')) {
             $Scheduler->updateEnd($Request->request->get('end'));
         }
     }

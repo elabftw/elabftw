@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 
@@ -22,7 +23,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAndDestroy()
     {
-        $new = $this->Database->create(1);
+        $new = $this->Database->create(new ParamsProcessor(array('id' => 1)));
         $this->assertTrue((bool) Check::id($new));
         $this->Database->setId($new);
         $this->Database->destroy();
@@ -36,7 +37,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
 
     public function testRead()
     {
-        $new = $this->Database->create(1);
+        $new = $this->Database->create(new ParamsProcessor(array('id' => 1)));
         $this->Database->setId($new);
         $this->Database->canOrExplode('read');
         $this->assertTrue(is_array($this->Database->entityData));
@@ -46,7 +47,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $new = $this->Database->create(1);
+        $new = $this->Database->create(new ParamsProcessor(array('id' => 1)));
         $this->Database->setId($new);
         $this->Database->update('Database item 1', '20160729', 'body', 1);
     }
@@ -66,7 +67,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
 
     public function testToggleLock()
     {
-        $new = $this->Database->create(1);
+        $new = $this->Database->create(new ParamsProcessor(array('id' => 1)));
         $this->Database->setId($new);
 
         // lock

@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Controllers\ApiController;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -27,14 +28,15 @@ use Symfony\Component\HttpFoundation\Session\Session;
 /**
  * This file is called without any auth, so we don't load init.inc.php but only what we need
  */
-require_once \dirname(__DIR__, 3) . '/config.php';
-require_once \dirname(__DIR__, 3) . '/vendor/autoload.php';
+require_once dirname(__DIR__, 3) . '/config.php';
+require_once dirname(__DIR__, 3) . '/vendor/autoload.php';
 
 // create Request object
 $Request = Request::createFromGlobals();
 $Session = new Session();
 $Session->start();
 $Request->setSession($Session);
+$Response = new Response(Tools::error(), 500);
 
 try {
     // INIT APP OBJECT

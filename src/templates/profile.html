@@ -9,7 +9,7 @@
       <h4>{{ App.Users.userData.fullname|raw }} ({{ App.Users.userData.email }})</h4>
       <!-- TEAM -->
       <h5>{{ 'Member of:'|trans }}
-      {% for team in UsersHelper.getTeamsFromUserid(App.Users.userData.userid) %}
+      {% for team in teamsArr %}
         <span class='btn btn-secondary'>{{ team.name }}</span>
       {% endfor %}
       </h5>

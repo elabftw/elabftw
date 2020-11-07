@@ -105,11 +105,18 @@ class Config
             throw new IllegalActionException('Bad value for number of login attempts!');
         }
 
-        // encrypt password
+        // encrypt SMTP password
         if (isset($post['smtp_password']) && !empty($post['smtp_password'])) {
             $post['smtp_password'] = Crypto::encrypt($post['smtp_password'], Key::loadFromAsciiSafeString(\SECRET_KEY));
         } elseif (isset($post['smtp_password'])) {
             unset($post['smtp_password']);
+        }
+
+        // encrypt LDAP password
+        if (isset($post['ldap_password']) && !empty($post['ldap_password'])) {
+            $post['ldap_password'] = Crypto::encrypt($post['ldap_password'], Key::loadFromAsciiSafeString(\SECRET_KEY));
+        } elseif (isset($post['ldap_password'])) {
+            unset($post['ldap_password']);
         }
 
         // loop the array and update config
@@ -226,7 +233,14 @@ class Config
             ('extauth_lastname', ''),
             ('extauth_email', ''),
             ('extauth_teams', ''),
-            ('logout_url', '');";
+            ('logout_url', ''),
+            ('ldap_toggle', '0'),
+            ('ldap_host', ''),
+            ('ldap_port', '389'),
+            ('ldap_base_dn', ''),
+            ('ldap_username', ''),
+            ('ldap_password', ''),
+            ('ldap_use_tls', '0')";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);

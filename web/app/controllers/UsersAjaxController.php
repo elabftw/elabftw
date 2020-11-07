@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -24,7 +25,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 /**
  * Users info from admin or sysadmin page with ajax request and json response
  */
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new JsonResponse();
 $Response->setData(array(
@@ -40,9 +41,9 @@ try {
     if (!$App->Session->get('is_admin')) {
         throw new IllegalActionException('Non admin user tried to edit another user.');
     }
-    $UsersHelper = new UsersHelper();
     $targetUser = new Users((int) $Request->request->get('userid'));
-    $targetUserTeams = $UsersHelper->getTeamsIdFromUserid((int) $targetUser->userData['userid']);
+    $UsersHelper = new UsersHelper((int) $targetUser->userData['userid']);
+    $targetUserTeams = $UsersHelper->getTeamsIdFromUserid();
 
     if (!in_array((string) $App->Users->userData['team'], $targetUserTeams, true) && !$App->Session->get('is_sysadmin')) {
         throw new IllegalActionException('User tried to edit user from other team.');

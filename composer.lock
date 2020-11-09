@@ -71,16 +71,16 @@
         },
         {
             "name": "directorytree/ldaprecord",
-            "version": "v1.12.0",
+            "version": "v1.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DirectoryTree/LdapRecord.git",
-                "reference": "cf18c1fa3ed920e3087f9b669066b8875c94386b"
+                "reference": "4dd945db58a78eb2768477905b7ebb473dc782dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/cf18c1fa3ed920e3087f9b669066b8875c94386b",
-                "reference": "cf18c1fa3ed920e3087f9b669066b8875c94386b",
+                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/4dd945db58a78eb2768477905b7ebb473dc782dc",
+                "reference": "4dd945db58a78eb2768477905b7ebb473dc782dc",
                 "shasum": ""
             },
             "require": {
@@ -95,7 +95,7 @@
             },
             "require-dev": {
                 "mockery/mockery": "^1.0",
-                "phpunit/phpunit": "^6.0"
+                "phpunit/phpunit": "^8.0"
             },
             "type": "library",
             "autoload": {
@@ -133,7 +133,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-10-12T18:23:43+00:00"
+            "time": "2020-11-08T20:25:00+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -4684,6 +4684,7 @@
                 "faker",
                 "fixtures"
             ],
+            "abandoned": true,
             "time": "2019-12-12T13:22:17+00:00"
         },
         {

@@ -72,7 +72,7 @@ $(document).ready(function() {
       alert('Please use a modern web browser. Import aborted.');
       return false;
     }
-    const file = (<HTMLInputElement>e.target).files[0];
+    const file = (e.target as HTMLInputElement).files[0];
     const reader = new FileReader();
     reader.onload = function(e): void {
       TemplateC.create(title, e.target.result as string);

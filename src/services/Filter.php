@@ -146,7 +146,7 @@ class Filter
      */
     public static function body(string $input): string
     {
-        $whitelist = '<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol>
+        $whitelist = '<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol><dl><dt><dd>
             <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><th><td><code><video><audio><pagebreak><pre>
             <details><summary><figure><figcaption>';
         $body = strip_tags($input, $whitelist);

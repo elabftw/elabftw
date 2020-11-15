@@ -36,10 +36,6 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     {
         $stats = $this->Teams->getAllStats();
         $this->assertTrue(is_array($stats));
-        if (getenv('CIRCLE_BUILD_URL')) {
-            $this->assertEquals(9, $stats['totusers']);
-        } else {
-            $this->assertEquals(8, $stats['totusers']);
-        }
+        $this->assertEquals(8, $stats['totusers']);
     }
 }

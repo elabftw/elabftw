@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import $ from 'jquery';
-import 'bootstrap/js/dist/modal.js';
+import modal from 'bootstrap';
 import 'bootstrap-select';
 import { relativeMoment, displayMolFiles, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
@@ -66,8 +66,7 @@ $(document).ready(function() {
     if (path.split('/').pop() === 'experiments.php') {
       window.location.replace('?create=1');
     } else {
-      $('#createModal').modal('toggle');
+      ($('#createModal') as any).modal('toggle');
     }
   });
-
 });

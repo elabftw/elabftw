@@ -42,6 +42,7 @@ try {
     $Teams = new Teams($App->Users);
     $teamsArr = $Teams->readAll();
     $teamsStats = $Teams->getAllStats();
+    var_dump($teamsStats);
 
     // Users search
     $isSearching = false;

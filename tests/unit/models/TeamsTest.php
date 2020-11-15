@@ -3,6 +3,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Exceptions\ImproperActionException;
+use function getenv;
 
 class TeamsTest extends \PHPUnit\Framework\TestCase
 {
@@ -35,7 +36,10 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     {
         $stats = $this->Teams->getAllStats();
         $this->assertTrue(is_array($stats));
-        // TODO FIXME this is 9 in circleci
-        //$this->assertEquals(8, $stats['totusers']);
+        if (getenv('CIRCLE_BUILD_URL')) {
+            $this->assertEquals(9, $stats['totusers']);
+        } else {
+            $this->assertEquals(8, $stats['totusers']);
+        }
     }
 }

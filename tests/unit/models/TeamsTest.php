@@ -3,7 +3,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Exceptions\ImproperActionException;
-use function getenv;
 
 class TeamsTest extends \PHPUnit\Framework\TestCase
 {

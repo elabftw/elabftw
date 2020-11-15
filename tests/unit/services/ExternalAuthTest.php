@@ -48,8 +48,11 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $authResponse->selectedTeam);
         $teams = array(array('id' => '1', 'name' => 'Alpha'));
         $this->assertEquals($teams, $authResponse->selectableTeams);
+    }
 
-        // now try with a non existing user
+    // now try with a non existing user
+    public function testTryAuthWithNonExistingUser()
+    {
         $serverParams = $this->serverParams;
         $serverParams['auth_email'] = 'nonexisting@yopmail.com';
         $ExternalAuth = new ExternalAuth(
@@ -58,9 +61,12 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
             $this->log,
         );
         $authResponse = $ExternalAuth->tryAuth();
-        $this->assertEquals(9, $authResponse->userid);
+        $this->assertEquals(8, $authResponse->userid);
+    }
 
-        // now try without a team sent by server
+    // now try without a team sent by server
+    public function testTryAuthWithoutTeamSentByServer()
+    {
         // make sure we use the default team
         $this->serverParams['auth_team'] = null;
         $ExternalAuth = new ExternalAuth(
@@ -70,10 +76,14 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
         );
         $authResponse = $ExternalAuth->tryAuth();
         $this->assertEquals(1, $authResponse->selectedTeam);
+    }
 
-        // now try with throwing exception if no team is found
+    // now try with throwing exception if no team is found
+    public function testTryAuthWithoutTeamGetException()
+    {
         // because sysadmin configured it like that
         $this->configArr['saml_team_default'] = 0;
+        $this->serverParams['auth_team'] = null;
         $ExternalAuth = new ExternalAuth(
             $this->configArr,
             $this->serverParams,

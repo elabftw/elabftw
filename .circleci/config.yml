@@ -43,9 +43,9 @@ jobs:
       # copy the circleci config
       - run: sudo cp tests/config-circleci.php config.php
       - run: sudo apt-get update
-      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mariadb-server graphicsmagick libgraphicsmagick1-dev
+      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mariadb-server graphicsmagick libgraphicsmagick1-dev libldap2-dev
       - run: sudo service mysql start
-      - run: sudo docker-php-ext-install gd gettext zip pdo_mysql exif
+      - run: sudo docker-php-ext-install gd gettext zip pdo_mysql exif ldap
       - run: yes|sudo pecl install gmagick-2.0.5RC1
       - run: sudo docker-php-ext-enable gmagick
       # The following line was run implicitly in your 1.0 builds based on what CircleCI inferred about the structure of your project. In 2.0 you need to be explicit about which commands should be run. In some cases you can discard inferred commands if they are not relevant to your project.
@@ -77,7 +77,7 @@ jobs:
           command: ./vendor/bin/php-cs-fixer fix --config=.php_cs.dist -v --dry-run --stop-on-violation --using-cache=no
       - run:
           name: Run unit tests
-          command: yarn run unit
+          command: yarn run unit-ci
       # disable this for now, not really useful with github vulns scan and makes the PR fail because of missing secret
       #- snyk/scan
       - run:

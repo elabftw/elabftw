@@ -12,7 +12,7 @@ testLogin($I);
 $I->amOnPage('experiments.php?mode=edit&id=1');
 // set success status
 $I->click('#category_select > option:nth-child(2)');
-$I->waitForElement('.overlay', 5);
+$I->waitForElement('.overlay', 40);
 $I->see('Saved');
 //$I->click('Save and go back');
 //$I->waitForElement('#confirmTimestamp', 5);

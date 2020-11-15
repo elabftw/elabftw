@@ -10,18 +10,20 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function bin2hex;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\DestroyableInterface;
 use function filter_var;
 use function password_hash;
 use function password_verify;
 use PDO;
+use function random_bytes;
 
 /**
  * Api keys
  */
-class ApiKeys implements CrudInterface
+class ApiKeys implements DestroyableInterface
 {
     /** @var Db $Db SQL Database */
     private $Db;
@@ -48,10 +50,11 @@ class ApiKeys implements CrudInterface
      * @return string the key
      */
     public function create(string $name, int $canWrite): string
+    //public function create(ParamsProcessor $params): string
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
-        $apiKey = \bin2hex(\random_bytes(42));
-        $hash = password_hash($apiKey, 1);
+        $apiKey = bin2hex(random_bytes(42));
+        $hash = password_hash($apiKey, PASSWORD_BCRYPT);
 
         $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
         $req = $this->Db->prepare($sql);
@@ -74,7 +77,7 @@ class ApiKeys implements CrudInterface
      */
     public function createKnown(string $apiKey): void
     {
-        $hash = password_hash($apiKey, 1);
+        $hash = password_hash($apiKey, PASSWORD_BCRYPT);
 
         $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
         $req = $this->Db->prepare($sql);
@@ -131,15 +134,12 @@ class ApiKeys implements CrudInterface
 
     /**
      * Destroy an api key
-     *
-     * @param int $id id of the key
-     * @return void
      */
-    public function destroy(int $id): void
+    public function destroy(int $id): bool
     {
         $sql = 'DELETE FROM api_keys WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 }

@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
@@ -36,31 +38,17 @@ class Templates extends AbstractEntity
     }
 
     /**
-     * The create function from abstract class in not implemented here
-     *
-     * @param int $id
-     * @return int
-     */
-    public function create(int $id): int
-    {
-        return $id;
-    }
-
-    /**
      * Create a template
-     *
-     * @param string $name
-     * @param string|null $body
-     * @param int|null $userid
-     * @param int|null $team
-     * @return int
      */
-    public function createNew(string $name, ?string $body = null, ?int $userid = null, ?int $team = null): int
+    public function create(ParamsProcessor $params, bool $isDefault = false): int
     {
-        if ($team === null) {
+        $team = $params->team;
+        if ($team === 0) {
             $team = $this->Users->userData['team'];
         }
-        if ($userid === null) {
+        $userid = $params->id;
+        // default template will have userid 0
+        if ($userid === 0 && !$isDefault) {
             $userid = $this->Users->userData['userid'];
         }
 
@@ -74,14 +62,11 @@ class Templates extends AbstractEntity
             $canwrite = $this->Users->userData['default_write'];
         }
 
-        $name = filter_var($name, FILTER_SANITIZE_STRING);
-        $body = Filter::body($body ?? '');
-
         $sql = 'INSERT INTO experiments_templates(team, name, body, userid, canread, canwrite) VALUES(:team, :name, :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
-        $req->bindParam(':name', $name);
-        $req->bindParam('body', $body);
+        $req->bindParam(':name', $params->name);
+        $req->bindParam('body', $params->template);
         $req->bindParam('userid', $userid, PDO::PARAM_INT);
         $req->bindParam('canread', $canread, PDO::PARAM_STR);
         $req->bindParam('canwrite', $canwrite, PDO::PARAM_STR);
@@ -104,7 +89,7 @@ class Templates extends AbstractEntity
             <h1><span style='font-size: 14pt;'>Results :<br /></span></h1>
             <p>&nbsp;</p>";
 
-        $this->createNew('default', $defaultBody, 0, $team);
+        $this->create(new ParamsProcessor(array('name' => 'default', 'template' => $defaultBody, 'id' => 0, 'team' => $team)), true);
     }
 
     /**
@@ -278,7 +263,9 @@ class Templates extends AbstractEntity
      */
     public function updateCommon(string $body): void
     {
-        $body = Filter::body($body);
+        if (!$this->Users->userData['is_admin']) {
+            throw new IllegalActionException('Non admin user tried to update common template.');
+        }
         $sql = "UPDATE experiments_templates SET
             name = 'default',
             team = :team,
@@ -319,13 +306,12 @@ class Templates extends AbstractEntity
     /**
      * Delete template
      *
-     * @return void
      */
-    public function destroy(): void
+    public function destroy(int $id): void
     {
         $sql = 'DELETE FROM experiments_templates WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 

@@ -542,6 +542,7 @@ CREATE TABLE `users` (
   `userid` int(10) UNSIGNED NOT NULL,
   `salt` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
+  `mfa_secret` varchar(32) DEFAULT NULL,
   `usergroup` int(10) UNSIGNED NOT NULL,
   `firstname` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,

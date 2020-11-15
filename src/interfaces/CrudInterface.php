@@ -11,23 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * Interface for things like Steps, Links, Comments
+ * For things that can be created, read, updated and destroyed
  */
-interface CrudInterface
+interface CrudInterface extends CreatableInterface, ReadableInterface, UpdatableInterface, DestroyableInterface
 {
-    /**
-     * Read all the things
-     *
-     * @return array
-     */
-    public function readAll(): array;
-
-    /**
-     * Destroy with id
-     *
-     * @param int $id Id of item to destroy
-     *
-     * @return void
-     */
-    public function destroy(int $id): void;
 }

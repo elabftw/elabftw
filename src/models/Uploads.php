@@ -18,7 +18,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MakeThumbnail;
 use Elabftw\Traits\UploadTrait;
@@ -36,7 +36,7 @@ use function unlink;
 /**
  * All about the file uploads
  */
-class Uploads implements CrudInterface
+class Uploads implements DestroyableInterface
 {
     use UploadTrait;
 
@@ -294,11 +294,8 @@ class Uploads implements CrudInterface
 
     /**
      * Destroy an upload
-     *
-     * @param int $id id of the upload
-     * @return void
      */
-    public function destroy(int $id): void
+    public function destroy(int $id): bool
     {
         $this->Entity->canOrExplode('write');
 
@@ -321,7 +318,7 @@ class Uploads implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**

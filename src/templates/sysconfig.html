@@ -46,9 +46,10 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <li class='tabhandle' id='tab4'>{{ 'Timestamp'|trans }}</li>
         <li class='tabhandle' id='tab5'>{{ 'Security'|trans }}</li>
         <li class='tabhandle' id='tab6'>{{ 'Email'|trans }}</li>
-        <li class='tabhandle' id='tab7'>{{ 'SAML'|trans }}</li>
+        <li class='tabhandle' id='tab7'>SAML</li>
         <li class='tabhandle' id='tab8'>{{ 'Privacy policy'|trans }}</li>
         <li class='tabhandle' id='tab9'>{{ 'External auth'|trans }}</li>
+        <li class='tabhandle' id='tab10'>LDAP</li><span class='beta'>beta</span>
 </ul>
 
 <!-- TAB 1 SERVER -->
@@ -372,7 +373,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                 <a href='app/controllers/SysconfigController.php?clearSmtppass=1'>",
                 "</a>"
             )|raw }}
-            <span class='button btn btn-primary mt-2' id='editSmtpPassword'>{{ 'Edit'|trans }}</span>
+            <span class='button btn btn-primary mt-2 togglableNext'>{{ 'Edit'|trans }}</span>
             <input class='form-control col-md-4' type='password' name='smtp_password' style='display:none' autocomplete='off' id='hidden_smtp_password' />
           </p>
         {% endif %}
@@ -733,4 +734,88 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     </form>
 </div>
 
+<!-- TAB 10 LDAP -->
+<div class='divhandle box' id='tab10div'>
+    <form method='post' action='app/controllers/SysconfigController.php'>
+      <div class='form-group'>
+        <h3>{{ 'LDAP configuration'|trans }}</h3>
+        <hr>
+        <input type='hidden' name='updateConfig' value='true' />
+
+        <p class='smallgray'>{{ 'This page allows you to configure LDAP authentication.'|trans }}</p>
+
+        <label for='ldap_toggle'>{{ 'Toggle LDAP login'|trans }}</label>
+        <select class='form-control col-md-4' id='ldap_toggle' name='ldap_toggle'>
+          <option value='1'{{ App.Config.configArr.ldap_toggle == '1' ? ' selected' }}>Enabled</option>
+          <option value='0'{{ App.Config.configArr.ldap_toggle == '0' ? ' selected' }}>Disabled</option>
+        </select>
+
+        <label for='ldap_host'>{{ 'LDAP Host'|trans }}</label>
+        <input class='form-control col-md-4' type='text' placeholder='ldap' value='{{ App.Config.configArr.ldap_host }}' name='ldap_host' id='ldap_host' />
+        <p class='smallgray'>{{ 'Domain name or IP address'|trans }}</p>
+
+        <label for='ldap_port'>{{ 'LDAP Port'|trans }}</label>
+        <input class='form-control col-md-4' type='text' placeholder='389' value='{{ App.Config.configArr.ldap_port }}' name='ldap_port' id='ldap_port' />
+        <p class='smallgray'>{{ 'Default: 389 LDAPS: 636'|trans }}</p>
+
+        <label for='ldap_base_dn'>LDAP Base DN</label>
+        <input class='form-control col-md-4' type='text' placeholder='dc=example,dc=com' value='{{ App.Config.configArr.ldap_base_dn }}' name='ldap_base_dn' id='ldap_base_dn' />
+
+        <label for='ldap_username'>LDAP {{ 'Username'|trans }}</label>
+        <input class='form-control col-md-4' type='text' placeholder='cn=admin,dc=example,dc=com' value='{{ App.Config.configArr.ldap_username}}' name='ldap_username' id='ldap_username' />
+
+        <label for='ldap_password'>LDAP {{ 'Password'|trans }}</label>
+        {% if App.Config.configArr.ldap_password|length == 0 %}
+          <input class='form-control col-md-4' type='password' name='ldap_password' id='ldap_password' autocomplete='off' />
+        {% else %}
+          <p>
+            {{ 'A password is already set.'|trans }}
+            {{ '%sClear it%s or change it below:'|trans|format("
+                <a href='app/controllers/SysconfigController.php?clearLdappass=1'>",
+                "</a>"
+            )|raw }}
+            <span class='button btn btn-primary mt-2 togglableNext'>{{ 'Edit'|trans }}</span>
+            <input class='form-control col-md-4' type='password' name='ldap_password' style='display:none' autocomplete='off' id='hidden_ldap_password' />
+          </p>
+        {% endif %}
+
+        <label for='ldap_use_tls'>{{ 'Use TLS'|trans }}</label>
+        <select class='form-control col-md-4' id='ldap_use_tls' name='ldap_use_tls'>
+          <option value='1'{{ App.Config.configArr.ldap_use_tls == '1' ? ' selected' }}>{{ 'Yes'|trans }}</option>
+          <option value='0'{{ App.Config.configArr.ldap_use_tls == '0' ? ' selected' }}>{{ 'No'|trans }}</option>
+        </select>
+
+
+        <label for='ldap-team'>What attribute to look for the team name:</label>
+        <input class='form-control col-md-4' type='text' id='ldap-team' name='ldap_team' value='{{ App.Config.configArr.ldap_team }}' />
+
+        <label for='extauth-team-create'>Create team sent by server if it doesn't exist already:</label>
+        <select class='form-control col-md-4' id='extauth-team-create' name='saml_team_create'>
+            <option value='1'{{ App.Config.configArr.saml_team_create == '1' ? ' selected' }}>Yes</option>
+            <option value='0'{{ App.Config.configArr.saml_team_create == '0' ? ' selected' }}>No</option>
+        </select>
+
+        <label for='extauth-team-default'>If no team attribute is found, to which team user is assigned?</label>
+        <select class='form-control col-md-4' name='saml_team_default' id='extauth-team-default'>
+          {% for team in teamsArr %}
+            <option {{ team.id == App.Config.configArr.saml_team_default ? 'selected' }} value='{{ team.id }}'>{{ team.name }}</option>
+          {% endfor %}
+          <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>Throw error!</option>
+        </select>
+
+        <label for='ldap-email'>What attribute to look for the email:</label>
+        <input class='form-control col-md-4' type='text' id='ldap-email' placeholder='mail' name='ldap_email' value='{{ App.Config.configArr.ldap_email }}' />
+
+        <label for='ldap-firstname'>What attribute to look for the firstname:</label>
+        <input class='form-control col-md-4' type='text' id='ldap-firstname' placeholder='givenname' name='ldap_firstname' value='{{ App.Config.configArr.ldap_firstname }}' />
+
+        <label for='ldap-lastname'>What attribute to look for the lastname:</label>
+        <input class='form-control col-md-4' type='text' id='ldap-lastname' placeholder='sn' name='ldap_lastname' value='{{ App.Config.configArr.ldap_lastname }}' />
+
+        <div class='submitButtonDiv'>
+          <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+        </div>
+      </div>
+    </form>
+</div>
 {% endblock body %}

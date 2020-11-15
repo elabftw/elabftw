@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
@@ -21,6 +22,7 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
+use Elabftw\Services\MfaHelper;
 use Elabftw\Services\Populate;
 use function is_string;
 use Symfony\Component\Console\Command\Command;
@@ -29,6 +31,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -94,7 +98,6 @@ class PopulateDatabase extends Command
             }
         }
 
-
         $Db = Db::getConnection();
         $Sql = new Sql();
         $Faker = \Faker\Factory::create();
@@ -129,6 +132,13 @@ class PopulateDatabase extends Command
             $Teams->create($team);
         }
 
+        $Request = Request::createFromGlobals();
+        $Session = new Session();
+        $Request->setSession($Session);
+
+
+        $iterations = $yaml['iterations'] ?? 50;
+
         // create users
         // all users have the same password to make switching accounts easier
         // if the password is provided in the config file, it'll be used instead for that user
@@ -142,14 +152,20 @@ class PopulateDatabase extends Command
             $email = $user['email'] ?? $Faker->safeEmail;
 
             $userid = $Users->create($email, array($user['team']), $firstname, $lastname, $password);
-            $team = $Teams->getTeamIdFromNameOrOrgid($user['team']);
-            $Users = new Users($userid, $team);
+            $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));
+            $Users = new Users($userid, (int) $team[0]['id']);
 
+            if ($user['create_mfa_secret'] ?? false) {
+                $MfaHelper = new MfaHelper($userid);
+                // use a fixed secret
+                $MfaHelper->secret = 'EXAMPLE2FASECRET234567ABCDEFGHIJ';
+                $MfaHelper->saveSecret();
+            }
             if ($user['create_experiments'] ?? false) {
-                $Populate->generate(new Experiments($Users));
+                $Populate->generate(new Experiments($Users), $iterations);
             }
             if ($user['create_items'] ?? false) {
-                $Populate->generate(new Database($Users));
+                $Populate->generate(new Database($Users), $iterations);
             }
             if ($user['api_key'] ?? false) {
                 $ApiKeys = new ApiKeys($Users);
@@ -159,7 +175,9 @@ class PopulateDatabase extends Command
             if ($user['create_templates'] ?? false) {
                 $Templates = new Templates($Users);
                 for ($i = 0; $i < 100; $i++) {
-                    $Templates->createNew($Faker->sentence, $Faker->realText(1000));
+                    $Templates->create(new ParamsProcessor(
+                        array('name' => $Faker->sentence, 'template' => $Faker->realText(1000))
+                    ));
                 }
             }
         }
@@ -169,11 +187,15 @@ class PopulateDatabase extends Command
         $ItemsTypes = new ItemsTypes($Users1);
         foreach ($yaml['items_types'] as $items_types) {
             $ItemsTypes->create(
-                $items_types['name'],
-                $items_types['color'],
-                (int) $items_types['bookable'],
-                $items_types['template'],
-                $items_types['team'],
+                new ParamsProcessor(
+                    array(
+                        'name' => $items_types['name'],
+                        'color' => $items_types['color'],
+                        'bookable' => (int) $items_types['bookable'],
+                        'template' => $items_types['template'],
+                    )
+                ),
+                $items_types['team']
             );
         }
 

@@ -212,7 +212,7 @@ class MakePdf extends AbstractMake
     private function addLinkedItems(): string
     {
         $html = '';
-        $linksArr = $this->Entity->Links->readAll();
+        $linksArr = $this->Entity->Links->read();
         if (empty($linksArr)) {
             return $html;
         }
@@ -248,7 +248,7 @@ class MakePdf extends AbstractMake
     {
         $html = '';
 
-        $commentsArr = $this->Entity->Comments->readAll();
+        $commentsArr = $this->Entity->Comments->read();
         if (empty($commentsArr)) {
             return $html;
         }
@@ -346,7 +346,7 @@ class MakePdf extends AbstractMake
     {
         $html = '';
 
-        $stepsArr = $this->Entity->Steps->readAll();
+        $stepsArr = $this->Entity->Steps->read();
         if (empty($stepsArr)) {
             return $html;
         }
@@ -464,7 +464,7 @@ Witness' signature:<br><br>
 <htmlpagefooter name="footer">' . $pdfSig . '
     <div class="footer-block footer">
         PDF generated with <a href="https://www.elabftw.net">elabftw</a>, a free and open source lab notebook
-        <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:m}</p>
+        <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:i}</p>
     </div>
 </htmlpagefooter>
 <sethtmlpageheader name="header" value="on" show-this-page="1" />

@@ -12,8 +12,10 @@ namespace Elabftw\Models;
 
 use function array_diff;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Interfaces\ReadableInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use PDO;
@@ -21,7 +23,7 @@ use PDO;
 /**
  * All about the teams
  */
-class Teams implements CrudInterface
+class Teams implements ReadableInterface, DestroyableInterface
 {
     /** @var Users $Users instance of Users */
     public $Users;
@@ -41,69 +43,34 @@ class Teams implements CrudInterface
     }
 
     /**
-     * Check if the team exists from the id
-     *
-     * @param int $id team id
-     * @return bool
+     * Make sure that the teams exist. Input can be an array of team name, id or orgid
+     * and the response is an array of teams, with id and name for each
+     * Input can come from external auth and reference an uncreated team
+     * so with this the team will be created on the fly (if it's allowed)
      */
-    public function isExisting(int $id): bool
+    public function getTeamsFromIdOrNameOrOrgidArray(array $input): array
     {
-        $sql = 'SELECT id FROM teams WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return (bool) $req->fetch();
-    }
-
-    /**
-     * Transform a team name/orgid in the team id
-     *
-     * @param string $query name or orgid of the team
-     * @return int
-     */
-    public function getTeamIdFromNameOrOrgid(string $query): int
-    {
-        $sql = 'SELECT id FROM teams WHERE id = :query OR name = :query OR orgid = :query';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':query', $query);
-        $this->Db->execute($req);
-        $res = $req->fetchColumn();
-        if ($res === false) {
-            throw new ImproperActionException('Could not find team!');
-        }
-        return (int) $res;
-    }
-
-    /**
-     * Make sure that all the teams are existing
-     * If they do not exist, create them if it's allowed by sysadmin
-     *
-     * @param array<array-key, mixed> $teams
-     * @return array an array of teams id
-     */
-    public function validateTeams(array $teams): array
-    {
-        $Config = new Config();
-        $teamIdArr = array();
-        foreach ($teams as $team) {
-            try {
-                $teamIdArr[] = $this->getTeamIdFromNameOrOrgid($team ?? '');
-            } catch (ImproperActionException $e) {
-                if ($Config->configArr['saml_team_create']) {
-                    $teamIdArr[] = $this->create($team);
-                } else {
-                    throw new ImproperActionException('The administrator disabled team creation on SAML login. Contact your administrator for creating the team.', (int) $e->getCode(), $e);
-                }
+        $res = array();
+        foreach ($input as $query) {
+            $sql = 'SELECT id, name FROM teams WHERE id = :query OR name = :query OR orgid = :query';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':query', $query);
+            $this->Db->execute($req);
+            $team = $req->fetch();
+            if ($team === false) {
+                $id = $this->createTeamIfAllowed($query);
+                $team = $this->getTeamsFromIdOrNameOrOrgidArray(array($id));
             }
+            $res[] = $team;
         }
-        return $teamIdArr;
+        return $res;
     }
 
     /**
      * Add one user to n teams
      *
      * @param int $userid
-     * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist coming from validateTeams
+     * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
      *
      * @return void
      */
@@ -126,16 +93,16 @@ class Teams implements CrudInterface
      * Remove a user from teams
      *
      * @param int $userid
-     * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist coming from validateTeams
+     * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
      *
      * @return void
      */
     public function rmUserFromTeams(int $userid, array $teamIdArr): void
     {
         // make sure that the user is in more than one team before removing the team
-        $UsersHelper = new UsersHelper();
-        if (count($UsersHelper->getTeamsFromUserid($userid)) === 1) {
-            throw new ImproperActionException('Cannot remove team from user in only one team!');
+        $UsersHelper = new UsersHelper($userid);
+        if (count($UsersHelper->getTeamsFromUserid()) === 1) {
+            return;
         }
         foreach ($teamIdArr as $teamId) {
             $sql = 'DELETE FROM users2teams WHERE `users_id` = :userid AND `teams_id` = :team';
@@ -157,16 +124,17 @@ class Teams implements CrudInterface
      */
     public function syncFromIdp(int $userid, array $teams): void
     {
-        $teamIdArr = $this->validateTeams($teams);
+        $teamIdArr = array_column($teams, 'id');
         // get the difference between the teams sent by idp
         // and the teams that the user is in
-        $UsersHelper = new UsersHelper();
-        $currentTeams = $UsersHelper->getTeamsIdFromUserid($userid);
+        $UsersHelper = new UsersHelper($userid);
+        $currentTeams = $UsersHelper->getTeamsIdFromUserid();
 
         $addToTeams = array_diff($teamIdArr, $currentTeams);
-        $rmFromTeams = array_diff($currentTeams, $teamIdArr);
-
         $this->addUserToTeams($userid, $addToTeams);
+        $currentTeams = $UsersHelper->getTeamsIdFromUserid();
+
+        $rmFromTeams = array_diff($currentTeams, $teamIdArr);
         $this->rmUserFromTeams($userid, $rmFromTeams);
     }
 
@@ -197,10 +165,14 @@ class Teams implements CrudInterface
         // create default item type
         $ItemsTypes = new ItemsTypes($this->Users);
         $ItemsTypes->create(
-            'Edit me',
-            '#32a100',
-            0,
-            '<p>Go to the admin panel to edit/add more items types!</p>',
+            new ParamsProcessor(
+                array(
+                    'name' => 'Edit me',
+                    'color' => '#32a100',
+                    'bookable' => 0,
+                    'template' => '<p>Go to the admin panel to edit/add more items types!</p>',
+                )
+            ),
             $newId
         );
 
@@ -251,11 +223,8 @@ class Teams implements CrudInterface
 
     /**
      * Delete a team only if all the stats are at zero
-     *
-     * @param int $id ID of the team
-     * @return void
      */
-    public function destroy(int $id): void
+    public function destroy(int $id): bool
     {
         // check for stats, should be 0
         $count = $this->getStats($id);
@@ -268,7 +237,7 @@ class Teams implements CrudInterface
         $sql = 'DELETE FROM teams WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**
@@ -336,8 +305,8 @@ class Teams implements CrudInterface
 
     public function hasCommonTeamWithCurrent(int $userid, int $team): bool
     {
-        $UsersHelper = new UsersHelper();
-        $teams = $UsersHelper->getTeamsIdFromUserid($userid);
+        $UsersHelper = new UsersHelper($userid);
+        $teams = $UsersHelper->getTeamsIdFromUserid();
         return in_array((string) $team, $teams, true);
     }
 
@@ -350,5 +319,14 @@ class Teams implements CrudInterface
         $this->Db->execute($req);
 
         return (bool) $req->fetchColumn();
+    }
+
+    private function createTeamIfAllowed(string $name): int
+    {
+        $Config = new Config();
+        if ($Config->configArr['saml_team_create']) {
+            return $this->create($name);
+        }
+        throw new ImproperActionException('The administrator disabled team creation on login. Contact your administrator for creating the team beforehand.');
     }
 }

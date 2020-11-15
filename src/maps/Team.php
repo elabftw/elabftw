@@ -86,6 +86,11 @@ class Team implements MapInterface
         $this->hydrate($this->read());
     }
 
+    final public function getId(): int
+    {
+        return $this->id;
+    }
+
     final public function setName(?string $setting): void
     {
         if ($setting === null) {
@@ -213,7 +218,7 @@ class Team implements MapInterface
         }
     }
 
-    final public function setVisible($setting): void
+    final public function setVisible(string $setting): void
     {
         $this->visible = Filter::toBinary($setting);
     }

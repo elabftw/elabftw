@@ -34,7 +34,7 @@ class ExperimentsController extends AbstractEntityController
         parent::__construct($app, $entity);
 
         $Category = new Status($this->App->Users);
-        $this->categoryArr = $Category->readAll();
+        $this->categoryArr = $Category->read();
     }
 
     /**

@@ -10,6 +10,7 @@ declare let MathJax: any;
 import { insertParamAndReload, notif } from './misc';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
+import { CheckableItem } from './interfaces';
 
 $(document).ready(function(){
   if ($('#info').data('page') !== 'show') {
@@ -67,13 +68,13 @@ $(document).ready(function(){
   // END PAGINATION
 
   // THE CHECKBOXES
-  function getCheckedBoxes() {
+  function getCheckedBoxes(): Array<CheckableItem> {
     const checkedBoxes = [];
     $('input[type=checkbox]:checked').each(function() {
       checkedBoxes.push({
-        'id': $(this).data('id'),
+        id: $(this).data('id'),
         // the randomid is used to get the parent container and hide it when delete
-        'randomid': $(this).data('randomid'),
+        randomid: $(this).data('randomid'),
       });
     });
     return checkedBoxes;

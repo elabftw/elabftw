@@ -18,12 +18,20 @@ $(document).ready(function() {
   });
 
   // MAKE them editable on mousehover
-  $(document).on('mouseenter', '.comment', function() {
-    ($(this) as any).editable('app/controllers/CommentsAjaxController.php', {
-      name: 'update',
+  $(document).on('mouseenter', '.comment-editable', function() {
+    ($(this) as any).editable('app/controllers/Ajax.php', {
       type : 'textarea',
-      submitdata: {
-        type: $(this).data('type')
+      submitdata: (revert, settings, submitdata) => {
+        return {
+          action: 'update',
+          what: 'comment',
+          type: $(this).data('type'),
+          params: {
+            itemId: $(this).data('itemid'),
+            comment: submitdata.value,
+            id: $(this).data('id'),
+          },
+        };
       },
       width: '80%',
       height: '200',
@@ -39,7 +47,7 @@ $(document).ready(function() {
         notif(json);
         // show result in comment box
         if (json.res) {
-          $(this).html(json.update);
+          $(this).html(json.value);
         }
       }
     });

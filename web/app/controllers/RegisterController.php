@@ -64,12 +64,12 @@ try {
     );
 
     if ($App->Users->needValidation) {
-        $Session->getFlashBag()->add('ok', _('Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done.'));
+        $App->Session->getFlashBag()->add('ok', _('Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done.'));
     } else {
-        $Session->getFlashBag()->add('ok', _('Registration successful :)<br>Welcome to eLabFTW o/'));
+        $App->Session->getFlashBag()->add('ok', _('Registration successful :)<br>Welcome to eLabFTW o/'));
     }
     // store the email here so we can put it in the login field
-    $Session->set('email', $Request->request->get('email'));
+    $App->Session->set('email', $Request->request->get('email'));
 
     // log user creation
     $App->Log->info('New user created');

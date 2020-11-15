@@ -35,7 +35,7 @@ try {
     $apiKeysArr = $ApiKeys->readAll();
 
     $TeamGroups = new TeamGroups($App->Users);
-    $teamGroupsArr = $TeamGroups->readAll();
+    $teamGroupsArr = $TeamGroups->read();
 
     $Templates = new Templates($App->Users);
     $templatesArr = $Templates->getWriteableTemplatesList();

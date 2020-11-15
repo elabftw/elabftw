@@ -8,7 +8,7 @@
 import $ from 'jquery';
 import 'bootstrap/js/dist/modal.js';
 import 'bootstrap-select';
-import { relativeMoment, notif, displayMolFiles, makeSortableGreatAgain } from './misc';
+import { relativeMoment, displayMolFiles, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
 
 $(document).ready(function() {

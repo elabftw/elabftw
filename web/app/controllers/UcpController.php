@@ -19,6 +19,9 @@ use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Maps\UserPreferences;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Templates;
+use Elabftw\Services\Filter;
+use Elabftw\Services\LocalAuth;
+use Elabftw\Services\MfaHelper;
 use Exception;
 use function setcookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -41,11 +44,21 @@ try {
         $Prefs->hydrate($Request->request->all());
         $Prefs->save();
 
+
+        $cookieValue = '0';
+        $cookieOptions = array(
+            'expires' => time() - 3600,
+            'path' => '/',
+            'domain' => '',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Strict',
+        );
         if ($Request->request->get('pdf_sig') === 'on') {
-            setcookie('pdf_sig', '1', time() + 2592000, '/', '', true, true);
-        } else {
-            setcookie('pdf_sig', '0', time() - 3600, '/', '', true, true);
+            $cookieValue = '1';
+            $cookieOptions['expires'] = time() + 2592000;
         }
+        setcookie('pdf_sig', $cookieValue, $cookieOptions);
     }
     // END TAB 1
 
@@ -53,22 +66,45 @@ try {
     if ($Request->request->has('currpass')) {
         $tab = '2';
         // check that we got the good password
-        if (!$Auth->checkCredentials($App->Users->userData['email'], $Request->request->get('currpass'))) {
-            throw new ImproperActionException(_('Please input your current password!'));
-        }
+        // TODO what if we don't have a password (external, saml, ldap login), should we allow changing parameters on this page?
+        $LocalAuth = new LocalAuth($App->Users->userData['email'], $Request->request->get('currpass'));
+        $AuthResponse = $LocalAuth->tryAuth();
         $App->Users->updateAccount($Request->request->all());
-    }
 
-    // TAB 2 : CHANGE PASSWORD
-    if (!empty($Request->request->get('newpass'))) {
-        // check the confirm password
-        if ($Request->request->get('newpass') !== $Request->request->get('cnewpass')) {
-            throw new ImproperActionException(_('The passwords do not match!'));
+        // CHANGE PASSWORD
+        if (!empty($Request->request->get('newpass'))) {
+            // check the confirm password
+            if ($Request->request->get('newpass') !== $Request->request->get('cnewpass')) {
+                throw new ImproperActionException(_('The passwords do not match!'));
+            }
+            $App->Users->updatePassword($Request->request->get('newpass'));
         }
 
-        $App->Users->updatePassword($Request->request->get('newpass'));
-    }
+        // TWO FACTOR AUTHENTICATION
+        $useMFA = Filter::onToBinary($Request->request->get('use_mfa') ?? '');
+        $MfaHelper = new MfaHelper((int) $App->Users->userData['userid']);
 
+        if ($useMFA && !$App->Users->userData['mfa_secret']) {
+            // Need to request verification code to confirm user got secret and can authenticate in the future by MFA
+            // so we will require mfa, redirect the user to login
+            // which will pickup that enable_mfa is there so it will display the qr code to initialize the process
+            // and after that we redirect on ucp back thanks to mfa_redirect
+            // the mfa_secret is not yet saved to the DB
+            $App->Session->set('mfa_auth_required', true);
+            $App->Session->set('mfa_secret', $MfaHelper->generateSecret());
+            $App->Session->set('enable_mfa', true);
+            $App->Session->set('mfa_redirect', '../../ucp.php?tab=2');
+
+            // This will redirect user right away to verify mfa code
+            $Response = new RedirectResponse('../../login.php');
+            $Response->send();
+            exit;
+
+        // Disable MFA
+        } elseif (!$useMFA && $App->Users->userData['mfa_secret']) {
+            $MfaHelper->removeSecret();
+        }
+    }
     // END TAB 2
 
     // TAB 3 : EXPERIMENTS TEMPLATES
@@ -85,6 +121,7 @@ try {
         );
         $templateId = '&templateid=' . $Request->request->get('tpl_id');
     }
+    // END TAB 3
 
     // TAB 4 : CREATE API KEY
     if ($Request->request->has('createApiKey')) {
@@ -94,7 +131,7 @@ try {
             $Request->request->get('name'),
             (int) $Request->request->get('canWrite')
         );
-        $Session->getFlashBag()->add('warning', sprintf(_("This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again: %s"), $key));
+        $App->Session->getFlashBag()->add('warning', sprintf(_("This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again: %s"), $key));
     }
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));

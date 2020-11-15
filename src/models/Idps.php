@@ -12,13 +12,13 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\DestroyableInterface;
 use PDO;
 
 /**
  * Store informations about different identity providers for auth with SAML
  */
-class Idps implements CrudInterface
+class Idps implements DestroyableInterface
 {
     /** @var Db $Db SQL Database */
     protected $Db;
@@ -147,15 +147,12 @@ class Idps implements CrudInterface
 
     /**
      * Destroy an IDP
-     *
-     * @param int $id
-     * @return void
      */
-    public function destroy(int $id): void
+    public function destroy(int $id): bool
     {
         $sql = 'DELETE FROM idps WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 }

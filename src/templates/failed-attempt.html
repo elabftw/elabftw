@@ -1,0 +1,7 @@
+<!-- show message if there is a failed_attempt -->
+{% if App.Session.has('failed_attempt') and App.Session.get('failed_attempt') < App.Config.configArr.login_tries %}
+  {% set number_of_tries_left = App.Config.configArr.login_tries - App.Session.get('failed_attempt') %}
+  {{ 'Number of login attempt left before being banned for %s minutes: %s'|trans|format(
+    App.Config.configArr.ban_time,
+    number_of_tries_left)|msg('ko') }}
+{% endif %}

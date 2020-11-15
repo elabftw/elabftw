@@ -5,6 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import Template from './Template.class';
 import { notif } from './misc';
 import i18next from 'i18next';
 import 'jquery-ui/ui/widgets/autocomplete';
@@ -101,8 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
     firstDay: 1,
     // remove possibility to book whole day, might add it later
     allDaySlot: false,
-    // day start at 6 am
-    slotMinTime: '06:00:00',
+    // adjust the background color of event to the color of the item type
     eventBackgroundColor: $('#dropdownMenu1 > span:nth-child(1)').css('color'),
     // selection
     select: function(info): void {
@@ -227,17 +227,15 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     },
   });
-  calendar.render();
-  calendar.updateSize();
+  // only start it if the element is here
+  // otherwise it will error out if the element is not here
+  if (document.getElementById('scheduler')) {
+    calendar.render();
+    calendar.updateSize();
+  }
 
-});
-
-// IMPORT TPL
-$(document).on('click', '.importTpl', function() {
-  $.post('app/controllers/AjaxController.php', {
-    importTpl: true,
-    id: $(this).data('id')
-  }).done(function(json) {
-    notif(json);
+  // IMPORT TPL
+  $(document).on('click', '.importTpl', function() {
+    new Template().duplicate($(this).data('id'));
   });
 });

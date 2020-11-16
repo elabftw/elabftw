@@ -35,7 +35,6 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     {
         $stats = $this->Teams->getAllStats();
         $this->assertTrue(is_array($stats));
-        // TODO FIXME this is 9 in circleci
-        //$this->assertEquals(8, $stats['totusers']);
+        $this->assertEquals('0', $stats['totxpts']);
     }
 }

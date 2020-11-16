@@ -54,7 +54,7 @@ $(document).ready(function() {
       }).done(function(data) {
         try {
           editor.set(JSON.parse(data));
-          $('#jsonEditorDiv').collapse('show');
+          ($('#jsonEditorDiv') as any).collapse('show');
           if ($('.jsonEditorPlusMinusButton').html() === '+') {
             $('.jsonEditorPlusMinusButton').html('-').addClass('btn-neutral').removeClass('btn-primary');
           }

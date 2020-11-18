@@ -56,7 +56,6 @@ class Auth implements AuthInterface
     public function tryAuth(): AuthResponse
     {
         $AuthService = $this->getAuthService($this->getAuthType());
-        //var_dump($AuthService);die;
         return $AuthService->tryAuth();
     }
 

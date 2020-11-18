@@ -12,8 +12,12 @@ namespace Elabftw\Elabftw;
 use Elabftw\Controllers\DownloadController;
 use Elabftw\Exceptions\IllegalActionException;
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 
-require_once 'init.inc.php';
+// we don't load init.inc.php to avoid issues with auth and elabid/anon file access
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+$Request = Request::createFromGlobals();
 
 try {
     // we disable errors to avoid having notice and warning polluting our file
@@ -37,7 +41,8 @@ try {
     $Response = $DownloadController->getResponse();
     $Response->send();
 } catch (Exception $e) {
-    $App->Log->error('', array('exception' => $e));
-    $App->Session->getFlashBag()->add('ko', $e->getMessage());
+    $Session = new Session();
+    $Session->start();
+    $Session->getFlashBag()->add('ko', $e->getMessage());
     header('Location: ../experiments.php');
 }

@@ -86,7 +86,6 @@ class Auth implements AuthInterface
         // only the script name, not the path because we use basename() on it
         $nologinArr = array(
             'change-pass.php',
-            'download.php',
             'index.php',
             'login.php',
             'LoginController.php',

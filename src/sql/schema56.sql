@@ -12,5 +12,6 @@ START TRANSACTION;
     INSERT INTO config (conf_name, conf_value) VALUES ('ldap_firstname', 'givenname');
     INSERT INTO config (conf_name, conf_value) VALUES ('ldap_lastname', 'cn');
     INSERT INTO config (conf_name, conf_value) VALUES ('ldap_email', 'mail');
+    INSERT INTO config (conf_name, conf_value) VALUES ('ldap_uid_cn', 'cn');
     UPDATE `config` SET `conf_value` = 56 WHERE `conf_name` = 'schema';
 COMMIT;

@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Interfaces\ReadableInterface;
 use Elabftw\Services\Filter;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
 use PDO;
 
@@ -77,8 +78,9 @@ class Teams implements ReadableInterface, DestroyableInterface
     public function addUserToTeams(int $userid, array $teamIdArr): void
     {
         foreach ($teamIdArr as $teamId) {
+            $TeamsHelper = new TeamsHelper((int) $teamId);
             // don't add a second time
-            if ($this->isUserInTeam($userid, (int) $teamId)) {
+            if ($TeamsHelper->isUserInTeam($userid)) {
                 break;
             }
             $sql = 'INSERT INTO users2teams (`users_id`, `teams_id`) VALUES (:userid, :team);';
@@ -308,17 +310,6 @@ class Teams implements ReadableInterface, DestroyableInterface
         $UsersHelper = new UsersHelper($userid);
         $teams = $UsersHelper->getTeamsIdFromUserid();
         return in_array((string) $team, $teams, true);
-    }
-
-    public function isUserInTeam(int $userid, int $team): bool
-    {
-        $sql = 'SELECT `users_id` FROM `users2teams` WHERE `teams_id` = :team AND `users_id` = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return (bool) $req->fetchColumn();
     }
 
     private function createTeamIfAllowed(string $name): int

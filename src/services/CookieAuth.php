@@ -14,8 +14,6 @@ use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Models\Teams;
-use Elabftw\Models\Users;
 
 /**
  * Authenticate with the cookie
@@ -56,8 +54,8 @@ class CookieAuth implements AuthInterface
         $userid = (int) $res['userid'];
         // when doing auth with cookie, we take the token_team value
         // make sure user is in team because we can't trust it
-        $Teams = new Teams(new Users($userid));
-        if (!$Teams->isUserInTeam($userid, $this->tokenTeam)) {
+        $TeamsHelper = new TeamsHelper($this->tokenTeam);
+        if (!$TeamsHelper->isUserInTeam($userid)) {
             throw new UnauthorizedException();
         }
 

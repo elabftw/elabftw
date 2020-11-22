@@ -9,6 +9,7 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import Link from './Link.class';
 import Step from './Step.class';
+import i18next from 'i18next';
 
 $(document).ready(function() {
   const type = $('#info').data('type');
@@ -37,7 +38,7 @@ $(document).ready(function() {
       // an asynchronous response
       return input;
     }, {
-      tooltip : 'Click to edit',
+      tooltip : i18next.t('click-to-edit'),
       indicator : 'Saving...',
       onblur: 'submit',
       style : 'display:inline'

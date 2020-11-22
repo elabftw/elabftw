@@ -8,6 +8,7 @@
 declare let key: any;
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import Todolist from './Todolist.class';
+import i18next from 'i18next';
 
 $(document).ready(function() {
   const TodolistC = new Todolist();
@@ -42,7 +43,7 @@ $(document).ready(function() {
 
       return(value);
     }, {
-      tooltip : 'Click to edit',
+      tooltip : i18next.t('click-to-edit'),
       indicator : 'Saving...',
       onblur: 'submit',
       style : 'display:inline'

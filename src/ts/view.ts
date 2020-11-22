@@ -76,7 +76,7 @@ $(document).ready(function() {
   });
 
   // DUPLICATE
-  $('.duplicateItem').on('click', function() {
+  $(document).on('click', '.duplicateItem', function() {
     $.post('app/controllers/EntityAjaxController.php', {
       duplicate: true,
       id: $(this).data('id'),
@@ -87,7 +87,7 @@ $(document).ready(function() {
   });
 
   // SHARE
-  $('.shareItem').on('click', function() {
+  $(document).on('click', '.shareItem', function() {
     $.post('app/controllers/EntityAjaxController.php', {
       getShareLink: true,
       id: $(this).data('id'),

@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"3dmol@^1.4.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/3dmol/-/3dmol-1.6.0.tgz#32b8483cea248d5a7f0b7232d9765883ffb33e89"
-  integrity sha512-Bw1jShQJeB9s3J3vcfAvwwK1WcSQr9IUd+9DYz3pUndRsdN31fWr725nhoIGGXcUy6+IszSqWVQQ8N62m3zGvQ==
+"3dmol@^1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/3dmol/-/3dmol-1.6.1.tgz#21ae0291503ad2c471a68b86946880ef5a9e4ba1"
+  integrity sha512-cGZhSXvaZMo5A21xAXCpwbW2xdPlKb+AlDp840GSRurcSaKN8ZmOq3Ow4j1Tm1Ft+J+clxs6dqKBZRpG6J7rhw==
   dependencies:
     jquery "^3.5.0"
     netcdfjs "^1.0.0"
@@ -1101,10 +1101,10 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@types/bootstrap@^4.3.1":
-  version "4.5.1"
-  resolved "https://registry.yarnpkg.com/@types/bootstrap/-/bootstrap-4.5.1.tgz#9e11a2ccc79e5d6c116239571629db859ed82a9d"
-  integrity sha512-5iAWnZnqHucloYQFlozKUTPw0+fLfKo8d4flGCiE1B1w91z/91UIqMDht/31RQJIwx0+u5SL4CJCbs79Z15M+A==
+"@types/bootstrap@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@types/bootstrap/-/bootstrap-5.0.0.tgz#33507845c17ae9fc2284e5344b9dd17344848319"
+  integrity sha512-Buic9y01REuPhC7f3fvGN9ONoEKwkDnT/SdGcD7gk+99jrQnTC8QpPOfCMC7wZPKpPrTiizP0S4AC5MIH5PdQw==
   dependencies:
     "@types/jquery" "*"
     popper.js "^1.14.1"

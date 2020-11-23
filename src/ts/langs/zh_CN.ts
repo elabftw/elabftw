@@ -1,6 +1,7 @@
 /* eslint-disable quotes */
 const t = {
   translation: {
+    "click-to-edit": "点击编辑",
     "comment-add": "添加评论",
     "dropzone-upload-area": "请选取上传文件",
     "entity-default-title": "无标题",

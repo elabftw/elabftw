@@ -94,28 +94,24 @@ class App
 
     /**
      * Get the page generation time (called in the footer)
-     *
-     * @return float
      */
     public function getGenerationTime(): float
     {
         return round(microtime(true) - $this->Request->server->get('REQUEST_TIME_FLOAT'), 5);
     }
 
-    /**
-     * Get the current memory usage (called in the footer)
-     *
-     * @return int
-     */
     public function getMemoryUsage(): int
     {
         return memory_get_usage();
     }
 
+    public function getNumberOfQueries(): int
+    {
+        return $this->Db->getNumberOfQueries();
+    }
+
     /**
      * Get the mininum password length for injecting in templates
-     *
-     * @return int
      */
     public function getMinPasswordLength(): int
     {
@@ -124,9 +120,6 @@ class App
 
     /**
      * If the current user is authenticated, load Users with an id
-     *
-     * @param Users $users
-     * @return void
      */
     public function loadUser(Users $users): void
     {
@@ -139,8 +132,6 @@ class App
 
     /**
      * Get the lang (in short form like 'en' or 'fr') for the HTML attribute in head.html template
-     *
-     * @return string
      */
     public function getLangForHtmlAttribute(): string
     {

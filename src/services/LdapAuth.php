@@ -52,8 +52,9 @@ class LdapAuth implements AuthInterface
     {
         $query = $this->connection->query()->setDn($this->configArr['ldap_base_dn']);
         $record = $query->findbyOrFail('mail', $this->email);
-        $cn = $record['cn'][0];
-        if (!$this->connection->auth()->attempt('cn=' . $cn . ',' . $this->configArr['ldap_base_dn'], $this->password)) {
+        $uidOrCnConfig = $this->configArr['ldap_uid_cn'];
+        $uidOrCn = $record[$uidOrCnConfig][0];
+        if (!$this->connection->auth()->attempt($uidOrCnConfig . '=' . $uidOrCn . ',' . $this->configArr['ldap_base_dn'], $this->password)) {
             throw new InvalidCredentialsException();
         }
         $Users = new Users();
@@ -62,8 +63,8 @@ class LdapAuth implements AuthInterface
         } catch (ResourceNotFoundException $e) {
             // the user doesn't exist yet in the db
             // GET FIRSTNAME AND LASTNAME
-            $firstname = $record[$this->configArr['ldap_firstname']][0];
-            $lastname = $record[$this->configArr['ldap_lastname']][0];
+            $firstname = $record[$this->configArr['ldap_firstname']][0] ?? 'Unknown';
+            $lastname = $record[$this->configArr['ldap_lastname']][0] ?? 'Unknown';
             // GET TEAMS
             $teams = $record[$this->configArr['ldap_team']][0];
             // if no team attribute is sent by the LDAP server, use the default team

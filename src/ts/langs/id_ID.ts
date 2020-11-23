@@ -1,6 +1,7 @@
 /* eslint-disable quotes */
 const t = {
   translation: {
+    "click-to-edit": "Klik untuk mengedit",
     "comment-add": "Tambahkan komentar",
     "dropzone-upload-area": "Taruh berkas di sini untuk mengunggah",
     "entity-default-title": "Tanpa Judul",

@@ -47,7 +47,7 @@
     <a href='https://www.elabftw.net'>eLabFTW</a> {{ v }}<br>
         {{ 'Page generated in'|trans }} {{ App.getGenerationTime }} {{ 'seconds'|trans }}
     {% if App.Config.configArr.debug %}
-        ({{ App.Db.getNumberOfQueries }} SQL)
+        ({{ App.getNumberOfQueries }} SQL)
         <br>{{ 'Memory usage:'|trans }}
         {{ App.getMemoryUsage|formatBytes }} ({{ App.getMemoryUsage }} {{ 'bytes'|trans }})
     {% endif %}

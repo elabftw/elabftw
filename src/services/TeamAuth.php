@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\AuthResponse;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
 
 /**
@@ -28,11 +29,15 @@ class TeamAuth implements AuthInterface
         $this->AuthResponse->selectedTeam = $team;
     }
 
-    /**
-     * Nothing to do here
-     */
     public function tryAuth(): AuthResponse
     {
+        // we cannot trust the team sent by POST
+        // so make sure the user is part of that team
+        $TeamsHelper = new TeamsHelper($this->AuthResponse->selectedTeam);
+        if (!$TeamsHelper->isUserInTeam($this->AuthResponse->userid)) {
+            throw new UnauthorizedException();
+        }
+
         return $this->AuthResponse;
     }
 }

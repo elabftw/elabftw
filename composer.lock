@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0991280f48302f91440d60180f968dc2",
+    "content-hash": "af4c44ea37342901533357a879fb5b79",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -71,16 +71,16 @@
         },
         {
             "name": "directorytree/ldaprecord",
-            "version": "v1.12.1",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DirectoryTree/LdapRecord.git",
-                "reference": "4dd945db58a78eb2768477905b7ebb473dc782dc"
+                "reference": "d48f050ccc38f6379bd3be4c13325af7ebbc82b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/4dd945db58a78eb2768477905b7ebb473dc782dc",
-                "reference": "4dd945db58a78eb2768477905b7ebb473dc782dc",
+                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/d48f050ccc38f6379bd3be4c13325af7ebbc82b9",
+                "reference": "d48f050ccc38f6379bd3be4c13325af7ebbc82b9",
                 "shasum": ""
             },
             "require": {
@@ -133,7 +133,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-08T20:25:00+00:00"
+            "time": "2020-11-17T21:50:51+00:00"
         },
         {
             "name": "doctrine/lexer",

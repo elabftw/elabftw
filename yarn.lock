@@ -1223,7 +1223,7 @@
   resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.2.tgz#a811b8c18e2babab7d542b3365887ae2e4d9de47"
   integrity sha512-7EJYyKTL7tFR8+gDbB6Wwz/arpGa0Mywk1TJbNzKzHtzbwVmY4HR9WqS5VV7dsBUKQmPNr192jHr/VpBluj/hg==
 
-"@types/tinymce@^4.5.23":
+"@types/tinymce@^4.6.0":
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/@types/tinymce/-/tinymce-4.6.0.tgz#20b3b4944c5e2bfa232e91ea465a2cf349178c0d"
   integrity sha512-zpW6p/O1CXW9OrDnc+3tlFSGr1+TpTYgudc2vYXgk1KeWwwbK+t3p8cecb1fj0NJN987oMxSoQP13iabBd2fsA==
@@ -7711,10 +7711,10 @@ tiny-lr@^1.1.1:
     object-assign "^4.1.0"
     qs "^6.4.0"
 
-tinymce@5.4.*:
-  version "5.4.2"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.4.2.tgz#a1df417ea7e85697c2932269f7f93fbef30d4502"
-  integrity sha512-MRquvKxI28AiSn2ikypgJFD7LH4mQZLtgFn+yROF1bTFp92MdlLeGBrI38/O5mej3cvz27g3Pgr+3MShepbJ+w==
+tinymce@^5.6.0:
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.6.0.tgz#b5eda4888e1a607ddd545619cfaa137d59de14b4"
+  integrity sha512-f8LsyT80j8hD4wrL8Sac0DWDG5k10cDyykL/qkJ6kexn1KMt7w1ByrGlUm53XCYDqtavBA5snTU7odioMwSXSQ==
 
 tmp@0.0.33, tmp@^0.0.33:
   version "0.0.33"

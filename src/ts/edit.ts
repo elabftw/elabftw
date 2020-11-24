@@ -376,7 +376,7 @@ $(document).ready(function() {
     {
       // Save all the details needed for replacing upload
       // Then check for and get those details when you are handling file uploads
-      let url = tinymce.activeEditor.selection.getNode().src;
+      let url = (tinymce.activeEditor.selection.getNode() as any).src;
       url = url.slice(url.lastIndexOf('app/'));
       // Sometimes tinymce adds an identifier on modification
       // This checks for and removes it
@@ -389,9 +389,7 @@ $(document).ready(function() {
       tinymceEditImage.uploadId = uploadsDestroyEl.data('id');
       tinymceEditImage.itemId = uploadsDestroyEl.data('itemid');
       tinymceEditImage.url = url;
-    }
-    else
-    {
+    } else {
       tinymceEditImage = {selected:false, uploadId:'', itemId:'', url:''};
     }
   });

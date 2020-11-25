@@ -52,19 +52,21 @@ class Experiments extends AbstractEntity implements CreatableInterface
             $templatesArr = $Templates->read();
             $title = $templatesArr['name'];
             $body = $templatesArr['body'];
+            $canread = $templatesArr['canread'];
+            $canwrite = $templatesArr['canwrite'];
         } else {
             $title = _('Untitled');
             $body = $Templates->readCommonBody();
+            $canread = 'team';
+            $canwrite = 'user';
+            if ($this->Users->userData['default_read'] !== null) {
+                $canread = $this->Users->userData['default_read'];
+            }
+            if ($this->Users->userData['default_write'] !== null) {
+                $canwrite = $this->Users->userData['default_write'];
+            }
         }
 
-        $canread = 'team';
-        $canwrite = 'user';
-        if ($this->Users->userData['default_read'] !== null) {
-            $canread = $this->Users->userData['default_read'];
-        }
-        if ($this->Users->userData['default_write'] !== null) {
-            $canwrite = $this->Users->userData['default_write'];
-        }
 
         // enforce the permissions if the admin has set them
         $Team = new Team((int) $this->Users->userData['team']);

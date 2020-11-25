@@ -248,10 +248,6 @@ class Uploads implements DestroyableInterface
         $this->Entity->canOrExplode('write');
         $upload = $this->readFromId((int) $request->request->get('upload_id'));
         $fullPath = $this->getUploadsPath() . $upload['long_name'];
-        // check user is same as the previously uploaded file
-        if ((int) $upload['userid'] !== (int) $this->Entity->Users->userData['userid']) {
-            throw new IllegalActionException('User tried to replace an upload of another user.');
-        }
         $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb(true);

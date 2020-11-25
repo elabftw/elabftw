@@ -89,8 +89,14 @@ class Uploads implements DestroyableInterface
             $exifData = exif_read_data($fullPath);
             if ($exifData !== false) {
                 $image = new Gmagick($fullPath);
-                $image->rotateimage('#000', $this->getRotationAngle($exifData));
-                $image->write($fullPath);
+                // default is 75
+                $image->setCompressionQuality(100);
+                $rotationAngle = $this->getRotationAngle($exifData);
+                // only do it if needed
+                if ($rotationAngle !== 0) {
+                    $image->rotateimage('#000', $rotationAngle);
+                    $image->write($fullPath);
+                }
             }
         }
         // final sql

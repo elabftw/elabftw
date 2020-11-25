@@ -351,8 +351,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
         <label for='smtp_encryption'>{{ 'SMTP encryption:'|trans }}</label>
         <select class='form-control col-md-4' id='smtp_encryption' name='smtp_encryption'>
-          <option value='tls' {{ App.Config.configArr.smtp_encryption == 'tls' ? ' selected' }}>TLS</option>
-          <option value='startssl' {{ App.Config.configArr.smtp_encryption == 'startssl' ? ' selected' }}>STARTSSL</option>
+          <option value='ssl' {{ App.Config.configArr.smtp_encryption == 'ssl' ? ' selected' }}>TLS</option>
+          <option value='tls' {{ App.Config.configArr.smtp_encryption == 'tls' ? ' selected' }}>STARTSSL</option>
           <option value='none' {{ App.Config.configArr.smtp_encryption == 'none' ? ' selected' }}>{{ 'None'|trans }}</option>
         </select>
         <span class='smallgray'>{{ 'Probably TLS'|trans }}</span>

@@ -176,7 +176,7 @@ class Config
             ('proxy', ''),
             ('sendmail_path', '/usr/sbin/sendmail'),
             ('smtp_address', 'mail.smtp2go.com'),
-            ('smtp_encryption', 'tls'),
+            ('smtp_encryption', 'ssl'),
             ('smtp_password', ''),
             ('smtp_port', '2525'),
             ('smtp_username', ''),

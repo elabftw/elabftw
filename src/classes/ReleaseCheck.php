@@ -12,8 +12,8 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ReleaseCheckException;
 use Elabftw\Models\Config;
-use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
 
 /**

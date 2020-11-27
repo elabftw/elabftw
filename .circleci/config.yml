@@ -82,6 +82,6 @@ jobs:
       #- snyk/scan
       - run:
           name: Code coverage
-          command: ./vendor/bin/codecept run --skip api --skip acceptance --coverage --coverage-xml
+          command: echo 'xdebug.mode=coverage' | sudo tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && ./vendor/bin/codecept run --skip api --skip acceptance --coverage --coverage-xml
       - codecov/upload:
           file: /home/circleci/elabftw/elabftw/tests/_output/coverage.xml

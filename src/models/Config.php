@@ -176,7 +176,7 @@ class Config
             ('proxy', ''),
             ('sendmail_path', '/usr/sbin/sendmail'),
             ('smtp_address', 'mail.smtp2go.com'),
-            ('smtp_encryption', 'tls'),
+            ('smtp_encryption', 'ssl'),
             ('smtp_password', ''),
             ('smtp_port', '2525'),
             ('smtp_username', ''),
@@ -240,6 +240,11 @@ class Config
             ('ldap_base_dn', ''),
             ('ldap_username', ''),
             ('ldap_password', ''),
+            ('ldap_uid_cn', 'cn'),
+            ('ldap_email', 'mail'),
+            ('ldap_lastname', 'cn'),
+            ('ldap_firstname', 'givenname'),
+            ('ldap_team', 'on'),
             ('ldap_use_tls', '0')";
 
         $req = $this->Db->prepare($sql);

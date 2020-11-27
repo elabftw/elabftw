@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ReleaseCheckException;
 use Elabftw\Models\Config;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
 
@@ -21,7 +22,7 @@ use Psr\Http\Message\ResponseInterface;
 class ReleaseCheck
 {
     /** @var string INSTALLED_VERSION the current version of elabftw */
-    public const INSTALLED_VERSION = '3.6.0-alpha';
+    public const INSTALLED_VERSION = '3.6.0-beta';
 
     /** @var string $URL this file contains the latest version information */
     private const URL = 'https://get.elabftw.net/updates.ini';
@@ -61,11 +62,11 @@ class ReleaseCheck
     {
         try {
             $response = $this->get(self::URL);
-        } catch (RequestException $e) {
+        } catch (ConnectException | RequestException $e) {
             // try with http if https failed (see #176)
             try {
                 $response = $this->get(self::URL_HTTP);
-            } catch (RequestException $e) {
+            } catch (ConnectException | RequestException $e) {
                 throw new ReleaseCheckException('Could not make request to server!', (int) $e->getCode(), $e);
             }
         }
@@ -144,7 +145,7 @@ class ReleaseCheck
             'proxy' => $this->Config->configArr['proxy'],
             // add a timeout, because if you need proxy, but don't have it, it will mess up things
             // in seconds
-            'timeout' => 5,
+            'timeout' => 4,
         ));
     }
 

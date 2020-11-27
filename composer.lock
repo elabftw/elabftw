@@ -497,16 +497,16 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v8.14.0",
+            "version": "v8.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "c9c9ae3e00526010b9b46c644287765ef60d6147"
+                "reference": "a73835aad399da42e88217bdbb5e1e4c1e668807"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/c9c9ae3e00526010b9b46c644287765ef60d6147",
-                "reference": "c9c9ae3e00526010b9b46c644287765ef60d6147",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/a73835aad399da42e88217bdbb5e1e4c1e668807",
+                "reference": "a73835aad399da42e88217bdbb5e1e4c1e668807",
                 "shasum": ""
             },
             "require": {
@@ -537,7 +537,7 @@
             ],
             "description": "The Illuminate Contracts package.",
             "homepage": "https://laravel.com",
-            "time": "2020-11-04T19:55:57+00:00"
+            "time": "2020-11-18T13:57:08+00:00"
         },
         {
             "name": "league/commonmark",
@@ -3510,26 +3510,26 @@
         },
         {
             "name": "tightenco/collect",
-            "version": "v8.0.4",
+            "version": "v8.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tighten/collect.git",
-                "reference": "0d261a13c36fe964449d0240744eb4094ac3cd12"
+                "reference": "e63b331f3709d6c278faf14cd859cd8f44a8d4a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tighten/collect/zipball/0d261a13c36fe964449d0240744eb4094ac3cd12",
-                "reference": "0d261a13c36fe964449d0240744eb4094ac3cd12",
+                "url": "https://api.github.com/repos/tighten/collect/zipball/e63b331f3709d6c278faf14cd859cd8f44a8d4a6",
+                "reference": "e63b331f3709d6c278faf14cd859cd8f44a8d4a6",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1.3",
+                "php": "^7.2",
                 "symfony/var-dumper": "^3.4 || ^4.0 || ^5.0"
             },
             "require-dev": {
                 "mockery/mockery": "^1.0",
                 "nesbot/carbon": "^2.23.0",
-                "phpunit/phpunit": "^7.0"
+                "phpunit/phpunit": "^8.3"
             },
             "type": "library",
             "autoload": {
@@ -3556,7 +3556,7 @@
                 "collection",
                 "laravel"
             ],
-            "time": "2020-09-14T22:38:08+00:00"
+            "time": "2020-11-20T22:56:01+00:00"
         },
         {
             "name": "twig/extensions",
@@ -3752,16 +3752,16 @@
         },
         {
             "name": "codeception/codeception",
-            "version": "4.1.11",
+            "version": "4.1.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/Codeception.git",
-                "reference": "bf2b548a358750a5ecb3d1aa2b32ebfb82a46061"
+                "reference": "fc550bf6e90d69fbfc8ab7e9e0a330ac98ffafdd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/Codeception/zipball/bf2b548a358750a5ecb3d1aa2b32ebfb82a46061",
-                "reference": "bf2b548a358750a5ecb3d1aa2b32ebfb82a46061",
+                "url": "https://api.github.com/repos/Codeception/Codeception/zipball/fc550bf6e90d69fbfc8ab7e9e0a330ac98ffafdd",
+                "reference": "fc550bf6e90d69fbfc8ab7e9e0a330ac98ffafdd",
                 "shasum": ""
             },
             "require": {
@@ -3839,7 +3839,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2020-11-03T17:34:51+00:00"
+            "time": "2020-11-16T06:36:57+00:00"
         },
         {
             "name": "codeception/lib-asserts",
@@ -4156,16 +4156,16 @@
         },
         {
             "name": "codeception/module-webdriver",
-            "version": "1.1.3",
+            "version": "1.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/module-webdriver.git",
-                "reference": "b7dc227f91730e7abb520439decc9ad0677b8a55"
+                "reference": "f719edc1eca033e0dc5fd8d99db122070b1fb933"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/module-webdriver/zipball/b7dc227f91730e7abb520439decc9ad0677b8a55",
-                "reference": "b7dc227f91730e7abb520439decc9ad0677b8a55",
+                "url": "https://api.github.com/repos/Codeception/module-webdriver/zipball/f719edc1eca033e0dc5fd8d99db122070b1fb933",
+                "reference": "f719edc1eca033e0dc5fd8d99db122070b1fb933",
                 "shasum": ""
             },
             "require": {
@@ -4204,7 +4204,7 @@
                 "browser-testing",
                 "codeception"
             ],
-            "time": "2020-10-24T15:41:19+00:00"
+            "time": "2020-11-16T06:50:15+00:00"
         },
         {
             "name": "codeception/phpunit-wrapper",
@@ -4972,23 +4972,23 @@
         },
         {
             "name": "php-webdriver/webdriver",
-            "version": "1.8.3",
+            "version": "1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-webdriver/php-webdriver.git",
-                "reference": "fb0fc4cb01c70a7790a5fcc91d461b88c83174a2"
+                "reference": "e3633154554605274cc9d59837f55a7427d72003"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-webdriver/php-webdriver/zipball/fb0fc4cb01c70a7790a5fcc91d461b88c83174a2",
-                "reference": "fb0fc4cb01c70a7790a5fcc91d461b88c83174a2",
+                "url": "https://api.github.com/repos/php-webdriver/php-webdriver/zipball/e3633154554605274cc9d59837f55a7427d72003",
+                "reference": "e3633154554605274cc9d59837f55a7427d72003",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
                 "ext-json": "*",
                 "ext-zip": "*",
-                "php": "^5.6 || ~7.0",
+                "php": "^5.6 || ~7.0 || ^8.0",
                 "symfony/polyfill-mbstring": "^1.12",
                 "symfony/process": "^2.8 || ^3.1 || ^4.0 || ^5.0"
             },
@@ -4998,12 +4998,10 @@
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.0",
                 "ondram/ci-detector": "^2.1 || ^3.5",
-                "php-coveralls/php-coveralls": "^2.0",
-                "php-mock/php-mock-phpunit": "^1.1",
+                "php-coveralls/php-coveralls": "^2.4",
+                "php-mock/php-mock-phpunit": "^1.1 || ^2.0",
                 "php-parallel-lint/php-parallel-lint": "^1.2",
-                "phpunit/phpunit": "^5.7",
-                "sebastian/environment": "^1.3.4 || ^2.0 || ^3.0",
-                "sminnee/phpunit-mock-objects": "^3.4",
+                "phpunit/phpunit": "^5.7 || ^7 || ^8 || ^9",
                 "squizlabs/php_codesniffer": "^3.5",
                 "symfony/var-dumper": "^3.3 || ^4.0 || ^5.0"
             },
@@ -5037,7 +5035,7 @@
                 "selenium",
                 "webdriver"
             ],
-            "time": "2020-10-06T19:10:04+00:00"
+            "time": "2020-11-19T15:21:05+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -5748,12 +5746,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "0011d773ec873fbf3cde730da5655ff74eddc9f8"
+                "reference": "563faed0e5e24a5b639fbd30d8f3921bb11fccc0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/0011d773ec873fbf3cde730da5655ff74eddc9f8",
-                "reference": "0011d773ec873fbf3cde730da5655ff74eddc9f8",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/563faed0e5e24a5b639fbd30d8f3921bb11fccc0",
+                "reference": "563faed0e5e24a5b639fbd30d8f3921bb11fccc0",
                 "shasum": ""
             },
             "conflict": {
@@ -5783,7 +5781,7 @@
                 "composer/composer": "<=1-alpha.11",
                 "contao-components/mediaelement": ">=2.14.2,<2.21.1",
                 "contao/core": ">=2,<3.5.39",
-                "contao/core-bundle": ">=4,<4.4.52|>=4.5,<4.9.6|= 4.10.0",
+                "contao/core-bundle": "= 4.10.0|>=4,<4.4.52|>=4.5,<4.9.6",
                 "contao/listing-bundle": ">=4,<4.4.8",
                 "datadog/dd-trace": ">=0.30,<0.30.2",
                 "david-garcia/phpwhois": "<=4.3.1",
@@ -5799,8 +5797,8 @@
                 "doctrine/orm": ">=2,<2.4.8|>=2.5,<2.5.1",
                 "dolibarr/dolibarr": "<11.0.4",
                 "dompdf/dompdf": ">=0.6,<0.6.2",
-                "drupal/core": ">=7,<7.73|>=8,<8.8.10|>=8.9,<8.9.6|>=9,<9.0.6",
-                "drupal/drupal": ">=7,<7.73|>=8,<8.8.10|>=8.9,<8.9.6|>=9,<9.0.6",
+                "drupal/core": ">=7,<7.74|>=8,<8.8.11|>=8.9,<8.9.9|>=9,<9.0.8",
+                "drupal/drupal": ">=7,<7.74|>=8,<8.8.11|>=8.9,<8.9.9|>=9,<9.0.8",
                 "endroid/qr-code-bundle": "<3.4.2",
                 "enshrined/svg-sanitize": "<0.13.1",
                 "erusev/parsedown": "<1.7.2",
@@ -5853,7 +5851,7 @@
                 "magento/magento1ee": ">=1,<1.14.4.3",
                 "magento/product-community-edition": ">=2,<2.2.10|>=2.3,<2.3.2-p.2",
                 "marcwillmann/turn": "<0.3.3",
-                "mediawiki/core": ">=1.31,<1.31.9|>=1.32,<1.32.4|>=1.33,<1.33.3|>=1.34,<1.34.3|>=1.34.99,<1.35",
+                "mediawiki/core": ">=1.27,<1.27.6|>=1.29,<1.29.3|>=1.30,<1.30.2|>=1.31,<1.31.9|>=1.32,<1.32.6|>=1.32.99,<1.33.3|>=1.33.99,<1.34.3|>=1.34.99,<1.35",
                 "mittwald/typo3_forum": "<1.2.1",
                 "monolog/monolog": ">=1.8,<1.12",
                 "namshi/jose": "<2.2",
@@ -5861,8 +5859,8 @@
                 "nette/nette": ">=2,<2.0.19|>=2.1,<2.1.13",
                 "nystudio107/craft-seomatic": "<3.3",
                 "nzo/url-encryptor-bundle": ">=4,<4.3.2|>=5,<5.0.1",
-                "october/backend": ">=1.0.319,<1.0.467",
-                "october/cms": ">=1.0.319,<1.0.466",
+                "october/backend": ">=1.0.319,<1.0.470",
+                "october/cms": "= 1.0.469|>=1.0.319,<1.0.469",
                 "october/october": ">=1.0.319,<1.0.466",
                 "october/rain": ">=1.0.319,<1.0.468",
                 "onelogin/php-saml": "<2.10.4",
@@ -5875,13 +5873,14 @@
                 "padraic/humbug_get_contents": "<1.1.2",
                 "pagarme/pagarme-php": ">=0,<3",
                 "paragonie/random_compat": "<2",
+                "passbolt/passbolt_api": "<2.11",
                 "paypal/merchant-sdk-php": "<3.12",
                 "pear/archive_tar": "<1.4.4",
                 "personnummer/personnummer": "<3.0.2",
                 "phpfastcache/phpfastcache": ">=5,<5.0.13",
                 "phpmailer/phpmailer": "<6.1.6",
                 "phpmussel/phpmussel": ">=1,<1.6",
-                "phpmyadmin/phpmyadmin": "<4.9.2",
+                "phpmyadmin/phpmyadmin": "<4.9.6|>=5,<5.0.3",
                 "phpoffice/phpexcel": "<1.8.2",
                 "phpoffice/phpspreadsheet": "<1.8",
                 "phpunit/phpunit": ">=4.8.19,<4.8.28|>=5.0.10,<5.6.3",
@@ -5892,6 +5891,7 @@
                 "prestashop/autoupgrade": ">=4,<4.10.1",
                 "prestashop/contactform": ">1.0.1,<4.3",
                 "prestashop/gamification": "<2.3.2",
+                "prestashop/productcomments": ">=4,<4.2",
                 "prestashop/ps_facetedsearch": "<3.4.1",
                 "privatebin/privatebin": "<1.2.2|>=1.3,<1.3.2",
                 "propel/propel": ">=2-alpha.1,<=2-alpha.7",
@@ -5977,12 +5977,12 @@
                 "titon/framework": ">=0,<9.9.99",
                 "truckersmp/phpwhois": "<=4.3.1",
                 "twig/twig": "<1.38|>=2,<2.7",
-                "typo3/cms": ">=6.2,<6.2.30|>=7,<7.6.32|>=8,<8.7.30|>=9,<9.5.20|>=10,<10.4.6",
-                "typo3/cms-core": ">=8,<8.7.30|>=9,<9.5.20|>=10,<10.4.6",
+                "typo3/cms": ">=6.2,<6.2.30|>=7,<7.6.32|>=8,<8.7.38|>=9,<9.5.23|>=10,<10.4.10",
+                "typo3/cms-core": ">=8,<8.7.38|>=9,<9.5.23|>=10,<10.4.10",
                 "typo3/flow": ">=1,<1.0.4|>=1.1,<1.1.1|>=2,<2.0.1|>=2.3,<2.3.16|>=3,<3.0.10|>=3.1,<3.1.7|>=3.2,<3.2.7|>=3.3,<3.3.5",
                 "typo3/neos": ">=1.1,<1.1.3|>=1.2,<1.2.13|>=2,<2.0.4",
                 "typo3/phar-stream-wrapper": ">=1,<2.1.1|>=3,<3.1.1",
-                "typo3fluid/fluid": ">=2,<2.0.5|>=2.1,<2.1.4|>=2.2,<2.2.1|>=2.3,<2.3.5|>=2.4,<2.4.1|>=2.5,<2.5.5|>=2.6,<2.6.1",
+                "typo3fluid/fluid": ">=2,<2.0.8|>=2.1,<2.1.7|>=2.2,<2.2.4|>=2.3,<2.3.7|>=2.4,<2.4.4|>=2.5,<2.5.11|>=2.6,<2.6.10",
                 "ua-parser/uap-php": "<3.8",
                 "usmanhalalit/pixie": "<1.0.3|>=2,<2.0.2",
                 "verot/class.upload.php": "<=1.0.3|>=2,<=2.0.4",
@@ -6052,7 +6052,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-11-13T16:02:31+00:00"
+            "time": "2020-11-23T21:01:44+00:00"
         },
         {
             "name": "sebastian/cli-parser",

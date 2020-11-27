@@ -89,8 +89,14 @@ class Uploads implements DestroyableInterface
             $exifData = exif_read_data($fullPath);
             if ($exifData !== false) {
                 $image = new Gmagick($fullPath);
-                $image->rotateimage('#000', $this->getRotationAngle($exifData));
-                $image->write($fullPath);
+                // default is 75
+                $image->setCompressionQuality(100);
+                $rotationAngle = $this->getRotationAngle($exifData);
+                // only do it if needed
+                if ($rotationAngle !== 0) {
+                    $image->rotateimage('#000', $rotationAngle);
+                    $image->write($fullPath);
+                }
             }
         }
         // final sql
@@ -242,10 +248,6 @@ class Uploads implements DestroyableInterface
         $this->Entity->canOrExplode('write');
         $upload = $this->readFromId((int) $request->request->get('upload_id'));
         $fullPath = $this->getUploadsPath() . $upload['long_name'];
-        // check user is same as the previously uploaded file
-        if ((int) $upload['userid'] !== (int) $this->Entity->Users->userData['userid']) {
-            throw new IllegalActionException('User tried to replace an upload of another user.');
-        }
         $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb(true);

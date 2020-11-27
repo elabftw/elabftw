@@ -240,6 +240,11 @@ class Config
             ('ldap_base_dn', ''),
             ('ldap_username', ''),
             ('ldap_password', ''),
+            ('ldap_uid_cn', 'cn'),
+            ('ldap_email', 'mail'),
+            ('ldap_lastname', 'cn'),
+            ('ldap_firstname', 'givenname'),
+            ('ldap_team', 'on'),
             ('ldap_use_tls', '0')";
 
         $req = $this->Db->prepare($sql);

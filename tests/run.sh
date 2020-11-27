@@ -36,7 +36,7 @@ docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
 # the tests are split in two parts, api and acceptance, and later unit with coverage
 # this is because for some weird reason, when xdebug is enabled, there is an ssl verification error
 # during the acceptance/api tests
-if [ "$1" != "unit" ]; then
+if [ "${1:-}" != "unit" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip unit
 fi
 # now install xdebug in the container so we can do code coverage

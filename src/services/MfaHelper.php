@@ -28,7 +28,7 @@ class MfaHelper
     private const DIGITS = 6;
 
     /** @var int PERIOD number of seconds a code will be valid */
-    private const PERIOD = 60;
+    private const PERIOD = 30;
 
     /** @var string ALGO algorithm used */
     private const ALGO = 'sha1';

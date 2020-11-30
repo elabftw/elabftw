@@ -178,7 +178,7 @@ class Config
             ('smtp_address', 'mail.smtp2go.com'),
             ('smtp_encryption', 'ssl'),
             ('smtp_password', ''),
-            ('smtp_port', '2525'),
+            ('smtp_port', '587'),
             ('smtp_username', ''),
             ('stamplogin', ''),
             ('stamppass', ''),

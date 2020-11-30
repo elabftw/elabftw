@@ -94,6 +94,7 @@ try {
             if ($App->Request->headers->get('X-Requested-With') != 'XMLHttpRequest') {
                 // NO DON'T USE  THE FULL URL HERE BECAUSE IF SERVER IS HTTP it will fail badly
                 header('Location: app/logout.php?keep_redirect=1');
+                exit;
             }
             throw new UnauthorizedException(_('Your session expired.'));
         }

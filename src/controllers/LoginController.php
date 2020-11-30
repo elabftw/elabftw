@@ -62,7 +62,7 @@ class LoginController implements ControllerInterface
                 );
 
                 // check the input code against the secret stored in session
-                if (!$MfaHelper->verifyCode($this->App->Request->get('mfa_code') ?? '')) {
+                if (!$MfaHelper->verifyCode($this->App->Request->request->get('mfa_code') ?? '')) {
                     throw new InvalidCredentialsException('The code you entered is not valid!');
                 }
 
@@ -78,8 +78,10 @@ class LoginController implements ControllerInterface
             $this->App->Session->remove('enable_mfa');
             $this->App->Session->remove('mfa_auth_required');
             $this->App->Session->remove('mfa_secret');
+            $location = $this->App->Session->get('mfa_redirect');
+            $this->App->Session->remove('mfa_redirect');
 
-            return new RedirectResponse('../../ucp.php?tab=2');
+            return new RedirectResponse($location);
         }
 
         // store the rememberme choice in session
@@ -189,7 +191,7 @@ class LoginController implements ControllerInterface
                         (int) $this->App->Session->get('auth_userid'),
                         $this->App->Session->get('mfa_secret'),
                     ),
-                    $this->App->Request->get('mfa_code') ?? '',
+                    $this->App->Request->request->get('mfa_code') ?? '',
                 );
 
             default:

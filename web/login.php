@@ -1,7 +1,5 @@
 <?php
 /**
- * login.php
- *
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -19,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\BannedUsers;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
+use Elabftw\Services\MfaHelper;
 use Exception;
 use function implode;
 use function in_array;
@@ -64,7 +63,7 @@ try {
     }
 
     // Show MFA if necessary
-    if ($App->Session->has('mfa_secret')) {
+    if ($App->Session->has('mfa_auth_required')) {
         $App->pageTitle = _('Two Factor Authentication');
         $template = 'mfa.html';
         $renderArr = array('hideTitle' => true);
@@ -72,51 +71,17 @@ try {
         // If one enables 2FA we need to provide the secret.
         // For user convenience it is provide as QR code and as plain text.
         if ($App->Session->has('enable_mfa')) {
-            $Mfa = new Mfa($App->Request, $App->Session);
-            $renderArr['mfaQRCodeImageDataUri'] = $Mfa->getQRCodeImageAsDataUri($App->Users->userData['email']);
+            $MfaHelper = new MfaHelper((int) $App->Users->userData['userid'], $App->Session->get('mfa_secret'));
+            $renderArr['mfaQRCodeImageDataUri'] = $MfaHelper->getQRCodeImageAsDataUri($App->Users->userData['email']);
             $renderArr['mfaSecret'] = implode(' ', str_split($App->Session->get('mfa_secret'), 4));
         }
         $Response->setContent($App->render($template, $renderArr));
         $Response->send();
-        exit();
-    }
-
-    // Check if already logged in
-    if ($App->Session->has('auth') || $App->Session->has('anon')) {
-        $Response = new RedirectResponse('experiments.php');
-        $Response->send();
         exit;
     }
 
-    // Check for external authentication by web server
-    $remoteUser = $App->Request->server->get($App->Config->configArr['extauth_remote_user']);
-
-    if (isset($remoteUser)) {
-        $firstname = $App->Request->server->get($App->Config->configArr['extauth_firstname']);
-        $lastname = $App->Request->server->get($App->Config->configArr['extauth_lastname']);
-        $email = $App->Request->server->get($App->Config->configArr['extauth_email']);
-
-        // try and get the team
-        $teamId = $App->Request->server->get($App->Config->configArr['extauth_teams']);
-        // no team found!
-        if (empty($teamId)) {
-            // check for the default team
-            $teamId = (int) $App->Config->configArr['saml_team_default'];
-            // or throw error if sysadmin configured it like that
-            if ($teamId === 0) {
-                throw new ImproperActionException('Could not find team ID to assign user!');
-            }
-        }
-        $teams = array((string) $teamId);
-
-        if (($userid = $Auth->getUseridFromEmail($email)) === 0) {
-            $App->Users->create($email, $teams, $firstname, $lastname, '');
-            $App->Log->info('New user ' . $email . ' autocreated from external auth');
-            $userid = $Auth->getUseridFromEmail($email);
-        }
-        $Auth->login($userid);
-        // add this to the session so for logout we know we need to hit the logout_url from config to logout from external server too
-        $App->Session->set('is_ext_auth', 1);
+    // Check if already logged in
+    if ($App->Session->has('is_auth')) {
         $Response = new RedirectResponse('experiments.php');
         $Response->send();
         exit;

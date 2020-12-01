@@ -140,7 +140,7 @@ class Email
      * @param array<string, mixed> $userInfo to get the email and name of new user
      * @return void
      */
-    public function alertAdmin($team, $userInfo): void
+    public function alertAdmin(int $team, array $userInfo): void
     {
         if ($this->Config->configArr['mail_from'] === 'notconfigured@example.com') {
             return;

@@ -66,17 +66,19 @@ $(document).ready(function() {
   });
 
   // input to upload an elabftw.tpl file
-  $('#import_tpl').on('change', function() {
+  $('#import_tpl').on('change', function(e) {
     const title = (document.getElementById('import_tpl') as HTMLInputElement).value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
     if (!window.FileReader) {
       alert('Please use a modern web browser. Import aborted.');
       return false;
     }
+    const file = (e.target as HTMLInputElement).files[0];
     const reader = new FileReader();
     reader.onload = function(e): void {
       TemplateC.create(title, e.target.result as string);
       $('#import_tpl').hide();
     };
+    reader.readAsText(file);
   });
 
   // TinyMCE

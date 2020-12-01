@@ -6,7 +6,7 @@ run.config:
         nginx_document_root: '/web'
         nginx_index_list:
             - index.php
-        runtime: php-7.2
+        runtime: php-7.3
         extensions:
             - ctype
             - curl
@@ -14,6 +14,7 @@ run.config:
             - fileinfo
             - gd
             - gettext
+            - ldap
             - mbstring
             - pdo
             - pdo_mysql

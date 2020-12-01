@@ -34,6 +34,11 @@ try {
         $tab = '6';
         $App->Config->update(array('smtp_password' => null));
     }
+    // CLEAR LDAP PASS
+    if ($Request->query->get('clearLdappass')) {
+        $tab = '10';
+        $App->Config->update(array('ldap_password' => null));
+    }
 
     // ANNOUNCEMENT
     if ($Request->request->has('announcement')) {
@@ -78,6 +83,10 @@ try {
 
         if ($Request->request->has('extauth_remote_user')) {
             $tab = '9';
+        }
+
+        if ($Request->request->has('ldap_host')) {
+            $tab = '10';
         }
 
         $App->Config->update($Request->request->all());

@@ -58,8 +58,6 @@ users:
 
   - team: Delta
 
-  - team: Delta
-
 items_types:
   - Microscope:
     name: Microscope

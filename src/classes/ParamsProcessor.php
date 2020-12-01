@@ -19,23 +19,35 @@ use Elabftw\Services\Filter;
  */
 class ParamsProcessor
 {
+    /** @var string $name */
     public $name = 'Unnamed';
 
+    /** @var string $color */
     public $color = '#cccccc';
 
+    /** @var int $isTimestampable */
     public $isTimestampable = 0;
 
+    /** @var int $isDefault */
     public $isDefault = 0;
 
+    /** @var int $id */
     public $id = 0;
 
+    /** @var string $template */
     public $template = '';
 
+    /** @var string $tag */
     public $tag = 'blah';
 
+    /** @var string $comment */
     public $comment = 'blah';
 
+    /** @var int $bookable */
     public $bookable = 0;
+
+    /** @var int $team */
+    public $team = 0;
 
     public function __construct(array $params)
     {
@@ -49,5 +61,6 @@ class ParamsProcessor
         $this->template = Filter::body($params['template'] ?? $this->template);
         $this->bookable = $params['bookable'] ?? $this->bookable ? 1 : 0;
         $this->comment = Filter::comment($params['comment'] ?? $this->comment);
+        $this->team = (int) ($params['team'] ?? $this->team);
     }
 }

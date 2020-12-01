@@ -1,10 +1,9 @@
 parameters:
   level: 7
+  checkMissingIterableValueType: false
   bootstrapFiles:
     - %currentWorkingDirectory%/config.php
   ignoreErrors:
-    - '#Property [a-zA-Z0-9\\_]+::\$[a-zA-Z0-9]+ type has no value type+#'
-    - '#Method [a-zA-Z0-9\\_]+::[a-zA-Z0-9]+\(\) return type has no value type+#'
     -
       message: '#Variable \$App might not be defined.*#'
       path: %currentWorkingDirectory%/web

@@ -12,6 +12,7 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -332,9 +333,9 @@ class ApiController implements ControllerInterface
         // add the uploaded files
         $this->Entity->entityData['uploads'] = $this->Entity->Uploads->readAll();
         // add the linked items
-        $this->Entity->entityData['links'] = $this->Entity->Links->readAll();
+        $this->Entity->entityData['links'] = $this->Entity->Links->read();
         // add the steps
-        $this->Entity->entityData['steps'] = $this->Entity->Steps->readAll();
+        $this->Entity->entityData['steps'] = $this->Entity->Steps->read();
 
         return new JsonResponse($this->Entity->entityData);
     }
@@ -612,7 +613,8 @@ class ApiController implements ControllerInterface
         if ($this->Entity instanceof Database) {
             return new Response('Creating database items is not supported.', 400);
         }
-        $id = $this->Entity->create(0);
+        $params = new ParamsProcessor(array('id' => 0));
+        $id = $this->Entity->create($params);
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
 
@@ -660,7 +662,8 @@ class ApiController implements ControllerInterface
         if ($this->id === null) {
             return new Response('Invalid id', 400);
         }
-        $id = $this->Entity->create($this->id);
+        $params = new ParamsProcessor(array('id' => $this->id));
+        $id = $this->Entity->create($params);
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
 
@@ -695,7 +698,7 @@ class ApiController implements ControllerInterface
      */
     private function createLink(): Response
     {
-        $this->Entity->Links->create((int) $this->Request->request->get('link'));
+        $this->Entity->Links->create(new ParamsProcessor(array('id' => (int) $this->Request->request->get('link'))));
         return new JsonResponse(array('result' => 'success'));
     }
 
@@ -735,7 +738,7 @@ class ApiController implements ControllerInterface
      */
     private function createTag(): Response
     {
-        $this->Entity->Tags->create($this->Request->request->get('tag') ?? '');
+        $this->Entity->Tags->create(new ParamsProcessor(array('tag' => $this->Request->request->get('tag') ?? '')));
         return new JsonResponse(array('result' => 'success'));
     }
 

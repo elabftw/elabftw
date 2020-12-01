@@ -7,49 +7,11 @@
  */
 declare let key: any;
 declare let MathJax: any;
-import { addDateOnCursor, displayMolFiles, display3DMolecules, insertParamAndReload, notif, quickSave } from './misc';
+import { displayMolFiles, display3DMolecules, insertParamAndReload, notif } from './misc';
+import { getTinymceBaseConfig, quickSave } from './tinymce';
 import 'jquery-ui/ui/widgets/datepicker';
-import tinymce from 'tinymce/tinymce';
-import 'tinymce/icons/default';
-import 'tinymce/plugins/advlist';
-import 'tinymce/plugins/autosave';
-import 'tinymce/plugins/charmap';
-import 'tinymce/plugins/code';
-import 'tinymce/plugins/codesample';
-import 'tinymce/plugins/fullscreen';
-import 'tinymce/plugins/hr';
-import 'tinymce/plugins/image';
-import 'tinymce/plugins/imagetools';
-import 'tinymce/plugins/insertdatetime';
-import 'tinymce/plugins/link';
-import 'tinymce/plugins/lists';
-import '../../web/app/js/plugins/mention/plugin.js';
-import 'tinymce/plugins/pagebreak';
-import 'tinymce/plugins/paste';
-import 'tinymce/plugins/save';
-import 'tinymce/plugins/searchreplace';
-import 'tinymce/plugins/table';
-import 'tinymce/plugins/template';
-import 'tinymce/themes/silver';
-import 'tinymce/themes/mobile';
 import './doodle';
-import '../js/tinymce-langs/ca_ES.js';
-import '../js/tinymce-langs/de_DE.js';
-import '../js/tinymce-langs/en_GB.js';
-import '../js/tinymce-langs/es_ES.js';
-import '../js/tinymce-langs/fr_FR.js';
-import '../js/tinymce-langs/id_ID.js';
-import '../js/tinymce-langs/it_IT.js';
-import '../js/tinymce-langs/ja_JP.js';
-import '../js/tinymce-langs/ko_KR.js';
-import '../js/tinymce-langs/nl_BE.js';
-import '../js/tinymce-langs/pl_PL.js';
-import '../js/tinymce-langs/pt_BR.js';
-import '../js/tinymce-langs/pt_PT.js';
-import '../js/tinymce-langs/ru_RU.js';
-import '../js/tinymce-langs/sk_SK.js';
-import '../js/tinymce-langs/sl_SI.js';
-import '../js/tinymce-langs/zh_CN.js';
+import tinymce from 'tinymce/tinymce';
 import Dropzone from 'dropzone';
 import i18next from 'i18next';
 
@@ -62,7 +24,7 @@ $(document).ready(function() {
   }
 
   // UPLOAD FORM
-  const elabDropzone = new Dropzone('form#elabftw-dropzone', {
+  new Dropzone('form#elabftw-dropzone', {
     // i18n message to user
     //dictDefaultMessage: $('#info').data('upmsg'),
     dictDefaultMessage: i18next.t('dropzone-upload-area'),
@@ -164,11 +126,15 @@ $(document).ready(function() {
   // GET MOL FILES
   function getListFromMolFiles(): void {
     const mols: any = [];
-    $.get('app/controllers/AjaxController.php', {
-      getFiles: true,
+    $.get('app/controllers/Ajax.php', {
+      action: 'readAll',
+      what: 'upload',
       type: type,
-      id: id,
-    }).done(function(uploadedFiles) {
+      params: {
+        itemId: id,
+      },
+    }).done(function(json) {
+      const uploadedFiles = json.msg;
       uploadedFiles.forEach(function(upload: any) {
         if (upload.real_name.split('.').pop() === 'mol') {
           mols.push([upload.real_name, upload.long_name]);
@@ -201,7 +167,7 @@ $(document).ready(function() {
 
   class Entity {
 
-    destroy() {
+    destroy(): void {
       if (confirm(i18next.t('entity-delete-warning'))) {
         const controller = 'app/controllers/EntityAjaxController.php';
         $.post(controller, {
@@ -225,7 +191,7 @@ $(document).ready(function() {
         this.controller = 'app/controllers/EntityAjaxController.php';
       }
 
-      update(rating: any) {
+      update(rating: any): void {
         $.post(this.controller, {
           rating: rating,
           id: id,
@@ -279,24 +245,6 @@ $(document).ready(function() {
     });
   });
 
-  // AUTOSAVE
-  let typingTimer: any;                // timer identifier
-  const doneTypingInterval = 7000;  // time in ms between end of typing and save
-
-  function isOverCharLimit() {
-    const body = tinymce.get(0).getBody(), text = tinymce.trim(body.innerText || body.textContent);
-    return text.length > 1000000;
-  }
-
-  // user finished typing, save work
-  function doneTyping() {
-    if (isOverCharLimit()) {
-      alert('Too many characters!!! Cannot save properly!!!');
-      return;
-    }
-    quickSave(type, id);
-  }
-
   // SWITCH EDITOR
   $(document).on('click', '.switchEditor', function() {
     const currentEditor = $(this).data('editor');
@@ -321,6 +269,131 @@ $(document).ready(function() {
     });
   }
 
+  // DATEPICKER
+  $('#datepicker').datepicker({
+    dateFormat: 'yymmdd',
+    onClose: (date) => {
+      $.post('app/controllers/EntityAjaxController.php', {
+        updateDate: true,
+        type : type,
+        id : id,
+        date : date,
+      }).done((json) => notif(json));
+    },
+  });
+
+  // If the title is 'Untitled', clear it on focus
+  $('#title_input').focus(function(){
+    if ($(this).val() === i18next.t('entity-default-title')) {
+      $('#title_input').val('');
+    }
+  });
+
+  // ANNOTATE IMAGE
+  $(document).on('click', '.annotateImg',  function() {
+    $('#doodleDiv').show();
+    $(document).scrollTop($('#doodle-anchor').offset().top);
+    const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
+    const img = new Image();
+    // set src attribute to image path
+    img.src = 'app/download.php?f=' + $(this).data('path');
+    img.onload = (): void => {
+      // make canvas bigger than image
+      context.canvas.width = (this as HTMLImageElement).width * 2;
+      context.canvas.height = (this as HTMLImageElement).height * 2;
+      // add image to canvas
+      context.drawImage(img, (this as HTMLImageElement).width / 2, (this as HTMLImageElement).height / 2);
+    };
+  });
+  // STAR RATING
+  const StarC = new Star();
+  $(document).on('click', '.rating-cancel', function() {
+    StarC.update(0);
+  });
+  $(document).on('click', '.star', function() {
+    StarC.update($(this).data('rating').current[0].innerText);
+  });
+
+  // Object to hold control data for selected image
+  let tinymceEditImage = {
+    selected: false,
+    uploadId: '',
+    itemId: '',
+    url:'',
+  };
+
+  const tinyConfig = getTinymceBaseConfig('edit');
+  const tinyConfigForEdit = {
+    images_upload_handler: (blobInfo, success) => { // eslint-disable-line @typescript-eslint/camelcase
+      const dropZone = Dropzone.forElement('#elabftw-dropzone');
+      // Edgecase for editing an image using tinymce ImageTools
+      // Check if it was selected. This is set by an event hook below
+      if (tinymceEditImage.selected == true && confirm(i18next.t('replace-edited-file'))) {
+        // Use jquery to replace the file on the server
+        const formData = new FormData();
+        formData.append('replace', 'true');
+        formData.append('upload_id', tinymceEditImage.uploadId);
+        formData.append('id', tinymceEditImage.itemId);
+        formData.append('type', 'experiments');
+        formData.append('file', blobInfo.blob());
+
+        $.post({
+          url: 'app/controllers/EntityAjaxController.php',
+          data: formData,
+          processData: false,
+          contentType: false
+        }).done(function(json) {
+          notif(json);
+          // Send the same url we stored before the edit menu was clicked to tinymce
+          success(tinymceEditImage.url);
+          tinymceEditImage = {selected:false, uploadId:'', itemId:'', url:''};
+        });
+      // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
+      } else if (typeof blobInfo.blob().name=== 'undefined') {
+        const filename = prompt('Enter filename with extension e.g. .jpeg');
+        if (typeof filename !== 'undefined' && filename !== null) {
+          const fileOfBlob = new File([blobInfo.blob()], filename);
+          dropZone.addFile(fileOfBlob);
+          dropZone.tinyImageSuccess = success;
+        } else {
+          // Just disregard the edit if the name prompt is cancelled
+          tinymce.activeEditor.undoManager.undo();
+        }
+      } else {
+        dropZone.addFile(blobInfo.blob());
+        dropZone.tinyImageSuccess = success;
+      }
+    },
+    // use a custom function for the save button in toolbar
+    save_onsavecallback: () => quickSave(type , $('#info').data('id')), // eslint-disable-line @typescript-eslint/camelcase
+  };
+
+  tinymce.init(Object.assign(tinyConfig, tinyConfigForEdit));
+  // Hook into the SelectionChange event - This is to make sure we reset our control variable correctly
+  tinymce.activeEditor.on('SelectionChange', () => {
+    // Check if the user has selected an image
+    if (tinymce.activeEditor.selection.getNode().tagName == 'IMG')
+    {
+      // Save all the details needed for replacing upload
+      // Then check for and get those details when you are handling file uploads
+      let url = (tinymce.activeEditor.selection.getNode() as any).src;
+      url = url.slice(url.lastIndexOf('app/'));
+      // Sometimes tinymce adds an identifier on modification
+      // This checks for and removes it
+      if (url.lastIndexOf('&') != -1){
+        url = url.slice(0, url.lastIndexOf('&'));
+      }
+      // Find the element in the uploads html section to got uploadid and itemid
+      const uploadsDestroyEl = $('a[href="' + url + '"]' ).prev();
+      tinymceEditImage.selected = true;
+      tinymceEditImage.uploadId = uploadsDestroyEl.data('id');
+      tinymceEditImage.itemId = uploadsDestroyEl.data('itemid');
+      tinymceEditImage.url = url;
+    } else {
+      tinymceEditImage = {selected:false, uploadId:'', itemId:'', url:''};
+    }
+  });
+
   // INSERT IMAGE AT CURSOR POSITION IN TEXT
   $(document).on('click', '.inserter',  function() {
     // link to the image
@@ -341,217 +414,6 @@ $(document).ready(function() {
       alert('Error: could not find current editor!');
     }
   });
-
-  // DATEPICKER
-  $('#datepicker').datepicker({dateFormat: 'yymmdd'});
-  // If the title is 'Untitled', clear it on focus
-  $('#title_input').focus(function(){
-    if ($(this).val() === i18next.t('entity-default-title')) {
-      $('#title_input').val('');
-    }
-  });
-
-  // ANNOTATE IMAGE
-  $(document).on('click', '.annotateImg',  function() {
-    $('#doodleDiv').show();
-    $(document).scrollTop($('#doodle-anchor').offset().top);
-    const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
-    const img = new Image();
-    // set src attribute to image path
-    img.src = 'app/download.php?f=' + $(this).data('path');
-    img.onload = function(){
-      // make canvas bigger than image
-      context.canvas.width = (this as HTMLImageElement).width * 2;
-      context.canvas.height = (this as HTMLImageElement).height * 2;
-      // add image to canvas
-      context.drawImage(img, (this as HTMLImageElement).width / 2, (this as HTMLImageElement).height / 2);
-    };
-  });
-  // STAR RATING
-  const StarC = new Star();
-  $(document).on('click', '.rating-cancel', function() {
-    StarC.update(0);
-  });
-  $(document).on('click', '.star', function() {
-    StarC.update($(this).data('rating').current[0].innerText);
-  });
-
-  // Object to hold control data for selected image
-  let tinymceEditImage = {selected:false, uploadId:'', itemId:'', url:''};
-
-  /* eslint-disable */
-  tinymce.init({
-    mode: 'specific_textareas',
-    editor_selector: 'mceditable',
-    browser_spellcheck: true,
-    skin_url: 'app/css/tinymce',
-    plugins: 'autosave table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template',
-    pagebreak_separator: '<pagebreak>',
-    toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
-    removed_menuitems: 'newdocument, image',
-    image_caption: true,
-    images_reuse_filename: true,
-    contextmenu: false,
-    paste_data_images: true,
-    images_upload_handler: function (blobInfo, success, failure) {
-      let dropZone = Dropzone.forElement('#elabftw-dropzone');
-      // Edgecase for editing an image using tinymce ImageTools
-      // Check if it was selected. This is set by an event hook below
-      if (tinymceEditImage.selected == true && confirm(i18next.t('replace-edited-file'))){
-        // Use jquery to replace the file on the server
-        const formData = new FormData();
-        formData.append('replace', 'true');
-        formData.append('upload_id', tinymceEditImage.uploadId);
-        formData.append('id', tinymceEditImage.itemId);
-        formData.append('type', 'experiments');
-        formData.append('file', blobInfo.blob());
-
-        $.post({
-          url: 'app/controllers/EntityAjaxController.php',
-          data: formData,
-          processData: false,
-          contentType: false
-        }).done(function(json){
-            notif(json);
-            // Send the same url we stored before the edit menu was clicked to tinymce
-            success(tinymceEditImage.url);
-            tinymceEditImage = {selected:false, uploadId:'', itemId:'', url:''};
-          }
-        );
-      }
-      // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
-      else if (typeof blobInfo.blob().name=== 'undefined'){
-        let fname = prompt('Enter filename with extension e.g. .jpeg');
-        if (typeof fname !== 'undefined' && fname !== null)
-        {
-          let fileOfBlob = new File([blobInfo.blob()], fname);
-          dropZone.addFile(fileOfBlob);
-          dropZone.tinyImageSuccess = success;
-        }
-        else {tinymce.activeEditor.undoManager.undo();} // Just disregard the edit if the name prompt is cancelled
-      } else {
-        dropZone.addFile(blobInfo.blob());
-        dropZone.tinyImageSuccess = success;
-      }
-    },
-    content_style: '.mce-content-body {font-size:10pt;}',
-    codesample_languages: [
-      {text: 'Bash', value: 'bash'},
-      {text: 'C', value: 'c'},
-      {text: 'C++', value: 'cpp'},
-      {text: 'CSS', value: 'css'},
-      {text: 'Fortran', value: 'fortran'},
-      {text: 'Go', value: 'go'},
-      {text: 'Java', value: 'java'},
-      {text: 'JavaScript', value: 'javascript'},
-      {text: 'Julia', value: 'julia'},
-      {text: 'Latex', value: 'latex'},
-      {text: 'Makefile', value: 'makefile'},
-      {text: 'Matlab', value: 'matlab'},
-      {text: 'Perl', value: 'perl'},
-      {text: 'Python', value: 'python'},
-      {text: 'R', value: 'r'},
-      {text: 'Ruby', value: 'ruby'}
-    ],
-    language: $('#user-prefs').data('lang'),
-    charmap_append: [
-      [0x2640, 'female sign'],
-      [0x2642, 'male sign']
-    ],
-    mentions: {
-      // use # for autocompletion
-      delimiter: '#',
-      // get the source from json with get request
-      source: function (query: string, process: any) {
-        const url = 'app/controllers/EntityAjaxController.php';
-        $.getJSON(url, {
-          mention: 1,
-          term: query,
-          type: type,
-        }).done(function(data) {
-          process(data);
-        });
-      }
-    },
-    mobile: {
-      theme: 'mobile',
-      plugins: [ 'save', 'lists', 'link' ],
-      toolbar: [ 'undo', 'redo', 'bold', 'italic', 'underline', 'bullist', 'numlist', 'link' ]
-    },
-    // save button :
-    save_onsavecallback: function() {
-      quickSave(type , id);
-    },
-    // keyboard shortcut to insert today's date at cursor in editor
-    setup: function(editor: any) {
-      editor.addShortcut('ctrl+shift+d', 'add date at cursor', function() { addDateOnCursor(); });
-      editor.addShortcut('ctrl+=', 'subscript', function() {
-        editor.execCommand('subscript');
-      });
-      editor.addShortcut('ctrl+shift+=', 'superscript', function() {
-        editor.execCommand('superscript');
-      });
-      editor.on('keydown', function() {
-        clearTimeout(typingTimer);
-      });
-      editor.on('keyup', function() {
-        clearTimeout(typingTimer);
-        typingTimer = setTimeout(doneTyping, doneTypingInterval);
-      });
-      editor.on('init', function() {
-         editor.getContainer().className += ' rounded';
-      });
-    },
-    style_formats_merge: true,
-    style_formats: [
-      {
-        title: 'Image Left',
-        selector: 'img',
-        styles: {
-          'float': 'left',
-          'margin': '0 10px 0 10px'
-        }
-      }, {
-        title: 'Image Right',
-        selector: 'img',
-        styles: {
-          'float': 'right',
-          'margin': '0 0 10px 10px'
-        }
-      }
-    ],
-    // this will GET templates from current user
-    templates: 'app/controllers/AjaxController.php?getUserTpl'
-  });
-
-  // Hook into the SelectionChange event - This is to make sure we reset our control variable correctly
-  tinymce.activeEditor.on('SelectionChange', function(e) {
-    // Check if the user has selected an image
-    if (tinymce.activeEditor.selection.getNode().tagName == 'IMG')
-    {
-      // Save all the details needed for replacing upload
-      // Then check for and get those details when you are handling file uploads
-      let url = tinymce.activeEditor.selection.getNode().src;
-      url = url.slice(url.lastIndexOf('app/'));
-      // Sometimes tinymce adds an identifier on modification
-      // This checks for and removes it
-      if (url.lastIndexOf('&') != -1){
-        url = url.slice(0, url.lastIndexOf('&'))
-      }
-      // Find the element in the uploads html section to got uploadid and itemid
-      let uploadsDestroyEl = $('a[href="'+url+'"]' ).prev();
-      tinymceEditImage.selected = true;
-      tinymceEditImage.uploadId = uploadsDestroyEl.data('id');
-      tinymceEditImage.itemId = uploadsDestroyEl.data('itemid');
-      tinymceEditImage.url = url;
-    }
-    else
-    {
-      tinymceEditImage = {selected:false, uploadId:'', itemId:'', url:''};
-    }
-  });
-
-  /* eslint-enable */
 
   // IMPORT BODY OF LINKED ITEM INTO EDITOR
   // this is here because here tinymce exists and is reachable
@@ -583,5 +445,14 @@ $(document).ready(function() {
   }
   $(document).on('click', '.linkImport', function() {
     importBody($(this));
+  });
+  // update title on blur
+  $('#main_form').on('blur', '#title_input', function() {
+    $.post('app/controllers/EntityAjaxController.php', {
+      updateTitle: true,
+      type : type,
+      id : id,
+      title : $(this).val(),
+    }).done((json) => notif(json));
   });
 });

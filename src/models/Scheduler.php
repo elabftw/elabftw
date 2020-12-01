@@ -17,6 +17,8 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Traits\EntityTrait;
 use PDO;
+use function strlen;
+use function substr;
 
 /**
  * All about the team's scheduler
@@ -84,7 +86,7 @@ class Scheduler
             LEFT JOIN items_types ON items.category = items_types.id
             LEFT JOIN users AS u ON team_events.userid = u.userid
             WHERE team_events.team = :team
-            AND team_events.start > :start AND team_events.end < :end";
+            AND team_events.start > :start AND team_events.end <= :end";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Database->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':start', $start);
@@ -118,7 +120,7 @@ class Scheduler
             LEFT JOIN items_types ON items.category = items_types.id
             LEFT JOIN users AS u ON team_events.userid = u.userid
             WHERE team_events.item = :item
-            AND team_events.start > :start AND team_events.end < :end";
+            AND team_events.start > :start AND team_events.end <= :end";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item', $this->Database->id, PDO::PARAM_INT);
         $req->bindParam(':start', $start);
@@ -161,17 +163,14 @@ class Scheduler
     public function updateStart(array $delta): void
     {
         $event = $this->readFromId();
-        if (empty($event)) {
-            return;
-        }
-        $oldStart = new DateTime($event['start']);
-        $oldEnd = new DateTime($event['end']);
+        $oldStart = DateTime::createFromFormat(DateTime::ISO8601, $event['start']);
+        $oldEnd = DateTime::createFromFormat(DateTime::ISO8601, $event['end']);
         $seconds = '0';
-        if (\strlen($delta['milliseconds']) > 3) {
-            $seconds = \substr($delta['milliseconds'], 0, -3);
+        if (strlen($delta['milliseconds']) > 3) {
+            $seconds = substr($delta['milliseconds'], 0, -3);
         }
-        $newStart = $oldStart->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds');
-        $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds');
+        $newStart = $oldStart->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
+        $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
 
         $sql = 'UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
@@ -191,15 +190,12 @@ class Scheduler
     public function updateEnd(array $delta): void
     {
         $event = $this->readFromId();
-        if (empty($event)) {
-            return;
-        }
-        $oldEnd = new DateTime($event['end']);
+        $oldEnd = DateTime::createFromFormat(DateTime::ISO8601, $event['end']);
         $seconds = '0';
-        if (\strlen($delta['milliseconds']) > 3) {
-            $seconds = \substr($delta['milliseconds'], 0, -3);
+        if (strlen($delta['milliseconds']) > 3) {
+            $seconds = substr($delta['milliseconds'], 0, -3);
         }
-        $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds');
+        $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
 
         $sql = 'UPDATE team_events SET end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);

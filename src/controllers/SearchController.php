@@ -37,7 +37,7 @@ class SearchController extends AbstractEntityController
         if ($this->App->Request->query->get('type') !== 'experiments') {
             $this->categoryArr = $ItemsTypes->readAll();
         } else {
-            $this->categoryArr = $Status->readAll();
+            $this->categoryArr = $Status->read();
         }
     }
 

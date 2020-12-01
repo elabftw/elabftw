@@ -53,7 +53,7 @@ try {
         (int) $Request->request->get('usergroup'),
     );
 
-    $Session->getFlashBag()->add('ok', _('Account successfully created'));
+    $App->Session->getFlashBag()->add('ok', _('Account successfully created'));
 
     // log user creation
     $App->Log->info('New user created');

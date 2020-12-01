@@ -56,6 +56,7 @@ class ImportCsv extends AbstractImport
         $this->checkDelimiter($csv);
         $csv->setDelimiter($this->delimiter);
         $csv->setHeaderOffset(0);
+        $rows = $csv->getRecords();
 
         // SQL for importing
         $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread)
@@ -65,7 +66,7 @@ class ImportCsv extends AbstractImport
         $date = Filter::kdate();
 
         // now loop the rows and do the import
-        foreach ($csv as $row) {
+        foreach ($rows as $row) {
             if (empty($row['title'])) {
                 throw new ImproperActionException('Could not find the title column!');
             }

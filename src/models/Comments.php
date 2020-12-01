@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\Email;
 use PDO;
@@ -48,20 +48,15 @@ class Comments implements CrudInterface
 
     /**
      * Create a comment
-     *
-     * @param string $comment Content for the comment
-     * @return int comment id
      */
-    public function create(string $comment): int
+    public function create(ParamsProcessor $params): int
     {
-        $comment = $this->prepare($comment);
-
         $sql = 'INSERT INTO ' . $this->Entity->type . '_comments(datetime, item_id, comment, userid)
             VALUES(:datetime, :item_id, :comment, :userid)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':datetime', date('Y-m-d H:i:s'));
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':comment', $comment);
+        $req->bindParam(':comment', $params->comment);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
         $this->Db->execute($req);
@@ -76,7 +71,7 @@ class Comments implements CrudInterface
      *
      * @return array comments for this entity
      */
-    public function readAll(): array
+    public function read(): array
     {
         $sql = 'SELECT ' . $this->Entity->type . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname
@@ -95,55 +90,32 @@ class Comments implements CrudInterface
 
     /**
      * Update a comment
-     *
-     * @param string $comment New content for the comment
-     * @param int $id id of the comment
-     * @return string
      */
-    public function update(string $comment, int $id): string
+    public function update(ParamsProcessor $params): string
     {
-        $comment = $this->prepare($comment);
-
         $sql = 'UPDATE ' . $this->Entity->type . '_comments SET
             comment = :comment
             WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':comment', $comment);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':comment', $params->comment, PDO::PARAM_STR);
+        $req->bindParam(':id', $params->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        return $comment;
+        return $params->comment;
     }
 
     /**
      * Destroy a comment
-     *
-     * @param int $id id of the comment
-     * @return void
      */
-    public function destroy(int $id): void
+    public function destroy(int $id): bool
     {
         $sql = 'DELETE FROM ' . $this->Entity->type . '_comments WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-    }
 
-    /**
-     * Sanitize comment and check for size
-     *
-     * @param string $comment
-     * @return string
-     */
-    private function prepare(string $comment): string
-    {
-        $comment = filter_var($comment, FILTER_SANITIZE_STRING);
-        if ($comment === false || \mb_strlen($comment) < 2) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
-        }
-        return \nl2br($comment);
+        return $this->Db->execute($req);
     }
 
     /**

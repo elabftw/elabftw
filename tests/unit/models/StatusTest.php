@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
 
@@ -21,20 +22,40 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $new = $this->Status->create('', '#fffccc', 1);
+        $new = $this->Status->create(
+            new ParamsProcessor(
+                array(
+                    'name' => 'New status',
+                    'color' => '#29AEB9',
+                    'isTimestampable' => 0,
+                    'isDefault' => 1,
+                )
+            )
+        );
         $this->assertTrue((bool) Check::id($new));
     }
 
-    public function testReadAll()
+    public function testRead()
     {
-        $all = $this->Status->readAll();
+        $all = $this->Status->read();
         $this->assertTrue(is_array($all));
     }
 
     public function testUpdate()
     {
-        $this->Status->update($this->Status->create('Yep', '#fffaaa', 1), 'New name', '#fffccc', 0, 1);
-        $this->Status->update($this->Status->create('Yep2', '#fffaaa', 1), 'New name', '#fffccc', 1, 0);
+        $params = new ParamsProcessor(
+            array(
+                'name' => 'Yep',
+                'color' => '#29AEB9',
+                'isTimestampable' => 0,
+                'isDefault' => 1,
+            )
+        );
+        $id = $this->Status->create($params);
+        $params->id = $id;
+        $params->isTimestampable = 1;
+        $this->Status->update($params);
+        $this->assertTrue($this->Status->isTimestampable($id));
     }
 
     public function testReadColor()
@@ -52,10 +73,5 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         //$this->Status->destroy(2);
         $this->expectException(ImproperActionException::class);
         $this->Status->destroy(1);
-    }
-
-    public function testDestroyAll()
-    {
-        $this->Status->destroyAll();
     }
 }

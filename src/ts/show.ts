@@ -10,6 +10,7 @@ declare let MathJax: any;
 import { insertParamAndReload, notif } from './misc';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
+import { CheckableItem } from './interfaces';
 
 $(document).ready(function(){
   if ($('#info').data('page') !== 'show') {
@@ -38,9 +39,10 @@ $(document).ready(function(){
     const id = $(this).data('id');
     // get html of body
     $.get('app/controllers/EntityAjaxController.php', {
-      getBody : true,
-      id : id,
-      type : $(this).data('type')
+      getBody: true,
+      id: id,
+      type: $(this).data('type'),
+      editor: 'tiny',
       // and put it in the div and show the div
     }).done(function(data) {
       // get the width of the parent. The -30 is to make it smaller than parent even with the margins
@@ -66,13 +68,13 @@ $(document).ready(function(){
   // END PAGINATION
 
   // THE CHECKBOXES
-  function getCheckedBoxes() {
+  function getCheckedBoxes(): Array<CheckableItem> {
     const checkedBoxes = [];
     $('input[type=checkbox]:checked').each(function() {
       checkedBoxes.push({
-        'id': $(this).data('id'),
+        id: $(this).data('id'),
         // the randomid is used to get the parent container and hide it when delete
-        'randomid': $(this).data('randomid'),
+        randomid: $(this).data('randomid'),
       });
     });
     return checkedBoxes;

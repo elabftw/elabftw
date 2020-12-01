@@ -23,7 +23,6 @@ use Elabftw\Models\Templates;
 use Elabftw\Services\Check;
 use Elabftw\Services\ListBuilder;
 use Exception;
-use function mb_strlen;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -117,9 +116,6 @@ try {
 
     // SAVE AS IMAGE
     if ($Request->request->has('saveAsImage')) {
-        if ($App->Session->has('anon')) {
-            throw new IllegalActionException('Anonymous user tried to access database controller.');
-        }
         $Entity->Uploads->createFromString('png', $Request->request->get('realName'), $Request->request->get('content'));
     }
 
@@ -128,34 +124,19 @@ try {
         $Entity->Pins->togglePin();
     }
 
-    // CREATE STEP
-    if ($Request->request->has('createStep')) {
-        $Entity->Steps->create($Request->request->filter('body', null, FILTER_SANITIZE_STRING));
-    }
-
-    // FINISH STEP
-    if ($Request->request->has('finishStep')) {
-        $Entity->Steps->finish((int) $Request->request->get('stepId'));
-    }
-
-    // DESTROY STEP
-    if ($Request->request->has('destroyStep')) {
-        $Entity->Steps->destroy((int) $Request->request->get('stepId'));
-    }
-
-    // CREATE LINK
-    if ($Request->request->has('createLink')) {
-        $Entity->Links->create((int) $Request->request->get('linkId'));
-    }
-
-    // DESTROY LINK
-    if ($Request->request->has('destroyLink')) {
-        $Entity->Links->destroy((int) $Request->request->get('linkId'));
-    }
-
     // UPDATE VISIBILITY
     if ($Request->request->has('updatePermissions')) {
         $Entity->updatePermissions($Request->request->get('rw'), $Request->request->get('value'));
+    }
+
+    // UPDATE TITLE
+    if ($Request->request->has('updateTitle')) {
+        $Entity->updateTitle($Request->request->get('title'));
+    }
+
+    // UPDATE DATE
+    if ($Request->request->has('updateDate')) {
+        $Entity->updateDate($Request->request->get('date'));
     }
 
     // UPDATE RATING
@@ -216,25 +197,16 @@ try {
 
     // CREATE UPLOAD
     if ($Request->request->has('upload')) {
-        if ($App->Session->has('anon')) {
-            throw new IllegalActionException('Anonymous user tried to access database controller.');
-        }
         $Entity->Uploads->create($Request);
     }
 
     // REPLACE UPLOAD
     if ($Request->request->has('replace')) {
-        if ($App->Session->has('anon')) {
-            throw new IllegalActionException('Anonymous user tried to access database controller.');
-        }
         $Entity->Uploads->replace($Request);
     }
 
     // ADD MOL FILE OR PNG
     if ($Request->request->has('addFromString')) {
-        if ($App->Session->has('anon')) {
-            throw new IllegalActionException('Anonymous user tried to access database controller.');
-        }
         $uploadId = $Entity->Uploads->createFromString(
             $Request->request->get('fileType'),
             $Request->request->get('realName'),
@@ -249,12 +221,8 @@ try {
 
     // DESTROY ENTITY
     if ($Request->request->has('destroy')) {
-        if ($App->Session->has('anon')) {
-            throw new IllegalActionException('Anonymous user tried to access database controller.');
-        }
-
         // check for deletable xp
-        if ($Entity instanceof Experiments && (!$App->teamConfigArr['deletable_xp'] && !$Session->get('is_admin')
+        if ($Entity instanceof Experiments && (!$App->teamConfigArr['deletable_xp'] && !$App->Session->get('is_admin')
             || $App->Config->configArr['deletable_xp'] === '0')) {
             throw new ImproperActionException('You cannot delete experiments!');
         }
@@ -277,12 +245,8 @@ try {
         ));
     }
 
-
     // DESTROY UPLOAD
     if ($Request->request->has('uploadsDestroy')) {
-        if ($App->Session->has('anon')) {
-            throw new IllegalActionException('Anonymous user tried to access database controller.');
-        }
         $upload = $Entity->Uploads->readFromId((int) $Request->request->get('uploadId'));
         $Entity->Uploads->destroy((int) $Request->request->get('uploadId'));
         // check that the filename is not in the body. see #432
@@ -294,23 +258,6 @@ try {
         $Response->setData(array(
             'res' => true,
             'msg' => _('File deleted successfully') . $msg,
-        ));
-    }
-
-    // CREATE TEMPLATE
-    if ($Request->request->has('create') && $Entity instanceof Templates) {
-        // template name must be 3 chars at least
-        if (mb_strlen($Request->request->get('name')) < 3) {
-            throw new ImproperActionException(_('The template name must be 3 characters long.'));
-        }
-
-        $name = $Request->request->filter('name', null, FILTER_SANITIZE_STRING);
-        $body = $Request->request->filter('body', null, FILTER_SANITIZE_STRING);
-
-        $id = $Entity->createNew($name, $body);
-        $Response->setData(array(
-            'res' => true,
-            'msg' => $id,
         ));
     }
 } catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {

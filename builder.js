@@ -144,8 +144,8 @@ module.exports = {
       {
         test: /3Dmol-nojquery.js$/,
         use: {
-          loader: path.resolve('src/ts/3Dmol-loader.ts'),
-        }
+          loader: path.resolve('src/ts/3Dmol-loader.js'),
+        },
       }
     ]
   }

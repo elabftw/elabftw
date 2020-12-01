@@ -80,7 +80,7 @@
       </a>
   {% endif %}
 
-  {% if not App.Session.has('anon') %}
+  {% if not App.Session.has('is_anon') %}
   <a class='elab-tooltip' href='#'>
       <span>{{ 'Duplicate'|trans }}</span>
       <i class='far fa-copy clickable duplicateItem' data-id='{{ Entity.id }}'></i>
@@ -125,7 +125,7 @@
   {% endif %}
 
   {% if Entity.type == 'experiments' %}
-    {% if not App.Session.has('anon') %}
+    {% if not App.Session.has('is_anon') %}
     <a class='elab-tooltip' href='#'>
         <span>{{ 'Share'|trans }}</span>
         <i class='fas fa-share-alt clickable shareItem' data-id='{{ Entity.id }}'></i>
@@ -135,7 +135,7 @@
   {% endif %}
 
   <!-- show timestamp button if not timestamped already -->
-  {% if not Entity.entityData.timestamped and Entity.isTimestampable and Entity.type == 'experiments' and not App.Session.has('anon') %}
+  {% if not Entity.entityData.timestamped and Entity.isTimestampable and Entity.type == 'experiments' and not App.Session.has('is_anon') %}
     <a class='elab-tooltip' href='#'>
       <span>{{ 'Timestamp Experiment'|trans }}</span>
       <i class='far fa-calendar-check modalToggle' data-modal='timestampModal'></i>
@@ -221,7 +221,7 @@
   {{ include('json-editor.html') }}
 {% endif %}
 
-{% if App.Session.get('auth') %}
+{% if App.Session.get('is_auth') and not App.Session.has('is_anon') %}
     <section id='comment_container'>
         <div id='comment' class='box'>
             <i class='fas fa-comments mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Comments'|trans }}</h3>
@@ -236,8 +236,8 @@
                         <i class='fas fa-trash-alt fa-lg fa-pull-right clickable commentsDestroy' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}'></i>
                         {% endif %}
                         </div>
-                        <!-- .editable uses the id of the element to send to the controller -->
-                        <p class='comment m-2 p-2 {{ comment.userid == Entity.Users.userData.userid ? "editable" }}' data-itemid='{{ Entity.id }}' data-type='{{ Entity.type }}' id='comment_{{ comment.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment|raw }}</p>
+                        <!-- the comment itself is only editable by the owner -->
+                        <p class='comment m-2 p-2 {{ comment.userid == Entity.Users.userData.userid ? "editable comment-editable" }}' data-itemid='{{ Entity.id }}' data-type='{{ Entity.type }}' data-id='{{ comment.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment|raw }}</p>
                     </div>
                 {% endfor %}
             {% endif %}

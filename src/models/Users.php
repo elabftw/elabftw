@@ -10,16 +10,23 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function bin2hex;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
+use function filter_var;
+use function hash;
 use function in_array;
 use function mb_strlen;
 use PDO;
+use function random_bytes;
+use function time;
 
 /**
  * Users
@@ -42,6 +49,7 @@ class Users
      * Constructor
      *
      * @param int|null $userid
+     * @param int|null $team
      */
     public function __construct(?int $userid = null, ?int $team = null)
     {
@@ -83,10 +91,10 @@ class Users
     {
         $Config = new Config();
         $Teams = new Teams($this);
-        $UsersHelper = new UsersHelper();
 
-        // validate teams
-        $Teams->validateTeams($teams);
+        // make sure that all the teams in which the user will be are created/exist
+        // this might throw an exception if the team doesn't exist and we can't create it on the fly
+        $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
         // check for duplicate of email
         if ($this->isDuplicateEmail($email)) {
             throw new ImproperActionException(_('Someone is already using that email address!'));
@@ -96,21 +104,22 @@ class Users
             Check::passwordLength($password);
         }
 
-        $firstname = \filter_var($firstname, FILTER_SANITIZE_STRING);
-        $lastname = \filter_var($lastname, FILTER_SANITIZE_STRING);
+        $firstname = filter_var($firstname, FILTER_SANITIZE_STRING);
+        $lastname = filter_var($lastname, FILTER_SANITIZE_STRING);
 
         // Create salt
-        $salt = \hash('sha512', \bin2hex(\random_bytes(16)));
+        $salt = hash('sha512', bin2hex(random_bytes(16)));
         // Create hash
-        $passwordHash = \hash('sha512', $salt . $password);
+        $passwordHash = hash('sha512', $salt . $password);
 
         // Registration date is stored in epoch
-        $registerDate = \time();
+        $registerDate = time();
 
         // get the group for the new user
         if ($group === null) {
-            $teamId = $Teams->getTeamIdFromNameOrOrgid((string) $teams[0]);
-            $group = $UsersHelper->getGroup($teamId);
+            $teamId = (int) $teams[0]['id'];
+            $TeamsHelper = new TeamsHelper($teamId);
+            $group = $TeamsHelper->getGroup();
         }
 
         // will new user be validated?
@@ -119,10 +128,6 @@ class Users
             $validated = 1;
         }
 
-        // make sure that all the teams in which the user will be are created/exist
-        // this might throw an exception if the team doesn't exist and we can't create it on the fly
-        // the $teamIdArr is an array of teams ID
-        $teamIdArr = $Teams->validateTeams($teams);
 
         $sql = 'INSERT INTO users (
             `email`,
@@ -159,11 +164,11 @@ class Users
         $userid = $this->Db->lastInsertId();
 
         // now add the user to the team
-        $Teams->addUserToTeams($userid, $teamIdArr);
+        $Teams->addUserToTeams($userid, array_column($teams, 'id'));
         if ($validated === 0) {
             $userInfo = array('email' => $email, 'name' => $firstname . ' ' . $lastname);
             $Email = new Email($Config, $this);
-            $Email->alertAdmin($teamIdArr[0], $userInfo);
+            $Email->alertAdmin($teams[0]['id'], $userInfo);
             $Email->alertUserNeedValidation($email);
             // set a flag to show correct message to user
             $this->needValidation = true;
@@ -216,7 +221,7 @@ class Users
      * @param string $term
      * @return array
      */
-    public function lookFor(string $term): array
+    public function getList(string $term): array
     {
         $usersArr = $this->readFromQuery($term);
         $res = array();
@@ -236,13 +241,13 @@ class Users
     {
         $sql = 'SELECT userid
             FROM users
-            WHERE email = :email AND archived = 0 LIMIT 1';
+            WHERE email = :email AND archived = 0 AND validated = 1 LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $this->Db->execute($req);
         $res = $req->fetchColumn();
         if ($res === false) {
-            throw new ImproperActionException(_('Email not found in database!'));
+            throw new ResourceNotFoundException(_('Email not found in database!'));
         }
         $this->populate((int) $res);
     }
@@ -351,6 +356,14 @@ class Users
         $lastname = Filter::sanitize($params['lastname']);
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
 
+        // (Sys)admins can only disable 2FA
+        $mfaSql = '';
+        if (!isset($params['use_mfa']) || $params['use_mfa'] === 'off') {
+            $mfaSql = ', mfa_secret = null';
+        } elseif ($params['use_mfa'] === 'on' && !$this->userData['mfa_secret']) {
+            throw new ImproperActionException('Only users themselves can activate two factor authentication!');
+        }
+
         // check email is not already in db
         $usersEmails = $this->getAllEmails();
         $emailsArr = array();
@@ -381,8 +394,9 @@ class Users
             lastname = :lastname,
             email = :email,
             usergroup = :usergroup,
-            validated = :validated
-            WHERE userid = :userid';
+            validated = :validated';
+        $sql .= $mfaSql;
+        $sql .= ' WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':firstname', $firstname);
         $req->bindParam(':lastname', $lastname);
@@ -513,8 +527,8 @@ class Users
      */
     public function destroy(): void
     {
-        $UsersHelper = new UsersHelper();
-        if ($UsersHelper->hasExperiments((int) $this->userData['userid'])) {
+        $UsersHelper = new UsersHelper((int) $this->userData['userid']);
+        if ($UsersHelper->hasExperiments()) {
             throw new ImproperActionException('Cannot delete a user that owns experiments!');
         }
         $sql = 'DELETE FROM users WHERE userid = :userid';

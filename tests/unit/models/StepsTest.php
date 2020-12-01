@@ -9,18 +9,20 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ParamsProcessor;
+
 class StepsTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
     {
         $this->Users = new Users(1);
         $this->Experiments = new Experiments($this->Users, 1);
-        $this->Steps = new Steps($this->Experiments);
+        $this->Steps = $this->Experiments->Steps;
     }
 
     public function testCreate()
     {
-        $this->Steps->create('do this');
+        $this->Steps->create(new ParamsProcessor(array('template' => 'do this')));
     }
 
     public function testFinish()
@@ -28,13 +30,24 @@ class StepsTest extends \PHPUnit\Framework\TestCase
         $this->Steps->finish(1);
     }
 
-    public function testReadAll()
+    public function testRead()
     {
-        $this->assertTrue(is_array($this->Steps->readAll()));
+        $steps = $this->Steps->read();
+        $this->assertTrue(is_array($steps));
+    }
+
+    public function testUpdate()
+    {
+        $id = $this->Steps->create(new ParamsProcessor(array('template' => 'do that')));
+        $this->Steps->update(new ParamsProcessor(array('id' => $id, 'template' => 'updated step body')));
+        $ourStep = array_filter($this->Steps->read(), function ($s) use ($id) {
+            return ((int) $s['id']) === $id;
+        });
+        $this->assertEquals(array_pop($ourStep)['body'], 'updated step body');
     }
 
     public function testDestroy()
     {
-        $this->Steps->destroy(1);
+        $this->assertTrue($this->Steps->destroy(1));
     }
 }

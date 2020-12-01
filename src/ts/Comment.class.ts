@@ -5,47 +5,42 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif } from './misc';
+import Crud from './Crud.class';
 import i18next from 'i18next';
 
-export default class Comment {
-  controller: string;
+export default class Comment extends Crud {
   type: string;
 
   constructor(type: string) {
+    super('app/controllers/Ajax.php');
     this.type = type;
-    this.controller = 'app/controllers/CommentsAjaxController.php';
   }
 
   create(): void {
-    (document.getElementById('commentsCreateButton') as HTMLButtonElement).disabled = true;
-    const comment = $('#commentsCreateArea').val();
-    const id = $('#info').data('id');
-
-    $.post(this.controller, {
-      create: true,
-      comment: comment,
+    this.send({
+      action: 'create',
+      what: 'comment',
       type: this.type,
-      id: id,
-    }).done(function(json) {
-      notif(json);
+      params: {
+        itemId: $('#info').data('id') as number,
+        comment: $('#commentsCreateArea').val() as string,
+      },
+    }).then(() => {
       $('#comment_container').load(window.location.href + ' #comment');
-      (document.getElementById('commentsCreateButton') as HTMLButtonElement).disabled = false;
     });
   }
 
-  destroy(commentId: string): void {
-    const id = $('#info').data('id');
+  destroy(commentId: number): void {
     if (confirm(i18next.t('generic-delete-warning'))) {
-      $.post(this.controller, {
-        destroy: true,
+      this.send({
+        action: 'destroy',
+        what: 'comment',
         type: this.type,
-        id: commentId
-      }).done(function(json) {
-        notif(json);
-        if (json.res) {
-          $('#comment_container').load(window.location.href + ' #comment');
-        }
+        params: {
+          id: commentId,
+        },
+      }).then(() => {
+        $('#comment_container').load(window.location.href + ' #comment');
       });
     }
   }

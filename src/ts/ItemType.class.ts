@@ -5,15 +5,17 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, tinyMceInitLight } from './misc';
-import i18next from 'i18next';
+import Crud from './Crud.class';
+import { notif } from './misc';
+import { getTinymceBaseConfig } from './tinymce';
 import tinymce from 'tinymce/tinymce';
 
-export default class ItemType {
-  controller: string;
+export default class ItemType extends Crud {
+  what: string;
 
   constructor() {
-    this.controller = 'app/controllers/ItemsTypesAjaxController.php';
+    super('app/controllers/Ajax.php');
+    this.what = 'itemsTypes';
   }
 
   create(): void {
@@ -32,23 +34,23 @@ export default class ItemType {
 
     const template = tinymce.get('itemsTypesTemplate').getContent();
 
-    $.post(this.controller, {
-      itemsTypesCreate: true,
-      name: name,
-      color: color,
-      bookable: bookable,
-      template: template
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        window.location.replace('admin.php?tab=5');
-      }
+    this.send({
+      action: 'create',
+      what: this.what,
+      params: {
+        template: template,
+        name: name,
+        color: color,
+        bookable: bookable,
+      },
+    }).then(function() {
+      window.location.replace('admin.php?tab=5');
     });
   }
 
   showEditor(id): void {
     $('#itemsTypesTemplate_' + id).addClass('mceditable');
-    tinyMceInitLight();
+    tinymce.init(getTinymceBaseConfig('items_types'));
     $('#itemsTypesEditor_' + id).toggle();
   }
 
@@ -68,25 +70,28 @@ export default class ItemType {
     const template = tinymce.get('itemsTypesTemplate_' + id).getContent();
     $('#itemsTypesEditor_' + id).toggle();
 
-    $.post(this.controller, {
-      itemsTypesUpdate: true,
-      id: id,
-      name: name,
-      color: color,
-      bookable: bookable,
-      template: template
-    }).done(function(json) {
-      notif(json);
+    this.send({
+      action: 'update',
+      what: this.what,
+      params: {
+        id: id,
+        template: template,
+        name: name,
+        color: color,
+        bookable: bookable,
+      },
     });
   }
 
   destroy(id): void {
-    $.post(this.controller, {
-      itemsTypesDestroy: true,
-      id: id
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
+    this.send({
+      action: 'destroy',
+      what: this.what,
+      params: {
+        id: id,
+      },
+    }).then(function(response) {
+      if (response.res) {
         $('#itemstypes_' + id).hide();
         $('#itemstypesOrder_' + id).hide();
       }

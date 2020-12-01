@@ -10,15 +10,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
+use Elabftw\Elabftw\ParamsProcessor;
+
 /**
- * Interface for Experiments or Database
+ * For things that can be created
  */
-interface CreateInterface
+interface CreatableInterface
 {
-    /**
-     * Create an item (exp or db)
-     *
-     * @return int
-     */
-    public function create(int $tpl): int;
+    // returns the new id inserted
+    public function create(ParamsProcessor $params): int;
 }

@@ -14,6 +14,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use function filter_var;
 use function htmlspecialchars_decode;
 use function mb_strlen;
+use function nl2br;
 use function strip_tags;
 use function strlen;
 use function strtr;
@@ -94,6 +95,15 @@ class Filter
         return $output;
     }
 
+    public static function comment(string $input): string
+    {
+        $output = self::sanitize($input);
+        if (mb_strlen($output) < 2) {
+            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
+        }
+        return nl2br($output);
+    }
+
     /**
      * Sanitize title with a filter_var and remove the line breaks.
      *
@@ -136,7 +146,7 @@ class Filter
      */
     public static function body(string $input): string
     {
-        $whitelist = '<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol>
+        $whitelist = '<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol><dl><dt><dd>
             <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><th><td><code><video><audio><pagebreak><pre>
             <details><summary><figure><figcaption>';
         $body = strip_tags($input, $whitelist);

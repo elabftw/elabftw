@@ -88,12 +88,11 @@ try {
             // Need to request verification code to confirm user got secret and can authenticate in the future by MFA
             // so we will require mfa, redirect the user to login
             // which will pickup that enable_mfa is there so it will display the qr code to initialize the process
-            // and after that we redirect on ucp back thanks to mfa_redirect
+            // and after that we redirect on ucp back
             // the mfa_secret is not yet saved to the DB
             $App->Session->set('mfa_auth_required', true);
             $App->Session->set('mfa_secret', $MfaHelper->generateSecret());
             $App->Session->set('enable_mfa', true);
-            $App->Session->set('mfa_redirect', '../../ucp.php?tab=2');
 
             // This will redirect user right away to verify mfa code
             $Response = new RedirectResponse('../../login.php');

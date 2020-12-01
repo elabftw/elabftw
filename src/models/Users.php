@@ -269,7 +269,7 @@ class Users
         // NOTE: previously, the ORDER BY started with the team, but that didn't work
         // with the DISTINCT, so it was removed.
         $sql = "SELECT DISTINCT users.userid,
-            users.firstname, users.lastname, users.email,
+            users.firstname, users.lastname, users.email, users.mfa_secret,
             users.validated, users.usergroup, users.archived, users.last_login,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname
             FROM users

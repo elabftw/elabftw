@@ -15,7 +15,6 @@ use Defuse\Crypto\Key;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Saml;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\Idps;
@@ -54,6 +53,7 @@ class LoginController implements ControllerInterface
             $flashBag = $this->App->Session->getBag('flashes');
             $flashKey = 'ko';
             $flashValue = _('Two Factor Authentication was not enabled!');
+
             // Only save if user didn't click Cancel button
             if ($this->App->Request->request->get('Submit') === 'submit') {
                 $MfaHelper = new MfaHelper(
@@ -63,7 +63,10 @@ class LoginController implements ControllerInterface
 
                 // check the input code against the secret stored in session
                 if (!$MfaHelper->verifyCode($this->App->Request->request->get('mfa_code') ?? '')) {
-                    throw new InvalidCredentialsException('The code you entered is not valid!');
+                    if ($flashBag instanceof FlashBag) {
+                        $flashBag->add($flashKey, _('The code you entered is not valid!'));
+                    }
+                    return new RedirectResponse('../../login.php');
                 }
 
                 // all good, save the secret in the database now that we now the user can authenticate against it
@@ -75,13 +78,12 @@ class LoginController implements ControllerInterface
             if ($flashBag instanceof FlashBag) {
                 $flashBag->add($flashKey, $flashValue);
             }
+
             $this->App->Session->remove('enable_mfa');
             $this->App->Session->remove('mfa_auth_required');
             $this->App->Session->remove('mfa_secret');
-            $location = $this->App->Session->get('mfa_redirect');
-            $this->App->Session->remove('mfa_redirect');
 
-            return new RedirectResponse($location);
+            return new RedirectResponse('../../ucp.php?tab=2');
         }
 
         // store the rememberme choice in session

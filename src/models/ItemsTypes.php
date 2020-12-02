@@ -78,7 +78,7 @@ class ItemsTypes extends AbstractCategory
 
         $res = $req->fetch();
         if ($res === false || $res === null) {
-            return '';
+            return array();
         }
         return $res;
     }

@@ -1,6 +1,7 @@
 /* eslint-disable quotes */
 const t = {
   translation: {
+    "click-to-edit": "Click to edit",
     "comment-add": "Add a comment",
     "dropzone-upload-area": "Drop files here to upload",
     "entity-default-title": "Untitled",

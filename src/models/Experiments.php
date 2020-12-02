@@ -11,8 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use function bin2hex;
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\CreateInterface;
+use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
 use PDO;
@@ -22,7 +23,7 @@ use function sha1;
 /**
  * All about the experiments
  */
-class Experiments extends AbstractEntity implements CreateInterface
+class Experiments extends AbstractEntity implements CreatableInterface
 {
     /**
      * Constructor
@@ -39,33 +40,33 @@ class Experiments extends AbstractEntity implements CreateInterface
 
     /**
      * Create an experiment
-     *
-     * @param int $tpl the template on which to base the experiment
-     * @return int the new id of the experiment
      */
-    public function create(int $tpl): int
+    public function create(ParamsProcessor $params): int
     {
         $Templates = new Templates($this->Users);
 
+        $tpl = $params->id;
         // do we want template ?
         if ($tpl > 0) {
             $Templates->setId($tpl);
             $templatesArr = $Templates->read();
             $title = $templatesArr['name'];
             $body = $templatesArr['body'];
+            $canread = $templatesArr['canread'];
+            $canwrite = $templatesArr['canwrite'];
         } else {
             $title = _('Untitled');
             $body = $Templates->readCommonBody();
+            $canread = 'team';
+            $canwrite = 'user';
+            if ($this->Users->userData['default_read'] !== null) {
+                $canread = $this->Users->userData['default_read'];
+            }
+            if ($this->Users->userData['default_write'] !== null) {
+                $canwrite = $this->Users->userData['default_write'];
+            }
         }
 
-        $canread = 'team';
-        $canwrite = 'user';
-        if ($this->Users->userData['default_read'] !== null) {
-            $canread = $this->Users->userData['default_read'];
-        }
-        if ($this->Users->userData['default_write'] !== null) {
-            $canwrite = $this->Users->userData['default_write'];
-        }
 
         // enforce the permissions if the admin has set them
         $Team = new Team((int) $this->Users->userData['team']);
@@ -241,14 +242,9 @@ class Experiments extends AbstractEntity implements CreateInterface
         $this->Pins->cleanup();
     }
 
-    /**
-     * Get the team from the elabid
-     *
-     * @param string $elabid
-     * @return int
-     */
     public function getTeamFromElabid(string $elabid): int
     {
+        $elabid = Filter::sanitize($elabid);
         $sql = 'SELECT users2teams.teams_id FROM `experiments`
             CROSS JOIN users2teams ON (users2teams.users_id = experiments.userid)
             WHERE experiments.elabid = :elabid';

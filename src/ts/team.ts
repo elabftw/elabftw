@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
     eventClick: function(info): void {
       if (!editable) { return; }
       $('#rmBind').hide();
-      $('#eventModal').modal('toggle');
+      ($('#eventModal') as any).modal('toggle');
       // delete button in modal
       $('#deleteEvent').on('click', function(): void {
         $.post('app/controllers/SchedulerController.php', {
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
           notif(json);
           if (json.res) {
             info.event.remove();
-            $('#eventModal').modal('toggle');
+            ($('#eventModal') as any).modal('toggle');
           }
         });
       });
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
           notif(json);
           if (json.res) {
             $('#bindinput').val('');
-            $('#eventModal').modal('toggle');
+            ($('#eventModal') as any).modal('toggle');
             window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
           }
         });
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
           unbind: true,
           id: info.event.id,
         }).done(function(json) {
-          $('#eventModal').modal('toggle');
+          ($('#eventModal') as any).modal('toggle');
           notif(json);
           window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
         });

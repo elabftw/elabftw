@@ -36,6 +36,11 @@ abstract class AbstractCategory implements CrudInterface
     abstract public function readColor(int $id): string;
 
     /**
+     * Get all the things
+     */
+    abstract public function readAll(): array;
+
+    /**
      * Count all items of this type
      *
      * @param int $id of the type

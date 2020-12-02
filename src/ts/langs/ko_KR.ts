@@ -1,6 +1,7 @@
 /* eslint-disable quotes */
 const t = {
   translation: {
+    "click-to-edit": "편집하려면 클릭",
     "comment-add": "의견 추가",
     "dropzone-upload-area": "업로드 하려는 파일을 여기에 드롭하세요",
     "entity-default-title": "제목없음",

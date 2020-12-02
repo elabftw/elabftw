@@ -13,13 +13,15 @@ namespace Elabftw\Exceptions;
 use Exception;
 
 /**
- * Throw this if the SQL query failed
+ * Throw this if the auth is not good
  */
 class InvalidCredentialsException extends Exception
 {
-    public function __construct()
+    public function __construct(?string $message = null)
     {
-        $message = _('Invalid email/password combination.');
+        if ($message === null) {
+            $message = _('Invalid email/password combination.');
+        }
         parent::__construct($message, 0);
     }
 }

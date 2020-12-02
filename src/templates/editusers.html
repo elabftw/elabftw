@@ -54,7 +54,7 @@
                 <!-- TEAM -->
                 <li class='list-inline-item mb-2'>
                   <label for='usersUpdateTeam_{{ user.userid }}'>{{ 'Team(s)'|trans }}</label>
-                    {% for team in UsersHelper.getTeamsFromUserid(user.userid) %}
+                    {% for team in user.teams %}
                       <span class='btn btn-secondary clickable' data-team='{{ team.id }}'>{{ team.name }}</span>
                     {% endfor %}
                     {% if App.Session.get('is_sysadmin') %}

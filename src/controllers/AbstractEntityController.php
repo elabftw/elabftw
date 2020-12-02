@@ -12,6 +12,7 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
@@ -20,7 +21,6 @@ use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Check;
-use function is_array;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -72,8 +72,9 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         // CREATE
-        if ($this->App->Request->query->has('create')) {
-            $id = $this->Entity->create((int) $this->App->Request->query->get('tpl'));
+        if ($this->App->Request->query->has('create') && !$this->App->Session->get('is_anon')) {
+            $params = new ParamsProcessor(array('id' => $this->App->Request->query->get('tpl')));
+            $id = $this->Entity->create($params);
             return new RedirectResponse('?mode=edit&id=' . (string) $id);
         }
 
@@ -100,19 +101,20 @@ abstract class AbstractEntityController implements ControllerInterface
         if (!empty($this->App->Request->query->get('tags')[0])) {
             // get all the ids with that tag
             $tagsFromGet = $this->App->Request->query->get('tags') ?? array();
-            if (is_array($tagsFromGet)) {
-                $ids = $this->Entity->Tags->getIdFromTags($tagsFromGet, (int) $this->App->Users->userData['team']);
-                $idFilter = ' AND (';
-                foreach ($ids as $id) {
-                    $idFilter .= 'entity.id = ' . $id . ' OR ';
-                }
-                $trimmedFilter = rtrim($idFilter, ' OR ') . ')';
-                // don't add it if it's empty (for instance we search in items for a tag that only exists on experiments)
-                if ($trimmedFilter === ' AND ()') {
-                    throw new ImproperActionException(_("Sorry. I couldn't find anything :("));
-                }
-                $this->Entity->idFilter = $trimmedFilter;
+            if (is_string($tagsFromGet)) {
+                $tagsFromGet = array();
             }
+            $ids = $this->Entity->Tags->getIdFromTags($tagsFromGet, (int) $this->App->Users->userData['team']);
+            $idFilter = ' AND (';
+            foreach ($ids as $id) {
+                $idFilter .= 'entity.id = ' . $id . ' OR ';
+            }
+            $trimmedFilter = rtrim($idFilter, ' OR ') . ')';
+            // don't add it if it's empty (for instance we search in items for a tag that only exists on experiments)
+            if ($trimmedFilter === ' AND ()') {
+                throw new ImproperActionException(_("Sorry. I couldn't find anything :("));
+            }
+            $this->Entity->idFilter = $trimmedFilter;
         }
 
         // create the DisplayParams object from the query
@@ -120,7 +122,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $DisplayParams->adjust($this->App);
 
         // only show public to anon
-        if ($this->App->Session->get('anon')) {
+        if ($this->App->Session->get('is_anon')) {
             $this->Entity->addFilter('entity.canread', 'public');
         }
 

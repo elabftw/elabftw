@@ -54,7 +54,7 @@ $(document).ready(function() {
       }).done(function(data) {
         try {
           editor.set(JSON.parse(data));
-          $('#jsonEditorDiv').collapse('show');
+          ($('#jsonEditorDiv') as any).collapse('show');
           if ($('.jsonEditorPlusMinusButton').html() === '+') {
             $('.jsonEditorPlusMinusButton').html('-').addClass('btn-neutral').removeClass('btn-primary');
           }
@@ -86,7 +86,7 @@ $(document).ready(function() {
       if (typeof currentFileItemID === 'undefined') {
         // we are creating a new file
         let realName = prompt(i18next.t('request-filename'));
-        if (realName == null) {
+        if (realName === null) {
           return;
         }
         // strip the filename of the .json extension from the name if available
@@ -98,7 +98,7 @@ $(document).ready(function() {
         $.post('app/controllers/EntityAjaxController.php', {
           addFromString: true,
           type: 'experiments',
-          id: itemID,
+          id: $('#info').data('id'),
           realName: realName,
           fileType: 'json',
           string: JSON.stringify(editor.get())

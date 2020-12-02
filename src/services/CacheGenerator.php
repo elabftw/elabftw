@@ -25,8 +25,7 @@ class CacheGenerator
 
     /**
      * Generate a twig cache file for all the templates in the template dir
-     *
-     * @return void
+     * @phan-suppress PhanAccessMethodInternal
      */
     public function generate(): void
     {

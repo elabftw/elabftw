@@ -99,6 +99,7 @@ class Links implements CreatableInterface, ReadableInterface, DestroyableInterfa
      * Get related entities
      *
      * @return array It contains two result arrays (items, experiments).
+     * @phan-suppress PhanPluginPrintfVariableFormatString
      */
     public function readRelated(): array
     {

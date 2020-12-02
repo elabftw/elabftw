@@ -8,6 +8,7 @@
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import Tag from './Tag.class';
+import i18next from 'i18next';
 
 $(document).ready(function() {
   let type = $('#info').data('type');
@@ -64,7 +65,7 @@ $(document).ready(function() {
 
       return(value);
     }, {
-      tooltip : 'Click to edit',
+      tooltip : i18next.t('click-to-edit'),
       indicator : 'Saving...',
       onblur: 'submit',
       style : 'display:inline',

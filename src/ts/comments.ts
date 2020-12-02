@@ -7,6 +7,7 @@
  */
 import Comment from './Comment.class';
 import { notif } from './misc';
+import i18next from 'i18next';
 
 $(document).ready(function() {
   const type = $('#info').data('type');
@@ -35,7 +36,7 @@ $(document).ready(function() {
       },
       width: '80%',
       height: '200',
-      tooltip : 'Click to edit',
+      tooltip : i18next.t('click-to-edit'),
       indicator : $(this).data('indicator'),
       submit : $(this).data('submit'),
       cancel : $(this).data('cancel'),

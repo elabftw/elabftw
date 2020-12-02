@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function bin2hex;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\DestroyableInterface;
@@ -17,6 +18,7 @@ use function filter_var;
 use function password_hash;
 use function password_verify;
 use PDO;
+use function random_bytes;
 
 /**
  * Api keys
@@ -48,10 +50,11 @@ class ApiKeys implements DestroyableInterface
      * @return string the key
      */
     public function create(string $name, int $canWrite): string
+    //public function create(ParamsProcessor $params): string
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
-        $apiKey = \bin2hex(\random_bytes(42));
-        $hash = password_hash($apiKey, 1);
+        $apiKey = bin2hex(random_bytes(42));
+        $hash = password_hash($apiKey, PASSWORD_BCRYPT);
 
         $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
         $req = $this->Db->prepare($sql);
@@ -74,7 +77,7 @@ class ApiKeys implements DestroyableInterface
      */
     public function createKnown(string $apiKey): void
     {
-        $hash = password_hash($apiKey, 1);
+        $hash = password_hash($apiKey, PASSWORD_BCRYPT);
 
         $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
         $req = $this->Db->prepare($sql);

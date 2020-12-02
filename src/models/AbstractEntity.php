@@ -434,14 +434,30 @@ abstract class AbstractEntity implements CreatableInterface
      * Get a list of visibility/team groups to display
      *
      * @param string $rw read or write
-     * @return string
+     * @return string capitalized and translated permission level
      */
     public function getCan(string $rw): string
     {
         if (Check::id((int) $this->entityData['can' . $rw]) !== false) {
-            return $this->TeamGroups->readName((int) $this->entityData['can' . $rw]);
+            return ucfirst($this->TeamGroups->readName((int) $this->entityData['can' . $rw]));
         }
-        return ucfirst($this->entityData['can' . $rw]);
+        switch ($this->entityData['can' . $rw]) {
+            case 'public':
+                $res = _('Public');
+                break;
+            case 'organization':
+                $res = _('Organization');
+                break;
+            case 'team':
+                $res = _('Team');
+                break;
+            case 'user':
+                $res = _('User');
+                break;
+            default:
+                $res = Tools::error();
+        }
+        return ucfirst($res);
     }
 
     /**

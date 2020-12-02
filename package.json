@@ -36,7 +36,9 @@
     "popper.js": "1.16.*",
     "prismjs": "^1.21.0",
     "sass": "^1.23.7",
-    "tinymce": "^5.6.0"
+    "tinymce": "^5.6.0",
+    "timers-browserify": "^2.0.12",
+    "stream-browserify": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",

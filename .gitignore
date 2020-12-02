@@ -16,6 +16,7 @@ config.php*
 *.bundle.js
 node_modules/*
 web/test.php
+web/app/js/*.LICENSE.txt
 tests/_output/*
 tests/_support/_generated*
 uploads

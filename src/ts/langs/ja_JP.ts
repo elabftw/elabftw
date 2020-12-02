@@ -1,6 +1,7 @@
 /* eslint-disable quotes */
 const t = {
   translation: {
+    "click-to-edit": "クリックして編集する",
     "comment-add": "コメントを追加",
     "dropzone-upload-area": "ここにファイルをドロップしてアップロードします",
     "entity-default-title": "無題",

@@ -1,7 +1,7 @@
 {# for experiments or items the linksArr and stepsArr are already provided, for tpl it's in a loop #}
 {% if Entity.type == 'experiments_templates' %}
-  {% set stepsArr = Entity.Steps.readFromId(templateData.id) %}
-  {% set linksArr = Entity.Links.readFromId(templateData.id) %}
+  {% set stepsArr = Entity.Steps.read() %}
+  {% set linksArr = Entity.Links.read() %}
   {% set Entity_id = templateData.id %}
 {% else %}
   {% set Entity_id = Entity.id %}

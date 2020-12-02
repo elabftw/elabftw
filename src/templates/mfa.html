@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{{ include('failed-attempt.html') }}
+
+<section class='text-center'>
+  <img src='app/img/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
+  <h4 class='mt-4'>{{ 'Two Factor Authentication'|trans }}</h4>
+  <form method='post' action='app/controllers/LoginController.php' autocomplete='off'>
+    <input type='hidden' name='auth_type' value='mfa'>
+    <!-- form key -->
+    {{ App.Csrf.getHiddenInput|raw }}
+    {% if App.Session.has('enable_mfa') %}
+      <p>{{ 'Open your authenticator application and scan the QR code.'|trans }}</p>
+      <p><img src='{{ mfaQRCodeImageDataUri|raw }}'></p>
+
+      <div class='text-center col-md-5 mx-auto'>
+        <label for='mfa_secret'>{{ 'Secret for manual setup'|trans }}</label>
+        <div class='input-group'>
+          <input class='form-control text-center' value='{{ mfaSecret|raw }}' id='mfa_secret' name='mfa_secret' type='password' readonly />
+          <div class='input-group-append'>
+            <span class='btn btn-light input-border togglePassword' tabindex='-1' data-toggle='#mfa_secret'><i class='fas fa-eye' aria-hidden='true'></i></span>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+    <div class='col-md-4 mx-auto mt-4 form-group'>
+      <label for='mfa_code'>{{ 'Authentication code'|trans }}</label>
+      <input class='form-control mb-4 text-center' id='mfa_code' name='mfa_code' type='text' pattern='.{6}' aria-describedby='mfa_code_help_block' />
+      <p id='mfa_code_help_block' class='form-text text-muted'>{{ 'Open the authenticator app on your device to get your authentication code and verify your identity.'|trans }}</p>
+    </div>
+    <button type='submit' class='button btn btn-primary' name='Submit' value='submit'>{{ 'Verify'|trans }}</button>
+    {% if App.Session.has('enable_mfa') %}
+      <button type='submit' class='button btn btn-danger' name='Submit' value='cancel'>{{ 'Cancel'|trans }}</button>
+    {% endif %}
+  </form>
+</section>
+{% endblock body %}

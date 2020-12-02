@@ -26,7 +26,9 @@ class ResourceNotFoundException extends Exception
      */
     public function __construct($message = null, $code = 404, Exception $previous = null)
     {
-        $message = _('Nothing to show with this id');
+        if ($message === null) {
+            $message = _('Nothing to show with this id');
+        }
         parent::__construct($message, $code, $previous);
     }
 }

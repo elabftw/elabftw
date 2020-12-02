@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -22,22 +23,23 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 /**
  * Actions from team.php
  */
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new RedirectResponse('../../team.php?tab=4');
 try {
+    // NOT FOR ANON
+    if ($App->Session->get('is_anon')) {
+        throw new IllegalActionException('Anonymous user tried to send email to team');
+    }
 
     // CSRF
     $App->Csrf->validate();
 
     // EMAIL TEAM
     if ($Request->request->has('emailTeam')) {
-        if ($App->Session->get('auth') !== 1) {
-            throw new IllegalActionException('Anonymous user tried to send email to team');
-        }
         $Email = new Email($App->Config, $App->Users);
         $sent = $Email->massEmail($Request->request->get('subject'), $Request->request->get('body'), true);
-        $Session->getFlashBag()->add('ok', sprintf(_('Email sent to %d users'), $sent));
+        $App->Session->getFlashBag()->add('ok', sprintf(_('Email sent to %d users'), $sent));
     }
 } catch (ImproperActionException | InvalidCsrfTokenException $e) {
     // show message to user

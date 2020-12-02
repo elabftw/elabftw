@@ -237,7 +237,7 @@ class MakePdf extends AbstractMake
     private function addLinkedItems(): string
     {
         $html = '';
-        $linksArr = $this->Entity->Links->readAll();
+        $linksArr = $this->Entity->Links->read();
         if (empty($linksArr)) {
             return $html;
         }
@@ -273,7 +273,7 @@ class MakePdf extends AbstractMake
     {
         $html = '';
 
-        $commentsArr = $this->Entity->Comments->readAll();
+        $commentsArr = $this->Entity->Comments->read();
         if (empty($commentsArr)) {
             return $html;
         }
@@ -371,7 +371,7 @@ class MakePdf extends AbstractMake
     {
         $html = '';
 
-        $stepsArr = $this->Entity->Steps->readAll();
+        $stepsArr = $this->Entity->Steps->read();
         if (empty($stepsArr)) {
             return $html;
         }

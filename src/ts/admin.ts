@@ -5,60 +5,23 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, tinyMceInitLight } from './misc';
+import { notif } from './misc';
 import $ from 'jquery';
-import i18next from 'i18next';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import TeamGroup from './TeamGroup.class';
 import Status from './Status.class';
 import ItemType from './ItemType.class';
 import tinymce from 'tinymce/tinymce';
-import 'tinymce/icons/default';
-import 'tinymce/plugins/advlist';
-import 'tinymce/plugins/charmap';
-import 'tinymce/plugins/code';
-import 'tinymce/plugins/codesample';
-import 'tinymce/plugins/fullscreen';
-import 'tinymce/plugins/hr';
-import 'tinymce/plugins/image';
-import 'tinymce/plugins/imagetools';
-import 'tinymce/plugins/insertdatetime';
-import 'tinymce/plugins/link';
-import 'tinymce/plugins/lists';
-import 'tinymce/plugins/pagebreak';
-import 'tinymce/plugins/paste';
-import 'tinymce/plugins/save';
-import 'tinymce/plugins/searchreplace';
-import 'tinymce/plugins/table';
-import 'tinymce/plugins/template';
-import 'tinymce/themes/silver';
-import 'tinymce/themes/mobile';
-import '../js/tinymce-langs/ca_ES.js';
-import '../js/tinymce-langs/de_DE.js';
-import '../js/tinymce-langs/en_GB.js';
-import '../js/tinymce-langs/es_ES.js';
-import '../js/tinymce-langs/fr_FR.js';
-import '../js/tinymce-langs/id_ID.js';
-import '../js/tinymce-langs/it_IT.js';
-import '../js/tinymce-langs/ja_JP.js';
-import '../js/tinymce-langs/ko_KR.js';
-import '../js/tinymce-langs/nl_BE.js';
-import '../js/tinymce-langs/pl_PL.js';
-import '../js/tinymce-langs/pt_BR.js';
-import '../js/tinymce-langs/pt_PT.js';
-import '../js/tinymce-langs/ru_RU.js';
-import '../js/tinymce-langs/sk_SK.js';
-import '../js/tinymce-langs/sl_SI.js';
-import '../js/tinymce-langs/zh_CN.js';
+import { getTinymceBaseConfig } from './tinymce';
 
 $(document).ready(function() {
   if (window.location.pathname !== '/admin.php') {
     return;
   }
 
-  // activate editors in new item type and common template
-  tinyMceInitLight();
+  // activate editor for common template
+  tinymce.init(getTinymceBaseConfig('admin'));
 
   // VALIDATE USERS
   $(document).on('click', '.usersValidate', function() {
@@ -85,7 +48,12 @@ $(document).ready(function() {
             response(cache[term]);
             return;
           }
-          $.getJSON('app/controllers/AdminAjaxController.php', request, function(data) {
+          request.what = 'user';
+          request.action = 'getList';
+          request.params = {
+            name: term,
+          };
+          $.getJSON('app/controllers/Ajax.php', request, function(data) {
             cache[term] = data;
             response(data);
           });
@@ -130,15 +98,23 @@ $(document).ready(function() {
   });
   // edit the team group name
   $(document).on('mouseenter', 'h3.teamgroup_name', function() {
-    ($(this) as any).editable('app/controllers/TeamGroupsController.php', {
+    ($(this) as any).editable(function(value) {
+      $.post('app/controllers/Ajax.php', {
+        action: 'update',
+        what: 'teamgroup',
+        params: {
+          name: value,
+          id: $(this).data('id'),
+        },
+      });
+      return(value);
+    }, {
       indicator : 'Saving...',
-      name : 'teamGroupUpdateName',
       submit : 'Save',
       cancel : 'Cancel',
       cancelcssclass : 'button btn btn-danger',
       submitcssclass : 'button btn btn-primary',
       style : 'display:inline'
-
     });
   });
 
@@ -179,8 +155,13 @@ $(document).ready(function() {
   // COMMON TEMPLATE
   $('#commonTplTemplate').closest('div').find('.button').on('click', function() {
     const template = tinymce.get('commonTplTemplate').getContent();
-    $.post('app/controllers/AjaxController.php', {
-      commonTplUpdate: template
+    $.post('app/controllers/Ajax.php', {
+      action: 'updateCommon',
+      what: 'template',
+      type: 'experiments_templates',
+      params: {
+        template: template,
+      },
     }).done(function(json) {
       notif(json);
     });
@@ -190,22 +171,4 @@ $(document).ready(function() {
   // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
   const colorInput = '#' + Math.floor(Math.random()*16777215).toString(16);
   $('.randomColor').val(colorInput);
-
-  // make the tag editable
-  $(document).on('mouseenter', '.tag-editable', function() {
-    ($(this) as any).editable(function(value) {
-      $.post('app/controllers/TagsController.php', {
-        update: true,
-        newtag: value,
-        tagId: $(this).data('tagid'),
-      });
-
-      return(value);
-    }, {
-      tooltip : 'Click to edit',
-      indicator : 'Saving...',
-      onblur: 'submit',
-      style : 'display:inline',
-    });
-  });
 });

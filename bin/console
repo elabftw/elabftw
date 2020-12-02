@@ -25,5 +25,6 @@ $Application->add(new SnapFingers());
 $Application->add(new GenCache());
 $Application->add(new PopulateDatabase());
 $Application->add(new PruneRevisions());
+$Application->add(new MfaCode());
 
 $Application->run();

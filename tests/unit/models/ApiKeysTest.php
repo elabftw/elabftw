@@ -39,6 +39,6 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy()
     {
-        $this->assertNull($this->ApiKeys->destroy(2));
+        $this->assertTrue($this->ApiKeys->destroy(2));
     }
 }

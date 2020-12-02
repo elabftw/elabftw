@@ -12,6 +12,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use function filter_var;
 use function in_array;
 use function mb_strlen;
 
@@ -22,6 +23,9 @@ class Check
 {
     /** the minimum password length */
     public const MIN_PASSWORD_LENGTH = 8;
+
+    /** cookie is a sha1 sum: 64 chars */
+    private const COOKIE_LENGTH = 64;
 
     /**
      * Check the number of character of a password
@@ -97,7 +101,7 @@ class Check
                 'min_range' => 1,
                 'max_range' => 500,
             ),
-            FILTER_NULL_ON_FAILURE,
+            'flags' => FILTER_NULL_ON_FAILURE,
         );
         return filter_var($limit, FILTER_VALIDATE_INT, $filterOptions);
     }
@@ -185,10 +189,21 @@ class Check
             'write',
         );
 
-        if (!\in_array($rw, $validArr, true)) {
+        if (!in_array($rw, $validArr, true)) {
             throw new IllegalActionException('The read/write parameter is wrong.');
         }
 
         return $rw;
+    }
+
+    /**
+     * Check the cookie token
+     */
+    public static function token(string $token): string
+    {
+        if (mb_strlen($token) !== self::COOKIE_LENGTH) {
+            throw new IllegalActionException('Invalid cookie!');
+        }
+        return Filter::sanitize($token);
     }
 }

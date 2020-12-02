@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\OrderingParams;
 use PDO;
 
@@ -19,6 +20,9 @@ use PDO;
  */
 trait SortableTrait
 {
+    /** @var Db $Db SQL Database */
+    protected $Db;
+
     /**
      * Update ordering for status, experiment templates or items types
      *

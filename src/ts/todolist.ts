@@ -8,6 +8,7 @@
 declare let key: any;
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import Todolist from './Todolist.class';
+import i18next from 'i18next';
 
 $(document).ready(function() {
   const TodolistC = new Todolist();
@@ -31,15 +32,18 @@ $(document).ready(function() {
   // EDIT
   $(document).on('mouseenter', '.todoItem', function() {
     ($(this) as any).editable(function(value) {
-      $.post('app/controllers/TodolistController.php', {
-        update: true,
-        body: value,
-        id: $(this).data('id'),
+      $.post('app/controllers/Ajax.php', {
+        action: 'update',
+        what: 'todolist',
+        params: {
+          template: value,
+          id: $(this).data('id'),
+        },
       });
 
       return(value);
     }, {
-      tooltip : 'Click to edit',
+      tooltip : i18next.t('click-to-edit'),
       indicator : 'Saving...',
       onblur: 'submit',
       style : 'display:inline'
@@ -48,9 +52,6 @@ $(document).ready(function() {
 
   $('#todo-form').submit(function(e) {
     TodolistC.create(e);
-  });
-  $(document).on('click', '.todoDestroyAll', function() {
-    TodolistC.destroyAll();
   });
 
   $(document).on('click', '.destroyTodoItem', function() {

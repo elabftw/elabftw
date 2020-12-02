@@ -9,6 +9,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ParamsProcessor;
+
 class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
@@ -18,12 +20,31 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateUpdateDestroy()
     {
-        $this->ItemsTypes->create('new', '#fffccc', 0, 'body');
+        $this->ItemsTypes->create(
+            new ParamsProcessor(
+                array(
+                    'name' => 'new',
+                    'color' => '#fffccc',
+                    'bookable' => 0,
+                    'template' => '<p>body</p>',
+                )
+            )
+        );
         $itemsTypes = $this->ItemsTypes->readAll();
         $last = array_pop($itemsTypes);
-        $this->ItemsTypes->update((int) $last['category_id'], 'newname', '#fffccc', 1, 'newbody');
+        $this->ItemsTypes->update(
+            new ParamsProcessor(
+                array(
+                    'name' => 'newname',
+                    'id' => (int) $last['category_id'],
+                    'color' => '#fffccc',
+                    'bookable' => 1,
+                    'template' => 'newbody',
+                )
+            )
+        );
         $this->ItemsTypes->setId((int) $last['category_id']);
-        $this->assertEquals('newbody', $this->ItemsTypes->read($last['category_id']));
+        $this->assertEquals('newbody', $this->ItemsTypes->read($last['category_id'])['template']);
         $this->ItemsTypes->destroy((int) $last['category_id']);
     }
 }

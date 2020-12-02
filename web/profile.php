@@ -40,7 +40,11 @@ try {
     // see https://developers.google.com/chart/interactive/docs/reference?csw=1#datatable-class
     $UserStats = new UserStats($App->Users, $count);
     $UserStats->makeStats();
-    $UsersHelper = new UsersHelper();
+
+    // get the teams
+    $UsersHelper = new UsersHelper((int) $App->Users->userData['userid']);
+    $teams = $UsersHelper->getTeamsFromUserid();
+
     $stats = array();
     // columns
     $stats['cols'] = array(
@@ -67,12 +71,12 @@ try {
 
     $template = 'profile.html';
     $renderArr = array(
-        'UsersHelper' => $UsersHelper,
         'UserStats' => $UserStats,
         'colorsJson' => $colorsJson,
         'count' => $count,
         'statsJson' => $statsJson,
         'teamGroupsArr' => $teamGroupsArr,
+        'teamsArr' => $teams,
     );
 } catch (Exception $e) {
     $template = 'error.html';

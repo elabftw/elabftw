@@ -11,9 +11,11 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Traits\SortableTrait;
+use function mb_strlen;
 use PDO;
 
 /**
@@ -42,16 +44,13 @@ class Todolist implements CrudInterface
 
     /**
      * Create a todoitem
-     *
-     * @param string $body
-     * @return int the id of the created todoitem
      */
-    public function create(string $body): int
+    public function create(ParamsProcessor $params): int
     {
         $sql = 'INSERT INTO todolist(body, userid)
             VALUES(:body, :userid)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':body', $body);
+        $req->bindParam(':body', $params->template);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
@@ -60,10 +59,8 @@ class Todolist implements CrudInterface
 
     /**
      * Select all the todoitems for a user
-     *
-     * @return array
      */
-    public function readAll(): array
+    public function read(): array
     {
         $sql = 'SELECT id, body, creation_time FROM todolist WHERE userid = :userid ORDER BY ordering ASC, creation_time DESC';
         $req = $this->Db->prepare($sql);
@@ -79,42 +76,35 @@ class Todolist implements CrudInterface
 
     /**
      * Update the body of a todoitem with jeditable
-     *
-     * @param int $id Id of the todoitem
-     * @param string $body
-     * @return void
      */
-    public function update(int $id, string $body): void
+    public function update(ParamsProcessor $params): string
     {
-        if (\mb_strlen($body) < 2) {
+        if (mb_strlen($params->template) < 2) {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
         }
         $sql = 'UPDATE todolist SET body = :body WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->bindParam(':body', $body);
+        $req->bindParam(':id', $params->id, PDO::PARAM_INT);
+        $req->bindParam(':body', $params->template);
         $this->Db->execute($req);
+
+        return $params->template;
     }
 
     /**
      * Remove a todoitem
-     *
-     * @param int $id
-     * @return void
      */
-    public function destroy(int $id): void
+    public function destroy(int $id): bool
     {
         $sql = 'DELETE FROM todolist WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**
      * Clear all todoitems from the todolist
-     *
-     * @return void
      */
     public function destroyAll(): void
     {

@@ -18,7 +18,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MakeThumbnail;
 use Elabftw\Traits\UploadTrait;
@@ -36,7 +36,7 @@ use function unlink;
 /**
  * All about the file uploads
  */
-class Uploads implements CrudInterface
+class Uploads implements DestroyableInterface
 {
     use UploadTrait;
 
@@ -89,8 +89,14 @@ class Uploads implements CrudInterface
             $exifData = exif_read_data($fullPath);
             if ($exifData !== false) {
                 $image = new Gmagick($fullPath);
-                $image->rotateimage('#000', $this->getRotationAngle($exifData));
-                $image->write($fullPath);
+                // default is 75
+                $image->setCompressionQuality(100);
+                $rotationAngle = $this->getRotationAngle($exifData);
+                // only do it if needed
+                if ($rotationAngle !== 0) {
+                    $image->rotateimage('#000', $rotationAngle);
+                    $image->write($fullPath);
+                }
             }
         }
         // final sql
@@ -242,10 +248,6 @@ class Uploads implements CrudInterface
         $this->Entity->canOrExplode('write');
         $upload = $this->readFromId((int) $request->request->get('upload_id'));
         $fullPath = $this->getUploadsPath() . $upload['long_name'];
-        // check user is same as the previously uploaded file
-        if ((int) $upload['userid'] !== (int) $this->Entity->Users->userData['userid']) {
-            throw new IllegalActionException('User tried to replace an upload of another user.');
-        }
         $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb(true);
@@ -294,11 +296,8 @@ class Uploads implements CrudInterface
 
     /**
      * Destroy an upload
-     *
-     * @param int $id id of the upload
-     * @return void
      */
-    public function destroy(int $id): void
+    public function destroy(int $id): bool
     {
         $this->Entity->canOrExplode('write');
 
@@ -321,7 +320,7 @@ class Uploads implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**

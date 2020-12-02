@@ -5,13 +5,13 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { relativeMoment, notif, makeSortableGreatAgain } from './misc';
+import Crud from './Crud.class';
+import { relativeMoment, makeSortableGreatAgain } from './misc';
 
-export default class Todolist {
-  controller: string;
+export default class Todolist extends Crud {
 
   constructor() {
-    this.controller = 'app/controllers/TodolistController.php';
+    super('app/controllers/Ajax.php');
   }
 
   // add a todo item
@@ -19,25 +19,27 @@ export default class Todolist {
     e.preventDefault();
     const body = $('#todo').val();
     if (body !== '') {
-      $.post(this.controller, {
-        create: true,
-        body: body
-      }).done(json => {
-        if (json.res) {
+      this.send({
+        action: 'create',
+        what: 'todolist',
+        params: {
+          template: body,
+        },
+      }).then((response) => {
+        if (response.res) {
           // reload the todolist
-          this.getTodoItems();
+          this.read();
           // and clear the input
           $('#todo').val('');
-        } else {
-          notif(json);
         }
       });
     }
   }
 
-  getTodoItems(): void {
-    $.get('app/controllers/AjaxController.php', {
-      getTodoItems: true,
+  read(): void {
+    $.get('app/controllers/Ajax.php', {
+      action: 'read',
+      what: 'todolist',
     }).done(function(json) {
       let html = '<ul id="todoItems-list" class="sortable" data-axis="y" data-table="todolist">';
       for (const entry of json.msg) {
@@ -55,8 +57,10 @@ export default class Todolist {
   }
 
   getSteps(): void {
-    $.get('app/controllers/AjaxController.php', {
-      getExperimentsSteps: true,
+    $.get('app/controllers/Ajax.php', {
+      action: 'readAll',
+      what: 'step',
+      type: 'experiments',
     }).done(function(json) {
       let html = '';
       for (const exp of json.msg) {
@@ -74,26 +78,17 @@ export default class Todolist {
 
   // remove one todo item
   destroy(id): void {
-    $.post(this.controller, {
-      destroy: true,
-      id: id
-    }).done(function(json) {
-      if (json.res) {
+    this.send({
+      action: 'destroy',
+      what: 'todolist',
+      params: {
+        id: id,
+      },
+    }).then((response) => {
+      if (response.res) {
         // hide item
         $('#todoItem_' + id).css('background', '#29AEB9');
         $('#todoItem_' + id).toggle('blind');
-      }
-    });
-  }
-
-  // clear all the items
-  destroyAll(): void {
-    $.post(this.controller, {
-      destroyAll: true
-    }).done(function(json) {
-      if (json.res) {
-        // hide all items
-        $('#todoItems-list').children().toggle('blind');
       }
     });
   }
@@ -105,7 +100,7 @@ export default class Todolist {
       localStorage.setItem('isTodolistOpen', '0');
     } else {
       $('#container').css('width', '70%').css('margin-right', '0');
-      this.getTodoItems();
+      this.read();
       this.getSteps();
       localStorage.setItem('isTodolistOpen', '1');
     }

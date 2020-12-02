@@ -10,15 +10,15 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\CreateInterface;
 use Elabftw\Services\Filter;
 use PDO;
 
 /**
  * All about the database items
  */
-class Database extends AbstractEntity implements CreateInterface
+class Database extends AbstractEntity
 {
     /**
      * Constructor
@@ -35,13 +35,12 @@ class Database extends AbstractEntity implements CreateInterface
 
     /**
      * Create an item
-     *
-     * @param int $category What kind of item we want to create.
-     * @return int the new id of the item
      */
-    public function create(int $category): int
+    public function create(ParamsProcessor $params): int
     {
+        $category = $params->id;
         $itemsTypes = new ItemsTypes($this->Users, $category);
+        $body = $itemsTypes->read();
 
         // SQL for create DB item
         $sql = 'INSERT INTO items(team, title, date, body, userid, category)
@@ -51,7 +50,7 @@ class Database extends AbstractEntity implements CreateInterface
             'team' => $this->Users->userData['team'],
             'title' => _('Untitled'),
             'date' => Filter::kdate(),
-            'body' => $itemsTypes->read(),
+            'body' => $body['template'],
             'userid' => $this->Users->userData['userid'],
             'category' => $category,
         ));

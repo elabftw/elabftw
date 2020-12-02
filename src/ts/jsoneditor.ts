@@ -20,7 +20,7 @@ $(document).ready(function() {
 
   const options = {
     modes: (($('#info').data('page') === 'edit') ? ['tree','code','view','form','text']:['view']),
-    onModeChange: function(newMode) {
+    onModeChange: (newMode): void => {
       if (newMode==='code' || newMode==='text'){
         $('#jsoneditor').height('800px');
       } else {
@@ -54,7 +54,7 @@ $(document).ready(function() {
       }).done(function(data) {
         try {
           editor.set(JSON.parse(data));
-          $('#jsonEditorDiv').collapse('show');
+          ($('#jsonEditorDiv') as any).collapse('show');
           if ($('.jsonEditorPlusMinusButton').html() === '+') {
             $('.jsonEditorPlusMinusButton').html('-').addClass('btn-neutral').removeClass('btn-primary');
           }
@@ -82,11 +82,11 @@ $(document).ready(function() {
     });
 
     // The save function is now defined separately
-    const saveJsonFile = function(){
+    const saveJsonFile = (): void => {
       if (typeof currentFileItemID === 'undefined') {
         // we are creating a new file
         let realName = prompt(i18next.t('request-filename'));
-        if (realName == null) {
+        if (realName === null) {
           return;
         }
         // strip the filename of the .json extension from the name if available
@@ -98,7 +98,7 @@ $(document).ready(function() {
         $.post('app/controllers/EntityAjaxController.php', {
           addFromString: true,
           type: 'experiments',
-          id: itemID,
+          id: $('#info').data('id'),
           realName: realName,
           fileType: 'json',
           string: JSON.stringify(editor.get())

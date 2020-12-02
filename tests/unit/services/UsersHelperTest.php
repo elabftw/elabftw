@@ -13,16 +13,29 @@ class UsersHelperTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
     {
-        $this->UsersHelper = new UsersHelper();
+        $this->UsersHelper = new UsersHelper(1);
     }
 
     public function testHasExperiments()
     {
-        $this->assertTrue($this->UsersHelper->hasExperiments(1));
+        $this->assertTrue($this->UsersHelper->hasExperiments());
     }
 
-    public function testGetGroup()
+    public function testGetTeamsFromUserid()
     {
-        $this->assertEquals(4, $this->UsersHelper->getGroup(1));
+        $expected = array(array('id' => '1', 'name' => 'Alpha'));
+        $this->assertEquals($expected, $this->UsersHelper->getTeamsFromUserid());
+    }
+
+    public function testGetPermissions()
+    {
+        $expected = array('is_admin' => '1', 'is_sysadmin' => '1', 'can_lock' => '0');
+        $this->assertEquals($expected, $this->UsersHelper->getPermissions());
+    }
+
+    public function testgetTeamsNameFromUserid()
+    {
+        $expected = array('Alpha');
+        $this->assertEquals($expected, $this->UsersHelper->getTeamsNameFromUserid());
     }
 }

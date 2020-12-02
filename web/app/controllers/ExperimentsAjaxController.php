@@ -58,7 +58,7 @@ try {
         $Teams = new Teams($App->Users);
         $teamConfigArr = $Teams->read();
 
-        if (($teamConfigArr['deletable_xp'] == '0') && !$Session->get('is_admin')) {
+        if (($teamConfigArr['deletable_xp'] == '0') && !$App->Session->get('is_admin')) {
             throw new ImproperActionException(_("You don't have the rights to delete this experiment."));
         }
         $Entity->destroy();

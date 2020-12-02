@@ -54,7 +54,7 @@
                 <!-- TEAM -->
                 <li class='list-inline-item mb-2'>
                   <label for='usersUpdateTeam_{{ user.userid }}'>{{ 'Team(s)'|trans }}</label>
-                    {% for team in UsersHelper.getTeamsFromUserid(user.userid) %}
+                    {% for team in user.teams %}
                       <span class='btn btn-secondary clickable' data-team='{{ team.id }}'>{{ team.name }}</span>
                     {% endfor %}
                     {% if App.Session.get('is_sysadmin') %}
@@ -123,6 +123,15 @@
                       <input autocomplete='new-password' class='form-control custom-control-inline' id='usersUpdatePassword_{{ user.userid }}' type='password' pattern='{{ pattern }}' value='' name='password' />
                     </li>
 
+                    <!-- 2FA -->
+                    <li class='list-inline-item'>
+                      <label for='usersUpdate2FA_{{ user.userid }}'>{{ 'Uses 2FA?'|trans }}</label>
+                      <select class='form-control custom-control-inline' autocomplete='off' name='use_mfa' id='usersUpdate2FA_{{ user.userid }}'{{ not user.mfa_secret ? ' disabled' }}>
+                        <option value='on'{{ user.mfa_secret ? ' selected' }}>{{ 'Yes'|trans }}</option>
+                        <option value='off'{{ not user.mfa_secret ? ' selected' }}>{{ 'No'|trans }}</option>
+                      </select>
+                    </li>
+
                     <!-- ACTIVE ACCOUNT -->
                     <li class='list-inline-item'>
                       <label for='usersUpdateValidated_{{ user.userid }}'>{{ 'Has an active account?'|trans }}</label>
@@ -155,6 +164,7 @@
                 </form>
                 <hr>
               </ul>
+            </li>
             {% endfor %}
         </ul>
     {% else %}

@@ -18,6 +18,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
@@ -30,7 +31,7 @@ use PDO;
 /**
  * The mother class of Experiments and Database
  */
-abstract class AbstractEntity
+abstract class AbstractEntity implements CreatableInterface
 {
     use EntityTrait;
 
@@ -111,14 +112,6 @@ abstract class AbstractEntity
     }
 
     /**
-     * Create an empty entry
-     *
-     * @param int $tpl a template/category
-     * @return int the new id
-     */
-    abstract public function create(int $tpl): int;
-
-    /**
      * Duplicate an item
      *
      * @return int the new item id
@@ -130,7 +123,7 @@ abstract class AbstractEntity
      *
      * @return void
      */
-    abstract public function destroy(): void;
+    //abstract public function destroy(?int $id = null): void;
 
     /**
      * Lock/unlock
@@ -364,6 +357,40 @@ abstract class AbstractEntity
         $req->bindParam(':title', $title);
         $req->bindParam(':date', $date);
         $req->bindParam(':body', $body);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        $this->Db->execute($req);
+    }
+
+    public function updateTitle(string $title): void
+    {
+        $this->canOrExplode('write');
+        // don't update if locked
+        if ($this->entityData['locked']) {
+            throw new ImproperActionException(_('Cannot update a locked entity!'));
+        }
+
+        $title = Filter::title($title);
+        $sql = 'UPDATE ' . $this->type . ' SET title = :title WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':title', $title);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        $this->Db->execute($req);
+    }
+
+    public function updateDate(string $date): void
+    {
+        $this->canOrExplode('write');
+        // don't update if locked
+        if ($this->entityData['locked']) {
+            throw new ImproperActionException(_('Cannot update a locked entity!'));
+        }
+
+        $date = Filter::kdate($date);
+        $sql = 'UPDATE ' . $this->type . ' SET date = :date WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':date', $date);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         $this->Db->execute($req);
@@ -604,6 +631,7 @@ abstract class AbstractEntity
      * @param bool $getTags do we get the tags too?
      * @param bool $fullSelect select all the columns of entity
      * @return string
+     * @phan-suppress PhanPluginPrintfVariableFormatString
      */
     private function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false): string
     {

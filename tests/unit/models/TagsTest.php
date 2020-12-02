@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Services\Check;
 
 class TagsTest extends \PHPUnit\Framework\TestCase
@@ -21,13 +22,13 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->Experiments->Tags->create('my tag');
-        $id = $this->Experiments->Tags->create('new tag');
+        $this->Experiments->Tags->create(new ParamsProcessor(array('tag' => 'my tag')));
+        $id = $this->Experiments->Tags->create(new ParamsProcessor(array('tag' => 'new tag')));
         $this->assertTrue((bool) Check::id($id));
 
         $Database = new Database($this->Users, 1);
         $Tags = new Tags($Database);
-        $id =$Tags->create('tag2222');
+        $id =$Tags->create(new ParamsProcessor(array('tag' => 'tag2222')));
         $this->assertTrue((bool) Check::id($id));
     }
 
@@ -44,15 +45,15 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->assertTrue($this->Experiments->Tags->update(1, 'new super tag'));
+        $this->assertEquals('new super tag', $this->Experiments->Tags->update(new ParamsProcessor(array('id' => 1, 'tag' => 'new super tag'))));
     }
 
     public function testDeduplicate()
     {
         $this->assertEquals(0, $this->Experiments->Tags->deduplicate());
-        $this->Experiments->Tags->create('correcttag');
-        $id = $this->Experiments->Tags->create('typotag');
-        $this->Experiments->Tags->update($id, 'correcttag');
+        $this->Experiments->Tags->create(new ParamsProcessor(array('tag' => 'correcttag')));
+        $id = $this->Experiments->Tags->create(new ParamsProcessor(array('tag' => 'typotag')));
+        $this->Experiments->Tags->update(new ParamsProcessor(array('id' => $id, 'tag' => 'correcttag')));
         $this->assertEquals(1, $this->Experiments->Tags->deduplicate());
     }
 
@@ -69,7 +70,7 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy()
     {
-        $id = $this->Experiments->Tags->create('destroy me');
+        $id = $this->Experiments->Tags->create(new ParamsProcessor(array('tag' => 'destroy me')));
         $this->Experiments->Tags->destroy($id);
     }
 }

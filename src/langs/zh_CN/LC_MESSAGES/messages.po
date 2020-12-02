@@ -9,7 +9,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Nicolas CARPi <spam@yopmail.com>\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 
 #: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:317
@@ -2395,7 +2395,7 @@ msgstr "对该小组中所有用户的实验强制执行写入权限。"
 
 #: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:232
 msgid "Go"
-msgstr "走"
+msgstr "开始"
 
 #: cache/twig/4a/4ae03ad2ce3f111707799888eaf5c709abe80ae1ea2caa7eb8db2c252e036d14.php:71
 msgid "Unfinished steps"

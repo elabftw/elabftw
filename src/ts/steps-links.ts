@@ -9,11 +9,11 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import Link from './Link.class';
 import Step from './Step.class';
+import i18next from 'i18next';
 
 $(document).ready(function() {
   const type = $('#info').data('type');
 
-  ////////
   // STEPS
   const StepC = new Step(type);
 
@@ -21,45 +21,42 @@ $(document).ready(function() {
   $(document).on('keypress blur', '.stepinput', function(e) {
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
-      StepC.create($(this));
+      StepC.create(e.currentTarget);
     }
   });
 
-  // STEP IS DONE
-  $(document).on('click', 'input[type=checkbox].stepbox', function() {
-    StepC.finish($(this));
-  });
-
-
-  // DESTROY
-  $(document).on('click', '.stepDestroy', function() {
-    StepC.destroy($(this));
-  });
-
-  // EDITABLE STEPS
-  $(document).on('mouseenter', '.stepInput', function() {
-    ($(this) as any).editable(function(value) {
-      $.post('app/controllers/AjaxController.php', {
-        type: $(this).data('type'),
-        updateStep: true,
-        body: value,
-        id: $(this).data('id'),
-        stepid: $(this).data('stepid'),
-      });
-
-      return(value);
+  // UPDATE
+  $(document).on('mouseenter', '.stepInput', (e) => {
+    ($(e.currentTarget) as any).editable((input) => {
+      StepC.update(
+        input,
+        e.currentTarget.dataset.id,
+        e.currentTarget.dataset.stepid,
+      );
+      // here the input is returned instead of the value returned by controller
+      // in json response. That's because the call is asynchronous and jeditable expects
+      // an asynchronous response
+      return input;
     }, {
-      tooltip : 'Click to edit',
+      tooltip : i18next.t('click-to-edit'),
       indicator : 'Saving...',
       onblur: 'submit',
       style : 'display:inline'
     });
   });
 
-  // END STEPS
-  ////////////
+  // FINISH
+  $(document).on('click', 'input[type=checkbox].stepbox', function(e) {
+    StepC.finish(e.currentTarget);
+  });
 
-  ////////
+  // DESTROY
+  $(document).on('click', '.stepDestroy', function(e) {
+    StepC.destroy(e.currentTarget);
+  });
+
+  // END STEPS
+
   // LINKS
   const LinkC = new Link(type);
 
@@ -92,7 +89,4 @@ $(document).ready(function() {
   $(document).on('click', '.linkDestroy', function() {
     LinkC.destroy($(this));
   });
-
-  // END LINKS
-  ////////////
 });

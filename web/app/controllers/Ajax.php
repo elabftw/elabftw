@@ -71,6 +71,31 @@ try {
         $Entity = new Database($App->Users, $itemId);
     }
 
+    // have to check $what and $action at the same time
+    // otherwise $action==='toggle' could be executed with $what!=='adminRights'
+    if ($what === 'adminRights' && $action === 'toggle') {
+        $hasTmpDisableAdmin = $App->Session->has('tmp_disable_admin');
+        if (!($App->Session->get('is_admin') || $hasTmpDisableAdmin)) {
+            throw new IllegalActionException('Non admin user tried to access admin controller.');
+        }
+
+        if (!$hasTmpDisableAdmin) {
+            $App->Session->set('tmp_disable_admin', 1);
+            $App->Session->set('is_admin', 0);
+            $App->Session->set('tmp_disable_sysadmin', $App->Session->get('is_sysadmin'));
+            $App->Session->set('is_sysadmin', 0);
+        } elseif ($hasTmpDisableAdmin) {
+            $App->Session->set('is_admin', 1);
+            $App->Session->set('is_sysadmin', $App->Session->get('tmp_disable_sysadmin'));
+            $App->Session->remove('tmp_disable_sysadmin');
+            $App->Session->remove('tmp_disable_admin');
+        }
+
+        $Response->send();
+        // We exit here to avoid an IllegalActionException
+        // 'adminRights' and 'toggle' are not part of the $what and $action switches
+        exit();
+    }
 
     switch ($what) {
         case 'apikey':

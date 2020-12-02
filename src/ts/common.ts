@@ -69,4 +69,14 @@ $(document).ready(function() {
       ($('#createModal') as any).modal('toggle');
     }
   });
+
+  // temporarily disable admin rights
+  $(document).on('click', '.adminRightsToggle', function() {
+    $.get('app/controllers/Ajax.php', {
+      action: 'toggle',
+      what: 'adminRights',
+    }).done(function() {
+      window.location.reload(true);
+    });
+  });
 });

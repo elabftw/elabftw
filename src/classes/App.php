@@ -125,6 +125,12 @@ class App
     {
         $this->Users = $users;
 
+        // temporarily disable admin rights for user
+        if ($this->Session->has('tmp_disable_admin')) {
+            $this->Users->userData['is_admin'] = 0;
+            $this->Users->userData['is_sysadmin'] = 0;
+        }
+
         // team config
         $Teams = new Teams($this->Users);
         $this->teamConfigArr = $Teams->read();

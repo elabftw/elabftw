@@ -79,6 +79,7 @@ class SamlAuth implements AuthInterface
 
         // GET EMAIL
         $email = $this->getEmail($samlUserdata);
+
         // GET TEAMS
         $teams = $this->getTeams($samlUserdata);
         // GET POPULATED USERS OBJECT
@@ -124,7 +125,7 @@ class SamlAuth implements AuthInterface
     private function getTeams(array $samlUserdata): array
     {
         $Teams = new Teams(new Users());
-        $teams = $samlUserdata[$this->configArr['saml_team']];
+        $teams = $samlUserdata[$this->configArr['saml_team'] ?? 'Nope'];
 
         // if no team attribute is sent by the IDP, use the default team
         if (empty($teams)) {
@@ -137,8 +138,7 @@ class SamlAuth implements AuthInterface
         }
 
         if (is_array($teams)) {
-            $teams = $teams[0];
-            //return $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
+            return $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
         }
 
         if (is_string($teams)) {

@@ -69,4 +69,9 @@ $(document).ready(function() {
       ($('#createModal') as any).modal('toggle');
     }
   });
+
+  $('.logout').on('click', function() {
+    localStorage.removeItem('isTodolistOpen');
+    location.href = 'app/logout.php';
+  });
 });

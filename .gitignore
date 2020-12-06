@@ -16,6 +16,7 @@ config.php*
 *.bundle.js
 node_modules/*
 web/test.php
+web/app/js/*.LICENSE.txt
 tests/_output/*
 tests/_support/_generated*
 uploads
@@ -24,4 +25,3 @@ web/app/css/tinymce/fonts/*.woff
 .sass-cache
 src/ts/*.js
 src/ts/langs/*.js
-web/app/js/scripts-tags.html

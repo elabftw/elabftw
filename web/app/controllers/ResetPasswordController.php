@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -22,7 +23,7 @@ use Exception;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new RedirectResponse('../../login.php');
 
@@ -88,8 +89,12 @@ try {
     }
 
     // second part, update the password
-    if ($Request->request->has('password') &&
-        $Request->request->get('password') === $Request->request->get('cpassword')) {
+    if ($Request->request->has('password')) {
+        // verify both passwords are the same
+        // and show useful error message if not
+        if ($Request->request->get('password') !== $Request->request->get('cpassword')) {
+            throw new ImproperActionException(_('The passwords do not match!'));
+        }
         $App->Users->populate((int) $Request->request->get('userid'));
 
         // Validate key

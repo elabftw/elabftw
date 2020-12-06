@@ -34,17 +34,12 @@
 
     <div class='row'>
       <div class='col-md-4'></div>
-      <div class='col-md-4' id='checkPasswordMatchDiv'>
-        <p>{{ 'The passwords do not match!'|trans }}</p>
+      <div class='col-md-4'>
+        <button class='button btn btn-primary' type='submit' name='Submit'>{{ 'Save new password'|trans }}</button>
       </div>
       <div class='col-md-4'></div>
     </div>
 
   </form>
 </section>
-
-<div id='passwordMatch'
-  data-not='{{ 'The passwords do not match!'|trans }}'
-  data-save='{{ 'Save new password'|trans }}'></div>
-
 {% endblock %}

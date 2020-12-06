@@ -22,7 +22,7 @@
   <link rel='stylesheet' media='all' href='app/css/elabftw.min.css?v={{ v }}' />
   <link rel='stylesheet' media='all' href='app/css/vendor.min.css?v={{ v }}' />
 
-  <script defer src='app/js/vendors~main.bundle.js?v={{ v }}'></script>
+  <script defer src='app/js/36.bundle.js?v={{ v }}'></script>
   <!-- the main JS bundle with all the elabftw TS code (see builder.js) -->
   <script defer src='app/js/main.bundle.js?v={{ v }}'></script>
   <!-- concatenated JS built by grunt for non es6 libraries (see Gruntfile.js) -->
@@ -90,7 +90,7 @@
             {% endif %}
             <a class='dropdown-item modalToggle' data-modal='helpModal' href='#'><i class='fas fa-question-circle fa-fw'></i> {{ 'Help'|trans }}</a>
             <div class='dropdown-divider'></div>
-            <a class='dropdown-item' href='app/logout.php'><i class='fas fa-sign-out-alt fa-fw'></i> {{ 'Logout'|trans }}</a>
+            <a class='dropdown-item logout' href='#'><i class='fas fa-sign-out-alt fa-fw'></i> {{ 'Logout'|trans }}</a>
           </div>
         </div>
      </div>

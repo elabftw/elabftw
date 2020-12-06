@@ -67,7 +67,7 @@ class TeamGroups implements CrudInterface
     {
         $fullGroups = array();
 
-        $sql = 'SELECT DISTINCT id, name FROM team_groups CROSS JOIN users2teams ON (users2teams.teams_id = team_groups.team AND users2teams.teams_id = :team)';
+        $sql = 'SELECT DISTINCT id, name FROM team_groups CROSS JOIN users2teams ON (users2teams.teams_id = team_groups.team AND users2teams.teams_id = :team) ORDER BY name';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);

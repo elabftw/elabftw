@@ -125,7 +125,7 @@ export function displayPlasmidViewer(): void {
               //'alignmentTool',
               //'oligoTool',
               'orfTool',
-              'viewTool',
+              //'viewTool',
               //'editTool',
               //'findTool',
               //'visibilityTool'

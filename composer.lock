@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0991280f48302f91440d60180f968dc2",
+    "content-hash": "3bea8d309f2c31446e2956d2be98ae42",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -1483,21 +1483,21 @@
         },
         {
             "name": "onelogin/php-saml",
-            "version": "3.4.1",
+            "version": "3.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/onelogin/php-saml.git",
-                "reference": "5fbf3486704ac9835b68184023ab54862c95f213"
+                "reference": "593aca859b67d607923fe50d8ad7315373f5b6dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/onelogin/php-saml/zipball/5fbf3486704ac9835b68184023ab54862c95f213",
-                "reference": "5fbf3486704ac9835b68184023ab54862c95f213",
+                "url": "https://api.github.com/repos/onelogin/php-saml/zipball/593aca859b67d607923fe50d8ad7315373f5b6dd",
+                "reference": "593aca859b67d607923fe50d8ad7315373f5b6dd",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4",
-                "robrichards/xmlseclibs": ">=3.0.4"
+                "robrichards/xmlseclibs": ">=3.1.1"
             },
             "require-dev": {
                 "pdepend/pdepend": "^2.5.0",
@@ -1534,7 +1534,7 @@
                 "issues": "https://github.com/onelogin/php-saml/issues",
                 "source": "https://github.com/onelogin/php-saml/"
             },
-            "time": "2019-11-25T17:30:07+00:00"
+            "time": "2020-12-03T20:08:41+00:00"
         },
         {
             "name": "paragonie/random_compat",

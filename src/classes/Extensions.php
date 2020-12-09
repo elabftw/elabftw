@@ -128,8 +128,8 @@ final class Extensions
         // SBOL files (.xml)
         // deactivated because xml is used for other data too
         //'xml',
-        // SNAPGENE (.dna) files, disable for now
-        //'dna',
+        // SNAPGENE (.dna) files
+        'dna',
         // GFF files
         'gff',
         'gff3',

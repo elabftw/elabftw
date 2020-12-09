@@ -72,6 +72,12 @@ module.exports = {
   plugins: [
     // only load the moment locales that we are interested in
     new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(ca|de|en|es|fr|it|id|ja|kr|nl|pl|pt|pt-br|ru|sk|sl|zh-cn)$/),
+    // we need the following since webpack 5 to provide the Buffer API that was loaded before from node.js automatically
+    // https://webpack.js.org/migrate/5/#test-webpack-5-compatibility
+    // https://github.com/webpack/changelog-v5/issues/10#issuecomment-615877593
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
+    }),
   ],
   mode: 'production',
   output: {

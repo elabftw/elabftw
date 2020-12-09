@@ -11,7 +11,7 @@
           <option value='experiments'>{% trans %}Experiment {% plural 2 %}Experiments{% endtrans %}</option>
           <option disabled>----------------</option>
           <option value='database'{{ Request.query.get('type') == 'database' ? ' selected' }}>{{ 'Database'|trans }}</option>
-          {% for category in categoryArr %}
+          {% for category in itemsTypesArr %}
             <option value='{{ category.category_id }}'{{ Request.query.get('type') == category.category_id ? ' selected' }}>
               {{ category.category }}
             </option>

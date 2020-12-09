@@ -1949,6 +1949,23 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.1.0.tgz#30fa40c9e7fe07dbc895678cd287024dea241dd9"
   integrity sha512-1Yj8h9Q+QDF5FzhMs/c9+6UntbD5MkRfRwac8DoEm9ZfUBZ7tZ55YcGVAzEe4bXsdQHEk+s9S5wsOKVdZrw0tQ==
 
+bio-parsers@6.0.5:
+  version "6.0.5"
+  resolved "https://registry.yarnpkg.com/bio-parsers/-/bio-parsers-6.0.5.tgz#06ee86e2a36f4fe4131709ce0ea20c1244f73a48"
+  integrity sha512-bl7dGC1xYKBoeuokcyX3+84GMvpxG795E7P+CK2X1k8Goj+nS6q1Bs3nCi9nwkY/2ylBC2XUG7Vf39PZMgeANQ==
+  dependencies:
+    "@gmod/gff" "^1.1.2"
+    buffer "^6.0.3"
+    bufferpack "^0.0.6"
+    color "^3.1.2"
+    flatmap "0.0.3"
+    lodash "^4.17.11"
+    safe-access "^0.1.0"
+    string_decoder "^1.2.0"
+    validate.io-nonnegative-integer-array "^1.0.1"
+    waldojs "^0.1.9"
+    xml2js "^0.4.15"
+
 bio-parsers@^6.0.4:
   version "6.0.4"
   resolved "https://registry.yarnpkg.com/bio-parsers/-/bio-parsers-6.0.4.tgz#ad9ac1913bceb64f4617f94c8ac4ca62cef9ef03"
@@ -2100,6 +2117,14 @@ buffer@^5.5.0:
   dependencies:
     base64-js "^1.3.1"
     ieee754 "^1.1.13"
+
+buffer@^6.0.3:
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/buffer/-/buffer-6.0.3.tgz#2ace578459cc8fbe2a70aaa8f52ee63b6a74c6c6"
+  integrity sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==
+  dependencies:
+    base64-js "^1.3.1"
+    ieee754 "^1.2.1"
 
 bufferpack@^0.0.6:
   version "0.0.6"
@@ -4236,7 +4261,7 @@ icss-utils@^5.0.0:
   resolved "https://registry.yarnpkg.com/icss-utils/-/icss-utils-5.1.0.tgz#c6be6858abd013d768e98366ae47e25d5887b1ae"
   integrity sha512-soFhflCVWLfRNOPU3iv5Z9VUdT44xFRbzjLsEzSr5AQmgqPMTHdU3PMT1Cf1ssx8fLNJDA1juftYl+PUcv3MqA==
 
-ieee754@^1.1.13:
+ieee754@^1.1.13, ieee754@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.2.1.tgz#8eb7a10a63fff25d15a57b001586d177d1b0d352"
   integrity sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==

@@ -180,6 +180,10 @@ export function displayPlasmidViewer(): void {
         }
 
         editor.viewerID.updateEditor(editorState);
+
+        // exchange 'Open Editor' Button text to 'Open Viewer'
+        const oveButton = document.getElementById(viewerID).firstChild.firstChild.firstChild.firstChild.firstChild.firstChild as HTMLElement;
+        oveButton.innerHTML = 'Open Viewer';
       }, {
         fileName: realName,
         guessIfProtein: true

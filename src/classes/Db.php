@@ -43,7 +43,7 @@ final class Db
         $pdo_options[PDO::ATTR_PERSISTENT] = true;
         // only return a named array
         $pdo_options[PDO::ATTR_DEFAULT_FETCH_MODE] = PDO::FETCH_ASSOC;
-        if (is_string(\DB_CERT_PATH)) {
+        if (defined('DB_CERT_PATH') && is_string(\DB_CERT_PATH)) {
             $pdo_options[PDO::MYSQL_ATTR_SSL_CA] = \DB_CERT_PATH;
         }
 

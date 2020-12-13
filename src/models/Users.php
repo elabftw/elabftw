@@ -77,17 +77,8 @@ class Users
 
     /**
      * Create a new user. If no password is provided, it's because we create it from SAML.
-     *
-     * @param string $email
-     * @param array<array-key, mixed> $teams
-     * @param string $firstname
-     * @param string $lastname
-     * @param string $password
-     * @param int|null $group
-     * @param bool $forceValidation used when user is created from SAML login
-     * @return int the new userid
      */
-    public function create(string $email, array $teams, string $firstname = '', string $lastname = '', string $password = '', ?int $group = null, bool $forceValidation = false, bool $normalizeTeams = true): int
+    public function create(string $email, array $teams, string $firstname = '', string $lastname = '', string $password = '', ?int $group = null, bool $forceValidation = false, bool $normalizeTeams = true, bool $alertAdmin = true): int
     {
         $Config = new Config();
         $Teams = new Teams($this);
@@ -169,7 +160,9 @@ class Users
         $Teams->addUserToTeams($userid, array_column($teams, 'id'));
         $userInfo = array('email' => $email, 'name' => $firstname . ' ' . $lastname);
         $Email = new Email($Config, $this);
-        $Email->alertAdmin((int) $teams[0]['id'], $userInfo, !(bool) $validated);
+        if ($alertAdmin) {
+            $Email->alertAdmin((int) $teams[0]['id'], $userInfo, !(bool) $validated);
+        }
         if ($validated === 0) {
             $Email->alertUserNeedValidation($email);
             // set a flag to show correct message to user

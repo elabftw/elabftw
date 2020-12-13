@@ -156,7 +156,7 @@ class SamlAuth implements AuthInterface
         }
 
         if (is_string($teams)) {
-            // maybe it's a string containing several teams separated by spaces
+            // maybe it's a string containing several teams separated by commas
             return $Teams->getTeamsFromIdOrNameOrOrgidArray(explode(',', $teams));
         }
         throw new ImproperActionException('Could not find team ID to assign user!');
@@ -185,7 +185,7 @@ class SamlAuth implements AuthInterface
             $teams = $this->getTeams($samlUserdata);
 
             // CREATE USER (and force validation of user, with user permissions)
-            $Users = new Users($Users->create($email, $teams, $firstname, $lastname, '', 4, true));
+            $Users = new Users($Users->create($email, $teams, $firstname, $lastname, '', 4, true, false));
         }
         return $Users;
     }

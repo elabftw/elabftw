@@ -63,12 +63,28 @@
           </select>
           <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
       </p>
-      <div class='row display-flex'>
+
+      {% if App.Users.userData.display_mode=='it' %}
+      <div class='row display-flex' id='itemList'>
       {% for item in itemsArr|slice(0, DisplayParams.limit) %}
         {% include('show-item.html') %}
       {% endfor %}
       </div>
-
+      {% else  %}
+        <table class='item-table'>
+          <tr>
+            <th class='title-item-table'>Title</th>
+            {% if Entity.type == 'experiments' %}
+              <th class='step-item-table'>Next step</th>
+            {% endif %}
+            <th class='tags-item-table'>Tags</th>
+            <th class='info-item-table'>Info</th>
+          </tr>
+        {% for item in itemsArr|slice(0, DisplayParams.limit) %}
+          {% include('show-item-table.html') %}
+        {% endfor %}
+        </table>
+      {% endif %}
       <div class='text-center pageButtons mt-2'>
         {% if DisplayParams.offset != 0 %}
           <button class='button btn btn-neutral previousPage'>{{ 'Previous page'|trans }}</button>

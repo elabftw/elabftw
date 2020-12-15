@@ -37,6 +37,9 @@ class UserPreferences implements MapInterface
     /** @var string $displaySize */
     private $displaySize = 'lg';
 
+    /** @var string $displayMode */
+    private $displayMode = 'it';
+
     /** @var string $orderby */
     private $orderby = 'date';
 
@@ -106,6 +109,7 @@ class UserPreferences implements MapInterface
         $sql = 'UPDATE users SET
             limit_nb = :new_limit,
             display_size = :new_display_size,
+            display_mode = :new_display_mode,
             orderby = :new_orderby,
             sort = :new_sort,
             sc_create = :new_sc_create,
@@ -129,6 +133,7 @@ class UserPreferences implements MapInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':new_limit', $this->limit);
         $req->bindParam(':new_display_size', $this->displaySize);
+        $req->bindParam(':new_display_mode', $this->displayMode);
         $req->bindParam(':new_orderby', $this->orderby);
         $req->bindParam(':new_sort', $this->sort);
         $req->bindParam(':new_sc_create', $this->shortcuts['create']);
@@ -160,6 +165,11 @@ class UserPreferences implements MapInterface
     final public function setDisplaySize(string $setting): void
     {
         $this->displaySize = Check::displaySize($setting);
+    }
+
+    final public function setDisplayMode(string $setting): void
+    {
+        $this->displayMode = Check::displayMode($setting);
     }
 
     final public function setSort(string $setting): void
@@ -263,6 +273,7 @@ class UserPreferences implements MapInterface
         $this->setLimit($source['limit_nb'] ?? $this->limit);
         $this->setLang($source['lang'] ?? $this->lang);
         $this->setDisplaySize($source['display_size'] ?? $this->displaySize);
+        $this->setDisplayMode($source['display_mode'] ?? $this->displayMode);
         $this->setSort($source['sort'] ?? $this->sort);
         $this->setOrderby($source['orderby'] ?? $this->orderby);
         $this->setSingleColumnLayout($source['single_column_layout'] ?? '0');
@@ -291,6 +302,7 @@ class UserPreferences implements MapInterface
     private function read(): array
     {
         $sql = 'SELECT limit_nb,
+            display_mode,
             display_size,
             sort,
             orderby,

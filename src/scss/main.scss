@@ -560,6 +560,54 @@ table th {
     text-align: left;
 }
 
+/* TABLE OF EXPERIMENTS */
+
+table.item-table{
+    width: 100%;
+    table-layout: fixed;
+}
+
+table.item-table th{
+    border-left: solid $darkgray;
+    border-right: solid $darkgray;
+}
+
+table.item-table th.title-item-table{
+    // So that the title has the left part matching
+    // the experiments
+    border-left: solid $darkgray 6px;
+    width: 30%;
+}
+
+table.item-table th.step-item-table{
+    width: 20%;
+}
+table.item-table th.tags-item-table{
+    width: 20%;
+}
+table.item-table th.info-item-table{
+    width: 20%;
+}
+
+table.item-table td{
+    border-right: solid $bordersgray;
+    border-left: solid $bordersgray;
+}
+table.item-table td.tags{
+    overflow: hidden;
+}
+table.item-table td.title{
+    font-size: 100%;
+}
+
+table.item-table td.item-next
+{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
 /* color one row every other row */
 tr:nth-child(even) {
     background-color: #fff;

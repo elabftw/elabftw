@@ -31,6 +31,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'pdf_format' => 'A4',
             'default_vis' => 'organization',
             'display_size' => 'lg',
+            'display_mode' => 'it',
         );
         $Prefs = new UserPreferences((int) $this->Users->userData['userid']);
         $Prefs->hydrate($prefsArr);

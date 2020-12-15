@@ -125,6 +125,26 @@ class Check
     }
 
     /**
+     * Check the display mode user setting
+     *
+     * @param string $input
+     * @return string
+     */
+    public static function displayMode(string $input): string
+    {
+        switch ($input) {
+            // Item list (the usual)
+            case 'it':
+                return 'it';
+            // Table format
+            case 'tb':
+                return 'tb';
+            default:
+                return 'it';
+        }
+    }
+
+    /**
      * Check orderby param
      *
      * @param string $input

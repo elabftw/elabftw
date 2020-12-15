@@ -9,7 +9,7 @@
 
 use \Codeception\Util\HttpCode;
 
-class BadRequestCest
+class BadRequestsCest
 {
     // Make a request without an authorization header
     public function noTokenTest(ApiTester $I)

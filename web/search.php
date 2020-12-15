@@ -38,14 +38,11 @@ $Database = new Database($App->Users);
 $Tags = new Tags($Experiments);
 $tagsArr = $Tags->readAll();
 
-$ItemsTypes = new ItemsTypes($App->Users);
-$Status = new Status($App->Users);
+$itemsTypesArr = (new ItemsTypes($App->Users))->readAll();
+$categoryArr = $statusArr = (new Status($App->Users))->read();
 if ($Request->query->get('type') !== 'experiments') {
-    $categoryArr = $ItemsTypes->readAll();
-} else {
-    $categoryArr = $Status->read();
+    $categoryArr = $itemsTypesArr;
 }
-$statusArr = $Status->read();
 
 $TeamGroups = new TeamGroups($App->Users);
 $teamGroupsArr = $TeamGroups->read();
@@ -109,6 +106,7 @@ $renderArr = array(
     'andor' => $andor,
     'body' => $body,
     'categoryArr' => $categoryArr,
+    'itemsTypesArr' => $itemsTypesArr,
     'tagsArr' => $tagsArr,
     'teamGroupsArr' => $teamGroupsArr,
     'title' => $title,

@@ -36,7 +36,7 @@ class LocalAuth implements AuthInterface
     {
         $this->Db = Db::getConnection();
         $this->email = Filter::sanitize($email);
-        $this->password = Filter::sanitize($password);
+        $this->password = $password;
         $this->AuthResponse = new AuthResponse('local');
     }
 

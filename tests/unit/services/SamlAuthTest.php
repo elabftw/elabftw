@@ -111,7 +111,7 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
         $SamlAuthLib->method('isAuthenticated')->willReturn(true);
         $AuthService = new SamlAuth($SamlAuthLib, $this->configArr, $this->settings);
         $authResponse = $AuthService->assertIdpResponse();
-        $this->assertEquals(2, $authResponse->selectedTeam);
+        $this->assertEquals(1, $authResponse->selectedTeam);
     }
 
     /**
@@ -131,8 +131,9 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
         $configArr = $this->configArr;
         $configArr['saml_team_default'] = '0';
         $AuthService = new SamlAuth($SamlAuthLib, $configArr, $this->settings);
-        $this->expectException(ImproperActionException::class);
         $authResponse = $AuthService->assertIdpResponse();
+        // as user exists already, they'll be in team 1
+        $this->assertEquals(1, $authResponse->selectedTeam);
     }
 
     /**

@@ -117,14 +117,14 @@ class Teams implements ReadableInterface, DestroyableInterface
 
     /**
      * When the user logs in, make sure that the teams they are part of
-     * are the same teams than the one sent by the IDP
+     * are the same teams than the one sent by an external auth
      *
      * @param int $userid
      * @param array<array-key, mixed> $teams
      *
      * @return void
      */
-    public function syncFromIdp(int $userid, array $teams): void
+    public function synchronize(int $userid, array $teams): void
     {
         $teamIdArr = array_column($teams, 'id');
         // get the difference between the teams sent by idp

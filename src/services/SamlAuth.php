@@ -80,30 +80,22 @@ class SamlAuth implements AuthInterface
         // GET EMAIL
         $email = $this->getEmail($samlUserdata);
 
-        // GET TEAMS
-        $teams = $this->getTeams($samlUserdata);
         // GET POPULATED USERS OBJECT
-        $Users = $this->getUsers($email, $samlUserdata, $teams);
+        $Users = $this->getUsers($email, $samlUserdata);
         $userid = (int) $Users->userData['userid'];
 
         $this->AuthResponse->userid = $userid;
         $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
+
         // synchronize the teams from the IDP
         // because teams can change since the time the user was created
-        $Teams = new Teams($Users);
         if ($this->configArr['saml_sync_teams']) {
-            $Teams->syncFromIdp($userid, $teams);
-            // load the teams from db
-            $this->AuthResponse->setTeams();
-        } else {
-            // we don't use AuthResponse->setTeams() here because the teams are sent by idp
-            $this->AuthResponse->selectableTeams = $teams;
-
-            // if the user only has access to one team, use this one directly
-            if (count($this->AuthResponse->selectableTeams) === 1) {
-                $this->AuthResponse->selectedTeam = (int) $this->AuthResponse->selectableTeams[0]['id'];
-            }
+            $Teams = new Teams($Users);
+            $Teams->synchronize($userid, $this->getTeamsFromIdpResponse($samlUserdata));
         }
+
+        // load the teams from db
+        $this->AuthResponse->setTeams();
 
         return $this->AuthResponse;
     }
@@ -120,6 +112,28 @@ class SamlAuth implements AuthInterface
             throw new ImproperActionException('Could not find email in response from IDP! Aborting.');
         }
         return $email;
+    }
+
+    private function getTeamsFromIdpResponse(array $samlUserdata): array
+    {
+        if (empty($this->configArr['saml_team'])) {
+            throw new ImproperActionException('Cannot synchronize team(s) from IDP if no value is set for looking up team(s) in IDP response!');
+        }
+        $teams = $samlUserdata[$this->configArr['saml_team']];
+        if (empty($teams)) {
+            throw new ImproperActionException('Could not find team(s) in IDP response!');
+        }
+
+        $Teams = new Teams(new Users());
+        if (is_array($teams)) {
+            return $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
+        }
+
+        if (is_string($teams)) {
+            // maybe it's a string containing several teams separated by spaces
+            return $Teams->getTeamsFromIdOrNameOrOrgidArray(explode(',', $teams));
+        }
+        throw new ImproperActionException('Could not find team ID to assign user!');
     }
 
     private function getTeams(array $samlUserdata): array
@@ -142,13 +156,13 @@ class SamlAuth implements AuthInterface
         }
 
         if (is_string($teams)) {
-            // maybe it's a string containing several teams separated by spaces
+            // maybe it's a string containing several teams separated by commas
             return $Teams->getTeamsFromIdOrNameOrOrgidArray(explode(',', $teams));
         }
         throw new ImproperActionException('Could not find team ID to assign user!');
     }
 
-    private function getUsers(string $email, array $samlUserdata, array $teams): Users
+    private function getUsers(string $email, array $samlUserdata): Users
     {
         $Users = new Users();
         // user might not exist yet and populateFromEmail() will throw a ResourceNotFoundException
@@ -167,8 +181,11 @@ class SamlAuth implements AuthInterface
                 $lastname = $lastname[0];
             }
 
+            // now try and get the teams
+            $teams = $this->getTeams($samlUserdata);
+
             // CREATE USER (and force validation of user, with user permissions)
-            $Users = new Users($Users->create($email, $teams, $firstname, $lastname, '', 4, true));
+            $Users = new Users($Users->create($email, $teams, $firstname, $lastname, '', 4, true, false));
         }
         return $Users;
     }

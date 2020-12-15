@@ -24,16 +24,11 @@ require_once 'app/init.inc.php';
 $location = '../../experiments.php';
 $Response = new RedirectResponse($location);
 
-// TODO FIXME saml breaks if this line is removed
-// never thought I would write a comment like this
-// but here it is....
-var_dump($Request->get('SAMLResponse'));
-
 try {
     // SAML: IDP will redirect to this page after user login on IDP website
     if ($App->Request->query->has('acs')) {
         $Saml = new Saml($App->Config, new Idps());
-        $settings = $Saml->getSettings();
+        $settings = $Saml->getSettings((int) $App->Request->cookies->get('idp_id'));
         $AuthService = new SamlAuth(new SamlAuthLib($settings), $App->Config->configArr, $settings);
 
         $AuthResponse = $AuthService->assertIdpResponse();
@@ -52,6 +47,11 @@ try {
     }
 
     $Response = new RedirectResponse($location);
+    // TODO FIXME saml breaks if this line is removed
+    // this is a problem of the redirect response not working
+    // unless there is something shown/sent to the user before
+    // no idea why
+    var_dump($App->Request->request->get('SAMLResponse'));
 } catch (ImproperActionException $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());

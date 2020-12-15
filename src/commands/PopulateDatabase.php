@@ -151,7 +151,7 @@ class PopulateDatabase extends Command
             }
             $email = $user['email'] ?? $Faker->safeEmail;
 
-            $userid = $Users->create($email, array($user['team']), $firstname, $lastname, $password);
+            $userid = $Users->create($email, array($user['team']), $firstname, $lastname, $password, null, true, true, false);
             $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));
             $Users = new Users($userid, (int) $team[0]['id']);
 

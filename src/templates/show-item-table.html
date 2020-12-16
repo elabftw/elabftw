@@ -33,6 +33,11 @@
                     <td class='item-next'></td>
                 {% endif %}
             {% endif %}
+            {% if Entity.type == 'items' %}
+              <td class='item-next'>
+                      <span class='item-next-step'>{{ owner|raw }}</span>
+              </td>
+            {% endif %}
             <td class='tags'>
             {% set itemtagsArr = tagsArr[item.id] %}
               {% if itemtagsArr|length > 0 %}
@@ -74,8 +79,9 @@
               {% if Entity.type == 'items' and item.rating > 0 %}
                 {{ item.rating|stars|raw }}
               {% endif %}
-
-              {{ owner|raw }}
+              {% if Entity.type == 'experiments' %}
+                <div>{{ owner|raw }}</div>
+              {% endif %}
             </td>
             <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
             <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->

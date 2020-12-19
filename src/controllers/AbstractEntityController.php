@@ -126,7 +126,7 @@ abstract class AbstractEntityController implements ControllerInterface
             $this->Entity->addFilter('entity.canread', 'public');
         }
 
-        $itemsArr = $this->getItemsArr($DisplayParams->searchType);
+        $itemsArr = $this->getItemsArr();
         // get tags separately
         $tagsArr = array();
         if (!empty($itemsArr)) {
@@ -166,7 +166,7 @@ abstract class AbstractEntityController implements ControllerInterface
      *
      * @return array
      */
-    abstract protected function getItemsArr(string $searchType): array;
+    abstract protected function getItemsArr(): array;
 
     /**
      * View mode (one item displayed)

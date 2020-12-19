@@ -77,24 +77,17 @@ class Users
 
     /**
      * Create a new user. If no password is provided, it's because we create it from SAML.
-     *
-     * @param string $email
-     * @param array<array-key, mixed> $teams
-     * @param string $firstname
-     * @param string $lastname
-     * @param string $password
-     * @param int|null $group
-     * @param bool $forceValidation used when user is created from SAML login
-     * @return int the new userid
      */
-    public function create(string $email, array $teams, string $firstname = '', string $lastname = '', string $password = '', ?int $group = null, bool $forceValidation = false): int
+    public function create(string $email, array $teams, string $firstname = '', string $lastname = '', string $password = '', ?int $group = null, bool $forceValidation = false, bool $normalizeTeams = true, bool $alertAdmin = true): int
     {
         $Config = new Config();
         $Teams = new Teams($this);
 
         // make sure that all the teams in which the user will be are created/exist
         // this might throw an exception if the team doesn't exist and we can't create it on the fly
-        $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
+        if ($normalizeTeams) {
+            $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
+        }
         // check for duplicate of email
         if ($this->isDuplicateEmail($email)) {
             throw new ImproperActionException(_('Someone is already using that email address!'));
@@ -165,10 +158,12 @@ class Users
 
         // now add the user to the team
         $Teams->addUserToTeams($userid, array_column($teams, 'id'));
+        $userInfo = array('email' => $email, 'name' => $firstname . ' ' . $lastname);
+        $Email = new Email($Config, $this);
+        if ($alertAdmin) {
+            $Email->alertAdmin((int) $teams[0]['id'], $userInfo, !(bool) $validated);
+        }
         if ($validated === 0) {
-            $userInfo = array('email' => $email, 'name' => $firstname . ' ' . $lastname);
-            $Email = new Email($Config, $this);
-            $Email->alertAdmin($teams[0]['id'], $userInfo);
             $Email->alertUserNeedValidation($email);
             // set a flag to show correct message to user
             $this->needValidation = true;

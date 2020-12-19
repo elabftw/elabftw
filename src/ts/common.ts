@@ -70,6 +70,11 @@ $(document).ready(function() {
     }
   });
 
+  $('.logout').on('click', function() {
+    localStorage.removeItem('isTodolistOpen');
+    location.href = 'app/logout.php';
+  });
+
   // temporarily disable admin rights
   $(document).on('click', '.adminRightsToggle', function() {
     $.get('app/controllers/Ajax.php', {

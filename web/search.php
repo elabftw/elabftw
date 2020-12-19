@@ -38,12 +38,10 @@ $Database = new Database($App->Users);
 $Tags = new Tags($Experiments);
 $tagsArr = $Tags->readAll();
 
-$ItemsTypes = new ItemsTypes($App->Users);
-$Status = new Status($App->Users);
+$itemsTypesArr = (new ItemsTypes($App->Users))->readAll();
+$categoryArr = $statusArr = (new Status($App->Users))->read();
 if ($Request->query->get('type') !== 'experiments') {
-    $categoryArr = $ItemsTypes->readAll();
-} else {
-    $categoryArr = $Status->read();
+    $categoryArr = $itemsTypesArr;
 }
 
 $TeamGroups = new TeamGroups($App->Users);
@@ -108,10 +106,11 @@ $renderArr = array(
     'andor' => $andor,
     'body' => $body,
     'categoryArr' => $categoryArr,
+    'itemsTypesArr' => $itemsTypesArr,
     'tagsArr' => $tagsArr,
     'teamGroupsArr' => $teamGroupsArr,
     'title' => $title,
-    'statusArr' => $categoryArr,
+    'statusArr' => $statusArr,
     'usersArr' => $usersArr,
 );
 echo $App->render('search.html', $renderArr);
@@ -208,5 +207,6 @@ if ($Request->query->count() > 0) {
     }
 } else {
     // no search
+    echo $App->render('todolist.html', array());
     echo $App->render('footer.html', array());
 }

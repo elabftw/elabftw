@@ -138,9 +138,10 @@ class Email
      *
      * @param int $team
      * @param array<string, mixed> $userInfo to get the email and name of new user
+     * @param bool $needValidation
      * @return void
      */
-    public function alertAdmin(int $team, array $userInfo): void
+    public function alertAdmin(int $team, array $userInfo, bool $needValidation = true): void
     {
         if ($this->Config->configArr['mail_from'] === 'notconfigured@example.com') {
             return;
@@ -150,7 +151,19 @@ class Email
         $url = \rtrim(Tools::getUrl($Request), '/') . '/admin.php';
 
         // Create the message
+        $main = sprintf(
+            _('Hi. A new user registered an account on eLabFTW: %s (%s).'),
+            $userInfo['name'],
+            $userInfo['email'],
+        );
+        if ($needValidation) {
+            $main .= ' ' . sprintf(
+                _('Head to the admin panel to validate the account: %s'),
+                $url,
+            );
+        }
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
+
         $message = (new Swift_Message())
         // Give the message a subject
         ->setSubject(_('[eLabFTW] New user registered'))
@@ -159,7 +172,7 @@ class Email
         // Set the To
         ->setTo($this->getAdminEmail($team))
         // Give it a body
-        ->setBody(_('Hi. A new user registered on elabftw (' . $userInfo['name'] . ' (' . $userInfo['email'] . '). Head to the admin panel to validate the account: ') . $url . $footer);
+        ->setBody($main . $footer);
         // SEND EMAIL
         $this->send($message);
     }

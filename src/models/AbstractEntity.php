@@ -204,6 +204,11 @@ abstract class AbstractEntity implements CreatableInterface
         foreach ($this->filters as $filter) {
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
+
+        // experiments related to something?
+        if ($displayParams->searchType === 'related') {
+            $sql .= ' AND linkst.link_id = ' . $displayParams->related;
+        }
         // teamFilter is to restrict to the team for items only
         // as they have a team column
         $teamFilter = '';
@@ -434,14 +439,30 @@ abstract class AbstractEntity implements CreatableInterface
      * Get a list of visibility/team groups to display
      *
      * @param string $rw read or write
-     * @return string
+     * @return string capitalized and translated permission level
      */
     public function getCan(string $rw): string
     {
         if (Check::id((int) $this->entityData['can' . $rw]) !== false) {
-            return $this->TeamGroups->readName((int) $this->entityData['can' . $rw]);
+            return ucfirst($this->TeamGroups->readName((int) $this->entityData['can' . $rw]));
         }
-        return ucfirst($this->entityData['can' . $rw]);
+        switch ($this->entityData['can' . $rw]) {
+            case 'public':
+                $res = _('Public');
+                break;
+            case 'organization':
+                $res = _('Organization');
+                break;
+            case 'team':
+                $res = _('Team');
+                break;
+            case 'user':
+                $res = _('User');
+                break;
+            default:
+                $res = Tools::error();
+        }
+        return ucfirst($res);
     }
 
     /**
@@ -703,6 +724,7 @@ abstract class AbstractEntity implements CreatableInterface
             AS stepst ON (
             entity.id = steps_item_id
             AND stepst.finished = 0)';
+        $linksJoin = 'LEFT JOIN %1$s_links AS linkst ON (linkst.item_id = entity.id)';
 
 
         $from = 'FROM %1$s AS entity';
@@ -730,6 +752,7 @@ abstract class AbstractEntity implements CreatableInterface
             $tagsJoin,
             $eventsJoin,
             $stepsJoin,
+            $linksJoin,
             $usersJoin,
             $teamJoin,
             $uploadsJoin,

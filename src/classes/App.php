@@ -125,8 +125,16 @@ class App
     {
         $this->Users = $users;
 
-        // temporarily disable admin rights for user
-        if ($this->Session->has('tmp_disable_admin')) {
+        // temporarily disable admin rights for user by default
+        if ($this->Session->get('is_admin') && $this->Users->userData['default_role'] === 'user' && !$this->Session->has('tmp_disable_admin')) {
+            $this->Session->set('tmp_disable_admin', 1);
+            $this->Session->set('is_admin', 0);
+            $this->Session->set('tmp_disable_sysadmin', $this->Session->get('is_sysadmin'));
+            $this->Session->set('is_sysadmin', 0);
+        }
+
+        // overwrite default rights stored in database
+        if ($this->Session->get('tmp_disable_admin') === 1) {
             $this->Users->userData['is_admin'] = 0;
             $this->Users->userData['is_sysadmin'] = 0;
         }

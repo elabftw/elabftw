@@ -293,6 +293,21 @@
           </div>
         </div>
 
+      {% if App.Session.get('is_admin') %}
+        <hr><br>
+        <h4>{{ 'Default role'|trans }}</h4>
+        <div class='row'>
+          <div class='col-md-6'>
+            <label for='default_role'>{{ 'Your default role'|trans }}</label>
+            <select class='form-control' autocomplete='off' name='default_role' id='default_role'>
+              <option value='user'{{ App.Users.userData.default_role == 'user' ? ' selected' }}>{{ 'User'|trans }}</option>
+              <option value='admin'{{ App.Users.userData.default_role == 'admin' ? ' selected' }}>{{ 'Admin'|trans }}</option>
+            </select>
+            <p>Admin includes Sysadmin</p>
+          </div>
+        </div>
+      {% endif %}
+
         <hr><br>
         <h4>{{ 'Modify your identity'|trans }}</h4>
 

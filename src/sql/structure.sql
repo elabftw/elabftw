@@ -577,7 +577,8 @@ CREATE TABLE `users` (
   `pdfa` tinyint(1) NOT NULL DEFAULT '1',
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
   `display_size` varchar(2) NOT NULL DEFAULT 'lg',
-  `last_login` DATETIME NULL DEFAULT NULL
+  `last_login` DATETIME NULL DEFAULT NULL,
+  `default_role` ENUM('user', 'admin') NOT NULL DEFAULT 'user'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

@@ -418,6 +418,8 @@ class Users
             throw new ImproperActionException(_('Someone is already using that email address!'));
         }
 
+        // Check default_role
+        $params['default_role'] = $params['default_role'] === 'admin' ? 'admin' : 'user';
         // Check phone
         $params['phone'] = filter_var($params['phone'], FILTER_SANITIZE_STRING);
         // Check cellphone
@@ -432,6 +434,7 @@ class Users
             email = :email,
             firstname = :firstname,
             lastname = :lastname,
+            default_role = :default_role,
             phone = :phone,
             cellphone = :cellphone,
             skype = :skype,
@@ -442,6 +445,7 @@ class Users
         $req->bindParam(':email', $params['email']);
         $req->bindParam(':firstname', $params['firstname']);
         $req->bindParam(':lastname', $params['lastname']);
+        $req->bindParam(':default_role', $params['default_role']);
         $req->bindParam(':phone', $params['phone']);
         $req->bindParam(':cellphone', $params['cellphone']);
         $req->bindParam(':skype', $params['skype']);

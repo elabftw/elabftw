@@ -28,7 +28,7 @@ try {
     // SAML: IDP will redirect to this page after user login on IDP website
     if ($App->Request->query->has('acs')) {
         $Saml = new Saml($App->Config, new Idps());
-        $settings = $Saml->getSettings();
+        $settings = $Saml->getSettings((int) $App->Request->cookies->get('idp_id'));
         $AuthService = new SamlAuth(new SamlAuthLib($settings), $App->Config->configArr, $settings);
 
         $AuthResponse = $AuthService->assertIdpResponse();

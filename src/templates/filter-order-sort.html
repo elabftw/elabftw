@@ -8,6 +8,10 @@
     {% endif %}
     <div class='form-group form-inline'>
       <input type='hidden' name='q' value='{{ DisplayParams.query }}' />
+      {% if DisplayParams.searchType == 'related' %}
+        <input type='hidden' name='related' value='{{ App.Request.query.get('related')|number_format }}' />
+      {% endif %}
+
 
       <!-- CATEGORY -->
       <select name='cat' class='autosubmit mr-1 form-control select-filter-status' aria-label='Filter category'>

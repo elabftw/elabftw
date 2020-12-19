@@ -74,21 +74,21 @@ try {
     // have to check $what and $action at the same time
     // otherwise $action==='toggle' could be executed with $what!=='adminRights'
     if ($what === 'adminRights' && $action === 'toggle') {
-        $hasTmpDisableAdmin = $App->Session->has('tmp_disable_admin');
-        if (!($App->Session->get('is_admin') || $hasTmpDisableAdmin)) {
+        $TmpDisableAdmin = $App->Session->get('tmp_disable_admin');
+        if (!($App->Session->get('is_admin') || $TmpDisableAdmin === 1)) {
             throw new IllegalActionException('Non admin user tried to access admin controller.');
         }
 
-        if (!$hasTmpDisableAdmin) {
+        if ($TmpDisableAdmin === 0) {
             $App->Session->set('tmp_disable_admin', 1);
             $App->Session->set('is_admin', 0);
             $App->Session->set('tmp_disable_sysadmin', $App->Session->get('is_sysadmin'));
             $App->Session->set('is_sysadmin', 0);
-        } elseif ($hasTmpDisableAdmin) {
+        } elseif ($TmpDisableAdmin === 1) {
             $App->Session->set('is_admin', 1);
             $App->Session->set('is_sysadmin', $App->Session->get('tmp_disable_sysadmin'));
             $App->Session->remove('tmp_disable_sysadmin');
-            $App->Session->remove('tmp_disable_admin');
+            $App->Session->set('tmp_disable_admin', 0);
         }
 
         $Response->send();

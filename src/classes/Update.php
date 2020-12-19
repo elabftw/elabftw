@@ -30,7 +30,7 @@ use PDO;
 class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    private const REQUIRED_SCHEMA = 56;
+    private const REQUIRED_SCHEMA = 57;
 
     /** @var Config $Config instance of Config */
     public $Config;

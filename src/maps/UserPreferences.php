@@ -38,6 +38,8 @@ class UserPreferences implements MapInterface
     private $displaySize = 'lg';
 
     /** @var string $displayMode */
+    // Can have two values: 'it' for item list (the default mode),
+    // and 'tb' for tabular view
     private $displayMode = 'it';
 
     /** @var string $orderby */
@@ -302,8 +304,8 @@ class UserPreferences implements MapInterface
     private function read(): array
     {
         $sql = 'SELECT limit_nb,
-            display_mode,
             display_size,
+            display_mode,
             sort,
             orderby,
             single_column_layout,

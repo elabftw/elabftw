@@ -124,12 +124,6 @@ class Check
         }
     }
 
-    /**
-     * Check the display mode user setting
-     *
-     * @param string $input
-     * @return string
-     */
     public static function displayMode(string $input): string
     {
         switch ($input) {

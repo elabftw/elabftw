@@ -63,13 +63,12 @@
           </select>
           <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
       </p>
-
       {% if App.Users.userData.display_mode=='it' %}
-      <div class='row display-flex' id='itemList'>
-      {% for item in itemsArr|slice(0, DisplayParams.limit) %}
-        {% include('show-item.html') %}
-      {% endfor %}
-      </div>
+        <div class='row display-flex' id='itemList'>
+        {% for item in itemsArr|slice(0, DisplayParams.limit) %}
+          {% include('show-item.html') %}
+        {% endfor %}
+        </div>
       {% else  %}
         <table class='item-table'>
           <tr>

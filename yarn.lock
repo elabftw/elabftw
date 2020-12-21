@@ -4108,18 +4108,18 @@ jmespath@^0.15.0:
   integrity sha1-o/Iiqarp+Wb10nx5ZRDigJF2Qhc=
 
 jquery-jeditable@2.0.*:
-  version "2.0.17"
-  resolved "https://registry.yarnpkg.com/jquery-jeditable/-/jquery-jeditable-2.0.17.tgz#3f592515859cbf0c68044eb5b501a9b071714d37"
-  integrity sha512-XhSAcRPVS9sng/RYMLgj6TdGv4BbwIAGNQUxl0aEMfjiioNGYxkZHTUs7GDZX2q2Mde6vu2Ap3A9ZKvtY4Bl+w==
+  version "2.0.18"
+  resolved "https://registry.yarnpkg.com/jquery-jeditable/-/jquery-jeditable-2.0.18.tgz#8de4ed6d5bc346d83dabd0eb48622654b887f676"
+  integrity sha512-vXqkUlDdUDweo2opspDL3xZu1hO0A4xkFMpYG9RXgAjYzEP9JMMjoOnTXXcgkw4h1h9RAyO+diYZXwm/lbk3OA==
   dependencies:
-    jquery ">=3.5.0"
+    jquery "^3.5.1"
 
 jquery-ui@^1.12.1:
   version "1.12.1"
   resolved "https://registry.yarnpkg.com/jquery-ui/-/jquery-ui-1.12.1.tgz#bcb4045c8dd0539c134bc1488cdd3e768a7a9e51"
   integrity sha1-vLQEXI3QU5wTS8FIjN0+dop6nlE=
 
-jquery@>=3.5.0, jquery@^3.5.0, jquery@^3.5.1:
+jquery@^3.5.0, jquery@^3.5.1:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.5.1.tgz#d7b4d08e1bfdb86ad2f1a3d039ea17304717abb5"
   integrity sha512-XwIBPqcMn57FxfT+Go5pzySnm4KWkT1Tv7gjrpT1srtf8Weynl6R273VJ5GjkRb51IzMp5nbaPjJXMWeju2MKg==

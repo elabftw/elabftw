@@ -885,12 +885,20 @@
   dependencies:
     tslib "^2.0.3"
 
-"@fullcalendar/core@^5.1.0":
-  version "5.4.0"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/core/-/core-5.4.0.tgz#426eed400b0948b955e92275095d617e428be5a1"
-  integrity sha512-brg5TI/ZrCm+gBdKRkDLuenUxAEYa40Esw6yAtLbx0azRinhOZ+koqy4J3VA3dnv2W5HI9agVr9wuQLHWjqDtw==
+"@fullcalendar/common@~5.5.0":
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/common/-/common-5.5.0.tgz#02509c8d96bb0bb7fcf397ccf564ed271a6cee00"
+  integrity sha512-xHsHRI2xnC4vDPdRaOkt03SGIEsmlcSTI6RVInI2PQKi3n4otgM4ej3WL4B010uT4IzrBlUvNm8HHEo/o3g8Ug==
   dependencies:
-    "@fullcalendar/common" "~5.4.0"
+    ical.js "^1.4.0"
+    tslib "^2.0.3"
+
+"@fullcalendar/core@^5.5.0":
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/core/-/core-5.5.0.tgz#08373ce9b68a88ea3d48caf7a682a8261d90a3c7"
+  integrity sha512-NHyrH6AP1zRRCWsK0NuY/bZFQes1UaGB2pukMv86A0Yq1BI7Y7m9u/yH7D0/ZCaNkCLVxrSlIwAOtMQxPPITdg==
+  dependencies:
+    "@fullcalendar/common" "~5.5.0"
     preact "^10.0.5"
     tslib "^2.0.3"
 
@@ -3674,6 +3682,11 @@ i18next@^19.6.0:
   integrity sha512-FfVPNWv+felJObeZ6DSXZkj9QM1Ivvh7NcFCgA8XPtJWHz0iXVa9BUy+QY8EPrCLE+vWgDfV/sc96BgXVo6HAA==
   dependencies:
     "@babel/runtime" "^7.12.0"
+
+ical.js@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/ical.js/-/ical.js-1.4.0.tgz#fc5619dc55fe03d909bf04362aa0677f4541b9d7"
+  integrity sha512-ltHZuOFNNjcyEYbzDgjemS7LWIFh2vydJeznxQHUh3dnarbxqOYsWONYteBVAq1MEOHnwXFGN2eskZReHclnrA==
 
 iconv-lite@0.4.24, iconv-lite@^0.4.24, iconv-lite@^0.4.4, iconv-lite@~0.4.13:
   version "0.4.24"

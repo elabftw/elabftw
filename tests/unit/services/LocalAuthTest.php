@@ -29,9 +29,8 @@ class LocalAuthTest extends \PHPUnit\Framework\TestCase
 
     public function testTryAuthWithInvalidEmail()
     {
-        $AuthService = new LocalAuth('invalid@example.com', 'nopenope');
         $this->expectException(InvalidCredentialsException::class);
-        $authResponse = $AuthService->tryAuth();
+        $AuthService = new LocalAuth('invalid@example.com', 'nopenope');
     }
 
     public function testTryAuthWithInvalidPassword()

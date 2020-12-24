@@ -540,8 +540,9 @@ CREATE TABLE `uploads` (
 
 CREATE TABLE `users` (
   `userid` int(10) UNSIGNED NOT NULL,
-  `salt` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `salt` varchar(255) NULL DEFAULT NULL,
+  `password` varchar(255) NULL DEFAULT NULL,
+  `password_hash` varchar(255) NULL DEFAULT NULL,
   `mfa_secret` varchar(32) DEFAULT NULL,
   `usergroup` int(10) UNSIGNED NOT NULL,
   `firstname` varchar(255) NOT NULL,

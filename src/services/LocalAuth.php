@@ -12,8 +12,8 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\InvalidCredentialsException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Users;
 use function password_hash;

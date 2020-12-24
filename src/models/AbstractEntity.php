@@ -204,6 +204,11 @@ abstract class AbstractEntity implements CreatableInterface
         foreach ($this->filters as $filter) {
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
+
+        // experiments related to something?
+        if ($displayParams->searchType === 'related') {
+            $sql .= ' AND linkst.link_id = ' . $displayParams->related;
+        }
         // teamFilter is to restrict to the team for items only
         // as they have a team column
         $teamFilter = '';
@@ -719,6 +724,7 @@ abstract class AbstractEntity implements CreatableInterface
             AS stepst ON (
             entity.id = steps_item_id
             AND stepst.finished = 0)';
+        $linksJoin = 'LEFT JOIN %1$s_links AS linkst ON (linkst.item_id = entity.id)';
 
 
         $from = 'FROM %1$s AS entity';
@@ -746,6 +752,7 @@ abstract class AbstractEntity implements CreatableInterface
             $tagsJoin,
             $eventsJoin,
             $stepsJoin,
+            $linksJoin,
             $usersJoin,
             $teamJoin,
             $uploadsJoin,

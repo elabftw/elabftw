@@ -39,17 +39,9 @@ class ExperimentsController extends AbstractEntityController
 
     /**
      * Get the results from main sql query with items to display
-     *
-     * @param string $searchType
-     * @return array
      */
-    protected function getItemsArr(string $searchType): array
+    protected function getItemsArr(): array
     {
-        // related filter
-        if ($searchType === 'related') {
-            return $this->Entity->readRelated((int) $this->App->Request->query->get('related'));
-        }
-
         // filter by user if we don't want to show the rest of the team
         if (!$this->Entity->Users->userData['show_team']) {
             $this->Entity->addFilter('entity.userid', $this->App->Users->userData['userid']);

@@ -36,7 +36,7 @@
     "symfony/filesystem": "^5.0",
     "symfony/mime": "^5.1",
     "robthree/twofactorauth": "^1.7.0",
-    "directorytree/ldaprecord": "^1.11",
+    "directorytree/ldaprecord": "^2.0.3",
     "league/flysystem": "^1.1",
     "league/flysystem-memory": "^1.0"
   },

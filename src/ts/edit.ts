@@ -296,14 +296,14 @@ $(document).ready(function() {
     const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
     const img = new Image();
     // set src attribute to image path
-    img.src = 'app/download.php?f=' + $(this).data('path');
-    img.onload = (): void => {
+    img.addEventListener('load', function() {
       // make canvas bigger than image
       context.canvas.width = (this as HTMLImageElement).width * 2;
       context.canvas.height = (this as HTMLImageElement).height * 2;
       // add image to canvas
       context.drawImage(img, (this as HTMLImageElement).width / 2, (this as HTMLImageElement).height / 2);
-    };
+    });
+    img.src = 'app/download.php?f=' + $(this).data('path');
   });
   // STAR RATING
   const StarC = new Star();

@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Users;
 use function password_hash;
+use function password_needs_rehash;
 use function password_verify;
 use PDO;
 
@@ -150,6 +151,15 @@ class LocalAuth implements AuthInterface
         // verify password
         if (password_verify($this->password, $res['password_hash']) !== true) {
             throw new InvalidCredentialsException();
+        }
+        // check if it needs rehash (new algo)
+        if (password_needs_rehash($res['password_hash'], PASSWORD_DEFAULT)) {
+            $passwordHash = password_hash($this->password, PASSWORD_DEFAULT);
+            $sql = 'UPDATE users SET password_hash = :password_hash WHERE userid = :userid';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':password_hash', $passwordHash);
+            $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+            $this->Db->execute($req);
         }
 
         $this->AuthResponse->userid = $this->userid;

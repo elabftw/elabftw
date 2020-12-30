@@ -97,7 +97,7 @@ class Config
         if (isset($post['url']) && !empty($post['url'])) {
             $post['url'] = filter_var($post['url'], FILTER_SANITIZE_URL);
         }
-        if ($post['url'] === '') {
+        if (isset($post['url']) && $post['url'] === '') {
             $post['url'] = null;
         }
 

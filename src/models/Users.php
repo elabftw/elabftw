@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use function bin2hex;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -24,8 +23,8 @@ use function filter_var;
 use function hash;
 use function in_array;
 use function mb_strlen;
+use function password_hash;
 use PDO;
-use function random_bytes;
 use function time;
 
 /**
@@ -77,24 +76,17 @@ class Users
 
     /**
      * Create a new user. If no password is provided, it's because we create it from SAML.
-     *
-     * @param string $email
-     * @param array<array-key, mixed> $teams
-     * @param string $firstname
-     * @param string $lastname
-     * @param string $password
-     * @param int|null $group
-     * @param bool $forceValidation used when user is created from SAML login
-     * @return int the new userid
      */
-    public function create(string $email, array $teams, string $firstname = '', string $lastname = '', string $password = '', ?int $group = null, bool $forceValidation = false): int
+    public function create(string $email, array $teams, string $firstname = '', string $lastname = '', string $password = '', ?int $group = null, bool $forceValidation = false, bool $normalizeTeams = true, bool $alertAdmin = true): int
     {
         $Config = new Config();
         $Teams = new Teams($this);
 
         // make sure that all the teams in which the user will be are created/exist
         // this might throw an exception if the team doesn't exist and we can't create it on the fly
-        $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
+        if ($normalizeTeams) {
+            $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
+        }
         // check for duplicate of email
         if ($this->isDuplicateEmail($email)) {
             throw new ImproperActionException(_('Someone is already using that email address!'));
@@ -107,10 +99,8 @@ class Users
         $firstname = filter_var($firstname, FILTER_SANITIZE_STRING);
         $lastname = filter_var($lastname, FILTER_SANITIZE_STRING);
 
-        // Create salt
-        $salt = hash('sha512', bin2hex(random_bytes(16)));
-        // Create hash
-        $passwordHash = hash('sha512', $salt . $password);
+        // Create password hash
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
         // Registration date is stored in epoch
         $registerDate = time();
@@ -131,29 +121,26 @@ class Users
 
         $sql = 'INSERT INTO users (
             `email`,
-            `password`,
+            `password_hash`,
             `firstname`,
             `lastname`,
             `usergroup`,
-            `salt`,
             `register_date`,
             `validated`,
             `lang`
         ) VALUES (
             :email,
-            :password,
+            :password_hash,
             :firstname,
             :lastname,
             :usergroup,
-            :salt,
             :register_date,
             :validated,
             :lang);';
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $email);
-        $req->bindParam(':salt', $salt);
-        $req->bindParam(':password', $passwordHash);
+        $req->bindParam(':password_hash', $passwordHash);
         $req->bindParam(':firstname', $firstname);
         $req->bindParam(':lastname', $lastname);
         $req->bindParam(':register_date', $registerDate);
@@ -165,10 +152,15 @@ class Users
 
         // now add the user to the team
         $Teams->addUserToTeams($userid, array_column($teams, 'id'));
+        $userInfo = array('email' => $email, 'name' => $firstname . ' ' . $lastname);
+        $Email = new Email($Config, $this);
+        if ($alertAdmin) {
+            // just skip this if we don't have proper normalized teams
+            if (isset($teams[0]['id'])) {
+                $Email->alertAdmin((int) $teams[0]['id'], $userInfo, !(bool) $validated);
+            }
+        }
         if ($validated === 0) {
-            $userInfo = array('email' => $email, 'name' => $firstname . ' ' . $lastname);
-            $Email = new Email($Config, $this);
-            $Email->alertAdmin($teams[0]['id'], $userInfo);
             $Email->alertUserNeedValidation($email);
             // set a flag to show correct message to user
             $this->needValidation = true;
@@ -457,21 +449,16 @@ class Users
 
     /**
      * Update the password for the user
-     *
-     * @param string $password The new password
-     * @return void
      */
     public function updatePassword(string $password): void
     {
         Check::passwordLength($password);
 
-        $salt = \hash('sha512', \bin2hex(\random_bytes(16)));
-        $passwordHash = \hash('sha512', $salt . $password);
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
-        $sql = 'UPDATE users SET salt = :salt, password = :password, token = null WHERE userid = :userid';
+        $sql = 'UPDATE users SET password_hash = :password_hash, token = null WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':salt', $salt);
-        $req->bindParam(':password', $passwordHash);
+        $req->bindParam(':password_hash', $passwordHash);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
     }

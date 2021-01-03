@@ -30,6 +30,14 @@ If you scan the live demo for good practices and security headers, you'll find t
 
 [![observatory score a+](https://i.imgur.com/2qI796u.png)](https://observatory.mozilla.org/analyze/demo.elabftw.net)
 
+## Best practices
+
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2766/badge)](https://bestpractices.coreinfrastructure.org/projects/2766)
+
+**eLabFTW** follows the best practices edicted by The Linux Foundation [Core Infrastructure Initiative](https://bestpractices.coreinfrastructure.org/en).
+
+You can see the criteria [on this page](https://bestpractices.coreinfrastructure.org/en/projects/2766).
+
 ## Running an elabftw instance securely
 
 Great you've installed elabftw. But you're a little bit paranoid because you're working on some top secret project and you don't want anyone to be able to look at it.
@@ -38,7 +46,7 @@ Here is a list of steps you should follow to increase the security of your insta
 
 ### Run the Docker container
 
-**eLabFTW**'s container has been fine tuned for maximizing safety. For instance, the default PHP configuration has been modified to make the session identifier longer, in a specific folder with tight permissions, a lot of functions not used in elabftw are forbidden, the cookies have the httpOnly and secure flags, and other details that might not be easily modifiable if installed outside Docker.
+**eLabFTW**'s container has been fine tuned for maximizing safety. For instance, the default PHP configuration has been modified to make the session identifier longer, in a specific folder with tight permissions, a lot of functions not used in elabftw are forbidden, the cookies have the httpOnly, SameSite and secure flags, and other details that might not be easily modifiable if installed outside Docker.
 
 Nginx also has a custom configuration with secure headers sent to the client.
 

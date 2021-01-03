@@ -54,13 +54,6 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         //$this->assertEquals('20160729', $experiment['date']);
     }
 
-    public function testReadRelated()
-    {
-        $this->Experiments->setId(1);
-        $this->Experiments->Links->create(new ParamsProcessor(array('id' => 1)));
-        $this->assertTrue(is_array($this->Experiments->readRelated(1)));
-    }
-
     public function testUpdate()
     {
         $new = $this->Experiments->create(new ParamsProcessor(array('id' => 0)));

@@ -97,6 +97,9 @@ class Config
         if (isset($post['url']) && !empty($post['url'])) {
             $post['url'] = filter_var($post['url'], FILTER_SANITIZE_URL);
         }
+        if (isset($post['url']) && $post['url'] === '') {
+            $post['url'] = null;
+        }
 
         if (isset($post['login_tries']) && Check::id((int) $post['login_tries']) === false) {
             throw new IllegalActionException('Bad value for number of login attempts!');

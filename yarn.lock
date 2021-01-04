@@ -4197,10 +4197,10 @@ json5@^2.1.2:
   dependencies:
     minimist "^1.2.5"
 
-jsoneditor@^9.0.3:
-  version "9.1.5"
-  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-9.1.5.tgz#190a366ca5171321a120aa7460c4398b53f2b9c1"
-  integrity sha512-mLip7wKbG18sO2q5sHo/exokHLrClGXa2RnZYDAfkOenuTLzBQG21cTHQMbjUaX3+3i466EFKwnLm3BEFWv+Og==
+jsoneditor@^9.1.7:
+  version "9.1.7"
+  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-9.1.7.tgz#eda50d23bf5f83a8096f1c1a3afa33af93279e20"
+  integrity sha512-ykJOWFc98XJgyzSRDFZJET2MeW9BvZ0oUDo7FrInf7RSVQMRTb22kYjXlCEG9f3tN/bspaJeEtIXEU97sNa1Ww==
   dependencies:
     ace-builds "^1.4.12"
     ajv "^6.12.6"

@@ -310,11 +310,16 @@ class Tools
      * @param string $andor behavior of the space character
      * @param string $column the column to search into
      * @param string $table on which table to do the search
+     * @param bool $isStrict do we add wildcard characters on each side of the query?
      * @return string
      */
-    public static function getSearchSql(string $query, string $andor = 'and', string $column = '', string $table = ''): string
+    public static function getSearchSql(string $query, string $andor = 'and', string $column = '', string $table = '', bool $isStrict = false): string
     {
         $sql = ' AND ';
+        $wildcard = '%';
+        if ($isStrict) {
+            $wildcard = '';
+        }
         // search character is the separator for and/or
         $qArr = explode(' ', $query);
         $sql .= '(';
@@ -333,7 +338,7 @@ class Tools
                 $sql .= "(entity.title LIKE '%$value%' OR entity.date LIKE '%$value%' OR entity.body LIKE '%$value%' $elabidSql)";
             } else {
                 // from search page
-                $sql .= 'entity.' . $column . " LIKE '%$value%'";
+                $sql .= 'entity.' . $column . " LIKE '" . $wildcard . $value . $wildcard . "'";
             }
         }
         return $sql . ')';

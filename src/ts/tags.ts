@@ -9,6 +9,8 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import Tag from './Tag.class';
 import i18next from 'i18next';
+import { getCheckedBoxes, notif } from './misc';
+import { CheckableItem } from './interfaces';
 
 $(document).ready(function() {
   let type = $('#info').data('type');
@@ -25,7 +27,32 @@ $(document).ready(function() {
     }
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
-      TagC.save($(this).val() as string, $(this).data('id'));
+      const itemId = $(this).data('id');
+      TagC.save($(this).val() as string, itemId);
+      $(this).val('');
+    }
+  });
+
+  // CREATE TAG for several entities
+  $(document).on('keypress blur', '.createTagInputMultiple', function(e) {
+    if ($(this).val() === '') {
+      return;
+    }
+    // Enter is ascii code 13
+    if (e.which === 13 || e.type === 'focusout') {
+      // get the ids of selected entities
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        const json = {
+          'msg': 'Nothing selected!',
+          'res': false
+        };
+        notif(json);
+        return;
+      }
+      $.each(checked, function(index) {
+        TagC.save($('#createTagInputMultiple').val() as string, checked[index]['id']);
+      });
       $(this).val('');
     }
   });

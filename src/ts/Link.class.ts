@@ -16,31 +16,21 @@ export default class Link extends Crud {
     this.type = type;
   }
 
-  create(elem): void {
-    const id = elem.data('id');
-    // get link
-    const link = elem.val();
-    // fix for user pressing enter with no input
-    if (link.length > 0) {
-      // parseint will get the id, and not the rest (in case there is number in title)
-      const linkId = parseInt(link, 10);
-      if (!isNaN(linkId)) {
-        this.send({
-          action: 'create',
-          what: 'link',
-          type: this.type,
-          params: {
-            itemId: id,
-            id: linkId,
-          },
-        }).then(() => {
-          // reload the link list
-          $('#links_div_' + id).load(window.location.href + ' #links_div_' + id);
-          // clear input field
-          elem.val('');
-        });
-      } // end if input is bad
-    } // end if input < 0
+  create(targetId: number, itemId: number): void {
+    this.send({
+      action: 'create',
+      what: 'link',
+      type: this.type,
+      params: {
+        itemId: itemId,
+        id: targetId,
+      },
+    }).then(() => {
+      // reload the link list
+      $('#links_div_' + itemId).load(window.location.href + ' #links_div_' + itemId);
+      // clear input field
+      $('.linkinput').val('');
+    });
   }
 
   destroy(elem): void {

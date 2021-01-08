@@ -10,6 +10,7 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import Link from './Link.class';
 import Step from './Step.class';
 import i18next from 'i18next';
+import { getCheckedBoxes, notif } from './misc';
 
 $(document).ready(function() {
   const type = $('#info').data('type');
@@ -62,10 +63,33 @@ $(document).ready(function() {
 
   // CREATE
   // listen keypress, add link when it's enter or on blur
-  $(document).on('keypress blur', '.linkinput', function(e) {
+  $(document).on('keypress blur', '#linkinput', function(e) {
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
-      LinkC.create($(this));
+      LinkC.create(parseInt($(this).val() as string), $(this).data('id') as number);
+    }
+  });
+
+  $(document).on('keypress blur', '#linkInputMultiple', function(e) {
+    if ($(this).val() === '') {
+      return;
+    }
+    // Enter is ascii code 13
+    if (e.which === 13 || e.type === 'focusout') {
+      // get the ids of selected entities
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        const json = {
+          'msg': 'Nothing selected!',
+          'res': false
+        };
+        notif(json);
+        return;
+      }
+      $.each(checked, function(index) {
+        LinkC.create(parseInt($('#linkInputMultiple').val() as string), checked[index]['id']);
+      });
+      $(this).val('');
     }
   });
 

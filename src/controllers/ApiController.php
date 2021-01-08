@@ -152,6 +152,8 @@ class ApiController implements ControllerInterface
                 // CREATE AN EXPERIMENT/ITEM
                 if ($this->Entity instanceof Database) {
                     return $this->createItem();
+                } elseif ($this->Entity instanceof Templates) {
+                    return $this->createTemplate();
                 }
                 return $this->createExperiment();
             }
@@ -607,6 +609,44 @@ class ApiController implements ControllerInterface
      * @return Response
      */
     private function createExperiment(): Response
+    {
+        if ($this->Entity instanceof Database) {
+            return new Response('Creating database items is not supported.', 400);
+        }
+        $params = new ParamsProcessor(array('id' => 0));
+        $id = $this->Entity->create($params);
+        return new JsonResponse(array('result' => 'success', 'id' => $id));
+    }
+
+    /**
+     * @api {post} /templates Create template
+     * @apiName CreateTemplate
+     * @apiGroup Entity
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * response = manager.create_template()
+     * print(f"Created template with id {response['id']}.")
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # create a template with default status
+     * curl -X POST -H "Authorization: $TOKEN" https://elab.example.org/api/v1/templates
+     * @apiSuccess {String} result success or error message
+     * @apiSuccess {String} id Id of the new template
+     * @apiSuccessExample {Json} Success-Response:
+     *     HTTP/2 200 OK
+     *     {
+     *       "result": "success",
+     *       "id": 42
+     *     }
+     */
+
+    /**
+     * Create a template
+     *
+     * @return Response
+     */
+    private function createTemplate(): Response
     {
         if ($this->Entity instanceof Database) {
             return new Response('Creating database items is not supported.', 400);

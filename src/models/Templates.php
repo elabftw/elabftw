@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
 use function is_bool;
@@ -21,7 +22,7 @@ use PDO;
 /**
  * All about the templates
  */
-class Templates extends AbstractEntity
+class Templates extends AbstractEntity implements CreatableInterface
 {
     use SortableTrait;
 

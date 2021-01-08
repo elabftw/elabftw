@@ -26,6 +26,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Status;
+use Elabftw\Models\Templates;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
@@ -98,7 +99,7 @@ class ApiController implements ControllerInterface
                     return $this->getBackupZip();
                 }
 
-                if ($this->endpoint === 'experiments' || $this->endpoint === 'items') {
+                if ($this->endpoint === 'experiments' || $this->endpoint === 'items' || $this->endpoint === 'templates') {
                     return $this->getEntity();
                 }
                 if ($this->endpoint === 'items_types' || $this->endpoint === 'status') {
@@ -200,6 +201,8 @@ class ApiController implements ControllerInterface
             $this->Entity = new Experiments($this->Users, $this->id);
         } elseif ($this->endpoint === 'items' || $this->endpoint === 'bookable') {
             $this->Entity = new Database($this->Users, $this->id);
+        } elseif ($this->endpoint === 'templates') {
+            $this->Entity = new Templates($this->Users, $this->id);
         } elseif ($this->endpoint === 'items_types') {
             $this->Category = new ItemsTypes($this->Users);
         } elseif ($this->endpoint === 'status') {

@@ -11,7 +11,9 @@
     top: 0;
     left: 0;
     display: block;
-    z-index: 1000;
+    // keep this above 1200 for tinymce fullscreen mode
+    // see #2401
+    z-index: 1985;
     float: left;
     min-width: 160px;
     padding: 5px 0;

@@ -219,6 +219,8 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
      */
     public function unreference(int $tagId): void
     {
+        $this->Entity->canOrExplode('write');
+
         $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);

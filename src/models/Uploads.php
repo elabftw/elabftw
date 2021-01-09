@@ -23,6 +23,7 @@ use Elabftw\Services\Filter;
 use Elabftw\Services\MakeThumbnail;
 use Elabftw\Traits\UploadTrait;
 use function exif_read_data;
+use function extension_loaded;
 use function file_exists;
 use function function_exists;
 use Gmagick;
@@ -87,7 +88,7 @@ class Uploads implements DestroyableInterface
         // maybe php-exif extension isn't loaded
         if (function_exists('exif_read_data') && in_array($ext, Extensions::HAS_EXIF, true)) {
             $exifData = exif_read_data($fullPath);
-            if ($exifData !== false) {
+            if ($exifData !== false && extension_loaded('gmagick')) {
                 $image = new Gmagick($fullPath);
                 // default is 75
                 $image->setCompressionQuality(100);

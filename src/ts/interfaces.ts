@@ -20,8 +20,8 @@ interface ResponseMsg {
 }
 
 interface CheckableItem {
-  id: string;
-  randomid: string;
+  id: number;
+  randomid: number;
 }
 
 export {

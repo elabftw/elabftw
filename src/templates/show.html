@@ -33,35 +33,46 @@
       </p>
 
       <p id='withSelected' style='display:none'>{{ 'With selected:'|trans }}
-          <select autocomplete='off' id='catChecked'>
-              <option selected disabled>
-              {% if Entity.type == 'experiments' %}
-                  {{ 'Change status'|trans }}
-              {% else %}
-                  {{ 'Change item type'|trans }}
-              {% endif %}
-              </option>
+        <!-- Change category -->
+        <select autocomplete='off' id='catChecked'>
+            <option selected disabled>
+            {% if Entity.type == 'experiments' %}
+                {{ 'Change status'|trans }}
+            {% else %}
+                {{ 'Change item type'|trans }}
+            {% endif %}
+            </option>
 
-              {% for category in categoryArr %}
-                  <option value='{{ category.category_id }}'>{{ category.category }}</option>
-              {% endfor %}
-          </select>
-
-          <select autocomplete='off' id='visChecked'>
-            <option selected disabled>{{ 'Change visibility'|trans }}</option>
-            {% for key, value in visibilityArr %}
-              <option value='{{ key }}'>{{ value }}</option>
+            {% for category in categoryArr %}
+                <option value='{{ category.category_id }}'>{{ category.category }}</option>
             {% endfor %}
-          </select>
+        </select>
 
-          <select autocomplete='off' id='exportChecked'>
-            <option selected disabled>{{ 'Export'|trans }}</option>
-            <option value='zip'>{{ 'Make Zip'|trans }}</option>
-            <option value='csv'>{{ 'Make Csv'|trans }}</option>
-            <option value='multiPdf'>{{ 'Make PDF'|trans }}</option>
-            <option value='json'>{{ 'Make JSON'|trans }}</option>
-          </select>
-          <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
+        <!-- Change visibility -->
+        <select autocomplete='off' id='visChecked'>
+          <option selected disabled>{{ 'Change visibility'|trans }}</option>
+          {% for key, value in visibilityArr %}
+            <option value='{{ key }}'>{{ value }}</option>
+          {% endfor %}
+        </select>
+
+        <!-- Export -->
+        <select autocomplete='off' id='exportChecked'>
+          <option selected disabled>{{ 'Export'|trans }}</option>
+          <option value='zip'>{{ 'Make Zip'|trans }}</option>
+          <option value='csv'>{{ 'Make Csv'|trans }}</option>
+          <option value='multiPdf'>{{ 'Make PDF'|trans }}</option>
+          <option value='json'>{{ 'Make JSON'|trans }}</option>
+        </select>
+
+        <!-- Add a tag -->
+        <input type='text' id='createTagInputMultiple' class='createTagInputMultiple' placeholder='{{ 'Add a tag'|trans }}' />
+
+        <!-- Add a link -->
+        <input type='text' id='linkInputMultiple' class='linkinput' placeholder='{{ 'Add a link'|trans }}' />
+
+
+        <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
       </p>
       <div class='row display-flex'>
       {% for item in itemsArr|slice(0, DisplayParams.limit) %}

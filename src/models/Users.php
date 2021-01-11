@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use function bin2hex;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -24,8 +23,8 @@ use function filter_var;
 use function hash;
 use function in_array;
 use function mb_strlen;
+use function password_hash;
 use PDO;
-use function random_bytes;
 use function time;
 
 /**
@@ -100,10 +99,8 @@ class Users
         $firstname = filter_var($firstname, FILTER_SANITIZE_STRING);
         $lastname = filter_var($lastname, FILTER_SANITIZE_STRING);
 
-        // Create salt
-        $salt = hash('sha512', bin2hex(random_bytes(16)));
-        // Create hash
-        $passwordHash = hash('sha512', $salt . $password);
+        // Create password hash
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
         // Registration date is stored in epoch
         $registerDate = time();
@@ -124,29 +121,26 @@ class Users
 
         $sql = 'INSERT INTO users (
             `email`,
-            `password`,
+            `password_hash`,
             `firstname`,
             `lastname`,
             `usergroup`,
-            `salt`,
             `register_date`,
             `validated`,
             `lang`
         ) VALUES (
             :email,
-            :password,
+            :password_hash,
             :firstname,
             :lastname,
             :usergroup,
-            :salt,
             :register_date,
             :validated,
             :lang);';
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $email);
-        $req->bindParam(':salt', $salt);
-        $req->bindParam(':password', $passwordHash);
+        $req->bindParam(':password_hash', $passwordHash);
         $req->bindParam(':firstname', $firstname);
         $req->bindParam(':lastname', $lastname);
         $req->bindParam(':register_date', $registerDate);
@@ -161,7 +155,10 @@ class Users
         $userInfo = array('email' => $email, 'name' => $firstname . ' ' . $lastname);
         $Email = new Email($Config, $this);
         if ($alertAdmin) {
-            $Email->alertAdmin((int) $teams[0]['id'], $userInfo, !(bool) $validated);
+            // just skip this if we don't have proper normalized teams
+            if (isset($teams[0]['id'])) {
+                $Email->alertAdmin((int) $teams[0]['id'], $userInfo, !(bool) $validated);
+            }
         }
         if ($validated === 0) {
             $Email->alertUserNeedValidation($email);
@@ -452,21 +449,16 @@ class Users
 
     /**
      * Update the password for the user
-     *
-     * @param string $password The new password
-     * @return void
      */
     public function updatePassword(string $password): void
     {
         Check::passwordLength($password);
 
-        $salt = \hash('sha512', \bin2hex(\random_bytes(16)));
-        $passwordHash = \hash('sha512', $salt . $password);
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
-        $sql = 'UPDATE users SET salt = :salt, password = :password, token = null WHERE userid = :userid';
+        $sql = 'UPDATE users SET password_hash = :password_hash, token = null WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':salt', $salt);
-        $req->bindParam(':password', $passwordHash);
+        $req->bindParam(':password_hash', $passwordHash);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
     }

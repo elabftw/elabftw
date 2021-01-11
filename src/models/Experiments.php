@@ -100,30 +100,6 @@ class Experiments extends AbstractEntity implements CreatableInterface
         return $newId;
     }
 
-    /**
-     * Read all experiments related to a DB item
-     *
-     * @param int $itemId the DB item
-     * @return array
-     */
-    public function readRelated(int $itemId): array
-    {
-        $itemsArr = array();
-
-        // get the id of related experiments
-        $sql = 'SELECT item_id FROM experiments_links
-            WHERE link_id = :link_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':link_id', $itemId, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        while ($data = $req->fetch()) {
-            $this->setId((int) $data['item_id']);
-            $itemsArr[] = $this->read();
-        }
-
-        return $itemsArr;
-    }
-
     public function getBoundEvents(): array
     {
         $sql = 'SELECT team_events.* from team_events WHERE experiment = :id';

@@ -25,6 +25,9 @@ class DisplayParams
     /** @var int $offset */
     public $offset = 0;
 
+    /** @var int|null $related */
+    public $related;
+
     /** @var string $order */
     public $order = 'date';
 
@@ -50,6 +53,7 @@ class DisplayParams
         // RELATED FILTER
         if (Check::id((int) $app->Request->query->get('related')) !== false) {
             $this->searchType = 'related';
+            $this->setRelated($app);
         }
         if ((Check::id((int) $app->Request->query->get('cat')) !== false) || !empty($app->Request->query->get('tags')[0])) {
             $this->searchType = 'something';
@@ -115,6 +119,11 @@ class DisplayParams
 
         // now get pref from the filter-order-sort menu
         $this->order = $app->Request->query->get('order') ?? $this->order;
+    }
+
+    private function setRelated(App $app): void
+    {
+        $this->related = (int) $app->Request->query->get('related') ?? $this->related;
     }
 
     private function setSort(App $app): void

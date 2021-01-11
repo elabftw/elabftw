@@ -63,7 +63,7 @@
           </select>
           <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
       </p>
-      {% if App.Users.userData.display_mode=='it' %}
+      {% if App.Users.userData.display_mode == 'it' %}
         <div class='row display-flex' id='itemList'>
         {% for item in itemsArr|slice(0, DisplayParams.limit) %}
           {% include('show-item.html') %}
@@ -72,14 +72,24 @@
       {% else  %}
         <table class='item-table'>
           <tr>
-            <th class='title-item-table'>Title</th>
+            <th class='title-item-table'>Title
+            <i class='fas fa-sort sort-triangle' target-sort="title"></i>
+            </th>
             {% if Entity.type == 'experiments' %}
               <th class='step-item-table'>Next step</th>
             {% elseif Entity.type == 'items' %}
-              <th class='step-item-table'>User</th>
+              <th class='step-item-table'>User
+            <i class='fas fa-sort sort-triangle' target-sort="user"></i>
+            </th>
             {% endif %}
+            <th class='category-item-table'>Category
+              <i class='fas fa-sort sort-triangle' target-sort="cat"></i>
+            </th>
             <th class='tags-item-table'>Tags</th>
-            <th class='info-item-table'>Info</th>
+            <th class='actions-item-table'>Actions</th>
+            <th class='date-item-table'>Date
+            <i class='fas fa-sort sort-triangle' target-sort="date"></i>
+            </th>
           </tr>
         {% for item in itemsArr|slice(0, DisplayParams.limit) %}
           {% include('show-item-table.html') %}

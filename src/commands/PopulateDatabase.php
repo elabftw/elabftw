@@ -114,14 +114,9 @@ class PopulateDatabase extends Command
         $Sql->execFile('structure.sql');
 
         // adjust global config
-        $configArr = array(
-            'admin_validate' => 0,
-            'debug' => 1,
-            'mail_from' => $yaml['mailfrom'],
-            'smtp_password' => $input->getOption('smtppass') ?? 'afakepassword',
-            'smtp_username' => $input->getOption('smtpuser') ?? 'somesmtpuser',
-            'url' => $yaml['url'],
-        );
+        $configArr = $yaml['config'];
+        $configArr['smtp_password'] = $input->getOption('smtppass') ?? 'afakepassword';
+        $configArr['smtp_username'] = $input->getOption('smtpuser') ?? 'somesmtpuser';
         $Config = new Config();
         $Config->update($configArr);
 

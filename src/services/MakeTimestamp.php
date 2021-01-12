@@ -32,6 +32,7 @@ use PDO;
 use Psr\Http\Message\StreamInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use function is_dir;
 
 /**
  * Timestamp an experiment with RFC 3161
@@ -566,7 +567,7 @@ class MakeTimestamp extends AbstractMake
         $longName = $this->getLongName() . '.asn1';
         $filePath = $this->getUploadsPath() . $longName;
         $dir = \dirname($filePath);
-        if (!\is_dir($dir) && !\mkdir($dir, 0700, true) && !\is_dir($dir)) {
+        if (!is_dir($dir) && !\mkdir($dir, 0700, true) && !is_dir($dir)) {
             throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
         }
         if (!file_put_contents($filePath, $binaryToken)) {
@@ -606,7 +607,7 @@ class MakeTimestamp extends AbstractMake
     $longName = $this->getLongName() . '-bloxberg-proof.pdf';
         $filePath = $this->getUploadsPath() . $longName;
         $dir = \dirname($filePath);
-        if (!\is_dir($dir) && !\mkdir($dir, 0700, true) && !\is_dir($dir)) {
+        if (!is_dir($dir) && !\mkdir($dir, 0700, true) && !is_dir($dir)) {
             throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
         }
         if (!file_put_contents($filePath, $pdf_raw)) {

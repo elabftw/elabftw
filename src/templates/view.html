@@ -52,8 +52,8 @@
         </a>
     {% endif %}
     <!-- check if originstamp timestamp was created -->
-    {% if Entity.entityData.os_proof_received %}
-        <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.os_proof.0.long_name }}&name=os_proof.pdf&forceDownload=true'>
+    {% if Entity.entityData.originstamp_proof_received %}
+        <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.originstamp_proof.0.long_name }}&name=originstamp_proof.pdf&forceDownload=true'>
             <span>{{ 'Download OriginStamp proof'|trans }}</span><i class='fas fa-download'></i>
         </a>
     {% endif %}

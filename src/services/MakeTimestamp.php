@@ -253,8 +253,8 @@ class MakeTimestamp extends AbstractMake
         $hash = $this->getHash($this->pdfPath);
     
      //Submit hash to originstamp, state 2 == indifferent, i.e. sysadmin decides
-        if (($teamConfigArr['os_activate'] == 2 and  $this->Config->configArr['os_activate'] == 1) || ($teamConfigArr['os_activate'] == 1)) {
-            $api_key = ($teamConfigArr['os_activate'] == 1 ? $teamConfigArr['os_api_key'] : $this->Config->configArr['os_api_key']);
+        if (($teamConfigArr['originstamp_activate'] == 2 and  $this->Config->configArr['originstamp_activate'] == 1) || ($teamConfigArr['originstamp_activate'] == 1)) {
+            $api_key = ($teamConfigArr['originstamp_activate'] == 1 ? $teamConfigArr['originstamp_api_key'] : $this->Config->configArr['originstamp_api_key']);
 
             $this->OSsubmit($api_key,$hash,$elabid);
         }
@@ -326,7 +326,7 @@ class MakeTimestamp extends AbstractMake
         try {
             $response = $client->post("http://api.originstamp.com/v3/timestamp/create",$options);
             // currently we do not have an implementation to request originstamp proofs as their generation on the server takes multiple hours, 
-            // if you fetch the proofs with an external program set os_proof_received=1 in mysql experiment entry to make elabftw display the proof
+            // if you fetch the proofs with an external program set originstamp_proof_received=1 in mysql experiment entry to make elabftw display the proof
             $this->osStamp = 1;
         } catch (RequestException $e) {
             throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);

@@ -279,13 +279,13 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         {% endif %}
         <input class='form-control col-md-4' autocomplete='off' type='password' name='stamppass' id='stamppass' />
 	
-	<label for='os_activate'>{{ 'Send timestamp to OriginStamp:'|trans }}</label>
-        <select id='os_activate' name='os_activate' class='form-control col-md-4'>
-             <option {{ App.Config.configArr.os_activate == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
-             <option {{ App.Config.configArr.os_activate == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
+	<label for='originstamp_activate'>{{ 'Send timestamp to OriginStamp:'|trans }}</label>
+        <select id='originstamp_activate' name='originstamp_activate' class='form-control col-md-4'>
+             <option {{ App.Config.configArr.originstamp_activate == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
+             <option {{ App.Config.configArr.originstamp_activate == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
         </select>
-        <label for='os_api_key'>{{ 'API key for OriginStamp service:'|trans }}</label>
-        <input class='form-control col-md-4' autocomplete='off' type='text' value='{{ App.Config.configArr.os_api_key }}' name='os_api_key' id='os_api_key' />
+        <label for='originstamp_api_key'>{{ 'API key for OriginStamp service:'|trans }}</label>
+        <input class='form-control col-md-4' autocomplete='off' type='text' value='{{ App.Config.configArr.originstamp_api_key }}' name='originstamp_api_key' id='originstamp_api_key' />
 	
 	<label for='bloxberg_activate'>{{ 'Send timestamp to Bloxberg:'|trans }}</label>
         <select id='bloxberg_activate' name='bloxberg_activate' class='form-control col-md-4'>

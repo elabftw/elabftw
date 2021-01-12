@@ -135,7 +135,7 @@ class Experiments extends AbstractEntity implements CreatableInterface
      * @param string $responsefilePath the file path to the timestamp token
      * @return void
      */
-    public function updateTimestamp(string $responseTime, string $responsefilePath, int $os_timestamped=0, string $os_proof='', int $bloxberg_timestamped=0, string $bloxberg_proof=''): void
+    public function updateTimestamp(string $responseTime, string $responsefilePath, int $originstamp_timestamped=0, string $originstamp_proof='', int $bloxberg_timestamped=0, string $bloxberg_proof=''): void
     {
         $this->canOrExplode('write');
 
@@ -147,8 +147,8 @@ class Experiments extends AbstractEntity implements CreatableInterface
             timestampedby = :userid,
             timestampedwhen = :when,
             timestamptoken = :longname,
-            os_timestamped = :os_timestamped,
-            os_proof = :os_proof,
+            originstamp_timestamped = :originstamp_timestamped,
+            originstamp_proof = :originstamp_proof,
             bloxberg_timestamped = :bloxberg_timestamped,
             bloxberg_proof = :bloxberg_proof
             WHERE id = :id;';
@@ -158,8 +158,8 @@ class Experiments extends AbstractEntity implements CreatableInterface
         $req->bindParam(':longname', $responsefilePath);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':os_timestamped', $os_timestamped);
-        $req->bindParam(':os_proof', $os_proof);
+        $req->bindParam(':originstamp_timestamped', $originstamp_timestamped);
+        $req->bindParam(':originstamp_proof', $originstamp_proof);
         $req->bindParam(':bloxberg_timestamped', $bloxberg_timestamped);
         $req->bindParam(':bloxberg_proof', $bloxberg_proof);
 

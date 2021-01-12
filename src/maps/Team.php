@@ -57,11 +57,14 @@ class Team implements MapInterface
     /** @var string|null $stampcert path to the cert for the team's timestamping provider */
     private $stampcert;
     
-    /** @var string|null $originstamp_activate */
-    private $originstamp_activate;
+    /** @var string|null $originstampActivate */
+    private $originstampActivate;
 
-    /** @var string|null $originstamp_api_key */
-    private $originstamp_api_key;
+    /** @var string|null $originstampApiKey */
+    private $originstampApiKey;
+    
+    /** @var string|null $BloxbergActivate */
+    private $BloxbergActivate;
 
     /** @var string|null $orgid */
     private $orgid;
@@ -219,18 +222,18 @@ class Team implements MapInterface
 
     final public function setBloxbergActivate(string $setting): void
     {
-        $this->bloxberg_activate = Filter::toBinary($setting);
+        $this->bloxbergActivate = Filter::toBinary($setting);
     }
 
     final public function setOriginstampActivate(string $setting): void
     {
-        $this->originstamp_activate = Filter::toBinary($setting);
+        $this->originstampActivate = Filter::toBinary($setting);
     }
     
     final public function setOriginstampApiKey(?string $setting): void
     {
         if (!empty($setting)) {
-            $this->originstamp_api_key = Filter::sanitize($setting);
+            $this->originstampApiKey = Filter::sanitize($setting);
         }
     }
 
@@ -283,9 +286,9 @@ class Team implements MapInterface
         $req->bindParam(':stamppass', $this->stamppass);
         $req->bindParam(':stampprovider', $this->stampprovider);
         $req->bindParam(':stampcert', $this->stampcert);
-        $req->bindParam(':originstamp_activate', $this->originstamp_activate);
-        $req->bindParam(':originstamp_api_key', $this->originstamp_api_key);
-        $req->bindParam(':bloxberg_activate', $this->bloxberg_activate);
+        $req->bindParam(':originstamp_activate', $this->originstampActivate);
+        $req->bindParam(':originstamp_api_key', $this->originstampApiKey);
+        $req->bindParam(':bloxberg_activate', $this->bloxbergActivate);
         $req->bindParam(':visible', $this->visible);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
@@ -312,9 +315,9 @@ class Team implements MapInterface
         }
         $this->stampprovider = $source['stampprovider'] ?? $this->stampprovider;
         $this->setStampcert($source['stampcert'] ?? $this->stampcert);
-        $this->setOriginstampActivate($source['originstamp_activate'] ?? (string) $this->originstamp_activate);
-        $this->setOriginstampApiKey($source['originstamp_api_key'] ?? $this->originstamp_api_key);
-        $this->setBloxbergActivate($source['bloxberg_activate'] ?? (string) $this->bloxberg_activate);
+        $this->setOriginstampActivate($source['originstamp_activate'] ?? (string) $this->originstampActivate);
+        $this->setOriginstampApiKey($source['originstamp_api_key'] ?? $this->originstampApiKey);
+        $this->setBloxbergActivate($source['bloxberg_activate'] ?? (string) $this->bloxbergActivate);
         $this->setPublicDb($source['public_db'] ?? (string) $this->publicDb);
         $this->setDoForceCanread($source['do_force_canread'] ?? (string) $this->doForceCanread);
         $this->setDoForceCanwrite($source['do_force_canwrite'] ?? (string) $this->doForceCanwrite);

@@ -146,12 +146,17 @@ class LoginController implements ControllerInterface
             // AUTH WITH LDAP
             case 'ldap':
                 $c = $this->App->Config->configArr;
+                $ldapPassword = null;
+                // assume there is a password to decrypt if username is not null
+                if ($c['ldap_username']) {
+                    $ldapPassword = Crypto::decrypt($c['ldap_password'], Key::loadFromAsciiSafeString(\SECRET_KEY));
+                }
                 $ldapConfig = array(
                     'hosts' => array($c['ldap_host']),
                     'port' => (int) $c['ldap_port'],
                     'base_dn' => $c['ldap_base_dn'],
                     'username' => $c['ldap_username'],
-                    'password' => Crypto::decrypt($c['ldap_password'], Key::loadFromAsciiSafeString(\SECRET_KEY)),
+                    'password' => $ldapPassword,
                     'use_tls' => (bool) $c['ldap_use_tls'],
                 );
                 $connection = new Connection($ldapConfig);

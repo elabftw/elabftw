@@ -761,8 +761,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <label for='ldap_base_dn'>LDAP Base DN</label>
         <input class='form-control col-md-4' type='text' placeholder='dc=example,dc=com' value='{{ App.Config.configArr.ldap_base_dn }}' name='ldap_base_dn' id='ldap_base_dn' />
 
-        <label for='ldap_username'>LDAP {{ 'Username'|trans }}</label>
-        <input class='form-control col-md-4' type='text' placeholder='cn=admin,dc=example,dc=com' value='{{ App.Config.configArr.ldap_username}}' name='ldap_username' id='ldap_username' />
+        <label for='ldap_username'>LDAP {{ 'Username'|trans }} (keep empty to use anonymous bind)</label>
+        <input class='form-control col-md-4' type='text' autocomplete='off' placeholder='cn=admin,dc=example,dc=com' value='{{ App.Config.configArr.ldap_username}}' name='ldap_username' id='ldap_username' />
 
         <label for='ldap_password'>LDAP {{ 'Password'|trans }}</label>
         {% if App.Config.configArr.ldap_password|length == 0 %}

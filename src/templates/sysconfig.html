@@ -269,7 +269,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <label for='stampcert'>{{ 'Chain of certificates of the external timestamping service:'|trans }}</label>
         <input class='form-control col-md-4' type='text' placeholder='app/dfn-cert/pki.dfn.pem' value='{{ App.Config.configArr.stampcert }}' name='stampcert' id='stampcert' />
         <p class='smallgray'>{{ "This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. You should add it in the 'uploads' folder. The file needs to be in %sPEM-encoded (ASCII)%s format!"|trans|format("<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>")|raw }}</p>
-
+        
         <label for='stamplogin'>{{ 'Login for external timestamping service:'|trans }}</label>
         <input class='form-control col-md-4' autocomplete='off' type='text' value='{{ App.Config.configArr.stamplogin }}' name='stamplogin' id='stamplogin' />
         <label for='stamppass'>{{ 'Password for external timestamping service:'|trans }}</label>
@@ -278,7 +278,22 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           <a href='app/controllers/SysconfigController.php?clearStamppass=1'>Clear it</a> or change it below:</p>
         {% endif %}
         <input class='form-control col-md-4' autocomplete='off' type='password' name='stamppass' id='stamppass' />
-        <div class='submitButtonDiv'>
+	
+	<label for='os_activate'>{{ 'Send timestamp to OriginStamp:'|trans }}</label>
+        <select id='os_activate' name='os_activate' class='form-control col-md-4'>
+             <option {{ App.Config.configArr.os_activate == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
+             <option {{ App.Config.configArr.os_activate == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
+        </select>
+        <label for='os_api_key'>{{ 'API key for OriginStamp service:'|trans }}</label>
+        <input class='form-control col-md-4' autocomplete='off' type='text' value='{{ App.Config.configArr.os_api_key }}' name='os_api_key' id='os_api_key' />
+	
+	<label for='bloxberg_activate'>{{ 'Send timestamp to Bloxberg:'|trans }}</label>
+        <select id='bloxberg_activate' name='bloxberg_activate' class='form-control col-md-4'>
+             <option {{ App.Config.configArr.bloxberg_activate == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
+             <option {{ App.Config.configArr.bloxberg_activate == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
+        </select>
+        
+	<div class='submitButtonDiv'>
           <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
         </div>
       </div>

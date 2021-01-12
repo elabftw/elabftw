@@ -217,17 +217,17 @@ class Team implements MapInterface
         }
     }
 
-    final public function setBloxberg_activate(string $setting): void
+    final public function setBloxbergActivate(string $setting): void
     {
         $this->bloxberg_activate = Filter::toBinary($setting);
     }
 
-    final public function setOs_activate(string $setting): void
+    final public function setOriginstampActivate(string $setting): void
     {
         $this->originstamp_activate = Filter::toBinary($setting);
     }
     
-    final public function setOs_api_key(?string $setting): void
+    final public function setOriginstampApiKey(?string $setting): void
     {
         if (!empty($setting)) {
             $this->originstamp_api_key = Filter::sanitize($setting);
@@ -312,9 +312,9 @@ class Team implements MapInterface
         }
         $this->stampprovider = $source['stampprovider'] ?? $this->stampprovider;
         $this->setStampcert($source['stampcert'] ?? $this->stampcert);
-        $this->setOs_activate($source['originstamp_activate'] ?? (string) $this->originstamp_activate);
-        $this->setOs_api_key($source['originstamp_api_key'] ?? $this->originstamp_api_key);
-        $this->setBloxberg_activate($source['bloxberg_activate'] ?? (string) $this->bloxberg_activate);
+        $this->setOriginstampActivate($source['originstamp_activate'] ?? (string) $this->originstamp_activate);
+        $this->setOriginstampApiKey($source['originstamp_api_key'] ?? $this->originstamp_api_key);
+        $this->setBloxbergActivate($source['bloxberg_activate'] ?? (string) $this->bloxberg_activate);
         $this->setPublicDb($source['public_db'] ?? (string) $this->publicDb);
         $this->setDoForceCanread($source['do_force_canread'] ?? (string) $this->doForceCanread);
         $this->setDoForceCanwrite($source['do_force_canwrite'] ?? (string) $this->doForceCanwrite);

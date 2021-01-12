@@ -44,6 +44,19 @@
     <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.token.0.long_name }}&name=token.asn1&forceDownload=true'>
         <span>{{ 'Download token'|trans }}</span><i class='fas fa-download'></i>
     </a>
+    
+    <!-- check if bloxberg timestamp was created -->
+    {% if Entity.entityData.bloxberg_timestamped %}
+        <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.bloxberg_proof.0.long_name }}&name=bloxberg_proof.pdf&forceDownload=true'>
+            <span>{{ 'Download Bloxberg proof'|trans }}</span><i class='fas fa-download'></i>
+        </a>
+    {% endif %}
+    <!-- check if originstamp timestamp was created -->
+    {% if Entity.entityData.os_proof_received %}
+        <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.os_proof.0.long_name }}&name=os_proof.pdf&forceDownload=true'>
+            <span>{{ 'Download OriginStamp proof'|trans }}</span><i class='fas fa-download'></i>
+        </a>
+    {% endif %}
     <!-- TEMP DISABLE BECAUSE NOT WORKING ATM
     <a href='#' class='elab-tooltip'><span>{{ 'Decode token'|trans }}</span><i class='fas fa-info-circle decodeAsn1' data-token='{{ timestampInfo.token.0.long_name }}' data-id='{{ Entity.entityData.id }}'></i>
     </a>

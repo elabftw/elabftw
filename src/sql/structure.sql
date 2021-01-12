@@ -99,6 +99,11 @@ CREATE TABLE `experiments` (
   `timestampedby` int(11) DEFAULT NULL,
   `timestamptoken` text,
   `timestampedwhen` timestamp NULL DEFAULT NULL,
+  `bloxberg_timestamped` tinyint(1) NOT NULL DEFAULT '0',
+  `bloxberg_proof` text,
+  `os_timestamped` tinyint(1) NOT NULL DEFAULT '0',
+  `os_proof_received` tinyint(1) NOT NULL DEFAULT '0',
+  `os_proof` text,
   `canread` varchar(255) NOT NULL DEFAULT 'team',
   `canwrite` varchar(255) NOT NULL DEFAULT 'user',
   `datetime` timestamp NOT NULL,
@@ -439,7 +444,10 @@ CREATE TABLE `teams` (
   `force_canwrite` varchar(255) NOT NULL DEFAULT 'user',
   `do_force_canread` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `do_force_canwrite` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
-  `visible` tinyint(1) UNSIGNED NOT NULL DEFAULT 1
+  `visible` tinyint(1) UNSIGNED NOT NULL DEFAULT 1,
+  `os_activate` tinyint(1) UNSIGNED NOT NULL DEFAULT 2,
+  `os_api_key` text,
+  `bloxberg_activate` tinyint(1) UNSIGNED NOT NULL DEFAULT 2
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

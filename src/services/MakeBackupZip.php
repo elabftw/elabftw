@@ -109,9 +109,13 @@ class MakeBackupZip extends AbstractMake
     {
         if ($this->Entity instanceof Experiments && $this->Entity->entityData['timestamped']) {
             // SQL to get the path of the token
-            $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND (
-                type = 'timestamp-token'
-                OR type = 'exp-pdf-timestamp') LIMIT 2";
+            $sql = "(SELECT real_name, long_name FROM uploads WHERE item_id = :id AND type = 'timestamp-token' LIMIT 1)
+                    UNION DISTINCT
+                    (SELECT real_name, long_name FROM uploads WHERE item_id = :id AND type = 'exp-pdf-timestamp' LIMIT 1)
+                    UNION DISTINCT
+                    (SELECT real_name, long_name FROM uploads WHERE item_id = :id AND type = 'bloxberg-proof' LIMIT 1)
+                    UNION DISTINCT
+                    (SELECT real_name, long_name FROM uploads WHERE item_id = :id AND type = 'os-proof' LIMIT 1);";
             $req = $this->Db->prepare($sql);
             $req->bindParam(':id', $id, PDO::PARAM_INT);
             $req->execute();

@@ -135,7 +135,7 @@ class Experiments extends AbstractEntity implements CreatableInterface
      * @param string $responsefilePath the file path to the timestamp token
      * @return void
      */
-    public function updateTimestamp(string $responseTime, string $responsefilePath): void
+    public function updateTimestamp(string $responseTime, string $responsefilePath, int $os_timestamped=0, string $os_proof='', int $bloxberg_timestamped=0, string $bloxberg_proof=''): void
     {
         $this->canOrExplode('write');
 
@@ -146,7 +146,11 @@ class Experiments extends AbstractEntity implements CreatableInterface
             timestamped = 1,
             timestampedby = :userid,
             timestampedwhen = :when,
-            timestamptoken = :longname
+            timestamptoken = :longname,
+            os_timestamped = :os_timestamped,
+            os_proof = :os_proof,
+            bloxberg_timestamped = :bloxberg_timestamped,
+            bloxberg_proof = :bloxberg_proof
             WHERE id = :id;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':when', $responseTime);
@@ -154,6 +158,10 @@ class Experiments extends AbstractEntity implements CreatableInterface
         $req->bindParam(':longname', $responsefilePath);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':os_timestamped', $os_timestamped);
+        $req->bindParam(':os_proof', $os_proof);
+        $req->bindParam(':bloxberg_timestamped', $bloxberg_timestamped);
+        $req->bindParam(':bloxberg_proof', $bloxberg_proof);
 
         $this->Db->execute($req);
     }

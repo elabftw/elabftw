@@ -99,8 +99,9 @@
         <label for='stamplogin'>{{ 'Login for external timestamping service:'|trans }}</label>
         <input class='form-control col-md-4' autocomplete='off' type='text' value='{{ App.teamConfigArr.stamplogin }}' name='stamplogin' id='stamplogin' />
         <span class='smallgray'>{{ 'This should be the login associated with your timestamping service provider'|trans }}</span>
-
-        <label for='stamppass'>{{ 'Password for external timestamping service:'|trans }}</label>
+	
+        
+	<label for='stamppass'>{{ 'Password for external timestamping service:'|trans }}</label>
         {% if App.teamConfigArr.stamppass|length > 1 %}
         <p>{{ 'A password is already set.'|trans }}
         {{ '%sClear it%s or change it below:'|trans|format("
@@ -111,6 +112,22 @@
         {% endif %}
         <input class='form-control col-md-4' autocomplete='off' type='password' name='stamppass' id='stamppass' />
         <span class='smallgray'>{{ 'Your timestamping service provider password'|trans }}</span>
+
+	<label for='os_activate'>{{ 'Send timestamp to OriginStamp:'|trans }}</label>
+         <select id='os_activate' name='os_activate' class='form-control col-md-4'>
+             <option value='2'{{ App.teamConfigArr.os_activate == '2' ? "selected='selected'" }}>{{ '  '|trans }}</option> <!-- indifferent state, i.e. sysadmin decides -->
+             <option value='1'{{ App.teamConfigArr.os_activate == '1' ? "selected='selected'" }}>{{ 'Yes'|trans }}</option>
+             <option value='0'{{ App.teamConfigArr.os_activate == '0' ? "selected='selected'" }}>{{ 'No'|trans }}</option>
+         </select>
+        <label for='os_api_key'>{{ 'API key for OriginStamp service:'|trans }}</label>
+        <input class='form-control col-md-4' autocomplete='off' type='text' value='{{ App.teamConfigArr.os_api_key }}' name='os_api_key' id='os_api_key' />
+
+	<label for='bloxberg_activate'>{{ 'Send timestamp to Bloxberg:'|trans }}</label>
+        <select id='bloxberg_activate' name='bloxberg_activate' class='form-control col-md-4'>
+             <option {{ App.teamConfigArr.bloxberg_activate == '2' ? ' selected' }} value='2'>{{ '  '|trans }}</option> <!-- indifferent state, i.e. sysadmin decides -->
+             <option {{ App.teamConfigArr.bloxberg_activate == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
+             <option {{ App.teamConfigArr.bloxberg_activate == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
+        </select>
       </div>
 
       <div class='submitButtonDiv'>

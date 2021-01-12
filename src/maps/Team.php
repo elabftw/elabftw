@@ -56,6 +56,12 @@ class Team implements MapInterface
 
     /** @var string|null $stampcert path to the cert for the team's timestamping provider */
     private $stampcert;
+    
+    /** @var string|null $os_activate */
+    private $os_activate;
+
+    /** @var string|null $os_api_key */
+    private $os_api_key;
 
     /** @var string|null $orgid */
     private $orgid;
@@ -211,6 +217,23 @@ class Team implements MapInterface
         }
     }
 
+    final public function setBloxberg_activate(string $setting): void
+    {
+        $this->bloxberg_activate = Filter::toBinary($setting);
+    }
+
+    final public function setOs_activate(string $setting): void
+    {
+        $this->os_activate = Filter::toBinary($setting);
+    }
+    
+    final public function setOs_api_key(?string $setting): void
+    {
+        if (!empty($setting)) {
+            $this->os_api_key = Filter::sanitize($setting);
+        }
+    }
+
     final public function setOrgid(?string $setting): void
     {
         if ($setting !== null) {
@@ -239,7 +262,10 @@ class Team implements MapInterface
             stamplogin = :stamplogin,
             stamppass = :stamppass,
             stampprovider = :stampprovider,
-            stampcert = :stampcert,
+	    stampcert = :stampcert,
+	    os_activate = :os_activate,
+	    os_api_key = :os_api_key,
+	    bloxberg_activate = :bloxberg_activate,
             visible = :visible
             WHERE id = :id';
         $req = $this->Db->prepare($sql);
@@ -257,6 +283,9 @@ class Team implements MapInterface
         $req->bindParam(':stamppass', $this->stamppass);
         $req->bindParam(':stampprovider', $this->stampprovider);
         $req->bindParam(':stampcert', $this->stampcert);
+        $req->bindParam(':os_activate', $this->os_activate);
+        $req->bindParam(':os_api_key', $this->os_api_key);
+        $req->bindParam(':bloxberg_activate', $this->bloxberg_activate);
         $req->bindParam(':visible', $this->visible);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
@@ -283,6 +312,9 @@ class Team implements MapInterface
         }
         $this->stampprovider = $source['stampprovider'] ?? $this->stampprovider;
         $this->setStampcert($source['stampcert'] ?? $this->stampcert);
+        $this->setOs_activate($source['os_activate'] ?? (string) $this->os_activate);
+        $this->setOs_api_key($source['os_api_key'] ?? $this->os_api_key);
+        $this->setBloxberg_activate($source['bloxberg_activate'] ?? (string) $this->bloxberg_activate);
         $this->setPublicDb($source['public_db'] ?? (string) $this->publicDb);
         $this->setDoForceCanread($source['do_force_canread'] ?? (string) $this->doForceCanread);
         $this->setDoForceCanwrite($source['do_force_canwrite'] ?? (string) $this->doForceCanwrite);

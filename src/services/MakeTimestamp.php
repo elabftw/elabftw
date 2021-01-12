@@ -8,6 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 declare(strict_types=1);
 
 namespace Elabftw\Services;
@@ -21,6 +22,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Teams;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use function hash_file;
 use function is_readable;
@@ -48,6 +50,9 @@ class MakeTimestamp extends AbstractMake
     /** @var Config $Config instance of Config */
     private $Config;
 
+    /** @var Teams $teams instance of Teams */
+    private $Teams;
+
     /** @var string $pdfPath full path to pdf */
     private $pdfPath = '';
 
@@ -69,6 +74,19 @@ class MakeTimestamp extends AbstractMake
     /** @var string $responsefilePath where we store the asn1 token */
     private $responsefilePath = '';
 
+    /** @var int osStamp states whether a timestamp via OriginStamp has been created */
+    private $osStamp = 0;    
+
+    /** @var string $osproofPath where we store OriginStamp timestamp proof */
+    private $osproofPath = '';
+
+    /** @var int bloxbergStamp states whether a timestamp on the bloxberg blockchain has been created */
+    private $bloxbergStamp = 0;    
+
+    /** @var string $bloxbergproofPath where we store Bloxberg timestamp proof */
+    private $bloxbergproofPath = '';
+   
+
     /**
      * Pdf is generated on instanciation and after you need to call timestamp()
      *
@@ -81,7 +99,9 @@ class MakeTimestamp extends AbstractMake
         parent::__construct($entity);
         $this->Entity->canOrExplode('write');
 
-        $this->Config = $config;
+    $this->Config = $config;
+
+    $this->Teams = $teams;
 
         // initialize with info from config
         $this->stampParams = $this->getTimestampParameters($teams);
@@ -91,6 +111,7 @@ class MakeTimestamp extends AbstractMake
         $this->requestfilePath = $this->getTmpPath() . $this->getUniqueString();
         // we don't keep this file around
         $this->trash[] = $this->requestfilePath;
+
     }
 
     /**
@@ -104,13 +125,14 @@ class MakeTimestamp extends AbstractMake
         }
     }
 
+    
     /**
-     * The realname is elabid-timestamped.pdf
+     * Returns the experiment's elabid
      *
      * @throws ImproperActionException
      * @return string
      */
-    public function getFileName(): string
+    public function getElabid(): string
     {
         $sql = 'SELECT elabid FROM experiments WHERE id = :id';
         $req = $this->Db->prepare($sql);
@@ -118,8 +140,19 @@ class MakeTimestamp extends AbstractMake
         if (!$req->execute()) {
             throw new ImproperActionException('Cannot get elabid!');
         }
-        return $req->fetch(PDO::FETCH_COLUMN) . '-timestamped.pdf';
+        return $req->fetch(PDO::FETCH_COLUMN);
     }
+    
+     /**
+     * The realname is elabid-timestamped.pdf
+     *
+     * @return string
+     */
+    public function getFileName(): string
+    {
+    return $this->getElabid() .'-timestamped.pdf';
+    }
+
 
     /**
      * Decode asn1 encoded token
@@ -215,9 +248,90 @@ class MakeTimestamp extends AbstractMake
         // validate everything so we are sure it is OK
         $this->validate();
 
-        // SQL
-        $this->Entity->updateTimestamp($this->getResponseTime(), $this->responsefilePath);
+        $teamConfigArr = $this->Teams->read();
+        $elabid = $this->getElabid();    
+        $hash = $this->getHash($this->pdfPath);
+    
+     //Submit hash to originstamp, state 2 == indifferent, i.e. sysadmin decides
+        if (($teamConfigArr['os_activate'] == 2 and  $this->Config->configArr['os_activate'] == 1) || ($teamConfigArr['os_activate'] == 1)) {
+            $api_key = ($teamConfigArr['os_activate'] == 1 ? $teamConfigArr['os_api_key'] : $this->Config->configArr['os_api_key']);
+
+            $this->OSsubmit($api_key,$hash,$elabid);
+        }
+    // submit hash to bloxberg, state 2 == indifferent, i.e. sysadmin decides
+            if (($teamConfigArr['bloxberg_activate'] == 2 and $this->Config->configArr['bloxberg_activate'] == 1) || ($teamConfigArr['bloxberg_activate'] == 1)) {    
+            $this->Bloxbergsubmit($hash,$elabid);
+        }
+        
+    // SQL
+        $this->Entity->updateTimestamp($this->getResponseTime(), $this->responsefilePath, $this->osStamp, $this->osproofPath, $this->bloxbergStamp, $this->bloxbergproofPath);
         $this->sqlInsertPdf();
+    
+    }
+
+    /**
+     * send timestamp to Bloxberg server
+     *
+     * we submit the elabid as the 'author' attribute to bloxberg
+     * @return void
+         */
+    private function Bloxbergsubmit($hash,$elabid): void
+    {
+        $client = new \GuzzleHttp\Client();
+        $options = [
+        'json' => [
+            "certifyVariables"=>["checksum"=>$hash,"authorName"=>strval($elabid),"timestampString"=>strval(time())]
+         ]]; 
+
+        try {
+            $response = $client->post("https://certify.bloxberg.org/certifyData",$options);
+        } catch (RequestException $e) {
+            throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);
+        }
+	// extract the transaction hash from the response, needed for requesting the proof
+        $content = json_decode($response->getBody()->getContents());
+        $transaction_hash = $content->txReceipt->events->createDataEvent->transactionHash;
+     
+        //now call the Bloxberg API to get the pdf proof, this comes back as binary data   
+        $retreive_options = [
+        'json' => [
+            "certificateVariables"=>["transactionHash"=>strval($transaction_hash)]
+           ]];
+        
+        try {
+            $proof_return = $client->post("https://certify.bloxberg.org/generateCertificate",$retreive_options);
+        } catch (RequestException $e) {
+            throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);
+        }
+        
+        $pdf_raw = $proof_return->getBody()->getContents();
+        $this->saveBloxbergProof($pdf_raw);
+    }
+    
+    /**
+     * send timestamp to OriginStamp server
+     *
+     * we submit the elabid to originstamp as a comment
+     * @return void
+     */
+    private function OSsubmit($api_key,$hash,$elabid): void
+    {
+        $client = new \GuzzleHttp\Client();
+        $options = [
+        'headers' => ['Authorization'=>strval($api_key)],    
+        'json' => [
+            'comment'=>strval($elabid),
+            'hash'=>strval($hash)
+        ]]; 
+        try {
+            $response = $client->post("http://api.originstamp.com/v3/timestamp/create",$options);
+            // currently we do not have an implementation to request originstamp proofs as their generation on the server takes multiple hours, 
+            // if you fetch the proofs with an external program set os_proof_received=1 in mysql experiment entry to make elabftw display the proof
+            $this->osStamp = 1;
+        } catch (RequestException $e) {
+            throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);
+        }
+        //$content = json_decode($response->getBody()->getContents());
     }
 
     /**
@@ -480,6 +594,48 @@ class MakeTimestamp extends AbstractMake
             throw new ImproperActionException('Cannot insert into SQL!');
         }
     }
+    
+    /**
+     * Save the pdf proof from Bloxberg
+     *
+     * @throws ImproperActionException
+     * @param pdf file as raw binary data
+     * @return void
+     */
+    private function saveBloxbergProof($pdf_raw): void
+    {
+    $longName = $this->getLongName() . '-bloxberg-proof.pdf';
+        $filePath = $this->getUploadsPath() . $longName;
+        $dir = \dirname($filePath);
+        if (!\is_dir($dir) && !\mkdir($dir, 0700, true) && !\is_dir($dir)) {
+            throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
+        }
+        if (!file_put_contents($filePath, $pdf_raw)) {
+            throw new FilesystemErrorException('Cannot save token to disk!');
+        }
+        $this->bloxbergStamp = 1;
+        $this->bloxbergproofPath = $filePath;
+
+        $realName = $this->getElabid() . '_bloxberg.pdf';
+        $hash = $this->getHash($this->bloxbergproofPath);
+
+        // keep a trace of where we put the file
+        $sql = 'INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, hash, hash_algorithm)
+            VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :hash, :hash_algorithm)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':real_name', $realName);
+        $req->bindParam(':long_name', $longName);
+        $req->bindValue(':comment', 'Bloxberg timestamp proof');
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindValue(':type', 'bloxberg-proof'); // save the proof in 'experiements' category to make sure it is zip exported, this could be solved more elegantly...
+        $req->bindParam(':hash', $hash);
+        $req->bindParam(':hash_algorithm', $this->stampParams['hash']);
+        if (!$req->execute()) {
+            throw new ImproperActionException('Cannot insert into SQL!');
+        }
+    }    
+
 
     /**
      * Validates a file against its timestamp and optionally check a provided time for consistence with the time encoded

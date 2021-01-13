@@ -28,7 +28,7 @@ $(document).ready(function() {
   });
 
   // TOGGLE LOCK
-  $(document).on('click', '#lock', function() {
+  $('#lock').on('click', function() {
     $.post('app/controllers/EntityAjaxController.php', {
       lock: true,
       type: type,
@@ -66,7 +66,8 @@ $(document).ready(function() {
   });
 
   // DECODE ASN1
-  $(document).on('click', '.decodeAsn1', function() {
+  $(document).on('click', '.decodeAsn1', function(e) {
+    e.preventDefault();
     $.post('app/controllers/ExperimentsAjaxController.php', {
       asn1: $(this).data('token'),
       id: $(this).data('id')
@@ -76,7 +77,7 @@ $(document).ready(function() {
   });
 
   // DUPLICATE
-  $(document).on('click', '.duplicateItem', function() {
+  $('.view-action-buttons').on('click', '.duplicateItem', function() {
     $.post('app/controllers/EntityAjaxController.php', {
       duplicate: true,
       id: $(this).data('id'),
@@ -87,7 +88,8 @@ $(document).ready(function() {
   });
 
   // SHARE
-  $(document).on('click', '.shareItem', function() {
+  $('.view-action-buttons').on('click', '.shareItem', function(e) {
+    e.preventDefault();
     $.post('app/controllers/EntityAjaxController.php', {
       getShareLink: true,
       id: $(this).data('id'),
@@ -98,7 +100,7 @@ $(document).ready(function() {
   });
 
   // TIMESTAMP
-  $(document).on('click', '#goForTimestamp', function() {
+  $('#goForTimestamp').on('click', function() {
     $(this).prop('disabled', true);
     $.post('app/controllers/ExperimentsAjaxController.php', {
       timestamp: true,
@@ -114,7 +116,8 @@ $(document).ready(function() {
   });
 
   // TOGGLE PINNED
-  $(document).on('click', '#pinIcon', function() {
+  $('#pinIcon').on('click', function(e) {
+    e.preventDefault();
     $.post('app/controllers/EntityAjaxController.php', {
       togglePin: true,
       type: type,

@@ -147,7 +147,8 @@ $(document).ready(function() {
   // honor already saved mail_method setting and hide unused options accordingly
   toggleMailMethod($('#selectMailMethod').val());
 
-  $(document).on('click', '.idpsDestroy', function() {
+  $(document).on('click', '.idpsDestroy', function(e) {
+    e.preventDefault();
     const elem = $(this);
     if (confirm(i18next.t('generic-delete-warning'))) {
       $.post('app/controllers/SysconfigAjaxController.php', {

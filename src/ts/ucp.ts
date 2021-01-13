@@ -27,17 +27,19 @@ $(document).ready(function() {
     }
   });
   // show the handles to reorder when the menu entry is clicked
-  $(document).on('click', '#toggleReorder', function() {
+  $('#toggleReorder').on('click', function() {
     $('.sortableHandle').toggle();
   });
-  $(document).on('click', '.saveToFile', function() {
+  $(document).on('click', '.saveToFile', function(e) {
+    e.preventDefault();
     TemplateC.saveToFile($(this).data('id'), $(this).data('name'));
   });
   $(document).on('click', '.destroyTemplate', function() {
     TemplateC.destroy($(this).data('id'));
   });
 
-  $(document).on('click', '#import-from-file', function() {
+  $('#import-from-file').on('click', function(e) {
+    e.preventDefault();
     $('#import_tpl').toggle();
   });
 
@@ -58,7 +60,8 @@ $(document).ready(function() {
   });
 
   // select the already selected permission for templates
-  $(document).on('click', '.modalToggle', function() {
+  $(document).on('click', '.modalToggle', function(e) {
+    e.preventDefault();
     const read = $(this).data('read');
     const write = $(this).data('write');
     $('#canread_select option[value="' + read + '"]').prop('selected', true);
@@ -85,7 +88,8 @@ $(document).ready(function() {
   tinymce.init(getTinymceBaseConfig('ucp'));
 
   // DESTROY API KEY
-  $(document).on('click', '.keyDestroy', function() {
+  $(document).on('click', '.keyDestroy', function(e) {
+    e.preventDefault();
     $.post('app/controllers/Ajax.php', {
       action: 'destroy',
       what: 'apikey',

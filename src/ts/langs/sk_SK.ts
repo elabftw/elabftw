@@ -9,6 +9,7 @@ const t = {
     "filename": "Názov súboru",
     "generic-delete-warning": "Odstrániť toto?",
     "link-delete-warning": "Odstrániť tento odkaz?",
+    "nothing-selected": "Nič vybraté!",
     "please-wait": "Prosím čakajte",
     "replace-edited-file": "Chcete nahradiť súbor na serveri touto úpravou?",
     "request-filename": "Zadajte názov súboru",

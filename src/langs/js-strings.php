@@ -26,6 +26,9 @@ _('Delete this?');
 // link-delete-warning
 _('Delete this link?');
 /** @psalm-suppress UnusedFunctionCall */
+// nothing-selected
+_('Nothing selected!');
+/** @psalm-suppress UnusedFunctionCall */
 // please-wait
 _('Please wait…');
 /** @psalm-suppress UnusedFunctionCall */

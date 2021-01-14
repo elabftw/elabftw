@@ -67,6 +67,10 @@ $(document).ready(function(){
   // END PAGINATION
 
   // THE CHECKBOXES
+  const nothingSelectedError = {
+    'msg': i18next.t('nothing-selected'),
+    'res': false,
+  };
 
   const bgColor = '#c4f9ff';
 
@@ -141,11 +145,7 @@ $(document).ready(function(){
     // get the item id of all checked boxes
     const checked = getCheckedBoxes();
     if (checked.length === 0) {
-      const json = {
-        'msg': 'Nothing selected!',
-        'res': false
-      };
-      notif(json);
+      notif(nothingSelectedError);
       return;
     }
     // loop on it and update the status/item type
@@ -171,11 +171,7 @@ $(document).ready(function(){
     // get the item id of all checked boxes
     const checked = getCheckedBoxes();
     if (checked.length === 0) {
-      const json = {
-        'msg': 'Nothing selected!',
-        'res': false
-      };
-      notif(json);
+      notif(nothingSelectedError);
       return;
     }
     // loop on it and update the status/item type
@@ -202,11 +198,7 @@ $(document).ready(function(){
     const what = $('#exportChecked').val();
     const checked = getCheckedBoxes();
     if (checked.length === 0) {
-      const json = {
-        'msg': 'Nothing selected!',
-        'res': false
-      };
-      notif(json);
+      notif(nothingSelectedError);
       return;
     }
     window.location.href = `make.php?what=${what}&type=${$('#type').data('type')}&id=${checked.map(value => value.id).join('+')}`;
@@ -217,11 +209,7 @@ $(document).ready(function(){
     // get the item id of all checked boxes
     const checked = getCheckedBoxes();
     if (checked.length === 0) {
-      const json = {
-        'msg': 'Nothing selected!',
-        'res': false
-      };
-      notif(json);
+      notif(nothingSelectedError);
       return;
     }
     // loop on it and delete stuff
@@ -236,16 +224,31 @@ $(document).ready(function(){
     });
   });
 
+  // THE TIMESTAMP BUTTON FOR CHECKED BOXES
+  $('#timestampChecked').on('click', function() {
+    // get the item id of all checked boxes
+    const checked = getCheckedBoxes();
+    if (checked.length === 0) {
+      notif(nothingSelectedError);
+      return;
+    }
+    // loop on it and delete stuff
+    $.each(checked, function(index) {
+      $.post('app/controllers/ExperimentsAjaxController.php', {
+        timestamp: true,
+        id: checked[index]['id'],
+      }).done(function(json) {
+        notif(json);
+      });
+    });
+  });
+
   // THE DELETE BUTTON FOR CHECKED BOXES
   $('#deleteChecked').on('click', function() {
     // get the item id of all checked boxes
     const checked = getCheckedBoxes();
     if (checked.length === 0) {
-      const json = {
-        'msg': 'Nothing selected!',
-        'res': false
-      };
-      notif(json);
+      notif(nothingSelectedError);
       return;
     }
     if (!confirm(i18next.t('entity-delete-warning'))) {

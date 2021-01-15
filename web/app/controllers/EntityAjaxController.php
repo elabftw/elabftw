@@ -23,6 +23,7 @@ use Elabftw\Models\Templates;
 use Elabftw\Services\Check;
 use Elabftw\Services\ListBuilder;
 use Exception;
+use function mb_convert_encoding;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -71,6 +72,9 @@ try {
         $DatabaseHelper = new ListBuilder(new Database($App->Users));
         // return list of itemd and experiments
         $mentionArr = array_merge($DatabaseHelper->getMentionList($term), $ExperimentsHelper->getMentionList($term));
+        // fix issue with Malformed UTF-8 characters, possibly incorrectly encoded
+        // see #2404
+        $mentionArr = mb_convert_encoding($mentionArr, 'UTF-8', 'UTF-8');
         $Response->setData($mentionArr);
     }
 

@@ -100,7 +100,10 @@ try {
             $Entity = new Database($App->Users);
         }
         $ListBuilder = new ListBuilder($Entity);
-        $Response->setData($ListBuilder->getAutocomplete($Request->query->get('term')));
+        // fix issue with Malformed UTF-8 characters, possibly incorrectly encoded
+        // see #2404
+        $responseArr = $ListBuilder->getAutocomplete($Request->query->get('term'));
+        $Response->setData(mb_convert_encoding($responseArr, 'UTF-8', 'UTF-8'));
     }
 
     // GET BOUND EVENTS

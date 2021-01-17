@@ -56,7 +56,7 @@ $(document).ready(function() {
     destructor: function(json): void {
       notif(json);
       if (json.res) {
-        $('#teamsDiv').load('sysconfig.php #teamsDiv');
+        $('#teamsDiv').load('sysconfig.php #teamsDiv > *');
       }
     }
   };

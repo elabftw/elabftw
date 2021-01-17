@@ -49,7 +49,7 @@ $(document).ready(function() {
         notif(json);
         // reload the #filesdiv once the file is uploaded
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-          $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
+          $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv > *', function() {
             displayMolFiles();
             display3DMolecules(true);
             const dropZone = Dropzone.forElement('#elabftw-dropzone');

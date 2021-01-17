@@ -17,6 +17,10 @@ export default class Link extends Crud {
   }
 
   create(targetId: number, itemId: number): void {
+    // only send request if there is a targetId
+    if (Number.isNaN(targetId)) {
+      return;
+    }
     this.send({
       action: 'create',
       what: 'link',
@@ -26,8 +30,8 @@ export default class Link extends Crud {
         id: targetId,
       },
     }).then(() => {
-      // reload the link list
-      $('#links_div_' + itemId).load(window.location.href + ' #links_div_' + itemId);
+      // only reload children of links_div_id
+      $('#links_div_' + itemId).load(window.location.href + ' #links_div_' + itemId + ' > *');
       // clear input field
       $('.linkinput').val('');
     });
@@ -45,7 +49,8 @@ export default class Link extends Crud {
           id: elem.data('linkid') as number,
         },
       }).then(() => {
-        $('#links_div_' + id).load(window.location.href + ' #links_div_' + id);
+        // only reload children of links_div_id
+        $('#links_div_' + id).load(window.location.href + ' #links_div_' + id + ' > *');
       });
     }
   }

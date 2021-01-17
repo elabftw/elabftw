@@ -32,8 +32,10 @@ export default class Step extends Crud {
           template: body,
         },
       }).then(() => {
+        // only reload children
+        const loadUrl = window.location.href + ' #steps_div_' + id + ' > *';
         // reload the step list
-        $('#steps_div_' + id).load(window.location.href + ' #steps_div_' + id, function() {
+        $('#steps_div_' + id).load(loadUrl, function() {
           relativeMoment();
           makeSortableGreatAgain();
         });
@@ -77,7 +79,8 @@ export default class Step extends Crud {
         id: stepId,
       },
     }).then(() => {
-      const loadUrl = window.location.href + ' #steps_div_' + id;
+      // only reload children
+      const loadUrl = window.location.href + ' #steps_div_' + id + ' > *';
       // reload the step list
       $('#steps_div_' + id).load(loadUrl, function() {
         relativeMoment();
@@ -101,7 +104,8 @@ export default class Step extends Crud {
           id: stepId,
         },
       }).then(() => {
-        const loadUrl = window.location + ' #steps_div_' + id;
+        // only reload children
+        const loadUrl = window.location + ' #steps_div_' + id + ' > *';
         // reload the step list
         $('#steps_div_' + id).load(loadUrl, function() {
           relativeMoment();

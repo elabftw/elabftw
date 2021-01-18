@@ -559,7 +559,7 @@ table th {
     border-right: solid $darkgray;
 }
 
-.item-table .title-item-table {
+.item-table th:first-child {
     // So that the title has the left part matching
     // the experiments
     border-left: solid $darkgray 6px;

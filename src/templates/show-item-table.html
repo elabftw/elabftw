@@ -3,11 +3,10 @@
       {% set opacity = '1' %}
       {% set owner = '' %}
       {% if (Entity.Users.userData.userid != item.userid) and not App.Session.has('is_anon') %}
-        {% set opacity = '0.7' %}
         {% set owner = item.fullname %}
       {% endif %}
 
-          <tr class='item item-show item-show-{{ App.Users.userData.display_size }} {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item.color }}'>
+          <tr class='item item-show item-show-{{ App.Users.userData.display_size }} {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='border-left: 6px solid #{{ item.color }}'>
 
             <!-- DATE -->
             <td class='item-date'>
@@ -32,6 +31,9 @@
               <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
             {% endif %}
               <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
+              {% if Entity.type == 'experiments' %}
+                <div>{{ owner|raw }}</div>
+              {% endif %}
             </td>
 
             <!-- NEXT STEP -->
@@ -84,9 +86,6 @@
 
               {% if Entity.type == 'items' and item.rating > 0 %}
                 {{ item.rating|stars|raw }}
-              {% endif %}
-              {% if Entity.type == 'experiments' %}
-                <div>{{ owner|raw }}</div>
               {% endif %}
             </td>
           </tr>

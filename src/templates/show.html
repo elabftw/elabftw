@@ -84,21 +84,21 @@
       {% else  %}
         <table class='item-table'>
           <tr>
-            <th class='date-item-table'>{{ 'Date'|trans }}
-            <i class='fas fa-sort sort-triangle' target-sort="date"></i>
+            <th>
+              {{ 'Date'|trans }} <i class='fas fa-sort orderBy' data-orderby='date'></i>
             </th>
             <th class='title-item-table'>{{ 'Title'|trans }}
-            <i class='fas fa-sort sort-triangle' target-sort="title"></i>
+            <i class='fas fa-sort orderBy' data-orderby='title'></i>
             </th>
             {% if Entity.type == 'experiments' %}
             <th class='step-item-table'>{{ 'Next step'|trans }}</th>
             {% elseif Entity.type == 'items' %}
             <th class='step-item-table'>{{ 'User'|trans }}
-            <i class='fas fa-sort sort-triangle' target-sort="user"></i>
+            <i class='fas fa-sort orderBy' data-orderby='user'></i>
             </th>
             {% endif %}
             <th class='category-item-table'>{{ 'Category'|trans }}
-              <i class='fas fa-sort sort-triangle' target-sort="cat"></i>
+              <i class='fas fa-sort orderBy' data-orderby='cat'></i>
             </th>
             <th class='tags-item-table'>{{ 'Tags'|trans }}</th>
             <th class='actions-item-table'>{{ 'Actions'|trans }}</th>

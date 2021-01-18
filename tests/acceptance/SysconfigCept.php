@@ -15,9 +15,10 @@ $I->see('Installed version');
 // Announcement
 $I->wantTo('Test the announcement system');
 $I->fillField('input.form-control:nth-child(1)', 'Blah blah blih');
-$I->click('div.submitButtonDiv:nth-child(2) > button:nth-child(1)');
+$I->click('div.mt-4:nth-child(2) > button:nth-child(1)');
 $I->amOnPage('sysconfig.php?tab=1');
 $I->see('Blah blah blih');
-$I->click('div.submitButtonDiv:nth-child(2) > button:nth-child(2)');
+// click the Clear button
+$I->click('div.mt-4:nth-child(2) > button:nth-child(2)');
 $I->amOnPage('sysconfig.php?tab=1');
 $I->dontsee('Blah blah blih');

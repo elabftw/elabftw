@@ -69,7 +69,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       <p>{{ "The following text will be displayed to all users on all pages while it's active."|trans }}</p>
       <form method='post' action='app/controllers/SysconfigController.php'>
         <input class='form-control' type='text' name='announcement' value='{{ App.Config.configArr.announcement }}' />
-        <div class='submitButtonDiv'>
+        <div class='mt-4 text-center'>
           <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
           <button type='submit' name='clear_announcement' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
         </div>
@@ -145,7 +145,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           </select>
           <p class='smallgray'>{{ 'You can still show the local login form by appending ?letmein to the login page URL.'|trans }}</p>
 
-          <div class='submitButtonDiv'>
+          <div class='mt-4 text-center'>
               <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
           </div>
         </div>
@@ -278,7 +278,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           <a href='app/controllers/SysconfigController.php?clearStamppass=1'>Clear it</a> or change it below:</p>
         {% endif %}
         <input class='form-control col-md-4' autocomplete='off' type='password' name='stamppass' id='stamppass' />
-        <div class='submitButtonDiv'>
+        <div class='mt-4 text-center'>
           <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
         </div>
       </div>
@@ -313,7 +313,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     <p class='smallgray'>
       {{ 'To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems.'|trans }}
     </p>
-    <div class='submitButtonDiv'>
+    <div class='mt-4 text-center'>
       <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
   </form>
@@ -379,7 +379,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         {% endif %}
       </div>
 
-      <div class='submitButtonDiv'>
+      <div class='mt-4 text-center'>
         <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
       </div>
     </form>
@@ -389,7 +389,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
   <div class='box form-group'>
     <label for='testemailEmail'>{{ 'Send a test email'|trans }}</label>
     <input class='form-control col-md-4' type='email' value='{{ App.Users.userData.email }}' id='testemailEmail' />
-    <div class='submitButtonDiv'>
+    <div class='mt-4 text-center'>
       <button id='testemailButton' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
     </div>
   </div>
@@ -403,7 +403,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
     <label for='massBody'>{{ 'Email Body'|trans }}</label>
     <textarea class='form-control col-md-4' id='massBody'></textarea>
-    <div class='submitButtonDiv'>
+    <div class='mt-4 text-center'>
       <button id='massSend' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
     </div>
   </div>
@@ -569,7 +569,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                   <option value='0'{{ App.Config.configArr.saml_lowercaseurlencoding == '0' ? ' selected' }}>No</option>
               </select>
 
-              <div class='submitButtonDiv'>
+              <div class='mt-4 text-center'>
                   <button type="submit" name="Submit" class='button btn btn-primary'>{{ 'Save'|trans }}</button>
               </div>
 
@@ -613,7 +613,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                     <option value='0'>{{ 'No'|trans }}</option>
                 </select>
 
-                <div class='submitButtonDiv'>
+                <div class='mt-4 text-center'>
                   <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
                 </div>
               </div>
@@ -624,7 +624,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <h4>Existing Identity Providers</h4>
             {% for idp in idpsArr %}
                 <div class='box' id='idps_div'>
-                  <i class='fas fa-trash-alt fa-2x clickable idpsDestroy align_right' title='Delete' data-id='{{ idp.id }}'></i>
+                  <i class='fas fa-trash-alt fa-2x clickable idpsDestroy align-right' title='Delete' data-id='{{ idp.id }}'></i>
                   <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>
                   <form method='post' action='app/controllers/IdpsController.php'>
                     <div class='form-group'>
@@ -650,7 +650,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                           <option value='1' {{ idp.active ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
                           <option value='0' {{ not idp.active ? " selected='selected'" }}>{{ 'No'|trans }}</option>
                       </select>
-                      <div class='submitButtonDiv'>
+                      <div class='mt-4 text-center'>
                           <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
                       </div>
                     </div>
@@ -676,7 +676,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <textarea name='privacy_policy' class='mceditable'>
                 {{ App.Config.configArr.privacy_policy|default(privacyPolicyTemplate)|raw }}
             </textarea>
-            <div class='submitButtonDiv'>
+            <div class='mt-4 text-center'>
                 <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
                 <button class='button btn btn-danger' type='submit' name='clear_policy'>{{ 'Clear'|trans }}</button>
             </div>
@@ -727,7 +727,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         </select>
 
 
-        <div class='submitButtonDiv'>
+        <div class='mt-4 text-center'>
           <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
         </div>
       </div>
@@ -814,7 +814,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <label for='ldap-lastname'>What attribute to look for the lastname:</label>
         <input class='form-control col-md-4' type='text' id='ldap-lastname' placeholder='sn' name='ldap_lastname' value='{{ App.Config.configArr.ldap_lastname }}' />
 
-        <div class='submitButtonDiv'>
+        <div class='mt-4 text-center'>
           <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
         </div>
       </div>

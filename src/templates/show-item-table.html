@@ -23,9 +23,9 @@
               <!-- checkbox -->
               <input class='item-checkbox' autocomplete='off' type='checkbox' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;' />
             {% if isPinned %}
-              <span class='align_right'><i class='fas fa-thumbtack' title="{{ 'Pinned'|trans }}"></i></span>
+              <span class='align-right'><i class='fas fa-thumbtack' title="{{ 'Pinned'|trans }}"></i></span>
             {% else %}
-              <span class='align_right'></span>
+              <span class='align-right'></span>
             {% endif %}
             <!-- lock icon -->
             {% if item.locked %}
@@ -99,5 +99,5 @@
           </tr>
 
           <!-- Perhaps not the most elegant solution, but helps keep the even/odd style of the table, which would be tricky in css -->
-          <tr style="display: none;"></tr>
+          <tr class='d-none'></tr>
         </div>

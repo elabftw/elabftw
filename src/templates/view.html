@@ -53,7 +53,7 @@
 {% endif %}
 
 <section class='item' style='padding:15px;border-left: 6px solid #{{ Entity.entityData.color }}'>
-  <p class='align_right inline'>
+  <p class='align-right d-inline'>
     {% if Entity.type == 'experiments' %}
       <i class='fas fa-clipboard-check ml-2' title='{{ 'Status'|trans }}'></i>
       {{ Entity.entityData.category }}
@@ -156,7 +156,7 @@
   {% endif %}
 
   <!-- TITLE : click on it to go to edit mode only if we are not in read only mode -->
-  <div class='{{ not Entity.isReadOnly and not Entity.entityData.locked ? 'click2Edit clickable' }} title_view'>
+  <div class='{{ not Entity.isReadOnly and not Entity.entityData.locked ? 'click2Edit clickable' }} title-view'>
       {% if Entity.type == 'items' %}
           <span style='color:#{{ Entity.entityData.color }}'>{{ Entity.entityData.category }}</span>
       {% endif %}
@@ -243,7 +243,7 @@
             {% endif %}
 
             <textarea id='commentsCreateArea' autocomplete='off' placeholder='{{ 'Add a comment'|trans }}' aria-label='Comment area'></textarea>
-            <div id='commentsCreateButtonDiv' class='submitButtonDiv'>
+            <div id='commentsCreateButtonDiv' class='mt-4 text-center'>
                 <button class='button btn btn-primary' id='commentsCreateButton' data-expid='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
             </div>
         </div>
@@ -253,7 +253,7 @@
 
 <!-- REVISIONS -->
 {% if revNum > 0 %}
-    <span class='align_right'><i class='fas fa-history mr-1'></i>
+    <span class='align-right'><i class='fas fa-history mr-1'></i>
         <a href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'>{{ revNum }}
             {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
     </span>

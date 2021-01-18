@@ -75,12 +75,39 @@
         <button id='timestampChecked' class='button btn btn-primary'>{{ 'Timestamp'|trans }}</button>
         <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
       </p>
-      <div class='row display-flex'>
-      {% for item in itemsArr|slice(0, DisplayParams.limit) %}
-        {% include('show-item.html') %}
-      {% endfor %}
-      </div>
-
+      {% if App.Users.userData.display_mode == 'it' %}
+        <div class='row display-flex' id='itemList'>
+        {% for item in itemsArr|slice(0, DisplayParams.limit) %}
+          {% include('show-item.html') %}
+        {% endfor %}
+        </div>
+      {% else  %}
+        <table class='item-table'>
+          <tr>
+            <th class='title-item-table'>Title
+            <i class='fas fa-sort sort-triangle' target-sort="title"></i>
+            </th>
+            {% if Entity.type == 'experiments' %}
+              <th class='step-item-table'>Next step</th>
+            {% elseif Entity.type == 'items' %}
+              <th class='step-item-table'>User
+            <i class='fas fa-sort sort-triangle' target-sort="user"></i>
+            </th>
+            {% endif %}
+            <th class='category-item-table'>Category
+              <i class='fas fa-sort sort-triangle' target-sort="cat"></i>
+            </th>
+            <th class='tags-item-table'>Tags</th>
+            <th class='actions-item-table'>Actions</th>
+            <th class='date-item-table'>Date
+            <i class='fas fa-sort sort-triangle' target-sort="date"></i>
+            </th>
+          </tr>
+        {% for item in itemsArr|slice(0, DisplayParams.limit) %}
+          {% include('show-item-table.html') %}
+        {% endfor %}
+        </table>
+      {% endif %}
       <div class='text-center pageButtons mt-2'>
         {% if DisplayParams.offset != 0 %}
           <button class='button btn btn-neutral previousPage'>{{ 'Previous page'|trans }}</button>

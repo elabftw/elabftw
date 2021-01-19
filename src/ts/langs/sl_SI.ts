@@ -9,6 +9,7 @@ const t = {
     "filename": "Ime datoteke",
     "generic-delete-warning": "Želite izbrisati?",
     "link-delete-warning": "Želite izbrisati to povezavo?",
+    "nothing-selected": "Nič izbranega!",
     "please-wait": "Prosim počakaj",
     "replace-edited-file": "Ali želite zamenjati datoteko na strežniku s tem urejanjem?",
     "request-filename": "Vnesite ime datoteke",

@@ -67,6 +67,10 @@ $(document).ready(function(){
   // END PAGINATION
 
   // THE CHECKBOXES
+  const nothingSelectedError = {
+    'msg': i18next.t('nothing-selected'),
+    'res': false,
+  };
 
   const bgColor = '#c4f9ff';
 
@@ -141,11 +145,7 @@ $(document).ready(function(){
     // get the item id of all checked boxes
     const checked = getCheckedBoxes();
     if (checked.length === 0) {
-      const json = {
-        'msg': 'Nothing selected!',
-        'res': false
-      };
-      notif(json);
+      notif(nothingSelectedError);
       return;
     }
     // loop on it and update the status/item type
@@ -171,11 +171,7 @@ $(document).ready(function(){
     // get the item id of all checked boxes
     const checked = getCheckedBoxes();
     if (checked.length === 0) {
-      const json = {
-        'msg': 'Nothing selected!',
-        'res': false
-      };
-      notif(json);
+      notif(nothingSelectedError);
       return;
     }
     // loop on it and update the status/item type
@@ -202,14 +198,49 @@ $(document).ready(function(){
     const what = $('#exportChecked').val();
     const checked = getCheckedBoxes();
     if (checked.length === 0) {
-      const json = {
-        'msg': 'Nothing selected!',
-        'res': false
-      };
-      notif(json);
+      notif(nothingSelectedError);
       return;
     }
     window.location.href = `make.php?what=${what}&type=${$('#type').data('type')}&id=${checked.map(value => value.id).join('+')}`;
+  });
+
+  // THE LOCK BUTTON FOR CHECKED BOXES
+  $('#lockChecked').on('click', function() {
+    // get the item id of all checked boxes
+    const checked = getCheckedBoxes();
+    if (checked.length === 0) {
+      notif(nothingSelectedError);
+      return;
+    }
+    // loop on it and delete stuff
+    $.each(checked, function(index) {
+      $.post('app/controllers/EntityAjaxController.php', {
+        lock: true,
+        id: checked[index]['id'],
+        type: $('#type').data('type')
+      }).done(function(json) {
+        notif(json);
+      });
+    });
+  });
+
+  // THE TIMESTAMP BUTTON FOR CHECKED BOXES
+  $('#timestampChecked').on('click', function() {
+    // get the item id of all checked boxes
+    const checked = getCheckedBoxes();
+    if (checked.length === 0) {
+      notif(nothingSelectedError);
+      return;
+    }
+    // loop on it and delete stuff
+    $.each(checked, function(index) {
+      $.post('app/controllers/ExperimentsAjaxController.php', {
+        timestamp: true,
+        id: checked[index]['id'],
+      }).done(function(json) {
+        notif(json);
+      });
+    });
   });
 
   // THE DELETE BUTTON FOR CHECKED BOXES
@@ -217,11 +248,7 @@ $(document).ready(function(){
     // get the item id of all checked boxes
     const checked = getCheckedBoxes();
     if (checked.length === 0) {
-      const json = {
-        'msg': 'Nothing selected!',
-        'res': false
-      };
-      notif(json);
+      notif(nothingSelectedError);
       return;
     }
     if (!confirm(i18next.t('entity-delete-warning'))) {
@@ -240,5 +267,27 @@ $(document).ready(function(){
         }
       });
     });
+  });
+
+  // Sort column in tabular mode
+  $(document).on('click', '.orderBy', function() {
+    // The attribute target-sort of the triangle icon next to the title contains the value of the corresponding
+    // option of the select field <select name="order"> that will be selected in the form.
+    // For example: <i class='fas fa-sort orderBy' data-order='title'></i>, will select the option 'title'
+    // in the <select name='order'>
+    const targetSort = $(this).data('orderby');
+    const selectOrder = $('select[name="order"]');
+    const selectSort = $('select[name="sort"]');
+
+    // I guess the default expectation is sort ascending, but if the user clicks twice, the
+    // order should invert. For this, we check whether the select value is already set
+    // to targetSort
+    if (selectOrder.val() == targetSort) {
+      selectSort.val(selectSort.val() == 'desc' ? 'asc': 'desc' );
+    } else {
+      $('select[name="sort"]').val('asc');
+    }
+    selectOrder.val(targetSort);
+    selectOrder.closest('form').trigger('submit');
   });
 });

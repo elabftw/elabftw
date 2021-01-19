@@ -113,7 +113,7 @@
         <span class='smallgray'>{{ 'Your timestamping service provider password'|trans }}</span>
       </div>
 
-      <div class='submitButtonDiv'>
+      <div class='mt-4 text-center'>
         <button type='submit' class='button btn btn-primary'>Save</button>
       </div>
     </form>
@@ -139,9 +139,9 @@
       {% for teamGroup in teamGroupsArr %}
         <div class='box'>
           <a href='#'>
-            <i class='fas fa-trash-alt clickable teamGroupDelete align_right' data-id='{{ teamGroup.id }}'></i>
+            <i class='fas fa-trash-alt clickable teamGroupDelete align-right' data-id='{{ teamGroup.id }}'></i>
           </a>
-          <h3 title='Click to Edit' class='inline editable teamgroup_name' data-id='{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
+          <h3 title='Click to Edit' class='editable teamgroup_name' data-id='{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
           {% for user in teamGroup.users %}
             <span class='user-badge clickable rmUserFromGroup' data-user='{{ user.userid }}' data-group='{{ teamGroup.id }}'>{{ user.fullname|raw }}</span>
           {% endfor %}
@@ -202,7 +202,7 @@
             <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button btn btn-primary statusSave'>{{ 'Save'|trans }}</button></li>
 
             <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button btn btn-danger statusDestroy' >{{ 'Delete'|trans }}</button></li>
-            <li class='list-inline-item'><i class='fas fa-sort draggable sortableHandle align_right fa-2x'></i></li>
+            <li class='list-inline-item'><i class='fas fa-sort draggable sortableHandle align-right fa-2x'></i></li>
           </ul>
         </li>
       {% endfor %}
@@ -235,7 +235,7 @@
     </div>
 
     <textarea class='mceditable' id='itemsTypesTemplate'></textarea>
-    <div class='submitButtonDiv'>
+    <div class='mt-4 text-center'>
       <button id='itemsTypesCreate' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
   </div>
@@ -273,7 +273,7 @@
             <li class='list-inline-item mt-2 itemsTypesEditor' id='itemsTypesEditor_{{ itemType.category_id }}'>
               <textarea class='' id='itemsTypesTemplate_{{ itemType.category_id }}'>{{ itemType.template }}</textarea>
             </li>
-            <li class='list-inline-item'><i class='fas fa-sort sortableHandle align_right fa-2x'></i></li>
+            <li class='list-inline-item'><i class='fas fa-sort sortableHandle align-right fa-2x'></i></li>
           </ul>
         </li>
       {% endfor %}
@@ -289,7 +289,7 @@
     <textarea style='height:400px' class='mceditable' id='commonTplTemplate'>
       {{ commonTplBody|raw }}
     </textarea>
-    <div class='submitButtonDiv'>
+    <div class='mt-4 text-center'>
       <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
   </div>
@@ -333,7 +333,7 @@
       <label for='csvuploader' class='d-block'>{{ '4. Select a CSV file to import:'|trans }}</label>
       <input id='csvuploader' name='file' type='file' accept='.csv' />
       <input name='type' type='hidden' value='csv' />
-      <div class='submitButtonDiv'>
+      <div class='mt-4 text-center'>
         <button type='submit' class='button btn btn-primary'>{{ 'Import CSV'|trans }}</button>
       </div>
     </form>
@@ -374,7 +374,7 @@
       <input id='zipuploader' name='file' type='file' accept='.zip' />
       <input name='type' type='hidden' value='zip' />
 
-      <div class='submitButtonDiv'>
+      <div class='mt-4 text-center'>
         <button type='submit' class='button btn btn-primary'>{{ 'Import ZIP'|trans }}</button>
       </div>
 

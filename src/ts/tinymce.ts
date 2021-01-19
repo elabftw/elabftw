@@ -129,6 +129,7 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'JavaScript', value: 'javascript'},
       {text: 'Julia', value: 'julia'},
       {text: 'Latex', value: 'latex'},
+      {text: 'Lua', value: 'lua'},
       {text: 'Makefile', value: 'makefile'},
       {text: 'Matlab', value: 'matlab'},
       {text: 'Perl', value: 'perl'},

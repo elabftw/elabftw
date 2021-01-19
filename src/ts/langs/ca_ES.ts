@@ -9,6 +9,7 @@ const t = {
     "filename": "Nom de l'arxiu",
     "generic-delete-warning": "Eliminar això?",
     "link-delete-warning": "Voleu eliminar aquest enllaç?",
+    "nothing-selected": "Res seleccionat!",
     "please-wait": "Si us plau, espera",
     "replace-edited-file": "Voleu substituir el fitxer del servidor per aquesta edició?",
     "request-filename": "Introduïu el nom del fitxer",

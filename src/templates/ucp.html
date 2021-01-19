@@ -77,6 +77,12 @@
           <option value='xs' {{ App.Users.userData.display_size == 'xs' ? ' selected' }}>{{ 'Small'|trans }}</option>
       </select>
 
+      <label for='display_mode'>{{ 'Display mode:'|trans }}</label>
+      <select id='display_mode' name='display_mode' class='form-control col-md-3'>
+          <option value='it' {{ App.Users.userData.display_mode == 'it' ? ' selected' }}>{{ 'Item list (default)'|trans }}</option>
+          <option value='tb' {{ App.Users.userData.display_mode == 'tb' ? ' selected' }}>{{ 'Tabular'|trans }}</option>
+      </select>
+
       <label for='orderby'>{{ 'Order by:'|trans }}</label>
       <select id='orderby' name='orderby' class='form-control col-md-3'>
           <option value='default' {{ App.Users.userData.orderby == null ? ' selected' }}>{{ 'Use default'|trans }}</option>
@@ -331,7 +337,7 @@
             </div>
         </div>
 
-        <div class='submitButtonDiv'>
+        <div class='mt-4 text-center'>
             <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Update profile'|trans }}</button>
         </div>
     </form>

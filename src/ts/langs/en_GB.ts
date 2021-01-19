@@ -9,6 +9,7 @@ const t = {
     "filename": "Filename",
     "generic-delete-warning": "Delete this?",
     "link-delete-warning": "Delete this link?",
+    "nothing-selected": "Nothing selected!",
     "please-wait": "Please wait…",
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",
     "request-filename": "Enter name of the file",

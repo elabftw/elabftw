@@ -9,6 +9,7 @@ const t = {
     "filename": "파일 이름",
     "generic-delete-warning": "삭제할까요?",
     "link-delete-warning": "링크를 삭제할까요?",
+    "nothing-selected": "선택한 항목이 없습니다!",
     "please-wait": "기다려주세요",
     "replace-edited-file": "서버의 파일을이 편집으로 바꾸시겠습니까?",
     "request-filename": "파일 이름 입력",

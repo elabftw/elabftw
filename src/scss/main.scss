@@ -620,6 +620,9 @@ tr:nth-child(odd) {
     padding: 0 10px;
     position: fixed;
     top: 10px;
+    // keep this above 1200 for tinymce fullscreen mode
+    // see #2419
+    z-index: 1985;
 }
 
 .overlay p {

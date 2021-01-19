@@ -6,7 +6,8 @@
         {% set owner = item.fullname %}
       {% endif %}
 
-          <tr class='item item-show item-show-{{ App.Users.userData.display_size }} {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='border-left: 6px solid #{{ item.color }}'>
+          <!-- here the item-show-{lg-md-xs} is always lg -->
+          <tr class='item item-show item-show-lg {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='border-left: 6px solid #{{ item.color }}'>
 
             <!-- DATE -->
             <td class='item-date'>

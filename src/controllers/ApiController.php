@@ -724,7 +724,7 @@ class ApiController implements ControllerInterface
      * # add tag "some-tag" to database item 42
      * curl -X POST -F "tag=some-tag" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
      * @apiSuccess {String} result Success
-     * @apiError {String} error Error mesage
+     * @apiError {String} error Error message
      * @apiParamExample {Json} Request-Example:
      *     {
      *       "tag": "my tag"
@@ -747,7 +747,7 @@ class ApiController implements ControllerInterface
      * @apiName AddEvent
      * @apiGroup Events
      * @apiDescription Create an event in the scheduler for an item
-     * @apiParam {Sring} start Start time
+     * @apiParam {String} start Start time
      * @apiParam {Number} end End time
      * @apiParam {String} title Comment for the booking
      * @apiExample {python} Python example
@@ -766,7 +766,7 @@ class ApiController implements ControllerInterface
      * curl -X POST -F "start=2019-11-30T12:00:00" -F "end=2019-11-30T14:00:00" -F "title=Booked from API" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/events/42
      * @apiSuccess {String} result Success
      * @apiSuccess {String} id Id of new event
-     * @apiError {Number} error Error mesage
+     * @apiError {Number} error Error message
      * @apiParamExample {Json} Request-Example:
      *     {
      *       "start": "2019-11-30T12:00:00",
@@ -810,7 +810,7 @@ class ApiController implements ControllerInterface
      * # destroy event with id 13
      * curl -X DELETE -H "Authorization: $TOKEN" https://elab.example.org/api/v1/events/13
      * @apiSuccess {String} result Success
-     * @apiError {String} error Error mesage
+     * @apiError {String} error Error message
      */
 
     /**
@@ -852,7 +852,7 @@ class ApiController implements ControllerInterface
      * # update database item 42
      * curl -X POST -F "title=a new title" -F "body=a new body" -F "date=20200504" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
      * @apiSuccess {String} result Success
-     * @apiError {String} error Error mesage
+     * @apiError {String} error Error message
      * @apiParamExample {Json} Request-Example:
      *     {
      *       "body": "New body to be updated.",
@@ -898,7 +898,7 @@ class ApiController implements ControllerInterface
      * # update database item 42
      * curl -X POST -F "category=2" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
      * @apiSuccess {String} result Success
-     * @apiError {String} error Error mesage
+     * @apiError {String} error Error message
      * @apiParamExample {Json} Request-Example:
      *     {
      *       "category": "2"
@@ -941,7 +941,7 @@ class ApiController implements ControllerInterface
      * # upload your-file.jpg to database item 42
      * curl -X POST -F "file=@your-file.jpg" -H "Authorization: $TOKEN" "https://elab.example.org/api/v1/items/42"
      * @apiSuccess {String} result Success
-     * @apiError {String} error Error mesage
+     * @apiError {String} error Error message
      */
 
     /**

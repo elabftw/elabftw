@@ -78,7 +78,7 @@
     "buildprofile": "webpack-cli --config builder.js --profile --json > stats.json",
     "clean": "rm -rf apidoc/html _srcdoc src/ts/*.js src/ts/*.js.map web/app/js/*bundle.js web/app/js/*.LICENSE.txt web/app/js/*.min.js web/app/css/*.min.css",
     "csslint": "./node_modules/.bin/stylelint src/scss/*.scss",
-    "full": "yarn phpcs && yarn jslint && yarn psalm && yarn phpstan && yarn test unit",
+    "full": "yarn phpcs && yarn jslint && yarn csslint && yarn psalm && yarn phpstan && yarn test unit",
     "jslint": "eslint --ext .ts src/ts",
     "jslint-ci": "eslint --ext .ts --quiet src/ts",
     "phan": "phan --allow-polyfill-parser -k src/tools/phan-config.php",

@@ -127,11 +127,19 @@ textarea {
 }
 
 select {
+    /* stylelint-disable-next-line property-no-vendor-prefix */
+    -moz-appearance: none;
+    /* stylelint-disable-next-line property-no-vendor-prefix */
+    -webkit-appearance: none;
     background: #fff url('images/ico-arrow.png') no-repeat 93% 56%;
     padding-right: 31px;
 }
 
 .form-control {
+    /* stylelint-disable-next-line property-no-vendor-prefix */
+    -moz-appearance: none;
+    /* stylelint-disable-next-line property-no-vendor-prefix */
+    -webkit-appearance: none;
     padding-right: 31px;
 }
 

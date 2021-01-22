@@ -33,8 +33,8 @@ class MfaHelper
     /** @var string ALGO algorithm used */
     private const ALGO = 'sha1';
 
-    /** @var int DISCREPENCY discrepency parameter to verify the code */
-    private const DISCREPENCY = 2;
+    /** @var int DISCREPANCY discrepancy parameter to verify the code */
+    private const DISCREPANCY = 2;
 
     /** @var int MFA_SECRET_BITS entropy for the mfa secret */
     private const SECRET_BITS = 160;
@@ -91,7 +91,7 @@ class MfaHelper
     public function verifyCode(string $code): bool
     {
         $code = Filter::sanitize($code);
-        return $this->TwoFactorAuth->verifyCode($this->secret, $code, self::DISCREPENCY);
+        return $this->TwoFactorAuth->verifyCode($this->secret, $code, self::DISCREPANCY);
     }
 
     // only used to emulate the phone app (in MfaCode)

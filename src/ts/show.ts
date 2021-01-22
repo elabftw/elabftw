@@ -165,7 +165,7 @@ $(document).ready(function(){
     });
   });
 
-  // UPDATE THE VISIBILTY OF AN EXPERIMENT ON SELECT CHANGE
+  // UPDATE THE VISIBILITY OF AN EXPERIMENT ON SELECT CHANGE
   $('#visChecked').on('change', function() {
     const ajaxs = [];
     // get the item id of all checked boxes

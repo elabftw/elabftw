@@ -14,7 +14,7 @@ use Exception;
 
 /**
  * When something goes wrong with the new release check
- * It is not a critical error and should be catched, logged, and a message displayed
+ * It is not a critical error and should be caught, logged, and a message displayed
  */
 class ReleaseCheckException extends Exception
 {

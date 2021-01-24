@@ -569,7 +569,7 @@ abstract class AbstractEntity implements CreatableInterface
         if ($period === '') {
             $period = '15000101-30000101';
         }
-        list($from, $to) = explode('-', $period);
+        [$from, $to] = explode('-', $period);
         $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid AND lastchange BETWEEN :from AND :to';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);

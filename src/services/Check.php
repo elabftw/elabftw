@@ -124,6 +124,20 @@ class Check
         }
     }
 
+    public static function displayMode(string $input): string
+    {
+        switch ($input) {
+            // Item list (the usual)
+            case 'it':
+                return 'it';
+            // Table format
+            case 'tb':
+                return 'tb';
+            default:
+                return 'it';
+        }
+    }
+
     /**
      * Check orderby param
      *

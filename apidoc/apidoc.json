@@ -2,6 +2,7 @@
   "name": "eLabFTW API",
   "version": "1.0.0",
   "description": "Documentation for elab's API",
+  "sampleUrl": null,
   "template": {
     "withCompare": false
   },

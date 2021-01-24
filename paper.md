@@ -31,4 +31,4 @@ bibliography: paper.bib
 eLabFTW is a free and open source electronic laboratory notebook for researchers.
 Once installed on a server, it allows researchers to track their experiments, but
 also to manage their assets in the lab (antibodies, mouse, siRNAs, proteins, etc.).
-Experiments can be timestamp to any RFC 3161 Time Stamping Authority, allowing solid legal proof in case of issues about a patent. It also features a scheduler to book equipment. More informations can be found on the official website [@Elabweb] and in the documentation [@Elabdoc]. Moreover, an online demo is accessible [@Elabdemo] to try out the software without installing.
+Experiments can be timestamp to any RFC 3161 Time Stamping Authority, allowing solid legal proof in case of issues about a patent. It also features a scheduler to book equipment. More information can be found on the official website [@Elabweb] and in the documentation [@Elabdoc]. Moreover, an online demo is accessible [@Elabdemo] to try out the software without installing.

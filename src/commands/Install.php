@@ -104,7 +104,7 @@ class Install extends Command
         }
 
         if (!$fs->exists($configFilePath)) {
-            $output->writeln('✓ All preliminary checks suceeded. Now asking information to produce the config.php file.');
+            $output->writeln('✓ All preliminary checks succeeded. Now asking information to produce the config.php file.');
             $output->writeln('<comment>The value between brackets is the default value entered if you just press enter.</comment>');
             // ask for authentication credentials
             $helper = $this->getHelper('question');

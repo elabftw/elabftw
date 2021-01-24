@@ -75,12 +75,39 @@
         <button id='timestampChecked' class='button btn btn-primary'>{{ 'Timestamp'|trans }}</button>
         <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
       </p>
-      <div class='row display-flex'>
-      {% for item in itemsArr|slice(0, DisplayParams.limit) %}
-        {% include('show-item.html') %}
-      {% endfor %}
-      </div>
-
+      {% if App.Users.userData.display_mode == 'it' %}
+        <div class='row display-flex' id='itemList'>
+        {% for item in itemsArr|slice(0, DisplayParams.limit) %}
+          {% include('show-item.html') %}
+        {% endfor %}
+        </div>
+      {% else  %}
+        <table class='item-table'>
+          <tr>
+            <th>
+              {{ 'Date'|trans }} <i class='fas fa-sort orderBy clickable' data-orderby='date'></i>
+            </th>
+            <th class='title-item-table'>{{ 'Title'|trans }}
+            <i class='fas fa-sort orderBy clickable' data-orderby='title'></i>
+            </th>
+            {% if Entity.type == 'experiments' %}
+            <th class='step-item-table'>{{ 'Next step'|trans }}</th>
+            {% elseif Entity.type == 'items' %}
+            <th class='step-item-table'>{{ 'User'|trans }}
+            <i class='fas fa-sort orderBy clickable' data-orderby='user'></i>
+            </th>
+            {% endif %}
+            <th class='category-item-table'>{{ 'Category'|trans }}
+              <i class='fas fa-sort orderBy clickable' data-orderby='cat'></i>
+            </th>
+            <th class='tags-item-table'>{{ 'Tags'|trans }}</th>
+            <th class='actions-item-table'>{{ 'Actions'|trans }}</th>
+          </tr>
+        {% for item in itemsArr|slice(0, DisplayParams.limit) %}
+          {% include('show-item-table.html') %}
+        {% endfor %}
+        </table>
+      {% endif %}
       <div class='text-center pageButtons mt-2'>
         {% if DisplayParams.offset != 0 %}
           <button class='button btn btn-neutral previousPage'>{{ 'Previous page'|trans }}</button>

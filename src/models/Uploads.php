@@ -377,7 +377,7 @@ class Uploads implements DestroyableInterface
         // see http://php.net/manual/en/function.rename.php#117590
         if (PHP_OS === 'FreeBSD') {
             if (copy($orig, $dest) !== true) {
-                throw new FilesystemErrorException('Error while moving the file. Check folder permissons!');
+                throw new FilesystemErrorException('Error while moving the file. Check folder permissions!');
             }
             if (unlink($orig) !== true) {
                 throw new FilesystemErrorException('Error deleting file!');
@@ -385,7 +385,7 @@ class Uploads implements DestroyableInterface
         }
 
         if (rename($orig, $dest) !== true) {
-            throw new FilesystemErrorException('Error while moving the file. Check folder permissons!');
+            throw new FilesystemErrorException('Error while moving the file. Check folder permissions!');
         }
     }
 

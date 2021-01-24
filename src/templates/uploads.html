@@ -8,7 +8,7 @@
             {% endtrans %}
         </h3>
         {% if mode == 'edit' %}
-          <i class='fas fa-eye clickable align_right togglableNext' title="{{ 'Toggle visibility'|trans }}"></i>
+          <i class='fas fa-eye clickable align-right togglableNext' title="{{ 'Toggle visibility'|trans }}"></i>
         {% endif %}
 
         <div class='row' id='uploadsDiv'>
@@ -81,7 +81,7 @@
                                   </ul>
                                 </div>
 
-                                <div class='viewer_3Dmoljs'
+                                <div class='viewer-3Dmoljs'
                                   data-href='app/download.php?f={{ upload.long_name }}'
                                   data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick'}}"
                                   data-backgroundcolor='0xffffff'

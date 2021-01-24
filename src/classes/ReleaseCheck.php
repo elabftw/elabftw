@@ -22,7 +22,7 @@ use Psr\Http\Message\ResponseInterface;
 class ReleaseCheck
 {
     /** @var string INSTALLED_VERSION the current version of elabftw */
-    public const INSTALLED_VERSION = '3.6.4';
+    public const INSTALLED_VERSION = '3.6.5';
 
     /** @var string $URL this file contains the latest version information */
     private const URL = 'https://get.elabftw.net/updates.ini';

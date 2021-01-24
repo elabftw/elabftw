@@ -127,11 +127,19 @@ textarea {
 }
 
 select {
+    /* stylelint-disable-next-line property-no-vendor-prefix */
+    -moz-appearance: none;
+    /* stylelint-disable-next-line property-no-vendor-prefix */
+    -webkit-appearance: none;
     background: #fff url('images/ico-arrow.png') no-repeat 93% 56%;
     padding-right: 31px;
 }
 
 .form-control {
+    /* stylelint-disable-next-line property-no-vendor-prefix */
+    -moz-appearance: none;
+    /* stylelint-disable-next-line property-no-vendor-prefix */
+    -webkit-appearance: none;
     padding-right: 31px;
 }
 
@@ -620,6 +628,9 @@ tr:nth-child(odd) {
     padding: 0 10px;
     position: fixed;
     top: 10px;
+    // keep this above 1200 for tinymce fullscreen mode
+    // see #2419
+    z-index: 1985;
 }
 
 .overlay p {
@@ -1021,7 +1032,7 @@ input[type='color'] {
 
 /* bring the search and user menu a bit more on the left
  * this is the only way I found that works
- * adding row/columns will mess up the left alignement of the navbar
+ * adding row/columns will mess up the left alignment of the navbar
  */
 #main-nav {
     padding-right: 120px !important;

@@ -1,0 +1,2 @@
+[codespell]
+skip = ./node_modules,./vendor,./uploads,./cache,*.map,*.bundle.js,*.min.js,./.git,./_srcdoc,./src/langs/*,./src/ts/langs/*,./src/js/tinymce-langs/*,./tests/_output/*,./tests/_support/*,*.min.css,./src/dfn-cert/*,./src/js/vendor/*,./_coverage/*,./yarn.lock,*.bundle.js.LICENSE.txt

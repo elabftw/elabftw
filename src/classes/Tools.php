@@ -141,7 +141,7 @@ class Tools
      * Take a 8 digits input and output 2014.08.16
      *
      * @param string $date Input date '20140302'
-     * @param string $s an optionnal param to specify the separator
+     * @param string $s an optional param to specify the separator
      * @throws InvalidArgumentException
      * @return string The formatted string
      */

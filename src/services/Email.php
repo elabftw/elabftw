@@ -113,7 +113,7 @@ class Email
             $from = array($this->Config->configArr['mail_from'] => 'eLabFTW');
         }
 
-        // get all email adresses
+        // get all email addresses
         $usersArr = $this->Users->getAllEmails($teamFilter);
         $bcc = array();
         foreach ($usersArr as $user) {
@@ -246,7 +246,7 @@ class Email
      */
     private function getAdminEmail($team): array
     {
-        // array for storing email adresses of admin(s)
+        // array for storing email addresses of admin(s)
         $arr = array();
         $Db = Db::getConnection();
 

@@ -87,7 +87,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
               <option {{ App.Config.configArr.lang == lang ? ' selected' }} value='{{ lang }}'>{{ text }}</option>
               {% endfor %}
           </select>
-          <p class='smallgray'>{{ 'The default language of this instance. It can be overriden by each users.' }}</p>
+          <p class='smallgray'>{{ 'The default language of this instance. It can be overridden by each users.' }}</p>
 
           <label for='proxy'>{{ 'Installation URL:'|trans }}</label>
           <input class='form-control col-md-4' type='url' value='{{ App.Config.configArr.url }}' name='url' id='url' />

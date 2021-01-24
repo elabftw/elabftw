@@ -149,7 +149,7 @@ final class MakeThumbnail
      */
     private function useGd(): void
     {
-        // the fonction used is different depending on extension
+        // the function used is different depending on extension
         switch ($this->mime) {
             case 'image/jpeg':
                 $sourceImage = imagecreatefromjpeg($this->filePath);

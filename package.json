@@ -81,7 +81,7 @@
     "buildcss": "grunt css && sass src/scss/main.scss:web/app/css/elabftw.min.css",
     "buildjs": "grunt ts && yarn build",
     "buildprofile": "webpack-cli --config builder.js --profile --json > stats.json",
-    "clean": "rm -rf apidoc/html _srcdoc src/ts/*.js src/ts/*.js.map web/app/js/*bundle.js web/app/js/*.LICENSE.txt web/app/js/*.min.js web/app/css/*.min.css",
+    "clean": "rm -rf apidoc/html _srcdoc src/ts/*.js src/ts/*.js.map web/app/js/*bundle.js web/app/js/*.LICENSE.txt web/app/js/*.min.js web/app/css/*.min.css web/app/css/*.min.css.map web/app/ove/*",
     "codespell": "codespell --config src/tools/codespellrc -L want to,sSee",
     "csslint": "./node_modules/.bin/stylelint src/scss/*.scss",
     "full": "yarn phpcs && yarn jslint && yarn csslint && yarn psalm && yarn phpstan && yarn test unit",

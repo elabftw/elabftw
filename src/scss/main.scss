@@ -883,8 +883,8 @@ the form-control fails to do that so we do the border ourselves */
     }
 }
 
-// raise above .viewer_OVE
-.uploadsDestroy {
+// raise above .viewer-ove
+.uploadsDestroy { /* stylelint-disable-line */
     position: relative;
     z-index: 10;
 }
@@ -892,7 +892,7 @@ the form-control fails to do that so we do the border ourselves */
 // overwrite some default open-vector-editor settings
 // this is only working for the circular preview (single svg element)
 // the linear preview unfortunately is made from individual svg elements
-.viewer_OVE {
+.viewer-ove {
     .preview-mode-container {
         display: block;
         width: auto !important;
@@ -901,16 +901,18 @@ the form-control fails to do that so we do the border ourselves */
             box-shadow: none !important;
         }
     }
-    .veCircularView {
-        width: auto !important;
+
+    .veCircularView { /* stylelint-disable-line */
         height: auto !important;
-    }
-    .circularViewSvg {
-        width: 100% !important;
-        height: 100% !important;
+        width: auto !important;
     }
 
-    .ve-propertiesPanel .bp3-tab-list {
+    .circularViewSvg { /* stylelint-disable-line */
+        height: 100% !important;
+        width: 100% !important;
+    }
+
+    .ve-propertiesPanel .bp3-tab-list { /* stylelint-disable-line */
         overflow: auto !important;
     }
 }

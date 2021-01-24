@@ -17,7 +17,7 @@ import anyToJson from 'bio-parsers/src/parsers/anyToJson';
 // DISPLAY Plasmids FILES
 export function displayPlasmidViewer(): void {
   const editor: any = {};
-  $('.viewer_OVE').each(function() {
+  $('.viewer-ove').each(function() {
     const viewerID = $(this).attr('id');
     const filename = $(this).data('href');
     const realName = $(this).data('realName');

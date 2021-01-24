@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-import anyToJson from 'bio-parsers/src/parsers/anyToJson';
+import anyToJson from 'bio-parsers/es/parsers/anyToJson';
 
 // DISPLAY Plasmids FILES
 export function displayPlasmidViewer(): void {

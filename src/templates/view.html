@@ -233,7 +233,7 @@
                         <span class='text-muted'>{{ comment.fullname|raw }} {{ 'commented'|trans }}</span>
                         <span title='{{ comment.datetime }}' class='text-muted relative-moment'></span>
                         {% if comment.userid == Entity.Users.userData.userid %}
-                            <a href='#' class='clickable commentsDestroy align_right' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}'>
+                            <a href='#' class='clickable commentsDestroy align-right' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}'>
                                 <i class='fas fa-trash-alt fa-lg'></i>
                             </a>
                         {% endif %}

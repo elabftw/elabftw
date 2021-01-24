@@ -111,7 +111,7 @@ class App
     }
 
     /**
-     * Get the mininum password length for injecting in templates
+     * Get the minimum password length for injecting in templates
      */
     public function getMinPasswordLength(): int
     {

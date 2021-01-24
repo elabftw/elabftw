@@ -44,7 +44,7 @@
 
   <p class='footer-right'>
     {{ 'Powered by'|trans }}
-    <a href='https://www.elabftw.net'>eLabFTW</a> {{ v }}<br>
+    <a href='https://www.elabftw.net'>eLabFTW</a> {{ App.Session.has('is_auth') ? v }}<br>
         {{ 'Page generated in'|trans }} {{ App.getGenerationTime }} {{ 'seconds'|trans }}
     {% if App.Config.configArr.debug %}
         ({{ App.getNumberOfQueries }} SQL)

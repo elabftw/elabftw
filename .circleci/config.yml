@@ -73,6 +73,9 @@ jobs:
           name: Run Javascript linter
           command: yarn run jslint-ci
       - run:
+          name: Run SCSS linter
+          command: yarn run csslint
+      - run:
           name: Run PHP-CS-Fixer
           command: ./vendor/bin/php-cs-fixer fix --config=.php_cs.dist -v --dry-run --stop-on-violation --using-cache=no
       - run:

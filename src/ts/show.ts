@@ -165,7 +165,7 @@ $(document).ready(function(){
     });
   });
 
-  // UPDATE THE VISIBILTY OF AN EXPERIMENT ON SELECT CHANGE
+  // UPDATE THE VISIBILITY OF AN EXPERIMENT ON SELECT CHANGE
   $('#visChecked').on('change', function() {
     const ajaxs = [];
     // get the item id of all checked boxes
@@ -267,5 +267,27 @@ $(document).ready(function(){
         }
       });
     });
+  });
+
+  // Sort column in tabular mode
+  $(document).on('click', '.orderBy', function() {
+    // The attribute target-sort of the triangle icon next to the title contains the value of the corresponding
+    // option of the select field <select name="order"> that will be selected in the form.
+    // For example: <i class='fas fa-sort orderBy' data-order='title'></i>, will select the option 'title'
+    // in the <select name='order'>
+    const targetSort = $(this).data('orderby');
+    const selectOrder = $('select[name="order"]');
+    const selectSort = $('select[name="sort"]');
+
+    // I guess the default expectation is sort ascending, but if the user clicks twice, the
+    // order should invert. For this, we check whether the select value is already set
+    // to targetSort
+    if (selectOrder.val() == targetSort) {
+      selectSort.val(selectSort.val() == 'desc' ? 'asc': 'desc' );
+    } else {
+      $('select[name="sort"]').val('asc');
+    }
+    selectOrder.val(targetSort);
+    selectOrder.closest('form').trigger('submit');
   });
 });

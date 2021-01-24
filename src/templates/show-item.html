@@ -13,7 +13,7 @@
       {% endif %}
           <section class='item item-show item-show-{{ App.Users.userData.display_size }} {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item.color }}'>
               {% if isPinned %}
-                <span class='align_right'><i class='fas fa-thumbtack' title="{{ 'Pinned'|trans }}"></i></span>
+                <span class='align-right'><i class='fas fa-thumbtack' title="{{ 'Pinned'|trans }}"></i></span>
               {% endif %}
 
             <p class='title'>

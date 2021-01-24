@@ -70,7 +70,7 @@ class MakeTimestamp extends AbstractMake
     private $responsefilePath = '';
 
     /**
-     * Pdf is generated on instanciation and after you need to call timestamp()
+     * Pdf is generated on instantiation and after you need to call timestamp()
      *
      * @param Config $config
      * @param Teams $teams

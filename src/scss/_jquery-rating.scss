@@ -8,33 +8,33 @@
 
 .rating-cancel,
 .star-rating {
-    float: left;
-    width: 17px;
-    height: 15px;
-    text-indent: -999em;
+    background: transparent;
     cursor: pointer;
     display: block;
-    background: transparent;
+    float: left;
+    height: 15px;
     overflow: hidden;
+    text-indent: -999em;
+    width: 17px;
 }
 
 .rating-cancel,
 .rating-cancel a {
-    background: url(images/delete.gif) no-repeat 0 -16px;
+    background: url('images/delete.gif') no-repeat 0 -16px;
 }
 
 .star-rating,
 .star-rating a {
-    background: url(images/star.gif) no-repeat 0 0;
+    background: url('images/star.gif') no-repeat 0 0;
 }
 
 .rating-cancel a,
 .star-rating a {
-    display: block;
-    width: 16px;
-    height: 100%;
     background-position: 0 0;
     border: 0;
+    display: block;
+    height: 100%;
+    width: 16px;
 }
 
 .star-rating-on a {

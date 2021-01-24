@@ -77,7 +77,7 @@ module.exports = function(grunt) {
       ove: {
         // download open-vector-editor from Node package manager, extract only umd files and cleanup
         command: [
-          'wget -q -O /tmp/OVE.tgz https://registry.npmjs.org/open-vector-editor/-/open-vector-editor-12.0.24.tgz',
+          'wget -q -O /tmp/OVE.tgz https://registry.npmjs.org/open-vector-editor/-/open-vector-editor-12.1.0.tgz',
           'tar -C web/app/ove/ -zxmf /tmp/OVE.tgz package/umd/ --strip-components 2 --overwrite',
           'rm /tmp/OVE.tgz'
         ].join('&&')

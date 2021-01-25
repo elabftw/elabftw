@@ -55,8 +55,7 @@ $(document).ready(function() {
   });
 
   // DESTROY COMMENTS
-  $('#comment_container').on('click', '.commentsDestroy', function(e) {
-    e.preventDefault();
+  $('#comment_container').on('click', '.commentsDestroy', function() {
     CommentC.destroy($(this).data('id'));
   });
 });

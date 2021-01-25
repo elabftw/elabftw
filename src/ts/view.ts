@@ -66,8 +66,7 @@ $(document).ready(function() {
   });
 
   // DECODE ASN1
-  $(document).on('click', '.decodeAsn1', function(e) {
-    e.preventDefault();
+  $(document).on('click', '.decodeAsn1', function() {
     $.post('app/controllers/ExperimentsAjaxController.php', {
       asn1: $(this).data('token'),
       id: $(this).data('id')
@@ -88,8 +87,7 @@ $(document).ready(function() {
   });
 
   // SHARE
-  $('.view-action-buttons').on('click', '.shareItem', function(e) {
-    e.preventDefault();
+  $('.view-action-buttons').on('click', '.shareItem', function() {
     $.post('app/controllers/EntityAjaxController.php', {
       getShareLink: true,
       id: $(this).data('id'),
@@ -116,8 +114,7 @@ $(document).ready(function() {
   });
 
   // TOGGLE PINNED
-  $('#pinIcon').on('click', function(e) {
-    e.preventDefault();
+  $('#pinIcon').on('click', function() {
     $.post('app/controllers/EntityAjaxController.php', {
       togglePin: true,
       type: type,

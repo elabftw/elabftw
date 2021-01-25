@@ -18,7 +18,7 @@
           </div>
           <div class='dropdown-menu dropdown-menu-right'>
             <!-- IMPORT -->
-            <a href='#' class='dropdown-item importTpl' data-id='{{ templateData.id }}'><i class='fas fa-file-import fa-fw mr-1'></i>{{ 'Import to your profile'|trans }}</a>
+            <a class='clickable dropdown-item importTpl' data-id='{{ templateData.id }}'><i class='fas fa-file-import fa-fw mr-1'></i>{{ 'Import to your profile'|trans }}</a>
             <!-- CREATE EXPERIMENT FROM TPL -->
             <a href='experiments.php?create=true&tpl={{ templateData.id }}' class='dropdown-item'><i class='fas fa-pencil-alt fa-fw mr-1'></i>{{ 'Create experiment from template'|trans }}</a>
           </div>

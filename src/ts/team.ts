@@ -235,8 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // IMPORT TPL
-  $(document).on('click', '.importTpl', function(e) {
-    e.preventDefault();
+  $(document).on('click', '.importTpl', function() {
     new Template().duplicate($(this).data('id'));
   });
 });

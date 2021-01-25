@@ -27,8 +27,7 @@ $(document).ready(function() {
   });
 
   // Toggle modal
-  $('.modalToggle').on('click', function(e) {
-    e.preventDefault();
+  $('.modalToggle').on('click', function() {
     ($('#' + $(this).data('modal')) as any).modal('toggle');
   });
 

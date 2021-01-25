@@ -45,7 +45,7 @@
         <span>{{ 'Download token'|trans }}</span><i class='fas fa-download'></i>
     </a>
     <!-- TEMP DISABLE BECAUSE NOT WORKING ATM
-    <a href='#' class='elab-tooltip decodeAsn1' data-token='{{ timestampInfo.token.0.long_name }}' data-id='{{ Entity.entityData.id }}'>
+    <a class='clickable elab-tooltip decodeAsn1' data-token='{{ timestampInfo.token.0.long_name }}' data-id='{{ Entity.entityData.id }}'>
         <span>{{ 'Decode token'|trans }}</span>
         <i class='fas fa-info-circle'></i>
     </a>
@@ -66,7 +66,7 @@
     {% endif %}
     <i class='fas fa-eye ml-2' title='{{ 'Visibility'|trans }}'></i> {{ Entity.getCan('read') }}
     <i class='fas fa-pencil-alt ml-2' title='{{ 'Edit'|trans }}'></i> {{ Entity.getCan('write') }}
-    <a href='#' id='pinIcon' class='ml-2 clickable'><i class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }}' title='{{ 'Toggle pin'|trans }}'></i></a>
+    <a id='pinIcon' class='clickable ml-2'><i class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }}' title='{{ 'Toggle pin'|trans }}'></i></a>
   </p>
 
   <!-- DATE -->
@@ -83,7 +83,7 @@
   {% endif %}
 
   {% if not App.Session.has('is_anon') %}
-  <a class='elab-tooltip clickable duplicateItem' href='#' data-id='{{ Entity.id }}'>
+  <a class='elab-tooltip clickable duplicateItem' data-id='{{ Entity.id }}'>
       <span>{{ 'Duplicate'|trans }}</span>
       <i class='far fa-copy'></i>
   </a>
@@ -120,14 +120,14 @@
           {% set lockIcon = 'fa-lock' %}
           {% set alt = Entity.entityData.lockedwhen %}
       {% endif %}
-      <a id='lock' class='elab-tooltip' href='#'>
+      <a id='lock' class='elab-tooltip'>
           <span>{{ alt }}</span>
           <i class='fas {{lockIcon}}'></i>
       </a>
   {% endif %}
 
   {% if Entity.type == 'experiments' and not App.Session.has('is_anon') %}
-      <a class='elab-tooltip clickable shareItem' href='#' data-id='{{ Entity.id }}'>
+      <a class='elab-tooltip clickable shareItem' data-id='{{ Entity.id }}'>
           <span>{{ 'Share'|trans }}</span>
           <i class='fas fa-share-alt'></i>
       </a>
@@ -136,7 +136,7 @@
 
   <!-- show timestamp button if not timestamped already -->
   {% if not Entity.entityData.timestamped and Entity.isTimestampable and Entity.type == 'experiments' and not App.Session.has('is_anon') %}
-    <a class='elab-tooltip modalToggle' href='#' data-modal='timestampModal'>
+    <a class='clickable elab-tooltip modalToggle' data-modal='timestampModal'>
       <span>{{ 'Timestamp Experiment'|trans }}</span>
       <i class='far fa-calendar-check'></i>
     </a>
@@ -233,7 +233,7 @@
                         <span class='text-muted'>{{ comment.fullname|raw }} {{ 'commented'|trans }}</span>
                         <span title='{{ comment.datetime }}' class='text-muted relative-moment'></span>
                         {% if comment.userid == Entity.Users.userData.userid %}
-                            <a href='#' class='clickable commentsDestroy align-right' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}'>
+                            <a class='clickable commentsDestroy align-right' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}'>
                                 <i class='fas fa-trash-alt fa-lg'></i>
                             </a>
                         {% endif %}

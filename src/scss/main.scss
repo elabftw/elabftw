@@ -884,8 +884,10 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 /* 3Dmol.js */
+/* IMPORTANT: keep this name like this, it allows autoload of the viewer */
+/* see: https://3dmol.csb.pitt.edu/doc/tutorial-embeddable.html */
 /* stylelint-disable-next-line selector-class-pattern */
-.viewer-3Dmoljs {
+.viewer_3Dmoljs {
     height: 250px;
     position: relative;
     width: 100%;

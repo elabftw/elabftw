@@ -120,7 +120,7 @@
           {% set lockIcon = 'fa-lock' %}
           {% set alt = Entity.entityData.lockedwhen %}
       {% endif %}
-      <a id='lock' class='elab-tooltip'>
+      <a id='lock' class='clickable elab-tooltip'>
           <span>{{ alt }}</span>
           <i class='fas {{lockIcon}}'></i>
       </a>
@@ -233,7 +233,7 @@
                         <span class='text-muted'>{{ comment.fullname|raw }} {{ 'commented'|trans }}</span>
                         <span title='{{ comment.datetime }}' class='text-muted relative-moment'></span>
                         {% if comment.userid == Entity.Users.userData.userid %}
-                            <a class='clickable commentsDestroy align-right' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}'>
+                            <a class='clickable commentsDestroy align-right' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}' title='{{ 'Delete'|trans }}'>
                                 <i class='fas fa-trash-alt fa-lg'></i>
                             </a>
                         {% endif %}

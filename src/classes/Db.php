@@ -160,4 +160,14 @@ final class Db
     {
         return $this->nq;
     }
+    
+    /**
+     * Get SQL server version
+     *
+     * @return string
+     */
+    public function getServerVersion(): string
+    {
+        return (string) $this->connection->getAttribute(constant('PDO::ATTR_SERVER_VERSION'));
+    }
 }

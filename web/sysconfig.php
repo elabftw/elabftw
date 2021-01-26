@@ -18,6 +18,7 @@ use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Elabftw\Services\UsersHelper;
 use Exception;
+use PDO;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -71,6 +72,8 @@ try {
         PHP_SYSCONFDIR,
         ini_get('upload_max_filesize'),
         ini_get('date.timezone'),
+        Db::getConnection()->getServerVersion(),
+        $_SERVER['SERVER_SOFTWARE'],
     );
 
     $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';

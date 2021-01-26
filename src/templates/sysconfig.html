@@ -156,6 +156,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       <hr>
       <ul class='list-group'>
         <li class='list-group-item'>{{ 'Operating System'|trans }}: {{ phpInfos.0 }}</li>
+        <li class='list-group-item'>{{ 'Server version'|trans }}: {{ phpInfos.7 }}</li>
         <li class='list-group-item'>{{ 'PHP Version'|trans }}: {{ phpInfos.1 }}</li>
         <li class='list-group-item'>{{ 'Largest integer supported'|trans }}: {{ phpInfos.2 }}</li>
         <li class='list-group-item'>{{ 'PHP configuration directory'|trans }}: {{ phpInfos.3 }}</li>
@@ -163,6 +164,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         {% if phpInfos.5|length > 1 %}
           <li class='list-group-item'>{{ 'Timezone'|trans }}: {{ phpInfos.5 }}</li>
         {% endif %}
+        <li class='list-group-item'>{{ 'SQL server version'|trans }}: {{ phpInfos.6 }}</li>
       </ul>
   </div>
 </div>

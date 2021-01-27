@@ -172,6 +172,7 @@ class Config
             ('admin_validate', '1'),
             ('ban_time', '60'),
             ('debug', '0'),
+            ('devmode', '0'),
             ('lang', 'en_GB'),
             ('login_tries', '3'),
             ('mail_from', 'notconfigured@example.com'),

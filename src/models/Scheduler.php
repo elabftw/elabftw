@@ -101,6 +101,39 @@ class Scheduler
     }
 
     /**
+     * Return an array with events for all items of the user
+     *
+     * @param string $start 2019-12-23T00:00:00 01:00
+     * @param string $end 2019-12-30T00:00:00 01:00
+     * @return array
+     */
+    public function readAllFromUser(string $start, string $end): array
+    {
+        // the title of the event is title + Firstname Lastname of the user who booked it
+        $sql = "SELECT team_events.title, team_events.id, team_events.start, team_events.end, team_events.userid,
+            CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
+            items.title AS item_title,
+            CONCAT('#', items_types.color) AS color
+            FROM team_events
+            LEFT JOIN items ON team_events.item = items.id
+            LEFT JOIN items_types ON items.category = items_types.id
+            LEFT JOIN users AS u ON team_events.userid = u.userid
+            WHERE u.userid = :userid
+            AND team_events.start > :start AND team_events.end <= :end";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':start', $start);
+        $req->bindParam(':end', $end);
+        $this->Db->execute($req);
+
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
+    }
+
+    /**
      * Return an array with events for this item
      *
      * @param string $start 2019-12-23T00:00:00 01:00
@@ -258,4 +291,6 @@ class Scheduler
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
     }
+
+
 }

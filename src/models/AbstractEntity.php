@@ -209,6 +209,10 @@ abstract class AbstractEntity implements CreatableInterface
         if ($displayParams->searchType === 'related') {
             $sql .= ' AND linkst.link_id = ' . $displayParams->related;
         }
+
+        // needUseridBind is to toggle the bindParam
+        // with php8 it will throw an error if you try and bind to a non existing token
+        $needUseridBind = false;
         // teamFilter is to restrict to the team for items only
         // as they have a team column
         $teamFilter = '';
@@ -222,6 +226,7 @@ abstract class AbstractEntity implements CreatableInterface
             $sql .= 'AND entity.userid = users2teams.users_id)';
         } else {
             // normal user will so only their own experiments
+            $needUseridBind = true;
             $sql .= 'AND entity.userid = :userid)';
         }
         // add all the teamgroups in which the user is
@@ -251,7 +256,9 @@ abstract class AbstractEntity implements CreatableInterface
         $sql .= implode(' ', $sqlArr);
 
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        if ($needUseridBind === true) {
+            $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        }
         $this->Db->execute($req);
 
         $itemsArr = $req->fetchAll();

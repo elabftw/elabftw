@@ -40,7 +40,7 @@ if [ "${1:-}" != "unit" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip unit
 fi
 # now install xdebug in the container so we can do code coverage
-docker exec -it elabtmp bash -c "apk add --update php7-xdebug && echo 'zend_extension=xdebug.so' >> /etc/php7/php.ini && echo 'xdebug.mode=coverage' >> /etc/php7/php.ini"
+docker exec -it elabtmp bash -c "apk add --update php8-pecl-xdebug && echo 'zend_extension=xdebug.so' >> /etc/php8/php.ini && echo 'xdebug.mode=coverage' >> /etc/php8/php.ini"
 # generate the coverage, results will be available in _coverage directory
 docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --skip api --coverage --coverage-html
 # all tests succeeded, display a koala

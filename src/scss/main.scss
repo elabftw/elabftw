@@ -994,3 +994,37 @@ input[type='color'] {
 #main-nav {
     padding-right: 120px !important;
 }
+
+/* pure css pie chart based on: https://codepen.io/chriscoyier/pen/RPLqMg */
+.pie-chart {
+    background: conic-gradient(var(--pie-data));
+    border-radius: 50%;
+    height: 0;
+    padding-right: 20px;
+    padding-top: 100%;
+    width: 100%;
+}
+
+.pie-percent {
+    background: var(--bg);
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    text-shadow: 0 0 1px #000;
+}
+
+.pie-legend {
+    border-collapse: separate;
+    display: table;
+    list-style: none;
+
+    > li {
+        display: table-row;
+
+        > * {
+            display: table-cell;
+        }
+    }
+}
+
+

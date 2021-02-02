@@ -28,33 +28,33 @@ class Team implements MapInterface
 
     private int $id;
 
-    private string $name;
+    private string $name = '';
 
-    private int $deletableXp;
+    private int $deletableXp = 1;
 
-    private int $publicDb;
+    private int $publicDb = 0;
 
     private string $linkName = 'Documentation';
 
     private string $linkHref = 'https://doc.elabftw.net';
 
-    private ?string $stamplogin;
+    private string $stamplogin = '';
 
-    private ?string $stamppass;
+    private string $stamppass = '';
 
-    private ?string $stampprovider;
+    private string $stampprovider = '';
 
-    private ?string $stampcert;
+    private string $stampcert = '';
 
-    private ?string $orgid;
+    private string $orgid = '';
 
     private int $doForceCanread;
 
     private int $doForceCanwrite;
 
-    private string $forceCanread;
+    private string $forceCanread = '';
 
-    private string $forceCanwrite;
+    private string $forceCanwrite = '';
 
     private int $visible;
 

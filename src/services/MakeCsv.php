@@ -21,14 +21,11 @@ class MakeCsv extends AbstractMake
 {
     use CsvTrait;
 
-    /** @var string $idList list of id to make csv from */
-    private $idList;
+    // list of id to make csv from, separated by spaces: 4 8 15 16 23 42
+    private string $idList;
 
     /**
      * Give me a list of "id id id" and a type, I make good csv for you
-     *
-     * @param AbstractEntity $entity
-     * @param string $idList 1 4 5 2
      */
     public function __construct(AbstractEntity $entity, string $idList)
     {
@@ -38,8 +35,6 @@ class MakeCsv extends AbstractMake
 
     /**
      * Return a nice name for the file
-     *
-     * @return string
      */
     public function getFileName(): string
     {
@@ -48,8 +43,6 @@ class MakeCsv extends AbstractMake
 
     /**
      * Here we populate the first row: it will be the column names
-     *
-     * @return array
      */
     protected function getHeader(): array
     {
@@ -61,8 +54,6 @@ class MakeCsv extends AbstractMake
 
     /**
      * Generate an array for the requested data
-     *
-     * @return array
      */
     protected function getRows(): array
     {

@@ -19,21 +19,12 @@ use PDO;
  */
 class UserStats
 {
-    /** @var Users $Users instance of Users */
-    private $Users;
+    private Users $Users;
 
-    /** @var int $count count of experiments */
-    private $count;
+    private int $count;
 
-    /** @var Db $Db SQL Database */
-    private $Db;
+    private Db $Db;
 
-    /**
-     * Init the object with a userid and the total count of experiments
-     *
-     * @param Users $users
-     * @param int $count total count of experiments
-     */
     public function __construct(Users $users, int $count)
     {
         $this->Users = $users;

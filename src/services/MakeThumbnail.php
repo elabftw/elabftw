@@ -54,14 +54,11 @@ final class MakeThumbnail
         'application/postscript',
     );
 
-    /** @var string $filePath full path to file */
-    private $filePath;
+    private string $filePath;
 
-    /** @var string $thumbPath full path to thumbnail */
-    private $thumbPath;
+    private string $thumbPath;
 
-    /** @var string $mime mime type of the file */
-    private $mime;
+    private string $mime;
 
     /**
      * This class has no public method. Just instance it with a filePath and it creates the thumbnail if needed.

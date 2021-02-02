@@ -20,14 +20,10 @@ use PDO;
  */
 trait SortableTrait
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
     /**
      * Update ordering for status, experiment templates or items types
-     *
-     * @param OrderingParams $params
-     * @return void
      */
     public function updateOrdering(OrderingParams $params): void
     {

@@ -23,12 +23,6 @@ class ItemsTypes extends AbstractCategory
 {
     use EntityTrait;
 
-    /**
-     * Constructor
-     *
-     * @param Users $users
-     * @param int|null $id
-     */
     public function __construct(Users $users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
@@ -38,10 +32,6 @@ class ItemsTypes extends AbstractCategory
         }
     }
 
-    /**
-     * Create an item type
-     *
-     */
     public function create(ParamsProcessor $params, ?int $team = null): int
     {
         if ($team === null) {
@@ -112,7 +102,6 @@ class ItemsTypes extends AbstractCategory
      * Get the color of an item type
      *
      * @param int $id ID of the category
-     * @return string
      */
     public function readColor(int $id): string
     {
@@ -130,7 +119,6 @@ class ItemsTypes extends AbstractCategory
 
     /**
      * Update an item type
-     *
      */
     public function update(ParamsProcessor $params): string
     {
@@ -168,15 +156,6 @@ class ItemsTypes extends AbstractCategory
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Not implemented
-     *
-     * @return void
-     */
-    public function destroyAll(): void
-    {
     }
 
     /**

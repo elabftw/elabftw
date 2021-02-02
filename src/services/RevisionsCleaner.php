@@ -17,13 +17,8 @@ use Elabftw\Interfaces\CleanerInterface;
  */
 class RevisionsCleaner implements CleanerInterface
 {
-    /** @var Db $Db SQL Database */
-    private $Db;
+    private Db $Db;
 
-    /**
-     * Constructor
-     *
-     */
     public function __construct()
     {
         $this->Db = Db::getConnection();
@@ -31,8 +26,6 @@ class RevisionsCleaner implements CleanerInterface
 
     /**
      * Do the purge
-     *
-     * @return int
      */
     public function cleanup(): int
     {
@@ -49,9 +42,6 @@ class RevisionsCleaner implements CleanerInterface
 
     /**
      * Remove every other row
-     *
-     * @param string $table
-     * @return void
      */
     private function removeRows(string $table): void
     {

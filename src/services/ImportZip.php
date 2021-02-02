@@ -28,20 +28,20 @@ use ZipArchive;
  */
 class ImportZip extends AbstractImport
 {
-    /** @var int $inserted number of item we have inserted */
-    public $inserted = 0;
+    // number of items we got into the database
+    public int $inserted = 0;
 
     /** @var AbstractEntity $Entity instance of Entity */
     private $Entity;
 
-    /** @var string $tmpPath the folder where we extract the zip */
-    private $tmpPath = '';
+    // the folder where we extract the zip
+    private string $tmpPath = '';
 
-    /** @var array $json an array with the data we want to import */
-    private $json = array();
+    // an array with the data we want to import
+    private array $json = array();
 
-    /** @var string $type experiments or items */
-    private $type = 'items';
+    // experiments or items
+    private string $type = 'items';
 
     /**
      * Constructor
@@ -74,8 +74,6 @@ class ImportZip extends AbstractImport
 
     /**
      * Do the import
-     *
-     * @return void
      */
     public function import(): void
     {
@@ -92,8 +90,6 @@ class ImportZip extends AbstractImport
 
     /**
      * Extract the zip to the temporary folder
-     *
-     * @return void
      */
     private function openFile(): void
     {
@@ -104,9 +100,6 @@ class ImportZip extends AbstractImport
 
     /**
      * We get all the info we need from the embedded .json file
-     *
-     * @throws ImproperActionException
-     * @return void
      */
     private function readJson(): void
     {
@@ -140,7 +133,6 @@ class ImportZip extends AbstractImport
      *
      * @param array<string, mixed> $item the item to insert
      * @throws ImproperActionException
-     * @return void
      */
     private function dbInsert($item): void
     {
@@ -209,7 +201,6 @@ class ImportZip extends AbstractImport
      * Loop over the tags and insert them for the new entity
      *
      * @param string $tags the tags string separated by '|'
-     * @return void
      */
     private function tagsDbInsert($tags): void
     {
@@ -221,8 +212,6 @@ class ImportZip extends AbstractImport
 
     /**
      * Loop the json and import the items.
-     *
-     * @return void
      */
     private function importAll(): void
     {

@@ -41,41 +41,32 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class ApiController implements ControllerInterface
 {
-    /** @var App $App */
-    private $App;
+    private App $App;
 
-    /** @var Request $Request instance of Request */
-    private $Request;
+    private Request $Request;
 
-    /** @var AbstractCategory $Category instance of ItemsTypes or Status
-     * @psalm-suppress PropertyNotSetInConstructor */
-    private $Category;
+    /** @psalm-suppress PropertyNotSetInConstructor */
+    private AbstractCategory $Category;
 
-    /** @var AbstractEntity $Entity instance of Entity
-     * @psalm-suppress PropertyNotSetInConstructor */
-    private $Entity;
+    /** @psalm-suppress PropertyNotSetInConstructor */
+    private AbstractEntity $Entity;
 
-    /** @var Scheduler $Scheduler instance of Scheduler
-     * @psalm-suppress PropertyNotSetInConstructor */
-    private $Scheduler;
+    /** @psalm-suppress PropertyNotSetInConstructor */
+    private Scheduler $Scheduler;
 
-    /** @var Users $Users the authenticated user */
-    private $Users;
+    private Users $Users;
 
-    /** @var array $allowedMethods allowed HTTP methods */
-    private $allowedMethods = array('GET', 'POST', 'DELETE');
+    private array $allowedMethods = array('GET', 'POST', 'DELETE');
 
-    /** @var bool $canWrite can we do POST methods? */
-    private $canWrite = false;
+    private bool $canWrite = false;
 
-    /** @var int|null $id the id at the end of the url */
-    private $id;
+    private ?int $id;
 
-    /** @var string $endpoint experiments, items or uploads */
-    private $endpoint;
+    // experiments, items or uploads
+    private string $endpoint;
 
-    /** @var string $param used by backupzip to get the period */
-    private $param;
+    // used by backupzip to get the period
+    private string $param;
 
     public function __construct(App $app)
     {

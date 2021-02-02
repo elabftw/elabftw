@@ -19,35 +19,25 @@ use Elabftw\Services\Filter;
  */
 class ParamsProcessor
 {
-    /** @var string $name */
-    public $name = 'Unnamed';
+    public string $name = 'Unnamed';
 
-    /** @var string $color */
-    public $color = '#cccccc';
+    public string $color = '#cccccc';
 
-    /** @var int $isTimestampable */
-    public $isTimestampable = 0;
+    public int $isTimestampable = 0;
 
-    /** @var int $isDefault */
-    public $isDefault = 0;
+    public int $isDefault = 0;
 
-    /** @var int $id */
-    public $id = 0;
+    public int $id = 0;
 
-    /** @var string $template */
-    public $template = '';
+    public string $template = '';
 
-    /** @var string $tag */
-    public $tag = 'blah';
+    public string $tag = 'blah';
 
-    /** @var string $comment */
-    public $comment = 'blah';
+    public string $comment = 'blah';
 
-    /** @var int $bookable */
-    public $bookable = 0;
+    public int $bookable = 0;
 
-    /** @var int $team */
-    public $team = 0;
+    public int $team = 0;
 
     public function __construct(array $params)
     {

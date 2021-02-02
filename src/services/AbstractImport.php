@@ -21,28 +21,18 @@ use Symfony\Component\HttpFoundation\Request;
  */
 abstract class AbstractImport
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
-    /** @var UploadedFile $UploadedFile the uploaded file */
-    protected $UploadedFile;
+    protected UploadedFile $UploadedFile;
 
-    /** @var Users $Users instance of Users */
-    protected $Users;
+    protected Users $Users;
 
-    /** @var int $target the item type category or userid where we do the import */
-    protected $target;
+    // the item type category or userid where we do the import
+    protected int $target;
 
-    /** @var string $canread read permission for the imported items */
-    protected $canread;
+    // read permission for the imported items
+    protected string $canread;
 
-    /**
-     * Constructor
-     *
-     * @param Users $users instance of Users
-     * @param Request $request instance of Request
-     * @return void
-     */
     public function __construct(Users $users, Request $request)
     {
         $this->Db = Db::getConnection();
@@ -60,8 +50,6 @@ abstract class AbstractImport
     /**
      * Look at mime type. not a trusted source, but it can prevent dumb errors
      * There is null in the mimes array because it can happen that elabftw files are like that.
-     *
-     * @return bool
      */
     protected function checkMimeType(): bool
     {

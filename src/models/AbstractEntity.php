@@ -35,56 +35,47 @@ abstract class AbstractEntity implements CreatableInterface
 {
     use EntityTrait;
 
-    /** @var Comments $Comments instance of Comments */
-    public $Comments;
+    public Comments $Comments;
 
-    /** @var Links $Links instance of Links */
-    public $Links;
+    public Links $Links;
 
-    /** @var Steps $Steps instance of Steps */
-    public $Steps;
+    public Steps $Steps;
 
-    /** @var Tags $Tags instance of Tags */
-    public $Tags;
+    public Tags $Tags;
 
-    /** @var Uploads $Uploads instance of Uploads */
-    public $Uploads;
+    public Uploads $Uploads;
 
-    /** @var Users $Users our user */
-    public $Users;
+    public Users $Users;
 
-    /** @var Pins $Pins */
-    public $Pins;
+    public Pins $Pins;
 
-    /** @var string $type experiments or items */
-    public $type = '';
+    // experiments or items
+    public string $type = '';
 
-    /** @var bool $bypassPermissions use that to ignore the canOrExplode calls */
-    public $bypassPermissions = false;
+    // use that to ignore the canOrExplode calls
+    public bool $bypassPermissions = false;
 
-    /** @var string $page will be defined in children classes */
-    public $page = '';
+    // will be defined in children classes
+    public string $page = '';
 
-    /** @var array $filters an array of arrays with filters for sql query */
-    public $filters = array();
+    // an array of arrays with filters for sql query
+    public array $filters = array();
 
-    /** @var string $idFilter sql of ids to include */
-    public $idFilter;
+    // sql of ids to include
+    public string $idFilter = '';
 
-    /** @var string $titleFilter inserted in sql */
-    public $titleFilter = '';
+    // inserted in sql
+    public string $titleFilter = '';
 
-    /** @var string $dateFilter inserted in sql */
-    public $dateFilter = '';
+    // inserted in sql
+    public string $dateFilter = '';
 
-    /** @var string $bodyFilter inserted in sql */
-    public $bodyFilter = '';
+    // inserted in sql
+    public string $bodyFilter = '';
 
-    /** @var bool $isReadOnly if we can read but not write to it */
-    public $isReadOnly = false;
+    public bool $isReadOnly = false;
 
-    /** @var TeamGroups $TeamGroups instance of TeamGroups */
-    protected $TeamGroups;
+    protected TeamGroups $TeamGroups;
 
     /**
      * Constructor
@@ -104,7 +95,6 @@ abstract class AbstractEntity implements CreatableInterface
         $this->Comments = new Comments($this, new Email(new Config(), $this->Users));
         $this->TeamGroups = new TeamGroups($this->Users);
         $this->Pins = new Pins($this);
-        $this->idFilter = '';
 
         if ($id !== null) {
             $this->setId($id);
@@ -117,13 +107,6 @@ abstract class AbstractEntity implements CreatableInterface
      * @return int the new item id
      */
     abstract public function duplicate(): int;
-
-    /**
-     * Destroy an item
-     *
-     * @return void
-     */
-    //abstract public function destroy(?int $id = null): void;
 
     /**
      * Lock/unlock

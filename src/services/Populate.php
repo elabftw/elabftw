@@ -26,7 +26,6 @@ class Populate
      *
      * @param AbstractEntity $Entity
      * @param int $iter number of items to add
-     * @return void
      */
     public function generate(AbstractEntity $Entity, int $iter = 50): void
     {

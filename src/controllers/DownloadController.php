@@ -26,17 +26,16 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
  */
 class DownloadController implements ControllerInterface
 {
-    /** @var string $longName the hash name of the file on disk */
-    private $longName;
+    // the hash name of the file on disk
+    private string $longName;
 
-    /** @var string $realName the human-friendly name that we will give to the downloaded file */
-    private $realName;
+    // the human-friendly name that we will give to the downloaded file */
+    private ?string $realName;
 
-    /** @var bool $forceDownload do we tell the browser to force the download? */
-    private $forceDownload = false;
+    // do we tell the browser to force the download?
+    private bool $forceDownload = false;
 
-    /** @var string $filePath the full file path */
-    private $filePath;
+    private string $filePath;
 
     public function __construct(string $longName, string $realName = null, bool $forceDownload = false)
     {

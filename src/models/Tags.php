@@ -27,17 +27,10 @@ use PDO;
  */
 class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterface
 {
-    /** @var AbstractEntity $Entity an instance of AbstractEntity */
-    public $Entity;
+    public AbstractEntity $Entity;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
-    /**
-     * Constructor
-     *
-     * @param AbstractEntity $entity
-     */
     public function __construct(AbstractEntity $entity)
     {
         $this->Db = Db::getConnection();
@@ -46,7 +39,6 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
 
     /**
      * Create a tag
-     *
      */
     public function create(ParamsProcessor $params): int
     {

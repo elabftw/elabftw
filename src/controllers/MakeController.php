@@ -34,8 +34,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class MakeController implements ControllerInterface
 {
-    /** @var App $App */
-    private $App;
+    private App $App;
 
     /** @var AbstractEntity $Entity */
     private $Entity;

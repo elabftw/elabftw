@@ -21,17 +21,12 @@ abstract class AbstractCategory implements CrudInterface
 {
     use SortableTrait;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
-    /** @var Users $Users Users instance */
-    protected $Users;
+    protected Users $Users;
 
     /**
      * Get the color of an item type
-     *
-     * @param int $id ID of the category
-     * @return string
      */
     abstract public function readColor(int $id): string;
 
@@ -42,9 +37,6 @@ abstract class AbstractCategory implements CrudInterface
 
     /**
      * Count all items of this type
-     *
-     * @param int $id of the type
-     * @return int
      */
     abstract protected function countItems(int $id): int;
 }

@@ -21,7 +21,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 class ReleaseCheck
 {
-    /** @var string INSTALLED_VERSION the current version of elabftw */
     public const INSTALLED_VERSION = '3.6.5';
 
     /** @var string $URL this file contains the latest version information */
@@ -30,23 +29,17 @@ class ReleaseCheck
     /** @var string URL_HTTP if we can't connect in https for some reason, use http */
     private const URL_HTTP = 'http://get.elabftw.net/updates.ini';
 
-    /** @var bool $success this is used to check if we managed to get a version or not */
-    public $success = false;
+    // this is used to check if we managed to get a version or not
+    public bool $success = false;
 
-    /** @var Config $Config instance of Config */
-    private $Config;
+    private Config $Config;
 
-    /** @var string $version the latest version from ini file (1.1.4) */
-    private $version = '';
+    // the latest version from ini file (1.1.4)
+    private string $version = '';
 
-    /** @var string $releaseDate release date of the version */
-    private $releaseDate = '';
+    // release date of the latest version
+    private string $releaseDate = '';
 
-    /**
-     * Fetch the update info on object creation
-     *
-     * @param Config $config Instance of Config
-     */
     public function __construct(Config $config)
     {
         $this->Config = $config;
@@ -55,8 +48,6 @@ class ReleaseCheck
     /**
      * Try to get the latest version number of elabftw
      * Will fetch updates.ini file from get.elabftw.net
-     *
-     * @return void
      */
     public function getUpdatesIni(): void
     {
@@ -87,8 +78,6 @@ class ReleaseCheck
 
     /**
      * Return true if there is a new version out there
-     *
-     * @return bool
      */
     public function updateIsAvailable(): bool
     {
@@ -97,10 +86,8 @@ class ReleaseCheck
 
     /**
      * Return the latest version string
-     *
-     * @return string|int 1.1.4
      */
-    public function getLatestVersion()
+    public function getLatestVersion(): string|int
     {
         return $this->version;
     }

@@ -25,20 +25,13 @@ abstract class AbstractMake
 {
     use UploadTrait;
 
-    /** @var string $filePath the full path of the file */
-    public $filePath = '';
+    public string $filePath = '';
 
-    /** @var AbstractEntity $Entity instance of Experiments or Database */
+    /** @var AbstractEntity $Entity */
     protected $Entity;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
-    /**
-     * Constructor
-     *
-     * @param AbstractEntity $entity
-     */
     public function __construct(AbstractEntity $entity)
     {
         $this->Entity = $entity;
@@ -47,8 +40,6 @@ abstract class AbstractMake
 
     /**
      * The filename for what we are making
-     *
-     * @return string
      */
     abstract public function getFileName(): string;
 

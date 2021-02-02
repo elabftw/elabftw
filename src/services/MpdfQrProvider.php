@@ -21,14 +21,11 @@ use RobThree\Auth\Providers\Qr\IQRCodeProvider;
  */
 class MpdfQrProvider implements IQRCodeProvider
 {
-    /** @var array $background */
-    public $background = array();
+    public array $background = array();
 
-    /** @var array $color */
-    public $color = array();
+    public array $color = array();
 
-    /** @var int $compression */
-    public $compression;
+    public int $compression;
 
     /**
      * Constructor
@@ -44,11 +41,6 @@ class MpdfQrProvider implements IQRCodeProvider
         $this->compression = $compression;
     }
 
-    /**
-     * getMimeType
-     *
-     * @return string The mime type
-     */
     public function getMimeType(): string
     {
         // Do not use type declarations for function arguments here.
@@ -57,12 +49,7 @@ class MpdfQrProvider implements IQRCodeProvider
     }
 
     /**
-     * getQRCodeImage
-     *
-     * @param string $qrtext
-     * @param int $size
-     *
-     * @return string
+     * Generate the png qr code
      */
     public function getQRCodeImage($qrtext, $size): string
     {

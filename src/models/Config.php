@@ -25,15 +25,13 @@ use PDO;
  */
 class Config
 {
-    /** @var array $configArr the array with all config */
-    public $configArr;
+    // the array with all config
+    public array $configArr = array();
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
     /**
      * Get Db and load the configArr
-     *
      */
     public function __construct()
     {
@@ -48,8 +46,6 @@ class Config
 
     /**
      * Read the configuration values
-     *
-     * @return array
      */
     public function read(): array
     {
@@ -134,8 +130,6 @@ class Config
 
     /**
      * Reset the timestamp password
-     *
-     * @return void
      */
     public function destroyStamppass(): void
     {
@@ -146,8 +140,6 @@ class Config
 
     /**
      * Restore default values
-     *
-     * @return void
      */
     public function restoreDefaults(): void
     {
@@ -160,8 +152,6 @@ class Config
     /**
      * Insert the default values in the sql config table
      * Only run once of first ever page load
-     *
-     * @return void
      */
     private function populate(): void
     {

@@ -28,14 +28,11 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  */
 class Auth implements AuthInterface
 {
-    /** @var Config $Config */
-    private $Config;
+    private Config $Config;
 
-    /** @var SessionInterface $Session the current session */
-    private $Session;
+    private SessionInterface $Session;
 
-    /** @var Request $Request current request */
-    private $Request;
+    private Request $Request;
 
     public function __construct(App $app)
     {
@@ -61,8 +58,6 @@ class Auth implements AuthInterface
 
     /**
      * Increase the failed attempts counter
-     *
-     * @return void
      */
     public function increaseFailedAttempt(): void
     {

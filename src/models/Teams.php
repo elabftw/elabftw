@@ -26,17 +26,10 @@ use PDO;
  */
 class Teams implements ReadableInterface, DestroyableInterface
 {
-    /** @var Users $Users instance of Users */
-    public $Users;
+    public Users $Users;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
-    /**
-     * Constructor
-     *
-     * @param Users $users
-     */
     public function __construct(Users $users)
     {
         $this->Db = Db::getConnection();
@@ -72,8 +65,6 @@ class Teams implements ReadableInterface, DestroyableInterface
      *
      * @param int $userid
      * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
-     *
-     * @return void
      */
     public function addUserToTeams(int $userid, array $teamIdArr): void
     {
@@ -96,8 +87,6 @@ class Teams implements ReadableInterface, DestroyableInterface
      *
      * @param int $userid
      * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
-     *
-     * @return void
      */
     public function rmUserFromTeams(int $userid, array $teamIdArr): void
     {
@@ -121,8 +110,6 @@ class Teams implements ReadableInterface, DestroyableInterface
      *
      * @param int $userid
      * @param array<array-key, mixed> $teams
-     *
-     * @return void
      */
     public function synchronize(int $userid, array $teams): void
     {
@@ -187,8 +174,6 @@ class Teams implements ReadableInterface, DestroyableInterface
 
     /**
      * Read from the current team
-     *
-     * @return array
      */
     public function read(): array
     {
@@ -207,8 +192,6 @@ class Teams implements ReadableInterface, DestroyableInterface
 
     /**
      * Get all the teams
-     *
-     * @return array
      */
     public function readAll(): array
     {
@@ -244,8 +227,6 @@ class Teams implements ReadableInterface, DestroyableInterface
 
     /**
      * Clear the timestamp password
-     *
-     * @return bool
      */
     public function destroyStamppass(): bool
     {
@@ -258,8 +239,6 @@ class Teams implements ReadableInterface, DestroyableInterface
 
     /**
      * Get statistics for the whole install
-     *
-     * @return array
      */
     public function getAllStats(): array
     {
@@ -282,9 +261,6 @@ class Teams implements ReadableInterface, DestroyableInterface
 
     /**
      * Get statistics for a team
-     *
-     * @param int $team
-     * @return array
      */
     public function getStats(int $team): array
     {

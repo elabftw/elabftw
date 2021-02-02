@@ -32,21 +32,12 @@ class Update
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
     private const REQUIRED_SCHEMA = 57;
 
-    /** @var Config $Config instance of Config */
-    public $Config;
+    public Config $Config;
 
-    /** @var Db $Db SQL Database */
-    private $Db;
+    private Db $Db;
 
-    /** @var Sql $Sql instance of Sql */
-    private $Sql;
+    private Sql $Sql;
 
-    /**
-     * Constructor
-     *
-     * @param Config $config
-     * @param Sql $sql
-     */
     public function __construct(Config $config, Sql $sql)
     {
         $this->Config = $config;
@@ -56,8 +47,6 @@ class Update
 
     /**
      * Get the current required schema
-     *
-     * @return int required schema number
      */
     public function getRequiredSchema(): int
     {
@@ -66,8 +55,6 @@ class Update
 
     /**
      * Check if the Db structure needs updating
-     *
-     * @return void
      */
     public function checkSchema(): void
     {
@@ -80,8 +67,6 @@ class Update
 
     /**
      * Update the database schema if needed
-     *
-     * @return void
      */
     public function runUpdateScript(): void
     {
@@ -130,8 +115,6 @@ class Update
 
     /**
      * Delete things in the tmp folder (cache/elab)
-     *
-     * @return void
      */
     private function cleanTmp(): void
     {
@@ -148,9 +131,6 @@ class Update
 
     /**
      * Update the schema value in config to latest because we did the update functions before
-     *
-     * @param int $schema the version we want to update
-     * @return void
      */
     private function updateSchema(int $schema): void
     {
@@ -160,8 +140,6 @@ class Update
 
     /**
      * Add items_comments and rename exp_id to item_id in experiments_comments
-     *
-     * @return void
      */
     private function schema38(): void
     {

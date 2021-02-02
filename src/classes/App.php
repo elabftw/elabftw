@@ -31,41 +31,29 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    /** @var Request $Request the request */
-    public $Request;
+    public Request $Request;
 
-    /** @var SessionInterface $Session the session */
-    public $Session;
+    public SessionInterface $Session;
 
-    /** @var Config $Config the config stored in sql */
-    public $Config;
+    public Config $Config;
 
-    /** @var Logger $Log instance of Logger */
-    public $Log;
+    public Logger $Log;
 
-    /** @var Csrf $Csrf instance of Csrf */
-    public $Csrf;
+    public Csrf $Csrf;
 
-    /** @var Users $Users instance of Users */
-    public $Users;
+    public Users $Users;
 
-    /** @var string $pageTitle the title for the current page */
-    public $pageTitle = 'Lab manager';
+    public string $pageTitle = 'Lab manager';
 
-    /** @var array $ok the ok messages from flashBag */
-    public $ok = array();
+    public array $ok = array();
 
-    /** @var array $ko the ko messages from flashBag */
-    public $ko = array();
+    public array $ko = array();
 
-    /** @var array $warning the warning messages from flashBag */
-    public $warning = array();
+    public array $warning = array();
 
-    /** @var array $teamConfigArr the config for the current team */
-    public $teamConfigArr = array();
+    public array $teamConfigArr = array();
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
     public function __construct(Request $request, SessionInterface $session, Config $config, Logger $log, Csrf $csrf)
     {

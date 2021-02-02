@@ -20,12 +20,6 @@ use PDO;
  */
 class Database extends AbstractEntity
 {
-    /**
-     * Constructor
-     *
-     * @param Users $users
-     * @param int|null $id id of the item
-     */
     public function __construct(Users $users, ?int $id = null)
     {
         parent::__construct($users, $id);
@@ -33,9 +27,6 @@ class Database extends AbstractEntity
         $this->page = 'database';
     }
 
-    /**
-     * Create an item
-     */
     public function create(ParamsProcessor $params): int
     {
         $category = $params->id;
@@ -58,12 +49,6 @@ class Database extends AbstractEntity
         return $this->Db->lastInsertId();
     }
 
-    /**
-     * Update the rating of an item
-     *
-     * @param int $rating
-     * @return void
-     */
     public function updateRating(int $rating): void
     {
         $this->canOrExplode('write');
@@ -109,11 +94,6 @@ class Database extends AbstractEntity
         return $newId;
     }
 
-    /**
-     * Destroy a DB item
-     *
-     * @return void
-     */
     public function destroy(): void
     {
         $this->canOrExplode('write');

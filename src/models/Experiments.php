@@ -25,12 +25,6 @@ use function sha1;
  */
 class Experiments extends AbstractEntity implements CreatableInterface
 {
-    /**
-     * Constructor
-     *
-     * @param Users $users
-     * @param int|null $id
-     */
     public function __construct(Users $users, ?int $id = null)
     {
         parent::__construct($users, $id);
@@ -38,9 +32,6 @@ class Experiments extends AbstractEntity implements CreatableInterface
         $this->type = 'experiments';
     }
 
-    /**
-     * Create an experiment
-     */
     public function create(ParamsProcessor $params): int
     {
         $Templates = new Templates($this->Users);
@@ -115,8 +106,6 @@ class Experiments extends AbstractEntity implements CreatableInterface
 
     /**
      * Can this experiment be timestamped?
-     *
-     * @return bool
      */
     public function isTimestampable(): bool
     {
@@ -133,7 +122,6 @@ class Experiments extends AbstractEntity implements CreatableInterface
      *
      * @param string $responseTime the date of the timestamp
      * @param string $responsefilePath the file path to the timestamp token
-     * @return void
      */
     public function updateTimestamp(string $responseTime, string $responsefilePath): void
     {
@@ -199,8 +187,6 @@ class Experiments extends AbstractEntity implements CreatableInterface
     /**
      * Destroy an experiment and all associated data
      * The foreign key constraints will take care of associated tables
-     *
-     * @return void
      */
     public function destroy(): void
     {
@@ -232,8 +218,6 @@ class Experiments extends AbstractEntity implements CreatableInterface
 
     /**
      * Count all the experiments owned by a user
-     *
-     * @return int
      */
     public function countAll(): int
     {

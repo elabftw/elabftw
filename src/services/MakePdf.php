@@ -29,8 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class MakePdf extends AbstractMake
 {
-    /** @var string $longName a sha512 sum.pdf */
-    public $longName;
+    public string $longName;
 
     /**
      * Constructor

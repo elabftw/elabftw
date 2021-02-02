@@ -17,26 +17,20 @@ use Elabftw\Services\UsersHelper;
  */
 class AuthResponse
 {
-    /** @var int $userid */
-    public $userid;
+    public ?int $userid;
 
     /** @var array<int, array<int, string>> don't use an array of Team but just the ids and name */
     public $selectableTeams = array();
 
-    /** @var int $selectedTeam */
-    public $selectedTeam;
+    public ?int $selectedTeam;
 
-    /** @var bool $isAnonymous */
-    public $isAnonymous = false;
+    public bool $isAnonymous = false;
 
-    /** @var string $mfaSecret */
-    public $mfaSecret = '';
+    public ?string $mfaSecret;
 
-    /** @var bool $hasVerifiedMfa */
-    public $hasVerifiedMfa = false;
+    public bool $hasVerifiedMfa = false;
 
-    /** @var string $isAuthBy */
-    public $isAuthBy;
+    public string $isAuthBy;
 
     public function __construct(string $authBy)
     {

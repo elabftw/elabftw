@@ -22,17 +22,13 @@ use Monolog\Logger;
  */
 class ExternalAuth implements AuthInterface
 {
-    /** @var AuthResponse $AuthResponse */
-    private $AuthResponse;
+    private AuthResponse $AuthResponse;
 
-    /** @var array $configArr */
-    private $configArr;
+    private array $configArr;
 
-    /** @var Logger $log */
-    private $log;
+    private Logger $log;
 
-    /** @var array $serverParams */
-    private $serverParams;
+    private array $serverParams;
 
     public function __construct(array $configArr, array $serverParams, Logger $log)
     {

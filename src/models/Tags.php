@@ -301,20 +301,22 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
             }
         }
 
+        // look for item ids that have all the tags not only one of them
         $itemIds = array();
+        $sql = 'SELECT item_id FROM `tags2entity` WHERE tag_id IN (';
         foreach ($tagIds as $tagid) {
-            $sql = 'SELECT item_id FROM tags2entity WHERE tag_id = :tagid AND item_type = :type';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':tagid', $tagid, PDO::PARAM_INT);
-            $req->bindParam(':type', $this->Entity->type);
-            $req->execute();
-            $results = $req->fetchAll();
-            if ($results === false) {
-                return array();
-            }
-            foreach ($results as $res) {
-                $itemIds[] = (int) $res['item_id'];
-            }
+            $sql .= $tagid . ', ';
+        }
+        $sql = rtrim($sql, ', ') . ')';
+        $sql .= ' AND item_type = "' . $this->Entity->type . '" GROUP By item_id HAVING COUNT(DISTINCT tag_id) = ' . count($tagIds);
+        $req = $this->Db->prepare($sql);
+        $req->execute();
+        $results = $req->fetchAll();
+        if ($results === false) {
+            return array();
+        }
+        foreach ($results as $res) {
+            $itemIds[] = (int) $res['item_id'];
         }
         return $itemIds;
     }

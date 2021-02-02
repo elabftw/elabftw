@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function array_column;
+use function count;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -17,6 +19,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Interfaces\UpdatableInterface;
+use function implode;
 use PDO;
 
 /**
@@ -285,21 +288,19 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
      */
     public function getIdFromTags(array $tags, int $team): array
     {
-        $tagIds = array();
+        $results = array();
         $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
         $req = $this->Db->prepare($sql);
         foreach ($tags as $tag) {
             $req->bindParam(':tag', $tag);
             $req->bindParam(':team', $team, PDO::PARAM_INT);
             $req->execute();
-            $results = $req->fetchAll();
-            if ($results === false) {
-                return array();
-            }
-            foreach ($results as $res) {
-                $tagIds[] = (int) $res['id'];
+            $res = $req->fetch();
+            if ($res !== false) {
+                $results[] = $res;
             }
         }
+        $tagIds = array_column($results, 'id');
 
         // look for item ids that have all the tags not only one of them
         $itemIds = array();

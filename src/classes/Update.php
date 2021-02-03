@@ -112,13 +112,4 @@ class Update
             $file->isDir() ? rmdir($file->getPathName()) : unlink($file->getPathName());
         }
     }
-
-    /**
-     * Update the schema value in config to latest because we did the update functions before
-     */
-    private function updateSchema(int $schema): void
-    {
-        $config_arr = array('schema' => $schema);
-        $this->Config->update($config_arr);
-    }
 }

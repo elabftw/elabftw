@@ -60,14 +60,13 @@ final class MakeThumbnail
 
     private string $mime;
 
-    /**
-     * This class has no public method. Just instance it with a filePath and it creates the thumbnail if needed.
-     *
-     * @param string $filePath the full path to the file
-     */
     public function __construct(string $filePath)
     {
         $this->filePath = $filePath;
+        // make sure we can read the file
+        if (is_readable($this->filePath) === false) {
+            throw new FilesystemErrorException('File not found! (' . substr($this->filePath, 0, 42) . '…)');
+        }
         // get mime type of the file
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $mime = $finfo->file($this->filePath);
@@ -82,14 +81,9 @@ final class MakeThumbnail
      * Create a jpg thumbnail from images of type jpeg, png, gif, tiff, eps and pdf.
      *
      * @param bool $force force regeneration of thumbnail even if file exist (useful if upload was replaced)
-     * @return void
      */
     public function makeThumb($force = false): void
     {
-        if (is_readable($this->filePath) === false) {
-            throw new FilesystemErrorException('File not found! (' . substr($this->filePath, 0, 42) . '…)');
-        }
-
         // do nothing for big files
         if (filesize($this->filePath) > self::BIG_FILE_THRESHOLD) {
             return;

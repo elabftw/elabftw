@@ -4,7 +4,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
-    autoloader="config.php"
+    autoloader="../../config.php"
     strictBinaryOperands="true"
     checkForThrowsInGlobalScope="true"
     ignoreInternalFunctionFalseReturn="true"
@@ -15,11 +15,11 @@
     runTaintAnalysis="true"
 >
     <projectFiles>
-        <directory name="src" />
+        <directory name="../../src" />
         <ignoreFiles>
-            <directory name="cache" />
-            <directory name="uploads" />
-            <directory name="vendor" />
+            <directory name="../../cache" />
+            <directory name="../../uploads" />
+            <directory name="../../vendor" />
         </ignoreFiles>
     </projectFiles>
 
@@ -37,7 +37,6 @@
         <MissingReturnType errorLevel="info" />
         <MissingPropertyType errorLevel="info" />
         <InvalidDocblock errorLevel="info" />
-        <MisplacedRequiredParam errorLevel="info" />
 
         <PropertyNotSetInConstructor errorLevel="info" />
         <MissingConstructor errorLevel="info" />

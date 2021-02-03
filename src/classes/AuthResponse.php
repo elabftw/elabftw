@@ -24,6 +24,8 @@ class AuthResponse
 
     public int $selectedTeam;
 
+    public bool $isInSeveralTeams = false;
+
     public bool $isAnonymous = false;
 
     public ?string $mfaSecret;
@@ -45,6 +47,8 @@ class AuthResponse
         // if the user only has access to one team, use this one directly
         if (count($this->selectableTeams) === 1) {
             $this->selectedTeam = (int) $this->selectableTeams[0]['id'];
+        } else {
+            $this->isInSeveralTeams = true;
         }
     }
 }

@@ -30,10 +30,6 @@ trait EntityTrait
 
     /**
      * Check and set id
-     *
-     * @param int $id
-     * @throws IllegalActionException
-     * @return void
      */
     public function setId(int $id): void
     {

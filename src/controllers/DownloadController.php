@@ -26,9 +26,6 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
  */
 class DownloadController implements ControllerInterface
 {
-    // the hash name of the file on disk
-    private string $longName;
-
     // the human-friendly name that we will give to the downloaded file */
     private ?string $realName;
 

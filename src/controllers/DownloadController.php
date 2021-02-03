@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 class DownloadController implements ControllerInterface
 {
     // the human-friendly name that we will give to the downloaded file */
-    private ?string $realName;
+    private string $realName = 'unnamed_file';
 
     // do we tell the browser to force the download?
     private bool $forceDownload = false;
@@ -47,11 +47,7 @@ class DownloadController implements ControllerInterface
         }
         $this->filePath = $basePath . $fullFilePath;
         $this->realName = Filter::forFilesystem($realName ?? '');
-        // if the name is not sent along, just use the longName instead
-        if ($this->realName === null) {
-            $this->realName = $longName;
-        }
-        if ($this->realName === '') {
+        if (empty($this->realName)) {
             $this->realName = 'unnamed_file';
         }
         $this->forceDownload = $forceDownload;

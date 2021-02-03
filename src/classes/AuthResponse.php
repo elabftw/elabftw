@@ -17,12 +17,12 @@ use Elabftw\Services\UsersHelper;
  */
 class AuthResponse
 {
-    public ?int $userid;
+    public int $userid;
 
     /** @var array<int, array<int, string>> don't use an array of Team but just the ids and name */
     public $selectableTeams = array();
 
-    public ?int $selectedTeam;
+    public int $selectedTeam;
 
     public bool $isAnonymous = false;
 

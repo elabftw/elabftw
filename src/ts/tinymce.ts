@@ -51,7 +51,6 @@ import '../js/tinymce-langs/zh_CN.js';
 const type = $('#info').data('type');
 
 // AUTOSAVE
-let typingTimer: any;                // timer identifier
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
 
 // called when you click the save button of tinymce
@@ -146,7 +145,7 @@ export function getTinymceBaseConfig(page: string): object {
       // use # for autocompletion
       delimiter: '#',
       // get the source from json with get request
-      source: function (query: string, process: any) {
+      source: function (query: string, process: callable) {
         const url = 'app/controllers/EntityAjaxController.php';
         $.getJSON(url, {
           mention: 1,
@@ -163,7 +162,7 @@ export function getTinymceBaseConfig(page: string): object {
       toolbar: [ 'undo', 'redo', 'bold', 'italic', 'underline', 'bullist', 'numlist', 'link' ]
     },
     // keyboard shortcut to insert today's date at cursor in editor
-    setup: (editor: any): void => {
+    setup: (editor: Editor): void => {
       // make the edges round
       editor.on('init', () => editor.getContainer().className += ' rounded');
       // some shortcuts

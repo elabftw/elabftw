@@ -36,8 +36,8 @@ $(document).ready(function() {
     init: function(): void {
 
       // add additional parameters (id and type)
-      this.on('sending', function(file: string, xhr: string, formData: any) {
-        formData.append('upload', true);
+      this.on('sending', function(file: string, xhr: string, formData: FormData) {
+        formData.append('upload', '1');
         formData.append('id', $('#info').data('id'));
         formData.append('type', $('#info').data('type'));
       });

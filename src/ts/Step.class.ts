@@ -43,7 +43,7 @@ export default class Step extends Crud {
     } // end if input < 0
   }
 
-  update(input, itemId, stepId) {
+  update(input, itemId, stepId): JQueryPromise<Promise> {
     return this.send({
       action: 'update',
       what: 'step',

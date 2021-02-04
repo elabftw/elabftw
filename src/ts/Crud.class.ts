@@ -15,7 +15,7 @@ export default class Crud {
     this.controller = controller;
   }
 
-  send(req: ActionReq): JQueryPromise<any> {
+  send(req: ActionReq): JQueryPromise<Promise> {
     return $.ajax({
       type: 'post',
       url: this.controller,

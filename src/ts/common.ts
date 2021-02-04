@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import $ from 'jquery';
-import modal from 'bootstrap';
 import 'bootstrap-select';
 import { relativeMoment, displayMolFiles, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';

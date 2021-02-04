@@ -110,7 +110,7 @@ $(document).ready(function() {
   });
 
   // DESTROY (from admin panel/tag manager)
-  $(document).on('click', '.tagDestroy', function() {
+  $('#tag_manager').on('click', '.tagDestroy', function() {
     TagC.destroy($(this).data('tagid'));
 
   });

@@ -37,11 +37,11 @@
               <input class='item-checkbox' autocomplete='off' type='checkbox' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;vertical-align:-3px;' />
               <!-- edit icon -->
               {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
-                <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a>
+                <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}' class='clickable' title='{{ 'Edit'|trans }}'><i class='fas fa-pencil-alt link-like'></i></a>
               {% endif %}
               <!-- toggle body -->
-              <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} class='toggleBody clickable'>
-                <i class='fas fa-plus-circle' title='{{ 'Toggle content'|trans }}'></i>
+              <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} class='toggleBody clickable' title='{{ 'Toggle content'|trans }}'>
+                <i class='fas fa-plus-circle link-like'></i>
               </span>
               <!-- category -->
               <span class='item-category' style='color:#{{ item.color }}'>{{ item.category }}</span>

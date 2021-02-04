@@ -27,7 +27,7 @@ $(document).ready(function() {
     }
   });
   // show the handles to reorder when the menu entry is clicked
-  $(document).on('click', '#toggleReorder', function() {
+  $('#toggleReorder').on('click', function() {
     $('.sortableHandle').toggle();
   });
   $(document).on('click', '.saveToFile', function() {
@@ -37,7 +37,7 @@ $(document).ready(function() {
     TemplateC.destroy($(this).data('id'));
   });
 
-  $(document).on('click', '#import-from-file', function() {
+  $('#import-from-file').on('click', function() {
     $('#import_tpl').toggle();
   });
 

@@ -14,12 +14,12 @@ $(document).ready(function() {
   const CommentC = new Comment(type);
 
   // CREATE COMMENTS
-  $(document).on('click', '#commentsCreateButton', function() {
+  $('#comment_container').on('click', '#commentsCreateButton', function() {
     CommentC.create();
   });
 
   // MAKE them editable on mousehover
-  $(document).on('mouseenter', '.comment-editable', function() {
+  $('#comment_container').on('mouseenter', '.comment-editable', function() {
     ($(this) as any).editable('app/controllers/Ajax.php', {
       type : 'textarea',
       submitdata: (revert, settings, submitdata) => {
@@ -55,7 +55,7 @@ $(document).ready(function() {
   });
 
   // DESTROY COMMENTS
-  $(document).on('click', '.commentsDestroy', function() {
+  $('#comment_container').on('click', '.commentsDestroy', function() {
     CommentC.destroy($(this).data('id'));
   });
 });

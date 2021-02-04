@@ -7,6 +7,8 @@
  */
 import Crud from './Crud.class';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
+import i18next from 'i18next';
+
 
 export default class Todolist extends Crud {
 
@@ -44,8 +46,10 @@ export default class Todolist extends Crud {
       let html = '<ul id="todoItems-list" class="sortable" data-axis="y" data-table="todolist">';
       for (const entry of json.msg) {
         html += `<li id='todoItem_${entry.id}'>
-        <i class='fas fa-trash-alt clickable align-right destroyTodoItem' data-id='${entry.id}'></i>
-        <span style='font-size:90%;display:block;'><i class='fas fa-sort draggable sortableHandle'></i> <span class='relative-moment' title='${entry.creation_time}'></span></span>
+        <a class='clickable align-right destroyTodoItem' data-id='${entry.id}' title='` + i18next.t('generic-delete-warning') + `'>
+          <i class='fas fa-trash-alt'></i>
+        </a>
+        <span style='font-size:90%;display:block;'><span class='draggable sortableHandle'><i class='fas fa-sort'></i></span> <span class='relative-moment' title='${entry.creation_time}'></span></span>
         <span class='todoItem editable' data-id='${entry.id}'>${entry.body}</span>
       </li>`;
       }

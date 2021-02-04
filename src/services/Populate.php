@@ -63,7 +63,8 @@ class Populate
             $Entity->setId($id);
             // variable tag number
             $Tags = new Tags($Entity);
-            for ($j = 0; $j <= $this->faker->numberBetween(0, 5); $j++) {
+            $tagNb = $this->faker->numberBetween(0, 5);
+            for ($j = 0; $j <= $tagNb; $j++) {
                 $Tags->create(new ParamsProcessor(array('tag' => $this->faker->word)));
             }
             // random date in the past 5 years

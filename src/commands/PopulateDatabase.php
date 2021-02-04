@@ -13,6 +13,7 @@ namespace Elabftw\Commands;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Elabftw\Sql;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
 use Elabftw\Models\Database;
@@ -25,6 +26,8 @@ use Elabftw\Models\Users;
 use Elabftw\Services\MfaHelper;
 use Elabftw\Services\Populate;
 use function is_string;
+use function mb_strlen;
+use function str_repeat;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -66,25 +69,23 @@ class PopulateDatabase extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // display header
-        $output->writeln(array(
-            $this->getDescription(),
-            \str_repeat('=', \mb_strlen($this->getDescription())),
-        ));
-
-        // read the yaml config file
-        $file = $input->getArgument('file');
-        if (!is_string($file)) {
-            $output->writeln('Error parsing the file path!');
-            return 1;
-        }
         try {
-            $yaml = Yaml::parseFile($file);
-        } catch (ParseException $e) {
+            $file = $input->getArgument('file');
+            if (!is_string($file)) {
+                throw new ImproperActionException('Could not read file from provided file path!');
+            }
+            $yaml = $this->readConfigFile($file);
+        } catch (ParseException | ImproperActionException $e) {
             $output->writeln('Error parsing the file!');
             $output->writeln($e->getMessage());
             return 1;
         }
+
+        // display header
+        $output->writeln(array(
+            $this->getDescription(),
+            str_repeat('=', mb_strlen($this->getDescription())),
+        ));
 
         // ask confirmation before deleting all the database
         $helper = $this->getHelper('question');
@@ -98,20 +99,12 @@ class PopulateDatabase extends Command
             }
         }
 
-        $Db = Db::getConnection();
-        $Sql = new Sql();
         $Faker = \Faker\Factory::create();
         $Populate = new Populate();
 
         // drop database
-        $output->writeln('Dropping current database');
-        $Db->q('DROP database ' . \DB_NAME);
-        $Db->q('CREATE database ' . \DB_NAME);
-        $Db->q('USE ' . \DB_NAME);
-
-        // load structure
-        $output->writeln('Loading structure');
-        $Sql->execFile('structure.sql');
+        $output->writeln('Dropping current database and loading structure');
+        $this->dropAndInitDb();
 
         // adjust global config
         $configArr = $yaml['config'] ?? array();
@@ -201,5 +194,23 @@ class PopulateDatabase extends Command
 
         $output->writeln('All done.');
         return 0;
+    }
+
+    // read the yaml config file
+    private function readConfigFile(string $file): array
+    {
+        return Yaml::parseFile($file);
+    }
+
+    private function dropAndInitDb(): void
+    {
+        $Db = Db::getConnection();
+        $Sql = new Sql();
+        $Db->q('DROP database ' . \DB_NAME);
+        $Db->q('CREATE database ' . \DB_NAME);
+        $Db->q('USE ' . \DB_NAME);
+
+        // load structure
+        $Sql->execFile('structure.sql');
     }
 }

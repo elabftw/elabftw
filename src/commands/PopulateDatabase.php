@@ -14,16 +14,12 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
 use Elabftw\Models\Database;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\Idps;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
-use Elabftw\Services\MfaHelper;
 use Elabftw\Services\Populate;
 use function is_string;
 use function mb_strlen;
@@ -34,8 +30,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -45,8 +39,8 @@ use Symfony\Component\Yaml\Yaml;
  */
 class PopulateDatabase extends Command
 {
-    /** @var string DEFAULT_PASSWORD the password to use if none are provided */
-    private const DEFAULT_PASSWORD = 'totototo';
+    /** @var int DEFAULT_ITERATIONS number of things to create */
+    private const DEFAULT_ITERATIONS = 50;
 
     // the name of the command (the part after "bin/console")
     protected static $defaultName = 'dev:populate';
@@ -56,7 +50,6 @@ class PopulateDatabase extends Command
         $this
             // the short description shown while running "php bin/console list"
             ->setDescription('Populate the database with fake data')
-            ->addOption('password', 'p', InputOption::VALUE_REQUIRED, 'Users password (8 chars min)')
             ->addOption('smtpuser', 'u', InputOption::VALUE_REQUIRED, 'SMTP username')
             ->addOption('smtppass', 's', InputOption::VALUE_REQUIRED, 'SMTP password')
             ->addOption('yes', 'y', InputOption::VALUE_NONE, 'Skip confirmation question')
@@ -74,7 +67,7 @@ class PopulateDatabase extends Command
             if (!is_string($file)) {
                 throw new ImproperActionException('Could not read file from provided file path!');
             }
-            $yaml = $this->readConfigFile($file);
+            $yaml = Yaml::parseFile($file);
         } catch (ParseException | ImproperActionException $e) {
             $output->writeln('Error parsing the file!');
             $output->writeln($e->getMessage());
@@ -99,8 +92,6 @@ class PopulateDatabase extends Command
             }
         }
 
-        $Faker = \Faker\Factory::create();
-        $Populate = new Populate();
 
         // drop database
         $output->writeln('Dropping current database and loading structure');
@@ -120,54 +111,14 @@ class PopulateDatabase extends Command
             $Teams->create($team);
         }
 
-        $Request = Request::createFromGlobals();
-        $Session = new Session();
-        $Request->setSession($Session);
-
-
-        $iterations = $yaml['iterations'] ?? 50;
+        $iterations = $yaml['iterations'] ?? self::DEFAULT_ITERATIONS;
+        $Populate = new Populate((int) $iterations);
 
         // create users
         // all users have the same password to make switching accounts easier
         // if the password is provided in the config file, it'll be used instead for that user
         foreach ($yaml['users'] as $user) {
-            $firstname = $user['firstname'] ?? $Faker->firstName;
-            $lastname = $user['lastname'] ?? $Faker->lastName;
-            $password = $user['password'] ?? $input->getOption('password') ?? self::DEFAULT_PASSWORD;
-            if (!is_string($password)) {
-                $password = self::DEFAULT_PASSWORD;
-            }
-            $email = $user['email'] ?? $Faker->safeEmail;
-
-            $userid = $Users->create($email, array($user['team']), $firstname, $lastname, $password, null, true, true, false);
-            $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));
-            $Users = new Users($userid, (int) $team[0]['id']);
-
-            if ($user['create_mfa_secret'] ?? false) {
-                $MfaHelper = new MfaHelper($userid);
-                // use a fixed secret
-                $MfaHelper->secret = 'EXAMPLE2FASECRET234567ABCDEFGHIJ';
-                $MfaHelper->saveSecret();
-            }
-            if ($user['create_experiments'] ?? false) {
-                $Populate->generate(new Experiments($Users), $iterations);
-            }
-            if ($user['create_items'] ?? false) {
-                $Populate->generate(new Database($Users), $iterations);
-            }
-            if ($user['api_key'] ?? false) {
-                $ApiKeys = new ApiKeys($Users);
-                $ApiKeys->createKnown($user['api_key']);
-            }
-
-            if ($user['create_templates'] ?? false) {
-                $Templates = new Templates($Users);
-                for ($i = 0; $i < 100; $i++) {
-                    $Templates->create(new ParamsProcessor(
-                        array('name' => $Faker->sentence, 'template' => $Faker->realText(1000))
-                    ));
-                }
-            }
+            $Populate->createUser($Teams, $user);
         }
 
         // add more items types
@@ -194,12 +145,6 @@ class PopulateDatabase extends Command
 
         $output->writeln('All done.');
         return 0;
-    }
-
-    // read the yaml config file
-    private function readConfigFile(string $file): array
-    {
-        return Yaml::parseFile($file);
     }
 
     private function dropAndInitDb(): void

@@ -157,6 +157,7 @@ class Config
 
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
             ('admin_validate', '1'),
+            ('autologout_time', '0'),
             ('ban_time', '60'),
             ('debug', '0'),
             ('devmode', '0'),

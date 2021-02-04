@@ -12,6 +12,9 @@
   <meta http-equiv='Content-type' content='text/html;charset=UTF-8' />
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
+  {% if App.Config.configArr.autologout_time != '0' %}
+    <meta http-equiv='refresh' content='{{ App.Config.configArr.autologout_time }};url=app/logout.php' />
+  {% endif %}
   <meta name='csrf-token' content='{{ App.Csrf.getToken }}'/>
   <link rel='icon' type='image/ico' href='app/img/favicon.ico' />
   <link rel='apple-touch-icon' href='app/img/apple-touch-icon.png' />

@@ -313,6 +313,12 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     <p class='smallgray'>
       {{ 'To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems.'|trans }}
     </p>
+
+    <label for='autologout_time'>{{ 'Time after which inactive sessions are invalidated (force logout) (in seconds):'|trans }}</label>
+    <input class='form-control col-md-4' type='number' value='{{ App.Config.configArr.autologout_time }}' name='autologout_time' id='autologout_time' />
+    <p class='smallgray'>
+      {{ 'Set to 0 to disable this feature.'|trans }}
+    </p>
     <div class='mt-4 text-center'>
       <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>

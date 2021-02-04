@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function array_map;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
@@ -49,8 +50,6 @@ class Config
      */
     public function read(): array
     {
-        $configArr = array();
-
         $sql = 'SELECT * FROM config';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
@@ -58,10 +57,9 @@ class Config
         if ($config === false) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
-        foreach ($config as $name => $value) {
-            $configArr[$name] = $value[0];
-        }
-        return $configArr;
+        return array_map(function ($v) {
+            return $v[0];
+        }, $config);
     }
 
     /**
@@ -69,7 +67,6 @@ class Config
      *
      * @param array<string, mixed> $post (conf_name => conf_value)
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
-     * @return void
      */
     public function update(array $post): void
     {

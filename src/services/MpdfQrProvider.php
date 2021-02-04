@@ -50,8 +50,8 @@ class MpdfQrProvider implements IQRCodeProvider
 
     /**
      * Generate the png qr code
+     * @phpstan-ignore-next-line
      */
-    /** @phpstan-ignore-next-line */
     public function getQRCodeImage($qrtext, $size): string
     {
         // Do not use type declarations for function arguments here.

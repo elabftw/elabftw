@@ -44,7 +44,6 @@ $(document).ready(function() {
       latestVersionDiv.appendChild(successIcon);
     } else {
       currentVersionDiv.style.color = 'red';
-      console.log(data.date);
       const warning = `<div class='alert alert-warning'><i class='fas fa-chevron-right'></i> <a href='#' class='close' data-dismiss='alert'>×</a> ${data.date} - A new version is available! <a href='https://doc.elabftw.net/how-to-update.html' class='button btn btn-primary text-white'>Update elabftw</a><a href='https://doc.elabftw.net/changelog.html' class='button btn btn-primary text-white'>Read changelog</a></div>`;
       document.querySelector('#versionNotifZone').innerHTML = warning;
     }

@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Elabftw\Services\UsersHelper;
-use function file_get_contents;
-use function dirname;
 use Exception;
+use function file_get_contents;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

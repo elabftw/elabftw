@@ -65,7 +65,7 @@ $(document).ready(function() {
     }).done(function(json) {
       notif(json);
       if (json.res) {
-        $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
+        $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv > *', function() {
           displayMolFiles();
         });
       }
@@ -84,7 +84,7 @@ $(document).ready(function() {
       }).done(function(json) {
         notif(json);
         if (json.res) {
-          $('#filesdiv').load('?mode=edit&id=' + itemid + ' #filesdiv', function() {
+          $('#filesdiv').load('?mode=edit&id=' + itemid + ' #filesdiv > *', function() {
             displayMolFiles();
             display3DMolecules(true);
           });

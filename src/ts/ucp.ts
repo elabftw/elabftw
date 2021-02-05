@@ -94,7 +94,8 @@ $(document).ready(function() {
       },
     }).done(function(json) {
       notif(json);
-      $('#apiTable').load('ucp.php #apiTable');
+      // only reload children of apiTable
+      $('#apiTable').load('ucp.php #apiTable > *');
     });
   });
 });

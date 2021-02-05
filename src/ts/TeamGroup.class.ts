@@ -25,7 +25,8 @@ export default class TeamGroup extends Crud {
         },
       }).then((json) => {
         if (json.res) {
-          $('#team_groups_div').load('admin.php #team_groups_div');
+          // only reload children
+          $('#team_groups_div').load('admin.php #team_groups_div > *');
           $('#teamGroupCreate').val('');
         }
       });
@@ -42,7 +43,8 @@ export default class TeamGroup extends Crud {
         'how': how,
       },
     }).then(() => {
-      $('#team_groups_div').load('admin.php #team_groups_div');
+      // only reload children
+      $('#team_groups_div').load('admin.php #team_groups_div > *');
     });
   }
 
@@ -55,7 +57,8 @@ export default class TeamGroup extends Crud {
           id: id,
         },
       }).then(() => {
-        $('#team_groups_div').load('admin.php #team_groups_div');
+        // only reload children
+        $('#team_groups_div').load('admin.php #team_groups_div > *');
       });
     }
   }

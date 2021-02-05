@@ -1,43 +1,20 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<!-- Get the updates.ini file to check for updates -->
-{% if not ReleaseCheck.success %}
-    {{ 'Error getting latest version information from server! Check the proxy setting.'|msg('ko') }}
-{% endif %}
-
 <!-- display current and latest version -->
-{% if ReleaseCheck.success and ReleaseCheck.updateIsAvailable %}
-    {% set style = 'color:red' %}
-{% endif %}
-<p>{{ 'Installed version:'|trans }} <span style='{{ style }}'>{{ constant('INSTALLED_VERSION', ReleaseCheck) }}</span>
-{% if ReleaseCheck.success %}
-    <!-- show a little green check if we have latest version -->
-    {% if not ReleaseCheck.updateIsAvailable %}
-        <i style='color:green' class='fas fa-check fa-lg align-top' title="Good job!"></i>
-    {% endif %}
-{% endif %}
+<p>{{ 'Installed version:'|trans }} <span id='currentVersion'>{{ constant('INSTALLED_VERSION', ReleaseCheck) }}</span>
 <br>
-{% if ReleaseCheck.success %}
-    <!-- display latest version -->
-    {{ 'Latest version:'|trans }} {{ ReleaseCheck.getLatestVersion }}</p>
+{{ 'Latest version:'|trans }} <span id='latestVersion'></span>
 
-    <!-- if we don't have the latest version, show button redirecting to doc -->
-    {% if ReleaseCheck.updateIsAvailable %}
-        {{ '%s - A new version is available! %sUpdate elabftw%sRead changelog%s'|trans|format(
-            ReleaseCheck.getReleaseDate,
-            "<a href='https://doc.elabftw.net/how-to-update.html' class='button btn btn-primary text-white'>",
-            "</a><a href='" ~ ReleaseCheck.getChangelogLink ~ "' class='button btn btn-primary text-white'>",
-            "</a>")|msg('warning') }}
-    {% endif %}
-
-    {% if App.Config.configArr.mail_from == 'notconfigured@example.com' %}
-        {{ 'Please finalize install: %slink to documentation%s.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#setting-up-email'>", "</a>")|msg('ko') }}
-    {% endif %}
+<!-- show error if the email is not configured -->
+{% if App.Config.configArr.mail_from == 'notconfigured@example.com' %}
+    {{ 'Please finalize install: %slink to documentation%s.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#setting-up-email'>", "</a>")|msg('ko') }}
 {% endif %}
 
 <p>Docker image version: {{ elabimgVersion }}<br />
 MySQL database structure version: {{ App.Config.configArr.schema }}</p>
+
+<div id='versionNotifZone'></div>
 
 <ul id='menu'>
         <li class='tabhandle' id='tab1'>{{ 'Server'|trans }}</li>

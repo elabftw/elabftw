@@ -13,10 +13,11 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ReleaseCheckException;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Elabftw\Services\UsersHelper;
+use function file_get_contents;
+use function dirname;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -55,13 +56,6 @@ try {
         }
     }
 
-    $ReleaseCheck = new ReleaseCheck($App->Config);
-    try {
-        $ReleaseCheck->getUpdatesIni();
-    } catch (ReleaseCheckException $e) {
-        $App->Log->warning('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
-    }
-
     $langsArr = Tools::getLangsArr();
 
     $phpInfos = array(
@@ -75,19 +69,19 @@ try {
 
     $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
 
-    $privacyPolicyTemplate = \file_get_contents(\dirname(__DIR__) . '/src/templates/privacy-policy.html');
+    $privacyPolicyTemplate = file_get_contents(dirname(__DIR__) . '/src/templates/privacy-policy.html');
 
     $template = 'sysconfig.html';
     $renderArr = array(
-        'Teams' => $Teams,
         'elabimgVersion' => $elabimgVersion,
-        'ReleaseCheck' => $ReleaseCheck,
-        'langsArr' => $langsArr,
         'fromSysconfig' => true,
         'idpsArr' => $idpsArr,
         'isSearching' => $isSearching,
+        'langsArr' => $langsArr,
         'phpInfos' => $phpInfos,
         'privacyPolicyTemplate' => $privacyPolicyTemplate,
+        'ReleaseCheck' => new ReleaseCheck(),
+        'Teams' => $Teams,
         'teamsArr' => $teamsArr,
         'teamsStats' => $teamsStats,
         'usersArr' => $usersArr,

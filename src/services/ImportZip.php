@@ -17,6 +17,7 @@ use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use FilesystemIterator;
+use function mb_strlen;
 use PDO;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -41,7 +42,7 @@ class ImportZip extends AbstractImport
     private array $json = array();
 
     // experiments or items
-    private string $type = 'items';
+    private string $type = 'experiments';
 
     /**
      * Constructor
@@ -109,8 +110,8 @@ class ImportZip extends AbstractImport
             throw new ImproperActionException('Unable to read the json file!');
         }
         $this->json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
-        if (isset($this->json[0]['elabid'])) {
-            $this->type = 'experiments';
+        if (isset($this->json[0]['rating'])) {
+            $this->type = 'items';
         }
     }
 
@@ -136,28 +137,28 @@ class ImportZip extends AbstractImport
      */
     private function dbInsert($item): void
     {
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread)
-            VALUES(:team, :title, :date, :body, :userid, :category, :canread)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, elabid)
+            VALUES(:team, :title, :date, :body, :userid, :category, :canread, :elabid)';
 
         if ($this->type === 'experiments') {
             $sql = 'INSERT into experiments(title, date, body, userid, canread, category, elabid)
                 VALUES(:title, :date, :body, :userid, :canread, :category, :elabid)';
         }
         $req = $this->Db->prepare($sql);
-        if ($this->type !== 'experiments') {
+        if ($this->type === 'items') {
             $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         }
         $req->bindParam(':title', $item['title']);
         $req->bindParam(':date', $item['date']);
         $req->bindParam(':body', $item['body']);
         $req->bindValue(':canread', $this->canread);
+        $req->bindParam(':elabid', $item['elabid']);
         if ($this->type === 'items') {
             $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':category', $this->target, PDO::PARAM_INT);
         } else {
             $req->bindValue(':category', $this->getDefaultStatus());
             $req->bindParam(':userid', $this->target, PDO::PARAM_INT);
-            $req->bindParam(':elabid', $item['elabid']);
         }
 
         if (!$req->execute()) {
@@ -174,12 +175,12 @@ class ImportZip extends AbstractImport
         }
 
         // add tags
-        if (\mb_strlen($item['tags'] ?? '') > 1) {
+        if (mb_strlen($item['tags'] ?? '') > 1) {
             $this->tagsDbInsert($item['tags']);
         }
         // add links
         if (!empty($item['links'])) {
-            // don't import the links as as because the id might be different from the one we had before
+            // don't import the links as is because the id might be different from the one we had before
             // so add the link in the body
             $header = '<h3>Linked items:</h3><ul>';
             $end = '</ul>';

@@ -88,7 +88,7 @@ $(document).ready(function() {
 
   // SHARE
   $('.view-action-buttons').on('click', '.shareItem', function() {
-    $.post('app/controllers/EntityAjaxController.php', {
+    $.get('app/controllers/EntityAjaxController.php', {
       getShareLink: true,
       id: $(this).data('id'),
       type: type

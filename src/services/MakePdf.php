@@ -171,26 +171,13 @@ class MakePdf extends AbstractMake
     }
 
     /**
-     * Add the elabid block for an experiment
-     *
-     * @return string
-     */
-    private function addElabid(): string
-    {
-        if ($this->Entity instanceof Experiments) {
-            return "<p class='elabid'>Unique eLabID: " . $this->Entity->entityData['elabid'] . '</p>';
-        }
-        return '';
-    }
-
-    /**
      * Add information about the lock state
      *
      * @return string
      */
     private function addLockinfo(): string
     {
-        if ($this->Entity instanceof Experiments && $this->Entity->entityData['locked']) {
+        if ($this->Entity->entityData['locked']) {
             // get info about the locker
             $Locker = new Users((int) $this->Entity->entityData['lockedby']);
 
@@ -401,7 +388,7 @@ class MakePdf extends AbstractMake
         return "<table id='infoblock'><tr><td class='noborder'>
             <barcode code='" . $this->getUrl() . "' type='QR' class='barcode' size='0.8' error='M' />
             </td><td class='noborder'>" .
-            $this->addElabid() .
+            "<p class='elabid'>Unique eLabID: " . $this->Entity->entityData['elabid'] . '</p>' .
             $this->addLockinfo() .
             $this->addUrl() . '</td></tr></table>';
     }

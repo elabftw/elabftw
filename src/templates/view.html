@@ -126,7 +126,7 @@
       </a>
   {% endif %}
 
-  {% if Entity.type == 'experiments' and not App.Session.has('is_anon') %}
+  {% if not App.Session.has('is_anon') %}
       <a class='elab-tooltip clickable shareItem' data-id='{{ Entity.id }}'>
           <span>{{ 'Share'|trans }}</span>
           <i class='fas fa-share-alt'></i>
@@ -203,11 +203,8 @@
       <p>{{ 'Last modified on %s'|trans|format(Entity.entityData.lastchange) }}</p>
     </div>
     <div class='col-6'>
-
-    {% if Entity.type == 'experiments' %}
-        <!-- eLabID -->
-        <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ Entity.entityData.elabid }}</p>
-    {% endif %}
+      <!-- eLabID -->
+      <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ Entity.entityData.elabid }}</p>
     </div>
   </div>
 

@@ -74,7 +74,7 @@ $title = '';
 if ($Request->query->has('title') && !empty($Request->query->get('title'))) {
     $title = filter_var(trim($Request->query->get('title')), FILTER_SANITIZE_STRING);
     if ($title !== false) {
-        $Entity->titleFilter = Tools::getSearchSql($title, $andor, 'title', $Entity->type, $isStrict);
+        $Entity->titleFilter = Tools::getSearchSql($title, $andor, 'title', $isStrict);
     }
 }
 
@@ -83,7 +83,7 @@ $body = '';
 if ($Request->query->has('body') && !empty($Request->query->get('body'))) {
     $body = filter_var(trim($Request->query->get('body')), FILTER_SANITIZE_STRING);
     if ($body !== false) {
-        $Entity->bodyFilter = Tools::getSearchSql($body, $andor, 'body', $Entity->type, $isStrict);
+        $Entity->bodyFilter = Tools::getSearchSql($body, $andor, 'body', $isStrict);
     }
 }
 

@@ -10,13 +10,17 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function bin2hex;
 use function dirname;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Models\Config;
 use FilesystemIterator;
+use PDO;
+use function random_bytes;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use function sha1;
 
 /**
  * Use this to check for latest version or update the database schema
@@ -72,6 +76,7 @@ class Update
      */
     public function runUpdateScript(): void
     {
+        $this->addElabidToItems();
         $currentSchema = (int) $this->Config->configArr['schema'];
 
         // do nothing if we're up to date
@@ -90,8 +95,14 @@ class Update
 
         // new style with SQL files instead of functions
         while ($currentSchema < self::REQUIRED_SCHEMA) {
-            $this->Sql->execFile('schema' . (string) (++$currentSchema) . '.sql');
+            ++$currentSchema;
+            $this->Sql->execFile('schema' . (string) ($currentSchema) . '.sql');
+            // schema57: add an elabid to existing database items
+            if ($currentSchema === 57) {
+                $this->addElabidToItems();
+            }
         }
+
 
         // remove cached twig templates (for non docker users)
         $this->cleanTmp();
@@ -110,6 +121,26 @@ class Update
         $ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
         foreach ($ri as $file) {
             $file->isDir() ? rmdir($file->getPathName()) : unlink($file->getPathName());
+        }
+    }
+
+    private function addElabidToItems(): void
+    {
+        $sql = 'SELECT id, date FROM items';
+        $req = $this->Db->prepare($sql);
+        $req->execute();
+        $items = $req->fetchAll();
+        if (empty($items)) {
+            return;
+        }
+
+        $sql = 'UPDATE items SET elabid = :elabid WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        foreach ($items as $item) {
+            $elabid = $item['date'] . '-' . sha1(bin2hex(random_bytes(16)));
+            $req->bindParam(':id', $item['id'], PDO::PARAM_INT);
+            $req->bindParam(':elabid', $elabid);
+            $req->execute();
         }
     }
 }

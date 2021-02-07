@@ -63,8 +63,7 @@ class Permissions
 
         // if we have the elabid in the URL, allow read access to all
         $Request = Request::createFromGlobals();
-        // make sure we check if entity has elabid because items won't have one (null)
-        if (isset($this->item['elabid']) && ($this->item['elabid'] === $Request->query->get('elabid'))) {
+        if ($this->item['elabid'] === $Request->query->get('elabid')) {
             return array('read' => true, 'write' => $write);
         }
 

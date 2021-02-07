@@ -60,6 +60,19 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('German', $langsArr['de_DE']);
     }
 
+    public function testPrintArr()
+    {
+        $arr = array('Blah' => 42, array('Pwet', 1337));
+        $out = '<ul><li><span style="color:red;">Blah</span><b> => </b><span style="color:blue;">42</span></li><li><span style="color:red;">0</span><b> => </b><span style="color:blue;"><ul><li><span style="color:red;">0</span><b> => </b><span style="color:blue;">Pwet</span></li><li><span style="color:red;">1</span><b> => </b><span style="color:blue;">1337</span></li></ul></span></li></ul>';
+        $this->assertEquals($out, Tools::printArr($arr));
+    }
+
+    public function testShowStar()
+    {
+        $out = "<i style='color:#54aa08' class='fas fa-star' title='☻'></i><i style='color:#54aa08' class='fas fa-star' title='☻'></i><i style='color:gray' class='fas fa-star' title='☺'></i><i style='color:gray' class='fas fa-star' title='☺'></i><i style='color:gray' class='fas fa-star' title='☺'></i>";
+        $this->assertEquals($out, Tools::showStars(2));
+    }
+
     public function testGetLimitOptions()
     {
         $this->assertEquals(2, Tools::getLimitOptions(2)[0]);

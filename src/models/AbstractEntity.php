@@ -227,7 +227,7 @@ abstract class AbstractEntity implements CreatableInterface
             $this->titleFilter,
             $this->dateFilter,
             $this->bodyFilter,
-            Tools::getSearchSql($displayParams->query, 'and', '', $this->type),
+            Tools::getSearchSql($displayParams->query),
             $this->idFilter,
             'GROUP BY id ORDER BY',
             $displayParams->getOrderSql(),

@@ -309,11 +309,10 @@ class Tools
      * @param string $query the searched string
      * @param string $andor behavior of the space character
      * @param string $column the column to search into
-     * @param string $table on which table to do the search
      * @param bool $isStrict do we add wildcard characters on each side of the query?
      * @return string
      */
-    public static function getSearchSql(string $query, string $andor = 'and', string $column = '', string $table = '', bool $isStrict = false): string
+    public static function getSearchSql(string $query, string $andor = 'and', string $column = '', bool $isStrict = false): string
     {
         $sql = ' AND ';
         $wildcard = '%';

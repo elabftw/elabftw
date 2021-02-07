@@ -34,13 +34,14 @@ class Database extends AbstractEntity
         $body = $itemsTypes->read();
 
         // SQL for create DB item
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category)
-            VALUES(:team, :title, :date, :body, :userid, :category)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, elabid)
+            VALUES(:team, :title, :date, :body, :userid, :category, :elabid)';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req, array(
             'team' => $this->Users->userData['team'],
             'title' => _('Untitled'),
             'date' => Filter::kdate(),
+            'elabid' => $this->generateElabid(),
             'body' => $body['template'],
             'userid' => $this->Users->userData['userid'],
             'category' => $category,
@@ -69,8 +70,8 @@ class Database extends AbstractEntity
     {
         $this->canOrExplode('read');
 
-        $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, category)
-            VALUES(:team, :title, :date, :body, :userid, :canread, :canwrite, :category)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, category, elabid)
+            VALUES(:team, :title, :date, :body, :userid, :canread, :canwrite, :category, :elabid)';
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
@@ -78,6 +79,7 @@ class Database extends AbstractEntity
             'date' => Filter::kdate(),
             'body' => $this->entityData['body'],
             'userid' => $this->Users->userData['userid'],
+            'elabid' => $this->generateElabid(),
             'canread' => $this->entityData['canread'],
             'canwrite' => $this->entityData['canwrite'],
             'category' => $this->entityData['category_id'],

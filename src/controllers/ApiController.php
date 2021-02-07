@@ -245,6 +245,7 @@ class ApiController implements ControllerInterface
      * @apiSuccess {String} fullname Name of the owner of the experiment
      * @apiSuccess {Number} has_attachment Number of files attached
      * @apiSuccess {Number} id Id of the item
+     * @apiSuccess {String} elabid Unique elabid of the item
      * @apiSuccess {Number} locked 0 if not locked, 1 if locked
      * @apiSuccess {Number} rating Number of stars
      * @apiSuccess {String} tags Tags separated by '|'

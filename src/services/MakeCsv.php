@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Traits\CsvTrait;
 
@@ -49,7 +50,7 @@ class MakeCsv extends AbstractMake
         if ($this->Entity instanceof Experiments) {
             return array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
         }
-        return  array('id', 'date', 'title', 'description', 'category', 'rating', 'url');
+        return  array('id', 'date', 'title', 'description', 'category', 'elabid', 'url', 'rating');
     }
 
     /**
@@ -63,20 +64,20 @@ class MakeCsv extends AbstractMake
             $this->Entity->setId((int) $id);
             $permissions = $this->Entity->getPermissions();
             if ($permissions['read']) {
-                if ($this->Entity instanceof Experiments) {
-                    $elabidOrRating = $this->Entity->entityData['elabid'];
-                } else {
-                    $elabidOrRating = $this->Entity->entityData['rating'];
-                }
-                $rows[] = array(
+                $row = array(
                     $this->Entity->entityData['id'],
                     $this->Entity->entityData['date'],
                     htmlspecialchars_decode((string) $this->Entity->entityData['title'], ENT_QUOTES | ENT_COMPAT),
                     html_entity_decode(strip_tags(htmlspecialchars_decode((string) $this->Entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
                     htmlspecialchars_decode((string) $this->Entity->entityData['category'], ENT_QUOTES | ENT_COMPAT),
-                    $elabidOrRating,
+                    $this->Entity->entityData['elabid'],
                     $this->getUrl(),
                 );
+                // add rating if it's an item
+                if ($this->Entity instanceof Database) {
+                    $row[] = $this->Entity->entityData['rating'];
+                }
+                $rows[] = $row;
             }
         }
 

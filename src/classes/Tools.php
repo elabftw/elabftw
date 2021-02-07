@@ -330,12 +330,7 @@ class Tools
             }
             if ($column === '') {
                 // do quicksearch
-                $elabidSql = '';
-                if ($table === 'experiments') {
-                    // add elabid to the search columns
-                    $elabidSql = " OR entity.elabid LIKE '%$value%'";
-                }
-                $sql .= "(entity.title LIKE '%$value%' OR entity.date LIKE '%$value%' OR entity.body LIKE '%$value%' $elabidSql)";
+                $sql .= "(entity.title LIKE '%$value%' OR entity.date LIKE '%$value%' OR entity.body LIKE '%$value%' OR entity.elabid LIKE '%$value%')";
             } else {
                 // from search page
                 $sql .= 'entity.' . $column . " LIKE '" . $wildcard . $value . $wildcard . "'";

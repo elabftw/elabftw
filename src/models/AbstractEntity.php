@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function bin2hex;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Permissions;
@@ -27,6 +28,8 @@ use Elabftw\Traits\EntityTrait;
 use function explode;
 use function is_bool;
 use PDO;
+use function random_bytes;
+use function sha1;
 
 /**
  * The mother class of Experiments and Database
@@ -282,6 +285,18 @@ abstract class AbstractEntity implements CreatableInterface
         }
 
         return $item;
+    }
+
+    public function getTeamFromElabid(string $elabid): int
+    {
+        $elabid = Filter::sanitize($elabid);
+        $sql = 'SELECT users2teams.teams_id FROM ' . $this->type . ' AS entity
+            CROSS JOIN users2teams ON (users2teams.users_id = entity.userid)
+            WHERE entity.elabid = :elabid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':elabid', $elabid, PDO::PARAM_STR);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
     }
 
     /**
@@ -634,6 +649,18 @@ abstract class AbstractEntity implements CreatableInterface
 
         $this->Db->execute($req);
         return $req->rowCount() > 0;
+    }
+
+    /**
+     * Generate unique elabID
+     * This function is called during the creation of an experiment.
+     *
+     * @return string unique elabid with date in front of it
+     */
+    protected function generateElabid(): string
+    {
+        $date = Filter::kdate();
+        return $date . '-' . sha1(bin2hex(random_bytes(16)));
     }
 
     /**

@@ -75,16 +75,16 @@
         },
         {
             "name": "directorytree/ldaprecord",
-            "version": "v2.0.4",
+            "version": "v2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DirectoryTree/LdapRecord.git",
-                "reference": "56700e0cb05377d17d468a425a3077aa768101c7"
+                "reference": "ad3a6c12ffa5fd04b0ee261eed2e3d61dd5742e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/56700e0cb05377d17d468a425a3077aa768101c7",
-                "reference": "56700e0cb05377d17d468a425a3077aa768101c7",
+                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/ad3a6c12ffa5fd04b0ee261eed2e3d61dd5742e7",
+                "reference": "ad3a6c12ffa5fd04b0ee261eed2e3d61dd5742e7",
                 "shasum": ""
             },
             "require": {
@@ -143,7 +143,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-01-20T03:32:33+00:00"
+            "time": "2021-02-03T23:44:54+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -527,7 +527,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v8.25.0",
+            "version": "v8.26.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -3466,7 +3466,7 @@
         },
         {
             "name": "symfony/translation",
-            "version": "v5.2.2",
+            "version": "v5.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation.git",
@@ -3539,7 +3539,7 @@
             "description": "Provides tools to internationalize your application",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/translation/tree/v5.2.2"
+                "source": "https://github.com/symfony/translation/tree/v5.2.3"
             },
             "funding": [
                 {
@@ -3637,7 +3637,7 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v5.2.2",
+            "version": "v5.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
@@ -3705,7 +3705,7 @@
                 "dump"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-dumper/tree/v5.2.2"
+                "source": "https://github.com/symfony/var-dumper/tree/v5.2.3"
             },
             "funding": [
                 {

@@ -22,6 +22,7 @@ use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
+use Elabftw\Models\Metadata;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
@@ -91,6 +92,10 @@ try {
 
         case 'link':
             $Model = new Links($Entity);
+            break;
+
+        case 'metadata':
+            $Model = new Metadata($Entity);
             break;
 
         case 'status':

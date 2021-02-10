@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use function copy;
+use Elabftw\Controllers\DownloadController;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
@@ -32,6 +33,7 @@ use function mb_strlen;
 use PDO;
 use function rename;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use function unlink;
 
 /**
@@ -197,6 +199,13 @@ class Uploads implements DestroyableInterface
         return $res;
     }
 
+    public function getMetadataFile(): Response
+    {
+        $filename = $this->getMetadataFilename();
+        $DownloadController = new DownloadController($filename);
+        return $DownloadController->getResponse();
+    }
+
     /**
      * Update the comment of a file. We also pass the itemid to make sure we update
      * the comment associated with the item sent to the controller. Because write access
@@ -315,6 +324,21 @@ class Uploads implements DestroyableInterface
         foreach ($uploadArr as $upload) {
             $this->destroy((int) $upload['id']);
         }
+    }
+
+    private function getMetadataFilename(): ?string
+    {
+        $sql = "SELECT long_name FROM uploads WHERE item_id = :id AND type = :type AND real_name = 'metadata.json'";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':type', $this->Entity->type);
+        $this->Db->execute($req);
+
+        $res = $req->fetchColumn();
+        if ($res === false) {
+            return null;
+        }
+        return $res;
     }
 
     /**

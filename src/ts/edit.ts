@@ -23,6 +23,62 @@ $(document).ready(function() {
     return;
   }
 
+  const type = $('#info').data('type');
+  const id = $('#info').data('id');
+
+  function processExtrafield(description: Record<string, any>): Element {
+    let element;
+    for (const [key, value] of Object.entries(description)) {
+      if (key === 'type') {
+        if (value === 'number') {
+          element = document.createElement('input');
+          element.type = 'number';
+        }
+        if (value === 'select') {
+          element = document.createElement('select');
+        }
+      }
+      if (key === 'options') {
+        for (const option of value) {
+          const optionEl = document.createElement('option');
+          optionEl.text = option;
+          element.add(optionEl);
+        }
+      }
+      if (key === 'value') {
+        element.value = value;
+      }
+    }
+    element.classList.add('form-control');
+    return element;
+  }
+
+  // GET the metadata json
+  const metadataDiv = document.querySelector('#metadataDiv');
+  fetch(`app/controllers/Ajax.php?what=metadata&action=read&type=${type}&params[itemId]=${id}`).then(response => {
+    if (!response.ok) {
+      throw new Error('Error fetching metadata.json');
+    }
+    return response.json();
+  }).then(data => {
+    const json = JSON.parse(data.msg);
+    const superTitle = document.createElement('h4');
+    superTitle.innerHTML = 'Extra fields (from metadata.json)';
+    metadataDiv.append(superTitle);
+    // the input elements that will be created from the extra fields
+    const elements = [];
+    for (const [name, description] of Object.entries(json.extra_fields)) {
+      elements.push({ name: name, element: processExtrafield(description)});
+    }
+    for (const element of elements) {
+      const name = document.createElement('h5');
+      name.innerHTML = element.name as string;
+      metadataDiv.append(name);
+      metadataDiv.append(element.element);
+    }
+  }).catch(error => metadataDiv.append(error));
+
+
   // UPLOAD FORM
   new Dropzone('form#elabftw-dropzone', {
     // i18n message to user
@@ -74,8 +130,6 @@ $(document).ready(function() {
   // add the title in the page name (see #324)
   document.title = $('#title_input').val() + ' - eLabFTW';
 
-  const type = $('#info').data('type');
-  const id = $('#info').data('id');
   let location = 'experiments.php';
   if (type != 'experiments') {
     location = 'database.php';

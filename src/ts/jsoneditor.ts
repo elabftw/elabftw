@@ -53,7 +53,7 @@ $(document).ready(function() {
         f: $(this).data('link')
       }).done(function(data) {
         try {
-          editor.set(JSON.parse(data));
+          editor.set(data);
           ($('#jsonEditorDiv') as any).collapse('show');
           if ($('.jsonEditorPlusMinusButton').html() === '+') {
             $('.jsonEditorPlusMinusButton').html('-').addClass('btn-neutral').removeClass('btn-primary');

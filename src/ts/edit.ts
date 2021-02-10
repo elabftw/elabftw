@@ -61,6 +61,10 @@ $(document).ready(function() {
     }
     return response.json();
   }).then(data => {
+    // if there are no metadata.json file available, do nothing more
+    if (data.res === false) {
+      return;
+    }
     const json = JSON.parse(data.msg);
     const superTitle = document.createElement('h4');
     superTitle.innerHTML = 'Extra fields (from metadata.json)';

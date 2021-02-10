@@ -19,6 +19,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MakeThumbnail;
@@ -326,7 +327,7 @@ class Uploads implements DestroyableInterface
         }
     }
 
-    private function getMetadataFilename(): ?string
+    private function getMetadataFilename(): string
     {
         $sql = "SELECT long_name FROM uploads WHERE item_id = :id AND type = :type AND real_name = 'metadata.json'";
         $req = $this->Db->prepare($sql);
@@ -336,7 +337,7 @@ class Uploads implements DestroyableInterface
 
         $res = $req->fetchColumn();
         if ($res === false) {
-            return null;
+            throw new ResourceNotFoundException();
         }
         return $res;
     }

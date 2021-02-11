@@ -99,6 +99,10 @@ class ImportCsv extends AbstractImport
         // deal with the rest of the columns
         $body = '';
         foreach ($row as $subheader => $content) {
+            // translate urls into links
+            if (filter_var($content, FILTER_VALIDATE_URL)) {
+                $content = '<a href="' . $content . '">' . $content . '</a>';
+            }
             $body .= '<p><strong>' . (string) $subheader . ':</strong> ' . $content . '</p>';
         }
 

@@ -23,7 +23,7 @@ class Metadata
 
     public function read(): string
     {
-        $metadata = $this->Entity->Uploads->getMetadataFile();
-        return file_get_contents($metadata->getFile()->getPathName());
+        $this->Entity->canOrExplode('read');
+        return $this->Entity->entityData['metadata'];
     }
 }

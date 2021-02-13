@@ -143,7 +143,7 @@ class MakePdf extends AbstractMake
         if (!$multiEntity) {
             $mpdf->SetAuthor($this->Entity->entityData['fullname']);
             $mpdf->SetTitle($this->Entity->entityData['title']);
-            $mpdf->SetKeywords(str_replace('|', ' ', $this->Entity->entityData['tags']));
+            $mpdf->SetKeywords(str_replace('|', ' ', $this->Entity->entityData['tags'] ?? ''));
         }
 
         return $mpdf;

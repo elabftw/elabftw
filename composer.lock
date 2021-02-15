@@ -75,16 +75,16 @@
         },
         {
             "name": "directorytree/ldaprecord",
-            "version": "v2.1.1",
+            "version": "v2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DirectoryTree/LdapRecord.git",
-                "reference": "ad3a6c12ffa5fd04b0ee261eed2e3d61dd5742e7"
+                "reference": "079f3aab0f2b7676303beed96a8888bdf06daa84"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/ad3a6c12ffa5fd04b0ee261eed2e3d61dd5742e7",
-                "reference": "ad3a6c12ffa5fd04b0ee261eed2e3d61dd5742e7",
+                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/079f3aab0f2b7676303beed96a8888bdf06daa84",
+                "reference": "079f3aab0f2b7676303beed96a8888bdf06daa84",
                 "shasum": ""
             },
             "require": {
@@ -143,7 +143,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-02-03T23:44:54+00:00"
+            "time": "2021-02-10T01:01:36+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -1387,16 +1387,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.45.0",
+            "version": "2.45.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "e2ba3174ce869da1713c38340dbb36572dfacd5a"
+                "reference": "528783b188bdb853eb21239b1722831e0f000a8d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/e2ba3174ce869da1713c38340dbb36572dfacd5a",
-                "reference": "e2ba3174ce869da1713c38340dbb36572dfacd5a",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/528783b188bdb853eb21239b1722831e0f000a8d",
+                "reference": "528783b188bdb853eb21239b1722831e0f000a8d",
                 "shasum": ""
             },
             "require": {
@@ -1476,7 +1476,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-02-07T21:35:59+00:00"
+            "time": "2021-02-11T18:30:17+00:00"
         },
         {
             "name": "onelogin/php-saml",

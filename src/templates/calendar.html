@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
 
 {% block body %}
-Hello
 
-<!-- TAB 1 SCHEDULER -->
-<div class='divhandle' id='tab1div'>
-    <div id='scheduler'></div>
+{% if experimentSteps|length>0 %}
+<h4>Events to be scheduled</h4>
+<div class='divhandle to-schedule-list' id='tab1div'>
+    {% for step in experimentSteps %}
+      <div class="fc-event fc-h-event to-schedule-item" data-stepid='{{step.id}}' data-id='{{ step.item_id }}' data-entityType='experiments'>
+        <div class="fc-event-main">{{step.item_title}}: {{step.body}}</div>
+      </div>
+    {% endfor %}
 </div>
+{% endif %}
+<div id='scheduler'></div>
 
 {% endblock body %}

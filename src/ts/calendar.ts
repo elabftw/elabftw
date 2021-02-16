@@ -5,7 +5,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import Template from './Template.class';
 import { notif } from './misc';
 import i18next from 'i18next';
 import 'jquery-ui/ui/widgets/autocomplete';
@@ -29,45 +28,22 @@ import ruLocale from '@fullcalendar/core/locales/ru';
 import skLocale from '@fullcalendar/core/locales/sk';
 import slLocale from '@fullcalendar/core/locales/sl';
 import zhcnLocale from '@fullcalendar/core/locales/zh-cn';
-import interactionPlugin from '@fullcalendar/interaction';
+import interactionPlugin, {Draggable} from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { config } from '@fortawesome/fontawesome-svg-core';
+import Step from './Step.class';
 
-console.log("Logging is allowed 1");
 
 document.addEventListener('DOMContentLoaded', function() {
   if (window.location.pathname !== '/calendar.php') {
     return;
   }
-  console.log("Logging is allowed 2");
-  // use this setting to prevent bug in fullcalendar
-  // see https://github.com/fullcalendar/fullcalendar/issues/5544
-  config.autoReplaceSvg = 'nest';
-  // this setting has a side-effect with the top right fa icon
-  // so we set it at a correct size again
-  $('.fa-user-circle').css('font-size', '130%');
-
-  // if we show all items, they are not editable
-  let editable = true;
-  let selectable = true;
-  if ($('#info').data('all')) {
-    editable = false;
-    selectable = false;
-  }
-  // get the start parameter from url and use that as start time if it's there
-  const params = new URLSearchParams(document.location.search.substring(1));
-  const start = params.get('start');
-  let selectedDate = new Date().valueOf();
-  if (start !== null) {
-    selectedDate = new Date(decodeURIComponent(start)).valueOf();
-  }
-
-  // bind to the element #scheduler
+  const selectedDate = new Date().valueOf();
+  const editable = true;
+  const selectable = true;
   const calendarEl: HTMLElement = document.getElementById('scheduler');
 
-  // SCHEDULER
   const calendar = new Calendar(calendarEl, {
     plugins: [ dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin ],
     headerToolbar: {
@@ -81,6 +57,8 @@ document.addEventListener('DOMContentLoaded', function() {
     locales: [ caLocale, deLocale, enLocale, esLocale, frLocale, itLocale, idLocale, jaLocale, koLocale, nlLocale, plLocale, ptLocale, ptbrLocale, ruLocale, skLocale, slLocale, zhcnLocale ],
     // selected locale
     locale: $('#info').data('calendarlang'),
+    // Allow the scheduled step to be dropped in the calendar
+    droppable: true,
     initialView: 'timeGridWeek',
     // allow selection of range
     selectable: selectable,
@@ -95,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // load the events as JSON
     eventSources: [
       {
-        url: 'app/controllers/SchedulerController.php',
+        url: 'app/controllers/CalendarController.php',
         extraParams: {
           item: $('#info').data('item'),
         },
@@ -116,18 +94,26 @@ document.addEventListener('DOMContentLoaded', function() {
         calendar.unselect();
         return;
       }
-      $.post('app/controllers/SchedulerController.php', {
+      const newEvent = {
         create: true,
         start: info.startStr,
         end: info.endStr,
         title: title,
-        item: $('#info').data('item')
-      }).done(function(json) {
-        notif(json);
-        if (json.res) {
-          window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.startStr));
-        }
-      });
+        item: null,
+        stepid: 0
+      };
+      $.post('app/controllers/CalendarController.php', newEvent)
+        .done(function(json) {
+          notif(json);
+          if (json.res) {
+            calendar.addEvent(
+              {
+                id: json.id,
+                ...newEvent,
+              }
+            );
+          }
+        });
     },
     // on click activate modal window
     eventClick: function(info): void {
@@ -136,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
       ($('#eventModal') as any).modal('toggle');
       // delete button in modal
       $('#deleteEvent').on('click', function(): void {
-        $.post('app/controllers/SchedulerController.php', {
+        $.post('app/controllers/CalendarController.php', {
           destroy: true,
           id: info.event.id
         }).done(function(json) {
@@ -155,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       // bind an experiment to the event
       $('#goBind').on('click', function(): void {
-        $.post('app/controllers/SchedulerController.php', {
+        $.post('app/controllers/CalendarController.php', {
           bind: true,
           id: info.event.id,
           expid: parseInt(($('#bindinput').val() as string), 10),
@@ -170,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       // remove the binding
       $('#rmBind').on('click', function(): void {
-        $.post('app/controllers/SchedulerController.php', {
+        $.post('app/controllers/CalendarController.php', {
           unbind: true,
           id: info.event.id,
         }).done(function(json) {
@@ -215,6 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
         delta: info.delta,
         id: info.event.id,
       }).done(function(json) {
+        console.log(info);
         notif(json);
       });
     },
@@ -229,16 +216,53 @@ document.addEventListener('DOMContentLoaded', function() {
         notif(json);
       });
     },
+
+    // When you drag an external event into the calendar
+    drop: function(info): void{
+      console.log(info.date);
+      const newEvent = {
+        create: true,
+        start: info.dateStr,
+        // No length by default
+        end: info.dateStr,
+        title: info.draggedEl.textContent,
+        item: null,
+        stepid: info.draggedEl.getAttribute('data-stepid')
+      };
+      $.post('app/controllers/CalendarController.php', newEvent)
+        .done(function(json) {
+          notif(json);
+          if (json.res) {
+          // Link the event and the step
+            const step = new Step(info.draggedEl.getAttribute('data-entityType'));
+            step.schedule(info.draggedEl,2,json.id);
+            // Remove it from the list
+            info.draggedEl.parentNode.removeChild(info.draggedEl);
+            // Could not find a way to update the id of the event, so better to reload them all.
+            calendar.removeAllEvents();
+            calendar.refetchEvents();
+          }
+
+        });
+    },
+
   });
   // only start it if the element is here
   // otherwise it will error out if the element is not here
+
   if (document.getElementById('scheduler')) {
     calendar.render();
     calendar.updateSize();
-  }
 
-  // IMPORT TPL
-  $(document).on('click', '.importTpl', function() {
-    new Template().duplicate($(this).data('id'));
-  });
+    // Make the divs draggable into the calendar
+    const toScheduleSteps = document.getElementsByClassName('to-schedule-item');
+    Array.from(toScheduleSteps).forEach(element => {
+      new Draggable(element as HTMLElement,{
+        eventData: {
+          title: element.textContent,
+          duration: '00:00'
+        }
+      });
+    });
+  }
 });

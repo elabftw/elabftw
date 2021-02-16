@@ -59,6 +59,8 @@
                 href='experiments.php'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</a>
             <a class='nav-item nav-link {{ App.Request.getScriptName|split('/')|last == 'database.php' ? 'active' }}'
                 href='database.php'>{{ 'Database'|trans }}</a>
+            <a class='nav-item nav-link {{ App.Request.getScriptName|split('/')|last == 'calendar.php' ? 'active' }}'
+                href='calendar.php'>{{ 'Calendar'|trans }}</a>
 
             {% if not App.Session.has('is_anon') %}
             <a class='nav-item nav-link {{ App.Request.getScriptName|split('/')|last == 'team.php' ? 'active' }}'

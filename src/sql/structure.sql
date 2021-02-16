@@ -183,7 +183,8 @@ CREATE TABLE `experiments_steps` (
   `body` text NOT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `finished` tinyint(1) NOT NULL DEFAULT '0',
-  `finished_time` datetime DEFAULT NULL
+  `finished_time` datetime DEFAULT NULL,
+  `schedule_status` int(10) UNSIGNED NOT NULL DEFAULT '0';
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -437,7 +438,7 @@ CREATE TABLE `teams` (
   `public_db` tinyint(1) NOT NULL DEFAULT 0,
   `force_canread` varchar(255) NOT NULL DEFAULT 'team',
   `force_canwrite` varchar(255) NOT NULL DEFAULT 'user',
-  `do_force_canread` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
+  `do_force_can\read` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `do_force_canwrite` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `visible` tinyint(1) UNSIGNED NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -455,12 +456,13 @@ CREATE TABLE `teams` (
 CREATE TABLE `team_events` (
   `id` int(10) UNSIGNED NOT NULL,
   `team` int(10) UNSIGNED NOT NULL,
-  `item` int(10) UNSIGNED NOT NULL,
+  `item` int(10) UNSIGNED DEFAULT NULL,
   `start` varchar(255) NOT NULL,
   `end` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
-  `experiment` int(10) UNSIGNED DEFAULT NULL
+  `experiment` int(10) UNSIGNED DEFAULT NULL,
+  `experiments_step` int(10) UNSIGNED DEFAULT NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -745,7 +747,8 @@ ALTER TABLE `teams`
 ALTER TABLE `team_events`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_team_events_teams_id` (`team`),
-  ADD KEY `fk_team_events_users_userid` (`userid`);
+  ADD KEY `fk_team_events_users_userid` (`userid`),
+  ADD KEY `fk_team_events_experiments_steps_id` (`experiments_step`);
 
 --
 -- Indexes for table `team_groups`
@@ -1008,7 +1011,8 @@ ALTER TABLE `tags`
 --
 ALTER TABLE `team_events`
   ADD CONSTRAINT `fk_team_events_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_team_events_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_team_events_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_team_events_experiments_steps_id` FOREIGN KEY (`experiments_step`) REFERENCES `experiments_steps` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `team_groups`
@@ -1030,6 +1034,7 @@ CREATE TABLE `items_steps` (
     `ordering` int(10) unsigned DEFAULT NULL,
     `finished` tinyint(1) NOT NULL DEFAULT '0',
     `finished_time` datetime DEFAULT NULL,
+    `schedule_status` int(10) UNSIGNED NOT NULL DEFAULT '0';
     PRIMARY KEY (`id`),
     KEY `fk_items_steps_items_id` (`item_id`),
     CONSTRAINT `fk_items_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1041,6 +1046,7 @@ CREATE TABLE `experiments_templates_steps` (
     `ordering` int(10) unsigned DEFAULT NULL,
     `finished` tinyint(1) NOT NULL DEFAULT '0',
     `finished_time` datetime DEFAULT NULL,
+    `schedule_status` int(10) UNSIGNED NOT NULL DEFAULT '0';
     PRIMARY KEY (`id`),
     KEY `fk_experiments_templates_steps_items_id` (`item_id`),
     CONSTRAINT `fk_experiments_templates_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE

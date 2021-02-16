@@ -32,6 +32,22 @@
               </div>
               <div class='input-group-prepend'>
                 <div class='input-group-text'>
+                  <a class='stepSchedule elab-tooltip-top' data-stepid='{{ step.id }}' data-id='{{ Entity_id }}' data-schedulestatus='{{ step.schedule_status }}'>
+                    {% if step.schedule_status == 0 %}
+                      <span>{{ 'Mark for scheduling'|trans }}</span>
+                      <i class='fas fa-calendar-plus clickable'></i>
+                    {% elseif step.schedule_status == 1 %}
+                      <span>{{ 'Unmark for scheduling'|trans }}</span>
+                      <i class='far fa-calendar-check clickable' style="color: red;"></i>
+                    {% else %}
+                      <span>{{ 'Remove from schedule'|trans }}</span>
+                    <i class='far fa-calendar-alt clickable' style="color: green;"></i>
+                    {% endif %}
+                  </a>
+                </div>
+              </div>
+              <div class='input-group-prepend'>
+                <div class='input-group-text'>
                   <input type='checkbox' {{ Entity.type == 'experiments_templates' ? 'disabled' }} {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity_id }}' class='stepbox'>
                 </div>
               </div>

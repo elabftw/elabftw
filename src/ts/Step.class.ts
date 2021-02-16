@@ -87,6 +87,35 @@ export default class Step extends Crud {
     });
   }
 
+  schedule(elem, scheduleStatus: number, eventId=null): void {
+    // the id of the exp/item/tpl
+    const id = elem.dataset.id;
+    const stepId = elem.dataset.stepid;
+    let itemType = this.type;
+    if (elem.dataset.type) {
+      itemType = elem.dataset.type;
+    }
+    this.send({
+      action: 'schedule',
+      what: 'step',
+      type: itemType,
+      params: {
+        itemId: id,
+        id: stepId,
+        scheduleStatus: scheduleStatus,
+        eventId: eventId
+      },
+    }).then(() => {
+      const loadUrl = window.location.href + ' #steps_div_' + id;
+      // reload the step list
+      $('#steps_div_' + id).load(loadUrl, function() {
+        relativeMoment();
+        makeSortableGreatAgain();
+      });
+      $('#todo_step_' + stepId).prop('checked', true);
+    });
+  }
+
   destroy(elem): void {
     // the id of the exp/item/tpl
     const id = elem.dataset.id;

@@ -106,6 +106,48 @@ class Steps implements CrudInterface
     }
 
     /**
+     * Change the scheduling status of a step, and potentially link to an event
+     *
+     * @param int $stepid
+     * @param int $scheduleStatus
+     * @param string $eventId
+     * @return void
+     */
+    public function schedule(int $stepid,int $scheduleStatus, string $eventId): void
+    {
+        $this->Entity->canOrExplode('write');
+        $sql = 'UPDATE ' . $this->Entity->type . '_steps
+            SET schedule_status = :schedule_status
+            WHERE id = :id AND item_id = :item_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $stepid, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':schedule_status', $scheduleStatus, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        // Link the event or delete it in case of unscheduling.
+        if (!$eventId)
+        {
+            $sql = 'DELETE FROM team_events WHERE '. $this->Entity->type . '_step=:step_id';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':step_id', $stepid, PDO::PARAM_INT);
+            $this->Db->execute($req);
+        }
+        else
+        {
+            $sql = 'UPDATE team_events
+            SET ' . $this->Entity->type . '_step=:step_id
+            WHERE id=:event_id';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':step_id', $stepid, PDO::PARAM_INT);
+            $req->bindParam(':event_id', $eventId, PDO::PARAM_INT);
+            $this->Db->execute($req);
+        }
+
+
+    }
+
+    /**
      * Get steps for an entity
      *
      * @return array
@@ -168,6 +210,32 @@ class Steps implements CrudInterface
 
         return $res;
     }
+
+    /**
+     * Get pending schedule items from the current user
+     *
+     * @return array
+     */
+    public function readPending2Schedule(): array
+    {
+        $entityType = $this->Entity->type;
+        $sql = "SELECT ${entityType}.title as item_title, ${entityType}.id as item_id, ${entityType}_steps.id as id, ${entityType}_steps.body as body
+        FROM ${entityType}
+        INNER JOIN ${entityType}_steps
+        ON ${entityType}.id = ${entityType}_steps.item_id
+        WHERE ${entityType}_steps.schedule_status=1";
+
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
+    }
+
 
     /**
      * Copy the steps from one entity to an other

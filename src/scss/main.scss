@@ -933,6 +933,22 @@ the form-control fails to do that so we do the border ourselves */
     }
 }
 
+/* To-schedule event container */
+.to-schedule-list {
+    display:flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-content: flex-start;
+    margin-bottom: 20px;
+    max-width: 550px;
+}
+
+.to-schedule-item {
+    min-width:100px;
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
 /* caption for tinymce */
 .image {
     background: #f5f2f0;

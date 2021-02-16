@@ -11,6 +11,7 @@ import Link from './Link.class';
 import Step from './Step.class';
 import i18next from 'i18next';
 import { getCheckedBoxes, notif } from './misc';
+import { constrainPoint } from '@fullcalendar/core';
 
 $(document).ready(function() {
   const type = $('#info').data('type');
@@ -56,6 +57,12 @@ $(document).ready(function() {
     StepC.destroy(e.currentTarget);
   });
 
+  // SCHEDULE
+  $(document).on('click', '.stepSchedule', function(e) {
+    // If status 1 or 2, set to zero
+    console.log(StepC);
+    StepC.schedule(e.currentTarget,e.currentTarget.dataset.schedulestatus != 0 ? 0 : 1);
+  });
   // END STEPS
 
   // LINKS

@@ -16,10 +16,9 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Database;
-use Elabftw\Models\Scheduler;
-use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Teams;
+use Elabftw\Models\Calendar;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\Steps;
 use Elabftw\Models\Templates;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,10 +34,10 @@ $Response = new Response();
 $Response->prepare($Request);
 
 try {
-
-    $Database = new Database($App->Users);
-    $Scheduler = new Scheduler($Database);
-
+    $Calendar = new Calendar($App->Users);
+    $Experiment = new Experiments($App->Users);
+    $ExperimentStep = new Steps($Experiment);
+    $experimentSteps = $ExperimentStep->readPending2Schedule();
     $DisplayParams = new DisplayParams();
     $DisplayParams->adjust($App);
     // make limit very big because we want to see ALL the bookable items here
@@ -64,6 +63,7 @@ try {
         'templateData' => $templateData,
         'templatesArr' => $templatesArr,
         'calendarLang' => Tools::getCalendarLang($App->Users->userData['lang']),
+        'experimentSteps' => $experimentSteps
     );
 
     $Response->setContent($App->render($template, $renderArr));

@@ -76,7 +76,7 @@ $(document).ready(function() {
   });
 
   // temporarily disable admin rights
-  $(document).on('click', '.adminRightsToggle', function() {
+  $('.adminRightsToggle').on('click', function() {
     $.get('app/controllers/Ajax.php', {
       action: 'toggle',
       what: 'adminRights',

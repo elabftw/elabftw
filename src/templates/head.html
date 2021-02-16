@@ -85,7 +85,7 @@
                 {% if App.Session.get('tmp_disable_admin') == 1%}
                   {% set onOffIcon = 'fa-toggle-off' %}
                 {% endif %}
-                  <a class='dropdown-item adminRightsToggle' href='#'><i class='fas {{ onOffIcon }} fa-fw'></i> {{ 'Admin features'|trans }}</a>
+                  <a class='dropdown-item adminRightsToggle clickable'><i class='fas {{ onOffIcon }} fa-fw'></i> {{ 'Admin features'|trans }}</a>
               {% endif %}
               {% if App.Session.get('is_admin') %}
                 <a class='dropdown-item' href='admin.php'><i class='fas fa-tools fa-fw'></i> {{ 'Admin panel'|trans }}</a>

@@ -267,9 +267,10 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
      */
     public function destroyAll(): void
     {
-        $sql = 'DELETE FROM tags2entity WHERE item_id = :id';
+        $sql = 'DELETE FROM tags2entity WHERE item_id = :id AND item_type = :type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':type', $this->Entity->type);
         $this->Db->execute($req);
     }
 

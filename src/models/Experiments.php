@@ -156,8 +156,8 @@ class Experiments extends AbstractEntity implements CreatableInterface
         // capital i looks good enough
         $title = $this->entityData['title'] . ' I';
 
-        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid)
-            VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, NOW(), :userid)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid, metadata)
+            VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, NOW(), :userid, :metadata)';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req, array(
             'title' => $title,
@@ -168,6 +168,7 @@ class Experiments extends AbstractEntity implements CreatableInterface
             'canread' => $this->entityData['canread'],
             'canwrite' => $this->entityData['canwrite'],
             'userid' => $this->Users->userData['userid'],
+            'metadata' => $this->entityData['metadata'],
         ));
         $newId = $this->Db->lastInsertId();
 

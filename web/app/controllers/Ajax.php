@@ -31,6 +31,7 @@ use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
 use Exception;
+use PDOException;
 use Swift_TransportException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -200,6 +201,13 @@ try {
             );
             break;
 
+        case 'updateExtraField':
+            $Model->updateExtraField(
+                $Request->request->get('params')['field'],
+                $Request->request->get('params')['value'],
+            );
+            break;
+
         case 'updateCommon':
             // update the common template
             $Model->updateCommon($Params->template);
@@ -237,7 +245,7 @@ try {
         'res' => false,
         'msg' => _('Error sending email'),
     ));
-} catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException | ResourceNotFoundException $e) {
+} catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException | ResourceNotFoundException | PDOException $e) {
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),

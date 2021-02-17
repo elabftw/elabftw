@@ -6,6 +6,7 @@ const t = {
     "dropzone-upload-area": "Dateien zum Hochladen hier fallen lassen",
     "entity-default-title": "Unbenannt",
     "entity-delete-warning": "Die ausgewählten Element(e) und alle zugehörigen Daten werden dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden. Bist du sicher?",
+    "extra-fields": "Zusätzliche Felder",
     "filename": "Dateiname",
     "generic-delete-warning": "Element löschen?",
     "link-delete-warning": "Diesen Link löschen?",

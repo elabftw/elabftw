@@ -6,6 +6,7 @@ const t = {
     "dropzone-upload-area": "Za nalaganje povlecite datoteko sem",
     "entity-default-title": "Brez naslova",
     "entity-delete-warning": "Izbrani predmeti in vsi pridruženi podatki bodo trajno izbrisani. Tega ni mogoče razveljaviti. Ali si prepričan?",
+    "extra-fields": "Dodatna polja",
     "filename": "Ime datoteke",
     "generic-delete-warning": "Želite izbrisati?",
     "link-delete-warning": "Želite izbrisati to povezavo?",

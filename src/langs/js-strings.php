@@ -17,6 +17,9 @@ _('Untitled');
 // entity-delete-warning
 _('The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?');
 /** @psalm-suppress UnusedFunctionCall */
+// extra-fields
+_('Extra fields');
+/** @psalm-suppress UnusedFunctionCall */
 // filename
 _('Filename');
 /** @psalm-suppress UnusedFunctionCall */

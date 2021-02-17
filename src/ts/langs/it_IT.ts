@@ -6,6 +6,7 @@ const t = {
     "dropzone-upload-area": "Trascina qui i file da allegare",
     "entity-default-title": "Senza titolo",
     "entity-delete-warning": "Quanto è stato selezionato (nonché i dati associati) sarà definitivamente cancellato. Il processo è irreversibile. Si è veramente sicuri?",
+    "extra-fields": "Campi extra",
     "filename": "Nome del file",
     "generic-delete-warning": "Cancellare questo?",
     "link-delete-warning": "Eliminare questo collegamento?",

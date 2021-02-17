@@ -10,6 +10,7 @@ declare let key: any;
 import { notif } from './misc';
 import i18next from 'i18next';
 import JSONEditor from 'jsoneditor';
+import { Metadata } from './Metadata.class';
 
 // editor div
 $(document).ready(function() {
@@ -17,6 +18,9 @@ $(document).ready(function() {
     return;
   }
   const container = document.getElementById('jsonEditorContainer');
+  const type = $('#info').data('type');
+  const id = $('#info').data('id');
+  const MetadataC = new Metadata(type, id);
 
   const options = {
     modes: (($('#info').data('page') === 'edit') ? ['tree','code','view','form','text']:['view']),
@@ -78,7 +82,6 @@ $(document).ready(function() {
     $(document).on('click', '.jsonClear', function() {
       currentFileItemID = undefined;
       editor.set({});
-      $('#jsonEditorTitle').html('File was unloaded.');
     });
 
     // The save function is now defined separately
@@ -97,7 +100,7 @@ $(document).ready(function() {
         $('#jsonEditorTitle').html(i18next.t('filename') + ': ' + realName + '.json');
         $.post('app/controllers/EntityAjaxController.php', {
           addFromString: true,
-          type: 'experiments',
+          type: $('#info').data('type'),
           id: $('#info').data('id'),
           realName: realName,
           fileType: 'json',
@@ -130,10 +133,25 @@ $(document).ready(function() {
     };
 
     // Add support for 'Save as' by resetting the currentFileItemID to undefined
-    $(document).on('click', '.jsonSaveAs', function () {
+    $(document).on('click', '.jsonSaveAs', function() {
       currentFileItemID = undefined;
       saveJsonFile();
     });
+
+    $(document).on('click', '.jsonLoadMetadata', function() {
+      // set the title
+      // TODO fill i18n values
+      $('#jsonEditorTitle').html(i18next.t('editing-metadata'));
+      MetadataC.read().then(metadata => {
+        ($('#jsonEditorDiv') as any).collapse('show');
+        if ($('.jsonEditorPlusMinusButton').html() === '+') {
+          $('.jsonEditorPlusMinusButton').html('-').addClass('btn-neutral').removeClass('btn-primary');
+        }
+        editor.set(metadata);
+      });
+    });
+
+    $(document).on('click', '.jsonSaveMeta', () => MetadataC.update(JSON.stringify(editor.get())));
 
     $(document).on('click', '.jsonSaver', saveJsonFile);
   }

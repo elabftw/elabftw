@@ -6,6 +6,7 @@ const t = {
     "dropzone-upload-area": "Déposez ici les fichiers à uploader",
     "entity-default-title": "Sans titre",
     "entity-delete-warning": "Le ou les objet(s) sélectionné(s) ainsi que toutes les données associées seront supprimés définitivement. Cela est irréversible. Êtes-vous sûr(e) ?",
+    "extra-fields": "Champs supplémentaires",
     "filename": "Nom de fichier",
     "generic-delete-warning": "Supprimer ça ?",
     "link-delete-warning": "Supprimer ce lien ?",

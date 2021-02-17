@@ -14,6 +14,7 @@ import './doodle';
 import tinymce from 'tinymce/tinymce';
 import Dropzone from 'dropzone';
 import i18next from 'i18next';
+import { Metadata } from './Metadata.class';
 
 // the dropzone is created programmatically, disable autodiscover
 Dropzone.autoDiscover = false;
@@ -26,62 +27,9 @@ $(document).ready(function() {
   const type = $('#info').data('type');
   const id = $('#info').data('id');
 
-  function processExtrafield(description: Record<string, any>): Element {
-    let element;
-    for (const [key, value] of Object.entries(description)) {
-      if (key === 'type') {
-        if (value === 'number') {
-          element = document.createElement('input');
-          element.type = 'number';
-        }
-        if (value === 'select') {
-          element = document.createElement('select');
-        }
-      }
-      if (key === 'options') {
-        for (const option of value) {
-          const optionEl = document.createElement('option');
-          optionEl.text = option;
-          element.add(optionEl);
-        }
-      }
-      if (key === 'value') {
-        element.value = value;
-      }
-    }
-    element.classList.add('form-control');
-    return element;
-  }
-
-  // GET the metadata json
-  const metadataDiv = document.querySelector('#metadataDiv');
-  fetch(`app/controllers/Ajax.php?what=metadata&action=read&type=${type}&params[itemId]=${id}`).then(response => {
-    if (!response.ok) {
-      throw new Error('Error fetching metadata.json');
-    }
-    return response.json();
-  }).then(data => {
-    // if there are no metadata.json file available, do nothing more
-    if (data.res === false) {
-      return;
-    }
-    const json = JSON.parse(data.msg);
-    const superTitle = document.createElement('h4');
-    superTitle.innerHTML = 'Extra fields (from metadata.json)';
-    metadataDiv.append(superTitle);
-    // the input elements that will be created from the extra fields
-    const elements = [];
-    for (const [name, description] of Object.entries(json.extra_fields)) {
-      elements.push({ name: name, element: processExtrafield(description)});
-    }
-    for (const element of elements) {
-      const name = document.createElement('h5');
-      name.innerHTML = element.name as string;
-      metadataDiv.append(name);
-      metadataDiv.append(element.element);
-    }
-  }).catch(error => metadataDiv.append(error));
-
+  // add extra fields input elements from metadata json
+  const MetadataC = new Metadata(type, id);
+  MetadataC.addElements();
 
   // UPLOAD FORM
   new Dropzone('form#elabftw-dropzone', {
@@ -98,8 +46,8 @@ $(document).ready(function() {
       // add additional parameters (id and type)
       this.on('sending', function(file: string, xhr: string, formData: FormData) {
         formData.append('upload', '1');
-        formData.append('id', $('#info').data('id'));
-        formData.append('type', $('#info').data('type'));
+        formData.append('type', type);
+        formData.append('id', id);
       });
 
       // once it is done
@@ -109,7 +57,7 @@ $(document).ready(function() {
         notif(json);
         // reload the #filesdiv once the file is uploaded
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-          $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv > *', function() {
+          $('#filesdiv').load(`?mode=edit&id=${id} #filesdiv > *`, function() {
             displayMolFiles();
             display3DMolecules(true);
             const dropZone = Dropzone.forElement('#elabftw-dropzone');
@@ -392,7 +340,7 @@ $(document).ready(function() {
         formData.append('replace', 'true');
         formData.append('upload_id', tinymceEditImage.uploadId);
         formData.append('id', tinymceEditImage.itemId);
-        formData.append('type', 'experiments');
+        formData.append('type', type);
         formData.append('file', blobInfo.blob());
 
         $.post({
@@ -423,7 +371,7 @@ $(document).ready(function() {
       }
     },
     // use a custom function for the save button in toolbar
-    save_onsavecallback: () => quickSave(type , $('#info').data('id')), // eslint-disable-line @typescript-eslint/camelcase
+    save_onsavecallback: () => quickSave(type , id), // eslint-disable-line @typescript-eslint/camelcase
   };
 
   tinymce.init(Object.assign(tinyConfig, tinyConfigForEdit));

@@ -19,7 +19,7 @@ $(document).ready(function() {
   const updateUrl = 'https://get.elabftw.net/updates.json';
   const currentVersionDiv = document.querySelector('#currentVersion') as HTMLElement;
   const latestVersionDiv = document.querySelector('#latestVersion');
-  const currentVersion = currentVersionDiv.innerHTML;
+  const currentVersion = currentVersionDiv.innerText;
   // Note: this doesn't work on Chrome
   // see: https://bugs.chromium.org/p/chromium/issues/detail?id=571722
   // normal user-agent will be sent

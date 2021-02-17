@@ -28,6 +28,13 @@ class Team implements MapInterface
 
     private int $id;
 
+    private string $commonTemplate = "<h1><span style='font-size: 14pt;'>Goal :</span></h1>
+    <p>&nbsp;</p>
+    <h1><span style='font-size: 14pt;'>Procedure :</span></h1>
+    <p>&nbsp;</p>
+    <h1><span style='font-size: 14pt;'>Results :<br /></span></h1>
+    <p>&nbsp;</p>";
+
     private string $name = '';
 
     private int $deletableXp = 1;
@@ -81,6 +88,19 @@ class Team implements MapInterface
     final public function getName(): string
     {
         return $this->name;
+    }
+
+    final public function setCommonTemplate(?string $setting): void
+    {
+        if ($setting === null) {
+            throw new ImproperActionException('Common template cannot be empty!');
+        }
+        $this->commonTemplate = $setting;
+    }
+
+    final public function getCommonTemplate(): string
+    {
+        return $this->commonTemplate;
     }
 
     final public function setDeletableXp(string $setting): void
@@ -206,6 +226,7 @@ class Team implements MapInterface
     {
         $sql = 'UPDATE teams SET
             name = :name,
+            common_template = :common_template,
             orgid = :orgid,
             deletable_xp = :deletable_xp,
             public_db = :public_db,
@@ -223,6 +244,7 @@ class Team implements MapInterface
             WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $this->name);
+        $req->bindParam(':common_template', $this->commonTemplate);
         $req->bindParam(':orgid', $this->orgid);
         $req->bindParam(':deletable_xp', $this->deletableXp, PDO::PARAM_INT);
         $req->bindParam(':public_db', $this->publicDb, PDO::PARAM_INT);
@@ -252,6 +274,7 @@ class Team implements MapInterface
     public function hydrate(array $source): void
     {
         $this->setName($source['name'] ?? $this->name);
+        $this->setCommonTemplate($source['commonTemplate'] ?? $this->commonTemplate);
         $this->setOrgid($source['orgid'] ?? $this->orgid);
         $this->setDeletableXp($source['deletable_xp'] ?? (string) $this->deletableXp);
         $this->setLinkName($source['link_name'] ?? $this->linkName);

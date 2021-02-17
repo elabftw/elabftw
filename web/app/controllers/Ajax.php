@@ -194,11 +194,6 @@ try {
             );
             break;
 
-        case 'updateCommon':
-            // update the common template
-            $Model->updateCommon($Params->template);
-            break;
-
         case 'destroy':
             $Model->destroy($Params->id);
             break;

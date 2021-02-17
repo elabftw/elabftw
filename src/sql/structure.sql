@@ -202,8 +202,12 @@ CREATE TABLE `experiments_templates` (
   `id` int(10) UNSIGNED NOT NULL,
   `team` int(10) UNSIGNED DEFAULT NULL,
   `body` text,
-  `name` varchar(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `date` int(10) UNSIGNED NOT NULL,
   `userid` int(10) UNSIGNED DEFAULT NULL,
+  `locked` tinyint(3) UNSIGNED DEFAULT NULL,
+  `lockedby` int(10) UNSIGNED DEFAULT NULL,
+  `lockedwhen` timestamp NULL DEFAULT NULL,
   `canread` varchar(255) NOT NULL,
   `canwrite` varchar(255) NOT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL
@@ -213,6 +217,24 @@ CREATE TABLE `experiments_templates` (
 -- RELATIONSHIPS FOR TABLE `experiments_templates`:
 --   `team`
 --       `teams` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `experiments_templates_revisions`
+--
+
+CREATE TABLE `experiments_templates_revisions` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `item_id` int(10) UNSIGNED NOT NULL,
+  `body` mediumtext NOT NULL,
+  `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `userid` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- RELATIONSHIPS FOR TABLE `experiments_templates_revisions`:
 --
 
 -- --------------------------------------------------------
@@ -425,6 +447,7 @@ CREATE TABLE `tags2entity` (
 CREATE TABLE `teams` (
   `id` int(10) UNSIGNED NOT NULL,
   `name` varchar(255) NOT NULL,
+  `common_template` text,
   `deletable_xp` tinyint(1) NOT NULL DEFAULT 1,
   `link_name` text NOT NULL,
   `link_href` text NOT NULL,

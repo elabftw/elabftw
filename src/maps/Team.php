@@ -274,7 +274,7 @@ class Team implements MapInterface
     public function hydrate(array $source): void
     {
         $this->setName($source['name'] ?? $this->name);
-        $this->setCommonTemplate($source['commonTemplate'] ?? $this->commonTemplate);
+        $this->setCommonTemplate($source['common_template'] ?? $this->commonTemplate);
         $this->setOrgid($source['orgid'] ?? $this->orgid);
         $this->setDeletableXp($source['deletable_xp'] ?? (string) $this->deletableXp);
         $this->setLinkName($source['link_name'] ?? $this->linkName);

@@ -165,6 +165,10 @@ CREATE TABLE `experiments_revisions` (
 
 --
 -- RELATIONSHIPS FOR TABLE `experiments_revisions`:
+--   `item_id`
+--       `experiments` -> `id`
+--   `userid`
+--       `users` -> `userid`
 --
 
 -- --------------------------------------------------------
@@ -928,6 +932,13 @@ ALTER TABLE `experiments_comments`
 ALTER TABLE `experiments_links`
   ADD CONSTRAINT `fk_experiments_links_experiments_id` FOREIGN KEY (`item_id`) REFERENCES `experiments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_experiments_links_items_id` FOREIGN KEY (`link_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `experiments_revisions`
+--
+ALTER TABLE `experiments_revisions`
+  ADD CONSTRAINT `fk_experiments_revisions_experiments_id` FOREIGN KEY (`item_id`) REFERENCES `experiments`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `experiments_steps`

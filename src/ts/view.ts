@@ -8,12 +8,10 @@
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import { notif } from './misc';
 import { Metadata } from './Metadata.class';
-// not working
-//import { key } from '../js/vendor/keymaster.js';
 declare let key: any;
 const moment = require('moment'); // eslint-disable-line @typescript-eslint/no-var-requires
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   if ($('#info').data('page') !== 'view') {
     return;
   }

@@ -19,15 +19,17 @@ import { Metadata } from './Metadata.class';
 // the dropzone is created programmatically, disable autodiscover
 Dropzone.autoDiscover = false;
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   if ($('#info').data('page') !== 'edit') {
     return;
   }
+  // add the title in the page name (see #324)
+  document.title = $('#title_input').val() + ' - eLabFTW';
 
   const type = $('#info').data('type');
   const id = $('#info').data('id');
 
-  // add extra fields input elements from metadata json
+  // add extra fields elements from metadata json
   const MetadataC = new Metadata(type, id);
   MetadataC.display('edit');
 
@@ -78,9 +80,6 @@ $(document).ready(function() {
       });
     }
   });
-
-  // add the title in the page name (see #324)
-  document.title = $('#title_input').val() + ' - eLabFTW';
 
   let location = 'experiments.php';
   if (type != 'experiments') {

@@ -35,7 +35,7 @@ import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { config } from '@fortawesome/fontawesome-svg-core';
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/team.php') {
     return;
   }

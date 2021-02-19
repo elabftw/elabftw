@@ -17,12 +17,15 @@ export class Metadata extends Crud {
   type: string;
   id: string;
   what: string;
+  metadataDiv: Element;
 
   constructor(type: string, id: string) {
     super('app/controllers/Ajax.php');
     this.type = type;
     this.id = id;
     this.what = 'metadata';
+    // this is the div that will hold all the generated fields from metadata json
+    this.metadataDiv = document.getElementById('metadataDiv');
   }
 
   /**
@@ -124,9 +127,18 @@ export class Metadata extends Crud {
   }
 
   /**
+   * Generate a non editable view of the extra fields
+   */
+  generateElement(name: string, description: Record<string, any>): Element {
+    const element = document.createElement('div');
+    element.innerText = name + ': ' + description.value;
+    return element;
+  }
+
+  /**
    * Take the json description of the field and build an input element to be injected
    */
-  generateField(name: string, description: Record<string, any>): Element {
+  generateInput(name: string, description: Record<string, any>): Element {
     // we don't know yet which kind of element it will be
     let element;
     // generate a unique id for the element so we can associate the label properly
@@ -197,29 +209,74 @@ export class Metadata extends Crud {
   }
 
   /**
-   * Get the metadata json and add input elements to DOM
+   * Create the "Extra fields" header
    */
-  addElements() {
-    // this is the div that will hold all the generated fields from metadata json
-    const metadataDiv = document.getElementById('metadataDiv');
+  getHeaderDiv(): Element {
+    const headerDiv = document.createElement('div');
+    headerDiv.classList.add('row');
+    const header = document.createElement('h4');
+    header.innerText = i18next.t('extra-fields');
+    headerDiv.append(header);
+    return headerDiv;
+  }
 
-    this.read().then(json => {
-      const superTitleDiv = document.createElement('div');
-      superTitleDiv.classList.add('row');
-      const superTitle = document.createElement('h4');
-      superTitle.innerText = i18next.t('extra-fields');
-      metadataDiv.append(superTitleDiv);
-      superTitleDiv.append(superTitle);
+  /**
+   * Main public function to call to display the metadata in view or edit mode
+   */
+  display(mode: string) {
+    let displayFunction = this.view;
+    if (mode === 'edit') {
+      displayFunction = this.edit;
+    }
+
+    displayFunction.call(this).catch(e => {
+      if (e instanceof ResourceNotFoundException) {
+        // no metadata is associated but it's okay, it's not an error
+        return;
+      }
+      // if there was an issue fetching metadata, log the error
+      console.error(e);
+      return;
+    });
+  }
+
+  /**
+   * In view mode, display the extra fields
+   */
+  view() {
+    return this.read().then(json => {
+      this.metadataDiv.append(this.getHeaderDiv());
       // the input elements that will be created from the extra fields
       const elements = [];
       for (const [name, description] of Object.entries(json.extra_fields)) {
-        elements.push({ name: name, element: this.generateField(name, description)});
+        elements.push({ name: name, element: this.generateElement(name, description)});
+      }
+      // now display the names/values from extra_fields
+      for (const element of elements) {
+        const rowDiv = document.createElement('div');
+        rowDiv.classList.add('row');
+        this.metadataDiv.append(rowDiv);
+        rowDiv.append(element.element);
+      }
+    });
+  }
+
+  /**
+   * Get the metadata json and add input elements to DOM
+   */
+  edit() {
+    return this.read().then(json => {
+      this.metadataDiv.append(this.getHeaderDiv());
+      // the input elements that will be created from the extra fields
+      const elements = [];
+      for (const [name, description] of Object.entries(json.extra_fields)) {
+        elements.push({ name: name, element: this.generateInput(name, description)});
       }
       // now display the inputs from extra_fields
       for (const element of elements) {
         const rowDiv = document.createElement('div');
         rowDiv.classList.add('row');
-        metadataDiv.append(rowDiv);
+        this.metadataDiv.append(rowDiv);
         const label = document.createElement('label');
         label.htmlFor = element.element.id;
         label.innerText = element.name as string;
@@ -240,14 +297,6 @@ export class Metadata extends Crud {
           rowDiv.append(element.element);
         }
       }
-    }).catch(e => {
-      if (e instanceof ResourceNotFoundException) {
-        // no metadata is associated but it's okay, it's not an error
-        return;
-      }
-      // if there was an issue fetching metadata, log the error
-      console.error(e);
-      return;
     });
   }
 }

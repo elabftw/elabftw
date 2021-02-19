@@ -29,7 +29,7 @@ $(document).ready(function() {
 
   // add extra fields input elements from metadata json
   const MetadataC = new Metadata(type, id);
-  MetadataC.addElements();
+  MetadataC.display('edit');
 
   // UPLOAD FORM
   new Dropzone('form#elabftw-dropzone', {

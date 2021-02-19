@@ -7,6 +7,7 @@
  */
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import { notif } from './misc';
+import { Metadata } from './Metadata.class';
 // not working
 //import { key } from '../js/vendor/keymaster.js';
 declare let key: any;
@@ -21,6 +22,10 @@ $(document).ready(function() {
 
   const type = $('#info').data('type');
   const id = $('#info').data('id');
+
+  // add extra fields elements from metadata json
+  const MetadataC = new Metadata(type, id);
+  MetadataC.display('view');
 
   // EDIT
   key($('#shortcuts').data('edit'), function() {

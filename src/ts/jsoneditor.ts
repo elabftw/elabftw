@@ -14,7 +14,7 @@ import { Metadata } from './Metadata.class';
 
 // editor div
 $(document).ready(function() {
-  if (!($('#info').data('page') === 'edit' || $('#info').data('page') === 'view')) {
+  if (!($('#info').data('page') === 'edit' || $('#info').data('page') === 'view' || $('#info').data('page') === 'template-edit')) {
     return;
   }
   const container = document.getElementById('jsonEditorContainer');
@@ -23,7 +23,7 @@ $(document).ready(function() {
   const MetadataC = new Metadata(type, id);
 
   const options = {
-    modes: (($('#info').data('page') === 'edit') ? ['tree','code','view','form','text']:['view']),
+    modes: (($('#info').data('page') === 'edit' || $('#info').data('page') === 'template-edit') ? ['tree','code','view','form','text']:['view']),
     onModeChange: (newMode): void => {
       if (newMode==='code' || newMode==='text'){
         $('#jsoneditor').height('800px');

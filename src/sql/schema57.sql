@@ -12,5 +12,6 @@ START TRANSACTION;
     ALTER TABLE `experiments` ADD `metadata` JSON NULL DEFAULT NULL;
     ALTER TABLE `items` ADD `metadata` JSON NULL DEFAULT NULL;
     ALTER TABLE `experiments_templates` ADD `metadata` JSON NULL DEFAULT NULL;
+    ALTER TABLE `items_types` ADD `metadata` JSON NULL DEFAULT NULL;
     UPDATE `config` SET `conf_value` = 57 WHERE `conf_name` = 'schema';
 COMMIT;

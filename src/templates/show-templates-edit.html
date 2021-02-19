@@ -98,6 +98,8 @@
         <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
       </div>
     </form>
-    {% include('steps-links-edit.html') %}
+    {{ include('steps-links-edit.html') }}
+    {{ include('json-editor.html') }}
   {% endif %}
   </div>
+  <div id='info' data-page='template-edit' data-type='experiments_templates' data-id='{{ templateData.id }}'></div>

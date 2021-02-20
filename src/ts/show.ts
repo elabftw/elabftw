@@ -234,7 +234,7 @@ $(document).ready(function(){
     }
     // loop on it and delete stuff
     $.each(checked, function(index) {
-      $.post('app/controllers/ExperimentsAjaxController.php', {
+      $.post('app/controllers/EntityAjaxController.php', {
         timestamp: true,
         id: checked[index]['id'],
       }).done(function(json) {

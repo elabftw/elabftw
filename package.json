@@ -70,7 +70,7 @@
   "scripts": {
     "analyzejs": "webpack-bundle-analyzer stats.json web/app/js",
     "apidoc": "apidoc -c apidoc -o apidoc/html -i src/controllers",
-    "build": "webpack-cli --config builder.js",
+    "build": "webpack-cli --progress --config builder.js",
     "buildall": "grunt && yarn build && sass --style compressed src/scss/main.scss:web/app/css/elabftw.min.css",
     "buildcss": "grunt css && sass src/scss/main.scss:web/app/css/elabftw.min.css",
     "buildjs": "grunt ts && yarn build",

@@ -8,7 +8,6 @@ START TRANSACTION;
     INSERT INTO config (conf_name, conf_value) VALUES ('autologout_time', '0');
     ALTER TABLE `items` ADD `elabid` VARCHAR(255) NOT NULL;
     ALTER TABLE `experiments` CHANGE `datetime` `datetime` TIMESTAMP NULL DEFAULT NULL;
-    ALTER TABLE `items` CHANGE `datetime` `datetime` TIMESTAMP NULL DEFAULT NULL;
     ALTER TABLE `experiments` ADD `metadata` JSON NULL DEFAULT NULL;
     ALTER TABLE `items` ADD `metadata` JSON NULL DEFAULT NULL;
     ALTER TABLE `experiments_templates` ADD `metadata` JSON NULL DEFAULT NULL;

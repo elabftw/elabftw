@@ -146,33 +146,33 @@ export class Metadata extends Crud {
 
     // read the type of element
     switch (description.type) {
-      case 'number':
-        element = document.createElement('input');
-        element.type = 'number';
-        break;
-      case 'select':
-        element = document.createElement('select');
-        // add options to select element
-        for (const option of description.options) {
-          const optionEl = document.createElement('option');
-          optionEl.text = option;
-          element.add(optionEl);
-        }
-        break;
-      case 'date':
-        element = document.createElement('input');
-        element.type = 'date';
-        break;
-      case 'checkbox':
-        element = document.createElement('input');
-        element.type = 'checkbox';
-        break;
-      case 'radio':
-        return this.buildRadio(name, description);
-        break;
-      default:
-        element = document.createElement('input');
-        element.type = 'text';
+    case 'number':
+      element = document.createElement('input');
+      element.type = 'number';
+      break;
+    case 'select':
+      element = document.createElement('select');
+      // add options to select element
+      for (const option of description.options) {
+        const optionEl = document.createElement('option');
+        optionEl.text = option;
+        element.add(optionEl);
+      }
+      break;
+    case 'date':
+      element = document.createElement('input');
+      element.type = 'date';
+      break;
+    case 'checkbox':
+      element = document.createElement('input');
+      element.type = 'checkbox';
+      break;
+    case 'radio':
+      return this.buildRadio(name, description);
+      break;
+    default:
+      element = document.createElement('input');
+      element.type = 'text';
     }
 
     // add the unique id to the element

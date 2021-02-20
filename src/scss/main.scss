@@ -789,7 +789,8 @@ the form-control fails to do that so we do the border ourselves */
     overflow-wrap: break-word;
 }
 
-.clickable.title-view:hover {
+.title-view[data-action="edit"]:hover {
+    cursor: pointer;
     color: $elabblue;
     transition: color 0.8s ease;
 }
@@ -831,11 +832,6 @@ the form-control fails to do that so we do the border ourselves */
 .elabid {
     color: $maingray;
     text-align: right;
-}
-
-/* give more space between view action buttons */
-.view-action-buttons a {
-    margin-right: 5px;
 }
 
 /* TAGS */
@@ -903,6 +899,13 @@ the form-control fails to do that so we do the border ourselves */
     border-radius: 5px;
     display: block;
     margin: 10px 0;
+}
+
+/* don't register clicks with the svg (fontawesome icons)
+ * this way the click event is registered by the parent and all is well
+ */
+[data-fa-i2svg] {
+    pointer-events: none;
 }
 
 .clickable:hover {

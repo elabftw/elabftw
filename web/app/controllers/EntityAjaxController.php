@@ -13,10 +13,12 @@ namespace Elabftw\Elabftw;
 use function dirname;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\MakeTimestamp;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Teams;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Templates;
@@ -134,6 +136,12 @@ try {
      * POST REQUESTS
      *
      */
+
+    // TIMESTAMP
+    if ($Request->request->has('timestamp') && $Entity instanceof Experiments) {
+        $MakeTimestamp = new MakeTimestamp($App->Config, new Teams($App->Users), $Entity);
+        $MakeTimestamp->timestamp();
+    }
 
     // SAVE AS IMAGE
     if ($Request->request->has('saveAsImage')) {

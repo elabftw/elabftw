@@ -1924,10 +1924,10 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.2.0.tgz#75f502eeaf9ffde42fc98829645be4ea76bd9e2d"
   integrity sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==
 
-bio-parsers@^6.1.1:
-  version "6.2.6"
-  resolved "https://registry.yarnpkg.com/bio-parsers/-/bio-parsers-6.2.6.tgz#e03057735008f730cbf28d36f657aa95a30ae60b"
-  integrity sha512-341dcd6olGswOmgFDqXOs/YdEyRN5XRsFNPYSwTwjq4fg25ro2V+kRvaeFkTwr/iRzf0QWhGpu6G3z0aNzYyHA==
+bio-parsers@^7.0.5:
+  version "7.0.5"
+  resolved "https://registry.yarnpkg.com/bio-parsers/-/bio-parsers-7.0.5.tgz#3c4a49321987a8f5d0bf25938226fa5d321fd5c9"
+  integrity sha512-8G+eHPoOTyISn6zjdVm9PXsudLBdNDpvvhNqe3xidVg1I/63lejqCB36KJ7OWW9Qt5+oyNJsSp/fdhpa/oi7wA==
   dependencies:
     "@gmod/gff" "^1.1.2"
     buffer "^6.0.3"
@@ -5032,7 +5032,7 @@ lodash.values@^4.3.0:
   resolved "https://registry.yarnpkg.com/lodash.values/-/lodash.values-4.3.0.tgz#a3a6c2b0ebecc5c2cba1c17e6e620fe81b53d347"
   integrity sha1-o6bCsOvsxcLLocF+bmIP6BtT00c=
 
-lodash@>=4.17.13, lodash@^4.17.10, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@~4.17.10, lodash@~4.17.19, lodash@~4.17.20:
+lodash@>=4.17.13, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.4, lodash@~4.17.10, lodash@~4.17.19, lodash@~4.17.20:
   version "4.17.20"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
@@ -8224,17 +8224,17 @@ vanilla-picker@^2.11.0:
     "@sphinxxxx/color-conversion" "^2.2.2"
 
 ve-range-utils@^2.5.8:
-  version "2.5.8"
-  resolved "https://registry.yarnpkg.com/ve-range-utils/-/ve-range-utils-2.5.8.tgz#f1fb9f2277c99913b3f3fd2b145f38c079f99342"
-  integrity sha512-CoRrJ8lk/oJcq6En9oWbMorfIjFPvCEfDFiPlQhFjJgudvq7LzILlhkC96UgC1sMbunjttKRL1OzC0MvjQpG2A==
+  version "2.5.9"
+  resolved "https://registry.yarnpkg.com/ve-range-utils/-/ve-range-utils-2.5.9.tgz#c25edd55497e8236b0206f8d24cd35c1de8fb740"
+  integrity sha512-Ly3Pu58hPJNPWfaDdCA+lCj9uoPLf64V/ZGAVj3MndvmcYgL45aBCoj2hNo8/Dso+UmdLzgJm19j7APZ3jA/vw==
   dependencies:
     lodash "^4.17.4"
     validate.io-nonnegative-integer-array "^1.0.1"
 
-ve-sequence-utils@^3.2.19:
-  version "3.3.56"
-  resolved "https://registry.yarnpkg.com/ve-sequence-utils/-/ve-sequence-utils-3.3.56.tgz#00b20525601fcd1b0633192bc03bc692ad674ec2"
-  integrity sha512-Yv9FbKKPmm7k5JLnY1Ma9lgqcy5LFFviE461+irBFtYDbhEQLBk17vUZOiHnE8h4ML3I2pPL4JkXivSM/2ssvw==
+ve-sequence-utils@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/ve-sequence-utils/-/ve-sequence-utils-5.0.0.tgz#521379ca017348714476bf60f276cd220ed8ee1d"
+  integrity sha512-kQKJbiwTlxBIWbQih5tRhpmUzERPkLDnL93EJeQTXSg7LSZn0fLzjtpc3Yjuu6ok8tNLApn420e0QVbvc2b5cA==
   dependencies:
     bson-objectid "^1.1.1"
     escape-string-regexp "^1.0.5"

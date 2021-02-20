@@ -55,6 +55,7 @@ abstract class AbstractImport
     {
         $mimes = array(
             null,
+            'application/csv',
             'application/vnd.ms-excel',
             'text/plain',
             'text/csv',

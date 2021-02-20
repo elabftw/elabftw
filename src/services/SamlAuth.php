@@ -28,17 +28,14 @@ use OneLogin\Saml2\Auth as SamlAuthLib;
  */
 class SamlAuth implements AuthInterface
 {
-    /** @var array $configArr the global elab config */
-    private $configArr;
+    private array $configArr;
 
-    /** @var array $settings saml settings for a particular idp */
-    private $settings;
+    // saml settings for a particular idp
+    private array $settings;
 
-    /** @var SamlAuthLib $SamlAuthLib */
-    private $SamlAuthLib;
+    private SamlAuthLib $SamlAuthLib;
 
-    /** @var AuthResponse $AuthResponse */
-    private $AuthResponse;
+    private AuthResponse $AuthResponse;
 
     public function __construct(SamlAuthLib $samlAuthLib, array $configArr, array $settings)
     {

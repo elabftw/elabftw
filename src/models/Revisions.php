@@ -25,17 +25,10 @@ class Revisions implements DestroyableInterface
     /** @var int MIN_DELTA the min number of characters different between two versions to trigger save */
     private const MIN_DELTA = 100;
 
-    /** @var Db $Db SQL Database */
-    private $Db;
+    private Db $Db;
 
-    /** @var AbstractEntity $Entity an instance of Experiments or Database */
-    private $Entity;
+    private AbstractEntity $Entity;
 
-    /**
-     * Constructor
-     *
-     * @param AbstractEntity $entity
-     */
     public function __construct(AbstractEntity $entity)
     {
         $this->Entity = $entity;
@@ -44,9 +37,6 @@ class Revisions implements DestroyableInterface
 
     /**
      * Add a revision if the changeset is big enough
-     *
-     * @param string $body
-     * @return void
      */
     public function create(string $body): void
     {
@@ -73,8 +63,6 @@ class Revisions implements DestroyableInterface
 
     /**
      * Get how many revisions we have
-     *
-     * @return int number of revisions existing
      */
     public function readCount(): int
     {
@@ -89,8 +77,6 @@ class Revisions implements DestroyableInterface
 
     /**
      * Read all revisions for an item
-     *
-     * @return array
      */
     public function readAll(): array
     {
@@ -111,10 +97,7 @@ class Revisions implements DestroyableInterface
     }
 
     /**
-     * Restore a revision
-     *
-     * @param int $revId The id of the revision we want to restore
-     * @return void
+     * Restore a revision from revision id
      */
     public function restore(int $revId): void
     {
@@ -132,9 +115,6 @@ class Revisions implements DestroyableInterface
         $this->Db->execute($req);
     }
 
-    /**
-     * Destroy a revision
-     */
     public function destroy(int $id): bool
     {
         $sql = 'DELETE FROM ' . $this->Entity->type . '_revisions WHERE id = :id';
@@ -143,6 +123,9 @@ class Revisions implements DestroyableInterface
         return $this->Db->execute($req);
     }
 
+    /**
+     * Make sure we don't store too many
+     */
     public function prune(): int
     {
         $numberToRemove = 0;
@@ -157,8 +140,6 @@ class Revisions implements DestroyableInterface
 
     /**
      * Get the maximum number of revisions allowed to be stored
-     *
-     * @return int
      */
     private function getMaxCount(): int
     {
@@ -170,7 +151,6 @@ class Revisions implements DestroyableInterface
      * Destroy old revisions
      *
      * @param int $num number of old revisions to destroy
-     * @return void
      */
     private function destroyOld(int $num = 1): void
     {
@@ -183,11 +163,8 @@ class Revisions implements DestroyableInterface
 
     /**
      * Get the body of a revision
-     *
-     * @param int $revId The id of the revision
-     * @return string
      */
-    private function readRev(int $revId)
+    private function readRev(int $revId): string
     {
         $sql = 'SELECT body FROM ' . $this->Entity->type . '_revisions WHERE id = :rev_id';
         $req = $this->Db->prepare($sql);
@@ -203,8 +180,6 @@ class Revisions implements DestroyableInterface
 
     /**
      * Check if item is locked before restoring it
-     *
-     * @return bool
      */
     private function isLocked(): bool
     {

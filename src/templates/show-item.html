@@ -11,7 +11,7 @@
       {% else %}
         <div class='col-xs-12 col-sm-6 col-md-6 col-lg-4'>
       {% endif %}
-          <section class='item item-show item-show-{{ App.Users.userData.display_size }} {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item.color }}'>
+          <section class='item item-show item-show-{{ App.Users.userData.display_size }} {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='--opacity:{{ opacity }}; --left-color: #{{ item.color }};'>
               {% if isPinned %}
                 <span class='align-right'><i class='fas fa-thumbtack' title="{{ 'Pinned'|trans }}"></i></span>
               {% endif %}
@@ -37,11 +37,11 @@
               <input class='item-checkbox' autocomplete='off' type='checkbox' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;vertical-align:-3px;' />
               <!-- edit icon -->
               {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
-                <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a>
+                <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}' class='clickable' title='{{ 'Edit'|trans }}'><i class='fas fa-pencil-alt link-like'></i></a>
               {% endif %}
               <!-- toggle body -->
-              <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} class='toggleBody clickable'>
-                <i class='fas fa-plus-circle' title='{{ 'Toggle content'|trans }}'></i>
+              <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} class='toggleBody clickable' title='{{ 'Toggle content'|trans }}'>
+                <i class='fas fa-plus-circle link-like'></i>
               </span>
               <!-- category -->
               <span class='item-category' style='color:#{{ item.color }}'>{{ item.category }}</span>

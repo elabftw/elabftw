@@ -14,6 +14,41 @@ $(document).ready(function() {
   if (window.location.pathname !== '/sysconfig.php') {
     return;
   }
+
+  // GET the latest version information
+  const updateUrl = 'https://get.elabftw.net/updates.json';
+  const currentVersionDiv = document.querySelector('#currentVersion') as HTMLElement;
+  const latestVersionDiv = document.querySelector('#latestVersion');
+  const currentVersion = currentVersionDiv.innerHTML;
+  // Note: this doesn't work on Chrome
+  // see: https://bugs.chromium.org/p/chromium/issues/detail?id=571722
+  // normal user-agent will be sent
+  const headers = new Headers({
+    'User-Agent': 'Elabftw/' + currentVersion,
+  });
+
+  fetch(updateUrl, {
+    headers: headers,
+  }).then(response => {
+    if (!response.ok) {
+      throw new Error('Error fetching latest version!');
+    }
+    return response.json();
+  }).then(data => {
+    latestVersionDiv.append(data.version);
+    if (data.version === currentVersion) {
+      // show a little green check if we have latest version
+      const successIcon = document.createElement('i');
+      successIcon.style.color = 'green';
+      successIcon.classList.add('fas', 'fa-check', 'fa-lg', 'align-top', 'ml-1');
+      latestVersionDiv.appendChild(successIcon);
+    } else {
+      currentVersionDiv.style.color = 'red';
+      const warning = `<div class='alert alert-warning'><i class='fas fa-chevron-right'></i> <a href='#' class='close' data-dismiss='alert'>×</a> ${data.date} - A new version is available! <a href='https://doc.elabftw.net/how-to-update.html' class='button btn btn-primary text-white'>Update elabftw</a><a href='https://doc.elabftw.net/changelog.html' class='button btn btn-primary text-white'>Read changelog</a></div>`;
+      document.querySelector('#versionNotifZone').innerHTML = warning;
+    }
+  }).catch(error => latestVersionDiv.append(error));
+
   // TEAMS
   const Teams = {
     controller: 'app/controllers/SysconfigAjaxController.php',
@@ -56,7 +91,7 @@ $(document).ready(function() {
     destructor: function(json): void {
       notif(json);
       if (json.res) {
-        $('#teamsDiv').load('sysconfig.php #teamsDiv');
+        $('#teamsDiv').load('sysconfig.php #teamsDiv > *');
       }
     }
   };

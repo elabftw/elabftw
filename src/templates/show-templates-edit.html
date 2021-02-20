@@ -11,10 +11,10 @@
             <span class='sr-only'>{{ 'Toggle create new menu'|trans }}</span>
           </button>
           <div class='dropdown-menu' aria-labelledby='btnGroupDrop1'>
-            <a href='#' id='import-from-file' class='dropdown-item'><i class='fas fa-upload'></i> {{ 'Import from file'|trans }}</a>
+            <a id='import-from-file' class='clickable dropdown-item'><i class='fas fa-upload fa-fw'></i> {{ 'Import from file'|trans }}</a>
             <!-- disable the reordering for now
             <div class='dropdown-divider'></div>
-            <a href='#' id='toggleReorder' class='dropdown-item'><i class='fas fa-sort' data-fa-transform='rotate-90 down-1'></i> {{ 'Reorder templates'|trans }}</a>
+            <a id='toggleReorder' class='clickable dropdown-item'><i class='fas fa-sort fa-fw' data-fa-transform='rotate-90 down-1'></i> {{ 'Reorder templates'|trans }}</a>
             -->
           </div>
         </div>
@@ -62,20 +62,22 @@
       <!-- MORE OPTIONS DROPDOWN MENU (···) -->
       <div class='col'>
         <div class='dropdown'>
-          <i data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' class='dropdown-toggle fas fa-ellipsis-h fa-2x fa-pull-right' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'></i>
-          <div class='dropdown-menu' aria-label='{{ 'More options'|trans }}'>
+          <a class='align-right clickable' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
+            <i class='fas fa-ellipsis-h fa-2x'></i>
+          </a>
+          <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
             <!-- MANAGE PERMISSIONS -->
-            <a class='dropdown-item modalToggle' data-modal='permModal' href='#' data-read='{{ templateData.canread }}' data-write='{{ templateData.canwrite }}'>
-              <i class='fas fa-share-alt'></i> {{ 'Manage Permissions'|trans }}
+            <a class='clickable dropdown-item modalToggle' data-modal='permModal' data-read='{{ templateData.canread }}' data-write='{{ templateData.canwrite }}'>
+              <i class='fas fa-share-alt fa-fw'></i> {{ 'Manage Permissions'|trans }}
             </a>
             <!-- DOWNLOAD -->
-            <a href='#' class='dropdown-item saveToFile' data-name='{{ templateData.name }}' data-id='e{{ templateData.id }}'>
-              <i class='fas fa-download'></i> {{ 'Download template'|trans }}
+            <a class='clickable dropdown-item saveToFile' data-name='{{ templateData.name }}' data-id='e{{ templateData.id }}'>
+              <i class='fas fa-download fa-fw'></i> {{ 'Download template'|trans }}
             </a>
             <!-- DESTROY -->
             <div class='dropdown-divider'></div>
-            <a href='#' class='dropdown-item destroyTemplate hover-danger' data-id='{{ templateData.id }}'>
-              <i class='fas fa-trash-alt'></i> {{ 'Destroy template'|trans }}
+            <a class='clickable dropdown-item destroyTemplate hover-danger' data-id='{{ templateData.id }}'>
+              <i class='fas fa-trash-alt fa-fw'></i> {{ 'Destroy template'|trans }}
             </a>
           </div>
         </div>

@@ -79,7 +79,7 @@ trait TwigTrait
         $TwigEnvironment->addExtension(new \Twig\Extensions\I18nExtension());
 
         // add the version as a global var so we can have it for the ?v=x.x.x for js files
-        $ReleaseCheck = new ReleaseCheck($config);
+        $ReleaseCheck = new ReleaseCheck();
         $TwigEnvironment->addGlobal('v', $ReleaseCheck::INSTALLED_VERSION);
 
         if ($config->configArr['debug']) {

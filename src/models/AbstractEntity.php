@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function bin2hex;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Permissions;
@@ -27,6 +28,8 @@ use Elabftw\Traits\EntityTrait;
 use function explode;
 use function is_bool;
 use PDO;
+use function random_bytes;
+use function sha1;
 
 /**
  * The mother class of Experiments and Database
@@ -35,56 +38,47 @@ abstract class AbstractEntity implements CreatableInterface
 {
     use EntityTrait;
 
-    /** @var Comments $Comments instance of Comments */
-    public $Comments;
+    public Comments $Comments;
 
-    /** @var Links $Links instance of Links */
-    public $Links;
+    public Links $Links;
 
-    /** @var Steps $Steps instance of Steps */
-    public $Steps;
+    public Steps $Steps;
 
-    /** @var Tags $Tags instance of Tags */
-    public $Tags;
+    public Tags $Tags;
 
-    /** @var Uploads $Uploads instance of Uploads */
-    public $Uploads;
+    public Uploads $Uploads;
 
-    /** @var Users $Users our user */
-    public $Users;
+    public Users $Users;
 
-    /** @var Pins $Pins */
-    public $Pins;
+    public Pins $Pins;
 
-    /** @var string $type experiments or items */
-    public $type = '';
+    // experiments or items
+    public string $type = '';
 
-    /** @var bool $bypassPermissions use that to ignore the canOrExplode calls */
-    public $bypassPermissions = false;
+    // use that to ignore the canOrExplode calls
+    public bool $bypassPermissions = false;
 
-    /** @var string $page will be defined in children classes */
-    public $page = '';
+    // will be defined in children classes
+    public string $page = '';
 
-    /** @var array $filters an array of arrays with filters for sql query */
-    public $filters = array();
+    // an array of arrays with filters for sql query
+    public array $filters = array();
 
-    /** @var string $idFilter sql of ids to include */
-    public $idFilter;
+    // sql of ids to include
+    public string $idFilter = '';
 
-    /** @var string $titleFilter inserted in sql */
-    public $titleFilter = '';
+    // inserted in sql
+    public string $titleFilter = '';
 
-    /** @var string $dateFilter inserted in sql */
-    public $dateFilter = '';
+    // inserted in sql
+    public string $dateFilter = '';
 
-    /** @var string $bodyFilter inserted in sql */
-    public $bodyFilter = '';
+    // inserted in sql
+    public string $bodyFilter = '';
 
-    /** @var bool $isReadOnly if we can read but not write to it */
-    public $isReadOnly = false;
+    public bool $isReadOnly = false;
 
-    /** @var TeamGroups $TeamGroups instance of TeamGroups */
-    protected $TeamGroups;
+    protected TeamGroups $TeamGroups;
 
     /**
      * Constructor
@@ -104,7 +98,6 @@ abstract class AbstractEntity implements CreatableInterface
         $this->Comments = new Comments($this, new Email(new Config(), $this->Users));
         $this->TeamGroups = new TeamGroups($this->Users);
         $this->Pins = new Pins($this);
-        $this->idFilter = '';
 
         if ($id !== null) {
             $this->setId($id);
@@ -117,13 +110,6 @@ abstract class AbstractEntity implements CreatableInterface
      * @return int the new item id
      */
     abstract public function duplicate(): int;
-
-    /**
-     * Destroy an item
-     *
-     * @return void
-     */
-    //abstract public function destroy(?int $id = null): void;
 
     /**
      * Lock/unlock
@@ -209,6 +195,10 @@ abstract class AbstractEntity implements CreatableInterface
         if ($displayParams->searchType === 'related') {
             $sql .= ' AND linkst.link_id = ' . $displayParams->related;
         }
+
+        // needUseridBind is to toggle the bindParam
+        // with php8 it will throw an error if you try and bind to a non existing token
+        $needUseridBind = false;
         // teamFilter is to restrict to the team for items only
         // as they have a team column
         $teamFilter = '';
@@ -222,6 +212,7 @@ abstract class AbstractEntity implements CreatableInterface
             $sql .= 'AND entity.userid = users2teams.users_id)';
         } else {
             // normal user will so only their own experiments
+            $needUseridBind = true;
             $sql .= 'AND entity.userid = :userid)';
         }
         // add all the teamgroups in which the user is
@@ -236,7 +227,7 @@ abstract class AbstractEntity implements CreatableInterface
             $this->titleFilter,
             $this->dateFilter,
             $this->bodyFilter,
-            Tools::getSearchSql($displayParams->query, 'and', '', $this->type),
+            Tools::getSearchSql($displayParams->query),
             $this->idFilter,
             'GROUP BY id ORDER BY',
             $displayParams->getOrderSql(),
@@ -251,7 +242,9 @@ abstract class AbstractEntity implements CreatableInterface
         $sql .= implode(' ', $sqlArr);
 
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        if ($needUseridBind === true) {
+            $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        }
         $this->Db->execute($req);
 
         $itemsArr = $req->fetchAll();
@@ -292,6 +285,18 @@ abstract class AbstractEntity implements CreatableInterface
         }
 
         return $item;
+    }
+
+    public function getTeamFromElabid(string $elabid): int
+    {
+        $elabid = Filter::sanitize($elabid);
+        $sql = 'SELECT users2teams.teams_id FROM ' . $this->type . ' AS entity
+            CROSS JOIN users2teams ON (users2teams.users_id = entity.userid)
+            WHERE entity.elabid = :elabid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':elabid', $elabid, PDO::PARAM_STR);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
     }
 
     /**
@@ -644,6 +649,18 @@ abstract class AbstractEntity implements CreatableInterface
 
         $this->Db->execute($req);
         return $req->rowCount() > 0;
+    }
+
+    /**
+     * Generate unique elabID
+     * This function is called during the creation of an experiment.
+     *
+     * @return string unique elabid with date in front of it
+     */
+    protected function generateElabid(): string
+    {
+        $date = Filter::kdate();
+        return $date . '-' . sha1(bin2hex(random_bytes(16)));
     }
 
     /**

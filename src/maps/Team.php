@@ -24,61 +24,40 @@ use PDO;
  */
 class Team implements MapInterface
 {
-    /** @var Db $Db */
-    private $Db;
+    private Db $Db;
 
-    /** @var int $id */
-    private $id;
+    private int $id;
 
-    /** @var string $name */
-    private $name;
+    private string $name = '';
 
-    /** @var int $deletableXp */
-    private $deletableXp;
+    private int $deletableXp = 1;
 
-    /** @var int $publicDb */
-    private $publicDb;
+    private int $publicDb = 0;
 
-    /** @var string $linkName */
-    private $linkName = 'Documentation';
+    private string $linkName = 'Documentation';
 
-    /** @var string $linkHref */
-    private $linkHref = 'https://doc.elabftw.net';
+    private string $linkHref = 'https://doc.elabftw.net';
 
-    /** @var string|null $stamplogin */
-    private $stamplogin;
+    private string $stamplogin = '';
 
-    /** @var string|null $stamppass */
-    private $stamppass;
+    private string $stamppass = '';
 
-    /** @var string|null $stampprovider url for the team's timestamping provider */
-    private $stampprovider;
+    private string $stampprovider = '';
 
-    /** @var string|null $stampcert path to the cert for the team's timestamping provider */
-    private $stampcert;
+    private string $stampcert = '';
 
-    /** @var string|null $orgid */
-    private $orgid;
+    private string $orgid = '';
 
-    /** @var int $doForceCanread */
-    private $doForceCanread;
+    private int $doForceCanread;
 
-    /** @var int $doForceCanwrite */
-    private $doForceCanwrite;
+    private int $doForceCanwrite;
 
-    /** @var string $forceCanread */
-    private $forceCanread;
+    private string $forceCanread = '';
 
-    /** @var string $forceCanwrite */
-    private $forceCanwrite;
+    private string $forceCanwrite = '';
 
-    /** @var int $visible */
-    private $visible;
+    private int $visible;
 
-    /**
-     * Constructor
-     *
-     */
     public function __construct(int $id)
     {
         $this->id = $id;
@@ -293,8 +272,6 @@ class Team implements MapInterface
 
     /**
      * Read from the current team
-     *
-     * @return array
      */
     private function read(): array
     {

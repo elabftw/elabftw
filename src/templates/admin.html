@@ -134,16 +134,16 @@
 
     <!-- SHOW EXISTING GROUPS -->
     <div id='team_groups_div'>
-    <hr>
+      <hr>
       <h3>{{ 'Existing groups'|trans }}</h3>
       {% for teamGroup in teamGroupsArr %}
         <div class='box'>
-          <a href='#'>
-            <i class='fas fa-trash-alt clickable teamGroupDelete align-right' data-id='{{ teamGroup.id }}'></i>
+          <a class='clickable teamGroupDelete align-right' data-id='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>
+            <i class='fas fa-trash-alt'></i>
           </a>
           <h3 title='Click to Edit' class='editable teamgroup_name' data-id='{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
           {% for user in teamGroup.users %}
-            <span class='user-badge clickable rmUserFromGroup' data-user='{{ user.userid }}' data-group='{{ teamGroup.id }}'>{{ user.fullname|raw }}</span>
+            <span class='user-badge clickable rmUserFromGroup' data-user='{{ user.userid }}' data-group='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>{{ user.fullname|raw }}</span>
           {% endfor %}
           <input class='form-control col-md-4 addUserToGroup d-block mt-2' autocomplete='off' data-group={{ teamGroup.id }} placeholder='{{ 'Add user'|trans }}' type='text' />
         </div>
@@ -202,7 +202,7 @@
             <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button btn btn-primary statusSave'>{{ 'Save'|trans }}</button></li>
 
             <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button btn btn-danger statusDestroy' >{{ 'Delete'|trans }}</button></li>
-            <li class='list-inline-item'><i class='fas fa-sort draggable sortableHandle align-right fa-2x'></i></li>
+            <li class='list-inline-item'><span class='draggable sortableHandle align-right'><i class='fas fa-sort fa-2x'></i></span></li>
           </ul>
         </li>
       {% endfor %}
@@ -244,7 +244,7 @@
   <div class='box'>
     <h3>{{ 'Database Items Types'|trans }}</h3>
     <hr>
-    <ul class='list-group form-group draggable sortable' data-axis='y' data-table='items_types'>
+    <ul class='list-group form-group sortable' data-axis='y' data-table='items_types'>
       {% for itemType in itemsTypesArr %}
         <li id='itemstypes_{{ itemType.category_id }}' class='list-group-item'>
           <ul class='list-inline'>
@@ -273,7 +273,7 @@
             <li class='list-inline-item mt-2 itemsTypesEditor' id='itemsTypesEditor_{{ itemType.category_id }}'>
               <textarea class='' id='itemsTypesTemplate_{{ itemType.category_id }}'>{{ itemType.template }}</textarea>
             </li>
-            <li class='list-inline-item'><i class='fas fa-sort sortableHandle align-right fa-2x'></i></li>
+            <li class='list-inline-item'><span class='sortableHandle draggable align-right'><i class='fas fa-sort fa-2x'></i></span></li>
           </ul>
         </li>
       {% endfor %}
@@ -391,7 +391,7 @@
     <hr>
     <div class='mt-2' id='tag_manager'>
       {% for tag in tagsArr %}
-        <p><i class='fas fa-trash-alt clickable tagDestroy mr-1' title='Delete' data-tagid='{{ tag.id }}'></i> <span class='tag-editable editable' data-tagid='{{ tag.id }}'>{{ tag.tag|raw }}</span></p>
+        <p><a class='mr-1 clickable tagDestroy' data-tagid='{{ tag.id }}' title='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></a><span class='tag-editable editable' data-tagid='{{ tag.id }}'>{{ tag.tag|raw }}</span></p>
       {% endfor %}
     </div>
   </div>

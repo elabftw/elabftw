@@ -34,7 +34,7 @@ try {
         $AuthResponse = $AuthService->assertIdpResponse();
 
         // if the user is in several teams, we need to redirect to the team selection
-        if ($AuthResponse->selectedTeam === null) {
+        if ($AuthResponse->isInSeveralTeams) {
             $App->Session->set('team_selection_required', true);
             $App->Session->set('team_selection', $AuthResponse->selectableTeams);
             $App->Session->set('auth_userid', $AuthResponse->userid);

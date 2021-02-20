@@ -68,21 +68,23 @@
 
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
   <div class='dropdown'>
-    <i data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' class='dropdown-toggle fas fa-ellipsis-h fa-2x fa-pull-right clickable' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'></i>
-    <div class='dropdown-menu' aria-label='{{ 'More options'|trans }}'>
+    <a class='clickable align-right' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
+      <i class='fas fa-ellipsis-h fa-2x'></i>
+    </a>
+    <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
       <!-- MANAGE PERMISSIONS -->
       {% if Entity.type == 'items' or Entity.entityData.userid == App.Users.userData.userid %}
-        <a class='dropdown-item modalToggle' data-modal='permModal' href='#'><i class='fas fa-share-alt' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
+        <a class='clickable dropdown-item modalToggle' data-modal='permModal'><i class='fas fa-share-alt fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
       {% endif %}
       <!-- SWITCH EDITOR -->
-      <a class='dropdown-item switchEditor' id='iHazEditor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt'></i> {{ 'Switch editor'|trans }}</a>
+      <a class='dropdown-item switchEditor' id='iHazEditor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</a>
       <!-- REVISIONS -->
       {% if revNum > 0 %}
-        <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history'></i> {{ revNum }} {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
+        <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ revNum }} {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
       {% endif %}
 
       <div class='dropdown-divider'></div>
-      <a class='dropdown-item entityDestroy hover-danger' href='#'><i class='fas fa-trash-alt' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</a>
+      <a class='dropdown-item entityDestroy hover-danger' href='#'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</a>
     </div>
   </div>
 

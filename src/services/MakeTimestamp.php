@@ -42,39 +42,33 @@ class MakeTimestamp extends AbstractMake
     /** default hash algo for file */
     private const HASH_ALGORITHM = 'sha256';
 
-    /** @var Experiments $Entity instance of Experiments */
+    /** @var Experiments $Entity */
     protected $Entity;
 
-    /** @var Config $Config instance of Config */
-    private $Config;
+    private Config $Config;
 
-    /** @var string $pdfPath full path to pdf */
-    private $pdfPath = '';
+    private string $pdfPath = '';
 
-    /** @var string $pdfRealName name of the pdf (elabid-timestamped.pdf) */
-    private $pdfRealName = '';
+    // name of the pdf (elabid-timestamped.pdf)
+    private string $pdfRealName = '';
 
-    /** @var string $pdfLongName a hash */
-    private $pdfLongName = '';
+    // a random long string
+    private string $pdfLongName = '';
 
-    /** @var array $stampParams config (url, login, password, cert) */
-    private $stampParams = array();
+    // config (url, login, password, cert)
+    private array $stampParams = array();
 
-    /** @var array $trash things that get deleted with destruct method */
-    private $trash = array();
+    // things that get deleted with destruct method
+    private array $trash = array();
 
-    /** @var string $requestfilePath where we store the request file */
-    private $requestfilePath = '';
+    // where we store the request file
+    private string $requestfilePath = '';
 
-    /** @var string $responsefilePath where we store the asn1 token */
-    private $responsefilePath = '';
+    // where we store the asn1 token
+    private string $responsefilePath = '';
 
     /**
      * Pdf is generated on instantiation and after you need to call timestamp()
-     *
-     * @param Config $config
-     * @param Teams $teams
-     * @param Experiments $entity
      */
     public function __construct(Config $config, Teams $teams, Experiments $entity)
     {

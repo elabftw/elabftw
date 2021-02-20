@@ -103,7 +103,7 @@ $(document).ready(function() {
           fileType: 'json',
           string: JSON.stringify(editor.get())
         }).done(function(json) {
-          $('#filesdiv').load(window.location.href + ' #filesdiv');
+          $('#filesdiv').load(window.location.href + ' #filesdiv > *');
           currentFileItemID = String(json.uploadId);
           notif(json);
         });

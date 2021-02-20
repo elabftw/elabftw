@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function array_column;
+use function count;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -17,6 +19,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Interfaces\UpdatableInterface;
+use function implode;
 use PDO;
 
 /**
@@ -24,17 +27,10 @@ use PDO;
  */
 class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterface
 {
-    /** @var AbstractEntity $Entity an instance of AbstractEntity */
-    public $Entity;
+    public AbstractEntity $Entity;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
-    /**
-     * Constructor
-     *
-     * @param AbstractEntity $entity
-     */
     public function __construct(AbstractEntity $entity)
     {
         $this->Db = Db::getConnection();
@@ -43,7 +39,6 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
 
     /**
      * Create a tag
-     *
      */
     public function create(ParamsProcessor $params): int
     {
@@ -285,36 +280,32 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
      */
     public function getIdFromTags(array $tags, int $team): array
     {
-        $tagIds = array();
+        $results = array();
+        $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
+        $req = $this->Db->prepare($sql);
         foreach ($tags as $tag) {
-            $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
-            $req = $this->Db->prepare($sql);
             $req->bindParam(':tag', $tag);
             $req->bindParam(':team', $team, PDO::PARAM_INT);
             $req->execute();
-            $results = $req->fetchAll();
-            if ($results === false) {
-                return array();
-            }
-            foreach ($results as $res) {
-                $tagIds[] = (int) $res['id'];
+            $res = $req->fetch();
+            if ($res !== false) {
+                $results[] = $res;
             }
         }
+        $tagIds = array_column($results, 'id');
 
+        // look for item ids that have all the tags not only one of them
         $itemIds = array();
-        foreach ($tagIds as $tagid) {
-            $sql = 'SELECT item_id FROM tags2entity WHERE tag_id = :tagid AND item_type = :type';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':tagid', $tagid, PDO::PARAM_INT);
-            $req->bindParam(':type', $this->Entity->type);
-            $req->execute();
-            $results = $req->fetchAll();
-            if ($results === false) {
-                return array();
-            }
-            foreach ($results as $res) {
-                $itemIds[] = (int) $res['item_id'];
-            }
+        $sql = 'SELECT item_id FROM `tags2entity` WHERE tag_id IN (' . implode(',', $tagIds) . ')
+            AND item_type = "' . $this->Entity->type . '" GROUP By item_id HAVING COUNT(DISTINCT tag_id) = ' . count($tagIds);
+        $req = $this->Db->prepare($sql);
+        $req->execute();
+        $results = $req->fetchAll();
+        if ($results === false) {
+            return array();
+        }
+        foreach ($results as $res) {
+            $itemIds[] = (int) $res['item_id'];
         }
         return $itemIds;
     }

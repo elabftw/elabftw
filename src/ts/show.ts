@@ -120,7 +120,7 @@ $(document).ready(function(){
 
   // INVERT SELECTION
   $('#invertSelection').on('click', function() {
-    ($('.item input[type=checkbox]') as any).each(function () {
+    ($('.item input[type=checkbox]') as JQuery<HTMLInputElement>).each(function () {
       this.checked = !this.checked;
       if ($(this).prop('checked')) {
         $(this).parent().parent().css('background-color', bgColor);
@@ -269,11 +269,18 @@ $(document).ready(function(){
     });
   });
 
+  // change sort-icon based on sort value: asc or desc
+  $('.orderBy').each(function() {
+    if ($('select[name="order"]').val() === $(this).data('orderby')) {
+      $(this).find('[data-fa-i2svg]').removeClass('fa-sort').addClass($('select[name="sort"]').val() === 'asc' ? 'fa-sort-up': 'fa-sort-down');
+    }
+  });
+
   // Sort column in tabular mode
   $(document).on('click', '.orderBy', function() {
-    // The attribute target-sort of the triangle icon next to the title contains the value of the corresponding
-    // option of the select field <select name="order"> that will be selected in the form.
-    // For example: <i class='fas fa-sort orderBy' data-order='title'></i>, will select the option 'title'
+    // The attribute data-orderby of the anchor element next to the title contains the value of the corresponding
+    // option of the select field <select name='order'> that will be selected in the form.
+    // For example: <a class='clickable orderBy' data-orderby='title'>...</a>, will select the option 'title'
     // in the <select name='order'>
     const targetSort = $(this).data('orderby');
     const selectOrder = $('select[name="order"]');

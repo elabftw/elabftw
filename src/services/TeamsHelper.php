@@ -15,11 +15,9 @@ use PDO;
 
 class TeamsHelper
 {
-    /** @var Db $Db db connection */
-    private $Db;
+    private Db $Db;
 
-    /** @var int $team */
-    private $team;
+    private int $team;
 
     public function __construct(int $team)
     {

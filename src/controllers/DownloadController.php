@@ -13,30 +13,25 @@ namespace Elabftw\Controllers;
 use function dirname;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Services\Filter;
-use finfo;
-use function function_exists;
 use function is_readable;
 use function substr;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\Mime\MimeTypes;
 
 /**
  * To download uploaded files
  */
 class DownloadController implements ControllerInterface
 {
-    /** @var string $longName the hash name of the file on disk */
-    private $longName;
+    // the human-friendly name that we will give to the downloaded file */
+    private string $realName = 'unnamed_file';
 
-    /** @var string $realName the human-friendly name that we will give to the downloaded file */
-    private $realName;
+    // do we tell the browser to force the download?
+    private bool $forceDownload = false;
 
-    /** @var bool $forceDownload do we tell the browser to force the download? */
-    private $forceDownload = false;
-
-    /** @var string $filePath the full file path */
-    private $filePath;
+    private string $filePath;
 
     public function __construct(string $longName, string $realName = null, bool $forceDownload = false)
     {
@@ -51,11 +46,7 @@ class DownloadController implements ControllerInterface
         }
         $this->filePath = $basePath . $fullFilePath;
         $this->realName = Filter::forFilesystem($realName ?? '');
-        // if the name is not sent along, just use the longName instead
-        if ($this->realName === null) {
-            $this->realName = $longName;
-        }
-        if ($this->realName === '') {
+        if (empty($this->realName)) {
             $this->realName = 'unnamed_file';
         }
         $this->forceDownload = $forceDownload;
@@ -81,14 +72,9 @@ class DownloadController implements ControllerInterface
      */
     private function getMimeType(): string
     {
-        $mime = false;
-        if (function_exists('mime_content_type')) {
-            $mime = mime_content_type($this->filePath);
-        } elseif (function_exists('finfo_file')) {
-            $finfo = new finfo(FILEINFO_MIME);
-            $mime = $finfo->file($this->filePath);
-        }
-        if ($mime === false) {
+        $mimeTypes = new MimeTypes();
+        $mime = $mimeTypes->guessMimeType($this->filePath);
+        if ($mime === null) {
             return 'application/force-download';
         }
         return $mime;

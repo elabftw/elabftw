@@ -116,6 +116,19 @@ try {
         ));
     }
 
+    // SHARE
+    if ($Request->query->has('getShareLink')) {
+        if (!($Entity instanceof Experiments || $Entity instanceof Database)) {
+            throw new IllegalActionException('Can only share experiments or items.');
+        }
+        $Entity->canOrExplode('read');
+        $link = Tools::getUrl($Request) . '/' . $Entity->page . '.php?mode=view&id=' . $Entity->id . '&elabid=' . $Entity->entityData['elabid'];
+        $Response->setData(array(
+            'res' => true,
+            'msg' => $link,
+        ));
+    }
+
     /**
      * POST REQUESTS
      *
@@ -173,19 +186,6 @@ try {
         $Response->setData(array(
             'res' => true,
             'msg' => $id,
-        ));
-    }
-
-    // SHARE
-    if ($Request->request->has('getShareLink')) {
-        if (!$Entity instanceof Experiments) {
-            throw new IllegalActionException('Can only share experiments.');
-        }
-        $Entity->canOrExplode('read');
-        $link = Tools::getUrl($Request) . '/experiments.php?mode=view&id=' . $Entity->id . '&elabid=' . $Entity->entityData['elabid'];
-        $Response->setData(array(
-            'res' => true,
-            'msg' => $link,
         ));
     }
 

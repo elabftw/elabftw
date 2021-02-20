@@ -22,17 +22,13 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Permissions
 {
-    /** @var Users $Users instance of Users */
-    private $Users;
+    private Users $Users;
 
-    /** @var Teams $Teams instance of Teams */
-    private $Teams;
+    private Teams $Teams;
 
-    /** @var TeamGroups $TeamGroups instance of TeamsGroups */
-    private $TeamGroups;
+    private TeamGroups $TeamGroups;
 
-    /** @var array $item the item to check */
-    private $item;
+    private array $item;
 
     /**
      * Constructor
@@ -50,8 +46,6 @@ class Permissions
 
     /**
      * Get permissions for an experiment/item
-     *
-     * @return array
      */
     public function forExpItem(): array
     {
@@ -69,8 +63,7 @@ class Permissions
 
         // if we have the elabid in the URL, allow read access to all
         $Request = Request::createFromGlobals();
-        // make sure we check if entity has elabid because items won't have one (null)
-        if (isset($this->item['elabid']) && ($this->item['elabid'] === $Request->query->get('elabid'))) {
+        if ($this->item['elabid'] === $Request->query->get('elabid')) {
             return array('read' => true, 'write' => $write);
         }
 
@@ -104,8 +97,6 @@ class Permissions
 
     /**
      * Get permissions for a template
-     *
-     * @return array
      */
     public function forTemplates(): array
     {
@@ -153,8 +144,6 @@ class Permissions
 
     /**
      * Get the write permission for an exp/item
-     *
-     * @return bool
      */
     private function getWrite(): bool
     {

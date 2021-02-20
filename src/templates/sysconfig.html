@@ -1,43 +1,20 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<!-- Get the updates.ini file to check for updates -->
-{% if not ReleaseCheck.success %}
-    {{ 'Error getting latest version information from server! Check the proxy setting.'|msg('ko') }}
-{% endif %}
-
 <!-- display current and latest version -->
-{% if ReleaseCheck.success and ReleaseCheck.updateIsAvailable %}
-    {% set style = 'color:red' %}
-{% endif %}
-<p>{{ 'Installed version:'|trans }} <span style='{{ style }}'>{{ constant('INSTALLED_VERSION', ReleaseCheck) }}</span>
-{% if ReleaseCheck.success %}
-    <!-- show a little green check if we have latest version -->
-    {% if not ReleaseCheck.updateIsAvailable %}
-        <i style='color:green' class='fas fa-check fa-lg align-top' title="Good job!"></i>
-    {% endif %}
-{% endif %}
+<p>{{ 'Installed version:'|trans }} <span id='currentVersion'>{{ constant('INSTALLED_VERSION', ReleaseCheck) }}</span>
 <br>
-{% if ReleaseCheck.success %}
-    <!-- display latest version -->
-    {{ 'Latest version:'|trans }} {{ ReleaseCheck.getLatestVersion }}</p>
+{{ 'Latest version:'|trans }} <span id='latestVersion'></span>
 
-    <!-- if we don't have the latest version, show button redirecting to doc -->
-    {% if ReleaseCheck.updateIsAvailable %}
-        {{ '%s - A new version is available! %sUpdate elabftw%sRead changelog%s'|trans|format(
-            ReleaseCheck.getReleaseDate,
-            "<a href='https://doc.elabftw.net/how-to-update.html' class='button btn btn-primary text-white'>",
-            "</a><a href='" ~ ReleaseCheck.getChangelogLink ~ "' class='button btn btn-primary text-white'>",
-            "</a>")|msg('warning') }}
-    {% endif %}
-
-    {% if App.Config.configArr.mail_from == 'notconfigured@example.com' %}
-        {{ 'Please finalize install: %slink to documentation%s.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#setting-up-email'>", "</a>")|msg('ko') }}
-    {% endif %}
+<!-- show error if the email is not configured -->
+{% if App.Config.configArr.mail_from == 'notconfigured@example.com' %}
+    {{ 'Please finalize install: %slink to documentation%s.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#setting-up-email'>", "</a>")|msg('ko') }}
 {% endif %}
 
 <p>Docker image version: {{ elabimgVersion }}<br />
 MySQL database structure version: {{ App.Config.configArr.schema }}</p>
+
+<div id='versionNotifZone'></div>
 
 <ul id='menu'>
         <li class='tabhandle' id='tab1'>{{ 'Server'|trans }}</li>
@@ -312,6 +289,12 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     <input class='form-control col-md-4' type='number' value='{{ App.Config.configArr.ban_time }}' name='ban_time' id='ban_time' />
     <p class='smallgray'>
       {{ 'To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems.'|trans }}
+    </p>
+
+    <label for='autologout_time'>{{ 'Time after which inactive sessions are invalidated (force logout) (in seconds):'|trans }}</label>
+    <input class='form-control col-md-4' type='number' value='{{ App.Config.configArr.autologout_time }}' name='autologout_time' id='autologout_time' />
+    <p class='smallgray'>
+      {{ 'Set to 0 to disable this feature.'|trans }}
     </p>
     <div class='mt-4 text-center'>
       <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
@@ -624,7 +607,9 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <h4>Existing Identity Providers</h4>
             {% for idp in idpsArr %}
                 <div class='box' id='idps_div'>
-                  <i class='fas fa-trash-alt fa-2x clickable idpsDestroy align-right' title='Delete' data-id='{{ idp.id }}'></i>
+                  <a class='clickable idpsDestroy align-right' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
+                      <i class='fas fa-trash-alt fa-2x'></i>
+                  </a>
                   <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>
                   <form method='post' action='app/controllers/IdpsController.php'>
                     <div class='form-group'>

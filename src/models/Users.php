@@ -32,28 +32,17 @@ use function time;
  */
 class Users
 {
-    /** @var bool $needValidation flag to check if we need validation or not */
-    public $needValidation = false;
+    public bool $needValidation = false;
 
-    /** @var array $userData what you get when you read() */
-    public $userData = array();
+    public array $userData = array();
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
-    /** @var int $team */
-    private $team;
+    private int $team = 0;
 
-    /**
-     * Constructor
-     *
-     * @param int|null $userid
-     * @param int|null $team
-     */
     public function __construct(?int $userid = null, ?int $team = null)
     {
         $this->Db = Db::getConnection();
-        $this->team = 0;
         if ($team !== null) {
             $this->team = $team;
         }
@@ -64,8 +53,6 @@ class Users
 
     /**
      * Populate userData property
-     *
-     * @param int $userid
      */
     public function populate(int $userid): void
     {
@@ -186,9 +173,6 @@ class Users
 
     /**
      * Get info about a user
-     *
-     * @param int $userid
-     * @return array
      */
     public function read(int $userid): array
     {
@@ -209,9 +193,6 @@ class Users
 
     /**
      * Get users matching a search term for consumption in autocomplete
-     *
-     * @param string $term
-     * @return array
      */
     public function getList(string $term): array
     {
@@ -225,9 +206,6 @@ class Users
 
     /**
      * Select by email
-     *
-     * @param string $email
-     * @return void
      */
     public function populateFromEmail(string $email): void
     {
@@ -249,7 +227,6 @@ class Users
      *
      * @param string $query the searched term
      * @param bool $teamFilter toggle between sysadmin/admin view
-     * @return array
      */
     public function readFromQuery(string $query, bool $teamFilter = false): array
     {
@@ -284,8 +261,6 @@ class Users
 
     /**
      * Read all users from the team
-     *
-     * @return array
      */
     public function readAllFromTeam(): array
     {
@@ -313,9 +288,6 @@ class Users
 
     /**
      * Get email for every single user
-     *
-     * @param bool $fromTeam
-     * @return array
      */
     public function getAllEmails(bool $fromTeam = false): array
     {
@@ -340,7 +312,6 @@ class Users
      * Update user from the editusers template
      *
      * @param array<string, mixed> $params POST
-     * @return void
      */
     public function update(array $params): void
     {
@@ -403,7 +374,6 @@ class Users
      * Update things from UCP
      *
      * @param array<string, mixed> $params
-     * @return void
      */
     public function updateAccount(array $params): void
     {
@@ -465,8 +435,6 @@ class Users
 
     /**
      * Validate current user instance
-     *
-     * @return void
      */
     public function validate(): void
     {
@@ -481,8 +449,6 @@ class Users
 
     /**
      * Archive/Unarchive a user
-     *
-     * @return void
      */
     public function toggleArchive(): void
     {
@@ -494,8 +460,6 @@ class Users
 
     /**
      * Lock all the experiments owned by user
-     *
-     * @return void
      */
     public function lockExperiments(): void
     {
@@ -509,8 +473,6 @@ class Users
 
     /**
      * Destroy user. Will completely remove everything from the user.
-     *
-     * @return void
      */
     public function destroy(): void
     {

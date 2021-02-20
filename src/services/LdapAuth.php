@@ -24,20 +24,15 @@ use LdapRecord\Connection;
  */
 class LdapAuth implements AuthInterface
 {
-    /** @var Connection $connection */
-    private $connection;
+    private Connection $connection;
 
-    /** @var string $email */
-    private $email = '';
+    private string $email = '';
 
-    /** @var string $password */
-    private $password = '';
+    private string $password = '';
 
-    /** @var AuthResponse $AuthResponse */
-    private $AuthResponse;
+    private AuthResponse $AuthResponse;
 
-    /** @var array $configArr */
-    private $configArr;
+    private array $configArr;
 
     public function __construct(Connection $connection, array $configArr, string $email, string $password)
     {

@@ -277,6 +277,7 @@ CREATE TABLE `items` (
   `title` varchar(255) DEFAULT NULL,
   `date` int(10) UNSIGNED NOT NULL,
   `body` mediumtext,
+  `elabid` varchar(255) NOT NULL,
   `rating` tinyint(10) DEFAULT '0',
   `category` int(255) UNSIGNED NOT NULL,
   `locked` tinyint(3) UNSIGNED DEFAULT NULL,

@@ -12,6 +12,9 @@
   <meta http-equiv='Content-type' content='text/html;charset=UTF-8' />
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
+  {% if App.Config.configArr.autologout_time != '0' %}
+    <meta http-equiv='refresh' content='{{ App.Config.configArr.autologout_time }};url=app/logout.php' />
+  {% endif %}
   <meta name='csrf-token' content='{{ App.Csrf.getToken }}'/>
   <link rel='icon' type='image/ico' href='app/img/favicon.ico' />
   <link rel='apple-touch-icon' href='app/img/apple-touch-icon.png' />
@@ -27,7 +30,11 @@
   <link rel='stylesheet' media='all' href='app/css/elabftw.min.css?v={{ v }}' />
   <link rel='stylesheet' media='all' href='app/css/vendor.min.css?v={{ v }}' />
 
-  <script defer src='app/js/vendors.bundle.js?v={{ v }}'></script>
+  {% if App.Config.configArr.devmode %}
+    <script defer src='app/js/vendors-node_modules_fancyapps_fancybox_dist_jquery_fancybox_js-node_modules_fortawesome_font-4ecb99.bundle.js?v={{ v }}'></script>
+  {% else %}
+    <script defer src='app/js/vendors.bundle.js?v={{ v }}'></script>
+  {% endif %}
   <!-- the main JS bundle with all the elabftw TS code (see builder.js) -->
   <script defer src='app/js/main.bundle.js?v={{ v }}'></script>
   <!-- concatenated JS built by grunt for non es6 libraries (see Gruntfile.js) -->
@@ -92,7 +99,7 @@
               {% endif %}
 
             {% endif %}
-            <a class='dropdown-item modalToggle' data-modal='helpModal' href='#'><i class='fas fa-question-circle fa-fw'></i> {{ 'Help'|trans }}</a>
+            <a class='clickable dropdown-item modalToggle' data-modal='helpModal'><i class='fas fa-question-circle fa-fw'></i> {{ 'Help'|trans }}</a>
             <div class='dropdown-divider'></div>
             <a class='dropdown-item logout' href='#'><i class='fas fa-sign-out-alt fa-fw'></i> {{ 'Logout'|trans }}</a>
           </div>

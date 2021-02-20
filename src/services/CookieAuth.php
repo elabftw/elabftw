@@ -20,17 +20,13 @@ use Elabftw\Interfaces\AuthInterface;
  */
 class CookieAuth implements AuthInterface
 {
-    /** @var Db $Db SQL Database */
-    private $Db;
+    private Db $Db;
 
-    /** @var string $token */
-    private $token;
+    private string $token;
 
-    /** @var int $tokenTeam */
-    private $tokenTeam;
+    private int $tokenTeam;
 
-    /** @var AuthResponse $AuthResponse */
-    private $AuthResponse;
+    private AuthResponse $AuthResponse;
 
     public function __construct(string $token, string $tokenTeam)
     {

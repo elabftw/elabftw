@@ -26,20 +26,15 @@ use PDO;
  */
 class LocalAuth implements AuthInterface
 {
-    /** @var Db $Db SQL Database */
-    private $Db;
+    private Db $Db;
 
-    /** @var string $email */
-    private $email = '';
+    private string $email = '';
 
-    /** @var int $userid */
-    private $userid;
+    private int $userid;
 
-    /** @var string $password */
-    private $password = '';
+    private string $password = '';
 
-    /** @var AuthResponse $AuthResponse */
-    private $AuthResponse;
+    private AuthResponse $AuthResponse;
 
     public function __construct(string $email, string $password)
     {
@@ -64,7 +59,6 @@ class LocalAuth implements AuthInterface
 
     /**
      * Get the salt for the user so we can generate a correct hash
-     *
      */
     private function getSalt(): string
     {

@@ -24,21 +24,12 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Comments implements CrudInterface
 {
-    /** @var AbstractEntity $Entity instance of Experiments or Database */
-    public $Entity;
+    public AbstractEntity $Entity;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
-    /** @var Email $Email instance of Email */
-    private $Email;
+    private Email $Email;
 
-    /**
-     * Constructor
-     *
-     * @param AbstractEntity $entity
-     * @param Email $email
-     */
     public function __construct(AbstractEntity $entity, Email $email)
     {
         $this->Db = Db::getConnection();
@@ -46,9 +37,6 @@ class Comments implements CrudInterface
         $this->Email = $email;
     }
 
-    /**
-     * Create a comment
-     */
     public function create(ParamsProcessor $params): int
     {
         $sql = 'INSERT INTO ' . $this->Entity->type . '_comments(datetime, item_id, comment, userid)
@@ -66,11 +54,6 @@ class Comments implements CrudInterface
         return $this->Db->lastInsertId();
     }
 
-    /**
-     * Read comments for an entity id
-     *
-     * @return array comments for this entity
-     */
     public function read(): array
     {
         $sql = 'SELECT ' . $this->Entity->type . "_comments.*,
@@ -88,9 +71,6 @@ class Comments implements CrudInterface
         return $res;
     }
 
-    /**
-     * Update a comment
-     */
     public function update(ParamsProcessor $params): string
     {
         $sql = 'UPDATE ' . $this->Entity->type . '_comments SET
@@ -105,9 +85,6 @@ class Comments implements CrudInterface
         return $params->comment;
     }
 
-    /**
-     * Destroy a comment
-     */
     public function destroy(int $id): bool
     {
         $sql = 'DELETE FROM ' . $this->Entity->type . '_comments WHERE id = :id AND userid = :userid';

@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Traits\CsvTrait;
 
@@ -21,14 +22,11 @@ class MakeCsv extends AbstractMake
 {
     use CsvTrait;
 
-    /** @var string $idList list of id to make csv from */
-    private $idList;
+    // list of id to make csv from, separated by spaces: 4 8 15 16 23 42
+    private string $idList;
 
     /**
      * Give me a list of "id id id" and a type, I make good csv for you
-     *
-     * @param AbstractEntity $entity
-     * @param string $idList 1 4 5 2
      */
     public function __construct(AbstractEntity $entity, string $idList)
     {
@@ -38,8 +36,6 @@ class MakeCsv extends AbstractMake
 
     /**
      * Return a nice name for the file
-     *
-     * @return string
      */
     public function getFileName(): string
     {
@@ -48,21 +44,17 @@ class MakeCsv extends AbstractMake
 
     /**
      * Here we populate the first row: it will be the column names
-     *
-     * @return array
      */
     protected function getHeader(): array
     {
         if ($this->Entity instanceof Experiments) {
             return array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
         }
-        return  array('id', 'date', 'title', 'description', 'category', 'rating', 'url');
+        return  array('id', 'date', 'title', 'description', 'category', 'elabid', 'url', 'rating');
     }
 
     /**
      * Generate an array for the requested data
-     *
-     * @return array
      */
     protected function getRows(): array
     {
@@ -72,20 +64,20 @@ class MakeCsv extends AbstractMake
             $this->Entity->setId((int) $id);
             $permissions = $this->Entity->getPermissions();
             if ($permissions['read']) {
-                if ($this->Entity instanceof Experiments) {
-                    $elabidOrRating = $this->Entity->entityData['elabid'];
-                } else {
-                    $elabidOrRating = $this->Entity->entityData['rating'];
-                }
-                $rows[] = array(
+                $row = array(
                     $this->Entity->entityData['id'],
                     $this->Entity->entityData['date'],
                     htmlspecialchars_decode((string) $this->Entity->entityData['title'], ENT_QUOTES | ENT_COMPAT),
                     html_entity_decode(strip_tags(htmlspecialchars_decode((string) $this->Entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
                     htmlspecialchars_decode((string) $this->Entity->entityData['category'], ENT_QUOTES | ENT_COMPAT),
-                    $elabidOrRating,
+                    $this->Entity->entityData['elabid'],
                     $this->getUrl(),
                 );
+                // add rating if it's an item
+                if ($this->Entity instanceof Database) {
+                    $row[] = $this->Entity->entityData['rating'];
+                }
+                $rows[] = $row;
             }
         }
 

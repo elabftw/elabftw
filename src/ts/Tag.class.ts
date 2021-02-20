@@ -28,7 +28,7 @@ export default class Tag extends Crud {
         itemId: itemId,
       },
     }).then(() => {
-      $('#tags_div_' + itemId).load(window.location.href + ' #tags_div_' + itemId);
+      $('#tags_div_' + itemId).load(window.location.href + ' #tags_div_' + itemId + ' > *');
     });
   }
 
@@ -44,7 +44,7 @@ export default class Tag extends Crud {
           itemId: itemId,
         },
       }).then(() => {
-        $('#tags_div_' + itemId).load(window.location.href + ' #tags_div_' + itemId);
+        $('#tags_div_' + itemId).load(window.location.href + ' #tags_div_' + itemId + ' > *');
       });
     }
   }

@@ -19,7 +19,7 @@ jobs:
     # To see the list of pre-built images that CircleCI provides for most common languages see
     # https://circleci.com/docs/2.0/circleci-images/
     docker:
-    - image: circleci/php:7.3-cli-node-browsers
+    - image: circleci/php:8.0-cli-node-browsers
     steps:
       # Machine Setup
       #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
@@ -46,8 +46,6 @@ jobs:
       - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mariadb-server graphicsmagick libgraphicsmagick1-dev libldap2-dev
       - run: sudo service mysql start
       - run: sudo docker-php-ext-install gd gettext zip pdo_mysql exif ldap
-      - run: yes|sudo pecl install gmagick-2.0.5RC1
-      - run: sudo docker-php-ext-enable gmagick
       # The following line was run implicitly in your 1.0 builds based on what CircleCI inferred about the structure of your project. In 2.0 you need to be explicit about which commands should be run. In some cases you can discard inferred commands if they are not relevant to your project.
       - run:
           name: Install JS dependencies

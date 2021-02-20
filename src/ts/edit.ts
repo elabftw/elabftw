@@ -37,8 +37,8 @@ $(document).ready(function() {
     init: function(): void {
 
       // add additional parameters (id and type)
-      this.on('sending', function(file: string, xhr: string, formData: any) {
-        formData.append('upload', true);
+      this.on('sending', function(file: string, xhr: string, formData: FormData) {
+        formData.append('upload', '1');
         formData.append('id', $('#info').data('id'));
         formData.append('type', $('#info').data('type'));
       });
@@ -50,7 +50,7 @@ $(document).ready(function() {
         notif(json);
         // reload the #filesdiv once the file is uploaded
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-          $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
+          $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv > *', function() {
             displayMolFiles();
             display3DMolecules(true);
             displayPlasmidViewer();

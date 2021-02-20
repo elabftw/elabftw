@@ -19,13 +19,8 @@ use function file;
  */
 class Sql
 {
-    /** @var Db $Db SQL Database */
-    private $Db;
+    private Db $Db;
 
-    /**
-     * Constructor
-     *
-     */
     public function __construct()
     {
         $this->Db = Db::getConnection();
@@ -33,9 +28,6 @@ class Sql
 
     /**
      * Read a SQL file from src/sql folder and execute the contents
-     *
-     * @param string $filename
-     * @return void
      */
     public function execFile(string $filename): void
     {

@@ -20,21 +20,12 @@ use PDO;
  */
 class Status extends AbstractCategory
 {
-    /**
-     * Constructor
-     *
-     * @param Users $users
-     */
     public function __construct(Users $users)
     {
         $this->Users = $users;
         $this->Db = Db::getConnection();
     }
 
-    /**
-     * Create a new status
-     *
-     */
     public function create(ParamsProcessor $params, int $team = null): int
     {
         if ($team === null) {
@@ -56,7 +47,6 @@ class Status extends AbstractCategory
      * Create a default set of status for a new team
      *
      * @param int $team the new team id
-     * @return bool
      */
     public function createDefault(int $team): bool
     {
@@ -167,7 +157,6 @@ class Status extends AbstractCategory
 
     /**
      * Update a status
-     *
      */
     public function update(ParamsProcessor $params): string
     {
@@ -195,10 +184,6 @@ class Status extends AbstractCategory
         return $params->name;
     }
 
-    /**
-     * Destroy a status
-     *
-     */
     public function destroy(int $id): bool
     {
         // don't allow deletion of a status with experiments
@@ -215,9 +200,6 @@ class Status extends AbstractCategory
 
     /**
      * Count all experiments with this status
-     *
-     * @param int $id
-     * @return int
      */
     protected function countItems(int $id): int
     {
@@ -233,8 +215,6 @@ class Status extends AbstractCategory
      * Remove all the default status for a team.
      * If we set true to is_default somewhere, it's best to remove all other default
      * in the team so we won't have two default status
-     *
-     * @return void
      */
     private function setDefaultFalse(): void
     {

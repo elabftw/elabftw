@@ -393,73 +393,6 @@ label {
     width: 0;
 }
 
-/* fix tooltip larger than parent div */
-.item {
-    line-height: 200%;
-    overflow: visible;
-
-    p {
-        margin-bottom: 0;
-    }
-}
-
-/* display_size stuff */
-
-.item-show-xs {
-    &:not(.item-show-last) {
-        /* stylelint-disable-next-line declaration-property-value-disallowed-list */
-        border-bottom: none !important;
-    }
-}
-
-.item-info {
-    padding-left: 20px;
-}
-
-.item-next {
-    padding-left: 20px;
-
-    .item-next-step {
-        color: #000;
-    }
-}
-
-.item-category {
-    font-size: 80%;
-    text-transform: uppercase;
-}
-
-@mixin item-show-inline {
-    .title,
-    .item-next,
-    .item-info,
-    .item-date {
-        display: inline;
-    }
-
-    .item-next,
-    .item-info {
-        padding-left: 0;
-    }
-}
-
-.item-show-xs {
-    @include item-show-inline;
-    margin: 0 !important;
-    padding: 0 !important;
-
-    .title {
-        font-size: 100%;
-    }
-}
-
-.item-show-md {
-    @include item-show-inline;
-
-    .title {
-        font-size: 130%;
-    }
-}
 
 /* BUTTONS */
 .button {
@@ -507,8 +440,6 @@ button:disabled {
     top: -12px;
     transform: rotate(35deg);
 }
-
-/* REGISTER */
 
 /* body in view mode is black for more lisibility
 github issue #52 */
@@ -652,11 +583,77 @@ tr:nth-child(odd) {
 /* ITEMS */
 .item {
     border: 1px solid $bordersgray;
+    border-left: 6px solid var(--left-color);
     border-radius: 5px;
+    /* fix tooltip larger than parent div */
+    line-height: 200%;
     margin: 5px auto;
     min-width: 100%;
+    opacity: var(--opacity);
     overflow: hidden;
     padding: 5px 10px 0 5px;
+
+    p {
+        margin-bottom: 0;
+    }
+}
+
+/* display_size stuff */
+
+.item-show-xs {
+    &:not(.item-show-last) {
+        /* stylelint-disable-next-line declaration-property-value-disallowed-list */
+        border-bottom: none !important;
+    }
+}
+
+.item-info {
+    padding-left: 20px;
+}
+
+.item-next {
+    padding-left: 20px;
+
+    .item-next-step {
+        color: #000;
+    }
+}
+
+.item-category {
+    font-size: 80%;
+    text-transform: uppercase;
+}
+
+@mixin item-show-inline {
+    .title,
+    .item-next,
+    .item-info,
+    .item-date {
+        display: inline;
+    }
+
+    .item-next,
+    .item-info {
+        padding-left: 0;
+    }
+}
+
+.item-show-xs {
+    @include item-show-inline;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    .title {
+        font-size: 100%;
+    }
+}
+
+.item-show-md {
+    @include item-show-inline;
+
+    .title {
+        font-size: 130%;
+    }
 }
 
 .item a p:hover {
@@ -917,18 +914,9 @@ the form-control fails to do that so we do the border ourselves */
     }
 }
 
-/* 3Dmol.js */
-/* stylelint-disable-next-line selector-class-pattern */
-.viewer-3Dmoljs {
+/* fix for 3Dmoljs uploaded files */
+.file-uploaded {
     height: 250px;
-    position: relative;
-    width: 100%;
-}
-
-/* stylelint-disable-next-line selector-class-pattern */
-.molFile {
-    height: 250px;
-    position: relative;
     width: 100%;
 }
 
@@ -1039,3 +1027,37 @@ input[type='color'] {
 #main-nav {
     padding-right: 120px !important;
 }
+
+/* pure css pie chart based on: https://codepen.io/chriscoyier/pen/RPLqMg */
+.pie-chart {
+    background: conic-gradient(var(--pie-data));
+    border-radius: 50%;
+    height: 0;
+    padding-right: 20px;
+    padding-top: 100%;
+    width: 100%;
+}
+
+.pie-percent {
+    background: var(--bg);
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    text-shadow: 0 0 1px #000;
+}
+
+.pie-legend {
+    border-collapse: separate;
+    display: table;
+    list-style: none;
+
+    > li {
+        display: table-row;
+
+        > * {
+            display: table-cell;
+        }
+    }
+}
+
+

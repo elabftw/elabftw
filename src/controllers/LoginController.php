@@ -39,8 +39,7 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
  */
 class LoginController implements ControllerInterface
 {
-    /** @var App $App */
-    private $App;
+    private App $App;
 
     public function __construct(App $app)
     {
@@ -119,7 +118,7 @@ class LoginController implements ControllerInterface
         // TEAM SELECTION //
         ////////////////////
         // if the user is in several teams, we need to redirect to the team selection
-        if ($AuthResponse->selectedTeam === null) {
+        if ($AuthResponse->isInSeveralTeams) {
             $this->App->Session->set('team_selection_required', true);
             $this->App->Session->set('team_selection', $AuthResponse->selectableTeams);
             $this->App->Session->set('auth_userid', $AuthResponse->userid);

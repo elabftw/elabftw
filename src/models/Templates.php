@@ -25,21 +25,12 @@ class Templates extends AbstractEntity
 {
     use SortableTrait;
 
-    /**
-     * Constructor
-     *
-     * @param Users $users
-     * @param int|null $id
-     */
     public function __construct(Users $users, ?int $id = null)
     {
         parent::__construct($users, $id);
         $this->type = 'experiments_templates';
     }
 
-    /**
-     * Create a template
-     */
     public function create(ParamsProcessor $params, bool $isDefault = false): int
     {
         $team = $params->team;
@@ -76,9 +67,6 @@ class Templates extends AbstractEntity
 
     /**
      * Create a default template for a new team
-     *
-     * @param int $team the id of the new team
-     * @return void
      */
     public function createDefault(int $team): void
     {
@@ -94,8 +82,6 @@ class Templates extends AbstractEntity
 
     /**
      * Duplicate a template from someone else in the team
-     *
-     * @return int id of the new template
      */
     public function duplicate(): int
     {
@@ -127,10 +113,6 @@ class Templates extends AbstractEntity
 
     /**
      * Read a template
-     *
-     * @param bool $getTags
-     * @param bool $inTeam
-     * @return array
      */
     public function read(bool $getTags = false, bool $inTeam = true): array
     {
@@ -233,8 +215,6 @@ class Templates extends AbstractEntity
 
     /**
      * Get the body of the default experiment template
-     *
-     * @return string body of the common template
      */
     public function readCommonBody(): string
     {
@@ -257,9 +237,6 @@ class Templates extends AbstractEntity
 
     /**
      * Update the common team template from admin.php
-     *
-     * @param string $body Content of the template
-     * @return void
      */
     public function updateCommon(string $body): void
     {
@@ -279,11 +256,6 @@ class Templates extends AbstractEntity
 
     /**
      * Update a template
-     *
-     * @param int $id Id of the template
-     * @param string $name Title of the template
-     * @param string $body Content of the template
-     * @return void
      */
     public function updateTpl(int $id, string $name, string $body): void
     {
@@ -305,7 +277,6 @@ class Templates extends AbstractEntity
 
     /**
      * Delete template
-     *
      */
     public function destroy(int $id): void
     {

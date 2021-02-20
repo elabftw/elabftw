@@ -10,27 +10,18 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use function bin2hex;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
 use PDO;
-use function random_bytes;
-use function sha1;
 
 /**
  * All about the experiments
  */
 class Experiments extends AbstractEntity implements CreatableInterface
 {
-    /**
-     * Constructor
-     *
-     * @param Users $users
-     * @param int|null $id
-     */
     public function __construct(Users $users, ?int $id = null)
     {
         parent::__construct($users, $id);
@@ -38,9 +29,6 @@ class Experiments extends AbstractEntity implements CreatableInterface
         $this->type = 'experiments';
     }
 
-    /**
-     * Create an experiment
-     */
     public function create(ParamsProcessor $params): int
     {
         $Templates = new Templates($this->Users);
@@ -115,8 +103,6 @@ class Experiments extends AbstractEntity implements CreatableInterface
 
     /**
      * Can this experiment be timestamped?
-     *
-     * @return bool
      */
     public function isTimestampable(): bool
     {
@@ -133,7 +119,6 @@ class Experiments extends AbstractEntity implements CreatableInterface
      *
      * @param string $responseTime the date of the timestamp
      * @param string $responsefilePath the file path to the timestamp token
-     * @return void
      */
     public function updateTimestamp(string $responseTime, string $responsefilePath): void
     {
@@ -199,8 +184,6 @@ class Experiments extends AbstractEntity implements CreatableInterface
     /**
      * Destroy an experiment and all associated data
      * The foreign key constraints will take care of associated tables
-     *
-     * @return void
      */
     public function destroy(): void
     {
@@ -218,22 +201,8 @@ class Experiments extends AbstractEntity implements CreatableInterface
         $this->Pins->cleanup();
     }
 
-    public function getTeamFromElabid(string $elabid): int
-    {
-        $elabid = Filter::sanitize($elabid);
-        $sql = 'SELECT users2teams.teams_id FROM `experiments`
-            CROSS JOIN users2teams ON (users2teams.users_id = experiments.userid)
-            WHERE experiments.elabid = :elabid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':elabid', $elabid, PDO::PARAM_STR);
-        $this->Db->execute($req);
-        return (int) $req->fetchColumn();
-    }
-
     /**
      * Count all the experiments owned by a user
-     *
-     * @return int
      */
     public function countAll(): int
     {
@@ -271,17 +240,5 @@ class Experiments extends AbstractEntity implements CreatableInterface
             $status = $req->fetchColumn();
         }
         return (int) $status;
-    }
-
-    /**
-     * Generate unique elabID
-     * This function is called during the creation of an experiment.
-     *
-     * @return string unique elabid with date in front of it
-     */
-    private function generateElabid(): string
-    {
-        $date = Filter::kdate();
-        return $date . '-' . sha1(bin2hex(random_bytes(16)));
     }
 }

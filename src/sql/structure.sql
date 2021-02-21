@@ -208,7 +208,8 @@ CREATE TABLE `experiments_templates` (
   `userid` int(10) UNSIGNED DEFAULT NULL,
   `canread` varchar(255) NOT NULL,
   `canwrite` varchar(255) NOT NULL,
-  `ordering` int(10) UNSIGNED DEFAULT NULL
+  `ordering` int(10) UNSIGNED DEFAULT NULL,
+  `metadata` json NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

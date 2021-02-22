@@ -18,7 +18,7 @@ export class Ajax {
     this.controller = 'app/controllers/EntityAjaxController.php';
   }
 
-  get(action: string) {
+  get(action: string): Promise<JSON> {
     return fetch(`${this.controller}?${action}=1&id=${this.id}&type=${this.type}`).then(response => {
       if (!response.ok) {
         throw new Error('An unexpected error occured!');
@@ -33,7 +33,7 @@ export class Ajax {
     });
   }
 
-  post(action: string) {
+  post(action: string): Promise<JSON> {
     const formData = new FormData();
     formData.append(action, '1');
     formData.append('type', this.type);

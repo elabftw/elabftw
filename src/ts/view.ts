@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import 'jquery-jeditable/src/jquery.jeditable.js';
-import { notif } from './misc';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
 declare let key: any;
@@ -40,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
-    const ctrl = 'app/controllers/EntityAjaxController.php';
     // DUPLICATE
     if (el.matches('[data-action="duplicate"]')) {
       AjaxC.post('duplicate').then(json => window.location.replace(`?mode=edit&id=${json.msg}`));

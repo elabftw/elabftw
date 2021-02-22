@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // DESTROY ENTITY
     if (el.matches('[data-action="destroy"]')) {
       if (confirm(i18next.t('entity-delete-warning'))) {
-        AjaxC.post('destroy').then(json => window.location.replace(location));
+        AjaxC.post('destroy').then(() => window.location.replace(location));
       }
     }
   });

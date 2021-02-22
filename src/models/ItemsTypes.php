@@ -54,11 +54,11 @@ class ItemsTypes extends AbstractCategory
     }
 
     /**
-     * Read the body (template) of the item_type from an id
+     * Read the body (template) and default permissions of the item_type from an id
      */
     public function read(): array
     {
-        $sql = 'SELECT template FROM items_types WHERE id = :id AND team = :team';
+        $sql = 'SELECT template, canread, canwrite FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);

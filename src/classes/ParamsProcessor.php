@@ -56,7 +56,7 @@ class ParamsProcessor
         $this->bookable = $params['bookable'] ?? $this->bookable ? 1 : 0;
         $this->comment = Filter::comment($params['comment'] ?? $this->comment);
         $this->team = (int) ($params['team'] ?? $this->team);
-        $this->canread = Check::visibility($params['canread']) ?? $this->canread;
-        $this->canwrite = Check::visibility($params['canwrite']) ?? $this->canwrite;
+        $this->canread = Check::visibility($params['canread'] ?? $this->canread);
+        $this->canwrite = Check::visibility($params['canwrite'] ?? $this->canwrite);
     }
 }

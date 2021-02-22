@@ -12,5 +12,7 @@ START TRANSACTION;
     ALTER TABLE `items` ADD `metadata` JSON NULL DEFAULT NULL;
     ALTER TABLE `experiments_templates` ADD `metadata` JSON NULL DEFAULT NULL;
     ALTER TABLE `items_types` ADD `metadata` JSON NULL DEFAULT NULL;
+    ALTER TABLE `items_types` ADD `canread` VARCHAR(255) NOT NULL DEFAULT 'team';
+    ALTER TABLE `items_types` ADD`canwrite` VARCHAR(255) NOT NULL DEFAULT 'team';
     UPDATE `config` SET `conf_value` = 57 WHERE `conf_name` = 'schema';
 COMMIT;

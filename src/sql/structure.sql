@@ -354,6 +354,8 @@ CREATE TABLE `items_types` (
   `template` text,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `bookable` tinyint(1) DEFAULT '0',
+  `canread` varchar(255) NOT NULL DEFAULT 'team',
+  `canwrite` varchar(255) NOT NULL DEFAULT 'team',
   `metadata` json NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

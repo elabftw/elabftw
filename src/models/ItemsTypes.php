@@ -38,14 +38,16 @@ class ItemsTypes extends AbstractCategory
             $team = $this->Users->userData['team'];
         }
 
-        $sql = 'INSERT INTO items_types(name, color, bookable, template, team)
-            VALUES(:name, :color, :bookable, :template, :team)';
+        $sql = 'INSERT INTO items_types(name, color, bookable, template, team, canread, canwrite)
+            VALUES(:name, :color, :bookable, :template, :team, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $params->name, PDO::PARAM_STR);
         $req->bindParam(':color', $params->color, PDO::PARAM_STR);
         $req->bindParam(':bookable', $params->bookable, PDO::PARAM_INT);
         $req->bindParam(':template', $params->template, PDO::PARAM_STR);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $req->bindParam(':canread', $params->canread, PDO::PARAM_STR);
+        $req->bindParam(':canwrite', $params->canwrite, PDO::PARAM_STR);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
@@ -85,7 +87,9 @@ class ItemsTypes extends AbstractCategory
             items_types.color,
             items_types.bookable,
             items_types.template,
-            items_types.ordering
+            items_types.ordering,
+            items_types.canread,
+            items_types.canwrite
             FROM items_types WHERE team = :team ORDER BY ordering ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
@@ -127,7 +131,9 @@ class ItemsTypes extends AbstractCategory
             team = :team,
             color = :color,
             bookable = :bookable,
-            template = :template
+            template = :template,
+            canread = :canread,
+            canwrite = :canwrite
             WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $params->name, PDO::PARAM_STR);
@@ -135,6 +141,8 @@ class ItemsTypes extends AbstractCategory
         $req->bindParam(':bookable', $params->bookable, PDO::PARAM_INT);
         $req->bindParam(':template', $params->template, PDO::PARAM_STR);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':canread', $params->canread, PDO::PARAM_STR);
+        $req->bindParam(':canwrite', $params->canwrite, PDO::PARAM_STR);
         $req->bindParam(':id', $params->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 

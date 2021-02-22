@@ -23,7 +23,7 @@ export function relativeMoment(): void {
 // PUT A NOTIFICATION IN TOP LEFT WINDOW CORNER
 export function notif(info: ResponseMsg): void {
   const p = document.createElement('p');
-  p.innerText = info.msg;
+  p.innerText = (info.msg as string);
   const result = info.res ? 'ok' : 'ko';
   const overlay = document.createElement('div');
   overlay.setAttribute('id','overlay');

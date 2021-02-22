@@ -8,6 +8,7 @@
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
+import { BoundEvent, ResponseMsg } from './interfaces';
 declare let key: any;
 const moment = require('moment'); // eslint-disable-line @typescript-eslint/no-var-requires
 
@@ -56,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="see-events"]')) {
       AjaxC.get('getBoundEvents').then(json => {
         const bookingsDiv = document.getElementById('boundBookings');
-        for (const msg of json.msg) {
+        for (const msg of (json.msg as Array<BoundEvent>)) {
           const el = document.createElement('a');
           el.href = `team.php?item=${msg.item}&start=${encodeURIComponent(msg.start)}`;
           const button = document.createElement('button');
@@ -71,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="share"]')) {
       AjaxC.get('getShareLink').then(json => {
         const link = (document.getElementById('shareLinkInput') as HTMLInputElement);
-        link.value = json.msg;
+        link.value = (json.msg as string);
         link.style.display = 'inline';
         link.focus();
         link.select();

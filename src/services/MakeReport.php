@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -10,34 +10,37 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Users;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Uploads;
+use Elabftw\Models\Users;
+use Elabftw\Traits\CsvTrait;
+use Elabftw\Traits\UploadTrait;
 
 /**
  * Create a report of usage for all users
  */
-class MakeReport extends AbstractMake
+class MakeReport
 {
+    use CsvTrait;
+    use UploadTrait;
+
+    /** @var Db $Db the mysql connection */
+    protected $Db;
+
     /** @var Teams $Teams instance of Teams */
     private $Teams;
-
-    /** @var Uploads $Uploads instance of Uploads */
-    private $Uploads;
 
     /**
      * Constructor
      *
      * @param Teams $teams
-     * @param Uploads $uploads
      */
-    public function __construct(Teams $teams, Uploads $uploads)
+    public function __construct(Teams $teams)
     {
         $this->Teams = $teams;
-        $this->Uploads = $uploads;
-        $this->outputContent = $this->makeCsv($this->getHeader(), $this->getRows());
+        $this->Db = Db::getConnection();
     }
 
     /**
@@ -47,7 +50,7 @@ class MakeReport extends AbstractMake
      */
     public function getFileName(): string
     {
-        return Tools::kdate() . '-report.elabftw.csv';
+        return Filter::kdate() . '-report.elabftw.csv';
     }
 
     /**
@@ -55,22 +58,22 @@ class MakeReport extends AbstractMake
      *
      * @return array
      */
-    private function getHeader(): array
+    protected function getHeader(): array
     {
         return array(
             'userid',
             'firstname',
             'lastname',
-            'team',
             'email',
             'validated',
             'usergroup',
             'archived',
             'last_login',
-            'teamname',
+            'full_name',
+            'team(s)',
             'diskusage_in_bytes',
             'diskusage_formatted',
-            'exp_total'
+            'exp_total',
         );
     }
 
@@ -79,21 +82,22 @@ class MakeReport extends AbstractMake
      *
      * @return array
      */
-    private function getRows(): array
+    protected function getRows(): array
     {
         $allUsers = $this->Teams->Users->readFromQuery('');
         foreach ($allUsers as $key => $user) {
+            $UsersHelper = new UsersHelper((int) $user['userid']);
+            // get the teams of user
+            $teams = implode(',', $UsersHelper->getTeamsNameFromUserid());
             // get disk usage for all uploaded files
-            $diskUsage = $this->Uploads->getDiskUsage((int) $user['userid']);
+            $diskUsage = $this->getDiskUsage((int) $user['userid']);
             // get total number of experiments
             $Entity = new Experiments(new Users((int) $user['userid']));
-            $Entity->setUseridFilter();
-            $itemsArr = $Entity->read(false);
-            $count = \count($itemsArr);
 
+            $allUsers[$key]['team(s)'] = $teams;
             $allUsers[$key]['diskusage_in_bytes'] = $diskUsage;
             $allUsers[$key]['diskusage_formatted'] = Tools::formatBytes($diskUsage);
-            $allUsers[$key]['exp_total'] = $count;
+            $allUsers[$key]['exp_total'] = $Entity->countAll();
         }
         return $allUsers;
     }

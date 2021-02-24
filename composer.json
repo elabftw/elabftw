@@ -3,47 +3,85 @@
   "description": "Laboratory notebook for research labs",
   "homepage": "https://www.elabftw.net",
   "require": {
-    "php": ">=7.1.3",
+    "php": ">=7.3.7",
     "ext-ctype": "*",
-    "ext-curl":"*",
-    "ext-gettext":"*",
-    "ext-openssl":"*",
-    "ext-gd":"*",
+    "ext-curl": "*",
+    "ext-exif": "*",
+    "ext-fileinfo": "*",
+    "ext-filter": "*",
+    "ext-gettext": "*",
+    "ext-hash": "*",
+    "ext-json": "*",
+    "ext-ldap": "*",
+    "ext-mbstring": "*",
+    "ext-openssl": "*",
+    "ext-gd": "*",
     "ext-pdo": "*",
     "ext-zip": "*",
     "defuse/php-encryption": "2.2.*",
     "mpdf/mpdf": "8.0.*",
-    "swiftmailer/swiftmailer":"6.2.*",
-    "onelogin/php-saml": "3.1.*",
-    "guzzlehttp/guzzle": "6.3.*",
-    "michelf/php-markdown": "1.8.*",
-    "symfony/http-foundation": "4.2.*",
-    "twig/twig": "2.9.*",
+    "swiftmailer/swiftmailer": "6.2.*",
+    "onelogin/php-saml": "3.5.*",
+    "guzzlehttp/guzzle": "^7.0.1",
+    "symfony/http-foundation": "^5.1.0",
+    "twig/twig": "^2.13.0",
     "twig/extensions": "1.5.*",
-    "monolog/monolog": "1.24.*",
-    "maennchen/zipstream-php": "^1.0.0",
-    "ext-fileinfo": "*",
-    "ext-json": "*",
-    "league/csv": "^9.2",
+    "monolog/monolog": "^2.1.0",
+    "maennchen/zipstream-php": "^2.0.0",
+    "league/csv": "^9.4",
     "mpdf/qrcode": "^1.0",
-    "symfony/console": "^4.2"
+    "symfony/console": "^5.0",
+    "symfony/process": "^5.0",
+    "league/commonmark": "^1.0",
+    "symfony/filesystem": "^5.0",
+    "symfony/mime": "^5.1",
+    "robthree/twofactorauth": "^1.7.0",
+    "directorytree/ldaprecord": "^1.11",
+    "league/flysystem": "^1.1",
+    "league/flysystem-memory": "^1.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
-    "codeception/codeception": "3.0.*",
-    "pyrech/composer-changelogs": "1.6.*",
-    "fzaninotto/faker": "^1.8"
+    "codeception/codeception": "^4.0",
+    "pyrech/composer-changelogs": "1.7.*",
+    "fzaninotto/faker": "^1.9",
+    "friendsofphp/php-cs-fixer": "^2.15",
+    "codeception/module-webdriver": "^1.0.0",
+    "codeception/module-db": "^1.0.0",
+    "codeception/module-asserts": "^1.0.0",
+    "codeception/module-rest": "^1.0",
+    "codeception/module-phpbrowser": "^1.0",
+    "symfony/yaml": "^5.0"
   },
   "autoload": {
     "psr-4": {
-      "Elabftw\\Controllers\\" : ["src/controllers"],
-      "Elabftw\\Elabftw\\" : ["src/classes"],
-      "Elabftw\\Commands\\" : ["src/commands"],
-      "Elabftw\\Exceptions\\" : ["src/exceptions"],
-      "Elabftw\\Interfaces\\" : ["src/interfaces"],
-      "Elabftw\\Models\\" : ["src/models"],
-      "Elabftw\\Services\\" : ["src/services"],
-      "Elabftw\\Traits\\" : ["src/traits"]
+      "Elabftw\\Controllers\\": [
+        "src/controllers"
+      ],
+      "Elabftw\\Elabftw\\": [
+        "src/classes"
+      ],
+      "Elabftw\\Commands\\": [
+        "src/commands"
+      ],
+      "Elabftw\\Exceptions\\": [
+        "src/exceptions"
+      ],
+      "Elabftw\\Interfaces\\": [
+        "src/interfaces"
+      ],
+      "Elabftw\\Maps\\": [
+        "src/maps"
+      ],
+      "Elabftw\\Models\\": [
+        "src/models"
+      ],
+      "Elabftw\\Services\\": [
+        "src/services"
+      ],
+      "Elabftw\\Traits\\": [
+        "src/traits"
+      ]
     }
   },
   "license": "AGPL-3.0-or-later"

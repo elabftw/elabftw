@@ -1,21 +1,27 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * app/init.inc.php
- *
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  */
+
 namespace Elabftw\Elabftw;
 
+use function basename;
+use function dirname;
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
+use Elabftw\Services\LoginHelper;
 use Exception;
+use function in_array;
 use Monolog\Logger;
 use PDOException;
+use function setcookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -24,47 +30,31 @@ use Symfony\Component\HttpFoundation\Session\Session;
  * It loads the config file, connects to the database,
  * includes functions and locale, tries to update the db schema and redirects anonymous visitors.
  */
-require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+
+$Request = Request::createFromGlobals();
+$Session = new Session();
+$Session->start();
+$Request->setSession($Session);
 
 try {
-    // CREATE REQUEST OBJECT
-    $Request = Request::createFromGlobals();
-
-    // CREATE SESSION
-    $Session = new Session();
-    $Session->start();
-    // and attach it to Request
-    $Request->setSession($Session);
-
-    // LOAD CONFIG.PHP
-    $configFilePath = \dirname(__DIR__, 2) . '/config.php';
-    // redirect to install page if the config file is not here
+    // CONFIG.PHP
+    // Make sure config.php is readable
+    $configFilePath = dirname(__DIR__, 2) . '/config.php';
     if (!is_readable($configFilePath)) {
-        $url = Tools::getUrlFromRequest($Request) . '/install/index.php';
-        // not pretty but gets the job done
-        $url = str_replace('app/', '', $url);
-        header('Location: ' . $url);
-        throw new ImproperActionException('Redirecting to install folder');
+        throw new ImproperActionException('The config file is missing! Did you run the installer?');
     }
     require_once $configFilePath;
-    // END LOAD CONFIG.PHP
+    // END CONFIG.PHP
 
     // INIT APP OBJECT
     // new Config will make the first SQL request
     // PDO will throw an exception if the SQL structure is not imported yet
-    // so we redirect to the install folder
     try {
-        $App = new App($Session, $Request, new Config(), new Logger('elabftw'), new Csrf($Session, $Request));
-    } catch (PDOException $e) {
-        $url = Tools::getUrlFromRequest($Request) . '/install/index.php';
-        header('Location: ' . $url);
-        throw new ImproperActionException('Redirecting to install folder');
+        $App = new App($Request, $Session, new Config(), new Logger('elabftw'), new Csrf($Request, $Session));
+    } catch (DatabaseErrorException | PDOException $e) {
+        throw new ImproperActionException('The database structure is not loaded! Did you run the installer?');
     }
-
-    // UPDATE SQL SCHEMA if necessary
-    $Update = new Update($App->Config, new Sql());
-    $Update->checkSchema();
-
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     //     ____          _                            //
     //    / ___|___ _ __| |__   ___ _ __ _   _ ___    //
@@ -73,72 +63,90 @@ try {
     //    \____\___|_|  |_.__/ \___|_|   \__,_|___/   //
     //                                                //
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
+    $Auth = new Auth($App);
+    if ($Auth->needAuth()) {
+        try {
+            // this will throw an UnauthorizedException if we don't have a valid auth
+            $AuthResponse = $Auth->tryAuth();
+            $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
+            $LoginHelper->login(false);
+        } catch (UnauthorizedException $e) {
+            // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
 
-    // autologin as anon if it's allowed by sysadmin
-    if ($App->Config->configArr['open_science']) {
-        // only autologin on selected pages and if we are not authenticated with an account
-        $autoAnon = array('experiments.php', 'database.php', 'search.php');
-        if (\in_array(\basename($Request->getScriptName()), $autoAnon, true) && !$App->Request->getSession()->has('auth')) {
-            $App->Users->Auth->loginAsAnon($App->Config->configArr['open_team'] ?? 1);
+            // maybe we clicked an email link and we want to be redirected to the page upon successful login
+            // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
+            // don't store a redirect cookie if we have been logged out and the redirect is to a controller page
+            if (!stripos($App->Request->getRequestUri(), 'controllers')) {
+                $cookieOptions = array(
+                    'expires' => time() + 300,
+                    'path' => '/',
+                    'domain' => '',
+                    'secure' => true,
+                    'httponly' => true,
+                    'samesite' => 'Strict',
+                );
+                setcookie('redirect', $App->Request->getRequestUri(), $cookieOptions);
+            }
+
+            // used by ajax requests to detect a timed out session
+            header('X-Elab-Need-Auth: 1');
+            // don't send a GET app/logout.php if it's an ajax call because it messes up the jquery ajax
+            if ($App->Request->headers->get('X-Requested-With') != 'XMLHttpRequest') {
+                // NO DON'T USE  THE FULL URL HERE BECAUSE IF SERVER IS HTTP it will fail badly
+                header('Location: app/logout.php?keep_redirect=1');
+                exit;
+            }
+            throw new UnauthorizedException(_('Your session expired.'));
         }
     }
 
-    if ($App->Users->Auth->needAuth() && !$App->Users->Auth->tryAuth()) {
-        // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
-
-        // maybe we clicked an email link and we want to be redirected to the page upon successful login
-        // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
-        // don't store a redirect cookie if we have been logged out and the redirect is to a controller page
-        if (!stripos($Request->getRequestUri(), 'controllers')) {
-            setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', null, true, true);
-        }
-
-        // used by ajax requests to detect a timed out session
-        header('X-Elab-Need-Auth: 1');
-        // don't send a GET app/logout.php if it's an ajax call because it messes up the jquery ajax
-        if ($App->Request->headers->get('X-Requested-With') != 'XMLHttpRequest') {
-            // NO DON'T USE  THE FULL URL HERE BECAUSE IF SERVER IS HTTP it will fail badly
-            header('Location: app/logout.php');
-        }
-        exit;
-    }
-
-    // load the Users with a userid if we are auth
-    if ($App->Request->getSession()->has('auth')) {
-        $App->loadUser(new Users($Request->getSession()->get('userid'), $App->Users->Auth, $App->Config));
+    // load the Users with a userid if we are auth and not anon
+    if ($App->Session->has('is_auth') && $App->Session->get('userid') !== 0) {
+        $App->loadUser(new Users(
+            $App->Session->get('userid'),
+            $App->Session->get('team'),
+        ));
     }
 
     // ANONYMOUS
-    if ($App->Request->getSession()->has('anon')) {
+    if ($App->Session->get('is_anon') === 1) {
+        // anon user only has access to a subset of pages
+        $allowedPages = array('index.php', 'experiments.php', 'database.php', 'search.php', 'make.php');
+        if (!in_array(basename($App->Request->getScriptName()), $allowedPages, true)) {
+            throw new ImproperActionException('Anonymous user cannot access this page');
+        }
         $Users = new Users();
-        $Users->userData['team'] = $App->Request->getSession()->get('team');
+        $Users->userData['team'] = $App->Session->get('team');
         $App->loadUser($Users);
-        $App->Users->userData['team'] = $App->Request->getSession()->get('team');
+        // create a fake Users object with default data for anon user
+        $App->Users->userData['team'] = $App->Session->get('team');
         $App->Users->userData['limit_nb'] = 15;
         $App->Users->userData['anon'] = true;
         $App->Users->userData['fullname'] = 'Anon Ymous';
         $App->Users->userData['is_admin'] = 0;
         $App->Users->userData['is_sysadmin'] = 0;
+        $App->Users->userData['show_team'] = 1;
+        $App->Users->userData['show_team_templates'] = 0;
     }
 
-    // GET THE LANG
-    if ($Request->getSession()->has('auth')) {
-        // generate full Users object with current userid
+    // START i18n
+    // get the lang
+    if ($App->Session->has('is_auth') && $App->Session->get('userid') !== 0) {
         // set lang based on user pref
         $locale = $App->Users->userData['lang'] . '.utf8';
     } else {
         // load server configured lang if logged out
         $locale = $App->Config->configArr['lang'] . '.utf8';
     }
-
-    // CONFIGURE GETTEXT
+    // configure gettext
     $domain = 'messages';
     putenv("LC_ALL=$locale");
     setlocale(LC_ALL, $locale);
-    bindtextdomain($domain, \dirname(__DIR__, 2) . "/src/langs");
+    bindtextdomain($domain, dirname(__DIR__, 2) . '/src/langs');
     textdomain($domain);
     // END i18n
-
+} catch (UnauthorizedException $e) {
+    // do nothing here, controller will display the error
 } catch (ImproperActionException | InvalidSchemaException | Exception $e) {
     // if something went wrong here it should stop whatever is after
     die($e->getMessage());

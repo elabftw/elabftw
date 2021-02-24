@@ -1,17 +1,21 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Services;
 
+use function basename;
+use function count;
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Interfaces\CleanerInterface;
+use League\Flysystem\FilesystemInterface;
+use function substr;
 
 /**
  * This is used to find out if there are untracked files that should have been deleted
@@ -19,6 +23,28 @@ use Elabftw\Interfaces\CleanerInterface;
  */
 class UploadsCleaner implements CleanerInterface
 {
+    /** @var FilesystemInterface $filesystem */
+    private $filesystem;
+
+    public function __construct(FilesystemInterface $filesystem)
+    {
+        $this->filesystem = $filesystem;
+    }
+
+    /**
+     * Remove orphan files from filesystem
+     *
+     * @return int number of orphan files
+     */
+    public function cleanup(): int
+    {
+        $orphans = $this->findOrphans();
+        foreach ($orphans as $orphan) {
+            $this->filesystem->delete($orphan['path']);
+        }
+        return count($orphans);
+    }
+
     /**
      * Loop of uploaded file and check if it is referenced in the uploads table
      *
@@ -27,17 +53,12 @@ class UploadsCleaner implements CleanerInterface
     private function findOrphans(): array
     {
         $orphans = array();
-        $dir = \dirname(__DIR__, 2) . '/uploads';
-        if (!is_dir($dir)) {
-            return $orphans;
-        }
-        $di = new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS);
-        $ri = new \RecursiveIteratorIterator($di, \RecursiveIteratorIterator::CHILD_FIRST);
-        foreach ($ri as $file) {
-            if ($file->isDir() === false) {
-                $isTracked = $this->isInDb($file->getPathName());
+        $contents = $this->filesystem->listContents('', true);
+        foreach ($contents as $file) {
+            if ($file['type'] === 'file') {
+                $isTracked = $this->isInDb($file['path']);
                 if ($isTracked === false) {
-                    $orphans[] = $file->getPathName();
+                    $orphans[] = $file;
                 }
             }
         }
@@ -52,33 +73,19 @@ class UploadsCleaner implements CleanerInterface
      */
     private function isInDb(string $filePath): bool
     {
-        $longName = \basename($filePath);
+        // don't delete the thumbnails! They are not in the database but still useful!
+        if (substr($filePath, -7) === '_th.jpg') {
+            return true;
+        }
+        $longName = basename($filePath);
         $folder = substr($longName, 0, 2);
         $longNameWithFolder = $folder . '/' . $longName;
         $Db = Db::getConnection();
-        $sql = "SELECT long_name FROM uploads WHERE long_name = :long_name OR long_name = :long_name_with_folder";
+        $sql = 'SELECT long_name FROM uploads WHERE long_name = :long_name OR long_name = :long_name_with_folder';
         $req = $Db->prepare($sql);
         $req->bindParam(':long_name', $longName);
         $req->bindParam(':long_name_with_folder', $longNameWithFolder);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $Db->execute($req);
         return (bool) $req->fetch();
-    }
-
-    /**
-     * Remove orphan files from filesystem
-     *
-     * @return int number of orphan files
-     */
-    public function cleanup(): int
-    {
-        $orphans = $this->findOrphans();
-        foreach ($orphans as $orphan) {
-            if (\unlink($orphan) === false) {
-                throw new FilesystemErrorException("Could not remove file: $orphan");
-            }
-        }
-        return \count($orphans);
     }
 }

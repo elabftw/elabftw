@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -14,6 +14,9 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidCsrfTokenException;
+use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Maps\Team;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Elabftw\Services\Email;
@@ -28,11 +31,10 @@ require_once \dirname(__DIR__) . '/init.inc.php';
 $Response = new JsonResponse();
 $Response->setData(array(
     'res' => true,
-    'msg' => _('Saved')
+    'msg' => _('Saved'),
 ));
 
 try {
-
     if (!$App->Session->get('is_sysadmin')) {
         throw new IllegalActionException('Non sysadmin user tried to access sysadmin controller.');
     }
@@ -46,15 +48,9 @@ try {
 
     // UPDATE TEAM
     if ($Request->request->has('teamsUpdate')) {
-        $orgid = "";
-        if ($Request->request->has('teamsUpdateOrgid')) {
-            $orgid = $Request->request->get('teamsUpdateOrgid');
-        }
-        $Teams->updateName(
-            (int) $Request->request->get('teamsUpdateId'),
-            $Request->request->get('teamsUpdateName'),
-            $orgid
-        );
+        $Team = new Team((int) $Request->request->get('id'));
+        $Team->hydrate($Request->request->all());
+        $Team->save();
     }
 
     // DESTROY TEAM
@@ -79,31 +75,25 @@ try {
         $Idps = new Idps();
         $Idps->destroy((int) $Request->request->get('id'));
     }
-
-
-} catch (ImproperActionException $e) {
+} catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
     $Response->setData(array(
         'res' => false,
-        'msg' => $e->getMessage()
+        'msg' => $e->getMessage(),
     ));
-
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $Response->setData(array(
         'res' => false,
-        'msg' => Tools::error(true)
+        'msg' => Tools::error(true),
     ));
-
 } catch (DatabaseErrorException | FilesystemErrorException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $Response->setData(array(
         'res' => false,
-        'msg' => $e->getMessage()
+        'msg' => $e->getMessage(),
     ));
-
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
-
 } finally {
     $Response->send();
 }

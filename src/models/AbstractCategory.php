@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -24,6 +24,9 @@ abstract class AbstractCategory implements CrudInterface
     /** @var Db $Db SQL Database */
     protected $Db;
 
+    /** @var Users $Users Users instance */
+    protected $Users;
+
     /**
      * Get the color of an item type
      *
@@ -31,6 +34,11 @@ abstract class AbstractCategory implements CrudInterface
      * @return string
      */
     abstract public function readColor(int $id): string;
+
+    /**
+     * Get all the things
+     */
+    abstract public function readAll(): array;
 
     /**
      * Count all items of this type

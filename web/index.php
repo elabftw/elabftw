@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -11,97 +11,47 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
-use Elabftw\Models\Teams;
+use Elabftw\Services\LoginHelper;
+use Elabftw\Services\SamlAuth;
 use Exception;
-use OneLogin\Saml2\Auth as SamlAuth;
+use OneLogin\Saml2\Auth as SamlAuthLib;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 require_once 'app/init.inc.php';
 
-$Response = new RedirectResponse("experiments.php");
+$location = '../../experiments.php';
+$Response = new RedirectResponse($location);
 
 try {
+    // SAML: IDP will redirect to this page after user login on IDP website
+    if ($App->Request->query->has('acs')) {
+        $Saml = new Saml($App->Config, new Idps());
+        $settings = $Saml->getSettings((int) $App->Request->cookies->get('idp_id'));
+        $AuthService = new SamlAuth(new SamlAuthLib($settings), $App->Config->configArr, $settings);
 
-    if ($Request->query->has('acs')) {
+        $AuthResponse = $AuthService->assertIdpResponse();
 
-        $Saml = new Saml(new Config, new Idps);
-
-        $settings = $Saml->getSettings();
-        $SamlAuth = new SamlAuth($settings);
-
-        $requestID = null;
-        if ($Session->has('AuthNRequestID')) {
-            $requestID = $Session->get('AuthNRequestID');
+        // if the user is in several teams, we need to redirect to the team selection
+        if ($AuthResponse->selectedTeam === null) {
+            $App->Session->set('team_selection_required', true);
+            $App->Session->set('team_selection', $AuthResponse->selectableTeams);
+            $App->Session->set('auth_userid', $AuthResponse->userid);
+            $location = '../../login.php';
+        } else {
+            $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
+            $LoginHelper->login(false);
         }
-
-        $SamlAuth->processResponse($requestID);
-
-        $errors = $SamlAuth->getErrors();
-
-        if (!empty($errors) && $Saml->Config->configArr['debug']) {
-            echo 'Something went wrong:<br>';
-            echo Tools::printArr($errors);
-        }
-
-        if (!$SamlAuth->isAuthenticated()) {
-            throw new ImproperActionException('Not authenticated!');
-        }
-
-        $Session->set('samlUserdata', $SamlAuth->getAttributes());
-
-        // GET EMAIL
-        $emailAttribute = $Saml->Config->configArr['saml_email'];
-        $email = $Session->get('samlUserdata')[$emailAttribute];
-        if (is_array($email)) {
-            $email = $email[0];
-        }
-
-        if ($email === null) {
-            throw new ImproperActionException("Could not find email in response from IDP! Aborting.");
-        }
-
-        if (!$App->Users->Auth->loginFromSaml($email)) {
-            // the user doesn't exist yet in the db
-            // check if the team exists
-            $Teams = new Teams($App->Users);
-
-            // GET TEAM
-            $teamAttribute = $Saml->Config->configArr['saml_team'];
-            // we didn't receive any team attribute for some reason
-            if (empty($teamAttribute)) {
-                throw new ImproperActionException('Team attribute is empty!');
-            }
-            $team = $Session->get('samlUserdata')[$teamAttribute];
-            if (is_array($team)) {
-                $team = $team[0];
-            }
-            $teamId = $Teams->initializeIfNeeded($team);
-
-            // GET FIRSTNAME AND LASTNAME
-            $firstnameAttribute = $Saml->Config->configArr['saml_firstname'];
-            $firstname = $Session->get('samlUserdata')[$firstnameAttribute];
-            if (is_array($firstname)) {
-                $firstname = $firstname[0];
-            }
-            $lastnameAttribute = $Saml->Config->configArr['saml_lastname'];
-            $lastname = $Session->get('samlUserdata')[$lastnameAttribute];
-            if (is_array($lastname)) {
-                $lastname = $lastname[0];
-            }
-
-            // CREATE USER
-            $App->Users->create($email, $teamId, $firstname, $lastname);
-            // ok now the user is created, try logging in again
-            if (!$App->Users->Auth->loginFromSaml($email)) {
-                throw new ImproperActionException("Not authenticated!");
-            }
-        }
-
+        $location = $App->Request->cookies->get('redirect') ?? $location;
     }
 
+    $Response = new RedirectResponse($location);
+    // TODO FIXME saml breaks if this line is removed
+    // this is a problem of the redirect response not working
+    // unless there is something shown/sent to the user before
+    // no idea why
+    var_dump($App->Request->request->get('SAMLResponse'));
 } catch (ImproperActionException $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
@@ -116,7 +66,6 @@ try {
     $Response = new Response();
     $Response->prepare($Request);
     $Response->setContent($App->render($template, $renderArr));
-
 } finally {
     $Response->send();
 }

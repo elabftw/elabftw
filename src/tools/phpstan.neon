@@ -1,0 +1,20 @@
+parameters:
+  level: 7
+  checkMissingIterableValueType: false
+  bootstrapFiles:
+    - %currentWorkingDirectory%/config.php
+  ignoreErrors:
+    -
+      message: '#Variable \$App might not be defined.*#'
+      path: %currentWorkingDirectory%/web
+    -
+      message: '#Variable \$Request might not be defined.*#'
+      path: %currentWorkingDirectory%/web
+    -
+      message: '#Variable \$Auth might not be defined.*#'
+      path: %currentWorkingDirectory%/web
+
+  paths:
+    - %currentWorkingDirectory%/src
+    - %currentWorkingDirectory%/web
+

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   Elabftw\Elabftw
- * @author    Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author    Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -34,8 +33,8 @@ abstract class AbstractImport
     /** @var int $target the item type category or userid where we do the import */
     protected $target;
 
-    /** @var string $visibility visibility for the imported items */
-    protected $visibility;
+    /** @var string $canread read permission for the imported items */
+    protected $canread;
 
     /**
      * Constructor
@@ -49,7 +48,7 @@ abstract class AbstractImport
         $this->Db = Db::getConnection();
         $this->Users = $users;
         $this->target = (int) $request->request->get('target');
-        $this->visibility = Tools::checkVisibility($request->request->get('visibility'));
+        $this->canread = Check::visibility($request->request->get('visibility') ?? '');
         $this->UploadedFile = $request->files->all()['file'];
         if ($this->UploadedFile->getError()) {
             throw new ImproperActionException($this->UploadedFile->getErrorMessage());
@@ -66,9 +65,17 @@ abstract class AbstractImport
      */
     protected function checkMimeType(): bool
     {
-        $mimes = array(null, 'application/vnd.ms-excel', 'text/plain',
-            'text/csv', 'text/tsv',
-            'application/zip', 'application/force-download', 'application/x-zip-compressed');
+        $mimes = array(
+            null,
+            'application/csv',
+            'application/vnd.ms-excel',
+            'text/plain',
+            'text/csv',
+            'text/tsv',
+            'application/zip',
+            'application/force-download',
+            'application/x-zip-compressed',
+        );
 
         if (in_array($this->UploadedFile->getMimeType(), $mimes, true)) {
             return true;

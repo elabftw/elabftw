@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -10,23 +10,21 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CreateInterface;
+use function bin2hex;
+use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Interfaces\CreatableInterface;
+use Elabftw\Maps\Team;
+use Elabftw\Services\Filter;
 use PDO;
+use function random_bytes;
+use function sha1;
 
 /**
  * All about the experiments
  */
-class Experiments extends AbstractEntity implements CreateInterface
+class Experiments extends AbstractEntity implements CreatableInterface
 {
-    /** @var Links $Links instance of Links */
-    public $Links;
-
-    /** @var Steps $Steps instance of Steps */
-    public $Steps;
-
     /**
      * Constructor
      *
@@ -38,55 +36,63 @@ class Experiments extends AbstractEntity implements CreateInterface
         parent::__construct($users, $id);
         $this->page = 'experiments';
         $this->type = 'experiments';
-
-        $this->Links = new Links($this);
-        $this->Steps = new Steps($this);
     }
 
     /**
      * Create an experiment
-     *
-     * @param int $tpl the template on which to base the experiment
-     * @return int the new id of the experiment
      */
-    public function create(int $tpl): int
+    public function create(ParamsProcessor $params): int
     {
         $Templates = new Templates($this->Users);
 
+        $tpl = $params->id;
         // do we want template ?
         if ($tpl > 0) {
             $Templates->setId($tpl);
             $templatesArr = $Templates->read();
             $title = $templatesArr['name'];
             $body = $templatesArr['body'];
+            $canread = $templatesArr['canread'];
+            $canwrite = $templatesArr['canwrite'];
         } else {
             $title = _('Untitled');
             $body = $Templates->readCommonBody();
+            $canread = 'team';
+            $canwrite = 'user';
+            if ($this->Users->userData['default_read'] !== null) {
+                $canread = $this->Users->userData['default_read'];
+            }
+            if ($this->Users->userData['default_write'] !== null) {
+                $canwrite = $this->Users->userData['default_write'];
+            }
         }
 
-        $visibility = 'team';
-        if ($this->Users->userData['default_vis'] !== null) {
-            $visibility = $this->Users->userData['default_vis'];
-        }
+
+        // enforce the permissions if the admin has set them
+        $Team = new Team((int) $this->Users->userData['team']);
+        $canread = $Team->getDoForceCanread() === 1 ? $Team->getForceCanread() : $canread;
+        $canwrite = $Team->getDoForceCanwrite() === 1 ? $Team->getForceCanwrite() : $canwrite;
 
         // SQL for create experiments
-        $sql = "INSERT INTO experiments(team, title, date, body, category, elabid, visibility, userid)
-            VALUES(:team, :title, :date, :body, :category, :elabid, :visibility, :userid)";
+        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid)
+            VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, NOW(), :userid)';
         $req = $this->Db->prepare($sql);
-        $req->execute(array(
-            'team' => $this->Users->userData['team'],
+        $this->Db->execute($req, array(
             'title' => $title,
-            'date' => Tools::kdate(),
+            'date' => Filter::kdate(),
             'body' => $body,
             'category' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
-            'visibility' => $visibility,
-            'userid' => $this->Users->userData['userid']
+            'canread' => $canread,
+            'canwrite' => $canwrite,
+            'userid' => $this->Users->userData['userid'],
         ));
         $newId = $this->Db->lastInsertId();
 
         // insert the tags from the template
-        if ($tpl !== null && $tpl !== 0) {
+        if ($tpl !== 0) {
+            $this->Links->duplicate($tpl, $newId, true);
+            $this->Steps->duplicate($tpl, $newId, true);
             $Tags = new Tags($Templates);
             $Tags->copyTags($newId, true);
         }
@@ -94,31 +100,17 @@ class Experiments extends AbstractEntity implements CreateInterface
         return $newId;
     }
 
-    /**
-     * Read all experiments related to a DB item
-     *
-     * @param int $itemId the DB item
-     * @return array
-     */
-    public function readRelated(int $itemId): array
+    public function getBoundEvents(): array
     {
-        $itemsArr = array();
-
-        // get the id of related experiments
-        $sql = "SELECT item_id FROM experiments_links
-            WHERE link_id = :link_id";
+        $sql = 'SELECT team_events.* from team_events WHERE experiment = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':link_id', $itemId, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
         }
-        while ($data = $req->fetch()) {
-            $this->setId((int) $data['item_id']);
-            $this->canOrExplode('read');
-            $itemsArr[] = $this->read();
-        }
-
-        return $itemsArr;
+        return $res;
     }
 
     /**
@@ -129,12 +121,10 @@ class Experiments extends AbstractEntity implements CreateInterface
     public function isTimestampable(): bool
     {
         $currentCategory = (int) $this->entityData['category_id'];
-        $sql = "SELECT is_timestampable FROM status WHERE id = :category;";
+        $sql = 'SELECT is_timestampable FROM status WHERE id = :category;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':category', $currentCategory, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         return (bool) $req->fetchColumn();
     }
 
@@ -147,7 +137,9 @@ class Experiments extends AbstractEntity implements CreateInterface
      */
     public function updateTimestamp(string $responseTime, string $responsefilePath): void
     {
-        $sql = "UPDATE experiments SET
+        $this->canOrExplode('write');
+
+        $sql = 'UPDATE experiments SET
             locked = 1,
             lockedby = :userid,
             lockedwhen = :when,
@@ -155,7 +147,7 @@ class Experiments extends AbstractEntity implements CreateInterface
             timestampedby = :userid,
             timestampedwhen = :when,
             timestamptoken = :longname
-            WHERE id = :id;";
+            WHERE id = :id;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':when', $responseTime);
         // the date recorded in the db has to match the creation time of the timestamp token
@@ -163,54 +155,7 @@ class Experiments extends AbstractEntity implements CreateInterface
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-    }
-
-    /**
-     * Select what will be the status for the experiment
-     *
-     * @return int The status ID
-     */
-    private function getStatus(): int
-    {
-        // what will be the status ?
-        // go pick what is the default status upon creating experiment
-        // there should be only one because upon making a status default,
-        // all the others are made not default
-        $sql = 'SELECT id FROM status WHERE is_default = true AND team = :team LIMIT 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-        $status = $req->fetchColumn();
-
-        // if there is no is_default status
-        // we take the first status that come
-        if (!$status) {
-            $sql = 'SELECT id FROM status WHERE team = :team LIMIT 1';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-            if ($req->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
-            $status = $req->fetchColumn();
-        }
-        return (int) $status;
-    }
-
-    /**
-     * Generate unique elabID
-     * This function is called during the creation of an experiment.
-     *
-     * @return string unique elabid with date in front of it
-     */
-    private function generateElabid(): string
-    {
-        $date = Tools::kdate();
-        return $date . "-" . \sha1(\bin2hex(\random_bytes(16)));
+        $this->Db->execute($req);
     }
 
     /**
@@ -220,24 +165,30 @@ class Experiments extends AbstractEntity implements CreateInterface
      */
     public function duplicate(): int
     {
+        $this->canOrExplode('read');
+
         // let's add something at the end of the title to show it's a duplicate
         // capital i looks good enough
         $title = $this->entityData['title'] . ' I';
 
-        $sql = "INSERT INTO experiments(team, title, date, body, category, elabid, visibility, userid)
-            VALUES(:team, :title, :date, :body, :category, :elabid, :visibility, :userid)";
+        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid)
+            VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, NOW(), :userid)';
         $req = $this->Db->prepare($sql);
-        $req->execute(array(
-            'team' => $this->Users->userData['team'],
+        $this->Db->execute($req, array(
             'title' => $title,
-            'date' => Tools::kdate(),
+            'date' => Filter::kdate(),
             'body' => $this->entityData['body'],
             'category' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
-            'visibility' => $this->entityData['visibility'],
-            'userid' => $this->Users->userData['userid']));
+            'canread' => $this->entityData['canread'],
+            'canwrite' => $this->entityData['canwrite'],
+            'userid' => $this->Users->userData['userid'],
+        ));
         $newId = $this->Db->lastInsertId();
 
+        if ($this->id === null) {
+            throw new IllegalActionException('Try to duplicate without an id.');
+        }
         $this->Links->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
@@ -258,81 +209,79 @@ class Experiments extends AbstractEntity implements CreateInterface
         $this->Tags->destroyAll();
         $this->Uploads->destroyAll();
 
-        $sql = "DELETE FROM experiments WHERE id = :id";
+        $sql = 'DELETE FROM experiments WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
+
+        // delete from pinned
+        $this->Pins->cleanup();
+    }
+
+    public function getTeamFromElabid(string $elabid): int
+    {
+        $elabid = Filter::sanitize($elabid);
+        $sql = 'SELECT users2teams.teams_id FROM `experiments`
+            CROSS JOIN users2teams ON (users2teams.users_id = experiments.userid)
+            WHERE experiments.elabid = :elabid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':elabid', $elabid, PDO::PARAM_STR);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
     }
 
     /**
-     * Get token and pdf info for displaying in view mode
+     * Count all the experiments owned by a user
      *
-     * @return array
+     * @return int
      */
-    public function getTimestampInfo(): array
+    public function countAll(): int
     {
-        if ($this->entityData['timestamped'] === '0') {
-            return array();
-        }
-        $timestamper = $this->Users->read((int) $this->entityData['timestampedby']);
-
-        $Uploads = new Uploads(new Experiments($this->Users, (int) $this->entityData['id']));
-        $Uploads->Entity->type = 'exp-pdf-timestamp';
-        $pdf = $Uploads->readAll();
-
-        $Uploads->Entity->type = 'timestamp-token';
-        $token = $Uploads->readAll();
-
-        return array(
-            'timestamper' => $timestamper,
-            'pdf' => $pdf,
-            'token' => $token
-        );
+        $sql = 'SELECT COUNT(id) FROM experiments WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
     }
 
     /**
-     * Lock/unlock
+     * Select what will be the status for the experiment
      *
-     * @return void
+     * @return int The status ID
      */
-    public function toggleLock(): void
+    private function getStatus(): int
     {
-        $permissions = $this->getPermissions();
-        if (!$this->Users->userData['can_lock'] && !$permissions['write']) {
-            throw new ImproperActionException(_("You don't have the rights to lock/unlock this."));
-        }
-        $locked = (int) $this->entityData['locked'];
+        // what will be the status ?
+        // go pick what is the default status upon creating experiment
+        // there should be only one because upon making a status default,
+        // all the others are made not default
+        $sql = 'SELECT id FROM status WHERE is_default = true AND team = :team LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $status = $req->fetchColumn();
 
-        // if we try to unlock something we didn't lock
-        if ($locked === 1 && ($this->entityData['lockedby'] != $this->Users->userData['userid'])) {
-            // Get the first name of the locker to show in error message
-            $sql = "SELECT firstname FROM users WHERE userid = :userid";
+        // if there is no is_default status
+        // we take the first status that come
+        if (!$status) {
+            $sql = 'SELECT id FROM status WHERE team = :team LIMIT 1';
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':userid', $this->entityData['lockedby'], PDO::PARAM_INT);
-            if ($req->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
-            throw new ImproperActionException(
-                _('This experiment was locked by') .
-                ' ' . $req->fetchColumn() . '. ' .
-                _("You don't have the rights to unlock this.")
-            );
+            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+            $this->Db->execute($req);
+            $status = $req->fetchColumn();
         }
+        return (int) $status;
+    }
 
-        // check if the experiment is timestamped. Disallow unlock in this case.
-        if ($locked === 1 && $this->entityData['timestamped']) {
-            throw new ImproperActionException(_('You cannot unlock or edit in any way a timestamped experiment.'));
-        }
-
-        $sql = "UPDATE experiments SET locked = IF(locked = 1, 0, 1), lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':lockedby', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+    /**
+     * Generate unique elabID
+     * This function is called during the creation of an experiment.
+     *
+     * @return string unique elabid with date in front of it
+     */
+    private function generateElabid(): string
+    {
+        $date = Filter::kdate();
+        return $date . '-' . sha1(bin2hex(random_bytes(16)));
     }
 }

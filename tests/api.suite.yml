@@ -1,0 +1,7 @@
+actor: ApiTester
+modules:
+    enabled:
+        - \Helper\Api
+        - REST:
+            url: https://elabtmp/api/v1/
+            depends: PhpBrowser

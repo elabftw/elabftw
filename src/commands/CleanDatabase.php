@@ -1,11 +1,13 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Commands;
 
 use Elabftw\Services\DatabaseCleaner;
@@ -21,9 +23,9 @@ class CleanDatabase extends Command
     // the name of the command (the part after "bin/console")
     protected static $defaultName = 'db:clean';
 
-    protected function configure()
+    protected function configure(): void
     {
-         $this
+        $this
             // the short description shown while running "php bin/console list"
             ->setDescription('Clean the database from orphans')
 
@@ -40,5 +42,6 @@ class CleanDatabase extends Command
         ));
         $Cleaner = new DatabaseCleaner();
         $Cleaner->cleanup();
+        return 0;
     }
 }

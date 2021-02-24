@@ -1,0 +1,101 @@
+<div class='box' style='min-height: 600px;'>
+  <div class='row'>
+    <div class='col'>
+      <h3>{{ 'Experiments Templates'|trans }}</h3>
+    </div>
+    <!-- CREATE NEW AND IMPORT BUTTONS -->
+    <div class='col text-right'>
+      <div class='btn-group mt-1'>
+        <div class='btn-group dropleft' role='group'>
+          <button type='button' id='btnGroupDrop1' class='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+            <span class='sr-only'>{{ 'Toggle create new menu'|trans }}</span>
+          </button>
+          <div class='dropdown-menu' aria-labelledby='btnGroupDrop1'>
+            <a href='#' id='import-from-file' class='dropdown-item'><i class='fas fa-upload'></i> {{ 'Import from file'|trans }}</a>
+            <!-- disable the reordering for now
+            <div class='dropdown-divider'></div>
+            <a href='#' id='toggleReorder' class='dropdown-item'><i class='fas fa-sort' data-fa-transform='rotate-90 down-1'></i> {{ 'Reorder templates'|trans }}</a>
+            -->
+          </div>
+        </div>
+        <button type='button' class='btn btn-primary createNewTemplate'>{{ 'Create'|trans }}</button>
+      </div>
+      <input type='file' aria-hidden='true' style='display: none' accept='.tpl' id='import_tpl' class='form-control mt-1'>
+    </div>
+  </div>
+  <hr>
+
+  {% include('show-templates-select.html') %}
+
+  {% if templateData %}
+    <div class='row mt-3'>
+      <!-- NAME OF TPL AND OWNER -->
+      <div class='col'>
+        <h4>{{ templateData.fullname|raw }} - {{ templateData.name|raw }}</h4>
+      </div>
+    </div>
+
+    <div class='row'>
+
+      <div class='col'>
+        <!-- TAGS -->
+        <i class='fas fa-tags'></i>
+        <label>{{ 'Tags'|trans }}</label>
+        <div class='tags'>
+          <span id='tags_div_{{ templateData.id }}'>
+            <!--  build the tag array -->
+            {% if templateData.tags|length > 0 %}
+              {% set tagsIdArr = templateData.tags_id|split(',') %}
+              {% set tagsValueArr = templateData.tags|split('|') %}
+              {% for key, tag in tagsValueArr %}
+                {# the key allows to get the id stored in tagsIdArr #}
+                <a class='tag m-1 tag-delete tagUnreference clickable' data-id='{{ templateData.id }}' data-tagid='{{ tagsIdArr[key] }}'>
+                  {{ tag|raw }}
+                </a>
+              {% endfor %}
+            {% endif %}
+          </span>
+          <input type='text' style='width:auto' class='createTagInput ml-1' id='createTagInput_{{ templateData.id }}' data-id='{{ templateData.id }}' placeholder='{{ 'Add a tag'|trans }}' />
+        </div>
+      </div>
+
+      <!-- MORE OPTIONS DROPDOWN MENU (···) -->
+      <div class='col'>
+        <div class='dropdown'>
+          <i data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' class='dropdown-toggle fas fa-ellipsis-h fa-2x fa-pull-right' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'></i>
+          <div class='dropdown-menu' aria-label='{{ 'More options'|trans }}'>
+            <!-- MANAGE PERMISSIONS -->
+            <a class='dropdown-item modalToggle' data-modal='permModal' href='#' data-read='{{ templateData.canread }}' data-write='{{ templateData.canwrite }}'>
+              <i class='fas fa-share-alt'></i> {{ 'Manage Permissions'|trans }}
+            </a>
+            <!-- DOWNLOAD -->
+            <a href='#' class='dropdown-item saveToFile' data-name='{{ templateData.name }}' data-id='e{{ templateData.id }}'>
+              <i class='fas fa-download'></i> {{ 'Download template'|trans }}
+            </a>
+            <!-- DESTROY -->
+            <div class='dropdown-divider'></div>
+            <a href='#' class='dropdown-item destroyTemplate hover-danger' data-id='{{ templateData.id }}'>
+              <i class='fas fa-trash-alt'></i> {{ 'Destroy template'|trans }}
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <form action='app/controllers/UcpController.php' method='post'>
+      {{ App.Csrf.getHiddenInput|raw }}
+      <input type='hidden' name='tpl_form' />
+      <input type='hidden' name='tpl_id' value='{{ templateData.id }}' />
+      <label for='tplName'>{{ 'Name'|trans }}</label>
+      <input id='tplName' name='tpl_name' class='form-control' value='{{ templateData.name|raw }}' />
+      {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
+      <label for='e{{ templateData.id }}'>{{ 'Template content'|trans }}</label>
+      <textarea id='e{{ templateData.id }}' name='tpl_body' class='mceditable' style='height:500px;'>{{ templateData.body }}</textarea><br />
+      <div class='text-center'>
+        <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+      </div>
+    </form>
+    {% include('steps-links-edit.html') %}
+  {% endif %}
+  </div>

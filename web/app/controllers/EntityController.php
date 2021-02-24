@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -14,6 +14,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Templates;
@@ -26,12 +27,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
-$Response = new RedirectResponse("../../experiments.php");
+$Response = new RedirectResponse('../../experiments.php');
 
 try {
-    if ($App->Session->has('anon')) {
-        throw new IllegalActionException('Anonymous user tried to access database controller.');
-    }
     // CSRF
     $App->Csrf->validate();
 
@@ -47,13 +45,13 @@ try {
     if ($Request->request->get('type') === 'experiments' ||
         $Request->query->get('type') === 'experiments') {
         $Entity = new Experiments($App->Users, $id);
-    } elseif ($Request->request->get('type') === 'experiments_tpl') {
+    } elseif ($Request->request->get('type') === 'experiments_templates') {
         $Entity = new Templates($App->Users, $id);
     } else {
         $Entity = new Database($App->Users, $id);
     }
 
-    $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=edit&id=" . $Entity->id);
+    $Response = new RedirectResponse('../../' . $Entity->page . '.php?mode=edit&id=' . $Entity->id);
 
     // UPDATE
     if ($Request->request->has('update')) {
@@ -63,30 +61,25 @@ try {
             $Request->request->get('body')
         );
         // redirect to view mode (Save and go back button)
-        $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=view&id=" . $Entity->id);
+        $Response = new RedirectResponse('../../' . $Entity->page . '.php?mode=view&id=' . $Entity->id);
     }
 
     // REPLACE UPLOAD
     if ($Request->request->has('replace')) {
         $Entity->Uploads->replace($Request);
     }
-
-} catch (ImproperActionException $e) {
+} catch (ImproperActionException | InvalidCsrfTokenException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
-
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid') ?? 'anon'), array('IllegalAction', $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));
-
 } catch (DatabaseErrorException | FilesystemErrorException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid') ?? 'anon'), array('Error', $e)));
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
-
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid') ?? 'anon'), array('Exception' => $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error());
-
 } finally {
     $Response->send();
 }

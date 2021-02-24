@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use function count;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
@@ -45,73 +46,6 @@ class Email
     {
         $this->Config = $config;
         $this->Users = $users;
-    }
-
-    /**
-     * Fetch the email(s) of the admin(s) for a team
-     *
-     * @param int $team
-     * @return array
-     */
-    private function getAdminEmail($team): array
-    {
-        // array for storing email adresses of admin(s)
-        $arr = array();
-        $Db = Db::getConnection();
-
-        $sql = "SELECT email FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team";
-        $req = $Db->prepare($sql);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
-        $req->execute();
-
-        while ($email = $req->fetchColumn()) {
-            $arr[] = $email;
-        }
-
-        // if we have only one admin, we need to have an associative array
-        if (\count($arr) === 1) {
-            return array($arr[0] => 'Admin eLabFTW');
-        }
-
-        return $arr;
-    }
-
-    /**
-     * Return Swift_Mailer instance and choose between sendmail and smtp
-     *
-     * @return Swift_Mailer
-     */
-    private function getMailer(): Swift_Mailer
-    {
-
-        // Choose mail transport method; either smtp or sendmail
-        if ($this->Config->configArr['mail_method'] === 'smtp') {
-            if ($this->Config->configArr['smtp_encryption'] === 'none') {
-                $transport = new Swift_SmtpTransport(
-                    $this->Config->configArr['smtp_address'],
-                    $this->Config->configArr['smtp_port']
-                );
-            } else {
-                $transport = new Swift_SmtpTransport(
-                    $this->Config->configArr['smtp_address'],
-                    $this->Config->configArr['smtp_port'],
-                    $this->Config->configArr['smtp_encryption']
-                );
-            }
-
-            if ($this->Config->configArr['smtp_password']) {
-                $transport->setUsername($this->Config->configArr['smtp_username'])
-                ->setPassword(Crypto::decrypt(
-                    $this->Config->configArr['smtp_password'],
-                    Key::loadFromAsciiSafeString(\SECRET_KEY)
-                ));
-            }
-        } else {
-            // Use locally installed MTA (aka sendmail); Default
-            $transport = new Swift_SendmailTransport($this->Config->configArr['sendmail_path'] . ' -bs');
-        }
-
-        return new Swift_Mailer($transport);
     }
 
     /**
@@ -203,9 +137,11 @@ class Email
      * Send an email to the admin of a team
      *
      * @param int $team
+     * @param array<string, mixed> $userInfo to get the email and name of new user
+     * @param bool $needValidation
      * @return void
      */
-    public function alertAdmin($team): void
+    public function alertAdmin(int $team, array $userInfo, bool $needValidation = true): void
     {
         if ($this->Config->configArr['mail_from'] === 'notconfigured@example.com') {
             return;
@@ -215,7 +151,19 @@ class Email
         $url = \rtrim(Tools::getUrl($Request), '/') . '/admin.php';
 
         // Create the message
+        $main = sprintf(
+            _('Hi. A new user registered an account on eLabFTW: %s (%s).'),
+            $userInfo['name'],
+            $userInfo['email'],
+        );
+        if ($needValidation) {
+            $main .= ' ' . sprintf(
+                _('Head to the admin panel to validate the account: %s'),
+                $url,
+            );
+        }
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
+
         $message = (new Swift_Message())
         // Give the message a subject
         ->setSubject(_('[eLabFTW] New user registered'))
@@ -224,7 +172,35 @@ class Email
         // Set the To
         ->setTo($this->getAdminEmail($team))
         // Give it a body
-        ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account: ') . $url . $footer);
+        ->setBody($main . $footer);
+        // SEND EMAIL
+        $this->send($message);
+    }
+
+    /**
+     * Send an email to a new user to notify that admin validation is required.
+     * This exists because experience shows that users don't read the notification and expect
+     * their account to work right away.
+     *
+     * @param string $email email of the user to notify
+     * @return void
+     */
+    public function alertUserNeedValidation($email): void
+    {
+        if ($this->Config->configArr['mail_from'] === 'notconfigured@example.com') {
+            return;
+        }
+        // Create the message
+        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
+        $message = (new Swift_Message())
+        // Give the message a subject
+        ->setSubject(_('[eLabFTW] Your account has been created'))
+        // Set the From address with an associative array
+        ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
+        // Set the To
+        ->setTo($email)
+        // Give it a body
+        ->setBody(_('Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done.') . $footer);
         // SEND EMAIL
         $this->send($message);
     }
@@ -259,5 +235,75 @@ class Email
         ->setBody(_('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ') . $url . $footer);
         // now we try to send the email
         $this->send($message);
+    }
+
+    /**
+     * Fetch the email(s) of the admin(s) for a team
+     *
+     * @param int $team
+     *
+     * @return scalar[]
+     */
+    private function getAdminEmail($team): array
+    {
+        // array for storing email adresses of admin(s)
+        $arr = array();
+        $Db = Db::getConnection();
+
+        $sql = 'SELECT email FROM users
+             CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
+             WHERE (`usergroup` = 1 OR `usergroup` = 2 OR `usergroup` = 3)';
+        $req = $Db->prepare($sql);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $req->execute();
+
+        while ($email = $req->fetchColumn()) {
+            $arr[] = (string) $email;
+        }
+
+        // if we have only one admin, we need to have an associative array
+        if (count($arr) === 1) {
+            return array($arr[0] => 'Admin eLabFTW');
+        }
+
+        return $arr;
+    }
+
+    /**
+     * Return Swift_Mailer instance and choose between sendmail and smtp
+     *
+     * @return Swift_Mailer
+     */
+    private function getMailer(): Swift_Mailer
+    {
+
+        // Choose mail transport method; either smtp or sendmail
+        if ($this->Config->configArr['mail_method'] === 'smtp') {
+            if ($this->Config->configArr['smtp_encryption'] === 'none') {
+                $transport = new Swift_SmtpTransport(
+                    $this->Config->configArr['smtp_address'],
+                    $this->Config->configArr['smtp_port']
+                );
+            } else {
+                $transport = new Swift_SmtpTransport(
+                    $this->Config->configArr['smtp_address'],
+                    $this->Config->configArr['smtp_port'],
+                    $this->Config->configArr['smtp_encryption']
+                );
+            }
+
+            if ($this->Config->configArr['smtp_password']) {
+                $transport->setUsername($this->Config->configArr['smtp_username'])
+                ->setPassword(Crypto::decrypt(
+                    $this->Config->configArr['smtp_password'],
+                    Key::loadFromAsciiSafeString(\SECRET_KEY)
+                ));
+            }
+        } else {
+            // Use locally installed MTA (aka sendmail); Default
+            $transport = new Swift_SendmailTransport($this->Config->configArr['sendmail_path'] . ' -bs');
+        }
+
+        return new Swift_Mailer($transport);
     }
 }

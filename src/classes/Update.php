@@ -1,8 +1,6 @@
 <?php
 /**
- * \Elabftw\Elabftw\Update
- *
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -12,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Models\Config;
@@ -26,23 +23,23 @@ use PDO;
  * 1. add a file in src/sql/ named 'schemaXX.sql' where XX is the current schema version + 1
  * 2. this file should use transactions (see other files for examples)
  * 3. increment the REQUIRED_SCHEMA number
- * 4. reload the page, the sql file should be read and modify the structure
+ * 4. Run `bin/console db:update`
  * 5. reflect the changes in src/sql/structure.sql
  * 6. reflect the changes in tests/_data/phpunit.sql if needed
  */
 class Update
 {
-    /** @var Db $Db SQL Database */
-    private $Db;
+    /** @var int REQUIRED_SCHEMA the current version of the database structure */
+    private const REQUIRED_SCHEMA = 56;
 
     /** @var Config $Config instance of Config */
     public $Config;
 
+    /** @var Db $Db SQL Database */
+    private $Db;
+
     /** @var Sql $Sql instance of Sql */
     private $Sql;
-
-    /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    private const REQUIRED_SCHEMA = 47;
 
     /**
      * Constructor
@@ -67,15 +64,19 @@ class Update
         return self::REQUIRED_SCHEMA;
     }
 
+    /**
+     * Check if the Db structure needs updating
+     *
+     * @return void
+     */
     public function checkSchema(): void
     {
         $currentSchema = (int) $this->Config->configArr['schema'];
 
         if ($currentSchema !== self::REQUIRED_SCHEMA) {
-            throw new InvalidSchemaException('Database schema is different from required schema. Please run update command: docker exec -it elabftw bin/console db:update');
+            throw new InvalidSchemaException();
         }
     }
-
 
     /**
      * Update the database schema if needed
@@ -120,7 +121,7 @@ class Update
 
         // new style with SQL files instead of functions
         while ($currentSchema < self::REQUIRED_SCHEMA) {
-            $this->Sql->execFile('schema' . (++$currentSchema) . '.sql');
+            $this->Sql->execFile('schema' . (string) (++$currentSchema) . '.sql');
         }
 
         // remove cached twig templates (for non docker users)
@@ -164,21 +165,17 @@ class Update
      */
     private function schema38(): void
     {
-        $sql = "ALTER TABLE experiments_comments CHANGE exp_id item_id INT(10) UNSIGNED NOT NULL";
-        if (!$this->Db->q($sql)) {
-            throw new DatabaseErrorException('Problem updating to schema 38!');
-        }
-        $sql = "CREATE TABLE IF NOT EXISTS `items_comments` (
+        $sql = 'ALTER TABLE experiments_comments CHANGE exp_id item_id INT(10) UNSIGNED NOT NULL';
+        $this->Db->q($sql);
+        $sql = 'CREATE TABLE IF NOT EXISTS `items_comments` (
           `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
           `datetime` datetime NOT NULL,
           `item_id` int(11) NOT NULL,
           `comment` text NOT NULL,
           `userid` int(11) NOT NULL,
           PRIMARY KEY (`id`)
-        );";
-        if (!$this->Db->q($sql)) {
-            throw new DatabaseErrorException('Problem updating to schema 38 (second part)!');
-        }
+        );';
+        $this->Db->q($sql);
     }
 
     /**
@@ -188,10 +185,8 @@ class Update
      */
     private function schema39(): void
     {
-        $sql = "ALTER TABLE `users` DROP `can_lock`";
-        if (!$this->Db->q($sql)) {
-            throw new DatabaseErrorException('Problem updating to schema 39!');
-        }
+        $sql = 'ALTER TABLE `users` DROP `can_lock`';
+        $this->Db->q($sql);
     }
 
     /**
@@ -202,9 +197,7 @@ class Update
     private function schema40(): void
     {
         $sql = "ALTER TABLE `users` ADD `allow_edit` TINYINT(1) NOT NULL DEFAULT '0'";
-        if (!$this->Db->q($sql)) {
-            throw new DatabaseErrorException('Problem updating to schema 40!');
-        }
+        $this->Db->q($sql);
     }
 
     /**
@@ -215,45 +208,50 @@ class Update
     private function schema41(): void
     {
         // first create the tags table
-        $sql = "CREATE TABLE IF NOT EXISTS `tags` ( `id` INT NOT NULL AUTO_INCREMENT , `team` INT NOT NULL , `tag` VARCHAR(255) NOT NULL , PRIMARY KEY (`id`))";
-        if (!$this->Db->q($sql)) {
-            throw new DatabaseErrorException('Problem creating table tags!');
-        }
+        $sql = 'CREATE TABLE IF NOT EXISTS `tags` ( `id` INT NOT NULL AUTO_INCREMENT , `team` INT NOT NULL , `tag` VARCHAR(255) NOT NULL , PRIMARY KEY (`id`))';
 
+        $this->Db->q($sql);
         // now create the mapping table
-        $sql = "CREATE TABLE IF NOT EXISTS `tags2entity` ( `item_id` INT NOT NULL , `tag_id` INT NOT NULL , `item_type` VARCHAR(255) NOT NULL)";
-        if (!$this->Db->q($sql)) {
-            throw new DatabaseErrorException('Problem creating table tags2entity!');
-        }
+        $sql = 'CREATE TABLE IF NOT EXISTS `tags2entity` ( `item_id` INT NOT NULL , `tag_id` INT NOT NULL , `item_type` VARCHAR(255) NOT NULL)';
+        $this->Db->q($sql);
 
         // fetch existing tags
-        $sql = "SELECT experiments_tags.*, users.team FROM experiments_tags INNER JOIN users ON (experiments_tags.userid = users.userid)";
+        $sql = 'SELECT experiments_tags.*, users.team FROM experiments_tags INNER JOIN users ON (experiments_tags.userid = users.userid)';
         $req = $this->Db->prepare($sql);
         $req->execute();
         $experimentsTags = $req->fetchAll();
+        if ($experimentsTags === false) {
+            $experimentsTags = array();
+        }
 
         // same for items tags
-        $sql = "SELECT * FROM items_tags";
+        $sql = 'SELECT * FROM items_tags';
         $req = $this->Db->prepare($sql);
         $req->execute();
         $itemsTags = $req->fetchAll();
+        if ($itemsTags === false) {
+            $itemsTags = array();
+        }
 
         // same for experiments_tpl_tags
-        $sql = "SELECT experiments_tpl_tags.*, users.team FROM experiments_tpl_tags INNER JOIN users ON (experiments_tpl_tags.userid = users.userid)";
+        $sql = 'SELECT experiments_tpl_tags.*, users.team FROM experiments_tpl_tags INNER JOIN users ON (experiments_tpl_tags.userid = users.userid)';
         $req = $this->Db->prepare($sql);
         $req->execute();
         $tplTags = $req->fetchAll();
+        if ($tplTags === false) {
+            $tplTags = array();
+        }
 
         // now the insert part
-        $insertSql = "INSERT INTO tags (team, tag) VALUES (:team, :tag)";
+        $insertSql = 'INSERT INTO tags (team, tag) VALUES (:team, :tag)';
         $insertReq = $this->Db->prepare($insertSql);
 
-        $insertSql2 = "INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)";
+        $insertSql2 = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
         $insertReq2 = $this->Db->prepare($insertSql2);
 
         foreach ($experimentsTags as $tag) {
             // check if the tag doesn't exist already for the team
-            $sql = "SELECT id FROM tags WHERE tag = :tag AND team = :team";
+            $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':tag', $tag['tag']);
             $req->bindParam(':team', $tag['team'], PDO::PARAM_INT);
@@ -282,7 +280,7 @@ class Update
 
         foreach ($itemsTags as $tag) {
             // check if the tag doesn't exist already for the team
-            $sql = "SELECT id FROM tags WHERE tag = :tag AND team = :team";
+            $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':tag', $tag['tag']);
             $req->bindParam(':team', $tag['team_id'], PDO::PARAM_INT);
@@ -310,7 +308,7 @@ class Update
 
         foreach ($tplTags as $tag) {
             // check if the tag doesn't exist already for the team
-            $sql = "SELECT id FROM tags WHERE tag = :tag AND team = :team";
+            $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':tag', $tag['tag']);
             $req->bindParam(':team', $tag['team'], PDO::PARAM_INT);

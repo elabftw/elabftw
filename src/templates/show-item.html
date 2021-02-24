@@ -1,0 +1,84 @@
+      {# dim the experiment a bit if it's not yours #}
+      {% set randomId = random() %}
+      {% set opacity = '1' %}
+      {% set owner = '' %}
+      {% if (Entity.Users.userData.userid != item.userid) and not App.Session.has('is_anon') %}
+        {% set opacity = '0.7' %}
+        {% set owner = item.fullname %}
+      {% endif %}
+      {% if Entity.Users.userData.single_column_layout %}
+        <div class='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
+      {% else %}
+        <div class='col-xs-12 col-sm-6 col-md-6 col-lg-4'>
+      {% endif %}
+          <section class='item item-show item-show-{{ App.Users.userData.display_size }} {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item.color }}'>
+              {% if isPinned %}
+                <span class='align_right'><i class='fas fa-thumbtack' title="{{ 'Pinned'|trans }}"></i></span>
+              {% endif %}
+
+            <p class='title'>
+              <!-- lock icon -->
+              {% if item.locked %}
+                <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
+              {% endif %}
+
+              <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
+            </p>
+            {% if item.next_step|length > 0 %}
+              {% set stepsArr = item.next_step|split('|') %}
+              {% set next = stepsArr|first %}
+              <p class='item-next'>
+                {{ 'Next step'|trans }}: <span class='item-next-step'>{{ next|raw }}</span>
+              </p>
+            {% endif %}
+
+            <p class='item-info'>
+              <!-- checkbox -->
+              <input class='item-checkbox' autocomplete='off' type='checkbox' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;vertical-align:-3px;' />
+              <!-- edit icon -->
+              {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
+                <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a>
+              {% endif %}
+              <!-- toggle body -->
+              <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} class='toggleBody clickable'>
+                <i class='fas fa-plus-circle' title='{{ 'Toggle content'|trans }}'></i>
+              </span>
+              <!-- category -->
+              <span class='item-category' style='color:#{{ item.color }}'>{{ item.category }}</span>
+              <!-- date -->
+              <span class='item-date'><i class='far fa-calendar-alt mr-1'></i>{{ item.date|kdate }}</span>
+              <!-- timestamp icon -->
+              {% if item.timestamped %}
+                <i class='far fa-calendar-check'></i>
+              {% endif %}
+
+              {# show attached if there is a file attached #}
+              {% if item.has_attachment %}
+                <i class='fas fa-paperclip'></i>
+              {% endif %}
+              {% if item.has_comment %}
+                <i class='fas fa-comments'></i>
+              {% endif %}
+
+              {% if Entity.type == 'items' and item.rating > 0 %}
+                {{ item.rating|stars|raw }}
+              {% endif %}
+
+              {{ owner|raw }}
+
+              {% set itemtagsArr = tagsArr[item.id] %}
+              {% if itemtagsArr|length > 0 %}
+                <span class='tags'><i class='fas fa-tags mr-1'></i>
+                  {% for tag in itemtagsArr %}
+                    <a class='tag' href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+                  {% endfor %}
+                </span>
+              {% endif %}
+            </p>
+
+            <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
+            <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
+            <div class='togglableHidden' id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
+
+          </section>
+        </div>

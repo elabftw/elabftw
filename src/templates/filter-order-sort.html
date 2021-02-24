@@ -1,0 +1,75 @@
+<div class='row'>
+  <!-- LEFT MENU: FILTER/ORDER/SORT/LIMIT -->
+  <!-- we hide this menu for small devices -->
+  <div class='col-md-10 hidden-xs {{ searchPage ? 'mt-2' }}'>
+
+    {% if not searchPage %}
+      <form>
+    {% endif %}
+    <div class='form-group form-inline'>
+      <input type='hidden' name='q' value='{{ DisplayParams.query }}' />
+      {% if DisplayParams.searchType == 'related' %}
+        <input type='hidden' name='related' value='{{ App.Request.query.get('related')|number_format }}' />
+      {% endif %}
+
+
+      <!-- CATEGORY -->
+      <select name='cat' class='autosubmit mr-1 form-control select-filter-status' aria-label='Filter category'>
+        <option value=''>{{ Entity.type == 'experiments' ? 'Filter status'|trans : 'Filter by type'|trans }}</option>
+        {% for category in categoryArr %}
+          <option value='{{ category.category_id }}'{{ App.Request.query.get('cat') == category.category_id ? ' selected'}}>
+          {{ category.category }}</option>
+        {% endfor %}
+
+      </select>
+      <input type='hidden' name='mode' value='show' />
+
+      <!-- ORDER -->
+      <select name='order' class='autosubmit mr-1 form-control select-order' aria-label='Order by'>
+        <option value=''>{{ 'Order by'|trans }}</option>
+        <option value='cat'{{ App.Request.query.get('order') == 'cat' ? ' selected' }}>{{ 'Category'|trans }}</option>
+        <option value='id'{{ App.Request.query.get('order') == 'id' ? ' selected' }}>{{ 'Id'|trans }}</option>
+        <option value='date'{{ App.Request.query.get('order') == 'date' ? ' selected' }}>{{ 'Date'|trans }}</option>
+        <option value='lastchange'{{ App.Request.query.get('order') == 'lastchange' ? ' selected' }}>{{ 'Last modified'|trans }}</option>
+        {% if Entity.type == 'items' %}
+            <option value='rating'{{ App.Request.query.get('order') == 'rating' ? ' selected' }}>{{ 'Rating'|trans }}</option>
+        {% else %}
+            <option value='comment'{{ App.Request.query.get('order') == 'comment' ? ' selected' }}>{{ 'Comment'|trans }}</option>
+        {% endif %}
+        <option value='title'{{ App.Request.query.get('order') == 'title' ? ' selected' }}>{{ 'Title'|trans }}</option>
+        <option value='user'{{ App.Request.query.get('order') == 'user' ? ' selected' }}>{{ 'User'|trans }}</option>
+      </select>
+
+      <!-- SORT -->
+      <select name='sort' class='autosubmit mr-1 form-control select-sort' aria-label='Sort by'>
+        <option value=''>{{ 'Sort'|trans }}</option>
+        <option value='desc'{{ App.Request.query.get('sort') == 'desc' ? ' selected' }}>{{ 'DESC'|trans }}</option>
+        <option value='asc'{{ App.Request.query.get('sort') == 'asc' ? ' selected' }}>{{ 'ASC'|trans }}</option>
+      </select>
+
+      <!-- LIMIT -->
+      <select autocomplete='off' name='limit' id='select-limit' class='autosubmit mr-1 form-control' aria-label='Number of results shown'>
+        <option value=''>{{ 'Results per page'|trans }}</option>
+        {% for option in limitOptions(DisplayParams.limit) %}
+          <option{{ option == App.Request.query.get('limit') ? ' selected' }} value='{{ option }}'>{{ option }}</option>
+        {% endfor %}
+      </select>
+
+      {% if not searchPage %}
+        <!-- SEARCH WITH TAG -->
+        <select multiple name='tags[]' class='form-control mr-1 selectpicker' data-show-subtext='true' data-none-selected-text='{{ 'Tags'|trans }}' data-live-search='true' data-style='' data-style-base='form-control' data-showtick='true' data-actions-box='true'>
+          {% for tag in tagsArrForSelect %}
+            <option value='{{ tag.tag }}'{{ tag.tag in App.Request.query.get('tags') ? ' selected' }}>{{ tag.tag|raw }}</option>
+          {% endfor %}
+        </select>
+        <!-- onBlur cannot work on bootstrap multiselect see https://stackoverflow.com/questions/42673800/bootstrap-multiselect-blur-event-not-triggering so add a button -->
+        <button class='btn btn-primary'>{{ 'Go'|trans }}</button>
+      {% endif %}
+
+    </div>
+    </form>
+  </div>
+  {% if not searchPage %}
+    {% include('create-new.html') %}
+  {% endif %}
+</div>

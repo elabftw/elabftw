@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -19,6 +19,12 @@ use PDO;
  */
 class UserStats
 {
+    /** @var array $colorsArr colors for status */
+    public $colorsArr = array();
+
+    /** @var array $percentArr percentage and status name */
+    public $percentArr = array();
+
     /** @var Users $Users instance of Users */
     private $Users;
 
@@ -34,12 +40,6 @@ class UserStats
     /** @var array $statusArr status id and name */
     private $statusArr = array();
 
-    /** @var array $colorsArr colors for status */
-    public $colorsArr = array();
-
-    /** @var array $percentArr percentage and status name */
-    public $percentArr = array();
-
     /**
      * Init the object with a userid and the total count of experiments
      *
@@ -51,8 +51,20 @@ class UserStats
         $this->Users = $users;
         $this->count = $count;
         $this->Db = Db::getConnection();
-        $this->countStatus();
-        $this->makePercent();
+    }
+
+    /**
+     * Create the statistics
+     *
+     * @return void
+     */
+    public function makeStats(): void
+    {
+        // only work if there is something to work on
+        if ($this->count > 0) {
+            $this->countStatus();
+            $this->makePercent();
+        }
     }
 
     /**
@@ -64,7 +76,7 @@ class UserStats
     {
         // get all status name and id
         $Status = new Status($this->Users);
-        $statusAll = $Status->readAll();
+        $statusAll = $Status->read();
 
         // populate arrays
         foreach ($statusAll as $status) {
@@ -74,10 +86,10 @@ class UserStats
 
         // count experiments for each status
         foreach (array_keys($this->statusArr) as $key) {
-            $sql = "SELECT COUNT(id)
+            $sql = 'SELECT COUNT(id)
                 FROM experiments
                 WHERE userid = :userid
-                AND category = :category";
+                AND category = :category';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':category', $key, PDO::PARAM_INT);
@@ -95,7 +107,7 @@ class UserStats
     {
         foreach ($this->statusArr as $key => $value) {
             $value = str_replace("'", "\'", html_entity_decode($value, ENT_QUOTES));
-            $this->percentArr[$value] = round(((int) $this->countArr[$key] / $this->count) * 100);
+            $this->percentArr[$value] = round(((float) $this->countArr[$key] / (float) $this->count) * 100.0);
         }
     }
 }

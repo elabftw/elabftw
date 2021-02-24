@@ -1,6 +1,6 @@
 .git
 .gitignore
-_apidoc
+apidoc/html
 _srcdoc
 config.php*
 cache

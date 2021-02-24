@@ -33,13 +33,16 @@ CREATE TABLE `api_keys` (
   `hash` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `can_write` tinyint(1) NOT NULL DEFAULT 0,
-  `userid` int(10) UNSIGNED NOT NULL
+  `userid` int(10) UNSIGNED NOT NULL,
+  `team` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- RELATIONSHIPS FOR TABLE `api_keys`:
 --   `userid`
 --       `users` -> `userid`
+--   `team`
+--       `teams` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -77,11 +80,12 @@ CREATE TABLE `config` (
 
 --
 -- Table structure for table `experiments`
+-- Here the datetime column cannot have current_timestamp on update because
+-- of the way the code is in MySQL. It is fixed in 5.6 but we still target 5.5
 --
 
 CREATE TABLE `experiments` (
   `id` int(10) UNSIGNED NOT NULL,
-  `team` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `date` int(10) UNSIGNED NOT NULL,
   `body` mediumtext,
@@ -95,14 +99,14 @@ CREATE TABLE `experiments` (
   `timestampedby` int(11) DEFAULT NULL,
   `timestamptoken` text,
   `timestampedwhen` timestamp NULL DEFAULT NULL,
-  `visibility` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `canread` varchar(255) NOT NULL DEFAULT 'team',
+  `canwrite` varchar(255) NOT NULL DEFAULT 'user',
+  `datetime` timestamp NOT NULL,
+  `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- RELATIONSHIPS FOR TABLE `experiments`:
---   `team`
---       `teams` -> `id`
 --   `userid`
 --       `users` -> `userid`
 --
@@ -204,6 +208,8 @@ CREATE TABLE `experiments_templates` (
   `body` text,
   `name` varchar(255) NOT NULL,
   `userid` int(10) UNSIGNED DEFAULT NULL,
+  `canread` varchar(255) NOT NULL,
+  `canwrite` varchar(255) NOT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -278,9 +284,13 @@ CREATE TABLE `items` (
   `rating` tinyint(10) DEFAULT '0',
   `category` int(255) UNSIGNED NOT NULL,
   `locked` tinyint(3) UNSIGNED DEFAULT NULL,
+  `lockedby` int(10) UNSIGNED DEFAULT NULL,
+  `lockedwhen` timestamp NULL DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
-  `visibility` varchar(255) NOT NULL DEFAULT 'team',
-  `available` tinyint(1) NOT NULL DEFAULT '1'
+  `canread` varchar(255) NOT NULL DEFAULT 'team',
+  `canwrite` varchar(255) NOT NULL DEFAULT 'team',
+  `available` tinyint(1) NOT NULL DEFAULT '1',
+  `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -418,7 +428,7 @@ CREATE TABLE `tags2entity` (
 CREATE TABLE `teams` (
   `id` int(10) UNSIGNED NOT NULL,
   `name` varchar(255) NOT NULL,
-  `deletable_xp` tinyint(1) NOT NULL DEFAULT '1',
+  `deletable_xp` tinyint(1) NOT NULL DEFAULT 1,
   `link_name` text NOT NULL,
   `link_href` text NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -428,7 +438,12 @@ CREATE TABLE `teams` (
   `stampcert` text,
   `stamphash` varchar(10) DEFAULT 'sha256',
   `orgid` varchar(255) DEFAULT NULL,
-  `public_db` tinyint(1) NOT NULL DEFAULT '0'
+  `public_db` tinyint(1) NOT NULL DEFAULT 0,
+  `force_canread` varchar(255) NOT NULL DEFAULT 'team',
+  `force_canwrite` varchar(255) NOT NULL DEFAULT 'user',
+  `do_force_canread` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
+  `do_force_canwrite` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
+  `visible` tinyint(1) UNSIGNED NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -448,7 +463,8 @@ CREATE TABLE `team_events` (
   `start` varchar(255) NOT NULL,
   `end` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
-  `userid` int(10) UNSIGNED NOT NULL
+  `userid` int(10) UNSIGNED NOT NULL,
+  `experiment` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -530,7 +546,7 @@ CREATE TABLE `users` (
   `userid` int(10) UNSIGNED NOT NULL,
   `salt` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `team` int(10) UNSIGNED NOT NULL,
+  `mfa_secret` varchar(32) DEFAULT NULL,
   `usergroup` int(10) UNSIGNED NOT NULL,
   `firstname` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
@@ -547,22 +563,24 @@ CREATE TABLE `users` (
   `sc_submit` varchar(1) NOT NULL DEFAULT 's',
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
   `show_team` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-  `close_warning` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `show_team_templates` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `chem_editor` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `json_editor` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `validated` tinyint(1) NOT NULL DEFAULT '0',
   `lang` varchar(5) NOT NULL DEFAULT 'en_GB',
   `api_key` varchar(255) DEFAULT NULL,
-  `default_vis` varchar(255) DEFAULT 'team',
+  `default_read` varchar(255) NULL DEFAULT 'team',
+  `default_write` varchar(255) NULL DEFAULT 'user',
   `single_column_layout` tinyint(1) NOT NULL DEFAULT '0',
   `cjk_fonts` tinyint(1) NOT NULL DEFAULT '0',
-  `orderby` varchar(255) DEFAULT NULL,
-  `sort` varchar(255) DEFAULT NULL,
+  `orderby` varchar(255) NOT NULL DEFAULT 'date',
+  `sort` varchar(255) NOT NULL DEFAULT 'desc',
   `use_markdown` tinyint(1) NOT NULL DEFAULT '0',
   `inc_files_pdf` tinyint(1) NOT NULL DEFAULT '1',
   `archived` tinyint(1) NOT NULL DEFAULT '0',
   `pdfa` tinyint(1) NOT NULL DEFAULT '1',
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
-  `allow_edit` tinyint(1) NOT NULL DEFAULT '0',
+  `display_size` varchar(2) NOT NULL DEFAULT 'lg',
   `last_login` DATETIME NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -619,7 +637,6 @@ ALTER TABLE `config`
 --
 ALTER TABLE `experiments`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_experiments_teams_id` (`team`),
   ADD KEY `fk_experiments_users_userid` (`userid`);
 
 --
@@ -715,8 +732,8 @@ ALTER TABLE `tags`
 --
 -- Indexes for table `tags2entity`
 --
-ALTER TABLE `tags2entity`
-  ADD KEY `fk_tags2entity_tags_id` (`tag_id`);
+-- ALTER TABLE `tags2entity`
+-- ADD KEY `fk_tags2entity_tags_id` (`tag_id`);
 
 --
 -- Indexes for table `teams`
@@ -756,8 +773,7 @@ ALTER TABLE `uploads`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`userid`),
-  ADD KEY `fk_users_teams_id` (`team`);
+  ADD PRIMARY KEY (`userid`);
 
 --
 -- Indexes for table `users2team_groups`
@@ -910,13 +926,13 @@ ALTER TABLE `users`
 -- Constraints for table `api_keys`
 --
 ALTER TABLE `api_keys`
-  ADD CONSTRAINT `fk_api_keys_users_id` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_api_keys_users_id` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_api_keys_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `experiments`
 --
 ALTER TABLE `experiments`
-  ADD CONSTRAINT `fk_experiments_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_experiments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
@@ -1015,18 +1031,113 @@ ALTER TABLE `team_groups`
 ALTER TABLE `todolist`
   ADD CONSTRAINT `fk_todolist_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- schema 49
+CREATE TABLE `items_steps` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `item_id` int(10) unsigned NOT NULL,
+    `body` text NOT NULL,
+    `ordering` int(10) unsigned DEFAULT NULL,
+    `finished` tinyint(1) NOT NULL DEFAULT '0',
+    `finished_time` datetime DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `fk_items_steps_items_id` (`item_id`),
+    CONSTRAINT `fk_items_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+CREATE TABLE `experiments_templates_steps` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `item_id` int(10) unsigned NOT NULL,
+    `body` text NOT NULL,
+    `ordering` int(10) unsigned DEFAULT NULL,
+    `finished` tinyint(1) NOT NULL DEFAULT '0',
+    `finished_time` datetime DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `fk_experiments_templates_steps_items_id` (`item_id`),
+    CONSTRAINT `fk_experiments_templates_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+CREATE TABLE `items_links` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `item_id` int(10) unsigned NOT NULL,
+    `link_id` int(10) unsigned NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `fk_items_links_items_id` (`item_id`),
+    KEY `fk_items_links_items_id2` (`link_id`),
+    CONSTRAINT `fk_items_links_items_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_items_links_items_id2` FOREIGN KEY (`link_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+CREATE TABLE `experiments_templates_links` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `item_id` int(10) unsigned NOT NULL,
+    `link_id` int(10) unsigned NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `fk_experiments_templates_links_items_id` (`item_id`),
+    KEY `fk_experiments_templates_links_items_id2` (`link_id`),
+    CONSTRAINT `fk_experiments_templates_links_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_experiments_templates_links_items_id` FOREIGN KEY (`link_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+-- schema 52
+CREATE TABLE `users2teams` (
+  `users_id` int(10) UNSIGNED NOT NULL,
+  `teams_id` int(10) UNSIGNED NOT NULL
+);
 --
--- Constraints for table `users`
+-- Indexes for table `users2teams`
 --
-ALTER TABLE `users`
-  ADD CONSTRAINT `fk_users_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `users2teams`
+  ADD KEY `fk_users2teams_teams_id` (`teams_id`),
+  ADD KEY `fk_users2teams_users_id` (`users_id`);
+ALTER TABLE `users2teams`
+  ADD CONSTRAINT `fk_users2teams_teams_id` FOREIGN KEY (`teams_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_users2teams_users_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+
+--
+-- Table structure for table `pin2users`
+--
+
+CREATE TABLE `pin2users` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `users_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  `type` varchar(255) NOT NULL
+);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `pin2users`
+--
+ALTER TABLE `pin2users`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_pin2users_userid` (`users_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `pin2users`
+--
+ALTER TABLE `pin2users`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `pin2users`
+--
+ALTER TABLE `pin2users`
+  ADD CONSTRAINT `fk_pin2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+--
 --
 -- Constraints for table `users2team_groups`
 --
-ALTER TABLE `users2team_groups`
-  ADD CONSTRAINT `fk_users2team_groups_team_groups_id` FOREIGN KEY (`groupid`) REFERENCES `team_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_users2team_groups_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+-- ALTER TABLE `users2team_groups`
+--  ADD CONSTRAINT `fk_users2team_groups_team_groups_id` FOREIGN KEY (`groupid`) REFERENCES `team_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+--  ADD CONSTRAINT `fk_users2team_groups_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

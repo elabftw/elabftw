@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "es6",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strict": false,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "lib": ["es6", "dom"]
+  },
+  "include": [
+    "."
+  ]
+}

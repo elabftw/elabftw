@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -10,10 +10,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
+use function explode;
+use function filter_var;
+use function in_array;
 use InvalidArgumentException;
+use League\CommonMark\CommonMarkConverter;
+use League\CommonMark\Environment;
+use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
+use function mb_strlen;
+use function pathinfo;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -23,40 +29,6 @@ class Tools
 {
     /** @var int DEFAULT_UPLOAD_SIZE max size of uploaded file if we cannot find in in ini file */
     private const DEFAULT_UPLOAD_SIZE = 2;
-
-    /**
-     * @var int MAX_BODY_SIZE max size for the body
-     * ~= max size of MEDIUMTEXT in MySQL for UTF-8
-     * But here it's less than that because while trying different sizes
-     * I found this value to work, but not above.
-     * Anyway, a few millions characters should be enough to report an experiment.
-     */
-    private const MAX_BODY_SIZE = 4120000;
-
-    /**
-     * Return the current date as YYYYMMDD format if no input
-     * return input if it is a valid date
-     *
-     * @param string|null $input 20160521
-     * @return string
-     */
-    public static function kdate($input = null): string
-    {
-        if ($input !== null
-            && \mb_strlen($input) == '8') {
-            // Check if day/month are good (badly)
-            $datemonth = substr($input, 4, 2);
-            $dateday = substr($input, 6, 2);
-            if (($datemonth <= '12')
-                && ($dateday <= '31')
-                && ($datemonth > '0')
-                && ($dateday > '0')) {
-                // SUCCESS on every test
-                return $input;
-            }
-        }
-        return date('Ymd');
-    }
 
     /**
      * For displaying messages using bootstrap alerts
@@ -82,72 +54,15 @@ class Tools
         $crossLink = '';
 
         if ($cross) {
-            $crossLink = "<a href='#' class='close' data-dismiss='alert'>&times</a>";
+            $crossLink = "<a href='#' class='close' data-dismiss='alert'>&times;</a>";
         }
 
         $begin = "<div class='alert alert-" . $alert .
             "'><i class='fas " . $icon .
             "'></i>";
-        $end = "</div>";
+        $end = '</div>';
 
         return $begin . $crossLink . ' ' . $message . $end;
-    }
-
-    /**
-     * Sanitize title with a filter_var and remove the line breaks.
-     *
-     * @param string $input The title to sanitize
-     * @return string Will return Untitled if there is no input.
-     */
-    public static function checkTitle(string $input): string
-    {
-        if (empty($input)) {
-            return _('Untitled');
-        }
-        $title = filter_var($input, FILTER_SANITIZE_STRING);
-        // remove linebreak to avoid problem in javascript link list generation on editXP
-        return str_replace(array("\r\n", "\n", "\r"), ' ', $title);
-    }
-
-    /**
-     * Sanitize body with a white list of allowed html tags.
-     *
-     * @param string $input Body to sanitize
-     * @return string The sanitized body or empty string if there is no input
-     */
-    public static function checkBody(string $input): string
-    {
-        $whitelist = "<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol>
-            <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td><code><video><audio><pagebreak><pre>
-            <details><summary><figure><figcaption>";
-        $body = strip_tags($input, $whitelist);
-        // use strlen() instead of mb_strlen() because we want the size in bytes
-        if (\strlen($body) > self::MAX_BODY_SIZE) {
-            throw new ImproperActionException('Content is too big! Cannot save!' . \strlen($body));
-        }
-        return $body;
-    }
-
-    /**
-     * Check if we have a correct value for visibility
-     *
-     * @param string $visibility
-     * @return string
-     */
-    public static function checkVisibility(string $visibility): string
-    {
-        $validArr = array(
-            'public',
-            'organization',
-            'team',
-            'user'
-        );
-
-        if (!\in_array($visibility, $validArr, true) && self::checkId((int) $visibility) === false) {
-            throw new IllegalActionException('The visibility parameter is wrong.');
-        }
-
-        return $visibility;
     }
 
     /**
@@ -158,7 +73,11 @@ class Tools
      */
     public static function md2html(string $md): string
     {
-        return \Michelf\Markdown::defaultTransform($md);
+        $environment = Environment::createCommonMarkEnvironment();
+        $environment->addExtension(new GithubFlavoredMarkdownExtension());
+
+        $converter = new CommonMarkConverter(array('allow_unsafe_links' => false, 'max_nesting_level' => 42), $environment);
+        return \trim($converter->convertToHtml($md), "\n");
     }
 
     /**
@@ -185,7 +104,7 @@ class Tools
         }
 
         // get unit
-        $unit = strtolower($input[\mb_strlen($input) - 1]);
+        $unit = strtolower($input[mb_strlen($input) - 1]);
         $value = (int) $input;
 
         // convert to Mb
@@ -213,25 +132,13 @@ class Tools
      */
     public static function formatBytes(int $bytes): string
     {
-        // nice display of filesize
-        if ($bytes < 1024) {
-            return $bytes . ' B';
-        }
-
-        if ($bytes < 1048576) {
-            return round($bytes / 1024, 2) . ' KiB';
-        } elseif ($bytes < 1073741824) {
-            return round($bytes / 1048576, 2) . ' MiB';
-        } elseif ($bytes < 1099511627776) {
-            return round($bytes / 1073741824, 2) . ' GiB';
-        } elseif ($bytes < 1125899906842624) {
-            return round($bytes / 1099511627776, 2) . ' TiB';
-        }
-        return 'That is a very big file you have there my friend.';
+        $sizes = array('B', 'KiB', 'MiB', 'GiB', 'TiB');
+        $factor = (int) floor((strlen((string) $bytes) - 1) / 3);
+        return sprintf('%.2f', $bytes / 1024** $factor) . ' ' . $sizes[$factor];
     }
 
     /**
-     * Take a 8 digits input and output 2014.08.16
+     * Take a 8 digits input and output 2014.08.16
      *
      * @param string $date Input date '20140302'
      * @param string $s an optionnal param to specify the separator
@@ -240,7 +147,7 @@ class Tools
      */
     public static function formatDate(string $date, string $s = '.'): string
     {
-        if (\mb_strlen($date) != 8) {
+        if (mb_strlen($date) !== 8) {
             throw new InvalidArgumentException('Date has wrong size!');
         }
         return $date[0] . $date[1] . $date[2] . $date[3] . $s . $date[4] . $date[5] . $s . $date[6] . $date[7];
@@ -255,28 +162,12 @@ class Tools
     public static function getExt(string $filename): string
     {
         // Get file extension
-        $path_info = pathinfo($filename);
-        // if no extension
-        if (!empty($path_info['extension'])) {
-            return $path_info['extension'];
+        $ext = filter_var(pathinfo($filename, PATHINFO_EXTENSION), FILTER_SANITIZE_STRING);
+        if ($ext !== null && $ext !== '' && $ext !== false) {
+            return $ext;
         }
 
         return 'unknown';
-    }
-
-    /**
-     * Check ID is valid (pos int)
-     *
-     * @param int $id
-     * @return int|false $id if pos int
-     */
-    public static function checkId(int $id)
-    {
-        $filter_options = array(
-            'options' => array(
-                'min_range' => 1
-            ));
-        return filter_var($id, FILTER_VALIDATE_INT, $filter_options);
     }
 
     /**
@@ -288,9 +179,9 @@ class Tools
     public static function error(bool $permission = false): string
     {
         if ($permission) {
-            return _("This section is out of your reach!");
+            return _('This section is out of your reach!');
         }
-        return _("An error occurred!");
+        return _('An error occurred!');
     }
 
     /**
@@ -309,13 +200,16 @@ class Tools
             'fr_FR' => 'fr',
             'id_ID' => 'id',
             'it_IT' => 'it',
+            'ja_JP' => 'ja',
+            'ko_KR' => 'ko',
+            'nl_BE' => 'nl',
             'pl_PL' => 'pl',
             'pt_BR' => 'pt-br',
             'pt_PT' => 'pt',
             'ru_RU' => 'ru',
             'sl_SI' => 'sl',
             'sk_SK' => 'sk',
-            'zh_CN' => 'zh-cn'
+            'zh_CN' => 'zh-cn',
         );
         return $map[$lang];
     }
@@ -327,7 +221,7 @@ class Tools
      */
     public static function getLangsArr(): array
     {
-        $langs = array(
+        return array(
             'ca_ES' => 'Spanish (Catalan)',
             'de_DE' => 'German',
             'en_GB' => 'English (UK)',
@@ -335,23 +229,25 @@ class Tools
             'fr_FR' => 'French',
             'id_ID' => 'Indonesian',
             'it_IT' => 'Italian',
+            'ja_JP' => 'Japanese',
+            'ko_KR' => 'Korean',
+            'nl_BE' => 'Dutch',
             'pl_PL' => 'Polish',
             'pt_BR' => 'Portuguese (Brazilian)',
             'pt_PT' => 'Portuguese',
             'ru_RU' => 'Russian',
             'sl_SI' => 'Slovenian',
             'sk_SK' => 'Slovak',
-            'zh_CN' => 'Chinese Simplified'
+            'zh_CN' => 'Chinese Simplified',
         );
-
-        return $langs;
     }
 
     /**
      * A better print_r()
      * Used for debugging only
      *
-     * @param array $arr
+     * @noRector \Rector\DeadCode\Rector\ClassMethod\RemoveDeadRecursiveClassMethodRector
+     * @param array<mixed> $arr
      * @return string
      */
     public static function printArr(array $arr): string
@@ -359,13 +255,12 @@ class Tools
         $html = '<ul>';
         foreach ($arr as $key => $val) {
             if (is_array($val)) {
-                $html .= '<li><span style="color:red;">' . $key . '</span><b> => </b><span style="color:blue;">' . self::printArr($val) . '</span></li>';
+                $html .= '<li><span style="color:red;">' . (string) $key . '</span><b> => </b><span style="color:blue;">' . self::printArr($val) . '</span></li>';
             } else {
-                $html .= '<li><span style="color:red;">' . $key . '</span><b> => </b><span style="color:blue;">' . $val . '</span></li>';
+                $html .= '<li><span style="color:red;">' . (string) $key . '</span><b> => </b><span style="color:blue;">' . $val . '</span></li>';
             }
         }
-        $html .= '</ul>';
-        return $html;
+        return $html . '</ul>';
     }
 
     /**
@@ -397,14 +292,101 @@ class Tools
     }
 
     /**
-     * Get the URL from the Request
+     * Get the URL from the Request
      *
      * @param Request $Request
      * @return string the url
      */
     public static function getUrlFromRequest(Request $Request): string
     {
-        $url = $Request->getScheme() . '://' . $Request->getHost() . ':' . $Request->getPort() . $Request->getBasePath();
+        $url = $Request->getScheme() . '://' . $Request->getHost() . ':' . (string) $Request->getPort() . $Request->getBasePath();
         return \str_replace('app/controllers', '', $url);
+    }
+
+    /**
+     * Build an SQL string for searching something
+     *
+     * @param string $query the searched string
+     * @param string $andor behavior of the space character
+     * @param string $column the column to search into
+     * @param string $table on which table to do the search
+     * @return string
+     */
+    public static function getSearchSql(string $query, string $andor = 'and', string $column = '', string $table = ''): string
+    {
+        $sql = ' AND ';
+        // search character is the separator for and/or
+        $qArr = explode(' ', $query);
+        $sql .= '(';
+        foreach ($qArr as $key => $value) {
+            // add the andor after the first
+            if ($key !== 0) {
+                $sql .= $andor;
+            }
+            if ($column === '') {
+                // do quicksearch
+                $elabidSql = '';
+                if ($table === 'experiments') {
+                    // add elabid to the search columns
+                    $elabidSql = " OR entity.elabid LIKE '%$value%'";
+                }
+                $sql .= "(entity.title LIKE '%$value%' OR entity.date LIKE '%$value%' OR entity.body LIKE '%$value%' $elabidSql)";
+            } else {
+                // from search page
+                $sql .= 'entity.' . $column . " LIKE '%$value%'";
+            }
+        }
+        return $sql . ')';
+    }
+
+    /**
+     * Get an array of integer with valid number of items per page based on the current limit
+     *
+     * @param int $input the current limit for the page
+     * @return array
+     */
+    public static function getLimitOptions(int $input): array
+    {
+        $limits = array(10, 20, 50, 100);
+        // if the current limit is already a standard one, no need to include it
+        if (in_array($input, $limits, true)) {
+            return $limits;
+        }
+        // now find the place where to include our limit
+        $place = count($limits);
+        foreach ($limits as $key => $limit) {
+            if ($input < $limit) {
+                $place = $key;
+                break;
+            }
+        }
+        array_splice($limits, $place, 0, array($input));
+        return $limits;
+    }
+
+    /**
+     * Transform a query object in a query string
+     *
+     * @param array<string, mixed> $query the query array given by Request
+     * @return string
+     */
+    public static function qFilter(array $query): string
+    {
+        $res = '';
+        foreach ($query as $key => $value) {
+            // tags for instance are arrays
+            if ($key === 'tags') {
+                foreach ($value as $tag) {
+                    $res .= '&tags[]=' . $tag;
+                }
+            } else {
+                $res .= '&' . (string) $key . '=' . $value;
+            }
+        }
+        $output = filter_var($res, FILTER_SANITIZE_STRING);
+        if ($output === false) {
+            return '';
+        }
+        return $output;
     }
 }

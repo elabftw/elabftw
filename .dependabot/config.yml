@@ -1,0 +1,13 @@
+version: 1
+update_configs:
+  - package_manager: "javascript"
+    directory: "/"
+    update_schedule: "weekly"
+    target_branch: "hypernext"
+    ignored_updates:
+      - match:
+          dependency_name: "snyk"
+  - package_manager: "php:composer"
+    directory: "/"
+    update_schedule: "weekly"
+    target_branch: "hypernext"

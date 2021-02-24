@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Database;
@@ -27,17 +28,17 @@ use ZipArchive;
  */
 class ImportZip extends AbstractImport
 {
-    /** @var AbstractEntity $Entity instance of Entity */
-    private $Entity;
-
     /** @var int $inserted number of item we have inserted */
     public $inserted = 0;
 
+    /** @var AbstractEntity $Entity instance of Entity */
+    private $Entity;
+
     /** @var string $tmpPath the folder where we extract the zip */
-    private $tmpPath;
+    private $tmpPath = '';
 
     /** @var array $json an array with the data we want to import */
-    private $json;
+    private $json = array();
 
     /** @var string $type experiments or items */
     private $type = 'items';
@@ -53,12 +54,28 @@ class ImportZip extends AbstractImport
     public function __construct(Users $users, Request $request)
     {
         parent::__construct($users, $request);
+        $this->Entity = new Database($users);
+    }
+
+    /**
+     * Cleanup : remove the temporary folder created
+     */
+    public function __destruct()
+    {
+        // first remove content
+        $di = new RecursiveDirectoryIterator($this->tmpPath, FilesystemIterator::SKIP_DOTS);
+        $ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($ri as $file) {
+            $file->isDir() ? rmdir($file->getPathname()) : unlink($file->getPathname());
+        }
+        // and remove folder itself
+        rmdir($this->tmpPath);
     }
 
     /**
      * Do the import
      *
-     * @return null
+     * @return void
      */
     public function import(): void
     {
@@ -74,6 +91,18 @@ class ImportZip extends AbstractImport
     }
 
     /**
+     * Extract the zip to the temporary folder
+     *
+     * @return void
+     */
+    private function openFile(): void
+    {
+        $Zip = new ZipArchive();
+        $Zip->open($this->UploadedFile->getPathname());
+        $Zip->extractTo($this->tmpPath);
+    }
+
+    /**
      * We get all the info we need from the embedded .json file
      *
      * @throws ImproperActionException
@@ -81,12 +110,12 @@ class ImportZip extends AbstractImport
      */
     private function readJson(): void
     {
-        $file = $this->tmpPath . "/.elabftw.json";
+        $file = $this->tmpPath . '/.elabftw.json';
         $content = file_get_contents($file);
         if ($content === false) {
             throw new ImproperActionException('Unable to read the json file!');
         }
-        $this->json = json_decode($content, true);
+        $this->json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         if (isset($this->json[0]['elabid'])) {
             $this->type = 'experiments';
         }
@@ -109,25 +138,27 @@ class ImportZip extends AbstractImport
     /**
      * The main SQL to create a new item with the title and body we have
      *
-     * @param array $item the item to insert
+     * @param array<string, mixed> $item the item to insert
      * @throws ImproperActionException
      * @return void
      */
     private function dbInsert($item): void
     {
-        $sql = "INSERT INTO items(team, title, date, body, userid, category, visibility)
-            VALUES(:team, :title, :date, :body, :userid, :category, :visibility)";
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread)
+            VALUES(:team, :title, :date, :body, :userid, :category, :canread)';
 
         if ($this->type === 'experiments') {
-            $sql = "INSERT into experiments(team, title, date, body, userid, visibility, category, elabid)
-                VALUES(:team, :title, :date, :body, :userid, :visibility, :category, :elabid)";
+            $sql = 'INSERT into experiments(title, date, body, userid, canread, category, elabid)
+                VALUES(:title, :date, :body, :userid, :canread, :category, :elabid)';
         }
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        if ($this->type !== 'experiments') {
+            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        }
         $req->bindParam(':title', $item['title']);
         $req->bindParam(':date', $item['date']);
         $req->bindParam(':body', $item['body']);
-        $req->bindValue(':visibility', $this->visibility);
+        $req->bindValue(':canread', $this->canread);
         if ($this->type === 'items') {
             $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':category', $this->target, PDO::PARAM_INT);
@@ -147,11 +178,30 @@ class ImportZip extends AbstractImport
         if ($this->type === 'experiments') {
             $this->Entity = new Experiments($this->Users, $newItemId);
         } else {
-            $this->Entity = new Database($this->Users, $newItemId);
+            $this->Entity->setId($newItemId);
         }
 
+        // add tags
         if (\mb_strlen($item['tags'] ?? '') > 1) {
             $this->tagsDbInsert($item['tags']);
+        }
+        // add links
+        if (!empty($item['links'])) {
+            // don't import the links as as because the id might be different from the one we had before
+            // so add the link in the body
+            $header = '<h3>Linked items:</h3><ul>';
+            $end = '</ul>';
+            $linkText = '';
+            foreach ($item['links'] as $link) {
+                $linkText .= sprintf('<li>[%s] %s</li>', $link['name'], $link['title']);
+            }
+            $this->Entity->update($item['title'], $item['date'], $item['body'] . $header . $linkText . $end);
+        }
+        // add steps
+        if (!empty($item['steps'])) {
+            foreach ($item['steps'] as $step) {
+                $this->Entity->Steps->import($step);
+            }
         }
     }
 
@@ -165,7 +215,7 @@ class ImportZip extends AbstractImport
     {
         $tagsArr = explode('|', $tags);
         foreach ($tagsArr as $tag) {
-            $this->Entity->Tags->create($tag);
+            $this->Entity->Tags->create(new ParamsProcessor(array('tag' => $tag)));
         }
     }
 
@@ -181,11 +231,11 @@ class ImportZip extends AbstractImport
 
             // upload the attached files
             if (is_array($item['uploads'])) {
-                $titlePath = preg_replace('/[^A-Za-z0-9]/', '_', $item['title']);
+                $titlePath = Filter::forFilesystem($item['title']);
                 foreach ($item['uploads'] as $file) {
                     if ($this->type === 'experiments') {
                         $filePath = $this->tmpPath . '/' .
-                            $item['date'] . '-' . $titlePath . '/' . $file['real_name'];
+                            $item['date'] . ' - ' . $titlePath . '/' . $file['real_name'];
                     } else {
                         $filePath = $this->tmpPath . '/' .
                             $item['category'] . ' - ' . $titlePath . '/' . $file['real_name'];
@@ -203,31 +253,5 @@ class ImportZip extends AbstractImport
             }
             ++$this->inserted;
         }
-    }
-
-    /**
-     * Extract the zip to the temporary folder
-     *
-     * @return void
-     */
-    protected function openFile(): void
-    {
-        $Zip = new ZipArchive();
-        $Zip->open($this->UploadedFile->getPathname()) && $Zip->extractTo($this->tmpPath);
-    }
-
-    /**
-     * Cleanup : remove the temporary folder created
-     */
-    public function __destruct()
-    {
-        // first remove content
-        $di = new RecursiveDirectoryIterator($this->tmpPath, FilesystemIterator::SKIP_DOTS);
-        $ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
-        foreach ($ri as $file) {
-            $file->isDir() ? rmdir($file->getPathname()) : unlink($file->getPathname());
-        }
-        // and remove folder itself
-        rmdir($this->tmpPath);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   Elabftw\Elabftw
- * @author    Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author    Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
@@ -15,29 +15,24 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Traits\UploadTrait;
-use League\Csv\Reader;
-use League\Csv\Writer;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Mother class of MakeCsv, MakePdf and MakeZip
+ * Mother class of the Make* services
  *
  */
 abstract class AbstractMake
 {
     use UploadTrait;
 
+    /** @var string $filePath the full path of the file */
+    public $filePath = '';
+
     /** @var AbstractEntity $Entity instance of Experiments or Database */
     protected $Entity;
 
     /** @var Db $Db SQL Database */
     protected $Db;
-
-    /** @var string $filePath the full path of the file */
-    public $filePath;
-
-    /** @var string $outputContent content generated */
-    public $outputContent;
 
     /**
      * Constructor
@@ -49,7 +44,6 @@ abstract class AbstractMake
         $this->Entity = $entity;
         $this->Db = Db::getConnection();
     }
-
 
     /**
      * The filename for what we are making
@@ -65,7 +59,7 @@ abstract class AbstractMake
      */
     protected function getLongName(): string
     {
-        $hash = \hash("sha512", \bin2hex(\random_bytes(16)));
+        $hash = \hash('sha512', \bin2hex(\random_bytes(16)));
         $folder = substr($hash, 0, 2);
 
         return $folder . '/' . $hash;
@@ -88,30 +82,6 @@ abstract class AbstractMake
     }
 
     /**
-     * Create a CSV file from header and rows
-     *
-     * @param array $headers the column names
-     * @param array $rows the rows to write
-     * @return void
-     */
-    protected function makeCsv(array $header, array $rows): string
-    {
-        // load the CSV document from a string
-        $csv = Writer::createFromString('');
-
-        // insert the header
-        $csv->insertOne($header);
-
-        // insert all the records
-        $csv->insertAll($rows);
-
-        // add UTF8 BOM
-        $csv->setOutputBOM(Reader::BOM_UTF8);
-
-        return $csv->getContent();
-    }
-
-    /**
      * Return the url of the item or experiment
      *
      * @return string url to the item/experiment
@@ -121,6 +91,6 @@ abstract class AbstractMake
         $Request = Request::createFromGlobals();
         $url = Tools::getUrl($Request) . '/' . $this->Entity->page . '.php';
 
-        return $url . "?mode=view&id=" . $this->Entity->id;
+        return $url . '?mode=view&id=' . (string) $this->Entity->id;
     }
 }

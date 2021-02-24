@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -18,11 +18,11 @@ use PDO;
  */
 class BannedUsers
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
-
     /** @var Config $Config Master configuration */
     public $Config;
+
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /**
      * Constructor
@@ -43,7 +43,7 @@ class BannedUsers
      */
     public function create(string $fingerprint): bool
     {
-        $sql = "INSERT INTO banned_users (fingerprint) VALUES (:fingerprint)";
+        $sql = 'INSERT INTO banned_users (fingerprint) VALUES (:fingerprint)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':fingerprint', $fingerprint);
 
@@ -57,9 +57,9 @@ class BannedUsers
      */
     public function readAll(): array
     {
-        $banTime = date("Y-m-d H:i:s", (int) strtotime('-' . $this->Config->configArr['ban_time'] . ' minutes'));
+        $banTime = date('Y-m-d H:i:s', (int) strtotime('-' . $this->Config->configArr['ban_time'] . ' minutes'));
 
-        $sql = "SELECT fingerprint FROM banned_users WHERE time > :ban_time";
+        $sql = 'SELECT fingerprint FROM banned_users WHERE time > :ban_time';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':ban_time', $banTime);
         $req->execute();

@@ -9,11 +9,11 @@ end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-[*.js,*.json]
+[*.js,*.json,*.ts]
 indent_size = 2
 
 [*.html]
 indent_size = 2
 
-[*.php,*.css]
+[*.php,*.css,*.scss]
 indent_size = 4

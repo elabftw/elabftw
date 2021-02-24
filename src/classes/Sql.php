@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   Elabftw\Elabftw
- * @author    Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author    Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
@@ -10,7 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\FilesystemErrorException;
+use function file;
 
 /**
  * For SQL operations from files
@@ -37,18 +39,18 @@ class Sql
      */
     public function execFile(string $filename): void
     {
-        $path = \dirname(__DIR__) . '/sql/' . $filename;
+        $path = dirname(__DIR__) . '/sql/' . $filename;
         // temporary variable, used to store current query
         $queryline = '';
         // read in entire file as array
-        $lines = \file($path);
+        $lines = file($path);
         if ($lines === false) {
             throw new FilesystemErrorException('Error reading file: ' . $path);
         }
         // loop through each line
         foreach ($lines as $line) {
             // Skip it if it's a comment or blank line
-            if ($line === '' || strpos($line, '--') === 0) {
+            if ($line === "\n" || $line === '' || strpos($line, '--') === 0) {
                 continue;
             }
 

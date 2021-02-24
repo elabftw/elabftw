@@ -1,0 +1,40 @@
+#todoList {
+    text-align: center;
+    overflow: hidden;
+    background: $darkgray;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 30%;
+    height: 100%;
+    min-width: 300px;
+    padding: 20px;
+    overflow-y: auto;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.8);
+    z-index: 9001;
+
+    li {
+        list-style-type: none;
+        font-size: 18px;
+        background-color: #efefef;
+        margin-bottom: 5px;
+        padding: 10px;
+        text-align: left;
+    }
+
+    #todo {
+        margin-bottom: 10px;
+    }
+}
+
+
+/* fix the padding for sortable list */
+#todoItems-list.ui-sortable {
+    padding-left: 0;
+}
+
+/* fix add button too close to first item on small screen */
+#todoItems-list li:first-child {
+    margin-top: 5px;
+}

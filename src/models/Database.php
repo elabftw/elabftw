@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -10,15 +10,15 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Interfaces\CreateInterface;
+use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Services\Filter;
 use PDO;
 
 /**
  * All about the database items
  */
-class Database extends AbstractEntity implements CreateInterface
+class Database extends AbstractEntity
 {
     /**
      * Constructor
@@ -35,25 +35,24 @@ class Database extends AbstractEntity implements CreateInterface
 
     /**
      * Create an item
-     *
-     * @param int $category What kind of item we want to create.
-     * @return int the new id of the item
      */
-    public function create(int $category): int
+    public function create(ParamsProcessor $params): int
     {
+        $category = $params->id;
         $itemsTypes = new ItemsTypes($this->Users, $category);
+        $body = $itemsTypes->read();
 
         // SQL for create DB item
-        $sql = "INSERT INTO items(team, title, date, body, userid, category)
-            VALUES(:team, :title, :date, :body, :userid, :category)";
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category)
+            VALUES(:team, :title, :date, :body, :userid, :category)';
         $req = $this->Db->prepare($sql);
-        $req->execute(array(
+        $this->Db->execute($req, array(
             'team' => $this->Users->userData['team'],
             'title' => _('Untitled'),
-            'date' => Tools::kdate(),
-            'body' => $itemsTypes->read(),
+            'date' => Filter::kdate(),
+            'body' => $body['template'],
             'userid' => $this->Users->userData['userid'],
-            'category' => $category
+            'category' => $category,
         ));
 
         return $this->Db->lastInsertId();
@@ -73,10 +72,7 @@ class Database extends AbstractEntity implements CreateInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -86,19 +82,28 @@ class Database extends AbstractEntity implements CreateInterface
      */
     public function duplicate(): int
     {
-        $sql = "INSERT INTO items(team, title, date, body, userid, category)
-            VALUES(:team, :title, :date, :body, :userid, :category)";
+        $this->canOrExplode('read');
+
+        $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, category)
+            VALUES(:team, :title, :date, :body, :userid, :canread, :canwrite, :category)';
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
             'title' => $this->entityData['title'],
-            'date' => Tools::kdate(),
+            'date' => Filter::kdate(),
             'body' => $this->entityData['body'],
             'userid' => $this->Users->userData['userid'],
-            'category' => $this->entityData['category_id']
+            'canread' => $this->entityData['canread'],
+            'canwrite' => $this->entityData['canwrite'],
+            'category' => $this->entityData['category_id'],
         ));
         $newId = $this->Db->lastInsertId();
 
+        if ($this->id === null) {
+            throw new IllegalActionException('Try to duplicate without an id.');
+        }
+        $this->Links->duplicate($this->id, $newId);
+        $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
 
         return $newId;
@@ -111,13 +116,13 @@ class Database extends AbstractEntity implements CreateInterface
      */
     public function destroy(): void
     {
+        $this->canOrExplode('write');
+
         // delete the database item
-        $sql = "DELETE FROM items WHERE id = :id";
+        $sql = 'DELETE FROM items WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $this->Tags->destroyAll();
 
@@ -125,36 +130,19 @@ class Database extends AbstractEntity implements CreateInterface
 
         // delete links of this item in experiments with this item linked
         // get all experiments with that item linked
-        $sql = "SELECT id FROM experiments_links WHERE link_id = :link_id";
+        $sql = 'SELECT id FROM experiments_links WHERE link_id = :link_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         while ($links = $req->fetch()) {
-            $delete_sql = "DELETE FROM experiments_links WHERE id = :links_id";
+            $delete_sql = 'DELETE FROM experiments_links WHERE id = :links_id';
             $delete_req = $this->Db->prepare($delete_sql);
             $delete_req->bindParam(':links_id', $links['id'], PDO::PARAM_INT);
-            if ($delete_req->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
+            $this->Db->execute($delete_req);
         }
-    }
 
-    /**
-     * Lock or unlock an item
-     *
-     * @return void
-     */
-    public function toggleLock(): void
-    {
-        $sql = "UPDATE items SET locked = IF(locked = 1, 0, 1) WHERE id = :id";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        // delete from pinned
+        $this->Pins->cleanup();
     }
 }

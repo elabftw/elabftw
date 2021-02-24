@@ -1,22 +1,30 @@
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
 window.MathJax = {
-  extensions: ['tex2jax.js'],
-  jax: ['input/TeX', 'output/HTML-CSS'],
-  tex2jax: {
+  tex: {
     inlineMath: [ ['$','$'], ['\\(','\\)'] ],
     displayMath: [ ['$$','$$'], ['\\[','\\]'] ],
-    processEscapes: true
+    processEscapes: true,
+    packages: ['base', 'ams', 'autoload']
   },
-  'HTML-CSS': {
-    fonts: ['TeX']
-  },
-  TeX: {
-    extensions: ['autoload-all.js']
+  startup: {
+    ready: () => {
+      MathJax.startup.defaultReady();
+    },
+    pageReady() {
+      const options = MathJax.startup.document.options;
+      const BaseMathItem = options.MathItem;
+      options.MathItem = class FixedMathItem extends BaseMathItem {
+        assistiveMml(document) {
+          if (this.display !== null) super.assistiveMml(document);
+        }
+      };
+      return MathJax.startup.defaultPageReady();
+    }
   }
 };

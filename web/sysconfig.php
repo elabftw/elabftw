@@ -2,19 +2,21 @@
 /**
  * sysconfig.php
  *
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Models\Idps;
-use Elabftw\Models\Teams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ReleaseCheckException;
+use Elabftw\Models\Idps;
+use Elabftw\Models\Teams;
+use Elabftw\Services\UsersHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,6 +28,9 @@ require_once 'app/init.inc.php';
 $App->pageTitle = _('eLabFTW Configuration');
 $Response = new Response();
 $Response->prepare($Request);
+
+$template = 'error.html';
+$renderArr = array();
 
 try {
     if (!$App->Session->get('is_sysadmin')) {
@@ -44,6 +49,10 @@ try {
     if ($Request->query->has('q')) {
         $isSearching = true;
         $usersArr = $App->Users->readFromQuery(filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING));
+        foreach ($usersArr as &$user) {
+            $UsersHelper = new UsersHelper((int) $user['userid']);
+            $user['teams'] = $UsersHelper->getTeamsFromUserid();
+        }
     }
 
     $ReleaseCheck = new ReleaseCheck($App->Config);
@@ -61,7 +70,7 @@ try {
         PHP_INT_MAX,
         PHP_SYSCONFDIR,
         ini_get('upload_max_filesize'),
-        ini_get('date.timezone')
+        ini_get('date.timezone'),
     );
 
     $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
@@ -81,18 +90,13 @@ try {
         'privacyPolicyTemplate' => $privacyPolicyTemplate,
         'teamsArr' => $teamsArr,
         'teamsStats' => $teamsStats,
-        'usersArr' => $usersArr
+        'usersArr' => $usersArr,
     );
-
 } catch (IllegalActionException $e) {
-    $template = 'error.html';
-    $renderArr = array('error' => Tools::error(true));
-
+    $renderArr['error'] = Tools::error(true);
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
-
+    $renderArr['error'] = $e->getMessage();
 } finally {
     $Response->setContent($App->render($template, $renderArr));
     $Response->send();

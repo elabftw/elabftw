@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -10,12 +10,18 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use function dirname;
+use Elabftw\Elabftw\Tools;
+use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
-use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\FilesystemErrorException;
+use function file_exists;
+use function is_dir;
+use function mkdir;
 use Mpdf\Mpdf;
+use function preg_match;
+use function str_replace;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -42,8 +48,8 @@ class MakePdf extends AbstractMake
             $this->filePath = $this->getTmpPath() . $this->getUniqueString();
         } else {
             $this->filePath = $this->getUploadsPath() . $this->longName;
-            $dir = \dirname($this->filePath);
-            if (!\is_dir($dir) && !\mkdir($dir, 0700, true) && !\is_dir($dir)) {
+            $dir = dirname($this->filePath);
+            if (!is_dir($dir) && !mkdir($dir, 0700, true) && !is_dir($dir)) {
                 throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
             }
         }
@@ -65,21 +71,50 @@ class MakePdf extends AbstractMake
     }
 
     /**
-     * Generate pdf and output it to the browser
+     * Build HTML content that will be fed to mpdf->WriteHTML()
      *
-     * @return void
+     * @return string
      */
-    public function outputToBrowser(): void
+    public function getContent(): string
     {
-        $this->generate()->Output($this->getFileName(), 'I');
+        $content = $this->buildHeader();
+        $content .= $this->buildBody();
+        $content .= $this->addLinkedItems();
+        $content .= $this->addSteps();
+        $content .= $this->addAttachedFiles();
+        $content .= $this->addComments();
+        $content .= $this->buildInfoBlock();
+
+        return $content;
     }
 
     /**
-     * Build the pdf
+     * Generate pdf and return it as string
+     *
+     * @return string
+     */
+    public function getPdf(): string
+    {
+        return $this->generate()->Output('', 'S');
+    }
+
+    /**
+     * Replace weird characters by underscores
+     *
+     * @return string The file name of the pdf
+     */
+    public function getFileName(): string
+    {
+        $title = Filter::forFilesystem($this->Entity->entityData['title']);
+        return $this->Entity->entityData['date'] . ' - ' . $title . '.pdf';
+    }
+
+    /**
+     * Initialize Mpdf
      *
      * @return Mpdf
      */
-    private function generate(): Mpdf
+    public function initializeMpdf(bool $multiEntity = false): Mpdf
     {
         $format = $this->Entity->Users->userData['pdf_format'];
 
@@ -93,7 +128,7 @@ class MakePdf extends AbstractMake
         $mpdf = new Mpdf(array(
             'format' => $format,
             'tempDir' => $tmpDir,
-            'mode' => 'utf-8'
+            'mode' => 'utf-8',
         ));
 
         // make sure header and footer are not overlapping the body text
@@ -101,11 +136,28 @@ class MakePdf extends AbstractMake
         $mpdf->setAutoBottomMargin = 'stretch';
 
         // set metadata
-        $mpdf->SetAuthor($this->Entity->entityData['fullname']);
-        $mpdf->SetTitle($this->Entity->entityData['title']);
+        $mpdf->SetAuthor($this->Entity->Users->userData['fullname']);
+        $mpdf->SetTitle('eLabFTW pdf');
         $mpdf->SetSubject('eLabFTW pdf');
-        $mpdf->SetKeywords(\str_replace('|', ' ', $this->Entity->entityData['tags']));
         $mpdf->SetCreator('www.elabftw.net');
+
+        if (!$multiEntity) {
+            $mpdf->SetAuthor($this->Entity->entityData['fullname']);
+            $mpdf->SetTitle($this->Entity->entityData['title']);
+            $mpdf->SetKeywords(str_replace('|', ' ', $this->Entity->entityData['tags']));
+        }
+
+        return $mpdf;
+    }
+
+    /**
+     * Build the pdf
+     *
+     * @return Mpdf
+     */
+    private function generate(): Mpdf
+    {
+        $mpdf = $this->initializeMpdf();
 
         // write content
         $mpdf->WriteHTML($this->getContent());
@@ -127,9 +179,9 @@ class MakePdf extends AbstractMake
     private function addElabid(): string
     {
         if ($this->Entity instanceof Experiments) {
-            return "<p class='elabid'>Unique eLabID: " . $this->Entity->entityData['elabid'] . "</p>";
+            return "<p class='elabid'>Unique eLabID: " . $this->Entity->entityData['elabid'] . '</p>';
         }
-        return "";
+        return '';
     }
 
     /**
@@ -146,10 +198,10 @@ class MakePdf extends AbstractMake
             // separate the date and time
             $lockdate = explode(' ', $this->Entity->entityData['lockedwhen']);
 
-            return "<p class='elabid'>locked by " . $Locker->userData['fullname'] . " on " .
-                $lockdate[0] . " at " . $lockdate[1] . "</p>";
+            return "<p class='elabid'>locked by " . $Locker->userData['fullname'] . ' on ' .
+                $lockdate[0] . ' at ' . $lockdate[1] . '</p>';
         }
-        return "";
+        return '';
     }
 
     /**
@@ -160,34 +212,31 @@ class MakePdf extends AbstractMake
     private function addLinkedItems(): string
     {
         $html = '';
-        $linksArr = $this->Entity->Links->readAll();
+        $linksArr = $this->Entity->Links->read();
         if (empty($linksArr)) {
             return $html;
         }
 
         $html .= "<section class='no-break'>";
-        $html .= "<h3>Linked item";
+        $html .= '<h3>Linked item';
         if (count($linksArr) > 1) {
             $html .= 's';
         }
-        $html .= ":</h3>";
+        $html .= ':</h3>';
         // add the item with a link
 
         // create Request object
         $Request = Request::createFromGlobals();
         $url = Tools::getUrl($Request) . '/database.php';
-        // not pretty but gets the job done
-        $url = str_replace('app/classes/', '', $url);
 
         foreach ($linksArr as $link) {
-            $fullItemUrl = $url . "?mode=view&id=" . $link['link_id'];
+            $fullItemUrl = $url . '?mode=view&id=' . $link['itemid'];
             $html .= "<p class='pdf-ul'>";
             $html .= "<span style='color:#" . $link['color'] . "'>" .
-                $link['name'] . "</span> - <a href='" . $fullItemUrl . "'>" . $link['title'] . "</a></p>";
+                $link['name'] . "</span> - <a href='" . $fullItemUrl . "'>" . $link['title'] . '</a></p>';
         }
-        $html .= "</section>";
 
-        return $html;
+        return $html . '</section>';
     }
 
     /**
@@ -199,7 +248,7 @@ class MakePdf extends AbstractMake
     {
         $html = '';
 
-        $commentsArr = $this->Entity->Comments->readAll();
+        $commentsArr = $this->Entity->Comments->read();
         if (empty($commentsArr)) {
             return $html;
         }
@@ -212,13 +261,11 @@ class MakePdf extends AbstractMake
         }
 
         foreach ($commentsArr as $comment) {
-            $html .= "<p class='pdf-ul'>On " . $comment['datetime'] . " " . $comment['fullname'] . " wrote :<br />";
+            $html .= "<p class='pdf-ul'>On " . $comment['datetime'] . ' ' . $comment['fullname'] . ' wrote :<br />';
             $html .= $comment['comment'] . '</p>';
         }
 
-        $html .= '</section>';
-
-        return $html;
+        return $html . '</section>';
     }
 
     /**
@@ -255,9 +302,9 @@ class MakePdf extends AbstractMake
         if ($fileNb > 0) {
             $html .= "<section class='no-break'>";
             if ($fileNb === 1) {
-                $html .= "<h3>Attached file:</h3>";
+                $html .= '<h3>Attached file:</h3>';
             } else {
-                $html .= "<h3>Attached files:</h3>";
+                $html .= '<h3>Attached files:</h3>';
             }
 
             foreach ($uploadsArr as $upload) {
@@ -265,23 +312,27 @@ class MakePdf extends AbstractMake
                 $html .= "<p class='pdf-ul'>" . $upload['real_name'];
                 // add a comment ? don't add if it's the default text
                 if ($upload['comment'] != 'Click to add a comment') {
-                    $html .= " (" . $upload['comment'] . ")";
+                    $html .= ' (' . $upload['comment'] . ')';
                 }
                 // add hash ? don't add if we don't have it
                 // length must be greater (sha2 hashes) or equal (md5) 32 bits
                 if (\mb_strlen((string) $upload['hash']) >= 32) { // we have hash
-                    $html .= "<br>" . $upload['hash_algorithm'] . " : " . $upload['hash'];
+                    $html .= '<br>' . $upload['hash_algorithm'] . ' : ' . $upload['hash'];
                 }
                 // if this is an image file, add the thumbnail picture
-                $ext = filter_var(Tools::getExt($upload['real_name']), FILTER_SANITIZE_STRING);
+                $ext = Tools::getExt($upload['real_name']);
                 $filePath = \dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
-                if (file_exists($filePath) && preg_match('/(jpg|jpeg|png|gif)$/i', $ext)) {
+                // if it's a TIF file, we can't add it like that to the pdf, but we can add the thumbnail
+                if (preg_match('/(tiff|tif)$/i', $ext)) {
+                    $filePath .= '_th.jpg';
+                }
+                if (file_exists($filePath) && preg_match('/(tiff|tif|jpg|jpeg|png|gif)$/i', $ext)) {
                     $html .= "<br /><img class='attached-image' src='" . $filePath . "' alt='attached image' />";
                 }
 
-                $html .= "</p>";
+                $html .= '</p>';
             }
-            $html .= "</section>";
+            $html .= '</section>';
         }
         return $html;
     }
@@ -295,7 +346,7 @@ class MakePdf extends AbstractMake
     {
         $html = '';
 
-        $stepsArr = $this->Entity->Steps->readAll();
+        $stepsArr = $this->Entity->Steps->read();
         if (empty($stepsArr)) {
             return $html;
         }
@@ -306,13 +357,11 @@ class MakePdf extends AbstractMake
         foreach ($stepsArr as $step) {
             $html .= "<p class='pdf-ul'>" . $step['body'];
             if ($step['finished']) {
-                $html .= " (" . $step['finished_time'] . ")";
+                $html .= ' (' . $step['finished_time'] . ')';
             }
-            $html .= "</p>";
+            $html .= '</p>';
         }
-
-        $html .= "</section>";
-        return $html;
+        return $html . '</section>';
     }
 
     /**
@@ -323,7 +372,7 @@ class MakePdf extends AbstractMake
     private function addUrl(): string
     {
         $full_url = $this->getUrl();
-        return "<p class='elabid'>link : <a href='" . $full_url . "'>" . $full_url . "</a></p>";
+        return "<p class='elabid'>link : <a href='" . $full_url . "'>" . $full_url . '</a></p>';
     }
 
     /**
@@ -340,7 +389,7 @@ class MakePdf extends AbstractMake
             $body = Tools::md2html($body);
         }
         // we need to fix the file path in the body so it shows properly into the pdf for timestamping (issue #131)
-        return str_replace("src=\"app/download.php?f=", "src=\"" . \dirname(__DIR__, 2) . "/uploads/", $body);
+        return str_replace('src="app/download.php?f=', 'src="' . \dirname(__DIR__, 2) . '/uploads/', $body);
     }
 
     /**
@@ -355,7 +404,7 @@ class MakePdf extends AbstractMake
             </td><td class='noborder'>" .
             $this->addElabid() .
             $this->addLockinfo() .
-            $this->addUrl() . "</td></tr></table>";
+            $this->addUrl() . '</td></tr></table>';
     }
 
     /**
@@ -365,13 +414,13 @@ class MakePdf extends AbstractMake
      */
     private function buildHeader(): string
     {
-        $date = new \DateTime($this->Entity->entityData['date'] ?? Tools::kdate());
+        $date = new \DateTime($this->Entity->entityData['date'] ?? Filter::kdate());
 
         // add a CJK font for the body if we want CJK fonts
-        $cjkStyle = "";
-        $cjkFont = "";
+        $cjkStyle = '';
+        $cjkFont = '';
         if ($this->Entity->Users->userData['cjk_fonts']) {
-            $cjkFont = "font-family:sun-extA;";
+            $cjkFont = 'font-family:sun-extA;';
             $cjkStyle = " style='" . $cjkFont . "'";
         }
 
@@ -383,6 +432,13 @@ User's signature:<br><br>
 Witness' name:<br><br>
 Witness' signature:<br><br>
 </div>";
+        }
+
+        // don't show the Tags line if there are none
+        $tags = '';
+        if ($this->Entity->entityData['tags']) {
+            $tags = '<strong>Tags:</strong> <em>' .
+                str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />';
         }
 
         // we add a custom style for td for bug #350
@@ -397,9 +453,7 @@ Witness' signature:<br><br>
     <div id="header">
         <h1>' . $this->Entity->entityData['title'] . '</h1>
         <p style="float:left; width:90%;">
-            <strong>Date:</strong> ' . $date->format('Y-m-d') . '<br />
-            <strong>Tags:</strong> <em>' .
-                \str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />
+            <strong>Date:</strong> ' . $date->format('Y-m-d') . '<br />' . $tags . '
             <strong>Created by:</strong> ' . $this->Entity->entityData['fullname'] . '
         </p>
         <p style="float:right; width:10%;"><br /><br />
@@ -410,40 +464,11 @@ Witness' signature:<br><br>
 <htmlpagefooter name="footer">' . $pdfSig . '
     <div class="footer-block footer">
         PDF generated with <a href="https://www.elabftw.net">elabftw</a>, a free and open source lab notebook
-        <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:m}</p>
+        <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:i}</p>
     </div>
 </htmlpagefooter>
+<sethtmlpageheader name="header" value="on" show-this-page="1" />
+<sethtmlpagefooter name="footer" value="on" />
 ';
-    }
-
-    /**
-     * Build HTML content that will be fed to mpdf->WriteHTML()
-     *
-     * @return string
-     */
-    private function getContent(): string
-    {
-        $content = $this->buildHeader();
-        $content .= $this->buildBody();
-        if ($this->Entity instanceof Experiments) {
-            $content .= $this->addLinkedItems();
-            $content .= $this->addSteps();
-        }
-        $content .= $this->addAttachedFiles();
-        $content .= $this->addComments();
-        $content .= $this->buildInfoBlock();
-
-        return $content;
-    }
-
-    /**
-     * Replace weird characters by underscores
-     *
-     * @return string The file name of the pdf
-     */
-    public function getFileName(): string
-    {
-        return $this->Entity->entityData['date'] . "-" .
-            preg_replace('/[^A-Za-z0-9 ]/', '_', $this->Entity->entityData['title']) . '.pdf';
     }
 }

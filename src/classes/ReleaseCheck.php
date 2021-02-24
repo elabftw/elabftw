@@ -1,9 +1,7 @@
 <?php
 /**
- * \Elabftw\Elabftw\ReleaseCheck
- *
  * @package   Elabftw\Elabftw
- * @author    Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author    Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
@@ -14,13 +12,27 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ReleaseCheckException;
 use Elabftw\Models\Config;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Use this to check for latest version
  */
 class ReleaseCheck
 {
+    /** @var string INSTALLED_VERSION the current version of elabftw */
+    public const INSTALLED_VERSION = '3.6.6';
+
+    /** @var string $URL this file contains the latest version information */
+    private const URL = 'https://get.elabftw.net/updates.ini';
+
+    /** @var string URL_HTTP if we can't connect in https for some reason, use http */
+    private const URL_HTTP = 'http://get.elabftw.net/updates.ini';
+
+    /** @var bool $success this is used to check if we managed to get a version or not */
+    public $success = false;
+
     /** @var Config $Config instance of Config */
     private $Config;
 
@@ -29,18 +41,6 @@ class ReleaseCheck
 
     /** @var string $releaseDate release date of the version */
     private $releaseDate = '';
-
-    /** @var bool $success this is used to check if we managed to get a version or not */
-    public $success = false;
-
-    /** @var string $URL this file contains the latest version information */
-    private const URL = 'https://get.elabftw.net/updates.ini';
-
-    /** @var string URL_HTTP if we can't connect in https for some reason, use http */
-    private const URL_HTTP = 'http://get.elabftw.net/updates.ini';
-
-    /** @var string INSTALLED_VERSION the current version of elabftw */
-    public const INSTALLED_VERSION = '3.1.0';
 
     /**
      * Fetch the update info on object creation
@@ -53,44 +53,6 @@ class ReleaseCheck
     }
 
     /**
-     * Make a GET request with Guzzle
-     *
-     * @param string $url URL to hit
-     * @throws \GuzzleHttp\Exception\RequestException
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    private function get($url): \Psr\Http\Message\ResponseInterface
-    {
-        $client = new \GuzzleHttp\Client();
-
-        return $client->request('GET', $url, [
-            // add user agent
-            // http://developer.github.com/v3/#user-agent-required
-            'headers' => [
-                'User-Agent' => 'Elabftw/' . self::INSTALLED_VERSION
-            ],
-            // add proxy if there is one
-            'proxy' => $this->Config->configArr['proxy'],
-            // add a timeout, because if you need proxy, but don't have it, it will mess up things
-            // in seconds
-            'timeout' => 5
-        ]);
-    }
-
-    /**
-     * Check if the version string actually looks like a version
-     *
-     * @return void
-     */
-    private function validateVersion(): void
-    {
-        $res = preg_match('/^[0-99]+\.[0-99]+\.[0-99]+.*$/', $this->version);
-        if ($res === false) {
-            throw new ReleaseCheckException('Could not parse version!');
-        }
-    }
-
-    /**
      * Try to get the latest version number of elabftw
      * Will fetch updates.ini file from get.elabftw.net
      *
@@ -100,12 +62,12 @@ class ReleaseCheck
     {
         try {
             $response = $this->get(self::URL);
-        } catch (RequestException $e) {
+        } catch (ConnectException | RequestException $e) {
             // try with http if https failed (see #176)
             try {
                 $response = $this->get(self::URL_HTTP);
-            } catch (RequestException $e) {
-                throw new ReleaseCheckException('Could not make request to server!');
+            } catch (ConnectException | RequestException $e) {
+                throw new ReleaseCheckException('Could not make request to server!', (int) $e->getCode(), $e);
             }
         }
 
@@ -160,9 +122,43 @@ class ReleaseCheck
      */
     public function getChangelogLink(): string
     {
-        $base = "https://doc.elabftw.net/changelog.html#version-";
-        $dashedVersion = str_replace(".", "-", $this->version);
+        $base = 'https://doc.elabftw.net/changelog.html#version-';
+        $dashedVersion = str_replace('.', '-', $this->version);
 
         return $base . $dashedVersion;
+    }
+
+    /**
+     * Make a GET request with Guzzle
+     */
+    private function get(string $url): ResponseInterface
+    {
+        $client = new \GuzzleHttp\Client();
+
+        return $client->request('GET', $url, array(
+            // add user agent
+            // http://developer.github.com/v3/#user-agent-required
+            'headers' => array(
+                'User-Agent' => 'Elabftw/' . self::INSTALLED_VERSION,
+            ),
+            // add proxy if there is one
+            'proxy' => $this->Config->configArr['proxy'],
+            // add a timeout, because if you need proxy, but don't have it, it will mess up things
+            // in seconds
+            'timeout' => 4,
+        ));
+    }
+
+    /**
+     * Check if the version string actually looks like a version
+     *
+     * @return void
+     */
+    private function validateVersion(): void
+    {
+        $res = preg_match('/^[0-99]+\.[0-99]+\.[0-99]+.*$/', $this->version);
+        if ($res === false) {
+            throw new ReleaseCheckException('Could not parse version!');
+        }
     }
 }

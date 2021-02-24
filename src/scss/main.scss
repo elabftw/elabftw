@@ -1,0 +1,960 @@
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+$darkgray: #343434;
+$maingray: #797979;
+$lightgray: #f2f2f2;
+$lightgraybutnottoolight: #d6d6d6;
+$bordersgray: #dcdddc;
+$elabblue: #29aeb9;
+$darkblue: #1F8591;
+$dangerred: #e6614c;
+$lightblue: #C4F9FF;
+$darkred: #dd1e00;
+$lightred: #ffc1b7;
+$green: #54aa08;
+
+/* import this first to be able to modify bootstrap theme */
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
+/* override bootstrap theme */
+$theme-colors: (
+    "primary": $elabblue,
+    "danger": $dangerred,
+    "neutral": $maingray,
+);
+@import '../../node_modules/bootstrap/scss/bootstrap';
+@import '../../node_modules/bootstrap-select/sass/bootstrap-select.scss';
+@import '../../node_modules/@fullcalendar/common/main';
+
+@import 'autocomplete';
+@import 'footer';
+@import 'header';
+@import 'jquery-rating';
+@import 'tagcloud';
+@import 'todolist';
+
+
+/* Font is Lato */
+@font-face {
+    font-family: 'Lato';
+    src: url('fonts/lato-medium-webfont.ttf');
+    src: url('fonts/lato-medium-webfont.eot');
+    src:
+        url('fonts/lato-medium-webfont.eot?#iefix') format('embedded-opentype'),
+        url('fonts/lato-medium-webfont.woff') format('woff'),
+        url('fonts/lato-medium-webfont.ttf') format('truetype'),
+        url('fonts/lato-medium-webfont.svg#webfont') format('svg');
+}
+
+/* little shadow on top of the screen for no reasons */
+body::before {
+    content: "";
+    position: fixed;
+    top: -10px;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    z-index: 100;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+/* this is the big white thing that holds everything */
+#container {
+    background: #fff;
+    padding: 0;
+    font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
+    font-weight: 500;
+}
+
+/* holds the main content */
+.real-container {
+    max-width: 1636px;
+    margin: auto;
+    margin-top: 20px;
+    padding: 0 5%;
+}
+
+/* paragraphs */
+p {
+    color: $maingray;
+}
+
+/* LINKS */
+a,
+.link-like {
+    color: $elabblue;
+    text-decoration: none;
+}
+
+a:hover,
+.link-like:hover {
+    color: $elabblue;
+    text-decoration: none;
+}
+
+.underlined {
+    text-decoration: underline !important;
+}
+
+/* LISTS */
+.list-group-item {
+    margin-bottom: 3px;
+}
+
+.clean-list {
+    padding: 0;
+    margin: 0;
+}
+
+.group-list {
+    margin: 0;
+}
+
+li.inline {
+    display: inline;
+}
+
+/* input and select */
+/* TODO this is a bit too wide: padding will apply to jsoneditor search bar for instance */
+input,
+select,
+textarea {
+    padding: 7px;
+    color: $maingray;
+    border-radius: 4px;
+    border: 1px solid #e3e3e3;
+}
+
+select {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    background: #fff url("images/ico-arrow.png") no-repeat 93% 56%;
+    padding-right: 31px;
+}
+
+.form-control {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    padding-right: 31px;
+}
+
+#dropdownMenu1 {
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus,
+#dropdownMenu1:focus {
+    border-color: $elabblue;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(41, 174, 185, 0.6);
+}
+
+li.dropdown-item > a {
+    color: black;
+}
+
+li.dropdown-item:hover a {
+    color: $elabblue;
+}
+
+/* GENERAL */
+img {
+    vertical-align: -3px;
+    margin-right: 3px;
+}
+
+.align_right {
+    float: right;
+}
+
+hr {
+    margin: 10px 0 20px 0;
+    color: $bordersgray;
+}
+
+/* BLOCKQUOTE */
+blockquote {
+    background: #f9f9f9;
+    border-left: 10px solid #ccc;
+    margin: 1.5em 10px;
+    padding: 0.5em 10px;
+    quotes: "\201C""\201D""\2018""\2019";
+}
+
+blockquote::before {
+    color: #ccc;
+    content: open-quote;
+    font-size: 4em;
+    line-height: 0.1em;
+    margin-right: 0.25em;
+    vertical-align: -0.4em;
+}
+
+/* TITLES */
+h2 {
+    font-weight: normal;
+    color: $maingray;
+    font-size: 30px;
+    margin-top: 0;
+}
+
+h3 {
+    color: $maingray;
+    font-size: 150%;
+    margin: 0 auto 10px auto;
+}
+
+h4 {
+    font-size: 150%;
+    font-weight: normal;
+    color: $maingray;
+}
+
+h5 {
+    color: $maingray;
+    font-size: 130%;
+}
+
+label {
+    color: $maingray;
+    font-size: 120%;
+    font-weight: normal;
+}
+
+/* HEAD */
+
+/* BEGIN HELP CONTAINER */
+.tip::before {
+    content: "☺ ";
+    font-size: 120%;
+    color: $elabblue;
+}
+
+li.tip {
+    list-style: none;
+}
+
+/*  MENU is below main nav */
+ul#menu {
+    line-height: 200%;
+    margin: 30px 0 20px;
+    padding: 0;
+    border-bottom: 1px solid $bordersgray;
+}
+
+ul#menu li {
+    display: inline;
+    margin-right: 2%;
+    text-transform: uppercase;
+    color: $maingray;
+    cursor: pointer;
+}
+
+ul#menu li.selected {
+    border-bottom: 5px solid $elabblue;
+    padding-bottom: 0;
+}
+
+/* ALERT */
+.alert {
+    margin-top: 20px;
+}
+
+.alert a,
+.alert a:hover {
+    color: $darkgray;
+}
+
+.alert-success {
+    background-color: $lightblue;
+    color: #36b1c0;
+    border-color: #36b1c0;
+}
+
+.alert-danger {
+    color: #e6614c;
+    background-color: $lightred;
+    border-color: #e6614c;
+}
+
+.hover-danger:hover {
+    color: $darkred;
+    background-color: $lightred;
+    border-color: $darkred;
+    transition-duration: 500ms;
+}
+
+.alert-danger a.close {
+    color: #e6614c;
+}
+
+.alert-sucess a.close {
+    color: #36b1c0;
+}
+
+/* TOOLTIP */
+
+a.elab-tooltip {
+    outline: none;
+    position: relative;
+}
+
+a.elab-tooltip:hover {
+    text-decoration: none;
+}
+
+a.elab-tooltip span {
+    z-index: 10;
+    display: none;
+    padding: 5px 10px 8px;
+    margin: 25px auto 0;
+    width: auto;
+    line-height: 16px;
+    font-weight: normal;
+    border-radius: 2px;
+    box-shadow: 1px 1px 2px #666;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+}
+
+a.elab-tooltip:hover span {
+    display: inline;
+    position: absolute;
+    color: white;
+    background: $darkgray;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    white-space: nowrap;
+}
+
+a.elab-tooltip span::after {
+    bottom: 100%;
+    left: 50%;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border: 4px solid transparent;
+    border-bottom-color: $darkgray;
+    margin-left: -4px;
+}
+
+a.elab-tooltip-top {
+    outline: none;
+    position: relative;
+}
+
+a.elab-tooltip-top:hover {
+    text-decoration: none;
+}
+
+a.elab-tooltip-top span {
+    text-transform: none;
+    z-index: 10;
+    display: none;
+    padding: 5px 10px 8px;
+    margin: 0 auto 25px;
+    width: auto;
+    line-height: 16px;
+    font-weight: normal;
+    border-radius: 2px;
+    box-shadow: 1px 1px 2px #666;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+}
+
+a.elab-tooltip-top:hover span {
+    display: inline;
+    position: absolute;
+    color: white;
+    background: $darkgray;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    white-space: nowrap;
+}
+
+a.elab-tooltip-top span::after {
+    top: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-top-color: $darkgray;
+    border-width: 4px;
+    margin-left: -4px;
+}
+
+/* fix tooltip larger than parent div */
+section.item {
+    line-height: 200%;
+    overflow: visible;
+    p {
+        margin-bottom: 0;
+    }
+}
+
+/* display_size stuff */
+
+.item-show-xs {
+    &:not(.item-show-last) {
+        border-bottom: none !important;
+    }
+}
+
+.item-info {
+    padding-left: 20px;
+}
+
+.item-next {
+    padding-left: 20px;
+    .item-next-step {
+        color: black;
+    }
+}
+
+.item-category {
+    text-transform: uppercase;
+    font-size:80%;
+}
+
+@mixin item-show-inline {
+    .title,
+    .item-next,
+    .item-info,
+    .item-date {
+        display: inline;
+    }
+    .item-next,
+    .item-info {
+        padding-left: 0;
+    }
+}
+
+.item-show-xs {
+    @include item-show-inline;
+    margin: 0 !important;
+    padding: 0 !important;
+    .title {
+        font-size: 100%;
+    }
+}
+
+.item-show-md {
+    @include item-show-inline;
+    .title {
+        font-size: 130%;
+    }
+}
+
+/* BUTTONS */
+.button {
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    text-align: center;
+    color: white;
+    font-size: 11px;
+    text-transform: uppercase;
+    margin: 0 5px;
+    letter-spacing: 1px;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}
+
+.submitButtonDiv {
+    margin-top: 30px;
+    text-align: center;
+}
+
+/* make the +/- button rounder */
+.plusMinusButton {
+    font-size: 110%;
+}
+
+.separator {
+    border-bottom: 1px solid $bordersgray;
+    padding-bottom: 30px;
+    margin: 20px 0 20px 0;
+}
+
+/* beta ribbon */
+.beta {
+    position: relative;
+    top: -12px;
+    left: -33px;
+    display: inline-block;
+    transform: rotate(35deg);
+    line-height: 80%;
+    background: $elabblue;
+    color: #fff;
+    font-size: 10px;
+    padding: 4px;
+    border-radius: 5px;
+    font-family: sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+/* REGISTER */
+
+/* body in view mode is black for more lisibility
+github issue #52 */
+#body_view p {
+    color: black;
+}
+
+/* add some css for details/summary html5 */
+summary::before {
+    content: "► ";
+    font-size: 120%;
+    color: $elabblue;
+}
+
+/* fix for big images uploaded in the text */
+section.item div.txt {
+    overflow: auto;
+}
+
+/* size of the editable box in edit mode */
+.mceditable {
+    height: 500px;
+}
+
+/* prettier tables in mceditable area */
+div.txt table,
+div.txt table td {
+    border: 1px solid $maingray;
+}
+
+table td {
+    padding: 0 5px;
+}
+
+table td input {
+    width: 100%;
+}
+
+table th {
+    background-color: $bordersgray;
+    color: $maingray;
+    text-transform: uppercase;
+    font-size: 90%;
+    padding: 0 5px;
+    text-align: left;
+}
+
+/* color one row every other row */
+tr:nth-child(even) {
+    background-color: #fff;
+}
+
+tr:nth-child(odd) {
+    background-color: $lightgray;
+}
+
+/* OVERLAY */
+.overlay {
+    display: flex;
+    padding: 0 10px;
+    position: fixed;
+    opacity: 0.9;
+    top: 10px;
+    left: 10px;
+    border-radius: 5px;
+    line-height: 50px;
+}
+
+.overlay p {
+    font-weight: bold;
+    vertical-align: middle;
+    color: #fff;
+}
+
+.overlay-ok {
+    background-color: $elabblue;
+}
+
+.overlay-ko,
+.overlay-ko p {
+    background-color: $lightred;
+    color: #000;
+}
+
+/* ITEMS */
+.item {
+    min-width: 100%;
+    border: 1px solid $bordersgray;
+    border-radius: 5px;
+    margin: 5px auto;
+    padding: 5px 10px 0 5px;
+    overflow: hidden;
+}
+
+.item a p:hover {
+    color: $elabblue;
+}
+
+.box {
+    border: 1px solid $bordersgray;
+    margin-top: 10px;
+    border-radius: 5px;
+    padding: 20px;
+    overflow: auto;
+}
+
+.box section {
+    margin-bottom: 15px;
+}
+
+.box label {
+    margin: 0 10px 0 0;
+}
+
+input[type='checkbox'] {
+    position: relative;
+}
+
+/* EXPERIMENT STEPS */
+/* this is a hack to make the steps that are long work fine in multiline
+the form-control fails to do that so we do the border ourselves */
+.step-static {
+    border: 1px solid $bordersgray;
+    border-bottom-right-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.finished {
+    color: $green;
+}
+
+.col-md-6 label {
+    margin: 0;
+}
+
+.draggable {
+    cursor: move;
+}
+
+.config_form input,
+.config_form select {
+    float: right;
+}
+
+.config_form label {
+    float: left;
+}
+
+/*
+ * fix the white space when columned items don't have the same height
+ * see https://medium.com/wdstack/varying-column-heights-in-bootstrap-4e8dd5338643
+ */
+.row.display-flex {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.row.display-flex > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
+
+/* fix for bootstrap's thumbnail class */
+.thumbnail {
+    overflow: hidden;
+}
+
+.thumb {
+    min-height: 50px;
+    min-width: 50px;
+    width: 100px;
+    height: 100px;
+}
+
+/* EDITABLE */
+.editable:hover {
+    cursor: pointer;
+}
+
+.editable button {
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    text-align: center;
+    color: white;
+    font-size: 11px;
+    text-transform: uppercase;
+    margin: 0 5px;
+    letter-spacing: 1px;
+}
+
+.editable input {
+    margin: 0 0 15px;
+}
+
+.comment-header {
+    background-color: #f7f7f7;
+    padding: 5px;
+}
+
+#commentsCreateArea {
+    border: 1px solid #ccc;
+    width: 100%;
+    border-radius: 5px;
+    margin: 10px 0;
+    padding: 20px;
+}
+
+/* END COMMENTS */
+
+/* TITLE */
+.title {
+    font-size: 160%;
+    margin: 0 20px 0 0;
+    padding-left: 20px;
+
+    /* add several rules, see https://stackoverflow.com/a/36555643 */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-all;
+    hyphens: auto;
+
+    a {
+        color: $maingray;
+        &:hover {
+            color: $elabblue !important;
+            transition-duration: 500ms;
+        }
+    }
+}
+
+.title_view {
+    font-size: 160%;
+    overflow-wrap: break-word;
+}
+
+.clickable.title_view:hover {
+    transition: color 0.8s ease;
+    color: $elabblue;
+}
+
+.item-date {
+    color: $maingray;
+    padding: 0 5px;
+}
+
+.smallgray {
+    display: block;
+    color: #a2a2a2;
+    font-size: 80%;
+}
+
+/* ucp.php */
+#currpass {
+    background-color: $lightblue;
+    border: 1px solid $elabblue;
+}
+
+.txt {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 10px;
+    color: black;
+    font-size: 16px;
+    padding: 5px;
+}
+
+/* title on editXP */
+#title_input {
+    width: 100%;
+    margin: 0 0 15px;
+}
+
+/* elabid */
+.elabid {
+    text-align: right;
+    color: $maingray;
+}
+
+/* give more space between view action buttons */
+.view-action-buttons a {
+    margin-right: 5px;
+}
+
+/* TAGS */
+.tag {
+    font: bold 13px Verdana, Arial, Helvetica, sans-serif;
+    border-radius: 5px;
+    border: 1px solid $maingray;
+    color: $maingray;
+    padding: 2px 5px;
+
+}
+
+.tag-delete:hover {
+    transition: color 0.8s ease;
+    color: $darkred !important;
+}
+
+/* print only the main div */
+@media print {
+    nav {
+        visibility: hidden;
+    }
+
+    section.item {
+        background-color: white;
+        width: 900px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 15px;
+        font-size: 14px;
+        line-height: 18px;
+    }
+
+    h2 {
+        visibility: hidden;
+    }
+
+    footer {
+        visibility: hidden;
+    }
+}
+
+/* 3Dmol.js */
+.viewer_3Dmoljs {
+    height: 250px;
+    width: 100%;
+    position: relative;
+}
+
+.molFile {
+    height: 250px;
+    width: 100%;
+    position: relative;
+}
+
+/* fix dropzone css */
+.dropzone {
+    border: 1px solid #fff;
+    border-radius: 5px;
+}
+
+.dropzone:hover {
+    border: 1px solid $elabblue;
+    border-radius: 5px;
+}
+
+/* doodle canvas */
+.doodle {
+    border: 1px solid $bordersgray;
+    border-radius: 5px;
+    display: block;
+    margin: 10px 0 10px 0;
+}
+
+.clickable:hover {
+    cursor: pointer;
+}
+
+/* trash icon is red on hover */
+svg.fa-trash-alt:hover {
+    transition: color 0.8s ease;
+    color: $darkred;
+}
+
+/* font awesome icons color */
+.svg-inline--fa {
+    color: $maingray;
+}
+
+/* for icons such as pin */
+.grayed-out {
+    color: $lightgraybutnottoolight;
+}
+
+/* in the fullcalendar toolbar icons are used in a button so we want them white */
+.fc-toolbar {
+    .svg-inline--fa {
+        color: #fff;
+    }
+}
+
+/* caption for tinymce */
+figure.image {
+    display: inline-block;
+    border: 1px solid gray;
+    margin: 0 2px 0 1px;
+    background: #f5f2f0;
+}
+
+figure.image img {
+    margin: 8px 8px 0 8px;
+}
+
+figure.image figcaption {
+    margin: 6px 8px 6px 8px;
+    text-align: center;
+}
+
+/* make the markdown editor full width */
+.markdown-textarea {
+    width: 100%;
+}
+
+.togglableHidden {
+    display: none;
+}
+
+input[type='color'] {
+    padding: 5px 10px;
+}
+
+.user-badge {
+    padding: 5px;
+    margin-right: 5px;
+    font-size: 110%;
+    border: 1px solid #c0c0c0;
+    border-radius: 5px;
+}
+
+.user-badge:hover {
+    border-color: $elabblue;
+    transition-duration: 500ms;
+}
+
+.color-white {
+    color: white;
+}
+
+/* give the togglePassword some borders like input */
+.input-border {
+    border: 1px solid #ced4da;
+}
+
+/* bring the search and user menu a bit more on the left
+ * this is the only way I found that works
+ * adding row/columns will mess up the left alignement of the navbar
+ */
+#main-nav {
+    padding-right: 120px !important;
+}

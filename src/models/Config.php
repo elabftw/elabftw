@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -14,10 +14,10 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\Update;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Services\Check;
 use PDO;
 
 /**
@@ -25,11 +25,11 @@ use PDO;
  */
 class Config
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
-
     /** @var array $configArr the array with all config */
     public $configArr;
+
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /**
      * Get Db and load the configArr
@@ -55,12 +55,13 @@ class Config
     {
         $configArr = array();
 
-        $sql = "SELECT * FROM config";
+        $sql = 'SELECT * FROM config';
         $req = $this->Db->prepare($sql);
-        if ($req->execute() !== true) {
+        $this->Db->execute($req);
+        $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
+        if ($config === false) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
-        $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
         foreach ($config as $name => $value) {
             $configArr[$name] = $value[0];
         }
@@ -70,7 +71,7 @@ class Config
     /**
      * Used in sysconfig.php to update config values
      *
-     * @param array $post (conf_name => conf_value)
+     * @param array<string, mixed> $post (conf_name => conf_value)
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      * @return void
      */
@@ -97,27 +98,34 @@ class Config
             $post['url'] = filter_var($post['url'], FILTER_SANITIZE_URL);
         }
 
-        if (isset($post['login_tries']) && Tools::checkId((int) $post['login_tries']) === false) {
+        if (isset($post['login_tries']) && Check::id((int) $post['login_tries']) === false) {
             throw new IllegalActionException('Bad value for number of login attempts!');
         }
-        if (isset($post['ban_time']) && Tools::checkId((int) $post['ban_time']) === false) {
+        if (isset($post['ban_time']) && Check::id((int) $post['ban_time']) === false) {
             throw new IllegalActionException('Bad value for number of login attempts!');
         }
 
-        // encrypt password
+        // encrypt SMTP password
         if (isset($post['smtp_password']) && !empty($post['smtp_password'])) {
             $post['smtp_password'] = Crypto::encrypt($post['smtp_password'], Key::loadFromAsciiSafeString(\SECRET_KEY));
+        } elseif (isset($post['smtp_password'])) {
+            unset($post['smtp_password']);
+        }
+
+        // encrypt LDAP password
+        if (isset($post['ldap_password']) && !empty($post['ldap_password'])) {
+            $post['ldap_password'] = Crypto::encrypt($post['ldap_password'], Key::loadFromAsciiSafeString(\SECRET_KEY));
+        } elseif (isset($post['ldap_password'])) {
+            unset($post['ldap_password']);
         }
 
         // loop the array and update config
         foreach ($post as $name => $value) {
-            $sql = "UPDATE config SET conf_value = :value WHERE conf_name = :name";
+            $sql = 'UPDATE config SET conf_value = :value WHERE conf_name = :name';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':value', $value);
             $req->bindParam(':name', $name);
-            if ($req->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
+            $this->Db->execute($req);
         }
     }
 
@@ -130,9 +138,7 @@ class Config
     {
         $sql = "UPDATE config SET conf_value = NULL WHERE conf_name = 'stamppass'";
         $req = $this->Db->prepare($sql);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -142,20 +148,19 @@ class Config
      */
     public function restoreDefaults(): void
     {
-        $sql = "DELETE FROM config";
+        $sql = 'DELETE FROM config';
         $req = $this->Db->prepare($sql);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $this->populate();
     }
 
     /**
-     * Insert the default values in config
+     * Insert the default values in the sql config table
+     * Only run once of first ever page load
      *
      * @return void
      */
-    public function populate(): void
+    private function populate(): void
     {
         $Update = new Update($this, new Sql());
         $schema = $Update->getRequiredSchema();
@@ -171,28 +176,29 @@ class Config
             ('proxy', ''),
             ('sendmail_path', '/usr/sbin/sendmail'),
             ('smtp_address', 'mail.smtp2go.com'),
-            ('smtp_encryption', 'tls'),
+            ('smtp_encryption', 'ssl'),
             ('smtp_password', ''),
-            ('smtp_port', '2525'),
+            ('smtp_port', '587'),
             ('smtp_username', ''),
             ('stamplogin', ''),
             ('stamppass', ''),
             ('stampshare', '1'),
             ('stampprovider', 'http://zeitstempel.dfn.de/'),
-            ('stampcert', 'app/dfn-cert/pki.dfn.pem'),
+            ('stampcert', 'src/dfn-cert/pki.dfn.pem'),
             ('stamphash', 'sha256'),
+            ('saml_toggle', '0'),
             ('saml_debug', '0'),
             ('saml_strict', '1'),
             ('saml_baseurl', NULL),
             ('saml_entityid', NULL),
-            ('saml_acs_url', NULL),
             ('saml_acs_binding', NULL),
-            ('saml_slo_url', NULL),
             ('saml_slo_binding', NULL),
             ('saml_nameidformat', NULL),
             ('saml_x509', NULL),
             ('saml_privatekey', NULL),
             ('saml_team', NULL),
+            ('saml_team_create', '1'),
+            ('saml_team_default', NULL),
             ('saml_email', NULL),
             ('saml_firstname', NULL),
             ('saml_lastname', NULL),
@@ -203,13 +209,47 @@ class Config
             ('schema', :schema),
             ('open_science', '0'),
             ('open_team', NULL),
-            ('privacy_policy', NULL);";
+            ('privacy_policy', NULL),
+            ('announcement', NULL),
+            ('saml_nameidencrypted', 0),
+            ('saml_authnrequestssigned', 0),
+            ('saml_logoutrequestsigned', 0),
+            ('saml_logoutresponsesigned', 0),
+            ('saml_signmetadata', 0),
+            ('saml_wantmessagessigned', 0),
+            ('saml_wantassertionsencrypted', 0),
+            ('saml_wantassertionssigned', 0),
+            ('saml_wantnameid', 1),
+            ('saml_wantnameidencrypted', 0),
+            ('saml_wantxmlvalidation', 1),
+            ('saml_relaxdestinationvalidation', 0),
+            ('saml_lowercaseurlencoding', 0),
+            ('email_domain', NULL),
+            ('saml_sync_teams', 0),
+            ('deletable_xp', 1),
+            ('max_revisions', 10),
+            ('extauth_remote_user', ''),
+            ('extauth_firstname', ''),
+            ('extauth_lastname', ''),
+            ('extauth_email', ''),
+            ('extauth_teams', ''),
+            ('logout_url', ''),
+            ('ldap_toggle', '0'),
+            ('ldap_host', ''),
+            ('ldap_port', '389'),
+            ('ldap_base_dn', ''),
+            ('ldap_username', ''),
+            ('ldap_password', ''),
+            ('ldap_uid_cn', 'cn'),
+            ('ldap_email', 'mail'),
+            ('ldap_lastname', 'cn'),
+            ('ldap_firstname', 'givenname'),
+            ('ldap_team', 'on'),
+            ('ldap_use_tls', '0')";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);
 
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 }

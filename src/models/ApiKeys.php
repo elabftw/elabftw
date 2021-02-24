@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -10,16 +10,20 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function bin2hex;
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\DestroyableInterface;
+use function filter_var;
+use function password_hash;
+use function password_verify;
 use PDO;
+use function random_bytes;
 
 /**
  * Api keys
  */
-class ApiKeys implements CrudInterface
+class ApiKeys implements DestroyableInterface
 {
     /** @var Db $Db SQL Database */
     private $Db;
@@ -46,23 +50,43 @@ class ApiKeys implements CrudInterface
      * @return string the key
      */
     public function create(string $name, int $canWrite): string
+    //public function create(ParamsProcessor $params): string
     {
-        $name = \filter_var($name, FILTER_SANITIZE_STRING);
-        $apiKey = \bin2hex(\random_bytes(42));
-        $hash = \password_hash($apiKey, PASSWORD_DEFAULT);
+        $name = filter_var($name, FILTER_SANITIZE_STRING);
+        $apiKey = bin2hex(random_bytes(42));
+        $hash = password_hash($apiKey, PASSWORD_BCRYPT);
 
-        $sql = "INSERT INTO api_keys (name, hash, can_write, userid) VALUES (:name, :hash, :can_write, :userid)";
+        $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':hash', $hash);
         $req->bindParam(':can_write', $canWrite, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $this->Db->execute($req);
 
         return $apiKey;
+    }
+
+    /**
+     * Create a known key so we can test against it in dev mode
+     * This function should only be called from the dev:populate command
+     *
+     * @param string $apiKey
+     * @return void
+     */
+    public function createKnown(string $apiKey): void
+    {
+        $hash = password_hash($apiKey, PASSWORD_BCRYPT);
+
+        $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':name', 'test key');
+        $req->bindParam(':hash', $hash);
+        $req->bindValue(':can_write', 1, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $this->Db->execute($req);
     }
 
     /**
@@ -72,13 +96,11 @@ class ApiKeys implements CrudInterface
      */
     public function readAll(): array
     {
-        $sql = "SELECT id, name, created_at, hash, can_write FROM api_keys WHERE userid = :userid";
+        $sql = 'SELECT id, name, created_at, hash, can_write FROM api_keys WHERE userid = :userid AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $this->Db->execute($req);
         $res = $req->fetchAll();
         if ($res === false) {
             return array();
@@ -94,16 +116,17 @@ class ApiKeys implements CrudInterface
      */
     public function readFromApiKey(string $apiKey): array
     {
-        $sql = "SELECT hash, userid, can_write FROM api_keys";
+        $sql = 'SELECT hash, userid, can_write, team FROM api_keys';
         $req = $this->Db->prepare($sql);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $keysArr = $req->fetchAll();
+        if ($keysArr === false) {
+            $keysArr = array();
+        }
 
         foreach ($keysArr as $key) {
-            if (\password_verify($apiKey, $key['hash'])) {
-                return array('userid' => $key['userid'], 'canWrite' => $key['can_write']);
+            if (password_verify($apiKey, $key['hash'])) {
+                return array('userid' => $key['userid'], 'canWrite' => $key['can_write'], 'team' => $key['team']);
             }
         }
         throw new ImproperActionException('No corresponding API key found!');
@@ -111,28 +134,12 @@ class ApiKeys implements CrudInterface
 
     /**
      * Destroy an api key
-     *
-     * @param int $id id of the key
-     * @return void
      */
-    public function destroy(int $id): void
+    public function destroy(int $id): bool
     {
-        $sql = "DELETE FROM api_keys WHERE id = :id";
+        $sql = 'DELETE FROM api_keys WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-    }
-
-    /**
-     * Not implemented
-     * If a user is deleted the FK constraints will take care of deleting the keys anyway
-     *
-     * @return void
-     */
-    public function destroyAll(): void
-    {
-        return;
+        return $this->Db->execute($req);
     }
 }

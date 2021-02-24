@@ -167,8 +167,8 @@ class MakePdf extends AbstractMake
         $mpdf->SetCreator('www.elabftw.net');
 
         if (!$multiEntity) {
-        $mpdf->SetAuthor($this->Entity->entityData['fullname']);
-        $mpdf->SetTitle($this->Entity->entityData['title']);
+            $mpdf->SetAuthor($this->Entity->entityData['fullname']);
+            $mpdf->SetTitle($this->Entity->entityData['title']);
             $mpdf->SetKeywords(str_replace('|', ' ', $this->Entity->entityData['tags']));
         }
 

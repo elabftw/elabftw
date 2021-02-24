@@ -68,7 +68,9 @@ export default class JsonEditorHelper {
   }
 
   loadFile(link: string, name: string, uploadid: string): void {
-    fetch(`app/download.php?f=${link}`)
+    const headers = new Headers();
+    headers.append('cache-control', 'no-cache');
+    fetch(`app/download.php?f=${link}`, { headers: headers })
       .then(response => {
         if (!response.ok) {
           throw new Error('An unexpected error occured!');

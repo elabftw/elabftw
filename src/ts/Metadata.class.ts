@@ -38,9 +38,11 @@ export class Metadata extends Crud {
       }
       return response.json();
     }).then(data => {
-      // if there are no metadata.json file available, do nothing more
+      // if there are no metadata.json file available, return an empty object
       if (data.res === false) {
-        throw new ResourceNotFoundException('No metadata associated!');
+        return {};
+        // TODO i18n
+        //throw new ResourceNotFoundException('No metadata associated!');
       }
       return JSON.parse(data.msg);
     });
@@ -245,6 +247,10 @@ export class Metadata extends Crud {
    */
   view() {
     return this.read().then(json => {
+      // do nothing more if there is no extra_fields in our json
+      if (!json.hasOwnProperty('extra_fields')) {
+        return;
+      }
       this.metadataDiv.append(this.getHeaderDiv());
       // the input elements that will be created from the extra fields
       const elements = [];
@@ -266,6 +272,10 @@ export class Metadata extends Crud {
    */
   edit() {
     return this.read().then(json => {
+      // do nothing more if there is no extra_fields in our json
+      if (!json.hasOwnProperty('extra_fields')) {
+        return;
+      }
       this.metadataDiv.append(this.getHeaderDiv());
       // the input elements that will be created from the extra fields
       const elements = [];

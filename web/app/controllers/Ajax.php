@@ -70,6 +70,8 @@ try {
         $Entity = new Experiments($App->Users, $itemId);
     } elseif ($type === 'experiments_templates') {
         $Entity = new Templates($App->Users, $itemId);
+    } elseif ($type === 'items_types') {
+        $Entity = new ItemsTypes($App->Users, $itemId);
     } else {
         $Entity = new Database($App->Users, $itemId);
     }

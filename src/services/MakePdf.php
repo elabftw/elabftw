@@ -177,6 +177,7 @@ class MakePdf extends AbstractMake
         $filename = $tmpDir . strval(random_int(10000, 99999)) . '.html';
 
         // decode html entities, otherwise it crashes
+        // compare to https://github.com/mathjax/MathJax-demos-node/issues/16
         file_put_contents($filename, html_entity_decode($content, ENT_HTML5, 'UTF-8'));
 
         // use tex2svg-page script located in src/node-apps
@@ -195,7 +196,8 @@ class MakePdf extends AbstractMake
         if ($html) {
             // remove the mjx-assistive-mml stuff.
             // Otherwise there are additional characters visible
-            $html = preg_replace('/<mjx-assistive-mml[^>*].*?<\/mjx-assistive-mml>/', '', $html);
+            // can be disabled, see http://docs.mathjax.org/en/latest/options/accessibility.html#assisitve-mml-extension-options
+            //$html = preg_replace('/<mjx-assistive-mml[^>*].*?<\/mjx-assistive-mml>/', '', $html);
 
             // save html with converted tex to svg
             //file_put_contents($filename . '.mod', $html);

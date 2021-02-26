@@ -89,6 +89,13 @@ MathJax = {
     },
     startup: {
         document: htmlfile
+    },
+    // disable hidden MathML
+    // http://docs.mathjax.org/en/latest/options/accessibility.html#assisitve-mml-extension-options
+    options: {
+        renderActions: {
+            assistiveMml: []
+        }
     }
 }
 

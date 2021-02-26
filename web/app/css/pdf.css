@@ -131,3 +131,8 @@ figure.image figcaption {
     border: 1px solid gray;
     text-align: center;
 }
+
+/* This helps alignment for inline equations */
+img {
+    vertical-align: middle;
+}

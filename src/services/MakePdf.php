@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use function chdir;
 use function dirname;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -17,12 +18,22 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use function file_exists;
+use function file_put_contents;
+use function html_entity_decode;
 use function is_dir;
 use function mkdir;
 use Mpdf\Mpdf;
+use Mpdf\SizeConverter;
 use function preg_match;
+use function preg_match_all;
+use function preg_replace;
+use Psr\Log\NullLogger;
+use function random_int;
+use function shell_exec;
 use function str_replace;
+use function strval;
 use Symfony\Component\HttpFoundation\Request;
+use function unlink;
 
 /**
  * Create a pdf from an Entity
@@ -118,7 +129,7 @@ class MakePdf extends AbstractMake
         $format = $this->Entity->Users->userData['pdf_format'];
 
         // we use a custom tmp dir, not the same as Twig because its content gets deleted after pdf is generated
-        $tmpDir = \dirname(__DIR__, 2) . '/cache/mpdf/';
+        $tmpDir = dirname(__DIR__, 2) . '/cache/mpdf/';
         if (!is_dir($tmpDir) && !mkdir($tmpDir, 0700, true) && !is_dir($tmpDir)) {
             throw new FilesystemErrorException("Could not create the $tmpDir directory! Please check permissions on this folder.");
         }
@@ -150,6 +161,91 @@ class MakePdf extends AbstractMake
     }
 
     /**
+     * Convert MathJax to SVG
+     *
+     * @return string
+     */
+    public function mathToSVG(Mpdf $mpdf, string $content): string
+    {
+        // we use a custom tmp dir
+        $tmpDir = dirname(__DIR__, 2) . '/cache/mathjax/';
+        if (!is_dir($tmpDir) && !mkdir($tmpDir, 0700, true) && !is_dir($tmpDir)) {
+            throw new FilesystemErrorException("Could not create the $tmpDir directory! Please check permissions on this folder.");
+        }
+
+        // temporary file to hold the content
+        $filename = $tmpDir . strval(random_int(10000, 99999)) . '.html';
+
+        // decode html entities, otherwise it crashes
+        file_put_contents($filename, html_entity_decode($content, ENT_HTML5, 'UTF-8'));
+
+        // use tex2svg-page script located in src/node-apps
+        // convert tex to svg with nodejs script
+        // returns nothing if there is no tex
+        $currentDir = dirname(__DIR__);
+        chdir(dirname(__DIR__, 2) . '/src/node-apps');
+        // disable font cache so all paths are inside the svg and not linked
+        $html = shell_exec('./tex2svg-page --fontCache=none ' . $filename);
+        chdir($currentDir);
+        unlink($filename);
+
+        // was there actually tex in the content?
+        // if not we can skip the svg modifications and return the original content
+        //error_log('>>' . $html . '<<');
+        if ($html) {
+            // remove the mjx-assistive-mml stuff.
+            // Otherwise there are additional characters visible
+            $html = preg_replace('/<mjx-assistive-mml[^>*].*?<\/mjx-assistive-mml>/', '', $html);
+
+            // save html with converted tex to svg
+            //file_put_contents($filename . '.mod', $html);
+
+            // based on https://github.com/mpdf/mpdf-examples/blob/master/MathJaxProcess.php
+            // ˅˅˅˅˅˅˅˅˅˅
+            $sizeConverter = new SizeConverter($mpdf->dpi, $mpdf->default_font_size, $mpdf, new NullLogger());
+
+            /*
+            // without font cache we can disable this very bad preg_match preg_replace
+            preg_match('/<svg[^>]*>\s*(<defs.*?>.*?<\/defs>)\s*<\/svg>/', $html, $m);
+            $defs = $m[1];
+
+            $html = preg_replace('/<svg[^>]*>\s*<defs.*?<\/defs>\s*<\/svg>/', '', $html);
+            $html = preg_replace('/(<svg[^>]*>)/', '\\1' . $defs, $html);
+            */
+            // scale SVG size according to pdf + font settings
+            preg_match_all('/<svg([^>]*)>/', $html, $m);
+            foreach ($m as $attributes) {
+                foreach ($attributes as $attribute) {
+                    preg_match('/width="(.*?)"/', $attribute, $wr);
+                    preg_match('/height="(.*?)"/', $attribute, $hr);
+                    //var_dump($wr, $hr);
+                    if ($wr && $hr) {
+                        $w = $sizeConverter->convert($wr[1], 0, $mpdf->FontSize) * $mpdf->dpi / 25.4;
+                        $h = $sizeConverter->convert($hr[1], 0, $mpdf->FontSize) * $mpdf->dpi / 25.4;
+                        //var_dump($w, $h);
+                        $html = str_replace('width="' . $wr[1] . '"', 'width="' . $w . '"', $html);
+                        $html = str_replace('height="' . $hr[1] . '"', 'height="' . $h . '"', $html);
+                    }
+                }
+            }
+
+            // change stroke to black and fill to white for all SVGs
+            $html = str_replace('stroke="currentColor"', 'stroke="#FFF"', $html);
+            $html = str_replace('fill="currentColor"', 'fill="#000"', $html);
+
+            // ˄˄˄˄˄˄˄˄˄˄
+            // end copy
+
+            //file_put_contents($filename . '.mod_final', $html);
+
+            //error_log($html);
+            $content = $html;
+        }
+
+        return $content;
+    }
+
+    /**
      * Build the pdf
      *
      * @return Mpdf
@@ -159,7 +255,7 @@ class MakePdf extends AbstractMake
         $mpdf = $this->initializeMpdf();
 
         // write content
-        $mpdf->WriteHTML($this->getContent());
+        $mpdf->WriteHTML($this->mathToSVG($mpdf, $this->getContent()));
 
         if ($this->Entity->Users->userData['pdfa']) {
             // make sure we can read the pdf in a long time

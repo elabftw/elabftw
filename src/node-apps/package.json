@@ -1,0 +1,13 @@
+{
+  "name": "mathjax_to_mpdf",
+  "version": "0.0.1",
+  "description": "enable mathjax in mpdf",
+  "main": "index.js",
+  "author": "marcel",
+  "license": "MIT",
+  "dependencies": {
+    "esm": "^3.2.25",
+    "mathjax-full": "^3.1.2",
+    "yargs": "^16.2.0"
+  }
+}

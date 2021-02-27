@@ -20,10 +20,10 @@ $(document).ready(function() {
 
   // TEMPLATES listeners
   $(document).on('click', '.createNewTemplate', function() {
-    const name = prompt('Template title');
-    if (name) {
+    const title = prompt('Template title');
+    if (title) {
       // no body on template creation
-      TemplateC.create(name);
+      TemplateC.create(title);
     }
   });
   // show the handles to reorder when the menu entry is clicked

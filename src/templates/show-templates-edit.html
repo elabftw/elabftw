@@ -31,7 +31,7 @@
     <div class='row mt-3'>
       <!-- NAME OF TPL AND OWNER -->
       <div class='col'>
-        <h4>{{ templateData.fullname|raw }} - {{ templateData.name|raw }}</h4>
+        <h4>{{ templateData.fullname|raw }} - {{ templateData.title|raw }}</h4>
       </div>
     </div>
 
@@ -71,7 +71,7 @@
               <i class='fas fa-share-alt fa-fw'></i> {{ 'Manage Permissions'|trans }}
             </a>
             <!-- DOWNLOAD -->
-            <a class='clickable dropdown-item saveToFile' data-name='{{ templateData.name }}' data-id='e{{ templateData.id }}'>
+            <a class='clickable dropdown-item saveToFile' data-name='{{ templateData.title }}' data-id='e{{ templateData.id }}'>
               <i class='fas fa-download fa-fw'></i> {{ 'Download template'|trans }}
             </a>
             <!-- DESTROY -->
@@ -89,8 +89,8 @@
       {{ App.Csrf.getHiddenInput|raw }}
       <input type='hidden' name='tpl_form' />
       <input type='hidden' name='tpl_id' value='{{ templateData.id }}' />
-      <label for='tplName'>{{ 'Name'|trans }}</label>
-      <input id='tplName' name='tpl_name' class='form-control' value='{{ templateData.name|raw }}' />
+      <label for='tplTitle'>{{ 'Title'|trans }}</label>
+      <input id='tplTitle' name='tpl_title' class='form-control' value='{{ templateData.title|raw }}' />
       {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
       <label for='e{{ templateData.id }}'>{{ 'Template content'|trans }}</label>
       <textarea id='e{{ templateData.id }}' name='tpl_body' class='mceditable' style='height:500px;'>{{ templateData.body }}</textarea><br />

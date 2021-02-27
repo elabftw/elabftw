@@ -153,6 +153,7 @@
           {# the key allows to get the id stored in tagsIdArr #}
           <a class='tag' href='?mode=show&tags%5B%5D={{ tag|url_encode }}'>{{ tag|raw }}</a>
       {% endfor %}
+      </span>
   {% endif %}
 
   <!-- TITLE : click on it to go to edit mode only if we are not in read only mode -->

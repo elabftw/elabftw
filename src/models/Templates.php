@@ -32,18 +32,8 @@ class Templates extends AbstractEntity implements CreatableInterface
         $this->type = 'experiments_templates';
     }
 
-    public function create(ParamsProcessor $params, bool $isDefault = false): int
+    public function create(ParamsProcessor $params): int
     {
-        $team = $params->team;
-        if ($team === 0) {
-            $team = $this->Users->userData['team'];
-        }
-        $userid = $params->id;
-        // default template will have userid 0
-        if ($userid === 0 && !$isDefault) {
-            $userid = $this->Users->userData['userid'];
-        }
-
         $canread = 'team';
         $canwrite = 'user';
 
@@ -54,31 +44,19 @@ class Templates extends AbstractEntity implements CreatableInterface
             $canwrite = $this->Users->userData['default_write'];
         }
 
-        $sql = 'INSERT INTO experiments_templates(team, name, body, userid, canread, canwrite) VALUES(:team, :name, :body, :userid, :canread, :canwrite)';
+        $sql = 'INSERT INTO experiments_templates(team, title, date, body, userid, canread, canwrite)
+            VALUES(:team, :title, :date, :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
-        $req->bindParam(':name', $params->name);
-        $req->bindParam('body', $params->template);
-        $req->bindParam('userid', $userid, PDO::PARAM_INT);
-        $req->bindParam('canread', $canread, PDO::PARAM_STR);
-        $req->bindParam('canwrite', $canwrite, PDO::PARAM_STR);
-        $this->Db->execute($req);
+        $this->Db->execute($req, array(
+            'team' => $this->Users->userData['team'],
+            'title' => $params->name,
+            'date' => Filter::kdate(),
+            'body' => $params->template,
+            'userid' => $this->Users->userData['userid'],
+            'canread' => $canread,
+            'canwrite' => $canwrite,
+        ));
         return $this->Db->lastInsertId();
-    }
-
-    /**
-     * Create a default template for a new team
-     */
-    public function createDefault(int $team): void
-    {
-        $defaultBody = "<h1><span style='font-size: 14pt;'>Goal :</span></h1>
-            <p>&nbsp;</p>
-            <h1><span style='font-size: 14pt;'>Procedure :</span></h1>
-            <p>&nbsp;</p>
-            <h1><span style='font-size: 14pt;'>Results :<br /></span></h1>
-            <p>&nbsp;</p>";
-
-        $this->create(new ParamsProcessor(array('name' => 'default', 'template' => $defaultBody, 'id' => 0, 'team' => $team)), true);
     }
 
     /**
@@ -88,15 +66,18 @@ class Templates extends AbstractEntity implements CreatableInterface
     {
         $template = $this->read();
 
-        $sql = 'INSERT INTO experiments_templates(team, name, body, userid, canread, canwrite) VALUES(:team, :name, :body, :userid, :canread, :canwrite)';
+        $sql = 'INSERT INTO experiments_templates(team, title, date, body, userid, canread, canwrite)
+            VALUES(:team, :title, :date, :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':name', $template['name']);
-        $req->bindParam(':body', $template['body']);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam('canread', $template['canread'], PDO::PARAM_STR);
-        $req->bindParam('canwrite', $template['canwrite'], PDO::PARAM_STR);
-        $this->Db->execute($req);
+        $this->Db->execute($req, array(
+            'team' => $this->Users->userData['team'],
+            'title' => $template['title'],
+            'date' => Filter::kdate(),
+            'body' => $template['body'],
+            'userid' => $this->Users->userData['userid'],
+            'canread' => $template['canread'],
+            'canwrite' => $template['canwrite'],
+        ));
         $newId = $this->Db->lastInsertId();
 
         // copy tags
@@ -117,8 +98,9 @@ class Templates extends AbstractEntity implements CreatableInterface
      */
     public function read(bool $getTags = false, bool $inTeam = true): array
     {
-        $sql = "SELECT experiments_templates.id, experiments_templates.name, experiments_templates.body,
+        $sql = "SELECT experiments_templates.id, experiments_templates.title, experiments_templates.body,
             experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
+            experiments_templates.locked, experiments_templates.lockedby, experiments_templates.lockedwhen,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             GROUP_CONCAT(tags.tag SEPARATOR '|') AS tags, GROUP_CONCAT(tags.id) AS tags_id
             FROM experiments_templates
@@ -130,12 +112,12 @@ class Templates extends AbstractEntity implements CreatableInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $res = $req->fetch();
-        if ($res === false) {
+        $this->entityData = $req->fetch();
+        if ($this->entityData === false) {
             throw new ImproperActionException('No template found with this id!');
         }
 
-        return $res;
+        return $this->entityData;
     }
 
     /**
@@ -168,7 +150,7 @@ class Templates extends AbstractEntity implements CreatableInterface
     }
 
     /**
-     * Get a list of fullname + id + name of template
+     * Get a list of fullname + id + title of template
      * Use this to build a select of the readable templates
      */
     public function getTemplatesList(): array
@@ -176,7 +158,7 @@ class Templates extends AbstractEntity implements CreatableInterface
         $TeamGroups = new TeamGroups($this->Users);
         $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
 
-        $sql = "SELECT DISTINCT experiments_templates.id, experiments_templates.name, experiments_templates.canwrite,
+        $sql = "SELECT DISTINCT experiments_templates.id, experiments_templates.title, experiments_templates.canwrite,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname,
                 users2teams.teams_id, experiments_templates.userid, experiments_templates.body
                 FROM experiments_templates
@@ -212,68 +194,6 @@ class Templates extends AbstractEntity implements CreatableInterface
         }
 
         return $res;
-    }
-
-    /**
-     * Get the body of the default experiment template
-     */
-    public function readCommonBody(): string
-    {
-        // don't load the common template if you are using markdown because it's probably in html
-        if ($this->Users->userData['use_markdown']) {
-            return '';
-        }
-
-        $sql = 'SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $res = $req->fetchColumn();
-        if (is_bool($res) || $res === null) {
-            return '';
-        }
-        return (string) $res;
-    }
-
-    /**
-     * Update the common team template from admin.php
-     */
-    public function updateCommon(string $body): void
-    {
-        if (!$this->Users->userData['is_admin']) {
-            throw new IllegalActionException('Non admin user tried to update common template.');
-        }
-        $sql = "UPDATE experiments_templates SET
-            name = 'default',
-            team = :team,
-            body = :body
-            WHERE userid = 0 AND team = :team";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':body', $body);
-        $this->Db->execute($req);
-    }
-
-    /**
-     * Update a template
-     */
-    public function updateTpl(int $id, string $name, string $body): void
-    {
-        $body = Filter::body($body);
-        $name = Filter::title($name);
-        $this->setId($id);
-
-        $sql = 'UPDATE experiments_templates SET
-            name = :name,
-            body = :body
-            WHERE userid = :userid AND id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':name', $name);
-        $req->bindParam(':body', $body);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
     }
 
     /**

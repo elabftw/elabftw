@@ -32,19 +32,20 @@ class Experiments extends AbstractEntity implements CreatableInterface
     public function create(ParamsProcessor $params): int
     {
         $Templates = new Templates($this->Users);
+        $Team = new Team((int) $this->Users->userData['team']);
 
         $tpl = $params->id;
         // do we want template ?
         if ($tpl > 0) {
             $Templates->setId($tpl);
             $templatesArr = $Templates->read();
-            $title = $templatesArr['name'];
+            $title = $templatesArr['title'];
             $body = $templatesArr['body'];
             $canread = $templatesArr['canread'];
             $canwrite = $templatesArr['canwrite'];
         } else {
             $title = _('Untitled');
-            $body = $Templates->readCommonBody();
+            $body = $Team->getCommonTemplate();
             $canread = 'team';
             $canwrite = 'user';
             if ($this->Users->userData['default_read'] !== null) {
@@ -55,9 +56,7 @@ class Experiments extends AbstractEntity implements CreatableInterface
             }
         }
 
-
         // enforce the permissions if the admin has set them
-        $Team = new Team((int) $this->Users->userData['team']);
         $canread = $Team->getDoForceCanread() === 1 ? $Team->getForceCanread() : $canread;
         $canwrite = $Team->getDoForceCanwrite() === 1 ? $Team->getForceCanwrite() : $canwrite;
 

@@ -65,6 +65,22 @@ $(document).ready(function() {
     $('#canwrite_select option[value="' + write + '"]').prop('selected', true);
   });
 
+  // TOGGLE LOCK
+  $('#lock').on('click', function() {
+    const id = $(this).data('id');
+    $.post('app/controllers/EntityAjaxController.php', {
+      lock: true,
+      type: 'experiments_templates',
+      id: id
+    }).done(function(json) {
+      notif(json);
+      if (json.res) {
+        // reload the page to change the icon and make the save button disappear
+        window.location.href = '?tab=3&templateid=' + id;
+      }
+    });
+  });
+
   // input to upload an elabftw.tpl file
   $('#import_tpl').on('change', function(e) {
     const title = (document.getElementById('import_tpl') as HTMLInputElement).value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');

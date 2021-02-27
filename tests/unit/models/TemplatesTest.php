@@ -47,6 +47,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
+        $this->Templates->setId(1);
         $this->Templates->update('my tpl', '20160729', 'Plop');
     }
 

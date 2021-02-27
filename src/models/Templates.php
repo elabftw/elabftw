@@ -11,12 +11,10 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ParamsProcessor;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
-use function is_bool;
 use PDO;
 
 /**

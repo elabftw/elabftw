@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Revisions;
+use Elabftw\Models\Templates;
 use Elabftw\Services\Check;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -31,6 +32,8 @@ $Response = new RedirectResponse('../../experiments.php');
 try {
     if ($Request->query->get('type') === 'experiments') {
         $Entity = new Experiments($App->Users);
+    } elseif ($Request->query->get('type') === 'experiments_templates') {
+        $Entity = new Templates($App->Users);
     } elseif ($Request->query->get('type') === 'items') {
         $Entity = new Database($App->Users);
     } else {
@@ -51,7 +54,11 @@ try {
         $App->Session->getFlashBag()->add('ok', _('Saved'));
     }
 
-    $Response = new RedirectResponse('../../' . $Entity->page . '.php?mode=view&id=' . $Entity->id);
+    if ($Entity->type == 'experiments_templates') {
+        $Response = new RedirectResponse('../../ucp.php?tab=3&templateid=' . $Entity->id);
+    } else {
+        $Response = new RedirectResponse('../../' . $Entity->page . '.php?mode=view&id=' . $Entity->id);
+    }
 } catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());

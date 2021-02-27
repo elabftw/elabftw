@@ -169,6 +169,10 @@ CREATE TABLE `experiments_revisions` (
 
 --
 -- RELATIONSHIPS FOR TABLE `experiments_revisions`:
+--   `item_id`
+--       `experiments` -> `id`
+--   `userid`
+--       `users` -> `userid`
 --
 
 -- --------------------------------------------------------
@@ -235,6 +239,10 @@ CREATE TABLE `experiments_templates_revisions` (
 
 --
 -- RELATIONSHIPS FOR TABLE `experiments_templates_revisions`:
+--   `item_id`
+--       `experiments_templates` -> `id`
+--   `userid`
+--       `users` -> `userid`
 --
 
 -- --------------------------------------------------------
@@ -698,6 +706,12 @@ ALTER TABLE `experiments_templates`
   ADD KEY `fk_experiments_templates_teams_id` (`team`);
 
 --
+-- Indexes for table `experiments_templates_revisions`
+--
+ALTER TABLE `experiments_templates_revisions`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `groups`
 --
 ALTER TABLE `groups`
@@ -857,6 +871,12 @@ ALTER TABLE `experiments_templates`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `experiments_templates_revisions`
+--
+ALTER TABLE `experiments_templates_revisions`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `groups`
 --
 ALTER TABLE `groups`
@@ -978,10 +998,24 @@ ALTER TABLE `experiments_steps`
   ADD CONSTRAINT `fk_experiments_steps_experiments_id` FOREIGN KEY (`item_id`) REFERENCES `experiments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `experiments_revisions`
+--
+ALTER TABLE `experiments_revisions`
+  ADD CONSTRAINT `fk_experiments_revisions_experiments_id` FOREIGN KEY (`item_id`) REFERENCES `experiments`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `experiments_templates`
 --
 ALTER TABLE `experiments_templates`
   ADD CONSTRAINT `fk_experiments_templates_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `experiments_templates_revisions`
+--
+ALTER TABLE `experiments_templates_revisions`
+  ADD CONSTRAINT `fk_experiments_templates_revisions_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_templates_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `items`

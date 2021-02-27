@@ -22,5 +22,15 @@ START TRANSACTION;
         `userid` int(10) UNSIGNED NOT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+    ALTER TABLE `experiments_templates_revisions`
+        ADD PRIMARY KEY (`id`);
+
+    ALTER TABLE `experiments_templates_revisions`
+        MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+    ALTER TABLE `experiments_templates_revisions`
+        ADD CONSTRAINT `fk_experiments_templates_revisions_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+        ADD CONSTRAINT `fk_experiments_templates_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
     UPDATE `config` SET `conf_value` = 58 WHERE `conf_name` = 'schema';
 COMMIT;

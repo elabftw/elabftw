@@ -878,21 +878,29 @@ the form-control fails to do that so we do the border ourselves */
     }
 
     .real-container::after {
-        content: 'Powered by eLabFTW: elabftw.net';
+        content: 'Powered by eLabFTW ❤ www.elabftw.net';
         display: block;
         margin-top: 0.5rem;
         text-align: center;
     }
 
     /* don't show create button */
-    .real-container > .row {
+    .real-container .row {
         display: none;
     }
 
     /* but show >last modified< and >elabid< */
-    .real-container > .row:last-child {
-        display: flex;
+    .real-container .row:last-child {
+        display: block;
         margin-top: 0.5rem;
+    }
+    
+    .real-container .row:last-child .col-6 {
+        max-width: 100%;
+    }
+
+    .elabid {
+        text-align: left;
     }
 
     /* don't show experiment/database */

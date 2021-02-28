@@ -85,6 +85,10 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           <input class='form-control col-md-4' type='number' min='0' max='999' value='{{ App.Config.configArr.max_revisions }}' name='max_revisions' id='max_revisions' />
           <p class='smallgray'>{{ 'Setting this to a low value will help keeping the database size small. Setting this to 0 will allow infinite number of revisions stored.'|trans }}</p>
 
+          <label for='min_delta_revisions'>{{ 'Minimum number of characters that need to be changed in order to create a new revision per entry:'|trans }}</label>
+          <input class='form-control col-md-4' type='number' min='1' max='999' value='{{ App.Config.configArr.min_delta_revisions }}' name='min_delta_revisions' id='min_delta_revisions' />
+          <p class='smallgray'>{{ 'Setting this to a high value will help keeping the database size small.'|trans }}</p>
+
           <h3>{{ 'Registration and authentication configuration'|trans }}</h3>
 
           <label for='anon_users'>{{ 'Allow anonymous visitors to login and see Public experiments:'|trans }}</label>

@@ -330,7 +330,7 @@ class ApiController implements ControllerInterface
             // default DisplayParams is 16, crank it up to 9000
             // in the future maybe use limit/offset/page query params
             $DisplayParams->limit = 9000;
-            return new JsonResponse($this->Entity->readShow($DisplayParams, true));
+            return new JsonResponse($this->Entity->readShow($DisplayParams, false));
         }
         $this->Entity->canOrExplode('read');
         // add the uploaded files

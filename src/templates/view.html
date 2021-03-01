@@ -20,7 +20,7 @@
       <div class='timestamp-error'></div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='button' id='goForTimestamp' class='btn btn-primary'>{{ 'Timestamp'|trans }}</button>
+        <button type='button' data-action='timestamp' class='btn btn-primary'>{{ 'Timestamp'|trans }}</button>
       </div>
     </div>
   </div>
@@ -37,20 +37,13 @@
 
 {% if Entity.entityData.timestamped %}
 <div class='alert alert-success'><i class='fas fa-info-circle'></i>
-    {{ 'Experiment was timestamped by %s on %s at %s'|trans|format(timestampInfo.timestamper.fullname, Entity.entityData.timestampedwhen|date('Y-m-d'), Entity.entityData.timestampedwhen|date('H:i:s'))|raw }}
-    <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.pdf.0.long_name }}'>
-        <span>{{ 'Download timestamped pdf'|trans }}</span><i class='fas fa-file-pdf'></i>
-    </a>
-    <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.token.0.long_name }}&name=token.asn1&forceDownload=true'>
-        <span>{{ 'Download token'|trans }}</span><i class='fas fa-download'></i>
-    </a>
-    <!-- TEMP DISABLE BECAUSE NOT WORKING ATM
-    <a class='clickable elab-tooltip decodeAsn1' data-token='{{ timestampInfo.token.0.long_name }}' data-id='{{ Entity.entityData.id }}'>
-        <span>{{ 'Decode token'|trans }}</span>
-        <i class='fas fa-info-circle'></i>
-    </a>
-    <div style='color:black;overflow:auto' id='decodedDiv'></div>
-    !-->
+  {{ 'Experiment was timestamped by %s on %s at %s'|trans|format(timestampInfo.timestamper.fullname, Entity.entityData.timestampedwhen|date('Y-m-d'), Entity.entityData.timestampedwhen|date('H:i:s'))|raw }}
+  <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.pdf.0.long_name }}'>
+    <span>{{ 'Download timestamped pdf'|trans }}</span><i class='fas fa-file-pdf'></i>
+  </a>
+  <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.token.0.long_name }}&name=token.asn1&forceDownload=true'>
+    <span>{{ 'Download token'|trans }}</span><i class='fas fa-download'></i>
+  </a>
 </div>
 {% endif %}
 
@@ -66,50 +59,51 @@
     {% endif %}
     <i class='fas fa-eye ml-2' title='{{ 'Visibility'|trans }}'></i> {{ Entity.getCan('read') }}
     <i class='fas fa-pencil-alt ml-2' title='{{ 'Edit'|trans }}'></i> {{ Entity.getCan('write') }}
-    <a id='pinIcon' class='clickable ml-2'><i class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }}' title='{{ 'Toggle pin'|trans }}'></i></a>
+    <a class='elab-tooltip ml-2' data-action='pin' href='#'>
+      <span>{{ 'Pin'|trans }}</span>
+      <i class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }}' title='{{ 'Toggle pin'|trans }}'></i>
+    </a>
   </p>
 
   <!-- DATE -->
   <div>
     <i class='far fa-calendar-alt mr-1'></i>{{ Entity.entityData.date|kdate }}
   </div>
-  <!-- begin action buttons row -->
-  <span class='view-action-buttons'>
   {% if not Entity.isReadOnly and not Entity.entityData.locked %}
-      <a class='elab-tooltip' href='?mode=edit&id={{ Entity.id }}'>
-          <span>{{ 'Edit'|trans }}</span>
-          <i class='fas fa-pencil-alt' style='color:#29AEB9'></i>
-      </a>
+    <a class='elab-tooltip mr-1' href='#' data-action='edit'>
+      <span>{{ 'Edit'|trans }}</span>
+      <i class='fas fa-pencil-alt' style='color:#29AEB9'></i>
+    </a>
   {% endif %}
 
   {% if not App.Session.has('is_anon') %}
-  <a class='elab-tooltip clickable duplicateItem' data-id='{{ Entity.id }}'>
+    <a class='elab-tooltip mr-1' href='#' data-action='duplicate'>
       <span>{{ 'Duplicate'|trans }}</span>
       <i class='far fa-copy'></i>
-  </a>
+    </a>
   {% endif %}
 
-  <a class='elab-tooltip' href='make.php?what=pdf&id={{ Entity.id }}&type={{ Entity.type }}'>
-      <span>{{ 'Make a PDF'|trans }}</span>
-      <i class='fas fa-file-pdf'></i>
+  <a class='elab-tooltip mr-1' href='make.php?what=pdf&id={{ Entity.id }}&type={{ Entity.type }}'>
+    <span>{{ 'Make a PDF'|trans }}</span>
+    <i class='fas fa-file-pdf'></i>
   </a>
 
-  <a class='elab-tooltip' href='make.php?what=zip&id={{ Entity.id }}&type={{ Entity.type }}'>
-      <span>{{ 'Make a ZIP'|trans }}</span>
-      <i class='fas fa-file-archive'></i>
+  <a class='elab-tooltip mr-1' href='make.php?what=zip&id={{ Entity.id }}&type={{ Entity.type }}'>
+    <span>{{ 'Make a ZIP'|trans }}</span>
+    <i class='fas fa-file-archive'></i>
   </a>
 
   {% if Entity.type == 'items' %}
-      <a class='elab-tooltip' href='experiments.php?mode=show&related={{ Entity.id }}'>
-          <span>{{ 'Show related'|trans }}</span>
-          <i class='fas fa-link'></i>
+    <a class='elab-tooltip mr-1' href='experiments.php?mode=show&related={{ Entity.id }}'>
+      <span>{{ 'Show related'|trans }}</span>
+      <i class='fas fa-link'></i>
+    </a>
+    {% if Entity.entityData.bookable %}
+      <a class='elab-tooltip mr-1' href='team.php?item={{ Entity.id }}'>
+        <span>{{ 'Book item'|trans }}</span>
+        <i class='fas fa-calendar-plus'></i>
       </a>
-      {% if Entity.entityData.bookable %}
-      <a class='elab-tooltip' href='team.php?item={{ Entity.id }}'>
-          <span>{{ 'Book item'|trans }}</span>
-          <i class='fas fa-calendar-plus'></i>
-      </a>
-      {% endif %}
+    {% endif %}
   {% endif %}
 
   <!-- LOCK -->
@@ -120,43 +114,43 @@
           {% set lockIcon = 'fa-lock' %}
           {% set alt = Entity.entityData.lockedwhen %}
       {% endif %}
-      <a id='lock' class='clickable elab-tooltip'>
+      <a class='elab-tooltip mr-1' href='#' data-action='lock'>
           <span>{{ alt }}</span>
           <i class='fas {{lockIcon}}'></i>
       </a>
   {% endif %}
 
   {% if not App.Session.has('is_anon') %}
-      <a class='elab-tooltip clickable shareItem' data-id='{{ Entity.id }}'>
-          <span>{{ 'Share'|trans }}</span>
-          <i class='fas fa-share-alt'></i>
-      </a>
-      <input type='text' id='shareLinkInput' value='' style='display:none' />
+    <a class='elab-tooltip mr-1' href='#' data-action='share'>
+      <span>{{ 'Share'|trans }}</span>
+      <i class='fas fa-share-alt'></i>
+    </a>
+    <input type='text' id='shareLinkInput' value='' style='display:none' />
   {% endif %}
 
   <!-- show timestamp button if not timestamped already -->
   {% if not Entity.entityData.timestamped and Entity.isTimestampable and Entity.type == 'experiments' and not App.Session.has('is_anon') %}
-    <a class='clickable elab-tooltip modalToggle' data-modal='timestampModal'>
+    <a href='#' class='elab-tooltip mr-1 modalToggle' data-modal='timestampModal'>
       <span>{{ 'Timestamp Experiment'|trans }}</span>
       <i class='far fa-calendar-check'></i>
     </a>
   {% endif %}
 
-  </span><!-- end view-action-button -->
-
   <!-- build the tag array -->
   {% if Entity.entityData.tags|length > 0 %}
-      <span class='tags'><i class='fas fa-tags'></i>
+    <span class='tags'>
+      <i class='fas fa-tags'></i>
       {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
       {% set tagsValueArr = Entity.entityData.tags|split('|') %}
       {% for key, tag in tagsValueArr %}
-          {# the key allows to get the id stored in tagsIdArr #}
-          <a class='tag' href='?mode=show&tags%5B%5D={{ tag|url_encode }}'>{{ tag|raw }}</a>
+        {# the key allows to get the id stored in tagsIdArr #}
+        <a class='tag' href='?mode=show&tags%5B%5D={{ tag|url_encode }}'>{{ tag|raw }}</a>
       {% endfor %}
+    </span>
   {% endif %}
 
   <!-- TITLE : click on it to go to edit mode only if we are not in read only mode -->
-  <div class='{{ not Entity.isReadOnly and not Entity.entityData.locked ? 'click2Edit clickable' }} title-view'>
+  <div class='title-view' {{ not Entity.isReadOnly and not Entity.entityData.locked ? 'data-action="edit"' }}>
       {% if Entity.type == 'items' %}
           <span style='color:#{{ Entity.entityData.color }}'>{{ Entity.entityData.category }}</span>
       {% endif %}
@@ -168,7 +162,7 @@
     {{ '%s%d%sSee bookings%s'|trans|format("<a href='team.php?item=", Entity.entityData.id, "'>", "</a>")|raw }}
   {% endif %}
   {% if Entity.entityData.is_bound and Entity.type == 'experiments' %}<i class='far fa-calendar-alt'></i>
-    {{ '%s%d%sSee bookings%s'|trans|format("<a id='seeBookings' href='#' class='seeEvents osef", 0, "'>", "</a>")|raw }}
+    {{ '%s%d%sSee bookings%s'|trans|format("<a href='#' data-action='see-events'", 0, "'>", "</a>")|raw }}
     <div id='boundBookings'></div>
 
   {% endif %}
@@ -194,6 +188,8 @@
       {% endif %}
       <div id='body_view' class='txt'>{{ body|raw }}</div>
   {% endif %}
+
+  <div id='metadataDiv' class='col-md-6'></div>
 
   {% include('steps-links-view.html') %}
 
@@ -261,11 +257,11 @@
 <div id='info'
     data-page='view'
     data-type='{{ Entity.type }}'
-    data-id='{{ Entity.id }}'>
+    data-id='{{ Entity.id }}'
+    data-scedit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
 <div id='shortcuts'
     data-create='{{ Entity.Users.userData.sc_create }}'
-    data-edit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
 
 {% endblock body %}

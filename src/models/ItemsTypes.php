@@ -13,13 +13,14 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\HasMetadataInterface;
 use Elabftw\Traits\EntityTrait;
 use PDO;
 
 /**
  * The kind of items you can have in the database for a team
  */
-class ItemsTypes extends AbstractCategory
+class ItemsTypes extends AbstractCategory implements HasMetadataInterface
 {
     use EntityTrait;
 
@@ -38,25 +39,27 @@ class ItemsTypes extends AbstractCategory
             $team = $this->Users->userData['team'];
         }
 
-        $sql = 'INSERT INTO items_types(name, color, bookable, template, team)
-            VALUES(:name, :color, :bookable, :template, :team)';
+        $sql = 'INSERT INTO items_types(name, color, bookable, template, team, canread, canwrite)
+            VALUES(:name, :color, :bookable, :template, :team, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $params->name, PDO::PARAM_STR);
         $req->bindParam(':color', $params->color, PDO::PARAM_STR);
         $req->bindParam(':bookable', $params->bookable, PDO::PARAM_INT);
         $req->bindParam(':template', $params->template, PDO::PARAM_STR);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $req->bindParam(':canread', $params->canread, PDO::PARAM_STR);
+        $req->bindParam(':canwrite', $params->canwrite, PDO::PARAM_STR);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
     }
 
     /**
-     * Read the body (template) of the item_type from an id
+     * Read the body (template) and default permissions of the item_type from an id
      */
     public function read(): array
     {
-        $sql = 'SELECT template FROM items_types WHERE id = :id AND team = :team';
+        $sql = 'SELECT template, canread, canwrite, metadata FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
@@ -85,7 +88,9 @@ class ItemsTypes extends AbstractCategory
             items_types.color,
             items_types.bookable,
             items_types.template,
-            items_types.ordering
+            items_types.ordering,
+            items_types.canread,
+            items_types.canwrite
             FROM items_types WHERE team = :team ORDER BY ordering ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
@@ -96,6 +101,28 @@ class ItemsTypes extends AbstractCategory
             return array();
         }
         return $res;
+    }
+
+    public function getMetadata(): ?string
+    {
+        $res = $this->read();
+        return $res['metadata'];
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getTable(): string
+    {
+        return 'items_types';
+    }
+
+    public function canOrExplode(string $rw): void
+    {
+        // TODO
+        return;
     }
 
     /**
@@ -127,7 +154,9 @@ class ItemsTypes extends AbstractCategory
             team = :team,
             color = :color,
             bookable = :bookable,
-            template = :template
+            template = :template,
+            canread = :canread,
+            canwrite = :canwrite
             WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $params->name, PDO::PARAM_STR);
@@ -135,6 +164,8 @@ class ItemsTypes extends AbstractCategory
         $req->bindParam(':bookable', $params->bookable, PDO::PARAM_INT);
         $req->bindParam(':template', $params->template, PDO::PARAM_STR);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':canread', $params->canread, PDO::PARAM_STR);
+        $req->bindParam(':canwrite', $params->canwrite, PDO::PARAM_STR);
         $req->bindParam(':id', $params->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 

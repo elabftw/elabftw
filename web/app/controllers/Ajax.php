@@ -16,12 +16,14 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
+use Elabftw\Models\Metadata;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
@@ -29,6 +31,7 @@ use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
 use Exception;
+use PDOException;
 use Swift_TransportException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -67,6 +70,8 @@ try {
         $Entity = new Experiments($App->Users, $itemId);
     } elseif ($type === 'experiments_templates') {
         $Entity = new Templates($App->Users, $itemId);
+    } elseif ($type === 'items_types') {
+        $Entity = new ItemsTypes($App->Users, $itemId);
     } else {
         $Entity = new Database($App->Users, $itemId);
     }
@@ -91,6 +96,10 @@ try {
 
         case 'link':
             $Model = new Links($Entity);
+            break;
+
+        case 'metadata':
+            $Model = new Metadata($Entity);
             break;
 
         case 'status':
@@ -194,6 +203,13 @@ try {
             );
             break;
 
+        case 'updateExtraField':
+            $Model->updateExtraField(
+                $Request->request->get('params')['field'],
+                $Request->request->get('params')['value'],
+            );
+            break;
+
         case 'updateCommon':
             // update the common template
             $Model->updateCommon($Params->template);
@@ -231,7 +247,7 @@ try {
         'res' => false,
         'msg' => _('Error sending email'),
     ));
-} catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
+} catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException | ResourceNotFoundException | PDOException $e) {
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),

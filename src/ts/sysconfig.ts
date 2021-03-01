@@ -19,7 +19,7 @@ $(document).ready(function() {
   const updateUrl = 'https://get.elabftw.net/updates.json';
   const currentVersionDiv = document.querySelector('#currentVersion') as HTMLElement;
   const latestVersionDiv = document.querySelector('#latestVersion');
-  const currentVersion = currentVersionDiv.innerHTML;
+  const currentVersion = currentVersionDiv.innerText;
   // Note: this doesn't work on Chrome
   // see: https://bugs.chromium.org/p/chromium/issues/detail?id=571722
   // normal user-agent will be sent
@@ -44,8 +44,26 @@ $(document).ready(function() {
       latestVersionDiv.appendChild(successIcon);
     } else {
       currentVersionDiv.style.color = 'red';
-      const warning = `<div class='alert alert-warning'><i class='fas fa-chevron-right'></i> <a href='#' class='close' data-dismiss='alert'>×</a> ${data.date} - A new version is available! <a href='https://doc.elabftw.net/how-to-update.html' class='button btn btn-primary text-white'>Update elabftw</a><a href='https://doc.elabftw.net/changelog.html' class='button btn btn-primary text-white'>Read changelog</a></div>`;
-      document.querySelector('#versionNotifZone').innerHTML = warning;
+      const warningDiv = document.createElement('div');
+      warningDiv.classList.add('alert', 'alert-warning');
+      const chevron = document.createElement('i');
+      chevron.classList.add('fas', 'fa-chevron-right');
+      warningDiv.appendChild(chevron);
+      const text = document.createElement('span');
+      text.classList.add('ml-1');
+      text.innerText = `${data.date} - A new version is available!`;
+      warningDiv.appendChild(text);
+      const updateLink = document.createElement('a');
+      updateLink.href = 'https://doc.elabftw.net/how-to-update.html';
+      updateLink.classList.add('button', 'btn', 'btn-primary', 'text-white');
+      updateLink.innerText = 'Update elabftw';
+      const changelogLink = document.createElement('a');
+      changelogLink.href = 'https://doc.elabftw.net/changelog.html';
+      changelogLink.classList.add('button', 'btn', 'btn-primary', 'text-white');
+      changelogLink.innerText = 'Read changelog';
+      warningDiv.appendChild(updateLink);
+      warningDiv.appendChild(changelogLink);
+      document.getElementById('versionNotifZone').appendChild(warningDiv);
     }
   }).catch(error => latestVersionDiv.append(error));
 

@@ -4583,10 +4583,10 @@ json5@^2.1.2:
   dependencies:
     minimist "^1.2.5"
 
-jsoneditor@^9.0.3:
-  version "9.1.9"
-  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-9.1.9.tgz#1a2143eb1365df69d584d2098e9280b33270f5c2"
-  integrity sha512-Vu33B2lAuj93yP32CJE8Cm62nFdluyj95kbakiGUHqwHSzObFil9muNG547q3Qy7d4q9ahckUDovEbDiN17a/A==
+jsoneditor@^9.2.0:
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-9.2.0.tgz#cb11cf5cb80ce686f5275e50f79785c2430f0de9"
+  integrity sha512-n8ceD09+L9U9lwP3poW6NAEmm2Z02rxhq4HRB6pC+id1N2LpyMhYFxIDlEisdVMr7Rd0HF33YiIbUPjBw9O7JA==
   dependencies:
     ace-builds "^1.4.12"
     ajv "^6.12.6"
@@ -4596,7 +4596,7 @@ jsoneditor@^9.0.3:
     jsonrepair "^2.0.0"
     mobius1-selectr "^2.4.13"
     picomodal "^3.0.0"
-    vanilla-picker "^2.11.0"
+    vanilla-picker "^2.11.2"
 
 jsonfile@^6.0.1:
   version "6.1.0"
@@ -8025,7 +8025,7 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-vanilla-picker@^2.11.0:
+vanilla-picker@^2.11.2:
   version "2.11.2"
   resolved "https://registry.yarnpkg.com/vanilla-picker/-/vanilla-picker-2.11.2.tgz#eaa24efa68c27e7ee9e0776df55d6913b855f133"
   integrity sha512-2cP7LlUnxHxwOf06ReUVtd2RFJMnJGaxN2s0p8wzBH3In5b00Le7fFZ9VrIoBE0svZkSq/BC/Pwq/k/9n+AA2g==

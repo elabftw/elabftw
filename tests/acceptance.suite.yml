@@ -14,6 +14,8 @@ modules:
             url: 'https://elabtmp'
             browser: 'chrome'
             host: 'selenium-hub'
+            # allow some time for the page to load
+            wait: 3
             capabilities:
                 "goog:chromeOptions":
                     args:

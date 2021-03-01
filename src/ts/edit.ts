@@ -14,14 +14,33 @@ import './doodle';
 import tinymce from 'tinymce/tinymce';
 import Dropzone from 'dropzone';
 import i18next from 'i18next';
+import { Metadata } from './Metadata.class';
+import { Ajax } from './Ajax.class';
 
 // the dropzone is created programmatically, disable autodiscover
 Dropzone.autoDiscover = false;
 
-$(document).ready(function() {
-  if ($('#info').data('page') !== 'edit') {
+document.addEventListener('DOMContentLoaded', () => {
+
+  // holds info about the page through data attributes
+  const about = document.getElementById('info').dataset;
+
+  // only run in edit mode
+  if (about.page !== 'edit') {
     return;
   }
+
+  // add the title in the page name (see #324)
+  document.title = (document.getElementById('title_input') as HTMLInputElement).value + ' - eLabFTW';
+
+  const type = about.type;
+  const id = about.id;
+
+  const AjaxC = new Ajax(type, id);
+
+  // add extra fields elements from metadata json
+  const MetadataC = new Metadata(type, id);
+  MetadataC.display('edit');
 
   // UPLOAD FORM
   new Dropzone('form#elabftw-dropzone', {
@@ -38,8 +57,8 @@ $(document).ready(function() {
       // add additional parameters (id and type)
       this.on('sending', function(file: string, xhr: string, formData: FormData) {
         formData.append('upload', '1');
-        formData.append('id', $('#info').data('id'));
-        formData.append('type', $('#info').data('type'));
+        formData.append('type', type);
+        formData.append('id', id);
       });
 
       // once it is done
@@ -49,7 +68,7 @@ $(document).ready(function() {
         notif(json);
         // reload the #filesdiv once the file is uploaded
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-          $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv > *', function() {
+          $('#filesdiv').load(`?mode=edit&id=${id} #filesdiv > *`, function() {
             displayMolFiles();
             display3DMolecules(true);
             const dropZone = Dropzone.forElement('#elabftw-dropzone');
@@ -71,20 +90,8 @@ $(document).ready(function() {
     }
   });
 
-  // add the title in the page name (see #324)
-  document.title = $('#title_input').val() + ' - eLabFTW';
-
-  const type = $('#info').data('type');
-  const id = $('#info').data('id');
-  let location = 'experiments.php';
-  if (type != 'experiments') {
-    location = 'database.php';
-  }
-
   // KEYBOARD SHORTCUT
-  key($('#shortcuts').data('submit'), function() {
-    $('#main_form').submit();
-  });
+  key(about.scsubmit, () => (document.getElementById('main_form') as HTMLFormElement).submit());
 
   ////////////////
   // DATA RECOVERY
@@ -165,25 +172,6 @@ $(document).ready(function() {
   });
   // END GET MOL FILES
 
-  class Entity {
-
-    destroy(): void {
-      if (confirm(i18next.t('entity-delete-warning'))) {
-        const controller = 'app/controllers/EntityAjaxController.php';
-        $.post(controller, {
-          destroy: true,
-          id: id,
-          type: type
-        }).done(function(json) {
-          notif(json);
-          if (json.res) {
-            window.location.replace(location);
-          }
-        });
-      }
-    }
-  }
-
   class Star {
       controller: string;
 
@@ -202,10 +190,20 @@ $(document).ready(function() {
       }
   }
 
-  // DESTROY ENTITY
-  const EntityC = new Entity();
-  $(document).on('click', '.entityDestroy', function() {
-    EntityC.destroy();
+  let location = 'experiments.php';
+  if (type !== 'experiments') {
+    location = 'database.php';
+  }
+
+  // Add click listener and do action based on which element is clicked
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // DESTROY ENTITY
+    if (el.matches('[data-action="destroy"]')) {
+      if (confirm(i18next.t('entity-delete-warning'))) {
+        AjaxC.post('destroy').then(() => window.location.replace(location));
+      }
+    }
   });
 
   // CAN READ/WRITE SELECT
@@ -324,7 +322,7 @@ $(document).ready(function() {
 
   const tinyConfig = getTinymceBaseConfig('edit');
   const tinyConfigForEdit = {
-    images_upload_handler: (blobInfo, success) => { // eslint-disable-line @typescript-eslint/camelcase
+    images_upload_handler: (blobInfo, success): void => { // eslint-disable-line @typescript-eslint/camelcase
       const dropZone = Dropzone.forElement('#elabftw-dropzone');
       // Edgecase for editing an image using tinymce ImageTools
       // Check if it was selected. This is set by an event hook below
@@ -334,7 +332,7 @@ $(document).ready(function() {
         formData.append('replace', 'true');
         formData.append('upload_id', tinymceEditImage.uploadId);
         formData.append('id', tinymceEditImage.itemId);
-        formData.append('type', 'experiments');
+        formData.append('type', type);
         formData.append('file', blobInfo.blob());
 
         $.post({
@@ -365,7 +363,7 @@ $(document).ready(function() {
       }
     },
     // use a custom function for the save button in toolbar
-    save_onsavecallback: () => quickSave(type , $('#info').data('id')), // eslint-disable-line @typescript-eslint/camelcase
+    save_onsavecallback: (): void => quickSave(type , id), // eslint-disable-line @typescript-eslint/camelcase
   };
 
   tinymce.init(Object.assign(tinyConfig, tinyConfigForEdit));

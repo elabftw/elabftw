@@ -6,124 +6,87 @@
  * @package elabftw
  */
 import 'jquery-jeditable/src/jquery.jeditable.js';
-import { notif } from './misc';
-// not working
-//import { key } from '../js/vendor/keymaster.js';
+import { Metadata } from './Metadata.class';
+import { Ajax } from './Ajax.class';
+import { BoundEvent, ResponseMsg } from './interfaces';
 declare let key: any;
 const moment = require('moment'); // eslint-disable-line @typescript-eslint/no-var-requires
 
-$(document).ready(function() {
-  if ($('#info').data('page') !== 'view') {
+document.addEventListener('DOMContentLoaded', () => {
+
+  // holds info about the page through data attributes
+  const about = document.getElementById('info').dataset;
+
+  // only run in view mode
+  if (about.page !== 'view') {
     return;
   }
+
   // add the title in the page name (see #324)
-  document.title = $('.title-view').text() + ' - eLabFTW';
+  document.title = document.querySelector('.title-view').textContent + ' - eLabFTW';
 
-  const type = $('#info').data('type');
-  const id = $('#info').data('id');
+  const type = about.type;
+  const id = about.id;
 
-  // EDIT
-  key($('#shortcuts').data('edit'), function() {
-    window.location.href = '?mode=edit&id=' + id;
-  });
+  const AjaxC = new Ajax(type, id);
 
-  // TOGGLE LOCK
-  $('#lock').on('click', function() {
-    $.post('app/controllers/EntityAjaxController.php', {
-      lock: true,
-      type: type,
-      id: id
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        // reload the page to change the icon and make the edit button disappear
-        // and fix the issue #1897
-        window.location.href = '?mode=view&id=' + id;
-      }
-    });
-  });
+  // add extra fields elements from metadata json
+  const MetadataC = new Metadata(type, id);
+  MetadataC.display('view');
 
-  // CLICK TITLE TO GO IN EDIT MODE
-  $(document).on('click', '.click2Edit', function() {
-    window.location.href = '?mode=edit&id=' + id;
-  });
+  // EDIT SHORTCUT
+  key(about.scedit, () => window.location.href = `?mode=edit&id=${id}`);
 
-  // CLICK SEE EVENTS BUTTON
-  $(document).on('click', '.seeEvents', function() {
-    $.get('app/controllers/EntityAjaxController.php', {
-      getBoundEvents: true,
-      type: type,
-      id: id
-    }).done(function(json) {
-      if (json.res) {
-        let bookings = '';
-        for(let i=0; i < json.msg.length; i++) {
-          bookings = bookings + '<a href="team.php?item=' + json.msg[i].item + '&start=' + encodeURIComponent(json.msg[i].start) + '"><button class="mr-2 btn btn-neutral relative-moment">' + moment(json.msg[i].start).fromNow() + '</button></a>';
+  // Add click listener and do action based on which element is clicked
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // DUPLICATE
+    if (el.matches('[data-action="duplicate"]')) {
+      AjaxC.post('duplicate').then(json => window.location.replace(`?mode=edit&id=${json.msg}`));
+
+    // EDIT
+    } else if (el.matches('[data-action="edit"]')) {
+      window.location.href = `?mode=edit&id=${id}`;
+
+    // TOGGLE LOCK
+    } else if (el.matches('[data-action="lock"]')) {
+      // reload the page to change the icon and make the edit button disappear (#1897)
+      AjaxC.post('lock').then(() => window.location.href = `?mode=view&id=${id}`);
+
+    // SEE EVENTS
+    } else if (el.matches('[data-action="see-events"]')) {
+      AjaxC.get('getBoundEvents').then(json => {
+        const bookingsDiv = document.getElementById('boundBookings');
+        for (const msg of (json.msg as Array<BoundEvent>)) {
+          const el = document.createElement('a');
+          el.href = `team.php?item=${msg.item}&start=${encodeURIComponent(msg.start)}`;
+          const button = document.createElement('button');
+          button.classList.add('mr-2', 'btn', 'btn-neutral', 'relative-moment');
+          button.innerText = moment(msg.start).fromNow();
+          el.appendChild(button);
+          bookingsDiv.append(el);
         }
-        $('#boundBookings').html(bookings);
-      }
-    });
-  });
+      });
 
-  // DECODE ASN1
-  $(document).on('click', '.decodeAsn1', function() {
-    $.post('app/controllers/ExperimentsAjaxController.php', {
-      asn1: $(this).data('token'),
-      id: $(this).data('id')
-    }).done(function(data) {
-      $('#decodedDiv').html(data.msg);
-    });
-  });
+    // SHARE
+    } else if (el.matches('[data-action="share"]')) {
+      AjaxC.get('getShareLink').then(json => {
+        const link = (document.getElementById('shareLinkInput') as HTMLInputElement);
+        link.value = (json.msg as string);
+        link.style.display = 'inline';
+        link.focus();
+        link.select();
+      });
 
-  // DUPLICATE
-  $('.view-action-buttons').on('click', '.duplicateItem', function() {
-    $.post('app/controllers/EntityAjaxController.php', {
-      duplicate: true,
-      id: $(this).data('id'),
-      type: type
-    }).done(function(data) {
-      window.location.replace('?mode=edit&id=' + data.msg);
-    });
-  });
+    // TOGGLE PINNED
+    } else if (el.matches('[data-action="pin"]')) {
+      AjaxC.post('togglePin').then(() => el.querySelector('svg').classList.toggle('grayed-out'));
 
-  // SHARE
-  $('.view-action-buttons').on('click', '.shareItem', function() {
-    $.get('app/controllers/EntityAjaxController.php', {
-      getShareLink: true,
-      id: $(this).data('id'),
-      type: type
-    }).done(function(data) {
-      $('#shareLinkInput').val(data.msg).toggle().focus().select();
-    });
-  });
-
-  // TIMESTAMP
-  $('#goForTimestamp').on('click', function() {
-    $(this).prop('disabled', true);
-    $.post('app/controllers/ExperimentsAjaxController.php', {
-      timestamp: true,
-      id: id
-    }).done(function(json) {
-      if (json.res) {
-        window.location.replace('experiments.php?mode=view&id=' + id);
-      } else {
-        $('.modal-body').css('color', 'red');
-        $('.modal-body').html(json.msg);
-      }
-    });
-  });
-
-  // TOGGLE PINNED
-  $('#pinIcon').on('click', function() {
-    $.post('app/controllers/EntityAjaxController.php', {
-      togglePin: true,
-      type: type,
-      id: id
-    }).done(function(json) {
-      if (json.res) {
-        $('#pinIcon').find('[data-fa-i2svg]').toggleClass('grayed-out');
-      }
-      notif(json);
-    });
+    // TIMESTAMP button in modal
+    } else if (el.matches('[data-action="timestamp"]')) {
+      // prevent double click
+      (event.target as HTMLButtonElement).disabled = true;
+      AjaxC.post('timestamp').then(() => window.location.replace(`experiments.php?mode=view&id=${id}`));
+    }
   });
 });

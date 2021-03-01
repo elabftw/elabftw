@@ -30,21 +30,24 @@ class Database extends AbstractEntity
     public function create(ParamsProcessor $params): int
     {
         $category = $params->id;
-        $itemsTypes = new ItemsTypes($this->Users, $category);
-        $body = $itemsTypes->read();
+        $ItemsTypes = new ItemsTypes($this->Users, $category);
+        $itemsTypesArr = $ItemsTypes->read();
 
         // SQL for create DB item
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, elabid)
-            VALUES(:team, :title, :date, :body, :userid, :category, :elabid)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, elabid, canread, canwrite, metadata)
+            VALUES(:team, :title, :date, :body, :userid, :category, :elabid, :canread, :canwrite, :metadata)';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req, array(
             'team' => $this->Users->userData['team'],
             'title' => _('Untitled'),
             'date' => Filter::kdate(),
             'elabid' => $this->generateElabid(),
-            'body' => $body['template'],
+            'body' => $itemsTypesArr['template'],
             'userid' => $this->Users->userData['userid'],
             'category' => $category,
+            'canread' => $itemsTypesArr['canread'],
+            'canwrite' => $itemsTypesArr['canwrite'],
+            'metadata' => $itemsTypesArr['metadata'],
         ));
 
         return $this->Db->lastInsertId();

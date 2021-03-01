@@ -104,12 +104,18 @@ function doneTyping(): void {
 
 // options for tinymce to pass to tinymce.init()
 export function getTinymceBaseConfig(page: string): object {
+  let plugins = 'anchor table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template';
+  if (page !== 'admin') {
+    plugins += ' autosave';
+  }
+
+
   return {
     mode: 'specific_textareas',
     editor_selector: 'mceditable', // eslint-disable-line @typescript-eslint/camelcase
     browser_spellcheck: true, // eslint-disable-line @typescript-eslint/camelcase
     skin_url: 'app/css/tinymce', // eslint-disable-line @typescript-eslint/camelcase
-    plugins: 'autosave anchor table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template',
+    plugins: plugins,
     pagebreak_separator: '<pagebreak>', // eslint-disable-line @typescript-eslint/camelcase
     toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
     removed_menuitems: 'newdocument, image', // eslint-disable-line @typescript-eslint/camelcase

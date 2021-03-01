@@ -13,17 +13,18 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\HasMetadataInterface;
 use Elabftw\Interfaces\UpdatableInterface;
 use Elabftw\Services\Filter;
 use PDO;
 
 class Metadata implements UpdatableInterface
 {
-    private AbstractEntity $Entity;
+    private HasMetadataInterface $Entity;
 
     private Db $Db;
 
-    public function __construct(AbstractEntity $entity)
+    public function __construct(HasMetadataInterface $entity)
     {
         $this->Entity = $entity;
         $this->Db = Db::getConnection();
@@ -32,10 +33,11 @@ class Metadata implements UpdatableInterface
     public function read(): string
     {
         $this->Entity->canOrExplode('read');
-        if (empty($this->Entity->entityData['metadata'])) {
-            throw new ResourceNotFoundException();
+        $metadata = $this->Entity->getMetadata();
+        if (empty($metadata)) {
+            throw new ResourceNotFoundException('No metadata found!');
         }
-        return $this->Entity->entityData['metadata'];
+        return $metadata;
     }
 
     /**
@@ -44,10 +46,11 @@ class Metadata implements UpdatableInterface
     public function update(ParamsProcessor $params): string
     {
         $this->Entity->canOrExplode('write');
-        $sql = 'UPDATE ' . $this->Entity->type . ' SET metadata = :metadata WHERE id = :id';
+        $id = $this->Entity->getId();
+        $sql = 'UPDATE ' . $this->Entity->getTable() . ' SET metadata = :metadata WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':metadata', $params->template);
-        $req->bindParam(':id', $this->Entity->entityData['id'], PDO::PARAM_INT);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $params->template;
     }
@@ -58,14 +61,15 @@ class Metadata implements UpdatableInterface
     public function updateExtraField(string $field, string $value): bool
     {
         $this->Entity->canOrExplode('write');
+        $id = $this->Entity->getId();
         // build field (input is double quoted to allow for whitespace in key)
         $field = '$.extra_fields."' . Filter::sanitize($field) . '".value';
         $value = Filter::sanitize($value);
-        $sql = 'UPDATE ' . $this->Entity->type . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
+        $sql = 'UPDATE ' . $this->Entity->getTable() . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':field', $field);
         $req->bindParam(':value', $value);
-        $req->bindParam(':id', $this->Entity->entityData['id'], PDO::PARAM_INT);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 }

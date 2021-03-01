@@ -34,8 +34,8 @@ class Database extends AbstractEntity
         $itemsTypesArr = $ItemsTypes->read();
 
         // SQL for create DB item
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, elabid, canread, canwrite)
-            VALUES(:team, :title, :date, :body, :userid, :category, :elabid, :canread, :canwrite)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, elabid, canread, canwrite, metadata)
+            VALUES(:team, :title, :date, :body, :userid, :category, :elabid, :canread, :canwrite, :metadata)';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req, array(
             'team' => $this->Users->userData['team'],
@@ -47,6 +47,7 @@ class Database extends AbstractEntity
             'category' => $category,
             'canread' => $itemsTypesArr['canread'],
             'canwrite' => $itemsTypesArr['canwrite'],
+            'metadata' => $itemsTypesArr['metadata'],
         ));
 
         return $this->Db->lastInsertId();

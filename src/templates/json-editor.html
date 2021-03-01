@@ -7,11 +7,11 @@
   {% endif %}
   <div id='jsonEditorDiv' class='collapse mt-2'>
     <h6 id='jsonEditorTitle'></h6>
-    <div id='jsonEditorContainer'></div>
+    <div id='jsonEditorContainer' data-what=''></div>
     {% if mode == 'edit' %}
       <div class='mt-4 text-center'>
         <div class='btn-group'>
-          <button type='button' data-action='json-save-file' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+          <button type='button' data-action='json-save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
           <div class='btn-group dropright' role='group'>
             <button type='button' class='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
               <span class='sr-only'>{{ 'Toggle JSON editor save menu'|trans }}</span>
@@ -22,7 +22,13 @@
             </div>
           </div>
         </div>
-        <button type='button' data-action='json-clear' class='btn btn-danger jsonClear align-right'>{{ 'Clear'|trans }}</button>
+        <button type='button' data-action='json-clear' class='btn btn-danger align-right'>{{ 'Clear'|trans }}</button>
+      </div>
+    {% endif %}
+    {% if mode == 'edit-item-type' %}
+      <div class='mt-4 text-center'>
+        <button type='button' id='itemsTypesJsonSave' data-action='json-save-metadata-from-id' data-type='items_types' data-id='' class='btn btn-primary'>{{ 'Save as metadata'|trans }}</button>
+        <button type='button' data-action='json-clear' class='btn btn-danger align-right'>{{ 'Clear'|trans }}</button>
       </div>
     {% endif %}
   </div>

@@ -15,7 +15,7 @@ set -eu
 cleanup() {
     docker-compose -f tests/docker-compose.yml down
     sudo cp config.php.dev config.php
-    sudo chown 100:101 config.php
+    sudo chown 101:101 config.php
 }
 trap cleanup EXIT
 

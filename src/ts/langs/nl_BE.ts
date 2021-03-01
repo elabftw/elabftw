@@ -4,6 +4,7 @@ const t = {
     "click-to-edit": "Klik om te bewerken",
     "comment-add": "Voeg een opmerking toe",
     "dropzone-upload-area": "Sleep bestanden om te uploaden hierheen",
+    "editing-metadata": "Metadata bewerken",
     "entity-default-title": "Geen titel",
     "entity-delete-warning": "Het geselecteerde item(s) en alle geassocieerde gegevens zullen permanent verwijderd worden. Dit kan niet ongedaan gemaakt worden. Bent u zeker?",
     "extra-fields": "Extra velden",

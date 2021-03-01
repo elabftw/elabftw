@@ -4,6 +4,7 @@ const t = {
     "click-to-edit": "Feu clic per editar",
     "comment-add": "Afegir un comentari",
     "dropzone-upload-area": "Arrossega els fitxers fins aquí per a adjuntar-los",
+    "editing-metadata": "S'estan editant metadades",
     "entity-default-title": "Sense títol",
     "entity-delete-warning": "L’element o els elements seleccionats i totes les dades associades s’eliminaran definitivament. Això no es pot desfer. Estàs segur?",
     "extra-fields": "Camps addicionals",

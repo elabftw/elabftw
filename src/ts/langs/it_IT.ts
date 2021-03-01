@@ -4,6 +4,7 @@ const t = {
     "click-to-edit": "Clicca per modificare",
     "comment-add": "Aggiungi un commento",
     "dropzone-upload-area": "Trascina qui i file da allegare",
+    "editing-metadata": "Modifica dei metadati",
     "entity-default-title": "Senza titolo",
     "entity-delete-warning": "Quanto è stato selezionato (nonché i dati associati) sarà definitivamente cancellato. Il processo è irreversibile. Si è veramente sicuri?",
     "extra-fields": "Campi extra",

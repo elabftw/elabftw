@@ -295,6 +295,9 @@
               <button data-id='{{ itemType.category_id }}' class='button btn btn-neutral itemsTypesShowEditor'>{{ 'Edit the template'|trans }}</button>
             </li>
             <li class='list-inline-item'>
+              <button data-id='{{ itemType.category_id }}' data-type='items_types' data-action='json-load-metadata-from-id' class='button btn btn-neutral'>{{ 'Edit metadata'|trans }}</button>
+            </li>
+            <li class='list-inline-item'>
               <label for='itemsTypesSelectCanread_{{ itemType.category_id }}'>{{ 'Visibility'|trans }}</label>
               <select id='itemsTypesSelectCanread_{{ itemType.category_id }}' data-id='{{ itemType.category_id }}' class='itemsTypesSelectCanread form-control'>
                 {% for key, value in visibilityArr %}
@@ -329,6 +332,10 @@
       {% endfor %}
     </ul>
   </div>
+
+  <! -- METADATA editor for items types -->
+  {% set mode = 'edit-item-type' %}
+  {{ include('json-editor.html') }}
 </div>
 
 <!-- TAB 6 COMMON EXPERIMENT TEMPLATE -->

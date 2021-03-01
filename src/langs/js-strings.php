@@ -11,6 +11,9 @@ _('Add a comment');
 // dropzone-upload-area
 _('Drop files here to upload');
 /** @psalm-suppress UnusedFunctionCall */
+// editing-metadata
+_('Editing metadata');
+/** @psalm-suppress UnusedFunctionCall */
 // entity-default-title
 _('Untitled');
 /** @psalm-suppress UnusedFunctionCall */

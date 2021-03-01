@@ -4,6 +4,7 @@ const t = {
     "click-to-edit": "Zum Bearbeiten anklicken",
     "comment-add": "Einen Kommentar hinzufügen",
     "dropzone-upload-area": "Dateien zum Hochladen hier fallen lassen",
+    "editing-metadata": "Metadaten bearbeiten",
     "entity-default-title": "Unbenannt",
     "entity-delete-warning": "Die ausgewählten Element(e) und alle zugehörigen Daten werden dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden. Bist du sicher?",
     "extra-fields": "Zusätzliche Felder",

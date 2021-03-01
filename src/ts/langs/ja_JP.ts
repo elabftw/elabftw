@@ -4,6 +4,7 @@ const t = {
     "click-to-edit": "クリックして編集する",
     "comment-add": "コメントを追加",
     "dropzone-upload-area": "ここにファイルをドロップしてアップロードします",
+    "editing-metadata": "メタデータの編集",
     "entity-default-title": "無題",
     "entity-delete-warning": "選択したアイテムとすべての関連データが完全に削除されます。これは、元に戻すことはできません。実行して良いですか？",
     "extra-fields": "追加フィールド",

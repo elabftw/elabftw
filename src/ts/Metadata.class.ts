@@ -41,8 +41,6 @@ export class Metadata extends Crud {
       // if there are no metadata.json file available, return an empty object
       if (data.res === false) {
         return {};
-        // TODO i18n
-        //throw new ResourceNotFoundException('No metadata associated!');
       }
       return JSON.parse(data.msg);
     });

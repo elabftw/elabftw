@@ -88,17 +88,38 @@ export default class JsonEditorHelper {
     // add the filename as a title
     document.getElementById('jsonEditorTitle').innerText = `${i18next.t('filename')}: ${name}`;
     this.currentUploadId = uploadid;
+    this.editorDiv.dataset.what = 'file';
   }
 
   loadMetadata(): void {
     // set the title
-    // TODO fill i18n values
     document.getElementById('jsonEditorTitle').innerText = i18next.t('editing-metadata');
     this.MetadataC.read().then(metadata => this.load(metadata));
+    this.editorDiv.dataset.what = 'metadata';
+  }
+
+  loadMetadataFromId(type, id): void {
+    const MetadataC = new Metadata(type, id);
+    MetadataC.read().then(metadata => this.load(metadata));
+    this.editorDiv.dataset.what = 'metadata';
   }
 
   saveMetadata(): void {
     this.MetadataC.update(JSON.stringify(this.editor.get()));
+  }
+
+  saveMetadataFromId(type, id): void {
+    const MetadataC = new Metadata(type, id);
+    MetadataC.update(JSON.stringify(this.editor.get()));
+  }
+
+  // save a file or metadata depending on what was loaded
+  save(): void {
+    if (this.editorDiv.dataset.what === 'file') {
+      return this.saveFile();
+    } else if (this.editorDiv.dataset.what === 'metadata') {
+      return this.saveMetadata();
+    }
   }
 
   saveFile(): void {

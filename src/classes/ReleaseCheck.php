@@ -15,5 +15,5 @@ namespace Elabftw\Elabftw;
  */
 class ReleaseCheck
 {
-    public const INSTALLED_VERSION = '3.6.5';
+    public const INSTALLED_VERSION = '3.6.6';
 }

@@ -154,6 +154,11 @@
         />
         <label for='pdfa'>{{ 'Generate PDF/A compliant pdfs (will embed the fonts and make the file bigger)'|trans }}</label>
         <br>
+        <input id='pdf_tex' type='checkbox' name='pdf_tex'
+          {{ App.Users.userData.pdf_tex == '1' ? " checked='checked'" }}
+        />
+        <label for='pdf_tex'>{{ 'Typeset formulas written in TeX/LaTeX. WARNING: Some (more complex) TeX/LaTeX commands will not be typeset correctly'|trans }}</label>
+        <br>
         <input id='inc_files_pdf' type='checkbox' name='inc_files_pdf'
           {{ App.Users.userData.inc_files_pdf == '1' ? " checked='checked'" }}
         />

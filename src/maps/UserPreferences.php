@@ -61,6 +61,8 @@ class UserPreferences implements MapInterface
 
     private string $pdfFormat = 'A4';
 
+    private int $pdfTex = 0;
+
     private int $useMarkdown = 0;
 
     private int $incFilesPdf = 1;
@@ -104,6 +106,7 @@ class UserPreferences implements MapInterface
             single_column_layout = :new_layout,
             cjk_fonts = :new_cjk_fonts,
             pdfa = :new_pdfa,
+            pdf_tex = :new_pdf_tex,
             pdf_format = :new_pdf_format,
             use_markdown = :new_use_markdown,
             inc_files_pdf = :new_inc_files_pdf
@@ -128,6 +131,7 @@ class UserPreferences implements MapInterface
         $req->bindParam(':new_layout', $this->singleColumnLayout);
         $req->bindParam(':new_cjk_fonts', $this->cjkFonts);
         $req->bindParam(':new_pdfa', $this->pdfa);
+        $req->bindParam(':new_pdf_tex', $this->pdfTex);
         $req->bindParam(':new_pdf_format', $this->pdfFormat);
         $req->bindParam(':new_use_markdown', $this->useMarkdown);
         $req->bindParam(':new_inc_files_pdf', $this->incFilesPdf);
@@ -192,6 +196,11 @@ class UserPreferences implements MapInterface
     final public function setPdfa(string $setting): void
     {
         $this->pdfa = Filter::toBinary($setting);
+    }
+
+    final public function setPdfTex(string $setting): void
+    {
+        $this->pdfTex = Filter::toBinary($setting);
     }
 
     final public function setPdfFormat(string $setting): void
@@ -262,6 +271,7 @@ class UserPreferences implements MapInterface
         $this->setShowTeamTemplates($source['show_team_templates'] ?? '0');
         $this->setCjkFonts($source['cjk_fonts'] ?? '0');
         $this->setPdfa($source['pdfa'] ?? '0');
+        $this->setPdfTex($source['pdf_tex'] ?? '0');
         $this->setPdfFormat($source['pdf_format'] ?? $this->pdfFormat);
         $this->setUseMarkdown($source['use_markdown'] ?? '0');
         $this->setIncFilesPdf($source['inc_files_pdf'] ?? '0');
@@ -290,6 +300,7 @@ class UserPreferences implements MapInterface
             show_team_templates,
             cjk_fonts,
             pdfa,
+            pdf_tex,
             pdf_format,
             use_markdown,
             inc_files_pdf,

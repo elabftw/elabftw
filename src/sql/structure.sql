@@ -577,6 +577,7 @@ CREATE TABLE `users` (
   `inc_files_pdf` tinyint(1) NOT NULL DEFAULT '1',
   `archived` tinyint(1) NOT NULL DEFAULT '0',
   `pdfa` tinyint(1) NOT NULL DEFAULT '1',
+  `pdf_tex` tinyint(1) NOT NULL DEFAULT '0',
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
   `display_size` varchar(2) NOT NULL DEFAULT 'lg',
   `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it',

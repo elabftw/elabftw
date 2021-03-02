@@ -9,10 +9,10 @@
 declare(strict_types=1);
 
 namespace Elabftw\Models;
+
 use Elabftw\Elabftw\Db;
 use Elabftw\Traits\EntityTrait;
 use PDO;
-
 
 /**
  * All about the user's calendar
@@ -46,7 +46,6 @@ class Calendar
      */
     public function createEvent(string $start, string $end, string $title): int
     {
-
         $title = filter_var($title, FILTER_SANITIZE_STRING);
         $sql = 'INSERT INTO team_events(team, start, end, userid, title)
             VALUES(:team, :start, :end, :userid, :title)';
@@ -82,6 +81,5 @@ class Calendar
             return array();
         }
         return $res;
-
     }
 }

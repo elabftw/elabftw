@@ -274,6 +274,4 @@ class Scheduler
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
     }
-
-
 }

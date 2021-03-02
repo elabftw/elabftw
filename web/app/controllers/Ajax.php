@@ -233,9 +233,11 @@ try {
             break;
 
         case 'schedule':
-            $Model->schedule($Params->id,
-            (int) $Request->request->get('params')['scheduleStatus'],
-            $Request->request->get('params')['eventId']);
+            $Model->schedule(
+                $Params->id,
+                (int) $Request->request->get('params')['scheduleStatus'],
+                $Request->request->get('params')['eventId']
+            );
             break;
 
         case 'unreference':

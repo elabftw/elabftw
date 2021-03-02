@@ -63,7 +63,7 @@ try {
         'templateData' => $templateData,
         'templatesArr' => $templatesArr,
         'calendarLang' => Tools::getCalendarLang($App->Users->userData['lang']),
-        'experimentSteps' => $experimentSteps
+        'experimentSteps' => $experimentSteps,
     );
 
     $Response->setContent($App->render($template, $renderArr));

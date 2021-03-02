@@ -31,7 +31,6 @@ $Response->setData(array(
 ));
 
 try {
-
     $Calendar = new Calendar($App->Users);
 
     // CREATE EVENT.
@@ -44,7 +43,7 @@ try {
         $Response->setData(array(
             'res' => true,
             'msg' => _('Saved'),
-            'id'  => $eventId
+            'id'  => $eventId,
         ));
     }
 
@@ -52,10 +51,9 @@ try {
     if ($Request->query->has('start') && $Request->query->has('end')) {
         $start = $Request->query->get('start');
         $end = $Request->query->get('end');
-        $Response->setData($Calendar->readAllFromUser($start,$end));
+        $Response->setData($Calendar->readAllFromUser($start, $end));
         $Response->send();
     }
-
 } catch (ImproperActionException $e) {
     $Response->setData(array(
         'res' => false,

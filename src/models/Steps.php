@@ -106,7 +106,7 @@ class Steps implements CrudInterface
      * @param string $eventId
      * @return void
      */
-    public function schedule(int $stepid,int $scheduleStatus, string $eventId): void
+    public function schedule(int $stepid, int $scheduleStatus, string $eventId): void
     {
         $this->Entity->canOrExplode('write');
         $sql = 'UPDATE ' . $this->Entity->type . '_steps
@@ -119,15 +119,12 @@ class Steps implements CrudInterface
         $this->Db->execute($req);
 
         // Link the event or delete it in case of unscheduling.
-        if (!$eventId)
-        {
+        if (!$eventId) {
             $sql = 'DELETE FROM team_events WHERE '. $this->Entity->type . '_step=:step_id';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':step_id', $stepid, PDO::PARAM_INT);
             $this->Db->execute($req);
-        }
-        else
-        {
+        } else {
             $sql = 'UPDATE team_events
             SET ' . $this->Entity->type . '_step=:step_id
             WHERE id=:event_id';
@@ -136,8 +133,6 @@ class Steps implements CrudInterface
             $req->bindParam(':event_id', $eventId, PDO::PARAM_INT);
             $this->Db->execute($req);
         }
-
-
     }
 
     /**
@@ -228,7 +223,6 @@ class Steps implements CrudInterface
         }
         return $res;
     }
-
 
     /**
      * Copy the steps from one entity to an other

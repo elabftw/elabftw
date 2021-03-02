@@ -156,6 +156,8 @@ class MakePdf extends AbstractMake
             $mpdf->SetTitle($this->Entity->entityData['title']);
             $mpdf->SetKeywords(str_replace('|', ' ', $this->Entity->entityData['tags'] ?? ''));
         }
+        // image debugging
+        $mpdf->showImageErrors = true;
 
         return $mpdf;
     }
@@ -174,11 +176,13 @@ class MakePdf extends AbstractMake
         }
 
         // temporary file to hold the content
-        $filename = $tmpDir . strval(random_int(10000, 99999)) . '.html';
+        $extension = '.html';
+        $filename = $tmpDir . strval(random_int(10000, 99999));
 
         // decode html entities, otherwise it crashes
         // compare to https://github.com/mathjax/MathJax-demos-node/issues/16
-        file_put_contents($filename, html_entity_decode($content, ENT_HTML5, 'UTF-8'));
+        $content = html_entity_decode($content, ENT_HTML5, 'UTF-8');
+        file_put_contents($filename . $extension, $content);
 
         // use tex2svg-page script located in src/node-apps
         // convert tex to svg with nodejs script
@@ -186,9 +190,9 @@ class MakePdf extends AbstractMake
         $currentDir = dirname(__DIR__);
         chdir(dirname(__DIR__, 2) . '/src/node-apps');
         // disable font cache so all paths are inside the svg and not linked
-        $html = shell_exec('./tex2svg-page --fontCache=none ' . $filename);
+        $html = shell_exec('./tex2svg-page --fontCache=none ' . $filename . $extension);
         chdir($currentDir);
-        unlink($filename);
+        //unlink($filename . $extension);
 
         // was there actually tex in the content?
         // if not we can skip the svg modifications and return the original content
@@ -200,7 +204,7 @@ class MakePdf extends AbstractMake
             //$html = preg_replace('/<mjx-assistive-mml[^>*].*?<\/mjx-assistive-mml>/', '', $html);
 
             // save html with converted tex to svg
-            //file_put_contents($filename . '.mod', $html);
+            file_put_contents($filename . '.mod' . $extension, $html);
 
             // based on https://github.com/mpdf/mpdf-examples/blob/master/MathJaxProcess.php
             // ˅˅˅˅˅˅˅˅˅˅
@@ -238,7 +242,7 @@ class MakePdf extends AbstractMake
             // ˄˄˄˄˄˄˄˄˄˄
             // end copy
 
-            //file_put_contents($filename . '.mod_final', $html);
+            file_put_contents($filename . '.mod_final' . $extension, $html);
 
             //error_log($html);
             $content = $html;

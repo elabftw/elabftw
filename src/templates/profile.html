@@ -29,20 +29,29 @@
     {% if count == 0 %}
       {{ 'No statistics available yet.'|trans }}
     {% else %}
-    <i class='fas fa-chart-pie fa-lg mr-1'></i><h5 class='d-inline'>{{ 'Statistics'|trans }}</h5>
-        <hr>
-        <p>{{ count }} {% trans %}
-            experiments done since
-            {% endtrans %} {{ App.Users.userData.register_date|date("l jS \\of F Y") }}</p>
-        <div id='stats' data-stats='{{ statsJson|raw }}' data-title='{% trans %}
-                Experiment
-                {% plural 2 %}
-                Experiments
-                {% endtrans %}'
-        data-colors='{{ colorsJson|raw }}'></div>
-        <div id='pieChart' class='text-center'></div>
+      <i class='fas fa-chart-pie fa-lg mr-1'></i><h5 class='d-inline'>{{ 'Statistics'|trans }}</h5>
+      <hr>
+      <h4>{% trans %}
+            Experiment
+            {% plural 2 %}
+            Experiments
+            {% endtrans %}</h4>
+      <p>{{ count }} {% trans %}
+          experiments done since
+          {% endtrans %} {{ App.Users.userData.register_date|date("l jS \\of F Y") }}</p>
+      <div class='row'>
+        <div class='col col-md-3'>
+          <div class='pie-chart' style='--pie-data: {{ pieDataCss }}'></div>
+        </div>
+        <div class='col col-md-3'>
+          <ul class='pie-legend'>
+            {% for status in pieData %}
+            <li style='color: {{ status.color }}'><span class='pie-percent' style='--bg: {{ status.color }}'>{{ status.percent }}%</span>{{ status.name }} ({{ status.count }})</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
     {% endif %}
 </section>
 
-<script src='https://www.gstatic.com/charts/loader.js'></script>
 {% endblock body %}

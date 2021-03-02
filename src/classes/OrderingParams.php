@@ -16,18 +16,10 @@ namespace Elabftw\Elabftw;
  */
 class OrderingParams
 {
-    /** @var string $table */
-    private $table;
+    private string $table;
 
-    /** @var array $ordering */
-    private $ordering;
+    private array $ordering;
 
-    /**
-     * Constructor
-     *
-     * @param string $table
-     * @param array<mixed> $ordering
-     */
     public function __construct(string $table, array $ordering)
     {
         $this->table = $table;

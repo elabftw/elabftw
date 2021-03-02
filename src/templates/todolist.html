@@ -1,9 +1,11 @@
 <div id='todoList'>
-  <i class='fas fa-times fa-2x clickable align-right todoToggle' title="{{ 'Close'|trans }}"></i>
+  <a class='clickable align-right todoToggle' title='{{ 'Close'|trans }}'>
+      <i class='fas fa-times fa-2x'></i>
+  </a>
   <h2>{{ 'Todolist'|trans }}</h2>
-  <form id="todo-form">
-      <input id="todo" type="text" />
-      <input type="submit" class='button btn btn-primary' value="{{ 'Add'|trans }}">
+  <form id='todo-form'>
+      <input id='todo' type='text' />
+      <input type='submit' class='button btn btn-primary' value='{{ 'Add'|trans }}'>
   </form>
 
   <!-- this div will be filled with the list of todo items by js -->

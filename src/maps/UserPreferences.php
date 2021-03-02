@@ -25,80 +25,56 @@ use PDO;
  */
 class UserPreferences implements MapInterface
 {
-    /** @var Db $Db */
-    private $Db;
+    private Db $Db;
 
-    /** @var int $id */
-    private $id;
+    private int $id;
 
-    /** @var int $limit */
-    private $limit = 15;
+    private int $limit = 15;
 
-    /** @var string $displaySize */
-    private $displaySize = 'lg';
+    private string $displaySize = 'lg';
 
-    /** @var string $displayMode */
     // Can have two values: 'it' for item list (the default mode),
     // and 'tb' for tabular view
-    private $displayMode = 'it';
+    private string $displayMode = 'it';
 
-    /** @var string $orderby */
-    private $orderby = 'date';
+    private string $orderby = 'date';
 
-    /** @var int $singleColumnLayout */
-    private $singleColumnLayout = 0;
+    private int $singleColumnLayout = 0;
 
     /** @var array<string, string> $shortcuts */
-    private $shortcuts = array(
+    private array $shortcuts = array(
         'create' => 'c',
         'edit' => 'e',
         'submit' => 's',
         'todo' => 't',
     );
 
-    /** @var string $sort */
-    private $sort = 'desc';
+    private string $sort = 'desc';
 
-    /** @var int $showTeam */
-    private $showTeam = 0;
+    private int $showTeam = 0;
 
-    /** @var int $showTeamTemplates */
-    private $showTeamTemplates = 0;
+    private int $showTeamTemplates = 0;
 
-    /** @var int $cjkFonts */
-    private $cjkFonts = 0;
+    private int $cjkFonts = 0;
 
-    /** @var int $pdfa */
-    private $pdfa = 1;
+    private int $pdfa = 1;
 
-    /** @var string $pdfFormat */
-    private $pdfFormat = 'A4';
+    private string $pdfFormat = 'A4';
 
-    /** @var int $useMarkdown */
-    private $useMarkdown = 0;
+    private int $useMarkdown = 0;
 
-    /** @var int $incFilesPdf */
-    private $incFilesPdf = 1;
+    private int $incFilesPdf = 1;
 
-    /** @var int $chemEditor */
-    private $chemEditor = 0;
+    private int $chemEditor = 0;
 
-    /** @var int $jsonEditor */
-    private $jsonEditor = 0;
+    private int $jsonEditor = 0;
 
-    /** @var string $lang */
-    private $lang = 'en_GB';
+    private string $lang = 'en_GB';
 
-    /** @var string $defaultRead */
-    private $defaultRead = 'team';
+    private string $defaultRead = 'team';
 
-    /** @var string $defaultWrite */
-    private $defaultWrite = 'user';
+    private string $defaultWrite = 'user';
 
-    /**
-     * Constructor
-     *
-     */
     public function __construct(int $id)
     {
         $this->id = $id;
@@ -268,7 +244,6 @@ class UserPreferences implements MapInterface
      * Source can be sql query or post data
      *
      * @param array<string, mixed> $source
-     * @return void
      */
     public function hydrate(array $source): void
     {
@@ -298,8 +273,6 @@ class UserPreferences implements MapInterface
 
     /**
      * Read from the current team
-     *
-     * @return array
      */
     private function read(): array
     {

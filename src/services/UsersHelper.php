@@ -20,11 +20,9 @@ use PDO;
  */
 class UsersHelper
 {
-    /** @var Db $Db db connection */
-    private $Db;
+    private Db $Db;
 
-    /** @var int $userid */
-    private $userid;
+    private int $userid;
 
     public function __construct(int $userid)
     {

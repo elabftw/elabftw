@@ -32,7 +32,6 @@ module.exports = {
       './src/ts/view.ts',
       './src/ts/comments.ts',
       './src/ts/editusers.ts',
-      './src/ts/profile.ts',
       './src/ts/search.ts',
       './src/ts/show.ts',
       './src/ts/sysconfig.ts',
@@ -84,6 +83,9 @@ module.exports = {
     splitChunks: {
       chunks: 'all',
     },
+  },
+  watchOptions: {
+      ignored: /node_modules/
   },
   module: {
     rules:[

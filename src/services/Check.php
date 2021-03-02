@@ -32,7 +32,6 @@ class Check
      *
      * @param string $password The password to check
      * @throws ImproperActionException
-     * @return bool
      */
     public static function passwordLength(string $password): bool
     {

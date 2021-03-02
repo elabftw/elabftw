@@ -11,24 +11,23 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Models\AbstractEntity;
+use Mpdf\Mpdf;
 
 /**
  * Make a PDF from several experiments or db items
  */
 class MakeMultiPdf extends AbstractMake
 {
-    /** @var array $idArr the input ids but in an array */
-    private $idArr = array();
+    // the input ids but in an array
+    private array $idArr = array();
 
-    /** @var \Mpdf\Mpdf $mpdf The mpdf object which contains all information for the multi entiy PDF file */
-    private $mpdf;
+    // The mpdf object which contains all information for the multi entiy PDF file
+    private Mpdf $mpdf;
 
     /**
      * Give me an id list and a type, I make multi entity PDF for you
      *
-     * @param AbstractEntity $entity
-     * @param string $idList 1+3+5+8
-     * @return void
+     * @param string $idList 4 8 15 16 23 42
      */
     public function __construct(AbstractEntity $entity, string $idList)
     {
@@ -42,8 +41,6 @@ class MakeMultiPdf extends AbstractMake
 
     /**
      * Get the name of the generated file
-     *
-     * @return string
      */
     public function getFileName(): string
     {
@@ -53,8 +50,6 @@ class MakeMultiPdf extends AbstractMake
     /**
      * Loop over each id and add it to the PDF
      * This could be called the main function.
-     *
-     * @return string
      */
     public function getMultiPdf(): string
     {
@@ -79,7 +74,6 @@ class MakeMultiPdf extends AbstractMake
      * This is where the magic happens
      *
      * @param int $id The id of the current item
-     * @return void
      */
     private function addToPdf(int $id): void
     {

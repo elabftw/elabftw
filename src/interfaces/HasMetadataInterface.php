@@ -8,12 +8,18 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Interfaces;
 
 /**
- * Provide the installed version
+ * Interface for stuff that have metadata
  */
-class ReleaseCheck
+interface HasMetadataInterface
 {
-    public const INSTALLED_VERSION = '3.6.6';
+    public function getId(): int;
+
+    public function getTable(): string;
+
+    public function getMetadata(): ?string;
+
+    public function canOrExplode(string $rw): void;
 }

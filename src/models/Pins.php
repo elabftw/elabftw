@@ -18,11 +18,9 @@ use PDO;
  */
 class Pins
 {
-    /** @var Db $Db */
-    private $Db;
+    private Db $Db;
 
-    /** @var AbstractEntity $Entity */
-    private $Entity;
+    private AbstractEntity $Entity;
 
     public function __construct(AbstractEntity $entity)
     {
@@ -32,8 +30,6 @@ class Pins
 
     /**
      * Check if the current entity is pin of current user
-     *
-     * @return bool
      */
     public function isPinned(): bool
     {
@@ -49,8 +45,6 @@ class Pins
 
     /**
      * Add/remove current entity as pinned for current user
-     *
-     * @return void
      */
     public function togglePin(): void
     {
@@ -59,8 +53,6 @@ class Pins
 
     /**
      * Get the items pinned by current users to display in show mode
-     *
-     * @return array
      */
     public function getPinned(): array
     {
@@ -99,8 +91,6 @@ class Pins
 
     /**
      * Remove current entity from pinned of current user
-     *
-     * @return void
      */
     private function rmFromPinned(): void
     {
@@ -117,8 +107,6 @@ class Pins
 
     /**
      * Add current entity to pinned of current user
-     *
-     * @return void
      */
     private function addToPinned(): void
     {

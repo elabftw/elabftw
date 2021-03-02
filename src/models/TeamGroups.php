@@ -15,6 +15,7 @@ use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
+use function in_array;
 use function is_bool;
 use function mb_strlen;
 use PDO;
@@ -24,17 +25,10 @@ use PDO;
  */
 class TeamGroups implements CrudInterface
 {
-    /** @var Db $Db SQL Database */
-    private $Db;
+    private Db $Db;
 
-    /** @var Users $Users instance of Users */
-    private $Users;
+    private Users $Users;
 
-    /**
-     * Constructor
-     *
-     * @param Users $users
-     */
     public function __construct(Users $users)
     {
         $this->Users = $users;
@@ -98,8 +92,6 @@ class TeamGroups implements CrudInterface
 
     /**
      * When we need to build a select menu with visibility + team groups
-     *
-     * @return array
      */
     public function getVisibilityList(): array
     {
@@ -129,9 +121,6 @@ class TeamGroups implements CrudInterface
 
     /**
      * Get the name of a group
-     *
-     * @param int $id
-     * @return string
      */
     public function readName(int $id): string
     {
@@ -220,10 +209,6 @@ class TeamGroups implements CrudInterface
 
     /**
      * Check if user is in a team group
-     *
-     * @param int $userid
-     * @param int $groupid
-     * @return bool
      */
     public function isInTeamGroup(int $userid, int $groupid): bool
     {
@@ -236,14 +221,13 @@ class TeamGroups implements CrudInterface
             $authUsersArr[] = (int) $authUsers['userid'];
         }
 
-        return \in_array($userid, $authUsersArr, true);
+        return in_array($userid, $authUsersArr, true);
     }
 
     /**
      * Check if both users are in the same group
      *
      * @param int $userid the other user
-     * @return bool
      */
     public function isUserInSameGroup(int $userid): bool
     {

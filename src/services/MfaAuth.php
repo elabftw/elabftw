@@ -20,14 +20,12 @@ use Elabftw\Models\Users;
  */
 class MfaAuth implements AuthInterface
 {
-    /** @var MfaHelper $MfaHelper */
-    private $MfaHelper;
+    private MfaHelper $MfaHelper;
 
-    /** @var string $code */
-    private $code;
+    // user-provided code
+    private string $code;
 
-    /** @var AuthResponse $AuthResponse */
-    private $AuthResponse;
+    private AuthResponse $AuthResponse;
 
     public function __construct(MfaHelper $mfa, string $code)
     {

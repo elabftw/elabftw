@@ -39,17 +39,13 @@ class MfaHelper
     /** @var int MFA_SECRET_BITS entropy for the mfa secret */
     private const SECRET_BITS = 160;
 
-    /** @var int $userid */
-    public $userid;
+    public int $userid;
 
-    /** @var string|null $secret */
-    public $secret;
+    public ?string $secret;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
-    /** @var TwoFactorAuth $TwoFactorAuth PHP Class for handling two/multi-factor authentication */
-    private $TwoFactorAuth;
+    private TwoFactorAuth $TwoFactorAuth;
 
     public function __construct(int $userid, ?string $secret = null)
     {

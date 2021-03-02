@@ -27,14 +27,8 @@ class Scheduler
 {
     use EntityTrait;
 
-    /** @var Database $Database instance of Database */
-    public $Database;
+    public Database $Database;
 
-    /**
-     * Constructor
-     *
-     * @param Database $database
-     */
     public function __construct(Database $database)
     {
         $this->Db = Db::getConnection();
@@ -72,7 +66,6 @@ class Scheduler
      *
      * @param string $start 2019-12-23T00:00:00 01:00
      * @param string $end 2019-12-30T00:00:00 01:00
-     * @return array
      */
     public function readAllFromTeam(string $start, string $end): array
     {
@@ -138,7 +131,6 @@ class Scheduler
      *
      * @param string $start 2019-12-23T00:00:00 01:00
      * @param string $end 2019-12-30T00:00:00 01:00
-     * @return array
      */
     public function read(string $start, string $end): array
     {
@@ -169,8 +161,6 @@ class Scheduler
 
     /**
      * Read info from an event id
-     *
-     * @return array
      */
     public function readFromId(): array
     {
@@ -191,7 +181,6 @@ class Scheduler
      * Update the start (and end) of an event (when you drag and drop it)
      *
      * @param array<string, string> $delta timedelta
-     * @return void
      */
     public function updateStart(array $delta): void
     {
@@ -218,7 +207,6 @@ class Scheduler
      * Update the end of an event (when you resize it)
      *
      * @param array<string, string> $delta timedelta
-     * @return void
      */
     public function updateEnd(array $delta): void
     {
@@ -242,7 +230,6 @@ class Scheduler
      * Bind an experiment to a calendar event
      *
      * @param int $expid id of the experiment
-     * @return void
      */
     public function bind(int $expid): void
     {
@@ -256,8 +243,6 @@ class Scheduler
 
     /**
      * Unbind an experiment from a calendar event
-     *
-     * @return void
      */
     public function unbind(): void
     {
@@ -270,8 +255,6 @@ class Scheduler
 
     /**
      * Remove an event
-     *
-     * @return void
      */
     public function destroy(): void
     {

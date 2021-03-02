@@ -19,11 +19,14 @@ use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Check;
 use Elabftw\Services\ListBuilder;
+use Elabftw\Services\MakeTimestamp;
 use Exception;
 use function mb_convert_encoding;
+use PDOException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -43,7 +46,7 @@ try {
     $App->Csrf->validate();
 
     // id of the item (experiment or database item)
-    $id = 1;
+    $id = null;
 
     if ($Request->request->has('id')) {
         $id = (int) $Request->request->get('id');
@@ -116,10 +119,29 @@ try {
         ));
     }
 
+    // SHARE
+    if ($Request->query->has('getShareLink')) {
+        if (!($Entity instanceof Experiments || $Entity instanceof Database)) {
+            throw new IllegalActionException('Can only share experiments or items.');
+        }
+        $Entity->canOrExplode('read');
+        $link = Tools::getUrl($Request) . '/' . $Entity->page . '.php?mode=view&id=' . $Entity->id . '&elabid=' . $Entity->entityData['elabid'];
+        $Response->setData(array(
+            'res' => true,
+            'msg' => $link,
+        ));
+    }
+
     /**
      * POST REQUESTS
      *
      */
+
+    // TIMESTAMP
+    if ($Request->request->has('timestamp') && $Entity instanceof Experiments) {
+        $MakeTimestamp = new MakeTimestamp($App->Config, new Teams($App->Users), $Entity);
+        $MakeTimestamp->timestamp();
+    }
 
     // SAVE AS IMAGE
     if ($Request->request->has('saveAsImage')) {
@@ -173,19 +195,6 @@ try {
         $Response->setData(array(
             'res' => true,
             'msg' => $id,
-        ));
-    }
-
-    // SHARE
-    if ($Request->request->has('getShareLink')) {
-        if (!$Entity instanceof Experiments) {
-            throw new IllegalActionException('Can only share experiments.');
-        }
-        $Entity->canOrExplode('read');
-        $link = Tools::getUrl($Request) . '/experiments.php?mode=view&id=' . $Entity->id . '&elabid=' . $Entity->entityData['elabid'];
-        $Response->setData(array(
-            'res' => true,
-            'msg' => $link,
         ));
     }
 
@@ -267,7 +276,7 @@ try {
             'msg' => _('File deleted successfully') . $msg,
         ));
     }
-} catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
+} catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException | PDOException $e) {
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),

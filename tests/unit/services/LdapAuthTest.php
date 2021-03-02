@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use LdapRecord\Query\ObjectNotFoundException;
+use LdapRecord\LdapRecordException;
 use LdapRecord\Testing\ConnectionFake;
 use LdapRecord\Testing\LdapFake;
 
@@ -39,7 +39,7 @@ class LdapAuthTest extends \PHPUnit\Framework\TestCase
 
     public function testTryAuth()
     {
-        $this->expectException(ObjectNotFoundException::class);
+        $this->expectException(LdapRecordException::class);
         $authResponse = $this->AuthService->tryAuth();
     }
 }

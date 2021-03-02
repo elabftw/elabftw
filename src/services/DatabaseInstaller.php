@@ -22,8 +22,6 @@ class DatabaseInstaller
 {
     /**
      * Load the structure into the database and create the first team
-     *
-     * @return void
      */
     public function install(): void
     {

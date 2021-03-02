@@ -19,17 +19,10 @@ use PDO;
  */
 class TagCloud
 {
-    /** @var Db $Db SQL Database */
-    private $Db;
+    private Db $Db;
 
-    /** @var int $team id of the team */
-    private $team;
+    private int $team;
 
-    /**
-     * Constructor
-     *
-     * @param int $team
-     */
     public function __construct(int $team)
     {
         $this->team = $team;
@@ -38,8 +31,6 @@ class TagCloud
 
     /**
      * Create an array with tag => css class for tag cloud in profile
-     *
-     * @return array
      */
     public function getCloudArr(): array
     {
@@ -70,8 +61,6 @@ class TagCloud
 
     /**
      * Read all the tags from the team
-     *
-     * @return array
      */
     private function readAll(): array
     {
@@ -96,7 +85,6 @@ class TagCloud
      * Classes are in css/tagcloud.css
      *
      * @param int $ratio between 0 and 100
-     * @return string
      */
     private function getClassFromRatio(int $ratio): string
     {

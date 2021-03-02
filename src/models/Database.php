@@ -20,12 +20,6 @@ use PDO;
  */
 class Database extends AbstractEntity
 {
-    /**
-     * Constructor
-     *
-     * @param Users $users
-     * @param int|null $id id of the item
-     */
     public function __construct(Users $users, ?int $id = null)
     {
         parent::__construct($users, $id);
@@ -33,37 +27,32 @@ class Database extends AbstractEntity
         $this->page = 'database';
     }
 
-    /**
-     * Create an item
-     */
     public function create(ParamsProcessor $params): int
     {
         $category = $params->id;
-        $itemsTypes = new ItemsTypes($this->Users, $category);
-        $body = $itemsTypes->read();
+        $ItemsTypes = new ItemsTypes($this->Users, $category);
+        $itemsTypesArr = $ItemsTypes->read();
 
         // SQL for create DB item
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category)
-            VALUES(:team, :title, :date, :body, :userid, :category)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, elabid, canread, canwrite, metadata)
+            VALUES(:team, :title, :date, :body, :userid, :category, :elabid, :canread, :canwrite, :metadata)';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req, array(
             'team' => $this->Users->userData['team'],
             'title' => _('Untitled'),
             'date' => Filter::kdate(),
-            'body' => $body['template'],
+            'elabid' => $this->generateElabid(),
+            'body' => $itemsTypesArr['template'],
             'userid' => $this->Users->userData['userid'],
             'category' => $category,
+            'canread' => $itemsTypesArr['canread'],
+            'canwrite' => $itemsTypesArr['canwrite'],
+            'metadata' => $itemsTypesArr['metadata'],
         ));
 
         return $this->Db->lastInsertId();
     }
 
-    /**
-     * Update the rating of an item
-     *
-     * @param int $rating
-     * @return void
-     */
     public function updateRating(int $rating): void
     {
         $this->canOrExplode('write');
@@ -84,8 +73,8 @@ class Database extends AbstractEntity
     {
         $this->canOrExplode('read');
 
-        $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, category)
-            VALUES(:team, :title, :date, :body, :userid, :canread, :canwrite, :category)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, category, elabid)
+            VALUES(:team, :title, :date, :body, :userid, :canread, :canwrite, :category, :elabid)';
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
@@ -93,6 +82,7 @@ class Database extends AbstractEntity
             'date' => Filter::kdate(),
             'body' => $this->entityData['body'],
             'userid' => $this->Users->userData['userid'],
+            'elabid' => $this->generateElabid(),
             'canread' => $this->entityData['canread'],
             'canwrite' => $this->entityData['canwrite'],
             'category' => $this->entityData['category_id'],
@@ -109,11 +99,6 @@ class Database extends AbstractEntity
         return $newId;
     }
 
-    /**
-     * Destroy a DB item
-     *
-     * @return void
-     */
     public function destroy(): void
     {
         $this->canOrExplode('write');

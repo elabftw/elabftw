@@ -15,9 +15,14 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use function extension_loaded;
+use function file_exists;
 use function filesize;
+use finfo;
 use Gmagick;
+use Imagick;
+use function in_array;
 use function is_readable;
+use function substr;
 
 /**
  * Create a thumbnail from a file
@@ -36,9 +41,9 @@ final class MakeThumbnail
      * when adding new mime types take care of ambiguities:
      * e.g. image/eps may be a valid application/postscript; image/bmp may also be image/x-bmp or
      * image/x-ms-bmp
-     * @var array GMAGICK_WHITELIST
+     * @var array ALLOWED_MIMES
      */
-    private const GMAGICK_WHITELIST = array(
+    private const ALLOWED_MIMES = array(
         'image/png',
         'image/jpeg',
         'image/gif',
@@ -49,25 +54,21 @@ final class MakeThumbnail
         'application/postscript',
     );
 
-    /** @var string $filePath full path to file */
-    private $filePath;
+    private string $filePath;
 
-    /** @var string $thumbPath full path to thumbnail */
-    private $thumbPath;
+    private string $thumbPath;
 
-    /** @var string $mime mime type of the file */
-    private $mime;
+    private string $mime;
 
-    /**
-     * This class has no public method. Just instance it with a filePath and it creates the thumbnail if needed.
-     *
-     * @param string $filePath the full path to the file
-     */
     public function __construct(string $filePath)
     {
         $this->filePath = $filePath;
+        // make sure we can read the file
+        if (is_readable($this->filePath) === false) {
+            throw new FilesystemErrorException('File not found! (' . substr($this->filePath, 0, 42) . '…)');
+        }
         // get mime type of the file
-        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
         $mime = $finfo->file($this->filePath);
         if ($mime === false) {
             throw new ImproperActionException('Cannot detect the file type for thumbnail!');
@@ -80,43 +81,21 @@ final class MakeThumbnail
      * Create a jpg thumbnail from images of type jpeg, png, gif, tiff, eps and pdf.
      *
      * @param bool $force force regeneration of thumbnail even if file exist (useful if upload was replaced)
-     * @return void
      */
     public function makeThumb($force = false): void
     {
-        if (is_readable($this->filePath) === false) {
-            throw new FilesystemErrorException('File not found! (' . \substr($this->filePath, 0, 42) . '…)');
-        }
-
         // do nothing for big files
         if (filesize($this->filePath) > self::BIG_FILE_THRESHOLD) {
             return;
         }
 
         // don't bother if the thumbnail exists already
-        if (\file_exists($this->thumbPath) && $force === false) {
+        if (file_exists($this->thumbPath) && $force === false) {
             return;
         }
 
-        // use gmagick preferentially
-        // FIXME at the moment there is a bug with only png files on thumbnail generation, so use GD for png
-        if (extension_loaded('gmagick') && Tools::getExt($this->filePath) !== 'png') {
-            $this->useGmagick();
-
-        // if we don't have gmagick, try with gd
-        } elseif (extension_loaded('gd')) {
-            $this->useGd();
-        }
-    }
-
-    /**
-     * Create a thumbnail with Gmagick extension
-     *
-     * @return void
-     */
-    private function useGmagick(): void
-    {
-        if (!\in_array($this->mime, self::GMAGICK_WHITELIST, true)) {
+        // verify mime type
+        if (!in_array($this->mime, self::ALLOWED_MIMES, true)) {
             return;
         }
 
@@ -126,6 +105,49 @@ final class MakeThumbnail
         if ($this->mime === 'application/pdf' || $this->mime === 'application/postscript') {
             $this->filePath .= '[0]';
         }
+
+        // try with imagick first
+        if (extension_loaded('imagick')) {
+            $this->useImagick();
+
+        // try with gmagick
+        // FIXME at the moment there is a bug with only png files on thumbnail generation, so use GD for png
+        } elseif (extension_loaded('gmagick') && Tools::getExt($this->filePath) !== 'png') {
+            $this->useGmagick();
+
+        // if we don't have gmagick, try with gd
+        } elseif (extension_loaded('gd')) {
+            $this->useGd();
+        }
+    }
+
+    private function useImagick(): void
+    {
+        try {
+            $image = new Imagick();
+            $image->setBackgroundColor('white');
+        } catch (Exception $e) {
+            return;
+        }
+        $image->readImage($this->filePath);
+        // fix pdf with black background
+        if ($this->mime === 'application/pdf' || $this->mime === 'application/postscript') {
+            $image->setResolution(300, 300);
+            $image->setImageFormat('jpg');
+            $image->scaleImage(500, 500, true);
+            $image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
+            $image->setImageAlphaChannel(Imagick::ALPHACHANNEL_REMOVE);
+        }
+        // create thumbnail of width 100px; height is calculated automatically to keep the aspect ratio
+        $image->thumbnailImage(self::WIDTH, 0);
+        // create the physical thumbnail image to its destination (85% quality)
+        $image->setCompressionQuality(85);
+        $image->writeImage($this->thumbPath);
+        $image->clear();
+    }
+
+    private function useGmagick(): void
+    {
         // fail silently if thumbnail generation does not work to keep file upload field functional
         // originally introduced due to issue #415.
         try {
@@ -142,11 +164,6 @@ final class MakeThumbnail
         $image->clear();
     }
 
-    /**
-     * Create a thumbnail with GD extension
-     *
-     * @return void
-     */
     private function useGd(): void
     {
         // the function used is different depending on extension

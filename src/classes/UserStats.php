@@ -19,33 +19,12 @@ use PDO;
  */
 class UserStats
 {
-    /** @var array $colorsArr colors for status */
-    public $colorsArr = array();
+    private Users $Users;
 
-    /** @var array $percentArr percentage and status name */
-    public $percentArr = array();
+    private int $count;
 
-    /** @var Users $Users instance of Users */
-    private $Users;
+    private Db $Db;
 
-    /** @var int $count count of experiments */
-    private $count;
-
-    /** @var Db $Db SQL Database */
-    private $Db;
-
-    /** @var array $countArr status id and count */
-    private $countArr = array();
-
-    /** @var array $statusArr status id and name */
-    private $statusArr = array();
-
-    /**
-     * Init the object with a userid and the total count of experiments
-     *
-     * @param Users $users
-     * @param int $count total count of experiments
-     */
     public function __construct(Users $users, int $count)
     {
         $this->Users = $users;
@@ -54,60 +33,68 @@ class UserStats
     }
 
     /**
-     * Create the statistics
-     *
-     * @return void
+     * Generate data for pie chart of status
+     * We want an array with each value corresponding to a status with: name, percent and color
      */
-    public function makeStats(): void
-    {
-        // only work if there is something to work on
-        if ($this->count > 0) {
-            $this->countStatus();
-            $this->makePercent();
-        }
-    }
-
-    /**
-     * Count number of experiments for each status
-     *
-     * @return void
-     */
-    private function countStatus(): void
+    public function getPieData(): array
     {
         // get all status name and id
         $Status = new Status($this->Users);
         $statusAll = $Status->read();
 
+        $res = array();
+
         // populate arrays
         foreach ($statusAll as $status) {
-            $this->statusArr[$status['category_id']] = $status['category'];
-            $this->colorsArr[] = '#' . $status['color'];
-        }
+            $statusArr = array();
+            $statusArr['name'] = $status['category'];
+            $statusArr['id'] = $status['category_id'];
+            $statusArr['color'] = '#' . $status['color'];
 
-        // count experiments for each status
-        foreach (array_keys($this->statusArr) as $key) {
+            // now get the count
             $sql = 'SELECT COUNT(id)
                 FROM experiments
                 WHERE userid = :userid
                 AND category = :category';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-            $req->bindParam(':category', $key, PDO::PARAM_INT);
+            $req->bindParam(':category', $status['category_id'], PDO::PARAM_INT);
             $req->execute();
-            $this->countArr[$key] = $req->fetchColumn();
+            $statusArr['count'] = $req->fetchColumn();
+
+            // calculate the percent
+            $statusArr['percent'] = round(((float) $statusArr['count'] / (float) $this->count) * 100.0);
+
+            $res[] = $statusArr;
         }
+        return $res;
     }
 
     /**
-     * Create an array with status name => percent
-     *
-     * @return void
+     * Take the raw data and make a string that can be injected into conic-gradient css value
+     * example: #29AEB9 18%,#54AA08 0 43%,#C0C0C0 0 74%,#C24F3D 0
      */
-    private function makePercent(): void
+    public function getFormattedPieData(): string
     {
-        foreach ($this->statusArr as $key => $value) {
-            $value = str_replace("'", "\'", html_entity_decode($value, ENT_QUOTES));
-            $this->percentArr[$value] = round(((float) $this->countArr[$key] / (float) $this->count) * 100.0);
+        $pieData = $this->getPieData();
+        $res = '';
+        $percentSum = 0;
+        foreach ($pieData as $key => $value) {
+            if ($key === array_key_first($pieData)) {
+                $res .= $value['color'] . ' ' . $value['percent'] . '%,';
+                $percentSum = $value['percent'];
+                continue;
+            }
+
+            // last one is just 0
+            if ($key === array_key_last($pieData)) {
+                $res .= $value['color'] . ' 0';
+                continue;
+            }
+            // the percent value needs to be added to the previous sum of percents
+            $percentSum += $value['percent'];
+            $res .= $value['color'] . ' 0 ' . $percentSum . '%,';
         }
+        return $res;
     }
 }

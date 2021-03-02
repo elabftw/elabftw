@@ -7,7 +7,7 @@
       {% endif %}
 
           <!-- here the item-show-{lg-md-xs} is always lg -->
-          <tr class='item item-show item-show-lg {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='border-left: 6px solid #{{ item.color }}'>
+          <tr class='item item-show item-show-lg {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='--left-color: #{{ item.color }}'>
 
             <!-- DATE -->
             <td class='item-date'>
@@ -74,7 +74,7 @@
               {% endif %}
               <!-- toggle body -->
               <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} class='toggleBody clickable'>
-                <i class='fas fa-plus-circle' title='{{ 'Toggle content'|trans }}'></i>
+                <i class='fas fa-plus-circle link-like' title='{{ 'Toggle content'|trans }}'></i>
               </span>
 
               {# show attached if there is a file attached #}

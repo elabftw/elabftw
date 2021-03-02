@@ -26,13 +26,10 @@ use function random_bytes;
  */
 trait UploadTrait
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
     /**
      * Get the uploads folder absolute path
-     *
-     * @return string absolute path
      */
     public function getUploadsPath(): string
     {
@@ -41,8 +38,6 @@ trait UploadTrait
 
     /**
      * Generate a long and unique string
-     *
-     * @return string a random sha512 hash
      */
     protected function getUniqueString(): string
     {
@@ -68,9 +63,6 @@ trait UploadTrait
 
     /**
      * Get the total size on disk of uploaded files for a user
-     *
-     * @param int $userid
-     * @return int
      */
     protected function getDiskUsage(int $userid): int
     {

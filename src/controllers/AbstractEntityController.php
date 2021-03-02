@@ -29,24 +29,15 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class AbstractEntityController implements ControllerInterface
 {
-    /** @var App $App instance of App */
-    protected $App;
+    protected App $App;
 
-    /** @var AbstractEntity $Entity instance of AbstractEntity */
+    /** @var AbstractEntity $Entity */
     protected $Entity;
 
-    /** @var Templates $Templates instance of Templates */
-    protected $Templates;
+    protected Templates $Templates;
 
-    /** @var array $categoryArr array of category (status or item type) */
-    protected $categoryArr = array();
+    protected array $categoryArr = array();
 
-    /**
-     * Constructor
-     *
-     * @param App $app
-     * @param AbstractEntity $entity
-     */
     public function __construct(App $app, AbstractEntity $entity)
     {
         $this->App = $app;
@@ -56,8 +47,6 @@ abstract class AbstractEntityController implements ControllerInterface
 
     /**
      * Get the Response object from the Request
-     *
-     * @return Response
      */
     public function getResponse(): Response
     {
@@ -84,8 +73,6 @@ abstract class AbstractEntityController implements ControllerInterface
 
     /**
      * Show mode (several items displayed). Default view.
-     *
-     * @return Response
      */
     public function show(bool $isSearchPage = false): Response
     {
@@ -163,15 +150,11 @@ abstract class AbstractEntityController implements ControllerInterface
 
     /**
      * Get the items
-     *
-     * @return array
      */
     abstract protected function getItemsArr(): array;
 
     /**
      * View mode (one item displayed)
-     *
-     * @return Response
      */
     protected function view(): Response
     {
@@ -213,8 +196,6 @@ abstract class AbstractEntityController implements ControllerInterface
 
     /**
      * Edit mode
-     *
-     * @return Response
      */
     protected function edit(): Response
     {

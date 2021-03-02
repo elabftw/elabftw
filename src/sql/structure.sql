@@ -184,7 +184,7 @@ CREATE TABLE `experiments_steps` (
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `finished` tinyint(1) NOT NULL DEFAULT '0',
   `finished_time` datetime DEFAULT NULL,
-  `schedule_status` int(10) UNSIGNED NOT NULL DEFAULT '0';
+  `schedule_status` int(10) UNSIGNED NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -438,7 +438,7 @@ CREATE TABLE `teams` (
   `public_db` tinyint(1) NOT NULL DEFAULT 0,
   `force_canread` varchar(255) NOT NULL DEFAULT 'team',
   `force_canwrite` varchar(255) NOT NULL DEFAULT 'user',
-  `do_force_can\read` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
+  `do_force_canread` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `do_force_canwrite` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `visible` tinyint(1) UNSIGNED NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -462,7 +462,7 @@ CREATE TABLE `team_events` (
   `title` varchar(255) DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
   `experiment` int(10) UNSIGNED DEFAULT NULL,
-  `experiments_step` int(10) UNSIGNED DEFAULT NULL,
+  `experiments_step` int(10) UNSIGNED DEFAULT NULL UNIQUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -1034,7 +1034,7 @@ CREATE TABLE `items_steps` (
     `ordering` int(10) unsigned DEFAULT NULL,
     `finished` tinyint(1) NOT NULL DEFAULT '0',
     `finished_time` datetime DEFAULT NULL,
-    `schedule_status` int(10) UNSIGNED NOT NULL DEFAULT '0';
+    `schedule_status` int(10) UNSIGNED NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
     KEY `fk_items_steps_items_id` (`item_id`),
     CONSTRAINT `fk_items_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1046,7 +1046,7 @@ CREATE TABLE `experiments_templates_steps` (
     `ordering` int(10) unsigned DEFAULT NULL,
     `finished` tinyint(1) NOT NULL DEFAULT '0',
     `finished_time` datetime DEFAULT NULL,
-    `schedule_status` int(10) UNSIGNED NOT NULL DEFAULT '0';
+    `schedule_status` int(10) UNSIGNED NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
     KEY `fk_experiments_templates_steps_items_id` (`item_id`),
     CONSTRAINT `fk_experiments_templates_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE

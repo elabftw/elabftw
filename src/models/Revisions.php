@@ -22,10 +22,9 @@ use PDO;
  */
 class Revisions implements DestroyableInterface
 {
-    /** @var int MIN_DELTA the min number of characters different between two versions to trigger save */
-    private const MIN_DELTA = 100;
-
     private Db $Db;
+
+    private Config $Config;
 
     private AbstractEntity $Entity;
 
@@ -33,6 +32,7 @@ class Revisions implements DestroyableInterface
     {
         $this->Entity = $entity;
         $this->Db = Db::getConnection();
+        $this->Config = new Config();
     }
 
     /**
@@ -40,9 +40,9 @@ class Revisions implements DestroyableInterface
      */
     public function create(string $body): void
     {
-        // only save a revision if there is at least MIN_DELTA characters difference between the old version and the new one
+        // only save a revision if there is at least minimum of delta characters difference between the old version and the new one
         $delta = abs(mb_strlen($this->Entity->entityData['body'] ?? '') - mb_strlen($body));
-        if ($delta < self::MIN_DELTA) {
+        if ($delta < $this->getMinDelta()) {
             return;
         }
 
@@ -143,8 +143,15 @@ class Revisions implements DestroyableInterface
      */
     private function getMaxCount(): int
     {
-        $Config = new Config();
-        return (int) $Config->configArr['max_revisions'];
+        return (int) $this->Config->configArr['max_revisions'];
+    }
+
+    /**
+     * Get the min number of characters different between two versions to trigger save
+     */
+    private function getMinDelta(): int
+    {
+        return (int) $this->Config->configArr['min_delta_revisions'];
     }
 
     /**

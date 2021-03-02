@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
   // get the tab=X parameter in the url
   const params = new URLSearchParams(document.location.search.slice(1));
   let tab = parseInt(params.get('tab'), 10);

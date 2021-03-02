@@ -61,6 +61,7 @@ try {
         'Entity' => $Templates,
         'apiKeysArr' => $apiKeysArr,
         'langsArr' => Tools::getLangsArr(),
+        'mode' => 'edit',
         'teamGroupsArr' => $teamGroupsArr,
         'templateData' => $templateData,
         'templatesArr' => $templatesArr,

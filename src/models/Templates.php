@@ -99,7 +99,7 @@ class Templates extends AbstractEntity implements CreatableInterface
         $sql = "SELECT experiments_templates.id, experiments_templates.title, experiments_templates.body,
             experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
             experiments_templates.locked, experiments_templates.lockedby, experiments_templates.lockedwhen,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata,
             GROUP_CONCAT(tags.tag SEPARATOR '|') AS tags, GROUP_CONCAT(tags.id) AS tags_id
             FROM experiments_templates
             LEFT JOIN users ON (experiments_templates.userid = users.userid)

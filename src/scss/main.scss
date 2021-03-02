@@ -890,7 +890,7 @@ the form-control fails to do that so we do the border ourselves */
         display: block;
         margin-top: 0.5rem;
     }
-    
+
     .real-container .row:last-child .col-6 {
         max-width: 100%;
     }
@@ -999,18 +999,18 @@ the form-control fails to do that so we do the border ourselves */
 
 /* To-schedule event container */
 .to-schedule-list {
-    display:flex;
+    align-content: flex-start;
+    display: flex;
     flex-flow: row wrap;
     justify-content: space-between;
-    align-content: flex-start;
     margin-bottom: 20px;
     max-width: 550px;
 }
 
 .to-schedule-item {
-    min-width:100px;
-    margin-top: 5px;
     margin-left: 5px;
+    margin-top: 5px;
+    min-width: 100px;
 }
 
 /* caption for tinymce */

@@ -11,7 +11,6 @@ import Link from './Link.class';
 import Step from './Step.class';
 import i18next from 'i18next';
 import { getCheckedBoxes, notif } from './misc';
-import { constrainPoint } from '@fullcalendar/core';
 
 $(document).ready(function() {
   const type = $('#info').data('type');

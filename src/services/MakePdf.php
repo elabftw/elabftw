@@ -154,8 +154,6 @@ class MakePdf extends AbstractMake
             $mpdf->SetTitle($this->Entity->entityData['title']);
             $mpdf->SetKeywords(str_replace('|', ' ', $this->Entity->entityData['tags'] ?? ''));
         }
-        // image debugging
-        $mpdf->showImageErrors = true;
 
         return $mpdf;
     }

@@ -1,0 +1,28 @@
+{% if templateData.tags|length > 0 %}
+  <span class='tags'><i class='fas fa-tags'></i></span>
+  {% set tagsValueArr = templateData.tags|split('|') %}
+  {% for tag in tagsValueArr %}
+    <span class='tag'>{{ tag|raw }}</span>
+  {% endfor %}
+{% endif %}
+
+<div class='mt-2'>
+  {% if templateData.canread > 0 %}
+    {% for teamGroup in teamGroupsArr if teamGroup.id == templateData.canread %}
+      <i class='fas fa-eye'></i> {{ teamGroup.name }}
+    {% endfor %}
+  {% else %}
+    <i class='fas fa-eye'></i> {{ templateData.canread }}
+  {% endif %}
+
+  {% if templateData.canwrite > 0 %}
+    {% for teamGroup in teamGroupsArr if teamGroup.id == templateData.canwrite %}
+      <i class='fas fa-pencil-alt'></i> {{ teamGroup.name }}
+    {% endfor %}
+  {% else %}
+    <i class='fas fa-pencil-alt'></i> {{ templateData.canwrite }}
+  {% endif %}
+</div>
+
+<div id='body_view' class='txt'>{{ templateData.body|raw }}</div>
+{% include('steps-links-view.html') %}

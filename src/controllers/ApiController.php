@@ -26,6 +26,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Status;
+use Elabftw\Models\Templates;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
@@ -101,6 +102,9 @@ class ApiController implements ControllerInterface
                 if ($this->endpoint === 'experiments' || $this->endpoint === 'items') {
                     return $this->getEntity();
                 }
+                if ($this->endpoint === 'templates') {
+                    return $this->getTemplate();
+                }
                 if ($this->endpoint === 'items_types' || $this->endpoint === 'status') {
                     return $this->getCategory();
                 }
@@ -151,6 +155,8 @@ class ApiController implements ControllerInterface
                 // CREATE AN EXPERIMENT/ITEM
                 if ($this->Entity instanceof Database) {
                     return $this->createItem();
+                } elseif ($this->Entity instanceof Templates) {
+                    return $this->createTemplate();
                 }
                 return $this->createExperiment();
             }
@@ -200,6 +206,8 @@ class ApiController implements ControllerInterface
             $this->Entity = new Experiments($this->Users, $this->id);
         } elseif ($this->endpoint === 'items' || $this->endpoint === 'bookable') {
             $this->Entity = new Database($this->Users, $this->id);
+        } elseif ($this->endpoint === 'templates') {
+            $this->Entity = new Templates($this->Users, $this->id);
         } elseif ($this->endpoint === 'items_types') {
             $this->Category = new ItemsTypes($this->Users);
         } elseif ($this->endpoint === 'status') {
@@ -331,6 +339,61 @@ class ApiController implements ControllerInterface
         $this->Entity->entityData['links'] = $this->Entity->Links->read();
         // add the steps
         $this->Entity->entityData['steps'] = $this->Entity->Steps->read();
+
+        return new JsonResponse($this->Entity->entityData);
+    }
+
+    /**
+     * @api {get} /templates/[:id] Read templates
+     * @apiName GetTemplate
+     * @apiGroup Entity
+     * @apiDescription Get the data from templates or just one template if id is set.
+     * @apiUse GetTemplate
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * # get all templates
+     * all_tpl = manager.get_all_templates()
+     * # get template with id 42
+     * tpl = manager.get_template(42)
+     * print(json.dumps(tpl, indent=4, sort_keys=True))
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # get all templates
+     * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/templates
+     * # get template with id 42
+     * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/templates/42
+     * @apiSuccess {String} body Main content
+     * @apiSuccess {Number} date Date in YYYYMMDD format
+     * @apiSuccess {String} fullname Name of the owner of the experiment
+     * @apiSuccess {Number} id Id of the experiment
+     * @apiSuccess {Number} locked 0 if not locked, 1 if locked
+     * @apiSuccess {Number} lockedby 1 User id of the locker
+     * @apiSuccess {DateTime} lockedwhen Time when it was locked
+     * @apiSuccess {String} tags Tags separated by '|'
+     * @apiSuccess {String} tags_id Id of the tags separated by ','
+     * @apiSuccess {String} title Title of the experiment
+     * @apiSuccess {Number} userid User id of the owner
+     * @apiSuccess {String} canread Read permission of the experiment
+     * @apiSuccess {String} canwrite Write permission of the experiment
+     *
+     */
+
+    /**
+     * Get template, one or several
+     *
+     * @return Response
+     */
+    private function getTemplate(): Response
+    {
+        if ($this->id === null) {
+            return new JsonResponse($this->Entity->getTemplatesList());
+        }
+        $this->Entity->read();
+        $permissions = $this->Entity->getPermissions($this->Entity->entityData);
+        if ($permissions['read'] === false) {
+            throw new IllegalActionException('User tried to access a template without read permissions');
+        }
 
         return new JsonResponse($this->Entity->entityData);
     }
@@ -608,6 +671,41 @@ class ApiController implements ControllerInterface
         if ($this->Entity instanceof Database) {
             return new Response('Creating database items is not supported.', 400);
         }
+        $params = new ParamsProcessor(array('id' => 0));
+        $id = $this->Entity->create($params);
+        return new JsonResponse(array('result' => 'success', 'id' => $id));
+    }
+
+    /**
+     * @api {post} /templates Create template
+     * @apiName CreateTemplate
+     * @apiGroup Entity
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * response = manager.create_template()
+     * print(f"Created template with id {response['id']}.")
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # create a template with default status
+     * curl -X POST -H "Authorization: $TOKEN" https://elab.example.org/api/v1/templates
+     * @apiSuccess {String} result success or error message
+     * @apiSuccess {String} id Id of the new template
+     * @apiSuccessExample {Json} Success-Response:
+     *     HTTP/2 200 OK
+     *     {
+     *       "result": "success",
+     *       "id": 42
+     *     }
+     */
+
+    /**
+     * Create a template
+     *
+     * @return Response
+     */
+    private function createTemplate(): Response
+    {
         $params = new ParamsProcessor(array('id' => 0));
         $id = $this->Entity->create($params);
         return new JsonResponse(array('result' => 'success', 'id' => $id));

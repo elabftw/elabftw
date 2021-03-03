@@ -9,6 +9,7 @@ import { notif } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Template from './Template.class';
+import i18next from 'i18next';
 
 $(document).ready(function() {
   if (window.location.pathname !== '/ucp.php') {
@@ -20,10 +21,10 @@ $(document).ready(function() {
 
   // TEMPLATES listeners
   $(document).on('click', '.createNewTemplate', function() {
-    const name = prompt('Template title');
-    if (name) {
+    const title = prompt(i18next.t('template-title'));
+    if (title) {
       // no body on template creation
-      TemplateC.create(name);
+      TemplateC.create(title);
     }
   });
   // show the handles to reorder when the menu entry is clicked
@@ -63,6 +64,22 @@ $(document).ready(function() {
     const write = $(this).data('write');
     $('#canread_select option[value="' + read + '"]').prop('selected', true);
     $('#canwrite_select option[value="' + write + '"]').prop('selected', true);
+  });
+
+  // TOGGLE LOCK
+  $('#lock').on('click', function() {
+    const id = $(this).data('id');
+    $.post('app/controllers/EntityAjaxController.php', {
+      lock: true,
+      type: 'experiments_templates',
+      id: id
+    }).done(function(json) {
+      notif(json);
+      if (json.res) {
+        // reload the page to change the icon and make the save button disappear
+        window.location.href = '?tab=3&templateid=' + id;
+      }
+    });
   });
 
   // input to upload an elabftw.tpl file

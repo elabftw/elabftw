@@ -52,3 +52,6 @@ _('Delete this tag?');
 /** @psalm-suppress UnusedFunctionCall */
 // upload-file-comment
 _('File comment');
+/** @psalm-suppress UnusedFunctionCall */
+// template-title
+_('Template title');

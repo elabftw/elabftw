@@ -122,11 +122,6 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
      */
     public function toggleLock(): void
     {
-        // no locking for templates
-        if ($this instanceof Templates) {
-            return;
-        }
-
         $permissions = $this->getPermissions();
         if (!$this->Users->userData['can_lock'] && !$permissions['write']) {
             throw new ImproperActionException(_("You don't have the rights to lock/unlock this."));

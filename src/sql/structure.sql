@@ -171,6 +171,10 @@ CREATE TABLE `experiments_revisions` (
 
 --
 -- RELATIONSHIPS FOR TABLE `experiments_revisions`:
+--   `item_id`
+--       `experiments` -> `id`
+--   `userid`
+--       `users` -> `userid`
 --
 
 -- --------------------------------------------------------
@@ -204,8 +208,12 @@ CREATE TABLE `experiments_templates` (
   `id` int(10) UNSIGNED NOT NULL,
   `team` int(10) UNSIGNED DEFAULT NULL,
   `body` text,
-  `name` varchar(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `date` int(10) UNSIGNED NOT NULL,
   `userid` int(10) UNSIGNED DEFAULT NULL,
+  `locked` tinyint(3) UNSIGNED DEFAULT NULL,
+  `lockedby` int(10) UNSIGNED DEFAULT NULL,
+  `lockedwhen` timestamp NULL DEFAULT NULL,
   `canread` varchar(255) NOT NULL,
   `canwrite` varchar(255) NOT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
@@ -216,6 +224,28 @@ CREATE TABLE `experiments_templates` (
 -- RELATIONSHIPS FOR TABLE `experiments_templates`:
 --   `team`
 --       `teams` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `experiments_templates_revisions`
+--
+
+CREATE TABLE `experiments_templates_revisions` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `item_id` int(10) UNSIGNED NOT NULL,
+  `body` mediumtext NOT NULL,
+  `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `userid` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB;
+
+--
+-- RELATIONSHIPS FOR TABLE `experiments_templates_revisions`:
+--   `item_id`
+--       `experiments_templates` -> `id`
+--   `userid`
+--       `users` -> `userid`
 --
 
 -- --------------------------------------------------------
@@ -432,6 +462,7 @@ CREATE TABLE `tags2entity` (
 CREATE TABLE `teams` (
   `id` int(10) UNSIGNED NOT NULL,
   `name` varchar(255) NOT NULL,
+  `common_template` text,
   `deletable_xp` tinyint(1) NOT NULL DEFAULT 1,
   `link_name` text NOT NULL,
   `link_href` text NOT NULL,
@@ -682,6 +713,12 @@ ALTER TABLE `experiments_templates`
   ADD KEY `fk_experiments_templates_teams_id` (`team`);
 
 --
+-- Indexes for table `experiments_templates_revisions`
+--
+ALTER TABLE `experiments_templates_revisions`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `groups`
 --
 ALTER TABLE `groups`
@@ -841,6 +878,12 @@ ALTER TABLE `experiments_templates`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `experiments_templates_revisions`
+--
+ALTER TABLE `experiments_templates_revisions`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `groups`
 --
 ALTER TABLE `groups`
@@ -962,10 +1005,24 @@ ALTER TABLE `experiments_steps`
   ADD CONSTRAINT `fk_experiments_steps_experiments_id` FOREIGN KEY (`item_id`) REFERENCES `experiments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `experiments_revisions`
+--
+ALTER TABLE `experiments_revisions`
+  ADD CONSTRAINT `fk_experiments_revisions_experiments_id` FOREIGN KEY (`item_id`) REFERENCES `experiments`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `experiments_templates`
 --
 ALTER TABLE `experiments_templates`
   ADD CONSTRAINT `fk_experiments_templates_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `experiments_templates_revisions`
+--
+ALTER TABLE `experiments_templates_revisions`
+  ADD CONSTRAINT `fk_experiments_templates_revisions_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_templates_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `items`

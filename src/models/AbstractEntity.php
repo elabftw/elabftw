@@ -20,6 +20,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\CreatableInterface;
+use Elabftw\Interfaces\HasMetadataInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
@@ -34,7 +35,7 @@ use function sha1;
 /**
  * The mother class of Experiments and Database
  */
-abstract class AbstractEntity implements CreatableInterface
+abstract class AbstractEntity implements CreatableInterface, HasMetadataInterface
 {
     use EntityTrait;
 
@@ -104,6 +105,11 @@ abstract class AbstractEntity implements CreatableInterface
         }
     }
 
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
     /**
      * Duplicate an item
      *
@@ -113,8 +119,6 @@ abstract class AbstractEntity implements CreatableInterface
 
     /**
      * Lock/unlock
-     *
-     * @return void
      */
     public function toggleLock(): void
     {
@@ -649,6 +653,17 @@ abstract class AbstractEntity implements CreatableInterface
 
         $this->Db->execute($req);
         return $req->rowCount() > 0;
+    }
+
+    public function getMetadata(): ?string
+    {
+        $entityData = $this->read(false);
+        return $entityData['metadata'];
+    }
+
+    public function getTable(): string
+    {
+        return $this->type;
     }
 
     /**

@@ -41,7 +41,7 @@ jobs:
           # Any branch if there are none on the default branch - this should be unnecessary if you have your default branch configured correctly
           - v1-dep-
       # copy the circleci config
-      - run: sudo cp tests/config-circleci.php config.php
+      - run: sudo cp tests/config-ci.php config.php
       - run: sudo apt-get update
       - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mariadb-server graphicsmagick libgraphicsmagick1-dev libldap2-dev
       - run: sudo service mysql start

@@ -39,6 +39,10 @@ class ParamsProcessor
 
     public int $team = 0;
 
+    public string $canread = 'team';
+
+    public string $canwrite = 'team';
+
     public function __construct(array $params)
     {
         $this->name = Filter::sanitize($params['name'] ?? $this->name);
@@ -52,5 +56,7 @@ class ParamsProcessor
         $this->bookable = $params['bookable'] ?? $this->bookable ? 1 : 0;
         $this->comment = Filter::comment($params['comment'] ?? $this->comment);
         $this->team = (int) ($params['team'] ?? $this->team);
+        $this->canread = Check::visibility($params['canread'] ?? $this->canread);
+        $this->canwrite = Check::visibility($params['canwrite'] ?? $this->canwrite);
     }
 }

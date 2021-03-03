@@ -96,13 +96,14 @@ CREATE TABLE `experiments` (
   `lockedby` int(10) UNSIGNED DEFAULT NULL,
   `lockedwhen` timestamp NULL DEFAULT NULL,
   `timestamped` tinyint(1) NOT NULL DEFAULT '0',
-  `timestampedby` int(11) DEFAULT NULL,
+  `timestampedby` int(11) NULL DEFAULT NULL,
   `timestamptoken` text,
   `timestampedwhen` timestamp NULL DEFAULT NULL,
   `canread` varchar(255) NOT NULL DEFAULT 'team',
   `canwrite` varchar(255) NOT NULL DEFAULT 'user',
-  `datetime` timestamp NOT NULL,
-  `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `datetime` timestamp NULL DEFAULT NULL,
+  `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `metadata` json NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -164,7 +165,8 @@ CREATE TABLE `experiments_revisions` (
   `item_id` int(10) UNSIGNED NOT NULL,
   `body` mediumtext NOT NULL,
   `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `userid` int(10) UNSIGNED NOT NULL
+  `userid` int(10) UNSIGNED NOT NULL,
+  `metadata` json NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -206,7 +208,8 @@ CREATE TABLE `experiments_templates` (
   `userid` int(10) UNSIGNED DEFAULT NULL,
   `canread` varchar(255) NOT NULL,
   `canwrite` varchar(255) NOT NULL,
-  `ordering` int(10) UNSIGNED DEFAULT NULL
+  `ordering` int(10) UNSIGNED DEFAULT NULL,
+  `metadata` json NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -287,7 +290,8 @@ CREATE TABLE `items` (
   `canread` varchar(255) NOT NULL DEFAULT 'team',
   `canwrite` varchar(255) NOT NULL DEFAULT 'team',
   `available` tinyint(1) NOT NULL DEFAULT '1',
-  `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `metadata` json NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -349,7 +353,10 @@ CREATE TABLE `items_types` (
   `color` varchar(6) DEFAULT '000000',
   `template` text,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
-  `bookable` tinyint(1) DEFAULT '0'
+  `bookable` tinyint(1) DEFAULT '0',
+  `canread` varchar(255) NOT NULL DEFAULT 'team',
+  `canwrite` varchar(255) NOT NULL DEFAULT 'team',
+  `metadata` json NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

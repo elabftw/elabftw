@@ -220,6 +220,7 @@ class Config
             ('saml_sync_teams', 0),
             ('deletable_xp', 1),
             ('max_revisions', 10),
+            ('min_delta_revisions', 100),
             ('extauth_remote_user', ''),
             ('extauth_firstname', ''),
             ('extauth_lastname', ''),

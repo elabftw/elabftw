@@ -235,6 +235,35 @@
     </div>
 
     <textarea class='mceditable' id='itemsTypesTemplate'></textarea>
+
+    <div class='row'>
+      <div class='col-md-3'>
+        <!-- CAN READ -->
+        <i class='fas fa-eye' title='Visibility'></i>
+        <label for='canread_select'>{{ 'Visibility'|trans }}</label>
+        <select id='canread_select' class='form-control'>
+          {% for key, value in visibilityArr %}
+            <option value='{{ key }}'
+            {{ key == 'team' ? ' selected' }}
+            >{{ value|trans }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class='col-md-3'>
+        <!-- CAN WRITE -->
+        <i class='fas fa-pencil-alt' title='Can write'></i>
+        <label for='canwrite_select'>{{ 'Can write'|trans }}</label>
+        <select id='canwrite_select' class='form-control'>
+          {% for key, value in visibilityArr %}
+            <option value='{{ key }}'
+            {{ key == 'team' ? ' selected' }}
+            >{{ value|trans }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
     <div class='mt-4 text-center'>
       <button id='itemsTypesCreate' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
@@ -248,6 +277,7 @@
       {% for itemType in itemsTypesArr %}
         <li id='itemstypes_{{ itemType.category_id }}' class='list-group-item'>
           <ul class='list-inline'>
+            <li class='list-inline-item'><span class='sortableHandle draggable align-right'><i class='fas fa-sort fa-2x'></i></span></li>
             <li class='list-inline-item'>
               <label for='itemsTypesName_{{ itemType.category_id }}'>{{ 'Name'|trans }}</label>
               <input type='text' class='form-control' id='itemsTypesName_{{ itemType.category_id }}' value='{{ itemType.category }}' />
@@ -265,6 +295,30 @@
               <button data-id='{{ itemType.category_id }}' class='button btn btn-neutral itemsTypesShowEditor'>{{ 'Edit the template'|trans }}</button>
             </li>
             <li class='list-inline-item'>
+              <button data-id='{{ itemType.category_id }}' data-type='items_types' data-action='json-load-metadata-from-id' class='button btn btn-neutral'>{{ 'Edit metadata'|trans }}</button>
+            </li>
+            <li class='list-inline-item'>
+              <label for='itemsTypesSelectCanread_{{ itemType.category_id }}'>{{ 'Visibility'|trans }}</label>
+              <select id='itemsTypesSelectCanread_{{ itemType.category_id }}' data-id='{{ itemType.category_id }}' class='itemsTypesSelectCanread form-control'>
+                {% for key, value in visibilityArr %}
+                  <option value='{{ key }}'
+                  {{ key == itemType.canread ? ' selected' }}
+                  >{{ value|trans }}</option>
+                {% endfor %}
+              </select>
+            </li>
+
+            <li class='list-inline-item itemsTypesCanwrite'>
+              <label for='itemsTypesSelectCanwrite_{{ itemType.category_id }}'>{{ 'Can write'|trans }}</label>
+              <select id='itemsTypesSelectCanwrite_{{ itemType.category_id }}' data-id='{{ itemType.category_id }}' class='itemsTypesSelectCanwrite form-control'>
+                {% for key, value in visibilityArr %}
+                  <option value='{{ key }}'
+                  {{ key == itemType.canwrite ? ' selected' }}
+                  >{{ value|trans }}</option>
+                {% endfor %}
+              </select>
+            </li>
+            <li class='list-inline-item'>
               <button data-id='{{ itemType.category_id }}' class='button btn btn-primary itemsTypesUpdate'>{{ 'Save'|trans }}</button>
             </li>
             <li class='list-inline-item'>
@@ -273,12 +327,15 @@
             <li class='list-inline-item mt-2 itemsTypesEditor' id='itemsTypesEditor_{{ itemType.category_id }}'>
               <textarea class='' id='itemsTypesTemplate_{{ itemType.category_id }}'>{{ itemType.template }}</textarea>
             </li>
-            <li class='list-inline-item'><span class='sortableHandle draggable align-right'><i class='fas fa-sort fa-2x'></i></span></li>
           </ul>
         </li>
       {% endfor %}
     </ul>
   </div>
+
+  <! -- METADATA editor for items types -->
+  {% set mode = 'edit-item-type' %}
+  {{ include('json-editor.html') }}
 </div>
 
 <!-- TAB 6 COMMON EXPERIMENT TEMPLATE -->
@@ -396,5 +453,7 @@
     </div>
   </div>
 </div>
+
+<div id='info' data-page='template-edit'></div>
 
 {% endblock body %}

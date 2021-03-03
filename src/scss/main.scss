@@ -789,8 +789,9 @@ the form-control fails to do that so we do the border ourselves */
     overflow-wrap: break-word;
 }
 
-.clickable.title-view:hover {
+.title-view[data-action='edit']:hover {
     color: $elabblue;
+    cursor: pointer;
     transition: color 0.8s ease;
 }
 
@@ -833,11 +834,6 @@ the form-control fails to do that so we do the border ourselves */
     text-align: right;
 }
 
-/* give more space between view action buttons */
-.view-action-buttons a {
-    margin-right: 5px;
-}
-
 /* TAGS */
 .tag {
     border: 1px solid $maingray;
@@ -855,28 +851,90 @@ the form-control fails to do that so we do the border ourselves */
 
 /* print only the main div */
 @media print {
+    /* overwrite bootstrap defaults
+     * https://stackoverflow.com/a/53232790
+     */
+    body {
+        min-width: 0 !important;
+    }
+
+    .container {
+        min-width: 0 !important;
+        width: auto;
+    }
+
+    /* don't show nav bar */
     nav {
-        visibility: hidden;
+        display: none;
+    }
+
+    .real-container {
+        margin: auto;
+        padding: 0;
+    }
+
+    .real-container::after {
+        content: 'Powered by eLabFTW ❤ www.elabftw.net';
+        display: block;
+        margin-top: 0.5rem;
+        text-align: center;
+    }
+
+    /* don't show create button */
+    .real-container .row {
+        display: none;
+    }
+
+    /* but show >last modified< and >elabid< */
+    .real-container .row:last-child {
+        display: block;
+        margin-top: 0.5rem;
+    }
+    
+    .real-container .row:last-child .col-6 {
+        max-width: 100%;
+    }
+
+    .elabid {
+        text-align: left;
+    }
+
+    /* don't show experiment/database */
+    .real-container > h2 {
+        display: none;
+    }
+
+    /* don't show revisions */
+    .real-container > span {
+        display: none;
+    }
+
+    .view-action-buttons {
+        display: none;
     }
 
     .item {
         background-color: #fff;
+        border: 0 !important;
         font-size: 14px;
-        left: 0;
-        line-height: 18px;
+        line-height: normal;
         margin: 0;
         padding: 15px;
-        position: fixed;
-        top: 0;
-        width: 900px;
     }
 
-    h2 {
-        visibility: hidden;
+    /* don't show attached files */
+    #filesdiv {
+        display: none;
     }
 
+    /* don't show comments */
+    #comment_container {
+        display: none;
+    }
+
+    /* don't show footer */
     footer {
-        visibility: hidden;
+        display: none;
     }
 }
 
@@ -903,6 +961,13 @@ the form-control fails to do that so we do the border ourselves */
     border-radius: 5px;
     display: block;
     margin: 10px 0;
+}
+
+/* don't register clicks with the svg (fontawesome icons)
+ * this way the click event is registered by the parent and all is well
+ */
+[data-fa-i2svg] {
+    pointer-events: none;
 }
 
 .clickable:hover {
@@ -1026,4 +1091,12 @@ input[type='color'] {
     }
 }
 
+/* jsoneditor */
+div.jsoneditor,
+div.jsoneditor-menu {
+    border-color: $elabblue;
+}
 
+div.jsoneditor-menu {
+    background-color: $elabblue;
+}

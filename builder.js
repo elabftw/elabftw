@@ -83,6 +83,9 @@ module.exports = {
       chunks: 'all',
     },
   },
+  watchOptions: {
+      ignored: /node_modules/
+  },
   module: {
     rules:[
       // ts loader

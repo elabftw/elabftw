@@ -10,7 +10,6 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import Tag from './Tag.class';
 import i18next from 'i18next';
 import { getCheckedBoxes, notif } from './misc';
-import { CheckableItem } from './interfaces';
 
 $(document).ready(function() {
   let type = $('#info').data('type');

@@ -118,7 +118,7 @@ class Templates extends AbstractEntity
     {
         $sql = "SELECT experiments_templates.id, experiments_templates.name, experiments_templates.body,
             experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata,
             GROUP_CONCAT(tags.tag SEPARATOR '|') AS tags, GROUP_CONCAT(tags.id) AS tags_id
             FROM experiments_templates
             LEFT JOIN users ON (experiments_templates.userid = users.userid)

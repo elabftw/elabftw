@@ -15,8 +15,13 @@ interface ActionReq {
 
 interface ResponseMsg {
   res: boolean;
-  msg: string;
+  msg: string | Array<BoundEvent>;
   color?: string;
+}
+
+interface BoundEvent {
+  item: string;
+  start: string;
 }
 
 interface CheckableItem {
@@ -26,6 +31,7 @@ interface CheckableItem {
 
 export {
   ActionReq,
-  ResponseMsg,
+  BoundEvent,
   CheckableItem,
+  ResponseMsg,
 };

@@ -238,7 +238,7 @@ CREATE TABLE `experiments_templates_revisions` (
   `body` mediumtext NOT NULL,
   `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB;
 
 --
 -- RELATIONSHIPS FOR TABLE `experiments_templates_revisions`:

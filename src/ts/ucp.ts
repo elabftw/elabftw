@@ -9,6 +9,7 @@ import { notif } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Template from './Template.class';
+import i18next from 'i18next';
 
 $(document).ready(function() {
   if (window.location.pathname !== '/ucp.php') {
@@ -20,7 +21,7 @@ $(document).ready(function() {
 
   // TEMPLATES listeners
   $(document).on('click', '.createNewTemplate', function() {
-    const title = prompt('Template title');
+    const title = prompt(i18next.t('template-title'));
     if (title) {
       // no body on template creation
       TemplateC.create(title);

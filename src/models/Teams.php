@@ -137,19 +137,11 @@ class Teams implements ReadableInterface, DestroyableInterface
     {
         $name = Filter::sanitize($name);
 
-        // default experiment template
-        $defaultBody = "<h1><span style='font-size: 14pt;'>Goal :</span></h1>
-            <p>&nbsp;</p>
-            <h1><span style='font-size: 14pt;'>Procedure :</span></h1>
-            <p>&nbsp;</p>
-            <h1><span style='font-size: 14pt;'>Results :<br /></span></h1>
-            <p>&nbsp;</p>";
-
         // add to the teams table
         $sql = 'INSERT INTO teams (name, common_template, link_name, link_href) VALUES (:name, :common_template, :link_name, :link_href)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
-        $req->bindParam(':common_template', $defaultBody);
+        $req->bindParam(':common_template', Templates::defaultBody);
         $req->bindValue(':link_name', 'Documentation');
         $req->bindValue(':link_href', 'https://doc.elabftw.net');
         $this->Db->execute($req);

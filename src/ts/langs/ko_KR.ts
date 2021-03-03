@@ -18,6 +18,7 @@ const t = {
     "step-delete-warning": "단계를 삭제할까요?",
     "tag-delete-warning": "이 태그를 삭제할까요?",
     "upload-file-comment": "파일 코멘트",
+    "template-title": "Template title",
   }
 };
 

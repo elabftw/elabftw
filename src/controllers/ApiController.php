@@ -648,9 +648,6 @@ class ApiController implements ControllerInterface
      */
     private function createTemplate(): Response
     {
-        if ($this->Entity instanceof Database) {
-            return new Response('Creating database items is not supported.', 400);
-        }
         $params = new ParamsProcessor(array('id' => 0));
         $id = $this->Entity->create($params);
         return new JsonResponse(array('result' => 'success', 'id' => $id));

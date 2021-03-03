@@ -18,6 +18,7 @@ const t = {
     "step-delete-warning": "Diesen Schritt löschen?",
     "tag-delete-warning": "Schlagwort löschen?",
     "upload-file-comment": "Dateikommentar",
+    "template-title": "Vorlagentitel",
   }
 };
 

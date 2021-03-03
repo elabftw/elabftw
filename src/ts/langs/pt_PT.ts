@@ -18,6 +18,7 @@ const t = {
     "step-delete-warning": "Excluir esta etapa?",
     "tag-delete-warning": "Excluir esta tag?",
     "upload-file-comment": "Comentário no arquivo",
+    "template-title": "Template title",
   }
 };
 

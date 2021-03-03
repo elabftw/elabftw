@@ -24,6 +24,13 @@ class Templates extends AbstractEntity implements CreatableInterface
 {
     use SortableTrait;
 
+    public const defaultBody = "<h1><span style='font-size: 14pt;'>Goal :</span></h1>
+    <p>&nbsp;</p>
+    <h1><span style='font-size: 14pt;'>Procedure :</span></h1>
+    <p>&nbsp;</p>
+    <h1><span style='font-size: 14pt;'>Results :<br /></span></h1>
+    <p>&nbsp;</p>";
+
     public function __construct(Users $users, ?int $id = null)
     {
         parent::__construct($users, $id);

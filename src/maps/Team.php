@@ -28,12 +28,7 @@ class Team implements MapInterface
 
     private int $id;
 
-    private string $commonTemplate = "<h1><span style='font-size: 14pt;'>Goal :</span></h1>
-    <p>&nbsp;</p>
-    <h1><span style='font-size: 14pt;'>Procedure :</span></h1>
-    <p>&nbsp;</p>
-    <h1><span style='font-size: 14pt;'>Results :<br /></span></h1>
-    <p>&nbsp;</p>";
+    private string $commonTemplate = '';
 
     private string $name = '';
 

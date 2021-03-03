@@ -101,7 +101,8 @@
       </select>
 
       <input id='layout' class='mt-2' type='checkbox' name='single_column_layout'
-          {{ App.Users.userData.single_column_layout == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.single_column_layout == '1' ? " checked='checked'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+          #}
       />
       <label for='layout'>{{ 'Use single column layout'|trans }}</label>
     </section>
@@ -145,12 +146,14 @@
         <br>
 
         <input id='cjk_fonts' type='checkbox' name='cjk_fonts'
-          {{ App.Users.userData.cjk_fonts == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.cjk_fonts == '1' ? " checked='checked'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+          #}
         />
         <label for='cjk_fonts'>{{ 'Enable Chinese, Japanese and Korean fonts in PDF generation (WARNING: this will dramatically increase the file size unless you disable PDF/A)'|trans }}</label>
         <br>
         <input id='pdfa' type='checkbox' name='pdfa'
-          {{ App.Users.userData.pdfa == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.pdfa == '1' ? " checked='checked'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+          #}
         />
         <label for='pdfa'>{{ 'Generate PDF/A compliant pdfs (will embed the fonts and make the file bigger)'|trans }}</label>
         <br>
@@ -161,12 +164,14 @@
         <label for='pdf_tex'>{{ 'Typeset formulas written in TeX/LaTeX. WARNING: Some (more complex) TeX/LaTeX commands will not be typeset correctly'|trans }}</label>
         <br>
         <input id='inc_files_pdf' type='checkbox' name='inc_files_pdf'
-          {{ App.Users.userData.inc_files_pdf == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.inc_files_pdf == '1' ? " checked='checked'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+          #}
         />
         <label for='inc_files_pdf'>{{ 'Add attached files summary to the pdf'|trans }}</label>
         <br>
         <input id='pdf_sig' type='checkbox' name='pdf_sig'
-          {{ App.Request.cookies.get('pdf_sig') == '1' ? " checked='checked'" }}
+          {{ App.Request.cookies.get('pdf_sig') == '1' ? " checked='checked'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+          #}
         />
         <label for='pdf_sig'>{{ 'Enable french style signature block in pdf export (setting is only set for this browser)'|trans }}</label>
 
@@ -184,22 +189,26 @@
         <label for='show_team'>{{ 'Show experiments from the team on the Experiments page'|trans }}</label>
         <br>
         <input id='show_team_templates' type='checkbox' name='show_team_templates'
-               {{ App.Users.userData.show_team_templates == '1' ? " checked='checked'" }}
+               {{ App.Users.userData.show_team_templates == '1' ? " checked='checked'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+          #}
         />
         <label for='show_team_templates'>{{ 'Show templates from the team on the Templates page and in the menus'|trans }}</label>
         <br>
         <input id='chem_editor' type='checkbox' name='chem_editor'
-          {{ App.Users.userData.chem_editor == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.chem_editor == '1' ? " checked='checked'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+          #}
         />
         <label for='chem_editor'>{{ 'Display the molecule editor in edit mode'|trans }}</label>
         <br>
         <input id='json_editor' type='checkbox' name='json_editor'
-          {{ App.Users.userData.json_editor == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.json_editor == '1' ? " checked='checked'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+          #}
         />
         <label for='json_editor'>{{ 'Display the JSON editor in edit mode'|trans }}</label>
         <br>
         <input id='use_markdown' type='checkbox' name='use_markdown'
-          {{ App.Users.userData.use_markdown == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.use_markdown == '1' ? " checked='checked'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+          #}
         />
         <label for='use_markdown'>{{ 'Disable the rich text editor and write Markdown directly'|trans }}</label>
         </p>
@@ -208,17 +217,21 @@
         <label for='default-read-select'>{{ 'Default visibility for new experiments'|trans }}</label>
         <select id='default-read-select' name='default_read'>
             <option value='organization'
-              {{ App.Users.userData.default_read == 'organization' ? " selected='selected'" }}
+              {{ App.Users.userData.default_read == 'organization' ? " selected='selected'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+              #}
             >{{ 'Organization'|trans }}</option>
             <option value='team'
-              {{ App.Users.userData.default_read == 'team' ? " selected='selected'" }}
+              {{ App.Users.userData.default_read == 'team' ? " selected='selected'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+               #}
             >{{ 'Team'|trans }}</option>
             <option value='user'
-              {{ App.Users.userData.default_read == 'user' ? " selected='selected'" }}
+              {{ App.Users.userData.default_read == 'user' ? " selected='selected'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+              #}
             >{{ 'User'|trans }}</option>
             {% for teamGroup in teamGroupsArr %}
                 <option value='{{ teamGroup.id }}'
-                  {{ teamGroup.id == App.Users.userData.default_read ? " selected='selected'" }}
+                  {{ teamGroup.id == App.Users.userData.default_read ? " selected='selected'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+                  #}
                 >{{ 'Group'|trans }} - {{ teamGroup.name }}
                 </option>
             {% endfor %}
@@ -228,17 +241,21 @@
         <label for='default-write-select'>{{ 'Default write permission for new experiments'|trans }}</label>
         <select id='default-write-select' name='default_write'>
             <option value='organization'
-              {{ App.Users.userData.default_write == 'organization' ? " selected='selected'" }}
+              {{ App.Users.userData.default_write == 'organization' ? " selected='selected'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+              #}
             >{{ 'Organization'|trans }}</option>
             <option value='team'
-              {{ App.Users.userData.default_write == 'team' ? " selected='selected'" }}
+              {{ App.Users.userData.default_write == 'team' ? " selected='selected'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+              #}
             >{{ 'Team'|trans }}</option>
             <option value='user'
-              {{ App.Users.userData.default_write == 'user' ? " selected='selected'" }}
+              {{ App.Users.userData.default_write == 'user' ? " selected='selected'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+              #}
             >{{ 'User'|trans }}</option>
             {% for teamGroup in teamGroupsArr %}
                 <option value='{{ teamGroup.id }}'
-                  {{ teamGroup.id == App.Users.userData.default_write ? " selected='selected'" }}
+                  {{ teamGroup.id == App.Users.userData.default_write ? " selected='selected'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
+                  #}
                 >{{ 'Group'|trans }} - {{ teamGroup.name }}
                 </option>
             {% endfor %}

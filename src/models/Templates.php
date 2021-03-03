@@ -49,18 +49,18 @@ class Templates extends AbstractEntity implements CreatableInterface
             $canwrite = $this->Users->userData['default_write'];
         }
 
+        $date = Filter::kdate();
         $sql = 'INSERT INTO experiments_templates(team, title, date, body, userid, canread, canwrite)
             VALUES(:team, :title, :date, :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
-        $this->Db->execute($req, array(
-            'team' => $this->Users->userData['team'],
-            'title' => $params->name,
-            'date' => Filter::kdate(),
-            'body' => $params->template,
-            'userid' => $this->Users->userData['userid'],
-            'canread' => $canread,
-            'canwrite' => $canwrite,
-        ));
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':title', $params->name);
+        $req->bindParam(':date', $date);
+        $req->bindParam(':body', $params->template);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':canread', $canread);
+        $req->bindParam(':canwrite', $canwrite);
+        $req->execute();
         return $this->Db->lastInsertId();
     }
 

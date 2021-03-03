@@ -164,12 +164,17 @@ class Templates extends AbstractEntity implements CreatableInterface
         $TeamGroups = new TeamGroups($this->Users);
         $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
 
-        $sql = "SELECT DISTINCT experiments_templates.id, experiments_templates.title, experiments_templates.canwrite,
-                CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-                users2teams.teams_id, experiments_templates.userid, experiments_templates.body
+        $sql = "SELECT DISTINCT experiments_templates.id, experiments_templates.title, experiments_templates.body,
+                experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
+                experiments_templates.locked, experiments_templates.lockedby, experiments_templates.lockedwhen,
+                CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata,
+                users2teams.teams_id,
+                GROUP_CONCAT(tags.tag SEPARATOR '|') AS tags, GROUP_CONCAT(tags.id) AS tags_id
                 FROM experiments_templates
                 LEFT JOIN users ON (experiments_templates.userid = users.userid)
                 LEFT JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
+                LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
+                LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
                 WHERE experiments_templates.userid != 0 AND (
                     experiments_templates.canread = 'public' OR
                     experiments_templates.canread = 'organization' OR

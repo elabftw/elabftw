@@ -99,8 +99,11 @@ class ApiController implements ControllerInterface
                     return $this->getBackupZip();
                 }
 
-                if ($this->endpoint === 'experiments' || $this->endpoint === 'items' || $this->endpoint === 'templates') {
+                if ($this->endpoint === 'experiments' || $this->endpoint === 'items') {
                     return $this->getEntity();
+                }
+                if ($this->endpoint === 'templates') {
+                    return $this->getTemplate();
                 }
                 if ($this->endpoint === 'items_types' || $this->endpoint === 'status') {
                     return $this->getCategory();
@@ -336,6 +339,20 @@ class ApiController implements ControllerInterface
         $this->Entity->entityData['links'] = $this->Entity->Links->read();
         // add the steps
         $this->Entity->entityData['steps'] = $this->Entity->Steps->read();
+
+        return new JsonResponse($this->Entity->entityData);
+    }
+
+    private function getTemplate(): Response
+    {
+        if ($this->id === null) {
+            return new JsonResponse($this->Entity->getTemplatesList());
+        }
+        $this->Entity->read();
+        $permissions = $this->Entity->getPermissions($this->Entity->entityData);
+        if ($permissions['read'] === false) {
+            throw new IllegalActionException('User tried to access a template without read permissions');
+        }
 
         return new JsonResponse($this->Entity->entityData);
     }

@@ -113,9 +113,8 @@ class Templates extends AbstractEntity implements CreatableInterface
         $res = $req->fetch();
         if ($res === false) {
             throw new ImproperActionException('No template found with this id!');
-        } else {
-            $this->entityData = $res;
         }
+        $this->entityData = $res;
 
         return $res;
     }

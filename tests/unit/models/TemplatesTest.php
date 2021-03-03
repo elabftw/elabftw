@@ -25,6 +25,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
 
     public function testRead()
     {
+        $this->Templates->create(new ParamsProcessor(array('name' => 'Test tpl', 'template' => 'pwet')));
         $this->Templates->setId(1);
         $this->assertTrue(is_array($this->Templates->read()));
     }
@@ -36,6 +37,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
 
     public function testDuplicate()
     {
+        $this->Templates->create(new ParamsProcessor(array('name' => 'Test tpl', 'template' => 'pwet')));
         $this->Templates->setId(1);
         $this->assertIsInt($this->Templates->duplicate());
     }
@@ -47,6 +49,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
+        $this->Templates->create(new ParamsProcessor(array('name' => 'Test tpl', 'template' => 'pwet')));
         $this->Templates->setId(1);
         $this->Templates->update('my tpl', '20160729', 'Plop');
     }

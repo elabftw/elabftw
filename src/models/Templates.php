@@ -110,12 +110,14 @@ class Templates extends AbstractEntity implements CreatableInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $this->entityData = $req->fetch();
-        if ($this->entityData === false) {
+        $res = $req->fetch();
+        if ($res === false) {
             throw new ImproperActionException('No template found with this id!');
+        } else {
+            $this->entityData = $res;
         }
 
-        return $this->entityData;
+        return $res;
     }
 
     /**

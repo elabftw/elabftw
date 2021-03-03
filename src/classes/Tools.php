@@ -21,8 +21,8 @@ use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
 use function mb_strlen;
 use function pathinfo;
-use function trim;
 use Symfony\Component\HttpFoundation\Request;
+use function trim;
 
 /**
  * Toolbelt full of useful functions
@@ -81,9 +81,9 @@ class Tools
         try {
             $converter = new CommonMarkConverter(array('allow_unsafe_links' => false, 'max_nesting_level' => 42), $environment);
             return trim($converter->convertToHtml($md), "\n");
-        // fix for incorrect utf8 encoding, just return md and hope it's html
-        // so at least the thing is displayed instead of triggering a fatal error
         } catch (UnexpectedEncodingException $e) {
+            // fix for incorrect utf8 encoding, just return md and hope it's html
+            // so at least the thing is displayed instead of triggering a fatal error
             return $md;
         }
     }

@@ -343,6 +343,47 @@ class ApiController implements ControllerInterface
         return new JsonResponse($this->Entity->entityData);
     }
 
+    /**
+     * @api {get} /templates/[:id] Read templates
+     * @apiName GetTemplate
+     * @apiGroup Entity
+     * @apiDescription Get the data from templates or just one template if id is set.
+     * @apiUse GetTemplate
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * # get all templates
+     * all_tpl = manager.get_all_templates()
+     * # get template with id 42
+     * tpl = manager.get_template(42)
+     * print(json.dumps(tpl, indent=4, sort_keys=True))
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # get all templates
+     * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/templates
+     * # get template with id 42
+     * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/templates/42
+     * @apiSuccess {String} body Main content
+     * @apiSuccess {Number} date Date in YYYYMMDD format
+     * @apiSuccess {String} fullname Name of the owner of the experiment
+     * @apiSuccess {Number} id Id of the experiment
+     * @apiSuccess {Number} locked 0 if not locked, 1 if locked
+     * @apiSuccess {Number} lockedby 1 User id of the locker
+     * @apiSuccess {DateTime} lockedwhen Time when it was locked
+     * @apiSuccess {String} tags Tags separated by '|'
+     * @apiSuccess {String} tags_id Id of the tags separated by ','
+     * @apiSuccess {String} title Title of the experiment
+     * @apiSuccess {Number} userid User id of the owner
+     * @apiSuccess {String} canread Read permission of the experiment
+     * @apiSuccess {String} canwrite Write permission of the experiment
+     *
+     */
+
+    /**
+     * Get template, one or several
+     *
+     * @return Response
+     */
     private function getTemplate(): Response
     {
         if ($this->id === null) {

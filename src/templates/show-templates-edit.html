@@ -31,22 +31,20 @@
     <div class='row mt-3'>
       <!-- NAME OF TPL AND OWNER -->
       <div class='col'>
-        <h4>
+        <h4 class='d-inline'>
           {{ templateData.fullname|raw }} - {{ templateData.title|raw }}
-
-          <!-- LOCK -->
-          {% set lockIcon = 'fa-lock-open' %}
-          {% set alt = 'Lock/Unlock item'|trans %}
-          {% if templateData.locked %}
-              {% set lockIcon = 'fa-lock' %}
-              {% set alt = templateData.lockedwhen %}
-          {% endif %}
-          <a id='lock' data-id="{{ templateData.id }}" class='clickable elab-tooltip'>
-              <span>{{ alt }}</span>
-              <i class='fas {{lockIcon}}'></i>
-          </a>
-
         </h4>
+        <!-- LOCK -->
+        {% set lockIcon = 'fa-lock-open' %}
+        {% set alt = 'Lock/Unlock item'|trans %}
+        {% if templateData.locked %}
+            {% set lockIcon = 'fa-lock' %}
+            {% set alt = templateData.lockedwhen %}
+        {% endif %}
+        <a data-action='lock' data-id="{{ templateData.id }}" href='#' class='elab-tooltip'>
+          <span>{{ alt }}</span>
+          <i class='fas {{lockIcon}}'></i>
+        </a>
       </div>
     </div>
 

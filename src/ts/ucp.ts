@@ -9,6 +9,7 @@ import { notif } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Template from './Template.class';
+import { Ajax } from './Ajax.class';
 import i18next from 'i18next';
 
 $(document).ready(function() {
@@ -66,20 +67,16 @@ $(document).ready(function() {
     $('#canwrite_select option[value="' + write + '"]').prop('selected', true);
   });
 
-  // TOGGLE LOCK
-  $('#lock').on('click', function() {
-    const id = $(this).data('id');
-    $.post('app/controllers/EntityAjaxController.php', {
-      lock: true,
-      type: 'experiments_templates',
-      id: id
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        // reload the page to change the icon and make the save button disappear
-        window.location.href = '?tab=3&templateid=' + id;
-      }
-    });
+  // MAIN LISTENER
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // TOGGLE LOCK
+    if (el.matches('[data-action="lock"]')) {
+      // reload the page to change the icon and make the edit button disappear (#1897)
+      const id = el.dataset.id;
+      const AjaxC = new Ajax('experiments_templates', id);
+      AjaxC.post('lock').then(() => window.location.href = `?tab=3&templateid=${id}`);
+    }
   });
 
   // input to upload an elabftw.tpl file

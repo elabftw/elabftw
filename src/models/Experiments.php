@@ -40,6 +40,10 @@ class Experiments extends AbstractEntity implements CreatableInterface
         if ($tpl > 0) {
             $Templates->setId($tpl);
             $templateArr = $Templates->read();
+            $permissions = $Templates->getPermissions($templateArr);
+            if ($permissions['read'] === false) {
+                throw new IllegalActionException('User tried to access a template without read permissions');
+            }
             $metadata = $templateArr['metadata'];
             $title = $templateArr['title'];
             $body = $templateArr['body'];

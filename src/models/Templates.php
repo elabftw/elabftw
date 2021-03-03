@@ -101,7 +101,7 @@ class Templates extends AbstractEntity implements CreatableInterface
     /**
      * Read a template
      */
-    public function read(bool $getTags = false, bool $inTeam = true): array
+    public function read(bool $getTags = false): array
     {
         $sql = "SELECT experiments_templates.id, experiments_templates.title, experiments_templates.body,
             experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,

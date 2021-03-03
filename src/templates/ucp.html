@@ -161,7 +161,7 @@
           {{ App.Users.userData.pdf_tex == '1' ? " checked='checked'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
           #}
         />
-        <label for='pdf_tex'>{{ 'Typeset formulas written in TeX/LaTeX. WARNING: Some (more complex) TeX/LaTeX commands will not be typeset correctly'|trans }}</label>
+        <label for='pdf_tex'>{{ 'Typeset formulas written in TeX/LaTeX. WARNING: Reaction arrows with optional arguments will not be typeset correctly'|trans }}, <a href='https://mhchem.github.io/MathJax-mhchem/' target='_blank'>mhchem for MathJax manual</a></label>
         <br>
         <input id='inc_files_pdf' type='checkbox' name='inc_files_pdf'
           {{ App.Users.userData.inc_files_pdf == '1' ? " checked='checked'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->

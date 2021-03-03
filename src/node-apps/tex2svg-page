@@ -24,11 +24,6 @@
  */
 
 //
-//  The default TeX packages to use
-//
-const PACKAGES = 'base, autoload, require, ams, newcommand';
-
-//
 //  Get the command-line arguments
 //
 var argv = require('yargs')
@@ -42,10 +37,6 @@ var argv = require('yargs')
         ex: {
             default: 8,
             describe: 'ex-size in pixels'
-        },
-        packages: {
-            default: PACKAGES,
-            describe: 'the packages to use, e.g. "base, ams"; use "*" to represent the default packages, e.g, "*, bbox"'
         },
         fontCache: {
             default: 'global',

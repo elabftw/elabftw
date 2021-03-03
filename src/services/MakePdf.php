@@ -26,13 +26,11 @@ use Mpdf\Mpdf;
 use Mpdf\SizeConverter;
 use function preg_match;
 use function preg_match_all;
-use function preg_replace;
 use Psr\Log\NullLogger;
-use function random_int;
 use function shell_exec;
 use function str_replace;
-use function strval;
 use Symfony\Component\HttpFoundation\Request;
+use function tempnam;
 use function unlink;
 
 /**
@@ -163,11 +161,13 @@ class MakePdf extends AbstractMake
     }
 
     /**
-     * Convert MathJax to SVG
+     * Convert Tex to SVG with Mathjax
      *
+     * @param Mpdf $mpdf
+     * @param string $content
      * @return string
      */
-    public function mathToSVG(Mpdf $mpdf, string $content): string
+    public function tex2svg(Mpdf $mpdf, string $content): string
     {
         // we use a custom tmp dir
         $tmpDir = dirname(__DIR__, 2) . '/cache/mathjax/';
@@ -176,13 +176,15 @@ class MakePdf extends AbstractMake
         }
 
         // temporary file to hold the content
-        $extension = '.html';
-        $filename = $tmpDir . strval(random_int(10000, 99999));
+        $filename = tempnam($tmpDir, '');
+        if (!$filename) {
+            throw new FilesystemErrorException("Could not create a temporary file in $tmpDir! Please check permissions on this folder.");
+        }
 
         // decode html entities, otherwise it crashes
         // compare to https://github.com/mathjax/MathJax-demos-node/issues/16
         $content = html_entity_decode($content, ENT_HTML5, 'UTF-8');
-        file_put_contents($filename . $extension, $content);
+        file_put_contents($filename, $content);
 
         // use tex2svg-page script located in src/node-apps
         // convert tex to svg with nodejs script
@@ -190,65 +192,43 @@ class MakePdf extends AbstractMake
         $currentDir = dirname(__DIR__);
         chdir(dirname(__DIR__, 2) . '/src/node-apps');
         // disable font cache so all paths are inside the svg and not linked
-        $html = shell_exec('./tex2svg-page --fontCache=none ' . $filename . $extension);
+        $html = shell_exec('./tex2svg-page --fontCache=none ' . $filename);
         chdir($currentDir);
-        //unlink($filename . $extension);
+        unlink($filename);
 
         // was there actually tex in the content?
         // if not we can skip the svg modifications and return the original content
-        //error_log('>>' . $html . '<<');
-        if ($html) {
-            // remove the mjx-assistive-mml stuff.
-            // Otherwise there are additional characters visible
-            // can be disabled, see http://docs.mathjax.org/en/latest/options/accessibility.html#assisitve-mml-extension-options
-            //$html = preg_replace('/<mjx-assistive-mml[^>*].*?<\/mjx-assistive-mml>/', '', $html);
-
-            // save html with converted tex to svg
-            file_put_contents($filename . '.mod' . $extension, $html);
-
-            // based on https://github.com/mpdf/mpdf-examples/blob/master/MathJaxProcess.php
-            // ˅˅˅˅˅˅˅˅˅˅
-            $sizeConverter = new SizeConverter($mpdf->dpi, $mpdf->default_font_size, $mpdf, new NullLogger());
-
-            /*
-            // without font cache we can disable this very bad preg_match preg_replace
-            preg_match('/<svg[^>]*>\s*(<defs.*?>.*?<\/defs>)\s*<\/svg>/', $html, $m);
-            $defs = $m[1];
-
-            $html = preg_replace('/<svg[^>]*>\s*<defs.*?<\/defs>\s*<\/svg>/', '', $html);
-            $html = preg_replace('/(<svg[^>]*>)/', '\\1' . $defs, $html);
-            */
-            // scale SVG size according to pdf + font settings
-            preg_match_all('/<svg([^>]*)>/', $html, $m);
-            foreach ($m as $attributes) {
-                foreach ($attributes as $attribute) {
-                    preg_match('/width="(.*?)"/', $attribute, $wr);
-                    preg_match('/height="(.*?)"/', $attribute, $hr);
-                    //var_dump($wr, $hr);
-                    if ($wr && $hr) {
-                        $w = $sizeConverter->convert($wr[1], 0, $mpdf->FontSize) * $mpdf->dpi / 25.4;
-                        $h = $sizeConverter->convert($hr[1], 0, $mpdf->FontSize) * $mpdf->dpi / 25.4;
-                        //var_dump($w, $h);
-                        $html = str_replace('width="' . $wr[1] . '"', 'width="' . $w . '"', $html);
-                        $html = str_replace('height="' . $hr[1] . '"', 'height="' . $h . '"', $html);
-                    }
-                }
-            }
-
-            // change stroke to black and fill to white for all SVGs
-            $html = str_replace('stroke="currentColor"', 'stroke="#FFF"', $html);
-            $html = str_replace('fill="currentColor"', 'fill="#000"', $html);
-
-            // ˄˄˄˄˄˄˄˄˄˄
-            // end copy
-
-            file_put_contents($filename . '.mod_final' . $extension, $html);
-
-            //error_log($html);
-            $content = $html;
+        if (!$html) {
+            return $content;
         }
 
-        return $content;
+        // based on https://github.com/mpdf/mpdf-examples/blob/master/MathJaxProcess.php
+        // ˅˅˅˅˅˅˅˅˅˅
+        $sizeConverter = new SizeConverter($mpdf->dpi, $mpdf->default_font_size, $mpdf, new NullLogger());
+
+        // scale SVG size according to pdf + font settings
+        preg_match_all('/<svg([^>]*)>/', $html, $m);
+        foreach ($m as $attributes) {
+            foreach ($attributes as $attribute) {
+                preg_match('/width="(.*?)"/', $attribute, $wr);
+                preg_match('/height="(.*?)"/', $attribute, $hr);
+                //var_dump($wr, $hr);
+                if ($wr && $hr) {
+                    $w = $sizeConverter->convert($wr[1], 0, $mpdf->FontSize) * $mpdf->dpi / 25.4;
+                    $h = $sizeConverter->convert($hr[1], 0, $mpdf->FontSize) * $mpdf->dpi / 25.4;
+                    //var_dump($w, $h);
+                    $html = str_replace('width="' . $wr[1] . '"', 'width="' . $w . '"', $html);
+                    $html = str_replace('height="' . $hr[1] . '"', 'height="' . $h . '"', $html);
+                }
+            }
+        }
+
+        // change stroke to black and fill to white for all SVGs
+        $html = str_replace('stroke="currentColor"', 'stroke="#FFF"', $html);
+        return str_replace('fill="currentColor"', 'fill="#000"', $html);
+
+        // ˄˄˄˄˄˄˄˄˄˄
+        // end
     }
 
     /**
@@ -263,8 +243,8 @@ class MakePdf extends AbstractMake
         $content = $this->getContent();
 
         // User preference: Render tex in PDF?
-        if ($this->Entity->Users->userData['pdf_tex'] === 1) {
-            $content = $this->mathToSVG($mpdf, $content);
+        if ($this->Entity->Users->userData['pdf_tex']) {
+            $content = $this->tex2svg($mpdf, $content);
         }
 
         // write content

@@ -84,8 +84,8 @@ class MakeMultiPdf extends AbstractMake
             $content = $CurrentEntity->getContent();
 
             // User preference: Render tex in PDF?
-            if ($this->Entity->Users->userData['pdf_tex'] === 1) {
-                $content = $CurrentEntity->mathToSVG($this->mpdf, $content);
+            if ($this->Entity->Users->userData['pdf_tex']) {
+                $content = $CurrentEntity->tex2svg($this->mpdf, $content);
             }
 
             // write content

@@ -1,10 +1,8 @@
 {
-  "name": "mathjax_to_mpdf",
-  "version": "0.0.1",
-  "description": "enable mathjax in mpdf",
-  "main": "index.js",
-  "author": "marcel",
-  "license": "MIT",
+  "name": "elabftw-tex2svg",
+  "description": "Helper tool to convert Tex to SVG with MathJax so Tex can be typeset with Mpdf",
+  "author": "Marcel Bolten",
+  "license": "AGPL-3.0",
   "dependencies": {
     "esm": "^3.2.25",
     "mathjax-full": "^3.1.2",

@@ -211,8 +211,7 @@ class Steps implements CrudInterface
         FROM ${entityType}
         INNER JOIN ${entityType}_steps
         ON ${entityType}.id = ${entityType}_steps.item_id
-        WHERE ${entityType}_steps.schedule_status=1";
-
+        WHERE ${entityType}_steps.schedule_status=1 AND experiments.userid=:userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);

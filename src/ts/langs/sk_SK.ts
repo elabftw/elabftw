@@ -18,6 +18,7 @@ const t = {
     "step-delete-warning": "Odstrániť tento krok?",
     "tag-delete-warning": "Odstrániť túto značku?",
     "upload-file-comment": "Komentár k súboru",
+    "template-title": "Template title",
   }
 };
 

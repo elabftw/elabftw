@@ -9,6 +9,8 @@ import { notif } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Template from './Template.class';
+import { Ajax } from './Ajax.class';
+import i18next from 'i18next';
 
 $(document).ready(function() {
   if (window.location.pathname !== '/ucp.php') {
@@ -20,10 +22,10 @@ $(document).ready(function() {
 
   // TEMPLATES listeners
   $(document).on('click', '.createNewTemplate', function() {
-    const name = prompt('Template title');
-    if (name) {
+    const title = prompt(i18next.t('template-title'));
+    if (title) {
       // no body on template creation
-      TemplateC.create(name);
+      TemplateC.create(title);
     }
   });
   // show the handles to reorder when the menu entry is clicked
@@ -63,6 +65,18 @@ $(document).ready(function() {
     const write = $(this).data('write');
     $('#canread_select option[value="' + read + '"]').prop('selected', true);
     $('#canwrite_select option[value="' + write + '"]').prop('selected', true);
+  });
+
+  // MAIN LISTENER
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // TOGGLE LOCK
+    if (el.matches('[data-action="lock"]')) {
+      // reload the page to change the icon and make the edit button disappear (#1897)
+      const id = el.dataset.id;
+      const AjaxC = new Ajax('experiments_templates', id);
+      AjaxC.post('lock').then(() => window.location.href = `?tab=3&templateid=${id}`);
+    }
   });
 
   // input to upload an elabftw.tpl file

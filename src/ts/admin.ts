@@ -152,21 +152,6 @@ $(document).ready(function() {
   });
   // END ITEMS TYPES
 
-  // COMMON TEMPLATE
-  $('#commonTplTemplate').closest('div').find('.button').on('click', function() {
-    const template = tinymce.get('commonTplTemplate').getContent();
-    $.post('app/controllers/Ajax.php', {
-      action: 'updateCommon',
-      what: 'template',
-      type: 'experiments_templates',
-      params: {
-        template: template,
-      },
-    }).done(function(json) {
-      notif(json);
-    });
-  });
-
   // randomize the input of the color picker so even if user doesn't change the color it's a different one!
   // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
   const colorInput = '#' + Math.floor(Math.random()*16777215).toString(16);

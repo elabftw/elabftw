@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Traits;
 
 use function dirname;
-use Elabftw\Elabftw\ReleaseCheck;
+use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\Config;
 use function is_readable;
@@ -79,8 +79,7 @@ trait TwigTrait
         $TwigEnvironment->addExtension(new \Twig\Extensions\I18nExtension());
 
         // add the version as a global var so we can have it for the ?v=x.x.x for js files
-        $ReleaseCheck = new ReleaseCheck();
-        $TwigEnvironment->addGlobal('v', $ReleaseCheck::INSTALLED_VERSION);
+        $TwigEnvironment->addGlobal('v', App::INSTALLED_VERSION);
 
         if ($config->configArr['debug']) {
             $TwigEnvironment->addExtension(new \Twig\Extension\DebugExtension());

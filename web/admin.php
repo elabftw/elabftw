@@ -20,7 +20,6 @@ use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Templates;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,13 +46,11 @@ try {
     $Tags = new Tags(new Experiments($App->Users));
     $TeamGroups = new TeamGroups($App->Users);
     $Teams = new Teams($App->Users);
-    $Templates = new Templates($App->Users);
 
     $itemsTypesArr = $ItemsTypes->readAll();
     $statusArr = $Status->read();
     $teamGroupsArr = $TeamGroups->read();
     $teamsArr = $Teams->readAll();
-    $commonTplBody = $Templates->readCommonBody();
     $allTeamUsersArr = $App->Users->readAllFromTeam();
     // only the unvalidated ones
     $unvalidatedUsersArr = array_filter($allTeamUsersArr, function ($u) {
@@ -86,7 +83,6 @@ try {
         'teamGroupsArr' => $teamGroupsArr,
         'visibilityArr' => $TeamGroups->getVisibilityList(),
         'teamsArr' => $teamsArr,
-        'commonTplBody' => $commonTplBody,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,
     );

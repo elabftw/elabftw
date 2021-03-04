@@ -32,6 +32,7 @@ class Experiments extends AbstractEntity implements CreatableInterface
     public function create(ParamsProcessor $params): int
     {
         $Templates = new Templates($this->Users);
+        $Team = new Team((int) $this->Users->userData['team']);
 
         $metadata = null;
         $tpl = $params->id;
@@ -39,14 +40,18 @@ class Experiments extends AbstractEntity implements CreatableInterface
         if ($tpl > 0) {
             $Templates->setId($tpl);
             $templateArr = $Templates->read();
+            $permissions = $Templates->getPermissions($templateArr);
+            if ($permissions['read'] === false) {
+                throw new IllegalActionException('User tried to access a template without read permissions');
+            }
             $metadata = $templateArr['metadata'];
-            $title = $templateArr['name'];
+            $title = $templateArr['title'];
             $body = $templateArr['body'];
             $canread = $templateArr['canread'];
             $canwrite = $templateArr['canwrite'];
         } else {
             $title = _('Untitled');
-            $body = $Templates->readCommonBody();
+            $body = $Team->getCommonTemplate();
             $canread = 'team';
             $canwrite = 'user';
             if ($this->Users->userData['default_read'] !== null) {
@@ -57,9 +62,7 @@ class Experiments extends AbstractEntity implements CreatableInterface
             }
         }
 
-
         // enforce the permissions if the admin has set them
-        $Team = new Team((int) $this->Users->userData['team']);
         $canread = $Team->getDoForceCanread() === 1 ? $Team->getForceCanread() : $canread;
         $canwrite = $Team->getDoForceCanwrite() === 1 ? $Team->getForceCanwrite() : $canwrite;
 

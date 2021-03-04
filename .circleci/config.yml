@@ -32,6 +32,8 @@ jobs:
         MYSQL_DATABASE: elabftw
         MYSQL_USER: phpunit
         MYSQL_PASSWORD: phpunit
+      # use mysql native password mechanism
+      command: --default-authentication-plugin=mysql_native_password
     steps:
       # Machine Setup
       #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each

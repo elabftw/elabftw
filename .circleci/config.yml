@@ -29,7 +29,7 @@ jobs:
         password: $DOCKERHUB_PASSWORD
       environment:
         MYSQL_ROOT_PASSWORD: phpunit
-        MYSQL_DATABASE: elabftw
+        MYSQL_DATABASE: phpunit
         MYSQL_USER: phpunit
         MYSQL_PASSWORD: phpunit
       # use mysql native password mechanism

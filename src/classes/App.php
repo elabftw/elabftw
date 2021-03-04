@@ -31,6 +31,8 @@ class App
     use UploadTrait;
     use TwigTrait;
 
+    public const INSTALLED_VERSION = '4.0.0-dev';
+
     public Request $Request;
 
     public SessionInterface $Session;
@@ -52,8 +54,6 @@ class App
     public array $warning = array();
 
     public array $teamConfigArr = array();
-
-    public const INSTALLED_VERSION = '4.0.0-dev';
 
     protected Db $Db;
 

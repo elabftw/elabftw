@@ -6,8 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-use function getenv;
-
 if (getenv('CIRCLE_BUILD_URL') || getenv('USER') === 'scrutinizer') {
     require_once 'tests/config-ci.php';
 } else {

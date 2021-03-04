@@ -53,6 +53,8 @@ class App
 
     public array $teamConfigArr = array();
 
+    public const INSTALLED_VERSION = '4.0.0-dev';
+
     protected Db $Db;
 
     public function __construct(Request $request, SessionInterface $session, Config $config, Logger $log, Csrf $csrf)

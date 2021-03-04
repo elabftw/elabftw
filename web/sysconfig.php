@@ -80,7 +80,6 @@ try {
         'langsArr' => $langsArr,
         'phpInfos' => $phpInfos,
         'privacyPolicyTemplate' => $privacyPolicyTemplate,
-        'ReleaseCheck' => new ReleaseCheck(),
         'Teams' => $Teams,
         'teamsArr' => $teamsArr,
         'teamsStats' => $teamsStats,

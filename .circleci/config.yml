@@ -4,7 +4,6 @@ version: 2.1
 # code coverage orb
 orbs:
   codecov: codecov/codecov@1.0.2
-  snyk: snyk/snyk@0.0.9
 jobs:
   build:
     working_directory: ~/elabftw/elabftw
@@ -100,8 +99,9 @@ jobs:
       - run:
           name: Run unit tests
           command: yarn run unit-ci
-      # disable this for now, not really useful with github vulns scan and makes the PR fail because of missing secret
-      #- snyk/scan
+      - run:
+          name: Repopulate the db for coverage
+          command: php bin/console dev:populate tests/populate-config.yml
       - run:
           name: Code coverage
           command: echo 'xdebug.mode=coverage' | sudo tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && ./vendor/bin/codecept run --skip api --skip acceptance --coverage --coverage-xml

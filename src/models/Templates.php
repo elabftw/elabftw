@@ -71,18 +71,18 @@ class Templates extends AbstractEntity implements CreatableInterface
     {
         $template = $this->read();
 
+        $date = Filter::kdate();
         $sql = 'INSERT INTO experiments_templates(team, title, date, body, userid, canread, canwrite)
             VALUES(:team, :title, :date, :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
-        $this->Db->execute($req, array(
-            'team' => $this->Users->userData['team'],
-            'title' => $template['title'],
-            'date' => Filter::kdate(),
-            'body' => $template['body'],
-            'userid' => $this->Users->userData['userid'],
-            'canread' => $template['canread'],
-            'canwrite' => $template['canwrite'],
-        ));
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':title', $template['title']);
+        $req->bindParam(':date', $date);
+        $req->bindParam(':body', $template['body']);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':canread', $template['canread']);
+        $req->bindParam(':canwrite', $template['canwrite']);
+        $req->execute();
         $newId = $this->Db->lastInsertId();
 
         // copy tags

@@ -440,6 +440,29 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
     }
 
     /**
+     * Transfer ownership of an entity to another user
+     *
+     * @param int $newUserId
+     */
+    public function updateOwnership(int $newUserId): void
+    {
+        $this->canOrExplode('write');
+
+        // check if the experiment is timestamped.
+        if ($this->entityData['locked'] === 1 && $this instanceof Experiments && $this->entityData['timestamped']) {
+            throw new ImproperActionException(_('You cannot unlock or edit in any way a timestamped experiment.'));
+        }
+
+        $sql = 'UPDATE ' . $this->type . ' SET userid = :new_userid WHERE id = :id';
+
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':new_userid', $newUserId, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        $this->Db->execute($req);
+    }
+
+    /**
      * Get a list of visibility/team groups to display
      *
      * @param string $rw read or write

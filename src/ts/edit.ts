@@ -221,6 +221,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // TRANSFER OWNERSHIP
+  $(document).on('change', '.updateOwner', function() {
+    const value = $(this).val();
+    $.post('app/controllers/EntityAjaxController.php', {
+      updateOwnership: true,
+      id: id,
+      type: type,
+      value: value,
+    }).done(function(json) {
+      notif(json);
+      if (json.res) {
+        window.location.reload();
+      }
+    });
+  });
+
   // STATUS SELECT
   $(document).on('change', '#category_select', function() {
     const categoryId = $(this).val();

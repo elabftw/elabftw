@@ -15,7 +15,7 @@ namespace Elabftw\Services;
 use DateTime;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
-use Elabftw\Elabftw\ReleaseCheck;
+use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
@@ -325,7 +325,7 @@ class MakeTimestamp extends AbstractMake
             // add user agent
             // http://developer.github.com/v3/#user-agent-required
             'headers' => array(
-                'User-Agent' => 'Elabftw/' . ReleaseCheck::INSTALLED_VERSION,
+                'User-Agent' => 'Elabftw/' . App::INSTALLED_VERSION,
                 'Content-Type' => 'application/timestamp-query',
                 'Content-Transfer-Encoding' => 'base64',
             ),

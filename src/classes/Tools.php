@@ -17,10 +17,12 @@ use function in_array;
 use InvalidArgumentException;
 use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment;
+use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
 use function mb_strlen;
 use function pathinfo;
 use Symfony\Component\HttpFoundation\Request;
+use function trim;
 
 /**
  * Toolbelt full of useful functions
@@ -76,8 +78,14 @@ class Tools
         $environment = Environment::createCommonMarkEnvironment();
         $environment->addExtension(new GithubFlavoredMarkdownExtension());
 
-        $converter = new CommonMarkConverter(array('allow_unsafe_links' => false, 'max_nesting_level' => 42), $environment);
-        return \trim($converter->convertToHtml($md), "\n");
+        try {
+            $converter = new CommonMarkConverter(array('allow_unsafe_links' => false, 'max_nesting_level' => 42), $environment);
+            return trim($converter->convertToHtml($md), "\n");
+        } catch (UnexpectedEncodingException $e) {
+            // fix for incorrect utf8 encoding, just return md and hope it's html
+            // so at least the thing is displayed instead of triggering a fatal error
+            return $md;
+        }
     }
 
     /**

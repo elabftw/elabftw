@@ -19,6 +19,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Revisions;
+use Elabftw\Models\Templates;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -35,6 +36,8 @@ $Response->prepare($Request);
 try {
     if ($Request->query->get('type') === 'experiments') {
         $Entity = new Experiments($App->Users);
+    } elseif ($Request->query->get('type') === 'experiments_templates') {
+        $Entity = new Templates($App->Users);
     } elseif ($Request->query->get('type') === 'items') {
         $Entity = new Database($App->Users);
     } else {

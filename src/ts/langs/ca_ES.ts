@@ -18,6 +18,7 @@ const t = {
     "step-delete-warning": "Voleu eliminar aquest pas?",
     "tag-delete-warning": "Vols suprimir aquesta etiqueta?",
     "upload-file-comment": "Comentari d’arxiu",
+    "template-title": "Template title",
   }
 };
 

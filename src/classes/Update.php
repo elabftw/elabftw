@@ -76,7 +76,6 @@ class Update
      */
     public function runUpdateScript(): void
     {
-        $this->addElabidToItems();
         $currentSchema = (int) $this->Config->configArr['schema'];
 
         // do nothing if we're up to date

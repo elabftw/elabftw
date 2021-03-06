@@ -45,7 +45,7 @@ services:
         networks:
             - elabftw-net
     mysql:
-        image: mysql:5.7
+        image: mysql:8.0
         container_name: mysqltmp
         # drop some capabilities
         cap_drop:

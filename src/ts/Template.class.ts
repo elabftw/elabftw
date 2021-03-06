@@ -18,13 +18,13 @@ export default class Template extends Crud {
     this.type = 'experiments_templates';
   }
 
-  create(name: string, body = ''): void {
+  create(title: string, body = ''): void {
     this.send({
       action: 'create',
       type: this.type,
       what: 'template',
       params: {
-        name: name,
+        name: title,
         template: body,
       },
     }).then((response) => {

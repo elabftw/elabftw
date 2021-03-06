@@ -31,75 +31,36 @@
     <div class='row mt-3'>
       <!-- NAME OF TPL AND OWNER -->
       <div class='col'>
-        <h4>{{ templateData.fullname|raw }} - {{ templateData.name|raw }}</h4>
+        <h4 class='d-inline'>
+          {{ templateData.fullname|raw }} - {{ templateData.title|raw }}
+        </h4>
+        <!-- LOCK -->
+        {% set lockIcon = 'fa-lock-open' %}
+        {% set alt = 'Lock/Unlock item'|trans %}
+        {% if templateData.locked %}
+            {% set lockIcon = 'fa-lock' %}
+            {% set alt = templateData.lockedwhen %}
+        {% endif %}
+        <a data-action='lock' data-id="{{ templateData.id }}" href='#' class='elab-tooltip'>
+          <span>{{ alt }}</span>
+          <i class='fas {{lockIcon}}'></i>
+        </a>
       </div>
     </div>
 
-    <div class='row'>
+    {% if templateData.locked %}
+      {% include('templates-view.html') %}
+    {% else %}
+      {% include('templates-edit.html') %}
+    {% endif %}
 
-      <div class='col'>
-        <!-- TAGS -->
-        <i class='fas fa-tags'></i>
-        <label>{{ 'Tags'|trans }}</label>
-        <div class='tags'>
-          <span id='tags_div_{{ templateData.id }}'>
-            <!--  build the tag array -->
-            {% if templateData.tags|length > 0 %}
-              {% set tagsIdArr = templateData.tags_id|split(',') %}
-              {% set tagsValueArr = templateData.tags|split('|') %}
-              {% for key, tag in tagsValueArr %}
-                {# the key allows to get the id stored in tagsIdArr #}
-                <a class='tag m-1 tag-delete tagUnreference clickable' data-id='{{ templateData.id }}' data-tagid='{{ tagsIdArr[key] }}'>
-                  {{ tag|raw }}
-                </a>
-              {% endfor %}
-            {% endif %}
-          </span>
-          <input type='text' style='width:auto' class='createTagInput ml-1' id='createTagInput_{{ templateData.id }}' data-id='{{ templateData.id }}' placeholder='{{ 'Add a tag'|trans }}' />
-        </div>
-      </div>
-
-      <!-- MORE OPTIONS DROPDOWN MENU (···) -->
-      <div class='col'>
-        <div class='dropdown'>
-          <a class='align-right clickable' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
-            <i class='fas fa-ellipsis-h fa-2x'></i>
-          </a>
-          <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
-            <!-- MANAGE PERMISSIONS -->
-            <a class='clickable dropdown-item modalToggle' data-modal='permModal' data-read='{{ templateData.canread }}' data-write='{{ templateData.canwrite }}'>
-              <i class='fas fa-share-alt fa-fw'></i> {{ 'Manage Permissions'|trans }}
-            </a>
-            <!-- DOWNLOAD -->
-            <a class='clickable dropdown-item saveToFile' data-name='{{ templateData.name }}' data-id='e{{ templateData.id }}'>
-              <i class='fas fa-download fa-fw'></i> {{ 'Download template'|trans }}
-            </a>
-            <!-- DESTROY -->
-            <div class='dropdown-divider'></div>
-            <a class='clickable dropdown-item destroyTemplate hover-danger' data-id='{{ templateData.id }}'>
-              <i class='fas fa-trash-alt fa-fw'></i> {{ 'Destroy template'|trans }}
-            </a>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <form action='app/controllers/UcpController.php' method='post'>
-      {{ App.Csrf.getHiddenInput|raw }}
-      <input type='hidden' name='tpl_form' />
-      <input type='hidden' name='tpl_id' value='{{ templateData.id }}' />
-      <label for='tplName'>{{ 'Name'|trans }}</label>
-      <input id='tplName' name='tpl_name' class='form-control' value='{{ templateData.name|raw }}' />
-      {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
-      <label for='e{{ templateData.id }}'>{{ 'Template content'|trans }}</label>
-      <textarea id='e{{ templateData.id }}' name='tpl_body' class='mceditable' style='height:500px;'>{{ templateData.body }}</textarea><br />
-      <div class='text-center'>
-        <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-      </div>
-    </form>
-    {{ include('steps-links-edit.html') }}
-    {{ include('json-editor.html') }}
+    <!-- REVISIONS -->
+    {% if revNum > 0 %}
+    <span class='align-right'><i class='fas fa-history mr-1'></i>
+        <a href='revisions.php?type=experiments_templates&item_id={{ templateData.id }}'>{{ revNum }}
+            {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
+    </span>
+    {% endif %}
   {% endif %}
   </div>
   <div id='info' data-page='template-edit' data-type='experiments_templates' data-id='{{ templateData.id }}'></div>

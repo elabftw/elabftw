@@ -2,7 +2,7 @@
 
 {% block body %}
 <!-- display current and latest version -->
-<p>{{ 'Installed version:'|trans }} <span id='currentVersion'>{{ constant('INSTALLED_VERSION', ReleaseCheck) }}</span>
+<p>{{ 'Installed version:'|trans }} <span id='currentVersion'>{{ v }}</span>
 <br>
 {{ 'Latest version:'|trans }} <span id='latestVersion'></span>
 

@@ -1320,10 +1320,10 @@
   dependencies:
     "@types/sizzle" "*"
 
-"@types/jqueryui@^1.12.14":
-  version "1.12.14"
-  resolved "https://registry.yarnpkg.com/@types/jqueryui/-/jqueryui-1.12.14.tgz#33559cd1024bfc56bc18aeca8c8939fbb48e3418"
-  integrity sha512-fR9PoOI0yauBS0sjGaU3ao0s2pJWjBi0yVYnPdYbllNoimaPUlHMOh0Ubq+hy8OB258hRSlK2hWCJk40kNhrZQ==
+"@types/jqueryui@^1.12.15":
+  version "1.12.15"
+  resolved "https://registry.yarnpkg.com/@types/jqueryui/-/jqueryui-1.12.15.tgz#401732371c6fcbace711b609590b9e343f8f6bab"
+  integrity sha512-993YPaPj06yrUB1GOLZukmryIbA+blkrUzF+TZfP0BkLFnz+JA6H1pde4FtxYpDilgt9o/iPYEpN2KT0MMTNfg==
   dependencies:
     "@types/jquery" "*"
 

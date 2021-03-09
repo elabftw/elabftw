@@ -76,7 +76,7 @@ module.exports = function(grunt) {
       },
       ove: {
         // copy open vector editor umd files
-        command: 'cp node_module/@deltablot/open-vector-editor-umd/* web/app/ove/'
+        command: 'cp node_modules/@deltablot/open-vector-editor-umd/* web/app/ove/'
         // download open-vector-editor from Node package manager, extract only umd files and cleanup
         //command: [
         //  'wget -q -O /tmp/OVE.tgz https://registry.npmjs.org/open-vector-editor/-/open-vector-editor-16.0.1.tgz',

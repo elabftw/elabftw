@@ -2113,7 +2113,7 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.1.0.tgz#30fa40c9e7fe07dbc895678cd287024dea241dd9"
   integrity sha512-1Yj8h9Q+QDF5FzhMs/c9+6UntbD5MkRfRwac8DoEm9ZfUBZ7tZ55YcGVAzEe4bXsdQHEk+s9S5wsOKVdZrw0tQ==
 
-bio-parsers@^7.0.5:
+bio-parsers@^7.0.6:
   version "7.0.6"
   resolved "https://registry.yarnpkg.com/bio-parsers/-/bio-parsers-7.0.6.tgz#42a99bc94d2bed21c812696df860fcbb8fc03780"
   integrity sha512-1tJCCKKPKd58pslezBq1AVfJOwZBVfI4FDyi5HXc5dQ6Fa2rNadRIx12G9LgIBTds36Ly/di9kNYyVZDGhWMfg==

@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "3dmol": "^1.4.0",
+    "@deltablot/open-vector-editor-umd": "^16.0.1",
     "@fancyapps/fancybox": "3.5.*",
     "@fortawesome/fontawesome-svg-core": "1.2.*",
     "@fortawesome/free-brands-svg-icons": "^5.12.0",

@@ -75,12 +75,14 @@ module.exports = function(grunt) {
         command: 'cp node_modules/tinymce/skins/ui/oxide/fonts/tinymce-mobile.woff web/app/css/tinymce/fonts/tinymce-mobile.woff'
       },
       ove: {
+        // copy open vector editor umd files
+        command: 'cp node_module/@deltablot/open-vector-editor-umd/* web/app/ove/'
         // download open-vector-editor from Node package manager, extract only umd files and cleanup
-        command: [
-          'wget -q -O /tmp/OVE.tgz https://registry.npmjs.org/open-vector-editor/-/open-vector-editor-16.0.1.tgz',
-          'tar -C web/app/ove/ -zxmf /tmp/OVE.tgz package/umd/ --strip-components 2 --overwrite',
-          'rm /tmp/OVE.tgz'
-        ].join('&&')
+        //command: [
+        //  'wget -q -O /tmp/OVE.tgz https://registry.npmjs.org/open-vector-editor/-/open-vector-editor-16.0.1.tgz',
+        //  'tar -C web/app/ove/ -zxmf /tmp/OVE.tgz package/umd/ --strip-components 2 --overwrite',
+        //  'rm /tmp/OVE.tgz'
+        //].join('&&')
       }
     }
   });

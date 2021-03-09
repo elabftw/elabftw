@@ -19,7 +19,7 @@
             {% if templatesArr|length > 0 %}
               {% for tpl in templatesArr %}
                 <a href='?create=true&tpl={{ tpl.id }}' class='dropdown-item'>
-                  {{ tpl.name|raw }}
+                  {{ tpl.title|raw }}
                 </a>
               {% endfor %}
             {% else %}

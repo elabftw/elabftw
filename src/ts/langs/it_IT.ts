@@ -4,8 +4,10 @@ const t = {
     "click-to-edit": "Clicca per modificare",
     "comment-add": "Aggiungi un commento",
     "dropzone-upload-area": "Trascina qui i file da allegare",
+    "editing-metadata": "Modifica dei metadati",
     "entity-default-title": "Senza titolo",
     "entity-delete-warning": "Quanto è stato selezionato (nonché i dati associati) sarà definitivamente cancellato. Il processo è irreversibile. Si è veramente sicuri?",
+    "extra-fields": "Campi extra",
     "filename": "Nome del file",
     "generic-delete-warning": "Cancellare questo?",
     "link-delete-warning": "Eliminare questo collegamento?",
@@ -16,6 +18,7 @@ const t = {
     "step-delete-warning": "Cancellare questo passaggio?",
     "tag-delete-warning": "Si vuol eliminare questo tag?",
     "upload-file-comment": "Commento sul file",
+    "template-title": "Template title",
   }
 };
 

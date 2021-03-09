@@ -112,10 +112,10 @@ try {
     if ($Request->request->has('tpl_form')) {
         $tab = '3';
 
-        $Templates = new Templates($App->Users);
-        $Templates->updateTpl(
-            (int) $Request->request->get('tpl_id'),
-            $Request->request->get('tpl_name'),
+        $Templates = new Templates($App->Users, (int) $Request->request->get('tpl_id'));
+        $Templates->update(
+            $Request->request->get('tpl_title'),
+            Filter::kdate(),
             $Request->request->get('tpl_body'),
         );
         $templateId = '&templateid=' . $Request->request->get('tpl_id');

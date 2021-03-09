@@ -2,7 +2,11 @@
 
 {% block body %}
 
+{% if Entity.type == 'experiments_templates' %}
+<a href='ucp.php?tab=3&templateid={{ Entity.id }}'>
+{% else %}
 <a href='{{ Entity.page }}.php?mode=view&id={{ Entity.id }}'>
+{% endif %}
     <i style='color:#29AEB9' class='fas fa-chevron-circle-left mr-1'></i>{{ 'Go back'|trans }}
 </a>
 {% for revision in revisionsArr %}

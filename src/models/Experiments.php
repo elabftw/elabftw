@@ -32,19 +32,26 @@ class Experiments extends AbstractEntity implements CreatableInterface
     public function create(ParamsProcessor $params): int
     {
         $Templates = new Templates($this->Users);
+        $Team = new Team((int) $this->Users->userData['team']);
 
+        $metadata = null;
         $tpl = $params->id;
         // do we want template ?
         if ($tpl > 0) {
             $Templates->setId($tpl);
-            $templatesArr = $Templates->read();
-            $title = $templatesArr['name'];
-            $body = $templatesArr['body'];
-            $canread = $templatesArr['canread'];
-            $canwrite = $templatesArr['canwrite'];
+            $templateArr = $Templates->read();
+            $permissions = $Templates->getPermissions($templateArr);
+            if ($permissions['read'] === false) {
+                throw new IllegalActionException('User tried to access a template without read permissions');
+            }
+            $metadata = $templateArr['metadata'];
+            $title = $templateArr['title'];
+            $body = $templateArr['body'];
+            $canread = $templateArr['canread'];
+            $canwrite = $templateArr['canwrite'];
         } else {
             $title = _('Untitled');
-            $body = $Templates->readCommonBody();
+            $body = $Team->getCommonTemplate();
             $canread = 'team';
             $canwrite = 'user';
             if ($this->Users->userData['default_read'] !== null) {
@@ -55,15 +62,13 @@ class Experiments extends AbstractEntity implements CreatableInterface
             }
         }
 
-
         // enforce the permissions if the admin has set them
-        $Team = new Team((int) $this->Users->userData['team']);
         $canread = $Team->getDoForceCanread() === 1 ? $Team->getForceCanread() : $canread;
         $canwrite = $Team->getDoForceCanwrite() === 1 ? $Team->getForceCanwrite() : $canwrite;
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid)
-            VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, NOW(), :userid)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, metadata, userid)
+            VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, NOW(), :metadata, :userid)';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req, array(
             'title' => $title,
@@ -73,6 +78,7 @@ class Experiments extends AbstractEntity implements CreatableInterface
             'elabid' => $this->generateElabid(),
             'canread' => $canread,
             'canwrite' => $canwrite,
+            'metadata' => $metadata,
             'userid' => $this->Users->userData['userid'],
         ));
         $newId = $this->Db->lastInsertId();
@@ -156,8 +162,8 @@ class Experiments extends AbstractEntity implements CreatableInterface
         // capital i looks good enough
         $title = $this->entityData['title'] . ' I';
 
-        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid)
-            VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, NOW(), :userid)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid, metadata)
+            VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, NOW(), :userid, :metadata)';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req, array(
             'title' => $title,
@@ -168,6 +174,7 @@ class Experiments extends AbstractEntity implements CreatableInterface
             'canread' => $this->entityData['canread'],
             'canwrite' => $this->entityData['canwrite'],
             'userid' => $this->Users->userData['userid'],
+            'metadata' => $this->entityData['metadata'],
         ));
         $newId = $this->Db->lastInsertId();
 

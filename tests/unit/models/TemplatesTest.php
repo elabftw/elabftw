@@ -45,20 +45,10 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($this->Templates->readForUser()));
     }
 
-    public function testReadCommonBody()
+    public function testUpdate()
     {
-        $this->Templates->Users->userData['use_markdown'] = 1;
-        $this->assertEquals('', $this->Templates->readCommonBody());
-    }
-
-    public function testUpdateCommon()
-    {
-        $this->Templates->updateCommon('Plop');
-    }
-
-    public function testUpdateTpl()
-    {
-        $this->Templates->updateTpl(1, 'my tpl', 'Plop');
+        $this->Templates->setId(1);
+        $this->Templates->update('my tpl', '20160729', 'Plop');
     }
 
     public function testDestroy()

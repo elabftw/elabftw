@@ -81,6 +81,9 @@ class MakeReport
             // get total number of experiments
             $Entity = new Experiments(new Users((int) $user['userid']));
 
+            // remove mfa column
+            unset($allUsers[$key]['mfa_secret']);
+
             $allUsers[$key]['team(s)'] = $teams;
             $allUsers[$key]['diskusage_in_bytes'] = $diskUsage;
             $allUsers[$key]['diskusage_formatted'] = Tools::formatBytes($diskUsage);

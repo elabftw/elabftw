@@ -15,6 +15,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
 use Exception;
@@ -47,6 +48,7 @@ try {
         if ($permissions['write'] === false) {
             throw new IllegalActionException('User tried to access a template without write permissions');
         }
+        $Revisions = new Revisions($Templates);
     }
 
     // TEAM GROUPS
@@ -59,10 +61,12 @@ try {
         'Entity' => $Templates,
         'apiKeysArr' => $apiKeysArr,
         'langsArr' => Tools::getLangsArr(),
+        'mode' => 'edit',
         'teamGroupsArr' => $teamGroupsArr,
         'templateData' => $templateData,
         'templatesArr' => $templatesArr,
         'visibilityArr' => $visibilityArr,
+        'revNum' => isset($Revisions) ? $Revisions->readCount() : 0,
     );
 } catch (ImproperActionException $e) {
     // show message to user

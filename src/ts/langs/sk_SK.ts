@@ -4,8 +4,10 @@ const t = {
     "click-to-edit": "Kliknite a upravte",
     "comment-add": "Pridať komentár",
     "dropzone-upload-area": "Tu vložte súbory, ktoré chcete priložiť",
+    "editing-metadata": "Úpravy metadát",
     "entity-default-title": "Bez mena",
     "entity-delete-warning": "Vybraté položky a všetky súvisiace údaje sa natrvalo odstránia. To nie je možné vrátiť späť. Si si istý?",
+    "extra-fields": "Polia navyše",
     "filename": "Názov súboru",
     "generic-delete-warning": "Odstrániť toto?",
     "link-delete-warning": "Odstrániť tento odkaz?",
@@ -16,6 +18,7 @@ const t = {
     "step-delete-warning": "Odstrániť tento krok?",
     "tag-delete-warning": "Odstrániť túto značku?",
     "upload-file-comment": "Komentár k súboru",
+    "template-title": "Template title",
   }
 };
 

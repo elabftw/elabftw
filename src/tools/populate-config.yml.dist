@@ -57,6 +57,13 @@ users:
     team: Alpha
     create_experiments: true
     create_templates: false
+    create_mfa_secret: false
+
+  - email: tutu@yopmail.com
+    firstname: Tutu
+    team: Alpha
+    create_experiments: true
+    create_templates: false
     create_mfa_secret: true
 
   - email: demo@elabftw.net

@@ -138,9 +138,10 @@ class Teams implements ReadableInterface, DestroyableInterface
         $name = Filter::sanitize($name);
 
         // add to the teams table
-        $sql = 'INSERT INTO teams (name, link_name, link_href) VALUES (:name, :link_name, :link_href)';
+        $sql = 'INSERT INTO teams (name, common_template, link_name, link_href) VALUES (:name, :common_template, :link_name, :link_href)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
+        $req->bindValue(':common_template', Templates::defaultBody);
         $req->bindValue(':link_name', 'Documentation');
         $req->bindValue(':link_href', 'https://doc.elabftw.net');
         $this->Db->execute($req);
@@ -164,10 +165,6 @@ class Teams implements ReadableInterface, DestroyableInterface
             ),
             $newId
         );
-
-        // create default experiment template
-        $Templates = new Templates($this->Users);
-        $Templates->createDefault($newId);
 
         return $newId;
     }

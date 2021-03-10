@@ -161,13 +161,13 @@ class Update
         if ($req->rowCount() === 0) {
             // First of all delete revisions that do not belong to any experiment
             $sql = 'DELETE FROM `experiments_revisions` WHERE `item_id` NOT IN (SELECT `id` FROM `experiments`)';
-            $this->DB->q($sql);
+            $this->Db->q($sql);
 
             // Now, add the constraints
             $sql = 'ALTER TABLE `experiments_revisions`
                 ADD CONSTRAINT `fk_experiments_revisions_experiments_id` FOREIGN KEY (`item_id`) REFERENCES `experiments`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
                 ADD CONSTRAINT `fk_experiments_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;';
-            $this->DB->q($sql);
+            $this->Db->q($sql);
         }
     }
 }

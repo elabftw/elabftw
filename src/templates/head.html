@@ -21,9 +21,11 @@
   <link rel='apple-touch-icon-precomposed' href='app/img/apple-touch-icon-precomposed.png'>
   <title>{{ block('title') }} - eLabFTW</title>
 
-  <!-- load open vector editor -->
-  <link rel='stylesheet' type='text/css' href='app/ove/main.css?v={{ v }}'>
-  <script defer src='app/ove/open-vector-editor.min.js?v={{ v }}'></script>
+  {% if App.Users.userData.use_ove %}
+      <!-- load open vector editor -->
+      <link rel='stylesheet' type='text/css' href='app/ove/main.css?v={{ v }}'>
+      <script defer src='app/ove/open-vector-editor.min.js?v={{ v }}'></script>
+  {% endif %}
 
   <!-- see Gruntfile.js and builder.js to see what gets inside these files -->
   <!-- CSS -->

@@ -63,6 +63,8 @@ class UserPreferences implements MapInterface
 
     private int $useMarkdown = 0;
 
+    private int $useOve = 1;
+
     private int $incFilesPdf = 1;
 
     private int $chemEditor = 0;
@@ -106,6 +108,7 @@ class UserPreferences implements MapInterface
             pdfa = :new_pdfa,
             pdf_format = :new_pdf_format,
             use_markdown = :new_use_markdown,
+            use_ove = :new_use_ove,
             inc_files_pdf = :new_inc_files_pdf
             WHERE userid = :userid;';
         $req = $this->Db->prepare($sql);
@@ -130,6 +133,7 @@ class UserPreferences implements MapInterface
         $req->bindParam(':new_pdfa', $this->pdfa);
         $req->bindParam(':new_pdf_format', $this->pdfFormat);
         $req->bindParam(':new_use_markdown', $this->useMarkdown);
+        $req->bindParam(':new_use_ove', $this->useOve);
         $req->bindParam(':new_inc_files_pdf', $this->incFilesPdf);
         $req->bindParam(':userid', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
@@ -207,6 +211,11 @@ class UserPreferences implements MapInterface
         $this->useMarkdown = Filter::toBinary($setting);
     }
 
+    final public function setUseOve(string $setting): void
+    {
+        $this->useOve = Filter::toBinary($setting);
+    }
+
     final public function setIncFilesPdf(string $setting): void
     {
         $this->incFilesPdf = Filter::toBinary($setting);
@@ -264,6 +273,7 @@ class UserPreferences implements MapInterface
         $this->setPdfa($source['pdfa'] ?? '0');
         $this->setPdfFormat($source['pdf_format'] ?? $this->pdfFormat);
         $this->setUseMarkdown($source['use_markdown'] ?? '0');
+        $this->setUseOve($source['use_ove'] ?? '0');
         $this->setIncFilesPdf($source['inc_files_pdf'] ?? '0');
         $this->setChemEditor($source['chem_editor'] ?? '0');
         $this->setJsonEditor($source['json_editor'] ?? '0');
@@ -292,6 +302,7 @@ class UserPreferences implements MapInterface
             pdfa,
             pdf_format,
             use_markdown,
+            use_ove,
             inc_files_pdf,
             chem_editor,
             json_editor,

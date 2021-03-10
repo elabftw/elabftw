@@ -152,7 +152,7 @@ class Update
      */
     private function fixExperimentsRevisions(): void
     {
-        $sql = 'SELECT * FROM information_schema.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME=":name1" OR CONSTRAINT_NAME=":name2"';
+        $sql = 'SELECT * FROM information_schema.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME = :name1 OR CONSTRAINT_NAME= :name2';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':name1', 'fk_experiments_revisions_experiments_id');
         $req->bindValue(':name2', 'fk_experiments_revisions_users_userid');

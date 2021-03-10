@@ -154,8 +154,8 @@ class Update
     {
         $sql = 'SELECT * FROM information_schema.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME=":name1" OR CONSTRAINT_NAME=":name2"';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':name1', 'fk_experiments_revisions_experiments_id');
-        $req->bindParam(':name2', 'fk_experiments_revisions_users_userid');
+        $req->bindValue(':name1', 'fk_experiments_revisions_experiments_id');
+        $req->bindValue(':name2', 'fk_experiments_revisions_users_userid');
         $req->execute();
 
         if ($req->rowCount() === 0) {

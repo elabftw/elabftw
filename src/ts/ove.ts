@@ -25,11 +25,7 @@ export function displayPlasmidViewer(): void {
     // helper function to convert Blob to File
     function blobToFile(theBlob: Blob, fileName: string): File {
       //A Blob() is almost a File() - it's just missing the two properties below which we will add
-      const b: any = theBlob;
-      b.lastModified = new Date();
-      b.name = fileName;
-
-      return b as File;
+      return new File([theBlob], fileName, { lastModified: new Date().getTime(), type: theBlob.type });
     }
 
     function parseFile(fileContent): void {

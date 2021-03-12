@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use function array_push;
 use function dirname;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -23,6 +24,9 @@ use Mpdf\Mpdf;
 use function preg_match;
 use function str_replace;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
+use function unlink;
 
 /**
  * Create a pdf from an Entity
@@ -57,6 +61,10 @@ class MakePdf extends AbstractMake
         // see https://github.com/baselbers/mpdf/commit
         // 5cbaff4303604247f698afc6b13a51987a58f5bc#commitcomment-23217652
         error_reporting(E_ERROR);
+
+        // WIP
+        // ToDo: implemented user setting 'append_pdfs'
+        $this->Entity->Users->userData['append_pdfs'] = 1;
     }
 
     /**
@@ -67,6 +75,53 @@ class MakePdf extends AbstractMake
     public function outputToFile(): void
     {
         $this->generate()->Output($this->filePath, 'F');
+
+        if (!$this->Entity->Users->userData['append_pdfs']) {
+            return;
+        }
+
+        $listOfPdfs = $this->getListOfPdfs();
+        if (count($listOfPdfs) === 0) {
+            // nothing to append
+            return;
+        }
+
+        // new tmp file that also holds appended PDFs
+        $outputFileName = $this->getTmpPath() . $this->getUniqueString();
+
+        // run GhostScript to append PDFs
+        $process = new Process(
+            array_merge(
+                array(
+                    'gs',
+                    '-dBATCH',
+                    '-dNOPAUSE',
+                    '-sDEVICE=pdfwrite',
+                    '-dAutoRotatePages=/None',
+                    '-dAutoFilterColorImages=false',
+                    '-dAutoFilterGrayImages=false',
+                    '-dColorImageFilter=/FlateEncode',
+                    '-dGrayImageFilter=/FlateEncode',
+                    '-dDownsampleMonoImages=false',
+                    '-dDownsampleGrayImages=false',
+                    '-sOutputFile=' . $outputFileName,
+                    $this->filePath,
+                ),
+                $listOfPdfs
+            ),
+            // set working directory for process
+            $this->getTmpPath()
+        );
+        $process->run();
+
+        // delete first tmp file
+        unlink($this->filePath);
+        // point to new tmp file with appended PDFs
+        $this->filePath = $outputFileName;
+
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
     }
 
     /**
@@ -94,7 +149,14 @@ class MakePdf extends AbstractMake
      */
     public function getPdf(): string
     {
-        return $this->generate()->Output('', 'S');
+        if (!$this->Entity->Users->userData['append_pdfs']) {
+            return $this->generate()->Output('', 'S');
+        }
+
+        $this->outputToFile();
+        $content = file_get_contents($this->filePath);
+        unlink($this->filePath);
+        return $content;
     }
 
     /**
@@ -118,7 +180,7 @@ class MakePdf extends AbstractMake
         $format = $this->Entity->Users->userData['pdf_format'];
 
         // we use a custom tmp dir, not the same as Twig because its content gets deleted after pdf is generated
-        $tmpDir = \dirname(__DIR__, 2) . '/cache/mpdf/';
+        $tmpDir = dirname(__DIR__, 2) . '/cache/mpdf/';
         if (!is_dir($tmpDir) && !mkdir($tmpDir, 0700, true) && !is_dir($tmpDir)) {
             throw new FilesystemErrorException("Could not create the $tmpDir directory! Please check permissions on this folder.");
         }
@@ -147,6 +209,26 @@ class MakePdf extends AbstractMake
         }
 
         return $mpdf;
+    }
+
+    /**
+     * Get a list of all PDFs that are attached to an entity
+     *
+     * @return array
+     */
+    private function getListOfPdfs(): array
+    {
+        $uploadsArr = $this->Entity->Uploads->readAll();
+        $listOfPdfs = array();
+        if (count($uploadsArr) > 0) {
+            foreach ($uploadsArr as $upload) {
+                $filePath = dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
+                if (file_exists($filePath) && preg_match('/(pdf)$/i', Tools::getExt($upload['real_name']))) {
+                    array_push($listOfPdfs, $filePath);
+                }
+            }
+        }
+        return $listOfPdfs;
     }
 
     /**

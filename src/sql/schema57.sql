@@ -1,5 +1,7 @@
 -- Schema 57
+SET AUTOCOMMIT=0;
 START TRANSACTION;
+
     ALTER TABLE `users` ADD `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it';
     ALTER TABLE `users` CHANGE `password` `password` VARCHAR(255) NULL DEFAULT NULL;
     ALTER TABLE `users` CHANGE `salt` `salt` VARCHAR(255) NULL DEFAULT NULL;
@@ -47,12 +49,10 @@ START TRANSACTION;
     ALTER TABLE `experiments_templates_revisions`
         ADD CONSTRAINT `fk_experiments_templates_revisions_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
         ADD CONSTRAINT `fk_experiments_templates_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-    ALTER TABLE `users2teams` ADD `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-    ALTER TABLE `users2teams` ADD PRIMARY KEY (`id`);
-    ALTER TABLE `users2team_groups` ADD `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-    ALTER TABLE `users2team_groups` ADD PRIMARY KEY (`id`);
-    ALTER TABLE `tags2entity` ADD `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-    ALTER TABLE `tags2entity` ADD PRIMARY KEY (`id`);
+    ALTER TABLE `users2teams` ADD `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`id`);
+    ALTER TABLE `users2team_groups` ADD `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`id`);
+    ALTER TABLE `tags2entity` ADD `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`id`);
 
     UPDATE `config` SET `conf_value` = 57 WHERE `conf_name` = 'schema';
 COMMIT;
+SET AUTOCOMMIT=1;

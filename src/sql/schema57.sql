@@ -1,5 +1,4 @@
 -- Schema 57
-SET AUTOCOMMIT=0;
 START TRANSACTION;
 
     ALTER TABLE `users` ADD `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it';
@@ -55,4 +54,3 @@ START TRANSACTION;
 
     UPDATE `config` SET `conf_value` = 57 WHERE `conf_name` = 'schema';
 COMMIT;
-SET AUTOCOMMIT=1;

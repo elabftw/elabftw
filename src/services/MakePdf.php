@@ -28,6 +28,7 @@ use function preg_match_all;
 use Psr\Log\NullLogger;
 use function str_replace;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use function tempnam;
 use function unlink;
@@ -183,15 +184,23 @@ class MakePdf extends AbstractMake
         $content = html_entity_decode($content, ENT_HTML5, 'UTF-8');
         file_put_contents($filename, $content);
 
+        // apsolute path to tex2svg app
+        $appDir = dirname(__DIR__, 2) . '/src/node-apps';
+        
         // use tex2svg-page script located in src/node-apps
         // convert tex to svg with nodejs script
         // returns nothing if there is no tex
-        $process = new Process(array(
-            dirname(__DIR__, 2) . '/src/node-apps/tex2svg-page',
-            // disable font cache so all paths are inside the svg and not linked
-            '--fontCache=none',
-            $filename,
-        ));
+        $process = new Process(
+            array(
+                $appDir . '/tex2svg-page',
+                // disable font cache so all paths are inside the svg and not linked
+                '--fontCache=none',
+                $filename,
+            ),
+            // set working directory for process
+            // helps node to find dependencies in /src/node-apps
+            $appDir
+        );
         $process->run();
 
         if (!$process->isSuccessful()) {

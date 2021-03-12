@@ -73,6 +73,10 @@ module.exports = function(grunt) {
       tinymce: {
         // copy the mobile font file
         command: 'cp node_modules/tinymce/skins/ui/oxide/fonts/tinymce-mobile.woff web/app/css/tinymce/fonts/tinymce-mobile.woff'
+      },
+      tex2svg: {
+        // install tex2svg dependencies in src/node-apps
+        command: 'cd src/node-apps/ && yarn install --pure-lockfile'
       }
     }
   });
@@ -84,8 +88,9 @@ module.exports = function(grunt) {
 
   // before minifying js it is preferable to do 'yarn install' to update the dependencies
   grunt.registerTask('yarn', 'shell:yarninstall');
-  grunt.registerTask('default', ['yarn', 'shell:tsc', 'uglify', 'cssmin', 'tinymce']);
+  grunt.registerTask('default', ['yarn', 'shell:tex2svg', 'shell:tsc', 'uglify', 'cssmin', 'tinymce']);
   grunt.registerTask('css', 'cssmin');
   grunt.registerTask('tinymce', 'shell:tinymce');
   grunt.registerTask('ts', ['shell:tsc']);
+  grunt.registerTask('tex2svg', ['shell:tex2svg']);
 };

@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use function chdir;
 use function dirname;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -27,7 +26,6 @@ use Mpdf\SizeConverter;
 use function preg_match;
 use function preg_match_all;
 use Psr\Log\NullLogger;
-use function shell_exec;
 use function str_replace;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Process\Process;
@@ -188,12 +186,12 @@ class MakePdf extends AbstractMake
         // use tex2svg-page script located in src/node-apps
         // convert tex to svg with nodejs script
         // returns nothing if there is no tex
-        $process = new Process([
+        $process = new Process(array(
             dirname(__DIR__, 2) . '/src/node-apps/tex2svg-page',
             // disable font cache so all paths are inside the svg and not linked
             '--fontCache=none',
-            $filename
-        ]);
+            $filename,
+        ));
         $process->run();
 
         if (!$process->isSuccessful()) {

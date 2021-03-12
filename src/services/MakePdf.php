@@ -96,6 +96,8 @@ class MakePdf extends AbstractMake
                     'gs',
                     '-dBATCH',
                     '-dNOPAUSE',
+                    //'-dPDFA=1', $this->Entity->Users->userData['pdfa']
+                    //https://stackoverflow.com/questions/1659147/how-to-use-ghostscript-to-convert-pdf-to-pdf-a-or-pdf-x
                     '-sDEVICE=pdfwrite',
                     '-dAutoRotatePages=/None',
                     '-dAutoFilterColorImages=false',

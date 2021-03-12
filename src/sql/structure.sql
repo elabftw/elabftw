@@ -28,13 +28,14 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `api_keys` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `hash` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `can_write` tinyint(1) NOT NULL DEFAULT 0,
   `userid` int(10) UNSIGNED NOT NULL,
-  `team` int(10) UNSIGNED NOT NULL
+  `team` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -52,9 +53,10 @@ CREATE TABLE `api_keys` (
 --
 
 CREATE TABLE `banned_users` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `fingerprint` char(32) NOT NULL,
-  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -69,7 +71,8 @@ CREATE TABLE `banned_users` (
 
 CREATE TABLE `config` (
   `conf_name` varchar(255) NOT NULL,
-  `conf_value` text
+  `conf_value` text,
+  PRIMARY KEY (`conf_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -85,7 +88,7 @@ CREATE TABLE `config` (
 --
 
 CREATE TABLE `experiments` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `date` int(10) UNSIGNED NOT NULL,
   `body` mediumtext,
@@ -103,7 +106,8 @@ CREATE TABLE `experiments` (
   `canwrite` varchar(255) NOT NULL DEFAULT 'user',
   `datetime` timestamp NULL DEFAULT NULL,
   `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `metadata` json NULL DEFAULT NULL
+  `metadata` json NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -119,11 +123,12 @@ CREATE TABLE `experiments` (
 --
 
 CREATE TABLE `experiments_comments` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `datetime` datetime NOT NULL,
   `item_id` int(10) UNSIGNED NOT NULL,
   `comment` text NOT NULL,
-  `userid` int(10) UNSIGNED NOT NULL
+  `userid` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -141,9 +146,10 @@ CREATE TABLE `experiments_comments` (
 --
 
 CREATE TABLE `experiments_links` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `item_id` int(10) UNSIGNED NOT NULL,
-  `link_id` int(10) UNSIGNED NOT NULL
+  `link_id` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -161,12 +167,13 @@ CREATE TABLE `experiments_links` (
 --
 
 CREATE TABLE `experiments_revisions` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `item_id` int(10) UNSIGNED NOT NULL,
   `body` mediumtext NOT NULL,
   `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(10) UNSIGNED NOT NULL,
-  `metadata` json NULL DEFAULT NULL
+  `metadata` json NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -184,12 +191,13 @@ CREATE TABLE `experiments_revisions` (
 --
 
 CREATE TABLE `experiments_steps` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `item_id` int(10) UNSIGNED NOT NULL,
   `body` text NOT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `finished` tinyint(1) NOT NULL DEFAULT '0',
-  `finished_time` datetime DEFAULT NULL
+  `finished_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -205,7 +213,7 @@ CREATE TABLE `experiments_steps` (
 --
 
 CREATE TABLE `experiments_templates` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED DEFAULT NULL,
   `body` text,
   `title` varchar(255) NOT NULL,
@@ -217,7 +225,8 @@ CREATE TABLE `experiments_templates` (
   `canread` varchar(255) NOT NULL,
   `canwrite` varchar(255) NOT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
-  `metadata` json NULL DEFAULT NULL
+  `metadata` json NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -233,11 +242,12 @@ CREATE TABLE `experiments_templates` (
 --
 
 CREATE TABLE `experiments_templates_revisions` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `item_id` int(10) UNSIGNED NOT NULL,
   `body` mediumtext NOT NULL,
   `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `userid` int(10) UNSIGNED NOT NULL
+  `userid` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
 --
@@ -255,11 +265,12 @@ CREATE TABLE `experiments_templates_revisions` (
 --
 
 CREATE TABLE `groups` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `is_sysadmin` tinyint(1) NOT NULL,
   `is_admin` text NOT NULL,
-  `can_lock` text NOT NULL
+  `can_lock` text NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -283,7 +294,7 @@ INSERT INTO `groups` (`id`, `name`, `is_sysadmin`, `is_admin`, `can_lock`) VALUE
 --
 
 CREATE TABLE `idps` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `entityid` varchar(255) NOT NULL,
   `sso_url` varchar(255) NOT NULL,
@@ -291,7 +302,8 @@ CREATE TABLE `idps` (
   `slo_url` varchar(255) NOT NULL,
   `slo_binding` varchar(255) NOT NULL,
   `x509` text NOT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT '0'
+  `active` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -305,7 +317,7 @@ CREATE TABLE `idps` (
 --
 
 CREATE TABLE `items` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) DEFAULT NULL,
   `date` int(10) UNSIGNED NOT NULL,
@@ -321,7 +333,8 @@ CREATE TABLE `items` (
   `canwrite` varchar(255) NOT NULL DEFAULT 'team',
   `available` tinyint(1) NOT NULL DEFAULT '1',
   `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `metadata` json NULL DEFAULT NULL
+  `metadata` json NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -337,11 +350,12 @@ CREATE TABLE `items` (
 --
 
 CREATE TABLE `items_comments` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `datetime` datetime NOT NULL,
   `item_id` int(10) UNSIGNED NOT NULL,
   `comment` text NOT NULL,
-  `userid` int(10) UNSIGNED NOT NULL
+  `userid` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -359,11 +373,12 @@ CREATE TABLE `items_comments` (
 --
 
 CREATE TABLE `items_revisions` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `item_id` int(10) UNSIGNED NOT NULL,
   `body` mediumtext NOT NULL,
   `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `userid` int(10) UNSIGNED NOT NULL
+  `userid` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -377,7 +392,7 @@ CREATE TABLE `items_revisions` (
 --
 
 CREATE TABLE `items_types` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
   `name` text NOT NULL,
   `color` varchar(6) DEFAULT '000000',
@@ -386,7 +401,8 @@ CREATE TABLE `items_types` (
   `bookable` tinyint(1) DEFAULT '0',
   `canread` varchar(255) NOT NULL DEFAULT 'team',
   `canwrite` varchar(255) NOT NULL DEFAULT 'team',
-  `metadata` json NULL DEFAULT NULL
+  `metadata` json NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -398,17 +414,30 @@ CREATE TABLE `items_types` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `pin2users`
+--
+
+CREATE TABLE `pin2users` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `users_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  `type` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+--
 -- Table structure for table `status`
 --
 
 CREATE TABLE `status` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
   `name` text NOT NULL,
   `color` varchar(6) NOT NULL,
   `is_timestampable` tinyint(1) NOT NULL DEFAULT '1',
   `is_default` tinyint(1) DEFAULT NULL,
-  `ordering` int(10) UNSIGNED DEFAULT NULL
+  `ordering` int(10) UNSIGNED DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -424,9 +453,10 @@ CREATE TABLE `status` (
 --
 
 CREATE TABLE `tags` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
-  `tag` varchar(255) NOT NULL
+  `tag` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -442,9 +472,11 @@ CREATE TABLE `tags` (
 --
 
 CREATE TABLE `tags2entity` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `item_id` int(10) UNSIGNED NOT NULL,
   `tag_id` int(10) UNSIGNED NOT NULL,
-  `item_type` varchar(255) NOT NULL
+  `item_type` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -460,7 +492,7 @@ CREATE TABLE `tags2entity` (
 --
 
 CREATE TABLE `teams` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `common_template` text,
   `deletable_xp` tinyint(1) NOT NULL DEFAULT 1,
@@ -478,7 +510,8 @@ CREATE TABLE `teams` (
   `force_canwrite` varchar(255) NOT NULL DEFAULT 'user',
   `do_force_canread` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `do_force_canwrite` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
-  `visible` tinyint(1) UNSIGNED NOT NULL DEFAULT 1
+  `visible` tinyint(1) UNSIGNED NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -492,14 +525,15 @@ CREATE TABLE `teams` (
 --
 
 CREATE TABLE `team_events` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
   `item` int(10) UNSIGNED NOT NULL,
   `start` varchar(255) NOT NULL,
   `end` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
-  `experiment` int(10) UNSIGNED DEFAULT NULL
+  `experiment` int(10) UNSIGNED DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -517,9 +551,10 @@ CREATE TABLE `team_events` (
 --
 
 CREATE TABLE `team_groups` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `team` int(10) UNSIGNED NOT NULL
+  `team` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -535,11 +570,12 @@ CREATE TABLE `team_groups` (
 --
 
 CREATE TABLE `todolist` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `body` text NOT NULL,
   `creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
-  `userid` int(10) UNSIGNED NOT NULL
+  `userid` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -555,7 +591,7 @@ CREATE TABLE `todolist` (
 --
 
 CREATE TABLE `uploads` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `real_name` text NOT NULL,
   `long_name` text NOT NULL,
   `comment` text NOT NULL,
@@ -564,7 +600,8 @@ CREATE TABLE `uploads` (
   `type` varchar(255) NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `hash` varchar(128) DEFAULT NULL,
-  `hash_algorithm` varchar(10) DEFAULT NULL
+  `hash_algorithm` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -578,7 +615,7 @@ CREATE TABLE `uploads` (
 --
 
 CREATE TABLE `users` (
-  `userid` int(10) UNSIGNED NOT NULL,
+  `userid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `salt` varchar(255) NULL DEFAULT NULL,
   `password` varchar(255) NULL DEFAULT NULL,
   `password_hash` varchar(255) NULL DEFAULT NULL,
@@ -618,7 +655,8 @@ CREATE TABLE `users` (
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
   `display_size` varchar(2) NOT NULL DEFAULT 'lg',
   `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it',
-  `last_login` DATETIME NULL DEFAULT NULL
+  `last_login` DATETIME NULL DEFAULT NULL,
+  PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -634,10 +672,11 @@ CREATE TABLE `users` (
 --
 
 CREATE TABLE `users2team_groups` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `userid` int(10) UNSIGNED NOT NULL,
-  `groupid` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
+  `groupid` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+);
 --
 -- RELATIONSHIPS FOR TABLE `users2team_groups`:
 --   `groupid`
@@ -645,6 +684,13 @@ CREATE TABLE `users2team_groups` (
 --   `userid`
 --       `users` -> `userid`
 --
+
+CREATE TABLE `users2teams` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `users_id` int(10) UNSIGNED NOT NULL,
+  `teams_id` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+);
 
 --
 -- Indexes for dumped tables
@@ -654,33 +700,18 @@ CREATE TABLE `users2team_groups` (
 -- Indexes for table `api_keys`
 --
 ALTER TABLE `api_keys`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_api_keys_users_id` (`userid`);
-
---
--- Indexes for table `banned_users`
---
-ALTER TABLE `banned_users`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `config`
---
-ALTER TABLE `config`
-  ADD PRIMARY KEY (`conf_name`);
 
 --
 -- Indexes for table `experiments`
 --
 ALTER TABLE `experiments`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_experiments_users_userid` (`userid`);
 
 --
 -- Indexes for table `experiments_comments`
 --
 ALTER TABLE `experiments_comments`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_experiments_comments_experiments_id` (`item_id`),
   ADD KEY `fk_experiments_comments_users_userid` (`userid`);
 
@@ -688,107 +719,56 @@ ALTER TABLE `experiments_comments`
 -- Indexes for table `experiments_links`
 --
 ALTER TABLE `experiments_links`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_experiments_links_experiments_id` (`item_id`),
   ADD KEY `fk_experiments_links_items_id` (`link_id`);
-
---
--- Indexes for table `experiments_revisions`
---
-ALTER TABLE `experiments_revisions`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `experiments_steps`
 --
 ALTER TABLE `experiments_steps`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_experiments_steps_experiments_id` (`item_id`);
 
 --
 -- Indexes for table `experiments_templates`
 --
 ALTER TABLE `experiments_templates`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_experiments_templates_teams_id` (`team`);
-
---
--- Indexes for table `experiments_templates_revisions`
---
-ALTER TABLE `experiments_templates_revisions`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `groups`
---
-ALTER TABLE `groups`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `idps`
---
-ALTER TABLE `idps`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `items`
 --
 ALTER TABLE `items`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_items_teams_id` (`team`);
 
 --
 -- Indexes for table `items_comments`
 --
 ALTER TABLE `items_comments`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_items_comments_items_id` (`item_id`),
   ADD KEY `fk_items_comments_users_userid` (`userid`);
-
---
--- Indexes for table `items_revisions`
---
-ALTER TABLE `items_revisions`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `items_types`
 --
 ALTER TABLE `items_types`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_items_types_teams_id` (`team`);
 
 --
 -- Indexes for table `status`
 --
 ALTER TABLE `status`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_status_teams_team_id` (`team`);
 
 --
 -- Indexes for table `tags`
 --
 ALTER TABLE `tags`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_tags_teams_id` (`team`);
-
---
--- Indexes for table `tags2entity`
---
--- ALTER TABLE `tags2entity`
--- ADD KEY `fk_tags2entity_tags_id` (`tag_id`);
-
---
--- Indexes for table `teams`
---
-ALTER TABLE `teams`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `team_events`
 --
 ALTER TABLE `team_events`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_team_events_teams_id` (`team`),
   ADD KEY `fk_team_events_users_userid` (`userid`);
 
@@ -796,176 +776,13 @@ ALTER TABLE `team_events`
 -- Indexes for table `team_groups`
 --
 ALTER TABLE `team_groups`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_team_groups_teams_id` (`team`);
 
 --
 -- Indexes for table `todolist`
 --
 ALTER TABLE `todolist`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_todolist_users_userid` (`userid`);
-
---
--- Indexes for table `uploads`
---
-ALTER TABLE `uploads`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`userid`);
-
---
--- Indexes for table `users2team_groups`
---
--- ALTER TABLE `users2team_groups`
-  -- ADD KEY `fk_users2team_groups_users_userid` (`userid`),
-  -- ADD KEY `fk_users2team_groups_team_groups_id` (`groupid`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `api_keys`
---
-ALTER TABLE `api_keys`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `banned_users`
---
-ALTER TABLE `banned_users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `experiments`
---
-ALTER TABLE `experiments`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `experiments_comments`
---
-ALTER TABLE `experiments_comments`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `experiments_links`
---
-ALTER TABLE `experiments_links`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `experiments_revisions`
---
-ALTER TABLE `experiments_revisions`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `experiments_steps`
---
-ALTER TABLE `experiments_steps`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `experiments_templates`
---
-ALTER TABLE `experiments_templates`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `experiments_templates_revisions`
---
-ALTER TABLE `experiments_templates_revisions`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `groups`
---
-ALTER TABLE `groups`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT for table `idps`
---
-ALTER TABLE `idps`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `items`
---
-ALTER TABLE `items`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `items_comments`
---
-ALTER TABLE `items_comments`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `items_revisions`
---
-ALTER TABLE `items_revisions`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `items_types`
---
-ALTER TABLE `items_types`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `status`
---
-ALTER TABLE `status`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `tags`
---
-ALTER TABLE `tags`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `teams`
---
-ALTER TABLE `teams`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `team_events`
---
-ALTER TABLE `team_events`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `team_groups`
---
-ALTER TABLE `team_groups`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `todolist`
---
-ALTER TABLE `todolist`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `uploads`
---
-ALTER TABLE `uploads`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `userid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -1063,12 +880,6 @@ ALTER TABLE `tags`
   ADD CONSTRAINT `fk_tags_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `tags2entity`
---
--- ALTER TABLE `tags2entity`
-  -- ADD CONSTRAINT `fk_tags2entity_tags_id` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
 -- Constraints for table `team_events`
 --
 ALTER TABLE `team_events`
@@ -1130,11 +941,6 @@ CREATE TABLE `experiments_templates_links` (
     CONSTRAINT `fk_experiments_templates_links_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_experiments_templates_links_items_id` FOREIGN KEY (`link_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
--- schema 52
-CREATE TABLE `users2teams` (
-  `users_id` int(10) UNSIGNED NOT NULL,
-  `teams_id` int(10) UNSIGNED NOT NULL
-);
 --
 -- Indexes for table `users2teams`
 --
@@ -1147,53 +953,17 @@ ALTER TABLE `users2teams`
 
 
 --
--- Table structure for table `pin2users`
---
-
-CREATE TABLE `pin2users` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `users_id` int(10) UNSIGNED NOT NULL,
-  `entity_id` int(10) UNSIGNED NOT NULL,
-  `type` varchar(255) NOT NULL
-);
-
---
--- Indexes for dumped tables
---
-
---
 -- Indexes for table `pin2users`
 --
 ALTER TABLE `pin2users`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_pin2users_userid` (`users_id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `pin2users`
---
-ALTER TABLE `pin2users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- Constraints for dumped tables
---
 
 --
 -- Constraints for table `pin2users`
 --
 ALTER TABLE `pin2users`
   ADD CONSTRAINT `fk_pin2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
---
---
--- Constraints for table `users2team_groups`
---
--- ALTER TABLE `users2team_groups`
---  ADD CONSTRAINT `fk_users2team_groups_team_groups_id` FOREIGN KEY (`groupid`) REFERENCES `team_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
---  ADD CONSTRAINT `fk_users2team_groups_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

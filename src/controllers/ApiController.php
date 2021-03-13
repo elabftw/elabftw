@@ -347,7 +347,6 @@ class ApiController implements ControllerInterface
     }
 
     /**
-<<<<<<< HEAD
      * @api {get} /templates/[:id] Read templates
      * @apiName GetTemplate
      * @apiGroup Entity

@@ -9,15 +9,17 @@ declare let ChemDoodle: any;
 import 'jquery-ui/ui/widgets/sortable';
 import * as $3Dmol from '3dmol/build/3Dmol-nojquery.js';
 import { CheckableItem, ResponseMsg } from './interfaces';
+import { DateTime } from 'luxon';
 
-const moment = require('moment'); // eslint-disable-line @typescript-eslint/no-var-requires
-
-// DISPLAY COMMENT TIME RELATIVE TO NOW
+// DISPLAY TIME RELATIVE TO NOW
+// the datetime is taken from the title of the element so mouse hover will show raw datetime
 export function relativeMoment(): void {
-  moment.locale($('#user-prefs').data('lang'));
-  $.each($('.relative-moment'), function(i, el) {
-    el.textContent = moment(el.title, 'YYYY-MM-DD H:m:s').fromNow();
-  });
+  const locale = document.getElementById('user-prefs').dataset.jslang;
+  document.querySelectorAll('.relative-moment')
+    .forEach((el) => {
+      const span = el as HTMLElement;
+      span.innerText = DateTime.fromFormat(span.title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale}).toRelative();
+    });
 }
 
 // PUT A NOTIFICATION IN TOP LEFT WINDOW CORNER

@@ -53,6 +53,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy()
     {
-        $this->Templates->destroy(1);
+        $this->Templates->setId(1);
+        $this->Templates->destroy();
     }
 }

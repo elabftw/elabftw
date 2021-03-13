@@ -8,7 +8,7 @@
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
-import { BoundEvent, ResponseMsg } from './interfaces';
+import { BoundEvent } from './interfaces';
 declare let key: any;
 const moment = require('moment'); // eslint-disable-line @typescript-eslint/no-var-requires
 

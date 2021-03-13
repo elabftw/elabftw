@@ -234,8 +234,15 @@ document.addEventListener('DOMContentLoaded', () => {
     calendar.updateSize();
   }
 
-  // IMPORT TPL
-  $(document).on('click', '.importTpl', function() {
-    new Template().duplicate($(this).data('id'));
+  // Add click listener and do action based on which element is clicked
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // IMPORT TPL
+    if (el.matches('[data-action="import-template"]')) {
+      new Template().duplicate(parseInt(el.dataset.id));
+    // DESTROY TPL
+    } else if (el.matches('[data-action="destroy-template"]')) {
+      new Template().destroy(parseInt(el.dataset.id)).then(() => window.location.replace('?tab=3'));
+    }
   });
 });

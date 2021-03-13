@@ -210,12 +210,12 @@ class Templates extends AbstractEntity implements CreatableInterface
     /**
      * Delete template
      */
-    public function destroy(int $id): void
+    public function destroy(): void
     {
-        $sql = 'DELETE FROM experiments_templates WHERE id = :id AND userid = :userid';
+        $this->canOrExplode('write');
+        $sql = 'DELETE FROM experiments_templates WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $this->Tags->destroyAll();

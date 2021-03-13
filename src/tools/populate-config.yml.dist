@@ -20,6 +20,8 @@ config:
   admin_validate: 0
   # set debug mode ON
   debug: 1
+  # load the js made with watchjs
+  devmode: 1
   # the url of the dev install
   url: "https://elab.local:3148"
   # set the mail_from config

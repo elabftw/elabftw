@@ -112,9 +112,6 @@ class TeamGroups implements CrudInterface
         }
 
         $tgArr = array_combine($idArr, $nameArr);
-        if (is_bool($tgArr)) {
-            return $visibilityArr;
-        }
 
         return $visibilityArr + $tgArr;
     }

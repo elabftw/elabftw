@@ -16,7 +16,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
 use function in_array;
-use function is_bool;
 use function mb_strlen;
 use PDO;
 

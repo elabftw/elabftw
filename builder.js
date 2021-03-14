@@ -77,6 +77,7 @@ module.exports = {
   optimization: {
     splitChunks: {
       chunks: 'all',
+      name: 'vendor'
     },
   },
   watchOptions: {

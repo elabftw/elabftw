@@ -93,6 +93,15 @@ class MakePdf extends AbstractMake
         $process = new Process(
             array_merge(
                 array(
+/*
+                    'mutool',
+                    'merge',
+                    '-o',
+                    $outputFileName,
+                    //'-O',
+                    //'linearize',
+                    $this->filePath,
+*/
                     'gs',
                     '-dBATCH',
                     '-dNOPAUSE',

@@ -96,7 +96,8 @@ class MakePdf extends AbstractMake
                 '-dBATCH',
                 '-dNOPAUSE',
                 //'-dPDFA=1', $this->Entity->Users->userData['pdfa']
-                //https://stackoverflow.com/questions/1659147/how-to-use-ghostscript-to-convert-pdf-to-pdf-a-or-pdf-x
+                // https://stackoverflow.com/questions/1659147/how-to-use-ghostscript-to-convert-pdf-to-pdf-a-or-pdf-x
+                // but it will be actually a new pdf that migth not represend all aspects of the original file
                 '-sDEVICE=pdfwrite',
                 '-dAutoRotatePages=/None',
                 '-dAutoFilterColorImages=false',
@@ -110,7 +111,10 @@ class MakePdf extends AbstractMake
             ),
             $listOfPdfs
         );
+
         // use muPDF's mutool to merge PDFs
+        // https://mupdf.com/
+        // https://pkgs.alpinelinux.org/package/edge/community/x86_64/mupdf
         if ($muPDF) {
             $processArray = array_merge(
                 array(
@@ -125,12 +129,40 @@ class MakePdf extends AbstractMake
                 $listOfPdfs
             );
         }
+
         // use pdfTK to merge PDFs
+        // https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/
         // might not be available on alpine linux
-       if ($pdfTK = True) {
+        // there is a port to java, see next if block
+        if ($pdfTK) {
             $processArray = array_merge(
-                array('pdftk'),
-                array_merge(array($this->filePath), $listOfPdfs),
+                array(
+                    'pdftk',
+                    $this->filePath
+                ),
+                $listOfPdfs,
+                array(
+                    'cat',
+                    'output',
+                    $outputFileName,
+                    'dont_ask',
+                ),
+            );
+        }
+
+        // use pdfTK to merge PDFs
+        // this way it works on alpine
+        // repo https://gitlab.com/pdftk-java/pdftk
+        // need to get the jar from https://gitlab.com/pdftk-java/pdftk/-/jobs/924565145/artifacts/raw/build/libs/pdftk-all.jar
+        if ($pdfTkJava = True) {
+            $processArray = array_merge(
+                array(
+                    'java',
+                    '-jar',
+                    'pdftk-all.jar',
+                    $this->filePath
+                ),
+                $listOfPdfs,
                 array(
                     'cat',
                     'output',

@@ -89,37 +89,59 @@ class MakePdf extends AbstractMake
         // new tmp file that also holds appended PDFs
         $outputFileName = $this->getTmpPath() . $this->getUniqueString();
 
-        // run GhostScript to append PDFs
-        $process = new Process(
-            array_merge(
+        // default is GhostScript to merge PDFs
+        $processArray = array_merge(
+            array(
+                'gs',
+                '-dBATCH',
+                '-dNOPAUSE',
+                //'-dPDFA=1', $this->Entity->Users->userData['pdfa']
+                //https://stackoverflow.com/questions/1659147/how-to-use-ghostscript-to-convert-pdf-to-pdf-a-or-pdf-x
+                '-sDEVICE=pdfwrite',
+                '-dAutoRotatePages=/None',
+                '-dAutoFilterColorImages=false',
+                '-dAutoFilterGrayImages=false',
+                '-dColorImageFilter=/FlateEncode',
+                '-dGrayImageFilter=/FlateEncode',
+                '-dDownsampleMonoImages=false',
+                '-dDownsampleGrayImages=false',
+                '-sOutputFile=' . $outputFileName,
+                $this->filePath,
+            ),
+            $listOfPdfs
+        );
+        // use muPDF's mutool to merge PDFs
+        if ($muPDF) {
+            $processArray = array_merge(
                 array(
-/*
                     'mutool',
                     'merge',
                     '-o',
                     $outputFileName,
-                    //'-O',
-                    //'linearize',
-                    $this->filePath,
-*/
-                    'gs',
-                    '-dBATCH',
-                    '-dNOPAUSE',
-                    //'-dPDFA=1', $this->Entity->Users->userData['pdfa']
-                    //https://stackoverflow.com/questions/1659147/how-to-use-ghostscript-to-convert-pdf-to-pdf-a-or-pdf-x
-                    '-sDEVICE=pdfwrite',
-                    '-dAutoRotatePages=/None',
-                    '-dAutoFilterColorImages=false',
-                    '-dAutoFilterGrayImages=false',
-                    '-dColorImageFilter=/FlateEncode',
-                    '-dGrayImageFilter=/FlateEncode',
-                    '-dDownsampleMonoImages=false',
-                    '-dDownsampleGrayImages=false',
-                    '-sOutputFile=' . $outputFileName,
+                    // '-O',
+                    // 'linearize',
                     $this->filePath,
                 ),
                 $listOfPdfs
-            ),
+            );
+        }
+        // use pdfTK to merge PDFs
+        // might not be available on alpine linux
+       if ($pdfTK = True) {
+            $processArray = array_merge(
+                array('pdftk'),
+                array_merge(array($this->filePath), $listOfPdfs),
+                array(
+                    'cat',
+                    'output',
+                    $outputFileName,
+                    'dont_ask',
+                ),
+            );
+        }
+
+        $process = new Process(
+            $processArray,
             // set working directory for process
             $this->getTmpPath()
         );

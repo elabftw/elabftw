@@ -29,7 +29,7 @@ class Sql
     /**
      * Read a SQL file from src/sql folder and execute the contents
      */
-    public function execFile(string $filename): void
+    public function execFile(string $filename): bool
     {
         $path = dirname(__DIR__) . '/sql/' . $filename;
         // temporary variable, used to store current query
@@ -56,5 +56,6 @@ class Sql
                 $queryline = '';
             }
         }
+        return true;
     }
 }

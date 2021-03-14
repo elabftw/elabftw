@@ -5,6 +5,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import { Ajax } from './Ajax.class';
+import { ResponseMsg } from './interfaces';
 import Crud from './Crud.class';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
@@ -36,7 +38,7 @@ export default class Template extends Crud {
     // we have the name of the template used for filename
     // and we have the id of the editor to get the content from
     // we don't use activeEditor because it requires a click inside the editing area
-    const content = tinymce.get(id).getContent();
+    const content = tinymce.get('e' + id).getContent();
     const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
     saveAs(blob, name + '.elabftw.tpl');
   }
@@ -52,18 +54,11 @@ export default class Template extends Crud {
     });
   }
 
-  destroy(id: number): void {
+  destroy(id: number): Promise<ResponseMsg>  {
     if (confirm(i18next.t('generic-delete-warning'))) {
-      this.send({
-        action: 'destroy',
-        what: 'template',
-        type: this.type,
-        params: {
-          id: id,
-        },
-      }).then(() => {
-        window.location.replace('ucp.php?tab=3');
-      });
+      const AjaxC = new Ajax('experiments_templates', String(id));
+      return AjaxC.post('destroy');
     }
+    return Promise.reject(new Error('Action aborted'));
   }
 }

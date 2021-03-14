@@ -16,7 +16,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
 use function in_array;
-use function is_bool;
 use function mb_strlen;
 use PDO;
 
@@ -61,7 +60,7 @@ class TeamGroups implements CrudInterface
     {
         $fullGroups = array();
 
-        $sql = 'SELECT DISTINCT id, name FROM team_groups CROSS JOIN users2teams ON (users2teams.teams_id = team_groups.team AND users2teams.teams_id = :team) ORDER BY name';
+        $sql = 'SELECT DISTINCT team_groups.id, team_groups.name FROM team_groups CROSS JOIN users2teams ON (users2teams.teams_id = team_groups.team AND users2teams.teams_id = :team) ORDER BY name';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -112,9 +111,6 @@ class TeamGroups implements CrudInterface
         }
 
         $tgArr = array_combine($idArr, $nameArr);
-        if (is_bool($tgArr)) {
-            return $visibilityArr;
-        }
 
         return $visibilityArr + $tgArr;
     }

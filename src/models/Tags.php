@@ -259,8 +259,6 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
      * Destroy all the tags for an item ID
      * Here the tag are not destroyed because it might be nice to keep the tags in memory
      * even when nothing is referencing it. Admin can manage tags anyway if it needs to be destroyed.
-     *
-     * @return void
      */
     public function destroyAll(): void
     {

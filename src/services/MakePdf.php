@@ -230,7 +230,7 @@ class MakePdf extends AbstractMake
         $content = file_get_contents($this->filePath);
         unlink($this->filePath);
         if ($content === false) {
-            throw new FilesystemErrorException('Could not load file ' . $this->filePath . '.');
+            throw new FilesystemErrorException('Could not creat merged PDF.');
         }
         return $content;
     }

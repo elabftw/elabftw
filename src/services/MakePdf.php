@@ -98,7 +98,7 @@ class MakePdf extends AbstractMake
                 // use pdfTK to merge PDFs
                 // https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/
                 // might not be available on newer alpine linux versions
-                // there is a port to java, see next if block
+                // there is a port to java, see next case
                 $processArray = array_merge(
                     array(
                         'pdftk',

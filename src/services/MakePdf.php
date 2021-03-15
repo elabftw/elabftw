@@ -89,87 +89,95 @@ class MakePdf extends AbstractMake
         // new tmp file that also holds appended PDFs
         $outputFileName = $this->getTmpPath() . $this->getUniqueString();
 
-        // default is GhostScript to merge PDFs
-        $processArray = array_merge(
-            array(
-                'gs',
-                '-dBATCH',
-                '-dNOPAUSE',
-                //'-dPDFA=1', $this->Entity->Users->userData['pdfa']
-                // https://stackoverflow.com/questions/1659147/how-to-use-ghostscript-to-convert-pdf-to-pdf-a-or-pdf-x
-                // but it will be actually a new pdf that migth not represend all aspects of the original file
-                '-sDEVICE=pdfwrite',
-                '-dAutoRotatePages=/None',
-                '-dAutoFilterColorImages=false',
-                '-dAutoFilterGrayImages=false',
-                '-dColorImageFilter=/FlateEncode',
-                '-dGrayImageFilter=/FlateEncode',
-                '-dDownsampleMonoImages=false',
-                '-dDownsampleGrayImages=false',
-                '-sOutputFile=' . $outputFileName,
-                $this->filePath,
-            ),
-            $listOfPdfs
-        );
+        // switch for testing the different pdf tools
+        // default is GhostScript
+        // but can be: mupdf, pdftk, or pdftk-java
+        $mergePdfs = 'pdftk-java';
+        switch ($mergePdfs) {
+            case 'pdftk':
+                // use pdfTK to merge PDFs
+                // https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/
+                // might not be available on newer alpine linux versions
+                // there is a port to java, see next if block
+                $processArray = array_merge(
+                    array(
+                        'pdftk',
+                        $this->filePath,
+                    ),
+                    $listOfPdfs,
+                    array(
+                        'cat',
+                        'output',
+                        $outputFileName,
+                        'dont_ask',
+                    ),
+                );
+                break;
 
-        // use muPDF's mutool to merge PDFs
-        // https://mupdf.com/
-        // https://pkgs.alpinelinux.org/package/edge/community/x86_64/mupdf
-        if ($muPDF) {
-            $processArray = array_merge(
-                array(
-                    'mutool',
-                    'merge',
-                    '-o',
-                    $outputFileName,
-                    // '-O',
-                    // 'linearize',
-                    $this->filePath,
-                ),
-                $listOfPdfs
-            );
-        }
+            case 'pdftk-java':
+                // use pdfTK-java to merge PDFs
+                // this way it works on alpine
+                // repo https://gitlab.com/pdftk-java/pdftk
+                // need to get the jar from https://gitlab.com/pdftk-java/pdftk/-/jobs/924565145/artifacts/raw/build/libs/pdftk-all.jar
+                // for now the file has to be located in cache/elab
+                $processArray = array_merge(
+                    array(
+                        'java',
+                        '-jar',
+                        'pdftk-all.jar',
+                        $this->filePath,
+                    ),
+                    $listOfPdfs,
+                    array(
+                        'cat',
+                        'output',
+                        $outputFileName,
+                        'dont_ask',
+                    ),
+                );
+                break;
 
-        // use pdfTK to merge PDFs
-        // https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/
-        // might not be available on alpine linux
-        // there is a port to java, see next if block
-        if ($pdfTK) {
-            $processArray = array_merge(
-                array(
-                    'pdftk',
-                    $this->filePath
-                ),
-                $listOfPdfs,
-                array(
-                    'cat',
-                    'output',
-                    $outputFileName,
-                    'dont_ask',
-                ),
-            );
-        }
+            case 'mupdf':
+                // use muPDF's mutool to merge PDFs
+                // https://mupdf.com/
+                // https://pkgs.alpinelinux.org/package/edge/community/x86_64/mupdf
+                $processArray = array_merge(
+                    array(
+                        'mutool',
+                        'merge',
+                        '-o',
+                        $outputFileName,
+                        // '-O',
+                        // 'linearize',
+                        $this->filePath,
+                    ),
+                    $listOfPdfs
+                );
+                break;
 
-        // use pdfTK to merge PDFs
-        // this way it works on alpine
-        // repo https://gitlab.com/pdftk-java/pdftk
-        // need to get the jar from https://gitlab.com/pdftk-java/pdftk/-/jobs/924565145/artifacts/raw/build/libs/pdftk-all.jar
-        if ($pdfTkJava = True) {
-            $processArray = array_merge(
-                array(
-                    'java',
-                    '-jar',
-                    'pdftk-all.jar',
-                    $this->filePath
-                ),
-                $listOfPdfs,
-                array(
-                    'cat',
-                    'output',
-                    $outputFileName,
-                    'dont_ask',
-                ),
-            );
+            default:
+                // default is GhostScript to merge PDFs
+                $processArray = array_merge(
+                    array(
+                        'gs',
+                        '-dBATCH',
+                        '-dNOPAUSE',
+                        //'-dPDFA=1', $this->Entity->Users->userData['pdfa']
+                        // https://stackoverflow.com/questions/1659147/how-to-use-ghostscript-to-convert-pdf-to-pdf-a-or-pdf-x
+                        // but it will be actually a new pdf that migth not represend all aspects of the original file
+                        '-sDEVICE=pdfwrite',
+                        '-dAutoRotatePages=/None',
+                        '-dAutoFilterColorImages=false',
+                        '-dAutoFilterGrayImages=false',
+                        '-dColorImageFilter=/FlateEncode',
+                        '-dGrayImageFilter=/FlateEncode',
+                        '-dDownsampleMonoImages=false',
+                        '-dDownsampleGrayImages=false',
+                        '-sOutputFile=' . $outputFileName,
+                        $this->filePath,
+                    ),
+                    $listOfPdfs
+                );
         }
 
         $process = new Process(

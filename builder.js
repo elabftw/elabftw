@@ -78,6 +78,7 @@ module.exports = {
     splitChunks: {
       name: 'vendors',
       chunks: 'all',
+      name: 'vendor'
     },
   },
   watchOptions: {

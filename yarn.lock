@@ -2,14 +2,16 @@
 # yarn lockfile v1
 
 
-"3dmol@^1.4.0":
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/3dmol/-/3dmol-1.6.2.tgz#beaf4b96c50ab27ccd4bfe5eb7da3309dedff395"
-  integrity sha512-tVFhTwqvQDfLY54FDGlGpxLhLyQb50UeClUr5ME9VQR7QUGtQS1PJvTevlA82GV0QSYUfJdDqGTPsz9wMd/mhQ==
+"3dmol@^1.6.3":
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/3dmol/-/3dmol-1.6.3.tgz#f4f7ef7fb34cb7cf17e846421aa398183c0c1a2f"
+  integrity sha512-7Nz+KDo/oOswDLRezmwLpSW1FIGiq08NE5MVaFbWewgHqUr/PFD3pNWlmsMRZLP6TCkHp0TDXpVfq8ycjhdWmQ==
   dependencies:
-    jquery "^3.5.0"
+    ini "^2.0.0"
+    jquery "^3.6.0"
     netcdfjs "^1.0.0"
     pako "^1.0.11"
+    yargs-parser "^20.2.7"
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.12.13":
   version "7.12.13"
@@ -4332,6 +4334,11 @@ ini@^1.3.4, ini@^1.3.5, ini@~1.3.0:
   resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.8.tgz#a29da425b48806f34767a4efce397269af28432c"
   integrity sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==
 
+ini@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/ini/-/ini-2.0.0.tgz#e5fd556ecdd5726be978fa1001862eacb0a94bc5"
+  integrity sha512-7PnF4oN3CvZF23ADhA5wRaYEQpJ8qygSkbtTXWBeXWXmEVRXK+1ITciHWwHhsjv1TmW0MgacIv6hEi5pX5NQdA==
+
 inquirer@^7.0.0:
   version "7.3.3"
   resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-7.3.3.tgz#04d176b2af04afc157a83fd7c100e98ee0aad003"
@@ -4719,7 +4726,7 @@ jquery-ui@^1.12.1:
   resolved "https://registry.yarnpkg.com/jquery-ui/-/jquery-ui-1.12.1.tgz#bcb4045c8dd0539c134bc1488cdd3e768a7a9e51"
   integrity sha1-vLQEXI3QU5wTS8FIjN0+dop6nlE=
 
-jquery@^3.5.0, jquery@^3.5.1:
+jquery@^3.5.1, jquery@^3.6.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.6.0.tgz#c72a09f15c1bdce142f49dbf1170bdf8adac2470"
   integrity sha512-JVzAR/AjBvVt2BmYhxRCSYysDsPcssdmTFnzyLEts9qNwmjmu4JTAMYubEfwVOSwpQ1I1sKKFcxhZCI2buerfw==
@@ -8675,7 +8682,7 @@ yaml@^1.10.0, yaml@^1.9.2:
   resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.10.1.tgz#bb13d805ed104fba38f533570f3441027eeeca22"
   integrity sha512-z/asvd+V08l1ywhaemZVirCwjdzLo6O1/0j2JbYCsGjiezupNQqjs5IIPyNtctbHjPEckqzVGd4jvpU5Lr25vQ==
 
-yargs-parser@^20.2.3:
+yargs-parser@^20.2.3, yargs-parser@^20.2.7:
   version "20.2.7"
   resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-20.2.7.tgz#61df85c113edfb5a7a4e36eb8aa60ef423cbc90a"
   integrity sha512-FiNkvbeHzB/syOjIUxFDCnhSfzAL8R5vs40MgLFBorXACCOAEaWu0gRZl14vG8MR9AOJIZbmkjhusqBYZ3HTHw==

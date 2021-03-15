@@ -30,6 +30,12 @@ export function displayPlasmidViewer(): void {
 
     function parseFile(fileContent): void {
       anyToJson(fileContent, function(parsedData) {
+        // we always return an array of results because some files my contain multiple sequences 
+        // parsedData[0].success //either true or false
+        // parsedData[0].messages //either an array of strings giving any warnings or errors generated during the parsing process
+        
+        // ToDo: test if fileContent was parsed successfully. if false: show error >Invalid DNA data<
+
         const parsedSequence = parsedData[0].parsedSequence;
 
         const data: any = {};

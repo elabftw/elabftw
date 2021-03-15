@@ -10,8 +10,8 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\AuthResponse;
-use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\UnauthorizedException;
 
 class CookieAuthTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,7 +20,7 @@ class CookieAuthTest extends \PHPUnit\Framework\TestCase
         $token = '8669b095961a14edc0dd37fefa76e932938b830f2d02377a8f2154cc3f12719d';
         $CookieAuth = new CookieAuth($token, '1');
         $Db = Db::getConnection();
-        $req = $Db->prepare("UPDATE users SET token = :token WHERE userid = 1");
+        $req = $Db->prepare('UPDATE users SET token = :token WHERE userid = 1');
         $req->bindParam(':token', $token);
         $req->execute();
         $res = $CookieAuth->tryAuth();
@@ -42,7 +42,7 @@ class CookieAuthTest extends \PHPUnit\Framework\TestCase
         $token = '8669b095961a14edc0dd37fefa76e932938b830f2d02377a8f2154cc3f12719d';
         $CookieAuth = new CookieAuth($token, '2');
         $Db = Db::getConnection();
-        $req = $Db->prepare("UPDATE users SET token = :token WHERE userid = 1");
+        $req = $Db->prepare('UPDATE users SET token = :token WHERE userid = 1');
         $req->bindParam(':token', $token);
         $req->execute();
         $this->expectException(UnauthorizedException::class);

@@ -29,17 +29,17 @@
       </a>
       <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
         <!-- MANAGE PERMISSIONS -->
-        <a class='clickable dropdown-item modalToggle' data-modal='permModal' data-read='{{ templateData.canread }}' data-write='{{ templateData.canwrite }}'>
-          <i class='fas fa-share-alt fa-fw'></i> {{ 'Manage Permissions'|trans }}
+        <a href='#' class='dropdown-item modalToggle' data-modal='permModal' data-read='{{ templateData.canread }}' data-write='{{ templateData.canwrite }}'>
+          <i class='fas fa-share-alt fa-fw mr-1'></i>{{ 'Manage Permissions'|trans }}
         </a>
         <!-- DOWNLOAD -->
-        <a class='clickable dropdown-item saveToFile' data-name='{{ templateData.title }}' data-id='e{{ templateData.id }}'>
-          <i class='fas fa-download fa-fw'></i> {{ 'Download template'|trans }}
+        <a href='#' class='dropdown-item' data-action='download-template' data-name='{{ templateData.title }}' data-id='{{ templateData.id }}'>
+          <i class='fas fa-download fa-fw mr-1'></i>{{ 'Download template'|trans }}
         </a>
         <!-- DESTROY -->
         <div class='dropdown-divider'></div>
-        <a class='clickable dropdown-item destroyTemplate hover-danger' data-id='{{ templateData.id }}'>
-          <i class='fas fa-trash-alt fa-fw'></i> {{ 'Destroy template'|trans }}
+        <a href='#' data-action='destroy-template' class='dropdown-item hover-danger' data-id='{{ templateData.id }}'>
+          <i class='fas fa-trash-alt fa-fw mr-1'></i>{{ 'Destroy template'|trans }}
         </a>
       </div>
     </div>

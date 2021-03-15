@@ -6,7 +6,7 @@ run.config:
         nginx_document_root: '/web'
         nginx_index_list:
             - index.php
-        runtime: php-7.3
+        runtime: php-8.0
         extensions:
             - ctype
             - curl

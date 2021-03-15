@@ -8,9 +8,9 @@
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
-import { BoundEvent, ResponseMsg } from './interfaces';
+import { BoundEvent } from './interfaces';
+import { DateTime } from 'luxon';
 declare let key: any;
-const moment = require('moment'); // eslint-disable-line @typescript-eslint/no-var-requires
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -62,7 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
           el.href = `team.php?item=${msg.item}&start=${encodeURIComponent(msg.start)}`;
           const button = document.createElement('button');
           button.classList.add('mr-2', 'btn', 'btn-neutral', 'relative-moment');
-          button.innerText = moment(msg.start).fromNow();
+          const locale = document.getElementById('user-prefs').dataset.jslang;
+          button.innerText = DateTime.fromISO(msg.start, {'locale': locale}).toRelative();
           el.appendChild(button);
           bookingsDiv.append(el);
         }

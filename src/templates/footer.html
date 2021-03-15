@@ -57,7 +57,7 @@
 </div><!-- end container -->
 </div><!-- end real-container -->
 
-<div id='user-prefs' data-lang='{{ App.Users.userData.lang }}'></div>
+<div id='user-prefs' data-lang='{{ App.Session.has('is_auth') ? App.Users.userData.lang : App.Config.configArr.lang }}' data-jslang='{{ (App.Session.has('is_auth') ? App.Users.userData.lang : App.Config.configArr.lang)|jslang }}'></div>
 
 </body>
 </html>

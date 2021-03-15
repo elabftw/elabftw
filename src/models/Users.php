@@ -380,6 +380,9 @@ class Users
         $params['firstname'] = filter_var($params['firstname'], FILTER_SANITIZE_STRING);
         $params['lastname'] = filter_var($params['lastname'], FILTER_SANITIZE_STRING);
         $params['email'] = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
+        if ($params['email'] === false) {
+            throw new ImproperActionException('Invalid email!');
+        }
 
         if ($this->isDuplicateEmail($params['email']) && ($params['email'] != $this->userData['email'])) {
             throw new ImproperActionException(_('Someone is already using that email address!'));

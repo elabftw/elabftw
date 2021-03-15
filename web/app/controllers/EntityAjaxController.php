@@ -77,7 +77,7 @@ try {
         $mentionArr = array_merge($DatabaseHelper->getMentionList($term), $ExperimentsHelper->getMentionList($term));
         // fix issue with Malformed UTF-8 characters, possibly incorrectly encoded
         // see #2404
-        $mentionArr = mb_convert_encoding($mentionArr, 'UTF-8', 'UTF-8'); // @phpstan-ignore-line
+        $mentionArr = mb_convert_encoding($mentionArr, 'UTF-8', 'UTF-8');
         $Response->setData($mentionArr);
     }
 

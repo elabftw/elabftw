@@ -16,7 +16,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
 use function in_array;
-use function is_bool;
 use function mb_strlen;
 use PDO;
 
@@ -112,9 +111,6 @@ class TeamGroups implements CrudInterface
         }
 
         $tgArr = array_combine($idArr, $nameArr);
-        if (is_bool($tgArr)) {
-            return $visibilityArr;
-        }
 
         return $visibilityArr + $tgArr;
     }

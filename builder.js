@@ -69,10 +69,6 @@ module.exports = {
   // uncomment this to find where the error is coming from
   // makes the build slower
   //devtool: 'inline-source-map',
-  plugins: [
-    // only load the moment locales that we are interested in
-    new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(ca|de|en|es|fr|it|id|ja|kr|nl|pl|pt|pt-br|ru|sk|sl|zh-cn)$/),
-  ],
   mode: 'production',
   output: {
     filename: '[name].bundle.js',
@@ -81,6 +77,7 @@ module.exports = {
   optimization: {
     splitChunks: {
       chunks: 'all',
+      name: 'vendor'
     },
   },
   watchOptions: {
@@ -110,20 +107,13 @@ module.exports = {
           }
         }
       },
-      // expose jquery and moment globally
+      // expose jquery globally
       {
         test: require.resolve('jquery'),
         loader: 'expose-loader',
         options: {
           exposes: ['$', 'jQuery'],
         },
-      },
-      {
-        test: require.resolve('moment'),
-        loader: 'expose-loader',
-          options: {
-            exposes: 'moment',
-          },
       },
       // use a custom loader for 3Dmol.js
       {

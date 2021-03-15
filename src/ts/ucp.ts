@@ -17,26 +17,32 @@ $(document).ready(function() {
     return;
   }
 
-  const TemplateC = new Template();
 
-
-  // TEMPLATES listeners
-  $(document).on('click', '.createNewTemplate', function() {
-    const title = prompt(i18next.t('template-title'));
-    if (title) {
-      // no body on template creation
-      TemplateC.create(title);
-    }
-  });
   // show the handles to reorder when the menu entry is clicked
   $('#toggleReorder').on('click', function() {
     $('.sortableHandle').toggle();
   });
-  $(document).on('click', '.saveToFile', function() {
-    TemplateC.saveToFile($(this).data('id'), $(this).data('name'));
-  });
-  $(document).on('click', '.destroyTemplate', function() {
-    TemplateC.destroy($(this).data('id'));
+
+  const TemplateC = new Template();
+
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // CREATE TPL
+    if (el.matches('[data-action="create-template"]')) {
+      const title = prompt(i18next.t('template-title'));
+      if (title) {
+        // no body on template creation
+        TemplateC.create(title);
+      }
+    // DOWNLOAD TEMPLATE
+    } else if (el.matches('[data-action="download-template"]')) {
+      TemplateC.saveToFile(parseInt(el.dataset.id), el.dataset.name);
+    // DESTROY TEMPLATE
+    } else if (el.matches('[data-action="destroy-template"]')) {
+      TemplateC.destroy(parseInt(el.dataset.id))
+        .then(() => window.location.replace('ucp.php?tab=3'))
+        .catch((e) => notif({'res': false, 'msg': e.message}));
+    }
   });
 
   $('#import-from-file').on('click', function() {
@@ -80,16 +86,16 @@ $(document).ready(function() {
   });
 
   // input to upload an elabftw.tpl file
-  $('#import_tpl').on('change', function(e) {
+  document.getElementById('import_tpl').addEventListener('change', (event) => {
     const title = (document.getElementById('import_tpl') as HTMLInputElement).value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
     if (!window.FileReader) {
       alert('Please use a modern web browser. Import aborted.');
       return false;
     }
-    const file = (e.target as HTMLInputElement).files[0];
+    const file = (event.target as HTMLInputElement).files[0];
     const reader = new FileReader();
-    reader.onload = function(e): void {
-      TemplateC.create(title, e.target.result as string);
+    reader.onload = function(event): void {
+      TemplateC.create(title, event.target.result as string);
       $('#import_tpl').hide();
     };
     reader.readAsText(file);

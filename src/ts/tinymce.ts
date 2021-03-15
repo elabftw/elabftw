@@ -7,6 +7,7 @@
  */
 import tinymce from 'tinymce/tinymce';
 import { notif } from './misc';
+import { DateTime } from 'luxon';
 import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/anchor';
@@ -80,17 +81,19 @@ export function quickSave(type: string, id: string): void {
   });
 }
 
+function getNow(): DateTime {
+  const locale = document.getElementById('user-prefs').dataset.jslang;
+  return DateTime.now().setLocale(locale);
+}
+
 // ctrl-shift-D will add the date in the tinymce editor
 function addDateOnCursor(): void {
-  const todayDate = new Date();
-  const today = todayDate.toISOString().split('T')[0];
-  tinymce.activeEditor.execCommand('mceInsertContent', false, today + ' ');
+  tinymce.activeEditor.execCommand('mceInsertContent', false, `${getNow().toLocaleString(DateTime.DATE_HUGE)} `);
 }
 
 // ctrl-shift-T will add the time in the tinymce editor
 function addTimeOnCursor(): void {
-  const d = new Date();
-  tinymce.activeEditor.execCommand('mceInsertContent', false, `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()} `);
+  tinymce.activeEditor.execCommand('mceInsertContent', false, `${getNow().toLocaleString(DateTime.TIME_WITH_SECONDS)} `);
 }
 
 function isOverCharLimit(): boolean {

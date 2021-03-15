@@ -65,8 +65,6 @@ class MakePdf extends AbstractMake
 
     /**
      * Generate pdf and output it to a file
-     *
-     * @return void
      */
     public function outputToFile(): void
     {
@@ -75,8 +73,6 @@ class MakePdf extends AbstractMake
 
     /**
      * Build HTML content that will be fed to mpdf->WriteHTML()
-     *
-     * @return string
      */
     public function getContent(): string
     {
@@ -131,8 +127,6 @@ class MakePdf extends AbstractMake
 
     /**
      * Generate pdf and return it as string
-     *
-     * @return string
      */
     public function getPdf(): string
     {
@@ -141,8 +135,6 @@ class MakePdf extends AbstractMake
 
     /**
      * Replace weird characters by underscores
-     *
-     * @return string The file name of the pdf
      */
     public function getFileName(): string
     {
@@ -152,15 +144,13 @@ class MakePdf extends AbstractMake
 
     /**
      * Initialize Mpdf
-     *
-     * @return Mpdf
      */
     public function initializeMpdf(bool $multiEntity = false): Mpdf
     {
         $format = $this->Entity->Users->userData['pdf_format'];
 
         // we use a custom tmp dir, not the same as Twig because its content gets deleted after pdf is generated
-        $tmpDir = \dirname(__DIR__, 2) . '/cache/mpdf/';
+        $tmpDir = dirname(__DIR__, 2) . '/cache/mpdf/';
         if (!is_dir($tmpDir) && !mkdir($tmpDir, 0700, true) && !is_dir($tmpDir)) {
             throw new FilesystemErrorException("Could not create the $tmpDir directory! Please check permissions on this folder.");
         }
@@ -193,8 +183,6 @@ class MakePdf extends AbstractMake
 
     /**
      * Build the pdf
-     *
-     * @return Mpdf
      */
     private function generate(): Mpdf
     {

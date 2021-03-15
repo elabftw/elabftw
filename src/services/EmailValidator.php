@@ -39,9 +39,7 @@ class EmailValidator
         if ($this->isDuplicateEmail()) {
             throw new ImproperActionException(_('Someone is already using that email address!'));
         }
-        if ($this->emailDomain !== null) {
-            $this->validateDomain();
-        }
+        $this->validateDomain();
     }
 
     private function basicCheck(): void
@@ -53,10 +51,12 @@ class EmailValidator
 
     private function validateDomain(): void
     {
-        $splitEmail = explode('@', $this->email);
-        $splitDomains = explode(',', $this->emailDomain);
-        if (!in_array($splitEmail[1], $splitDomains, true)) {
-            throw new ImproperActionException(sprintf(_('This email domain is not allowed. Allowed domains: %s'), implode(', ', $splitDomains)));
+        if ($this->emailDomain !== null) {
+            $splitEmail = explode('@', $this->email);
+            $splitDomains = explode(',', $this->emailDomain);
+            if (!in_array($splitEmail[1], $splitDomains, true)) {
+                throw new ImproperActionException(sprintf(_('This email domain is not allowed. Allowed domains: %s'), implode(', ', $splitDomains)));
+            }
         }
     }
 

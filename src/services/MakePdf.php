@@ -19,7 +19,6 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
-use function file_exists;
 use function file_get_contents;
 use function file_put_contents;
 use function html_entity_decode;

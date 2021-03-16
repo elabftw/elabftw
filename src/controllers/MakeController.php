@@ -117,7 +117,7 @@ class MakeController implements ControllerInterface
     {
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
         $this->Entity->canOrExplode('read');
-        $Make = new MakePdf($this->Entity);
+        $Make = new MakePdf($this->Entity, true);
         return new Response(
             $Make->getPdf(),
             200,

@@ -7,6 +7,7 @@
  */
 import tinymce from 'tinymce/tinymce';
 import { notif } from './misc';
+import { DateTime } from 'luxon';
 import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/anchor';
@@ -80,11 +81,19 @@ export function quickSave(type: string, id: string): void {
   });
 }
 
+function getNow(): DateTime {
+  const locale = document.getElementById('user-prefs').dataset.jslang;
+  return DateTime.now().setLocale(locale);
+}
+
 // ctrl-shift-D will add the date in the tinymce editor
 function addDateOnCursor(): void {
-  const todayDate = new Date();
-  const today = todayDate.toISOString().split('T')[0];
-  tinymce.activeEditor.execCommand('mceInsertContent', false, today + ' ');
+  tinymce.activeEditor.execCommand('mceInsertContent', false, `${getNow().toLocaleString(DateTime.DATE_HUGE)} `);
+}
+
+// ctrl-shift-T will add the time in the tinymce editor
+function addTimeOnCursor(): void {
+  tinymce.activeEditor.execCommand('mceInsertContent', false, `${getNow().toLocaleString(DateTime.TIME_WITH_SECONDS)} `);
 }
 
 function isOverCharLimit(): boolean {
@@ -174,6 +183,7 @@ export function getTinymceBaseConfig(page: string): object {
       editor.on('init', () => editor.getContainer().className += ' rounded');
       // some shortcuts
       editor.addShortcut('ctrl+shift+d', 'add date at cursor', addDateOnCursor);
+      editor.addShortcut('ctrl+shift+t', 'add time at cursor', addTimeOnCursor);
       editor.addShortcut('ctrl+=', 'subscript', () => editor.execCommand('subscript'));
       editor.addShortcut('ctrl+shift+=', 'superscript', () => editor.execCommand('superscript'));
 

@@ -5,7 +5,6 @@ START TRANSACTION;
     ALTER TABLE `users` CHANGE `salt` `salt` VARCHAR(255) NULL DEFAULT NULL;
     ALTER TABLE `users` ADD `password_hash` VARCHAR(255) NULL DEFAULT NULL AFTER `password`;
     ALTER TABLE `users` ADD `pdf_tex` tinyint(1) NOT NULL DEFAULT '0' AFTER `pdfa`;
-    INSERT INTO config (conf_name, conf_value) VALUES ('devmode', '0');
     INSERT INTO config (conf_name, conf_value) VALUES ('autologout_time', '0');
     INSERT INTO config (conf_name, conf_value) VALUES ('min_delta_revisions', '100');
     ALTER TABLE `items` ADD `elabid` VARCHAR(255) NOT NULL;
@@ -48,7 +47,9 @@ START TRANSACTION;
     ALTER TABLE `experiments_templates_revisions`
         ADD CONSTRAINT `fk_experiments_templates_revisions_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
         ADD CONSTRAINT `fk_experiments_templates_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
+    ALTER TABLE `users2teams` ADD `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`id`);
+    ALTER TABLE `users2team_groups` ADD `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`id`);
+    ALTER TABLE `tags2entity` ADD `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`id`);
 
     UPDATE `config` SET `conf_value` = 57 WHERE `conf_name` = 'schema';
 COMMIT;

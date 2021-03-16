@@ -9,7 +9,6 @@ import Crud from './Crud.class';
 import { notif } from './misc';
 import { getTinymceBaseConfig } from './tinymce';
 import tinymce from 'tinymce/tinymce';
-import JSONEditor from 'jsoneditor';
 
 export default class ItemType extends Crud {
   what: string;

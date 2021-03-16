@@ -37,15 +37,6 @@ try {
     // CSRF
     $App->Csrf->validate();
 
-    // Check if email domain is correct
-    if ($App->Config->configArr['email_domain']) {
-        $splitEmail = explode('@', $Request->request->get('email'));
-        $splitDomains = explode(',', $App->Config->configArr['email_domain']);
-        if (!in_array($splitEmail[1], $splitDomains, true)) {
-            throw new ImproperActionException(_('This email domain is not allowed.'));
-        }
-    }
-
     if ((Check::id((int) $Request->request->get('team')) === false) ||
         !$Request->request->get('firstname') ||
         !$Request->request->get('lastname') ||

@@ -36,7 +36,7 @@ class CacheGenerator
             // force compilation
             if ($file->isFile()) {
                 /** @psalm-suppress InternalMethod */
-                $TwigEnvironment->loadTemplate(str_replace($tplDir . '/', '', $file));
+                $TwigEnvironment->loadTemplate(str_replace($tplDir . '/', '', $file->getFilename()));
             }
         }
     }

@@ -1,0 +1,127 @@
+<html>
+  <head>
+    <style>{{ css }}</style>
+    {{ useCjk ? '<style>td { font-family:sun-extA; }</style>' }}
+  </head>
+  <body {{ useCjk ? " style='font-family:sun-extA;'" }}>
+    <htmlpageheader name='header'>
+      <div id='header'>
+        <h1>{{ title }}</h1>
+        <p style='float:left; width:90%;'>
+        {{ entityDate }}
+          <strong>{{ 'Date'|trans }}:</strong> {{ date }}<br>
+          {% if tags %}
+          <strong>{{ 'Tags'|trans }}:</strong> <em>{{ tags|replace({'|': ' '}) }}</em><br>
+          {% endif %}
+          <strong>{{ 'Created by'|trans }}:</strong> {{ fullname }}
+        </p>
+        <p style='float:right; width:10%;'><br><br>
+          {PAGENO} / {nbpg}
+        </p>
+      </div>
+    </htmlpageheader>
+
+  <htmlpagefooter name='footer'>
+    {% if pdfSig %}
+      <div class='footer-block signatures'>
+        User's signature:<br><br>
+        Witness' name:<br><br>
+        Witness' signature:<br><br>
+      </div>
+    {% endif %}
+    <div class='footer-block footer'>
+      PDF generated with <a href="https://www.elabftw.net">elabftw</a>, a free and open source lab notebook
+      <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:i}</p>
+    </div>
+  </htmlpagefooter>
+<sethtmlpageheader name='header' value='on' show-this-page='1' />
+<sethtmlpagefooter name='footer' value='on' />
+
+{{ body|raw }}
+
+{% if linksArr %}
+  <section class='no-break'>
+    <h3>{% trans %}
+      Linked item
+      {% plural linksArr|length %}
+      Linked items
+      {% endtrans %}</h3>
+
+    {% for link in linksArr %}
+      <p class='pdf-ul'>
+        <span style='color:#{{ link.color }}'>{{ link.name }}</span> - <a href='{{ linkBaseUrl }}?mode=view&id={{ link.itemid }}'>{{ link.title }}</a>
+      </p>
+    {% endfor %}
+  </section>
+{% endif %}
+
+{% if stepsArr %}
+  <section class='no-break'>
+    <h3>{{ 'Steps'|trans }}</h3>
+    {% for step in stepsArr %}
+      <p class='pdf-ul'>{{ step.body }}
+      {% if step.finished %} ({{ step.finished_time }}){% endif %}
+    </p>
+    {% endfor %}
+  </section>
+{% endif %}
+
+{% if includeFiles and uploadsArr %}
+  <section class='no-break'>
+    <h3>{% trans %}
+      Attached file
+      {% plural uploadsArr|length %}
+      Attached files
+      {% endtrans %}
+    </h3>
+    {% for upload in uploadsArr %}
+      <p class='pdf-ul'>{{ upload.real_name }}
+      {# add a comment? don't add if it's the default text #}
+      {% if upload.comment != 'Click to add a comment' %} ({{ upload.comment }}){% endif %}
+      {# add hash? don't add if we don't have it #}
+      {% if upload.hash|length >= 32 %}<br>{{ upload.hash_algorithm }}: {{ upload.hash }}{% endif %}
+
+      {# if this is an image file, add the thumbnail picture #}
+      {% set ext = upload.real_name|getExt|lower %}
+      {% set filePath = uploadsFolder ~ upload.long_name %}
+
+      {# if it's a TIF file, we can't add it like that to the pdf, but we can add the thumbnail #}
+      {% if ext in tiff %}
+        {% set filePath = filePath ~ '_th.jpg' %}
+      {% endif %}
+      {% if ext in ['tiff', 'jpg', 'jpeg', 'png', 'gif'] %}
+        <br><img class='attached-image' src='{{ filePath }}' alt='{{ upload.comment }}' />
+      {% endif %}
+      </p>
+    {% endfor %}
+  </section>
+{% endif %}
+
+{% if commentsArr %}
+  <section class='no-break'>
+    <h3>{% trans %}
+      Comment
+      {% plural commentsArr|length %}
+      Comments
+      {% endtrans %}
+    </h3>
+    {% for comment in commentsArr %}
+      <p class='pdf-ul'>On {{ comment.datetime }} {{ comment.fullname|raw }} wrote:<br>{{ comment.comment|raw }}</p>
+    {% endfor %}
+  </section>
+{% endif %}
+
+<table id='infoblock'>
+  <tr>
+    <td class='noborder'>
+      <barcode code='{{ url }}' type='QR' class='barcode' size='0.8' error='M' />
+    </td>
+    <td class='noborder'>
+      <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ elabid }}</p>
+      {% if locked %}
+        <p class='elabid'>Locked by {{ lockerName }} on {{ lockDate }}</p>
+      {% endif %}
+      <p class='elabid'>Link: <a href='{{ url }}'>{{ url }}</a></p>
+    </td>
+  </tr>
+</table>

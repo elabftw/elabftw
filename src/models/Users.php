@@ -16,6 +16,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
+use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
@@ -74,10 +75,9 @@ class Users
         if ($normalizeTeams) {
             $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
         }
-        // check for duplicate of email
-        if ($this->isDuplicateEmail($email)) {
-            throw new ImproperActionException(_('Someone is already using that email address!'));
-        }
+
+        $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);
+        $EmailValidator->validate();
 
         if ($password !== '') {
             Check::passwordLength($password);
@@ -153,22 +153,6 @@ class Users
             $this->needValidation = true;
         }
         return $userid;
-    }
-
-    /**
-     * Check we have not a duplicate email in DB
-     *
-     * @param string $email
-     * @return bool true if there is a duplicate
-     */
-    public function isDuplicateEmail(string $email): bool
-    {
-        $sql = 'SELECT email FROM users WHERE email = :email AND archived = 0';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $email);
-        $this->Db->execute($req);
-
-        return (bool) $req->rowCount();
     }
 
     /**
@@ -384,8 +368,11 @@ class Users
             throw new ImproperActionException('Invalid email!');
         }
 
-        if ($this->isDuplicateEmail($params['email']) && ($params['email'] != $this->userData['email'])) {
-            throw new ImproperActionException(_('Someone is already using that email address!'));
+        // if we change the email, make sure it's valid
+        if ($params['email'] !== $this->userData['email']) {
+            $Config = new Config();
+            $EmailValidator = new EmailValidator($params['email'], $Config->configArr['email_domain']);
+            $EmailValidator->validate();
         }
 
         // Check phone

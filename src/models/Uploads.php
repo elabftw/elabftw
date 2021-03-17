@@ -359,10 +359,11 @@ class Uploads implements DestroyableInterface
             if (unlink($orig) !== true) {
                 throw new FilesystemErrorException('Error deleting file!');
             }
-        }
+        } else {
 
-        if (rename($orig, $dest) !== true) {
-            throw new FilesystemErrorException('Error while moving the file. Check folder permissions!');
+            if (rename($orig, $dest) !== true) {
+                throw new FilesystemErrorException('Error while moving the file. Check folder permissions!');
+            }
         }
     }
 

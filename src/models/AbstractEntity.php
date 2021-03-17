@@ -626,10 +626,14 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         $Uploads->Entity->type = 'timestamp-token';
         $token = $Uploads->readAll();
 
+        $Uploads->Entity->type = 'bloxberg-proof';
+        $bloxbergProof = $Uploads->readAll();
+
         return array(
             'timestamper' => $timestamper,
             'pdf' => $pdf,
             'token' => $token,
+            'bloxbergProof' => $bloxbergProof,
         );
     }
 

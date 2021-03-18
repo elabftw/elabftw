@@ -15,6 +15,7 @@ use DateTime;
 use function dirname;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
@@ -24,6 +25,7 @@ use function file_get_contents;
 use function is_dir;
 use function mkdir;
 use Mpdf\Mpdf;
+use setasign\Fpdi\FpdiException;
 use function str_replace;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -78,6 +80,9 @@ class MakePdf extends AbstractMake
     {
         $this->generate()->Output($this->filePath, 'F');
 
+        return;
+
+/*
         if (!$this->Entity->Users->userData['append_pdfs']) {
             return;
         }
@@ -197,6 +202,7 @@ class MakePdf extends AbstractMake
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
+*/
     }
 
     /**
@@ -258,6 +264,9 @@ class MakePdf extends AbstractMake
      */
     public function getPdf(): string
     {
+        return $this->generate()->Output('', 'S');
+
+/*
         if (!$this->Entity->Users->userData['append_pdfs']) {
             return $this->generate()->Output('', 'S');
         }
@@ -269,6 +278,7 @@ class MakePdf extends AbstractMake
             throw new FilesystemErrorException('Could not creat merged PDF.');
         }
         return $content;
+*/
     }
 
     /**
@@ -349,12 +359,61 @@ class MakePdf extends AbstractMake
         // write content
         $mpdf->WriteHTML($this->getContent());
 
+        if ($this->Entity->Users->userData['append_pdfs']) {
+            $mpdf = $this->appendPDFs($mpdf);
+        }
+
         if ($this->Entity->Users->userData['pdfa']) {
             // make sure we can read the pdf in a long time
             // will embed the font and make the pdf bigger
             $mpdf->PDFA = true;
         }
 
+        return $mpdf;
+    }
+
+    /**
+     * Append PDFs attached to an entity
+     */
+    private function appendPDFs(Mpdf $mpdf): Mpdf
+    {
+        $listOfPdfs = $this->getListOfPdfs();
+
+        if (count($listOfPdfs) > 0) {
+            // there will be occasions where the merging will fail
+            // due to incompatibility of mpdf with the attached pdfs
+            try {
+                foreach ($listOfPdfs as $pdf) {
+                    $numberOfPages = $mpdf->setSourceFile($pdf);
+
+                    for ($i=1; $i <= $numberOfPages; $i++) {
+                        // Import the ith page of the source PDF file
+                        $page = $mpdf->importPage($i);
+
+                        // this is not documented in the MPDF manual
+                        // @return array|bool An array with following keys: width, height, 0 (=width), 1 (=height), orientation (L or P)
+                        $pageDim = $mpdf->getTemplateSize($page);
+
+                        // add a new (blank) page with the dimentions of the imported page
+                        $mpdf->AddPageByArray(array(
+                            'orientation' => $pageDim['orientation'],
+                            'sheet-size' => array($pageDim['width'], $pageDim['height']),
+                        ));
+
+                        // empty the header and footer
+                        // can not be an empty string
+                        $mpdf->SetHTMLHeader(' ', '', true);
+                        $mpdf->SetHTMLFooter(' ', '');
+
+                        // add the content of the imported page
+                        $mpdf->useTemplate($page);
+                    }
+                }
+            } catch (FpdiException $e) {
+                // so we catch it here and tell the user
+                throw new ImproperActionException(_('PDF could not be merged.'));
+            }
+        }
         return $mpdf;
     }
 

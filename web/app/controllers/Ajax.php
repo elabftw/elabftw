@@ -152,7 +152,7 @@ try {
             $templates = $Model->readForUser();
             $res = array();
             foreach ($templates as $template) {
-                $res[] = array('title' => $template['name'], 'description' => '', 'content' => $template['body']);
+                $res[] = array('title' => $template['title'], 'description' => '', 'content' => $template['body']);
             }
             $Response->setData($res);
             break;

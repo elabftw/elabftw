@@ -75,16 +75,16 @@
         },
         {
             "name": "directorytree/ldaprecord",
-            "version": "v2.2.3",
+            "version": "v2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DirectoryTree/LdapRecord.git",
-                "reference": "37fd5abef9abba84473d7575d9ace874a059303f"
+                "reference": "71340de5b63853956ede391175d00968899c6861"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/37fd5abef9abba84473d7575d9ace874a059303f",
-                "reference": "37fd5abef9abba84473d7575d9ace874a059303f",
+                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/71340de5b63853956ede391175d00968899c6861",
+                "reference": "71340de5b63853956ede391175d00968899c6861",
                 "shasum": ""
             },
             "require": {
@@ -143,7 +143,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-03-11T16:32:52+00:00"
+            "time": "2021-03-17T02:15:34+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -527,16 +527,16 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v8.32.1",
+            "version": "v8.33.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "9c7a9868d7485a82663d67109429094c8e4ed56d"
+                "reference": "121cea1d8b8772bc7fee99c71ecf0f57c1d77b3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/9c7a9868d7485a82663d67109429094c8e4ed56d",
-                "reference": "9c7a9868d7485a82663d67109429094c8e4ed56d",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/121cea1d8b8772bc7fee99c71ecf0f57c1d77b3b",
+                "reference": "121cea1d8b8772bc7fee99c71ecf0f57c1d77b3b",
                 "shasum": ""
             },
             "require": {
@@ -571,7 +571,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-02-26T13:17:03+00:00"
+            "time": "2021-03-12T14:45:30+00:00"
         },
         {
             "name": "league/commonmark",

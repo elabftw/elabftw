@@ -359,6 +359,7 @@ class Uploads implements DestroyableInterface
             if (unlink($orig) !== true) {
                 throw new FilesystemErrorException('Error deleting file!');
             }
+            return;
         }
 
         if (rename($orig, $dest) !== true) {

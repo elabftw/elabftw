@@ -127,7 +127,7 @@ class Uploads implements DestroyableInterface
     {
         $this->Entity->canOrExplode('write');
 
-        $allowedFileTypes = array('png', 'mol', 'json');
+        $allowedFileTypes = array('png', 'mol', 'json', 'zip');
         if (!in_array($fileType, $allowedFileTypes, true)) {
             throw new IllegalActionException('Bad filetype!');
         }

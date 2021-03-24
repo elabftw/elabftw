@@ -88,6 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // prevent double click
       (event.target as HTMLButtonElement).disabled = true;
       AjaxC.post('timestamp').then(() => window.location.replace(`experiments.php?mode=view&id=${id}`));
+
+    // BLOXBERG
+    } else if (el.matches('[data-action="bloxberg"]')) {
+      AjaxC.post('bloxberg').then(() => window.location.replace(`experiments.php?mode=view&id=${id}`));
     }
   });
 });

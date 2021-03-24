@@ -10,10 +10,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Client;
-use Elabftw\Models\AbstractEntity;
+use DateTimeImmutable;
+use Elabftw\Controllers\DownloadController;
+use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\AbstractEntity;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use ZipArchive;
 
 /**
  * Send data to Bloxberg server
@@ -21,94 +25,96 @@ use Elabftw\Exceptions\ImproperActionException;
  */
 class MakeBloxberg extends AbstractMake
 {
-    private AbstractEntity $Entity;
+    /**
+     * This pubkey is currently the same for everyone
+     * Information about the user/institution is stored in the metadataJson field
+     */
+    private const PUB_KEY = '0xc4d84f32cd6fd05e2e292c171f5209a678525002';
 
-    private const BLOXBERG_CERT_URL = 'https://certify.bloxberg.org/certifyData';
+    private const CERT_URL = 'https://qa.certify.bloxberg.org/createBloxbergCertificate';
 
-    private const BLOXBERG_PROOF_URL = 'https://certify.bloxberg.org/generateCertificate';
+    private const PROOF_URL = 'https://qa.certify.bloxberg.org/generatePDF';
 
-    public function __construct(AbstractEntity $entity)
+    /** @var AbstractEntity $Entity */
+    protected $Entity;
+
+    private Client $client;
+
+    public function __construct(Client $client, AbstractEntity $entity)
     {
+        $this->client = $client;
         parent::__construct($entity);
         $this->Entity->canOrExplode('write');
     }
 
-    public function timestamp()
+    public function timestamp(): bool
     {
-        $client = new Client();
+        $pdf = $this->getPdf();
+        $pdfHash = hash('sha256', $pdf);
+
+        try {
+            // first request sends the hash to the certify endpoint
+            $certifyResponse = json_decode($this->certify($pdfHash));
+            // now we send the previous response to another endpoint to get the pdf back in a zip archive
+            $proofResponse = $this->client->post(self::PROOF_URL, array('json' => $certifyResponse));
+        } catch (RequestException $e) {
+            throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);
+        }
+
+        // the binary response is a zip archive that contains the certificate in pdf format
+        $zip = $proofResponse->getBody()->getContents();
+        // save the zip file as an upload
+        $zipUploadId = $this->Entity->Uploads->createFromString('zip', $this->getFileName(), $zip);
+        $zipFile = $this->Entity->Uploads->readFromId($zipUploadId);
+        $this->addToZip($pdf, $zipFile);
+        return true;
+    }
+
+    public function getFileName(): string
+    {
+        $DateTime = new DateTimeImmutable();
+        return sprintf('bloxberg-proof_%s', $DateTime->format('c'));
+    }
+
+    private function getPdf(): string
+    {
+        $MakePdf = new MakePdf($this->Entity);
+        return $MakePdf->getPdf();
+    }
+
+    private function certify(string $hash): string
+    {
         $options = array(
             'json' => array(
-                'certifyVariables' => array(
-                    'checksum' => $checksum,
-                    'authorName' => $this->Entity->entityData['elabid'],
-                    'timestampString' => (string) time(),
-                )
-            )
+                'publicKey' => self::PUB_KEY,
+                'crid' => array('0x' . $hash),
+                'cridType' => 'sha2-256',
+                'enableIPFS' => false,
+                'metadataJson' => json_encode(array(
+                    'author' => $this->Entity->entityData['fullname'],
+                    'elabid' => $this->Entity->entityData['elabid'],
+                    'instanceid' => 'not implemented',
+                )),
+            ),
         );
 
-        try {
-            $response = $client->post(self::BLOXBERG_URL, $options);
-        } catch (RequestException $e) {
-            throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);
-        }
-
-        $content = json_decode($response->getBody()->getContents());
-        $transactionHash = $content->txReceipt->events->createDataEvent->transactionHash;
-
-        // now call the Bloxberg API to get the pdf proof, this comes back as binary data
-        $retrieveOptions = array(
-            'json' => array(
-                'certificateVariables' => array(
-                    'transactionHash' => (string) $transaction_hash,
-                )
-            )
-        );
-
-        try {
-            $proofResponse = $client->post(self::BLOXBERG_PROOF_URL, $retrieveOptions);
-        } catch (RequestException $e) {
-            throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);
-        }
-
-        $pdf = $proofResponse->getBody()->getContents();
-        var_dump($pdf);die;
-        $this->saveProof($pdf);
+        return $this->client->post(self::CERT_URL, $options)->getBody()->getContents();
     }
 
-    private function saveProof(string $pdf)
+    /**
+     * Add the timestamped pdf to existing zip archive
+     */
+    private function addToZip(string $pdf, array $zipFile): void
     {
-        $longName = $this->getLongName() . '-bloxberg-proof.pdf';
-        $filePath = $this->getUploadsPath() . $longName;
-        $dir = dirname($filePath);
-        if (!is_dir($dir) && !\mkdir($dir, 0700, true) && !is_dir($dir)) {
-            throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
+        // add the timestamped pdf to the zip archive
+        $ZipArchive = new ZipArchive();
+        // we need this to get the path to the file
+        $DownloadController = new DownloadController($zipFile['long_name']);
+        $res = $ZipArchive->open($DownloadController->getFilePath());
+        if ($res !== true) {
+            throw new FilesystemErrorException('Error opening the zip archive!');
         }
-        if (!file_put_contents($filePath, $pdf_raw)) {
-            throw new FilesystemErrorException('Cannot save token to disk!');
-        }
-        $this->bloxbergStamp = 1;
-        $this->bloxbergproofPath = $filePath;
-
-        $realName = $this->getElabid() . '_bloxberg.pdf';
-        $hash = $this->getHash($this->bloxbergproofPath);
-
-        // keep a trace of where we put the file
-        $sql = 'INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, hash, hash_algorithm)
-            VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :hash, :hash_algorithm)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':real_name', $realName);
-        $req->bindParam(':long_name', $longName);
-        $req->bindValue(':comment', 'Bloxberg timestamp proof');
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindValue(':type', 'bloxberg-proof'); // save the proof in 'experiements' category to make sure it is zip exported, this could be solved more elegantly...
-        $req->bindParam(':hash', $hash);
-        $req->bindParam(':hash_algorithm', $this->stampParams['hash']);
-        if (!$req->execute()) {
-            throw new ImproperActionException('Cannot insert into SQL!');
-        }
+        $ZipArchive->addFromString('timestamped-data.pdf', $pdf);
+        $ZipArchive->close();
     }
-
-
-
 }

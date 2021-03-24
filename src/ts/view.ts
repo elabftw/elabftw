@@ -91,6 +91,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // BLOXBERG
     } else if (el.matches('[data-action="bloxberg"]')) {
+      const overlay = document.createElement('div');
+      const loading = document.createElement('p');
+      const ring = document.createElement('div');
+      ring.classList.add('lds-ring');
+      // see https://loading.io/css/
+      const emptyDiv = document.createElement('div');
+      ring.appendChild(emptyDiv);
+      ring.appendChild(emptyDiv);
+      ring.appendChild(emptyDiv);
+      ring.appendChild(emptyDiv);
+      overlay.classList.add('full-screen-overlay');
+      loading.appendChild(ring);
+      overlay.appendChild(loading);
+      document.getElementById('container').append(overlay);
       AjaxC.post('bloxberg').then(() => window.location.replace(`experiments.php?mode=view&id=${id}`));
     }
   });

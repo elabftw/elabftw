@@ -57,11 +57,11 @@ $(document).ready(function(){
 
   // PAGINATION
   // previous page
-  $('.pageButtons').on('click', '.previousPage', function() {
+  $('.page-buttons').on('click', '.previousPage', function() {
     insertParamAndReload('offset', $('#info').data('offset') - $('#info').data('limit'));
   });
   // next page
-  $('.pageButtons').on('click', '.nextPage', function() {
+  $('.page-buttons').on('click', '.nextPage', function() {
     insertParamAndReload('offset', $('#info').data('offset') + $('#info').data('limit'));
   });
   // END PAGINATION

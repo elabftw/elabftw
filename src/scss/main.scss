@@ -858,14 +858,29 @@ the form-control fails to do that so we do the border ourselves */
         min-width: 0 !important;
     }
 
+    /* don't print all that stuff */
+    nav,
+    footer,
+    #menu,
+    #filesdiv,
+    #comment_container,
+    #withSelected,
+    .item-info > .item-checkbox,
+    .item-info > .clickable,
+    .real-container > span,
+    .real-container > hr,
+    .real-container > form,
+    .elab-tooltip,
+    .col-md-10,
+    .col-md-2,
+    .smallgray,
+    .page-buttons {
+        display: none !important;
+    }
+
     .container {
         min-width: 0 !important;
         width: auto;
-    }
-
-    /* don't show nav bar */
-    nav {
-        display: none;
     }
 
     .real-container {
@@ -880,61 +895,60 @@ the form-control fails to do that so we do the border ourselves */
         text-align: center;
     }
 
-    /* don't show create button */
-    .real-container .row {
-        display: none;
-    }
-
-    /* but show >last modified< and >elabid< */
     .real-container .row:last-child {
         display: block;
         margin-top: 0.5rem;
     }
-    
+
     .real-container .row:last-child .col-6 {
         max-width: 100%;
+        padding: 0;
     }
 
     .elabid {
         text-align: left;
     }
 
-    /* don't show experiment/database */
-    .real-container > h2 {
-        display: none;
+    .title,
+    .item-next,
+    .item-info {
+        padding-left: 5px !important;
     }
 
-    /* don't show revisions */
-    .real-container > span {
-        display: none;
-    }
-
-    .view-action-buttons {
-        display: none;
+    .title a {
+        text-decoration: none !important;
     }
 
     .item {
         background-color: #fff;
-        border: 0 !important;
         font-size: 14px;
         line-height: normal;
         margin: 0;
-        padding: 15px;
+        margin-top: 2px;
+        padding: 5px;
     }
 
-    /* don't show attached files */
-    #filesdiv {
-        display: none;
+    #itemList {
+        display: block;
     }
 
-    /* don't show comments */
-    #comment_container {
-        display: none;
+    #itemList > div {
+        display: block;
+        max-width: 95% !important;
     }
 
-    /* don't show footer */
-    footer {
-        display: none;
+    section > div {
+        margin: 0 !important;
+        padding: 5px;
+        width: 100% !important;
+    }
+
+    #body_view {
+        border: 0;
+    }
+
+    #itemList section {
+        break-inside: avoid;
     }
 }
 

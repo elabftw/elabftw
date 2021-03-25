@@ -580,6 +580,71 @@ tr:nth-child(odd) {
     color: #000;
 }
 
+.full-screen-overlay {
+    background: rgba(0, 0, 0, 0.8);
+    height: 100vh;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    z-index: 1337;
+
+    p {
+        color: #fff;
+        left: 50%;
+        opacity: 1;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1342;
+    }
+}
+
+/* loading ring */
+.lds-ring {
+    display: block;
+    height: 80px;
+    margin-left: 50%;
+    margin-right: auto;
+    position: relative;
+    width: 80px;
+
+    div {
+        animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        border: 8px solid #fff;
+        border-color: #fff transparent transparent;
+        border-radius: 50%;
+        box-sizing: border-box;
+        display: block;
+        height: 64px;
+        margin: 8px;
+        position: absolute;
+        width: 64px;
+    }
+
+    div:nth-child(1) {
+        animation-delay: -0.45s;
+    }
+
+    div:nth-child(2) {
+        animation-delay: -0.3s;
+    }
+
+    div:nth-child(3) {
+        animation-delay: -0.15s;
+    }
+}
+
+@keyframes lds-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 /* ITEMS */
 .item {
     border: 1px solid $bordersgray;
@@ -890,7 +955,7 @@ the form-control fails to do that so we do the border ourselves */
         display: block;
         margin-top: 0.5rem;
     }
-    
+
     .real-container .row:last-child .col-6 {
         max-width: 100%;
     }

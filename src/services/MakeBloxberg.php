@@ -31,9 +31,9 @@ class MakeBloxberg extends AbstractMake
      */
     private const PUB_KEY = '0xc4d84f32cd6fd05e2e292c171f5209a678525002';
 
-    private const CERT_URL = 'https://qa.certify.bloxberg.org/createBloxbergCertificate';
+    private const CERT_URL = 'https://certify.bloxberg.org/createBloxbergCertificate';
 
-    private const PROOF_URL = 'https://qa.certify.bloxberg.org/generatePDF';
+    private const PROOF_URL = 'https://certify.bloxberg.org/generatePDF';
 
     /** @var AbstractEntity $Entity */
     protected $Entity;
@@ -64,10 +64,8 @@ class MakeBloxberg extends AbstractMake
         // the binary response is a zip archive that contains the certificate in pdf format
         $zip = $proofResponse->getBody()->getContents();
         // save the zip file as an upload
-        $zipUploadId = $this->Entity->Uploads->createFromString('zip', $this->getFileName(), $zip);
-        $zipFile = $this->Entity->Uploads->readFromId($zipUploadId);
-        $this->addToZip($pdf, $zipFile);
-        return true;
+        $uploadId = $this->Entity->Uploads->createFromString('zip', $this->getFileName(), $zip);
+        return $this->addToZip($pdf, $uploadId);
     }
 
     public function getFileName(): string
@@ -104,8 +102,10 @@ class MakeBloxberg extends AbstractMake
     /**
      * Add the timestamped pdf to existing zip archive
      */
-    private function addToZip(string $pdf, array $zipFile): void
+    private function addToZip(string $pdf, int $uploadId): bool
     {
+        // get info about the file to get the long_name
+        $zipFile = $this->Entity->Uploads->readFromId($uploadId);
         // add the timestamped pdf to the zip archive
         $ZipArchive = new ZipArchive();
         // we need this to get the path to the file
@@ -115,6 +115,6 @@ class MakeBloxberg extends AbstractMake
             throw new FilesystemErrorException('Error opening the zip archive!');
         }
         $ZipArchive->addFromString('timestamped-data.pdf', $pdf);
-        $ZipArchive->close();
+        return $ZipArchive->close();
     }
 }

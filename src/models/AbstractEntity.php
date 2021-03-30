@@ -25,6 +25,7 @@ use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
+use Elabftw\Services\Transform;
 use Elabftw\Traits\EntityTrait;
 use function explode;
 use function is_bool;
@@ -437,34 +438,16 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
     /**
      * Get a list of visibility/team groups to display
      *
-     * @param string $rw read or write
+     * @param string $permission raw value (public, organization, team, user, useronly)
      * @return string capitalized and translated permission level
      */
-    public function getCan(string $rw): string
+    public function getCan(string $permission): string
     {
-        if (Check::id((int) $this->entityData['can' . $rw]) !== false) {
-            return ucfirst($this->TeamGroups->readName((int) $this->entityData['can' . $rw]));
+        // if it's a number, then lookup the name of the team group
+        if (Check::id((int) $permission) !== false) {
+            return ucfirst($this->TeamGroups->readName((int) $permission));
         }
-        switch ($this->entityData['can' . $rw]) {
-            case 'public':
-                $res = _('Public');
-                break;
-            case 'organization':
-                $res = _('Organization');
-                break;
-            case 'team':
-                $res = _('Team');
-                break;
-            case 'user':
-                $res = _('Owner + Admin(s)');
-                break;
-            case 'useronly':
-                $res = _('Owner only');
-                break;
-            default:
-                $res = Tools::error();
-        }
-        return ucfirst($res);
+        return Transform::permission($permission);
     }
 
     /**

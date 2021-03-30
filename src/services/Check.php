@@ -149,6 +149,7 @@ class Check
             'organization',
             'team',
             'user',
+            'useronly',
         );
 
         if (!in_array($visibility, $validArr, true) && self::id((int) $visibility) === false) {

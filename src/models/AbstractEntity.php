@@ -195,9 +195,6 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
             $sql .= ' AND linkst.link_id = ' . $displayParams->related;
         }
 
-        // needUseridBind is to toggle the bindParam
-        // with php8 it will throw an error if you try and bind to a non existing token
-        $needUseridBind = false;
         // teamFilter is to restrict to the team for items only
         // as they have a team column
         $teamFilter = '';
@@ -210,10 +207,10 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         if ($this->Users->userData['is_admin']) {
             $sql .= 'AND entity.userid = users2teams.users_id)';
         } else {
-            // normal user will so only their own experiments
-            $needUseridBind = true;
             $sql .= 'AND entity.userid = :userid)';
         }
+        // add entities in useronly visibility only if we own them
+        $sql .= " OR (entity.canread = 'useronly' AND entity.userid = :userid)";
         // add all the teamgroups in which the user is
         if (!empty($teamgroupsOfUser)) {
             foreach ($teamgroupsOfUser as $teamgroup) {
@@ -241,9 +238,7 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         $sql .= implode(' ', $sqlArr);
 
         $req = $this->Db->prepare($sql);
-        if ($needUseridBind === true) {
-            $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        }
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $itemsArr = $req->fetchAll();
@@ -461,7 +456,10 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
                 $res = _('Team');
                 break;
             case 'user':
-                $res = _('User');
+                $res = _('Owner + Admin(s)');
+                break;
+            case 'useronly':
+                $res = _('Owner only');
                 break;
             default:
                 $res = Tools::error();

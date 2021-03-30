@@ -15,7 +15,7 @@ use Elabftw\Controllers\DownloadController;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
-use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use ZipArchive;
 
@@ -38,9 +38,9 @@ class MakeBloxberg extends AbstractMake
     /** @var AbstractEntity $Entity */
     protected $Entity;
 
-    private ClientInterface $client;
+    private Client $client;
 
-    public function __construct(ClientInterface $client, AbstractEntity $entity)
+    public function __construct(Client $client, AbstractEntity $entity)
     {
         $this->client = $client;
         parent::__construct($entity);

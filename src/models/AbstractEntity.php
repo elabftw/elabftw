@@ -22,6 +22,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Interfaces\HasMetadataInterface;
 use Elabftw\Maps\Team;
+use Elabftw\Models\Config;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
@@ -345,7 +346,12 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         }
 
         // add a revision
-        $Revisions = new Revisions($this);
+        $Config = new Config();
+        $Revisions = new Revisions(
+            $this,
+            (int) $Config->configArr['max_revisions'],
+            (int) $Config->configArr['min_delta_revisions'],
+        );
         $Revisions->create($body);
 
         $title = Filter::title($title);

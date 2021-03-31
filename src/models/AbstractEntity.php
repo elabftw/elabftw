@@ -496,12 +496,8 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
 
         $Permissions = new Permissions($this->Users, $item);
 
-        if ($this instanceof Experiments || $this instanceof Database) {
-            return $Permissions->forExpItem();
-        }
-
-        if ($this instanceof Templates) {
-            return $Permissions->forTemplates();
+        if ($this instanceof Experiments || $this instanceof Database || $this instanceof Templates) {
+            return $Permissions->forEntity();
         }
 
         return array('read' => false, 'write' => false);

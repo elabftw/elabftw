@@ -101,7 +101,8 @@ class TeamGroups implements CrudInterface
             'public' => _('Public'),
             'organization' => _('Everyone with an account'),
             'team' => _('Only the team'),
-            'user' => _('Only me'),
+            'user' => _('Only me and admins'),
+            'useronly' => _('Only me'),
         );
         $groups = $this->readGroupsFromUser();
 

@@ -63,6 +63,7 @@ class LdapAuth implements AuthInterface
             $lastname = $record[$this->configArr['ldap_lastname']][0] ?? 'Unknown';
             // GET TEAMS
             $teamFromLdap = $record[$this->configArr['ldap_team']][0];
+            // if no team attribute is sent by the LDAP server, use the default team
             if (empty($teamFromLdap)) {
                 // we directly get the id from the stored config
                 $teamId = (int) $this->configArr['saml_team_default'];
@@ -77,7 +78,6 @@ class LdapAuth implements AuthInterface
             }
             // normalize the team(s)
             $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teamFromLdap)[0];
-            // if no team attribute is sent by the LDAP server, use the default team
             // CREATE USER (and force validation of user)
             $Users = new Users($Users->create($this->email, $teams, $firstname, $lastname, '', null, true));
         }

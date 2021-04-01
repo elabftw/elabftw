@@ -158,8 +158,7 @@
         <label for='pdfa'>{{ 'Generate PDF/A compliant pdfs (will embed the fonts and make the file bigger)'|trans }}</label>
         <br>
         <input id='pdf_tex' type='checkbox' name='pdf_tex'
-          {{ App.Users.userData.pdf_tex == '1' ? " checked='checked'" }}{# <!-- lgtm[js/duplicate-html-attribute] -->
-          #}
+          {{ App.Users.userData.pdf_tex == '1' ? " checked='checked'" }}
         />
         <label for='pdf_tex'>{{ 'Typeset formulas written in TeX/LaTeX. WARNING: Reaction arrows with optional arguments will not be typeset correctly'|trans }}, <a href='https://mhchem.github.io/MathJax-mhchem/' target='_blank'>mhchem for MathJax manual</a></label>
         <br>

@@ -58,6 +58,10 @@ class LdapAuth implements AuthInterface
             $Users->populateFromEmail($this->email);
         } catch (ResourceNotFoundException $e) {
             // the user doesn't exist yet in the db
+            // what do we do? Lookup the config setting for that case
+            if ($this->configArr['saml_user_default'] === '0') {
+                throw new ImproperActionException('Could not find an existing user. Ask a Sysadmin to create your account.');
+            }
             // GET FIRSTNAME AND LASTNAME
             $firstname = $record[$this->configArr['ldap_firstname']][0] ?? 'Unknown';
             $lastname = $record[$this->configArr['ldap_lastname']][0] ?? 'Unknown';

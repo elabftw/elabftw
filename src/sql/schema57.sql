@@ -8,6 +8,7 @@ START TRANSACTION;
     ALTER TABLE `users` ADD `show_public` UNSIGNED TINYINT(1) NOT NULL DEFAULT '0';
     INSERT INTO config (conf_name, conf_value) VALUES ('autologout_time', '0');
     INSERT INTO config (conf_name, conf_value) VALUES ('min_delta_revisions', '100');
+    INSERT INTO config (conf_name, conf_value) VALUES ('saml_user_default', '1');
     ALTER TABLE `items` ADD `elabid` VARCHAR(255) NOT NULL;
     ALTER TABLE `experiments` CHANGE `datetime` `datetime` TIMESTAMP NULL DEFAULT NULL;
     ALTER TABLE `experiments` ADD `metadata` JSON NULL DEFAULT NULL;

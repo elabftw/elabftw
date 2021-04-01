@@ -22,7 +22,6 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Interfaces\HasMetadataInterface;
 use Elabftw\Maps\Team;
-use Elabftw\Models\Config;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;

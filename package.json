@@ -84,6 +84,7 @@
     "jslint-ci": "eslint --ext .ts --quiet src/ts",
     "phan": "phan --allow-polyfill-parser -k src/tools/phan-config.php",
     "phpcs": "./vendor/bin/php-cs-fixer fix --config=.php_cs.dist -v --using-cache=no",
+    "phpcs-dry": "./vendor/bin/php-cs-fixer fix --config=.php_cs.dist -v --dry-run --stop-on-violation --using-cache=no",
     "phpmetrics": "phpmetrics --report-html=metrics . && firefox metrics/index.html",
     "phpstan": "phpstan analyse --memory-limit 2G -c src/tools/phpstan.neon",
     "psalm": "psalm -c=src/tools/psalm.xml",

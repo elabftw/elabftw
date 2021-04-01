@@ -157,7 +157,7 @@ export function getTinymceBaseConfig(page: string): object {
       [0x2640, 'female sign'],
       [0x2642, 'male sign']
     ],
-    height: '1200',
+    height: '500',
     mentions: {
       // use # for autocompletion
       delimiter: '#',

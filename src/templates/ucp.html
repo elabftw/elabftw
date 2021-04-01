@@ -104,6 +104,13 @@
           {{ App.Users.userData.single_column_layout == '1' ? " checked='checked'" }}
       />
       <label for='layout'>{{ 'Use single column layout'|trans }}</label>
+
+      <div>
+      <input id='uploads_layout' class='mt-2' type='checkbox' name='uploads_layout'
+          {{ App.Users.userData.uploads_layout == '1' ? " checked='checked'" }}
+      />
+      <label for='uploads_layout'>{{ 'Display attached files with thumbnails'|trans }}</label>
+      </div>
     </section>
 
     <section class='box'>

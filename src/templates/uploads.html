@@ -39,9 +39,9 @@
                            >
                         {% endif %}
                     {% set thumb_name = upload.long_name ~ '_th.jpg' %}
-                    {% if thumb_name is readable %}
+                    {% if thumb_name is readable and App.Users.userData.uploads_layout %}
                        <img class='thumb img-thumbnail rounded mx-auto d-block' src='app/download.php?f={{ upload.long_name }}_th.jpg' alt='thumbnail' />
-                   {% else %}
+                   {% elseif App.Users.userData.uploads_layout %}
                       <i class='fas {{ Entity.Uploads.getIconFromExtension(ext) }} thumb rounded mx-auto d-block'></i>
                    {% endif %}
                      {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg)$/i' %}
@@ -90,7 +90,7 @@
                                   id='3Dmol_{{ upload.id }}'>
                                 </div>
 
-            {% else %}
+            {% elseif App.Users.userData.uploads_layout %}
             <i class='fas {{ Entity.Uploads.getIconFromExtension(ext) }} thumb rounded mx-auto d-block'></i>
             {% endif %}
 

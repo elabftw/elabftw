@@ -285,15 +285,8 @@ class MakePdf extends AbstractMake
     {
         $mpdf = $this->initializeMpdf();
 
-        $content = $this->getContent();
-
-        // User preference: Render tex in PDF?
-        if ($this->Entity->Users->userData['pdf_tex']) {
-            $content = $this->tex2svg($mpdf, $content);
-        }
-
         // write content
-        $mpdf->WriteHTML($content);
+        $mpdf->WriteHTML($this->tex2svg($mpdf, $this->getContent()));
 
         if ($this->Entity->Users->userData['pdfa']) {
             // make sure we can read the pdf in a long time

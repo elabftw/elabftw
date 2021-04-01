@@ -81,15 +81,8 @@ class MakeMultiPdf extends AbstractMake
         $CurrentEntity = new MakePdf($this->Entity, true);
         $permissions = $this->Entity->getPermissions();
         if ($permissions['read']) {
-            $content = $CurrentEntity->getContent();
-
-            // User preference: Render tex in PDF?
-            if ($this->Entity->Users->userData['pdf_tex']) {
-                $content = $CurrentEntity->tex2svg($this->mpdf, $content);
-            }
-
             // write content
-            $this->mpdf->WriteHTML($content);
+            $this->mpdf->WriteHTML($CurrentEntity->tex2svg($this->mpdf, $CurrentEntity->getContent()));
         }
     }
 }

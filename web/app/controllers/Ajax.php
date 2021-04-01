@@ -83,6 +83,9 @@ try {
             break;
 
         case 'comment':
+            if (!($Entity instanceof Experiments || $Entity instanceof Database)) {
+                throw new IllegalActionException('Invalid entity type for comments');
+            }
             $Model = $Entity->Comments;
             break;
 
@@ -95,6 +98,9 @@ try {
             break;
 
         case 'link':
+            if (!($Entity instanceof Experiments || $Entity instanceof Database || $Entity instanceof Templates)) {
+                throw new IllegalActionException('Invalid entity type for link');
+            }
             $Model = new Links($Entity);
             break;
 
@@ -111,6 +117,9 @@ try {
             break;
 
         case 'step':
+            if (!($Entity instanceof Experiments || $Entity instanceof Database || $Entity instanceof Templates)) {
+                throw new IllegalActionException('Invalid entity type for steps');
+            }
             $Model = new Steps($Entity);
             break;
 
@@ -122,6 +131,9 @@ try {
             break;
 
         case 'tag':
+            if (!($Entity instanceof Experiments || $Entity instanceof Database || $Entity instanceof Templates)) {
+                throw new IllegalActionException('Invalid entity type for steps');
+            }
             $Model = new Tags($Entity);
             break;
 
@@ -134,6 +146,9 @@ try {
             break;
 
         case 'upload':
+            if (!($Entity instanceof Experiments || $Entity instanceof Database)) {
+                throw new IllegalActionException('Invalid entity type for steps');
+            }
             $Model = $Entity->Uploads;
             break;
 

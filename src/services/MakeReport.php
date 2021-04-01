@@ -63,6 +63,7 @@ class MakeReport
             'diskusage_in_bytes',
             'diskusage_formatted',
             'exp_total',
+            'exp_timestamped_total',
         );
     }
 
@@ -87,7 +88,8 @@ class MakeReport
             $allUsers[$key]['team(s)'] = $teams;
             $allUsers[$key]['diskusage_in_bytes'] = $diskUsage;
             $allUsers[$key]['diskusage_formatted'] = Tools::formatBytes($diskUsage);
-            $allUsers[$key]['exp_total'] = $Entity->countAll();
+            $allUsers[$key]['exp_total'] = $UsersHelper->countExperiments();
+            $allUsers[$key]['exp_timestamped_total'] = $UsersHelper->countTimestampedExperiments();
         }
         return $allUsers;
     }

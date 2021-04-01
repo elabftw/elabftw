@@ -21,6 +21,16 @@ class UsersHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->UsersHelper->hasExperiments());
     }
 
+    public function testCountExperiments()
+    {
+        $this->assertEquals(58, $this->UsersHelper->countExperiments());
+    }
+
+    public function testCountTimestampedExperiments()
+    {
+        $this->assertEquals(0, $this->UsersHelper->countTimestampedExperiments());
+    }
+
     public function testGetTeamsFromUserid()
     {
         $expected = array(array('id' => '1', 'name' => 'Alpha'));

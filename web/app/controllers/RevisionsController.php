@@ -42,7 +42,11 @@ try {
 
     $Entity->setId((int) $Request->query->get('item_id'));
     $Entity->canOrExplode('write');
-    $Revisions = new Revisions($Entity);
+    $Revisions = new Revisions(
+        $Entity,
+        (int) $App->Config->configArr['max_revisions'],
+        (int) $App->Config->configArr['min_delta_revisions'],
+    );
 
     if ($Request->query->get('action') === 'restore') {
         $revId = Check::id((int) $Request->query->get('rev_id'));

@@ -53,6 +53,7 @@ class LdapAuth implements AuthInterface
             throw new InvalidCredentialsException();
         }
         $Users = new Users();
+        $Teams = new Teams($Users);
         try {
             $Users->populateFromEmail($this->email);
         } catch (ResourceNotFoundException $e) {
@@ -61,17 +62,22 @@ class LdapAuth implements AuthInterface
             $firstname = $record[$this->configArr['ldap_firstname']][0] ?? 'Unknown';
             $lastname = $record[$this->configArr['ldap_lastname']][0] ?? 'Unknown';
             // GET TEAMS
-            $teams = $record[$this->configArr['ldap_team']][0];
+            $teamFromLdap = $record[$this->configArr['ldap_team']][0];
             // if no team attribute is sent by the LDAP server, use the default team
-            if (empty($teams)) {
+            if (empty($teamFromLdap)) {
                 // we directly get the id from the stored config
                 $teamId = (int) $this->configArr['saml_team_default'];
                 if ($teamId === 0) {
                     throw new ImproperActionException('Could not find team ID to assign user!');
                 }
-                $Teams = new Teams($Users);
-                $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($teamId))[0];
+                $teamFromLdap = array($teamId);
+            } else {
+                if (is_string($teamFromLdap)) {
+                    $teamFromLdap = array($teamFromLdap);
+                }
             }
+            // normalize the team(s)
+            $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teamFromLdap)[0];
             // CREATE USER (and force validation of user)
             $Users = new Users($Users->create($this->email, $teams, $firstname, $lastname, '', null, true));
         }

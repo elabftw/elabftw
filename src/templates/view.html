@@ -57,8 +57,8 @@
         {{ Entity.entityData.rating|stars|raw }}
       {% endif %}
     {% endif %}
-    <i class='fas fa-eye ml-2' title='{{ 'Visibility'|trans }}'></i> {{ Entity.getCan('read') }}
-    <i class='fas fa-pencil-alt ml-2' title='{{ 'Edit'|trans }}'></i> {{ Entity.getCan('write') }}
+    <i class='fas fa-eye ml-2' title='{{ 'Visibility'|trans }}'></i> {{ Entity.getCan(Entity.entityData.canread) }}
+    <i class='fas fa-pencil-alt ml-2' title='{{ 'Edit'|trans }}'></i> {{ Entity.getCan(Entity.entityData.canwrite) }}
     <a class='elab-tooltip ml-2' data-action='pin' href='#'>
       <span>{{ 'Pin'|trans }}</span>
       <i class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }}' title='{{ 'Toggle pin'|trans }}'></i>
@@ -135,6 +135,12 @@
       <i class='far fa-calendar-check'></i>
     </a>
   {% endif %}
+
+  <!-- BLOXBERG BUTTON -->
+  <a href='#' class='elab-tooltip mr-1' data-action='bloxberg'>
+    <span>{{ 'Add to blockchain'|trans }}</span>
+    <i class='fas fa-cubes'></i>
+  </a>
 
   <!-- build the tag array -->
   {% if Entity.entityData.tags|length > 0 %}

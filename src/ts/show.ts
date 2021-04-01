@@ -55,17 +55,6 @@ $(document).ready(function(){
     });
   });
 
-  // PAGINATION
-  // previous page
-  $('.pageButtons').on('click', '.previousPage', function() {
-    insertParamAndReload('offset', $('#info').data('offset') - $('#info').data('limit'));
-  });
-  // next page
-  $('.pageButtons').on('click', '.nextPage', function() {
-    insertParamAndReload('offset', $('#info').data('offset') + $('#info').data('limit'));
-  });
-  // END PAGINATION
-
   // THE CHECKBOXES
   const nothingSelectedError = {
     'msg': i18next.t('nothing-selected'),
@@ -296,5 +285,26 @@ $(document).ready(function(){
     }
     selectOrder.val(targetSort);
     selectOrder.closest('form').trigger('submit');
+  });
+
+  // Add click listener and do action based on which element is clicked
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // PAGINATION
+    // previous page
+    if (el.matches('[data-action="previous-page"]')) {
+      const info = (document.querySelector('#info') as HTMLElement);
+      const offset = parseInt(info.dataset.offset);
+      const limit = parseInt(info.dataset.limit);
+      insertParamAndReload('offset', offset - limit);
+
+    // next page
+    } else if (el.matches('[data-action="next-page"]')) {
+      const info = (document.querySelector('#info') as HTMLElement);
+      const offset = parseInt(info.dataset.offset);
+      const limit = parseInt(info.dataset.limit);
+      insertParamAndReload('offset', offset + limit);
+    // END PAGINATION
+    }
   });
 });

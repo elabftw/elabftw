@@ -55,6 +55,8 @@ class UserPreferences implements MapInterface
 
     private int $showTeamTemplates = 0;
 
+    private int $showPublic = 0;
+
     private int $cjkFonts = 0;
 
     private int $pdfa = 1;
@@ -98,6 +100,7 @@ class UserPreferences implements MapInterface
             sc_todo = :new_sc_todo,
             show_team = :new_show_team,
             show_team_templates = :new_show_team_templates,
+            show_public = :new_show_public,
             chem_editor = :new_chem_editor,
             json_editor = :new_json_editor,
             lang = :new_lang,
@@ -123,6 +126,7 @@ class UserPreferences implements MapInterface
         $req->bindParam(':new_sc_todo', $this->shortcuts['todo']);
         $req->bindParam(':new_show_team', $this->showTeam);
         $req->bindParam(':new_show_team_templates', $this->showTeamTemplates);
+        $req->bindParam(':new_show_public', $this->showPublic);
         $req->bindParam(':new_chem_editor', $this->chemEditor);
         $req->bindParam(':new_json_editor', $this->jsonEditor);
         $req->bindParam(':new_lang', $this->lang);
@@ -186,6 +190,11 @@ class UserPreferences implements MapInterface
     final public function setShowTeamTemplates(string $setting): void
     {
         $this->showTeamTemplates = Filter::toBinary($setting);
+    }
+
+    final public function setShowPublic(string $setting): void
+    {
+        $this->showPublic = Filter::toBinary($setting);
     }
 
     final public function setCjkFonts(string $setting): void
@@ -269,6 +278,7 @@ class UserPreferences implements MapInterface
         $this->setShortcut('todo', $source['sc_todo'] ?? $this->shortcuts['todo']);
         $this->setShowTeam($source['show_team'] ?? '0');
         $this->setShowTeamTemplates($source['show_team_templates'] ?? '0');
+        $this->setShowPublic($source['show_public'] ?? '0');
         $this->setCjkFonts($source['cjk_fonts'] ?? '0');
         $this->setPdfa($source['pdfa'] ?? '0');
         $this->setPdfTex($source['pdf_tex'] ?? '0');
@@ -298,6 +308,7 @@ class UserPreferences implements MapInterface
             sc_todo,
             show_team,
             show_team_templates,
+            show_public,
             cjk_fonts,
             pdfa,
             pdf_tex,

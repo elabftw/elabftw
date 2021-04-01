@@ -580,6 +580,71 @@ tr:nth-child(odd) {
     color: #000;
 }
 
+.full-screen-overlay {
+    background: rgba(0, 0, 0, 0.8);
+    height: 100vh;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    z-index: 1337;
+
+    p {
+        color: #fff;
+        left: 50%;
+        opacity: 1;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1342;
+    }
+}
+
+/* loading ring */
+.lds-ring {
+    display: block;
+    height: 80px;
+    margin-left: 50%;
+    margin-right: auto;
+    position: relative;
+    width: 80px;
+
+    div {
+        animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        border: 8px solid #fff;
+        border-color: #fff transparent transparent;
+        border-radius: 50%;
+        box-sizing: border-box;
+        display: block;
+        height: 64px;
+        margin: 8px;
+        position: absolute;
+        width: 64px;
+    }
+
+    div:nth-child(1) {
+        animation-delay: -0.45s;
+    }
+
+    div:nth-child(2) {
+        animation-delay: -0.3s;
+    }
+
+    div:nth-child(3) {
+        animation-delay: -0.15s;
+    }
+}
+
+@keyframes lds-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 /* ITEMS */
 .item {
     border: 1px solid $bordersgray;
@@ -858,14 +923,29 @@ the form-control fails to do that so we do the border ourselves */
         min-width: 0 !important;
     }
 
+    /* don't print all that stuff */
+    nav,
+    footer,
+    #menu,
+    #filesdiv,
+    #comment_container,
+    #withSelected,
+    .item-info > .item-checkbox,
+    .item-info > .clickable,
+    .real-container > span,
+    .real-container > hr,
+    .real-container > form,
+    .elab-tooltip,
+    .col-md-10,
+    .col-md-2,
+    .smallgray,
+    .page-buttons {
+        display: none !important;
+    }
+
     .container {
         min-width: 0 !important;
         width: auto;
-    }
-
-    /* don't show nav bar */
-    nav {
-        display: none;
     }
 
     .real-container {
@@ -880,61 +960,60 @@ the form-control fails to do that so we do the border ourselves */
         text-align: center;
     }
 
-    /* don't show create button */
-    .real-container .row {
-        display: none;
-    }
-
-    /* but show >last modified< and >elabid< */
     .real-container .row:last-child {
         display: block;
         margin-top: 0.5rem;
     }
-    
+
     .real-container .row:last-child .col-6 {
         max-width: 100%;
+        padding: 0;
     }
 
     .elabid {
         text-align: left;
     }
 
-    /* don't show experiment/database */
-    .real-container > h2 {
-        display: none;
+    .title,
+    .item-next,
+    .item-info {
+        padding-left: 5px !important;
     }
 
-    /* don't show revisions */
-    .real-container > span {
-        display: none;
-    }
-
-    .view-action-buttons {
-        display: none;
+    .title a {
+        text-decoration: none !important;
     }
 
     .item {
         background-color: #fff;
-        border: 0 !important;
         font-size: 14px;
         line-height: normal;
         margin: 0;
-        padding: 15px;
+        margin-top: 2px;
+        padding: 5px;
     }
 
-    /* don't show attached files */
-    #filesdiv {
-        display: none;
+    #itemList {
+        display: block;
     }
 
-    /* don't show comments */
-    #comment_container {
-        display: none;
+    #itemList > div {
+        display: block;
+        max-width: 95% !important;
     }
 
-    /* don't show footer */
-    footer {
-        display: none;
+    section > div {
+        margin: 0 !important;
+        padding: 5px;
+        width: 100% !important;
+    }
+
+    #body_view {
+        border: 0;
+    }
+
+    #itemList section {
+        break-inside: avoid;
     }
 }
 

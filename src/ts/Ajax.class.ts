@@ -13,10 +13,13 @@ export class Ajax {
   id: string;
   controller: string;
 
-  constructor(type: string, id: string) {
+  constructor(type: string, id: string, controller = '') {
     this.type = type;
     this.id = id;
-    this.controller = 'app/controllers/EntityAjaxController.php';
+    this.controller = controller;
+    if (controller === '') {
+      this.controller = 'app/controllers/EntityAjaxController.php';
+    }
   }
 
   get(action: string): Promise<ResponseMsg> {

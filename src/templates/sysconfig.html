@@ -304,7 +304,13 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
   </form>
+
+  <hr>
+  <h3>{{ 'Bruteforce login protection' }}</h3>
+  <p id='bannedUsersCount'>{{ '%d users are currently prevented from logging on after too many failed tries.'|trans|format(bannedCount) }}</p>
+  <button type='submit' data-action='clear-banned' class='button btn btn-primary'>{{ 'Clear'|trans }}</button>
 </div>
+
 
 <!-- TAB 6 EMAIL -->
 <div class='divhandle' id='tab6div'>
@@ -809,4 +815,5 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       </div>
     </form>
 </div>
+<div id='info' data-page='sysconfig'></div>
 {% endblock body %}

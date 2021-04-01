@@ -5,6 +5,7 @@ START TRANSACTION;
     ALTER TABLE `users` CHANGE `salt` `salt` VARCHAR(255) NULL DEFAULT NULL;
     ALTER TABLE `users` ADD `password_hash` VARCHAR(255) NULL DEFAULT NULL AFTER `password`;
     ALTER TABLE `users` ADD `pdf_tex` tinyint(1) NOT NULL DEFAULT '0' AFTER `pdfa`;
+    ALTER TABLE `users` ADD `show_public` TINYINT(1) DEFAULT 0;
     INSERT INTO config (conf_name, conf_value) VALUES ('autologout_time', '0');
     INSERT INTO config (conf_name, conf_value) VALUES ('min_delta_revisions', '100');
     ALTER TABLE `items` ADD `elabid` VARCHAR(255) NOT NULL;

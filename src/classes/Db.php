@@ -20,14 +20,13 @@ use PDOStatement;
  */
 final class Db
 {
-    /** @var PDO $connection Connection to PDO */
-    private $connection;
+    private PDO $connection;
 
-    /** @var Db|null $instance store the single instance of the class */
-    private static $instance;
+    // store the single instance of the class
+    private static ?Db $instance = null;
 
-    /** @var int $nq total number of queries */
-    private $nq = 0;
+    // total number of queries
+    private int $nq = 0;
 
     /**
      * Construct of a singleton is private

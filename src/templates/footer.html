@@ -44,7 +44,7 @@
 
   <p class='footer-right'>
     {{ 'Powered by'|trans }}
-    <a href='https://www.elabftw.net'>eLabFTW</a> {{ v }}<br>
+    <a href='https://www.elabftw.net'>eLabFTW</a> {{ App.Session.has('is_auth') ? v }}<br>
         {{ 'Page generated in'|trans }} {{ App.getGenerationTime }} {{ 'seconds'|trans }}
     {% if App.Config.configArr.debug %}
         ({{ App.getNumberOfQueries }} SQL)
@@ -57,7 +57,7 @@
 </div><!-- end container -->
 </div><!-- end real-container -->
 
-<div id='user-prefs' data-lang='{{ App.Users.userData.lang }}'></div>
+<div id='user-prefs' data-lang='{{ App.Session.has('is_auth') ? App.Users.userData.lang : App.Config.configArr.lang }}' data-jslang='{{ (App.Session.has('is_auth') ? App.Users.userData.lang : App.Config.configArr.lang)|jslang }}'></div>
 
 </body>
 </html>

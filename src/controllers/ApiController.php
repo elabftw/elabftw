@@ -26,6 +26,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Status;
+use Elabftw\Models\Templates;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
@@ -41,41 +42,32 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class ApiController implements ControllerInterface
 {
-    /** @var App $App */
-    private $App;
+    private App $App;
 
-    /** @var Request $Request instance of Request */
-    private $Request;
+    private Request $Request;
 
-    /** @var AbstractCategory $Category instance of ItemsTypes or Status
-     * @psalm-suppress PropertyNotSetInConstructor */
-    private $Category;
+    /** @psalm-suppress PropertyNotSetInConstructor */
+    private AbstractCategory $Category;
 
-    /** @var AbstractEntity $Entity instance of Entity
-     * @psalm-suppress PropertyNotSetInConstructor */
-    private $Entity;
+    /** @psalm-suppress PropertyNotSetInConstructor */
+    private AbstractEntity $Entity;
 
-    /** @var Scheduler $Scheduler instance of Scheduler
-     * @psalm-suppress PropertyNotSetInConstructor */
-    private $Scheduler;
+    /** @psalm-suppress PropertyNotSetInConstructor */
+    private Scheduler $Scheduler;
 
-    /** @var Users $Users the authenticated user */
-    private $Users;
+    private Users $Users;
 
-    /** @var array $allowedMethods allowed HTTP methods */
-    private $allowedMethods = array('GET', 'POST', 'DELETE');
+    private array $allowedMethods = array('GET', 'POST', 'DELETE');
 
-    /** @var bool $canWrite can we do POST methods? */
-    private $canWrite = false;
+    private bool $canWrite = false;
 
-    /** @var int|null $id the id at the end of the url */
-    private $id;
+    private ?int $id;
 
-    /** @var string $endpoint experiments, items or uploads */
-    private $endpoint;
+    // experiments, items or uploads
+    private string $endpoint;
 
-    /** @var string $param used by backupzip to get the period */
-    private $param;
+    // used by backupzip to get the period
+    private string $param;
 
     public function __construct(App $app)
     {
@@ -109,6 +101,9 @@ class ApiController implements ControllerInterface
 
                 if ($this->endpoint === 'experiments' || $this->endpoint === 'items') {
                     return $this->getEntity();
+                }
+                if ($this->endpoint === 'templates') {
+                    return $this->getTemplate();
                 }
                 if ($this->endpoint === 'items_types' || $this->endpoint === 'status') {
                     return $this->getCategory();
@@ -163,6 +158,8 @@ class ApiController implements ControllerInterface
                 // CREATE AN EXPERIMENT/ITEM
                 if ($this->Entity instanceof Database) {
                     return $this->createItem();
+                } elseif ($this->Entity instanceof Templates) {
+                    return $this->createTemplate();
                 }
                 return $this->createExperiment();
             }
@@ -212,6 +209,8 @@ class ApiController implements ControllerInterface
             $this->Entity = new Experiments($this->Users, $this->id);
         } elseif ($this->endpoint === 'items' || $this->endpoint === 'bookable') {
             $this->Entity = new Database($this->Users, $this->id);
+        } elseif ($this->endpoint === 'templates') {
+            $this->Entity = new Templates($this->Users, $this->id);
         } elseif ($this->endpoint === 'items_types') {
             $this->Category = new ItemsTypes($this->Users);
         } elseif ($this->endpoint === 'status') {
@@ -257,6 +256,7 @@ class ApiController implements ControllerInterface
      * @apiSuccess {String} fullname Name of the owner of the experiment
      * @apiSuccess {Number} has_attachment Number of files attached
      * @apiSuccess {Number} id Id of the item
+     * @apiSuccess {String} elabid Unique elabid of the item
      * @apiSuccess {Number} locked 0 if not locked, 1 if locked
      * @apiSuccess {Number} rating Number of stars
      * @apiSuccess {String} tags Tags separated by '|'
@@ -342,6 +342,59 @@ class ApiController implements ControllerInterface
         $this->Entity->entityData['links'] = $this->Entity->Links->read();
         // add the steps
         $this->Entity->entityData['steps'] = $this->Entity->Steps->read();
+
+        return new JsonResponse($this->Entity->entityData);
+    }
+
+    /**
+     * @api {get} /templates/[:id] Read templates
+     * @apiName GetTemplate
+     * @apiGroup Entity
+     * @apiDescription Get the data from templates or just one template if id is set.
+     * @apiUse GetTemplate
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * # get all templates
+     * all_tpl = manager.get_all_templates()
+     * # get template with id 42
+     * tpl = manager.get_template(42)
+     * print(json.dumps(tpl, indent=4, sort_keys=True))
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # get all templates
+     * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/templates
+     * # get template with id 42
+     * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/templates/42
+     * @apiSuccess {String} body Main content
+     * @apiSuccess {Number} date Date in YYYYMMDD format
+     * @apiSuccess {String} fullname Name of the owner of the experiment
+     * @apiSuccess {Number} id Id of the experiment
+     * @apiSuccess {Number} locked 0 if not locked, 1 if locked
+     * @apiSuccess {Number} lockedby 1 User id of the locker
+     * @apiSuccess {DateTime} lockedwhen Time when it was locked
+     * @apiSuccess {String} tags Tags separated by '|'
+     * @apiSuccess {String} tags_id Id of the tags separated by ','
+     * @apiSuccess {String} title Title of the experiment
+     * @apiSuccess {Number} userid User id of the owner
+     * @apiSuccess {String} canread Read permission of the experiment
+     * @apiSuccess {String} canwrite Write permission of the experiment
+     *
+     */
+
+    /**
+     * Get template, one or several
+     */
+    private function getTemplate(): Response
+    {
+        if ($this->id === null && $this->Entity instanceof Templates) {
+            return new JsonResponse($this->Entity->getTemplatesList());
+        }
+        $this->Entity->read();
+        $permissions = $this->Entity->getPermissions($this->Entity->entityData);
+        if ($permissions['read'] === false) {
+            throw new IllegalActionException('User tried to access a template without read permissions');
+        }
 
         return new JsonResponse($this->Entity->entityData);
     }
@@ -648,6 +701,41 @@ class ApiController implements ControllerInterface
     }
 
     /**
+     * @api {post} /templates Create template
+     * @apiName CreateTemplate
+     * @apiGroup Entity
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * response = manager.create_template()
+     * print(f"Created template with id {response['id']}.")
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # create a template with default status
+     * curl -X POST -H "Authorization: $TOKEN" https://elab.example.org/api/v1/templates
+     * @apiSuccess {String} result success or error message
+     * @apiSuccess {String} id Id of the new template
+     * @apiSuccessExample {Json} Success-Response:
+     *     HTTP/2 200 OK
+     *     {
+     *       "result": "success",
+     *       "id": 42
+     *     }
+     */
+
+    /**
+     * Create a template
+     *
+     * @return Response
+     */
+    private function createTemplate(): Response
+    {
+        $params = new ParamsProcessor(array('id' => 0));
+        $id = $this->Entity->create($params);
+        return new JsonResponse(array('result' => 'success', 'id' => $id));
+    }
+
+    /**
      * @api {post} /items/:id Create a database item
      * @apiName CreateItem
      * @apiGroup Entity
@@ -753,7 +841,7 @@ class ApiController implements ControllerInterface
      * # add tag "some-tag" to database item 42
      * curl -X POST -F "tag=some-tag" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
      * @apiSuccess {String} result Success
-     * @apiError {String} error Error mesage
+     * @apiError {String} error Error message
      * @apiParamExample {Json} Request-Example:
      *     {
      *       "tag": "my tag"
@@ -776,7 +864,7 @@ class ApiController implements ControllerInterface
      * @apiName AddEvent
      * @apiGroup Events
      * @apiDescription Create an event in the scheduler for an item
-     * @apiParam {Sring} start Start time
+     * @apiParam {String} start Start time
      * @apiParam {Number} end End time
      * @apiParam {String} title Comment for the booking
      * @apiExample {python} Python example
@@ -795,7 +883,7 @@ class ApiController implements ControllerInterface
      * curl -X POST -F "start=2019-11-30T12:00:00" -F "end=2019-11-30T14:00:00" -F "title=Booked from API" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/events/42
      * @apiSuccess {String} result Success
      * @apiSuccess {String} id Id of new event
-     * @apiError {Number} error Error mesage
+     * @apiError {Number} error Error message
      * @apiParamExample {Json} Request-Example:
      *     {
      *       "start": "2019-11-30T12:00:00",
@@ -839,7 +927,7 @@ class ApiController implements ControllerInterface
      * # destroy event with id 13
      * curl -X DELETE -H "Authorization: $TOKEN" https://elab.example.org/api/v1/events/13
      * @apiSuccess {String} result Success
-     * @apiError {String} error Error mesage
+     * @apiError {String} error Error message
      */
 
     /**
@@ -881,7 +969,7 @@ class ApiController implements ControllerInterface
      * # update database item 42
      * curl -X POST -F "title=a new title" -F "body=a new body" -F "date=20200504" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
      * @apiSuccess {String} result Success
-     * @apiError {String} error Error mesage
+     * @apiError {String} error Error message
      * @apiParamExample {Json} Request-Example:
      *     {
      *       "body": "New body to be updated.",
@@ -927,7 +1015,7 @@ class ApiController implements ControllerInterface
      * # update database item 42
      * curl -X POST -F "category=2" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
      * @apiSuccess {String} result Success
-     * @apiError {String} error Error mesage
+     * @apiError {String} error Error message
      * @apiParamExample {Json} Request-Example:
      *     {
      *       "category": "2"
@@ -970,7 +1058,7 @@ class ApiController implements ControllerInterface
      * # upload your-file.jpg to database item 42
      * curl -X POST -F "file=@your-file.jpg" -H "Authorization: $TOKEN" "https://elab.example.org/api/v1/items/42"
      * @apiSuccess {String} result Success
-     * @apiError {String} error Error mesage
+     * @apiError {String} error Error message
      */
 
     /**

@@ -15,7 +15,7 @@ namespace Elabftw\Services;
 use DateTime;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
-use Elabftw\Elabftw\ReleaseCheck;
+use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
@@ -42,39 +42,33 @@ class MakeTimestamp extends AbstractMake
     /** default hash algo for file */
     private const HASH_ALGORITHM = 'sha256';
 
-    /** @var Experiments $Entity instance of Experiments */
+    /** @var Experiments $Entity */
     protected $Entity;
 
-    /** @var Config $Config instance of Config */
-    private $Config;
+    private Config $Config;
 
-    /** @var string $pdfPath full path to pdf */
-    private $pdfPath = '';
+    private string $pdfPath = '';
 
-    /** @var string $pdfRealName name of the pdf (elabid-timestamped.pdf) */
-    private $pdfRealName = '';
+    // name of the pdf (elabid-timestamped.pdf)
+    private string $pdfRealName = '';
 
-    /** @var string $pdfLongName a hash */
-    private $pdfLongName = '';
+    // a random long string
+    private string $pdfLongName = '';
 
-    /** @var array $stampParams config (url, login, password, cert) */
-    private $stampParams = array();
+    // config (url, login, password, cert)
+    private array $stampParams = array();
 
-    /** @var array $trash things that get deleted with destruct method */
-    private $trash = array();
+    // things that get deleted with destruct method
+    private array $trash = array();
 
-    /** @var string $requestfilePath where we store the request file */
-    private $requestfilePath = '';
+    // where we store the request file
+    private string $requestfilePath = '';
 
-    /** @var string $responsefilePath where we store the asn1 token */
-    private $responsefilePath = '';
+    // where we store the asn1 token
+    private string $responsefilePath = '';
 
     /**
-     * Pdf is generated on instanciation and after you need to call timestamp()
-     *
-     * @param Config $config
-     * @param Teams $teams
-     * @param Experiments $entity
+     * Pdf is generated on instantiation and after you need to call timestamp()
      */
     public function __construct(Config $config, Teams $teams, Experiments $entity)
     {
@@ -119,74 +113,6 @@ class MakeTimestamp extends AbstractMake
             throw new ImproperActionException('Cannot get elabid!');
         }
         return $req->fetch(PDO::FETCH_COLUMN) . '-timestamped.pdf';
-    }
-
-    /**
-     * Decode asn1 encoded token
-     *
-     * @param string $token
-     * @return string
-     */
-    public function decodeAsn1($token): string
-    {
-        $output = $this->runProcess(array(
-            'openssl',
-            'asn1parse',
-            '-inform',
-            'DER',
-            '-in',
-            $this->getUploadsPath() . $token,
-        ));
-        $lines = explode("\n", $output);
-
-        // now let's parse this
-        $out = '<br><hr>';
-
-        $statusArr = explode(':', $lines[4]);
-        $status = $statusArr[3];
-
-        $versionArr = explode(':', $lines[111]);
-        $version = $versionArr[3];
-
-        $oidArr = explode(':', $lines[148]);
-        $oid = $oidArr[3];
-
-        $hashArr = explode(':', $lines[12]);
-        $hash = $hashArr[3];
-
-        $messageArr = explode(':', $lines[17]);
-        $message = $messageArr[3];
-
-        $utctimeArr = explode(':', $lines[142]);
-        $utctime = rtrim($utctimeArr[3], 'Z');
-        $timestamp = \DateTime::createFromFormat('ymdHis', $utctime);
-        if ($timestamp === false) {
-            return 'Error: Could not parse timestamp!';
-        }
-
-        $countryArr = explode(':', $lines[31]);
-        $country = $countryArr[3];
-
-        $tsaArr = explode(':', $lines[121]);
-        $tsa = $tsaArr[3];
-
-        $tsaArr = explode(':', $lines[39]);
-        $tsa .= ', ' . $tsaArr[3];
-        $tsaArr = explode(':', $lines[43]);
-        $tsa .= ', ' . $tsaArr[3];
-
-        $out .= '<strong>Status</strong>: ' . $status;
-        $out .= '<br>Version: ' . $version;
-        $out .= '<br>OID: ' . $oid;
-        $out .= '<br>Hash algorithm: ' . $hash;
-        $out .= '<br>Message data: 0x' . $message;
-        $out .= '<br>Timestamp: ' . $timestamp->format('Y-m-d H:i:s P');
-
-        $out .= '<br><br><strong>TSA info:</strong>';
-        $out .= '<br>TSA: ' . $tsa;
-        $out .= '<br>Country: ' . $country;
-
-        return $out;
     }
 
     /**
@@ -399,7 +325,7 @@ class MakeTimestamp extends AbstractMake
             // add user agent
             // http://developer.github.com/v3/#user-agent-required
             'headers' => array(
-                'User-Agent' => 'Elabftw/' . ReleaseCheck::INSTALLED_VERSION,
+                'User-Agent' => 'Elabftw/' . App::INSTALLED_VERSION,
                 'Content-Type' => 'application/timestamp-query',
                 'Content-Transfer-Encoding' => 'base64',
             ),

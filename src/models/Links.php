@@ -22,17 +22,10 @@ use PDO;
  */
 class Links implements CreatableInterface, ReadableInterface, DestroyableInterface
 {
-    /** @var AbstractEntity $Entity instance of Experiments */
-    public $Entity;
+    public AbstractEntity $Entity;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
-    /**
-     * Constructor
-     *
-     * @param AbstractEntity $entity
-     */
     public function __construct(AbstractEntity $entity)
     {
         $this->Db = Db::getConnection();
@@ -169,7 +162,6 @@ class Links implements CreatableInterface, ReadableInterface, DestroyableInterfa
      * @param int $id The id of the original entity
      * @param int $newId The id of the new entity that will receive the links
      * @param bool $fromTpl do we duplicate from template?
-     * @return void
      */
     public function duplicate(int $id, int $newId, $fromTpl = false): void
     {
@@ -192,13 +184,9 @@ class Links implements CreatableInterface, ReadableInterface, DestroyableInterfa
         }
     }
 
-    /**
-     * Delete a link
-     */
     public function destroy(int $id): bool
     {
         $this->Entity->canOrExplode('write');
-
         $sql = 'DELETE FROM ' . $this->Entity->type . '_links WHERE id= :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);

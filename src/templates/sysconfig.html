@@ -1,43 +1,20 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<!-- Get the updates.ini file to check for updates -->
-{% if not ReleaseCheck.success %}
-    {{ 'Error getting latest version information from server! Check the proxy setting.'|msg('ko') }}
-{% endif %}
-
 <!-- display current and latest version -->
-{% if ReleaseCheck.success and ReleaseCheck.updateIsAvailable %}
-    {% set style = 'color:red' %}
-{% endif %}
-<p>{{ 'Installed version:'|trans }} <span style='{{ style }}'>{{ constant('INSTALLED_VERSION', ReleaseCheck) }}</span>
-{% if ReleaseCheck.success %}
-    <!-- show a little green check if we have latest version -->
-    {% if not ReleaseCheck.updateIsAvailable %}
-        <i style='color:green' class='fas fa-check fa-lg align-top' title="Good job!"></i>
-    {% endif %}
-{% endif %}
+<p>{{ 'Installed version:'|trans }} <span id='currentVersion'>{{ v }}</span>
 <br>
-{% if ReleaseCheck.success %}
-    <!-- display latest version -->
-    {{ 'Latest version:'|trans }} {{ ReleaseCheck.getLatestVersion }}</p>
+{{ 'Latest version:'|trans }} <span id='latestVersion'></span>
 
-    <!-- if we don't have the latest version, show button redirecting to doc -->
-    {% if ReleaseCheck.updateIsAvailable %}
-        {{ '%s - A new version is available! %sUpdate elabftw%sRead changelog%s'|trans|format(
-            ReleaseCheck.getReleaseDate,
-            "<a href='https://doc.elabftw.net/how-to-update.html' class='button btn btn-primary text-white'>",
-            "</a><a href='" ~ ReleaseCheck.getChangelogLink ~ "' class='button btn btn-primary text-white'>",
-            "</a>")|msg('warning') }}
-    {% endif %}
-
-    {% if App.Config.configArr.mail_from == 'notconfigured@example.com' %}
-        {{ 'Please finalize install: %slink to documentation%s.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#setting-up-email'>", "</a>")|msg('ko') }}
-    {% endif %}
+<!-- show error if the email is not configured -->
+{% if App.Config.configArr.mail_from == 'notconfigured@example.com' %}
+    {{ 'Please finalize install: %slink to documentation%s.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#setting-up-email'>", "</a>")|msg('ko') }}
 {% endif %}
 
 <p>Docker image version: {{ elabimgVersion }}<br />
 MySQL database structure version: {{ App.Config.configArr.schema }}</p>
+
+<div id='versionNotifZone'></div>
 
 <ul id='menu'>
         <li class='tabhandle' id='tab1'>{{ 'Server'|trans }}</li>
@@ -69,7 +46,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       <p>{{ "The following text will be displayed to all users on all pages while it's active."|trans }}</p>
       <form method='post' action='app/controllers/SysconfigController.php'>
         <input class='form-control' type='text' name='announcement' value='{{ App.Config.configArr.announcement }}' />
-        <div class='submitButtonDiv'>
+        <div class='mt-4 text-center'>
           <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
           <button type='submit' name='clear_announcement' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
         </div>
@@ -87,7 +64,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
               <option {{ App.Config.configArr.lang == lang ? ' selected' }} value='{{ lang }}'>{{ text }}</option>
               {% endfor %}
           </select>
-          <p class='smallgray'>{{ 'The default language of this instance. It can be overriden by each users.' }}</p>
+          <p class='smallgray'>{{ 'The default language of this instance. It can be overridden by each users.' }}</p>
 
           <label for='proxy'>{{ 'Installation URL:'|trans }}</label>
           <input class='form-control col-md-4' type='url' value='{{ App.Config.configArr.url }}' name='url' id='url' />
@@ -107,6 +84,10 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           <label for='max_revisions'>{{ 'Maximum number of stored revisions per entry:'|trans }}</label>
           <input class='form-control col-md-4' type='number' min='0' max='999' value='{{ App.Config.configArr.max_revisions }}' name='max_revisions' id='max_revisions' />
           <p class='smallgray'>{{ 'Setting this to a low value will help keeping the database size small. Setting this to 0 will allow infinite number of revisions stored.'|trans }}</p>
+
+          <label for='min_delta_revisions'>{{ 'Minimum number of characters that need to be changed in order to create a new revision per entry:'|trans }}</label>
+          <input class='form-control col-md-4' type='number' min='1' max='999' value='{{ App.Config.configArr.min_delta_revisions }}' name='min_delta_revisions' id='min_delta_revisions' />
+          <p class='smallgray'>{{ 'Setting this to a high value will help keeping the database size small.'|trans }}</p>
 
           <h3>{{ 'Registration and authentication configuration'|trans }}</h3>
 
@@ -145,7 +126,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           </select>
           <p class='smallgray'>{{ 'You can still show the local login form by appending ?letmein to the login page URL.'|trans }}</p>
 
-          <div class='submitButtonDiv'>
+          <div class='mt-4 text-center'>
               <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
           </div>
         </div>
@@ -278,7 +259,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           <a href='app/controllers/SysconfigController.php?clearStamppass=1'>Clear it</a> or change it below:</p>
         {% endif %}
         <input class='form-control col-md-4' autocomplete='off' type='password' name='stamppass' id='stamppass' />
-        <div class='submitButtonDiv'>
+        <div class='mt-4 text-center'>
           <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
         </div>
       </div>
@@ -313,11 +294,23 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     <p class='smallgray'>
       {{ 'To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems.'|trans }}
     </p>
-    <div class='submitButtonDiv'>
+
+    <label for='autologout_time'>{{ 'Time after which inactive sessions are invalidated (force logout) (in seconds):'|trans }}</label>
+    <input class='form-control col-md-4' type='number' value='{{ App.Config.configArr.autologout_time }}' name='autologout_time' id='autologout_time' />
+    <p class='smallgray'>
+      {{ 'Set to 0 to disable this feature.'|trans }}
+    </p>
+    <div class='mt-4 text-center'>
       <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
   </form>
+
+  <hr>
+  <h3>{{ 'Bruteforce login protection' }}</h3>
+  <p id='bannedUsersCount'>{{ '%d users are currently prevented from logging on after too many failed tries.'|trans|format(bannedCount) }}</p>
+  <button type='submit' data-action='clear-banned' class='button btn btn-primary'>{{ 'Clear'|trans }}</button>
 </div>
+
 
 <!-- TAB 6 EMAIL -->
 <div class='divhandle' id='tab6div'>
@@ -379,7 +372,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         {% endif %}
       </div>
 
-      <div class='submitButtonDiv'>
+      <div class='mt-4 text-center'>
         <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
       </div>
     </form>
@@ -389,7 +382,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
   <div class='box form-group'>
     <label for='testemailEmail'>{{ 'Send a test email'|trans }}</label>
     <input class='form-control col-md-4' type='email' value='{{ App.Users.userData.email }}' id='testemailEmail' />
-    <div class='submitButtonDiv'>
+    <div class='mt-4 text-center'>
       <button id='testemailButton' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
     </div>
   </div>
@@ -403,7 +396,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
     <label for='massBody'>{{ 'Email Body'|trans }}</label>
     <textarea class='form-control col-md-4' id='massBody'></textarea>
-    <div class='submitButtonDiv'>
+    <div class='mt-4 text-center'>
       <button id='massSend' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
     </div>
   </div>
@@ -569,7 +562,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                   <option value='0'{{ App.Config.configArr.saml_lowercaseurlencoding == '0' ? ' selected' }}>No</option>
               </select>
 
-              <div class='submitButtonDiv'>
+              <div class='mt-4 text-center'>
                   <button type="submit" name="Submit" class='button btn btn-primary'>{{ 'Save'|trans }}</button>
               </div>
 
@@ -613,7 +606,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                     <option value='0'>{{ 'No'|trans }}</option>
                 </select>
 
-                <div class='submitButtonDiv'>
+                <div class='mt-4 text-center'>
                   <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
                 </div>
               </div>
@@ -624,7 +617,9 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <h4>Existing Identity Providers</h4>
             {% for idp in idpsArr %}
                 <div class='box' id='idps_div'>
-                  <i class='fas fa-trash-alt fa-2x clickable idpsDestroy align_right' title='Delete' data-id='{{ idp.id }}'></i>
+                  <a class='clickable idpsDestroy align-right' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
+                      <i class='fas fa-trash-alt fa-2x'></i>
+                  </a>
                   <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>
                   <form method='post' action='app/controllers/IdpsController.php'>
                     <div class='form-group'>
@@ -650,7 +645,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                           <option value='1' {{ idp.active ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
                           <option value='0' {{ not idp.active ? " selected='selected'" }}>{{ 'No'|trans }}</option>
                       </select>
-                      <div class='submitButtonDiv'>
+                      <div class='mt-4 text-center'>
                           <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
                       </div>
                     </div>
@@ -676,7 +671,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <textarea name='privacy_policy' class='mceditable'>
                 {{ App.Config.configArr.privacy_policy|default(privacyPolicyTemplate)|raw }}
             </textarea>
-            <div class='submitButtonDiv'>
+            <div class='mt-4 text-center'>
                 <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
                 <button class='button btn btn-danger' type='submit' name='clear_policy'>{{ 'Clear'|trans }}</button>
             </div>
@@ -727,7 +722,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         </select>
 
 
-        <div class='submitButtonDiv'>
+        <div class='mt-4 text-center'>
           <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
         </div>
       </div>
@@ -761,8 +756,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <label for='ldap_base_dn'>LDAP Base DN</label>
         <input class='form-control col-md-4' type='text' placeholder='dc=example,dc=com' value='{{ App.Config.configArr.ldap_base_dn }}' name='ldap_base_dn' id='ldap_base_dn' />
 
-        <label for='ldap_username'>LDAP {{ 'Username'|trans }}</label>
-        <input class='form-control col-md-4' type='text' placeholder='cn=admin,dc=example,dc=com' value='{{ App.Config.configArr.ldap_username}}' name='ldap_username' id='ldap_username' />
+        <label for='ldap_username'>LDAP {{ 'Username'|trans }} (keep empty to use anonymous bind)</label>
+        <input class='form-control col-md-4' type='text' autocomplete='off' placeholder='cn=admin,dc=example,dc=com' value='{{ App.Config.configArr.ldap_username}}' name='ldap_username' id='ldap_username' />
 
         <label for='ldap_password'>LDAP {{ 'Password'|trans }}</label>
         {% if App.Config.configArr.ldap_password|length == 0 %}
@@ -814,10 +809,11 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <label for='ldap-lastname'>What attribute to look for the lastname:</label>
         <input class='form-control col-md-4' type='text' id='ldap-lastname' placeholder='sn' name='ldap_lastname' value='{{ App.Config.configArr.ldap_lastname }}' />
 
-        <div class='submitButtonDiv'>
+        <div class='mt-4 text-center'>
           <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
         </div>
       </div>
     </form>
 </div>
+<div id='info' data-page='sysconfig'></div>
 {% endblock body %}

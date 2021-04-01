@@ -39,8 +39,7 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
  */
 class LoginController implements ControllerInterface
 {
-    /** @var App $App */
-    private $App;
+    private App $App;
 
     public function __construct(App $app)
     {
@@ -119,7 +118,7 @@ class LoginController implements ControllerInterface
         // TEAM SELECTION //
         ////////////////////
         // if the user is in several teams, we need to redirect to the team selection
-        if ($AuthResponse->selectedTeam === null) {
+        if ($AuthResponse->isInSeveralTeams) {
             $this->App->Session->set('team_selection_required', true);
             $this->App->Session->set('team_selection', $AuthResponse->selectableTeams);
             $this->App->Session->set('auth_userid', $AuthResponse->userid);
@@ -146,12 +145,17 @@ class LoginController implements ControllerInterface
             // AUTH WITH LDAP
             case 'ldap':
                 $c = $this->App->Config->configArr;
+                $ldapPassword = null;
+                // assume there is a password to decrypt if username is not null
+                if ($c['ldap_username']) {
+                    $ldapPassword = Crypto::decrypt($c['ldap_password'], Key::loadFromAsciiSafeString(\SECRET_KEY));
+                }
                 $ldapConfig = array(
                     'hosts' => array($c['ldap_host']),
                     'port' => (int) $c['ldap_port'],
                     'base_dn' => $c['ldap_base_dn'],
                     'username' => $c['ldap_username'],
-                    'password' => Crypto::decrypt($c['ldap_password'], Key::loadFromAsciiSafeString(\SECRET_KEY)),
+                    'password' => $ldapPassword,
                     'use_tls' => (bool) $c['ldap_use_tls'],
                 );
                 $connection = new Connection($ldapConfig);

@@ -18,8 +18,7 @@ use Elabftw\Interfaces\AuthInterface;
  */
 class SessionAuth implements AuthInterface
 {
-    /** @var AuthResponse $AuthResponse */
-    private $AuthResponse;
+    private AuthResponse $AuthResponse;
 
     public function __construct()
     {

@@ -114,12 +114,17 @@
         <label for='body'>{{ 'And body contains'|trans }}</label>
         <input id='body' class='form-control' name='body' type='text' value='{{ body }}'/>
 
+        <label for='strict'>{{ 'Strict mode'|trans }}</label>
+        <input id='strict' class='mt-2 mr-3 custom-control-sm' type='checkbox' name='strict'
+          {{ Request.query.get('strict') == 'on' ? " checked='checked'" }}
+        />
         <!-- AND / OR -->
         <label for='andor'>{{ 'Space means'|trans }}</label>
         <select class='mt-2 custom-control-sm' id='andor' name='andor'>
           <option value='and'{{ Request.query.get('andor') == 'and' ? ' selected' }}>{{ 'and'|trans }}</option>
           <option value='or'{{ Request.query.get('andor') == 'or' ? ' selected' }}>{{ 'or'|trans }}</option>
         </select>
+
       </div>
       <!-- END TITLE/BODY block -->
 

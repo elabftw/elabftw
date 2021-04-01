@@ -33,48 +33,93 @@
       </p>
 
       <p id='withSelected' style='display:none'>{{ 'With selected:'|trans }}
-          <select autocomplete='off' id='catChecked'>
-              <option selected disabled>
-              {% if Entity.type == 'experiments' %}
-                  {{ 'Change status'|trans }}
-              {% else %}
-                  {{ 'Change item type'|trans }}
-              {% endif %}
-              </option>
+        <!-- Change category -->
+        <select autocomplete='off' id='catChecked'>
+            <option selected disabled>
+            {% if Entity.type == 'experiments' %}
+                {{ 'Change status'|trans }}
+            {% else %}
+                {{ 'Change item type'|trans }}
+            {% endif %}
+            </option>
 
-              {% for category in categoryArr %}
-                  <option value='{{ category.category_id }}'>{{ category.category }}</option>
-              {% endfor %}
-          </select>
-
-          <select autocomplete='off' id='visChecked'>
-            <option selected disabled>{{ 'Change visibility'|trans }}</option>
-            {% for key, value in visibilityArr %}
-              <option value='{{ key }}'>{{ value }}</option>
+            {% for category in categoryArr %}
+                <option value='{{ category.category_id }}'>{{ category.category }}</option>
             {% endfor %}
-          </select>
+        </select>
 
-          <select autocomplete='off' id='exportChecked'>
-            <option selected disabled>{{ 'Export'|trans }}</option>
-            <option value='zip'>{{ 'Make Zip'|trans }}</option>
-            <option value='csv'>{{ 'Make Csv'|trans }}</option>
-            <option value='multiPdf'>{{ 'Make PDF'|trans }}</option>
-            <option value='json'>{{ 'Make JSON'|trans }}</option>
-          </select>
-          <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
+        <!-- Change visibility -->
+        <select autocomplete='off' id='visChecked'>
+          <option selected disabled>{{ 'Change visibility'|trans }}</option>
+          {% for key, value in visibilityArr %}
+            <option value='{{ key }}'>{{ value }}</option>
+          {% endfor %}
+        </select>
+
+        <!-- Export -->
+        <select autocomplete='off' id='exportChecked'>
+          <option selected disabled>{{ 'Export'|trans }}</option>
+          <option value='zip'>{{ 'Make Zip'|trans }}</option>
+          <option value='csv'>{{ 'Make Csv'|trans }}</option>
+          <option value='multiPdf'>{{ 'Make PDF'|trans }}</option>
+          <option value='json'>{{ 'Make JSON'|trans }}</option>
+        </select>
+
+        <!-- Add a tag -->
+        <input type='text' id='createTagInputMultiple' class='createTagInputMultiple' placeholder='{{ 'Add a tag'|trans }}' />
+
+        <!-- Add a link -->
+        <input type='text' id='linkInputMultiple' class='linkinput' placeholder='{{ 'Add a link'|trans }}' />
+
+        <button id='lockChecked' class='button btn btn-primary'>{{ 'Lock'|trans }}</button>
+        <button id='timestampChecked' class='button btn btn-primary'>{{ 'Timestamp'|trans }}</button>
+        <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
       </p>
-      <div class='row display-flex'>
-      {% for item in itemsArr|slice(0, DisplayParams.limit) %}
-        {% include('show-item.html') %}
-      {% endfor %}
-      </div>
-
-      <div class='text-center pageButtons mt-2'>
+      {% if App.Users.userData.display_mode == 'it' %}
+        <div class='row display-flex' id='itemList'>
+        {% for item in itemsArr|slice(0, DisplayParams.limit) %}
+          {% include('show-item.html') %}
+        {% endfor %}
+        </div>
+      {% else  %}
+        <table class='item-table'>
+          <tr>
+            <th>
+              {{ 'Date'|trans }} <a class='orderBy clickable' data-orderby='date'><i class='fas fa-sort'></i></a>
+            </th>
+            <th class='title-item-table'>
+              {{ 'Title'|trans }} <a class='orderBy clickable' data-orderby='title'><i class='fas fa-sort'></i></a>
+            </th>
+            {% if Entity.type == 'experiments' %}
+              <th class='step-item-table'>
+                {{ 'Next step'|trans }}
+              </th>
+            {% elseif Entity.type == 'items' %}
+              <th class='step-item-table'>
+                {{ 'User'|trans }} <a class='orderBy clickable' data-orderby='user'><i class='fas fa-sort'></i></a>
+              </th>
+            {% endif %}
+            <th class='category-item-table'>
+              {{ 'Category'|trans }} <a class='orderBy clickable' data-orderby='cat'><i class='fas fa-sort'></i></a>
+            </th>
+            <th class='tags-item-table'>
+              {{ 'Tags'|trans }}
+            </th>
+            <th class='actions-item-table'>
+              {{ 'Actions'|trans }}
+            </th>
+          </tr>
+        {% for item in itemsArr|slice(0, DisplayParams.limit) %}
+          {% include('show-item-table.html') %}
+        {% endfor %}
+        </table>
+      {% endif %}
+      <div class='text-center page-buttons mt-2'>
         {% if DisplayParams.offset != 0 %}
-          <button class='button btn btn-neutral previousPage'>{{ 'Previous page'|trans }}</button>
+          <button class='button btn btn-neutral previousPage' data-action='previous-page'>{{ 'Previous page'|trans }}</button>
         {% endif %}
         {% if DisplayParams.limit < itemsArr|length %}
-          <button class='button btn btn-primary nextPage'>{{ 'Next page'|trans }}</button>
+          <button class='button btn btn-primary nextPage' data-action='next-page'>{{ 'Next page'|trans }}</button>
         {% endif %}
       </div>
 

@@ -150,3 +150,10 @@ items_types:
     bookable: false
     template: 'Host:'
     team: 1
+
+  - Heavy:
+    name: Heavy
+    color: '#C24F3D'
+    bookable: false
+    template: 'Yep:'
+    team: 2

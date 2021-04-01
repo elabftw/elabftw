@@ -2,23 +2,33 @@
 <section class='box' id='json-editor'>
   <i class='fas fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
   <button class='button btn btn-primary plusMinusButton jsonEditorPlusMinusButton' data-toggle='collapse' data-target='#jsonEditorDiv' aria-expanded='false' aria-controls='jsonEditorDiv'>+</button>
+  {% if mode == 'edit' %}
+    <button type='button' data-action='json-load-metadata' class='btn btn-neutral align-right'>{{ 'Load metadata'|trans }}</button>
+  {% endif %}
   <div id='jsonEditorDiv' class='collapse mt-2'>
     <h6 id='jsonEditorTitle'></h6>
-    <div id='jsonEditorContainer'></div>
+    <div id='jsonEditorContainer' data-what=''></div>
     {% if mode == 'edit' %}
-      <div class='submitButtonDiv'>
+      <div class='mt-4 text-center'>
         <div class='btn-group'>
-          <button type='button' class='btn btn-primary jsonSaver'>{{ 'Save'|trans }}</button>
+          <button type='button' data-action='json-save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
           <div class='btn-group dropright' role='group'>
-          <button type='button' class='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-            <span class='sr-only'>{{ 'Toggle JSON editor save menu'|trans }}</span>
-          </button>
-          <div class='dropdown-menu'>
-            <a class='dropdown-item clickable jsonSaveAs'>{{ 'Save as'|trans }}</a>
-            <a class='dropdown-item clickable jsonClear'>{{ 'Clear'|trans }}</a>
-          </div>
+            <button type='button' class='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+              <span class='sr-only'>{{ 'Toggle JSON editor save menu'|trans }}</span>
+            </button>
+            <div class='dropdown-menu'>
+              <a href='#' data-action='json-save-file' class='dropdown-item'>{{ 'Save as file'|trans }}</a>
+              <a href='#' data-action='json-save-metadata' class='dropdown-item'>{{ 'Save as metadata'|trans }}</a>
+            </div>
           </div>
         </div>
+        <button type='button' data-action='json-clear' class='btn btn-danger align-right'>{{ 'Clear'|trans }}</button>
+      </div>
+    {% endif %}
+    {% if mode == 'edit-item-type' %}
+      <div class='mt-4 text-center'>
+        <button type='button' id='itemsTypesJsonSave' data-action='json-save-metadata-from-id' data-type='items_types' data-id='' class='btn btn-primary'>{{ 'Save as metadata'|trans }}</button>
+        <button type='button' data-action='json-clear' class='btn btn-danger align-right'>{{ 'Clear'|trans }}</button>
       </div>
     {% endif %}
   </div>

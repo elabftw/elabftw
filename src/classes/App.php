@@ -31,41 +31,31 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    /** @var Request $Request the request */
-    public $Request;
+    public const INSTALLED_VERSION = '4.0.0-dev';
 
-    /** @var SessionInterface $Session the session */
-    public $Session;
+    public Request $Request;
 
-    /** @var Config $Config the config stored in sql */
-    public $Config;
+    public SessionInterface $Session;
 
-    /** @var Logger $Log instance of Logger */
-    public $Log;
+    public Config $Config;
 
-    /** @var Csrf $Csrf instance of Csrf */
-    public $Csrf;
+    public Logger $Log;
 
-    /** @var Users $Users instance of Users */
-    public $Users;
+    public Csrf $Csrf;
 
-    /** @var string $pageTitle the title for the current page */
-    public $pageTitle = 'Lab manager';
+    public Users $Users;
 
-    /** @var array $ok the ok messages from flashBag */
-    public $ok = array();
+    public string $pageTitle = 'Lab manager';
 
-    /** @var array $ko the ko messages from flashBag */
-    public $ko = array();
+    public array $ok = array();
 
-    /** @var array $warning the warning messages from flashBag */
-    public $warning = array();
+    public array $ko = array();
 
-    /** @var array $teamConfigArr the config for the current team */
-    public $teamConfigArr = array();
+    public array $warning = array();
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    public array $teamConfigArr = array();
+
+    protected Db $Db;
 
     public function __construct(Request $request, SessionInterface $session, Config $config, Logger $log, Csrf $csrf)
     {
@@ -111,7 +101,7 @@ class App
     }
 
     /**
-     * Get the mininum password length for injecting in templates
+     * Get the minimum password length for injecting in templates
      */
     public function getMinPasswordLength(): int
     {

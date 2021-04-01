@@ -47,11 +47,15 @@
         <option value='asc'{{ App.Request.query.get('sort') == 'asc' ? ' selected' }}>{{ 'ASC'|trans }}</option>
       </select>
 
-      <!-- LIMIT -->
+      <!-- LIMIT if there is nothing in the query params, take the user configured one -->
+      {% set thelimit = App.Request.query.get('limit') %}
+      {% if thelimit is empty %}
+        {% set thelimit = App.Users.userData.limit_nb %}
+      {% endif %}
       <select autocomplete='off' name='limit' id='select-limit' class='autosubmit mr-1 form-control' aria-label='Number of results shown'>
         <option value=''>{{ 'Results per page'|trans }}</option>
         {% for option in limitOptions(DisplayParams.limit) %}
-          <option{{ option == App.Request.query.get('limit') ? ' selected' }} value='{{ option }}'>{{ option }}</option>
+          <option{{ option == thelimit ? ' selected' }} value='{{ option }}'>{{ option }}</option>
         {% endfor %}
       </select>
 

@@ -3,7 +3,7 @@
   "description": "Laboratory notebook for research labs",
   "homepage": "https://www.elabftw.net",
   "require": {
-    "php": ">=7.3.7",
+    "php": ">=8.0.1",
     "ext-ctype": "*",
     "ext-curl": "*",
     "ext-exif": "*",
@@ -21,7 +21,7 @@
     "defuse/php-encryption": "2.2.*",
     "mpdf/mpdf": "8.0.*",
     "swiftmailer/swiftmailer": "6.2.*",
-    "onelogin/php-saml": "3.5.*",
+    "onelogin/php-saml": "^4.0.0",
     "guzzlehttp/guzzle": "^7.0.1",
     "symfony/http-foundation": "^5.1.0",
     "twig/twig": "^2.13.0",
@@ -36,7 +36,7 @@
     "symfony/filesystem": "^5.0",
     "symfony/mime": "^5.1",
     "robthree/twofactorauth": "^1.7.0",
-    "directorytree/ldaprecord": "^1.11",
+    "directorytree/ldaprecord": "^2.0.3",
     "league/flysystem": "^1.1",
     "league/flysystem-memory": "^1.0"
   },
@@ -44,14 +44,14 @@
     "roave/security-advisories": "dev-master",
     "codeception/codeception": "^4.0",
     "pyrech/composer-changelogs": "1.7.*",
-    "fzaninotto/faker": "^1.9",
     "friendsofphp/php-cs-fixer": "^2.15",
     "codeception/module-webdriver": "^1.0.0",
     "codeception/module-db": "^1.0.0",
     "codeception/module-asserts": "^1.0.0",
     "codeception/module-rest": "^1.0",
     "codeception/module-phpbrowser": "^1.0",
-    "symfony/yaml": "^5.0"
+    "symfony/yaml": "^5.0",
+    "fakerphp/faker": "^1.13"
   },
   "autoload": {
     "psr-4": {

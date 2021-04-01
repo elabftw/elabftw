@@ -21,12 +21,6 @@ use Elabftw\Models\Status;
  */
 class SearchController extends AbstractEntityController
 {
-    /**
-     * Constructor
-     *
-     * @param App $app
-     * @param AbstractEntity $entity
-     */
     public function __construct(App $app, AbstractEntity $entity)
     {
         parent::__construct($app, $entity);

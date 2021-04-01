@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function array_map;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
@@ -25,15 +26,13 @@ use PDO;
  */
 class Config
 {
-    /** @var array $configArr the array with all config */
-    public $configArr;
+    // the array with all config
+    public array $configArr = array();
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
     /**
      * Get Db and load the configArr
-     *
      */
     public function __construct()
     {
@@ -48,13 +47,9 @@ class Config
 
     /**
      * Read the configuration values
-     *
-     * @return array
      */
     public function read(): array
     {
-        $configArr = array();
-
         $sql = 'SELECT * FROM config';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
@@ -62,10 +57,9 @@ class Config
         if ($config === false) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
-        foreach ($config as $name => $value) {
-            $configArr[$name] = $value[0];
-        }
-        return $configArr;
+        return array_map(function ($v) {
+            return $v[0];
+        }, $config);
     }
 
     /**
@@ -73,7 +67,6 @@ class Config
      *
      * @param array<string, mixed> $post (conf_name => conf_value)
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
-     * @return void
      */
     public function update(array $post): void
     {
@@ -96,6 +89,9 @@ class Config
         // sanitize canonical URL
         if (isset($post['url']) && !empty($post['url'])) {
             $post['url'] = filter_var($post['url'], FILTER_SANITIZE_URL);
+        }
+        if (isset($post['url']) && $post['url'] === '') {
+            $post['url'] = null;
         }
 
         if (isset($post['login_tries']) && Check::id((int) $post['login_tries']) === false) {
@@ -131,8 +127,6 @@ class Config
 
     /**
      * Reset the timestamp password
-     *
-     * @return void
      */
     public function destroyStamppass(): void
     {
@@ -143,8 +137,6 @@ class Config
 
     /**
      * Restore default values
-     *
-     * @return void
      */
     public function restoreDefaults(): void
     {
@@ -157,8 +149,6 @@ class Config
     /**
      * Insert the default values in the sql config table
      * Only run once of first ever page load
-     *
-     * @return void
      */
     private function populate(): void
     {
@@ -167,6 +157,7 @@ class Config
 
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
             ('admin_validate', '1'),
+            ('autologout_time', '0'),
             ('ban_time', '60'),
             ('debug', '0'),
             ('lang', 'en_GB'),
@@ -228,6 +219,7 @@ class Config
             ('saml_sync_teams', 0),
             ('deletable_xp', 1),
             ('max_revisions', 10),
+            ('min_delta_revisions', 100),
             ('extauth_remote_user', ''),
             ('extauth_firstname', ''),
             ('extauth_lastname', ''),
@@ -238,8 +230,8 @@ class Config
             ('ldap_host', ''),
             ('ldap_port', '389'),
             ('ldap_base_dn', ''),
-            ('ldap_username', ''),
-            ('ldap_password', ''),
+            ('ldap_username', NULL),
+            ('ldap_password', NULL),
             ('ldap_uid_cn', 'cn'),
             ('ldap_email', 'mail'),
             ('ldap_lastname', 'cn'),

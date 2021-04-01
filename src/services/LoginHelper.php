@@ -24,14 +24,11 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  */
 class LoginHelper
 {
-    /** @var AuthResponse $AuthResponse */
-    private $AuthResponse;
+    private AuthResponse $AuthResponse;
 
-    /** @var SessionInterface $Session */
-    private $Session;
+    private SessionInterface $Session;
 
-    /** @var Db $Db db connection */
-    private $Db;
+    private Db $Db;
 
     public function __construct(AuthResponse $authResponse, SessionInterface $session)
     {
@@ -107,8 +104,6 @@ class LoginHelper
      * Set a $_COOKIE['token'] and update the database with this token.
      * Works only in HTTPS, valable for 1 month.
      * 1 month = 60*60*24*30 =  2592000
-     *
-     * @return void
      */
     private function setToken(): void
     {

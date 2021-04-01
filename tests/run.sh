@@ -14,14 +14,14 @@ set -eu
 # make sure we tear down everything when script ends
 cleanup() {
     docker-compose -f tests/docker-compose.yml down
-    sudo cp config.php.dev config.php
-    sudo chown 100:101 config.php
+    sudo cp -v config.php.dev config.php
+    sudo chown 101:101 config.php
 }
 trap cleanup EXIT
 
 # sudo is needed because config file for docker is owned by 100:101
-sudo cp config.php config.php.dev
-sudo cp tests/config-home.php config.php
+sudo cp -v config.php config.php.dev
+sudo cp -v tests/config-home.php config.php
 sudo chmod +r config.php
 # launch a fresh environment
 docker-compose -f tests/docker-compose.yml up -d
@@ -40,7 +40,7 @@ if [ "${1:-}" != "unit" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip unit
 fi
 # now install xdebug in the container so we can do code coverage
-docker exec -it elabtmp bash -c "apk add --update php7-xdebug && echo 'zend_extension=xdebug.so' >> /etc/php7/php.ini && echo 'xdebug.mode=coverage' >> /etc/php7/php.ini"
+docker exec -it elabtmp bash -c "apk add --update php8-pecl-xdebug && echo 'zend_extension=xdebug.so' >> /etc/php8/php.ini && echo 'xdebug.mode=coverage' >> /etc/php8/php.ini"
 # generate the coverage, results will be available in _coverage directory
 docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --skip api --coverage --coverage-html
 # all tests succeeded, display a koala

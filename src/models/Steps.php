@@ -23,17 +23,10 @@ class Steps implements CrudInterface
 {
     use SortableTrait;
 
-    /** @var AbstractEntity $Entity instance of Experiments, Templates or Database */
-    public $Entity;
+    public AbstractEntity $Entity;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
-    /**
-     * Constructor
-     *
-     * @param AbstractEntity $entity
-     */
     public function __construct(AbstractEntity $entity)
     {
         $this->Db = Db::getConnection();
@@ -49,7 +42,7 @@ class Steps implements CrudInterface
         $this->Entity->canOrExplode('write');
         // make sure the newly added step is at the bottom
         // count the number of steps and add 1 to be sure we're last
-        $ordering = count($this->readAll()) + 1;
+        $ordering = count($this->read()) + 1;
 
         // remove any | as they are used in the group_concat
         $body = str_replace('|', ' ', $params->template);

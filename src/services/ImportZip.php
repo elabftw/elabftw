@@ -17,6 +17,7 @@ use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use FilesystemIterator;
+use function mb_strlen;
 use PDO;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -28,20 +29,20 @@ use ZipArchive;
  */
 class ImportZip extends AbstractImport
 {
-    /** @var int $inserted number of item we have inserted */
-    public $inserted = 0;
+    // number of items we got into the database
+    public int $inserted = 0;
 
     /** @var AbstractEntity $Entity instance of Entity */
     private $Entity;
 
-    /** @var string $tmpPath the folder where we extract the zip */
-    private $tmpPath = '';
+    // the folder where we extract the zip
+    private string $tmpPath = '';
 
-    /** @var array $json an array with the data we want to import */
-    private $json = array();
+    // an array with the data we want to import
+    private array $json = array();
 
-    /** @var string $type experiments or items */
-    private $type = 'items';
+    // experiments or items
+    private string $type = 'experiments';
 
     /**
      * Constructor
@@ -74,8 +75,6 @@ class ImportZip extends AbstractImport
 
     /**
      * Do the import
-     *
-     * @return void
      */
     public function import(): void
     {
@@ -92,8 +91,6 @@ class ImportZip extends AbstractImport
 
     /**
      * Extract the zip to the temporary folder
-     *
-     * @return void
      */
     private function openFile(): void
     {
@@ -104,9 +101,6 @@ class ImportZip extends AbstractImport
 
     /**
      * We get all the info we need from the embedded .json file
-     *
-     * @throws ImproperActionException
-     * @return void
      */
     private function readJson(): void
     {
@@ -116,8 +110,8 @@ class ImportZip extends AbstractImport
             throw new ImproperActionException('Unable to read the json file!');
         }
         $this->json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
-        if (isset($this->json[0]['elabid'])) {
-            $this->type = 'experiments';
+        if (isset($this->json[0]['rating'])) {
+            $this->type = 'items';
         }
     }
 
@@ -140,32 +134,31 @@ class ImportZip extends AbstractImport
      *
      * @param array<string, mixed> $item the item to insert
      * @throws ImproperActionException
-     * @return void
      */
     private function dbInsert($item): void
     {
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread)
-            VALUES(:team, :title, :date, :body, :userid, :category, :canread)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, elabid)
+            VALUES(:team, :title, :date, :body, :userid, :category, :canread, :elabid)';
 
         if ($this->type === 'experiments') {
             $sql = 'INSERT into experiments(title, date, body, userid, canread, category, elabid)
                 VALUES(:title, :date, :body, :userid, :canread, :category, :elabid)';
         }
         $req = $this->Db->prepare($sql);
-        if ($this->type !== 'experiments') {
+        if ($this->type === 'items') {
             $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         }
         $req->bindParam(':title', $item['title']);
         $req->bindParam(':date', $item['date']);
         $req->bindParam(':body', $item['body']);
         $req->bindValue(':canread', $this->canread);
+        $req->bindParam(':elabid', $item['elabid']);
         if ($this->type === 'items') {
             $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':category', $this->target, PDO::PARAM_INT);
         } else {
             $req->bindValue(':category', $this->getDefaultStatus());
             $req->bindParam(':userid', $this->target, PDO::PARAM_INT);
-            $req->bindParam(':elabid', $item['elabid']);
         }
 
         if (!$req->execute()) {
@@ -182,12 +175,12 @@ class ImportZip extends AbstractImport
         }
 
         // add tags
-        if (\mb_strlen($item['tags'] ?? '') > 1) {
+        if (mb_strlen($item['tags'] ?? '') > 1) {
             $this->tagsDbInsert($item['tags']);
         }
         // add links
         if (!empty($item['links'])) {
-            // don't import the links as as because the id might be different from the one we had before
+            // don't import the links as is because the id might be different from the one we had before
             // so add the link in the body
             $header = '<h3>Linked items:</h3><ul>';
             $end = '</ul>';
@@ -209,7 +202,6 @@ class ImportZip extends AbstractImport
      * Loop over the tags and insert them for the new entity
      *
      * @param string $tags the tags string separated by '|'
-     * @return void
      */
     private function tagsDbInsert($tags): void
     {
@@ -221,8 +213,6 @@ class ImportZip extends AbstractImport
 
     /**
      * Loop the json and import the items.
-     *
-     * @return void
      */
     private function importAll(): void
     {

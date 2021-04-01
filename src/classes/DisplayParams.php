@@ -19,26 +19,21 @@ use Elabftw\Services\Check;
  */
 class DisplayParams
 {
-    /** @var int $limit */
-    public $limit = 15;
+    public int $limit = 15;
 
-    /** @var int $offset */
-    public $offset = 0;
+    public int $offset = 0;
 
-    /** @var int|null $related */
-    public $related;
+    public ?int $related;
 
-    /** @var string $order */
-    public $order = 'date';
+    public string $order = 'date';
 
-    /** @var string $sort */
-    public $sort = 'desc';
+    public string $sort = 'desc';
 
-    /** @var string $query the search from the top right search bar on experiments/database */
-    public $query = '';
+    // the search from the top right search bar on experiments/database
+    public string $query = '';
 
-    /** @var string $searchType if this variable is not empty the error message shown will be different if there are no results */
-    public $searchType = '';
+    // if this variable is not empty the error message shown will be different if there are no results
+    public string $searchType = '';
 
     /**
      * Use the user preferences and request to adjust parameters
@@ -62,8 +57,6 @@ class DisplayParams
 
     /**
      * Order by in sql
-     *
-     * @return string the column for order by
      */
     public function getOrderSql(): string
     {
@@ -113,7 +106,6 @@ class DisplayParams
 
     private function setOrder(App $app): void
     {
-        // NOTE: in 7.4 we will be able to use ??= here
         // load the pref from the user
         $this->order = $app->Users->userData['orderby'] ?? $this->order;
 

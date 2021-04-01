@@ -18,13 +18,8 @@ use Elabftw\Interfaces\CleanerInterface;
  */
 class DatabaseCleaner implements CleanerInterface
 {
-    /** @var Db $Db SQL Database */
-    private $Db;
+    private Db $Db;
 
-    /**
-     * Constructor
-     *
-     */
     public function __construct()
     {
         $this->Db = Db::getConnection();
@@ -32,8 +27,6 @@ class DatabaseCleaner implements CleanerInterface
 
     /**
      * Check all the things
-     *
-     * @return int
      */
     public function cleanup(): int
     {
@@ -69,7 +62,6 @@ class DatabaseCleaner implements CleanerInterface
      * @param string $foreignTable the table where we check if the id exists
      * @param string $foreignKey the name of the FK in the $table
      * @param string $foreignId is id everywhere except userid in users table
-     * @return void
      */
     private function findOrphans(string $table, string $foreignTable, string $foreignKey, string $foreignId = 'id'): void
     {
@@ -96,7 +88,6 @@ class DatabaseCleaner implements CleanerInterface
      *
      * @param string $table the mysql table to act upon
      * @param array<array-key, mixed> $results the results from the search
-     * @return void
      */
     private function deleteFrom(string $table, array $results): void
     {

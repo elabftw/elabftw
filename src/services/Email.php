@@ -30,18 +30,10 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Email
 {
-    /** @var Config $Config instance of Config */
-    private $Config;
+    private Config $Config;
 
-    /** @var Users $Users instance of Users */
-    private $Users;
+    private Users $Users;
 
-    /**
-     * Constructor
-     *
-     * @param Config $config
-     * @param Users $users
-     */
     public function __construct(Config $config, Users $users)
     {
         $this->Config = $config;
@@ -70,7 +62,6 @@ class Email
      *
      * @param string $email
      * @throws ImproperActionException
-     * @return bool
      */
     public function testemailSend(string $email): bool
     {
@@ -113,7 +104,7 @@ class Email
             $from = array($this->Config->configArr['mail_from'] => 'eLabFTW');
         }
 
-        // get all email adresses
+        // get all email addresses
         $usersArr = $this->Users->getAllEmails($teamFilter);
         $bcc = array();
         foreach ($usersArr as $user) {
@@ -139,7 +130,6 @@ class Email
      * @param int $team
      * @param array<string, mixed> $userInfo to get the email and name of new user
      * @param bool $needValidation
-     * @return void
      */
     public function alertAdmin(int $team, array $userInfo, bool $needValidation = true): void
     {
@@ -183,7 +173,6 @@ class Email
      * their account to work right away.
      *
      * @param string $email email of the user to notify
-     * @return void
      */
     public function alertUserNeedValidation($email): void
     {
@@ -209,7 +198,6 @@ class Email
      * Alert a user that they are validated
      *
      * @param string $email email of the newly validated user
-     * @return void
      */
     public function alertUserIsValidated($email): void
     {
@@ -246,7 +234,7 @@ class Email
      */
     private function getAdminEmail($team): array
     {
-        // array for storing email adresses of admin(s)
+        // array for storing email addresses of admin(s)
         $arr = array();
         $Db = Db::getConnection();
 
@@ -271,8 +259,6 @@ class Email
 
     /**
      * Return Swift_Mailer instance and choose between sendmail and smtp
-     *
-     * @return Swift_Mailer
      */
     private function getMailer(): Swift_Mailer
     {

@@ -13,6 +13,8 @@ parameters:
     -
       message: '#Variable \$Auth might not be defined.*#'
       path: %currentWorkingDirectory%/web
+  excludePaths:
+    - %currentWorkingDirectory%/src/langs/js-strings.php
 
   paths:
     - %currentWorkingDirectory%/src

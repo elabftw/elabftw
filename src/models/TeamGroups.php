@@ -15,7 +15,7 @@ use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
-use function is_bool;
+use function in_array;
 use function mb_strlen;
 use PDO;
 
@@ -24,17 +24,10 @@ use PDO;
  */
 class TeamGroups implements CrudInterface
 {
-    /** @var Db $Db SQL Database */
-    private $Db;
+    private Db $Db;
 
-    /** @var Users $Users instance of Users */
-    private $Users;
+    private Users $Users;
 
-    /**
-     * Constructor
-     *
-     * @param Users $users
-     */
     public function __construct(Users $users)
     {
         $this->Users = $users;
@@ -67,7 +60,7 @@ class TeamGroups implements CrudInterface
     {
         $fullGroups = array();
 
-        $sql = 'SELECT DISTINCT id, name FROM team_groups CROSS JOIN users2teams ON (users2teams.teams_id = team_groups.team AND users2teams.teams_id = :team) ORDER BY name';
+        $sql = 'SELECT DISTINCT team_groups.id, team_groups.name FROM team_groups CROSS JOIN users2teams ON (users2teams.teams_id = team_groups.team AND users2teams.teams_id = :team) ORDER BY name';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -98,8 +91,6 @@ class TeamGroups implements CrudInterface
 
     /**
      * When we need to build a select menu with visibility + team groups
-     *
-     * @return array
      */
     public function getVisibilityList(): array
     {
@@ -110,7 +101,8 @@ class TeamGroups implements CrudInterface
             'public' => _('Public'),
             'organization' => _('Everyone with an account'),
             'team' => _('Only the team'),
-            'user' => _('Only me'),
+            'user' => _('Only me and admins'),
+            'useronly' => _('Only me'),
         );
         $groups = $this->readGroupsFromUser();
 
@@ -120,18 +112,12 @@ class TeamGroups implements CrudInterface
         }
 
         $tgArr = array_combine($idArr, $nameArr);
-        if (is_bool($tgArr)) {
-            return $visibilityArr;
-        }
 
         return $visibilityArr + $tgArr;
     }
 
     /**
      * Get the name of a group
-     *
-     * @param int $id
-     * @return string
      */
     public function readName(int $id): string
     {
@@ -220,10 +206,6 @@ class TeamGroups implements CrudInterface
 
     /**
      * Check if user is in a team group
-     *
-     * @param int $userid
-     * @param int $groupid
-     * @return bool
      */
     public function isInTeamGroup(int $userid, int $groupid): bool
     {
@@ -236,14 +218,13 @@ class TeamGroups implements CrudInterface
             $authUsersArr[] = (int) $authUsers['userid'];
         }
 
-        return \in_array($userid, $authUsersArr, true);
+        return in_array($userid, $authUsersArr, true);
     }
 
     /**
      * Check if both users are in the same group
      *
      * @param int $userid the other user
-     * @return bool
      */
     public function isUserInSameGroup(int $userid): bool
     {

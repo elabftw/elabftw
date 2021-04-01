@@ -1,21 +1,31 @@
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
 footer {
     border-top: solid 1px $bordersgray;
     font-size: 11px;
-    margin: 60px 0 5px 0;
-    padding: 10px 0 0 0;
+    margin: 60px 5px;
+    padding-top: 10px;
 
     a {
         color: $maingray;
         font-size: 11px;
+
         &:hover {
             color: $elabblue;
         }
     }
 
     .footer-left {
-        text-transform: uppercase;
-        text-align: left;
         float: left;
+        text-align: left;
+        text-transform: uppercase;
+
         a {
             border-right: 1px #ccc solid;
             padding: 0 5px;
@@ -23,9 +33,9 @@ footer {
     }
 
     .footer-right {
-        text-align: right;
         float: right;
-        margin: 0 0 20px 0;
+        margin: 0 0 20px;
+        text-align: right;
     }
 
 }

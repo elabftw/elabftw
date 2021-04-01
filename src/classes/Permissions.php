@@ -22,17 +22,13 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Permissions
 {
-    /** @var Users $Users instance of Users */
-    private $Users;
+    private Users $Users;
 
-    /** @var Teams $Teams instance of Teams */
-    private $Teams;
+    private Teams $Teams;
 
-    /** @var TeamGroups $TeamGroups instance of TeamsGroups */
-    private $TeamGroups;
+    private TeamGroups $TeamGroups;
 
-    /** @var array $item the item to check */
-    private $item;
+    private array $item;
 
     /**
      * Constructor
@@ -49,11 +45,9 @@ class Permissions
     }
 
     /**
-     * Get permissions for an experiment/item
-     *
-     * @return array
+     * Get permissions for an entity
      */
-    public function forExpItem(): array
+    public function forEntity(): array
     {
         $write = $this->getWrite();
 
@@ -69,8 +63,7 @@ class Permissions
 
         // if we have the elabid in the URL, allow read access to all
         $Request = Request::createFromGlobals();
-        // make sure we check if entity has elabid because items won't have one (null)
-        if (isset($this->item['elabid']) && ($this->item['elabid'] === $Request->query->get('elabid'))) {
+        if ($this->item['elabid'] ?? '' === $Request->query->get('elabid')) {
             return array('read' => true, 'write' => $write);
         }
 
@@ -103,58 +96,7 @@ class Permissions
     }
 
     /**
-     * Get permissions for a template
-     *
-     * @return array
-     */
-    public function forTemplates(): array
-    {
-        $write = $this->getWrite();
-
-        if ($this->item['userid'] === $this->Users->userData['userid']) {
-            return array('read' => true, 'write' => true);
-        }
-
-        // if it's public, we can read it
-        if ($this->item['canread'] === 'public') {
-            return array('read' => true, 'write' => $write);
-        }
-
-        // starting from here, if we are anon we can't possibly have read access
-        if (isset($this->Users->userData['anon'])) {
-            return array('read' => false, 'write' => false);
-        }
-
-        if ($this->item['canread'] === 'organization') {
-            return array('read' => true, 'write' => $write);
-        }
-
-        // if the vis. setting is team, check we are in the same team than the $item
-        if ($this->item['canread'] === 'team') {
-            // items will have a team, make sure it's the same as the one we are logged in
-            if (isset($this->item['team']) && ((int) $this->item['team'] === $this->Users->userData['team'])) {
-                return array('read' => true, 'write' => $write);
-            }
-            // check if we have a team in common
-            if ($this->Teams->hasCommonTeamWithCurrent((int) $this->item['userid'], $this->Users->userData['team'])) {
-                return array('read' => true, 'write' => $write);
-            }
-        }
-
-        // if the vis. setting is a team group, check we are in the group
-        if (Check::id((int) $this->item['canread']) !== false) {
-            if ($this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canread'])) {
-                return array('read' => true, 'write' => $write);
-            }
-        }
-
-        return array('read' => false, 'write' => false);
-    }
-
-    /**
      * Get the write permission for an exp/item
-     *
-     * @return bool
      */
     private function getWrite(): bool
     {

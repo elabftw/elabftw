@@ -26,17 +26,10 @@ use PDO;
  */
 class Teams implements ReadableInterface, DestroyableInterface
 {
-    /** @var Users $Users instance of Users */
-    public $Users;
+    public Users $Users;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
-    /**
-     * Constructor
-     *
-     * @param Users $users
-     */
     public function __construct(Users $users)
     {
         $this->Db = Db::getConnection();
@@ -72,8 +65,6 @@ class Teams implements ReadableInterface, DestroyableInterface
      *
      * @param int $userid
      * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
-     *
-     * @return void
      */
     public function addUserToTeams(int $userid, array $teamIdArr): void
     {
@@ -96,8 +87,6 @@ class Teams implements ReadableInterface, DestroyableInterface
      *
      * @param int $userid
      * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
-     *
-     * @return void
      */
     public function rmUserFromTeams(int $userid, array $teamIdArr): void
     {
@@ -121,8 +110,6 @@ class Teams implements ReadableInterface, DestroyableInterface
      *
      * @param int $userid
      * @param array<array-key, mixed> $teams
-     *
-     * @return void
      */
     public function synchronize(int $userid, array $teams): void
     {
@@ -151,9 +138,10 @@ class Teams implements ReadableInterface, DestroyableInterface
         $name = Filter::sanitize($name);
 
         // add to the teams table
-        $sql = 'INSERT INTO teams (name, link_name, link_href) VALUES (:name, :link_name, :link_href)';
+        $sql = 'INSERT INTO teams (name, common_template, link_name, link_href) VALUES (:name, :common_template, :link_name, :link_href)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
+        $req->bindValue(':common_template', Templates::defaultBody);
         $req->bindValue(':link_name', 'Documentation');
         $req->bindValue(':link_href', 'https://doc.elabftw.net');
         $this->Db->execute($req);
@@ -178,17 +166,11 @@ class Teams implements ReadableInterface, DestroyableInterface
             $newId
         );
 
-        // create default experiment template
-        $Templates = new Templates($this->Users);
-        $Templates->createDefault($newId);
-
         return $newId;
     }
 
     /**
      * Read from the current team
-     *
-     * @return array
      */
     public function read(): array
     {
@@ -207,8 +189,6 @@ class Teams implements ReadableInterface, DestroyableInterface
 
     /**
      * Get all the teams
-     *
-     * @return array
      */
     public function readAll(): array
     {
@@ -244,8 +224,6 @@ class Teams implements ReadableInterface, DestroyableInterface
 
     /**
      * Clear the timestamp password
-     *
-     * @return bool
      */
     public function destroyStamppass(): bool
     {
@@ -258,8 +236,6 @@ class Teams implements ReadableInterface, DestroyableInterface
 
     /**
      * Get statistics for the whole install
-     *
-     * @return array
      */
     public function getAllStats(): array
     {
@@ -282,9 +258,6 @@ class Teams implements ReadableInterface, DestroyableInterface
 
     /**
      * Get statistics for a team
-     *
-     * @param int $team
-     * @return array
      */
     public function getStats(int $team): array
     {

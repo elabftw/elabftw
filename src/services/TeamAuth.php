@@ -19,8 +19,7 @@ use Elabftw\Interfaces\AuthInterface;
  */
 class TeamAuth implements AuthInterface
 {
-    /** @var AuthResponse $AuthResponse */
-    private $AuthResponse;
+    private AuthResponse $AuthResponse;
 
     public function __construct(int $userid, int $team)
     {

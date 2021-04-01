@@ -25,17 +25,10 @@ class Todolist implements CrudInterface
 {
     use SortableTrait;
 
-    /** @var Users $Users our user */
-    public $Users;
+    public Users $Users;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
-    /**
-     * Gimme a userid
-     *
-     * @param Users $users
-     */
     public function __construct(Users $users)
     {
         $this->Db = Db::getConnection();

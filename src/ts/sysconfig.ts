@@ -8,12 +8,66 @@
 import { notif } from './misc';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
+import { Ajax } from './Ajax.class';
 import { getTinymceBaseConfig } from './tinymce';
 
 $(document).ready(function() {
   if (window.location.pathname !== '/sysconfig.php') {
     return;
   }
+
+  // GET the latest version information
+  const updateUrl = 'https://get.elabftw.net/updates.json';
+  const currentVersionDiv = document.querySelector('#currentVersion') as HTMLElement;
+  const latestVersionDiv = document.querySelector('#latestVersion');
+  const currentVersion = currentVersionDiv.innerText;
+  // Note: this doesn't work on Chrome
+  // see: https://bugs.chromium.org/p/chromium/issues/detail?id=571722
+  // normal user-agent will be sent
+  const headers = new Headers({
+    'User-Agent': 'Elabftw/' + currentVersion,
+  });
+
+  fetch(updateUrl, {
+    headers: headers,
+  }).then(response => {
+    if (!response.ok) {
+      throw new Error('Error fetching latest version!');
+    }
+    return response.json();
+  }).then(data => {
+    latestVersionDiv.append(data.version);
+    if (data.version === currentVersion) {
+      // show a little green check if we have latest version
+      const successIcon = document.createElement('i');
+      successIcon.style.color = 'green';
+      successIcon.classList.add('fas', 'fa-check', 'fa-lg', 'align-top', 'ml-1');
+      latestVersionDiv.appendChild(successIcon);
+    } else {
+      currentVersionDiv.style.color = 'red';
+      const warningDiv = document.createElement('div');
+      warningDiv.classList.add('alert', 'alert-warning');
+      const chevron = document.createElement('i');
+      chevron.classList.add('fas', 'fa-chevron-right');
+      warningDiv.appendChild(chevron);
+      const text = document.createElement('span');
+      text.classList.add('ml-1');
+      text.innerText = `${data.date} - A new version is available!`;
+      warningDiv.appendChild(text);
+      const updateLink = document.createElement('a');
+      updateLink.href = 'https://doc.elabftw.net/how-to-update.html';
+      updateLink.classList.add('button', 'btn', 'btn-primary', 'text-white');
+      updateLink.innerText = 'Update elabftw';
+      const changelogLink = document.createElement('a');
+      changelogLink.href = 'https://doc.elabftw.net/changelog.html';
+      changelogLink.classList.add('button', 'btn', 'btn-primary', 'text-white');
+      changelogLink.innerText = 'Read changelog';
+      warningDiv.appendChild(updateLink);
+      warningDiv.appendChild(changelogLink);
+      document.getElementById('versionNotifZone').appendChild(warningDiv);
+    }
+  }).catch(error => latestVersionDiv.append(error));
+
   // TEAMS
   const Teams = {
     controller: 'app/controllers/SysconfigAjaxController.php',
@@ -56,7 +110,7 @@ $(document).ready(function() {
     destructor: function(json): void {
       notif(json);
       if (json.res) {
-        $('#teamsDiv').load('sysconfig.php #teamsDiv');
+        $('#teamsDiv').load('sysconfig.php #teamsDiv > *');
       }
     }
   };
@@ -97,6 +151,22 @@ $(document).ready(function() {
   $(document).on('change', '#selectMailMethod', function() {
     toggleMailMethod($(this).val());
   });
+
+  // Add click listener and do action based on which element is clicked
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // CLEAR-BANNED
+    if (el.matches('[data-action="clear-banned"]')) {
+      const AjaxC = new Ajax('bannedusers', '0', 'app/controllers/SysconfigAjaxController.php');
+      AjaxC.post('clear-banned').then(json => {
+        if (json.res) {
+          document.getElementById('bannedUsersCount').innerText = '';
+        }
+        notif(json);
+      });
+    }
+  });
+
 
   // MASS MAIL
   $(document).on('click', '#massSend', function() {

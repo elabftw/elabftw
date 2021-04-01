@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Maps\Team;
+use Elabftw\Models\BannedUsers;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Elabftw\Services\Email;
@@ -74,6 +75,12 @@ try {
     if ($Request->request->has('idpsDestroy')) {
         $Idps = new Idps();
         $Idps->destroy((int) $Request->request->get('id'));
+    }
+
+    // CLEAR BANNED
+    if ($Request->request->has('clear-banned')) {
+        $BannedUsers = new BannedUsers($App->Config);
+        $BannedUsers->clearAll();
     }
 } catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
     $Response->setData(array(

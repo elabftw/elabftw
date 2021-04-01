@@ -23,6 +23,7 @@ use Elabftw\Services\Filter;
 use Elabftw\Services\MakeThumbnail;
 use Elabftw\Traits\UploadTrait;
 use function exif_read_data;
+use function extension_loaded;
 use function file_exists;
 use function function_exists;
 use Gmagick;
@@ -43,20 +44,12 @@ class Uploads implements DestroyableInterface
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
     private const BIG_FILE_THRESHOLD = 50000000;
 
-    /** @var AbstractEntity $Entity an entity */
-    public $Entity;
+    public AbstractEntity $Entity;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
-    /** @var string $hashAlgorithm what algo for hashing */
-    private $hashAlgorithm = 'sha256';
+    private string $hashAlgorithm = 'sha256';
 
-    /**
-     * Constructor
-     *
-     * @param AbstractEntity $entity instance of Experiments or Database
-     */
     public function __construct(AbstractEntity $entity)
     {
         $this->Entity = $entity;
@@ -65,9 +58,6 @@ class Uploads implements DestroyableInterface
 
     /**
      * Main method for normal file upload
-     *
-     * @param Request $request
-     * @return void
      */
     public function create(Request $request): void
     {
@@ -87,7 +77,7 @@ class Uploads implements DestroyableInterface
         // maybe php-exif extension isn't loaded
         if (function_exists('exif_read_data') && in_array($ext, Extensions::HAS_EXIF, true)) {
             $exifData = exif_read_data($fullPath);
-            if ($exifData !== false) {
+            if ($exifData !== false && extension_loaded('gmagick')) {
                 $image = new Gmagick($fullPath);
                 // default is 75
                 $image->setCompressionQuality(100);
@@ -110,7 +100,6 @@ class Uploads implements DestroyableInterface
      *
      * @param string $filePath absolute path to the file
      * @param string $comment
-     * @return void
      */
     public function createFromLocalFile(string $filePath, string $comment): void
     {
@@ -133,13 +122,12 @@ class Uploads implements DestroyableInterface
      * @param string $fileType 'mol' or 'png'
      * @param string $realName name of the file
      * @param string $content content of the file
-     * @return int
      */
     public function createFromString(string $fileType, string $realName, string $content): int
     {
         $this->Entity->canOrExplode('write');
 
-        $allowedFileTypes = array('png', 'mol', 'json');
+        $allowedFileTypes = array('png', 'mol', 'json', 'zip');
         if (!in_array($fileType, $allowedFileTypes, true)) {
             throw new IllegalActionException('Bad filetype!');
         }
@@ -175,7 +163,6 @@ class Uploads implements DestroyableInterface
      *
      * @param int $id id of the uploaded item
      * @throws DatabaseErrorException
-     * @return array
      */
     public function readFromId(int $id): array
     {
@@ -194,7 +181,6 @@ class Uploads implements DestroyableInterface
      * Read all uploads for an item
      *
      * @throws DatabaseErrorException
-     * @return array
      */
     public function readAll(): array
     {
@@ -219,7 +205,6 @@ class Uploads implements DestroyableInterface
      * @param int $id id of the file
      * @param string $comment
      * @throws DatabaseErrorException
-     * @return void
      */
     public function updateComment(int $id, string $comment): void
     {
@@ -239,9 +224,6 @@ class Uploads implements DestroyableInterface
 
     /**
      * Replace an uploaded file by another
-     *
-     * @param Request $request
-     * @return void
      */
     public function replace(Request $request): void
     {
@@ -325,8 +307,6 @@ class Uploads implements DestroyableInterface
 
     /**
      * Delete all uploaded files for an entity
-     *
-     * @return void
      */
     public function destroyAll(): void
     {
@@ -341,7 +321,6 @@ class Uploads implements DestroyableInterface
      * Get the rotation angle from exif data
      *
      * @param array<string, mixed> $exifData
-     * @return int
      */
     private function getRotationAngle(array $exifData): int
     {
@@ -368,7 +347,6 @@ class Uploads implements DestroyableInterface
      * @param string $orig from
      * @param string $dest to
      * @throws FilesystemErrorException
-     * @return void
      */
     private function moveFile(string $orig, string $dest): void
     {
@@ -376,15 +354,16 @@ class Uploads implements DestroyableInterface
         // see http://php.net/manual/en/function.rename.php#117590
         if (PHP_OS === 'FreeBSD') {
             if (copy($orig, $dest) !== true) {
-                throw new FilesystemErrorException('Error while moving the file. Check folder permissons!');
+                throw new FilesystemErrorException('Error while moving the file. Check folder permissions!');
             }
             if (unlink($orig) !== true) {
                 throw new FilesystemErrorException('Error deleting file!');
             }
+            return;
         }
 
         if (rename($orig, $dest) !== true) {
-            throw new FilesystemErrorException('Error while moving the file. Check folder permissons!');
+            throw new FilesystemErrorException('Error while moving the file. Check folder permissions!');
         }
     }
 
@@ -411,7 +390,6 @@ class Uploads implements DestroyableInterface
      * Check if extension is allowed for upload
      *
      * @param string $realName The name of the file
-     * @return void
      */
     private function checkExtension(string $realName): void
     {
@@ -428,7 +406,6 @@ class Uploads implements DestroyableInterface
      * @param string $hash The hash string of our file
      * @param string|null $comment The file comment
      * @throws DatabaseErrorException
-     * @return int
      */
     private function dbInsert(string $realName, string $longName, string $hash, ?string $comment = null): int
     {

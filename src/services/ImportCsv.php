@@ -22,11 +22,11 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ImportCsv extends AbstractImport
 {
-    /** @var int $inserted number of items we got into the database */
-    public $inserted = 0;
+    // number of items we got into the database
+    public int $inserted = 0;
 
-    /** @var string $delimiter the separation character of the csv provided by user */
-    private $delimiter;
+    // the separation character of the csv provided by user
+    private string $delimiter;
 
     /**
      * Constructor

@@ -26,17 +26,10 @@ class MakeReport
     use CsvTrait;
     use UploadTrait;
 
-    /** @var Db $Db the mysql connection */
-    protected $Db;
+    protected Db $Db;
 
-    /** @var Teams $Teams instance of Teams */
-    private $Teams;
+    private Teams $Teams;
 
-    /**
-     * Constructor
-     *
-     * @param Teams $teams
-     */
     public function __construct(Teams $teams)
     {
         $this->Teams = $teams;
@@ -45,8 +38,6 @@ class MakeReport
 
     /**
      * The human friendly name
-     *
-     * @return string
      */
     public function getFileName(): string
     {
@@ -55,8 +46,6 @@ class MakeReport
 
     /**
      * Columns of the CSV
-     *
-     * @return array
      */
     protected function getHeader(): array
     {
@@ -79,8 +68,6 @@ class MakeReport
 
     /**
      * Get the rows for each users
-     *
-     * @return array
      */
     protected function getRows(): array
     {
@@ -93,6 +80,9 @@ class MakeReport
             $diskUsage = $this->getDiskUsage((int) $user['userid']);
             // get total number of experiments
             $Entity = new Experiments(new Users((int) $user['userid']));
+
+            // remove mfa column
+            unset($allUsers[$key]['mfa_secret']);
 
             $allUsers[$key]['team(s)'] = $teams;
             $allUsers[$key]['diskusage_in_bytes'] = $diskUsage;

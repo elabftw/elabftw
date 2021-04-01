@@ -16,17 +16,12 @@ use Elabftw\Interfaces\DestroyableInterface;
 use PDO;
 
 /**
- * Store informations about different identity providers for auth with SAML
+ * Store information about different identity providers for auth with SAML
  */
 class Idps implements DestroyableInterface
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    protected Db $Db;
 
-    /**
-     * Constructor
-     *
-     */
     public function __construct()
     {
         $this->Db = Db::getConnection();
@@ -66,8 +61,6 @@ class Idps implements DestroyableInterface
 
     /**
      * Read all IDPs
-     *
-     * @return array
      */
     public function readAll(): array
     {
@@ -123,8 +116,6 @@ class Idps implements DestroyableInterface
 
     /**
      * Get an active IDP
-     *
-     * @return array
      */
     public function getActive(?int $id = null): array
     {
@@ -145,9 +136,6 @@ class Idps implements DestroyableInterface
         return $res;
     }
 
-    /**
-     * Destroy an IDP
-     */
     public function destroy(int $id): bool
     {
         $sql = 'DELETE FROM idps WHERE id = :id';

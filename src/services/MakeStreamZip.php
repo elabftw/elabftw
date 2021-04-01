@@ -22,27 +22,24 @@ use ZipStream\ZipStream;
  */
 class MakeStreamZip extends AbstractMake
 {
-    /** @var ZipStream $Zip the ZipStream object */
-    private $Zip;
+    private ZipStream $Zip;
 
-    /** @var array $idArr the input ids but in an array */
-    private $idArr = array();
+    // the input ids but in an array
+    private array $idArr = array();
 
-    /** @var array $trash files to be deleted by destructor */
-    private $trash = array();
+    // files to be deleted by destructor
+    private array $trash = array();
 
-    /** @var string $folder name of folder */
-    private $folder = '';
+    private string $folder = '';
 
-    /** @var array $jsonArr array that will be converted to json */
-    private $jsonArr = array();
+    // array that will be converted to json
+    private array $jsonArr = array();
 
     /**
      * Give me an id list and a type, I make good zip for you
      *
      * @param AbstractEntity $entity
-     * @param string $idList 1+3+5+8
-     * @return void
+     * @param string $idList 4 8 15 16 23 42
      */
     public function __construct(AbstractEntity $entity, string $idList)
     {
@@ -60,8 +57,6 @@ class MakeStreamZip extends AbstractMake
 
     /**
      * Clean up the temporary files (csv and pdf)
-     *
-     * @return void
      */
     public function __destruct()
     {
@@ -72,8 +67,6 @@ class MakeStreamZip extends AbstractMake
 
     /**
      * Get the name of the generated file
-     *
-     * @return string
      */
     public function getFileName(): string
     {
@@ -88,8 +81,6 @@ class MakeStreamZip extends AbstractMake
     /**
      * Loop on each id and add it to our zip archive
      * This could be called the main function.
-     *
-     * @return void
      */
     public function getZip(): void
     {
@@ -107,7 +98,6 @@ class MakeStreamZip extends AbstractMake
      * Add the .asn1 token and the timestamped pdf to the zip archive
      *
      * @param int $id The id of current item we are zipping
-     * @return void
      */
     private function addTimestampFiles(int $id): void
     {
@@ -135,8 +125,6 @@ class MakeStreamZip extends AbstractMake
 
     /**
      * Folder and zip file name begins with date for experiments
-     *
-     * @return string
      */
     private function getBaseFileName(): string
     {
@@ -153,7 +141,6 @@ class MakeStreamZip extends AbstractMake
      * Add attached files
      *
      * @param array<array-key, array<string, string>> $filesArr the files array
-     * @return void
      */
     private function addAttachedFiles($filesArr): void
     {
@@ -175,8 +162,6 @@ class MakeStreamZip extends AbstractMake
 
     /**
      * Add a PDF file to the ZIP archive
-     *
-     * @return void
      */
     private function addPdf(): void
     {
@@ -190,7 +175,6 @@ class MakeStreamZip extends AbstractMake
      * Add a CSV file to the ZIP archive
      *
      * @param int $id The id of the item we are zipping
-     * @return void
      */
     private function addCsv(int $id): void
     {
@@ -202,7 +186,6 @@ class MakeStreamZip extends AbstractMake
      * This is where the magic happens
      *
      * @param int $id The id of the item we are zipping
-     * @return void
      */
     private function addToZip(int $id): void
     {

@@ -19,7 +19,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Display profile of current user
- *
  */
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Profile');
@@ -37,33 +36,11 @@ try {
     $count = count($itemsArr);
 
     // generate stats for the pie chart with experiments status
-    // see https://developers.google.com/chart/interactive/docs/reference?csw=1#datatable-class
     $UserStats = new UserStats($App->Users, $count);
-    $UserStats->makeStats();
 
     // get the teams
     $UsersHelper = new UsersHelper((int) $App->Users->userData['userid']);
     $teams = $UsersHelper->getTeamsFromUserid();
-
-    $stats = array();
-    // columns
-    $stats['cols'] = array(
-        array(
-            'type' => 'string',
-            'label' => 'Status',
-        ),
-        array(
-            'type' => 'number',
-            'label' => 'Experiments number',
-        ),
-    );
-    // rows
-    foreach ($UserStats->percentArr as $name => $percent) {
-        $stats['rows'][] = array('c' => array(array('v' => $name), array('v' => $percent)));
-    }
-    // now convert to json for JS usage
-    $statsJson = json_encode($stats);
-    $colorsJson = json_encode($UserStats->colorsArr);
 
     // get the team groups in which the user is
     $TeamGroups = new TeamGroups($App->Users);
@@ -71,10 +48,9 @@ try {
 
     $template = 'profile.html';
     $renderArr = array(
-        'UserStats' => $UserStats,
-        'colorsJson' => $colorsJson,
         'count' => $count,
-        'statsJson' => $statsJson,
+        'pieData' => $UserStats->getPieData(),
+        'pieDataCss' => $UserStats->getFormattedPieData(),
         'teamGroupsArr' => $teamGroupsArr,
         'teamsArr' => $teams,
     );

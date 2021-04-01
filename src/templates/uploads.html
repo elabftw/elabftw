@@ -8,7 +8,9 @@
             {% endtrans %}
         </h3>
         {% if mode == 'edit' %}
-          <i class='fas fa-eye clickable align_right togglableNext' title="{{ 'Toggle visibility'|trans }}"></i>
+            <a class='clickable align-right togglableNext' title='{{ 'Toggle visibility'|trans }}'>
+                <i class='fas fa-eye'></i>
+            </a>
         {% endif %}
 
         <div class='row' id='uploadsDiv'>
@@ -18,9 +20,9 @@
             <div class='col-md-4 col-sm-6'>
                 <div class='thumbnail box' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>
                     {% if mode == 'edit' %}
-                        <a class='uploadsDestroy' data-id='{{ upload.id }}' data-type='{{ upload.type }}'
-                            data-itemid='{{ upload.item_id }}' data-msg='{{ 'Delete this?'|trans }}'>
-                            <i class='fas fa-trash-alt fa-pull-right clickable'></i>
+                        <a class='uploadsDestroy clickable align-right' data-id='{{ upload.id }}' data-type='{{ upload.type }}'
+                            data-itemid='{{ upload.item_id }}' data-msg='{{ 'Delete this?'|trans }}' title='{{ 'Delete'|trans }}'>
+                            <i class='fas fa-trash-alt'></i>
                         </a>
                     {% endif %}
 
@@ -81,7 +83,7 @@
                                   </ul>
                                 </div>
 
-                                <div class='viewer_3Dmoljs'
+                                <div class='viewer_3Dmoljs file-uploaded'
                                   data-href='app/download.php?f={{ upload.long_name }}'
                                   data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick'}}"
                                   data-backgroundcolor='0xffffff'
@@ -106,8 +108,8 @@
         {% endif %}
 
         {% if ext matches '/(json)$/i' %}
-          <div class='jsonLoader clickable' data-type='{{ upload.type }}' data-name='{{ upload.real_name }}' data-link='{{ upload.long_name }}' data-id='{{ upload.item_id }}' data-uploadid='{{ upload.id }}'>
-            <i class='fas fa-{{ mode == 'edit' ? 'pencil-alt' : 'eye' }} mr-1'></i><p class='d-inline'>{{ 'Load into JSON Editor'|trans }}</p>
+          <div class='clickable'>
+            <i class='fas fa-{{ mode == 'edit' ? 'pencil-alt' : 'eye' }} mr-1'></i><p data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name }}' data-link='{{ upload.long_name }}' data-action='json-load-file' class='d-inline'>{{ 'Load into JSON Editor'|trans }}</p>
           </div>
         {% endif %}
 

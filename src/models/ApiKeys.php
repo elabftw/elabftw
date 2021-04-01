@@ -21,21 +21,14 @@ use PDO;
 use function random_bytes;
 
 /**
- * Api keys
+ * Api keys CRUD class
  */
 class ApiKeys implements DestroyableInterface
 {
-    /** @var Db $Db SQL Database */
-    private $Db;
+    private Db $Db;
 
-    /** @var Users $Users instance of Users */
-    private $Users;
+    private Users $Users;
 
-    /**
-     * Constructor
-     *
-     * @param Users $users instance of Users
-     */
     public function __construct(Users $users)
     {
         $this->Db = Db::getConnection();

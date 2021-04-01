@@ -9,35 +9,43 @@ import { notif } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Template from './Template.class';
+import { Ajax } from './Ajax.class';
+import i18next from 'i18next';
 
 $(document).ready(function() {
   if (window.location.pathname !== '/ucp.php') {
     return;
   }
 
-  const TemplateC = new Template();
 
-
-  // TEMPLATES listeners
-  $(document).on('click', '.createNewTemplate', function() {
-    const name = prompt('Template title');
-    if (name) {
-      // no body on template creation
-      TemplateC.create(name);
-    }
-  });
   // show the handles to reorder when the menu entry is clicked
-  $(document).on('click', '#toggleReorder', function() {
+  $('#toggleReorder').on('click', function() {
     $('.sortableHandle').toggle();
   });
-  $(document).on('click', '.saveToFile', function() {
-    TemplateC.saveToFile($(this).data('id'), $(this).data('name'));
-  });
-  $(document).on('click', '.destroyTemplate', function() {
-    TemplateC.destroy($(this).data('id'));
+
+  const TemplateC = new Template();
+
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // CREATE TPL
+    if (el.matches('[data-action="create-template"]')) {
+      const title = prompt(i18next.t('template-title'));
+      if (title) {
+        // no body on template creation
+        TemplateC.create(title);
+      }
+    // DOWNLOAD TEMPLATE
+    } else if (el.matches('[data-action="download-template"]')) {
+      TemplateC.saveToFile(parseInt(el.dataset.id), el.dataset.name);
+    // DESTROY TEMPLATE
+    } else if (el.matches('[data-action="destroy-template"]')) {
+      TemplateC.destroy(parseInt(el.dataset.id))
+        .then(() => window.location.replace('ucp.php?tab=3'))
+        .catch((e) => notif({'res': false, 'msg': e.message}));
+    }
   });
 
-  $(document).on('click', '#import-from-file', function() {
+  $('#import-from-file').on('click', function() {
     $('#import_tpl').toggle();
   });
 
@@ -65,17 +73,29 @@ $(document).ready(function() {
     $('#canwrite_select option[value="' + write + '"]').prop('selected', true);
   });
 
+  // MAIN LISTENER
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // TOGGLE LOCK
+    if (el.matches('[data-action="lock"]')) {
+      // reload the page to change the icon and make the edit button disappear (#1897)
+      const id = el.dataset.id;
+      const AjaxC = new Ajax('experiments_templates', id);
+      AjaxC.post('lock').then(() => window.location.href = `?tab=3&templateid=${id}`);
+    }
+  });
+
   // input to upload an elabftw.tpl file
-  $('#import_tpl').on('change', function(e) {
+  document.getElementById('import_tpl').addEventListener('change', (event) => {
     const title = (document.getElementById('import_tpl') as HTMLInputElement).value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
     if (!window.FileReader) {
       alert('Please use a modern web browser. Import aborted.');
       return false;
     }
-    const file = (e.target as HTMLInputElement).files[0];
+    const file = (event.target as HTMLInputElement).files[0];
     const reader = new FileReader();
-    reader.onload = function(e): void {
-      TemplateC.create(title, e.target.result as string);
+    reader.onload = function(event): void {
+      TemplateC.create(title, event.target.result as string);
       $('#import_tpl').hide();
     };
     reader.readAsText(file);
@@ -94,7 +114,8 @@ $(document).ready(function() {
       },
     }).done(function(json) {
       notif(json);
-      $('#apiTable').load('ucp.php #apiTable');
+      // only reload children of apiTable
+      $('#apiTable').load('ucp.php #apiTable > *');
     });
   });
 });

@@ -15,17 +15,23 @@ interface ActionReq {
 
 interface ResponseMsg {
   res: boolean;
-  msg: string;
+  msg: string | Array<BoundEvent>;
   color?: string;
 }
 
+interface BoundEvent {
+  item: string;
+  start: string;
+}
+
 interface CheckableItem {
-  id: string;
-  randomid: string;
+  id: number;
+  randomid: number;
 }
 
 export {
   ActionReq,
-  ResponseMsg,
+  BoundEvent,
   CheckableItem,
+  ResponseMsg,
 };

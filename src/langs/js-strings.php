@@ -11,11 +11,17 @@ _('Add a comment');
 // dropzone-upload-area
 _('Drop files here to upload');
 /** @psalm-suppress UnusedFunctionCall */
+// editing-metadata
+_('Editing metadata');
+/** @psalm-suppress UnusedFunctionCall */
 // entity-default-title
 _('Untitled');
 /** @psalm-suppress UnusedFunctionCall */
 // entity-delete-warning
 _('The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?');
+/** @psalm-suppress UnusedFunctionCall */
+// extra-fields
+_('Extra fields');
 /** @psalm-suppress UnusedFunctionCall */
 // filename
 _('Filename');
@@ -25,6 +31,9 @@ _('Delete this?');
 /** @psalm-suppress UnusedFunctionCall */
 // link-delete-warning
 _('Delete this link?');
+/** @psalm-suppress UnusedFunctionCall */
+// nothing-selected
+_('Nothing selected!');
 /** @psalm-suppress UnusedFunctionCall */
 // please-wait
 _('Please wait…');
@@ -43,3 +52,6 @@ _('Delete this tag?');
 /** @psalm-suppress UnusedFunctionCall */
 // upload-file-comment
 _('File comment');
+/** @psalm-suppress UnusedFunctionCall */
+// template-title
+_('Template title');

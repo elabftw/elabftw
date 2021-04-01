@@ -65,14 +65,14 @@ $(document).ready(function() {
   // TEAM GROUPS
   const TeamGroupC = new TeamGroup();
 
-  $(document).on('click', '#teamGroupCreateBtn', function() {
+  $('#teamGroupCreateBtn').on('click', function() {
     TeamGroupC.create();
   });
-  $(document).on('click', '.teamGroupDelete', function() {
+  $('#team_groups_div').on('click', '.teamGroupDelete', function() {
     TeamGroupC.destroy($(this).data('id'));
   });
 
-  $(document).on('keypress blur', '.addUserToGroup', function(e) {
+  $('#team_groups_div').on('keypress blur', '.addUserToGroup', function(e) {
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
       const user = parseInt($(this).val() as string, 10);
@@ -80,7 +80,7 @@ $(document).ready(function() {
       TeamGroupC.update('add', user, group);
     }
   });
-  $(document).on('click', '.rmUserFromGroup', function() {
+  $('#team_groups_div').on('click', '.rmUserFromGroup', function() {
     const user = $(this).data('user');
     const group = $(this).data('group');
     TeamGroupC.update('rm', user, group);
@@ -151,21 +151,6 @@ $(document).ready(function() {
     ItemTypeC.destroy($(this).data('id'));
   });
   // END ITEMS TYPES
-
-  // COMMON TEMPLATE
-  $('#commonTplTemplate').closest('div').find('.button').on('click', function() {
-    const template = tinymce.get('commonTplTemplate').getContent();
-    $.post('app/controllers/Ajax.php', {
-      action: 'updateCommon',
-      what: 'template',
-      type: 'experiments_templates',
-      params: {
-        template: template,
-      },
-    }).done(function(json) {
-      notif(json);
-    });
-  });
 
   // randomize the input of the color picker so even if user doesn't change the color it's a different one!
   // from https://www.paulirish.com/2009/random-hex-color-code-snippets/

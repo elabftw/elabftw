@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use function dirname;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\ParamsProcessor;
@@ -558,23 +559,32 @@ class ApiController implements ControllerInterface
 
     /**
      * Get the file corresponding to the ID
-     *
-     * @return Response
      */
     private function getUpload(): Response
     {
         if ($this->id === null) {
             return new Response('You need to specify an ID!', 400);
         }
-        $Uploads = new Uploads(new Experiments($this->Users));
+        // note: we don't really care about this entity yet
+        $Uploads = new Uploads($this->Entity);
         $uploadData = $Uploads->readFromId($this->id);
-        // check user owns the file
-        // we could also check if user has read access to the item
-        // but for now let's just restrict downloading file via API to owned files
-        if ((int) $uploadData['userid'] !== (int) $this->Users->userData['userid']) {
+        // now we know the id and type of the entity
+        // so get the Entity to check for read permissions
+        if ($uploadData['type'] === 'experiments') {
+            $Entity = new Experiments($this->Users, (int) $uploadData['item_id']);
+        } elseif ($uploadData['type'] === 'items') {
+            $Entity = new Database($this->Users, (int) $uploadData['item_id']);
+        } else {
+            return new Response('Invalid upload id', 400);
+        }
+
+        try {
+            // make sure we have read access to that entity
+            $Entity->canOrExplode('read');
+        } catch (IllegalActionException $e) {
             return new Response('You do not have permission to access this resource.', 403);
         }
-        $filePath = \dirname(__DIR__, 2) . '/uploads/' . $uploadData['long_name'];
+        $filePath = dirname(__DIR__, 2) . '/uploads/' . $uploadData['long_name'];
         return new BinaryFileResponse($filePath);
     }
 

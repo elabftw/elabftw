@@ -86,7 +86,7 @@
     "phpcs": "./vendor/bin/php-cs-fixer fix --config=.php_cs.dist -v --using-cache=no",
     "phpcs-dry": "./vendor/bin/php-cs-fixer fix --config=.php_cs.dist -v --dry-run --stop-on-violation --using-cache=no",
     "phpmetrics": "phpmetrics --report-html=metrics . && firefox metrics/index.html",
-    "phpstan": "phpstan analyse --memory-limit 2G -c src/tools/phpstan.neon",
+    "phpstan": "phpstan analyse --memory-limit 4G -c src/tools/phpstan.neon",
     "pre-commit": "yarn phpcs-dry && yarn csslint && yarn jslint && yarn static",
     "psalm": "psalm -c=src/tools/psalm.xml",
     "psalmall": "psalm -c=src/tools/psalm.xml --show-info=true",

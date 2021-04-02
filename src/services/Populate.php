@@ -65,18 +65,18 @@ class Populate
             $Tags = new Tags($Entity);
             $tagNb = $this->faker->numberBetween(0, 5);
             for ($j = 0; $j <= $tagNb; $j++) {
-                $Tags->create(new ParamsProcessor(array('tag' => $this->faker->word)));
+                $Tags->create(new ParamsProcessor(array('tag' => $this->faker->word())));
             }
             // random date in the past 5 years
-            $Entity->update($this->faker->sentence, $this->faker->dateTimeBetween('-5 years')->format('Ymd'), $this->faker->realText(1000));
+            $Entity->update($this->faker->sentence(), $this->faker->dateTimeBetween('-5 years')->format('Ymd'), $this->faker->realText(1000));
 
             // lock 10% of experiments (but not the first one because it is used in tests)
-            if ($this->faker->randomDigit > 8 && $i > 1) {
+            if ($this->faker->randomDigit() > 8 && $i > 1) {
                 $Entity->toggleLock();
             }
 
             // change the visibility
-            if ($this->faker->randomDigit > 8) {
+            if ($this->faker->randomDigit() > 8) {
                 $Entity->updatePermissions('read', $this->faker->randomElement(array('organization', 'public', 'user')));
                 $Entity->updatePermissions('write', $this->faker->randomElement(array('organization', 'public', 'user')));
             }
@@ -86,14 +86,14 @@ class Populate
             $Entity->updateCategory((int) $category['category_id']);
 
             // maybe upload a file but not on the first one
-            if ($this->faker->randomDigit > 7 && $id !== 1) {
-                $Entity->Uploads->createFromString('json', $this->faker->word, '{ "some": "content" }');
+            if ($this->faker->randomDigit() > 7 && $id !== 1) {
+                $Entity->Uploads->createFromString('json', $this->faker->word(), '{ "some": "content" }');
             }
 
             // maybe add a few steps
-            if ($this->faker->randomDigit > 8) {
-                $Entity->Steps->create(new ParamsProcessor(array('template' => $this->faker->word)));
-                $Entity->Steps->create(new ParamsProcessor(array('template' => $this->faker->word)));
+            if ($this->faker->randomDigit() > 8) {
+                $Entity->Steps->create(new ParamsProcessor(array('template' => $this->faker->word())));
+                $Entity->Steps->create(new ParamsProcessor(array('template' => $this->faker->word())));
             }
         }
         printf("Generated %d %s \n", $this->iter, $Entity->type);
@@ -102,10 +102,10 @@ class Populate
     // create a user based on options provided in yaml file
     public function createUser(Teams $Teams, array $user): void
     {
-        $firstname = $user['firstname'] ?? $this->faker->firstName;
-        $lastname = $user['lastname'] ?? $this->faker->lastName;
+        $firstname = $user['firstname'] ?? $this->faker->firstName();
+        $lastname = $user['lastname'] ?? $this->faker->lastName(); // @phpstan-ignore-line
         $password = $user['password'] ?? self::DEFAULT_PASSWORD;
-        $email = $user['email'] ?? $this->faker->safeEmail;
+        $email = $user['email'] ?? $this->faker->safeEmail(); // @phpstan-ignore-line
 
         $userid = $Teams->Users->create($email, array($user['team']), $firstname, $lastname, $password, null, true, true, false);
         $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));
@@ -132,7 +132,7 @@ class Populate
             $Templates = new Templates($Users);
             for ($i = 0; $i < $this->iter; $i++) {
                 $Templates->create(new ParamsProcessor(
-                    array('name' => $this->faker->sentence, 'template' => $this->faker->realText(1000))
+                    array('name' => $this->faker->sentence(), 'template' => $this->faker->realText(1000))
                 ));
             }
         }

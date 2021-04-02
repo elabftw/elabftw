@@ -425,12 +425,12 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         // check if the permissions are enforced
         $Team = new Team((int) $this->Users->userData['team']);
         if ($rw === 'read') {
-            if ($Team->getDoForceCanread() === 1) {
+            if ($Team->getDoForceCanread() === 1 && !$this->Users->userData['is_admin']) {
                 throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
             }
             $column = 'canread';
         } else {
-            if ($Team->getDoForceCanwrite() === 1) {
+            if ($Team->getDoForceCanwrite() === 1 && !$this->Users->userData['is_admin']) {
                 throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
             }
             $column = 'canwrite';

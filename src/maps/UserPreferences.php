@@ -41,6 +41,8 @@ class UserPreferences implements MapInterface
 
     private int $singleColumnLayout = 0;
 
+    private int $uploadsLayout = 1;
+
     /** @var array<string, string> $shortcuts */
     private array $shortcuts = array(
         'create' => 'c',
@@ -105,6 +107,7 @@ class UserPreferences implements MapInterface
             default_read = :new_default_read,
             default_write = :new_default_write,
             single_column_layout = :new_layout,
+            uploads_layout = :new_uploads_layout,
             cjk_fonts = :new_cjk_fonts,
             pdfa = :new_pdfa,
             pdf_format = :new_pdf_format,
@@ -130,6 +133,7 @@ class UserPreferences implements MapInterface
         $req->bindParam(':new_default_read', $this->defaultRead);
         $req->bindParam(':new_default_write', $this->defaultWrite);
         $req->bindParam(':new_layout', $this->singleColumnLayout);
+        $req->bindParam(':new_uploads_layout', $this->uploadsLayout);
         $req->bindParam(':new_cjk_fonts', $this->cjkFonts);
         $req->bindParam(':new_pdfa', $this->pdfa);
         $req->bindParam(':new_pdf_format', $this->pdfFormat);
@@ -167,6 +171,11 @@ class UserPreferences implements MapInterface
     final public function setSingleColumnLayout(string $setting): void
     {
         $this->singleColumnLayout = Filter::toBinary($setting);
+    }
+
+    final public function setUploadsLayout(string $setting): void
+    {
+        $this->uploadsLayout = Filter::toBinary($setting);
     }
 
     final public function setShortcut(string $shortcut, string $setting): void
@@ -263,6 +272,7 @@ class UserPreferences implements MapInterface
         $this->setSort($source['sort'] ?? $this->sort);
         $this->setOrderby($source['orderby'] ?? $this->orderby);
         $this->setSingleColumnLayout($source['single_column_layout'] ?? '0');
+        $this->setUploadsLayout($source['uploads_layout'] ?? '0');
         $this->setShortcut('create', $source['sc_create'] ?? $this->shortcuts['create']);
         $this->setShortcut('edit', $source['sc_edit'] ?? $this->shortcuts['edit']);
         $this->setShortcut('submit', $source['sc_submit'] ?? $this->shortcuts['submit']);
@@ -292,6 +302,7 @@ class UserPreferences implements MapInterface
             sort,
             orderby,
             single_column_layout,
+            uploads_layout,
             sc_create,
             sc_edit,
             sc_submit,

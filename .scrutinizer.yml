@@ -1,4 +1,0 @@
-build:
-  dependencies:
-    before:
-      - cd src/node-apps/ && chmod +rx tex2svg-page

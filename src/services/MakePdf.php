@@ -241,6 +241,7 @@ class MakePdf extends AbstractMake
         }
 
         $html = $process->getOutput();
+        //file_put_contents($filename. '.out', $html);
         unlink($filename);
 
         // was there actually tex in the content?
@@ -254,25 +255,31 @@ class MakePdf extends AbstractMake
         $sizeConverter = new SizeConverter($mpdf->dpi, $mpdf->default_font_size, $mpdf, new NullLogger());
 
         // scale SVG size according to pdf + font settings
-        preg_match_all('/<svg([^>]*)>/', $html, $m);
-        foreach ($m as $attributes) {
-            foreach ($attributes as $attribute) {
-                preg_match('/width="(.*?)"/', $attribute, $wr);
-                preg_match('/height="(.*?)"/', $attribute, $hr);
-                //var_dump($wr, $hr);
-                if ($wr && $hr) {
-                    $w = $sizeConverter->convert($wr[1], 0, $mpdf->FontSize) * $mpdf->dpi / 25.4;
-                    $h = $sizeConverter->convert($hr[1], 0, $mpdf->FontSize) * $mpdf->dpi / 25.4;
-                    //var_dump($w, $h);
-                    $html = str_replace('width="' . $wr[1] . '"', 'width="' . $w . '"', $html);
-                    $html = str_replace('height="' . $hr[1] . '"', 'height="' . $h . '"', $html);
-                }
+        // only select mathjax svg
+        preg_match_all('/<mjx-container[^>]*><svg([^>]*)/', $html, $mathJaxSvg);
+        foreach ($mathJaxSvg[1] as $svgAttributes) {
+            preg_match('/width="(.*?)"/', $svgAttributes, $wr);
+            preg_match('/height="(.*?)"/', $svgAttributes, $hr);
+
+            if ($wr && $hr) {
+                $w = $sizeConverter->convert($wr[1], 0, $mpdf->FontSize) * $mpdf->dpi / 25.4;
+                $h = $sizeConverter->convert($hr[1], 0, $mpdf->FontSize) * $mpdf->dpi / 25.4;
+                //var_dump($w, $h);
+                $html = str_replace('width="' . $wr[1] . '"', 'width="' . $w . '"', $html);
+                $html = str_replace('height="' . $hr[1] . '"', 'height="' . $h . '"', $html);
             }
         }
 
         // change stroke to black and fill to white for all SVGs
         $html = str_replace('stroke="currentColor"', 'stroke="#FFF"', $html);
+        //$html = str_replace('fill="currentColor"', 'fill="#000"', $html);
         return str_replace('fill="currentColor"', 'fill="#000"', $html);
+
+        // replace mjx-container with span to vertically align mpdf inline img
+        //$html = str_replace('</mjx-container>', '</span>', $html);
+        //$html = preg_replace('/<mjx-container[^>]*>/', '<span class="mathjax">', $html);
+        //file_put_contents($filename. '.out2', $html);
+        //return $html;
 
         // ˄˄˄˄˄˄˄˄˄˄
         // end

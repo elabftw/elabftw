@@ -79,7 +79,7 @@ jobs:
           no_output_timeout: 20m
       - run:
           name: Install node.js app mathjax
-          command: cd src/node-apps/ && yarn install
+          command: cd src/node-apps/ && chmod +rx tex2svg-page && yarn install
       - run: composer install --no-interaction
       # Save dependency cache
       - save_cache:

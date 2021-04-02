@@ -45,6 +45,7 @@
   <p class='footer-right'>
     {{ 'Powered by'|trans }}
     <a href='https://www.elabftw.net'>eLabFTW</a> {{ App.Session.has('is_auth') ? v }}<br>
+    <a href='#' data-action='show-privacy-policy'>{{ 'Privacy policy'|trans }}</a><br>
         {{ 'Page generated in'|trans }} {{ App.getGenerationTime }} {{ 'seconds'|trans }}
     {% if App.Config.configArr.debug %}
         ({{ App.getNumberOfQueries }} SQL)
@@ -59,5 +60,24 @@
 
 <div id='user-prefs' data-lang='{{ App.Session.has('is_auth') ? App.Users.userData.lang : App.Config.configArr.lang }}' data-jslang='{{ (App.Session.has('is_auth') ? App.Users.userData.lang : App.Config.configArr.lang)|jslang }}'></div>
 
+<!-- Modal for privacy policy -->
+<div class='modal fade' id='privacyModal' tabindex='-1' role='dialog' aria-labelledby='privacyModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='privacyModalLabel'>{{ 'Privacy policy'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' id='privacyModalBody'>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end privacy policy modal -->
 </body>
 </html>

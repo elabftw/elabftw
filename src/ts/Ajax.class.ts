@@ -37,6 +37,23 @@ export class Ajax {
     });
   }
 
+  do(action: string): Promise<ResponseMsg> {
+    // note: only works on Ajax.php controller
+    return fetch(`${this.controller}?action=${action}&what=${this.type}`).then(response => {
+      if (!response.ok) {
+        throw new Error('An unexpected error occured!');
+      }
+      return response.json();
+    }).then(json => {
+      if (!json.res) {
+        notif(json);
+        throw new Error('An unexpected error occured!');
+      }
+      return json;
+    });
+  }
+
+
   post(action: string): Promise<ResponseMsg> {
     const formData = new FormData();
     formData.append(action, '1');

@@ -203,7 +203,11 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
             $teamFilter = ' AND users2teams.teams_id = entity.team';
         }
         // add pub/org/team filter
-        $sql .= " AND ( entity.canread = 'public' OR entity.canread = 'organization' OR (entity.canread = 'team' AND users2teams.users_id = entity.userid" . $teamFilter . ") OR (entity.canread = 'user' ";
+        $sqlPublicOrg = '';
+        if ($this->Users->userData['show_public']) {
+            $sqlPublicOrg = "entity.canread = 'public' OR entity.canread = 'organization' OR ";
+        }
+        $sql .= ' AND ( ' . $sqlPublicOrg . " (entity.canread = 'team' AND users2teams.users_id = entity.userid" . $teamFilter . ") OR (entity.canread = 'user' ";
         // admin will see the experiments with visibility user for user of their team
         if ($this->Users->userData['is_admin']) {
             $sql .= 'AND entity.userid = users2teams.users_id)';
@@ -421,12 +425,12 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         // check if the permissions are enforced
         $Team = new Team((int) $this->Users->userData['team']);
         if ($rw === 'read') {
-            if ($Team->getDoForceCanread() === 1) {
+            if ($Team->getDoForceCanread() === 1 && !$this->Users->userData['is_admin']) {
                 throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
             }
             $column = 'canread';
         } else {
-            if ($Team->getDoForceCanwrite() === 1) {
+            if ($Team->getDoForceCanwrite() === 1 && !$this->Users->userData['is_admin']) {
                 throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
             }
             $column = 'canwrite';

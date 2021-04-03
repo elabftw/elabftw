@@ -275,20 +275,20 @@ class MakePdf extends AbstractMake
             }
         }
 
-        // add a class to mathjax svg, it is used to
+        // add a class to mathjax svg
         $html = preg_replace('/(<mjx-container[^>]*><svg)/', '\1 class="mathjax-svg"', $html);
 
         // change stroke to black and fill to white for all SVGs
         $html = str_replace('stroke="currentColor"', 'stroke="#FFF"', $html);
-        $html = str_replace('fill="currentColor"', 'fill="#000"', $html);
+        //$html = str_replace('fill="currentColor"', 'fill="#000"', $html);
 
-        //return str_replace('fill="currentColor"', 'fill="#000"', $html);
+        return str_replace('fill="currentColor"', 'fill="#000"', $html);
 
         // replace mjx-container with span to vertically align mpdf inline img
         //$html = str_replace('</mjx-container>', '</span>', $html);
         //$html = preg_replace('/<mjx-container[^>]*>/', '<span class="mathjax">', $html);
-        file_put_contents($filename. '.out2', $html);
-        return $html;
+        //file_put_contents($filename. '.out2', $html);
+        //return $html;
 
         // ˄˄˄˄˄˄˄˄˄˄
         // end

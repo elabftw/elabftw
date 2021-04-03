@@ -63,7 +63,7 @@ class Permissions
 
         // if we have the elabid in the URL, allow read access to all
         $Request = Request::createFromGlobals();
-        if ($this->item['elabid'] ?? '' === $Request->query->get('elabid')) {
+        if (($this->item['elabid'] ?? '') === $Request->query->get('elabid')) {
             return array('read' => true, 'write' => $write);
         }
 
@@ -92,6 +92,7 @@ class Permissions
         if (Check::id((int) $this->item['canread']) !== false && $this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canread'])) {
             return array('read' => true, 'write' => $write);
         }
+
         return array('read' => false, 'write' => false);
     }
 

@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Traits\CsvTrait;
@@ -79,8 +78,6 @@ class MakeReport
             $teams = implode(',', $UsersHelper->getTeamsNameFromUserid());
             // get disk usage for all uploaded files
             $diskUsage = $this->getDiskUsage((int) $user['userid']);
-            // get total number of experiments
-            $Entity = new Experiments(new Users((int) $user['userid']));
 
             // remove mfa column
             unset($allUsers[$key]['mfa_secret']);

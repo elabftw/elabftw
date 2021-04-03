@@ -37,9 +37,9 @@ class Users
 
     public array $userData = array();
 
-    protected Db $Db;
+    public int $team = 0;
 
-    private int $team = 0;
+    protected Db $Db;
 
     public function __construct(?int $userid = null, ?int $team = null)
     {

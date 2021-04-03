@@ -496,6 +496,8 @@ CREATE TABLE `teams` (
   `name` varchar(255) NOT NULL,
   `common_template` text,
   `deletable_xp` tinyint(1) NOT NULL DEFAULT 1,
+  `deletable_item` tinyint(1) NOT NULL DEFAULT 1,
+  `user_create_tag` tinyint(1) NOT NULL DEFAULT 1,
   `link_name` text NOT NULL,
   `link_href` text NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

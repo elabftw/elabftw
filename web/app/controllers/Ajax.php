@@ -19,11 +19,13 @@ use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Config;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
 use Elabftw\Models\Metadata;
+use Elabftw\Models\PrivacyPolicy;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
@@ -106,6 +108,10 @@ try {
 
         case 'metadata':
             $Model = new Metadata($Entity);
+            break;
+
+        case 'privacyPolicy':
+            $Model = new PrivacyPolicy(new Config());
             break;
 
         case 'status':

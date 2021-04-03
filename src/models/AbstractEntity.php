@@ -25,6 +25,7 @@ use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
+use Elabftw\Services\Transform;
 use Elabftw\Traits\EntityTrait;
 use function explode;
 use function is_bool;
@@ -195,9 +196,6 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
             $sql .= ' AND linkst.link_id = ' . $displayParams->related;
         }
 
-        // needUseridBind is to toggle the bindParam
-        // with php8 it will throw an error if you try and bind to a non existing token
-        $needUseridBind = false;
         // teamFilter is to restrict to the team for items only
         // as they have a team column
         $teamFilter = '';
@@ -205,15 +203,19 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
             $teamFilter = ' AND users2teams.teams_id = entity.team';
         }
         // add pub/org/team filter
-        $sql .= " AND ( entity.canread = 'public' OR entity.canread = 'organization' OR (entity.canread = 'team' AND users2teams.users_id = entity.userid" . $teamFilter . ") OR (entity.canread = 'user' ";
+        $sqlPublicOrg = '';
+        if ($this->Users->userData['show_public']) {
+            $sqlPublicOrg = "entity.canread = 'public' OR entity.canread = 'organization' OR ";
+        }
+        $sql .= ' AND ( ' . $sqlPublicOrg . " (entity.canread = 'team' AND users2teams.users_id = entity.userid" . $teamFilter . ") OR (entity.canread = 'user' ";
         // admin will see the experiments with visibility user for user of their team
         if ($this->Users->userData['is_admin']) {
             $sql .= 'AND entity.userid = users2teams.users_id)';
         } else {
-            // normal user will so only their own experiments
-            $needUseridBind = true;
             $sql .= 'AND entity.userid = :userid)';
         }
+        // add entities in useronly visibility only if we own them
+        $sql .= " OR (entity.canread = 'useronly' AND entity.userid = :userid)";
         // add all the teamgroups in which the user is
         if (!empty($teamgroupsOfUser)) {
             foreach ($teamgroupsOfUser as $teamgroup) {
@@ -241,9 +243,7 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         $sql .= implode(' ', $sqlArr);
 
         $req = $this->Db->prepare($sql);
-        if ($needUseridBind === true) {
-            $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        }
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $itemsArr = $req->fetchAll();
@@ -349,7 +349,12 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         }
 
         // add a revision
-        $Revisions = new Revisions($this);
+        $Config = new Config();
+        $Revisions = new Revisions(
+            $this,
+            (int) $Config->configArr['max_revisions'],
+            (int) $Config->configArr['min_delta_revisions'],
+        );
         $Revisions->create($body);
 
         $title = Filter::title($title);
@@ -420,12 +425,12 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         // check if the permissions are enforced
         $Team = new Team((int) $this->Users->userData['team']);
         if ($rw === 'read') {
-            if ($Team->getDoForceCanread() === 1) {
+            if ($Team->getDoForceCanread() === 1 && !$this->Users->userData['is_admin']) {
                 throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
             }
             $column = 'canread';
         } else {
-            if ($Team->getDoForceCanwrite() === 1) {
+            if ($Team->getDoForceCanwrite() === 1 && !$this->Users->userData['is_admin']) {
                 throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
             }
             $column = 'canwrite';
@@ -442,31 +447,16 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
     /**
      * Get a list of visibility/team groups to display
      *
-     * @param string $rw read or write
+     * @param string $permission raw value (public, organization, team, user, useronly)
      * @return string capitalized and translated permission level
      */
-    public function getCan(string $rw): string
+    public function getCan(string $permission): string
     {
-        if (Check::id((int) $this->entityData['can' . $rw]) !== false) {
-            return ucfirst($this->TeamGroups->readName((int) $this->entityData['can' . $rw]));
+        // if it's a number, then lookup the name of the team group
+        if (Check::id((int) $permission) !== false) {
+            return ucfirst($this->TeamGroups->readName((int) $permission));
         }
-        switch ($this->entityData['can' . $rw]) {
-            case 'public':
-                $res = _('Public');
-                break;
-            case 'organization':
-                $res = _('Organization');
-                break;
-            case 'team':
-                $res = _('Team');
-                break;
-            case 'user':
-                $res = _('User');
-                break;
-            default:
-                $res = Tools::error();
-        }
-        return ucfirst($res);
+        return Transform::permission($permission);
     }
 
     /**
@@ -515,12 +505,8 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
 
         $Permissions = new Permissions($this->Users, $item);
 
-        if ($this instanceof Experiments || $this instanceof Database) {
-            return $Permissions->forExpItem();
-        }
-
-        if ($this instanceof Templates) {
-            return $Permissions->forTemplates();
+        if ($this instanceof Experiments || $this instanceof Database || $this instanceof Templates) {
+            return $Permissions->forEntity();
         }
 
         return array('read' => false, 'write' => false);
@@ -626,10 +612,14 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         $Uploads->Entity->type = 'timestamp-token';
         $token = $Uploads->readAll();
 
+        $Uploads->Entity->type = 'bloxberg-proof';
+        $bloxbergProof = $Uploads->readAll();
+
         return array(
             'timestamper' => $timestamper,
             'pdf' => $pdf,
             'token' => $token,
+            'bloxbergProof' => $bloxbergProof,
         );
     }
 

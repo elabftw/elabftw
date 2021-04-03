@@ -14,6 +14,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\PrivacyPolicy;
 use Elabftw\Models\Teams;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -52,10 +53,11 @@ try {
     // PRIVACY POLICY
     if ($Request->request->has('privacy_policy')) {
         $tab = '8';
+        $PrivacyPolicy = new PrivacyPolicy($App->Config);
         if ($Request->request->has('clear_policy')) {
-            $App->Config->update(array('privacy_policy' => null));
+            $PrivacyPolicy->clear();
         } else {
-            $App->Config->update(array('privacy_policy' => $Request->request->get('privacy_policy')));
+            $PrivacyPolicy->update($Request->request->get('privacy_policy'));
         }
     }
 

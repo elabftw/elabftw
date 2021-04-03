@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Traits\CsvTrait;
@@ -63,6 +62,7 @@ class MakeReport
             'diskusage_in_bytes',
             'diskusage_formatted',
             'exp_total',
+            'exp_timestamped_total',
         );
     }
 
@@ -78,8 +78,6 @@ class MakeReport
             $teams = implode(',', $UsersHelper->getTeamsNameFromUserid());
             // get disk usage for all uploaded files
             $diskUsage = $this->getDiskUsage((int) $user['userid']);
-            // get total number of experiments
-            $Entity = new Experiments(new Users((int) $user['userid']));
 
             // remove mfa column
             unset($allUsers[$key]['mfa_secret']);
@@ -87,7 +85,8 @@ class MakeReport
             $allUsers[$key]['team(s)'] = $teams;
             $allUsers[$key]['diskusage_in_bytes'] = $diskUsage;
             $allUsers[$key]['diskusage_formatted'] = Tools::formatBytes($diskUsage);
-            $allUsers[$key]['exp_total'] = $Entity->countAll();
+            $allUsers[$key]['exp_total'] = $UsersHelper->countExperiments();
+            $allUsers[$key]['exp_timestamped_total'] = $UsersHelper->countTimestampedExperiments();
         }
         return $allUsers;
     }

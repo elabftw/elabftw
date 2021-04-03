@@ -19,11 +19,13 @@ use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Config;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
 use Elabftw\Models\Metadata;
+use Elabftw\Models\PrivacyPolicy;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
@@ -83,6 +85,9 @@ try {
             break;
 
         case 'comment':
+            if (!($Entity instanceof Experiments || $Entity instanceof Database)) {
+                throw new IllegalActionException('Invalid entity type for comments');
+            }
             $Model = $Entity->Comments;
             break;
 
@@ -95,11 +100,18 @@ try {
             break;
 
         case 'link':
+            if (!($Entity instanceof Experiments || $Entity instanceof Database || $Entity instanceof Templates)) {
+                throw new IllegalActionException('Invalid entity type for link');
+            }
             $Model = new Links($Entity);
             break;
 
         case 'metadata':
             $Model = new Metadata($Entity);
+            break;
+
+        case 'privacyPolicy':
+            $Model = new PrivacyPolicy(new Config());
             break;
 
         case 'status':
@@ -111,6 +123,9 @@ try {
             break;
 
         case 'step':
+            if (!($Entity instanceof Experiments || $Entity instanceof Database || $Entity instanceof Templates)) {
+                throw new IllegalActionException('Invalid entity type for steps');
+            }
             $Model = new Steps($Entity);
             break;
 
@@ -122,6 +137,9 @@ try {
             break;
 
         case 'tag':
+            if (!($Entity instanceof Experiments || $Entity instanceof Database || $Entity instanceof Templates)) {
+                throw new IllegalActionException('Invalid entity type for steps');
+            }
             $Model = new Tags($Entity);
             break;
 
@@ -134,6 +152,9 @@ try {
             break;
 
         case 'upload':
+            if (!($Entity instanceof Experiments || $Entity instanceof Database)) {
+                throw new IllegalActionException('Invalid entity type for steps');
+            }
             $Model = $Entity->Uploads;
             break;
 
@@ -152,7 +173,7 @@ try {
             $templates = $Model->readForUser();
             $res = array();
             foreach ($templates as $template) {
-                $res[] = array('title' => $template['name'], 'description' => '', 'content' => $template['body']);
+                $res[] = array('title' => $template['title'], 'description' => '', 'content' => $template['body']);
             }
             $Response->setData($res);
             break;

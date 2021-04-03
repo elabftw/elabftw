@@ -104,6 +104,13 @@
           {{ App.Users.userData.single_column_layout == '1' ? " checked='checked'" }}
       />
       <label for='layout'>{{ 'Use single column layout'|trans }}</label>
+
+      <div>
+      <input id='uploads_layout' class='mt-2' type='checkbox' name='uploads_layout'
+          {{ App.Users.userData.uploads_layout == '1' ? " checked='checked'" }}
+      />
+      <label for='uploads_layout'>{{ 'Display attached files with thumbnails'|trans }}</label>
+      </div>
     </section>
 
     <section class='box'>
@@ -181,6 +188,11 @@
                {{ App.Users.userData.show_team_templates == '1' ? " checked='checked'" }}
         />
         <label for='show_team_templates'>{{ 'Show templates from the team on the Templates page and in the menus'|trans }}</label>
+        <br>
+        <input id='show_public' type='checkbox' name='show_public'
+               {{ App.Users.userData.show_public == '1' ? " checked='checked'" }}
+        />
+        <label for='show_public'>{{ 'Show experiments/database items from outside the team'|trans }}</label>
         <br>
         <input id='chem_editor' type='checkbox' name='chem_editor'
           {{ App.Users.userData.chem_editor == '1' ? " checked='checked'" }}

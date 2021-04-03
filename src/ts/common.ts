@@ -6,7 +6,9 @@
  * @package elabftw
  */
 import $ from 'jquery';
+import { Ajax } from './Ajax.class';
 import 'bootstrap-select';
+import 'bootstrap/js/src/modal.js';
 import { relativeMoment, displayMolFiles, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
 
@@ -65,6 +67,7 @@ $(document).ready(function() {
     if (path.split('/').pop() === 'experiments.php') {
       window.location.replace('?create=1');
     } else {
+      // modal plugin requires jquery
       ($('#createModal') as any).modal('toggle');
     }
   });
@@ -72,5 +75,20 @@ $(document).ready(function() {
   $('.logout').on('click', function() {
     localStorage.removeItem('isTodolistOpen');
     location.href = 'app/logout.php';
+  });
+
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // SHOW PRIVACY POLICY
+    if (el.matches('[data-action="show-privacy-policy"]')) {
+      const AjaxC = new Ajax('privacyPolicy', '0', 'app/controllers/Ajax.php');
+      const privacyPolicy = AjaxC.do('read')
+        .then(json => typeof json.msg === 'string' ? json.msg : '')
+        .then(privacy => {
+          (document.getElementById('privacyModalBody') as HTMLDivElement).innerHTML = privacy;
+          // modal plugin requires jquery
+          ($('#privacyModal') as any).modal('toggle');
+        });
+    }
   });
 });

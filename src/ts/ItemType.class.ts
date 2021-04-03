@@ -27,7 +27,7 @@ export default class ItemType extends Crud {
       nameInput.focus();
       return;
     }
-    const color = document.getElementById('itemsTypesColor').innerText;
+    const color = (document.getElementById('itemsTypesColor') as HTMLInputElement).value;
     const checkbox = $('#itemsTypesBookable').is(':checked');
     let bookable = 0;
     if (checkbox) {

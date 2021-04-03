@@ -8,6 +8,7 @@
 import { notif } from './misc';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
+import { Ajax } from './Ajax.class';
 import { getTinymceBaseConfig } from './tinymce';
 
 $(document).ready(function() {
@@ -150,6 +151,22 @@ $(document).ready(function() {
   $(document).on('change', '#selectMailMethod', function() {
     toggleMailMethod($(this).val());
   });
+
+  // Add click listener and do action based on which element is clicked
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // CLEAR-BANNED
+    if (el.matches('[data-action="clear-banned"]')) {
+      const AjaxC = new Ajax('bannedusers', '0', 'app/controllers/SysconfigAjaxController.php');
+      AjaxC.post('clear-banned').then(json => {
+        if (json.res) {
+          document.getElementById('bannedUsersCount').innerText = '';
+        }
+        notif(json);
+      });
+    }
+  });
+
 
   // MASS MAIL
   $(document).on('click', '#massSend', function() {

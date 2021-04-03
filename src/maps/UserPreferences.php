@@ -41,6 +41,8 @@ class UserPreferences implements MapInterface
 
     private int $singleColumnLayout = 0;
 
+    private int $uploadsLayout = 1;
+
     /** @var array<string, string> $shortcuts */
     private array $shortcuts = array(
         'create' => 'c',
@@ -54,6 +56,8 @@ class UserPreferences implements MapInterface
     private int $showTeam = 0;
 
     private int $showTeamTemplates = 0;
+
+    private int $showPublic = 0;
 
     private int $cjkFonts = 0;
 
@@ -96,12 +100,14 @@ class UserPreferences implements MapInterface
             sc_todo = :new_sc_todo,
             show_team = :new_show_team,
             show_team_templates = :new_show_team_templates,
+            show_public = :new_show_public,
             chem_editor = :new_chem_editor,
             json_editor = :new_json_editor,
             lang = :new_lang,
             default_read = :new_default_read,
             default_write = :new_default_write,
             single_column_layout = :new_layout,
+            uploads_layout = :new_uploads_layout,
             cjk_fonts = :new_cjk_fonts,
             pdfa = :new_pdfa,
             pdf_format = :new_pdf_format,
@@ -120,12 +126,14 @@ class UserPreferences implements MapInterface
         $req->bindParam(':new_sc_todo', $this->shortcuts['todo']);
         $req->bindParam(':new_show_team', $this->showTeam);
         $req->bindParam(':new_show_team_templates', $this->showTeamTemplates);
+        $req->bindParam(':new_show_public', $this->showPublic);
         $req->bindParam(':new_chem_editor', $this->chemEditor);
         $req->bindParam(':new_json_editor', $this->jsonEditor);
         $req->bindParam(':new_lang', $this->lang);
         $req->bindParam(':new_default_read', $this->defaultRead);
         $req->bindParam(':new_default_write', $this->defaultWrite);
         $req->bindParam(':new_layout', $this->singleColumnLayout);
+        $req->bindParam(':new_uploads_layout', $this->uploadsLayout);
         $req->bindParam(':new_cjk_fonts', $this->cjkFonts);
         $req->bindParam(':new_pdfa', $this->pdfa);
         $req->bindParam(':new_pdf_format', $this->pdfFormat);
@@ -165,6 +173,11 @@ class UserPreferences implements MapInterface
         $this->singleColumnLayout = Filter::toBinary($setting);
     }
 
+    final public function setUploadsLayout(string $setting): void
+    {
+        $this->uploadsLayout = Filter::toBinary($setting);
+    }
+
     final public function setShortcut(string $shortcut, string $setting): void
     {
         // take the first letter only
@@ -182,6 +195,11 @@ class UserPreferences implements MapInterface
     final public function setShowTeamTemplates(string $setting): void
     {
         $this->showTeamTemplates = Filter::toBinary($setting);
+    }
+
+    final public function setShowPublic(string $setting): void
+    {
+        $this->showPublic = Filter::toBinary($setting);
     }
 
     final public function setCjkFonts(string $setting): void
@@ -254,12 +272,14 @@ class UserPreferences implements MapInterface
         $this->setSort($source['sort'] ?? $this->sort);
         $this->setOrderby($source['orderby'] ?? $this->orderby);
         $this->setSingleColumnLayout($source['single_column_layout'] ?? '0');
+        $this->setUploadsLayout($source['uploads_layout'] ?? '0');
         $this->setShortcut('create', $source['sc_create'] ?? $this->shortcuts['create']);
         $this->setShortcut('edit', $source['sc_edit'] ?? $this->shortcuts['edit']);
         $this->setShortcut('submit', $source['sc_submit'] ?? $this->shortcuts['submit']);
         $this->setShortcut('todo', $source['sc_todo'] ?? $this->shortcuts['todo']);
         $this->setShowTeam($source['show_team'] ?? '0');
         $this->setShowTeamTemplates($source['show_team_templates'] ?? '0');
+        $this->setShowPublic($source['show_public'] ?? '0');
         $this->setCjkFonts($source['cjk_fonts'] ?? '0');
         $this->setPdfa($source['pdfa'] ?? '0');
         $this->setPdfFormat($source['pdf_format'] ?? $this->pdfFormat);
@@ -282,12 +302,14 @@ class UserPreferences implements MapInterface
             sort,
             orderby,
             single_column_layout,
+            uploads_layout,
             sc_create,
             sc_edit,
             sc_submit,
             sc_todo,
             show_team,
             show_team_templates,
+            show_public,
             cjk_fonts,
             pdfa,
             pdf_format,

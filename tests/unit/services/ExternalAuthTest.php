@@ -22,7 +22,8 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
             'extauth_lastname' => 'auth_lastname',
             'extauth_email' => 'auth_email',
             'extauth_teams' => 'auth_team',
-            'saml_team_default' => 1,
+            'saml_team_default' => '1',
+            'saml_user_default' => '1',
         );
         $this->serverParams = array(
             'auth_firstname' => 'Phpunit',
@@ -62,6 +63,22 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
         );
         $authResponse = $ExternalAuth->tryAuth();
         $this->assertEquals(8, $authResponse->userid);
+    }
+
+    // now try with a non existing user and config is set to not create the user
+    public function testTryAuthWithNonExistingUserNoCreate()
+    {
+        $serverParams = $this->serverParams;
+        $serverParams['auth_email'] = 'nonexisting2@yopmail.com';
+        $configArr = $this->configArr;
+        $configArr['saml_user_default'] = '0';
+        $ExternalAuth = new ExternalAuth(
+            $configArr,
+            $serverParams,
+            $this->log,
+        );
+        $this->expectException(ImproperActionException::class);
+        $ExternalAuth->tryAuth();
     }
 
     // now try without a team sent by server

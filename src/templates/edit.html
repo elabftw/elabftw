@@ -73,9 +73,7 @@
     </a>
     <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
       <!-- MANAGE PERMISSIONS -->
-      {% if Entity.type == 'items' or Entity.entityData.userid == App.Users.userData.userid %}
-        <a class='clickable dropdown-item modalToggle' data-modal='permModal'><i class='fas fa-share-alt fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
-      {% endif %}
+      <a class='clickable dropdown-item modalToggle' data-modal='permModal'><i class='fas fa-share-alt fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
       <!-- SWITCH EDITOR -->
       <a class='dropdown-item switchEditor' id='iHazEditor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</a>
       <!-- REVISIONS -->
@@ -88,101 +86,101 @@
     </div>
   </div>
 
-    <!-- TAGS -->
-    <i class='fas fa-tags mr-1'></i><label for='createTagInput'>{{ 'Tags'|trans }}</label>
-    <div class='tags'>
-      <span id='tags_div_{{ Entity.id }}'>
-        <!--  build the tag array -->
-        {% if Entity.entityData.tags|length > 0 %}
-          {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
-          {% set tagsValueArr = Entity.entityData.tags|split('|') %}
-          {% for tag in tagsValueArr %}
-            <span class='tag m-1 clickable'>
-              <a class='tag-delete tagUnreference' data-tagid='{{ tagsIdArr[loop.index0] }}' data-id='{{ Entity.id }}'>
-                {{ tag|raw }}
-              </a>
-            </span>
-          {% endfor %}
+  <!-- TAGS -->
+  <i class='fas fa-tags mr-1'></i><label for='createTagInput'>{{ 'Tags'|trans }}</label>
+  <div class='tags'>
+    <span id='tags_div_{{ Entity.id }}'>
+      <!--  build the tag array -->
+      {% if Entity.entityData.tags|length > 0 %}
+        {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
+        {% set tagsValueArr = Entity.entityData.tags|split('|') %}
+        {% for tag in tagsValueArr %}
+          <span class='tag m-1 clickable'>
+            <a class='tag-delete tagUnreference' data-tagid='{{ tagsIdArr[loop.index0] }}' data-id='{{ Entity.id }}'>
+              {{ tag|raw }}
+            </a>
+          </span>
+        {% endfor %}
+      {% endif %}
+    </span>
+    <input type='text' id='createTagInput' data-id='{{ Entity.id }}' class='createTagInput mb-2' placeholder='{{ 'Add a tag'|trans }}' />
+  </div>
+
+  <!-- MAIN FORM -->
+  <form id='main_form' method='post' action='app/controllers/EntityController.php' enctype='multipart/form-data'>
+    <input name='update' type='hidden' value='true' />
+    {{ App.Csrf.getHiddenInput|raw }}
+    <input name='id' type='hidden' value='{{ Entity.id }}' />
+    <input name='type' type='hidden' value='{{ Entity.type }}' />
+
+    <div class='row'>
+      <!-- DATE -->
+      <div class='col-md-3'>
+        <i class='far fa-calendar-alt mr-1'></i><label for='datepicker'>{{ 'Date'|trans }}</label>
+        <!-- if firefox has support for it: type = date -->
+        <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=825294 -->
+        <input name='date' id='datepicker' size='8' type='text' value='{{ Entity.entityData.date }}' />
+      </div>
+
+      <!-- CATEGORIES (status for exp and itemstypes for items) -->
+      <div class='col-md-3'>
+        <i class='fas fa-clipboard-check'></i>
+        <label for='category_select'>
+        {% if Entity.type == 'experiments' %}
+          {{ 'Status'|trans }}
+        {% else %}
+          {{ 'Category'|trans }}
         {% endif %}
-      </span>
-      <input type='text' id='createTagInput' data-id='{{ Entity.id }}' class='createTagInput mb-2' placeholder='{{ 'Add a tag'|trans }}' />
+        </label>
+        <select id='category_select'>
+          {% for category in categoryArr %}
+            <option value='{{ category.category_id }}'
+            {{ Entity.entityData.category_id == category.category_id ? ' selected' }}>{{ category.category }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% if Entity.type == 'items' %}
+        <!-- STAR RATING -->
+        <div class='col-md-3' style='margin-top:15px'>
+          {% for i in range(1, 5) %}
+          <input data-rating='{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Entity.entityData.rating == i ? ' checked=checked' }} />
+          {% endfor %}
+        </div>
+      {% endif %}
+
     </div>
 
-    <!--  MAIN FORM -->
-    <form id='main_form' method='post' action='app/controllers/EntityController.php' enctype='multipart/form-data'>
-        <input name='update' type='hidden' value='true' />
-        {{ App.Csrf.getHiddenInput|raw }}
-        <input name='id' type='hidden' value='{{ Entity.id }}' />
-        <input name='type' type='hidden' value='{{ Entity.type }}' />
+    <!-- TITLE -->
+    <h4>{{ 'Title'|trans }}</h4>
+    <input id='title_input' type='text' name='title' value='{{ Entity.entityData.title|raw }}' required />
 
-            <div class='row'>
-                <!-- DATE -->
-                <div class='col-md-3'>
-                    <i class='far fa-calendar-alt mr-1'></i><label for='datepicker'>{{ 'Date'|trans }}</label>
-                    <!-- if firefox has support for it: type = date -->
-                    <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=825294 -->
-                    <input name='date' id='datepicker' size='8' type='text' value='{{ Entity.entityData.date }}' />
-                </div>
+    <!-- BODY -->
+    {% if Entity.type == 'experiments' %}
+      <h4>{% trans %}Experiment{% plural 1 %}Experiments{% endtrans %}</h4>
+    {% else %}
+      <h4>{{ 'Information'|trans }}</h4>
+    {% endif %}
 
-                <!-- CATEGORIES (status for exp and itemstypes for items) -->
-                <div class='col-md-3'>
-                    <i class='fas fa-clipboard-check'></i>
-                    <label for='category_select'>
-                    {% if Entity.type == 'experiments' %}
-                    {{ 'Status'|trans }}
-                    {% else %}
-                    {{ 'Category'|trans }}
-                    {% endif %}
-                    </label>
-                    <select id='category_select'>
-                        {% for category in categoryArr %}
-                            <option value='{{ category.category_id }}'
-                            {{ Entity.entityData.category_id == category.category_id ? ' selected' }}>{{ category.category }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                {% if Entity.type == 'items' %}
-                    <!-- STAR RATING -->
-                    <div class='col-md-3' style='margin-top:15px'>
-                        {% for i in range(1, 5) %}
-                        <input data-rating='{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Entity.entityData.rating == i ? ' checked=checked' }} />
-                        {% endfor %}
-                    </div>
-                {% endif %}
+    {% if editor == 'md' %}
+      <textarea id='body_area' class='markdown-textarea' data-language='{{ lang }}' name='body'>{{ Entity.entityData.body|raw }}</textarea>
+    {% else %}
+      <textarea id='body_area' class='mceditable invisible' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
+    {% endif %}
 
-            </div>
-            <!-- TITLE -->
-            <h4>{{ 'Title'|trans }}</h4>
-            <input id='title_input' type='text' name='title' value='{{ Entity.entityData.title|raw }}' required />
+    <div class='mt-4 text-center'>
+      <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save and go back'|trans }}</button>
+    </div>
+  </form>
 
-            <!-- BODY -->
-            {% if Entity.type == 'experiments' %}
-            <h4>{% trans %}Experiment{% plural 1 %}Experiments{% endtrans %}</h4>
-            {% else %}
-                <h4>{{ 'Information'|trans }}</h4>
-            {% endif %}
+  <div id='metadataDiv' class='col-md-6'></div>
 
-
-            {% if editor == 'md' %}
-                    <textarea id='body_area' class='markdown-textarea' data-language='{{ lang }}' name='body'>{{ Entity.entityData.body|raw }}</textarea>
-            {% else %}
-                <textarea id='body_area' class='mceditable invisible' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
-            {% endif %}
-
-            <div class='mt-4 text-center'>
-                <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save and go back'|trans }}</button>
-            </div>
-        </form>
-
-        <div id='metadataDiv' class='col-md-6'></div>
-
-    {% include('steps-links-edit.html') %}
+  {% include('steps-links-edit.html') %}
 </section>
 
 <!-- UPLOAD FORM -->
 <section class='box'>
-    <i class='fas fa-paperclip mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Attach a file'|trans }}</h3>
-    <form action='app/controllers/EntityAjaxController.php' class='dropzone' id='elabftw-dropzone'></form>
+  <i class='fas fa-paperclip mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Attach a file'|trans }}</h3>
+  <form action='app/controllers/EntityAjaxController.php' class='dropzone' id='elabftw-dropzone'></form>
 </section>
 
 {{ include('uploads.html') }}

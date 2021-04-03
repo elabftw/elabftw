@@ -36,12 +36,31 @@ class UsersHelper
      */
     public function hasExperiments(): bool
     {
+        return $this->countExperiments() > 0;
+    }
+
+    /**
+     * Count all the experiments owned by a user
+     */
+    public function countExperiments(): int
+    {
         $sql = 'SELECT COUNT(id) FROM experiments WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
 
-        return (bool) $req->fetchColumn();
+    /**
+     * Count all the timestamped experiments owned by a user
+     */
+    public function countTimestampedExperiments(): int
+    {
+        $sql = 'SELECT COUNT(id) FROM experiments WHERE userid = :userid AND timestamped = 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
     }
 
     /**

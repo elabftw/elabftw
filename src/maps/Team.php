@@ -34,6 +34,10 @@ class Team implements MapInterface
 
     private int $deletableXp = 1;
 
+    private int $deletableItem = 1;
+
+    private int $userCreateTag = 1;
+
     private int $publicDb = 0;
 
     private string $linkName = 'Documentation';
@@ -106,6 +110,26 @@ class Team implements MapInterface
     final public function getDeletableXp(): int
     {
         return $this->deletableXp;
+    }
+
+    final public function setDeletableItem(string $setting): void
+    {
+        $this->deletableItem = Filter::toBinary($setting);
+    }
+
+    final public function getDeletableItem(): int
+    {
+        return $this->deletableItem;
+    }
+
+    final public function setUserCreateTag(string $setting): void
+    {
+        $this->userCreateTag = Filter::toBinary($setting);
+    }
+
+    final public function getUserCreateTag(): int
+    {
+        return $this->userCreateTag;
     }
 
     final public function setPublicDb(string $setting): void
@@ -224,6 +248,8 @@ class Team implements MapInterface
             common_template = :common_template,
             orgid = :orgid,
             deletable_xp = :deletable_xp,
+            deletable_item = :deletable_item,
+            user_create_tag = :user_create_tag,
             public_db = :public_db,
             link_name = :link_name,
             link_href = :link_href,
@@ -242,6 +268,8 @@ class Team implements MapInterface
         $req->bindParam(':common_template', $this->commonTemplate);
         $req->bindParam(':orgid', $this->orgid);
         $req->bindParam(':deletable_xp', $this->deletableXp, PDO::PARAM_INT);
+        $req->bindParam(':deletable_item', $this->deletableItem, PDO::PARAM_INT);
+        $req->bindParam(':user_create_tag', $this->userCreateTag, PDO::PARAM_INT);
         $req->bindParam(':public_db', $this->publicDb, PDO::PARAM_INT);
         $req->bindParam(':link_name', $this->linkName);
         $req->bindParam(':link_href', $this->linkHref);
@@ -272,6 +300,8 @@ class Team implements MapInterface
         $this->setCommonTemplate($source['common_template'] ?? $this->commonTemplate);
         $this->setOrgid($source['orgid'] ?? $this->orgid);
         $this->setDeletableXp($source['deletable_xp'] ?? (string) $this->deletableXp);
+        $this->setDeletableItem($source['deletable_item'] ?? (string) $this->deletableItem);
+        $this->setUserCreateTag($source['user_create_tag'] ?? (string) $this->userCreateTag);
         $this->setLinkName($source['link_name'] ?? $this->linkName);
         $this->setLinkHref($source['link_href'] ?? $this->linkHref);
         $this->setStamplogin($source['stamplogin'] ?? $this->stamplogin);

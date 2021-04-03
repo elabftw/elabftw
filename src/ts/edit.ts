@@ -9,6 +9,7 @@ declare let key: any;
 declare let MathJax: any;
 import { displayMolFiles, display3DMolecules, insertParamAndReload, notif } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
+import { Payload, Method, Model, Target, Type, Entity, Action } from './interfaces';
 import 'jquery-ui/ui/widgets/datepicker';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
@@ -195,6 +196,39 @@ document.addEventListener('DOMContentLoaded', () => {
     location = 'database.php';
   }
 
+  let entityType: Type;
+  if (about.type === 'experiments') {
+    entityType = Type.Experiment;
+  }
+  if (about.type === 'items') {
+    entityType = Type.Item;
+  }
+
+  function processNewFilename(event, original: HTMLElement, parent: HTMLElement) {
+    if (event.key === 'Enter' || event.type === 'blur') {
+      const newFilename = (event.target as HTMLInputElement).value;
+      const payload: Payload = {
+        method: Method.POST,
+        action: Action.Update,
+        model: Model.Upload,
+        target: Target.RealName,
+        entity: {
+          type: entityType,
+          id: parseInt(id),
+        },
+        content: newFilename,
+        id: event.target.dataset.id,
+      };
+
+      AjaxC.send(payload).then(json => {
+        event.target.remove();
+        // change the link text with the new one
+        original.textContent = newFilename;
+        parent.prepend(original);
+      });
+    }
+  }
+
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
@@ -203,6 +237,23 @@ document.addEventListener('DOMContentLoaded', () => {
       if (confirm(i18next.t('entity-delete-warning'))) {
         AjaxC.post('destroy').then(() => window.location.replace(location));
       }
+
+    // RENAME UPLOAD
+    } else if (el.matches('[data-action="rename-upload"]')) {
+      // find the corresponding filename element
+      // we replace the parent span to also remove the link for download
+      const filenameLink = document.getElementById('upload-filename_' + el.dataset.id);
+      const filenameInput = document.createElement('input');
+      filenameInput.dataset.id = el.dataset.id;
+      filenameInput.value = filenameLink.textContent;
+      const parentSpan = filenameLink.parentElement;
+      filenameInput.addEventListener('blur', event => {
+        processNewFilename(event, filenameLink, parentSpan);
+      });
+      filenameInput.addEventListener('keypress', event => {
+        processNewFilename(event, filenameLink, parentSpan);
+      });
+      filenameLink.replaceWith(filenameInput);
     }
   });
 

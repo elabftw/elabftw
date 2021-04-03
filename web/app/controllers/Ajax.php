@@ -67,6 +67,14 @@ try {
             $itemId = (int) $Request->query->get('params')['itemId'];
         }
     }
+    if (strpos($Request->headers->get('Content-Type'), 'application/json') === 0) {
+        $data = json_decode($Request->getContent(), true);
+        $what = $data['what'];
+        $action = $data['action'];
+        $type = $data['type'];
+        $params = $data['params'];
+        $itemId = (int) $data['params']['itemId'];
+    }
 
     if ($type === 'experiments') {
         $Entity = new Experiments($App->Users, $itemId);
@@ -138,7 +146,7 @@ try {
 
         case 'tag':
             if (!($Entity instanceof Experiments || $Entity instanceof Database || $Entity instanceof Templates)) {
-                throw new IllegalActionException('Invalid entity type for steps');
+                throw new IllegalActionException('Invalid entity type for tags');
             }
             $Model = new Tags($Entity);
             break;
@@ -153,7 +161,7 @@ try {
 
         case 'upload':
             if (!($Entity instanceof Experiments || $Entity instanceof Database)) {
-                throw new IllegalActionException('Invalid entity type for steps');
+                throw new IllegalActionException('Invalid entity type for upload');
             }
             $Model = $Entity->Uploads;
             break;

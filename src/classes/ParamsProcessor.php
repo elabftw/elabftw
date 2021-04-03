@@ -35,6 +35,10 @@ class ParamsProcessor
 
     public string $comment = 'blah';
 
+    public string $content = '';
+
+    public string $target = '';
+
     public int $bookable = 0;
 
     public int $team = 0;
@@ -55,8 +59,10 @@ class ParamsProcessor
         $this->template = Filter::body($params['template'] ?? $this->template);
         $this->bookable = $params['bookable'] ?? $this->bookable ? 1 : 0;
         $this->comment = Filter::comment($params['comment'] ?? $this->comment);
+        $this->content = Filter::body($params['content'] ?? $this->content);
         $this->team = (int) ($params['team'] ?? $this->team);
         $this->canread = Check::visibility($params['canread'] ?? $this->canread);
         $this->canwrite = Check::visibility($params['canwrite'] ?? $this->canwrite);
+        $this->target = $params['target'] ?? $this->target;
     }
 }

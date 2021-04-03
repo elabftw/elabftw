@@ -6,14 +6,14 @@
  * @package elabftw
  */
 import { notif } from './misc';
-import { ResponseMsg } from './interfaces';
+import { ActionReq, ResponseMsg } from './interfaces';
 
 export class Ajax {
   type: string;
   id: string;
   controller: string;
 
-  constructor(type: string, id: string, controller = '') {
+  constructor(type = 'experiments', id = '0', controller = '') {
     this.type = type;
     this.id = id;
     this.controller = controller;
@@ -54,7 +54,7 @@ export class Ajax {
   }
 
 
-  post(action: string): Promise<ResponseMsg> {
+  post(action: string, body = {}): Promise<ResponseMsg> {
     const formData = new FormData();
     formData.append(action, '1');
     formData.append('type', this.type);
@@ -73,6 +73,50 @@ export class Ajax {
         notif(json);
         throw new Error('An unexpected error occured!');
       }
+      return json;
+    });
+  }
+
+  postAction(actionReq: ActionReq): Promise<ResponseMsg> {
+    // add csrf token to the request in the header
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    return fetch(this.controller, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrfToken,
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      body: JSON.stringify(actionReq),
+    }).then(response => {
+      if (!response.ok) {
+        throw new Error('An unexpected error occured!');
+      }
+      return response.json();
+    }).then(json => {
+      notif(json);
+      return json;
+    });
+  }
+
+  send(payload): Promise<ResponseMsg> {
+    // add csrf token to the request in the header
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    return fetch('app/controllers/JsonApi.php', {
+      method: payload.method,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrfToken,
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      body: JSON.stringify(payload),
+    }).then(response => {
+      if (!response.ok) {
+        throw new Error('An unexpected error occured!');
+      }
+      return response.json();
+    }).then(json => {
+      notif(json);
       return json;
     });
   }

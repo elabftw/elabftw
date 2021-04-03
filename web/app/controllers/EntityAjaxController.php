@@ -209,19 +209,6 @@ try {
         ));
     }
 
-    // UPDATE FILE COMMENT
-    if ($Request->request->has('updateFileComment')) {
-        $Entity->canOrExplode('write');
-        $comment = $Request->request->filter('comment', null, FILTER_SANITIZE_STRING);
-        $idArr = \explode('_', $Request->request->get('commentId'));
-        $commentId = (int) $idArr[1];
-        if (Check::id($commentId) === false) {
-            throw new IllegalActionException('The id parameter is invalid');
-        }
-
-        $Entity->Uploads->updateComment($commentId, $comment);
-    }
-
     // CREATE UPLOAD
     if ($Request->request->has('upload')) {
         $Entity->Uploads->create($Request);

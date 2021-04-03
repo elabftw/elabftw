@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\SortableTrait;
 
 /**
@@ -20,6 +21,7 @@ use Elabftw\Traits\SortableTrait;
 abstract class AbstractCategory implements CrudInterface
 {
     use SortableTrait;
+    use EntityTrait;
 
     protected Db $Db;
 

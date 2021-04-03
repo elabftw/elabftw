@@ -14,7 +14,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\HasMetadataInterface;
-use Elabftw\Traits\EntityTrait;
 use PDO;
 
 /**
@@ -22,8 +21,6 @@ use PDO;
  */
 class ItemsTypes extends AbstractCategory implements HasMetadataInterface
 {
-    use EntityTrait;
-
     public function __construct(Users $users, ?int $id = null)
     {
         $this->Db = Db::getConnection();

@@ -19,6 +19,8 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Interfaces\ModelInterface;
+use Elabftw\Interfaces\UpdateUploadParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MakeThumbnail;
 use Elabftw\Traits\UploadTrait;
@@ -28,7 +30,6 @@ use function file_exists;
 use function function_exists;
 use Gmagick;
 use function in_array;
-use function mb_strlen;
 use PDO;
 use function rename;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,7 +38,7 @@ use function unlink;
 /**
  * All about the file uploads
  */
-class Uploads implements DestroyableInterface
+class Uploads implements DestroyableInterface, ModelInterface
 {
     use UploadTrait;
 
@@ -197,29 +198,15 @@ class Uploads implements DestroyableInterface
         return $res;
     }
 
-    /**
-     * Update the comment of a file. We also pass the itemid to make sure we update
-     * the comment associated with the item sent to the controller. Because write access
-     * is checked on this value.
-     *
-     * @param int $id id of the file
-     * @param string $comment
-     * @throws DatabaseErrorException
-     */
-    public function updateComment(int $id, string $comment): void
+    public function update(UpdateUploadParamsInterface $params): bool
     {
-        // check length
-        if (mb_strlen($comment) < 2) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
-        }
         $this->Entity->canOrExplode('write');
-        // SQL to update single file comment
-        $sql = 'UPDATE uploads SET comment = :comment WHERE id = :id AND item_id = :item_id';
+        $sql = 'UPDATE uploads SET ' . $params->getTarget() . ' = :content WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':comment', $comment);
-        $this->Db->execute($req);
+        $req->bindValue(':content', $params->getContent());
+        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindValue(':item_id', $params->getEntityId(), PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     /**

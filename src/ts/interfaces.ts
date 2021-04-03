@@ -8,6 +8,7 @@
 
 interface ActionReq {
   action: string;
+  csrf?: string;
   what: string;
   type?: string;
   params?: object;
@@ -29,9 +30,65 @@ interface CheckableItem {
   randomid: number;
 }
 
+enum Method {
+  POST = 'POST',
+  GET = 'GET',
+}
+
+enum Action {
+  Create = 'create',
+  Read = 'read',
+  Update = 'update',
+  Destroy = 'destroy',
+}
+
+enum Model {
+  Upload = 'upload',
+  Step = 'step',
+  Link = 'link',
+}
+
+enum Target {
+  RealName = 'real_name',
+  Comment = 'comment',
+}
+
+enum Type {
+  Experiment = 'experiments',
+  ExperimentTemplate = 'experiments_templates',
+  Item = 'items',
+  ItemTypes = 'items_types',
+}
+
+interface Entity {
+  type: Type;
+  id: number;
+}
+
+
+interface Payload {
+  method: Method;
+  action: Action;
+  model: Model;
+  target: Target;
+  entity: {
+    type: Entity['type'];
+    id: Entity['id'];
+  };
+  content: string;
+  id: number;
+}
+
 export {
   ActionReq,
   BoundEvent,
   CheckableItem,
   ResponseMsg,
+  Payload,
+  Method,
+  Action,
+  Model,
+  Target,
+  Type,
+  Entity,
 };

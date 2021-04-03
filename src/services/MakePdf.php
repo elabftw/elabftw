@@ -28,8 +28,10 @@ use Mpdf\Mpdf;
 use Mpdf\SizeConverter;
 use function preg_match;
 use function preg_match_all;
+use function preg_replace;
 use Psr\Log\NullLogger;
 use function str_replace;
+use function str_starts_with;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -226,8 +228,6 @@ class MakePdf extends AbstractMake
         $process = new Process(
             array(
                 $appDir . '/tex2svg-page',
-                // disable font cache so all paths are inside the svg and not linked
-                '--fontCache=none',
                 $filename,
             ),
             // set working directory for process
@@ -237,12 +237,17 @@ class MakePdf extends AbstractMake
         $process->run();
 
         if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+            throw new FilesystemErrorException('PDF generation failed during Tex rendering.', 0, new ProcessFailedException($process));
         }
 
         $html = $process->getOutput();
         //file_put_contents($filename. '.out', $html);
         unlink($filename);
+
+        // was there an error during mathJax rendering
+        if (str_starts_with($html, 'MathJax Error:')) {
+            throw new FilesystemErrorException('PDF generation failed during Tex rendering.', 0, new FilesystemErrorException($html));
+        }
 
         // was there actually tex in the content?
         // if not we can skip the svg modifications and return the original content
@@ -270,16 +275,20 @@ class MakePdf extends AbstractMake
             }
         }
 
+        // add a class to mathjax svg, it is used to
+        $html = preg_replace('/(<mjx-container[^>]*><svg)/', '\1 class="mathjax-svg"', $html);
+
         // change stroke to black and fill to white for all SVGs
         $html = str_replace('stroke="currentColor"', 'stroke="#FFF"', $html);
-        //$html = str_replace('fill="currentColor"', 'fill="#000"', $html);
-        return str_replace('fill="currentColor"', 'fill="#000"', $html);
+        $html = str_replace('fill="currentColor"', 'fill="#000"', $html);
+
+        //return str_replace('fill="currentColor"', 'fill="#000"', $html);
 
         // replace mjx-container with span to vertically align mpdf inline img
         //$html = str_replace('</mjx-container>', '</span>', $html);
         //$html = preg_replace('/<mjx-container[^>]*>/', '<span class="mathjax">', $html);
-        //file_put_contents($filename. '.out2', $html);
-        //return $html;
+        file_put_contents($filename. '.out2', $html);
+        return $html;
 
         // ˄˄˄˄˄˄˄˄˄˄
         // end

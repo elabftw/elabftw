@@ -29,25 +29,6 @@
 var argv = require('yargs')
     .demand(0).strict()
     .usage('$0 [options] file.html > converted.html')
-    .options({
-        em: {
-            default: 16,
-            describe: 'em-size in pixels'
-        },
-        ex: {
-            default: 8,
-            describe: 'ex-size in pixels'
-        },
-        fontCache: {
-            default: 'global',
-            describe: 'cache type: local, global, or none'
-        },
-        dist: {
-            boolean: true,
-            default: false,
-            describe: 'true to use webpacked version, false to use MathJax source files'
-        }
-    })
     .argv;
 
 //
@@ -61,39 +42,46 @@ const htmlfile = require('fs').readFileSync(argv._[0], 'utf8');
 MathJax = {
     loader: {
         paths: {mathjax: 'mathjax-full/es5'},
-        source: (argv.dist ? {} : require('mathjax-full/components/src/source.js').source),
+        source: (require('mathjax-full/components/src/source.js').source),
         require: require,
         load: ['adaptors/liteDOM']
     },
     tex: {
-        inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-        displayMath: [ ['$$','$$'], ['\\[','\\]'] ],
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        displayMath: [['$$','$$'], ['\\[','\\]']],
         processEscapes: true,
-        packages: ['base', 'ams', 'autoload']
+        packages: ['base', 'ams', 'autoload'],
+        // fail hard
+        formatError: (jax, err) => {throw err},
     },
     svg: {
-        fontCache: argv.fontCache,
-        exFactor: argv.ex / argv.em
+        fontCache: 'local',
+        // ex-size in pixels / em-size in pixels
+        exFactor: 8 / 16
     },
     'adaptors/liteDOM': {
-        fontSize: argv.em
+        // em-size in pixels
+        fontSize: 16
     },
     startup: {
         document: htmlfile
     },
-    // disable hidden MathML
-    // http://docs.mathjax.org/en/latest/options/accessibility.html#assisitve-mml-extension-options
     options: {
+        // disable hidden MathML
+        // http://docs.mathjax.org/en/latest/options/accessibility.html#assisitve-mml-extension-options
         renderActions: {
             assistiveMml: []
-        }
+        },
+        // fail hard
+        compileError: (doc, math, err) => {throw err},
+        typesetError: (doc, math, err) => {throw err},
     }
 }
 
 //
 //  Load the MathJax startup module
 //
-require('mathjax-full/' + (argv.dist ? 'es5' : 'components/src/tex-svg-full') + '/tex-svg-full.js');
+require('mathjax-full/components/src/tex-svg-full/tex-svg-full.js');
 
 //
 //  Wait for MathJax to start up, and then typeset the math
@@ -108,4 +96,4 @@ MathJax.startup.promise.then(() => {
     }
     console.log(adaptor.doctype(html.document));
     console.log(adaptor.outerHTML(adaptor.root(html.document)));
-}).catch(err => console.log(err));
+}).catch(err => console.log('MathJax Error:', err));

@@ -133,6 +133,6 @@ figure.image figcaption {
 }
 
 /* This helps alignment for inline equations */
-img {
+img.mathjax-svg {
     vertical-align: middle;
 }

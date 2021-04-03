@@ -29,6 +29,10 @@ class EmailValidator
     public function __construct(string $email, ?string $emailDomain = null)
     {
         $this->email = $email;
+        // if it's an empty string, make it null
+        if ($emailDomain === '') {
+            $emailDomain = null;
+        }
         $this->emailDomain = $emailDomain;
         $this->Db = Db::getConnection();
     }

@@ -45,9 +45,9 @@ class Permissions
     }
 
     /**
-     * Get permissions for an experiment/item
+     * Get permissions for an entity
      */
-    public function forExpItem(): array
+    public function forEntity(): array
     {
         $write = $this->getWrite();
 
@@ -63,7 +63,7 @@ class Permissions
 
         // if we have the elabid in the URL, allow read access to all
         $Request = Request::createFromGlobals();
-        if ($this->item['elabid'] === $Request->query->get('elabid')) {
+        if (($this->item['elabid'] ?? '') === $Request->query->get('elabid')) {
             return array('read' => true, 'write' => $write);
         }
 
@@ -91,52 +91,6 @@ class Permissions
         // if the vis. setting is a team group, check we are in the group
         if (Check::id((int) $this->item['canread']) !== false && $this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canread'])) {
             return array('read' => true, 'write' => $write);
-        }
-        return array('read' => false, 'write' => false);
-    }
-
-    /**
-     * Get permissions for a template
-     */
-    public function forTemplates(): array
-    {
-        $write = $this->getWrite();
-
-        if ($this->item['userid'] === $this->Users->userData['userid']) {
-            return array('read' => true, 'write' => true);
-        }
-
-        // if it's public, we can read it
-        if ($this->item['canread'] === 'public') {
-            return array('read' => true, 'write' => $write);
-        }
-
-        // starting from here, if we are anon we can't possibly have read access
-        if (isset($this->Users->userData['anon'])) {
-            return array('read' => false, 'write' => false);
-        }
-
-        if ($this->item['canread'] === 'organization') {
-            return array('read' => true, 'write' => $write);
-        }
-
-        // if the vis. setting is team, check we are in the same team than the $item
-        if ($this->item['canread'] === 'team') {
-            // items will have a team, make sure it's the same as the one we are logged in
-            if (isset($this->item['team']) && ((int) $this->item['team'] === $this->Users->userData['team'])) {
-                return array('read' => true, 'write' => $write);
-            }
-            // check if we have a team in common
-            if ($this->Teams->hasCommonTeamWithCurrent((int) $this->item['userid'], $this->Users->userData['team'])) {
-                return array('read' => true, 'write' => $write);
-            }
-        }
-
-        // if the vis. setting is a team group, check we are in the group
-        if (Check::id((int) $this->item['canread']) !== false) {
-            if ($this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canread'])) {
-                return array('read' => true, 'write' => $write);
-            }
         }
 
         return array('read' => false, 'write' => false);

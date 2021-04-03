@@ -41,6 +41,20 @@
       </select>
       <span class='smallgray'>{{ 'An admin account will always be able to delete experiments.'|trans }}</span>
 
+      <label for='deletable_item'>{{ 'Users can delete items:'|trans }}</label>
+      <select class='form-control col-md-4' name='deletable_item' id='deletable_item'>
+        <option value='1'{{ App.teamConfigArr.deletable_item ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+        <option value='0'{{ not App.teamConfigArr.deletable_item ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+      </select>
+      <span class='smallgray'>{{ 'An admin account will always be able to delete items.'|trans }}</span>
+
+      <label for='user_create_tag'>{{ 'Users can create tags:'|trans }}</label>
+      <select class='form-control col-md-4' name='user_create_tag' id='user_create_tag'>
+        <option value='1'{{ App.teamConfigArr.user_create_tag ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+        <option value='0'{{ not App.teamConfigArr.user_create_tag ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+      </select>
+      <span class='smallgray'>{{ 'An admin account will always be able to create tags.'|trans }}</span>
+
       <label for='public_db'>{{ 'Anonymous visitors can see database items:'|trans }}</label>
       <select class='form-control col-md-4' name='public_db' id='public_db'>
         <option value='1'{{ App.teamConfigArr.public_db ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>

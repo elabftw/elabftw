@@ -85,7 +85,7 @@ class Check
             'options' => array(
                 'default' => 15,
                 'min_range' => 1,
-                'max_range' => 500,
+                'max_range' => 9999,
             ),
             'flags' => FILTER_NULL_ON_FAILURE,
         );
@@ -149,6 +149,7 @@ class Check
             'organization',
             'team',
             'user',
+            'useronly',
         );
 
         if (!in_array($visibility, $validArr, true) && self::id((int) $visibility) === false) {

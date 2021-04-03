@@ -16,9 +16,11 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Interfaces\UpdatableInterface;
+use Elabftw\Maps\Team;
 use function implode;
 use PDO;
 
@@ -43,6 +45,12 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
     public function create(ParamsProcessor $params): int
     {
         $this->Entity->canOrExplode('write');
+
+        // check if we can actually create tags (for non-admins)
+        $Team = new Team($this->Entity->Users->team);
+        if ($Team->getUserCreateTag() === 0 && $this->Entity->Users->userData['is_admin'] === '0') {
+            throw new ImproperActionException(_('Users cannot create tags.'));
+        }
 
         $insertSql2 = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
         $insertReq2 = $this->Db->prepare($insertSql2);

@@ -72,7 +72,6 @@ try {
 
         // Send an email with the reset link
         // Create the message
-        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         $message = (new Swift_Message())
         // Give the message a subject
         ->setSubject('[eLabFTW] Password reset')
@@ -81,7 +80,7 @@ try {
         // Set the To addresses with an associative array
         ->setTo(array($email => $App->Users->userData['fullname']))
         // Give it a body
-        ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $Request->server->get('HTTP_USER_AGENT'), $resetLink) . $footer);
+        ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $Request->server->get('HTTP_USER_AGENT'), $resetLink) . $Email->footer);
         // now we try to send the email
         $Email->send($message);
 

@@ -162,7 +162,11 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->Entity->canOrExplode('read');
 
         // REVISIONS
-        $Revisions = new Revisions($this->Entity);
+        $Revisions = new Revisions(
+            $this->Entity,
+            (int) $this->App->Config->configArr['max_revisions'],
+            (int) $this->App->Config->configArr['min_delta_revisions'],
+        );
 
         $template = 'view.html';
 
@@ -208,7 +212,11 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         // REVISIONS
-        $Revisions = new Revisions($this->Entity);
+        $Revisions = new Revisions(
+            $this->Entity,
+            (int) $this->App->Config->configArr['max_revisions'],
+            (int) $this->App->Config->configArr['min_delta_revisions'],
+        );
 
         // VISIBILITY ARR
         $TeamGroups = new TeamGroups($this->Entity->Users);

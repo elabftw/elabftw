@@ -132,12 +132,11 @@ class Comments implements CrudInterface
 
         // Create the message
         $Request = Request::createFromGlobals();
-        $url = Tools::getUrl($Request) . '/' . $this->Entity->page . '.php';
+        $url = Tools::getUrl($Request);
+        $bodyUrl = $url . '/' . $this->Entity->page . '.php';
         // not pretty but gets the job done
-        $url = str_replace('app/controllers/', '', $url);
-        $url .= '?mode=view&id=' . $this->Entity->id;
-
-        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
+        $bodyUrl = str_replace('app/controllers/', '', $bodyUrl);
+        $bodyUrl .= '?mode=view&id=' . $this->Entity->id;
 
         $message = (new Swift_Message())
         // Give the message a subject
@@ -150,8 +149,8 @@ class Comments implements CrudInterface
         ->setBody(sprintf(
             _('Hi. %s left a comment on your experiment. Have a look: %s'),
             $commenter['fullname'],
-            $url
-        ) . $footer);
+            $bodyUrl
+        ) . $this->Email->footer);
 
         return $this->Email->send($message);
     }

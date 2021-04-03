@@ -30,6 +30,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Email
 {
+    public string $footer;
+
     private Config $Config;
 
     private Users $Users;
@@ -38,6 +40,7 @@ class Email
     {
         $this->Config = $config;
         $this->Users = $users;
+        $this->footer = $this->makeFooter();
     }
 
     /**
@@ -69,7 +72,6 @@ class Email
             throw new ImproperActionException('Bad email!');
         }
 
-        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         $message = (new Swift_Message())
         // Give the message a subject
         ->setSubject(_('[eLabFTW] Test email'))
@@ -78,7 +80,7 @@ class Email
         // Set the To addresses with an associative array
         ->setTo(array($email => 'Admin eLabFTW'))
         // Give it a body
-        ->setBody('Congratulations, you correctly configured eLabFTW to send emails! :)' . $footer);
+        ->setBody('Congratulations, you correctly configured eLabFTW to send emails! :)' . $this->footer);
 
         return (bool) $this->send($message);
     }
@@ -111,15 +113,13 @@ class Email
             $bcc[] = $user['email'];
         }
 
-        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
-
         $message = (new Swift_Message())
         ->setSubject($subject)
         ->setFrom($from)
         ->setTo($from)
         // Set recipients in BCC to protect email addresses
         ->setBcc($bcc)
-        ->setBody($body . $footer);
+        ->setBody($body . $this->footer);
 
         return $this->send($message);
     }
@@ -152,7 +152,6 @@ class Email
                 $url,
             );
         }
-        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
 
         $message = (new Swift_Message())
         // Give the message a subject
@@ -162,7 +161,7 @@ class Email
         // Set the To
         ->setTo($this->getAdminEmail($team))
         // Give it a body
-        ->setBody($main . $footer);
+        ->setBody($main . $this->footer);
         // SEND EMAIL
         $this->send($message);
     }
@@ -180,7 +179,6 @@ class Email
             return;
         }
         // Create the message
-        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         $message = (new Swift_Message())
         // Give the message a subject
         ->setSubject(_('[eLabFTW] Your account has been created'))
@@ -189,7 +187,7 @@ class Email
         // Set the To
         ->setTo($email)
         // Give it a body
-        ->setBody(_('Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done.') . $footer);
+        ->setBody(_('Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done.') . $this->footer);
         // SEND EMAIL
         $this->send($message);
     }
@@ -209,7 +207,6 @@ class Email
         $Request = Request::createFromGlobals();
         $url = \rtrim(Tools::getUrl($Request), '/') . '/login.php';
 
-        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         // Create the message
         $message = (new Swift_Message())
         // Give the message a subject
@@ -220,9 +217,15 @@ class Email
         // Set the To addresses with an associative array
         ->setTo(array($email => 'eLabFTW'))
         // Give it a body
-        ->setBody(_('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ') . $url . $footer);
+        ->setBody(_('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ') . $url . $this->footer);
         // now we try to send the email
         $this->send($message);
+    }
+
+    private function makeFooter(): string
+    {
+        $url = Tools::getUrl(Request::createFromGlobals());
+        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), $url);
     }
 
     /**

@@ -190,6 +190,7 @@ class Config
             ('saml_team', NULL),
             ('saml_team_create', '1'),
             ('saml_team_default', NULL),
+            ('saml_user_default', '1'),
             ('saml_email', NULL),
             ('saml_firstname', NULL),
             ('saml_lastname', NULL),

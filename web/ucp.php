@@ -48,7 +48,11 @@ try {
         if ($permissions['write'] === false) {
             throw new IllegalActionException('User tried to access a template without write permissions');
         }
-        $Revisions = new Revisions($Templates);
+        $Revisions = new Revisions(
+            $Templates,
+            (int) $App->Config->configArr['max_revisions'],
+            (int) $App->Config->configArr['min_delta_revisions'],
+        );
     }
 
     // TEAM GROUPS

@@ -12,6 +12,8 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
 use PDO;
 
@@ -102,6 +104,12 @@ class Database extends AbstractEntity
     public function destroy(): void
     {
         $this->canOrExplode('write');
+
+        // check if we can actually delete items (for non-admins)
+        $Team = new Team($this->Users->team);
+        if ($Team->getDeletableItem() === 0 && $this->Users->userData['is_admin'] === '0') {
+            throw new ImproperActionException(_('Users cannot delete items.'));
+        }
 
         // delete the database item
         $sql = 'DELETE FROM items WHERE id = :id';

@@ -23,8 +23,10 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Check;
 use Elabftw\Services\ListBuilder;
+use Elabftw\Services\MakeBloxberg;
 use Elabftw\Services\MakeTimestamp;
 use Exception;
+use GuzzleHttp\Client;
 use function mb_convert_encoding;
 use PDOException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -141,6 +143,15 @@ try {
     if ($Request->request->has('timestamp') && $Entity instanceof Experiments) {
         $MakeTimestamp = new MakeTimestamp($App->Config, new Teams($App->Users), $Entity);
         $MakeTimestamp->timestamp();
+    }
+
+    // BLOXBERG
+    if ($Request->request->has('bloxberg')) {
+        $Make = new MakeBloxberg(new Client(), $Entity);
+        $Response->setData(array(
+            'res' => $Make->timestamp(),
+            'msg' => _('Saved'),
+        ));
     }
 
     // SAVE AS IMAGE

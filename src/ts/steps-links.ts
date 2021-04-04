@@ -85,13 +85,13 @@ $(document).ready(function() {
     const stepId = e.currentTarget.dataset.stepid;
     StepC.finish(stepId).then(() => {
       // only reload children
-      const loadUrl = window.location.href + ' #steps_div_' + stepId + ' > *';
+      const loadUrl = window.location.href + ' #steps_div_' + entity.id + ' > *';
       // reload the step list
-      $('#steps_div_' + stepId).load(loadUrl, function() {
+      $('#steps_div_' + entity.id).load(loadUrl, function() {
         relativeMoment();
         makeSortableGreatAgain();
+        $('#todo_step_' + stepId).prop('checked', $('.stepbox[data-stepid="' + stepId + '"]').prop('checked'));
       });
-      $('#todo_step_' + stepId).prop('checked', true);
     });
   });
 

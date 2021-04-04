@@ -71,13 +71,13 @@ interface Payload {
   method: Method;
   action: Action;
   model: Model;
-  target: Target;
+  content: string;
   entity: {
     type: Entity['type'];
     id: Entity['id'];
   };
-  content: string;
-  id: number;
+  target?: Target;
+  id?: number;
 }
 
 export {

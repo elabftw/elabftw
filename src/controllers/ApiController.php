@@ -12,6 +12,7 @@ namespace Elabftw\Controllers;
 
 use function dirname;
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
@@ -1078,8 +1079,7 @@ class ApiController implements ControllerInterface
      */
     private function uploadFile(): Response
     {
-        $this->Entity->canOrExplode('write');
-        $this->Entity->Uploads->create($this->Request);
+        $this->Entity->Uploads->create(new CreateUpload($this->Request));
 
         return new JsonResponse(array('result' => 'success'));
     }

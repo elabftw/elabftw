@@ -211,7 +211,7 @@ try {
 
     // CREATE UPLOAD
     if ($Request->request->has('upload')) {
-        $Entity->Uploads->create($Request);
+        $Entity->Uploads->create(new CreateUpload($Request));
     }
 
     // REPLACE UPLOAD

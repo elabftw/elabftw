@@ -20,7 +20,7 @@ abstract class UpdateUpload implements UpdateUploadParamsInterface
 
     private int $entityId;
 
-    public function __construct(PayloadProcessor $payload)
+    public function __construct(JsonProcessor $payload)
     {
         $this->id = $payload->id;
         $this->entityId = $payload->Entity->id;

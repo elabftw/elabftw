@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Interfaces\CreateParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateParamsInterface;
 use Elabftw\Models\AbstractCategory;
@@ -26,11 +27,12 @@ use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use function in_array;
 use function json_decode;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Process a JSON payload
+ * Process a JSON payload defined by the Payload interface in typescript
  */
-class PayloadProcessor
+class JsonProcessor
 {
     public string $method;
 
@@ -40,11 +42,11 @@ class PayloadProcessor
 
     public AbstractEntity|AbstractCategory $Entity;
 
-    public string $target;
+    public ?string $target = null;
 
     public string $content;
 
-    public int $id;
+    public ?int $id;
 
     private array $decoded;
 
@@ -57,6 +59,9 @@ class PayloadProcessor
 
     public function process(string $payload): self
     {
+        // TODO jsonDecoder should have getDecoded that uses json_decode
+        // the normal one just returns the request object or something for that method
+        // and jsonprocessor is child of abstract processor, and we have multipartprocessor too
         $this->decoded = json_decode($payload, true);
         $this->method = $this->getMethod();
         $this->action = $this->getAction();
@@ -68,7 +73,9 @@ class PayloadProcessor
         return $this;
     }
 
-    public function getParams(): UpdateParamsInterface
+    //public function getParams(): UpdateParamsInterface|CreateParamsInterface
+    // @phpstan-ignore-next-line
+    public function getParams()
     {
         if ($this->action === 'update') {
             if ($this->model instanceof Uploads) {
@@ -83,6 +90,15 @@ class PayloadProcessor
                 if ($this->target === 'body') {
                     return new UpdateStepBody($this);
                 }
+            }
+        }
+
+        if ($this->action === 'create') {
+            if ($this->model instanceof Steps) {
+                return new CreateStep($this->content);
+            }
+            if ($this->model instanceof Uploads) {
+                return new CreateUpload(Request::createFromGlobals());
             }
         }
         throw new IllegalActionException('Bad params');
@@ -100,7 +116,16 @@ class PayloadProcessor
     // for now only update
     private function getAction(): string
     {
-        return 'update';
+        $allowed = array(
+            'create',
+            'update',
+            'read',
+            'destroy',
+        );
+        if (!in_array($this->decoded['action'], $allowed, true)) {
+            throw new IllegalActionException('Invalid action!');
+        }
+        return $this->decoded['action'];
     }
 
     private function getModel(): ModelInterface
@@ -118,14 +143,17 @@ class PayloadProcessor
         throw new IllegalActionException('Bad model');
     }
 
-    private function getTarget(): string
+    private function getTarget(): ?string
     {
-        $allowedTargets = array(
+        if (!isset($this->decoded['target'])) {
+            return null;
+        }
+        $allowed = array(
             'comment',
             'real_name',
             'body',
         );
-        if (!in_array($this->decoded['target'], $allowedTargets, true)) {
+        if (!in_array($this->decoded['target'], $allowed, true)) {
             throw new IllegalActionException('Invalid target!');
         }
         return $this->decoded['target'];
@@ -149,8 +177,11 @@ class PayloadProcessor
         return Filter::body($this->decoded['content'] ?? '');
     }
 
-    private function getId(): int
+    private function getId(): ?int
     {
+        if (!isset($this->decoded['id'])) {
+            return null;
+        }
         $id = Check::id((int) $this->decoded['id']);
         if ($id === false) {
             throw new IllegalActionException('Bad id');

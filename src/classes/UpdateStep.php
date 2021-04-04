@@ -18,7 +18,9 @@ class UpdateStep
 
     private int $entityId;
 
-    public function __construct(PayloadProcessor $payload)
+    // TODO this could be a generic processor, or maybe a ProcessedParams class
+    // because here we don't care where the params are coming from!
+    public function __construct(JsonProcessor $payload)
     {
         $this->id = $payload->id;
         $this->entityId = $payload->Entity->id;

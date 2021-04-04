@@ -17,7 +17,7 @@ final class UpdateStepBody extends UpdateStep implements UpdateParamsInterface
 {
     private string $content;
 
-    public function __construct(PayloadProcessor $payload)
+    public function __construct(JsonProcessor $payload)
     {
         parent::__construct($payload);
         $this->content = $payload->content;

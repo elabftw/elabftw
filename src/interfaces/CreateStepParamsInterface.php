@@ -11,11 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * Interface for models that can have CRUD operations
+ * Interface for creating a step
  */
-interface ModelInterface
+interface CreateStepParamsInterface
 {
-    public function create(CreateParamsInterface $params): int;
-
-    public function update(UpdateParamsInterface $params): bool;
+    public function getContent(): string;
 }

@@ -21,35 +21,18 @@ export default class Step extends Crud {
     this.sender = new Ajax();
   }
 
-  create(elem): void {
-    const id = elem.dataset.id;
-    // get body
-    const body = elem.value;
-    // fix for user pressing enter with no input
-    if (body.length > 0) {
-      this.send({
-        action: 'create',
-        what: 'step',
-        type: this.type,
-        params: {
-          itemId: id,
-          template: body,
-        },
-      }).then(() => {
-        // only reload children
-        const loadUrl = window.location.href + ' #steps_div_' + id + ' > *';
-        // reload the step list
-        $('#steps_div_' + id).load(loadUrl, function() {
-          relativeMoment();
-          makeSortableGreatAgain();
-        });
-        // clear input field
-        elem.value = '';
-      });
-    } // end if input < 0
+  create(content: string, entity: Entity) {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Create,
+      model: Model.Step,
+      entity: entity,
+      content: content,
+    };
+    return this.sender.send(payload);
   }
 
-  update(content: string, entity: Entity, stepId: number) {
+  update(content: string, entity: Entity, id: number) {
     const payload: Payload = {
       method: Method.POST,
       action: Action.Update,
@@ -57,7 +40,7 @@ export default class Step extends Crud {
       target: Target.Body,
       entity: entity,
       content: content,
-      id : stepId,
+      id : id,
     };
     return this.sender.send(payload);
   }

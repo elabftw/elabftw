@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Interfaces\CreateStepParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateStepParamsInterface;
@@ -41,19 +41,17 @@ class Steps implements ModelInterface
      * Add a step
      *
      */
-    public function create(ParamsProcessor $params): int
+    public function create(CreateStepParamsInterface $params): int
     {
         $this->Entity->canOrExplode('write');
         // make sure the newly added step is at the bottom
         // count the number of steps and add 1 to be sure we're last
         $ordering = count($this->read()) + 1;
 
-        // remove any | as they are used in the group_concat
-        $body = str_replace('|', ' ', $params->template);
-        $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :body, :ordering)';
+        $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :content, :ordering)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':body', $body);
+        $req->bindValue(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':content', $params->getContent());
         $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
         $this->Db->execute($req);
 

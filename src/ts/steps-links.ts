@@ -10,6 +10,7 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import Link from './Link.class';
 import Step from './Step.class';
 import i18next from 'i18next';
+import { relativeMoment, makeSortableGreatAgain } from './misc';
 import { getCheckedBoxes, notif } from './misc';
 import { Type, Entity } from './interfaces';
 
@@ -32,7 +33,24 @@ $(document).ready(function() {
   $(document).on('keypress blur', '.stepinput', function(e) {
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
-      StepC.create(e.currentTarget);
+      const entity: Entity = {
+        type: entityType,
+        id: e.currentTarget.dataset.id,
+      };
+      const content = e.currentTarget.value;
+      if (content.length > 0) {
+        StepC.create(content, entity).then(() => {
+          // only reload children
+          const loadUrl = window.location.href + ' #steps_div_' + entity.id + ' > *';
+          // reload the step list
+          $('#steps_div_' + entity.id).load(loadUrl, function() {
+            relativeMoment();
+            makeSortableGreatAgain();
+          });
+          // clear input field
+          e.currentTarget.value = '';
+        });
+      }
     }
   });
 

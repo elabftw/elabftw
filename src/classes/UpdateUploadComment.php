@@ -20,7 +20,7 @@ final class UpdateUploadComment extends UpdateUpload implements UpdateParamsInte
 
     private string $content;
 
-    public function __construct(PayloadProcessor $payload)
+    public function __construct(JsonProcessor $payload)
     {
         parent::__construct($payload);
         $this->content = $payload->content;

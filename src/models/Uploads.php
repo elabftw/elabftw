@@ -18,6 +18,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateUploadParamsInterface;
@@ -60,11 +61,13 @@ class Uploads implements DestroyableInterface, ModelInterface
     /**
      * Main method for normal file upload
      */
-    public function create(Request $request): void
+    //public function create(Request $request): void
+    public function create(CreateUploadParamsInterface $params): int
     {
         $this->Entity->canOrExplode('write');
 
-        $realName = Filter::forFilesystem($request->files->get('file')->getClientOriginalName());
+        //$realName = Filter::forFilesystem($request->files->get('file')->getClientOriginalName());
+        $realName = $params->getFilename();
         $this->checkExtension($realName);
         $ext = Tools::getExt($realName);
 
@@ -72,7 +75,8 @@ class Uploads implements DestroyableInterface, ModelInterface
         $fullPath = $this->getUploadsPath() . $longName;
 
         // Try to move the file to its final place
-        $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
+        //$this->moveFile($request->files->get('file')->getPathname(), $fullPath);
+        $this->moveFile($params->getPathname(), $fullPath);
 
         // rotate the image if we can find the orientation in the exif data
         // maybe php-exif extension isn't loaded
@@ -94,6 +98,8 @@ class Uploads implements DestroyableInterface, ModelInterface
         $this->dbInsert($realName, $longName, $this->getHash($fullPath));
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb();
+
+        return 0;
     }
 
     /**

@@ -11,11 +11,11 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * Interface for models that can have CRUD operations
+ * Interface for creating an upload
  */
-interface ModelInterface
+interface CreateUploadParamsInterface
 {
-    public function create(CreateParamsInterface $params): int;
+    public function getFilename(): string;
 
-    public function update(UpdateParamsInterface $params): bool;
+    public function getPathname(): string;
 }

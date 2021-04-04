@@ -9,15 +9,16 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\CreateComment;
+use Elabftw\Elabftw\DestroyParams;
+use Elabftw\Elabftw\UpdateComment;
 use Elabftw\Exceptions\ImproperActionException;
 
 class CommentsTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
     {
-        $this->Users = new Users(1);
-        $this->Entity = new Experiments($this->Users, 1);
+        $this->Entity = new Experiments(new Users(1, 1), 1);
 
         // create mock object for Email because we don't want to actually send emails
         $this->mockEmail = $this->getMockBuilder(\Elabftw\Services\Email::class)
@@ -34,7 +35,7 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->assertIsInt($this->Comments->create(new ParamsProcessor(array('comment' => 'Ohai'))));
+        $this->assertIsInt($this->Comments->create(new CreateComment('Ohai')));
     }
 
     public function testRead()
@@ -44,14 +45,14 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->Comments->Update(new ParamsProcessor(array('comment' => 'Updated', 'id' => 1)));
+        $this->Comments->Update(new UpdateComment('Updated', 1));
         // too short comment
         $this->expectException(ImproperActionException::class);
-        $this->Comments->Update(new ParamsProcessor(array('comment' => 'a', 'id' => 1)));
+        $this->Comments->Update(new UpdateComment('a', 1));
     }
 
     public function testDestroy()
     {
-        $this->Comments->destroy(1);
+        $this->Comments->destroy(new DestroyParams(1));
     }
 }

@@ -9,7 +9,9 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\CreateStatus;
+use Elabftw\Elabftw\DestroyParams;
+use Elabftw\Elabftw\UpdateStatus;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
 
@@ -17,21 +19,12 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
     {
-        $this->Status = new Status(new Users(1, 1));
+        $this->Status = new Status(1);
     }
 
     public function testCreate()
     {
-        $new = $this->Status->create(
-            new ParamsProcessor(
-                array(
-                    'name' => 'New status',
-                    'color' => '#29AEB9',
-                    'isTimestampable' => 0,
-                    'isDefault' => 1,
-                )
-            )
-        );
+        $new = $this->Status->create(new CreateStatus('New status', '#29AEB9', false, true));
         $this->assertTrue((bool) Check::id($new));
     }
 
@@ -43,19 +36,17 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $params = new ParamsProcessor(
-            array(
-                'name' => 'Yep',
-                'color' => '#29AEB9',
-                'isTimestampable' => 0,
-                'isDefault' => 1,
-            )
-        );
-        $id = $this->Status->create($params);
-        $params->id = $id;
-        $params->isTimestampable = 1;
-        $this->Status->update($params);
-        $this->assertTrue($this->Status->isTimestampable($id));
+        $params = new CreateStatus('Yep', '#29AEB9', false, true);
+        $id = $this->Status->create(new CreateStatus('Yep', '#29AEB9', false, true));
+        $this->Status->update(new UpdateStatus($id, 'Updated', '#121212', true, false));
+        $ourStatus = array_filter($this->Status->read(), function ($s) use ($id) {
+            return ((int) $s['category_id']) === $id;
+        });
+        $status = array_pop($ourStatus);
+        $this->assertEquals('Updated', $status['category']);
+        $this->assertEquals('121212', $status['color']);
+        $this->assertTrue((bool) $status['is_timestampable']);
+        $this->assertFalse((bool) $status['is_default']);
     }
 
     public function testReadColor()
@@ -63,15 +54,9 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('29aeb9', strtolower($this->Status->readColor(1)));
     }
 
-    public function testIsTimestampable()
-    {
-        $this->assertFalse($this->Status->isTimestampable(1));
-    }
-
     public function testDestroy()
     {
-        //$this->Status->destroy(2);
         $this->expectException(ImproperActionException::class);
-        $this->Status->destroy(1);
+        $this->Status->destroy(new DestroyParams(1));
     }
 }

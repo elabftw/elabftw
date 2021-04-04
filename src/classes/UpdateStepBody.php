@@ -12,26 +12,24 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\UpdateParamsInterface;
-use function mb_strlen;
 
-final class UpdateUploadComment extends UpdateUpload implements UpdateParamsInterface
+final class UpdateStepBody extends UpdateStep implements UpdateParamsInterface
 {
-    private const MIN_COMMENT_SIZE = 2;
-
     private string $content;
 
     public function __construct(PayloadProcessor $payload)
     {
         parent::__construct($payload);
         $this->content = $payload->content;
-        $this->target = 'comment';
+        $this->target = 'real_name';
     }
 
     public function getContent(): string
     {
-        // check for length
-        if (mb_strlen($this->content) < self::MIN_COMMENT_SIZE) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
+        // don't allow php extension
+        $ext = Tools::getExt($this->content);
+        if ($ext === 'php') {
+            throw new ImproperActionException('No php extension allowed!');
         }
         return $this->content;
     }

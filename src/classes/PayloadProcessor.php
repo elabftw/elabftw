@@ -12,12 +12,13 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\ModelInterface;
-use Elabftw\Interfaces\UpdateUploadParamsInterface;
+use Elabftw\Interfaces\UpdateParamsInterface;
 use Elabftw\Models\AbstractCategory;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Steps;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
@@ -67,14 +68,21 @@ class PayloadProcessor
         return $this;
     }
 
-    public function getParams(): UpdateUploadParamsInterface
+    public function getParams(): UpdateParamsInterface
     {
-        if ($this->action === 'update' && $this->model instanceof Uploads) {
-            if ($this->target === 'real_name') {
-                return new UpdateUploadRealName($this);
+        if ($this->action === 'update') {
+            if ($this->model instanceof Uploads) {
+                if ($this->target === 'real_name') {
+                    return new UpdateUploadRealName($this);
+                }
+                if ($this->target === 'comment') {
+                    return new UpdateUploadComment($this);
+                }
             }
-            if ($this->target === 'comment') {
-                return new UpdateUploadComment($this);
+            if ($this->model instanceof Steps) {
+                if ($this->target === 'body') {
+                    return new UpdateStepBody($this);
+                }
             }
         }
         throw new IllegalActionException('Bad params');
@@ -103,6 +111,10 @@ class PayloadProcessor
             }
             return $this->Entity->Uploads;
         }
+
+        if ($this->decoded['model'] === 'step') {
+            return $this->Entity->Steps;
+        }
         throw new IllegalActionException('Bad model');
     }
 
@@ -111,6 +123,7 @@ class PayloadProcessor
         $allowedTargets = array(
             'comment',
             'real_name',
+            'body',
         );
         if (!in_array($this->decoded['target'], $allowedTargets, true)) {
             throw new IllegalActionException('Invalid target!');

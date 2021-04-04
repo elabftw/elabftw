@@ -10,9 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Interfaces\UpdateUploadParamsInterface;
-
-abstract class UpdateUpload implements UpdateUploadParamsInterface
+class UpdateStep
 {
     protected string $target;
 

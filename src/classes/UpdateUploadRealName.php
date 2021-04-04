@@ -11,9 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\UpdateUploadParamsInterface;
+use Elabftw\Interfaces\UpdateParamsInterface;
 
-final class UpdateUploadRealName extends UpdateUpload implements UpdateUploadParamsInterface
+final class UpdateUploadRealName extends UpdateUpload implements UpdateParamsInterface
 {
     private string $content;
 

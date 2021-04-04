@@ -11,9 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * Interface for models that can have CRUD operations
+ * Interface for updating something
  */
-interface ModelInterface
+interface UpdateParamsInterface extends UpdateStepParamsInterface, UpdateUploadParamsInterface
 {
-    public function update(UpdateParamsInterface $params): bool;
 }

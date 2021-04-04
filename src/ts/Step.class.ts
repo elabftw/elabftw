@@ -8,13 +8,17 @@
 import Crud from './Crud.class';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
+import { Payload, Method, Model, Target, Type, Entity, Action } from './interfaces';
+import { Ajax } from './Ajax.class';
 
 export default class Step extends Crud {
   type: string;
+  sender: Ajax;
 
   constructor(type: string) {
     super('app/controllers/Ajax.php');
     this.type = type;
+    this.sender = new Ajax();
   }
 
   create(elem): void {
@@ -45,17 +49,17 @@ export default class Step extends Crud {
     } // end if input < 0
   }
 
-  update(input, itemId, stepId) {
-    return this.send({
-      action: 'update',
-      what: 'step',
-      type: this.type,
-      params: {
-        template: input,
-        itemId: itemId,
-        id: stepId,
-      },
-    });
+  update(content: string, entity: Entity, stepId: number) {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Update,
+      model: Model.Step,
+      target: Target.Body,
+      entity: entity,
+      content: content,
+      id : stepId,
+    };
+    return this.sender.send(payload);
   }
 
   finish(elem): void {

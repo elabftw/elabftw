@@ -23,6 +23,9 @@ abstract class AbstractCategory implements CrudInterface
     use SortableTrait;
     use EntityTrait;
 
+    /** TODO implement steps for abstractcategory? maybe itemtype should not be a category but really should be abstractentity instead */
+    public Steps $Steps;
+
     protected Db $Db;
 
     protected Users $Users;

@@ -13,13 +13,17 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\ModelInterface;
+use Elabftw\Interfaces\UpdateStepParamsInterface;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
 /**
  * All about the steps
  */
-class Steps implements CrudInterface
+//class Steps implements CrudInterface, ModelInterface
+// TODO add crudinterface back once it's all ok
+class Steps implements ModelInterface
 {
     use SortableTrait;
 
@@ -196,18 +200,16 @@ class Steps implements CrudInterface
      * Update the body of a step
      *
      */
-    public function update(ParamsProcessor $params): string
+    public function update(UpdateStepParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
 
-        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET body = :body WHERE id = :id AND item_id = :item_id';
+        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET body = :content WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':body', $params->template, PDO::PARAM_STR);
-        $req->bindParam(':id', $params->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $params->template;
+        $req->bindValue(':content', $params->getContent(), PDO::PARAM_STR);
+        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindValue(':item_id', $params->getEntityId(), PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     /**

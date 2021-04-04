@@ -11,9 +11,19 @@ import Link from './Link.class';
 import Step from './Step.class';
 import i18next from 'i18next';
 import { getCheckedBoxes, notif } from './misc';
+import { Type, Entity } from './interfaces';
 
 $(document).ready(function() {
   const type = $('#info').data('type');
+  // holds info about the page through data attributes
+  const about = document.getElementById('info').dataset;
+  let entityType: Type;
+  if (about.type === 'experiments') {
+    entityType = Type.Experiment;
+  }
+  if (about.type === 'items') {
+    entityType = Type.Item;
+  }
 
   // STEPS
   const StepC = new Step(type);
@@ -28,10 +38,14 @@ $(document).ready(function() {
 
   // UPDATE
   $(document).on('mouseenter', '.stepInput', (e) => {
-    ($(e.currentTarget) as any).editable((input) => {
+    ($(e.currentTarget) as any).editable((input: string) => {
+      const entity: Entity = {
+        type: entityType,
+        id: e.currentTarget.dataset.id,
+      };
       StepC.update(
         input,
-        e.currentTarget.dataset.id,
+        entity,
         e.currentTarget.dataset.stepid,
       );
       // here the input is returned instead of the value returned by controller

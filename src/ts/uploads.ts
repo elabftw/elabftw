@@ -9,9 +9,9 @@ import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Payload, Method, Model, Target, Type, Entity, Action } from './interfaces';
+import { Ajax } from './Ajax.class';
 import { notif, displayMolFiles, display3DMolecules } from './misc';
 import i18next from 'i18next';
-import { Ajax } from './Ajax.class';
 
 $(document).ready(function() {
   const pages = ['edit', 'view'];
@@ -38,7 +38,7 @@ $(document).ready(function() {
 
   // make file comments editable
   $(document).on('mouseenter', '.file-comment', function() {
-    ($('.editable') as any).editable(function(value: string) {
+    ($('.editable') as any).editable(function(input: string) {
       const AjaxC = new Ajax();
       const payload: Payload = {
         method: Method.POST,
@@ -49,12 +49,12 @@ $(document).ready(function() {
           type: entityType,
           id: $(this).data('itemid'),
         },
-        content: value,
+        content: input,
         id : $(this).data('id'),
       };
       AjaxC.send(payload);
 
-      return(value);
+      return(input);
     }, {
       tooltip : i18next.t('upload-file-comment'),
       placeholder: i18next.t('upload-file-comment'),

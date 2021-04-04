@@ -51,6 +51,7 @@ enum Model {
 enum Target {
   RealName = 'real_name',
   Comment = 'comment',
+  Body = 'body',
 }
 
 enum Type {

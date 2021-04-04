@@ -18,4 +18,6 @@ interface ModelInterface
     public function create(CreateParamsInterface $params): int;
 
     public function update(UpdateParamsInterface $params): bool;
+
+    public function destroy(DestroyParamsInterface $params): bool;
 }

@@ -42,9 +42,9 @@ class JsonProcessor
 
     public AbstractEntity|AbstractCategory $Entity;
 
-    public ?string $target = null;
+    public ?string $target;
 
-    public string $content;
+    public ?string $content;
 
     public ?int $id;
 
@@ -77,6 +77,15 @@ class JsonProcessor
     // @phpstan-ignore-next-line
     public function getParams()
     {
+        if ($this->action === 'create') {
+            if ($this->model instanceof Steps) {
+                return new CreateStep($this->content);
+            }
+            if ($this->model instanceof Uploads) {
+                return new CreateUpload(Request::createFromGlobals());
+            }
+        }
+
         if ($this->action === 'update') {
             if ($this->model instanceof Uploads) {
                 if ($this->target === 'real_name') {
@@ -88,18 +97,19 @@ class JsonProcessor
             }
             if ($this->model instanceof Steps) {
                 if ($this->target === 'body') {
+                    // TODO it's better to have the strict minimum here instead of the whole this
+                    // it helps when doing from elsewhere in the code
                     return new UpdateStepBody($this);
+                }
+                if ($this->target === 'finished') {
+                    return new UpdateStepFinished($this->id);
                 }
             }
         }
 
-        if ($this->action === 'create') {
-            if ($this->model instanceof Steps) {
-                return new CreateStep($this->content);
-            }
-            if ($this->model instanceof Uploads) {
-                return new CreateUpload(Request::createFromGlobals());
-            }
+
+        if ($this->action === 'destroy') {
+            return new DestroyParams($this->id);
         }
         throw new IllegalActionException('Bad params');
     }
@@ -149,9 +159,10 @@ class JsonProcessor
             return null;
         }
         $allowed = array(
-            'comment',
-            'real_name',
             'body',
+            'comment',
+            'finished',
+            'real_name',
         );
         if (!in_array($this->decoded['target'], $allowed, true)) {
             throw new IllegalActionException('Invalid target!');
@@ -172,8 +183,11 @@ class JsonProcessor
         return new Database($this->Users, (int) $this->decoded['entity']['id']);
     }
 
-    private function getContent(): string
+    private function getContent(): ?string
     {
+        if (!isset($this->decoded['content'])) {
+            return null;
+        }
         return Filter::body($this->decoded['content'] ?? '');
     }
 

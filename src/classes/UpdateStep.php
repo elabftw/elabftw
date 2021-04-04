@@ -14,8 +14,9 @@ class UpdateStep
 {
     protected string $target;
 
-    private int $id;
+    protected int $id;
 
+    // TODO deprecated because we use this->Entity->id
     private int $entityId;
 
     // TODO this could be a generic processor, or maybe a ProcessedParams class

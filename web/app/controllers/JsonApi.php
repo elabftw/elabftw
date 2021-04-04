@@ -18,8 +18,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
-use Elabftw\Interfaces\CreateParamsInterface;
-use Elabftw\Interfaces\UpdateParamsInterface;
 use Exception;
 use PDOException;
 use Swift_TransportException;
@@ -29,9 +27,10 @@ require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new JsonResponse();
 $Response->setData(array(
-    'res' => true,
-    'msg' => _('Saved'),
+    'res' => false,
+    'msg' => Tools::error(),
 ));
+$res = '';
 
 try {
     // CSRF
@@ -45,30 +44,19 @@ try {
     $payload = $Processor->process($Request->getContent());
     $params = $Processor->getParams();
 
-    if ($params instanceof CreateParamsInterface) {
+    if ($params->action === 'create') {
         $res = $payload->model->create($params);
-        $Response->setData(array(
-            'res' => true,
-            'msg' => _('Saved'),
-            'value' => $res,
-        ));
-    } elseif ($params instanceof UpdateParamsInterface) {
+    } elseif ($params->action === 'update') {
         $res = $payload->model->update($params);
-        $Response->setData(array(
-            'res' => true,
-            'msg' => _('Saved'),
-            'value' => $res,
-        ));
+    } elseif ($params->action === 'destroy') {
+        $res = $payload->model->destroy($params);
     }
-    /*
-    switch ($payload->action) {
-        case 'update':
-            break;
 
-        default:
-            throw new IllegalActionException('Bad action param on Ajax controller');
-    }
-     */
+    $Response->setData(array(
+        'res' => true,
+        'msg' => _('Saved'),
+        'value' => $res,
+    ));
 } catch (Swift_TransportException $e) {
     // for swift error, don't display error to user as it might contain sensitive information
     // but log it and display general error. See #841

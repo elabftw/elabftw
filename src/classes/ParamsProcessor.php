@@ -15,6 +15,7 @@ use Elabftw\Services\Filter;
 
 /**
  * Parameters passed for status/items types create/update
+ * @deprecated this should be nuked at some point
  *
  */
 class ParamsProcessor

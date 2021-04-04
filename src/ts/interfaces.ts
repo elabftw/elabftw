@@ -52,6 +52,7 @@ enum Target {
   RealName = 'real_name',
   Comment = 'comment',
   Body = 'body',
+  Finished = 'finished',
 }
 
 enum Type {
@@ -71,11 +72,11 @@ interface Payload {
   method: Method;
   action: Action;
   model: Model;
-  content: string;
   entity: {
     type: Entity['type'];
     id: Entity['id'];
   };
+  content?: string;
   target?: Target;
   id?: number;
 }

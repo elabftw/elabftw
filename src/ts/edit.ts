@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
     entityType = Type.Item;
   }
 
-  function processNewFilename(event, original: HTMLElement, parent: HTMLElement) {
+  function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
     if (event.key === 'Enter' || event.type === 'blur') {
       const newFilename = (event.target as HTMLInputElement).value;
       const payload: Payload = {

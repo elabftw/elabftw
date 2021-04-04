@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CreateStepParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\DestroyParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateStepParamsInterface;
 use Elabftw\Traits\SortableTrait;
@@ -78,25 +79,6 @@ class Steps implements ModelInterface
         $req->bindParam(':ordering', $step['ordering']);
         $req->bindParam(':finished', $step['finished']);
         $req->bindParam(':finished_time', $step['finished_time']);
-        $this->Db->execute($req);
-    }
-
-    /**
-     * Toggle the finished column of a step
-     *
-     * @param int $stepid
-     * @return void
-     */
-    public function finish(int $stepid): void
-    {
-        $this->Entity->canOrExplode('write');
-
-        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET finished = !finished,
-            finished_time = NOW()
-            WHERE id = :id AND item_id = :item_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $stepid, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
     }
 
@@ -201,26 +183,47 @@ class Steps implements ModelInterface
     public function update(UpdateStepParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
-
-        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET body = :content WHERE id = :id AND item_id = :item_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent(), PDO::PARAM_STR);
-        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
-        $req->bindValue(':item_id', $params->getEntityId(), PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        if ($params->getTarget() === 'body') {
+            return $this->updateBody($params->getContent(), $params->getId());
+        }
+        if ($params->getTarget() === 'finished') {
+            return $this->updateFinished($params->getId());
+        }
+        return false;
     }
 
     /**
      * Delete a step
      */
-    public function destroy(int $id): bool
+    public function destroy(DestroyParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
 
-        $sql = 'DELETE FROM ' . $this->Entity->type . '_steps WHERE id = :id AND item_id = :item_id';
+        $sql = 'DELETE FROM ' . $this->Entity->type . '_steps WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    /**
+     * Toggle the finished column of a step
+     */
+    private function updateFinished(int $stepId): bool
+    {
+        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET finished = !finished,
+            finished_time = NOW() WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $stepId, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    private function updateBody(string $content, int $id): bool
+    {
+        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET body = :content WHERE id = :id AND item_id = :item_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $content, PDO::PARAM_STR);
+        $req->bindValue(':id', $id, PDO::PARAM_INT);
+        $req->bindValue(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 }

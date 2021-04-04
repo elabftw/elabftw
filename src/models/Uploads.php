@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 
 use function copy;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\DestroyParams;
 use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -19,7 +20,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
-use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Interfaces\DestroyParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateUploadParamsInterface;
 use Elabftw\Services\Filter;
@@ -39,7 +40,7 @@ use function unlink;
 /**
  * All about the file uploads
  */
-class Uploads implements DestroyableInterface, ModelInterface
+class Uploads implements ModelInterface
 {
     use UploadTrait;
 
@@ -272,11 +273,11 @@ class Uploads implements DestroyableInterface, ModelInterface
     /**
      * Destroy an upload
      */
-    public function destroy(int $id): bool
+    public function destroy(DestroyParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
 
-        $uploadArr = $this->readFromId($id);
+        $uploadArr = $this->readFromId($params->getId());
 
         // remove thumbnail
         $thumbPath = $this->getUploadsPath() . $uploadArr['long_name'] . '_th.jpg';
@@ -293,7 +294,7 @@ class Uploads implements DestroyableInterface, ModelInterface
         // to avoid someone deleting files saying it's DB whereas it's exp
         $sql = 'DELETE FROM uploads WHERE id = :id AND type = :type';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
         return $this->Db->execute($req);
     }
@@ -306,7 +307,7 @@ class Uploads implements DestroyableInterface, ModelInterface
         $uploadArr = $this->readAll();
 
         foreach ($uploadArr as $upload) {
-            $this->destroy((int) $upload['id']);
+            $this->destroy(new DestroyParams((int) $upload['id']));
         }
     }
 

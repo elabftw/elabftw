@@ -26,20 +26,21 @@ $(document).ready(function() {
     entityType = Type.Item;
   }
 
+  const entity: Entity = {
+    type: entityType,
+    id: parseInt(about.id),
+  };
+
   // STEPS
-  const StepC = new Step(type);
+  const StepC = new Step(entity);
 
   // CREATE
   $(document).on('keypress blur', '.stepinput', function(e) {
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
-      const entity: Entity = {
-        type: entityType,
-        id: e.currentTarget.dataset.id,
-      };
       const content = e.currentTarget.value;
       if (content.length > 0) {
-        StepC.create(content, entity).then(() => {
+        StepC.create(content).then(() => {
           // only reload children
           const loadUrl = window.location.href + ' #steps_div_' + entity.id + ' > *';
           // reload the step list
@@ -57,13 +58,8 @@ $(document).ready(function() {
   // UPDATE
   $(document).on('mouseenter', '.stepInput', (e) => {
     ($(e.currentTarget) as any).editable((input: string) => {
-      const entity: Entity = {
-        type: entityType,
-        id: e.currentTarget.dataset.id,
-      };
       StepC.update(
         input,
-        entity,
         e.currentTarget.dataset.stepid,
       );
       // here the input is returned instead of the value returned by controller
@@ -80,12 +76,39 @@ $(document).ready(function() {
 
   // FINISH
   $(document).on('click', 'input[type=checkbox].stepbox', function(e) {
-    StepC.finish(e.currentTarget);
+    // on the todolist we don't want to grab the type from the page
+    // because it's only steps from experiments
+    // so if the element has a data-type, take that instead
+    if (e.currentTarget.dataset.type) {
+      entity.type = e.currentTarget.dataset.type;
+    }
+    const stepId = e.currentTarget.dataset.stepid;
+    StepC.finish(stepId).then(() => {
+      // only reload children
+      const loadUrl = window.location.href + ' #steps_div_' + stepId + ' > *';
+      // reload the step list
+      $('#steps_div_' + stepId).load(loadUrl, function() {
+        relativeMoment();
+        makeSortableGreatAgain();
+      });
+      $('#todo_step_' + stepId).prop('checked', true);
+    });
   });
 
   // DESTROY
   $(document).on('click', '.stepDestroy', function(e) {
-    StepC.destroy(e.currentTarget);
+    if (confirm(i18next.t('step-delete-warning'))) {
+      const stepId = e.currentTarget.dataset.stepid;
+      StepC.destroy(stepId).then(() => {
+        // only reload children
+        const loadUrl = window.location + ' #steps_div_' + entity.id + ' > *';
+        // reload the step list
+        $('#steps_div_' + entity.id).load(loadUrl, function() {
+          relativeMoment();
+          makeSortableGreatAgain();
+        });
+      });
+    }
   });
 
   // END STEPS

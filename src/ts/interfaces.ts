@@ -44,9 +44,10 @@ enum Action {
 
 enum Model {
   Comment = 'comment',
-  Upload = 'upload',
-  Step = 'step',
   Link = 'link',
+  Status = 'status',
+  Step = 'step',
+  Upload = 'upload',
 }
 
 enum Target {
@@ -73,13 +74,14 @@ interface Payload {
   method: Method;
   action: Action;
   model: Model;
-  entity: {
+  entity?: {
     type: Entity['type'];
     id: Entity['id'];
   };
   content?: string;
   target?: Target;
   id?: number;
+  extraParams?: {};
 }
 
 export {

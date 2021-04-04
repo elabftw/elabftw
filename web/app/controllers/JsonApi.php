@@ -20,6 +20,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\DestroyParamsInterface;
 use Elabftw\Interfaces\UpdateParamsInterface;
+use Elabftw\Models\Status;
 use Exception;
 use PDOException;
 use Swift_TransportException;
@@ -46,6 +47,10 @@ try {
     $payload = $Processor->process($Request->getContent());
     $params = $Processor->getParams();
 
+    // Status actions can only be accessed by admin level
+    if ($payload->model instanceof Status && !$App->Session->get('is_admin')) {
+        throw new IllegalActionException('Non admin user tried to access admin controller.');
+    }
     if ($params->action === 'create') {
         $res = $payload->model->create($params);
     } elseif ($params->action === 'update' && $params instanceof UpdateParamsInterface) {

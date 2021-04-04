@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
           type: entity.type,
           id: checked[index]['id'],
         };
-        const TmpLinkC = new Link(entity);
+        const TmpLinkC = new Link(tmpEntity);
         TmpLinkC.create(parseInt($('#linkInputMultiple').val() as string));
       });
       $(this).val('');

@@ -14,12 +14,14 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreateParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateParamsInterface;
+use Elabftw\Models\AbstractCategory;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
+use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Uploads;
@@ -41,7 +43,7 @@ class JsonProcessor
 
     public ModelInterface $model;
 
-    public AbstractEntity $Entity;
+    public AbstractEntity|AbstractCategory $Entity;
 
     public ?string $target;
 
@@ -50,6 +52,8 @@ class JsonProcessor
     public int $id = 0;
 
     private array $decoded;
+
+    private array $extra;
 
     private Users $Users;
 
@@ -71,6 +75,7 @@ class JsonProcessor
         $this->model = $this->getModel();
         $this->content = $this->getContent();
         $this->id = $this->getId();
+        $this->extra = $this->decoded['extraParams'] ?? array();
         return $this;
     }
 
@@ -84,6 +89,9 @@ class JsonProcessor
             }
             if ($this->model instanceof Links) {
                 return new CreateLink($this->id);
+            }
+            if ($this->model instanceof Status) {
+                return new CreateStatus($this->content, $this->extra['color'], (bool) $this->extra['isTimestampable']);
             }
             if ($this->model instanceof Steps) {
                 return new CreateStep($this->content);
@@ -109,6 +117,9 @@ class JsonProcessor
                 if ($this->target === 'finished') {
                     return new UpdateStepFinished($this->id);
                 }
+            }
+            if ($this->model instanceof Status) {
+                return new UpdateStatus($this->id, $this->content, $this->extra['color'], (bool) $this->extra['isTimestampable'], (bool) $this->extra['isDefault']);
             }
         }
 
@@ -143,16 +154,20 @@ class JsonProcessor
         return $this->decoded['action'];
     }
 
-    private function getModel(): ModelInterface
+    //private function getModel(): ModelInterface
+    // @phpstan-ignore-next-line
+    private function getModel()
     {
-        if ($this->decoded['model'] === 'comment') {
+        if ($this->decoded['model'] === 'comment' && $this->Entity instanceof AbstractEntity) {
             return $this->Entity->Comments;
         }
-        if ($this->decoded['model'] === 'link') {
+        if ($this->decoded['model'] === 'link' && $this->Entity instanceof AbstractEntity) {
             return $this->Entity->Links;
         }
-
-        if ($this->decoded['model'] === 'step') {
+        if ($this->decoded['model'] === 'status') {
+            return $this->Entity;
+        }
+        if ($this->decoded['model'] === 'step' && $this->Entity instanceof AbstractEntity) {
             return $this->Entity->Steps;
         }
         if ($this->decoded['model'] === 'upload') {
@@ -183,8 +198,12 @@ class JsonProcessor
     }
 
     // figure out which type of entity we have to deal with
-    private function getEntity(): AbstractEntity
+    private function getEntity(): AbstractEntity|AbstractCategory
     {
+        if ($this->decoded['model'] === 'status') {
+            return new Status($this->Users->team);
+        }
+
         if ($this->decoded['entity']['type'] === 'experiments') {
             return new Experiments($this->Users, (int) $this->decoded['entity']['id']);
         } elseif ($this->decoded['entity']['type'] === 'experiments_templates') {

@@ -276,8 +276,13 @@ class Uploads implements ModelInterface
     public function destroy(DestroyParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
-
         $uploadArr = $this->readFromId($params->getId());
+
+        // check that the filename is not in the body. see #432
+        if (strpos($this->Entity->entityData['body'], $uploadArr['long_name'])) {
+            throw new ImproperActionException(_('Please make sure to remove any reference to this file in the body!'));
+        }
+
 
         // remove thumbnail
         $thumbPath = $this->getUploadsPath() . $uploadArr['long_name'] . '_th.jpg';

@@ -260,6 +260,7 @@ try {
     }
 
     // DESTROY UPLOAD
+    /*
     if ($Request->request->has('uploadsDestroy')) {
         $upload = $Entity->Uploads->readFromId((int) $Request->request->get('uploadId'));
         $Entity->Uploads->destroy(new DestroyParams((int) $Request->request->get('uploadId')));
@@ -274,6 +275,7 @@ try {
             'msg' => _('File deleted successfully') . $msg,
         ));
     }
+     */
 } catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException | PDOException $e) {
     $Response->setData(array(
         'res' => false,

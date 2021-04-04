@@ -35,4 +35,19 @@ abstract class UpdateUpload implements UpdateUploadParamsInterface
     {
         return $this->id;
     }
+
+    public function getColor(): string
+    {
+        return 'Nope';
+    }
+
+    public function getIsTimestampable(): int
+    {
+        return 0;
+    }
+
+    public function getIsDefault(): int
+    {
+        return 0;
+    }
 }

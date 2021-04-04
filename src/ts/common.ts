@@ -82,7 +82,7 @@ $(document).ready(function() {
     // SHOW PRIVACY POLICY
     if (el.matches('[data-action="show-privacy-policy"]')) {
       const AjaxC = new Ajax('privacyPolicy', '0', 'app/controllers/Ajax.php');
-      const privacyPolicy = AjaxC.do('read')
+      AjaxC.do('read')
         .then(json => typeof json.msg === 'string' ? json.msg : '')
         .then(privacy => {
           (document.getElementById('privacyModalBody') as HTMLDivElement).innerHTML = privacy;

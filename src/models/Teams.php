@@ -149,8 +149,8 @@ class Teams implements ReadableInterface, DestroyableInterface
         $newId = $this->Db->lastInsertId();
 
         // create default status
-        $Status = new Status($this->Users);
-        $Status->createDefault($newId);
+        $Status = new Status($newId);
+        $Status->createDefault();
 
         // create default item type
         $ItemsTypes = new ItemsTypes($this->Users);

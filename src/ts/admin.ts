@@ -11,6 +11,7 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import TeamGroup from './TeamGroup.class';
 import Status from './Status.class';
+import i18next from 'i18next';
 import ItemType from './ItemType.class';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
@@ -119,18 +120,39 @@ $(document).ready(function() {
   });
 
   // STATUS
-  const StatusC = new Status;
+  const StatusC = new Status();
 
-  $(document).on('click', '#statusCreate', function() {
-    StatusC.create();
+  document.getElementById('statusCreate').addEventListener('click', () => {
+    const content = (document.getElementById('statusName') as HTMLInputElement).value;
+    const color = (document.getElementById('statusColor') as HTMLInputElement).value;
+    const isTimestampable = (document.getElementById('statusTimestamp') as HTMLInputElement).checked;
+    if (content.length > 1) {
+      StatusC.create(content, color, isTimestampable).then(() => window.location.replace('admin.php?tab=4'));
+    }
   });
 
-  $(document).on('click', '.statusSave', function() {
-    StatusC.update($(this).data('id'));
+  document.querySelectorAll('.statusSave').forEach(el => {
+    el.addEventListener('click', ev => {
+      const statusId = parseInt((ev.target as HTMLElement).dataset.statusid);
+      const content = (document.getElementById('statusName_' + statusId) as HTMLInputElement).value;
+      const color = (document.getElementById('statusColor_' + statusId) as HTMLInputElement).value;
+      const isTimestampable = (document.getElementById('statusTimestamp_' + statusId) as HTMLInputElement).checked;
+      const isDefault = (document.getElementById('statusDefault_' + statusId) as HTMLInputElement).checked;
+      StatusC.update(statusId, content, color, isTimestampable, isDefault);
+    });
   });
 
-  $(document).on('click', '.statusDestroy', function() {
-    StatusC.destroy($(this).data('id'));
+  document.querySelectorAll('[data-action="destroy-status"]').forEach(el => {
+    el.addEventListener('click', ev => {
+      const statusId = parseInt((ev.target as HTMLElement).dataset.statusid);
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        StatusC.destroy(statusId).then((json) => {
+          if (json.res) {
+            document.getElementById('status_' + statusId).remove();
+          }
+        });
+      }
+    });
   });
   // END STATUS
 

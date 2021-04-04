@@ -11,8 +11,15 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * Interface for updating something
+ * Interface for creating a status
  */
-interface UpdateParamsInterface extends UpdateStepParamsInterface, UpdateUploadParamsInterface, UpdateCommentParamsInterface, UpdateStatusParamsInterface
+interface CreateStatusParamsInterface
 {
+    public function getContent(): string;
+
+    public function getColor(): string;
+
+    public function getIsTimestampable(): int;
+
+    public function getIsDefault(): int;
 }

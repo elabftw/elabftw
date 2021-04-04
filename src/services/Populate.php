@@ -49,7 +49,7 @@ class Populate
     public function generate(AbstractEntity $Entity): void
     {
         if ($Entity instanceof Experiments) {
-            $Category = new Status($Entity->Users);
+            $Category = new Status($Entity->Users->team);
             $tpl = 0;
         } else {
             $Category = new ItemsTypes($Entity->Users);

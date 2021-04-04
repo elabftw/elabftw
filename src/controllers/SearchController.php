@@ -27,7 +27,7 @@ class SearchController extends AbstractEntityController
 
         // on search page, the categories can be status or itemstypes depending on where one searches
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $Status = new Status($this->App->Users);
+        $Status = new Status($this->App->Users->team);
         if ($this->App->Request->query->get('type') !== 'experiments') {
             $this->categoryArr = $ItemsTypes->readAll();
         } else {

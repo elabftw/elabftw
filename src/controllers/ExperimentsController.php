@@ -33,7 +33,7 @@ class ExperimentsController extends AbstractEntityController
     {
         parent::__construct($app, $entity);
 
-        $Category = new Status($this->App->Users);
+        $Category = new Status($this->App->Users->team);
         $this->categoryArr = $Category->read();
     }
 

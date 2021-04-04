@@ -217,7 +217,7 @@ class ApiController implements ControllerInterface
         } elseif ($this->endpoint === 'items_types') {
             $this->Entity = new ItemsTypes($this->Users);
         } elseif ($this->endpoint === 'status') {
-            $this->Category = new Status($this->Users);
+            $this->Category = new Status($this->Users->team);
         } elseif ($this->endpoint === 'events') {
             $this->Entity = new Database($this->Users, $this->id);
             $this->Scheduler = new Scheduler($this->Entity);

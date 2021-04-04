@@ -11,24 +11,22 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\SortableTrait;
 
 /**
  * A category is a status for experiments and item type for db item
  */
-abstract class AbstractCategory implements CrudInterface
+//abstract class AbstractCategory implements CrudInterface
+abstract class AbstractCategory implements ModelInterface
 {
     use SortableTrait;
     use EntityTrait;
 
-    /** TODO implement steps for abstractcategory? maybe itemtype should not be a category but really should be abstractentity instead */
-    public Steps $Steps;
-
     protected Db $Db;
 
-    protected Users $Users;
+    protected int $team;
 
     /**
      * Get the color of an item type

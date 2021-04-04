@@ -58,8 +58,9 @@
 
 
                         <div class='dropdown-divider'></div>
-                          <a class='dropdown-item hover-danger' href='#' data-action='destroy-upload' data-id='{{ upload.id }}' data-type='{{ upload.type }}'
-                        data-itemid='{{ upload.item_id }}'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</a>
+                        <a class='dropdown-item hover-danger clickable' data-action='destroy-upload' data-uploadid='{{ upload.id }}'>
+                          <i class='fas fa-trash-alt fa-fw mr-1' title='{{ 'Delete'|trans }}'></i>{{ 'Delete'|trans }}
+                        </a>
                       <!--a class='uploadsDestroy clickable'  data-msg='{{ 'Delete this?'|trans }}' title='{{ 'Delete'|trans }}'-->
                       </div>
                     </div>

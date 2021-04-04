@@ -25,7 +25,6 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Metadata;
 use Elabftw\Models\PrivacyPolicy;
-use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
@@ -105,14 +104,6 @@ try {
             $Model = new PrivacyPolicy(new Config());
             break;
 
-        case 'status':
-            // status is only from admin panel
-            if (!$App->Session->get('is_admin')) {
-                throw new IllegalActionException('Non admin user tried to access admin controller.');
-            }
-            $Model = new Status($App->Users);
-            break;
-
         case 'teamgroup':
             if (!$App->Session->get('is_admin')) {
                 throw new IllegalActionException('Non admin user tried to access admin controller.');
@@ -133,13 +124,6 @@ try {
 
         case 'todolist':
             $Model = new Todolist($App->Users);
-            break;
-
-        case 'upload':
-            if (!($Entity instanceof Experiments || $Entity instanceof Database)) {
-                throw new IllegalActionException('Invalid entity type for upload');
-            }
-            $Model = $Entity->Uploads;
             break;
 
         case 'user':

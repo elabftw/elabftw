@@ -42,7 +42,7 @@ try {
     }
 
     $ItemsTypes = new ItemsTypes($App->Users);
-    $Status = new Status($App->Users);
+    $Status = new Status($App->Users->team);
     $Tags = new Tags(new Experiments($App->Users));
     $TeamGroups = new TeamGroups($App->Users);
     $Teams = new Teams($App->Users);

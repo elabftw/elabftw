@@ -8,7 +8,7 @@
 import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
-import { Payload, Method, Model, Target, Type, Action } from './interfaces';
+import { Payload, Entity, Method, Model, Target, Type, Action } from './interfaces';
 import { Ajax } from './Ajax.class';
 import { notif, displayMolFiles, display3DMolecules } from './misc';
 import i18next from 'i18next';
@@ -35,6 +35,11 @@ $(document).ready(function() {
   if (about.type === 'items') {
     entityType = Type.Item;
   }
+
+  const entity: Entity = {
+    type: entityType,
+    id: parseInt(about.id),
+  };
 
   // make file comments editable
   $(document).on('mouseenter', '.file-comment', function() {
@@ -90,24 +95,28 @@ $(document).ready(function() {
   });
 
   // DESTROY UPLOAD
-  $(document).on('click', '.uploadsDestroy', function() {
-    const itemid = $(this).data('itemid');
-    if (confirm($(this).data('msg'))) {
-      $.post('app/controllers/EntityAjaxController.php', {
-        uploadsDestroy: true,
-        uploadId: $(this).data('id'),
-        id: itemid,
-        type: $(this).data('type')
-      }).done(function(json) {
-        notif(json);
-        if (json.res) {
-          $('#filesdiv').load('?mode=edit&id=' + itemid + ' #filesdiv > *', function() {
-            displayMolFiles();
-            display3DMolecules(true);
-          });
-        }
-      });
-    }
+  document.querySelectorAll('[data-action="destroy-upload"]').forEach(el => {
+    el.addEventListener('click', ev => {
+      const uploadId = parseInt((ev.target as HTMLElement).dataset.uploadid);
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        const AjaxC = new Ajax();
+        const payload: Payload = {
+          method: Method.POST,
+          action: Action.Destroy,
+          model: Model.Upload,
+          entity: entity,
+          id : uploadId,
+        };
+        AjaxC.send(payload).then(json => {
+          if (json.res) {
+            $('#filesdiv').load('?mode=edit&id=' + entity.id + ' #filesdiv > *', function() {
+              displayMolFiles();
+              display3DMolecules(true);
+            });
+          }
+        });
+      }
+    });
   });
 
   // ACTIVATE FANCYBOX

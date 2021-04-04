@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Model, Target, Type, Entity, Action } from './interfaces';
+import { Payload, Method, Model, Entity, Action } from './interfaces';
 import { Ajax } from './Ajax.class';
 
 export default class Link {

@@ -43,6 +43,7 @@ enum Action {
 }
 
 enum Model {
+  Comment = 'comment',
   Upload = 'upload',
   Step = 'step',
   Link = 'link',

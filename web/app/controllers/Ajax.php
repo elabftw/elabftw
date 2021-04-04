@@ -23,11 +23,9 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Links;
 use Elabftw\Models\Metadata;
 use Elabftw\Models\PrivacyPolicy;
 use Elabftw\Models\Status;
-use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
@@ -67,14 +65,6 @@ try {
             $itemId = (int) $Request->query->get('params')['itemId'];
         }
     }
-    if (strpos($Request->headers->get('Content-Type'), 'application/json') === 0) {
-        $data = json_decode($Request->getContent(), true);
-        $what = $data['what'];
-        $action = $data['action'];
-        $type = $data['type'];
-        $params = $data['params'];
-        $itemId = (int) $data['params']['itemId'];
-    }
 
     if ($type === 'experiments') {
         $Entity = new Experiments($App->Users, $itemId);
@@ -107,13 +97,6 @@ try {
             $Model = new ItemsTypes($App->Users);
             break;
 
-        case 'link':
-            if (!($Entity instanceof Experiments || $Entity instanceof Database || $Entity instanceof Templates)) {
-                throw new IllegalActionException('Invalid entity type for link');
-            }
-            $Model = new Links($Entity);
-            break;
-
         case 'metadata':
             $Model = new Metadata($Entity);
             break;
@@ -128,13 +111,6 @@ try {
                 throw new IllegalActionException('Non admin user tried to access admin controller.');
             }
             $Model = new Status($App->Users);
-            break;
-
-        case 'step':
-            if (!($Entity instanceof Experiments || $Entity instanceof Database || $Entity instanceof Templates)) {
-                throw new IllegalActionException('Invalid entity type for steps');
-            }
-            $Model = new Steps($Entity);
             break;
 
         case 'teamgroup':
@@ -212,6 +188,17 @@ try {
                 'res' => true,
                 'msg' => _('Saved'),
                 'value' => $res,
+            ));
+            break;
+
+        // for the moment this stays here because sending json with jeditable is tricky
+        // TODO, should be moved to JsonApi like the rest
+        case 'updateComment':
+            $res = $Model->update(new UpdateComment($Params->comment, (int) $params['id']));
+            $Response->setData(array(
+                'res' => true,
+                'msg' => _('Saved'),
+                'value' => $Params->comment,
             ));
             break;
 

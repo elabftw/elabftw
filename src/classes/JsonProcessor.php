@@ -15,6 +15,7 @@ use Elabftw\Interfaces\CreateParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateParamsInterface;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Comments;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
@@ -78,6 +79,9 @@ class JsonProcessor
     public function getParams()
     {
         if ($this->action === 'create') {
+            if ($this->model instanceof Comments) {
+                return new CreateComment($this->content);
+            }
             if ($this->model instanceof Links) {
                 return new CreateLink($this->id);
             }
@@ -141,13 +145,9 @@ class JsonProcessor
 
     private function getModel(): ModelInterface
     {
-        if ($this->decoded['model'] === 'upload') {
-            if (!($this->Entity instanceof Experiments || $this->Entity instanceof Database)) {
-                throw new IllegalActionException('Invalid entity type for upload');
-            }
-            return $this->Entity->Uploads;
+        if ($this->decoded['model'] === 'comment') {
+            return $this->Entity->Comments;
         }
-
         if ($this->decoded['model'] === 'link') {
             return $this->Entity->Links;
         }
@@ -155,6 +155,13 @@ class JsonProcessor
         if ($this->decoded['model'] === 'step') {
             return $this->Entity->Steps;
         }
+        if ($this->decoded['model'] === 'upload') {
+            if (!($this->Entity instanceof Experiments || $this->Entity instanceof Database)) {
+                throw new IllegalActionException('Invalid entity type for upload');
+            }
+            return $this->Entity->Uploads;
+        }
+
         throw new IllegalActionException('Bad model');
     }
 

@@ -10,7 +10,7 @@ import 'jquery-jeditable/src/jquery.jeditable.js';
 import Todolist from './Todolist.class';
 import i18next from 'i18next';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   const TodolistC = new Todolist();
 
   // reopen todolist panel if it was previously opened

@@ -14,7 +14,7 @@ import { relativeMoment, makeSortableGreatAgain } from './misc';
 import { getCheckedBoxes, notif } from './misc';
 import { Type, Entity } from './interfaces';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
   let entityType: Type;

@@ -11,8 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * Interface for creating something
+ * Interface for creating a comment
  */
-interface CreateParamsInterface extends CreateStepParamsInterface, CreateUploadParamsInterface, CreateLinkParamsInterface, CreateCommentParamsInterface
+interface CreateCommentParamsInterface
 {
+    public function getContent(): string;
 }

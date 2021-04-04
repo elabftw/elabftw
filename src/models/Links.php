@@ -196,9 +196,10 @@ class Links implements ReadableInterface, ModelInterface
     public function destroy(DestroyParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
-        $sql = 'DELETE FROM ' . $this->Entity->type . '_links WHERE id= :id';
+        $sql = 'DELETE FROM ' . $this->Entity->type . '_links WHERE id= :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 }

@@ -199,9 +199,10 @@ class Steps implements ModelInterface
     {
         $this->Entity->canOrExplode('write');
 
-        $sql = 'DELETE FROM ' . $this->Entity->type . '_steps WHERE id = :id';
+        $sql = 'DELETE FROM ' . $this->Entity->type . '_steps WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
@@ -211,9 +212,10 @@ class Steps implements ModelInterface
     private function updateFinished(int $stepId): bool
     {
         $sql = 'UPDATE ' . $this->Entity->type . '_steps SET finished = !finished,
-            finished_time = NOW() WHERE id = :id';
+            finished_time = NOW() WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $stepId, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 

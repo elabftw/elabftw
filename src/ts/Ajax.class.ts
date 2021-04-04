@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import { notif } from './misc';
-import { ActionReq, ResponseMsg } from './interfaces';
+import { ActionReq, Payload, ResponseMsg } from './interfaces';
 
 export class Ajax {
   type: string;
@@ -99,7 +99,7 @@ export class Ajax {
     });
   }
 
-  send(payload): Promise<ResponseMsg> {
+  send(payload: Payload): Promise<ResponseMsg> {
     // add csrf token to the request in the header
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     return fetch('app/controllers/JsonApi.php', {

@@ -83,51 +83,60 @@ class JsonProcessor
     // @phpstan-ignore-next-line
     public function getParams()
     {
-        if ($this->action === 'create') {
-            if ($this->model instanceof Comments) {
-                return new CreateComment($this->content);
+        switch ($this->action) {
+            case 'create':
+                return $this->getCreateParams();
+            case 'update':
+                return $this->getUpdateParams();
+            case 'destroy':
+                return new DestroyParams($this->id);
+            default:
+                throw new IllegalActionException('Bad params');
+        }
+    }
+
+    // @phpstan-ignore-next-line
+    private function getCreateParams()
+    {
+        if ($this->model instanceof Comments) {
+            return new CreateComment($this->content);
+        }
+        if ($this->model instanceof Links) {
+            return new CreateLink($this->id);
+        }
+        if ($this->model instanceof Status) {
+            return new CreateStatus($this->content, $this->extra['color'], (bool) $this->extra['isTimestampable']);
+        }
+        if ($this->model instanceof Steps) {
+            return new CreateStep($this->content);
+        }
+        if ($this->model instanceof Uploads) {
+            return new CreateUpload(Request::createFromGlobals());
+        }
+    }
+
+    // @phpstan-ignore-next-line
+    private function getUpdateParams()
+    {
+        if ($this->model instanceof Uploads) {
+            if ($this->target === 'real_name') {
+                return new UpdateUploadRealName($this);
             }
-            if ($this->model instanceof Links) {
-                return new CreateLink($this->id);
-            }
-            if ($this->model instanceof Status) {
-                return new CreateStatus($this->content, $this->extra['color'], (bool) $this->extra['isTimestampable']);
-            }
-            if ($this->model instanceof Steps) {
-                return new CreateStep($this->content);
-            }
-            if ($this->model instanceof Uploads) {
-                return new CreateUpload(Request::createFromGlobals());
+            if ($this->target === 'comment') {
+                return new UpdateUploadComment($this);
             }
         }
-
-        if ($this->action === 'update') {
-            if ($this->model instanceof Uploads) {
-                if ($this->target === 'real_name') {
-                    return new UpdateUploadRealName($this);
-                }
-                if ($this->target === 'comment') {
-                    return new UpdateUploadComment($this);
-                }
+        if ($this->model instanceof Steps) {
+            if ($this->target === 'body') {
+                return new UpdateStepBody($this->id, $this->content);
             }
-            if ($this->model instanceof Steps) {
-                if ($this->target === 'body') {
-                    return new UpdateStepBody($this->id, $this->content);
-                }
-                if ($this->target === 'finished') {
-                    return new UpdateStepFinished($this->id);
-                }
-            }
-            if ($this->model instanceof Status) {
-                return new UpdateStatus($this->id, $this->content, $this->extra['color'], (bool) $this->extra['isTimestampable'], (bool) $this->extra['isDefault']);
+            if ($this->target === 'finished') {
+                return new UpdateStepFinished($this->id);
             }
         }
-
-
-        if ($this->action === 'destroy') {
-            return new DestroyParams($this->id);
+        if ($this->model instanceof Status) {
+            return new UpdateStatus($this->id, $this->content, $this->extra['color'], (bool) $this->extra['isTimestampable'], (bool) $this->extra['isDefault']);
         }
-        throw new IllegalActionException('Bad params');
     }
 
     // for now only GET or POST, should add PUT and DELETE later on...

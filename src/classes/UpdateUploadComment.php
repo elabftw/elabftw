@@ -18,6 +18,8 @@ final class UpdateUploadComment extends UpdateUpload implements UpdateParamsInte
 {
     private const MIN_COMMENT_SIZE = 2;
 
+    public string $action;
+
     private string $content;
 
     public function __construct(JsonProcessor $payload)
@@ -25,6 +27,7 @@ final class UpdateUploadComment extends UpdateUpload implements UpdateParamsInte
         parent::__construct($payload);
         $this->content = $payload->content;
         $this->target = 'comment';
+        $this->action = 'update';
     }
 
     public function getContent(): string

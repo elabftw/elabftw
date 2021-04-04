@@ -79,7 +79,7 @@ export default class ItemType extends Crud {
     $('#itemsTypesEditor_' + id).toggle();
 
     this.send({
-      action: 'update',
+      action: 'updateItemType',
       what: this.what,
       params: {
         id: id,

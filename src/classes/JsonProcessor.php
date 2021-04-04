@@ -14,7 +14,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreateParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateParamsInterface;
-use Elabftw\Models\AbstractCategory;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
@@ -40,13 +39,13 @@ class JsonProcessor
 
     public ModelInterface $model;
 
-    public AbstractEntity|AbstractCategory $Entity;
+    public AbstractEntity $Entity;
 
     public ?string $target;
 
-    public ?string $content;
+    public string $content = '';
 
-    public ?int $id;
+    public int $id = 0;
 
     private array $decoded;
 
@@ -171,7 +170,7 @@ class JsonProcessor
     }
 
     // figure out which type of entity we have to deal with
-    private function getEntity(): AbstractEntity|AbstractCategory
+    private function getEntity(): AbstractEntity
     {
         if ($this->decoded['entity']['type'] === 'experiments') {
             return new Experiments($this->Users, (int) $this->decoded['entity']['id']);
@@ -183,18 +182,18 @@ class JsonProcessor
         return new Database($this->Users, (int) $this->decoded['entity']['id']);
     }
 
-    private function getContent(): ?string
+    private function getContent(): string
     {
         if (!isset($this->decoded['content'])) {
-            return null;
+            return $this->content;
         }
-        return Filter::body($this->decoded['content'] ?? '');
+        return Filter::body($this->decoded['content']);
     }
 
-    private function getId(): ?int
+    private function getId(): int
     {
         if (!isset($this->decoded['id'])) {
-            return null;
+            return $this->id;
         }
         $id = Check::id((int) $this->decoded['id']);
         if ($id === false) {

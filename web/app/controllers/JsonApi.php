@@ -18,6 +18,8 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Interfaces\DestroyParamsInterface;
+use Elabftw\Interfaces\UpdateParamsInterface;
 use Exception;
 use PDOException;
 use Swift_TransportException;
@@ -46,9 +48,9 @@ try {
 
     if ($params->action === 'create') {
         $res = $payload->model->create($params);
-    } elseif ($params->action === 'update') {
+    } elseif ($params->action === 'update' && $params instanceof UpdateParamsInterface) {
         $res = $payload->model->update($params);
-    } elseif ($params->action === 'destroy') {
+    } elseif ($params->action === 'destroy' && $params instanceof DestroyParamsInterface) {
         $res = $payload->model->destroy($params);
     }
 

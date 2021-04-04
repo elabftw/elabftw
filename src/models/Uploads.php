@@ -212,7 +212,7 @@ class Uploads implements ModelInterface
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
-        $req->bindValue(':item_id', $params->getEntityId(), PDO::PARAM_INT);
+        $req->bindValue(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 

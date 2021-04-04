@@ -14,13 +14,16 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\HasMetadataInterface;
+use Elabftw\Traits\SortableTrait;
 use PDO;
 
 /**
  * The kind of items you can have in the database for a team
  */
-class ItemsTypes extends AbstractCategory implements HasMetadataInterface
+class ItemsTypes extends AbstractEntity implements HasMetadataInterface
 {
+    use SortableTrait;
+
     public function __construct(Users $users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
@@ -54,7 +57,7 @@ class ItemsTypes extends AbstractCategory implements HasMetadataInterface
     /**
      * Read the body (template) and default permissions of the item_type from an id
      */
-    public function read(): array
+    public function read(bool $getTags = true): array
     {
         $sql = 'SELECT template, canread, canwrite, metadata FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
@@ -141,10 +144,15 @@ class ItemsTypes extends AbstractCategory implements HasMetadataInterface
         return (string) $res;
     }
 
+    public function duplicate(): int
+    {
+        return 1;
+    }
+
     /**
      * Update an item type
      */
-    public function update(ParamsProcessor $params): string
+    public function updateAll(ParamsProcessor $params): string
     {
         $sql = 'UPDATE items_types SET
             name = :name,

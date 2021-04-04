@@ -14,16 +14,16 @@ use Elabftw\Interfaces\UpdateUploadParamsInterface;
 
 abstract class UpdateUpload implements UpdateUploadParamsInterface
 {
+    public string $action;
+
     protected string $target;
 
     private int $id;
 
-    private int $entityId;
-
     public function __construct(JsonProcessor $payload)
     {
         $this->id = $payload->id;
-        $this->entityId = $payload->Entity->id;
+        $this->action = 'update';
     }
 
     public function getTarget(): string
@@ -34,10 +34,5 @@ abstract class UpdateUpload implements UpdateUploadParamsInterface
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function getEntityId(): int
-    {
-        return $this->entityId;
     }
 }

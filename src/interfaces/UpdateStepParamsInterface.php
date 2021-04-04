@@ -20,6 +20,4 @@ interface UpdateStepParamsInterface
     public function getTarget(): string;
 
     public function getId(): int;
-
-    public function getEntityId(): int;
 }

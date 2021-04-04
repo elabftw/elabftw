@@ -104,10 +104,10 @@ class ApiController implements ControllerInterface
                 if ($this->endpoint === 'experiments' || $this->endpoint === 'items') {
                     return $this->getEntity();
                 }
-                if ($this->endpoint === 'templates') {
+                if ($this->endpoint === 'templates' || $this->endpoint === 'items_types') {
                     return $this->getTemplate();
                 }
-                if ($this->endpoint === 'items_types' || $this->endpoint === 'status') {
+                if ($this->endpoint === 'status') {
                     return $this->getCategory();
                 }
                 if ($this->endpoint === 'bookable') {
@@ -214,7 +214,7 @@ class ApiController implements ControllerInterface
         } elseif ($this->endpoint === 'templates') {
             $this->Entity = new Templates($this->Users, $this->id);
         } elseif ($this->endpoint === 'items_types') {
-            $this->Category = new ItemsTypes($this->Users);
+            $this->Entity = new ItemsTypes($this->Users);
         } elseif ($this->endpoint === 'status') {
             $this->Category = new Status($this->Users);
         } elseif ($this->endpoint === 'events') {

@@ -224,6 +224,15 @@ try {
             ));
             break;
 
+        case 'updateItemType':
+            $res = $Model->updateAll($Params);
+            $Response->setData(array(
+                'res' => true,
+                'msg' => _('Saved'),
+                'value' => $res,
+            ));
+            break;
+
         case 'updateMember':
             $Model->updateMember(
                 (int) $Request->request->get('params')['user'],

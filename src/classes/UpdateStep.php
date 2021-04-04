@@ -20,9 +20,9 @@ class UpdateStep
 
     // TODO this could be a generic processor, or maybe a ProcessedParams class
     // because here we don't care where the params are coming from!
-    public function __construct(JsonProcessor $payload)
+    public function __construct(int $id)
     {
-        $this->id = $payload->id;
+        $this->id = $id;
         $this->action = 'update';
     }
 

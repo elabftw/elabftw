@@ -32,7 +32,7 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
         );
         $itemsTypes = $this->ItemsTypes->readAll();
         $last = array_pop($itemsTypes);
-        $this->ItemsTypes->update(
+        $this->ItemsTypes->updateAll(
             new ParamsProcessor(
                 array(
                     'name' => 'newname',
@@ -44,7 +44,7 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
             )
         );
         $this->ItemsTypes->setId((int) $last['category_id']);
-        $this->assertEquals('newbody', $this->ItemsTypes->read($last['category_id'])['template']);
+        $this->assertEquals('newbody', $this->ItemsTypes->read()['template']);
         $this->ItemsTypes->destroy((int) $last['category_id']);
     }
 }

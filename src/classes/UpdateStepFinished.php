@@ -14,12 +14,9 @@ use Elabftw\Interfaces\UpdateParamsInterface;
 
 final class UpdateStepFinished extends UpdateStep implements UpdateParamsInterface
 {
-    public string $action;
-
     public function __construct(int $id)
     {
-        $this->id = $id;
-        $this->action = 'update';
+        parent::__construct($id);
         $this->target = 'finished';
     }
 

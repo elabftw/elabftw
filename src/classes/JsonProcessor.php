@@ -96,9 +96,7 @@ class JsonProcessor
             }
             if ($this->model instanceof Steps) {
                 if ($this->target === 'body') {
-                    // TODO it's better to have the strict minimum here instead of the whole this
-                    // it helps when doing from elsewhere in the code
-                    return new UpdateStepBody($this);
+                    return new UpdateStepBody($this->id, $this->content);
                 }
                 if ($this->target === 'finished') {
                     return new UpdateStepFinished($this->id);

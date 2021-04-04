@@ -11,8 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * Interface for creating something
+ * Interface for creating a link
  */
-interface CreateParamsInterface extends CreateStepParamsInterface, CreateUploadParamsInterface, CreateLinkParamsInterface
+interface CreateLinkParamsInterface
 {
+    public function getId(): int;
 }

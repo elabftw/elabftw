@@ -10,7 +10,7 @@ import { Ajax } from './Ajax.class';
 
 export default class Step {
   entity: Entity;
-  model: Model.Step;
+  model: Model;
   sender: Ajax;
 
   constructor(entity: Entity) {

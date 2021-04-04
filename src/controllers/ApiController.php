@@ -12,6 +12,7 @@ namespace Elabftw\Controllers;
 
 use function dirname;
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\CreateLink;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\ParamsProcessor;
@@ -826,7 +827,7 @@ class ApiController implements ControllerInterface
      */
     private function createLink(): Response
     {
-        $this->Entity->Links->create(new ParamsProcessor(array('id' => (int) $this->Request->request->get('link'))));
+        $this->Entity->Links->create(new CreateLink((int) $this->Request->request->get('link')));
         return new JsonResponse(array('result' => 'success'));
     }
 

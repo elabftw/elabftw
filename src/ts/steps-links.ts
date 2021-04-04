@@ -15,7 +15,6 @@ import { getCheckedBoxes, notif } from './misc';
 import { Type, Entity } from './interfaces';
 
 $(document).ready(function() {
-  const type = $('#info').data('type');
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
   let entityType: Type;
@@ -106,6 +105,7 @@ $(document).ready(function() {
         $('#steps_div_' + entity.id).load(loadUrl, function() {
           relativeMoment();
           makeSortableGreatAgain();
+          $('#todo_step_' + stepId).parent().hide();
         });
       });
     }
@@ -114,17 +114,29 @@ $(document).ready(function() {
   // END STEPS
 
   // LINKS
-  const LinkC = new Link(type);
+  const LinkC = new Link(entity);
 
   // CREATE
   // listen keypress, add link when it's enter or on blur
   $(document).on('keypress blur', '#linkinput', function(e) {
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
-      LinkC.create(parseInt($(this).val() as string), $(this).data('id') as number);
+      // grab the id from the target
+      const target = parseInt($(this).val() as string);
+      // only send request if there is a targetId
+      if (Number.isNaN(target)) {
+        return;
+      }
+      LinkC.create(target).then(() => {
+        // only reload children of links_div_id
+        $('#links_div_' + entity.id).load(window.location.href + ' #links_div_' + entity.id + ' > *');
+        // clear input field
+        (document.querySelector('.linkinput') as HTMLInputElement).value = '';
+      });
     }
   });
 
+  // CREATE FOR MULTIPLE ENTITIES
   $(document).on('keypress blur', '#linkInputMultiple', function(e) {
     if ($(this).val() === '') {
       return;
@@ -142,7 +154,12 @@ $(document).ready(function() {
         return;
       }
       $.each(checked, function(index) {
-        LinkC.create(parseInt($('#linkInputMultiple').val() as string), checked[index]['id']);
+        const tmpEntity: Entity = {
+          type: entity.type,
+          id: checked[index]['id'],
+        };
+        const TmpLinkC = new Link(entity);
+        TmpLinkC.create(parseInt($('#linkInputMultiple').val() as string));
       });
       $(this).val('');
     }
@@ -166,6 +183,11 @@ $(document).ready(function() {
 
   // DESTROY
   $(document).on('click', '.linkDestroy', function() {
-    LinkC.destroy($(this));
+    if (confirm(i18next.t('link-delete-warning'))) {
+      LinkC.destroy($(this).data('linkid')).then(() => {
+        // only reload children of links_div_id
+        $('#links_div_' + entity.id).load(window.location.href + ' #links_div_' + entity.id + ' > *');
+      });
+    }
   });
 });

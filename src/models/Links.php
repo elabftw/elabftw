@@ -11,16 +11,20 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Interfaces\CreatableInterface;
+use Elabftw\Interfaces\CreateLinkParamsInterface;
 use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Interfaces\DestroyParamsInterface;
+use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\ReadableInterface;
+use Elabftw\Interfaces\UpdateParamsInterface;
 use PDO;
 
 /**
  * All about the experiments links
  */
-class Links implements CreatableInterface, ReadableInterface, DestroyableInterface
+//class Links implements CreatableInterface, ReadableInterface, DestroyableInterface
+class Links implements ReadableInterface, ModelInterface
 {
     public AbstractEntity $Entity;
 
@@ -35,9 +39,9 @@ class Links implements CreatableInterface, ReadableInterface, DestroyableInterfa
     /**
      * Add a link to an experiment
      */
-    public function create(ParamsProcessor $params): int
+    public function create(CreateLinkParamsInterface $params): int
     {
-        $link = $params->id;
+        $link = $params->getId();
         $Database = new Database($this->Entity->Users, $link);
         $Database->canOrExplode('read');
         $this->Entity->canOrExplode('write');
@@ -184,12 +188,17 @@ class Links implements CreatableInterface, ReadableInterface, DestroyableInterfa
         }
     }
 
-    public function destroy(int $id): bool
+    public function update(UpdateParamsInterface $params): bool
+    {
+        return false;
+    }
+
+    public function destroy(DestroyParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
         $sql = 'DELETE FROM ' . $this->Entity->type . '_links WHERE id= :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 }

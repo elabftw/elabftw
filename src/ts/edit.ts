@@ -9,7 +9,7 @@ declare let key: any;
 declare let MathJax: any;
 import { displayMolFiles, display3DMolecules, insertParamAndReload, notif } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
-import { Payload, Method, Model, Target, Type, Entity, Action } from './interfaces';
+import { Payload, Method, Model, Target, Type, Action } from './interfaces';
 import 'jquery-ui/ui/widgets/datepicker';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         id: event.target.dataset.id,
       };
 
-      AjaxC.send(payload).then(json => {
+      AjaxC.send(payload).then(() => {
         event.target.remove();
         // change the link text with the new one
         original.textContent = newFilename;

@@ -18,6 +18,7 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Links;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Uploads;
@@ -77,6 +78,9 @@ class JsonProcessor
     public function getParams()
     {
         if ($this->action === 'create') {
+            if ($this->model instanceof Links) {
+                return new CreateLink($this->id);
+            }
             if ($this->model instanceof Steps) {
                 return new CreateStep($this->content);
             }
@@ -142,6 +146,10 @@ class JsonProcessor
                 throw new IllegalActionException('Invalid entity type for upload');
             }
             return $this->Entity->Uploads;
+        }
+
+        if ($this->decoded['model'] === 'link') {
+            return $this->Entity->Links;
         }
 
         if ($this->decoded['model'] === 'step') {

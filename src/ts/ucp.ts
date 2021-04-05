@@ -8,6 +8,7 @@
 import { notif } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
+import Apikey from './Apikey.class';
 import Template from './Template.class';
 import { Ajax } from './Ajax.class';
 import i18next from 'i18next';
@@ -104,18 +105,15 @@ $(document).ready(function() {
   // TinyMCE
   tinymce.init(getTinymceBaseConfig('ucp'));
 
-  // DESTROY API KEY
-  $(document).on('click', '.keyDestroy', function() {
-    $.post('app/controllers/Ajax.php', {
-      action: 'destroy',
-      what: 'apikey',
-      params: {
-        id: $(this).data('id'),
-      },
-    }).done(function(json) {
-      notif(json);
-      // only reload children of apiTable
-      $('#apiTable').load('ucp.php #apiTable > *');
-    });
+  const ApikeyC = new Apikey();
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // DESTROY API KEY
+    if (el.matches('[data-action="destroy-apikey"]')) {
+      ApikeyC.destroy(parseInt(el.dataset.apikeyid)).then(() => {
+        // only reload children of apiTable
+        $('#apiTable').load('ucp.php #apiTable > *');
+      });
+    }
   });
 });

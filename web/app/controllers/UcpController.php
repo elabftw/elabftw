@@ -126,11 +126,12 @@ try {
     if ($Request->request->has('createApiKey')) {
         $tab = '4';
         $ApiKeys = new ApiKeys($App->Users);
-        $key = $ApiKeys->create(
+        $params = new CreateApikey(
             $Request->request->get('name'),
-            (int) $Request->request->get('canWrite')
+            (int) $Request->request->get('canWrite'),
         );
-        $App->Session->getFlashBag()->add('warning', sprintf(_("This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again: %s"), $key));
+        $ApiKeys->create($params);
+        $App->Session->getFlashBag()->add('warning', sprintf(_("This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again: %s"), $params->getKey()));
     }
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));

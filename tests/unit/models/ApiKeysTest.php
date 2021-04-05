@@ -9,36 +9,43 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\CreateApikey;
+use Elabftw\Elabftw\DestroyParams;
+use function mb_strlen;
+
 class ApiKeysTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
     {
         $this->ApiKeys = new ApiKeys(new Users(1, 1));
-        $this->key = $this->ApiKeys->create('my key', 0);
     }
 
     public function testCreate()
     {
-        $this->assertTrue(\mb_strlen($this->key) === 84);
+        $params = new CreateApikey('test key', 1);
+        $this->ApiKeys->create($params);
+        $this->assertTrue(mb_strlen($params->getKey()) === 84);
     }
 
     public function testReadAll()
     {
         $res = $this->ApiKeys->readAll();
         $this->assertIsArray($res);
-        $this->assertTrue($res[1]['name'] === 'my key');
-        $this->assertTrue($res[1]['can_write'] === '0');
+        $this->assertTrue($res[1]['name'] === 'test key');
+        $this->assertTrue($res[1]['can_write'] === '1');
     }
 
     public function testReadFromApiKey()
     {
-        $res = $this->ApiKeys->readFromApiKey($this->key);
+        $params = new CreateApikey('my key', 0);
+        $this->ApiKeys->create($params);
+        $res = $this->ApiKeys->readFromApiKey($params->getKey());
         $this->assertTrue($res['userid'] === '1');
         $this->assertTrue($res['canWrite'] === '0');
     }
 
     public function testDestroy()
     {
-        $this->assertTrue($this->ApiKeys->destroy(2));
+        $this->assertTrue($this->ApiKeys->destroy(new DestroyParams(2)));
     }
 }

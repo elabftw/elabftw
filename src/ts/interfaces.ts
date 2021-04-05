@@ -43,6 +43,7 @@ enum Action {
 }
 
 enum Model {
+  Apikey = 'apikey',
   Comment = 'comment',
   Link = 'link',
   Status = 'status',

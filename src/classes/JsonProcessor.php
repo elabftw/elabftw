@@ -16,6 +16,7 @@ use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateParamsInterface;
 use Elabftw\Models\AbstractCategory;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
@@ -42,7 +43,8 @@ class JsonProcessor
 
     public ModelInterface $model;
 
-    public AbstractEntity|AbstractCategory $Entity;
+    // @phpstan-ignore-next-line
+    public $Entity;
 
     public ?string $target;
 
@@ -170,6 +172,9 @@ class JsonProcessor
     // @phpstan-ignore-next-line
     private function getModel()
     {
+        if ($this->decoded['model'] === 'apikey') {
+            return $this->Entity;
+        }
         if ($this->decoded['model'] === 'comment' && $this->Entity instanceof AbstractEntity) {
             return $this->Entity->Comments;
         }
@@ -210,8 +215,13 @@ class JsonProcessor
     }
 
     // figure out which type of entity we have to deal with
-    private function getEntity(): AbstractEntity|AbstractCategory
+    //private function getEntity(): AbstractEntity|AbstractCategory
+    // @phpstan-ignore-next-line
+    private function getEntity()
     {
+        if ($this->decoded['model'] === 'apikey') {
+            return new ApiKeys($this->Users);
+        }
         if ($this->decoded['model'] === 'status') {
             return new Status($this->Users->team);
         }

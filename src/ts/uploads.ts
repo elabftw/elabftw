@@ -80,10 +80,10 @@ $(document).ready(function() {
   function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
     if (event.key === 'Enter' || event.type === 'blur') {
       const newFilename = (event.target as HTMLInputElement).value;
-      UploadC.update(newFilename, event.target.dataset.id, Target.RealName).then(() => {
+      UploadC.update(newFilename, event.target.dataset.id, Target.RealName).then(json => {
         event.target.remove();
         // change the link text with the new one
-        original.textContent = newFilename;
+        original.textContent = json.res ? newFilename : original.textContent;
         parent.prepend(original);
       });
     }

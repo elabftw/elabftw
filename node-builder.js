@@ -1,5 +1,4 @@
 const path = require('path');
-require = require("esm")(module);
 
 module.exports = {
   target: 'node',

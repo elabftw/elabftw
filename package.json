@@ -22,7 +22,6 @@
     "bootstrap-markdown-fa5": "2.10.*",
     "bootstrap-select": "^1.13.18",
     "dropzone": "^5.8.0",
-    "esm": "^3.2.25",
     "file-saver": "2.0.*",
     "i18next": "^20.1.0",
     "jquery": "^3.5.1",

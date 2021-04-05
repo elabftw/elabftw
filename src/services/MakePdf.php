@@ -220,18 +220,19 @@ class MakePdf extends AbstractMake
         file_put_contents($filename, $content);
 
         // apsolute path to tex2svg app
-        $appDir = dirname(__DIR__, 2) . '/src/node-apps';
-        
-        // use tex2svg-page script located in src/node-apps
-        // convert tex to svg with nodejs script
+        $appDir = dirname(__DIR__, 2) . '/src/node';
+
+        // convert tex to svg with mathjax nodejs script
         // returns nothing if there is no tex
+        // use tex2svg.bundle.js script located in src/node
+        // tex2svg.bundle.js is webpacked src/node/tex2svg.js
         $process = new Process(
             array(
-                $appDir . '/tex2svg-page',
+                'node',
+                $appDir . '/tex2svg.bundle.js',
                 $filename,
             ),
             // set working directory for process
-            // helps node to find dependencies in /src/node-apps
             $appDir
         );
         $process->run();
@@ -241,7 +242,6 @@ class MakePdf extends AbstractMake
         }
 
         $html = $process->getOutput();
-        //file_put_contents($filename. '.out', $html);
         unlink($filename);
 
         // was there an error during mathJax rendering
@@ -269,26 +269,18 @@ class MakePdf extends AbstractMake
             if ($wr && $hr) {
                 $w = $sizeConverter->convert($wr[1], 0, $mpdf->FontSize) * $mpdf->dpi / 25.4;
                 $h = $sizeConverter->convert($hr[1], 0, $mpdf->FontSize) * $mpdf->dpi / 25.4;
-                //var_dump($w, $h);
+
                 $html = str_replace('width="' . $wr[1] . '"', 'width="' . $w . '"', $html);
                 $html = str_replace('height="' . $hr[1] . '"', 'height="' . $h . '"', $html);
             }
         }
 
-        // add a class to mathjax svg
+        // add 'mathjax-svg' class to all mathjax SVGs
         $html = preg_replace('/(<mjx-container[^>]*><svg)/', '\1 class="mathjax-svg"', $html);
 
         // change stroke to black and fill to white for all SVGs
         $html = str_replace('stroke="currentColor"', 'stroke="#FFF"', $html);
-        //$html = str_replace('fill="currentColor"', 'fill="#000"', $html);
-
         return str_replace('fill="currentColor"', 'fill="#000"', $html);
-
-        // replace mjx-container with span to vertically align mpdf inline img
-        //$html = str_replace('</mjx-container>', '</span>', $html);
-        //$html = preg_replace('/<mjx-container[^>]*>/', '<span class="mathjax">', $html);
-        //file_put_contents($filename. '.out2', $html);
-        //return $html;
 
         // ˄˄˄˄˄˄˄˄˄˄
         // end

@@ -18,16 +18,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
-use Elabftw\Models\Config;
-use Elabftw\Models\Database;
-use Elabftw\Models\Experiments;
-use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Metadata;
-use Elabftw\Models\PrivacyPolicy;
-use Elabftw\Models\Tags;
-use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Templates;
-use Elabftw\Models\Todolist;
 use Exception;
 use PDOException;
 use Swift_TransportException;
@@ -45,83 +35,17 @@ try {
     // CSRF
     $App->Csrf->validate();
 
-    $itemId = null;
     if ($Request->getMethod() === 'POST') {
-        $what = $Request->request->get('what');
         $action = $Request->request->get('action');
-        $type = $Request->request->get('type');
         $params = $Request->request->get('params') ?? array();
-        if (isset($Request->request->get('params')['itemId'])) {
-            $itemId = (int) $Request->request->get('params')['itemId'];
-        }
     } else {
-        $what = $Request->query->get('what');
         $action = $Request->query->get('action');
-        $type = $Request->query->get('type');
         $params = $Request->query->get('params') ?? array();
-        if (isset($Request->query->get('params')['itemId'])) {
-            $itemId = (int) $Request->query->get('params')['itemId'];
-        }
     }
 
-    if ($type === 'experiments') {
-        $Entity = new Experiments($App->Users, $itemId);
-    } elseif ($type === 'experiments_templates') {
-        $Entity = new Templates($App->Users, $itemId);
-    } elseif ($type === 'items_types') {
-        $Entity = new ItemsTypes($App->Users, $itemId);
-    } else {
-        $Entity = new Database($App->Users, $itemId);
-    }
-
-
-    switch ($what) {
-        case 'itemsTypes':
-            // items types is only from admin panel
-            if (!$App->Session->get('is_admin')) {
-                throw new IllegalActionException('Non admin user tried to access admin controller.');
-            }
-            $Model = new ItemsTypes($App->Users);
-            break;
-
-        case 'metadata':
-            $Model = new Metadata($Entity);
-            break;
-
-        case 'privacyPolicy':
-            $Model = new PrivacyPolicy(new Config());
-            break;
-
-        case 'teamgroup':
-            if (!$App->Session->get('is_admin')) {
-                throw new IllegalActionException('Non admin user tried to access admin controller.');
-            }
-            $Model = new TeamGroups($App->Users);
-            break;
-
-        case 'tag':
-            if (!($Entity instanceof Experiments || $Entity instanceof Database || $Entity instanceof Templates)) {
-                throw new IllegalActionException('Invalid entity type for tags');
-            }
-            $Model = new Tags($Entity);
-            break;
-
-        case 'template':
-            $Model = $Entity;
-            break;
-
-        case 'todolist':
-            $Model = new Todolist($App->Users);
-            break;
-
-        case 'user':
-            $Model = $App->Users;
-            break;
-
-        default:
-            throw new IllegalActionException('Bad what param on Ajax controller');
-    }
-
+    $Processor = new RequestProcessor($App->Users, $Request);
+    $Model = $Processor->getModel();
+    // TODO $Params = $Processor->getParams();
     $Params = new ParamsProcessor($params);
 
     switch ($action) {

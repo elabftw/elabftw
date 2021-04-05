@@ -40,27 +40,29 @@ try {
     // CSRF
     $App->Csrf->validate();
 
-    if ($Request->headers->get('Content-Type') !== 'application/json') {
-        throw new IllegalActionException('This endpoint only accepts json requests.');
+    if ($Request->headers->get('Content-Type') === 'application/json') {
+        $Processor = new JsonProcessor($App->Users, $Request);
+    } else {
+        // for the moment nothing comes here that is not json, but the goal is to merge with Ajax.php TODO
+        $Processor = new RequestProcessor($App->Users, $Request);
     }
 
-    $Processor = new JsonProcessor($App->Users);
-    $payload = $Processor->process($Request->getContent());
-    $params = $Processor->getParams();
+    $Model = $Processor->getModel();
+    $Params = $Processor->getParams();
 
     // Status actions can only be accessed by admin level
-    if ($payload->model instanceof Status && !$App->Session->get('is_admin')) {
+    if ($Model instanceof Status && !$App->Session->get('is_admin')) {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
-    if ($params->action === 'create') {
-        $res = $payload->model->create($params);
-        if ($payload->model instanceof ApiKeys) {
-            $res = $params->getKey();
+    if ($Params->action === 'create') {
+        $res = $Model->create($Params);
+        if ($Model instanceof ApiKeys) {
+            $res = $Params->getKey();
         }
-    } elseif ($params->action === 'update' && $params instanceof UpdateParamsInterface) {
-        $res = $payload->model->update($params);
-    } elseif ($params->action === 'destroy' && $params instanceof DestroyParamsInterface) {
-        $res = $payload->model->destroy($params);
+    } elseif ($Params->action === 'update' && $Params instanceof UpdateParamsInterface) {
+        $res = $Model->update($Params);
+    } elseif ($Params->action === 'destroy' && $Params instanceof DestroyParamsInterface) {
+        $res = $Model->destroy($Params);
     }
 
     $Response->setData(array(

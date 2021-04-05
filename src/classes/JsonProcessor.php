@@ -13,37 +13,27 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreateParamsInterface;
 use Elabftw\Interfaces\DestroyParamsInterface;
-use Elabftw\Interfaces\ModelInterface;
+use Elabftw\Interfaces\ProcessorInterface;
 use Elabftw\Interfaces\UpdateParamsInterface;
-use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
-use Elabftw\Models\Database;
-use Elabftw\Models\Experiments;
-use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
-use Elabftw\Models\Templates;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use function in_array;
-use function json_decode;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Process a JSON payload defined by the Payload interface in typescript
  */
-class JsonProcessor
+class JsonProcessor extends Processor implements ProcessorInterface
 {
     public string $method;
 
     public string $action;
-
-    public ModelInterface $model;
-
-    public AbstractEntity $Entity;
 
     public ?string $target;
 
@@ -55,30 +45,9 @@ class JsonProcessor
 
     private array $extra;
 
-    private Users $Users;
-
-    public function __construct(Users $users)
+    public function __construct(Users $users, Request $request)
     {
-        $this->Users = $users;
-    }
-
-    public function process(string $payload): self
-    {
-        // TODO jsonDecoder should have getDecoded that uses json_decode
-        // the normal one just returns the request object or something for that method
-        // and jsonprocessor is child of abstract processor, and we have multipartprocessor too
-        $this->decoded = json_decode($payload, true);
-        $this->method = $this->getMethod();
-        $this->action = $this->getAction();
-        $this->target = $this->getTarget();
-        if (isset($this->decoded['entity'])) {
-            $this->Entity = $this->getEntity();
-        }
-        $this->model = $this->getModel();
-        $this->content = $this->getContent();
-        $this->id = $this->getId();
-        $this->extra = $this->decoded['extraParams'] ?? array();
-        return $this;
+        parent::__construct($users, $request);
     }
 
     //public function getParams(): CreateParamsInterface | UpdateParamsInterface | DestroyParamsInterface
@@ -97,26 +66,42 @@ class JsonProcessor
         }
     }
 
+    // process a Payload json request
+    protected function process(Request $request): void
+    {
+        $this->decoded = $request->toArray();
+        $this->method = $this->getMethod();
+        $this->action = $this->getAction();
+        $this->target = $this->getTarget();
+        if (isset($this->decoded['entity'])) {
+            $this->Entity = $this->getEntity($this->decoded['entity']['type'], (int) $this->decoded['entity']['id']);
+        }
+        $this->Model = $this->findModel($this->decoded['model'] ?? '');
+        $this->content = $this->getContent();
+        $this->id = $this->getId();
+        $this->extra = $this->decoded['extraParams'] ?? array();
+    }
+
     //private function getCreateParams(): CreateParamsInterface
     // @phpstan-ignore-next-line
     private function getCreateParams()
     {
-        if ($this->model instanceof ApiKeys) {
+        if ($this->Model instanceof ApiKeys) {
             return new CreateApikey($this->content, (int) $this->extra['canwrite']);
         }
-        if ($this->model instanceof Comments) {
+        if ($this->Model instanceof Comments) {
             return new CreateComment($this->content);
         }
-        if ($this->model instanceof Links) {
+        if ($this->Model instanceof Links) {
             return new CreateLink($this->id);
         }
-        if ($this->model instanceof Status) {
+        if ($this->Model instanceof Status) {
             return new CreateStatus($this->content, $this->extra['color'], (bool) $this->extra['isTimestampable']);
         }
-        if ($this->model instanceof Steps) {
+        if ($this->Model instanceof Steps) {
             return new CreateStep($this->content);
         }
-        if ($this->model instanceof Uploads) {
+        if ($this->Model instanceof Uploads) {
             return new CreateUpload(Request::createFromGlobals());
         }
         throw new IllegalActionException('Bad params');
@@ -126,7 +111,7 @@ class JsonProcessor
     // @phpstan-ignore-next-line
     private function getUpdateParams()
     {
-        if ($this->model instanceof Uploads) {
+        if ($this->Model instanceof Uploads) {
             if ($this->target === 'real_name') {
                 return new UpdateUploadRealName($this);
             }
@@ -134,7 +119,7 @@ class JsonProcessor
                 return new UpdateUploadComment($this);
             }
         }
-        if ($this->model instanceof Steps) {
+        if ($this->Model instanceof Steps) {
             if ($this->target === 'body') {
                 return new UpdateStepBody($this->id, $this->content);
             }
@@ -142,11 +127,11 @@ class JsonProcessor
                 return new UpdateStepFinished($this->id);
             }
         }
-        if ($this->model instanceof Status) {
+        if ($this->Model instanceof Status) {
             return new UpdateStatus($this->id, $this->content, $this->extra['color'], (bool) $this->extra['isTimestampable'], (bool) $this->extra['isDefault']);
         }
 
-        if ($this->model instanceof Comments) {
+        if ($this->Model instanceof Comments) {
             return new UpdateComment($this->id, $this->content);
         }
         throw new IllegalActionException('Bad params');
@@ -176,35 +161,6 @@ class JsonProcessor
         return $this->decoded['action'];
     }
 
-    //private function getModel(): ModelInterface
-    // @phpstan-ignore-next-line
-    private function getModel()
-    {
-        if ($this->decoded['model'] === 'apikey') {
-            return new ApiKeys($this->Users);
-        }
-        if ($this->decoded['model'] === 'status') {
-            return new Status($this->Users->team);
-        }
-        if ($this->decoded['model'] === 'comment' && $this->Entity instanceof AbstractEntity) {
-            return $this->Entity->Comments;
-        }
-        if ($this->decoded['model'] === 'link' && $this->Entity instanceof AbstractEntity) {
-            return $this->Entity->Links;
-        }
-        if ($this->decoded['model'] === 'step' && $this->Entity instanceof AbstractEntity) {
-            return $this->Entity->Steps;
-        }
-        if ($this->decoded['model'] === 'upload') {
-            if (!($this->Entity instanceof Experiments || $this->Entity instanceof Database)) {
-                throw new IllegalActionException('Invalid entity type for upload');
-            }
-            return $this->Entity->Uploads;
-        }
-
-        throw new IllegalActionException('Bad model');
-    }
-
     // a target is like a subpart of a model
     // example: update the comment of an upload
     private function getTarget(): ?string
@@ -222,19 +178,6 @@ class JsonProcessor
             throw new IllegalActionException('Invalid target!');
         }
         return $this->decoded['target'];
-    }
-
-    // figure out which type of entity we have to deal with
-    private function getEntity(): AbstractEntity
-    {
-        if ($this->decoded['entity']['type'] === 'experiments') {
-            return new Experiments($this->Users, (int) $this->decoded['entity']['id']);
-        } elseif ($this->decoded['entity']['type'] === 'experiments_templates') {
-            return new Templates($this->Users, (int) $this->decoded['entity']['id']);
-        } elseif ($this->decoded['entity']['type'] === 'items_types') {
-            return new ItemsTypes($this->Users, (int) $this->decoded['entity']['id']);
-        }
-        return new Database($this->Users, (int) $this->decoded['entity']['id']);
     }
 
     private function getContent(): string

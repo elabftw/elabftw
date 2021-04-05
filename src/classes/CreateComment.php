@@ -16,7 +16,7 @@ use function mb_strlen;
 
 final class CreateComment implements CreateCommentParamsInterface
 {
-    private const MIN_COMMENT_SIZE = 2;
+    private const MIN_CONTENT_SIZE = 2;
 
     public string $action;
 
@@ -31,7 +31,7 @@ final class CreateComment implements CreateCommentParamsInterface
     public function getContent(): string
     {
         // check for length
-        if (mb_strlen($this->content) < self::MIN_COMMENT_SIZE) {
+        if (mb_strlen($this->content) < self::MIN_CONTENT_SIZE) {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
         }
         return $this->content;

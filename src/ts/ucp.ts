@@ -114,7 +114,14 @@ $(document).ready(function() {
     // CREATE API KEY
     if (el.matches('[data-action="create-apikey"]')) {
       // clear any prevous new key message
-      const content = (document.getElementById('apikeyName') as HTMLInputElement).value;
+      const nameInput = (document.getElementById('apikeyName') as HTMLInputElement);
+      const content = nameInput.value;
+      if (!content) {
+        notif({'res': false, 'msg': 'A name is required!'});
+        // set the border in red to bring attention
+        nameInput.style.borderColor = 'red';
+        return;
+      }
       const canwrite = parseInt((document.getElementById('apikeyCanwrite') as HTMLInputElement).value);
       ApikeyC.create(content, canwrite).then(json => {
         $('#apiTable').load('ucp.php #apiTable > *');

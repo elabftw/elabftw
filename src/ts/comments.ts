@@ -6,10 +6,8 @@
  * @package elabftw
  */
 import Comment from './Comment.class';
-import { notif } from './misc';
 import i18next from 'i18next';
-import { Ajax } from './Ajax.class';
-import { Payload, Entity, Method, Model, Target, Type, Action } from './interfaces';
+import { Entity, Type } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
   // holds info about the page through data attributes

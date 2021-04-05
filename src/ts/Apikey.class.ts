@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Model, Target, Entity, Action } from './interfaces';
+import { Payload, Method, Model, Action, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
 
 export default class Apikey {
@@ -17,16 +17,20 @@ export default class Apikey {
     this.sender = new Ajax();
   }
 
-  create(content: string) {
+  create(content: string, canwrite: number): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,
       action: Action.Create,
       model: this.model,
+      content: content,
+      extraParams: {
+        canwrite: canwrite,
+      },
     };
     return this.sender.send(payload);
   }
 
-  destroy(id: number) {
+  destroy(id: number): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,
       action: Action.Destroy,

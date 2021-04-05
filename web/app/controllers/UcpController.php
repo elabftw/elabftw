@@ -17,7 +17,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Maps\UserPreferences;
-use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Filter;
 use Elabftw\Services\LocalAuth;
@@ -121,18 +120,6 @@ try {
         $templateId = '&templateid=' . $Request->request->get('tpl_id');
     }
     // END TAB 3
-
-    // TAB 4 : CREATE API KEY
-    if ($Request->request->has('createApiKey')) {
-        $tab = '4';
-        $ApiKeys = new ApiKeys($App->Users);
-        $params = new CreateApikey(
-            $Request->request->get('name'),
-            (int) $Request->request->get('canWrite'),
-        );
-        $ApiKeys->create($params);
-        $App->Session->getFlashBag()->add('warning', sprintf(_("This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again: %s"), $params->getKey()));
-    }
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));
     $Response = new RedirectResponse('../../ucp.php?tab=' . $tab . $templateId);

@@ -11,6 +11,7 @@ const t = {
     "filename": "Filename",
     "generic-delete-warning": "Delete this?",
     "link-delete-warning": "Delete this link?",
+    "new-apikey-warning": "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:",
     "nothing-selected": "Nothing selected!",
     "please-wait": "Please wait…",
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",

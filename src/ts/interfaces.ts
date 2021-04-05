@@ -18,6 +18,7 @@ interface ResponseMsg {
   res: boolean;
   msg: string | Array<BoundEvent>;
   color?: string;
+  value?: string;
 }
 
 interface BoundEvent {

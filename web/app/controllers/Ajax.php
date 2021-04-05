@@ -18,7 +18,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
-use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
@@ -77,10 +76,6 @@ try {
 
 
     switch ($what) {
-        case 'apikey':
-            $Model = new ApiKeys($App->Users);
-            break;
-
         case 'itemsTypes':
             // items types is only from admin panel
             if (!$App->Session->get('is_admin')) {

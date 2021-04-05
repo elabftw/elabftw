@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Model, Action } from './interfaces';
+import { Payload, Method, Model, Action, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
 
 export default class Status {
@@ -17,7 +17,7 @@ export default class Status {
     this.sender = new Ajax();
   }
 
-  create(content: string, color: string, isTimestampable: boolean) {
+  create(content: string, color: string, isTimestampable: boolean): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,
       action: Action.Create,
@@ -31,7 +31,7 @@ export default class Status {
     return this.sender.send(payload);
   }
 
-  update(id: number, content: string, color: string, isTimestampable: boolean, isDefault: boolean) {
+  update(id: number, content: string, color: string, isTimestampable: boolean, isDefault: boolean): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,
       action: Action.Update,
@@ -47,7 +47,7 @@ export default class Status {
     return this.sender.send(payload);
   }
 
-  destroy(id: number) {
+  destroy(id: number): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,
       action: Action.Destroy,

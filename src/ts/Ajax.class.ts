@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import { notif } from './misc';
-import { ActionReq, Payload, ResponseMsg } from './interfaces';
+import { Payload, ResponseMsg } from './interfaces';
 
 export class Ajax {
   type: string;
@@ -54,7 +54,7 @@ export class Ajax {
   }
 
 
-  post(action: string, body = {}): Promise<ResponseMsg> {
+  post(action: string): Promise<ResponseMsg> {
     const formData = new FormData();
     formData.append(action, '1');
     formData.append('type', this.type);

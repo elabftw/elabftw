@@ -105,11 +105,39 @@ $(document).ready(function() {
   // TinyMCE
   tinymce.init(getTinymceBaseConfig('ucp'));
 
+  // API KEYS
   const ApikeyC = new Apikey();
+
+  // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
+    // CREATE API KEY
+    if (el.matches('[data-action="create-apikey"]')) {
+      // clear any prevous new key message
+      const content = (document.getElementById('apikeyName') as HTMLInputElement).value;
+      const canwrite = parseInt((document.getElementById('apikeyCanwrite') as HTMLInputElement).value);
+      ApikeyC.create(content, canwrite).then(json => {
+        $('#apiTable').load('ucp.php #apiTable > *');
+        const warningDiv = document.createElement('div');
+        warningDiv.classList.add('alert', 'alert-warning');
+        const chevron = document.createElement('i');
+        chevron.classList.add('fas', 'fa-chevron-right');
+        warningDiv.appendChild(chevron);
+
+        const newkey = document.createElement('p');
+        newkey.innerText = json.value;
+        const warningTextSpan = document.createElement('span');
+
+        warningTextSpan.innerText = i18next.t('new-apikey-warning');
+        warningTextSpan.classList.add('ml-1');
+        warningDiv.appendChild(warningTextSpan);
+        warningDiv.appendChild(newkey);
+        const placeholder = document.getElementById('newKeyPlaceholder');
+        placeholder.innerHTML = '';
+        placeholder.appendChild(warningDiv);
+      });
     // DESTROY API KEY
-    if (el.matches('[data-action="destroy-apikey"]')) {
+    } else if (el.matches('[data-action="destroy-apikey"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
         ApikeyC.destroy(parseInt(el.dataset.apikeyid)).then(() => {
           // only reload children of apiTable

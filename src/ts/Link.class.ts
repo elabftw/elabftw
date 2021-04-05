@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Model, Entity, Action } from './interfaces';
+import { Payload, Method, Model, Entity, Action, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
 
 export default class Link {
@@ -19,7 +19,7 @@ export default class Link {
     this.sender = new Ajax();
   }
 
-  create(targetId: number) {
+  create(targetId: number): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,
       action: Action.Create,
@@ -30,7 +30,7 @@ export default class Link {
     return this.sender.send(payload);
   }
 
-  destroy(id: number) {
+  destroy(id: number): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,
       action: Action.Destroy,

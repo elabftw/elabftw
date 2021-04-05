@@ -20,6 +20,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\DestroyParamsInterface;
 use Elabftw\Interfaces\UpdateParamsInterface;
+use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Status;
 use Exception;
 use PDOException;
@@ -53,6 +54,9 @@ try {
     }
     if ($params->action === 'create') {
         $res = $payload->model->create($params);
+        if ($payload->model instanceof ApiKeys) {
+            $res = $params->getKey();
+        }
     } elseif ($params->action === 'update' && $params instanceof UpdateParamsInterface) {
         $res = $payload->model->update($params);
     } elseif ($params->action === 'destroy' && $params instanceof DestroyParamsInterface) {

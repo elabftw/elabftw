@@ -101,6 +101,9 @@ class JsonProcessor
     // @phpstan-ignore-next-line
     private function getCreateParams()
     {
+        if ($this->model instanceof ApiKeys) {
+            return new CreateApikey($this->content, (int) $this->extra['canwrite']);
+        }
         if ($this->model instanceof Comments) {
             return new CreateComment($this->content);
         }

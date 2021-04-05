@@ -49,6 +49,7 @@ enum Model {
   Link = 'link',
   Status = 'status',
   Step = 'step',
+  Todolist = 'todolist',
   Upload = 'upload',
 }
 

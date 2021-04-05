@@ -56,6 +56,11 @@ try {
         $id = (int) $Request->query->get('id');
     }
 
+    /**
+     * TODO replace block below with this
+    $Processor = new RequestProcessor($App->Users, $Request);
+    $Model = $Processor->getModel();
+     */
     if ($Request->request->get('type') === 'experiments' ||
         $Request->query->get('type') === 'experiments') {
         $Entity = new Experiments($App->Users, $id);

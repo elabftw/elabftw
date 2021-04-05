@@ -20,6 +20,7 @@ use Elabftw\Models\Comments;
 use Elabftw\Models\Links;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
+use Elabftw\Models\Todolist;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
@@ -101,6 +102,9 @@ class JsonProcessor extends Processor implements ProcessorInterface
         if ($this->Model instanceof Steps) {
             return new CreateStep($this->content);
         }
+        if ($this->Model instanceof Todolist) {
+            return new CreateTodoitem($this->content);
+        }
         if ($this->Model instanceof Uploads) {
             return new CreateUpload(Request::createFromGlobals());
         }
@@ -111,13 +115,8 @@ class JsonProcessor extends Processor implements ProcessorInterface
     // @phpstan-ignore-next-line
     private function getUpdateParams()
     {
-        if ($this->Model instanceof Uploads) {
-            if ($this->target === 'real_name') {
-                return new UpdateUploadRealName($this);
-            }
-            if ($this->target === 'comment') {
-                return new UpdateUploadComment($this);
-            }
+        if ($this->Model instanceof Comments) {
+            return new UpdateComment($this->id, $this->content);
         }
         if ($this->Model instanceof Steps) {
             if ($this->target === 'body') {
@@ -130,10 +129,18 @@ class JsonProcessor extends Processor implements ProcessorInterface
         if ($this->Model instanceof Status) {
             return new UpdateStatus($this->id, $this->content, $this->extra['color'], (bool) $this->extra['isTimestampable'], (bool) $this->extra['isDefault']);
         }
-
-        if ($this->Model instanceof Comments) {
-            return new UpdateComment($this->id, $this->content);
+        if ($this->Model instanceof Todolist) {
+            return new UpdateTodoitem($this->id, $this->content);
         }
+        if ($this->Model instanceof Uploads) {
+            if ($this->target === 'real_name') {
+                return new UpdateUploadRealName($this);
+            }
+            if ($this->target === 'comment') {
+                return new UpdateUploadComment($this);
+            }
+        }
+
         throw new IllegalActionException('Bad params');
     }
 

@@ -8,7 +8,7 @@
 import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
-import { Payload, Entity, Method, Model, Target, Type, Action } from './interfaces';
+import { Entity, Target, Type } from './interfaces';
 import { notif, displayMolFiles, display3DMolecules } from './misc';
 import i18next from 'i18next';
 import Upload from './Upload.class';

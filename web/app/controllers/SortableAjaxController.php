@@ -60,7 +60,7 @@ try {
             $Entity = $model->Steps;
             break;
         case 'todolist':
-            $Entity = new Todolist($App->Users);
+            $Entity = new Todolist((int) $App->Users->userData['userid']);
             break;
         case 'experiments_templates':
             $Entity = new Templates($App->Users);

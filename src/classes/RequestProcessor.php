@@ -32,6 +32,7 @@ class RequestProcessor extends Processor implements ProcessorInterface
     // process a classic request
     protected function process(Request $request): void
     {
+        $type = null;
         $itemId = null;
         if ($request->getMethod() === 'POST') {
             $what = $request->request->get('what');
@@ -42,12 +43,13 @@ class RequestProcessor extends Processor implements ProcessorInterface
             $type = $request->query->get('type');
             $params = $request->query->get('params') ?? array();
         }
-
         if (isset($params['itemId'])) {
             $itemId = (int) $params['itemId'];
         }
 
-        $this->Entity = $this->getEntity($type, $itemId);
+        if (isset($type)) {
+            $this->Entity = $this->getEntity($type, $itemId);
+        }
         $this->Model = $this->findModel($what);
     }
 }

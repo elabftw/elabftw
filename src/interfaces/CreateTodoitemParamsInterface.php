@@ -11,8 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * Interface for creating something
+ * Interface for creating a todoitem
  */
-interface CreateParamsInterface extends CreateStepParamsInterface, CreateUploadParamsInterface, CreateLinkParamsInterface, CreateCommentParamsInterface, CreateStatusParamsInterface, CreateApikeyParamsInterface, CreateTodoitemParamsInterface
+interface CreateTodoitemParamsInterface
 {
+    public function getContent(): string;
 }

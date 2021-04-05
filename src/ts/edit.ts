@@ -9,7 +9,7 @@ declare let key: any;
 declare let MathJax: any;
 import { displayMolFiles, display3DMolecules, insertParamAndReload, notif } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
-import { Payload, Method, Model, Target, Type, Action } from './interfaces';
+import { Type } from './interfaces';
 import 'jquery-ui/ui/widgets/datepicker';
 import './doodle';
 import tinymce from 'tinymce/tinymce';

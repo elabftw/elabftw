@@ -11,40 +11,36 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ParamsProcessor;
-use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\CreateTodoitemParamsInterface;
+use Elabftw\Interfaces\DestroyParamsInterface;
+use Elabftw\Interfaces\ModelInterface;
+use Elabftw\Interfaces\UpdateTodoitemParamsInterface;
 use Elabftw\Traits\SortableTrait;
-use function mb_strlen;
 use PDO;
 
 /**
  * All about the todolist
  */
-class Todolist implements CrudInterface
+class Todolist implements ModelInterface
 {
     use SortableTrait;
 
-    public Users $Users;
-
     protected Db $Db;
 
-    public function __construct(Users $users)
+    private int $userid;
+
+    public function __construct(int $userid)
     {
         $this->Db = Db::getConnection();
-        $this->Users = $users;
+        $this->userid = $userid;
     }
 
-    /**
-     * Create a todoitem
-     */
-    public function create(ParamsProcessor $params): int
+    public function create(CreateTodoitemParamsInterface $params): int
     {
-        $sql = 'INSERT INTO todolist(body, userid)
-            VALUES(:body, :userid)';
+        $sql = 'INSERT INTO todolist(body, userid) VALUES(:content, :userid)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':body', $params->template);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindValue(':content', $params->getContent());
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
@@ -57,7 +53,7 @@ class Todolist implements CrudInterface
     {
         $sql = 'SELECT id, body, creation_time FROM todolist WHERE userid = :userid ORDER BY ordering ASC, creation_time DESC';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $res = $req->fetchAll();
@@ -67,32 +63,24 @@ class Todolist implements CrudInterface
         return $res;
     }
 
-    /**
-     * Update the body of a todoitem with jeditable
-     */
-    public function update(ParamsProcessor $params): string
+    public function update(UpdateTodoitemParamsInterface $params): bool
     {
-        if (mb_strlen($params->template) < 2) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
-        }
-        $sql = 'UPDATE todolist SET body = :body WHERE id = :id';
+        $sql = 'UPDATE todolist SET body = :content WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $params->id, PDO::PARAM_INT);
-        $req->bindParam(':body', $params->template);
-        $this->Db->execute($req);
+        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindValue(':content', $params->getContent());
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
 
-        return $params->template;
+        return $this->Db->execute($req);
     }
 
-    /**
-     * Remove a todoitem
-     */
-    public function destroy(int $id): bool
+    public function destroy(DestroyParamsInterface $params): bool
     {
         $sql = 'DELETE FROM todolist WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+
         return $this->Db->execute($req);
     }
 
@@ -103,7 +91,7 @@ class Todolist implements CrudInterface
     {
         $sql = 'DELETE FROM todolist WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
     }
 }

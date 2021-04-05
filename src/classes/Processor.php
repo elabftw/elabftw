@@ -115,7 +115,7 @@ abstract class Processor
             case 'template':
                 return $this->Entity;
             case 'todolist':
-                return new Todolist($this->Users);
+                return new Todolist((int) $this->Users->userData['userid']);
             case 'user':
                 return $this->Users;
             default:

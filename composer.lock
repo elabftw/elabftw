@@ -75,16 +75,16 @@
         },
         {
             "name": "directorytree/ldaprecord",
-            "version": "v2.3.0",
+            "version": "v2.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DirectoryTree/LdapRecord.git",
-                "reference": "71340de5b63853956ede391175d00968899c6861"
+                "reference": "6fa3565b77ad79314edcc39c5e0a9e07e2715326"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/71340de5b63853956ede391175d00968899c6861",
-                "reference": "71340de5b63853956ede391175d00968899c6861",
+                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/6fa3565b77ad79314edcc39c5e0a9e07e2715326",
+                "reference": "6fa3565b77ad79314edcc39c5e0a9e07e2715326",
                 "shasum": ""
             },
             "require": {
@@ -95,7 +95,7 @@
                 "php": ">=7.2",
                 "psr/log": "^1.0",
                 "psr/simple-cache": "^1.0",
-                "tightenco/collect": "^5.0|^6.0|^7.0|^8.0"
+                "tightenco/collect": "^5.6|^6.0|^7.0|^8.0"
             },
             "require-dev": {
                 "mockery/mockery": "^1.0",
@@ -143,7 +143,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-03-17T02:15:34+00:00"
+            "time": "2021-04-03T17:54:14+00:00"
         },
         {
             "name": "doctrine/lexer",

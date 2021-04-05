@@ -12,9 +12,9 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreateParamsInterface;
+use Elabftw\Interfaces\DestroyParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateParamsInterface;
-use Elabftw\Models\AbstractCategory;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
@@ -43,8 +43,7 @@ class JsonProcessor
 
     public ModelInterface $model;
 
-    // @phpstan-ignore-next-line
-    public $Entity;
+    public AbstractEntity $Entity;
 
     public ?string $target;
 
@@ -72,7 +71,9 @@ class JsonProcessor
         $this->method = $this->getMethod();
         $this->action = $this->getAction();
         $this->target = $this->getTarget();
-        $this->Entity = $this->getEntity();
+        if (isset($this->decoded['entity'])) {
+            $this->Entity = $this->getEntity();
+        }
         $this->model = $this->getModel();
         $this->content = $this->getContent();
         $this->id = $this->getId();
@@ -80,7 +81,7 @@ class JsonProcessor
         return $this;
     }
 
-    //public function getParams(): UpdateParamsInterface|CreateParamsInterface
+    //public function getParams(): CreateParamsInterface | UpdateParamsInterface | DestroyParamsInterface
     // @phpstan-ignore-next-line
     public function getParams()
     {
@@ -96,6 +97,7 @@ class JsonProcessor
         }
     }
 
+    //private function getCreateParams(): CreateParamsInterface
     // @phpstan-ignore-next-line
     private function getCreateParams()
     {
@@ -114,8 +116,10 @@ class JsonProcessor
         if ($this->model instanceof Uploads) {
             return new CreateUpload(Request::createFromGlobals());
         }
+        throw new IllegalActionException('Bad params');
     }
 
+    //private function getUpdateParams(): UpdateParams
     // @phpstan-ignore-next-line
     private function getUpdateParams()
     {
@@ -142,6 +146,7 @@ class JsonProcessor
         if ($this->model instanceof Comments) {
             return new UpdateComment($this->id, $this->content);
         }
+        throw new IllegalActionException('Bad params');
     }
 
     // for now only GET or POST, should add PUT and DELETE later on...
@@ -173,16 +178,16 @@ class JsonProcessor
     private function getModel()
     {
         if ($this->decoded['model'] === 'apikey') {
-            return $this->Entity;
+            return new ApiKeys($this->Users);
+        }
+        if ($this->decoded['model'] === 'status') {
+            return new Status($this->Users->team);
         }
         if ($this->decoded['model'] === 'comment' && $this->Entity instanceof AbstractEntity) {
             return $this->Entity->Comments;
         }
         if ($this->decoded['model'] === 'link' && $this->Entity instanceof AbstractEntity) {
             return $this->Entity->Links;
-        }
-        if ($this->decoded['model'] === 'status') {
-            return $this->Entity;
         }
         if ($this->decoded['model'] === 'step' && $this->Entity instanceof AbstractEntity) {
             return $this->Entity->Steps;
@@ -215,17 +220,8 @@ class JsonProcessor
     }
 
     // figure out which type of entity we have to deal with
-    //private function getEntity(): AbstractEntity|AbstractCategory
-    // @phpstan-ignore-next-line
-    private function getEntity()
+    private function getEntity(): AbstractEntity
     {
-        if ($this->decoded['model'] === 'apikey') {
-            return new ApiKeys($this->Users);
-        }
-        if ($this->decoded['model'] === 'status') {
-            return new Status($this->Users->team);
-        }
-
         if ($this->decoded['entity']['type'] === 'experiments') {
             return new Experiments($this->Users, (int) $this->decoded['entity']['id']);
         } elseif ($this->decoded['entity']['type'] === 'experiments_templates') {

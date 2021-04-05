@@ -110,10 +110,12 @@ $(document).ready(function() {
     const el = (event.target as HTMLElement);
     // DESTROY API KEY
     if (el.matches('[data-action="destroy-apikey"]')) {
-      ApikeyC.destroy(parseInt(el.dataset.apikeyid)).then(() => {
-        // only reload children of apiTable
-        $('#apiTable').load('ucp.php #apiTable > *');
-      });
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        ApikeyC.destroy(parseInt(el.dataset.apikeyid)).then(() => {
+          // only reload children of apiTable
+          $('#apiTable').load('ucp.php #apiTable > *');
+        });
+      }
     }
   });
 });

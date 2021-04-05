@@ -30,7 +30,7 @@ class MathJaxTest extends \PHPUnit\Framework\TestCase
         $mathJaxHtml = '<html><head></head><body>No Tex here</body></html>';
         $mathJaxOut = $this->MakePdf->tex2svg($mpdf, $mathJaxHtml);
 
-        $this->assertEquals($mathJaxHtml, $mathJaxOutput);
+        $this->assertEquals($mathJaxHtml, $mathJaxOut);
     }
 
     public function testMathJax()
@@ -40,7 +40,7 @@ class MathJaxTest extends \PHPUnit\Framework\TestCase
         $mathJaxOut = $this->MakePdf->tex2svg($mpdf, $mathJaxHtml);
         $mathJaxOutExpect = file_get_contents(dirname(__DIR__, 2) . '/_data/mathjax.out.html');
 
-        $this->assertEquals($mathJaxOutExpect, $mathJaxOutput);
+        $this->assertEquals($mathJaxOutExpect, $mathJaxOut);
     }
 
     public function testMathJaxFail()

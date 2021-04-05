@@ -52,8 +52,7 @@
 
 
                         <!-- Upload a new version -->
-                        <a class='dropdown-item clickable replaceUpload'
-                          data-itemid='{{ upload.item_id }}' data-id='{{ upload.id }}' data-type='{{ upload.type }}'>
+                        <a class='dropdown-item clickable' data-action='replace-upload' data-uploadid='{{ upload.id }}'>
                           <i class='fas fa-sync-alt mr-1'></i>{{ 'Upload a new version of this file'|trans }}</a>
 
 
@@ -165,7 +164,7 @@
 
                   {% if mode == 'edit' %}
                     <!-- replace upload form -->
-                    <div class='replaceUploadForm' style='display:none'>
+                    <div id='replaceUploadForm_{{ upload.id }}' style='display:none'>
                       <form enctype='multipart/form-data' action='app/controllers/EntityController.php' method='POST'>
                         <input type='hidden' name='replace' />
                         <input type='hidden' name='upload_id' value='{{ upload.id }}' />

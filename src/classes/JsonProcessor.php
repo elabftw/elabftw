@@ -166,8 +166,8 @@ class JsonProcessor
     {
         $allowed = array(
             'create',
-            'update',
             'read',
+            'update',
             'destroy',
         );
         if (!in_array($this->decoded['action'], $allowed, true)) {
@@ -205,6 +205,8 @@ class JsonProcessor
         throw new IllegalActionException('Bad model');
     }
 
+    // a target is like a subpart of a model
+    // example: update the comment of an upload
     private function getTarget(): ?string
     {
         if (!isset($this->decoded['target'])) {

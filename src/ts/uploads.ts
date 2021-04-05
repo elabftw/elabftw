@@ -9,7 +9,6 @@ import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Payload, Entity, Method, Model, Target, Type, Action } from './interfaces';
-import { Ajax } from './Ajax.class';
 import { notif, displayMolFiles, display3DMolecules } from './misc';
 import i18next from 'i18next';
 import Upload from './Upload.class';
@@ -21,11 +20,6 @@ $(document).ready(function() {
   }
   displayMolFiles();
   display3DMolecules();
-
-  // REPLACE UPLOAD toggle form
-  $(document).on('click', '.replaceUpload', function() {
-    $(this).next('.replaceUploadForm').toggle();
-  });
 
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
@@ -47,18 +41,7 @@ $(document).ready(function() {
   // make file comments editable
   $(document).on('mouseenter', '.file-comment', function() {
     ($('.editable') as any).editable(function(input: string) {
-      const AjaxC = new Ajax();
-      const payload: Payload = {
-        method: Method.POST,
-        action: Action.Update,
-        model: Model.Upload,
-        target: Target.Comment,
-        entity: entity,
-        content: input,
-        id : $(this).data('id'),
-      };
-      AjaxC.send(payload);
-
+      UploadC.update(input, $(this).data('id'), Target.Comment);
       return(input);
     }, {
       tooltip : i18next.t('upload-file-comment'),
@@ -94,10 +77,44 @@ $(document).ready(function() {
     });
   });
 
-  // DESTROY UPLOAD
-  document.querySelectorAll('[data-action="destroy-upload"]').forEach(el => {
-    el.addEventListener('click', ev => {
-      const uploadId = parseInt((ev.target as HTMLElement).dataset.uploadid);
+  function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
+    if (event.key === 'Enter' || event.type === 'blur') {
+      const newFilename = (event.target as HTMLInputElement).value;
+      UploadC.update(newFilename, event.target.dataset.id, Target.RealName).then(() => {
+        event.target.remove();
+        // change the link text with the new one
+        original.textContent = newFilename;
+        parent.prepend(original);
+      });
+    }
+  }
+
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // RENAME UPLOAD
+    if (el.matches('[data-action="rename-upload"]')) {
+      // find the corresponding filename element
+      // we replace the parent span to also remove the link for download
+      const filenameLink = document.getElementById('upload-filename_' + el.dataset.id);
+      const filenameInput = document.createElement('input');
+      filenameInput.dataset.id = el.dataset.id;
+      filenameInput.value = filenameLink.textContent;
+      const parentSpan = filenameLink.parentElement;
+      filenameInput.addEventListener('blur', event => {
+        processNewFilename(event, filenameLink, parentSpan);
+      });
+      filenameInput.addEventListener('keypress', event => {
+        processNewFilename(event, filenameLink, parentSpan);
+      });
+      filenameLink.replaceWith(filenameInput);
+
+    // REPLACE UPLOAD
+    } else if (el.matches('[data-action="replace-upload"]')) {
+      document.getElementById('replaceUploadForm_' + el.dataset.uploadid).style.display = '';
+
+    // DESTROY UPLOAD
+    } else if (el.matches('[data-action="destroy-upload"]')) {
+      const uploadId = parseInt(el.dataset.uploadid);
       if (confirm(i18next.t('generic-delete-warning'))) {
         UploadC.destroy(uploadId).then(json => {
           if (json.res) {
@@ -108,7 +125,7 @@ $(document).ready(function() {
           }
         });
       }
-    });
+    }
   });
 
   // ACTIVATE FANCYBOX

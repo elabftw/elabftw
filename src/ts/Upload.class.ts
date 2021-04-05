@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Model, Entity, Action, ResponseMsg } from './interfaces';
+import { Payload, Method, Model, Entity, Action, Target, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
 
 export default class Upload {
@@ -17,6 +17,19 @@ export default class Upload {
     this.entity = entity;
     this.model = Model.Upload,
     this.sender = new Ajax();
+  }
+
+  update(content: string, id: number, target: Target): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Update,
+      model: this.model,
+      target: target,
+      entity: this.entity,
+      content: content,
+      id : id,
+    };
+    return this.sender.send(payload);
   }
 
   destroy(id: number): Promise<ResponseMsg> {

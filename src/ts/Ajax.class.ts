@@ -77,28 +77,6 @@ export class Ajax {
     });
   }
 
-  postAction(actionReq: ActionReq): Promise<ResponseMsg> {
-    // add csrf token to the request in the header
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    return fetch(this.controller, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': csrfToken,
-        'X-Requested-With': 'XMLHttpRequest',
-      },
-      body: JSON.stringify(actionReq),
-    }).then(response => {
-      if (!response.ok) {
-        throw new Error('An unexpected error occured!');
-      }
-      return response.json();
-    }).then(json => {
-      notif(json);
-      return json;
-    });
-  }
-
   send(payload: Payload): Promise<ResponseMsg> {
     // add csrf token to the request in the header
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');

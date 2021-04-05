@@ -16,13 +16,7 @@ final class UpdateStepFinished extends UpdateStep implements UpdateParamsInterfa
 {
     public function __construct(int $id)
     {
-        parent::__construct($id);
+        parent::__construct($id, '');
         $this->target = 'finished';
-    }
-
-    // TODO should not be here
-    public function getContent(): string
-    {
-        return 'a';
     }
 }

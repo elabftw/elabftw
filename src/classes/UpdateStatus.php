@@ -10,21 +10,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\UpdateParamsInterface;
 use Elabftw\Services\Check;
-use function mb_strlen;
 
-final class UpdateStatus implements UpdateParamsInterface
+final class UpdateStatus extends UpdateParams implements UpdateParamsInterface
 {
-    private const MIN_CONTENT_SIZE = 2;
-
-    public string $action;
-
-    private string $content;
-
-    private int $id;
-
     private string $color;
 
     private bool $isTimestampable;
@@ -33,31 +23,11 @@ final class UpdateStatus implements UpdateParamsInterface
 
     public function __construct(int $id, string $content, string $color, bool $isTimestampable = false, bool $isDefault = false)
     {
-        $this->id = $id;
+        parent::__construct($id, $content);
         $this->content = $content;
-        $this->action = 'update';
         $this->color = $color;
         $this->isTimestampable = $isTimestampable;
         $this->isDefault = $isDefault;
-    }
-
-    public function getContent(): string
-    {
-        // check for length
-        if (mb_strlen($this->content) < self::MIN_CONTENT_SIZE) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
-        }
-        return $this->content;
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    public function getTarget(): string
-    {
-        return 'nope';
     }
 
     public function getColor(): string

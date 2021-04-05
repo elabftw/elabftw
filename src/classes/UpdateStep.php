@@ -10,44 +10,17 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-class UpdateStep
+class UpdateStep extends UpdateParams
 {
-    public string $action;
-
     protected string $target;
 
-    protected int $id;
-
-    // TODO this could be a generic processor, or maybe a ProcessedParams class
-    // because here we don't care where the params are coming from!
-    public function __construct(int $id)
+    public function __construct(int $id, string $content)
     {
-        $this->id = $id;
-        $this->action = 'update';
+        parent::__construct($id, $content);
     }
 
     public function getTarget(): string
     {
         return $this->target;
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    public function getColor(): string
-    {
-        return 'Nope';
-    }
-
-    public function getIsTimestampable(): int
-    {
-        return 0;
-    }
-
-    public function getIsDefault(): int
-    {
-        return 0;
     }
 }

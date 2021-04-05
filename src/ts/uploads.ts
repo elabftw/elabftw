@@ -12,6 +12,7 @@ import { Payload, Entity, Method, Model, Target, Type, Action } from './interfac
 import { Ajax } from './Ajax.class';
 import { notif, displayMolFiles, display3DMolecules } from './misc';
 import i18next from 'i18next';
+import Upload from './Upload.class';
 
 $(document).ready(function() {
   const pages = ['edit', 'view'];
@@ -41,6 +42,8 @@ $(document).ready(function() {
     id: parseInt(about.id),
   };
 
+  const UploadC = new Upload(entity);
+
   // make file comments editable
   $(document).on('mouseenter', '.file-comment', function() {
     ($('.editable') as any).editable(function(input: string) {
@@ -50,10 +53,7 @@ $(document).ready(function() {
         action: Action.Update,
         model: Model.Upload,
         target: Target.Comment,
-        entity: {
-          type: entityType,
-          id: $(this).data('itemid'),
-        },
+        entity: entity,
         content: input,
         id : $(this).data('id'),
       };
@@ -99,15 +99,7 @@ $(document).ready(function() {
     el.addEventListener('click', ev => {
       const uploadId = parseInt((ev.target as HTMLElement).dataset.uploadid);
       if (confirm(i18next.t('generic-delete-warning'))) {
-        const AjaxC = new Ajax();
-        const payload: Payload = {
-          method: Method.POST,
-          action: Action.Destroy,
-          model: Model.Upload,
-          entity: entity,
-          id : uploadId,
-        };
-        AjaxC.send(payload).then(json => {
+        UploadC.destroy(uploadId).then(json => {
           if (json.res) {
             $('#filesdiv').load('?mode=edit&id=' + entity.id + ' #filesdiv > *', function() {
               displayMolFiles();

@@ -258,24 +258,6 @@ try {
             'color' => $Category->readColor((int) $Request->request->get('categoryId')),
         ));
     }
-
-    // DESTROY UPLOAD
-    /*
-    if ($Request->request->has('uploadsDestroy')) {
-        $upload = $Entity->Uploads->readFromId((int) $Request->request->get('uploadId'));
-        $Entity->Uploads->destroy(new DestroyParams((int) $Request->request->get('uploadId')));
-        // check that the filename is not in the body. see #432
-        $msg = '';
-        if (strpos($Entity->entityData['body'], $upload['long_name'])) {
-            $msg = '. ';
-            $msg .= _('Please make sure to remove any reference to this file in the body!');
-        }
-        $Response->setData(array(
-            'res' => true,
-            'msg' => _('File deleted successfully') . $msg,
-        ));
-    }
-     */
 } catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException | PDOException $e) {
     $Response->setData(array(
         'res' => false,

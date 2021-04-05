@@ -27,7 +27,6 @@ use Elabftw\Models\Templates;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
-use Elabftw\Services\Filter;
 use function in_array;
 use function json_decode;
 use Symfony\Component\HttpFoundation\Request;
@@ -137,6 +136,10 @@ class JsonProcessor
         if ($this->model instanceof Status) {
             return new UpdateStatus($this->id, $this->content, $this->extra['color'], (bool) $this->extra['isTimestampable'], (bool) $this->extra['isDefault']);
         }
+
+        if ($this->model instanceof Comments) {
+            return new UpdateComment($this->id, $this->content);
+        }
     }
 
     // for now only GET or POST, should add PUT and DELETE later on...
@@ -228,7 +231,7 @@ class JsonProcessor
         if (!isset($this->decoded['content'])) {
             return $this->content;
         }
-        return Filter::body($this->decoded['content']);
+        return $this->decoded['content'];
     }
 
     private function getId(): int

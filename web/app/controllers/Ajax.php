@@ -81,13 +81,6 @@ try {
             $Model = new ApiKeys($App->Users);
             break;
 
-        case 'comment':
-            if (!($Entity instanceof Experiments || $Entity instanceof Database)) {
-                throw new IllegalActionException('Invalid entity type for comments');
-            }
-            $Model = $Entity->Comments;
-            break;
-
         case 'itemsTypes':
             // items types is only from admin panel
             if (!$App->Session->get('is_admin')) {
@@ -172,17 +165,6 @@ try {
                 'res' => true,
                 'msg' => _('Saved'),
                 'value' => $res,
-            ));
-            break;
-
-        // for the moment this stays here because sending json with jeditable is tricky
-        // TODO, should be moved to JsonApi like the rest
-        case 'updateComment':
-            $res = $Model->update(new UpdateComment($Params->comment, (int) $params['id']));
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved'),
-                'value' => $Params->comment,
             ));
             break;
 

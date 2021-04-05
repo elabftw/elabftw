@@ -30,9 +30,6 @@ export default class Comment {
     return this.sender.send(payload);
   }
 
-  /**
-   * FIXME: can't send json string with jeditable
-   * so update is still on Ajax.php
   update(content: string, id: number) {
     const payload: Payload = {
       method: Method.POST,
@@ -44,7 +41,6 @@ export default class Comment {
     };
     return this.sender.send(payload);
   }
- */
 
   destroy(id: number) {
     const payload: Payload = {

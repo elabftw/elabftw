@@ -28,7 +28,7 @@ class MathJaxTest extends \PHPUnit\Framework\TestCase
     {
         $mpdf = $this->MakePdf->initializeMpdf();
         $mathJaxHtml = '<html><head></head><body>No Tex here</body></html>';
-        $mathJaxOut = $this->MakePdf->tex2svg($tmpdf, $mathJaxHtml);
+        $mathJaxOut = $this->MakePdf->tex2svg($mpdf, $mathJaxHtml);
 
         $this->assertEquals($mathJaxHtml, $mathJaxOutput);
     }
@@ -37,7 +37,7 @@ class MathJaxTest extends \PHPUnit\Framework\TestCase
     {
         $mpdf = $this->MakePdf->initializeMpdf();
         $mathJaxHtml = file_get_contents(dirname(__DIR__, 2) . '/_data/mathjax.html');
-        $mathJaxOut = $this->MakePdf->tex2svg($tmpdf, $mathJaxHtml);
+        $mathJaxOut = $this->MakePdf->tex2svg($mpdf, $mathJaxHtml);
         $mathJaxOutExpect = file_get_contents(dirname(__DIR__, 2) . '/_data/mathjax.out.html');
 
         $this->assertEquals($mathJaxOutExpect, $mathJaxOutput);
@@ -48,6 +48,6 @@ class MathJaxTest extends \PHPUnit\Framework\TestCase
         $mpdf = $this->MakePdf->initializeMpdf();
         $mathJaxHtml = file_get_contents(dirname(__DIR__, 2) . '/_data/mathjaxFail.html');
         $this->expectException(FilesystemErrorException::class);
-        $mathJaxOut = $this->MakePdf->tex2svg($tmpdf, $mathJaxHtml);
+        $mathJaxOut = $this->MakePdf->tex2svg($mpdf, $mathJaxHtml);
     }
 }

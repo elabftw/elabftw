@@ -240,9 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // IMPORT TPL
     if (el.matches('[data-action="import-template"]')) {
       new Template().duplicate(parseInt(el.dataset.id));
-    // DESTROY TPL
-    } else if (el.matches('[data-action="destroy-template"]')) {
-      new Template().destroy(parseInt(el.dataset.id)).then(() => window.location.replace('?tab=3'));
     }
   });
 });

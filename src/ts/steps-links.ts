@@ -24,6 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (about.type === 'items') {
     entityType = Type.Item;
   }
+  if (about.type === 'experiments_templates') {
+    entityType = Type.ExperimentTemplate;
+  }
 
   const entity: Entity = {
     type: entityType,

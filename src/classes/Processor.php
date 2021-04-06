@@ -34,6 +34,8 @@ abstract class Processor
 {
     public AbstractEntity $Entity;
 
+    protected string $action;
+
     //private ModelInterface $Model;
     // @phpstan-ignore-next-line
     protected $Model;
@@ -51,6 +53,11 @@ abstract class Processor
     public function getModel()
     {
         return $this->Model;
+    }
+
+    public function getAction(): string
+    {
+        return $this->action;
     }
 
     abstract protected function process(Request $request): void;
@@ -88,24 +95,12 @@ abstract class Processor
                 }
                 return $this->Entity->Uploads;
             case 'itemsTypes':
-                /*
-                // items types is only from admin panel
-                if (!$App->Session->get('is_admin')) {
-                    throw new IllegalActionException('Non admin user tried to access admin controller.');
-                }
-                 */
                 return new ItemsTypes($this->Users);
-
             case 'metadata':
                 return new Metadata($this->Entity);
             case 'privacyPolicy':
                 return new PrivacyPolicy(new Config());
             case 'teamgroup':
-                /*
-                if (!$App->Session->get('is_admin')) {
-                    throw new IllegalActionException('Non admin user tried to access admin controller.');
-                }
-                 */
                 return new TeamGroups($this->Users);
             case 'tag':
                 if (!($this->Entity instanceof Experiments || $this->Entity instanceof Database || $this->Entity instanceof Templates)) {

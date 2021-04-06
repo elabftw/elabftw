@@ -11,10 +11,11 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * For things that can be created
+ * Interface for creating a template
  */
-interface CreatableInterface
+interface CreateTemplateParamsInterface
 {
-    // returns the new id inserted
-    public function create(CreateParamsInterface $params): int;
+    public function getContent(): string;
+
+    public function getBody(): string;
 }

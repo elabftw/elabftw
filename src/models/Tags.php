@@ -18,6 +18,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreatableInterface;
+use Elabftw\Interfaces\CreateTagParamsInterface;
 use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Interfaces\UpdatableInterface;
 use Elabftw\Maps\Team;
@@ -42,7 +43,7 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
     /**
      * Create a tag
      */
-    public function create(ParamsProcessor $params): int
+    public function create(CreateTagParamsInterface $params): int
     {
         $this->Entity->canOrExplode('write');
 
@@ -57,7 +58,7 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
         // check if the tag doesn't exist already for the team
         $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag', $params->tag);
+        $req->bindValue(':tag', $params->getContent());
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
         $tagId = (int) $req->fetchColumn();
@@ -66,7 +67,7 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
         if ($req->rowCount() === 0) {
             $insertSql = 'INSERT INTO tags (team, tag) VALUES (:team, :tag)';
             $insertReq = $this->Db->prepare($insertSql);
-            $insertReq->bindParam(':tag', $params->tag);
+            $insertReq->bindValue(':tag', $params->getContent());
             $insertReq->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
             $this->Db->execute($insertReq);
             $tagId = $this->Db->lastInsertId();

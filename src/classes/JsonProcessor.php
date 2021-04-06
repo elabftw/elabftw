@@ -15,11 +15,13 @@ use Elabftw\Interfaces\CreateParamsInterface;
 use Elabftw\Interfaces\DestroyParamsInterface;
 use Elabftw\Interfaces\ProcessorInterface;
 use Elabftw\Interfaces\UpdateParamsInterface;
+use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Links;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
+use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
@@ -33,8 +35,6 @@ use Symfony\Component\HttpFoundation\Request;
 class JsonProcessor extends Processor implements ProcessorInterface
 {
     public string $method;
-
-    public string $action;
 
     public ?string $target;
 
@@ -61,7 +61,13 @@ class JsonProcessor extends Processor implements ProcessorInterface
             case 'update':
                 return $this->getUpdateParams();
             case 'destroy':
+                if ($this->Model instanceof AbstractEntity) {
+                    return;
+                }
                 return new DestroyParams($this->id);
+            case 'duplicate':
+            case 'lock':
+                return;
             default:
                 throw new IllegalActionException('Bad params');
         }
@@ -72,10 +78,14 @@ class JsonProcessor extends Processor implements ProcessorInterface
     {
         $this->decoded = $request->toArray();
         $this->method = $this->getMethod();
-        $this->action = $this->getAction();
+        $this->action = $this->setAction();
         $this->target = $this->getTarget();
         if (isset($this->decoded['entity'])) {
-            $this->Entity = $this->getEntity($this->decoded['entity']['type'], (int) $this->decoded['entity']['id']);
+            $id = (int) $this->decoded['entity']['id'];
+            if ($id === 0) {
+                $id = null;
+            }
+            $this->Entity = $this->getEntity($this->decoded['entity']['type'], $id);
         }
         $this->Model = $this->findModel($this->decoded['model'] ?? '');
         $this->content = $this->getContent();
@@ -101,6 +111,9 @@ class JsonProcessor extends Processor implements ProcessorInterface
         }
         if ($this->Model instanceof Steps) {
             return new CreateStep($this->content);
+        }
+        if ($this->Model instanceof Templates) {
+            return new CreateTemplate($this->content, $this->extra['body'] ?? '');
         }
         if ($this->Model instanceof Todolist) {
             return new CreateTodoitem($this->content);
@@ -154,13 +167,15 @@ class JsonProcessor extends Processor implements ProcessorInterface
     }
 
     // for now only update
-    private function getAction(): string
+    private function setAction(): string
     {
         $allowed = array(
             'create',
             'read',
             'update',
             'destroy',
+            'duplicate',
+            'lock',
         );
         if (!in_array($this->decoded['action'], $allowed, true)) {
             throw new IllegalActionException('Invalid action!');

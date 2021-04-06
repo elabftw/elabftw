@@ -10,9 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CreatableInterface;
+use Elabftw\Interfaces\CreateTemplateParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -20,7 +19,7 @@ use PDO;
 /**
  * All about the templates
  */
-class Templates extends AbstractEntity implements CreatableInterface
+class Templates extends AbstractEntity
 {
     use SortableTrait;
 
@@ -37,7 +36,7 @@ class Templates extends AbstractEntity implements CreatableInterface
         $this->type = 'experiments_templates';
     }
 
-    public function create(ParamsProcessor $params): int
+    public function create(CreateTemplateParamsInterface $params): int
     {
         $canread = 'team';
         $canwrite = 'user';
@@ -54,9 +53,9 @@ class Templates extends AbstractEntity implements CreatableInterface
             VALUES(:team, :title, :date, :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':title', $params->name);
+        $req->bindValue(':title', $params->getContent());
         $req->bindParam(':date', $date);
-        $req->bindParam(':body', $params->template);
+        $req->bindValue(':body', $params->getBody());
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);

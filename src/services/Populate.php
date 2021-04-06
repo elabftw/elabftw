@@ -9,9 +9,10 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\CreateEntity;
 use Elabftw\Elabftw\CreateStep;
-use Elabftw\Elabftw\ParamsProcessor;
-use Elabftw\Models\AbstractEntity;
+use Elabftw\Elabftw\CreateTag;
+use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
@@ -46,7 +47,7 @@ class Populate
     /**
      * Populate the db with fake experiments or items
      */
-    public function generate(AbstractEntity $Entity): void
+    public function generate(Experiments|Database $Entity): void
     {
         if ($Entity instanceof Experiments) {
             $Category = new Status($Entity->Users->team);
@@ -60,13 +61,13 @@ class Populate
 
         printf("Generating %s \n", $Entity->type);
         for ($i = 0; $i <= $this->iter; $i++) {
-            $id = $Entity->create(new ParamsProcessor(array('id' => $tpl)));
+            $id = $Entity->create(new CreateEntity($tpl));
             $Entity->setId($id);
             // variable tag number
             $Tags = new Tags($Entity);
             $tagNb = $this->faker->numberBetween(0, 5);
             for ($j = 0; $j <= $tagNb; $j++) {
-                $Tags->create(new ParamsProcessor(array('tag' => $this->faker->word())));
+                $Tags->create(new CreateTag($this->faker->word()));
             }
             // random date in the past 5 years
             $Entity->update($this->faker->sentence(), $this->faker->dateTimeBetween('-5 years')->format('Ymd'), $this->faker->realText(1000));
@@ -132,9 +133,7 @@ class Populate
         if ($user['create_templates'] ?? false) {
             $Templates = new Templates($Users);
             for ($i = 0; $i < $this->iter; $i++) {
-                $Templates->create(new ParamsProcessor(
-                    array('name' => $this->faker->sentence(), 'template' => $this->faker->realText(1000))
-                ));
+                $Templates->create(new CreateTemplate($this->faker->sentence(), $this->faker->realText(1000)));
             }
         }
     }

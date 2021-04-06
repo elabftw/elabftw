@@ -41,6 +41,9 @@ enum Action {
   Read = 'read',
   Update = 'update',
   Destroy = 'destroy',
+
+  Duplicate = 'duplicate',
+  Lock = 'lock',
 }
 
 enum Model {
@@ -49,6 +52,7 @@ enum Model {
   Link = 'link',
   Status = 'status',
   Step = 'step',
+  Template = 'template',
   Todolist = 'todolist',
   Upload = 'upload',
 }

@@ -10,22 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Interfaces\DestroyParamsInterface;
-
-final class DestroyParams implements DestroyParamsInterface
+final class DestroyParams extends IdParams
 {
-    public string $action;
-
-    private int $id;
-
-    public function __construct(int $id)
-    {
-        $this->id = $id;
-        $this->action = 'destroy';
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
 }

@@ -121,7 +121,7 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
     /**
      * Lock/unlock
      */
-    public function toggleLock(): void
+    public function toggleLock(): bool
     {
         $permissions = $this->getPermissions();
         if (!$this->Users->userData['can_lock'] && !$permissions['write']) {
@@ -154,7 +154,7 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         $req = $this->Db->prepare($sql);
         $req->bindParam(':lockedby', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**

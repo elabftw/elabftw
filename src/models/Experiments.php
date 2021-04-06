@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreatableInterface;
+use Elabftw\Interfaces\CreateEntityParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
 use PDO;
@@ -29,13 +29,13 @@ class Experiments extends AbstractEntity implements CreatableInterface
         $this->type = 'experiments';
     }
 
-    public function create(ParamsProcessor $params): int
+    public function create(CreateEntityParamsInterface $params): int
     {
         $Templates = new Templates($this->Users);
         $Team = new Team((int) $this->Users->userData['team']);
 
         $metadata = null;
-        $tpl = $params->id;
+        $tpl = $params->getId();
         // do we want template ?
         if ($tpl > 0) {
             $Templates->setId($tpl);

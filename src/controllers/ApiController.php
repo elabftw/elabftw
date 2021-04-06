@@ -13,6 +13,8 @@ namespace Elabftw\Controllers;
 use function dirname;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\CreateLink;
+use Elabftw\Elabftw\CreateTag;
+use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\ParamsProcessor;
@@ -22,7 +24,6 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractCategory;
-use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
@@ -53,7 +54,8 @@ class ApiController implements ControllerInterface
     private AbstractCategory $Category;
 
     /** @psalm-suppress PropertyNotSetInConstructor */
-    private AbstractEntity $Entity;
+    //@phpstan-ignore-next-line
+    private $Entity;
 
     /** @psalm-suppress PropertyNotSetInConstructor */
     private Scheduler $Scheduler;
@@ -742,7 +744,7 @@ class ApiController implements ControllerInterface
      */
     private function createTemplate(): Response
     {
-        $params = new ParamsProcessor(array('id' => 0));
+        $params = new CreateTemplate('created from api', 'yep');
         $id = $this->Entity->create($params);
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
@@ -867,7 +869,7 @@ class ApiController implements ControllerInterface
      */
     private function createTag(): Response
     {
-        $this->Entity->Tags->create(new ParamsProcessor(array('tag' => $this->Request->request->get('tag') ?? '')));
+        $this->Entity->Tags->create(new CreateTag($this->Request->request->get('tag') ?? ''));
         return new JsonResponse(array('result' => 'success'));
     }
 

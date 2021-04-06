@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use function array_diff;
+use Elabftw\Elabftw\CreateItemType;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Interfaces\ReadableInterface;
@@ -154,17 +154,15 @@ class Teams implements ReadableInterface, DestroyableInterface
 
         // create default item type
         $ItemsTypes = new ItemsTypes($this->Users);
-        $ItemsTypes->create(
-            new ParamsProcessor(
-                array(
-                    'name' => 'Edit me',
-                    'color' => '#32a100',
-                    'bookable' => 0,
-                    'template' => '<p>Go to the admin panel to edit/add more items types!</p>',
-                )
-            ),
-            $newId
-        );
+        $ItemsTypes->create(new CreateItemType(
+            'Edit me',
+            '#32a100',
+            '<p>Go to the admin panel to edit/add more items types!</p>',
+            'team',
+            'team',
+            0,
+            $newId,
+        ));
 
         return $newId;
     }

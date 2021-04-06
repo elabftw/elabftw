@@ -11,10 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * For things that can be created
+ * Interface for creating an experiment or item
  */
-interface CreatableInterface
+interface CreateEntityParamsInterface
 {
-    // returns the new id inserted
-    public function create(CreateParamsInterface $params): int;
+    public function getId(): int;
 }

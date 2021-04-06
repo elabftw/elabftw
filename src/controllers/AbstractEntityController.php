@@ -11,12 +11,14 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\CreateEntity;
 use Elabftw\Elabftw\DisplayParams;
-use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Database;
+use Elabftw\Models\Experiments;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
@@ -61,9 +63,12 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         // CREATE
+        // TODO this will move to jsonapi as POST request
         if ($this->App->Request->query->has('create') && !$this->App->Session->get('is_anon')) {
-            $params = new ParamsProcessor(array('id' => $this->App->Request->query->get('tpl')));
-            $id = $this->Entity->create($params);
+            $id = 0;
+            if ($this->Entity instanceof Experiments || $this->Entity instanceof Database) {
+                $id = $this->Entity->create(new CreateEntity((int) $this->App->Request->query->get('tpl')));
+            }
             return new RedirectResponse('?mode=edit&id=' . (string) $id);
         }
 

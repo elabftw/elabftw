@@ -10,9 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Interfaces\CreateStepParamsInterface;
+use Elabftw\Interfaces\CreateTagParamsInterface;
+use Elabftw\Services\Filter;
 
-final class CreateStep implements CreateStepParamsInterface
+final class CreateTag implements CreateTagParamsInterface
 {
     private string $content;
 
@@ -23,7 +24,6 @@ final class CreateStep implements CreateStepParamsInterface
 
     public function getContent(): string
     {
-        // remove any | as they are used in the group_concat
-        return str_replace('|', ' ', $this->content);
+        return Filter::tag($this->content);
     }
 }

@@ -6,32 +6,47 @@
  * @package elabftw
  */
 import { Ajax } from './Ajax.class';
-import { ResponseMsg } from './interfaces';
-import Crud from './Crud.class';
-import i18next from 'i18next';
+import { Entity, Payload, Method, Model, Action, Type, ResponseMsg } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { saveAs } from 'file-saver/dist/FileSaver.js';
 
-export default class Template extends Crud {
-  type: string;
+export default class Template {
+  model: Model;
+  sender: Ajax;
 
   constructor() {
-    super('app/controllers/Ajax.php');
-    this.type = 'experiments_templates';
+    this.model = Model.Template;
+    this.sender = new Ajax();
   }
 
-  create(title: string, body = ''): void {
-    this.send({
-      action: 'create',
-      type: this.type,
-      what: 'template',
-      params: {
-        name: title,
-        template: body,
+  create(title: string, body = ''): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Create,
+      model: this.model,
+      entity: {
+        type: Type.ExperimentTemplate,
+        id: null,
       },
-    }).then((response) => {
-      window.location.replace(`ucp.php?tab=3&templateid=${response.value}`);
-    });
+      content: title,
+      extraParams: {
+        body: body,
+      },
+    };
+    return this.sender.send(payload);
+  }
+
+  lock(id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Lock,
+      model: this.model,
+      entity: {
+        type: Type.ExperimentTemplate,
+        id: id,
+      },
+    };
+    return this.sender.send(payload);
   }
 
   saveToFile(id, name): void {
@@ -43,22 +58,29 @@ export default class Template extends Crud {
     saveAs(blob, name + '.elabftw.tpl');
   }
 
-  duplicate(id: number): void {
-    this.send({
-      action: 'duplicate',
-      what: 'template',
-      type: 'experiments_templates',
-      params: {
-        itemId: id,
+  duplicate(id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Duplicate,
+      model: this.model,
+      entity: {
+        type: Type.ExperimentTemplate,
+        id: id,
       },
-    });
+    };
+    return this.sender.send(payload);
   }
 
-  destroy(id: number): Promise<ResponseMsg>  {
-    if (confirm(i18next.t('generic-delete-warning'))) {
-      const AjaxC = new Ajax('experiments_templates', String(id));
-      return AjaxC.post('destroy');
-    }
-    return Promise.reject(new Error('Action aborted'));
+  destroy(id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Destroy,
+      model: this.model,
+      entity: {
+        type: Type.ExperimentTemplate,
+        id: id,
+      },
+    };
+    return this.sender.send(payload);
   }
 }

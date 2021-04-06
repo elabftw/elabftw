@@ -18,8 +18,8 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
-use Elabftw\Interfaces\DestroyParamsInterface;
 use Elabftw\Interfaces\UpdateParamsInterface;
+use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Status;
 use Exception;
@@ -47,6 +47,7 @@ try {
         $Processor = new RequestProcessor($App->Users, $Request);
     }
 
+    $action = $Processor->getAction();
     $Model = $Processor->getModel();
     $Params = $Processor->getParams();
 
@@ -54,15 +55,19 @@ try {
     if ($Model instanceof Status && !$App->Session->get('is_admin')) {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
-    if ($Params->action === 'create') {
+    if ($action === 'create') {
         $res = $Model->create($Params);
         if ($Model instanceof ApiKeys) {
             $res = $Params->getKey();
         }
-    } elseif ($Params->action === 'update' && $Params instanceof UpdateParamsInterface) {
+    } elseif ($action === 'update' && $Params instanceof UpdateParamsInterface) {
         $res = $Model->update($Params);
-    } elseif ($Params->action === 'destroy' && $Params instanceof DestroyParamsInterface) {
+    } elseif ($action === 'destroy') {
         $res = $Model->destroy($Params);
+    } elseif ($action === 'duplicate' && $Model instanceof AbstractEntity) {
+        $res = $Model->duplicate();
+    } elseif ($action === 'lock' && $Model instanceof AbstractEntity) {
+        $res = $Model->toggleLock();
     }
 
     $Response->setData(array(

@@ -12,7 +12,10 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\CreateItemTypeParamsInterface;
+use Elabftw\Interfaces\CreateParamsInterface;
 use Elabftw\Interfaces\HasMetadataInterface;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -33,22 +36,27 @@ class ItemsTypes extends AbstractEntity implements HasMetadataInterface
         }
     }
 
-    public function create(ParamsProcessor $params, ?int $team = null): int
+    //public function create(CreateParamsInterface $params, ?int $team = null): int
+    public function create(CreateItemTypeParamsInterface $params): int
     {
-        if ($team === null) {
+        if (!$this->Users->userData['is_admin']) {
+            throw new IllegalActionException('Non admin user tried to do an admin action!');
+        }
+        $team = $params->getTeam();
+        if ($team === 0) {
             $team = $this->Users->userData['team'];
         }
 
         $sql = 'INSERT INTO items_types(name, color, bookable, template, team, canread, canwrite)
-            VALUES(:name, :color, :bookable, :template, :team, :canread, :canwrite)';
+            VALUES(:content, :color, :bookable, :body, :team, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':name', $params->name, PDO::PARAM_STR);
-        $req->bindParam(':color', $params->color, PDO::PARAM_STR);
-        $req->bindParam(':bookable', $params->bookable, PDO::PARAM_INT);
-        $req->bindParam(':template', $params->template, PDO::PARAM_STR);
+        $req->bindValue(':content', $params->getContent(), PDO::PARAM_STR);
+        $req->bindValue(':color', $params->getColor(), PDO::PARAM_STR);
+        $req->bindValue(':bookable', $params->getIsBookable(), PDO::PARAM_INT);
+        $req->bindValue(':body', $params->getBody(), PDO::PARAM_STR);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
-        $req->bindParam(':canread', $params->canread, PDO::PARAM_STR);
-        $req->bindParam(':canwrite', $params->canwrite, PDO::PARAM_STR);
+        $req->bindValue(':canread', $params->getCanread(), PDO::PARAM_STR);
+        $req->bindValue(':canwrite', $params->getCanwriteS(), PDO::PARAM_STR);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
@@ -154,6 +162,9 @@ class ItemsTypes extends AbstractEntity implements HasMetadataInterface
      */
     public function updateAll(ParamsProcessor $params): string
     {
+        if (!$this->Users->userData['is_admin']) {
+            throw new IllegalActionException('Non admin user tried to do an admin action!');
+        }
         $sql = 'UPDATE items_types SET
             name = :name,
             team = :team,
@@ -183,6 +194,9 @@ class ItemsTypes extends AbstractEntity implements HasMetadataInterface
      */
     public function destroy(int $id): bool
     {
+        if (!$this->Users->userData['is_admin']) {
+            throw new IllegalActionException('Non admin user tried to do an admin action!');
+        }
         // don't allow deletion of an item type with items
         if ($this->countItems($id) > 0) {
             throw new ImproperActionException(_('Remove all database items with this type before deleting this type.'));

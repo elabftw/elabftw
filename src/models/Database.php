@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\CreateEntityParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
 use PDO;
@@ -29,9 +29,9 @@ class Database extends AbstractEntity
         $this->page = 'database';
     }
 
-    public function create(ParamsProcessor $params): int
+    public function create(CreateEntityParamsInterface $params): int
     {
-        $category = $params->id;
+        $category = $params->getId();
         $ItemsTypes = new ItemsTypes($this->Users, $category);
         $itemsTypesArr = $ItemsTypes->read();
 

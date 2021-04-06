@@ -12,20 +12,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Interfaces\CreateLinkParamsInterface;
 
-final class CreateLink implements CreateLinkParamsInterface
+final class CreateLink extends IdParams implements CreateLinkParamsInterface
 {
-    public string $action;
-
-    private int $id;
-
-    public function __construct(int $id)
-    {
-        $this->id = $id;
-        $this->action = 'create';
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
 }

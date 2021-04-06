@@ -10,9 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateStep;
-use Elabftw\Elabftw\DestroyParams;
-use Elabftw\Elabftw\UpdateStepBody;
-use Elabftw\Elabftw\UpdateStepFinished;
+use Elabftw\Elabftw\UpdateStep;
 
 class StepsTest extends \PHPUnit\Framework\TestCase
 {
@@ -30,7 +28,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     public function testFinish()
     {
-        $this->Steps->update(new UpdateStepFinished(1));
+        $this->Steps->update(new UpdateStep('finished', ''));
     }
 
     public function testRead()
@@ -42,7 +40,8 @@ class StepsTest extends \PHPUnit\Framework\TestCase
     public function testUpdate()
     {
         $id = $this->Steps->create(new CreateStep('do that'));
-        $this->Steps->update(new UpdateStepBody($id, 'updated step body'));
+        $Steps = new Steps($this->Experiments, $id);
+        $Steps->update(new UpdateStep('body', 'updated step body'));
         $ourStep = array_filter($this->Steps->read(), function ($s) use ($id) {
             return ((int) $s['id']) === $id;
         });
@@ -51,6 +50,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy()
     {
-        $this->assertTrue($this->Steps->destroy(new DestroyParams(1)));
+        $Steps = new Steps($this->Experiments, 1);
+        $this->assertTrue($Steps->destroy());
     }
 }

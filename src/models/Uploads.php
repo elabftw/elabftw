@@ -12,15 +12,14 @@ namespace Elabftw\Models;
 
 use function copy;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\DestroyParams;
 use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
-use Elabftw\Interfaces\DestroyParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateUploadParamsInterface;
 use Elabftw\Services\Filter;
@@ -49,20 +48,28 @@ class Uploads implements ModelInterface
 
     public AbstractEntity $Entity;
 
+    public ?int $id;
+
     protected Db $Db;
 
     private string $hashAlgorithm = 'sha256';
 
-    public function __construct(AbstractEntity $entity)
+    public function __construct(AbstractEntity $entity, ?int $id = null)
     {
         $this->Entity = $entity;
         $this->Db = Db::getConnection();
+        $this->id = $id;
+    }
+
+    // TODO should be a trait, with interface hasid ?
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
     /**
      * Main method for normal file upload
      */
-    //public function create(Request $request): void
     public function create(CreateUploadParamsInterface $params): int
     {
         $this->Entity->canOrExplode('write');
@@ -166,21 +173,15 @@ class Uploads implements ModelInterface
         return $uploadId;
     }
 
-    /**
-     * Read info from an upload ID
-     *
-     * @param int $id id of the uploaded item
-     * @throws DatabaseErrorException
-     */
-    public function readFromId(int $id): array
+    public function read(): array
     {
         $sql = 'SELECT * FROM uploads WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $res = $req->fetch();
         if ($res === false) {
-            throw new ImproperActionException('Nothing to show with this id');
+            throw new ResourceNotFoundException();
         }
         return $res;
     }
@@ -211,7 +212,7 @@ class Uploads implements ModelInterface
         $sql = 'UPDATE uploads SET ' . $params->getTarget() . ' = :content WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
-        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
         $req->bindValue(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
@@ -219,10 +220,10 @@ class Uploads implements ModelInterface
     /**
      * Replace an uploaded file by another
      */
-    public function replace(Request $request): void
+    public function replace(Request $request): bool
     {
         $this->Entity->canOrExplode('write');
-        $upload = $this->readFromId((int) $request->request->get('upload_id'));
+        $upload = $this->read();
         $fullPath = $this->getUploadsPath() . $upload['long_name'];
         $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
         $MakeThumbnail = new MakeThumbnail($fullPath);
@@ -230,8 +231,8 @@ class Uploads implements ModelInterface
 
         $sql = 'UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':id', $request->request->get('upload_id'), PDO::PARAM_INT);
-        $this->Db->execute($req);
+        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     /**
@@ -273,10 +274,10 @@ class Uploads implements ModelInterface
     /**
      * Destroy an upload
      */
-    public function destroy(DestroyParamsInterface $params): bool
+    public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');
-        $uploadArr = $this->readFromId($params->getId());
+        $uploadArr = $this->read();
 
         // check that the filename is not in the body. see #432
         if (strpos($this->Entity->entityData['body'], $uploadArr['long_name'])) {
@@ -299,7 +300,7 @@ class Uploads implements ModelInterface
         // to avoid someone deleting files saying it's DB whereas it's exp
         $sql = 'DELETE FROM uploads WHERE id = :id AND type = :type';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
         return $this->Db->execute($req);
     }
@@ -312,7 +313,7 @@ class Uploads implements ModelInterface
         $uploadArr = $this->readAll();
 
         foreach ($uploadArr as $upload) {
-            $this->destroy(new DestroyParams((int) $upload['id']));
+            (new self($this->Entity, (int) $upload['id']))->destroy();
         }
     }
 

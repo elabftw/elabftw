@@ -10,7 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateTag;
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\UpdateTag;
 use Elabftw\Services\Check;
 
 class TagsTest extends \PHPUnit\Framework\TestCase
@@ -46,21 +46,25 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->assertEquals('new super tag', $this->Experiments->Tags->update(new ParamsProcessor(array('id' => 1, 'tag' => 'new super tag'))));
+        $Tags = new Tags($this->Experiments, 1);
+        $this->assertTrue($Tags->update(new UpdateTag('new super tag')));
     }
 
     public function testDeduplicate()
     {
-        $this->assertEquals(0, $this->Experiments->Tags->deduplicate());
+        $Tags = new Tags($this->Experiments, 1);
+        $this->assertEquals(0, $Tags->deduplicate());
         $this->Experiments->Tags->create(new CreateTag('correcttag'));
         $id = $this->Experiments->Tags->create(new CreateTag('typotag'));
-        $this->Experiments->Tags->update(new ParamsProcessor(array('id' => $id, 'tag' => 'correcttag')));
-        $this->assertEquals(1, $this->Experiments->Tags->deduplicate());
+        $Tags = new Tags($this->Experiments, $id);
+        $Tags->update(new UpdateTag('correcttag'));
+        $this->assertEquals(1, $Tags->deduplicate());
     }
 
     public function testUnreference()
     {
-        $this->Experiments->Tags->unreference(1);
+        $Tags = new Tags($this->Experiments, 1);
+        $this->Experiments->Tags->unreference();
     }
 
     public function testGetList()
@@ -72,6 +76,7 @@ class TagsTest extends \PHPUnit\Framework\TestCase
     public function testDestroy()
     {
         $id = $this->Experiments->Tags->create(new CreateTag('destroy me'));
-        $this->Experiments->Tags->destroy($id);
+        $Tags = new Tags($this->Experiments, $id);
+        $this->Experiments->Tags->destroy();
     }
 }

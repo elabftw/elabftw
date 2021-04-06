@@ -12,15 +12,15 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\UpdateParamsInterface;
+use Elabftw\Services\Filter;
 
 final class UpdateUploadRealName extends UpdateUpload implements UpdateParamsInterface
 {
     private string $content;
 
-    public function __construct(JsonProcessor $payload)
+    public function __construct(string $content)
     {
-        parent::__construct($payload);
-        $this->content = $payload->content;
+        $this->content = $content;
         $this->target = 'real_name';
     }
 
@@ -31,6 +31,6 @@ final class UpdateUploadRealName extends UpdateUpload implements UpdateParamsInt
         if ($ext === 'php') {
             throw new ImproperActionException('No php extension allowed!');
         }
-        return $this->content;
+        return Filter::sanitize($this->content);
     }
 }

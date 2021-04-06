@@ -13,7 +13,6 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CreateStepParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Interfaces\DestroyParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateStepParamsInterface;
 use Elabftw\Traits\SortableTrait;
@@ -24,7 +23,8 @@ use PDO;
  */
 //class Steps implements CrudInterface, ModelInterface
 // TODO add crudinterface back once it's all ok
-class Steps implements ModelInterface
+//class Steps implements ModelInterface
+class Steps
 {
     use SortableTrait;
 
@@ -32,10 +32,13 @@ class Steps implements ModelInterface
 
     protected Db $Db;
 
-    public function __construct(AbstractEntity $entity)
+    private ?int $id;
+
+    public function __construct(AbstractEntity $entity, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->Entity = $entity;
+        $this->id = $id;
     }
 
     /**
@@ -51,7 +54,7 @@ class Steps implements ModelInterface
 
         $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :content, :ordering)';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -184,10 +187,10 @@ class Steps implements ModelInterface
     {
         $this->Entity->canOrExplode('write');
         if ($params->getTarget() === 'body') {
-            return $this->updateBody($params->getContent(), $params->getId());
+            return $this->updateBody($params->getContent());
         }
         if ($params->getTarget() === 'finished') {
-            return $this->updateFinished($params->getId());
+            return $this->toggleFinished();
         }
         return false;
     }
@@ -195,13 +198,13 @@ class Steps implements ModelInterface
     /**
      * Delete a step
      */
-    public function destroy(DestroyParamsInterface $params): bool
+    public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');
 
         $sql = 'DELETE FROM ' . $this->Entity->type . '_steps WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
@@ -209,23 +212,23 @@ class Steps implements ModelInterface
     /**
      * Toggle the finished column of a step
      */
-    private function updateFinished(int $stepId): bool
+    private function toggleFinished(): bool
     {
         $sql = 'UPDATE ' . $this->Entity->type . '_steps SET finished = !finished,
             finished_time = NOW() WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $stepId, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
-    private function updateBody(string $content, int $id): bool
+    private function updateBody(string $content): bool
     {
         $sql = 'UPDATE ' . $this->Entity->type . '_steps SET body = :content WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $content, PDO::PARAM_STR);
-        $req->bindValue(':id', $id, PDO::PARAM_INT);
-        $req->bindValue(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':content', $content, PDO::PARAM_STR);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 }

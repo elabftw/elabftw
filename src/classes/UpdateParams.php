@@ -18,17 +18,11 @@ class UpdateParams
 {
     protected const MIN_CONTENT_SIZE = 2;
 
-    public string $action;
-
-    protected int $id;
-
     protected string $content;
 
-    // an update action always has an id and content at least required
-    public function __construct(int $id, string $content)
+    // an update action always has content at least required
+    public function __construct(string $content)
     {
-        $this->id = $id;
-        $this->action = 'update';
         $this->content = $content;
     }
 
@@ -40,11 +34,6 @@ class UpdateParams
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
         }
         return $c;
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
     }
 
     public function getColor(): string

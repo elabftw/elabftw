@@ -138,7 +138,7 @@ try {
             break;
 
         case 'unreference':
-            $Model->unreference($Params->id);
+            $Model->unreference();
             break;
 
         default:

@@ -16,6 +16,4 @@ namespace Elabftw\Interfaces;
 interface UpdateTodoitemParamsInterface
 {
     public function getContent(): string;
-
-    public function getId(): int;
 }

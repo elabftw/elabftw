@@ -20,8 +20,6 @@ final class CreateApikey implements CreateApikeyParamsInterface
 {
     private const MIN_CONTENT_SIZE = 2;
 
-    public string $action;
-
     private string $content;
 
     private int $canwrite;
@@ -31,7 +29,6 @@ final class CreateApikey implements CreateApikeyParamsInterface
     public function __construct(string $content, int $canwrite)
     {
         $this->content = $content;
-        $this->action = 'create';
         $this->canwrite = $canwrite;
     }
 

@@ -219,11 +219,6 @@ try {
         $Entity->Uploads->create(new CreateUpload($Request));
     }
 
-    // REPLACE UPLOAD
-    if ($Request->request->has('replace')) {
-        $Entity->Uploads->replace($Request);
-    }
-
     // ADD MOL FILE OR PNG
     if ($Request->request->has('addFromString')) {
         $uploadId = $Entity->Uploads->createFromString(

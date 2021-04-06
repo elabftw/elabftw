@@ -10,13 +10,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-class UpdateStep extends UpdateParams
-{
-    protected string $target;
+use Elabftw\Interfaces\UpdateStepParamsInterface;
 
-    public function __construct(int $id, string $content)
+class UpdateStep extends UpdateParams implements UpdateStepParamsInterface
+{
+    private string $target;
+
+    public function __construct(string $target, string $content)
     {
-        parent::__construct($id, $content);
+        parent::__construct($content);
+        $this->target = $target;
     }
 
     public function getTarget(): string

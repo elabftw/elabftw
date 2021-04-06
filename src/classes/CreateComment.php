@@ -18,14 +18,11 @@ final class CreateComment implements CreateCommentParamsInterface
 {
     private const MIN_CONTENT_SIZE = 2;
 
-    public string $action;
-
     private string $content;
 
     public function __construct(string $content)
     {
         $this->content = $content;
-        $this->action = 'create';
     }
 
     public function getContent(): string

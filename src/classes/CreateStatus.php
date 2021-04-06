@@ -16,8 +16,6 @@ use Elabftw\Services\Filter;
 
 final class CreateStatus implements CreateStatusParamsInterface
 {
-    public string $action;
-
     private string $content;
 
     private string $color;
@@ -28,7 +26,6 @@ final class CreateStatus implements CreateStatusParamsInterface
 
     public function __construct(string $content, string $color, bool $isTimestampable = false, bool $isDefault = false)
     {
-        $this->action = 'create';
         $this->content = $content;
         $this->color = $color;
         $this->isTimestampable = $isTimestampable;

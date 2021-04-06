@@ -18,6 +18,7 @@ use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Templates;
+use Elabftw\Models\Uploads;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -66,7 +67,8 @@ try {
 
     // REPLACE UPLOAD
     if ($Request->request->has('replace')) {
-        $Entity->Uploads->replace($Request);
+        $Uploads = new Uploads($Entity, (int) $Request->request->get('upload_id'));
+        $Uploads->replace($Request);
     }
 } catch (ImproperActionException | InvalidCsrfTokenException $e) {
     // show message to user

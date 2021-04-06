@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\SortableTrait;
 
@@ -19,7 +18,7 @@ use Elabftw\Traits\SortableTrait;
  * A category is a status for experiments and item type for db item
  */
 //abstract class AbstractCategory implements CrudInterface
-abstract class AbstractCategory implements ModelInterface
+abstract class AbstractCategory
 {
     use SortableTrait;
     use EntityTrait;
@@ -41,5 +40,5 @@ abstract class AbstractCategory implements ModelInterface
     /**
      * Count all items of this type
      */
-    abstract protected function countItems(int $id): int;
+    abstract protected function countItems(): int;
 }

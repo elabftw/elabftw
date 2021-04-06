@@ -15,9 +15,10 @@ use Elabftw\Interfaces\CreateParamsInterface;
 use Elabftw\Interfaces\DestroyParamsInterface;
 use Elabftw\Interfaces\ProcessorInterface;
 use Elabftw\Interfaces\UpdateParamsInterface;
-use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
+use Elabftw\Models\Database;
+use Elabftw\Models\Experiments;
 use Elabftw\Models\Links;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
@@ -40,8 +41,6 @@ class JsonProcessor extends Processor implements ProcessorInterface
 
     public string $content = '';
 
-    public int $id = 0;
-
     private array $decoded;
 
     private array $extra;
@@ -60,11 +59,8 @@ class JsonProcessor extends Processor implements ProcessorInterface
                 return $this->getCreateParams();
             case 'update':
                 return $this->getUpdateParams();
+            // no parameters needed for these actions
             case 'destroy':
-                if ($this->Model instanceof AbstractEntity) {
-                    return;
-                }
-                return new DestroyParams($this->id);
             case 'duplicate':
             case 'lock':
                 return;
@@ -87,9 +83,9 @@ class JsonProcessor extends Processor implements ProcessorInterface
             }
             $this->Entity = $this->getEntity($this->decoded['entity']['type'], $id);
         }
+        $this->id = $this->getId();
         $this->Model = $this->findModel($this->decoded['model'] ?? '');
         $this->content = $this->getContent();
-        $this->id = $this->getId();
         $this->extra = $this->decoded['extraParams'] ?? array();
     }
 
@@ -102,6 +98,9 @@ class JsonProcessor extends Processor implements ProcessorInterface
         }
         if ($this->Model instanceof Comments) {
             return new CreateComment($this->content);
+        }
+        if ($this->Model instanceof Experiments || $this->Model instanceof Database) {
+            return new CreateEntity($this->id);
         }
         if ($this->Model instanceof Links) {
             return new CreateLink($this->id);
@@ -129,28 +128,23 @@ class JsonProcessor extends Processor implements ProcessorInterface
     private function getUpdateParams()
     {
         if ($this->Model instanceof Comments) {
-            return new UpdateComment($this->id, $this->content);
+            return new UpdateComment($this->content);
         }
         if ($this->Model instanceof Steps) {
-            if ($this->target === 'body') {
-                return new UpdateStepBody($this->id, $this->content);
-            }
-            if ($this->target === 'finished') {
-                return new UpdateStepFinished($this->id);
-            }
+            return new UpdateStep($this->target, $this->content);
         }
         if ($this->Model instanceof Status) {
-            return new UpdateStatus($this->id, $this->content, $this->extra['color'], (bool) $this->extra['isTimestampable'], (bool) $this->extra['isDefault']);
+            return new UpdateStatus($this->content, $this->extra['color'], (bool) $this->extra['isTimestampable'], (bool) $this->extra['isDefault']);
         }
         if ($this->Model instanceof Todolist) {
-            return new UpdateTodoitem($this->id, $this->content);
+            return new UpdateTodoitem($this->content);
         }
         if ($this->Model instanceof Uploads) {
             if ($this->target === 'real_name') {
-                return new UpdateUploadRealName($this);
+                return new UpdateUploadRealName($this->content);
             }
             if ($this->target === 'comment') {
-                return new UpdateUploadComment($this);
+                return new UpdateUploadComment($this->content);
             }
         }
 
@@ -210,10 +204,10 @@ class JsonProcessor extends Processor implements ProcessorInterface
         return $this->decoded['content'];
     }
 
-    private function getId(): int
+    private function getId(): ?int
     {
-        if (!isset($this->decoded['id'])) {
-            return $this->id;
+        if (!isset($this->decoded['id']) || $this->decoded['id'] === 0) {
+            return null;
         }
         $id = Check::id((int) $this->decoded['id']);
         if ($id === false) {

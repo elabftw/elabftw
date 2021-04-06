@@ -570,8 +570,8 @@ class ApiController implements ControllerInterface
             return new Response('You need to specify an ID!', 400);
         }
         // note: we don't really care about this entity yet
-        $Uploads = new Uploads($this->Entity);
-        $uploadData = $Uploads->readFromId($this->id);
+        $Uploads = new Uploads($this->Entity, $this->id);
+        $uploadData = $Uploads->read();
         // now we know the id and type of the entity
         // so get the Entity to check for read permissions
         if ($uploadData['type'] === 'experiments') {

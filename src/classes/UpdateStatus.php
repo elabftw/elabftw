@@ -21,9 +21,9 @@ final class UpdateStatus extends UpdateParams implements UpdateParamsInterface
 
     private bool $isDefault;
 
-    public function __construct(int $id, string $content, string $color, bool $isTimestampable = false, bool $isDefault = false)
+    public function __construct(string $content, string $color, bool $isTimestampable = false, bool $isDefault = false)
     {
-        parent::__construct($id, $content);
+        parent::__construct($content);
         $this->content = $content;
         $this->color = $color;
         $this->isTimestampable = $isTimestampable;

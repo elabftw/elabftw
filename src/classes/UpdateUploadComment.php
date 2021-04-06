@@ -12,22 +12,19 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\UpdateParamsInterface;
+use Elabftw\Services\Filter;
 use function mb_strlen;
 
 final class UpdateUploadComment extends UpdateUpload implements UpdateParamsInterface
 {
     private const MIN_CONTENT_SIZE = 2;
 
-    public string $action;
-
     private string $content;
 
-    public function __construct(JsonProcessor $payload)
+    public function __construct(string $content)
     {
-        parent::__construct($payload);
-        $this->content = $payload->content;
+        $this->content = $content;
         $this->target = 'comment';
-        $this->action = 'update';
     }
 
     public function getContent(): string
@@ -36,6 +33,6 @@ final class UpdateUploadComment extends UpdateUpload implements UpdateParamsInte
         if (mb_strlen($this->content) < self::MIN_CONTENT_SIZE) {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
         }
-        return $this->content;
+        return Filter::sanitize($this->content);
     }
 }

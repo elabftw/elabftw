@@ -185,31 +185,31 @@ class ItemsTypes extends AbstractEntity implements HasMetadataInterface
      * Destroy an item type
      *
      */
-    public function destroy(int $id): bool
+    public function destroy(): bool
     {
         // don't allow deletion of an item type with items
-        if ($this->countItems($id) > 0) {
+        if ($this->countItems() > 0) {
             throw new ImproperActionException(_('Remove all database items with this type before deleting this type.'));
         }
         $sql = 'DELETE FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+
         return $this->Db->execute($req);
     }
 
     /**
      * Count all items of this type
-     *
-     * @param int $id of the type
-     * @return int
+     * TODO have a countable interface and maybe counttrait to merge this function with Status
      */
-    protected function countItems(int $id): int
+    protected function countItems(): int
     {
-        $sql = 'SELECT COUNT(*) FROM items WHERE category = :category';
+        $sql = 'SELECT COUNT(id) FROM items WHERE category = :category';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':category', $id, PDO::PARAM_INT);
+        $req->bindParam(':category', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
+
         return (int) $req->fetchColumn();
     }
 }

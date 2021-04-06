@@ -105,7 +105,8 @@ class MakeBloxberg extends AbstractMake
     private function addToZip(string $pdf, int $uploadId): bool
     {
         // get info about the file to get the long_name
-        $zipFile = $this->Entity->Uploads->readFromId($uploadId);
+        $this->Entity->Uploads->setId($uploadId);
+        $zipFile = $this->Entity->Uploads->read();
         // add the timestamped pdf to the zip archive
         $ZipArchive = new ZipArchive();
         // we need this to get the path to the file

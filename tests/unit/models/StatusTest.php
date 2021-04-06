@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateStatus;
-use Elabftw\Elabftw\DestroyParams;
 use Elabftw\Elabftw\UpdateStatus;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
@@ -19,7 +18,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
     {
-        $this->Status = new Status(1);
+        $this->Status = new Status(1, 1);
     }
 
     public function testCreate()
@@ -38,8 +37,9 @@ class StatusTest extends \PHPUnit\Framework\TestCase
     {
         $params = new CreateStatus('Yep', '#29AEB9', false, true);
         $id = $this->Status->create(new CreateStatus('Yep', '#29AEB9', false, true));
-        $this->Status->update(new UpdateStatus($id, 'Updated', '#121212', true, false));
-        $ourStatus = array_filter($this->Status->read(), function ($s) use ($id) {
+        $Status = new Status(1, $id);
+        $Status->update(new UpdateStatus('Updated', '#121212', true, false));
+        $ourStatus = array_filter($Status->read(), function ($s) use ($id) {
             return ((int) $s['category_id']) === $id;
         });
         $status = array_pop($ourStatus);
@@ -57,6 +57,6 @@ class StatusTest extends \PHPUnit\Framework\TestCase
     public function testDestroy()
     {
         $this->expectException(ImproperActionException::class);
-        $this->Status->destroy(new DestroyParams(1));
+        $this->Status->destroy();
     }
 }

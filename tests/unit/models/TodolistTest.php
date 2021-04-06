@@ -3,7 +3,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateTodoitem;
-use Elabftw\Elabftw\DestroyParams;
 use Elabftw\Elabftw\OrderingParams;
 use Elabftw\Elabftw\UpdateTodoitem;
 
@@ -27,7 +26,8 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->assertTrue($this->Todolist->update(new UpdateTodoitem(1, 'write way more tests')));
+        $Todolist = new Todolist(1, 1);
+        $this->assertTrue($Todolist->update(new UpdateTodoitem('write way more tests')));
     }
 
     public function testUpdateOrdering()
@@ -42,6 +42,7 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy()
     {
-        $this->Todolist->destroy(new DestroyParams(1));
+        $Todolist = new Todolist(1, 1);
+        $Todolist->destroy();
     }
 }

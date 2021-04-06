@@ -15,14 +15,11 @@ use Elabftw\Services\Filter;
 
 final class CreateTodoitem implements CreateTodoitemParamsInterface
 {
-    public string $action;
-
     private string $content;
 
     public function __construct(string $content)
     {
         $this->content = $content;
-        $this->action = 'create';
     }
 
     public function getContent(): string

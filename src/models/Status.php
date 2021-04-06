@@ -14,7 +14,6 @@ use Elabftw\Elabftw\CreateStatus;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateStatusParamsInterface;
-use Elabftw\Interfaces\DestroyParamsInterface;
 use Elabftw\Interfaces\UpdateStatusParamsInterface;
 use PDO;
 
@@ -23,10 +22,11 @@ use PDO;
  */
 class Status extends AbstractCategory
 {
-    public function __construct(int $team)
+    public function __construct(int $team, ?int $id = null)
     {
         $this->team = $team;
         $this->Db = Db::getConnection();
+        $this->id = $id;
     }
 
     public function create(CreateStatusParamsInterface $params): int
@@ -131,21 +131,21 @@ class Status extends AbstractCategory
         $req->bindValue(':color', $params->getColor(), PDO::PARAM_STR);
         $req->bindValue(':is_timestampable', $params->getIsTimestampable(), PDO::PARAM_INT);
         $req->bindValue(':is_default', $params->getIsDefault(), PDO::PARAM_INT);
-        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
-    public function destroy(DestroyParamsInterface $params): bool
+    public function destroy(): bool
     {
         // don't allow deletion of a status with experiments
-        if ($this->countItems($params->getId()) > 0) {
+        if ($this->countItems() > 0) {
             throw new ImproperActionException(_('Remove all experiments with this status before deleting this status.'));
         }
 
         $sql = 'DELETE FROM status WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
@@ -154,11 +154,11 @@ class Status extends AbstractCategory
     /**
      * Count all experiments with this status
      */
-    protected function countItems(int $id): int
+    protected function countItems(): int
     {
-        $sql = 'SELECT COUNT(*) FROM experiments WHERE category = :category';
+        $sql = 'SELECT COUNT(id) FROM experiments WHERE category = :category';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':category', $id, PDO::PARAM_INT);
+        $req->bindValue(':category', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return (int) $req->fetchColumn();

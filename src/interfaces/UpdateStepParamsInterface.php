@@ -18,6 +18,4 @@ interface UpdateStepParamsInterface
     public function getContent(): string;
 
     public function getTarget(): string;
-
-    public function getId(): int;
 }

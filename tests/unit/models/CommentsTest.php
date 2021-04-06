@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateComment;
-use Elabftw\Elabftw\DestroyParams;
 use Elabftw\Elabftw\UpdateComment;
 use Elabftw\Exceptions\ImproperActionException;
 
@@ -45,14 +44,16 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->Comments->Update(new UpdateComment(1, 'Updated'));
+        $Comments = new Comments($this->Entity, $this->mockEmail, 1);
+        $Comments->Update(new UpdateComment('Updated'));
         // too short comment
         $this->expectException(ImproperActionException::class);
-        $this->Comments->Update(new UpdateComment(1, 'a'));
+        $Comments->Update(new UpdateComment('a'));
     }
 
     public function testDestroy()
     {
-        $this->Comments->destroy(new DestroyParams(1));
+        $Comments = new Comments($this->Entity, $this->mockEmail, 1);
+        $Comments->destroy();
     }
 }

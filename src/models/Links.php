@@ -14,8 +14,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Interfaces\CreateLinkParamsInterface;
 use Elabftw\Interfaces\DestroyableInterface;
-use Elabftw\Interfaces\DestroyParamsInterface;
-use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\ReadableInterface;
 use Elabftw\Interfaces\UpdateParamsInterface;
 use PDO;
@@ -24,16 +22,19 @@ use PDO;
  * All about the experiments links
  */
 //class Links implements CreatableInterface, ReadableInterface, DestroyableInterface
-class Links implements ReadableInterface, ModelInterface
+class Links implements ReadableInterface
 {
     public AbstractEntity $Entity;
 
     protected Db $Db;
 
-    public function __construct(AbstractEntity $entity)
+    private ?int $id;
+
+    public function __construct(AbstractEntity $entity, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->Entity = $entity;
+        $this->id = $id;
     }
 
     /**
@@ -193,12 +194,13 @@ class Links implements ReadableInterface, ModelInterface
         return false;
     }
 
-    public function destroy(DestroyParamsInterface $params): bool
+    public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');
+
         $sql = 'DELETE FROM ' . $this->Entity->type . '_links WHERE id= :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

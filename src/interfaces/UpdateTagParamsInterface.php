@@ -11,15 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * Interface for updating a status
+ * Interface for updating a tag
  */
-interface UpdateStatusParamsInterface
+interface UpdateTagParamsInterface
 {
     public function getContent(): string;
-
-    public function getColor(): string;
-
-    public function getIsTimestampable(): int;
-
-    public function getIsDefault(): int;
 }

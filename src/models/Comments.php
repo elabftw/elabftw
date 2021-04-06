@@ -13,7 +13,6 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\CreateCommentParamsInterface;
-use Elabftw\Interfaces\DestroyParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateCommentParamsInterface;
 use Elabftw\Services\Email;
@@ -24,7 +23,8 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * All about the comments
  */
-class Comments implements ModelInterface
+//class Comments implements ModelInterface
+class Comments
 {
     public AbstractEntity $Entity;
 
@@ -32,11 +32,14 @@ class Comments implements ModelInterface
 
     private Email $Email;
 
-    public function __construct(AbstractEntity $entity, Email $email)
+    private ?int $id;
+
+    public function __construct(AbstractEntity $entity, Email $email, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->Entity = $entity;
         $this->Email = $email;
+        $this->id = $id;
     }
 
     public function create(CreateCommentParamsInterface $params): int
@@ -81,17 +84,17 @@ class Comments implements ModelInterface
             WHERE id = :id AND userid = :userid AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent(), PDO::PARAM_STR);
-        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
-    public function destroy(DestroyParamsInterface $params): bool
+    public function destroy(): bool
     {
         $sql = 'DELETE FROM ' . $this->Entity->type . '_comments WHERE id = :id AND userid = :userid AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
 

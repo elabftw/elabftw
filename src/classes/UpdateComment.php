@@ -14,8 +14,4 @@ use Elabftw\Interfaces\UpdateParamsInterface;
 
 final class UpdateComment extends UpdateParams implements UpdateParamsInterface
 {
-    public function __construct(int $id, string $content)
-    {
-        parent::__construct($id, $content);
-    }
 }

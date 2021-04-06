@@ -12,17 +12,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Interfaces\CreateEntityParamsInterface;
 
-final class CreateEntity implements CreateEntityParamsInterface
+final class CreateEntity extends IdParams implements CreateEntityParamsInterface
 {
-    private int $id;
-
-    public function __construct(int $id)
-    {
-        $this->id = $id;
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
 }

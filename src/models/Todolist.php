@@ -12,7 +12,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CreateTodoitemParamsInterface;
-use Elabftw\Interfaces\DestroyParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateTodoitemParamsInterface;
 use Elabftw\Traits\SortableTrait;
@@ -21,7 +20,8 @@ use PDO;
 /**
  * All about the todolist
  */
-class Todolist implements ModelInterface
+//class Todolist implements ModelInterface
+class Todolist
 {
     use SortableTrait;
 
@@ -29,10 +29,13 @@ class Todolist implements ModelInterface
 
     private int $userid;
 
-    public function __construct(int $userid)
+    private ?int $id;
+
+    public function __construct(int $userid, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->userid = $userid;
+        $this->id = $id;
     }
 
     public function create(CreateTodoitemParamsInterface $params): int
@@ -67,18 +70,18 @@ class Todolist implements ModelInterface
     {
         $sql = 'UPDATE todolist SET body = :content WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
     }
 
-    public function destroy(DestroyParamsInterface $params): bool
+    public function destroy(): bool
     {
         $sql = 'DELETE FROM todolist WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
@@ -87,11 +90,12 @@ class Todolist implements ModelInterface
     /**
      * Clear all todoitems from the todolist
      */
-    public function destroyAll(): void
+    public function destroyAll(): bool
     {
         $sql = 'DELETE FROM todolist WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
+
+        return $this->Db->execute($req);
     }
 }

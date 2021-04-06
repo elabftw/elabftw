@@ -49,6 +49,8 @@ enum Action {
 enum Model {
   Apikey = 'apikey',
   Comment = 'comment',
+  Experiment = 'experiment',
+  Item = 'item',
   Link = 'link',
   Status = 'status',
   Step = 'step',

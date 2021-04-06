@@ -13,14 +13,12 @@ namespace Elabftw\Models;
 use function array_column;
 use function count;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Interfaces\CreateTagParamsInterface;
-use Elabftw\Interfaces\DestroyableInterface;
-use Elabftw\Interfaces\UpdatableInterface;
+use Elabftw\Interfaces\UpdateTagParamsInterface;
 use Elabftw\Maps\Team;
 use function implode;
 use PDO;
@@ -28,16 +26,19 @@ use PDO;
 /**
  * All about the tag
  */
-class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterface
+class Tags implements CreatableInterface
 {
     public AbstractEntity $Entity;
 
     protected Db $Db;
 
-    public function __construct(AbstractEntity $entity)
+    private ?int $id;
+
+    public function __construct(AbstractEntity $entity, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->Entity = $entity;
+        $this->id = $id;
     }
 
     /**
@@ -165,7 +166,7 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
     /**
      * Update a tag
      */
-    public function update(ParamsProcessor $params): string
+    public function update(UpdateTagParamsInterface $params): bool
     {
         if ($this->Entity->Users->userData['is_admin'] !== '1') {
             throw new IllegalActionException('Only an admin can update a tag!');
@@ -174,12 +175,11 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
         // use the team in the query to prevent one admin from editing tags from another team
         $sql = 'UPDATE tags SET tag = :tag WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $params->id, PDO::PARAM_INT);
-        $req->bindParam(':tag', $params->tag, PDO::PARAM_STR);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindValue(':tag', $params->getContent(), PDO::PARAM_STR);
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
 
-        return $params->tag;
+        return $this->Db->execute($req);
     }
 
     /**
@@ -217,36 +217,33 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
 
     /**
      * Unreference a tag from an entity
-     *
-     * @param int $tagId id of the tag
-     * @return void
      */
-    public function unreference(int $tagId): void
+    public function unreference(): void
     {
         $this->Entity->canOrExplode('write');
 
         $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
+        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         // now check if another entity is referencing it, if not, remove it from the tags table
         $sql = 'SELECT tag_id FROM tags2entity WHERE tag_id = :tag_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
+        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $tags = $req->fetchAll();
 
         if (empty($tags)) {
-            $this->destroy($tagId);
+            $this->destroy();
         }
     }
 
     /**
      * Destroy a tag completely. Unreference it from everywhere and then delete it
      */
-    public function destroy(int $tagId): bool
+    public function destroy(): bool
     {
         if ($this->Entity->Users->userData['is_admin'] !== '1') {
             throw new IllegalActionException('Only an admin can update a tag!');
@@ -254,13 +251,13 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
         // first unreference the tag
         $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
+        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         // now delete it from the tags table
         $sql = 'DELETE FROM tags WHERE id = :tag_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
+        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 

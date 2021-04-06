@@ -18,7 +18,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
-use Elabftw\Interfaces\UpdateParamsInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Status;
@@ -60,7 +59,7 @@ try {
         if ($Model instanceof ApiKeys) {
             $res = $Params->getKey();
         }
-    } elseif ($action === 'update' && $Params instanceof UpdateParamsInterface) {
+    } elseif ($action === 'update') {
         $res = $Model->update($Params);
     } elseif ($action === 'destroy') {
         $res = $Model->destroy($Params);

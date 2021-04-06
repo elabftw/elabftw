@@ -14,17 +14,23 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Links;
 use Elabftw\Models\Metadata;
 use Elabftw\Models\PrivacyPolicy;
 use Elabftw\Models\Status;
+use Elabftw\Models\Steps;
+use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
+use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Elabftw\Services\Email;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -35,6 +41,8 @@ abstract class Processor
     public AbstractEntity $Entity;
 
     protected string $action;
+
+    protected ?int $id;
 
     //private ModelInterface $Model;
     // @phpstan-ignore-next-line
@@ -84,16 +92,13 @@ abstract class Processor
             case 'status':
                 return new Status($this->Users->team);
             case 'comment':
-                return $this->Entity->Comments;
+                return new Comments($this->Entity, new Email(new Config(), $this->Users), $this->id);
             case 'link':
-                return $this->Entity->Links;
+                return new Links($this->Entity, $this->id);
             case 'step':
-                return $this->Entity->Steps;
+                return new Steps($this->Entity, $this->id);
             case 'upload':
-                if (!($this->Entity instanceof Experiments || $this->Entity instanceof Database)) {
-                    throw new IllegalActionException('Invalid entity type for upload');
-                }
-                return $this->Entity->Uploads;
+                return new Uploads($this->Entity, $this->id);
             case 'itemsTypes':
                 return new ItemsTypes($this->Users);
             case 'metadata':
@@ -103,11 +108,10 @@ abstract class Processor
             case 'teamgroup':
                 return new TeamGroups($this->Users);
             case 'tag':
-                if (!($this->Entity instanceof Experiments || $this->Entity instanceof Database || $this->Entity instanceof Templates)) {
-                    throw new IllegalActionException('Invalid entity type for tags');
-                }
-                return $this->Entity->Tags;
+                return new Tags($this->Entity, $this->id);
             case 'template':
+            case 'experiment':
+            case 'item':
                 return $this->Entity;
             case 'todolist':
                 return new Todolist((int) $this->Users->userData['userid']);

@@ -11,19 +11,16 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\CreateEntity;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Check;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -52,28 +49,14 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     public function getResponse(): Response
     {
-        // VIEW
-        if ($this->App->Request->query->get('mode') === 'view') {
-            return $this->view();
+        switch ($this->App->Request->query->get('mode')) {
+            case 'view':
+                return $this->view();
+            case 'edit':
+                return $this->edit();
+            default:
+                return $this->show();
         }
-
-        // EDIT
-        if ($this->App->Request->query->get('mode') === 'edit') {
-            return $this->edit();
-        }
-
-        // CREATE
-        // TODO this will move to jsonapi as POST request
-        if ($this->App->Request->query->has('create') && !$this->App->Session->get('is_anon')) {
-            $id = 0;
-            if ($this->Entity instanceof Experiments || $this->Entity instanceof Database) {
-                $id = $this->Entity->create(new CreateEntity((int) $this->App->Request->query->get('tpl')));
-            }
-            return new RedirectResponse('?mode=edit&id=' . (string) $id);
-        }
-
-        // DEFAULT MODE IS SHOW
-        return $this->show();
     }
 
     /**

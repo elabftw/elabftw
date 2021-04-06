@@ -12,11 +12,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Interfaces\UpdateParamsInterface;
 
-final class UpdateStepFinished extends UpdateStep implements UpdateParamsInterface
+final class UpdateTag extends UpdateParams implements UpdateParamsInterface
 {
-    public function __construct(int $id)
-    {
-        parent::__construct($id, '');
-        $this->target = 'finished';
-    }
 }

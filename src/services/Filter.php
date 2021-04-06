@@ -82,9 +82,6 @@ class Filter
 
     /**
      * Simply sanitize string
-     *
-     * @param string $input
-     * @return string
      */
     public static function sanitize(string $input): string
     {

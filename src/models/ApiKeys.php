@@ -13,7 +13,6 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateApikeyParamsInterface;
-use Elabftw\Interfaces\DestroyParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateParamsInterface;
 use function password_hash;
@@ -29,10 +28,13 @@ class ApiKeys implements ModelInterface
 
     private Users $Users;
 
-    public function __construct(Users $users)
+    private ?int $id;
+
+    public function __construct(Users $users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->Users = $users;
+        $this->id = $id;
     }
 
     /**
@@ -124,15 +126,13 @@ class ApiKeys implements ModelInterface
         return false;
     }
 
-    /**
-     * Destroy an api key
-     */
-    public function destroy(DestroyParamsInterface $params): bool
+    public function destroy(): bool
     {
         $sql = 'DELETE FROM api_keys WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':id', $params->getId(), PDO::PARAM_INT);
+        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+
         return $this->Db->execute($req);
     }
 }

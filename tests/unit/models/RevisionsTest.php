@@ -9,7 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\CreateEntity;
 
 class RevisionsTest extends \PHPUnit\Framework\TestCase
 {
@@ -40,7 +40,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
     public function testRestore()
     {
         $this->Experiment = new Experiments($this->Users, 1);
-        $new = $this->Experiment->create(new ParamsProcessor(array('id' => 0)));
+        $new = $this->Experiment->create(new CreateEntity(0));
         $this->Experiment->setId($new);
         $this->Revisions = new Revisions($this->Experiment, 10, 100);
         $this->Revisions->create('Ohai');

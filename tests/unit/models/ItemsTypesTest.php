@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\CreateItemType;
 use Elabftw\Elabftw\ParamsProcessor;
 
 class ItemsTypesTest extends \PHPUnit\Framework\TestCase
@@ -21,14 +22,7 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
     public function testCreateUpdateDestroy()
     {
         $this->ItemsTypes->create(
-            new ParamsProcessor(
-                array(
-                    'name' => 'new',
-                    'color' => '#fffccc',
-                    'bookable' => 0,
-                    'template' => '<p>body</p>',
-                )
-            )
+            new CreateItemType('new', '#fffccc', '<p>body</p>', 'team', 'team', 0)
         );
         $itemsTypes = $this->ItemsTypes->readAll();
         $last = array_pop($itemsTypes);

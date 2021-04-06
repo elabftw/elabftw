@@ -9,7 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\CreateTemplate;
 
 class TemplatesTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,7 +20,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->Templates->create(new ParamsProcessor(array('name' => 'Test tpl', 'template' => 'pwet')));
+        $this->Templates->create(new CreateTemplate('Test tpl', 'pwet'));
     }
 
     public function testRead()

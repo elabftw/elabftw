@@ -12,7 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Interfaces\CreateStepParamsInterface;
 
-final class CreateStep implements CreateStepParamsInterface
+class CreateStep implements CreateStepParamsInterface
 {
     private string $content;
 

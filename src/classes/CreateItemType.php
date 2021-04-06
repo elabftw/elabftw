@@ -73,6 +73,9 @@ final class CreateItemType implements CreateItemTypeParamsInterface
 
     public function getTeam(): int
     {
+        if ($this->team === null) {
+            return 0;
+        }
         return $this->team;
     }
 }

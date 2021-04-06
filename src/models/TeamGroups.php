@@ -13,15 +13,15 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\CreateParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\CreatableInterface;
+use Elabftw\Interfaces\CreateStepParamsInterface;
 use function in_array;
 use PDO;
 
 /**
  * Everything related to the team groups
  */
-class TeamGroups implements CrudInterface
+class TeamGroups implements CreatableInterface
 {
     private Db $Db;
 
@@ -36,11 +36,8 @@ class TeamGroups implements CrudInterface
     /**
      * Create a team group
      */
-    public function create(CreateParamsInterface $params): int
+    public function create(CreateStepParamsInterface $params): int
     {
-        if (!$this->Users->userData['is_admin']) {
-            throw new IllegalActionException('Non admin user tried to access admin controller.');
-        }
         $sql = 'INSERT INTO team_groups(name, team) VALUES(:content, :team)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
@@ -137,9 +134,6 @@ class TeamGroups implements CrudInterface
      */
     public function update(ParamsProcessor $params): string
     {
-        if (!$this->Users->userData['is_admin']) {
-            throw new IllegalActionException('Non admin user tried to access admin controller.');
-        }
         $sql = 'UPDATE team_groups SET name = :name WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $params->name, PDO::PARAM_STR);
@@ -161,9 +155,6 @@ class TeamGroups implements CrudInterface
      */
     public function updateMember(int $userid, int $groupid, string $action): void
     {
-        if (!$this->Users->userData['is_admin']) {
-            throw new IllegalActionException('Non admin user tried to access admin controller.');
-        }
         if ($action === 'add') {
             $sql = 'INSERT INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)';
         } elseif ($action === 'rm') {
@@ -182,9 +173,6 @@ class TeamGroups implements CrudInterface
      */
     public function destroy(int $id): bool
     {
-        if (!$this->Users->userData['is_admin']) {
-            throw new IllegalActionException('Non admin user tried to access admin controller.');
-        }
         // TODO add fk to do that
         $sql = "UPDATE experiments SET canread = 'team', canwrite = 'user' WHERE canread = :id OR canwrite = :id";
         $req = $this->Db->prepare($sql);

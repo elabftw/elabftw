@@ -12,7 +12,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateItemTypeParamsInterface;
 use Elabftw\Interfaces\CreateParamsInterface;
@@ -39,9 +38,6 @@ class ItemsTypes extends AbstractEntity implements HasMetadataInterface
     //public function create(CreateParamsInterface $params, ?int $team = null): int
     public function create(CreateItemTypeParamsInterface $params): int
     {
-        if (!$this->Users->userData['is_admin']) {
-            throw new IllegalActionException('Non admin user tried to do an admin action!');
-        }
         $team = $params->getTeam();
         if ($team === 0) {
             $team = $this->Users->userData['team'];
@@ -162,9 +158,6 @@ class ItemsTypes extends AbstractEntity implements HasMetadataInterface
      */
     public function updateAll(ParamsProcessor $params): string
     {
-        if (!$this->Users->userData['is_admin']) {
-            throw new IllegalActionException('Non admin user tried to do an admin action!');
-        }
         $sql = 'UPDATE items_types SET
             name = :name,
             team = :team,
@@ -194,9 +187,6 @@ class ItemsTypes extends AbstractEntity implements HasMetadataInterface
      */
     public function destroy(int $id): bool
     {
-        if (!$this->Users->userData['is_admin']) {
-            throw new IllegalActionException('Non admin user tried to do an admin action!');
-        }
         // don't allow deletion of an item type with items
         if ($this->countItems($id) > 0) {
             throw new ImproperActionException(_('Remove all database items with this type before deleting this type.'));

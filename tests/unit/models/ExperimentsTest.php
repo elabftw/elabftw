@@ -9,7 +9,8 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\CreateEntity;
+use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Check;
 
@@ -23,15 +24,15 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAndDestroy()
     {
-        $new = $this->Experiments->create(new ParamsProcessor(array('id' => 0)));
+        $new = $this->Experiments->create(new CreateEntity(0));
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('write');
         $this->Experiments->toggleLock();
         $this->Experiments->destroy();
         $this->Templates = new Templates($this->Users);
-        $this->Templates->create(new ParamsProcessor(array('name' => 'my template', 'template' => 'is so cool')));
-        $new = $this->Experiments->create(new ParamsProcessor(array('id' => 1)));
+        $this->Templates->create(new CreateTemplate('my template', 'is so cool'));
+        $new = $this->Experiments->create(new CreateEntity(1));
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments = new Experiments($this->Users, $new);
         $this->Experiments->destroy();
@@ -45,7 +46,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead()
     {
-        $new = $this->Experiments->create(new ParamsProcessor(array('id' => 0)));
+        $new = $this->Experiments->create(new CreateEntity(0));
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('read');
         $experiment = $this->Experiments->read();
@@ -56,7 +57,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $new = $this->Experiments->create(new ParamsProcessor(array('id' => 0)));
+        $new = $this->Experiments->create(new CreateEntity(0));
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('write');
         $this->assertEquals($new, $this->Experiments->id);

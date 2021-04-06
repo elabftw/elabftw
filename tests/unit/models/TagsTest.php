@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\CreateTag;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Services\Check;
 
@@ -22,13 +23,13 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->Experiments->Tags->create(new ParamsProcessor(array('tag' => 'my tag')));
-        $id = $this->Experiments->Tags->create(new ParamsProcessor(array('tag' => 'new tag')));
+        $this->Experiments->Tags->create(new CreateTag('my tag'));
+        $id = $this->Experiments->Tags->create(new CreateTag('new tag'));
         $this->assertTrue((bool) Check::id($id));
 
         $Database = new Database($this->Users, 1);
         $Tags = new Tags($Database);
-        $id =$Tags->create(new ParamsProcessor(array('tag' => 'tag2222')));
+        $id =$Tags->create(new CreateTag('tag2222'));
         $this->assertTrue((bool) Check::id($id));
     }
 
@@ -51,8 +52,8 @@ class TagsTest extends \PHPUnit\Framework\TestCase
     public function testDeduplicate()
     {
         $this->assertEquals(0, $this->Experiments->Tags->deduplicate());
-        $this->Experiments->Tags->create(new ParamsProcessor(array('tag' => 'correcttag')));
-        $id = $this->Experiments->Tags->create(new ParamsProcessor(array('tag' => 'typotag')));
+        $this->Experiments->Tags->create(new CreateTag('correcttag'));
+        $id = $this->Experiments->Tags->create(new CreateTag('typotag'));
         $this->Experiments->Tags->update(new ParamsProcessor(array('id' => $id, 'tag' => 'correcttag')));
         $this->assertEquals(1, $this->Experiments->Tags->deduplicate());
     }
@@ -70,7 +71,7 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy()
     {
-        $id = $this->Experiments->Tags->create(new ParamsProcessor(array('tag' => 'destroy me')));
+        $id = $this->Experiments->Tags->create(new CreateTag('destroy me'));
         $this->Experiments->Tags->destroy($id);
     }
 }

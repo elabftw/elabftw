@@ -73,18 +73,18 @@ MathJax.config.startup.ready();
 MathJax.startup.promise.then(() => {
     const adaptor = MathJax.startup.adaptor;
     const html = MathJax.startup.document;
-    //
-    //  If no math was found on the page, return nothing
-    //
-    if (html.math.toArray().length === 0) {
-        //adaptor.remove(html.outputJax.svgStyles);
-        //const cache = adaptor.elementById(adaptor.body(html.document), 'MJX-SVG-global-cache');
-        //if (cache) adaptor.remove(cache);
-        return;
-    }
+
     //
     //  If math was found output the resulting HTML
     //
-    console.log(adaptor.doctype(html.document));
-    console.log(adaptor.outerHTML(adaptor.root(html.document)));
-}).catch(err => console.log('MathJax Error:', err));
+    if (html.math.toArray().length > 0) {
+        console.log(adaptor.doctype(html.document));
+        console.log(adaptor.outerHTML(adaptor.root(html.document)));
+    }
+}).catch(err => {
+    //
+    // Print error and fail hard
+    //
+    console.error('MathJax Error:', err.message);
+    process.exitCode = 1;
+});

@@ -31,7 +31,6 @@ use function preg_match_all;
 use function preg_replace;
 use Psr\Log\NullLogger;
 use function str_replace;
-use function str_starts_with;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -216,8 +215,8 @@ class MakePdf extends AbstractMake
 
         // decode html entities, otherwise it crashes
         // compare to https://github.com/mathjax/MathJax-demos-node/issues/16
-        $content = html_entity_decode($content, ENT_HTML5, 'UTF-8');
-        file_put_contents($filename, $content);
+        $contentDecode = html_entity_decode($content, ENT_HTML5, 'UTF-8');
+        file_put_contents($filename, $contentDecode);
 
         // apsolute path to tex2svg app
         $appDir = dirname(__DIR__, 2) . '/src/node';
@@ -231,23 +230,17 @@ class MakePdf extends AbstractMake
                 'node',
                 $appDir . '/tex2svg.bundle.js',
                 $filename,
-            ),
-            // set working directory for process
-            $appDir
+            )
         );
         $process->run();
 
         if (!$process->isSuccessful()) {
+            unlink($filename);
             throw new FilesystemErrorException('PDF generation failed during Tex rendering.', 0, new ProcessFailedException($process));
         }
 
         $html = $process->getOutput();
         unlink($filename);
-
-        // was there an error during mathJax rendering
-        if (str_starts_with($html, 'MathJax Error:')) {
-            throw new FilesystemErrorException('PDF generation failed during Tex rendering.', 0, new FilesystemErrorException($html));
-        }
 
         // was there actually tex in the content?
         // if not we can skip the svg modifications and return the original content

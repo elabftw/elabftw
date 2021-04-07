@@ -19,6 +19,7 @@ use Elabftw\Interfaces\ReadableInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
+use Elabftw\Traits\SetIdTrait;
 use PDO;
 
 /**
@@ -26,14 +27,17 @@ use PDO;
  */
 class Teams implements ReadableInterface, DestroyableInterface
 {
+    use SetIdTrait;
+
     public Users $Users;
 
     protected Db $Db;
 
-    public function __construct(Users $users)
+    public function __construct(Users $users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->Users = $users;
+        $this->id = $id;
     }
 
     /**
@@ -204,10 +208,10 @@ class Teams implements ReadableInterface, DestroyableInterface
     /**
      * Delete a team only if all the stats are at zero
      */
-    public function destroy(int $id): bool
+    public function destroy(): bool
     {
         // check for stats, should be 0
-        $count = $this->getStats($id);
+        $count = $this->getStats($this->id);
 
         if ($count['totxp'] !== '0' || $count['totdb'] !== '0' || $count['totusers'] !== '0') {
             throw new ImproperActionException('The team is not empty! Aborting deletion!');
@@ -216,7 +220,7 @@ class Teams implements ReadableInterface, DestroyableInterface
         // foreign keys will take care of deleting associated data (like status or experiments_templates)
         $sql = 'DELETE FROM teams WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 

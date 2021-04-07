@@ -13,9 +13,10 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\CreateCommentParamsInterface;
-use Elabftw\Interfaces\ModelInterface;
+use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\UpdateCommentParamsInterface;
 use Elabftw\Services\Email;
+use Elabftw\Traits\SetIdTrait;
 use PDO;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,16 +24,15 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * All about the comments
  */
-//class Comments implements ModelInterface
-class Comments
+class Comments implements CrudInterface
 {
+    use SetIdTrait;
+
     public AbstractEntity $Entity;
 
     protected Db $Db;
 
     private Email $Email;
-
-    private ?int $id;
 
     public function __construct(AbstractEntity $entity, Email $email, ?int $id = null)
     {

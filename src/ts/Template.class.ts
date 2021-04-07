@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import { Ajax } from './Ajax.class';
-import { Entity, Payload, Method, Model, Action, Type, ResponseMsg } from './interfaces';
+import { Payload, Method, Model, Action, Type, ResponseMsg } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { saveAs } from 'file-saver/dist/FileSaver.js';
 

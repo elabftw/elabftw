@@ -10,7 +10,6 @@ import { Ajax } from './Ajax.class';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
 
-
 export default class Todolist {
 
   model: Model;

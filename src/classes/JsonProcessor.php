@@ -22,6 +22,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Links;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
+use Elabftw\Models\Tags;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\Uploads;
@@ -111,6 +112,9 @@ class JsonProcessor extends Processor implements ProcessorInterface
         if ($this->Model instanceof Steps) {
             return new CreateStep($this->content);
         }
+        if ($this->Model instanceof Tags) {
+            return new CreateTag($this->content);
+        }
         if ($this->Model instanceof Templates) {
             return new CreateTemplate($this->content, $this->extra['body'] ?? '');
         }
@@ -160,7 +164,6 @@ class JsonProcessor extends Processor implements ProcessorInterface
         return 'GET';
     }
 
-    // for now only update
     private function setAction(): string
     {
         $allowed = array(
@@ -168,8 +171,10 @@ class JsonProcessor extends Processor implements ProcessorInterface
             'read',
             'update',
             'destroy',
+            'deduplicate',
             'duplicate',
             'lock',
+            'unreference',
         );
         if (!in_array($this->decoded['action'], $allowed, true)) {
             throw new IllegalActionException('Invalid action!');

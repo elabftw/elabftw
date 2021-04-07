@@ -9,6 +9,7 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import Tag from './Tag.class';
 import i18next from 'i18next';
+import { Type, Entity } from './interfaces';
 import { getCheckedBoxes, notif } from './misc';
 
 $(document).ready(function() {
@@ -17,7 +18,25 @@ $(document).ready(function() {
     type = 'experiments_templates';
   }
 
-  const TagC = new Tag(type);
+  // holds info about the page through data attributes
+  const about = document.getElementById('info').dataset;
+  let entityType: Type;
+  if (about.type === 'experiments') {
+    entityType = Type.Experiment;
+  }
+  if (about.type === 'items') {
+    entityType = Type.Item;
+  }
+  if (about.type === 'experiments_templates') {
+    entityType = Type.ExperimentTemplate;
+  }
+
+  const entity: Entity = {
+    type: entityType,
+    id: parseInt(about.id),
+  };
+
+  const TagC = new Tag(entity);
 
   // CREATE TAG
   $(document).on('keypress blur', '.createTagInput', function(e) {
@@ -26,9 +45,10 @@ $(document).ready(function() {
     }
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
-      const itemId = $(this).data('id');
-      TagC.save($(this).val() as string, itemId);
-      $(this).val('');
+      TagC.create($(this).val() as string).then(() => {
+        $('#tags_div_' + entity.id).load(window.location.href + ' #tags_div_' + entity.id + ' > *');
+        $(this).val('');
+      });
     }
   });
 
@@ -50,7 +70,7 @@ $(document).ready(function() {
         return;
       }
       $.each(checked, function(index) {
-        TagC.save($('#createTagInputMultiple').val() as string, checked[index]['id']);
+        TagC.create($('#createTagInputMultiple').val() as string, checked[index]['id']);
       });
       $(this).val('');
     }
@@ -66,6 +86,8 @@ $(document).ready(function() {
         return;
       }
       request.what = 'tag';
+      // so we need to have a type here so we can get an entity (Database will be default) and the Tags object is correctly built by the Processor
+      request.type = 'not-important-but-needs-to-be-here';
       request.action = 'getList';
       request.params = {
         name: term,
@@ -100,17 +122,28 @@ $(document).ready(function() {
 
   // UNREFERENCE (remove link between tag and entity)
   $(document).on('click', '.tagUnreference', function() {
-    TagC.unreference($(this).data('tagid'), $(this).data('id'));
+    if (confirm(i18next.t('tag-delete-warning'))) {
+      TagC.unreference($(this).data('tagid')).then(() => {
+        $('#tags_div_' + entity.id).load(window.location.href + ' #tags_div_' + entity.id + ' > *');
+      });
+    }
   });
 
   // DEDUPLICATE (from admin panel/tag manager)
   $(document).on('click', '.tagDeduplicate', function() {
-    TagC.deduplicate();
+    TagC.deduplicate().then(json => {
+      $('#tag_manager').load(window.location.href + ' #tag_manager > *');
+      // TODO notif this in js from json.value
+      //   $Response->setData(array('res' => true, 'msg' => sprintf(_('Deduplicated %d tags'), $deduplicated)));
+    });
   });
 
   // DESTROY (from admin panel/tag manager)
   $('#tag_manager').on('click', '.tagDestroy', function() {
-    TagC.destroy($(this).data('tagid'));
-
+    if (confirm(i18next.t('tag-delete-warning'))) {
+      TagC.destroy($(this).data('tagid')).then(() => {
+        $('#tag_manager').load(window.location.href + ' #tag_manager > *');
+      });
+    }
   });
 });

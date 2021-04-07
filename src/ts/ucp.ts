@@ -10,7 +10,6 @@ import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Apikey from './Apikey.class';
 import Template from './Template.class';
-import { Ajax } from './Ajax.class';
 import i18next from 'i18next';
 
 $(document).ready(function() {

@@ -8,8 +8,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
     {
-        $Users = new Users(1, 1);
-        $this->Teams= new Teams($Users);
+        $this->Teams= new Teams(new Users(1, 1));
     }
 
     public function testCreate()
@@ -25,10 +24,12 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     public function testDestroy()
     {
         $id = $this->Teams->create('Destroy me');
-        $this->Teams->destroy($id);
+        $this->Teams->setId($id);
+        $this->Teams->destroy();
         // try to destroy a team with data
+        $this->Teams->setId(1);
         $this->expectException(ImproperActionException::class);
-        $this->Teams->destroy(1);
+        $this->Teams->destroy();
     }
 
     public function testGetAllStats()

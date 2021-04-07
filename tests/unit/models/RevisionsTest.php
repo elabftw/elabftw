@@ -52,6 +52,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy()
     {
-        $this->Revisions->destroy(1);
+        $this->Revisions->setId(1);
+        $this->Revisions->destroy();
     }
 }

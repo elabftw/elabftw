@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateApikey;
-use Elabftw\Elabftw\DestroyParams;
 use function mb_strlen;
 
 class ApiKeysTest extends \PHPUnit\Framework\TestCase
@@ -46,6 +45,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy()
     {
-        $this->assertTrue($this->ApiKeys->destroy(new DestroyParams(2)));
+        $this->ApiKeys->setId(2);
+        $this->assertTrue($this->ApiKeys->destroy());
     }
 }

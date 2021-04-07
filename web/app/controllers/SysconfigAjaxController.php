@@ -56,7 +56,8 @@ try {
 
     // DESTROY TEAM
     if ($Request->request->has('teamsDestroy')) {
-        $Teams->destroy((int) $Request->request->get('teamsDestroyId'));
+        $Teams->setId((int) $Request->request->get('teamsDestroyId'));
+        $Teams->destroy();
     }
 
     // SEND TEST EMAIL
@@ -73,8 +74,8 @@ try {
 
     // DESTROY IDP
     if ($Request->request->has('idpsDestroy')) {
-        $Idps = new Idps();
-        $Idps->destroy((int) $Request->request->get('id'));
+        $Idps = new Idps((int) $Request->request->get('id'));
+        $Idps->destroy();
     }
 
     // CLEAR BANNED

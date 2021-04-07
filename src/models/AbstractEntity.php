@@ -20,6 +20,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\CreatableInterface;
+use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Interfaces\HasMetadataInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
@@ -36,7 +37,7 @@ use function sha1;
 /**
  * The mother class of Experiments and Database
  */
-abstract class AbstractEntity implements CreatableInterface, HasMetadataInterface
+abstract class AbstractEntity implements CreatableInterface, DestroyableInterface, HasMetadataInterface
 {
     use EntityTrait;
 
@@ -104,11 +105,6 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         if ($id !== null) {
             $this->setId($id);
         }
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
     }
 
     /**

@@ -14,6 +14,7 @@ use function count;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Traits\SetIdTrait;
 use function mb_strlen;
 use PDO;
 
@@ -22,6 +23,8 @@ use PDO;
  */
 class Revisions implements DestroyableInterface
 {
+    use SetIdTrait;
+
     private Db $Db;
 
     private AbstractEntity $Entity;
@@ -30,12 +33,13 @@ class Revisions implements DestroyableInterface
 
     private int $minDelta;
 
-    public function __construct(AbstractEntity $entity, int $maxRevisions, int $minDelta)
+    public function __construct(AbstractEntity $entity, int $maxRevisions, int $minDelta, ?int $id = null)
     {
         $this->Entity = $entity;
         $this->Db = Db::getConnection();
         $this->maxRevisions = $maxRevisions;
         $this->minDelta = $minDelta;
+        $this->id = $id;
     }
 
     /**
@@ -117,11 +121,12 @@ class Revisions implements DestroyableInterface
         $this->Db->execute($req);
     }
 
-    public function destroy(int $id): bool
+    public function destroy(): bool
     {
         $sql = 'DELETE FROM ' . $this->Entity->type . '_revisions WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
         return $this->Db->execute($req);
     }
 
@@ -149,7 +154,8 @@ class Revisions implements DestroyableInterface
         $oldestRevisions = array_slice(array_reverse($this->readAll()), 0, $num);
         foreach ($oldestRevisions as $revision) {
             $idToDelete = (int) $revision['id'];
-            $this->destroy($idToDelete);
+            $this->setId($idToDelete);
+            $this->destroy();
         }
     }
 

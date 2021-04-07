@@ -15,14 +15,12 @@ use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Interfaces\CreateLinkParamsInterface;
 use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Interfaces\ReadableInterface;
-use Elabftw\Interfaces\UpdateParamsInterface;
 use PDO;
 
 /**
  * All about the experiments links
  */
-//class Links implements CreatableInterface, ReadableInterface, DestroyableInterface
-class Links implements ReadableInterface
+class Links implements CreatableInterface, ReadableInterface, DestroyableInterface
 {
     public AbstractEntity $Entity;
 
@@ -187,11 +185,6 @@ class Links implements ReadableInterface
                 'item_id' => $newId,
             ));
         }
-    }
-
-    public function update(UpdateParamsInterface $params): bool
-    {
-        return false;
     }
 
     public function destroy(): bool

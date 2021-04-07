@@ -13,7 +13,6 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CreateStepParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateStepParamsInterface;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -21,10 +20,7 @@ use PDO;
 /**
  * All about the steps
  */
-//class Steps implements CrudInterface, ModelInterface
-// TODO add crudinterface back once it's all ok
-//class Steps implements ModelInterface
-class Steps
+class Steps implements CrudInterface
 {
     use SortableTrait;
 

@@ -26,8 +26,8 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $Todolist = new Todolist(1, 1);
-        $this->assertTrue($Todolist->update(new UpdateTodoitem('write way more tests')));
+        $this->Todolist->setId(1);
+        $this->assertTrue($this->Todolist->update(new UpdateTodoitem('write way more tests')));
     }
 
     public function testUpdateOrdering()
@@ -42,7 +42,7 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy()
     {
-        $Todolist = new Todolist(1, 1);
-        $Todolist->destroy();
+        $this->Todolist->setId(1);
+        $this->Todolist->destroy();
     }
 }

@@ -14,6 +14,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CreateTodoitemParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateTodoitemParamsInterface;
+use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
@@ -23,13 +24,12 @@ use PDO;
 //class Todolist implements ModelInterface
 class Todolist
 {
+    use SetIdTrait;
     use SortableTrait;
 
     protected Db $Db;
 
     private int $userid;
-
-    private ?int $id;
 
     public function __construct(int $userid, ?int $id = null)
     {

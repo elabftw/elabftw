@@ -11,8 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * Interface for models that can have CUD operations
+ * Interface for updating a comment
  */
-interface ModelInterface extends CreatableInterface, UpdatableInterface, DestroyableInterface
+interface UpdateMetadataParamsInterface
 {
+    public function getContent(): string;
 }

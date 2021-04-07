@@ -38,15 +38,13 @@ use Symfony\Component\HttpFoundation\Request;
  */
 abstract class Processor
 {
-    public AbstractEntity $Entity;
+    public ?AbstractEntity $Entity = null;
 
     protected string $action;
 
-    protected ?int $id;
+    protected ?int $id = null;
 
-    //private ModelInterface $Model;
-    // @phpstan-ignore-next-line
-    protected $Model;
+    protected ModelInterface $Model;
 
     private Users $Users;
 
@@ -56,9 +54,7 @@ abstract class Processor
         $this->process($request);
     }
 
-    //private function getModel(): ModelInterface
-    // @phpstan-ignore-next-line
-    public function getModel()
+    public function getModel(): ModelInterface
     {
         return $this->Model;
     }

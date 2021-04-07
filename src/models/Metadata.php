@@ -11,20 +11,19 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Interfaces\HasMetadataInterface;
 use Elabftw\Interfaces\UpdatableInterface;
+use Elabftw\Interfaces\UpdateMetadataParamsInterface;
 use Elabftw\Services\Filter;
 use PDO;
 
 class Metadata implements UpdatableInterface
 {
-    private HasMetadataInterface $Entity;
+    private AbstractEntity $Entity;
 
     private Db $Db;
 
-    public function __construct(HasMetadataInterface $entity)
+    public function __construct(AbstractEntity $entity)
     {
         $this->Entity = $entity;
         $this->Db = Db::getConnection();
@@ -43,16 +42,14 @@ class Metadata implements UpdatableInterface
     /**
      * Update the whole json in metadata column
      */
-    public function update(ParamsProcessor $params): string
+    public function update(UpdateMetadataParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
-        $id = $this->Entity->getId();
         $sql = 'UPDATE ' . $this->Entity->getTable() . ' SET metadata = :metadata WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':metadata', $params->template);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $params->template;
+        $req->bindValue(':metadata', $params->getContent());
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     /**
@@ -61,7 +58,6 @@ class Metadata implements UpdatableInterface
     public function updateExtraField(string $field, string $value): bool
     {
         $this->Entity->canOrExplode('write');
-        $id = $this->Entity->getId();
         // build field (input is double quoted to allow for whitespace in key)
         $field = '$.extra_fields."' . Filter::sanitize($field) . '".value';
         $value = Filter::sanitize($value);
@@ -69,7 +65,7 @@ class Metadata implements UpdatableInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':field', $field);
         $req->bindParam(':value', $value);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 }

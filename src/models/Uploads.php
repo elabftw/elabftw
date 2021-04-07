@@ -20,10 +20,11 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
-use Elabftw\Interfaces\ModelInterface;
+use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Interfaces\UpdateUploadParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MakeThumbnail;
+use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\UploadTrait;
 use function exif_read_data;
 use function extension_loaded;
@@ -39,16 +40,16 @@ use function unlink;
 /**
  * All about the file uploads
  */
-class Uploads implements ModelInterface
+class Uploads implements DestroyableInterface
 {
     use UploadTrait;
+
+    use SetIdTrait;
 
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
     private const BIG_FILE_THRESHOLD = 50000000;
 
     public AbstractEntity $Entity;
-
-    public ?int $id;
 
     protected Db $Db;
 
@@ -58,12 +59,6 @@ class Uploads implements ModelInterface
     {
         $this->Entity = $entity;
         $this->Db = Db::getConnection();
-        $this->id = $id;
-    }
-
-    // TODO should be a trait, with interface hasid ?
-    public function setId(int $id): void
-    {
         $this->id = $id;
     }
 

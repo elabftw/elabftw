@@ -101,7 +101,7 @@ class Database extends AbstractEntity
         return $newId;
     }
 
-    public function destroy(): void
+    public function destroy(): bool
     {
         $this->canOrExplode('write');
 
@@ -136,6 +136,6 @@ class Database extends AbstractEntity
         }
 
         // delete from pinned
-        $this->Pins->cleanup();
+        return $this->Pins->cleanup();
     }
 }

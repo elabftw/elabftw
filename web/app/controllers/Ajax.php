@@ -50,6 +50,7 @@ try {
 
     switch ($action) {
         case 'readForTinymce':
+            // @phpstan-ignore-next-line
             $templates = $Model->readForUser();
             $res = array();
             foreach ($templates as $template) {
@@ -59,6 +60,7 @@ try {
             break;
 
         case 'read':
+            // @phpstan-ignore-next-line
             $res = $Model->read();
             $Response->setData(array(
                 'res' => true,
@@ -67,6 +69,7 @@ try {
             break;
 
         case 'readAll':
+            // @phpstan-ignore-next-line
             $res = $Model->readAll();
             $Response->setData(array(
                 'res' => true,
@@ -75,10 +78,12 @@ try {
             break;
 
         case 'getList':
+            // @phpstan-ignore-next-line
             $Response->setData($Model->getList($Params->name));
             break;
 
         case 'create':
+            // @phpstan-ignore-next-line
             $res = $Model->create($Params);
             $Response->setData(array(
                 'res' => true,
@@ -88,6 +93,7 @@ try {
             break;
 
         case 'update':
+            // @phpstan-ignore-next-line
             $res = $Model->update($Params);
             $Response->setData(array(
                 'res' => true,
@@ -97,6 +103,7 @@ try {
             break;
 
         case 'updateItemType':
+            // @phpstan-ignore-next-line
             $res = $Model->updateAll($Params);
             $Response->setData(array(
                 'res' => true,
@@ -106,6 +113,7 @@ try {
             break;
 
         case 'updateMember':
+            // @phpstan-ignore-next-line
             $Model->updateMember(
                 (int) $Request->request->get('params')['user'],
                 (int) $Request->request->get('params')['group'],
@@ -114,6 +122,7 @@ try {
             break;
 
         case 'updateExtraField':
+            // @phpstan-ignore-next-line
             $Model->updateExtraField(
                 $Request->request->get('params')['field'],
                 $Request->request->get('params')['value'],
@@ -121,24 +130,13 @@ try {
             break;
 
         case 'destroy':
+            // @phpstan-ignore-next-line
             $Model->destroy($Params->id);
             break;
 
-        case 'deduplicate':
-            $deduplicated = $Model->deduplicate();
-            $Response->setData(array('res' => true, 'msg' => sprintf(_('Deduplicated %d tags'), $deduplicated)));
-            break;
-
         case 'duplicate':
+            // @phpstan-ignore-next-line
             $Model->duplicate();
-            break;
-
-        case 'finish':
-            $Model->finish($Params->id);
-            break;
-
-        case 'unreference':
-            $Model->unreference();
             break;
 
         default:

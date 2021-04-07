@@ -16,23 +16,24 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Interfaces\CreateTagParamsInterface;
+use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateTagParamsInterface;
 use Elabftw\Maps\Team;
+use Elabftw\Traits\SetIdTrait;
 use function implode;
 use PDO;
 
 /**
  * All about the tag
  */
-class Tags implements CreatableInterface
+class Tags implements ModelInterface
 {
+    use SetIdTrait;
+
     public AbstractEntity $Entity;
 
     protected Db $Db;
-
-    private ?int $id;
 
     public function __construct(AbstractEntity $entity, ?int $id = null)
     {
@@ -266,13 +267,13 @@ class Tags implements CreatableInterface
      * Here the tag are not destroyed because it might be nice to keep the tags in memory
      * even when nothing is referencing it. Admin can manage tags anyway if it needs to be destroyed.
      */
-    public function destroyAll(): void
+    public function destroyAll(): bool
     {
         $sql = 'DELETE FROM tags2entity WHERE item_id = :id AND item_type = :type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**

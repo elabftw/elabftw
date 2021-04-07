@@ -192,7 +192,7 @@ class Experiments extends AbstractEntity implements CreatableInterface
      * Destroy an experiment and all associated data
      * The foreign key constraints will take care of associated tables
      */
-    public function destroy(): void
+    public function destroy(): bool
     {
         $this->canOrExplode('write');
 
@@ -205,7 +205,7 @@ class Experiments extends AbstractEntity implements CreatableInterface
         $this->Db->execute($req);
 
         // delete from pinned
-        $this->Pins->cleanup();
+        return $this->Pins->cleanup();
     }
 
     /**

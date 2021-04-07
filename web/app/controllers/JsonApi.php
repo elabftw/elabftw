@@ -62,7 +62,7 @@ try {
     } elseif ($action === 'update') {
         $res = $Model->update($Params);
     } elseif ($action === 'destroy') {
-        $res = $Model->destroy($Params);
+        $res = $Model->destroy();
     } elseif ($action === 'duplicate' && $Model instanceof AbstractEntity) {
         $res = $Model->duplicate();
     } elseif ($action === 'lock' && $Model instanceof AbstractEntity) {

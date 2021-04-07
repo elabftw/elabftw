@@ -15,8 +15,6 @@ namespace Elabftw\Interfaces;
  */
 interface HasMetadataInterface
 {
-    public function getId(): int;
-
     public function getTable(): string;
 
     public function getMetadata(): ?string;

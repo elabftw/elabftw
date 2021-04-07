@@ -209,7 +209,7 @@ class Templates extends AbstractEntity
     /**
      * Delete template
      */
-    public function destroy(): void
+    public function destroy(): bool
     {
         $this->canOrExplode('write');
         $sql = 'DELETE FROM experiments_templates WHERE id = :id';
@@ -217,6 +217,6 @@ class Templates extends AbstractEntity
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $this->Tags->destroyAll();
+        return $this->Tags->destroyAll();
     }
 }

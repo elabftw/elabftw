@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\ProcessFailedException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use function file_get_contents;
@@ -47,7 +47,7 @@ class MathJaxTest extends \PHPUnit\Framework\TestCase
     {
         $mpdf = $this->MakePdf->initializeMpdf();
         $mathJaxHtml = file_get_contents(dirname(__DIR__, 2) . '/_data/mathjaxFail.html');
-        $this->expectException(FilesystemErrorException::class);
+        $this->expectException(ProcessFailedException::class);
         $mathJaxOut = $this->MakePdf->tex2svg($mpdf, $mathJaxHtml);
     }
 }

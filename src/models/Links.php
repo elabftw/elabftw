@@ -14,19 +14,22 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Interfaces\CreateLinkParamsInterface;
 use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\ReadableInterface;
+use Elabftw\Interfaces\UpdateParamsInterface;
+use Elabftw\Traits\SetIdTrait;
 use PDO;
 
 /**
  * All about the experiments links
  */
-class Links implements CreatableInterface, ReadableInterface, DestroyableInterface
+class Links implements CreatableInterface, ReadableInterface, DestroyableInterface, ModelInterface
 {
+    use SetIdTrait;
+
     public AbstractEntity $Entity;
 
     protected Db $Db;
-
-    private ?int $id;
 
     public function __construct(AbstractEntity $entity, ?int $id = null)
     {
@@ -185,6 +188,11 @@ class Links implements CreatableInterface, ReadableInterface, DestroyableInterfa
                 'item_id' => $newId,
             ));
         }
+    }
+
+    public function update(UpdateParamsInterface $params): bool
+    {
+        return false;
     }
 
     public function destroy(): bool

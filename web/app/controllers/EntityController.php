@@ -54,17 +54,6 @@ try {
 
     $Response = new RedirectResponse('../../' . $Entity->page . '.php?mode=edit&id=' . $Entity->id);
 
-    // UPDATE
-    if ($Request->request->has('update')) {
-        $Entity->update(
-            $Request->request->get('title'),
-            $Request->request->get('date'),
-            $Request->request->get('body')
-        );
-        // redirect to view mode (Save and go back button)
-        $Response = new RedirectResponse('../../' . $Entity->page . '.php?mode=view&id=' . $Entity->id);
-    }
-
     // REPLACE UPLOAD
     if ($Request->request->has('replace')) {
         $Uploads = new Uploads($Entity, (int) $Request->request->get('upload_id'));

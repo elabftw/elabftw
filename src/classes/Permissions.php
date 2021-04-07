@@ -101,6 +101,11 @@ class Permissions
      */
     private function getWrite(): bool
     {
+        // locked entity cannot be written to
+        if ($this->item['locked']) {
+            return false;
+        }
+
         // if anyone can write, we're sure to have access
         if ($this->item['canwrite'] === 'public') {
             return true;

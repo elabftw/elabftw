@@ -51,33 +51,32 @@ enum Action {
 enum Model {
   Apikey = 'apikey',
   Comment = 'comment',
-  Experiment = 'experiment',
-  Item = 'item',
   Link = 'link',
   Status = 'status',
   Step = 'step',
   Tag = 'tag',
-  Template = 'template',
   Todolist = 'todolist',
   Upload = 'upload',
 }
 
+enum EntityType {
+  Experiment = 'experiment',
+  Item = 'item',
+  ItemType = 'itemtype',
+  Template = 'template',
+}
+
 enum Target {
   Body = 'body',
+  Date = 'date',
   Comment = 'comment',
   Finished = 'finished',
   RealName = 'real_name',
-}
-
-enum Type {
-  Experiment = 'experiments',
-  ExperimentTemplate = 'experiments_templates',
-  Item = 'items',
-  ItemTypes = 'items_types',
+  Title = 'title',
 }
 
 interface Entity {
-  type: Type;
+  type: EntityType;
   id: number;
 }
 
@@ -85,7 +84,7 @@ interface Entity {
 interface Payload {
   method: Method;
   action: Action;
-  model: Model;
+  model: Model | EntityType;
   entity?: {
     type: Entity['type'];
     id: Entity['id'];
@@ -106,6 +105,6 @@ export {
   Action,
   Model,
   Target,
-  Type,
+  EntityType,
   Entity,
 };

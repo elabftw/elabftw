@@ -68,11 +68,11 @@ abstract class Processor
 
     protected function getEntity(string $type, ?int $itemId = null): AbstractEntity
     {
-        if ($type === 'experiments') {
+        if ($type === 'experiment') {
             return new Experiments($this->Users, $itemId);
-        } elseif ($type === 'experiments_templates') {
+        } elseif ($type === 'template') {
             return new Templates($this->Users, $itemId);
-        } elseif ($type === 'items_types') {
+        } elseif ($type === 'itemtype') {
             return new ItemsTypes($this->Users, $itemId);
         }
         return new Database($this->Users, $itemId);
@@ -95,8 +95,6 @@ abstract class Processor
                 return new Steps($this->Entity, $this->id);
             case 'upload':
                 return new Uploads($this->Entity, $this->id);
-            case 'itemsTypes':
-                return new ItemsTypes($this->Users);
             case 'metadata':
                 return new Metadata($this->Entity);
             case 'privacyPolicy':
@@ -105,9 +103,10 @@ abstract class Processor
                 return new TeamGroups($this->Users);
             case 'tag':
                 return new Tags($this->Entity, $this->id);
-            case 'template':
             case 'experiment':
             case 'item':
+            case 'template':
+            case 'itemtype':
                 return $this->Entity;
             case 'todolist':
                 return new Todolist((int) $this->Users->userData['userid']);

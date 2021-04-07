@@ -5,33 +5,44 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import { Payload, Method, EntityType, Action, Target, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
-import { Payload, Method, Action, EntityType, ResponseMsg } from './interfaces';
-import tinymce from 'tinymce/tinymce';
-import { saveAs } from 'file-saver/dist/FileSaver.js';
 
-export default class Template {
+
+export default class Entity {
   model: EntityType;
   sender: Ajax;
 
-  constructor() {
-    this.model = EntityType.Template;
+  constructor(model: EntityType) {
+    this.model = model;
     this.sender = new Ajax();
   }
 
-  create(title: string, body = ''): Promise<ResponseMsg> {
+  create(id: number): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,
       action: Action.Create,
       model: this.model,
+      id: id,
       entity: {
-        type: EntityType.Template,
+        type: this.model,
         id: null,
       },
-      content: title,
-      extraParams: {
-        body: body,
+    };
+    return this.sender.send(payload);
+  }
+
+  update(id: number, target: Target, content: string): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Update,
+      model: this.model,
+      entity: {
+        type: this.model,
+        id: id,
       },
+      content: content,
+      target: target,
     };
     return this.sender.send(payload);
   }
@@ -42,20 +53,11 @@ export default class Template {
       action: Action.Lock,
       model: this.model,
       entity: {
-        type: EntityType.Template,
+        type: this.model,
         id: id,
       },
     };
     return this.sender.send(payload);
-  }
-
-  saveToFile(id, name): void {
-    // we have the name of the template used for filename
-    // and we have the id of the editor to get the content from
-    // we don't use activeEditor because it requires a click inside the editing area
-    const content = tinymce.get('e' + id).getContent();
-    const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
-    saveAs(blob, name + '.elabftw.tpl');
   }
 
   duplicate(id: number): Promise<ResponseMsg> {
@@ -64,7 +66,7 @@ export default class Template {
       action: Action.Duplicate,
       model: this.model,
       entity: {
-        type: EntityType.Template,
+        type: this.model,
         id: id,
       },
     };
@@ -77,7 +79,7 @@ export default class Template {
       action: Action.Destroy,
       model: this.model,
       entity: {
-        type: EntityType.Template,
+        type: this.model,
         id: id,
       },
     };

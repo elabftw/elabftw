@@ -62,7 +62,7 @@ class Filter
         if ($input === null) {
             return date('Ymd');
         }
-        // the search page's datetime inputs will return YYYY-MM-DD
+        // the date inputs will return YYYY-MM-DD
         // so strip the '-'
         $input = strtr($input, array('-' => ''));
         if (mb_strlen($input) === 8) {

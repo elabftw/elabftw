@@ -9,14 +9,15 @@ declare let key: any;
 declare let MathJax: any;
 import { displayMolFiles, display3DMolecules, insertParamAndReload, notif } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
-import { Type } from './interfaces';
-import 'jquery-ui/ui/widgets/datepicker';
+import { EntityType, Entity, Target } from './interfaces';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
+import { getEntity } from './misc';
 import Dropzone from 'dropzone';
 import i18next from 'i18next';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
+import EntityClass from './Entity.class';
 
 // the dropzone is created programmatically, disable autodiscover
 Dropzone.autoDiscover = false;
@@ -34,13 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // add the title in the page name (see #324)
   document.title = (document.getElementById('title_input') as HTMLInputElement).value + ' - eLabFTW';
 
-  const type = about.type;
-  const id = about.id;
-
-  const AjaxC = new Ajax(type, id);
+  const entity = getEntity();
+  const EntityC = new EntityClass(entity.type);
 
   // add extra fields elements from metadata json
-  const MetadataC = new Metadata(type, id);
+  const MetadataC = new Metadata(entity.type, String(entity.id));
   MetadataC.display('edit');
 
   // UPLOAD FORM
@@ -58,8 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // add additional parameters (id and type)
       this.on('sending', function(file: string, xhr: string, formData: FormData) {
         formData.append('upload', '1');
-        formData.append('type', type);
-        formData.append('id', id);
+        formData.append('type', entity.type);
+        formData.append('id', String(entity.id));
       });
 
       // once it is done
@@ -69,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         notif(json);
         // reload the #filesdiv once the file is uploaded
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-          $('#filesdiv').load(`?mode=edit&id=${id} #filesdiv > *`, function() {
+          $('#filesdiv').load(`?mode=edit&id=${String(entity.id)} #filesdiv > *`, function() {
             displayMolFiles();
             display3DMolecules(true);
             const dropZone = Dropzone.forElement('#elabftw-dropzone');
@@ -98,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // DATA RECOVERY
 
   // check if there is some local data with this id to recover
-  if ((localStorage.getItem('id') == id) && (localStorage.getItem('type') == type)) {
+  if ((localStorage.getItem('id') == String(entity.id)) && (localStorage.getItem('type') == entity.type)) {
     const bodyRecovery = $('<div></div>', {
       'class' : 'alert alert-warning',
       html: 'Recovery data found (saved on ' + localStorage.getItem('date') + '). It was probably saved because your session timed out and it could not be saved in the database. Do you want to recover it?<br><button class="button recover-yes">YES</button> <button class="button btn btn-danger recover-no">NO</button><br><br>Here is what it looks like: ' + localStorage.getItem('body')
@@ -108,15 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // RECOVER YES
   $(document).on('click', '.recover-yes', function() {
-    $.post('app/controllers/EntityAjaxController.php', {
-      quickSave: true,
-      type : type,
-      id : id,
-      // we need this to get the updated content
-      title : (document.getElementById('title_input') as HTMLInputElement).value,
-      date : (document.getElementById('datepicker') as HTMLInputElement).value,
-      body : localStorage.getItem('body')
-    }).done(function() {
+    EntityC.update(entity.id, Target.Body, localStorage.getItem('body')).then(() => {
       localStorage.clear();
       document.location.reload(true);
     });
@@ -137,9 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
     $.get('app/controllers/Ajax.php', {
       action: 'readAll',
       what: 'upload',
-      type: type,
+      type: entity.type,
       params: {
-        itemId: id,
+        itemId: entity.id,
       },
     }).done(function(json) {
       const uploadedFiles = json.msg;
@@ -183,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
       update(rating: any): void {
         $.post(this.controller, {
           rating: rating,
-          id: id,
+          id: entity.id,
           type: 'items',
         }).done(function(json) {
           notif(json);
@@ -191,26 +182,20 @@ document.addEventListener('DOMContentLoaded', () => {
       }
   }
 
-  let location = 'experiments.php';
-  if (type !== 'experiments') {
-    location = 'database.php';
-  }
-
-  let entityType: Type;
-  if (about.type === 'experiments') {
-    entityType = Type.Experiment;
-  }
-  if (about.type === 'items') {
-    entityType = Type.Item;
-  }
-
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
+    // UPDATE ENTITY BODY
+    if (el.matches('[data-action="update-entity-body"]')) {
+      // TODO markdown editor stuff, there should be this code somewhere else though
+      const content = tinymce.activeEditor.getContent();
+      EntityC.update(entity.id, Target.Body, content);
+
     // DESTROY ENTITY
-    if (el.matches('[data-action="destroy"]')) {
+    } else if (el.matches('[data-action="destroy"]')) {
       if (confirm(i18next.t('entity-delete-warning'))) {
-        AjaxC.post('destroy').then(() => window.location.replace(location));
+        const path = window.location.pathname;
+        EntityC.destroy(entity.id).then(() => window.location.replace(path.split('/').pop()));
       }
     }
   });
@@ -222,8 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
     $.post('app/controllers/EntityAjaxController.php', {
       updatePermissions: true,
       rw: rw,
-      id: id,
-      type: type,
+      id: entity.id,
+      type: entity.type,
       value: value,
     }).done(function(json) {
       notif(json);
@@ -235,8 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryId = $(this).val();
     $.post('app/controllers/EntityAjaxController.php', {
       updateCategory: true,
-      id: id,
-      type: type,
+      id: entity.id,
+      type: entity.type,
       categoryId : categoryId
     }).done(function(json) {
       notif(json);
@@ -275,19 +260,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
-  // DATEPICKER
-  $('#datepicker').datepicker({
-    dateFormat: 'yymmdd',
-    onClose: (date) => {
-      $.post('app/controllers/EntityAjaxController.php', {
-        updateDate: true,
-        type : type,
-        id : id,
-        date : date,
-      }).done((json) => notif(json));
-    },
-  });
 
   // If the title is 'Untitled', clear it on focus
   $('#title_input').focus(function(){
@@ -341,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('replace', 'true');
         formData.append('upload_id', tinymceEditImage.uploadId);
         formData.append('id', tinymceEditImage.itemId);
-        formData.append('type', type);
+        formData.append('type', entity.type);
         formData.append('file', blobInfo.blob());
 
         $.post({
@@ -372,7 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     },
     // use a custom function for the save button in toolbar
-    save_onsavecallback: (): void => quickSave(type , id), // eslint-disable-line @typescript-eslint/camelcase
+    save_onsavecallback: (): void => quickSave(entity), // eslint-disable-line @typescript-eslint/camelcase
   };
 
   tinymce.init(Object.assign(tinyConfig, tinyConfigForEdit));
@@ -453,13 +425,14 @@ document.addEventListener('DOMContentLoaded', () => {
   $(document).on('click', '.linkImport', function() {
     importBody($(this));
   });
-  // update title on blur
-  $('#main_form').on('blur', '#title_input', function() {
-    $.post('app/controllers/EntityAjaxController.php', {
-      updateTitle: true,
-      type : type,
-      id : id,
-      title : $(this).val(),
-    }).done((json) => notif(json));
+
+  $(document).on('blur', '#date_input', function() {
+    const content = (document.getElementById('date_input') as HTMLInputElement).value;
+    EntityC.update(entity.id, Target.Date, content);
+  });
+
+  $(document).on('blur', '#title_input', function() {
+    const content = (document.getElementById('title_input') as HTMLInputElement).value;
+    EntityC.update(entity.id, Target.Title, content);
   });
 });

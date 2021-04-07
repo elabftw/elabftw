@@ -8,7 +8,7 @@
 import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
-import { Entity, Target, Type } from './interfaces';
+import { Entity, Target, EntityType } from './interfaces';
 import { notif, displayMolFiles, display3DMolecules } from './misc';
 import i18next from 'i18next';
 import Upload from './Upload.class';
@@ -23,12 +23,12 @@ $(document).ready(function() {
 
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
-  let entityType: Type;
+  let entityType: EntityType;
   if (about.type === 'experiments') {
-    entityType = Type.Experiment;
+    entityType = EntityType.Experiment;
   }
   if (about.type === 'items') {
-    entityType = Type.Item;
+    entityType = EntityType.Item;
   }
 
   const entity: Entity = {

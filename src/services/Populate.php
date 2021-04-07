@@ -13,6 +13,7 @@ use Elabftw\Elabftw\CreateEntity;
 use Elabftw\Elabftw\CreateStep;
 use Elabftw\Elabftw\CreateTag;
 use Elabftw\Elabftw\CreateTemplate;
+use Elabftw\Elabftw\UpdateEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
@@ -69,8 +70,13 @@ class Populate
             for ($j = 0; $j <= $tagNb; $j++) {
                 $Tags->create(new CreateTag($this->faker->word()));
             }
+            $params = new UpdateEntity('title', $this->faker->sentence());
+            $Entity->update($params);
             // random date in the past 5 years
-            $Entity->update($this->faker->sentence(), $this->faker->dateTimeBetween('-5 years')->format('Ymd'), $this->faker->realText(1000));
+            $params = new UpdateEntity('date', $this->faker->dateTimeBetween('-5 years')->format('Ymd'));
+            $Entity->update($params);
+            $params = new UpdateEntity('body', $this->faker->realText(1000));
+            $Entity->update($params);
 
             // lock 10% of experiments (but not the first one because it is used in tests)
             if ($this->faker->randomDigit() > 8 && $i > 1) {

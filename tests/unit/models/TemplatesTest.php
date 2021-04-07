@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateTemplate;
+use Elabftw\Elabftw\UpdateEntity;
 
 class TemplatesTest extends \PHPUnit\Framework\TestCase
 {
@@ -48,7 +49,9 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
     public function testUpdate()
     {
         $this->Templates->setId(1);
-        $this->Templates->update('my tpl', '20160729', 'Plop');
+        $this->Templates->update(new UpdateEntity('title', 'Database item 1'));
+        $this->Templates->update(new UpdateEntity('date', '20160729'));
+        $this->Templates->update(new UpdateEntity('body', 'pwet'));
     }
 
     public function testDestroy()

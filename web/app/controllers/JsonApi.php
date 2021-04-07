@@ -20,6 +20,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Exception;
 use PDOException;
@@ -51,6 +52,7 @@ try {
     $Params = $Processor->getParams();
 
     // Status actions can only be accessed by admin level
+    // TODO should probably not be here if we're going to use this to read too
     if ($Model instanceof Status && !$App->Session->get('is_admin')) {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
@@ -60,7 +62,12 @@ try {
             $res = $Params->getKey();
         }
     } elseif ($action === 'update') {
-        $res = $Model->update($Params);
+        // TODO should not exist, but it's here for now
+        if ($Model instanceof ItemsTypes) {
+            $res = $Model->updateAll($Params);
+        } else {
+            $res = $Model->update($Params);
+        }
     } elseif ($action === 'destroy') {
         $res = $Model->destroy();
     } elseif ($action === 'duplicate' && $Model instanceof AbstractEntity) {

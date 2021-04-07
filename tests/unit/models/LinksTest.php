@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateLink;
-use Elabftw\Elabftw\DestroyParams;
 use function is_array;
 
 class LinksTest extends \PHPUnit\Framework\TestCase
@@ -22,10 +21,10 @@ class LinksTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateReadDestroy()
     {
-        $this->Experiments->Links->create(new CreateLink(1));
+        $id = $this->Experiments->Links->create(new CreateLink(1));
         $links = $this->Experiments->Links->read();
         $this->assertTrue(is_array($links));
-        $last = array_pop($links);
-        $this->Experiments->Links->destroy(new DestroyParams((int) $last['linkid']));
+        $this->Experiments->Links->setId($id);
+        $this->Experiments->Links->destroy();
     }
 }

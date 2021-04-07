@@ -10,10 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Interfaces\DestroyParamsInterface;
 use Elabftw\Interfaces\IdParamsInterface;
 
-class IdParams implements DestroyParamsInterface, IdParamsInterface
+class IdParams implements IdParamsInterface
 {
     protected int $id;
 

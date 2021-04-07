@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-final class DestroyParams extends IdParams
+use Elabftw\Interfaces\UpdateItemTypeParamsInterface;
+
+final class UpdateItemType extends CreateItemType implements UpdateItemTypeParamsInterface
 {
 }

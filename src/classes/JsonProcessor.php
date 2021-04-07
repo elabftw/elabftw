@@ -12,13 +12,13 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreateParamsInterface;
-use Elabftw\Interfaces\DestroyParamsInterface;
 use Elabftw\Interfaces\ProcessorInterface;
 use Elabftw\Interfaces\UpdateParamsInterface;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
@@ -51,7 +51,7 @@ class JsonProcessor extends Processor implements ProcessorInterface
         parent::__construct($users, $request);
     }
 
-    //public function getParams(): CreateParamsInterface | UpdateParamsInterface | DestroyParamsInterface
+    //public function getParams(): CreateParamsInterface | UpdateParamsInterface
     // @phpstan-ignore-next-line
     public function getParams()
     {
@@ -74,9 +74,9 @@ class JsonProcessor extends Processor implements ProcessorInterface
     protected function process(Request $request): void
     {
         $this->decoded = $request->toArray();
-        $this->method = $this->getMethod();
         $this->action = $this->setAction();
         $this->target = $this->getTarget();
+
         if (isset($this->decoded['entity'])) {
             $id = (int) $this->decoded['entity']['id'];
             if ($id === 0) {
@@ -101,7 +101,17 @@ class JsonProcessor extends Processor implements ProcessorInterface
             return new CreateComment($this->content);
         }
         if ($this->Model instanceof Experiments || $this->Model instanceof Database) {
-            return new CreateEntity($this->id);
+            return new CreateEntity((int) $this->id);
+        }
+        if ($this->Model instanceof ItemsTypes) {
+            return new CreateItemType(
+                $this->content,
+                $this->extra['color'],
+                $this->extra['body'],
+                $this->extra['canread'],
+                $this->extra['canwrite'],
+                (int) $this->extra['bookable'],
+            );
         }
         if ($this->Model instanceof Links) {
             return new CreateLink($this->id);
@@ -137,6 +147,20 @@ class JsonProcessor extends Processor implements ProcessorInterface
         if ($this->Model instanceof Steps) {
             return new UpdateStep($this->target, $this->content);
         }
+        if ($this->Model instanceof ItemsTypes) {
+            return new UpdateItemType(
+                $this->content,
+                $this->extra['color'],
+                $this->extra['body'],
+                $this->extra['canread'],
+                $this->extra['canwrite'],
+                (int) $this->extra['bookable'],
+            );
+        }
+        if ($this->Model instanceof Experiments || $this->Model instanceof Database) {
+            return new UpdateEntity($this->target, $this->content);
+        }
+
         if ($this->Model instanceof Status) {
             return new UpdateStatus($this->content, $this->extra['color'], (bool) $this->extra['isTimestampable'], (bool) $this->extra['isDefault']);
         }
@@ -153,15 +177,6 @@ class JsonProcessor extends Processor implements ProcessorInterface
         }
 
         throw new IllegalActionException('Bad params');
-    }
-
-    // for now only GET or POST, should add PUT and DELETE later on...
-    private function getMethod(): string
-    {
-        if ($this->decoded['method'] === 'POST') {
-            return 'POST';
-        }
-        return 'GET';
     }
 
     private function setAction(): string
@@ -191,9 +206,11 @@ class JsonProcessor extends Processor implements ProcessorInterface
         }
         $allowed = array(
             'body',
+            'date',
             'comment',
             'finished',
             'real_name',
+            'title',
         );
         if (!in_array($this->decoded['target'], $allowed, true)) {
             throw new IllegalActionException('Invalid target!');

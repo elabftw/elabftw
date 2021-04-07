@@ -11,18 +11,16 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateItemTypeParamsInterface;
-use Elabftw\Interfaces\CreateParamsInterface;
-use Elabftw\Interfaces\HasMetadataInterface;
+use Elabftw\Interfaces\UpdateItemTypeParamsInterface;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
 /**
  * The kind of items you can have in the database for a team
  */
-class ItemsTypes extends AbstractEntity implements HasMetadataInterface
+class ItemsTypes extends AbstractEntity
 {
     use SortableTrait;
 
@@ -35,7 +33,6 @@ class ItemsTypes extends AbstractEntity implements HasMetadataInterface
         }
     }
 
-    //public function create(CreateParamsInterface $params, ?int $team = null): int
     public function create(CreateItemTypeParamsInterface $params): int
     {
         $team = $params->getTeam();
@@ -113,11 +110,6 @@ class ItemsTypes extends AbstractEntity implements HasMetadataInterface
         return $res['metadata'];
     }
 
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
     public function getTable(): string
     {
         return 'items_types';
@@ -153,10 +145,7 @@ class ItemsTypes extends AbstractEntity implements HasMetadataInterface
         return 1;
     }
 
-    /**
-     * Update an item type
-     */
-    public function updateAll(ParamsProcessor $params): string
+    public function updateAll(UpdateItemTypeParamsInterface $params): bool
     {
         $sql = 'UPDATE items_types SET
             name = :name,
@@ -168,17 +157,16 @@ class ItemsTypes extends AbstractEntity implements HasMetadataInterface
             canwrite = :canwrite
             WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':name', $params->name, PDO::PARAM_STR);
-        $req->bindParam(':color', $params->color, PDO::PARAM_STR);
-        $req->bindParam(':bookable', $params->bookable, PDO::PARAM_INT);
-        $req->bindParam(':template', $params->template, PDO::PARAM_STR);
+        $req->bindValue(':name', $params->getContent(), PDO::PARAM_STR);
+        $req->bindValue(':color', $params->getColor(), PDO::PARAM_STR);
+        $req->bindValue(':bookable', $params->getIsBookable(), PDO::PARAM_INT);
+        $req->bindValue(':template', $params->getBody(), PDO::PARAM_STR);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':canread', $params->canread, PDO::PARAM_STR);
-        $req->bindParam(':canwrite', $params->canwrite, PDO::PARAM_STR);
-        $req->bindParam(':id', $params->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        $req->bindValue(':canread', $params->getCanread(), PDO::PARAM_STR);
+        $req->bindValue(':canwrite', $params->getCanwriteS(), PDO::PARAM_STR);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        return $params->template;
+        return $this->Db->execute($req);
     }
 
     /**

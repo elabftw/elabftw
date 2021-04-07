@@ -11,8 +11,8 @@ import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
 import { relativeMoment, displayMolFiles, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
-import Experiment from './Experiment.class';
-import Item from './Item.class';
+import Entity from './Entity.class';
+import { EntityType } from './interfaces';
 
 $(document).ready(function() {
   $.ajaxSetup({
@@ -83,7 +83,7 @@ $(document).ready(function() {
       const path = window.location.pathname;
       if (path.split('/').pop() === 'experiments.php') {
         const tplid = parseInt(el.dataset.tplid);
-        (new Experiment).create(tplid).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
+        (new Entity(EntityType.Experiment)).create(tplid).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
       } else {
         // for database items, show a selection modal
         // modal plugin requires jquery
@@ -91,7 +91,7 @@ $(document).ready(function() {
       }
     } else if (el.matches('[data-action="create-item"]')) {
       const tplid = parseInt(el.dataset.tplid);
-      (new Item).create(tplid).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
+      (new Entity(EntityType.Item)).create(tplid).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
     }
   });
 });

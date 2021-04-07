@@ -10,7 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateItemType;
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\UpdateItemType;
 
 class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 {
@@ -26,18 +26,10 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
         );
         $itemsTypes = $this->ItemsTypes->readAll();
         $last = array_pop($itemsTypes);
-        $this->ItemsTypes->updateAll(
-            new ParamsProcessor(
-                array(
-                    'name' => 'newname',
-                    'id' => (int) $last['category_id'],
-                    'color' => '#fffccc',
-                    'bookable' => 1,
-                    'template' => 'newbody',
-                )
-            )
-        );
         $this->ItemsTypes->setId((int) $last['category_id']);
+        $this->ItemsTypes->updateAll(
+            new UpdateItemType('new', '#fffccc', 'newbody', 'team', 'team', 1)
+        );
         $this->assertEquals('newbody', $this->ItemsTypes->read()['template']);
         $this->ItemsTypes->destroy((int) $last['category_id']);
     }

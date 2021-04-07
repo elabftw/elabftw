@@ -159,18 +159,77 @@ $(document).ready(function() {
   // ITEMS TYPES
   const ItemTypeC = new ItemType();
 
+  // CREATE
   $('.itemsTypesEditor').hide();
   $(document).on('click', '#itemsTypesCreate', function() {
-    ItemTypeC.create();
+    const nameInput = (document.getElementById('itemsTypesName') as HTMLInputElement);
+    const name = nameInput.value;
+    if (name === '') {
+      notif({'res': false, 'msg': 'Name cannot be empty'});
+      nameInput.style.borderColor = 'red';
+      nameInput.focus();
+      return;
+    }
+    const color = (document.getElementById('itemsTypesColor') as HTMLInputElement).value;
+    const checkbox = $('#itemsTypesBookable').is(':checked');
+    let bookable = 0;
+    if (checkbox) {
+      bookable = 1;
+    }
+    const template = tinymce.get('itemsTypesTemplate').getContent();
+
+    const canread= (document.getElementById('canread_select') as HTMLSelectElement).value;
+    const canwrite= (document.getElementById('canwrite_select') as HTMLSelectElement).value;
+    // TODO don't reload the whole page, just what we need
+    ItemTypeC.create(name, color, bookable, template, canread, canwrite).then(() => window.location.replace('admin.php?tab=5'));
   });
+
+  // TOGGLE BODY
   $(document).on('click', '.itemsTypesShowEditor', function() {
     ItemTypeC.showEditor($(this).data('id'));
   });
+
+  // UPDATE
   $(document).on('click', '.itemsTypesUpdate', function() {
-    ItemTypeC.update($(this).data('id'));
+    const id = $(this).data('id');
+    const nameInput = (document.getElementById('itemsTypesName_' + id) as HTMLInputElement);
+    const name = nameInput.value;
+    if (name === '') {
+      notif({'res': false, 'msg': 'Name cannot be empty'});
+      nameInput.style.borderColor = 'red';
+      nameInput.focus();
+      return;
+    }
+    const color = (document.getElementById('itemsTypesColor_' + id) as HTMLInputElement).value;
+    const checkbox = $('#itemsTypesBookable_' + id).is(':checked');
+    let bookable = 0;
+    if (checkbox) {
+      bookable = 1;
+    }
+
+    const canread = (document.querySelector(`.itemsTypesSelectCanread[data-id="${id}"`) as HTMLSelectElement).value;
+    const canwrite = (document.querySelector(`.itemsTypesSelectCanwrite[data-id="${id}"`) as HTMLSelectElement).value;
+    // if tinymce is hidden, it'll fail to trigger
+    // so we toggle it quickly to grab the content
+    if ($('#itemsTypesTemplate_' + id).is(':hidden')) {
+      ItemTypeC.showEditor(id);
+    }
+    const template = tinymce.get('itemsTypesTemplate_' + id).getContent();
+    $('#itemsTypesEditor_' + id).toggle();
+    ItemTypeC.update(id, name, color, bookable, template, canread, canwrite);
   });
+
+  // DESTROY
   $(document).on('click', '.itemsTypesDestroy', function() {
-    ItemTypeC.destroy($(this).data('id'));
+    if (confirm(i18next.t('generic-delete-warning'))) {
+      const id = $(this).data('id');
+      ItemTypeC.destroy(id).then(json => {
+        if (json.res) {
+          $('#itemstypes_' + id).hide();
+          $('#itemstypesOrder_' + id).hide();
+        }
+      });
+    }
   });
   // END ITEMS TYPES
 

@@ -12,20 +12,20 @@ import Step from './Step.class';
 import i18next from 'i18next';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
 import { getCheckedBoxes, notif } from './misc';
-import { Type, Entity } from './interfaces';
+import { EntityType, Entity } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
-  let entityType: Type;
+  let entityType: EntityType;
   if (about.type === 'experiments') {
-    entityType = Type.Experiment;
+    entityType = EntityType.Experiment;
   }
   if (about.type === 'items') {
-    entityType = Type.Item;
+    entityType = EntityType.Item;
   }
   if (about.type === 'experiments_templates') {
-    entityType = Type.ExperimentTemplate;
+    entityType = EntityType.Template;
   }
 
   const entity: Entity = {

@@ -15,13 +15,12 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Interfaces\CreatableInterface;
-use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Interfaces\HasMetadataInterface;
+use Elabftw\Interfaces\ModelInterface;
+use Elabftw\Interfaces\UpdateEntityParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
@@ -37,7 +36,7 @@ use function sha1;
 /**
  * The mother class of Experiments and Database
  */
-abstract class AbstractEntity implements CreatableInterface, DestroyableInterface, HasMetadataInterface
+abstract class AbstractEntity implements ModelInterface, HasMetadataInterface
 {
     use EntityTrait;
 
@@ -327,83 +326,43 @@ abstract class AbstractEntity implements CreatableInterface, DestroyableInterfac
 
     /**
      * Update an entity. The revision is saved before so it can easily compare old and new body.
-     *
-     * @param string $title
-     * @param string $date
-     * @param string $body
-     * @throws ImproperActionException
-     * @throws DatabaseErrorException
-     * @return void
      */
-    public function update(string $title, string $date, string $body): void
+    //public function update(string $title, string $date, string $body): void
+    public function update(UpdateEntityParamsInterface $params): bool
     {
         $this->canOrExplode('write');
 
-        // don't update if locked
-        if ($this->entityData['locked']) {
-            throw new ImproperActionException(_('Cannot update a locked entity!'));
+        switch ($params->getTarget()) {
+            case 'title':
+                $content = $params->getTitle();
+                break;
+            case 'date':
+                $content = $params->getDate();
+                break;
+            case 'body':
+                $content = $params->getBody();
+                break;
+            default:
+                throw new ImproperActionException('Invalid update target');
         }
 
-        // add a revision
-        $Config = new Config();
-        $Revisions = new Revisions(
-            $this,
-            (int) $Config->configArr['max_revisions'],
-            (int) $Config->configArr['min_delta_revisions'],
-        );
-        $Revisions->create($body);
-
-        $title = Filter::title($title);
-        $date = Filter::kdate($date);
-        $body = Filter::body($body);
-
-        $sql = 'UPDATE ' . $this->type . ' SET
-            title = :title,
-            date = :date,
-            body = :body
-            WHERE id = :id';
-
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':title', $title);
-        $req->bindParam(':date', $date);
-        $req->bindParam(':body', $body);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        $this->Db->execute($req);
-    }
-
-    public function updateTitle(string $title): void
-    {
-        $this->canOrExplode('write');
-        // don't update if locked
-        if ($this->entityData['locked']) {
-            throw new ImproperActionException(_('Cannot update a locked entity!'));
+        // save a revision for body target
+        if ($params->getTarget() === 'body') {
+            $Config = new Config();
+            $Revisions = new Revisions(
+                $this,
+                (int) $Config->configArr['max_revisions'],
+                (int) $Config->configArr['min_delta_revisions'],
+            );
+            $Revisions->create($content);
         }
 
-        $title = Filter::title($title);
-        $sql = 'UPDATE ' . $this->type . ' SET title = :title WHERE id = :id';
+        $sql = 'UPDATE ' . $this->type . ' SET ' . $params->getTarget() . ' = :content WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':title', $title);
+        $req->bindValue(':content', $content);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        $this->Db->execute($req);
-    }
-
-    public function updateDate(string $date): void
-    {
-        $this->canOrExplode('write');
-        // don't update if locked
-        if ($this->entityData['locked']) {
-            throw new ImproperActionException(_('Cannot update a locked entity!'));
-        }
-
-        $date = Filter::kdate($date);
-        $sql = 'UPDATE ' . $this->type . ' SET date = :date WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':date', $date);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**

@@ -11,6 +11,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateEntity;
 use Elabftw\Elabftw\CreateTemplate;
+use Elabftw\Elabftw\UpdateEntity;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Check;
 
@@ -59,10 +60,11 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     {
         $new = $this->Experiments->create(new CreateEntity(0));
         $this->Experiments->setId($new);
-        $this->Experiments->canOrExplode('write');
         $this->assertEquals($new, $this->Experiments->id);
         $this->assertEquals(1, $this->Experiments->Users->userData['userid']);
-        $this->Experiments->update('Untitled', '20160729', '<p>Body</p>');
+        $this->Experiments->update(new UpdateEntity('title', 'Untitled'));
+        $this->Experiments->update(new UpdateEntity('date', '20160729'));
+        $this->Experiments->update(new UpdateEntity('body', '<p>Body</p>'));
     }
 
     public function testUpdateVisibility()

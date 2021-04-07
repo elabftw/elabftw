@@ -14,7 +14,7 @@ use Elabftw\Interfaces\CreateItemTypeParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 
-final class CreateItemType implements CreateItemTypeParamsInterface
+class CreateItemType implements CreateItemTypeParamsInterface
 {
     private string $body;
 

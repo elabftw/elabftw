@@ -7,17 +7,17 @@
  */
 import Comment from './Comment.class';
 import i18next from 'i18next';
-import { Entity, Type } from './interfaces';
+import { Entity, EntityType } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
-  let entityType: Type;
+  let entityType: EntityType;
   if (about.type === 'experiments') {
-    entityType = Type.Experiment;
+    entityType = EntityType.Experiment;
   }
   if (about.type === 'items') {
-    entityType = Type.Item;
+    entityType = EntityType.Item;
   }
 
   const entity: Entity = {

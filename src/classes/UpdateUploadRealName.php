@@ -14,13 +14,11 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\UpdateParamsInterface;
 use Elabftw\Services\Filter;
 
-final class UpdateUploadRealName extends UpdateUpload implements UpdateParamsInterface
+final class UpdateUploadRealName extends UpdateParams implements UpdateParamsInterface
 {
-    private string $content;
-
     public function __construct(string $content)
     {
-        $this->content = $content;
+        parent::__construct($content);
         $this->target = 'real_name';
     }
 

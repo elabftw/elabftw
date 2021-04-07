@@ -174,44 +174,10 @@ try {
         $Entity->updatePermissions($Request->request->get('rw'), $Request->request->get('value'));
     }
 
-    // UPDATE TITLE
-    if ($Request->request->has('updateTitle')) {
-        $Entity->updateTitle($Request->request->get('title'));
-    }
-
-    // UPDATE DATE
-    if ($Request->request->has('updateDate')) {
-        $Entity->updateDate($Request->request->get('date'));
-    }
-
     // UPDATE RATING
     if ($Request->request->has('rating') && $Entity instanceof Database) {
         $Entity->setId((int) $Request->request->get('id'));
         $Entity->updateRating((int) $Request->request->get('rating'));
-    }
-
-    // TOGGLE LOCK
-    if ($Request->request->has('lock')) {
-        $Entity->toggleLock();
-    }
-
-    // QUICKSAVE
-    if ($Request->request->has('quickSave')) {
-        $Entity->update(
-            $Request->request->get('title'),
-            $Request->request->get('date'),
-            $Request->request->get('body')
-        );
-    }
-
-    // DUPLICATE
-    if ($Request->request->has('duplicate')) {
-        $Entity->canOrExplode('read');
-        $id = $Entity->duplicate();
-        $Response->setData(array(
-            'res' => true,
-            'msg' => $id,
-        ));
     }
 
     // CREATE UPLOAD
@@ -248,7 +214,7 @@ try {
         $Entity->updateCategory((int) $Request->request->get('categoryId'));
         // get the color of the status/item type for updating the css
         if ($Entity instanceof Experiments) {
-            $Category = new Status($App->Users);
+            $Category = new Status($App->Users->team);
         } else {
             $Category = new ItemsTypes($App->Users);
         }

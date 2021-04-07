@@ -15,15 +15,11 @@ use Elabftw\Interfaces\UpdateParamsInterface;
 use Elabftw\Services\Filter;
 use function mb_strlen;
 
-final class UpdateUploadComment extends UpdateUpload implements UpdateParamsInterface
+final class UpdateUploadComment extends UpdateParams implements UpdateParamsInterface
 {
-    private const MIN_CONTENT_SIZE = 2;
-
-    private string $content;
-
     public function __construct(string $content)
     {
-        $this->content = $content;
+        parent::__construct($content);
         $this->target = 'comment';
     }
 

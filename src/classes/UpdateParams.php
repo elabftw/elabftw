@@ -20,6 +20,8 @@ class UpdateParams
 
     protected string $content;
 
+    protected string $target = '';
+
     // an update action always has content at least required
     public function __construct(string $content)
     {
@@ -34,6 +36,11 @@ class UpdateParams
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
         }
         return $c;
+    }
+
+    public function getTarget(): string
+    {
+        return $this->target;
     }
 
     public function getColor(): string
@@ -51,8 +58,38 @@ class UpdateParams
         return 0;
     }
 
-    public function getTarget(): string
+    public function getTitle(): string
     {
-        return 'Nope';
+        return 'no';
+    }
+
+    public function getDate(): string
+    {
+        return 'no';
+    }
+
+    public function getBody(): string
+    {
+        return 'no';
+    }
+
+    public function getCanread(): string
+    {
+        return 'team';
+    }
+
+    public function getCanwriteS(): string
+    {
+        return 'team';
+    }
+
+    public function getIsBookable(): int
+    {
+        return 0;
+    }
+
+    public function getTeam(): int
+    {
+        return 0;
     }
 }

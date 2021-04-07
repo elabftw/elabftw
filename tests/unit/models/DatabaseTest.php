@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateEntity;
+use Elabftw\Elabftw\UpdateEntity;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 
@@ -49,7 +50,9 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
     {
         $new = $this->Database->create(new CreateEntity(1));
         $this->Database->setId($new);
-        $this->Database->update('Database item 1', '20160729', 'body', 1);
+        $this->Database->update(new UpdateEntity('title', 'Database item 1'));
+        $this->Database->update(new UpdateEntity('date', '20160729'));
+        $this->Database->update(new UpdateEntity('body', 'pwet'));
     }
 
     public function testUpdateRating()

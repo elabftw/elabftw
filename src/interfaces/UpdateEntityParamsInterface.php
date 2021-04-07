@@ -11,9 +11,15 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * Interface for destroying
+ * Interface for updating an entity
  */
-interface DestroyParamsInterface
+interface UpdateEntityParamsInterface
 {
-    public function getId(): int;
+    public function getTarget(): string;
+
+    public function getTitle(): string;
+
+    public function getDate(): string;
+
+    public function getBody(): string;
 }

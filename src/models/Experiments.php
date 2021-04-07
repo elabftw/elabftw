@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Interfaces\CreateEntityParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
@@ -20,7 +19,7 @@ use PDO;
 /**
  * All about the experiments
  */
-class Experiments extends AbstractEntity implements CreatableInterface
+class Experiments extends AbstractEntity
 {
     public function __construct(Users $users, ?int $id = null)
     {

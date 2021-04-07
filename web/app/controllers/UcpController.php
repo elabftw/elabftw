@@ -112,11 +112,12 @@ try {
         $tab = '3';
 
         $Templates = new Templates($App->Users, (int) $Request->request->get('tpl_id'));
-        $Templates->update(
-            $Request->request->get('tpl_title'),
-            Filter::kdate(),
-            $Request->request->get('tpl_body'),
-        );
+        $params = new UpdateEntity('title', $Request->request->get('tpl_title'));
+        $Templates->update($params);
+        $params = new UpdateEntity('date', Filter::kdate());
+        $Templates->update($params);
+        $params = new UpdateEntity('body', $Request->request->get('tpl_body'));
+        $Templates->update($params);
         $templateId = '&templateid=' . $Request->request->get('tpl_id');
     }
     // END TAB 3

@@ -69,7 +69,7 @@
   <div>
     <i class='far fa-calendar-alt mr-1'></i>{{ Entity.entityData.date|kdate }}
   </div>
-  {% if not Entity.isReadOnly and not Entity.entityData.locked %}
+  {% if not Entity.isReadOnly %}
     <a class='elab-tooltip mr-1' href='#' data-action='edit'>
       <span>{{ 'Edit'|trans }}</span>
       <i class='fas fa-pencil-alt' style='color:#29AEB9'></i>
@@ -77,7 +77,7 @@
   {% endif %}
 
   {% if not App.Session.has('is_anon') %}
-    <a class='elab-tooltip mr-1' href='#' data-action='duplicate'>
+    <a class='elab-tooltip mr-1' href='#' data-action='duplicate-entity'>
       <span>{{ 'Duplicate'|trans }}</span>
       <i class='far fa-copy'></i>
     </a>
@@ -107,18 +107,16 @@
   {% endif %}
 
   <!-- LOCK -->
-  {% if not Entity.isReadOnly %}
-      {% set lockIcon = 'fa-lock-open' %}
-      {% set alt = 'Lock/Unlock item'|trans %}
-      {% if Entity.entityData.locked %}
-          {% set lockIcon = 'fa-lock' %}
-          {% set alt = Entity.entityData.lockedwhen %}
-      {% endif %}
-      <a class='elab-tooltip mr-1' href='#' data-action='lock'>
-          <span>{{ alt }}</span>
-          <i class='fas {{lockIcon}}'></i>
-      </a>
+  {% set lockIcon = 'fa-lock-open' %}
+  {% set alt = 'Lock/Unlock item'|trans %}
+  {% if Entity.entityData.locked %}
+      {% set lockIcon = 'fa-lock' %}
+      {% set alt = Entity.entityData.lockedwhen %}
   {% endif %}
+  <a class='elab-tooltip mr-1' href='#' data-action='lock-entity'>
+      <span>{{ alt }}</span>
+      <i class='fas {{lockIcon}}'></i>
+  </a>
 
   {% if not App.Session.has('is_anon') %}
     <a class='elab-tooltip mr-1' href='#' data-action='share'>

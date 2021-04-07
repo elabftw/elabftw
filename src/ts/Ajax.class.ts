@@ -7,7 +7,8 @@
  */
 import { notif } from './misc';
 import { Payload, ResponseMsg } from './interfaces';
-
+// TODO detect if session timedout in the response
+//if (xhr.getResponseHeader('X-Elab-Need-Auth') === '1') {
 export class Ajax {
   type: string;
   id: string;

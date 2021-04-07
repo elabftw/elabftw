@@ -15,6 +15,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ProcessFailedException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -43,7 +44,7 @@ try {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $renderArr = array('error' => Tools::error(true));
     $Response->setContent($App->render($template, $renderArr));
-} catch (DatabaseErrorException | FilesystemErrorException $e) {
+} catch (DatabaseErrorException | FilesystemErrorException | ProcessFailedException $e) {
     // log error and show message
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $renderArr = array('error' => $e->getMessage());

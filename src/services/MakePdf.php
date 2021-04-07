@@ -14,6 +14,7 @@ use DateTime;
 use function dirname;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\ProcessFailedException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
@@ -32,7 +33,7 @@ use function preg_replace;
 use Psr\Log\NullLogger;
 use function str_replace;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Exception\ProcessFailedException as SymfonyProcessFailedException;
 use Symfony\Component\Process\Process;
 use function tempnam;
 use function unlink;
@@ -236,7 +237,7 @@ class MakePdf extends AbstractMake
 
         if (!$process->isSuccessful()) {
             unlink($filename);
-            throw new FilesystemErrorException('PDF generation failed during Tex rendering.', 0, new ProcessFailedException($process));
+            throw new ProcessFailedException('PDF generation failed during Tex rendering.', 0, new SymfonyProcessFailedException($process));
         }
 
         $html = $process->getOutput();

@@ -12,11 +12,18 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Interfaces\UpdateStepParamsInterface;
 
-class UpdateStep extends UpdateParams implements UpdateStepParamsInterface
+class UpdateStep extends StepParams implements UpdateStepParamsInterface
 {
+    private string $target;
+
     public function __construct(string $target, string $content)
     {
         parent::__construct($content);
         $this->target = $target;
+    }
+
+    public function getTarget(): string
+    {
+        return $this->target;
     }
 }

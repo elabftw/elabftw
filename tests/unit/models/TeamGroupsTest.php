@@ -2,8 +2,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateTeamGroup;
-
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
 
@@ -17,7 +16,7 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->TeamGroups->create(new CreateTeamGroup('Group Name'));
+        $this->TeamGroups->create(new ContentParams('Group Name'));
     }
 
     public function testRead()
@@ -27,7 +26,7 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadName()
     {
-        $id = $this->TeamGroups->create(new CreateTeamGroup('Group Name'));
+        $id = $this->TeamGroups->create(new ContentParams('Group Name'));
         $this->assertEquals('Group Name', $this->TeamGroups->readName($id));
     }
 

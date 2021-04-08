@@ -9,7 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateStep;
+use Elabftw\Elabftw\StepParams;
 use Elabftw\Elabftw\UpdateStep;
 
 class StepsTest extends \PHPUnit\Framework\TestCase
@@ -23,7 +23,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->Steps->create(new CreateStep('do this'));
+        $this->Steps->create(new StepParams('do this'));
     }
 
     public function testFinish()
@@ -39,7 +39,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $id = $this->Steps->create(new CreateStep('do that'));
+        $id = $this->Steps->create(new StepParams('do that'));
         $Steps = new Steps($this->Experiments, $id);
         $Steps->update(new UpdateStep('body', 'updated step body'));
         $ourStep = array_filter($this->Steps->read(), function ($s) use ($id) {

@@ -9,9 +9,9 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\CreateStep;
 use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Elabftw\IdParams;
+use Elabftw\Elabftw\StepParams;
 use Elabftw\Elabftw\TagParams;
 use Elabftw\Elabftw\UpdateEntity;
 use Elabftw\Models\ApiKeys;
@@ -100,8 +100,8 @@ class Populate
 
             // maybe add a few steps
             if ($this->faker->randomDigit() > 8) {
-                $Entity->Steps->create(new CreateStep($this->faker->word()));
-                $Entity->Steps->create(new CreateStep($this->faker->word()));
+                $Entity->Steps->create(new StepParams($this->faker->word() . $this->faker->word()));
+                $Entity->Steps->create(new StepParams($this->faker->word() . $this->faker->word()));
             }
         }
         printf("Generated %d %s \n", $this->iter, $Entity->type);

@@ -67,10 +67,10 @@ class JsonProcessor extends Processor implements ProcessorInterface
         if ($this->Model instanceof ApiKeys) {
             return new CreateApikey($this->content, (int) $this->extra['canwrite']);
         }
-        if ($this->Model instanceof Comments) {
+        if ($this->Model instanceof Comments || $this->Model instanceof Todolist) {
             return new ContentParams($this->content);
         }
-        if ($this->Model instanceof Experiments || $this->Model instanceof Items) {
+        if ($this->Model instanceof Experiments || $this->Model instanceof Items || $this->Model instanceof Links) {
             return new IdParams((int) $this->id);
         }
         if ($this->Model instanceof ItemsTypes) {
@@ -83,26 +83,17 @@ class JsonProcessor extends Processor implements ProcessorInterface
                 (int) $this->extra['bookable'],
             );
         }
-        if ($this->Model instanceof Links) {
-            return new IdParams($this->id);
-        }
         if ($this->Model instanceof Status) {
             return new CreateStatus($this->content, $this->extra['color'], (bool) $this->extra['isTimestampable']);
         }
         if ($this->Model instanceof Steps) {
-            return new CreateStep($this->content);
+            return new StepParams($this->content);
         }
         if ($this->Model instanceof Tags) {
             return new TagParams($this->content);
         }
         if ($this->Model instanceof Templates) {
             return new CreateTemplate($this->content, $this->extra['body'] ?? '');
-        }
-        if ($this->Model instanceof Todolist) {
-            return new ContentParams($this->content);
-        }
-        if ($this->Model instanceof Uploads) {
-            return new CreateUpload(Request::createFromGlobals());
         }
         throw new IllegalActionException('Bad params');
     }

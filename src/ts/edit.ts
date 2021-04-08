@@ -187,10 +187,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // UPDATE ENTITY BODY
     if (el.matches('[data-action="update-entity-body"]')) {
-      // TODO markdown editor stuff, there should be this code somewhere else though
-      const content = tinymce.activeEditor.getContent();
+      const editor = $('#iHazEditor').data('editor');
+      let content: string;
+      if (editor === 'md') {
+        content = ($('#body_area').val() as string);
+      } else {
+        content = tinymce.activeEditor.getContent();
+      }
       EntityC.update(entity.id, Target.Body, content).then(json => {
-        if (json.res) {
+        if (json.res && editor !== 'md') {
           // set the editor as non dirty so we can navigate out without a warning to clear
           tinymce.activeEditor.setDirty(false);
         }
@@ -200,7 +205,11 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="destroy"]')) {
       if (confirm(i18next.t('entity-delete-warning'))) {
         const path = window.location.pathname;
-        EntityC.destroy(entity.id).then(() => window.location.replace(path.split('/').pop()));
+        EntityC.destroy(entity.id).then(json => {
+          if (json.res) {
+            window.location.replace(path.split('/').pop());
+          }
+        });
       }
     }
   });

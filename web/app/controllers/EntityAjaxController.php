@@ -21,7 +21,6 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
-use Elabftw\Services\Check;
 use Elabftw\Services\ListBuilder;
 use Elabftw\Services\MakeBloxberg;
 use Elabftw\Services\MakeTimestamp;
@@ -199,16 +198,6 @@ try {
             'msg' => _('File uploaded successfully'),
             'uploadId' => $uploadId,
         ));
-    }
-
-    // DESTROY ENTITY
-    if ($Request->request->has('destroy')) {
-        // check for deletable xp
-        if ($Entity instanceof Experiments && (!$App->teamConfigArr['deletable_xp'] && !$App->Session->get('is_admin')
-            || $App->Config->configArr['deletable_xp'] === '0')) {
-            throw new ImproperActionException('You cannot delete experiments!');
-        }
-        $Entity->destroy();
     }
 
     // UPDATE CATEGORY (item type or status)

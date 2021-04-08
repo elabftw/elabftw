@@ -20,6 +20,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Exception;
@@ -57,6 +58,7 @@ try {
     if ($Model instanceof Status && !$App->Session->get('is_admin')) {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
+
     if ($action === 'create') {
         $res = $Model->create($Params);
         if ($Model instanceof ApiKeys) {
@@ -70,6 +72,12 @@ try {
             $res = $Model->update($Params);
         }
     } elseif ($action === 'destroy') {
+        if ($Model instanceof Experiments) {
+            if ((!$App->teamConfigArr['deletable_xp'] && !$App->Session->get('is_admin'))
+                || $App->Config->configArr['deletable_xp'] === '0') {
+                throw new ImproperActionException('You cannot delete experiments!');
+            }
+        }
         $res = $Model->destroy();
     } elseif ($action === 'duplicate' && $Model instanceof AbstractEntity) {
         $res = $Model->duplicate();

@@ -72,6 +72,7 @@ enum Target {
   Comment = 'comment',
   Finished = 'finished',
   RealName = 'real_name',
+  Tag = 'tag',
   Title = 'title',
 }
 

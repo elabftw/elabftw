@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Entity, Payload, Method, Model, Action, ResponseMsg } from './interfaces';
+import { Entity, Payload, Method, Model, Target, Action, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
 
 export default class Tag {
@@ -38,9 +38,10 @@ export default class Tag {
   unreference(id: number): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,
-      action: Action.Unreference,
+      action: Action.Update,
       model: this.model,
       entity: this.entity,
+      target: Target.Tag,
       id: id,
     };
     return this.sender.send(payload);

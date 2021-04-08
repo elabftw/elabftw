@@ -44,7 +44,7 @@ class JsonProcessor extends Processor implements ProcessorInterface
     protected function process(Request $request): void
     {
         $this->decoded = $request->toArray();
-        $this->action = $this->setAction($this->decoded['action'] ?? '');
+        $this->action = $this->decoded['action'] ?? '';
         $this->target = $this->setTarget($this->decoded['target'] ?? '');
 
         if (isset($this->decoded['entity'])) {

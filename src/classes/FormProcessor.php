@@ -43,7 +43,7 @@ class FormProcessor extends Processor implements ProcessorInterface
 
     protected function process(Request $request): void
     {
-        $this->action = $this->setAction($request->request->get('action'));
+        $this->action = $request->request->get('action') ?? '';
         $this->target = $this->setTarget($request->request->get('target'));
         $type = 'experiment';
         if ($request->request->get('entity_type') === 'items') {

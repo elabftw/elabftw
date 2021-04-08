@@ -21,8 +21,7 @@ use PDO;
 /**
  * All about the todolist
  */
-//class Todolist implements ModelInterface
-class Todolist
+class Todolist implements ModelInterface
 {
     use SetIdTrait;
     use SortableTrait;

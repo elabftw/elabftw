@@ -102,7 +102,8 @@ class Permissions
     private function getWrite(): bool
     {
         // locked entity cannot be written to
-        if ($this->item['locked']) {
+        // only the locker can unlock an entity
+        if ($this->item['locked'] && ($this->item['lockedby'] !== $this->Users->userData['userid'])) {
             return false;
         }
 

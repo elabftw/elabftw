@@ -82,6 +82,7 @@ abstract class Processor
             // no parameters needed for these actions
             case 'destroy':
             case 'duplicate':
+            case 'deduplicate':
             case 'lock':
                 return;
             default:
@@ -117,24 +118,6 @@ abstract class Processor
             throw new IllegalActionException('Invalid target!');
         }
         return $target;
-    }
-
-    protected function setAction(string $action): string
-    {
-        $allowed = array(
-            'create',
-            'read',
-            'update',
-            'destroy',
-            'deduplicate',
-            'duplicate',
-            'lock',
-            'unreference',
-        );
-        if (!in_array($action, $allowed, true)) {
-            throw new IllegalActionException('Invalid action!');
-        }
-        return $action;
     }
 
     protected function getEntity(string $type, ?int $itemId = null): AbstractEntity
@@ -181,8 +164,6 @@ abstract class Processor
                 return $this->Entity;
             case 'todolist':
                 return new Todolist((int) $this->Users->userData['userid']);
-            case 'user':
-                return $this->Users;
             default:
                 throw new IllegalActionException('Bad model');
         }

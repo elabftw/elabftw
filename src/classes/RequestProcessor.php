@@ -57,7 +57,7 @@ class RequestProcessor extends Processor implements ProcessorInterface
             $itemId = (int) $params['itemId'];
         }
 
-        if (isset($type)) {
+        if ($type !== null) {
             $this->Entity = $this->getEntity($type, $itemId);
         }
         $this->Model = $this->findModel($what);

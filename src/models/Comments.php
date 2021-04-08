@@ -12,8 +12,9 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Interfaces\CreateCommentParamsInterface;
+use Elabftw\Interfaces\CreateContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateCommentParamsInterface;
 use Elabftw\Services\Email;
 use Elabftw\Traits\SetIdTrait;
@@ -24,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * All about the comments
  */
-class Comments implements CrudInterface
+class Comments implements CrudInterface, ModelInterface
 {
     use SetIdTrait;
 
@@ -42,7 +43,7 @@ class Comments implements CrudInterface
         $this->id = $id;
     }
 
-    public function create(CreateCommentParamsInterface $params): int
+    public function create(CreateContentParamsInterface $params): int
     {
         $sql = 'INSERT INTO ' . $this->Entity->type . '_comments(datetime, item_id, comment, userid)
             VALUES(:datetime, :item_id, :content, :userid)';

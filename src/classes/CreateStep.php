@@ -10,17 +10,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Interfaces\CreateStepParamsInterface;
+use Elabftw\Interfaces\CreateContentParamsInterface;
+use function str_replace;
 
-class CreateStep implements CreateStepParamsInterface
+final class CreateStep extends CreateContent implements CreateContentParamsInterface
 {
-    private string $content;
-
-    public function __construct(string $content)
-    {
-        $this->content = $content;
-    }
-
     public function getContent(): string
     {
         // remove any | as they are used in the group_concat

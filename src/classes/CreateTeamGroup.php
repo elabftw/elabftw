@@ -10,6 +10,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-final class CreateTeamGroup extends CreateStep
+use Elabftw\Interfaces\CreateContentParamsInterface;
+use Elabftw\Services\Filter;
+
+final class CreateTeamGroup extends CreateContent implements CreateContentParamsInterface
 {
+    public function getContent(): string
+    {
+        return Filter::sanitize($this->content);
+    }
 }

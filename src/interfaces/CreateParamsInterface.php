@@ -13,6 +13,6 @@ namespace Elabftw\Interfaces;
 /**
  * Interface for creating something
  */
-interface CreateParamsInterface extends CreateStepParamsInterface, CreateUploadParamsInterface, CreateLinkParamsInterface, CreateCommentParamsInterface, CreateStatusParamsInterface, CreateApikeyParamsInterface, CreateTodoitemParamsInterface, CreateTemplateParamsInterface, CreateEntityParamsInterface, CreateItemTypeParamsInterface, CreateTagParamsInterface
+interface CreateParamsInterface extends CreateUploadParamsInterface, CreateLinkParamsInterface, CreateStatusParamsInterface, CreateApikeyParamsInterface, CreateTodoitemParamsInterface, CreateTemplateParamsInterface, CreateEntityParamsInterface, CreateItemTypeParamsInterface, CreateContentParamsInterface
 {
 }

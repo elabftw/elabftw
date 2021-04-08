@@ -11,20 +11,11 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CreateCommentParamsInterface;
+use Elabftw\Interfaces\CreateContentParamsInterface;
 use function mb_strlen;
 
-final class CreateComment implements CreateCommentParamsInterface
+final class CreateComment extends CreateContent implements CreateContentParamsInterface
 {
-    private const MIN_CONTENT_SIZE = 2;
-
-    private string $content;
-
-    public function __construct(string $content)
-    {
-        $this->content = $content;
-    }
-
     public function getContent(): string
     {
         // check for length

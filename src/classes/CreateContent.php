@@ -10,13 +10,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Interfaces\CreateContentParamsInterface;
-use Elabftw\Services\Filter;
-
-final class CreateTag extends CreateContent implements CreateContentParamsInterface
+class CreateContent
 {
-    public function getContent(): string
+    protected const MIN_CONTENT_SIZE = 2;
+
+    protected string $content;
+
+    public function __construct(string $content)
     {
-        return Filter::tag($this->content);
+        $this->content = $content;
     }
 }

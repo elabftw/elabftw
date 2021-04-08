@@ -11,9 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * Interface for creating a tag
+ * Interface for when you need the content
  */
-interface CreateTagParamsInterface
+interface CreateContentParamsInterface
 {
     public function getContent(): string;
 }

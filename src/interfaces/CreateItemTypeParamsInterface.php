@@ -13,7 +13,7 @@ namespace Elabftw\Interfaces;
 /**
  * Interface for creating an itemtype
  */
-interface CreateItemTypeParamsInterface
+interface CreateItemTypeParamsInterface extends CreateContentParamsInterface
 {
     public function getBody(): string;
 
@@ -23,8 +23,6 @@ interface CreateItemTypeParamsInterface
     public function getCanwriteS(): string;
 
     public function getColor(): string;
-
-    public function getContent(): string;
 
     public function getIsBookable(): int;
 

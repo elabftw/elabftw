@@ -12,8 +12,8 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CreatableInterface;
-use Elabftw\Interfaces\CreateLinkParamsInterface;
 use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Interfaces\IdParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\ReadableInterface;
 use Elabftw\Interfaces\UpdateParamsInterface;
@@ -41,7 +41,7 @@ class Links implements CreatableInterface, ReadableInterface, DestroyableInterfa
     /**
      * Add a link to an experiment
      */
-    public function create(CreateLinkParamsInterface $params): int
+    public function create(IdParamsInterface $params): int
     {
         $link = $params->getId();
         $Items = new Items($this->Entity->Users, $link);

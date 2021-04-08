@@ -71,7 +71,7 @@ class JsonProcessor extends Processor implements ProcessorInterface
             return new CreateComment($this->content);
         }
         if ($this->Model instanceof Experiments || $this->Model instanceof Items) {
-            return new CreateEntity((int) $this->id);
+            return new IdParams((int) $this->id);
         }
         if ($this->Model instanceof ItemsTypes) {
             return new CreateItemType(
@@ -84,7 +84,7 @@ class JsonProcessor extends Processor implements ProcessorInterface
             );
         }
         if ($this->Model instanceof Links) {
-            return new CreateLink($this->id);
+            return new IdParams($this->id);
         }
         if ($this->Model instanceof Status) {
             return new CreateStatus($this->content, $this->extra['color'], (bool) $this->extra['isTimestampable']);

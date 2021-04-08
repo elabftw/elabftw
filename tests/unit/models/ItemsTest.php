@@ -9,7 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateEntity;
+use Elabftw\Elabftw\IdParams;
 use Elabftw\Elabftw\UpdateEntity;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
@@ -24,7 +24,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAndDestroy()
     {
-        $new = $this->Items->create(new CreateEntity(1));
+        $new = $this->Items->create(new IdParams(1));
         $this->assertTrue((bool) Check::id($new));
         $this->Items->setId($new);
         $this->Items->destroy();
@@ -38,7 +38,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead()
     {
-        $new = $this->Items->create(new CreateEntity(1));
+        $new = $this->Items->create(new IdParams(1));
         $this->Items->setId($new);
         $this->Items->canOrExplode('read');
         $this->assertTrue(is_array($this->Items->entityData));
@@ -48,7 +48,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $new = $this->Items->create(new CreateEntity(1));
+        $new = $this->Items->create(new IdParams(1));
         $this->Items->setId($new);
         $this->Items->update(new UpdateEntity('title', 'Items item 1'));
         $this->Items->update(new UpdateEntity('date', '20160729'));
@@ -70,7 +70,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testToggleLock()
     {
-        $new = $this->Items->create(new CreateEntity(1));
+        $new = $this->Items->create(new IdParams(1));
         $this->Items->setId($new);
 
         // lock

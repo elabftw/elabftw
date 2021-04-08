@@ -9,8 +9,8 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateEntity;
 use Elabftw\Elabftw\CreateTemplate;
+use Elabftw\Elabftw\IdParams;
 use Elabftw\Elabftw\UpdateEntity;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Check;
@@ -25,7 +25,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAndDestroy()
     {
-        $new = $this->Experiments->create(new CreateEntity(0));
+        $new = $this->Experiments->create(new IdParams(0));
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('write');
@@ -33,7 +33,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->destroy();
         $this->Templates = new Templates($this->Users);
         $this->Templates->create(new CreateTemplate('my template', 'is so cool'));
-        $new = $this->Experiments->create(new CreateEntity(1));
+        $new = $this->Experiments->create(new IdParams(1));
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments = new Experiments($this->Users, $new);
         $this->Experiments->destroy();
@@ -47,7 +47,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead()
     {
-        $new = $this->Experiments->create(new CreateEntity(0));
+        $new = $this->Experiments->create(new IdParams(0));
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('read');
         $experiment = $this->Experiments->read();
@@ -58,7 +58,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $new = $this->Experiments->create(new CreateEntity(0));
+        $new = $this->Experiments->create(new IdParams(0));
         $this->Experiments->setId($new);
         $this->assertEquals($new, $this->Experiments->id);
         $this->assertEquals(1, $this->Experiments->Users->userData['userid']);

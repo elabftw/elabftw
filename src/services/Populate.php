@@ -9,10 +9,10 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\CreateEntity;
 use Elabftw\Elabftw\CreateStep;
 use Elabftw\Elabftw\CreateTag;
 use Elabftw\Elabftw\CreateTemplate;
+use Elabftw\Elabftw\IdParams;
 use Elabftw\Elabftw\UpdateEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Experiments;
@@ -62,7 +62,7 @@ class Populate
 
         printf("Generating %s \n", $Entity->type);
         for ($i = 0; $i <= $this->iter; $i++) {
-            $id = $Entity->create(new CreateEntity($tpl));
+            $id = $Entity->create(new IdParams($tpl));
             $Entity->setId($id);
             // variable tag number
             $Tags = new Tags($Entity);

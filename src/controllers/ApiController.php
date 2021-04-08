@@ -12,12 +12,11 @@ namespace Elabftw\Controllers;
 
 use function dirname;
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\CreateEntity;
-use Elabftw\Elabftw\CreateLink;
 use Elabftw\Elabftw\CreateTag;
 use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\DisplayParams;
+use Elabftw\Elabftw\IdParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -683,7 +682,7 @@ class ApiController implements ControllerInterface
      */
     private function createExperiment(): Response
     {
-        $id = $this->Entity->create(new CreateEntity(0));
+        $id = $this->Entity->create(new IdParams(0));
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
 
@@ -754,7 +753,7 @@ class ApiController implements ControllerInterface
         if ($this->id === null) {
             return new Response('Invalid id', 400);
         }
-        $id = $this->Entity->create(new CreateEntity($this->id));
+        $id = $this->Entity->create(new IdParams($this->id));
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
 
@@ -783,7 +782,7 @@ class ApiController implements ControllerInterface
      */
     private function createLink(): Response
     {
-        $this->Entity->Links->create(new CreateLink((int) $this->Request->request->get('link')));
+        $this->Entity->Links->create(new IdParams((int) $this->Request->request->get('link')));
         return new JsonResponse(array('result' => 'success'));
     }
 

@@ -13,10 +13,10 @@ namespace Elabftw\Elabftw;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Filter;
 
-final class CreateTodoitem extends ContentParams implements ContentParamsInterface
+final class TagParams extends ContentParams implements ContentParamsInterface
 {
     public function getContent(): string
     {
-        return Filter::sanitize($this->content);
+        return Filter::tag($this->content);
     }
 }

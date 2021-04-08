@@ -15,7 +15,6 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\ModelInterface;
-use Elabftw\Interfaces\UpdateCommentParamsInterface;
 use Elabftw\Services\Email;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
@@ -77,7 +76,7 @@ class Comments implements CrudInterface, ModelInterface
         return $res;
     }
 
-    public function update(UpdateCommentParamsInterface $params): bool
+    public function update(ContentParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('read');
         $sql = 'UPDATE ' . $this->Entity->type . '_comments SET

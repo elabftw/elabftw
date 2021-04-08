@@ -68,7 +68,7 @@ class JsonProcessor extends Processor implements ProcessorInterface
             return new CreateApikey($this->content, (int) $this->extra['canwrite']);
         }
         if ($this->Model instanceof Comments) {
-            return new CreateComment($this->content);
+            return new ContentParams($this->content);
         }
         if ($this->Model instanceof Experiments || $this->Model instanceof Items) {
             return new IdParams((int) $this->id);
@@ -93,13 +93,13 @@ class JsonProcessor extends Processor implements ProcessorInterface
             return new CreateStep($this->content);
         }
         if ($this->Model instanceof Tags) {
-            return new CreateTag($this->content);
+            return new TagParams($this->content);
         }
         if ($this->Model instanceof Templates) {
             return new CreateTemplate($this->content, $this->extra['body'] ?? '');
         }
         if ($this->Model instanceof Todolist) {
-            return new CreateTodoitem($this->content);
+            return new ContentParams($this->content);
         }
         if ($this->Model instanceof Uploads) {
             return new CreateUpload(Request::createFromGlobals());
@@ -112,7 +112,7 @@ class JsonProcessor extends Processor implements ProcessorInterface
     protected function getUpdateParams()
     {
         if ($this->Model instanceof Comments) {
-            return new UpdateComment($this->content);
+            return new ContentParams($this->content);
         }
         if ($this->Model instanceof Steps) {
             return new UpdateStep($this->target, $this->content);
@@ -135,7 +135,7 @@ class JsonProcessor extends Processor implements ProcessorInterface
             return new UpdateStatus($this->content, $this->extra['color'], (bool) $this->extra['isTimestampable'], (bool) $this->extra['isDefault']);
         }
         if ($this->Model instanceof Todolist) {
-            return new UpdateTodoitem($this->content);
+            return new ContentParams($this->content);
         }
         if ($this->Model instanceof Uploads) {
             if ($this->target === 'real_name') {

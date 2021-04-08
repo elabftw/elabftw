@@ -9,8 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateTag;
-use Elabftw\Elabftw\UpdateTag;
+use Elabftw\Elabftw\TagParams;
 use Elabftw\Services\Check;
 
 class TagsTest extends \PHPUnit\Framework\TestCase
@@ -23,13 +22,13 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->Experiments->Tags->create(new CreateTag('my tag'));
-        $id = $this->Experiments->Tags->create(new CreateTag('new tag'));
+        $this->Experiments->Tags->create(new TagParams('my tag'));
+        $id = $this->Experiments->Tags->create(new TagParams('new tag'));
         $this->assertTrue((bool) Check::id($id));
 
         $Items = new Items($this->Users, 1);
         $Tags = new Tags($Items);
-        $id =$Tags->create(new CreateTag('tag2222'));
+        $id =$Tags->create(new TagParams('tag2222'));
         $this->assertTrue((bool) Check::id($id));
     }
 
@@ -47,17 +46,17 @@ class TagsTest extends \PHPUnit\Framework\TestCase
     public function testUpdate()
     {
         $Tags = new Tags($this->Experiments, 1);
-        $this->assertTrue($Tags->update(new UpdateTag('new super tag')));
+        $this->assertTrue($Tags->update(new TagParams('new super tag')));
     }
 
     public function testDeduplicate()
     {
         $Tags = new Tags($this->Experiments, 1);
         $this->assertEquals(0, $Tags->deduplicate());
-        $this->Experiments->Tags->create(new CreateTag('correcttag'));
-        $id = $this->Experiments->Tags->create(new CreateTag('typotag'));
+        $this->Experiments->Tags->create(new TagParams('correcttag'));
+        $id = $this->Experiments->Tags->create(new TagParams('typotag'));
         $Tags = new Tags($this->Experiments, $id);
-        $Tags->update(new UpdateTag('correcttag'));
+        $Tags->update(new TagParams('correcttag'));
         $this->assertEquals(1, $Tags->deduplicate());
     }
 
@@ -75,7 +74,7 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy()
     {
-        $id = $this->Experiments->Tags->create(new CreateTag('destroy me'));
+        $id = $this->Experiments->Tags->create(new TagParams('destroy me'));
         $Tags = new Tags($this->Experiments, $id);
         $this->Experiments->Tags->destroy();
     }

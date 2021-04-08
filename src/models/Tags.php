@@ -18,7 +18,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
-use Elabftw\Interfaces\UpdateTagParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Traits\SetIdTrait;
 use function implode;
@@ -167,7 +166,7 @@ class Tags implements ModelInterface
     /**
      * Update a tag
      */
-    public function update(UpdateTagParamsInterface $params): bool
+    public function update(ContentParamsInterface $params): bool
     {
         if ($this->Entity->Users->userData['is_admin'] !== '1') {
             throw new IllegalActionException('Only an admin can update a tag!');

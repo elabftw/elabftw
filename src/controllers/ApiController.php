@@ -12,11 +12,11 @@ namespace Elabftw\Controllers;
 
 use function dirname;
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\CreateTag;
 use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\IdParams;
+use Elabftw\Elabftw\TagParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -816,7 +816,7 @@ class ApiController implements ControllerInterface
      */
     private function createTag(): Response
     {
-        $this->Entity->Tags->create(new CreateTag($this->Request->request->get('tag') ?? ''));
+        $this->Entity->Tags->create(new TagParams($this->Request->request->get('tag') ?? ''));
         return new JsonResponse(array('result' => 'success'));
     }
 

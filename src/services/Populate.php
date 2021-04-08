@@ -10,9 +10,9 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\CreateStep;
-use Elabftw\Elabftw\CreateTag;
 use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Elabftw\IdParams;
+use Elabftw\Elabftw\TagParams;
 use Elabftw\Elabftw\UpdateEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Experiments;
@@ -68,7 +68,7 @@ class Populate
             $Tags = new Tags($Entity);
             $tagNb = $this->faker->numberBetween(0, 5);
             for ($j = 0; $j <= $tagNb; $j++) {
-                $Tags->create(new CreateTag($this->faker->word()));
+                $Tags->create(new TagParams($this->faker->word()));
             }
             $params = new UpdateEntity('title', $this->faker->sentence());
             $Entity->update($params);

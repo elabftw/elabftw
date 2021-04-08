@@ -2,9 +2,8 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateTodoitem;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\OrderingParams;
-use Elabftw\Elabftw\UpdateTodoitem;
 
 class TodolistTest extends \PHPUnit\Framework\TestCase
 {
@@ -16,7 +15,7 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
     public function testCreate()
     {
         $content = 'write more tests';
-        $this->assertIsInt($this->Todolist->create(new CreateTodoitem($content)));
+        $this->assertIsInt($this->Todolist->create(new ContentParams($content)));
     }
 
     public function testRead()
@@ -27,14 +26,14 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
     public function testUpdate()
     {
         $this->Todolist->setId(1);
-        $this->assertTrue($this->Todolist->update(new UpdateTodoitem('write way more tests')));
+        $this->assertTrue($this->Todolist->update(new ContentParams('write way more tests')));
     }
 
     public function testUpdateOrdering()
     {
         $content = 'write more tests';
-        $this->Todolist->create(new CreateTodoitem($content));
-        $this->Todolist->create(new CreateTodoitem($content));
+        $this->Todolist->create(new ContentParams($content));
+        $this->Todolist->create(new ContentParams($content));
         $ordering = array('todoItem_3', 'todoItem_2', 'todoItem_4');
         $OrderingParams = new OrderingParams('todolist', $ordering);
         $this->Todolist->updateOrdering($OrderingParams);

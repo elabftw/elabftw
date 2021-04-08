@@ -12,8 +12,8 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\UpdatableInterface;
-use Elabftw\Interfaces\UpdateMetadataParamsInterface;
 use Elabftw\Services\Filter;
 use PDO;
 
@@ -42,7 +42,7 @@ class Metadata implements UpdatableInterface
     /**
      * Update the whole json in metadata column
      */
-    public function update(UpdateMetadataParamsInterface $params): bool
+    public function update(ContentParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
         $sql = 'UPDATE ' . $this->Entity->getTable() . ' SET metadata = :metadata WHERE id = :id';

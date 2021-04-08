@@ -15,7 +15,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Database;
 use Elabftw\Models\Idps;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;

@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\CreateTag;
+use Elabftw\Elabftw\TagParams;
 use Elabftw\Elabftw\UpdateEntity;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
@@ -213,7 +213,7 @@ class ImportZip extends AbstractImport
     {
         $tagsArr = explode('|', $tags);
         foreach ($tagsArr as $tag) {
-            $this->Entity->Tags->create(new CreateTag($tag));
+            $this->Entity->Tags->create(new TagParams($tag));
         }
     }
 

@@ -13,7 +13,6 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
-use Elabftw\Interfaces\UpdateTodoitemParamsInterface;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -65,7 +64,7 @@ class Todolist implements ModelInterface
         return $res;
     }
 
-    public function update(UpdateTodoitemParamsInterface $params): bool
+    public function update(ContentParamsInterface $params): bool
     {
         $sql = 'UPDATE todolist SET body = :content WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);

@@ -34,7 +34,7 @@ use function random_bytes;
 use function sha1;
 
 /**
- * The mother class of Experiments and Database
+ * The mother class of Experiments, Items, Templates and ItemsTypes
  */
 abstract class AbstractEntity implements ModelInterface, HasMetadataInterface
 {
@@ -194,7 +194,7 @@ abstract class AbstractEntity implements ModelInterface, HasMetadataInterface
         // teamFilter is to restrict to the team for items only
         // as they have a team column
         $teamFilter = '';
-        if ($this instanceof Database) {
+        if ($this instanceof Items) {
             $teamFilter = ' AND users2teams.teams_id = entity.team';
         }
         // add pub/org/team filter
@@ -460,7 +460,7 @@ abstract class AbstractEntity implements ModelInterface, HasMetadataInterface
 
         $Permissions = new Permissions($this->Users, $item);
 
-        if ($this instanceof Experiments || $this instanceof Database || $this instanceof Templates) {
+        if ($this instanceof Experiments || $this instanceof Items || $this instanceof Templates) {
             return $Permissions->forEntity();
         }
 
@@ -555,7 +555,7 @@ abstract class AbstractEntity implements ModelInterface, HasMetadataInterface
      */
     public function getTimestampInfo(): array
     {
-        if ($this instanceof Database || $this->entityData['timestamped'] === '0') {
+        if ($this instanceof Items || $this->entityData['timestamped'] === '0') {
             return array();
         }
         $timestamper = $this->Users->read((int) $this->entityData['timestampedby']);
@@ -704,7 +704,7 @@ abstract class AbstractEntity implements ModelInterface, HasMetadataInterface
         if ($this instanceof Experiments) {
             $select .= ', entity.timestamped';
             $eventsColumn = 'experiment';
-        } elseif ($this instanceof Database) {
+        } elseif ($this instanceof Items) {
             $select .= ', categoryt.bookable';
             $eventsColumn = 'item';
         } else {

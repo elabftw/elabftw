@@ -26,6 +26,7 @@ use Exception;
 use PDOException;
 use Swift_TransportException;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 require_once dirname(__DIR__) . '/init.inc.php';
 
@@ -43,13 +44,13 @@ try {
     if ($Request->headers->get('Content-Type') === 'application/json') {
         $Processor = new JsonProcessor($App->Users, $Request);
     } else {
-        // for the moment nothing comes here that is not json, but the goal is to merge with Ajax.php TODO
-        $Processor = new RequestProcessor($App->Users, $Request);
+        $Processor = new FormProcessor($App->Users, $Request);
     }
 
     $action = $Processor->getAction();
     $Model = $Processor->getModel();
     $Params = $Processor->getParams();
+
 
     // Status actions can only be accessed by admin level
     // TODO should probably not be here if we're going to use this to read too
@@ -76,6 +77,11 @@ try {
         $res = $Model->toggleLock();
     }
 
+    if ($Processor instanceof FormProcessor) {
+        $Response = new RedirectResponse('../../' . $Processor->Entity->page . '.php?mode=edit&id=' . $Processor->Entity->id);
+        $Response->send();
+        die;
+    }
     $Response->setData(array(
         'res' => true,
         'msg' => _('Saved'),

@@ -13,11 +13,10 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreateParamsInterface;
 use Elabftw\Interfaces\ProcessorInterface;
-use Elabftw\Interfaces\UpdateParamsInterface;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
 use Elabftw\Models\Status;
@@ -27,8 +26,6 @@ use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
-use Elabftw\Services\Check;
-use function in_array;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -36,46 +33,19 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class JsonProcessor extends Processor implements ProcessorInterface
 {
-    public string $method;
-
-    public ?string $target;
-
-    public string $content = '';
-
     private array $decoded;
-
-    private array $extra;
 
     public function __construct(Users $users, Request $request)
     {
         parent::__construct($users, $request);
     }
 
-    //public function getParams(): CreateParamsInterface | UpdateParamsInterface
-    // @phpstan-ignore-next-line
-    public function getParams()
-    {
-        switch ($this->action) {
-            case 'create':
-                return $this->getCreateParams();
-            case 'update':
-                return $this->getUpdateParams();
-            // no parameters needed for these actions
-            case 'destroy':
-            case 'duplicate':
-            case 'lock':
-                return;
-            default:
-                throw new IllegalActionException('Bad params');
-        }
-    }
-
     // process a Payload json request
     protected function process(Request $request): void
     {
         $this->decoded = $request->toArray();
-        $this->action = $this->setAction();
-        $this->target = $this->getTarget();
+        $this->action = $this->setAction($this->decoded['action'] ?? '');
+        $this->target = $this->setTarget($this->decoded['target'] ?? '');
 
         if (isset($this->decoded['entity'])) {
             $id = (int) $this->decoded['entity']['id'];
@@ -84,15 +54,15 @@ class JsonProcessor extends Processor implements ProcessorInterface
             }
             $this->Entity = $this->getEntity($this->decoded['entity']['type'], $id);
         }
-        $this->id = $this->getId();
+        $this->id = $this->setId((int) $this->decoded['id']);
         $this->Model = $this->findModel($this->decoded['model'] ?? '');
-        $this->content = $this->getContent();
+        $this->content = $this->decoded['content'] ?? '';
         $this->extra = $this->decoded['extraParams'] ?? array();
     }
 
     //private function getCreateParams(): CreateParamsInterface
     // @phpstan-ignore-next-line
-    private function getCreateParams()
+    protected function getCreateParams()
     {
         if ($this->Model instanceof ApiKeys) {
             return new CreateApikey($this->content, (int) $this->extra['canwrite']);
@@ -100,7 +70,7 @@ class JsonProcessor extends Processor implements ProcessorInterface
         if ($this->Model instanceof Comments) {
             return new CreateComment($this->content);
         }
-        if ($this->Model instanceof Experiments || $this->Model instanceof Database) {
+        if ($this->Model instanceof Experiments || $this->Model instanceof Items) {
             return new CreateEntity((int) $this->id);
         }
         if ($this->Model instanceof ItemsTypes) {
@@ -139,7 +109,7 @@ class JsonProcessor extends Processor implements ProcessorInterface
 
     //private function getUpdateParams(): UpdateParams
     // @phpstan-ignore-next-line
-    private function getUpdateParams()
+    protected function getUpdateParams()
     {
         if ($this->Model instanceof Comments) {
             return new UpdateComment($this->content);
@@ -157,7 +127,7 @@ class JsonProcessor extends Processor implements ProcessorInterface
                 (int) $this->extra['bookable'],
             );
         }
-        if ($this->Model instanceof Experiments || $this->Model instanceof Database) {
+        if ($this->Model instanceof Experiments || $this->Model instanceof Items) {
             return new UpdateEntity($this->target, $this->content);
         }
 
@@ -177,64 +147,5 @@ class JsonProcessor extends Processor implements ProcessorInterface
         }
 
         throw new IllegalActionException('Bad params');
-    }
-
-    private function setAction(): string
-    {
-        $allowed = array(
-            'create',
-            'read',
-            'update',
-            'destroy',
-            'deduplicate',
-            'duplicate',
-            'lock',
-            'unreference',
-        );
-        if (!in_array($this->decoded['action'], $allowed, true)) {
-            throw new IllegalActionException('Invalid action!');
-        }
-        return $this->decoded['action'];
-    }
-
-    // a target is like a subpart of a model
-    // example: update the comment of an upload
-    private function getTarget(): ?string
-    {
-        if (!isset($this->decoded['target'])) {
-            return null;
-        }
-        $allowed = array(
-            'body',
-            'date',
-            'comment',
-            'finished',
-            'real_name',
-            'title',
-        );
-        if (!in_array($this->decoded['target'], $allowed, true)) {
-            throw new IllegalActionException('Invalid target!');
-        }
-        return $this->decoded['target'];
-    }
-
-    private function getContent(): string
-    {
-        if (!isset($this->decoded['content'])) {
-            return $this->content;
-        }
-        return $this->decoded['content'];
-    }
-
-    private function getId(): ?int
-    {
-        if (!isset($this->decoded['id']) || $this->decoded['id'] === 0) {
-            return null;
-        }
-        $id = Check::id((int) $this->decoded['id']);
-        if ($id === false) {
-            throw new IllegalActionException('Bad id');
-        }
-        return $id;
     }
 }

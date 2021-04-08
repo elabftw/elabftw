@@ -15,7 +15,7 @@ class PinsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Users = new Users(1, 1);
         $this->Experiments = new Experiments($this->Users, 1);
-        $this->Database = new Database($this->Users, 1);
+        $this->Items = new Items($this->Users, 1);
     }
 
     public function testTogglePin(): void
@@ -26,10 +26,10 @@ class PinsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->Pins->togglePin();
         $this->assertCount(0, $this->Experiments->Pins->getPinned());
 
-        $this->Database->Pins->togglePin();
-        $this->assertTrue($this->Database->Pins->isPinned());
-        $this->assertCount(1, $this->Database->Pins->getPinned());
-        $this->Database->Pins->togglePin();
-        $this->assertCount(0, $this->Database->Pins->getPinned());
+        $this->Items->Pins->togglePin();
+        $this->assertTrue($this->Items->Pins->isPinned());
+        $this->assertCount(1, $this->Items->Pins->getPinned());
+        $this->Items->Pins->togglePin();
+        $this->assertCount(0, $this->Items->Pins->getPinned());
     }
 }

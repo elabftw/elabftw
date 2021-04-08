@@ -14,8 +14,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $Users = new Users(1, 1);
-        $Database = new Database($Users, 1);
-        $this->Scheduler = new Scheduler($Database);
+        $Items = new Items($Users, 1);
+        $this->Scheduler = new Scheduler($Items);
         $this->id = 1;
         $this->delta = array(
             'years' => '0',

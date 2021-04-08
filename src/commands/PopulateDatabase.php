@@ -123,7 +123,7 @@ class PopulateDatabase extends Command
 
         // add more items types
         $Users1 = new Users(1, 1);
-        $ItemsTypes = new ItemsTypes($Users1);
+        $ItemsTypes = new ItemsTypes($Users1->team);
         foreach ($yaml['items_types'] as $items_types) {
             $ItemsTypes->create(new CreateItemType(
                 $items_types['name'],

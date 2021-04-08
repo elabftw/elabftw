@@ -23,4 +23,6 @@ interface ProcessorInterface
     // TODO type ActionParamsInterface?
     // @phpstan-ignore-next-line
     public function getParams();
+
+    public function getAction(): string;
 }

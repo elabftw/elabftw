@@ -86,34 +86,16 @@
     </div>
   </div>
 
-  <!-- TAGS -->
-  <i class='fas fa-tags mr-1'></i><label for='createTagInput'>{{ 'Tags'|trans }}</label>
-  <div class='tags'>
-    <span id='tags_div_{{ Entity.id }}'>
-      <!--  build the tag array -->
-      {% if Entity.entityData.tags|length > 0 %}
-        {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
-        {% set tagsValueArr = Entity.entityData.tags|split('|') %}
-        {% for tag in tagsValueArr %}
-          <span class='tag m-1 clickable'>
-            <a class='tag-delete tagUnreference' data-tagid='{{ tagsIdArr[loop.index0] }}' data-id='{{ Entity.id }}'>
-              {{ tag|raw }}
-            </a>
-          </span>
-        {% endfor %}
-      {% endif %}
-    </span>
-    <input type='text' id='createTagInput' class='createTagInput mb-2' placeholder='{{ 'Add a tag'|trans }}' />
-  </div>
-
-  <div class='row'>
-    <!-- DATE -->
-    <div class='col-md-3'>
-      <i class='far fa-calendar-alt mr-1'></i><label for='date_input'>{{ 'Date'|trans }}</label>
+  <!-- DATE -->
+  <div class='row mb-2'>
+    <div class=''>
+      <i class='far fa-calendar-alt mr-1'></i><label for='date_input'>{{ 'Started on'|trans }}</label>
       <!-- the input expects date in YYYY-MM-DD format, and it will be displayed according to the browser's locale -->
       <input name='date' id='date_input' type='date' value='{{ Entity.entityData.date|kdate('-') }}' />
     </div>
+  </div>
 
+  <div class='row'>
     <!-- CATEGORIES (status for exp and itemstypes for items) -->
     <div class='col-md-3'>
       <i class='fas fa-clipboard-check'></i>
@@ -143,16 +125,31 @@
   </div>
 
   <!-- TITLE -->
-  <h4>{{ 'Title'|trans }}</h4>
+  <label for='title_input'>{{ 'Title'|trans }}</label>
   <input id='title_input' type='text' name='title' value='{{ Entity.entityData.title|raw }}' required />
 
-  <!-- BODY -->
-  {% if Entity.type == 'experiments' %}
-    <h4>{% trans %}Experiment{% plural 1 %}Experiments{% endtrans %}</h4>
-  {% else %}
-    <h4>{{ 'Information'|trans }}</h4>
-  {% endif %}
 
+  <!-- TAGS -->
+  <i class='fas fa-tags mr-1'></i><label for='createTagInput'>{{ 'Tags'|trans }}</label>
+  <div class='tags'>
+    <span id='tags_div_{{ Entity.id }}'>
+      <!--  build the tag array -->
+      {% if Entity.entityData.tags|length > 0 %}
+        {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
+        {% set tagsValueArr = Entity.entityData.tags|split('|') %}
+        {% for tag in tagsValueArr %}
+          <span class='tag m-1 clickable'>
+            <a class='tag-delete tagUnreference' data-tagid='{{ tagsIdArr[loop.index0] }}' data-id='{{ Entity.id }}'>
+              {{ tag|raw }}
+            </a>
+          </span>
+        {% endfor %}
+      {% endif %}
+    </span>
+    <input type='text' id='createTagInput' class='createTagInput mb-2' placeholder='{{ 'Add a tag'|trans }}' />
+  </div>
+
+  <!-- BODY -->
   {% if editor == 'md' %}
     <textarea id='body_area' class='markdown-textarea' data-language='{{ lang }}' name='body'>{{ Entity.entityData.body|raw }}</textarea>
   {% else %}
@@ -160,7 +157,7 @@
   {% endif %}
 
   <div class='mt-4 text-center'>
-    <button data-action='update-entity-body' class='button btn btn-primary'>{{ 'Save and go back'|trans }}</button>
+    <button data-action='update-entity-body' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
   </div>
 
   <div id='metadataDiv' class='col-md-6'></div>

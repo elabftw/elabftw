@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     init: function(): void {
 
-      // add additional parameters (id and type)
+      // add additional parameters (id and type) //TODO
       this.on('sending', function(file: string, xhr: string, formData: FormData) {
         formData.append('upload', '1');
         formData.append('type', entity.type);
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // once it is done
       this.on('complete', function(answer: any) {
-        // check the answer we get back from app/controllers/EntityController.php
+        // check the answer we get back from the controller
         const json = JSON.parse(answer.xhr.responseText);
         notif(json);
         // reload the #filesdiv once the file is uploaded
@@ -189,7 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="update-entity-body"]')) {
       // TODO markdown editor stuff, there should be this code somewhere else though
       const content = tinymce.activeEditor.getContent();
-      EntityC.update(entity.id, Target.Body, content);
+      EntityC.update(entity.id, Target.Body, content).then(json => {
+        if (json.res) {
+          // set the editor as non dirty so we can navigate out without a warning to clear
+          tinymce.activeEditor.setDirty(false);
+        }
+      });
 
     // DESTROY ENTITY
     } else if (el.matches('[data-action="destroy"]')) {

@@ -44,8 +44,8 @@ class Links implements CreatableInterface, ReadableInterface, DestroyableInterfa
     public function create(CreateLinkParamsInterface $params): int
     {
         $link = $params->getId();
-        $Database = new Database($this->Entity->Users, $link);
-        $Database->canOrExplode('read');
+        $Items = new Items($this->Entity->Users, $link);
+        $Items->canOrExplode('read');
         $this->Entity->canOrExplode('write');
 
         // check if this link doesn't exist already

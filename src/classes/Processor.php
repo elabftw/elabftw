@@ -16,8 +16,8 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
 use Elabftw\Models\Metadata;
@@ -30,6 +30,7 @@ use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -40,11 +41,17 @@ abstract class Processor
 {
     public ?AbstractEntity $Entity = null;
 
+    public string $content = '';
+
+    public ?string $target;
+
     protected string $action;
 
     protected ?int $id = null;
 
     protected ModelInterface $Model;
+
+    protected array $extra;
 
     private Users $Users;
 
@@ -64,7 +71,71 @@ abstract class Processor
         return $this->action;
     }
 
+    // @phpstan-ignore-next-line
+    public function getParams()
+    {
+        switch ($this->action) {
+            case 'create':
+                return $this->getCreateParams();
+            case 'update':
+                return $this->getUpdateParams();
+            // no parameters needed for these actions
+            case 'destroy':
+            case 'duplicate':
+            case 'lock':
+                return;
+            default:
+                throw new IllegalActionException('Bad params');
+        }
+    }
+
     abstract protected function process(Request $request): void;
+
+    // @phpstan-ignore-next-line
+    abstract protected function getCreateParams();
+
+    // @phpstan-ignore-next-line
+    abstract protected function getUpdateParams();
+
+    // a target is like a subpart of a model
+    // example: update the comment of an upload
+    protected function setTarget(string $target): ?string
+    {
+        if (empty($target)) {
+            return null;
+        }
+        $allowed = array(
+            'body',
+            'comment',
+            'date',
+            'file',
+            'finished',
+            'real_name',
+            'title',
+        );
+        if (!in_array($target, $allowed, true)) {
+            throw new IllegalActionException('Invalid target!');
+        }
+        return $target;
+    }
+
+    protected function setAction(string $action): string
+    {
+        $allowed = array(
+            'create',
+            'read',
+            'update',
+            'destroy',
+            'deduplicate',
+            'duplicate',
+            'lock',
+            'unreference',
+        );
+        if (!in_array($action, $allowed, true)) {
+            throw new IllegalActionException('Invalid action!');
+        }
+        return $action;
+    }
 
     protected function getEntity(string $type, ?int $itemId = null): AbstractEntity
     {
@@ -73,9 +144,9 @@ abstract class Processor
         } elseif ($type === 'template') {
             return new Templates($this->Users, $itemId);
         } elseif ($type === 'itemtype') {
-            return new ItemsTypes($this->Users, $itemId);
+            return new ItemsTypes($this->Users->team, $itemId);
         }
-        return new Database($this->Users, $itemId);
+        return new Items($this->Users, $itemId);
     }
 
     //private function getModel(): ModelInterface
@@ -115,5 +186,17 @@ abstract class Processor
             default:
                 throw new IllegalActionException('Bad model');
         }
+    }
+
+    protected function setId(?int $id): ?int
+    {
+        if (!isset($id) || $id === 0) {
+            return null;
+        }
+        $id = Check::id((int) $id);
+        if ($id === false) {
+            throw new IllegalActionException('Bad id');
+        }
+        return $id;
     }
 }

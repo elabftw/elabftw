@@ -15,8 +15,8 @@ use Elabftw\Elabftw\CreateTag;
 use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Elabftw\UpdateEntity;
 use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
@@ -48,13 +48,13 @@ class Populate
     /**
      * Populate the db with fake experiments or items
      */
-    public function generate(Experiments|Database $Entity): void
+    public function generate(Experiments|Items $Entity): void
     {
         if ($Entity instanceof Experiments) {
             $Category = new Status($Entity->Users->team);
             $tpl = 0;
         } else {
-            $Category = new ItemsTypes($Entity->Users);
+            $Category = new ItemsTypes($Entity->Users->team);
             $tpl = (int) $Category->readAll()[0]['category_id'];
         }
         $categories = $Category->readAll();
@@ -129,7 +129,7 @@ class Populate
             $this->generate(new Experiments($Users));
         }
         if ($user['create_items'] ?? false) {
-            $this->generate(new Database($Users));
+            $this->generate(new Items($Users));
         }
         if ($user['api_key'] ?? false) {
             $ApiKeys = new ApiKeys($Users);

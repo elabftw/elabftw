@@ -9,8 +9,8 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 
 class MakeCsvTest extends \PHPUnit\Framework\TestCase
@@ -18,7 +18,7 @@ class MakeCsvTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->MakeExp = new MakeCsv(new Experiments(new Users(1, 1)), '1 2 3');
-        $this->MakeDb = new MakeCsv(new Database(new Users(1, 1)), '1 2 3');
+        $this->MakeDb = new MakeCsv(new Items(new Users(1, 1)), '1 2 3');
     }
 
     public function testGetFileName()

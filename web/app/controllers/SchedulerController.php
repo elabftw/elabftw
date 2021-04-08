@@ -14,7 +14,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Database;
+use Elabftw\Models\Items;
 use Elabftw\Models\Scheduler;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,12 +32,12 @@ $Response->setData(array(
 ));
 
 try {
-    $Database = new Database($App->Users);
-    $Scheduler = new Scheduler($Database);
+    $Items = new Items($App->Users);
+    $Scheduler = new Scheduler($Items);
 
     // CREATE
     if ($Request->request->has('create')) {
-        $Database->setId((int) $Request->request->get('item'));
+        $Items->setId((int) $Request->request->get('item'));
         $Scheduler->create(
             $Request->request->get('start'),
             $Request->request->get('end'),
@@ -50,7 +50,7 @@ try {
         if (empty($Request->query->get('item'))) {
             $Response->setData($Scheduler->readAllFromTeam($Request->query->get('start'), $Request->query->get('end')));
         } else {
-            $Database->setId((int) $Request->query->get('item'));
+            $Items->setId((int) $Request->query->get('item'));
             $Response->setData($Scheduler->read($Request->query->get('start'), $Request->query->get('end')));
         }
     }

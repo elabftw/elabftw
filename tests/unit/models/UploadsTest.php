@@ -7,7 +7,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Users = new Users(1);
-        $this->Entity= new Database($this->Users);
+        $this->Entity = new Items($this->Users);
     }
 
     public function testGetIconFromExtension()

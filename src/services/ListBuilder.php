@@ -12,8 +12,8 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 
 /**
  * Create lists of experiments/items for consumption by js code
@@ -59,7 +59,7 @@ class ListBuilder
         // add items from database
         $itemsArr = $this->getList($term);
 
-        if ($this->Entity instanceof Database) {
+        if ($this->Entity instanceof Items) {
             foreach ($itemsArr as $item) {
                 $mentionArr[] = array('name' => "<a href='database.php?mode=view&id=" .
                     $item['id'] . "'>[" . $item['category'] . '] ' . $item['title'] . '</a>',

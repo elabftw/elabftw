@@ -20,7 +20,7 @@ use PDO;
 /**
  * All about the database items
  */
-class Database extends AbstractEntity
+class Items extends AbstractEntity
 {
     public function __construct(Users $users, ?int $id = null)
     {
@@ -32,7 +32,7 @@ class Database extends AbstractEntity
     public function create(CreateEntityParamsInterface $params): int
     {
         $category = $params->getId();
-        $ItemsTypes = new ItemsTypes($this->Users, $category);
+        $ItemsTypes = new ItemsTypes($this->Users->team, $category);
         $itemsTypesArr = $ItemsTypes->read();
 
         // SQL for create DB item

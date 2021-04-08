@@ -12,8 +12,8 @@ namespace Elabftw\Services;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use PDO;
 use ZipStream\ZipStream;
 
@@ -130,7 +130,7 @@ class MakeStreamZip extends AbstractMake
     {
         if ($this->Entity instanceof Experiments) {
             return $this->Entity->entityData['date'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
-        } elseif ($this->Entity instanceof Database) {
+        } elseif ($this->Entity instanceof Items) {
             return $this->Entity->entityData['category'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
         }
 

@@ -24,10 +24,12 @@ class ItemsTypes extends AbstractEntity
 {
     use SortableTrait;
 
-    public function __construct(Users $users, ?int $id = null)
+    private int $team;
+
+    public function __construct(int $team, ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->Users = $users;
+        $this->team = $team;
         if ($id !== null) {
             $this->setId($id);
         }
@@ -37,7 +39,7 @@ class ItemsTypes extends AbstractEntity
     {
         $team = $params->getTeam();
         if ($team === 0) {
-            $team = $this->Users->userData['team'];
+            $team = $this->team;
         }
 
         $sql = 'INSERT INTO items_types(name, color, bookable, template, team, canread, canwrite)
@@ -63,7 +65,7 @@ class ItemsTypes extends AbstractEntity
         $sql = 'SELECT template, canread, canwrite, metadata FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         if ($req->rowCount() === 0) {
@@ -94,7 +96,7 @@ class ItemsTypes extends AbstractEntity
             items_types.canwrite
             FROM items_types WHERE team = :team ORDER BY ordering ASC';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $res = $req->fetchAll();
@@ -161,7 +163,7 @@ class ItemsTypes extends AbstractEntity
         $req->bindValue(':color', $params->getColor(), PDO::PARAM_STR);
         $req->bindValue(':bookable', $params->getIsBookable(), PDO::PARAM_INT);
         $req->bindValue(':template', $params->getBody(), PDO::PARAM_STR);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->bindValue(':canread', $params->getCanread(), PDO::PARAM_STR);
         $req->bindValue(':canwrite', $params->getCanwriteS(), PDO::PARAM_STR);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -182,7 +184,7 @@ class ItemsTypes extends AbstractEntity
         $sql = 'DELETE FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
     }

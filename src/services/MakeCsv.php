@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Traits\CsvTrait;
 
 /**
@@ -74,7 +74,7 @@ class MakeCsv extends AbstractMake
                     $this->getUrl(),
                 );
                 // add rating if it's an item
-                if ($this->Entity instanceof Database) {
+                if ($this->Entity instanceof Items) {
                     $row[] = $this->Entity->entityData['rating'];
                 }
                 $rows[] = $row;

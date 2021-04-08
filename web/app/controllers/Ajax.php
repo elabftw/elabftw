@@ -82,36 +82,6 @@ try {
             $Response->setData($Model->getList($Params->name));
             break;
 
-        case 'create':
-            // @phpstan-ignore-next-line
-            $res = $Model->create($Params);
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved'),
-                'value' => $res,
-            ));
-            break;
-
-        case 'update':
-            // @phpstan-ignore-next-line
-            $res = $Model->update($Params);
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved'),
-                'value' => $res,
-            ));
-            break;
-
-        case 'updateItemType':
-            // @phpstan-ignore-next-line
-            $res = $Model->updateAll($Params);
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved'),
-                'value' => $res,
-            ));
-            break;
-
         case 'updateMember':
             // @phpstan-ignore-next-line
             $Model->updateMember(
@@ -127,16 +97,6 @@ try {
                 $Request->request->get('params')['field'],
                 $Request->request->get('params')['value'],
             );
-            break;
-
-        case 'destroy':
-            // @phpstan-ignore-next-line
-            $Model->destroy($Params->id);
-            break;
-
-        case 'duplicate':
-            // @phpstan-ignore-next-line
-            $Model->duplicate();
             break;
 
         default:

@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 /**
  * Interface for updating an upload
  */
@@ -18,4 +20,6 @@ interface UpdateUploadParamsInterface
     public function getContent(): string;
 
     public function getTarget(): string;
+
+    public function getFile(): UploadedFile;
 }

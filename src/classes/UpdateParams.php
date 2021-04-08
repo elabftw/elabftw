@@ -13,6 +13,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
 use function mb_strlen;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UpdateParams
 {
@@ -91,5 +92,10 @@ class UpdateParams
     public function getTeam(): int
     {
         return 0;
+    }
+
+    public function getFile(): UploadedFile
+    {
+        return new UploadedFile('a', 'b');
     }
 }

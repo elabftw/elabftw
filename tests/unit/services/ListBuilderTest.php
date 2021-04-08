@@ -9,8 +9,8 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 
 class ListBuilderTest extends \PHPUnit\Framework\TestCase
@@ -18,7 +18,7 @@ class ListBuilderTest extends \PHPUnit\Framework\TestCase
     protected function setup(): void
     {
         $this->ListBuilderExp = new ListBuilder(new Experiments(new Users(1, 1)));
-        $this->ListBuilderDb = new ListBuilder(new Database(new Users(1, 1)));
+        $this->ListBuilderDb = new ListBuilder(new Items(new Users(1, 1)));
     }
 
     public function testGetAutocomplete()

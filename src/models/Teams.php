@@ -157,7 +157,7 @@ class Teams implements ReadableInterface, DestroyableInterface
         $Status->createDefault();
 
         // create default item type
-        $ItemsTypes = new ItemsTypes($this->Users);
+        $ItemsTypes = new ItemsTypes($this->Users->team);
         $ItemsTypes->create(new CreateItemType(
             'Edit me',
             '#32a100',

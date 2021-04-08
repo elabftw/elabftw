@@ -33,7 +33,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
     public function testReadCount()
     {
         $this->assertIsInt($this->Revisions->readCount());
-        $this->Revisions = new Revisions(new Database($this->Users, 1), 10, 100);
+        $this->Revisions = new Revisions(new Items($this->Users, 1), 10, 100);
         $this->assertIsInt($this->Revisions->readCount());
     }
 

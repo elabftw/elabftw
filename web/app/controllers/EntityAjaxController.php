@@ -15,8 +15,8 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Teams;
@@ -62,12 +62,14 @@ try {
     $Model = $Processor->getModel();
      */
     if ($Request->request->get('type') === 'experiments' ||
-        $Request->query->get('type') === 'experiments') {
+        $Request->query->get('type') === 'experiments' ||
+        $Request->request->get('type') === 'experiment' ||
+        $Request->query->get('type') === 'experiment') {
         $Entity = new Experiments($App->Users, $id);
     } elseif ($Request->request->get('type') === 'experiments_templates') {
         $Entity = new Templates($App->Users, $id);
     } else {
-        $Entity = new Database($App->Users, $id);
+        $Entity = new Items($App->Users, $id);
     }
 
     /**
@@ -79,7 +81,7 @@ try {
     if ($Request->query->has('term') && $Request->query->has('mention')) {
         $term = $Request->query->get('term');
         $ExperimentsHelper = new ListBuilder(new Experiments($App->Users));
-        $DatabaseHelper = new ListBuilder(new Database($App->Users));
+        $DatabaseHelper = new ListBuilder(new Items($App->Users));
         // return list of itemd and experiments
         $mentionArr = array_merge($DatabaseHelper->getMentionList($term), $ExperimentsHelper->getMentionList($term));
         // fix issue with Malformed UTF-8 characters, possibly incorrectly encoded
@@ -107,7 +109,7 @@ try {
         if ($Request->query->get('source') === 'experiments') {
             $Entity = new Experiments($App->Users);
         } else {
-            $Entity = new Database($App->Users);
+            $Entity = new Items($App->Users);
         }
         $ListBuilder = new ListBuilder($Entity);
         // fix issue with Malformed UTF-8 characters, possibly incorrectly encoded
@@ -128,7 +130,7 @@ try {
 
     // SHARE
     if ($Request->query->has('getShareLink')) {
-        if (!($Entity instanceof Experiments || $Entity instanceof Database)) {
+        if (!($Entity instanceof Experiments || $Entity instanceof Items)) {
             throw new IllegalActionException('Can only share experiments or items.');
         }
         $Entity->canOrExplode('read');
@@ -175,7 +177,7 @@ try {
     }
 
     // UPDATE RATING
-    if ($Request->request->has('rating') && $Entity instanceof Database) {
+    if ($Request->request->has('rating') && $Entity instanceof Items) {
         $Entity->setId((int) $Request->request->get('id'));
         $Entity->updateRating((int) $Request->request->get('rating'));
     }
@@ -216,7 +218,7 @@ try {
         if ($Entity instanceof Experiments) {
             $Category = new Status($App->Users->team);
         } else {
-            $Category = new ItemsTypes($App->Users);
+            $Category = new ItemsTypes($App->Users->team);
         }
         $Response->setData(array(
             'res' => true,

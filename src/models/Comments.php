@@ -112,7 +112,7 @@ class Comments implements CrudInterface
         $Config = new Config();
 
         // don't do it for Db items or if email is not configured
-        if ($this->Entity instanceof Database || $Config->configArr['mail_from'] === 'notconfigured@example.com') {
+        if ($this->Entity instanceof Items || $Config->configArr['mail_from'] === 'notconfigured@example.com') {
             return 0;
         }
 

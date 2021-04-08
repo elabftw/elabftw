@@ -165,13 +165,15 @@
                   {% if mode == 'edit' %}
                     <!-- replace upload form -->
                     <div id='replaceUploadForm_{{ upload.id }}' style='display:none'>
-                      <form enctype='multipart/form-data' action='app/controllers/EntityController.php' method='POST'>
-                        <input type='hidden' name='replace' />
-                        <input type='hidden' name='upload_id' value='{{ upload.id }}' />
-                        <input type='hidden' name='id' value='{{ upload.item_id }}' />
-                        <input type='hidden' name='type' value='{{ upload.type }}' />
+                      <form enctype='multipart/form-data' action='app/controllers/RequestHandler.php' method='POST'>
+                        <input type='hidden' name='action' value='update' />
+                        <input type='hidden' name='target' value='file' />
+                        <input type='hidden' name='entity_id' value='{{ upload.item_id }}' />
+                        <input type='hidden' name='entity_type' value='{{ upload.type }}' />
+                        <input type='hidden' name='id' value='{{ upload.id }}' />
+                        <input type='hidden' name='model' value='upload' />
                         {{ App.Csrf.getHiddenInput|raw }}
-                        <input type='file' style='display:inline' name='file' />
+                        <input type='file' style='display:inline' name='content' />
                         <button type='submit' class='button btn btn-primary'>OK</button>
                       </form>
                     </div>

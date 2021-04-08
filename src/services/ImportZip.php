@@ -14,8 +14,8 @@ use Elabftw\Elabftw\CreateTag;
 use Elabftw\Elabftw\UpdateEntity;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 use FilesystemIterator;
 use function mb_strlen;
@@ -56,7 +56,7 @@ class ImportZip extends AbstractImport
     public function __construct(Users $users, Request $request)
     {
         parent::__construct($users, $request);
-        $this->Entity = new Database($users);
+        $this->Entity = new Items($users);
     }
 
     /**

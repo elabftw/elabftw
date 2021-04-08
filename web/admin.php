@@ -41,7 +41,7 @@ try {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
 
-    $ItemsTypes = new ItemsTypes($App->Users);
+    $ItemsTypes = new ItemsTypes($App->Users->team);
     $Status = new Status($App->Users->team);
     $Tags = new Tags(new Experiments($App->Users));
     $TeamGroups = new TeamGroups($App->Users);

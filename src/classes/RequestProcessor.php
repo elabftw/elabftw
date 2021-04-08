@@ -29,6 +29,16 @@ class RequestProcessor extends Processor implements ProcessorInterface
     {
     }
 
+    // @phpstan-ignore-next-line
+    protected function getCreateParams()
+    {
+    }
+
+    // @phpstan-ignore-next-line
+    protected function getUpdateParams()
+    {
+    }
+
     // process a classic request
     protected function process(Request $request): void
     {

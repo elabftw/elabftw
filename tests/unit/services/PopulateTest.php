@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 
@@ -30,7 +30,7 @@ class PopulateTest extends \PHPUnit\Framework\TestCase
 
     public function testGenerateItems()
     {
-        $this->Populate->generate(new Database($this->Users));
+        $this->Populate->generate(new Items($this->Users));
     }
 
     public function testGenerateUser()

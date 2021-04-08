@@ -25,8 +25,8 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractCategory;
 use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Status;
@@ -156,7 +156,7 @@ class ApiController implements ControllerInterface
                 }
 
                 // CREATE AN EXPERIMENT/ITEM
-                if ($this->Entity instanceof Database) {
+                if ($this->Entity instanceof Items) {
                     return $this->createItem();
                 } elseif ($this->Entity instanceof Templates) {
                     return $this->createTemplate();
@@ -206,15 +206,15 @@ class ApiController implements ControllerInterface
         if ($this->endpoint === 'experiments' || $this->endpoint === 'uploads' || $this->endpoint === 'backupzip' || $this->endpoint === 'tags') {
             $this->Entity = new Experiments($this->Users, $this->id);
         } elseif ($this->endpoint === 'items' || $this->endpoint === 'bookable') {
-            $this->Entity = new Database($this->Users, $this->id);
+            $this->Entity = new Items($this->Users, $this->id);
         } elseif ($this->endpoint === 'templates') {
             $this->Entity = new Templates($this->Users, $this->id);
         } elseif ($this->endpoint === 'items_types') {
-            $this->Entity = new ItemsTypes($this->Users);
+            $this->Entity = new ItemsTypes($this->Users->team);
         } elseif ($this->endpoint === 'status') {
             $this->Category = new Status($this->Users->team);
         } elseif ($this->endpoint === 'events') {
-            $this->Entity = new Database($this->Users, $this->id);
+            $this->Entity = new Items($this->Users, $this->id);
             $this->Scheduler = new Scheduler($this->Entity);
         } else {
             throw new ImproperActionException('Bad endpoint!');
@@ -560,7 +560,7 @@ class ApiController implements ControllerInterface
         if ($uploadData['type'] === 'experiments') {
             $Entity = new Experiments($this->Users, (int) $uploadData['item_id']);
         } elseif ($uploadData['type'] === 'items') {
-            $Entity = new Database($this->Users, (int) $uploadData['item_id']);
+            $Entity = new Items($this->Users, (int) $uploadData['item_id']);
         } else {
             return new Response('Invalid upload id', 400);
         }
@@ -741,7 +741,7 @@ class ApiController implements ControllerInterface
     private function createItem(): Response
     {
         // check that the id we have is a valid item type from our team
-        $ItemsTypes = new ItemsTypes($this->Users);
+        $ItemsTypes = new ItemsTypes($this->Users->team);
         $itemsTypesArr = $ItemsTypes->readAll();
         $validIds = array();
         foreach ($itemsTypesArr as $itemsTypes) {

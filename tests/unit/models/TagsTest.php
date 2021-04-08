@@ -27,8 +27,8 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $id = $this->Experiments->Tags->create(new CreateTag('new tag'));
         $this->assertTrue((bool) Check::id($id));
 
-        $Database = new Database($this->Users, 1);
-        $Tags = new Tags($Database);
+        $Items = new Items($this->Users, 1);
+        $Tags = new Tags($Items);
         $id =$Tags->create(new CreateTag('tag2222'));
         $this->assertTrue((bool) Check::id($id));
     }
@@ -39,8 +39,8 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $res = $this->Experiments->Tags->readAll('my');
         $this->assertEquals('my tag', $res[0]['tag']);
 
-        $Database = new Database($this->Users, 1);
-        $Tags = new Tags($Database);
+        $Items = new Items($this->Users, 1);
+        $Tags = new Tags($Items);
         $this->assertTrue(is_array($Tags->readAll()));
     }
 

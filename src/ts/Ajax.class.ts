@@ -81,7 +81,7 @@ export class Ajax {
   send(payload: Payload): Promise<ResponseMsg> {
     // add csrf token to the request in the header
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    return fetch('app/controllers/JsonApi.php', {
+    return fetch('app/controllers/RequestHandler.php', {
       method: payload.method,
       headers: {
         'Content-Type': 'application/json',

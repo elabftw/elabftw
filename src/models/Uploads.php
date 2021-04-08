@@ -21,6 +21,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateUploadParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MakeThumbnail;
@@ -34,13 +35,14 @@ use Gmagick;
 use function in_array;
 use PDO;
 use function rename;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use function unlink;
 
 /**
  * All about the file uploads
  */
-class Uploads implements DestroyableInterface
+class Uploads implements DestroyableInterface, ModelInterface
 {
     use UploadTrait;
 
@@ -204,29 +206,14 @@ class Uploads implements DestroyableInterface
     public function update(UpdateUploadParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
+        if ($params->getTarget() === 'file') {
+            return $this->replace($params->getFile());
+        }
         $sql = 'UPDATE uploads SET ' . $params->getTarget() . ' = :content WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindValue(':id', $this->id, PDO::PARAM_INT);
         $req->bindValue(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
-    /**
-     * Replace an uploaded file by another
-     */
-    public function replace(Request $request): bool
-    {
-        $this->Entity->canOrExplode('write');
-        $upload = $this->read();
-        $fullPath = $this->getUploadsPath() . $upload['long_name'];
-        $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
-        $MakeThumbnail = new MakeThumbnail($fullPath);
-        $MakeThumbnail->makeThumb(true);
-
-        $sql = 'UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
@@ -310,6 +297,23 @@ class Uploads implements DestroyableInterface
         foreach ($uploadArr as $upload) {
             (new self($this->Entity, (int) $upload['id']))->destroy();
         }
+    }
+
+    /**
+     * Replace an uploaded file by another
+     */
+    private function replace(UploadedFile $file): bool
+    {
+        $upload = $this->read();
+        $fullPath = $this->getUploadsPath() . $upload['long_name'];
+        $this->moveFile($file->getPathname(), $fullPath);
+        $MakeThumbnail = new MakeThumbnail($fullPath);
+        $MakeThumbnail->makeThumb(true);
+
+        $sql = 'UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     /**

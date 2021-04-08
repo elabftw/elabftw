@@ -3,7 +3,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
-use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
 
 class TeamGroupsTest extends \PHPUnit\Framework\TestCase
@@ -32,7 +31,8 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->assertEquals('New Name', $this->TeamGroups->update(new ParamsProcessor(array('name' => 'New Name', 'id' => 1))));
+        $this->TeamGroups->setId(1);
+        $this->assertTrue($this->TeamGroups->update(new ContentParams('New Name')));
     }
 
     public function testUpdateMember()
@@ -47,6 +47,7 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy()
     {
-        $this->TeamGroups->destroy(1);
+        $this->TeamGroups->setId(1);
+        $this->TeamGroups->destroy();
     }
 }

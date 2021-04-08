@@ -18,6 +18,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Services\Filter;
 use Exception;
 use PDOException;
 use Swift_TransportException;
@@ -37,16 +38,12 @@ try {
 
     if ($Request->getMethod() === 'POST') {
         $action = $Request->request->get('action');
-        $params = $Request->request->get('params') ?? array();
     } else {
         $action = $Request->query->get('action');
-        $params = $Request->query->get('params') ?? array();
     }
 
     $Processor = new RequestProcessor($App->Users, $Request);
     $Model = $Processor->getModel();
-    // TODO $Params = $Processor->getParams();
-    $Params = new ParamsProcessor($params);
 
     switch ($action) {
         case 'readForTinymce':
@@ -78,8 +75,9 @@ try {
             break;
 
         case 'getList':
+            $content = Filter::sanitize($Request->query->get('params')['name']);
             // @phpstan-ignore-next-line
-            $Response->setData($Model->getList($Params->name));
+            $Response->setData($Model->getList($content));
             break;
 
         case 'updateMember':

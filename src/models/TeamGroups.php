@@ -11,26 +11,29 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CreatableInterface;
+use Elabftw\Interfaces\ModelInterface;
+use Elabftw\Traits\SetIdTrait;
 use function in_array;
 use PDO;
 
 /**
  * Everything related to the team groups
  */
-class TeamGroups implements CreatableInterface
+class TeamGroups implements ModelInterface
 {
+    use SetIdTrait;
+
     private Db $Db;
 
     private Users $Users;
 
-    public function __construct(Users $users)
+    public function __construct(Users $users, ?int $id = null)
     {
         $this->Users = $users;
         $this->Db = Db::getConnection();
+        $this->id = $id;
     }
 
     /**
@@ -128,20 +131,15 @@ class TeamGroups implements CreatableInterface
         return (string) $res;
     }
 
-    /**
-     * Update the name of the group
-     * The request comes from jeditable
-     */
-    public function update(ParamsProcessor $params): string
+    public function update(ContentParamsInterface $params): bool
     {
         $sql = 'UPDATE team_groups SET name = :name WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':name', $params->name, PDO::PARAM_STR);
+        $req->bindValue(':name', $params->getContent(), PDO::PARAM_STR);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':id', $params->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        // the group name is returned so it gets back into jeditable input field
-        return $params->name;
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        return $this->Db->execute($req);
     }
 
     /**
@@ -168,33 +166,30 @@ class TeamGroups implements CreatableInterface
         $this->Db->execute($req);
     }
 
-    /**
-     * Delete a team group
-     */
-    public function destroy(int $id): bool
+    public function destroy(): bool
     {
         // TODO add fk to do that
         $sql = "UPDATE experiments SET canread = 'team', canwrite = 'user' WHERE canread = :id OR canwrite = :id";
         $req = $this->Db->prepare($sql);
         // note: setting PDO::PARAM_INT here will throw error because the column type is varchar
-        $req->bindParam(':id', $id, PDO::PARAM_STR);
+        $req->bindParam(':id', $this->id, PDO::PARAM_STR);
         $res1 = $this->Db->execute($req);
 
         // same for items but canwrite is team
         $sql = "UPDATE items SET canread = 'team', canwrite = 'team' WHERE canread = :id OR canwrite = :id";
         $req = $this->Db->prepare($sql);
         // note: setting PDO::PARAM_INT here will throw error because the column type is varchar
-        $req->bindParam(':id', $id, PDO::PARAM_STR);
+        $req->bindParam(':id', $this->id, PDO::PARAM_STR);
         $res2 = $this->Db->execute($req);
 
         $sql = 'DELETE FROM team_groups WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $res3 = $this->Db->execute($req);
 
         $sql = 'DELETE FROM users2team_groups WHERE groupid = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $res4 = $this->Db->execute($req);
 
         return $res1 && $res2 && $res3 && $res4;

@@ -100,6 +100,7 @@ class Populate
 
             // maybe add a few steps
             if ($this->faker->randomDigit() > 8) {
+                // put two words so it's long enough
                 $Entity->Steps->create(new StepParams($this->faker->word() . $this->faker->word()));
                 $Entity->Steps->create(new StepParams($this->faker->word() . $this->faker->word()));
             }

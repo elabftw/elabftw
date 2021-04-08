@@ -45,10 +45,12 @@ class RequestProcessor extends Processor implements ProcessorInterface
         $type = null;
         $itemId = null;
         if ($request->getMethod() === 'POST') {
+            $this->action = $request->request->get('action');
             $what = $request->request->get('what');
             $type = $request->request->get('type');
             $params = $request->request->get('params') ?? array();
         } else {
+            $this->action = $request->query->get('action');
             $what = $request->query->get('what');
             $type = $request->query->get('type');
             $params = $request->query->get('params') ?? array();

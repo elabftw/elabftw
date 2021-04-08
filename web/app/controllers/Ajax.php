@@ -36,14 +36,9 @@ try {
     // CSRF
     $App->Csrf->validate();
 
-    if ($Request->getMethod() === 'POST') {
-        $action = $Request->request->get('action');
-    } else {
-        $action = $Request->query->get('action');
-    }
-
     $Processor = new RequestProcessor($App->Users, $Request);
     $Model = $Processor->getModel();
+    $action = $Processor->getAction();
 
     switch ($action) {
         case 'readForTinymce':

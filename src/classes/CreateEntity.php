@@ -10,8 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Interfaces\CreateEntityParamsInterface;
-
-final class CreateEntity extends IdParams implements CreateEntityParamsInterface
+final class CreateEntity extends IdParams
 {
 }

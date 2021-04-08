@@ -13,10 +13,8 @@ namespace Elabftw\Interfaces;
 /**
  * Interface for creating a status
  */
-interface CreateStatusParamsInterface
+interface CreateStatusParamsInterface extends ContentParamsInterface
 {
-    public function getContent(): string;
-
     public function getColor(): string;
 
     public function getIsTimestampable(): int;

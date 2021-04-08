@@ -10,18 +10,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Interfaces\CreateTodoitemParamsInterface;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Filter;
 
-final class CreateTodoitem implements CreateTodoitemParamsInterface
+final class CreateTodoitem extends ContentParams implements ContentParamsInterface
 {
-    private string $content;
-
-    public function __construct(string $content)
-    {
-        $this->content = $content;
-    }
-
     public function getContent(): string
     {
         return Filter::sanitize($this->content);

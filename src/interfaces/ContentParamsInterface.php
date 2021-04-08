@@ -10,10 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
-/**
- * Interface for creating a todoitem
- */
-interface CreateTodoitemParamsInterface
+interface ContentParamsInterface
 {
     public function getContent(): string;
 }

@@ -10,10 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Interfaces\CreateContentParamsInterface;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Filter;
 
-final class CreateTag extends CreateContent implements CreateContentParamsInterface
+final class CreateTag extends ContentParams implements ContentParamsInterface
 {
     public function getContent(): string
     {

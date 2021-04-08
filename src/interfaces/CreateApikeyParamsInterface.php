@@ -13,10 +13,8 @@ namespace Elabftw\Interfaces;
 /**
  * Interface for creating an apikey
  */
-interface CreateApikeyParamsInterface
+interface CreateApikeyParamsInterface extends ContentParamsInterface
 {
-    public function getContent(): string;
-
     public function getCanwrite(): int;
 
     public function getKey(): string;

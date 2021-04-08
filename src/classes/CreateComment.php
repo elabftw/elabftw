@@ -11,10 +11,10 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CreateContentParamsInterface;
+use Elabftw\Interfaces\ContentParamsInterface;
 use function mb_strlen;
 
-final class CreateComment extends CreateContent implements CreateContentParamsInterface
+final class CreateComment extends ContentParams implements ContentParamsInterface
 {
     public function getContent(): string
     {

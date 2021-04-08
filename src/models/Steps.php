@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Interfaces\CreateContentParamsInterface;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateStepParamsInterface;
@@ -42,7 +42,7 @@ class Steps implements CrudInterface, ModelInterface
      * Add a step
      *
      */
-    public function create(CreateContentParamsInterface $params): int
+    public function create(ContentParamsInterface $params): int
     {
         $this->Entity->canOrExplode('write');
         // make sure the newly added step is at the bottom

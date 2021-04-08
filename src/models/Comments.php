@@ -12,7 +12,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Interfaces\CreateContentParamsInterface;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateCommentParamsInterface;
@@ -43,7 +43,7 @@ class Comments implements CrudInterface, ModelInterface
         $this->id = $id;
     }
 
-    public function create(CreateContentParamsInterface $params): int
+    public function create(ContentParamsInterface $params): int
     {
         $sql = 'INSERT INTO ' . $this->Entity->type . '_comments(datetime, item_id, comment, userid)
             VALUES(:datetime, :item_id, :content, :userid)';

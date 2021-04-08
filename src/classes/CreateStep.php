@@ -10,10 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Interfaces\CreateContentParamsInterface;
+use Elabftw\Interfaces\ContentParamsInterface;
 use function str_replace;
 
-final class CreateStep extends CreateContent implements CreateContentParamsInterface
+final class CreateStep extends ContentParams implements ContentParamsInterface
 {
     public function getContent(): string
     {

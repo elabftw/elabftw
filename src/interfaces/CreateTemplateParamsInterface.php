@@ -13,9 +13,7 @@ namespace Elabftw\Interfaces;
 /**
  * Interface for creating a template
  */
-interface CreateTemplateParamsInterface
+interface CreateTemplateParamsInterface extends ContentParamsInterface
 {
-    public function getContent(): string;
-
     public function getBody(): string;
 }

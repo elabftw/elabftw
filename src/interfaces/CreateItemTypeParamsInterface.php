@@ -13,7 +13,7 @@ namespace Elabftw\Interfaces;
 /**
  * Interface for creating an itemtype
  */
-interface CreateItemTypeParamsInterface extends CreateContentParamsInterface
+interface CreateItemTypeParamsInterface extends ContentParamsInterface
 {
     public function getBody(): string;
 

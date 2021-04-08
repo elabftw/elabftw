@@ -13,8 +13,8 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CreatableInterface;
-use Elabftw\Interfaces\CreateContentParamsInterface;
 use function in_array;
 use PDO;
 
@@ -36,7 +36,7 @@ class TeamGroups implements CreatableInterface
     /**
      * Create a team group
      */
-    public function create(CreateContentParamsInterface $params): int
+    public function create(ContentParamsInterface $params): int
     {
         $sql = 'INSERT INTO team_groups(name, team) VALUES(:content, :team)';
         $req = $this->Db->prepare($sql);

@@ -16,7 +16,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CreateContentParamsInterface;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateTagParamsInterface;
 use Elabftw\Maps\Team;
@@ -45,7 +45,7 @@ class Tags implements ModelInterface
     /**
      * Create a tag
      */
-    public function create(CreateContentParamsInterface $params): int
+    public function create(ContentParamsInterface $params): int
     {
         $this->Entity->canOrExplode('write');
 

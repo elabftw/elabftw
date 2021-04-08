@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-class CreateContent
+class ContentParams
 {
     protected const MIN_CONTENT_SIZE = 2;
 

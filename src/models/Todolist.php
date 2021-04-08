@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Interfaces\CreateTodoitemParamsInterface;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UpdateTodoitemParamsInterface;
 use Elabftw\Traits\SetIdTrait;
@@ -38,7 +38,7 @@ class Todolist
         $this->id = $id;
     }
 
-    public function create(CreateTodoitemParamsInterface $params): int
+    public function create(ContentParamsInterface $params): int
     {
         $sql = 'INSERT INTO todolist(body, userid) VALUES(:content, :userid)';
         $req = $this->Db->prepare($sql);

@@ -173,6 +173,8 @@ class Check
             'finished',
             'real_name',
             'title',
+            // no target is also valid
+            '',
         );
         if (!in_array($target, $allowed, true)) {
             throw new IllegalActionException('Invalid target!');

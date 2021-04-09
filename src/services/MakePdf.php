@@ -122,7 +122,7 @@ class MakePdf extends AbstractMake
             'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
         );
 
-        return $this->getTwig(new Config())->render('pdf.html', $renderArr);
+        return $this->getTwig(Config::getConfig())->render('pdf.html', $renderArr);
     }
 
     /**

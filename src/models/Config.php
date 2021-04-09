@@ -69,8 +69,8 @@ final class Config
     /**
      * Return the instance of the class
      *
-     * @throws PDOException If connection to database failed
-     * @return Db The instance of the class
+     * @throws DatabaseErrorException If config can not be loaded
+     * @return Config The instance of the class
      */
     public static function getConfig(): self
     {

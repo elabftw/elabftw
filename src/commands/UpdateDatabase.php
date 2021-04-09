@@ -55,7 +55,7 @@ class UpdateDatabase extends Command
                 '========================',
             ));
 
-            $Config = new Config();
+            $Config = Config::getConfig();
             $Update = new Update($Config, new Sql());
             $Update->runUpdateScript();
             $output->writeln('All done.');

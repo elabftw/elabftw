@@ -97,7 +97,7 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         $this->Tags = new Tags($this);
         $this->Uploads = new Uploads($this);
         $this->Users = $users;
-        $this->Comments = new Comments($this, new Email(new Config(), $this->Users));
+        $this->Comments = new Comments($this, new Email(Config::getConfig(), $this->Users));
         $this->TeamGroups = new TeamGroups($this->Users);
         $this->Pins = new Pins($this);
 
@@ -349,7 +349,7 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         }
 
         // add a revision
-        $Config = new Config();
+        $Config = Config::getConfig();
         $Revisions = new Revisions(
             $this,
             (int) $Config->configArr['max_revisions'],

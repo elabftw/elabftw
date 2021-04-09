@@ -111,7 +111,7 @@ try {
             break;
 
         case 'privacyPolicy':
-            $Model = new PrivacyPolicy(new Config());
+            $Model = new PrivacyPolicy(Config::getConfig());
             break;
 
         case 'status':

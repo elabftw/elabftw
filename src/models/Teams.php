@@ -287,7 +287,7 @@ class Teams implements ReadableInterface, DestroyableInterface
 
     private function createTeamIfAllowed(string $name): int
     {
-        $Config = new Config();
+        $Config = Config::getConfig();
         if ($Config->configArr['saml_team_create']) {
             return $this->create($name);
         }

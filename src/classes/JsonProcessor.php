@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Process a JSON payload defined by the Payload interface in typescript
  */
-class JsonProcessor extends Processor
+class JsonProcessor extends AbstractProcessor
 {
     // process a Payload json request
     protected function process(Request $request): void

@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Process a submitted form
  */
-class FormProcessor extends Processor
+class FormProcessor extends AbstractProcessor
 {
     private UploadedFile $uploadedFile;
 

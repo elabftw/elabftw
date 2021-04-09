@@ -38,7 +38,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Mother class to process a request
  */
-abstract class Processor implements ProcessorInterface
+abstract class AbstractProcessor implements ProcessorInterface
 {
     public AbstractEntity $Entity;
 
@@ -75,19 +75,11 @@ abstract class Processor implements ProcessorInterface
     // @phpstan-ignore-next-line
     public function getParams()
     {
-        switch ($this->action) {
-            // no parameters needed for these actions
-            case 'destroy':
-            case 'duplicate':
-            case 'deduplicate':
-            case 'lock':
-                return;
-            case 'create':
-            case 'update':
-                return $this->getParamsObject();
-            default:
-                throw new IllegalActionException('Bad params');
+        if ($this->action === 'create' || $this->action === 'update') {
+            return $this->getParamsObject();
         }
+        // all the other actions need no parameters
+        return;
     }
 
     abstract protected function process(Request $request): void;

@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
  * Process a classic request, only here because of Ajax.php and EntityAjaxController that are both deprecated
  * @deprecated
  */
-class RequestProcessor extends Processor
+class RequestProcessor extends AbstractProcessor
 {
     protected function process(Request $request): void
     {

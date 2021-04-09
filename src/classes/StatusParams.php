@@ -13,7 +13,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Interfaces\StatusParamsInterface;
 use Elabftw\Services\Check;
 
-final class StatusParams extends UpdateParams implements StatusParamsInterface
+final class StatusParams extends ContentParams implements StatusParamsInterface
 {
     private string $color;
 

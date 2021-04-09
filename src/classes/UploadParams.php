@@ -15,7 +15,7 @@ use Elabftw\Interfaces\UploadParamsInterface;
 use Elabftw\Services\Filter;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-final class UploadParams extends UpdateParams implements UploadParamsInterface
+final class UploadParams extends ContentParams implements UploadParamsInterface
 {
     private ?UploadedFile $file;
 

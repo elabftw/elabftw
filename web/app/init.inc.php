@@ -48,7 +48,7 @@ try {
     // END CONFIG.PHP
 
     // INIT APP OBJECT
-    // new Config will make the first SQL request
+    // Config::getConfig() will make the first SQL request
     // PDO will throw an exception if the SQL structure is not imported yet
     try {
         $App = new App($Request, $Session, Config::getConfig(), new Logger('elabftw'), new Csrf($Request, $Session));

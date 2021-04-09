@@ -13,7 +13,7 @@ class BannedUsersTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
     {
-        $this->BannedUsers= new BannedUsers(new Config);
+        $this->BannedUsers= new BannedUsers(Config::getConfig());
     }
 
     public function testCreate()

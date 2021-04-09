@@ -20,7 +20,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
-use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\UploadParamsInterface;
 use Elabftw\Services\Filter;
@@ -42,7 +41,7 @@ use function unlink;
 /**
  * All about the file uploads
  */
-class Uploads implements DestroyableInterface, ModelInterface
+class Uploads implements ModelInterface
 {
     use UploadTrait;
 

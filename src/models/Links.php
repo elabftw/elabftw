@@ -12,17 +12,14 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CreatableInterface;
-use Elabftw\Interfaces\DestroyableInterface;
-use Elabftw\Interfaces\ModelInterface;
-use Elabftw\Interfaces\ReadableInterface;
+use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
 /**
  * All about the experiments links
  */
-class Links implements CreatableInterface, ReadableInterface, DestroyableInterface, ModelInterface
+class Links implements CrudInterface
 {
     use SetIdTrait;
 

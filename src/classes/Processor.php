@@ -40,7 +40,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 abstract class Processor implements ProcessorInterface
 {
-    public ?AbstractEntity $Entity = null;
+    public AbstractEntity $Entity;
 
     public string $content = '';
 
@@ -84,47 +84,7 @@ abstract class Processor implements ProcessorInterface
                 return;
             case 'create':
             case 'update':
-                if ($this->Model instanceof Comments || $this->Model instanceof Todolist || $this->Model instanceof Links) {
-                    return new ContentParams($this->content, $this->target);
-                }
-                if ($this->Model instanceof ItemsTypes) {
-                    return new ItemTypeParams(
-                        $this->content,
-                        $this->extra['color'],
-                        $this->extra['body'],
-                        $this->extra['canread'],
-                        $this->extra['canwrite'],
-                        (int) $this->extra['bookable'],
-                    );
-                }
-                if ($this->Model instanceof Steps) {
-                    return new StepParams($this->content, $this->target);
-                }
-                if ($this->Model instanceof Status) {
-                    return new StatusParams(
-                        $this->content,
-                        $this->extra['color'],
-                        (bool) $this->extra['isTimestampable'],
-                        (bool) $this->extra['isDefault']
-                    );
-                }
-                if ($this->Model instanceof ApiKeys) {
-                    return new CreateApikey($this->content, $this->target, (int) $this->extra['canwrite']);
-                }
-
-                if ($this->Model instanceof Experiments || $this->Model instanceof Items) {
-                    return new EntityParams($this->content, $this->target);
-                }
-                if ($this->Model instanceof Tags) {
-                    return new TagParams($this->content);
-                }
-                if ($this->Model instanceof Templates) {
-                    return new CreateTemplate($this->content, $this->extra['body'] ?? '');
-                }
-                if ($this->Model instanceof Uploads) {
-                    return new UploadParams($this->content, $this->target);
-                }
-                // no break
+                return $this->getParamsObject();
             default:
                 throw new IllegalActionException('Bad params');
         }
@@ -149,9 +109,7 @@ abstract class Processor implements ProcessorInterface
         return new Items($this->Users, $itemId);
     }
 
-    //private function getModel(): ModelInterface
-    // @phpstan-ignore-next-line
-    protected function findModel(string $model)
+    protected function buildModel(string $model): ModelInterface
     {
         switch ($model) {
             case 'apikey':
@@ -168,8 +126,8 @@ abstract class Processor implements ProcessorInterface
                 return new Uploads($this->Entity, $this->id);
             case 'metadata':
                 return new Metadata($this->Entity);
-            case 'privacyPolicy':
-                return new PrivacyPolicy(new Config());
+            //case 'privacyPolicy': TODO, do we really need a privacy policy class??
+            //    return new PrivacyPolicy(new Config());
             case 'teamgroup':
                 return new TeamGroups($this->Users);
             case 'tag':
@@ -196,5 +154,49 @@ abstract class Processor implements ProcessorInterface
             throw new IllegalActionException('Bad id');
         }
         return $id;
+    }
+
+    // @phpstan-ignore-next-line
+    private function getParamsObject()
+    {
+        if ($this->Model instanceof Comments || $this->Model instanceof Todolist || $this->Model instanceof Links) {
+            return new ContentParams($this->content, $this->target);
+        }
+        if ($this->Model instanceof Experiments || $this->Model instanceof Items) {
+            return new EntityParams($this->content, $this->target);
+        }
+        if ($this->Model instanceof ItemsTypes) {
+            return new ItemTypeParams(
+                $this->content,
+                $this->extra['color'],
+                $this->extra['body'],
+                $this->extra['canread'],
+                $this->extra['canwrite'],
+                (int) $this->extra['bookable'],
+            );
+        }
+        if ($this->Model instanceof Steps) {
+            return new StepParams($this->content, $this->target);
+        }
+        if ($this->Model instanceof Status) {
+            return new StatusParams(
+                $this->content,
+                $this->extra['color'],
+                (bool) $this->extra['isTimestampable'],
+                (bool) $this->extra['isDefault']
+            );
+        }
+        if ($this->Model instanceof ApiKeys) {
+            return new CreateApikey($this->content, $this->target, (int) $this->extra['canwrite']);
+        }
+        if ($this->Model instanceof Tags) {
+            return new TagParams($this->content);
+        }
+        if ($this->Model instanceof Templates) {
+            return new CreateTemplate($this->content, $this->extra['body'] ?? '');
+        }
+        if ($this->Model instanceof Uploads) {
+            return new UploadParams($this->content, $this->target);
+        }
     }
 }

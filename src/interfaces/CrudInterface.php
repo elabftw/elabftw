@@ -13,6 +13,6 @@ namespace Elabftw\Interfaces;
 /**
  * For things that can be created, read, updated and destroyed
  */
-interface CrudInterface extends CreatableInterface, ReadableInterface, UpdatableInterface, DestroyableInterface
+interface CrudInterface extends ReadableInterface, ModelInterface
 {
 }

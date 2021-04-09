@@ -43,7 +43,7 @@ class FormProcessor extends Processor
         }
         $this->Entity = $this->getEntity($type, (int) $request->request->get('entity_id'));
         $this->id = $this->setId((int) $request->request->get('id'));
-        $this->Model = $this->findModel($request->request->get('model') ?? '');
+        $this->Model = $this->buildModel($request->request->get('model') ?? '');
         $this->uploadedFile = $request->files->get('content');
         $this->extra = $request->request->get('extraParams') ?? array();
     }

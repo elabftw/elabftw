@@ -34,7 +34,7 @@ class JsonProcessor extends Processor
             $this->Entity = $this->getEntity($decoded['entity']['type'], $id);
         }
         $this->id = $this->setId((int) ($decoded['id'] ?? 0));
-        $this->Model = $this->findModel($decoded['model'] ?? '');
+        $this->Model = $this->buildModel($decoded['model'] ?? '');
         $this->content = $decoded['content'] ?? '';
         $this->extra = $decoded['extraParams'] ?? array();
     }

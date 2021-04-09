@@ -14,7 +14,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Services\Email;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
@@ -24,7 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * All about the comments
  */
-class Comments implements CrudInterface, ModelInterface
+class Comments implements CrudInterface
 {
     use SetIdTrait;
 

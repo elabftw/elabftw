@@ -13,11 +13,11 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\UpdatableInterface;
+use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Services\Filter;
 use PDO;
 
-class Metadata implements UpdatableInterface
+class Metadata implements ModelInterface
 {
     private AbstractEntity $Entity;
 
@@ -27,6 +27,11 @@ class Metadata implements UpdatableInterface
     {
         $this->Entity = $entity;
         $this->Db = Db::getConnection();
+    }
+
+    public function create(ContentParamsInterface $params): int
+    {
+        return 0;
     }
 
     public function read(): string
@@ -67,5 +72,10 @@ class Metadata implements UpdatableInterface
         $req->bindParam(':value', $value);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    public function destroy(): bool
+    {
+        return false;
     }
 }

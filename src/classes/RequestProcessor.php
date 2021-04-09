@@ -40,6 +40,6 @@ class RequestProcessor extends Processor
         if ($type !== null) {
             $this->Entity = $this->getEntity($type, $itemId);
         }
-        $this->Model = $this->findModel($what);
+        $this->Model = $this->buildModel($what);
     }
 }

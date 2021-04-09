@@ -12,14 +12,13 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\SortableTrait;
 
 /**
  * A category is a status for experiments and item type for db item
  */
-abstract class AbstractCategory implements CrudInterface, ModelInterface
+abstract class AbstractCategory implements CrudInterface
 {
     use SortableTrait;
     use EntityTrait;

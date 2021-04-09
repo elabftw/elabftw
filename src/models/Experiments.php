@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\IdParamsInterface;
+use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
 use PDO;
@@ -28,13 +28,13 @@ class Experiments extends AbstractEntity
         $this->type = 'experiments';
     }
 
-    public function create(IdParamsInterface $params): int
+    public function create(EntityParamsInterface $params): int
     {
         $Templates = new Templates($this->Users);
         $Team = new Team((int) $this->Users->userData['team']);
 
         $metadata = null;
-        $tpl = $params->getId();
+        $tpl = (int) $params->getContent();
         // do we want template ?
         if ($tpl > 0) {
             $Templates->setId($tpl);

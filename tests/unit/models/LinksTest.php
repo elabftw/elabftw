@@ -9,7 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\IdParams;
+use Elabftw\Elabftw\ContentParams;
 use function is_array;
 
 class LinksTest extends \PHPUnit\Framework\TestCase
@@ -21,7 +21,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateReadDestroy()
     {
-        $id = $this->Experiments->Links->create(new IdParams(1));
+        $id = $this->Experiments->Links->create(new ContentParams('1'));
         $links = $this->Experiments->Links->read();
         $this->assertTrue(is_array($links));
         $this->Experiments->Links->setId($id);

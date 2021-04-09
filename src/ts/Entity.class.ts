@@ -23,7 +23,8 @@ export default class Entity {
       method: Method.POST,
       action: Action.Create,
       model: this.model,
-      id: id,
+      // this id is the experiment template or item type id
+      content: String(id),
       entity: {
         type: this.model,
         id: null,

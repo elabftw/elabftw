@@ -25,7 +25,7 @@ export default class Link {
       action: Action.Create,
       model: this.model,
       entity: this.entity,
-      id: targetId,
+      content: String(targetId),
     };
     return this.sender.send(payload);
   }

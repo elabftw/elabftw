@@ -15,7 +15,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateApikeyParamsInterface;
 use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Interfaces\ModelInterface;
-use Elabftw\Interfaces\UpdateParamsInterface;
+use Elabftw\Interfaces\ParamsInterface;
 use Elabftw\Traits\SetIdTrait;
 use function password_hash;
 use function password_verify;
@@ -122,7 +122,7 @@ class ApiKeys implements DestroyableInterface, ModelInterface
         throw new ImproperActionException('No corresponding API key found!');
     }
 
-    public function update(UpdateParamsInterface $params): bool
+    public function update(ParamsInterface $params): bool
     {
         return false;
     }

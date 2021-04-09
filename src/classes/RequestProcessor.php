@@ -10,36 +10,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Interfaces\ProcessorInterface;
-use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Process a request
+ * Process a classic request, only here because of Ajax.php and EntityAjaxController that are both deprecated
+ * @deprecated
  */
-class RequestProcessor extends Processor implements ProcessorInterface
+class RequestProcessor extends Processor
 {
-    public function __construct(Users $users, Request $request)
-    {
-        parent::__construct($users, $request);
-    }
-
-    // @phpstan-ignore-next-line
-    public function getParams()
-    {
-    }
-
-    // @phpstan-ignore-next-line
-    protected function getCreateParams()
-    {
-    }
-
-    // @phpstan-ignore-next-line
-    protected function getUpdateParams()
-    {
-    }
-
-    // process a classic request
     protected function process(Request $request): void
     {
         $type = null;

@@ -11,12 +11,11 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CreatableInterface;
 use Elabftw\Interfaces\DestroyableInterface;
-use Elabftw\Interfaces\IdParamsInterface;
 use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Interfaces\ReadableInterface;
-use Elabftw\Interfaces\UpdateParamsInterface;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -41,9 +40,9 @@ class Links implements CreatableInterface, ReadableInterface, DestroyableInterfa
     /**
      * Add a link to an experiment
      */
-    public function create(IdParamsInterface $params): int
+    public function create(ContentParamsInterface $params): int
     {
-        $link = $params->getId();
+        $link = (int) $params->getContent();
         $Items = new Items($this->Entity->Users, $link);
         $Items->canOrExplode('read');
         $this->Entity->canOrExplode('write');
@@ -190,7 +189,7 @@ class Links implements CreatableInterface, ReadableInterface, DestroyableInterfa
         }
     }
 
-    public function update(UpdateParamsInterface $params): bool
+    public function update(ContentParamsInterface $params): bool
     {
         return false;
     }

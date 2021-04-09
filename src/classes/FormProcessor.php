@@ -11,25 +11,17 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\ProcessorInterface;
 use Elabftw\Models\Uploads;
-use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Process a submitted form
  */
-class FormProcessor extends Processor implements ProcessorInterface
+class FormProcessor extends Processor
 {
     private UploadedFile $uploadedFile;
 
-    public function __construct(Users $users, Request $request)
-    {
-        parent::__construct($users, $request);
-    }
-
-    //private function getUpdateParams(): UpdateParams
     // @phpstan-ignore-next-line
     public function getParams()
     {
@@ -54,15 +46,5 @@ class FormProcessor extends Processor implements ProcessorInterface
         $this->Model = $this->findModel($request->request->get('model') ?? '');
         $this->uploadedFile = $request->files->get('content');
         $this->extra = $request->request->get('extraParams') ?? array();
-    }
-
-    // @phpstan-ignore-next-line
-    protected function getCreateParams()
-    {
-    }
-
-    // @phpstan-ignore-next-line
-    protected function getUpdateParams()
-    {
     }
 }

@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\ModelInterface;
+use Elabftw\Interfaces\ProcessorInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
@@ -37,7 +38,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Mother class to process a request
  */
-abstract class Processor
+abstract class Processor implements ProcessorInterface
 {
     public ?AbstractEntity $Entity = null;
 
@@ -83,7 +84,7 @@ abstract class Processor
                 return;
             case 'create':
             case 'update':
-                if ($this->Model instanceof Comments || $this->Model instanceof Todolist) {
+                if ($this->Model instanceof Comments || $this->Model instanceof Todolist || $this->Model instanceof Links) {
                     return new ContentParams($this->content, $this->target);
                 }
                 if ($this->Model instanceof ItemsTypes) {
@@ -100,13 +101,30 @@ abstract class Processor
                     return new StepParams($this->content, $this->target);
                 }
                 if ($this->Model instanceof Status) {
-                    return new StatusParams($this->content, $this->extra['color'], (bool) $this->extra['isTimestampable'], (bool) $this->extra['isDefault']);
+                    return new StatusParams(
+                        $this->content,
+                        $this->extra['color'],
+                        (bool) $this->extra['isTimestampable'],
+                        (bool) $this->extra['isDefault']
+                    );
+                }
+                if ($this->Model instanceof ApiKeys) {
+                    return new CreateApikey($this->content, $this->target, (int) $this->extra['canwrite']);
+                }
+
+                if ($this->Model instanceof Experiments || $this->Model instanceof Items) {
+                    return new EntityParams($this->content, $this->target);
+                }
+                if ($this->Model instanceof Tags) {
+                    return new TagParams($this->content);
+                }
+                if ($this->Model instanceof Templates) {
+                    return new CreateTemplate($this->content, $this->extra['body'] ?? '');
+                }
+                if ($this->Model instanceof Uploads) {
+                    return new UploadParams($this->content, $this->target);
                 }
                 // no break
-            case 'create':
-                return $this->getCreateParams();
-            case 'update':
-                return $this->getUpdateParams();
             default:
                 throw new IllegalActionException('Bad params');
         }
@@ -114,32 +132,9 @@ abstract class Processor
 
     abstract protected function process(Request $request): void;
 
-    // @phpstan-ignore-next-line
-    abstract protected function getCreateParams();
-
-    // @phpstan-ignore-next-line
-    abstract protected function getUpdateParams();
-
-    // a target is like a subpart of a model
-    // example: update the comment of an upload
     protected function setTarget(string $target): string
     {
-        if (empty($target)) {
-            return '';
-        }
-        $allowed = array(
-            'body',
-            'comment',
-            'date',
-            'file',
-            'finished',
-            'real_name',
-            'title',
-        );
-        if (!in_array($target, $allowed, true)) {
-            throw new IllegalActionException('Invalid target!');
-        }
-        return $target;
+        return Check::target($target);
     }
 
     protected function getEntity(string $type, ?int $itemId = null): AbstractEntity

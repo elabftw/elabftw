@@ -13,7 +13,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Services\Filter;
 
-final class EntityParams extends UpdateParams implements EntityParamsInterface
+final class EntityParams extends ContentParams implements EntityParamsInterface
 {
     public function getTitle(): string
     {

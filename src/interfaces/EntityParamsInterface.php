@@ -10,12 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
-interface EntityParamsInterface
+interface EntityParamsInterface extends ContentParamsInterface
 {
-//    public function getTemplateId(): int;
-
-    public function getTarget(): string;
-
     public function getTitle(): string;
 
     public function getDate(): string;

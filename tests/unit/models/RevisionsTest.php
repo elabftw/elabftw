@@ -9,7 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\IdParams;
+use Elabftw\Elabftw\EntityParams;
 
 class RevisionsTest extends \PHPUnit\Framework\TestCase
 {
@@ -40,7 +40,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
     public function testRestore()
     {
         $this->Experiment = new Experiments($this->Users, 1);
-        $new = $this->Experiment->create(new IdParams(0));
+        $new = $this->Experiment->create(new EntityParams('0'));
         $this->Experiment->setId($new);
         $this->Revisions = new Revisions($this->Experiment, 10, 100);
         $this->Revisions->create('Ohai');

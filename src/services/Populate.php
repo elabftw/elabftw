@@ -11,7 +11,6 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Elabftw\EntityParams;
-use Elabftw\Elabftw\IdParams;
 use Elabftw\Elabftw\StepParams;
 use Elabftw\Elabftw\TagParams;
 use Elabftw\Models\ApiKeys;
@@ -62,13 +61,13 @@ class Populate
 
         printf("Generating %s \n", $Entity->type);
         for ($i = 0; $i <= $this->iter; $i++) {
-            $id = $Entity->create(new IdParams($tpl));
+            $id = $Entity->create(new EntityParams((string) $tpl));
             $Entity->setId($id);
             // variable tag number
             $Tags = new Tags($Entity);
             $tagNb = $this->faker->numberBetween(0, 5);
             for ($j = 0; $j <= $tagNb; $j++) {
-                $Tags->create(new TagParams($this->faker->word()));
+                $Tags->create(new TagParams($this->faker->word() . $this->faker->word()));
             }
             $params = new EntityParams($this->faker->sentence(), 'title');
             $Entity->update($params);
@@ -95,7 +94,7 @@ class Populate
 
             // maybe upload a file but not on the first one
             if ($this->faker->randomDigit() > 7 && $id !== 1) {
-                $Entity->Uploads->createFromString('json', $this->faker->word(), '{ "some": "content" }');
+                $Entity->Uploads->createFromString('json', $this->faker->word() . $this->faker->word(), '{ "some": "content" }');
             }
 
             // maybe add a few steps

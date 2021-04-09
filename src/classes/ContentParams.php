@@ -16,7 +16,7 @@ use Elabftw\Services\Filter;
 
 class ContentParams implements ContentParamsInterface
 {
-    protected const MIN_CONTENT_SIZE = 2;
+    protected const MIN_CONTENT_SIZE = 1;
 
     protected string $content;
 

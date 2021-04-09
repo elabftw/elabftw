@@ -12,7 +12,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\IdParamsInterface;
+use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
 use PDO;
@@ -29,9 +29,9 @@ class Items extends AbstractEntity
         $this->page = 'database';
     }
 
-    public function create(IdParamsInterface $params): int
+    public function create(EntityParamsInterface $params): int
     {
-        $category = $params->getId();
+        $category = (int) $params->getContent();
         $ItemsTypes = new ItemsTypes($this->Users->team, $category);
         $itemsTypesArr = $ItemsTypes->read();
 

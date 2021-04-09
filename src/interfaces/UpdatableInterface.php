@@ -15,5 +15,5 @@ namespace Elabftw\Interfaces;
  */
 interface UpdatableInterface
 {
-    public function update(UpdateParamsInterface $params): bool;
+    public function update(ParamsInterface $params): bool;
 }

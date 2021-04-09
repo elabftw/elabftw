@@ -15,6 +15,5 @@ namespace Elabftw\Interfaces;
  */
 interface CreatableInterface
 {
-    // returns the new id inserted
-    public function create(CreateParamsInterface $params): int;
+    public function create(ParamsInterface $params): int;
 }

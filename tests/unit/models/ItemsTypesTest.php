@@ -9,8 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateItemType;
-use Elabftw\Elabftw\UpdateItemType;
+use Elabftw\Elabftw\ItemTypeParams;
 
 class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 {
@@ -22,13 +21,13 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
     public function testCreateUpdateDestroy()
     {
         $this->ItemsTypes->create(
-            new CreateItemType('new', '#fffccc', '<p>body</p>', 'team', 'team', 0)
+            new ItemTypeParams('new', '#fffccc', '<p>body</p>', 'team', 'team', 0)
         );
         $itemsTypes = $this->ItemsTypes->readAll();
         $last = array_pop($itemsTypes);
         $this->ItemsTypes->setId((int) $last['category_id']);
         $this->ItemsTypes->updateAll(
-            new UpdateItemType('new', '#fffccc', 'newbody', 'team', 'team', 1)
+            new ItemTypeParams('new', '#fffccc', 'newbody', 'team', 'team', 1)
         );
         $this->assertEquals('newbody', $this->ItemsTypes->read()['template']);
         $this->ItemsTypes->destroy((int) $last['category_id']);

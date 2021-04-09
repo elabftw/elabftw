@@ -10,11 +10,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Interfaces\CreateItemTypeParamsInterface;
+use Elabftw\Interfaces\ItemTypeParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 
-class CreateItemType implements CreateItemTypeParamsInterface
+class ItemTypeParams extends ContentParams implements ItemTypeParamsInterface
 {
     private string $body;
 
@@ -24,19 +24,17 @@ class CreateItemType implements CreateItemTypeParamsInterface
 
     private string $color;
 
-    private string $content;
-
     private int $isBookable;
 
     private ?int $team;
 
     public function __construct(string $content, string $color, string $body = '', string $canread = 'team', string $canwrite = 'team', int $isBookable = 0, int $team = null)
     {
+        parent::__construct($content);
         $this->body = $body;
         $this->canread = $canread;
         $this->canwrite = $canwrite;
         $this->color = $color;
-        $this->content = $content;
         $this->isBookable = $isBookable;
         $this->team = $team;
     }

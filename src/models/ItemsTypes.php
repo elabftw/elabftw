@@ -12,8 +12,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CreateItemTypeParamsInterface;
-use Elabftw\Interfaces\UpdateItemTypeParamsInterface;
+use Elabftw\Interfaces\ItemTypeParamsInterface;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
@@ -35,7 +34,7 @@ class ItemsTypes extends AbstractEntity
         }
     }
 
-    public function create(CreateItemTypeParamsInterface $params): int
+    public function create(ItemTypeParamsInterface $params): int
     {
         $team = $params->getTeam();
         if ($team === 0) {
@@ -147,7 +146,7 @@ class ItemsTypes extends AbstractEntity
         return 1;
     }
 
-    public function updateAll(UpdateItemTypeParamsInterface $params): bool
+    public function updateAll(ItemTypeParamsInterface $params): bool
     {
         $sql = 'UPDATE items_types SET
             name = :name,

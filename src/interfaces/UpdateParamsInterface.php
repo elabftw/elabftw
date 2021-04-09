@@ -13,6 +13,6 @@ namespace Elabftw\Interfaces;
 /**
  * Interface for updating something
  */
-interface UpdateParamsInterface extends UpdateStepParamsInterface, UpdateUploadParamsInterface, UpdateStatusParamsInterface, UpdateEntityParamsInterface, UpdateItemTypeParamsInterface, ContentParamsInterface
+interface UpdateParamsInterface extends UploadParamsInterface, StatusParamsInterface, EntityParamsInterface, ItemTypeParamsInterface, ContentParamsInterface
 {
 }

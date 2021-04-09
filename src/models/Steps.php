@@ -14,7 +14,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\ModelInterface;
-use Elabftw\Interfaces\UpdateStepParamsInterface;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
@@ -180,7 +179,7 @@ class Steps implements CrudInterface, ModelInterface
      * Update the body of a step
      *
      */
-    public function update(UpdateStepParamsInterface $params): bool
+    public function update(ContentParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
         if ($params->getTarget() === 'body') {

@@ -10,40 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Services\Filter;
-use function mb_strlen;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class UpdateParams
+class UpdateParams extends ContentParams
 {
-    protected const MIN_CONTENT_SIZE = 2;
-
-    protected string $content;
-
-    protected string $target = '';
-
-    // an update action always has content at least required
-    public function __construct(string $content)
-    {
-        $this->content = $content;
-    }
-
-    public function getContent(): string
-    {
-        // check for length
-        $c = Filter::sanitize($this->content);
-        if (mb_strlen($c) < self::MIN_CONTENT_SIZE) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
-        }
-        return $c;
-    }
-
-    public function getTarget(): string
-    {
-        return $this->target;
-    }
-
     public function getColor(): string
     {
         return 'Nope';

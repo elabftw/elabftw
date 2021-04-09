@@ -9,8 +9,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\IdParams;
-use Elabftw\Elabftw\UpdateEntity;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 
@@ -50,9 +50,9 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     {
         $new = $this->Items->create(new IdParams(1));
         $this->Items->setId($new);
-        $this->Items->update(new UpdateEntity('title', 'Items item 1'));
-        $this->Items->update(new UpdateEntity('date', '20160729'));
-        $this->Items->update(new UpdateEntity('body', 'pwet'));
+        $this->Items->update(new EntityParams('Items item 1', 'title'));
+        $this->Items->update(new EntityParams('20160729', 'date'));
+        $this->Items->update(new EntityParams('pwet', 'body'));
     }
 
     public function testUpdateRating()

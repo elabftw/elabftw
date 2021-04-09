@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\TagParams;
-use Elabftw\Elabftw\UpdateEntity;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
@@ -189,11 +189,11 @@ class ImportZip extends AbstractImport
             foreach ($item['links'] as $link) {
                 $linkText .= sprintf('<li>[%s] %s</li>', $link['name'], $link['title']);
             }
-            $params = new UpdateEntity('title', $item['title']);
+            $params = new EntityParams('title', $item['title']);
             $this->Entity->update($params);
-            $params = new UpdateEntity('date', $item['date']);
+            $params = new EntityParams('date', $item['date']);
             $this->Entity->update($params);
-            $params = new UpdateEntity('body', $item['body'] . $header . $linkText . $end);
+            $params = new EntityParams('body', $item['body'] . $header . $linkText . $end);
             $this->Entity->update($params);
         }
         // add steps

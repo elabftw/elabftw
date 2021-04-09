@@ -10,11 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateStatus;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\StatusParams;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CreateStatusParamsInterface;
-use Elabftw\Interfaces\UpdateStatusParamsInterface;
+use Elabftw\Interfaces\StatusParamsInterface;
 use PDO;
 
 /**
@@ -29,7 +28,7 @@ class Status extends AbstractCategory
         $this->id = $id;
     }
 
-    public function create(CreateStatusParamsInterface $params): int
+    public function create(StatusParamsInterface $params): int
     {
         $sql = 'INSERT INTO status(name, color, team, is_timestampable, is_default)
             VALUES(:name, :color, :team, :is_timestampable, :is_default)';
@@ -50,13 +49,13 @@ class Status extends AbstractCategory
     public function createDefault(): bool
     {
         return $this->create(
-            new CreateStatus('Running', '#29AEB9', false, true)
+            new StatusParams('Running', '#29AEB9', false, true)
         ) && $this->create(
-            new CreateStatus('Success', '#54AA08', true)
+            new StatusParams('Success', '#54AA08', true)
         ) && $this->create(
-            new CreateStatus('Need to be redone', '#C0C0C0', true)
+            new StatusParams('Need to be redone', '#C0C0C0', true)
         ) && $this->create(
-            new CreateStatus('Fail', '#C24F3D', true)
+            new StatusParams('Fail', '#C24F3D', true)
         );
     }
 
@@ -112,7 +111,7 @@ class Status extends AbstractCategory
     /**
      * Update a status
      */
-    public function update(UpdateStatusParamsInterface $params): bool
+    public function update(StatusParamsInterface $params): bool
     {
         // make sure there is only one default status
         if ($params->getIsDefault() === 1) {

@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use function array_diff;
-use Elabftw\Elabftw\CreateItemType;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\ItemTypeParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Interfaces\ReadableInterface;
@@ -158,7 +158,7 @@ class Teams implements ReadableInterface, DestroyableInterface
 
         // create default item type
         $ItemsTypes = new ItemsTypes($this->Users->team);
-        $ItemsTypes->create(new CreateItemType(
+        $ItemsTypes->create(new ItemTypeParams(
             'Edit me',
             '#32a100',
             '<p>Go to the admin panel to edit/add more items types!</p>',

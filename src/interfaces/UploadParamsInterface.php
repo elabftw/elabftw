@@ -10,16 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
-/**
- * Interface for updating a status
- */
-interface UpdateStatusParamsInterface
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+
+interface UploadParamsInterface extends ContentParamsInterface
 {
-    public function getContent(): string;
-
-    public function getColor(): string;
-
-    public function getIsTimestampable(): int;
-
-    public function getIsDefault(): int;
+    public function getFile(): UploadedFile;
 }

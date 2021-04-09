@@ -13,15 +13,13 @@ namespace Elabftw\Elabftw;
 use Elabftw\Interfaces\CreateTemplateParamsInterface;
 use Elabftw\Services\Filter;
 
-final class CreateTemplate implements CreateTemplateParamsInterface
+final class CreateTemplate extends ContentParams implements CreateTemplateParamsInterface
 {
-    private string $content;
-
     private string $body;
 
     public function __construct(string $content, string $body)
     {
-        $this->content = $content;
+        parent::__construct($content);
         $this->body = $body;
     }
 

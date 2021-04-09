@@ -10,14 +10,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Interfaces\CreateStatusParamsInterface;
+use Elabftw\Interfaces\StatusParamsInterface;
 use Elabftw\Services\Check;
-use Elabftw\Services\Filter;
 
-final class CreateStatus implements CreateStatusParamsInterface
+final class StatusParams extends UpdateParams implements StatusParamsInterface
 {
-    private string $content;
-
     private string $color;
 
     private bool $isTimestampable;
@@ -26,16 +23,11 @@ final class CreateStatus implements CreateStatusParamsInterface
 
     public function __construct(string $content, string $color, bool $isTimestampable = false, bool $isDefault = false)
     {
+        parent::__construct($content);
         $this->content = $content;
         $this->color = $color;
         $this->isTimestampable = $isTimestampable;
         $this->isDefault = $isDefault;
-    }
-
-    public function getContent(): string
-    {
-        // TODO check for length after sanitize
-        return Filter::sanitize($this->content);
     }
 
     public function getColor(): string

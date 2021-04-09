@@ -14,16 +14,11 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreateParamsInterface;
 use Elabftw\Interfaces\ProcessorInterface;
 use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Comments;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
-use Elabftw\Models\Status;
-use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Templates;
-use Elabftw\Models\Todolist;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,7 +49,7 @@ class JsonProcessor extends Processor implements ProcessorInterface
             }
             $this->Entity = $this->getEntity($this->decoded['entity']['type'], $id);
         }
-        $this->id = $this->setId((int) $this->decoded['id']);
+        $this->id = $this->setId((int) ($this->decoded['id'] ?? 0));
         $this->Model = $this->findModel($this->decoded['model'] ?? '');
         $this->content = $this->decoded['content'] ?? '';
         $this->extra = $this->decoded['extraParams'] ?? array();
@@ -65,29 +60,10 @@ class JsonProcessor extends Processor implements ProcessorInterface
     protected function getCreateParams()
     {
         if ($this->Model instanceof ApiKeys) {
-            return new CreateApikey($this->content, (int) $this->extra['canwrite']);
-        }
-        if ($this->Model instanceof Comments || $this->Model instanceof Todolist) {
-            return new ContentParams($this->content);
+            return new CreateApikey($this->content, $this->target, (int) $this->extra['canwrite']);
         }
         if ($this->Model instanceof Experiments || $this->Model instanceof Items || $this->Model instanceof Links) {
             return new IdParams((int) $this->id);
-        }
-        if ($this->Model instanceof ItemsTypes) {
-            return new CreateItemType(
-                $this->content,
-                $this->extra['color'],
-                $this->extra['body'],
-                $this->extra['canread'],
-                $this->extra['canwrite'],
-                (int) $this->extra['bookable'],
-            );
-        }
-        if ($this->Model instanceof Status) {
-            return new CreateStatus($this->content, $this->extra['color'], (bool) $this->extra['isTimestampable']);
-        }
-        if ($this->Model instanceof Steps) {
-            return new StepParams($this->content);
         }
         if ($this->Model instanceof Tags) {
             return new TagParams($this->content);
@@ -102,39 +78,12 @@ class JsonProcessor extends Processor implements ProcessorInterface
     // @phpstan-ignore-next-line
     protected function getUpdateParams()
     {
-        if ($this->Model instanceof Comments) {
-            return new ContentParams($this->content);
-        }
-        if ($this->Model instanceof Steps) {
-            return new UpdateStep($this->target, $this->content);
-        }
-        if ($this->Model instanceof ItemsTypes) {
-            return new UpdateItemType(
-                $this->content,
-                $this->extra['color'],
-                $this->extra['body'],
-                $this->extra['canread'],
-                $this->extra['canwrite'],
-                (int) $this->extra['bookable'],
-            );
-        }
         if ($this->Model instanceof Experiments || $this->Model instanceof Items) {
-            return new UpdateEntity($this->target, $this->content);
+            return new EntityParams($this->content, $this->target);
         }
 
-        if ($this->Model instanceof Status) {
-            return new UpdateStatus($this->content, $this->extra['color'], (bool) $this->extra['isTimestampable'], (bool) $this->extra['isDefault']);
-        }
-        if ($this->Model instanceof Todolist) {
-            return new ContentParams($this->content);
-        }
         if ($this->Model instanceof Uploads) {
-            if ($this->target === 'real_name') {
-                return new UpdateUploadRealName($this->content);
-            }
-            if ($this->target === 'comment') {
-                return new UpdateUploadComment($this->content);
-            }
+            return new UploadParams($this->content, $this->target);
         }
 
         throw new IllegalActionException('Bad params');

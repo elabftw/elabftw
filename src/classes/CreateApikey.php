@@ -11,34 +11,19 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use function bin2hex;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateApikeyParamsInterface;
-use function mb_strlen;
 use function random_bytes;
 
-final class CreateApikey implements CreateApikeyParamsInterface
+final class CreateApikey extends ContentParams implements CreateApikeyParamsInterface
 {
-    private const MIN_CONTENT_SIZE = 2;
-
-    private string $content;
-
     private int $canwrite;
 
     private string $key = '';
 
-    public function __construct(string $content, int $canwrite)
+    public function __construct(string $content, string $target, int $canwrite)
     {
-        $this->content = $content;
+        parent::__construct($content, $target);
         $this->canwrite = $canwrite;
-    }
-
-    public function getContent(): string
-    {
-        // check for length
-        if (mb_strlen($this->content) < self::MIN_CONTENT_SIZE) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
-        }
-        return $this->content;
     }
 
     public function getCanwrite(): int

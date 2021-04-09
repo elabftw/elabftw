@@ -180,6 +180,8 @@ $(document).ready(function() {
 
     const canread= (document.getElementById('canread_select') as HTMLSelectElement).value;
     const canwrite= (document.getElementById('canwrite_select') as HTMLSelectElement).value;
+    // set the editor as non dirty so we can navigate out without a warning to clear
+    tinymce.activeEditor.setDirty(false);
     // TODO don't reload the whole page, just what we need
     ItemTypeC.create(name, color, bookable, template, canread, canwrite).then(() => window.location.replace('admin.php?tab=5'));
   });

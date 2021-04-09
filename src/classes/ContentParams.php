@@ -20,9 +20,17 @@ class ContentParams implements ContentParamsInterface
 
     protected string $content;
 
-    public function __construct(string $content)
+    protected string $target;
+
+    public function __construct(string $content, string $target = '')
     {
         $this->content = $content;
+        $this->target = $target;
+    }
+
+    public function getTarget(): string
+    {
+        return $this->target;
     }
 
     public function getContent(): string

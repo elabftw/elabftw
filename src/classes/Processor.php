@@ -43,7 +43,7 @@ abstract class Processor
 
     public string $content = '';
 
-    public ?string $target;
+    public string $target = '';
 
     protected string $action;
 
@@ -75,16 +75,38 @@ abstract class Processor
     public function getParams()
     {
         switch ($this->action) {
-            case 'create':
-                return $this->getCreateParams();
-            case 'update':
-                return $this->getUpdateParams();
             // no parameters needed for these actions
             case 'destroy':
             case 'duplicate':
             case 'deduplicate':
             case 'lock':
                 return;
+            case 'create':
+            case 'update':
+                if ($this->Model instanceof Comments || $this->Model instanceof Todolist) {
+                    return new ContentParams($this->content, $this->target);
+                }
+                if ($this->Model instanceof ItemsTypes) {
+                    return new ItemTypeParams(
+                        $this->content,
+                        $this->extra['color'],
+                        $this->extra['body'],
+                        $this->extra['canread'],
+                        $this->extra['canwrite'],
+                        (int) $this->extra['bookable'],
+                    );
+                }
+                if ($this->Model instanceof Steps) {
+                    return new StepParams($this->content, $this->target);
+                }
+                if ($this->Model instanceof Status) {
+                    return new StatusParams($this->content, $this->extra['color'], (bool) $this->extra['isTimestampable'], (bool) $this->extra['isDefault']);
+                }
+                // no break
+            case 'create':
+                return $this->getCreateParams();
+            case 'update':
+                return $this->getUpdateParams();
             default:
                 throw new IllegalActionException('Bad params');
         }
@@ -100,10 +122,10 @@ abstract class Processor
 
     // a target is like a subpart of a model
     // example: update the comment of an upload
-    protected function setTarget(string $target): ?string
+    protected function setTarget(string $target): string
     {
         if (empty($target)) {
-            return null;
+            return '';
         }
         $allowed = array(
             'body',
@@ -138,9 +160,9 @@ abstract class Processor
     {
         switch ($model) {
             case 'apikey':
-                return new ApiKeys($this->Users);
+                return new ApiKeys($this->Users, $this->id);
             case 'status':
-                return new Status($this->Users->team);
+                return new Status($this->Users->team, $this->id);
             case 'comment':
                 return new Comments($this->Entity, new Email(new Config(), $this->Users), $this->id);
             case 'link':

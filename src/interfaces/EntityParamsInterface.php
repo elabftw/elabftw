@@ -10,14 +10,15 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
-/**
- * Interface for creating a status
- */
-interface CreateStatusParamsInterface extends ContentParamsInterface
+interface EntityParamsInterface
 {
-    public function getColor(): string;
+//    public function getTemplateId(): int;
 
-    public function getIsTimestampable(): int;
+    public function getTarget(): string;
 
-    public function getIsDefault(): int;
+    public function getTitle(): string;
+
+    public function getDate(): string;
+
+    public function getBody(): string;
 }

@@ -9,8 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateStatus;
-use Elabftw\Elabftw\UpdateStatus;
+use Elabftw\Elabftw\StatusParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
 
@@ -23,7 +22,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $new = $this->Status->create(new CreateStatus('New status', '#29AEB9', false, true));
+        $new = $this->Status->create(new StatusParams('New status', '#29AEB9', false, true));
         $this->assertTrue((bool) Check::id($new));
     }
 
@@ -35,10 +34,10 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $params = new CreateStatus('Yep', '#29AEB9', false, true);
-        $id = $this->Status->create(new CreateStatus('Yep', '#29AEB9', false, true));
+        $params = new StatusParams('Yep', '#29AEB9', false, true);
+        $id = $this->Status->create(new StatusParams('Yep', '#29AEB9', false, true));
         $Status = new Status(1, $id);
-        $Status->update(new UpdateStatus('Updated', '#121212', true, false));
+        $Status->update(new StatusParams('Updated', '#121212', true, false));
         $ourStatus = array_filter($Status->read(), function ($s) use ($id) {
             return ((int) $s['category_id']) === $id;
         });

@@ -21,7 +21,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $params = new CreateApikey('test key', 1);
+        $params = new CreateApikey('test key', '', 1);
         $this->ApiKeys->create($params);
         $this->assertTrue(mb_strlen($params->getKey()) === 84);
     }
@@ -36,7 +36,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
 
     public function testReadFromApiKey()
     {
-        $params = new CreateApikey('my key', 0);
+        $params = new CreateApikey('my key', '', 0);
         $this->ApiKeys->create($params);
         $res = $this->ApiKeys->readFromApiKey($params->getKey());
         $this->assertTrue($res['userid'] === '1');

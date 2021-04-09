@@ -22,7 +22,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Interfaces\ModelInterface;
-use Elabftw\Interfaces\UpdateUploadParamsInterface;
+use Elabftw\Interfaces\UploadParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MakeThumbnail;
 use Elabftw\Traits\SetIdTrait;
@@ -203,7 +203,7 @@ class Uploads implements DestroyableInterface, ModelInterface
         return $res;
     }
 
-    public function update(UpdateUploadParamsInterface $params): bool
+    public function update(UploadParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
         if ($params->getTarget() === 'file') {
@@ -212,8 +212,8 @@ class Uploads implements DestroyableInterface, ModelInterface
         $sql = 'UPDATE uploads SET ' . $params->getTarget() . ' = :content WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
-        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
-        $req->bindValue(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 

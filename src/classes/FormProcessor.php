@@ -35,7 +35,7 @@ class FormProcessor extends Processor implements ProcessorInterface
     {
         if ($this->Model instanceof Uploads) {
             if ($this->target === 'file') {
-                return new UpdateUploadFile($this->uploadedFile);
+                return new UploadParams('', 'file', $this->uploadedFile);
             }
         }
         throw new IllegalActionException('Bad params');

@@ -10,12 +10,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
-/**
- * Interface for updating a step
- */
-interface UpdateStepParamsInterface
+interface StatusParamsInterface extends ContentParamsInterface
 {
-    public function getContent(): string;
+    public function getColor(): string;
 
-    public function getTarget(): string;
+    public function getIsTimestampable(): int;
+
+    public function getIsDefault(): int;
 }

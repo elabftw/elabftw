@@ -18,9 +18,9 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Interfaces\HasMetadataInterface;
 use Elabftw\Interfaces\ModelInterface;
-use Elabftw\Interfaces\UpdateEntityParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
@@ -328,7 +328,7 @@ abstract class AbstractEntity implements ModelInterface, HasMetadataInterface
      * Update an entity. The revision is saved before so it can easily compare old and new body.
      */
     //public function update(string $title, string $date, string $body): void
-    public function update(UpdateEntityParamsInterface $params): bool
+    public function update(EntityParamsInterface $params): bool
     {
         $this->canOrExplode('write');
 

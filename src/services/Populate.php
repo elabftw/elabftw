@@ -10,10 +10,10 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\CreateTemplate;
+use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\IdParams;
 use Elabftw\Elabftw\StepParams;
 use Elabftw\Elabftw\TagParams;
-use Elabftw\Elabftw\UpdateEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -70,12 +70,12 @@ class Populate
             for ($j = 0; $j <= $tagNb; $j++) {
                 $Tags->create(new TagParams($this->faker->word()));
             }
-            $params = new UpdateEntity('title', $this->faker->sentence());
+            $params = new EntityParams($this->faker->sentence(), 'title');
             $Entity->update($params);
             // random date in the past 5 years
-            $params = new UpdateEntity('date', $this->faker->dateTimeBetween('-5 years')->format('Ymd'));
+            $params = new EntityParams($this->faker->dateTimeBetween('-5 years')->format('Ymd'), 'date');
             $Entity->update($params);
-            $params = new UpdateEntity('body', $this->faker->realText(1000));
+            $params = new EntityParams($this->faker->realText(1000), 'body');
             $Entity->update($params);
 
             // lock 10% of experiments (but not the first one because it is used in tests)

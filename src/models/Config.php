@@ -28,11 +28,11 @@ final class Config
 {
     // the array with all config
     public array $configArr = array();
+
+    protected Db $Db;
     
     // store the single instance of the class
     private static ?Config $instance = null;
-
-    protected Db $Db;
 
     /**
      * Construct of a singleton is private
@@ -80,6 +80,7 @@ final class Config
 
         return self::$instance;
     }
+
     /**
      * Read the configuration values
      */

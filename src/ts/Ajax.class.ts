@@ -122,6 +122,9 @@ export class Ajax {
   }
 
   sendGet(payload: Payload): Promise<Response> {
-    return fetch(`app/controllers/RequestHandler.php?action=${payload.action}&entity[id]=${payload.entity.id}&entity[type]=${payload.entity.type}&model=${payload.model}&target=${payload.target}`);
+    // encode the json in a percent encoded parameter
+    const encoded = encodeURIComponent(JSON.stringify(payload));
+    // p as in payload
+    return fetch(`app/controllers/RequestHandler.php?p=${encoded}`);
   }
 }

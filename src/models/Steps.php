@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
@@ -45,7 +46,7 @@ class Steps implements CrudInterface
         $this->Entity->canOrExplode('write');
         // make sure the newly added step is at the bottom
         // count the number of steps and add 1 to be sure we're last
-        $ordering = count($this->read()) + 1;
+        $ordering = count($this->read(new ContentParams())) + 1;
 
         $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :content, :ordering)';
         $req = $this->Db->prepare($sql);
@@ -62,7 +63,6 @@ class Steps implements CrudInterface
      * Used when importing from zip archive (json)
      *
      * @param array<string, mixed> $step
-     * @return void
      */
     public function import(array $step): void
     {
@@ -80,12 +80,7 @@ class Steps implements CrudInterface
         $this->Db->execute($req);
     }
 
-    /**
-     * Get steps for an entity
-     *
-     * @return array
-     */
-    public function read(): array
+    public function read(ContentParamsInterface $params): array
     {
         $this->Entity->canOrExplode('read');
 
@@ -103,8 +98,6 @@ class Steps implements CrudInterface
 
     /**
      * Get the current unfinished steps from experiments owned by current user
-     *
-     * @return array
      */
     public function readAll(): array
     {
@@ -150,7 +143,6 @@ class Steps implements CrudInterface
      * @param int $id The id of the original entity
      * @param int $newId The id of the new entity that will receive the steps
      * @param bool $fromTpl do we duplicate from template?
-     * @return void
      */
     public function duplicate(int $id, int $newId, $fromTpl = false): void
     {
@@ -174,10 +166,6 @@ class Steps implements CrudInterface
         }
     }
 
-    /**
-     * Update the body of a step
-     *
-     */
     public function update(ContentParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
@@ -190,9 +178,6 @@ class Steps implements CrudInterface
         return false;
     }
 
-    /**
-     * Delete a step
-     */
     public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');
@@ -204,9 +189,6 @@ class Steps implements CrudInterface
         return $this->Db->execute($req);
     }
 
-    /**
-     * Toggle the finished column of a step
-     */
     private function toggleFinished(): bool
     {
         $sql = 'UPDATE ' . $this->Entity->type . '_steps SET finished = !finished,

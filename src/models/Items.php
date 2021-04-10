@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\EntityParamsInterface;
@@ -33,7 +34,7 @@ class Items extends AbstractEntity
     {
         $category = (int) $params->getContent();
         $ItemsTypes = new ItemsTypes($this->Users->team, $category);
-        $itemsTypesArr = $ItemsTypes->read();
+        $itemsTypesArr = $ItemsTypes->read(new ContentParams());
 
         // SQL for create DB item
         $sql = 'INSERT INTO items(team, title, date, body, userid, category, elabid, canread, canwrite, metadata)

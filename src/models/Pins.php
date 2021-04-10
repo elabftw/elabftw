@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use PDO;
 
@@ -71,7 +72,7 @@ class Pins
         $entity = clone $this->Entity;
         foreach ($ids as $id) {
             $entity->setId((int) $id['entity_id']);
-            $pinArr[] = $entity->read();
+            $pinArr[] = $entity->read(new ContentParams());
         }
         return $pinArr;
     }

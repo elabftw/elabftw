@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Models\AbstractEntity;
 use function json_decode;
 
@@ -50,7 +51,7 @@ class MakeJson extends AbstractMake
         $res = array();
         foreach ($this->idArr as $id) {
             $this->Entity->setId((int) $id);
-            $all = $this->Entity->read();
+            $all = $this->Entity->read(new ContentParams());
             // decode the metadata column because it's json
             if (isset($all['metadata'])) {
                 $all['metadata'] = json_decode($all['metadata']);

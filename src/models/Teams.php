@@ -14,6 +14,7 @@ use function array_diff;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ItemTypeParams;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Interfaces\ReadableInterface;
 use Elabftw\Services\Filter;
@@ -174,7 +175,7 @@ class Teams implements ReadableInterface, DestroyableInterface
     /**
      * Read from the current team
      */
-    public function read(): array
+    public function read(ContentParamsInterface $params): array
     {
         $sql = 'SELECT * FROM `teams` WHERE id = :id';
         $req = $this->Db->prepare($sql);

@@ -45,7 +45,7 @@ export class Metadata {
       if (json.res === false) {
         return {};
       }
-      return JSON.parse(json.value);
+      return JSON.parse(json.value as string);
     });
   }
 

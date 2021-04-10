@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use function bin2hex;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Permissions;
@@ -18,6 +19,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Maps\Team;
@@ -248,8 +250,14 @@ abstract class AbstractEntity implements CrudInterface
         return $itemsArr;
     }
 
-    public function read(): array
+    public function read(ContentParamsInterface $params): array
     {
+        if ($params->getTarget() === 'boundevent' && $this instanceof Experiments) {
+            return $this->getBoundEvents();
+        }
+        if ($params->getTarget() === 'metadata') {
+            return $this->readAll()['metadata'];
+        }
         return $this->readAll();
     }
 
@@ -552,7 +560,7 @@ abstract class AbstractEntity implements CrudInterface
         }
 
         // load the entity in entityData array
-        $this->entityData = $this->read();
+        $this->entityData = $this->read(new ContentParams());
     }
 
     /**

@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Maps\Team;
@@ -38,7 +39,7 @@ class Experiments extends AbstractEntity
         // do we want template ?
         if ($tpl > 0) {
             $Templates->setId($tpl);
-            $templateArr = $Templates->read();
+            $templateArr = $Templates->read(new ContentParams());
             $permissions = $Templates->getPermissions($templateArr);
             if ($permissions['read'] === false) {
                 throw new IllegalActionException('User tried to access a template without read permissions');
@@ -91,19 +92,6 @@ class Experiments extends AbstractEntity
         }
 
         return $newId;
-    }
-
-    public function getBoundEvents(): array
-    {
-        $sql = 'SELECT team_events.* from team_events WHERE experiment = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
     }
 
     /**
@@ -205,6 +193,19 @@ class Experiments extends AbstractEntity
 
         // delete from pinned
         return $this->Pins->cleanup();
+    }
+
+    protected function getBoundEvents(): array
+    {
+        $sql = 'SELECT team_events.* from team_events WHERE experiment = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**

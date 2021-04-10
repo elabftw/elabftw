@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\ItemTypeParamsInterface;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -60,8 +61,12 @@ class ItemsTypes extends AbstractEntity
     /**
      * Read the body (template) and default permissions of the item_type from an id
      */
-    public function read(): array
+    public function read(ContentParamsInterface $params): array
     {
+        if ($params->getTarget() === 'all') {
+            return $this->readAll();
+        }
+
         $sql = 'SELECT template, canread, canwrite, metadata FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -74,33 +79,6 @@ class ItemsTypes extends AbstractEntity
 
         $res = $req->fetch();
         if ($res === false || $res === null) {
-            return array();
-        }
-        return $res;
-    }
-
-    /**
-     * SQL to get all items type
-     *
-     * @return array all the items types for the team
-     */
-    public function readAll(bool $getTags = true): array
-    {
-        $sql = 'SELECT items_types.id AS category_id,
-            items_types.name AS category,
-            items_types.color,
-            items_types.bookable,
-            items_types.template,
-            items_types.ordering,
-            items_types.canread,
-            items_types.canwrite
-            FROM items_types WHERE team = :team ORDER BY ordering ASC';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $res = $req->fetchAll();
-        if ($res === false) {
             return array();
         }
         return $res;
@@ -176,6 +154,31 @@ class ItemsTypes extends AbstractEntity
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
+    }
+
+    /**
+     * SQL to get all items type
+     */
+    public function readAll(bool $getTags = true): array
+    {
+        $sql = 'SELECT items_types.id AS category_id,
+            items_types.name AS category,
+            items_types.color,
+            items_types.bookable,
+            items_types.template,
+            items_types.ordering,
+            items_types.canread,
+            items_types.canwrite
+            FROM items_types WHERE team = :team ORDER BY ordering ASC';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**

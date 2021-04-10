@@ -166,7 +166,9 @@ class Check
     public static function target(string $target): string
     {
         $allowed = array(
+            'all',
             'body',
+            'boundevent',
             'comment',
             'date',
             'file',

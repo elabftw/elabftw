@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use function copy;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
@@ -19,6 +20,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\UploadParamsInterface;
@@ -169,7 +171,10 @@ class Uploads implements CrudInterface
         return $uploadId;
     }
 
-    public function read(): array
+    /**
+     * Read from current id
+     */
+    public function read(ContentParamsInterface $params): array
     {
         $sql = 'SELECT * FROM uploads WHERE id = :id';
         $req = $this->Db->prepare($sql);
@@ -184,8 +189,6 @@ class Uploads implements CrudInterface
 
     /**
      * Read all uploads for an item
-     *
-     * @throws DatabaseErrorException
      */
     public function readAll(): array
     {
@@ -258,7 +261,7 @@ class Uploads implements CrudInterface
     public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');
-        $uploadArr = $this->read();
+        $uploadArr = $this->read(new ContentParams());
 
         // check that the filename is not in the body. see #432
         if (strpos($this->Entity->entityData['body'], $uploadArr['long_name'])) {
@@ -303,7 +306,7 @@ class Uploads implements CrudInterface
      */
     private function replace(UploadedFile $file): bool
     {
-        $upload = $this->read();
+        $upload = $this->read(new ContentParams());
         $fullPath = $this->getUploadsPath() . $upload['long_name'];
         $this->moveFile($file->getPathname(), $fullPath);
         $MakeThumbnail = new MakeThumbnail($fullPath);

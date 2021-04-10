@@ -40,7 +40,7 @@ class UserStats
     {
         // get all status name and id
         $Status = new Status($this->Users->team);
-        $statusAll = $Status->read();
+        $statusAll = $Status->read(new ContentParams());
 
         $res = array();
 

@@ -22,7 +22,7 @@ class ContentParams implements ContentParamsInterface
 
     protected string $target;
 
-    public function __construct(string $content, string $target = '')
+    public function __construct(string $content = '', string $target = '')
     {
         $this->content = $content;
         $this->target = $target;

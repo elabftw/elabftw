@@ -10,7 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
@@ -68,7 +70,7 @@ class Templates extends AbstractEntity
      */
     public function duplicate(): int
     {
-        $template = $this->read();
+        $template = $this->read(new ContentParams());
 
         $date = Filter::kdate();
         $sql = 'INSERT INTO experiments_templates(team, title, date, body, userid, canread, canwrite)
@@ -100,8 +102,12 @@ class Templates extends AbstractEntity
     /**
      * Read a template
      */
-    public function read(): array
+    public function read(ContentParamsInterface $params): array
     {
+        if ($params->getTarget() === 'tinymce') {
+            return $this->readForUser();
+        }
+
         $sql = "SELECT experiments_templates.id, experiments_templates.title, experiments_templates.body,
             experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
             experiments_templates.locked, experiments_templates.lockedby, experiments_templates.lockedwhen,
@@ -123,18 +129,6 @@ class Templates extends AbstractEntity
         $this->entityData = $res;
 
         return $res;
-    }
-
-    /**
-     * Read the templates for the user (in ucp or create new menu)
-     * depending on the user preference, we filter out on the owner or not
-     */
-    public function readForUser(): array
-    {
-        if (!$this->Users->userData['show_team_templates']) {
-            $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
-        }
-        return $this->getTemplatesList();
     }
 
     /**
@@ -218,5 +212,17 @@ class Templates extends AbstractEntity
         $this->Db->execute($req);
 
         return $this->Tags->destroyAll();
+    }
+
+    /**
+     * Read the templates for the user (in ucp or create new menu)
+     * depending on the user preference, we filter out on the owner or not
+     */
+    public function readForUser(): array
+    {
+        if (!$this->Users->userData['show_team_templates']) {
+            $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
+        }
+        return $this->getTemplatesList();
     }
 }

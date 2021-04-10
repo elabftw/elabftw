@@ -117,7 +117,7 @@ class App
 
         // team config
         $Teams = new Teams($this->Users);
-        $this->teamConfigArr = $Teams->read();
+        $this->teamConfigArr = $Teams->read(new ContentParams());
     }
 
     /**

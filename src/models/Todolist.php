@@ -50,7 +50,7 @@ class Todolist implements CrudInterface
     /**
      * Select all the todoitems for a user
      */
-    public function read(): array
+    public function read(ContentParamsInterface $params): array
     {
         $sql = 'SELECT id, body, creation_time FROM todolist WHERE userid = :userid ORDER BY ordering ASC, creation_time DESC';
         $req = $this->Db->prepare($sql);

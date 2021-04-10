@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
@@ -162,11 +163,11 @@ abstract class AbstractEntityController implements ControllerInterface
         $renderArr = array(
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
-            'commentsArr' => $this->Entity->Comments->read(),
-            'linksArr' => $this->Entity->Links->read(),
+            'commentsArr' => $this->Entity->Comments->read(new ContentParams()),
+            'linksArr' => $this->Entity->Links->read(new ContentParams()),
             'mode' => 'view',
             'revNum' => $Revisions->readCount(),
-            'stepsArr' => $this->Entity->Steps->read(),
+            'stepsArr' => $this->Entity->Steps->read(new ContentParams()),
             'templatesArr' => $this->Templates->readForUser(),
             'timestampInfo' => $this->Entity->getTimestampInfo(),
             'uploadsArr' => $this->Entity->Uploads->readAll(),
@@ -215,11 +216,11 @@ abstract class AbstractEntityController implements ControllerInterface
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
             'lang' => Tools::getCalendarLang($this->App->Users->userData['lang'] ?? 'en_GB'),
-            'linksArr' => $this->Entity->Links->read(),
+            'linksArr' => $this->Entity->Links->read(new ContentParams()),
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',
             'revNum' => $Revisions->readCount(),
-            'stepsArr' => $this->Entity->Steps->read(),
+            'stepsArr' => $this->Entity->Steps->read(new ContentParams()),
             'templatesArr' => $this->Templates->readForUser(),
             'uploadsArr' => $this->Entity->Uploads->readAll(),
             'visibilityArr' => $TeamGroups->getVisibilityList(),

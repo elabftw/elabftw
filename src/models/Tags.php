@@ -85,7 +85,7 @@ class Tags implements CrudInterface
         return $tagId;
     }
 
-    public function read(): array
+    public function read(ContentParamsInterface $params): array
     {
         return $this->readAll();
     }

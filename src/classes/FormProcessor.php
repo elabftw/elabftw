@@ -36,7 +36,7 @@ class FormProcessor extends AbstractProcessor
     protected function process(Request $request): void
     {
         $this->action = $request->request->get('action') ?? '';
-        $this->target = $this->setTarget($request->request->get('target'));
+        $this->setTarget($request->request->get('target'));
         $type = 'experiment';
         if ($request->request->get('entity_type') === 'items') {
             $type = 'item';

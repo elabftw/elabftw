@@ -67,10 +67,22 @@ $(document).ready(function() {
   const TeamGroupC = new TeamGroup();
 
   $('#teamGroupCreateBtn').on('click', function() {
-    TeamGroupC.create();
+    const content = $('#teamGroupCreate').val() as string;
+    TeamGroupC.create(content).then(json => {
+      if (json.res) {
+        // only reload children
+        $('#team_groups_div').load('admin.php #team_groups_div > *');
+        $('#teamGroupCreate').val('');
+      }
+    });
   });
   $('#team_groups_div').on('click', '.teamGroupDelete', function() {
-    TeamGroupC.destroy($(this).data('id'));
+    if (confirm(i18next.t('generic-delete-warning'))) {
+      TeamGroupC.destroy($(this).data('id')).then(() => {
+        // only reload children
+        $('#team_groups_div').load('admin.php #team_groups_div > *');
+      });
+    }
   });
 
   $('#team_groups_div').on('keypress blur', '.addUserToGroup', function(e) {
@@ -78,13 +90,19 @@ $(document).ready(function() {
     if (e.which === 13 || e.type === 'focusout') {
       const user = parseInt($(this).val() as string, 10);
       const group = $(this).data('group');
-      TeamGroupC.update('add', user, group);
+      TeamGroupC.update(user, group, 'add').then(() => {
+        // only reload children
+        $('#team_groups_div').load('admin.php #team_groups_div > *');
+      });
     }
   });
   $('#team_groups_div').on('click', '.rmUserFromGroup', function() {
     const user = $(this).data('user');
     const group = $(this).data('group');
-    TeamGroupC.update('rm', user, group);
+    TeamGroupC.update(user, group, 'rm').then(() => {
+      // only reload children
+      $('#team_groups_div').load('admin.php #team_groups_div > *');
+    });
   });
 
   // validate on enter
@@ -94,7 +112,8 @@ $(document).ready(function() {
       keynum = e.which;
     }
     if (keynum === 13) { // if the key that was pressed was Enter (ascii code 13)
-      TeamGroupC.create();
+      const content = $('#teamGroupCreate').val() as string;
+      TeamGroupC.create(content);
     }
   });
   // edit the team group name

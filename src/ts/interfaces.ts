@@ -16,9 +16,21 @@ interface ActionReq {
 
 interface ResponseMsg {
   res: boolean;
-  msg: string | Array<BoundEvent>;
+  msg: string;
   color?: string;
-  value?: string;
+  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedExperiments>;
+}
+
+interface Todoitem {
+  id: number;
+  body: string;
+  creation_time: string;
+}
+
+interface UnfinishedExperiments {
+  id: number;
+  title: string;
+  steps: Array<string>;
 }
 
 interface BoundEvent {
@@ -55,6 +67,7 @@ enum Model {
   Status = 'status',
   Step = 'step',
   Tag = 'tag',
+  TeamGroup = 'teamgroup',
   Todolist = 'todolist',
   Upload = 'upload',
 }
@@ -67,10 +80,13 @@ enum EntityType {
 }
 
 enum Target {
+  All = 'all',
   Body = 'body',
+  BoundEvent = 'boundevent',
   Date = 'date',
   Comment = 'comment',
   Finished = 'finished',
+  Member = 'member',
   Metadata = 'metadata',
   RealName = 'real_name',
   Tag = 'tag',
@@ -107,6 +123,8 @@ export {
   Action,
   Model,
   Target,
+  Todoitem,
   EntityType,
   Entity,
+  UnfinishedExperiments,
 };

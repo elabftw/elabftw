@@ -36,11 +36,11 @@ $Response->prepare($Request);
 
 try {
     $Teams = new Teams($App->Users);
-    $teamArr = $Teams->read();
+    $teamArr = $Teams->read(new ContentParams());
     $teamsStats = $Teams->getStats((int) $App->Users->userData['team']);
 
     $TeamGroups = new TeamGroups($App->Users);
-    $teamGroupsArr = $TeamGroups->read();
+    $teamGroupsArr = $TeamGroups->read(new ContentParams());
 
 
     $Database = new Items($App->Users);
@@ -68,7 +68,7 @@ try {
             $selectedItem = $Request->query->get('item');
             $allItems = false;
             // itemData is to display the name/category of the selected item
-            $itemData = $Scheduler->Items->read();
+            $itemData = $Scheduler->Items->read(new ContentParams());
             if (empty($itemData)) {
                 throw new ImproperActionException(_('Nothing to show with this id'));
             }
@@ -80,7 +80,7 @@ try {
     $templateData = array();
     if ($Request->query->has('templateid')) {
         $Templates->setId((int) $Request->query->get('templateid'));
-        $templateData = $Templates->read();
+        $templateData = $Templates->read(new ContentParams());
         $permissions = $Templates->getPermissions($templateData);
         if ($permissions['read'] === false) {
             throw new IllegalActionException('User tried to access a template without read permissions');

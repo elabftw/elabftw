@@ -38,14 +38,14 @@ $Database = new Items($App->Users);
 $Tags = new Tags($Experiments);
 $tagsArr = $Tags->readAll();
 
-$itemsTypesArr = (new ItemsTypes($App->Users->team))->readAll();
-$categoryArr = $statusArr = (new Status($App->Users->team))->read();
+$itemsTypesArr = (new ItemsTypes($App->Users->team))->read(new ContentParams('', 'all'));
+$categoryArr = $statusArr = (new Status($App->Users->team))->read(new ContentParams());
 if ($Request->query->get('type') !== 'experiments') {
     $categoryArr = $itemsTypesArr;
 }
 
 $TeamGroups = new TeamGroups($App->Users);
-$teamGroupsArr = $TeamGroups->read();
+$teamGroupsArr = $TeamGroups->read(new ContentParams());
 
 $usersArr = $App->Users->readAllFromTeam();
 

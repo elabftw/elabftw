@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CreateApikeyParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\ParamsInterface;
@@ -60,9 +61,6 @@ class ApiKeys implements CrudInterface
     /**
      * Create a known key so we can test against it in dev mode
      * This function should only be called from the dev:populate command
-     *
-     * @param string $apiKey
-     * @return void
      */
     public function createKnown(string $apiKey): void
     {
@@ -81,7 +79,7 @@ class ApiKeys implements CrudInterface
     /**
      * Read all keys for current user
      */
-    public function read(): array
+    public function read(ContentParamsInterface $params): array
     {
         $sql = 'SELECT id, name, created_at, hash, can_write FROM api_keys WHERE userid = :userid AND team = :team';
         $req = $this->Db->prepare($sql);

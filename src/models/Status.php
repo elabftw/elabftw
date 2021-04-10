@@ -10,9 +10,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\StatusParams;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\StatusParamsInterface;
 use PDO;
 
@@ -61,15 +63,13 @@ class Status extends AbstractCategory
 
     public function readAll(): array
     {
-        return $this->read();
+        return $this->read(new ContentParams());
     }
 
     /**
      * SQL to get all status from team
-     *
-     * @return array All status from the team
      */
-    public function read(): array
+    public function read(ContentParamsInterface $params): array
     {
         $sql = 'SELECT status.id AS category_id,
             status.name AS category,

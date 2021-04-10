@@ -82,7 +82,7 @@ $(document).ready(function() {
         warningDiv.appendChild(chevron);
 
         const newkey = document.createElement('p');
-        newkey.innerText = json.value;
+        newkey.innerText = json.value as string;
         const warningTextSpan = document.createElement('span');
 
         warningTextSpan.innerText = i18next.t('new-apikey-warning');
@@ -144,7 +144,7 @@ $(document).ready(function() {
     reader.onload = function(event): void {
       const body = event.target.result as string;
       EntityC.create(title).then(json => {
-        const newid = parseInt(json.value);
+        const newid = parseInt(json.value as string);
         EntityC.update(newid, Target.Body, body).then(() => {
           window.location.replace(`ucp.php?tab=3&templateid=${json.value}`);
         });

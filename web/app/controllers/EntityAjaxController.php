@@ -117,16 +117,6 @@ try {
         $Response->setData(mb_convert_encoding($responseArr, 'UTF-8', 'UTF-8'));
     }
 
-    // GET BOUND EVENTS
-    if ($Request->query->has('getBoundEvents') && $Entity instanceof Experiments) {
-        $Entity->canOrExplode('read');
-        $events = $Entity->getBoundEvents();
-        $Response->setData(array(
-            'res' => true,
-            'msg' => $events,
-        ));
-    }
-
     // SHARE
     if ($Request->query->has('getShareLink')) {
         if (!($Entity instanceof Experiments || $Entity instanceof Items)) {

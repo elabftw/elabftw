@@ -12,6 +12,7 @@ namespace Elabftw\Controllers;
 
 use function dirname;
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\DisplayParams;
@@ -553,7 +554,7 @@ class ApiController implements ControllerInterface
         }
         // note: we don't really care about this entity yet
         $Uploads = new Uploads($this->Entity, $this->id);
-        $uploadData = $Uploads->read();
+        $uploadData = $Uploads->read(new ContentParams());
         // now we know the id and type of the entity
         // so get the Entity to check for read permissions
         if ($uploadData['type'] === 'experiments') {

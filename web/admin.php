@@ -48,8 +48,8 @@ try {
     $Teams = new Teams($App->Users);
 
     $itemsTypesArr = $ItemsTypes->readAll();
-    $statusArr = $Status->read();
-    $teamGroupsArr = $TeamGroups->read();
+    $statusArr = $Status->read(new ContentParams());
+    $teamGroupsArr = $TeamGroups->read(new ContentParams());
     $teamsArr = $Teams->readAll();
     $allTeamUsersArr = $App->Users->readAllFromTeam();
     // only the unvalidated ones

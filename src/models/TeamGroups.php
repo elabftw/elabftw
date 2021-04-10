@@ -14,6 +14,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\TeamGroupParamsInterface;
 use Elabftw\Traits\SetIdTrait;
 use function in_array;
 use PDO;
@@ -55,7 +56,7 @@ class TeamGroups implements CrudInterface
      *
      * @return array all team groups with users in group as array
      */
-    public function read(): array
+    public function read(ContentParamsInterface $params): array
     {
         $fullGroups = array();
 
@@ -131,8 +132,11 @@ class TeamGroups implements CrudInterface
         return (string) $res;
     }
 
-    public function update(ContentParamsInterface $params): bool
+    public function update(TeamGroupParamsInterface $params): bool
     {
+        if ($params->getTarget() === 'member') {
+            return $this->updateMember($params);
+        }
         $sql = 'UPDATE team_groups SET name = :name WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':name', $params->getContent(), PDO::PARAM_STR);
@@ -140,30 +144,6 @@ class TeamGroups implements CrudInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Add or remove a member from a team group
-     *
-     * @param int $userid Id of the user
-     * @param int $groupid Id of the group
-     * @param string $action Can be 'add' or 'rm'
-     * @throws IllegalActionException if the action keyword is wrong
-     * @return void
-     */
-    public function updateMember(int $userid, int $groupid, string $action): void
-    {
-        if ($action === 'add') {
-            $sql = 'INSERT INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)';
-        } elseif ($action === 'rm') {
-            $sql = 'DELETE FROM users2team_groups WHERE userid = :userid AND groupid = :groupid';
-        } else {
-            throw new IllegalActionException('Bad action keyword');
-        }
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->bindParam(':groupid', $groupid, PDO::PARAM_INT);
-        $this->Db->execute($req);
     }
 
     public function destroy(): bool
@@ -264,5 +244,24 @@ class TeamGroups implements CrudInterface
             return array();
         }
         return $groups;
+    }
+
+    /**
+     * Add or remove a member from a team group
+     * How is add or rm
+     */
+    private function updateMember(TeamGroupParamsInterface $params): bool
+    {
+        if ($params->getHow() === 'add') {
+            $sql = 'INSERT INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)';
+        } elseif ($params->getHow() === 'rm') {
+            $sql = 'DELETE FROM users2team_groups WHERE userid = :userid AND groupid = :groupid';
+        } else {
+            throw new IllegalActionException('Bad action keyword');
+        }
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':userid', $params->getUserid(), PDO::PARAM_INT);
+        $req->bindValue(':groupid', $params->getGroup(), PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 }

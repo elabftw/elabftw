@@ -9,7 +9,7 @@ import 'jquery-jeditable/src/jquery.jeditable.js';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
 import { getEntity } from './misc';
-import { BoundEvent } from './interfaces';
+import { BoundEvent, Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedExperiments, Target, ResponseMsg } from './interfaces';
 import { DateTime } from 'luxon';
 import EntityClass from './Entity.class';
 declare let key: any;
@@ -66,9 +66,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // SEE EVENTS
     } else if (el.matches('[data-action="see-events"]')) {
-      AjaxC.get('getBoundEvents').then(json => {
+      const payload: Payload = {
+        method: Method.GET,
+        action: Action.Read,
+        entity: entity,
+        model: entity.type,
+        target: Target.BoundEvent
+      };
+      AjaxC.send(payload).then(json => {
         const bookingsDiv = document.getElementById('boundBookings');
-        for (const msg of (json.msg as Array<BoundEvent>)) {
+        for (const msg of (json.value as Array<BoundEvent>)) {
           const el = document.createElement('a');
           el.href = `team.php?item=${msg.item}&start=${encodeURIComponent(msg.start)}`;
           const button = document.createElement('button');

@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
@@ -45,7 +46,7 @@ class Links implements CrudInterface
         $this->Entity->canOrExplode('write');
 
         // check if this link doesn't exist already
-        $links = $this->read();
+        $links = $this->read(new ContentParams());
         foreach ($links as $existingLink) {
             if ((int) $existingLink['itemid'] === $link) {
                 return 0;
@@ -63,10 +64,8 @@ class Links implements CrudInterface
 
     /**
      * Get links for an entity
-     *
-     * @return array links of the entity
      */
-    public function read(): array
+    public function read(ContentParamsInterface $params): array
     {
         $sql = 'SELECT items.id AS itemid,
             ' . $this->Entity->type . '_links.id AS linkid,

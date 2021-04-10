@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
@@ -197,9 +198,9 @@ class MakeStreamZip extends AbstractMake
             // save the uploads in entityArr for the json file
             $entityArr['uploads'] = $uploadedFilesArr;
             // add links
-            $entityArr['links'] = $this->Entity->Links->read();
+            $entityArr['links'] = $this->Entity->Links->read(new ContentParams());
             // add steps
-            $entityArr['steps'] = $this->Entity->Steps->read();
+            $entityArr['steps'] = $this->Entity->Steps->read(new ContentParams());
             $this->folder = $this->getBaseFileName();
 
             $this->addTimestampFiles($id);

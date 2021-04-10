@@ -79,18 +79,37 @@ abstract class AbstractProcessor implements ProcessorInterface
     // @phpstan-ignore-next-line
     public function getParams()
     {
-        if ($this->action === 'create' || $this->action === 'update') {
+        if ($this->action === 'create' || $this->action === 'read' || $this->action === 'update') {
             return $this->getParamsObject();
         }
         // all the other actions need no parameters
         return;
     }
 
+    protected function processJson(string $json): void
+    {
+        $decoded = json_decode($json);
+        $this->action = $decoded->action ?? '';
+        $this->setTarget($decoded->target ?? '');
+
+        if (isset($decoded->entity)) {
+            $id = (int) $decoded->entity->id;
+            if ($id === 0) {
+                $id = null;
+            }
+            $this->Entity = $this->getEntity($decoded->entity->type, $id);
+        }
+        $this->id = $this->setId((int) ($decoded->id ?? 0));
+        $this->Model = $this->buildModel($decoded->model ?? '');
+        $this->content = $decoded->content ?? '';
+        $this->extra = $decoded->extraParams ?? array();
+    }
+
     abstract protected function process(Request $request): void;
 
-    protected function setTarget(string $target): string
+    protected function setTarget(string $target): void
     {
-        return Check::target($target);
+        $this->target = Check::target($target);
     }
 
     protected function getEntity(string $type, ?int $itemId = null): AbstractEntity
@@ -132,7 +151,7 @@ abstract class AbstractProcessor implements ProcessorInterface
             case 'itemtype':
                 return $this->Entity;
             case 'todolist':
-                return new Todolist((int) $this->Users->userData['userid']);
+                return new Todolist((int) $this->Users->userData['userid'], $this->id);
             default:
                 throw new IllegalActionException('Bad model');
         }
@@ -192,6 +211,9 @@ abstract class AbstractProcessor implements ProcessorInterface
         }
         if ($this->Model instanceof Uploads) {
             return new UploadParams($this->content, $this->target);
+        }
+        if ($this->Model instanceof TeamGroups) {
+            return new TeamGroupParams($this->content, $this->target, $this->extra);
         }
     }
 }

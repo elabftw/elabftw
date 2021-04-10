@@ -68,17 +68,7 @@ try {
             $res = $Params->getKey();
         }
     } elseif ($action === 'read') {
-        if ($target === 'tinymce') {
-            // TODO maybe read should take a Params object to get the target. Yes.
-            // @phpstan-ignore-next-line
-            $res = $Model->readForUser();
-        } else {
-            $res = $Model->read();
-        }
-        // filter out the metadata if we only want that
-        if ($target === 'metadata') {
-            $res = $res['metadata'];
-        }
+        $res = $Model->read($Params);
     } elseif ($action === 'update') {
         // TODO should not exist, but it's here for now
         if ($Model instanceof ItemsTypes) {
@@ -103,7 +93,7 @@ try {
     if ($Processor instanceof FormProcessor) {
         $Response = new RedirectResponse('../../' . $Processor->Entity->page . '.php?mode=edit&id=' . $Processor->Entity->id);
         $Response->send();
-        die;
+        exit;
     }
     $Response->setData(array(
         'res' => true,

@@ -45,6 +45,7 @@ try {
             // @phpstan-ignore-next-line
             $templates = $Model->readForUser();
             $res = array();
+            // TODO
             foreach ($templates as $template) {
                 $res[] = array('title' => $template['title'], 'description' => '', 'content' => $template['body']);
             }
@@ -52,6 +53,7 @@ try {
             break;
 
         case 'read':
+            // @phpstan-ignore-next-line
             $res = $Model->read();
             $Response->setData(array(
                 'res' => true,
@@ -72,23 +74,6 @@ try {
             $content = Filter::sanitize($Request->query->get('params')['name']);
             // @phpstan-ignore-next-line
             $Response->setData($Model->getList($content));
-            break;
-
-        case 'updateMember':
-            // @phpstan-ignore-next-line
-            $Model->updateMember(
-                (int) $Request->request->get('params')['user'],
-                (int) $Request->request->get('params')['group'],
-                $Request->request->get('params')['how'],
-            );
-            break;
-
-        case 'updateExtraField':
-            // @phpstan-ignore-next-line
-            $Model->updateExtraField(
-                $Request->request->get('params')['field'],
-                $Request->request->get('params')['value'],
-            );
             break;
 
         default:

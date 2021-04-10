@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Model, Action, ResponseMsg } from './interfaces';
+import { Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedExperiments, Target, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
@@ -30,13 +30,15 @@ export default class Todolist {
     return this.sender.send(payload);
   }
 
-  read(): void {
-    $.get('app/controllers/Ajax.php', {
-      action: 'read',
-      what: 'todolist',
-    }).done(function(json) {
+  read(): Promise<void> {
+    const payload: Payload = {
+      method: Method.GET,
+      action: Action.Read,
+      model: this.model,
+    };
+    return this.sender.send(payload).then(json => {
       let html = '<ul id="todoItems-list" class="sortable" data-axis="y" data-table="todolist">';
-      for (const entry of json.msg) {
+      for (const entry of json.value as Array<Todoitem>) {
         html += `<li data-todoitemid=${entry.id} id='todoItem_${entry.id}'>
         <a class='clickable align-right' data-action='destroy-todoitem' data-todoitemid='${entry.id}' title='` + i18next.t('generic-delete-warning') + `'>
           <i class='fas fa-trash-alt'></i>
@@ -64,14 +66,20 @@ export default class Todolist {
   }
 
 
-  getSteps(): void {
-    $.get('app/controllers/Ajax.php', {
-      action: 'readAll',
-      what: 'step',
-      type: 'experiments',
-    }).done(function(json) {
+  getSteps(): Promise<void> {
+    const payload: Payload = {
+      method: Method.GET,
+      action: Action.Read,
+      entity: {
+        type: EntityType.Experiment,
+        id: null,
+      },
+      model: Model.Step,
+      target: Target.All,
+    };
+    return this.sender.send(payload).then(json => {
       let html = '';
-      for (const exp of json.msg) {
+      for (const exp of json.value as Array<UnfinishedExperiments>) {
         html += `<li><h3><a href='experiments.php?mode=view&id=${exp.id}'>${exp.title}</a></h3>`;
         for (const stepsData of Object.entries(exp.steps)) {
           const stepId = stepsData[1][0];

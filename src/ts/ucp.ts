@@ -157,4 +157,11 @@ $(document).ready(function() {
 
   // TinyMCE
   tinymce.init(getTinymceBaseConfig('ucp'));
+
+  // auto update title on blur
+  $(document).on('blur', '#title_input', function() {
+    const content = (document.getElementById('title_input') as HTMLInputElement).value;
+    const id = $(this).data('id');
+    EntityC.update(id, Target.Title, content);
+  });
 });

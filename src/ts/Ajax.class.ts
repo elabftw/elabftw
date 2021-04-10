@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import { notif } from './misc';
-import { Payload, Model, Method, ResponseMsg } from './interfaces';
+import { Payload, Action, Model, Method, ResponseMsg } from './interfaces';
 
 export class Ajax {
   type: string;
@@ -100,7 +100,7 @@ export class Ajax {
       return response.json();
     }).then(json => {
       // we don't want notifs on get requests
-      if (payload.method === Method.POST) {
+      if (payload.method === Method.POST || payload.action === Action.Create) {
         notif(json);
       }
       return json;

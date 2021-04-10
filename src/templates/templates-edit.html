@@ -47,8 +47,8 @@
 
 </div>
 
-<label for='tplTitle'>{{ 'Title'|trans }}</label>
-<input id='tplTitle' class='form-control' value='{{ templateData.title|raw }}' />
+<label for='title_input'>{{ 'Title'|trans }}</label>
+<input id='title_input' class='form-control' data-id='{{ templateData.id }}' value='{{ templateData.title|raw }}' />
 {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
 <label for='e{{ templateData.id }}'>{{ 'Template content'|trans }}</label>
 <textarea id='e{{ templateData.id }}' class='mceditable' style='height:500px;'>{{ templateData.body }}</textarea><br />

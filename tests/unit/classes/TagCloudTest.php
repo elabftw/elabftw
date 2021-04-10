@@ -11,12 +11,14 @@ namespace Elabftw\Elabftw;
 
 class TagCloudTest extends \PHPUnit\Framework\TestCase
 {
+    private TagCloud $TagCloud;
+
     protected function setUp(): void
     {
         $this->TagCloud = new TagCloud(1);
     }
 
-    public function testReadAll()
+    public function testReadAll(): void
     {
         $this->assertTrue(is_array($this->TagCloud->getCloudArr()));
     }

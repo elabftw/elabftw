@@ -2,26 +2,29 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\ImproperActionException;
 
 class TeamsTest extends \PHPUnit\Framework\TestCase
 {
+    private Teams $Teams;
+
     protected function setUp(): void
     {
         $this->Teams= new Teams(new Users(1, 1));
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $this->assertIsInt($this->Teams->create('Test team'));
     }
 
-    public function testRead()
+    public function testRead(): void
     {
-        $this->assertTrue(is_array($this->Teams->read()));
+        $this->assertTrue(is_array($this->Teams->read(new ContentParams())));
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $id = $this->Teams->create('Destroy me');
         $this->Teams->setId($id);
@@ -32,7 +35,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         $this->Teams->destroy();
     }
 
-    public function testGetAllStats()
+    public function testGetAllStats(): void
     {
         $stats = $this->Teams->getAllStats();
         $this->assertTrue(is_array($stats));

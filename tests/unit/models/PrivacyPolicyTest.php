@@ -13,6 +13,8 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 
 class PrivacyPolicyTest extends \PHPUnit\Framework\TestCase
 {
+    private PrivacyPolicy $PrivacyPolicy;
+
     protected function setUp(): void
     {
         $this->PrivacyPolicy = new PrivacyPolicy(new Config());

@@ -11,12 +11,14 @@ namespace Elabftw\Models;
 
 class IdpsTest extends \PHPUnit\Framework\TestCase
 {
+    private Idps $Idps;
+
     protected function setUp(): void
     {
         $this->Idps= new Idps();
     }
 
-    public function testCreateReadUpdateDestroy()
+    public function testCreateReadUpdateDestroy(): void
     {
         $id = $this->Idps->create(
             'Test idp',
@@ -46,7 +48,7 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
         $this->Idps->destroy();
     }
 
-    public function testReadAll()
+    public function testReadAll(): void
     {
         $this->assertIsArray($this->Idps->readAll());
     }

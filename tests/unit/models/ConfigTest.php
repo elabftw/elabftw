@@ -13,18 +13,20 @@ use Exception;
 
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
+    private Config $Config;
+
     protected function setUp(): void
     {
         $this->Config= new Config();
     }
 
-    public function testRead()
+    public function testRead(): void
     {
         $this->assertTrue(is_array($this->Config->configArr));
         $this->assertEquals('sha256', $this->Config->configArr['stamphash']);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $post = array(
             'smtp_address' => 'smtp.mailgun.org',
@@ -58,12 +60,12 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $this->Config->update($post);
     }
 
-    public function testDestroyStamppass()
+    public function testDestroyStamppass(): void
     {
         $this->Config->destroyStamppass();
     }
 
-    public function testRestoreDefaults()
+    public function testRestoreDefaults(): void
     {
         $this->Config->restoreDefaults();
     }

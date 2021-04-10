@@ -17,23 +17,27 @@ use Elabftw\Models\Users;
 
 class PopulateTest extends \PHPUnit\Framework\TestCase
 {
+    private Users $Users;
+
+    private Populate $Populate;
+
     protected function setUp(): void
     {
         $this->Users = new Users(1, 1);
         $this->Populate = new Populate(2);
     }
 
-    public function testGenerateExperiments()
+    public function testGenerateExperiments(): void
     {
         $this->Populate->generate(new Experiments($this->Users));
     }
 
-    public function testGenerateItems()
+    public function testGenerateItems(): void
     {
         $this->Populate->generate(new Items($this->Users));
     }
 
-    public function testGenerateUser()
+    public function testGenerateUser(): void
     {
         $Teams = new Teams($this->Users);
         $user = array(

@@ -11,11 +11,15 @@ namespace Elabftw\Models;
 
 class PinsTest extends \PHPUnit\Framework\TestCase
 {
+    private Experiments $Experiments;
+
+    private Items $Items;
+
     protected function setUp(): void
     {
-        $this->Users = new Users(1, 1);
-        $this->Experiments = new Experiments($this->Users, 1);
-        $this->Items = new Items($this->Users, 1);
+        $Users = new Users(1, 1);
+        $this->Experiments = new Experiments($Users, 1);
+        $this->Items = new Items($Users, 1);
     }
 
     public function testTogglePin(): void

@@ -20,4 +20,5 @@ parameters:
   paths:
     - %currentWorkingDirectory%/src
     - %currentWorkingDirectory%/web
+    - %currentWorkingDirectory%/tests/unit
 

@@ -14,13 +14,17 @@ use Elabftw\Services\Check;
 
 class TagsTest extends \PHPUnit\Framework\TestCase
 {
+    private Users $Users;
+
+    private Experiments $Experiments;
+
     protected function setUp(): void
     {
         $this->Users = new Users(1, 1);
         $this->Experiments = new Experiments($this->Users, 1);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $this->Experiments->Tags->create(new TagParams('my tag'));
         $id = $this->Experiments->Tags->create(new TagParams('new tag'));
@@ -32,7 +36,7 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue((bool) Check::id($id));
     }
 
-    public function testReadAll()
+    public function testReadAll(): void
     {
         $this->assertTrue(is_array($this->Experiments->Tags->readAll()));
         $res = $this->Experiments->Tags->readAll('my');
@@ -43,13 +47,13 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($Tags->readAll()));
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $Tags = new Tags($this->Experiments, 1);
         $this->assertTrue($Tags->update(new TagParams('new super tag')));
     }
 
-    public function testDeduplicate()
+    public function testDeduplicate(): void
     {
         $Tags = new Tags($this->Experiments, 1);
         $this->assertEquals(0, $Tags->deduplicate());
@@ -60,19 +64,19 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $Tags->deduplicate());
     }
 
-    public function testUnreference()
+    public function testUnreference(): void
     {
         $Tags = new Tags($this->Experiments, 1);
         $this->Experiments->Tags->unreference();
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $res = $this->Experiments->Tags->getList('tag2');
         $this->assertEquals('tag2222', $res[0]);
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $id = $this->Experiments->Tags->create(new TagParams('destroy me'));
         $Tags = new Tags($this->Experiments, $id);

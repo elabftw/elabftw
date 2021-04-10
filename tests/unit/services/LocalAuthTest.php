@@ -14,12 +14,14 @@ use Elabftw\Exceptions\InvalidCredentialsException;
 
 class LocalAuthTest extends \PHPUnit\Framework\TestCase
 {
+    private LocalAuth $AuthService;
+
     protected function setUp(): void
     {
         $this->AuthService = new LocalAuth('phpunit@example.com', 'phpunitftw');
     }
 
-    public function testTryAuth()
+    public function testTryAuth(): void
     {
         $authResponse = $this->AuthService->tryAuth();
         $this->assertEquals('local', $authResponse->isAuthBy);
@@ -27,16 +29,16 @@ class LocalAuthTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $authResponse->selectedTeam);
     }
 
-    public function testTryAuthWithInvalidEmail()
+    public function testTryAuthWithInvalidEmail(): void
     {
         $this->expectException(InvalidCredentialsException::class);
         $AuthService = new LocalAuth('invalid@example.com', 'nopenope');
     }
 
-    public function testTryAuthWithInvalidPassword()
+    public function testTryAuthWithInvalidPassword(): void
     {
         $AuthService = new LocalAuth('phpunit@example.com', 'nopenope');
         $this->expectException(InvalidCredentialsException::class);
-        $authResponse = $AuthService->tryAuth();
+        $AuthService->tryAuth();
     }
 }

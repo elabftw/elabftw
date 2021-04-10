@@ -9,32 +9,35 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateApikey;
 use function mb_strlen;
 
 class ApiKeysTest extends \PHPUnit\Framework\TestCase
 {
+    private ApiKeys $ApiKeys;
+
     protected function setUp(): void
     {
         $this->ApiKeys = new ApiKeys(new Users(1, 1));
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $params = new CreateApikey('test key', '', 1);
         $this->ApiKeys->create($params);
         $this->assertTrue(mb_strlen($params->getKey()) === 84);
     }
 
-    public function testReadAll()
+    public function testReadAll(): void
     {
-        $res = $this->ApiKeys->read();
+        $res = $this->ApiKeys->read(new ContentParams());
         $this->assertIsArray($res);
         $this->assertTrue($res[1]['name'] === 'test key');
         $this->assertTrue($res[1]['can_write'] === '1');
     }
 
-    public function testReadFromApiKey()
+    public function testReadFromApiKey(): void
     {
         $params = new CreateApikey('my key', '', 0);
         $this->ApiKeys->create($params);
@@ -43,7 +46,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($res['canWrite'] === '0');
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $this->ApiKeys->setId(2);
         $this->assertTrue($this->ApiKeys->destroy());

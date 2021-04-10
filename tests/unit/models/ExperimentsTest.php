@@ -9,19 +9,24 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Check;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
+    private Users $Users;
+
+    private Experiments $Experiments;
+
     protected function setUp(): void
     {
         $this->Users = new Users(1, 1);
         $this->Experiments = new Experiments($this->Users);
     }
 
-    public function testCreateAndDestroy()
+    public function testCreateAndDestroy(): void
     {
         $new = $this->Experiments->create(new EntityParams('0'));
         $this->assertTrue((bool) Check::id($new));
@@ -29,32 +34,32 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->canOrExplode('write');
         $this->Experiments->toggleLock();
         $this->Experiments->destroy();
-        $this->Templates = new Templates($this->Users);
-        $this->Templates->create(new EntityParams('my template', '', array('body' => 'is so cool')));
+        $Templates = new Templates($this->Users);
+        $Templates->create(new EntityParams('my template', '', array('body' => 'is so cool')));
         $new = $this->Experiments->create(new EntityParams('1'));
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments = new Experiments($this->Users, $new);
         $this->Experiments->destroy();
     }
 
-    public function testSetId()
+    public function testSetId(): void
     {
         $this->expectException(IllegalActionException::class);
         $this->Experiments->setId(0);
     }
 
-    public function testRead()
+    public function testRead(): void
     {
         $new = $this->Experiments->create(new EntityParams('0'));
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('read');
-        $experiment = $this->Experiments->read();
+        $experiment = $this->Experiments->read(new ContentParams());
         $this->assertTrue(is_array($experiment));
         $this->assertEquals('Untitled', $experiment['title']);
         //$this->assertEquals('20160729', $experiment['date']);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $new = $this->Experiments->create(new EntityParams('0'));
         $this->Experiments->setId($new);
@@ -65,7 +70,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->update(new EntityParams('<p>Body</p>', 'body'));
     }
 
-    public function testUpdateVisibility()
+    public function testUpdateVisibility(): void
     {
         $this->Experiments->setId(1);
         $this->Experiments->canOrExplode('write');
@@ -75,14 +80,14 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->updatePermissions('write', 'public');
     }
 
-    public function testUpdateCategory()
+    public function testUpdateCategory(): void
     {
         $this->Experiments->setId(1);
         $this->Experiments->canOrExplode('write');
         $this->Experiments->updateCategory(3);
     }
 
-    public function testDuplicate()
+    public function testDuplicate(): void
     {
         $this->Experiments->setId(1);
         $this->Experiments->canOrExplode('read');

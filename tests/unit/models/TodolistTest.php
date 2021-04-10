@@ -7,29 +7,31 @@ use Elabftw\Elabftw\OrderingParams;
 
 class TodolistTest extends \PHPUnit\Framework\TestCase
 {
+    private Todolist $Todolist;
+
     protected function setUp(): void
     {
         $this->Todolist = new Todolist(1);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $content = 'write more tests';
         $this->assertIsInt($this->Todolist->create(new ContentParams($content)));
     }
 
-    public function testRead()
+    public function testRead(): void
     {
-        $this->assertTrue(is_array($this->Todolist->read()));
+        $this->assertTrue(is_array($this->Todolist->read(new ContentParams())));
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $this->Todolist->setId(1);
         $this->assertTrue($this->Todolist->update(new ContentParams('write way more tests')));
     }
 
-    public function testUpdateOrdering()
+    public function testUpdateOrdering(): void
     {
         $content = 'write more tests';
         $this->Todolist->create(new ContentParams($content));
@@ -39,7 +41,7 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
         $this->Todolist->updateOrdering($OrderingParams);
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $this->Todolist->setId(1);
         $this->Todolist->destroy();

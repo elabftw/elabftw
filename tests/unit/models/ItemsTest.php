@@ -9,19 +9,21 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 
 class ItemsTest extends \PHPUnit\Framework\TestCase
 {
+    private Items $Items;
+
     protected function setUp(): void
     {
-        $this->Users = new Users(1, 1);
-        $this->Items= new Items($this->Users);
+        $this->Items= new Items(new Users(1, 1));
     }
 
-    public function testCreateAndDestroy()
+    public function testCreateAndDestroy(): void
     {
         $new = $this->Items->create(new EntityParams('1'));
         $this->assertTrue((bool) Check::id($new));
@@ -29,13 +31,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->Items->destroy();
     }
 
-    public function testSetId()
-    {
-        $this->expectException(\TypeError::class);
-        $this->Items->setId('alpha');
-    }
-
-    public function testRead()
+    public function testRead(): void
     {
         $new = $this->Items->create(new EntityParams('1'));
         $this->Items->setId($new);
@@ -45,7 +41,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Filter::kdate(), $this->Items->entityData['date']);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $new = $this->Items->create(new EntityParams('1'));
         $this->Items->setId($new);
@@ -54,31 +50,31 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->Items->update(new EntityParams('pwet', 'body'));
     }
 
-    public function testUpdateRating()
+    public function testUpdateRating(): void
     {
         $this->Items->setId(1);
         $this->Items->updateRating(1);
     }
 
-    public function testDuplicate()
+    public function testDuplicate(): void
     {
         $this->Items->setId(1);
         $this->Items->canOrExplode('read');
-        $this->assertTrue((bool) Check::id($this->Items->duplicate(1)));
+        $this->assertTrue((bool) Check::id($this->Items->duplicate()));
     }
 
-    public function testToggleLock()
+    public function testToggleLock(): void
     {
         $new = $this->Items->create(new EntityParams('1'));
         $this->Items->setId($new);
 
         // lock
         $this->Items->toggleLock();
-        $item = $this->Items->read();
+        $item = $this->Items->read(new ContentParams());
         $this->assertTrue((bool) $item['locked']);
         // unlock
         $this->Items->toggleLock();
-        $item = $this->Items->read();
+        $item = $this->Items->read(new ContentParams());
         $this->assertFalse((bool) $item['locked']);
     }
 }

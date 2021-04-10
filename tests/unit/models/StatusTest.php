@@ -9,36 +9,39 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\StatusParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
 
 class StatusTest extends \PHPUnit\Framework\TestCase
 {
+    private Status $Status;
+
     protected function setUp(): void
     {
         $this->Status = new Status(1, 1);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $new = $this->Status->create(new StatusParams('New status', '#29AEB9', false, true));
         $this->assertTrue((bool) Check::id($new));
     }
 
-    public function testRead()
+    public function testRead(): void
     {
-        $all = $this->Status->read();
+        $all = $this->Status->read(new ContentParams());
         $this->assertTrue(is_array($all));
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $params = new StatusParams('Yep', '#29AEB9', false, true);
         $id = $this->Status->create(new StatusParams('Yep', '#29AEB9', false, true));
         $Status = new Status(1, $id);
         $Status->update(new StatusParams('Updated', '#121212', true, false));
-        $ourStatus = array_filter($Status->read(), function ($s) use ($id) {
+        $ourStatus = array_filter($Status->read(new ContentParams()), function ($s) use ($id) {
             return ((int) $s['category_id']) === $id;
         });
         $status = array_pop($ourStatus);
@@ -48,12 +51,12 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse((bool) $status['is_default']);
     }
 
-    public function testReadColor()
+    public function testReadColor(): void
     {
         $this->assertEquals('29aeb9', strtolower($this->Status->readColor(1)));
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $this->expectException(ImproperActionException::class);
         $this->Status->destroy();

@@ -13,7 +13,7 @@ use Elabftw\Elabftw\AuthResponse;
 
 class TeamAuthTest extends \PHPUnit\Framework\TestCase
 {
-    public function testTryAuth()
+    public function testTryAuth(): void
     {
         $AuthService = new TeamAuth(1, 1);
         $authResponse = $AuthService->tryAuth();

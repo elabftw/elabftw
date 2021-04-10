@@ -7,6 +7,7 @@
  */
 import { Payload, Method, EntityType, Action, Target, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
+import tinymce from 'tinymce/tinymce';
 
 
 export default class Entity {
@@ -18,13 +19,14 @@ export default class Entity {
     this.sender = new Ajax();
   }
 
-  create(id: number): Promise<ResponseMsg> {
+  // content can be a template id (for experiments), an itemtype id (for items) or a template title
+  create(content: string): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,
       action: Action.Create,
       model: this.model,
       // this id is the experiment template or item type id
-      content: String(id),
+      content: content,
       entity: {
         type: this.model,
         id: null,
@@ -46,6 +48,15 @@ export default class Entity {
       target: target,
     };
     return this.sender.send(payload);
+  }
+
+  saveToFile(id, name): void {
+    // we have the name of the template used for filename
+    // and we have the id of the editor to get the content from
+    // we don't use activeEditor because it requires a click inside the editing area
+    const content = tinymce.get('e' + id).getContent();
+    const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
+    saveAs(blob, name + '.elabftw.tpl');
   }
 
   lock(id: number): Promise<ResponseMsg> {

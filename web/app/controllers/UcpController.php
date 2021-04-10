@@ -17,7 +17,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Maps\UserPreferences;
-use Elabftw\Models\Templates;
 use Elabftw\Services\Filter;
 use Elabftw\Services\LocalAuth;
 use Elabftw\Services\MfaHelper;
@@ -104,23 +103,6 @@ try {
         }
     }
     // END TAB 2
-
-    // TAB 3 : EXPERIMENTS TEMPLATES
-
-    // EDIT TEMPLATES
-    if ($Request->request->has('tpl_form')) {
-        $tab = '3';
-
-        $Templates = new Templates($App->Users, (int) $Request->request->get('tpl_id'));
-        $params = new EntityParams('title', $Request->request->get('tpl_title'));
-        $Templates->update($params);
-        $params = new EntityParams('date', Filter::kdate());
-        $Templates->update($params);
-        $params = new EntityParams('body', $Request->request->get('tpl_body'));
-        $Templates->update($params);
-        $templateId = '&templateid=' . $Request->request->get('tpl_id');
-    }
-    // END TAB 3
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));
     $Response = new RedirectResponse('../../ucp.php?tab=' . $tab . $templateId);

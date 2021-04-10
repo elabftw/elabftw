@@ -20,7 +20,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\EntityParamsInterface;
-use Elabftw\Interfaces\HasMetadataInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
@@ -36,7 +35,7 @@ use function sha1;
 /**
  * The mother class of Experiments, Items, Templates and ItemsTypes
  */
-abstract class AbstractEntity implements CrudInterface, HasMetadataInterface
+abstract class AbstractEntity implements CrudInterface
 {
     use EntityTrait;
 
@@ -351,7 +350,7 @@ abstract class AbstractEntity implements CrudInterface, HasMetadataInterface
                     return $this->updateJsonField($params);
                 }
                 $content = $params->getMetadata();
-                // no break
+                break;
             default:
                 throw new ImproperActionException('Invalid update target');
         }
@@ -601,13 +600,6 @@ abstract class AbstractEntity implements CrudInterface, HasMetadataInterface
 
         $this->Db->execute($req);
         return $req->rowCount() > 0;
-    }
-
-    // TODO deprecated
-    public function getMetadata(): ?string
-    {
-        $entityData = $this->readAll(false);
-        return $entityData['metadata'];
     }
 
     public function getTable(): string

@@ -22,7 +22,7 @@ $(document).ready(function(){
 
   // CREATE EXPERIMENT with shortcut
   key($('#shortcuts').data('create'), function() {
-    EntityC.create(0).then(json => {
+    EntityC.create('0').then(json => {
       window.location.href = `experiments.php?mode=edit&id=${json.res}`;
     });
   });

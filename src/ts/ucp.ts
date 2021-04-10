@@ -9,8 +9,9 @@ import { notif } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Apikey from './Apikey.class';
-import Template from './Template.class';
 import i18next from 'i18next';
+import { EntityType, Entity, Target } from './interfaces';
+import EntityClass from './Entity.class';
 
 $(document).ready(function() {
   if (window.location.pathname !== '/ucp.php') {
@@ -23,7 +24,7 @@ $(document).ready(function() {
   });
 
   const ApikeyC = new Apikey();
-  const TemplateC = new Template();
+  const EntityC = new EntityClass(EntityType.Template);
 
   // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {
@@ -33,7 +34,7 @@ $(document).ready(function() {
       const title = prompt(i18next.t('template-title'));
       if (title) {
         // no body on template creation
-        TemplateC.create(title).then(json => {
+        EntityC.create(title).then(json => {
           window.location.replace(`ucp.php?tab=3&templateid=${json.value}`);
         });
       }
@@ -41,14 +42,21 @@ $(document).ready(function() {
     } else if (el.matches('[data-action="lock-template"]')) {
       // reload the page to change the icon and make the edit button disappear (#1897)
       const id = el.dataset.id;
-      TemplateC.lock(parseInt(id)).then(() => window.location.href = `?tab=3&templateid=${id}`);
+      EntityC.lock(parseInt(id)).then(() => window.location.href = `?tab=3&templateid=${id}`);
+    // TODO autoupdatetitle on blur
+    // UPDATE TEMPLATE
+    } else if (el.matches('[data-action="update-template"]')) {
+      const id = el.dataset.id;
+      const body = tinymce.activeEditor.getContent();
+      tinymce.activeEditor.setDirty(false);
+      EntityC.update(parseInt(id), Target.Body, body);
     // DOWNLOAD TEMPLATE
     } else if (el.matches('[data-action="download-template"]')) {
-      TemplateC.saveToFile(parseInt(el.dataset.id), el.dataset.name);
+      EntityC.saveToFile(parseInt(el.dataset.id), el.dataset.name);
     // DESTROY TEMPLATE
     } else if (el.matches('[data-action="destroy-template"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        TemplateC.destroy(parseInt(el.dataset.id))
+        EntityC.destroy(parseInt(el.dataset.id))
           .then(() => window.location.replace('ucp.php?tab=3'))
           .catch((e) => notif({'res': false, 'msg': e.message}));
       }
@@ -134,8 +142,12 @@ $(document).ready(function() {
     const file = (event.target as HTMLInputElement).files[0];
     const reader = new FileReader();
     reader.onload = function(event): void {
-      TemplateC.create(title, event.target.result as string).then(json => {
-        window.location.replace(`ucp.php?tab=3&templateid=${json.value}`);
+      const body = event.target.result as string;
+      EntityC.create(title).then(json => {
+        const newid = parseInt(json.value);
+        EntityC.update(newid, Target.Body, body).then(() => {
+          window.location.replace(`ucp.php?tab=3&templateid=${json.value}`);
+        });
       });
 
       $('#import_tpl').hide();

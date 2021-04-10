@@ -82,7 +82,7 @@ $(document).ready(function() {
     } else if (el.matches('[data-action="create-entity"]')) {
       const path = window.location.pathname;
       if (path.split('/').pop() === 'experiments.php') {
-        const tplid = parseInt(el.dataset.tplid);
+        const tplid = el.dataset.tplid;
         (new Entity(EntityType.Experiment)).create(tplid).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
       } else {
         // for database items, show a selection modal
@@ -90,7 +90,7 @@ $(document).ready(function() {
         ($('#createModal') as any).modal('toggle');
       }
     } else if (el.matches('[data-action="create-item"]')) {
-      const tplid = parseInt(el.dataset.tplid);
+      const tplid = el.dataset.tplid;
       (new Entity(EntityType.Item)).create(tplid).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
     }
   });

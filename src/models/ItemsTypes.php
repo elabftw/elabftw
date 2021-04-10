@@ -29,6 +29,7 @@ class ItemsTypes extends AbstractEntity
     {
         $this->Db = Db::getConnection();
         $this->team = $team;
+        $this->type = 'items_types';
         if ($id !== null) {
             $this->setId($id);
         }
@@ -103,17 +104,6 @@ class ItemsTypes extends AbstractEntity
             return array();
         }
         return $res;
-    }
-
-    public function getMetadata(): ?string
-    {
-        $res = $this->read();
-        return $res['metadata'];
-    }
-
-    public function getTable(): string
-    {
-        return 'items_types';
     }
 
     public function canOrExplode(string $rw): void

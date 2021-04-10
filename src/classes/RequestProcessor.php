@@ -13,8 +13,7 @@ namespace Elabftw\Elabftw;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Process a classic request, only here because of Ajax.php and EntityAjaxController that are both deprecated
- * @deprecated
+ * Process a classic GET request
  */
 class RequestProcessor extends AbstractProcessor
 {
@@ -22,24 +21,20 @@ class RequestProcessor extends AbstractProcessor
     {
         $type = null;
         $itemId = null;
-        if ($request->getMethod() === 'POST') {
-            $this->action = $request->request->get('action');
-            $what = $request->request->get('what');
-            $type = $request->request->get('type');
-            $params = $request->request->get('params') ?? array();
-        } else {
-            $this->action = $request->query->get('action');
-            $what = $request->query->get('what');
-            $type = $request->query->get('type');
-            $params = $request->query->get('params') ?? array();
-        }
-        if (isset($params['itemId'])) {
-            $itemId = (int) $params['itemId'];
+        $this->action = $request->query->get('action');
+        $this->target = $this->setTarget($request->query->get('target') ?? '');
+
+        if ($request->query->has('entity')) {
+            // we don't use the normal get here because we want to get an array, not a string
+            // so use all() that returns an array, and get the entity from that
+            $entity = $request->query->all()['entity'];
+            $type = $entity['type'];
+            $itemId = (int) $entity['id'];
         }
 
         if ($type !== null) {
             $this->Entity = $this->getEntity($type, $itemId);
         }
-        $this->Model = $this->buildModel($what);
+        $this->Model = $this->buildModel($request->query->get('model'));
     }
 }

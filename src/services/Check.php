@@ -171,7 +171,9 @@ class Check
             'date',
             'file',
             'finished',
+            'metadata',
             'real_name',
+            'tinymce',
             'title',
             // no target is also valid
             '',

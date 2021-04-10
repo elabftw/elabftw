@@ -710,7 +710,7 @@ class ApiController implements ControllerInterface
      */
     private function createTemplate(): Response
     {
-        $params = new CreateTemplate('created from api', 'yep');
+        $params = new EntityParams('created from api');
         $id = $this->Entity->create($params);
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }

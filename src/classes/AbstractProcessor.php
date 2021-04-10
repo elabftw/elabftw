@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\ModelInterface;
+use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\ProcessorInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
@@ -21,7 +21,6 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
-use Elabftw\Models\Metadata;
 use Elabftw\Models\PrivacyPolicy;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
@@ -50,7 +49,7 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     protected ?int $id = null;
 
-    protected ModelInterface $Model;
+    protected CrudInterface $Model;
 
     protected array $extra;
 
@@ -62,7 +61,7 @@ abstract class AbstractProcessor implements ProcessorInterface
         $this->process($request);
     }
 
-    public function getModel(): ModelInterface
+    public function getModel(): CrudInterface
     {
         return $this->Model;
     }
@@ -70,6 +69,11 @@ abstract class AbstractProcessor implements ProcessorInterface
     public function getAction(): string
     {
         return $this->action;
+    }
+
+    public function getTarget(): string
+    {
+        return $this->target;
     }
 
     // @phpstan-ignore-next-line
@@ -101,7 +105,7 @@ abstract class AbstractProcessor implements ProcessorInterface
         return new Items($this->Users, $itemId);
     }
 
-    protected function buildModel(string $model): ModelInterface
+    protected function buildModel(string $model): CrudInterface
     {
         switch ($model) {
             case 'apikey':
@@ -116,8 +120,6 @@ abstract class AbstractProcessor implements ProcessorInterface
                 return new Steps($this->Entity, $this->id);
             case 'upload':
                 return new Uploads($this->Entity, $this->id);
-            case 'metadata':
-                return new Metadata($this->Entity);
             //case 'privacyPolicy': TODO, do we really need a privacy policy class??
             //    return new PrivacyPolicy(new Config());
             case 'teamgroup':
@@ -151,11 +153,13 @@ abstract class AbstractProcessor implements ProcessorInterface
     // @phpstan-ignore-next-line
     private function getParamsObject()
     {
-        if ($this->Model instanceof Comments || $this->Model instanceof Todolist || $this->Model instanceof Links) {
+        if ($this->Model instanceof Comments ||
+            $this->Model instanceof Todolist ||
+            $this->Model instanceof Links) {
             return new ContentParams($this->content, $this->target);
         }
-        if ($this->Model instanceof Experiments || $this->Model instanceof Items) {
-            return new EntityParams($this->content, $this->target);
+        if ($this->Model instanceof Experiments || $this->Model instanceof Items || $this->Model instanceof Templates) {
+            return new EntityParams($this->content, $this->target, $this->extra);
         }
         if ($this->Model instanceof ItemsTypes) {
             return new ItemTypeParams(
@@ -179,13 +183,12 @@ abstract class AbstractProcessor implements ProcessorInterface
             );
         }
         if ($this->Model instanceof ApiKeys) {
+            // TODO only giv extra as third param and the get function will extract the correct stuff from it?
+            // will help with homogeneisation of Params class
             return new CreateApikey($this->content, $this->target, (int) $this->extra['canwrite']);
         }
         if ($this->Model instanceof Tags) {
             return new TagParams($this->content);
-        }
-        if ($this->Model instanceof Templates) {
-            return new CreateTemplate($this->content, $this->extra['body'] ?? '');
         }
         if ($this->Model instanceof Uploads) {
             return new UploadParams($this->content, $this->target);

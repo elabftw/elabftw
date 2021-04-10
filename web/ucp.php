@@ -33,7 +33,7 @@ $Response->prepare($Request);
 
 try {
     $ApiKeys = new ApiKeys($App->Users);
-    $apiKeysArr = $ApiKeys->readAll();
+    $apiKeysArr = $ApiKeys->read();
 
     $TeamGroups = new TeamGroups($App->Users);
     $teamGroupsArr = $TeamGroups->read();

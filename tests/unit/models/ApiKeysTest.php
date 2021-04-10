@@ -28,7 +28,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAll()
     {
-        $res = $this->ApiKeys->readAll();
+        $res = $this->ApiKeys->read();
         $this->assertIsArray($res);
         $this->assertTrue($res[1]['name'] === 'test key');
         $this->assertTrue($res[1]['can_write'] === '1');

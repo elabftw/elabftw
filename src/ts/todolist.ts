@@ -13,6 +13,10 @@ import i18next from 'i18next';
 document.addEventListener('DOMContentLoaded', () => {
   const TodolistC = new Todolist();
 
+  if (document.getElementById('info').dataset.page === 'login') {
+    return;
+  }
+
   // TOGGLE
   // reopen todolist panel if it was previously opened
   if (localStorage.getItem('isTodolistOpen') === '1') {

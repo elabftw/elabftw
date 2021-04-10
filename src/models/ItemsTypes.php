@@ -59,7 +59,7 @@ class ItemsTypes extends AbstractEntity
     /**
      * Read the body (template) and default permissions of the item_type from an id
      */
-    public function read(bool $getTags = true): array
+    public function read(): array
     {
         $sql = 'SELECT template, canread, canwrite, metadata FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
@@ -83,7 +83,7 @@ class ItemsTypes extends AbstractEntity
      *
      * @return array all the items types for the team
      */
-    public function readAll(): array
+    public function readAll(bool $getTags = true): array
     {
         $sql = 'SELECT items_types.id AS category_id,
             items_types.name AS category,

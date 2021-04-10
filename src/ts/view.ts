@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const AjaxC = new Ajax(entity.type, String(entity.id));
 
   // add extra fields elements from metadata json
-  const MetadataC = new Metadata(entity.type, String(entity.id));
+  const MetadataC = new Metadata(entity);
   MetadataC.display('view');
 
   // EDIT SHORTCUT

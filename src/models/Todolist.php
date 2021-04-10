@@ -12,7 +12,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\ModelInterface;
+use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -20,7 +20,7 @@ use PDO;
 /**
  * All about the todolist
  */
-class Todolist implements ModelInterface
+class Todolist implements CrudInterface
 {
     use SetIdTrait;
     use SortableTrait;

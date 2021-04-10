@@ -50,9 +50,11 @@ class MakeJson extends AbstractMake
         $res = array();
         foreach ($this->idArr as $id) {
             $this->Entity->setId((int) $id);
-            $all = $this->Entity->read(true);
+            $all = $this->Entity->read();
             // decode the metadata column because it's json
-            $all['metadata'] = json_decode($all['metadata']);
+            if (isset($all['metadata'])) {
+                $all['metadata'] = json_decode($all['metadata']);
+            }
             $res[] = $all;
         }
 

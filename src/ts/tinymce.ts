@@ -225,6 +225,7 @@ export function getTinymceBaseConfig(page: string): object {
       }
     ],
     // this will GET templates from current user
-    templates: 'app/controllers/Ajax.php?action=readForTinymce&what=template&type=experiments_templates'
+    //templates: 'app/controllers/Ajax.php?action=readForTinymce&what=template&type=experiments_templates'
+    templates: 'app/controllers/RequestHandler.php?action=read&target=tinymce&entity[type]=template'
   };
 }

@@ -9,7 +9,6 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\StepParams;
 use Elabftw\Elabftw\TagParams;
@@ -139,7 +138,11 @@ class Populate
         if ($user['create_templates'] ?? false) {
             $Templates = new Templates($Users);
             for ($i = 0; $i < $this->iter; $i++) {
-                $Templates->create(new CreateTemplate($this->faker->sentence(), $this->faker->realText(1000)));
+                $Templates->create(new EntityParams(
+                    $this->faker->sentence(),
+                    '',
+                    array('body' => $this->faker->realText(1000)),
+                ));
             }
         }
     }

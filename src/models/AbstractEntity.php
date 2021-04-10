@@ -18,9 +18,9 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Interfaces\HasMetadataInterface;
-use Elabftw\Interfaces\ModelInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
@@ -36,7 +36,7 @@ use function sha1;
 /**
  * The mother class of Experiments, Items, Templates and ItemsTypes
  */
-abstract class AbstractEntity implements ModelInterface, HasMetadataInterface
+abstract class AbstractEntity implements CrudInterface, HasMetadataInterface
 {
     use EntityTrait;
 
@@ -249,14 +249,18 @@ abstract class AbstractEntity implements ModelInterface, HasMetadataInterface
         return $itemsArr;
     }
 
+    public function read(): array
+    {
+        return $this->readAll();
+    }
+
     /**
      * Read all from one entity
      * Here be dragons!
      *
      * @param bool $getTags if true, might take a long time
-     * @return array
      */
-    public function read(bool $getTags = true): array
+    public function readAll(bool $getTags = true): array
     {
         if ($this->id === null) {
             throw new IllegalActionException('No id was set!');
@@ -342,6 +346,12 @@ abstract class AbstractEntity implements ModelInterface, HasMetadataInterface
             case 'body':
                 $content = $params->getBody();
                 break;
+            case 'metadata':
+                if (!empty($params->getField())) {
+                    return $this->updateJsonField($params);
+                }
+                $content = $params->getMetadata();
+                // no break
             default:
                 throw new ImproperActionException('Invalid update target');
         }
@@ -535,8 +545,6 @@ abstract class AbstractEntity implements ModelInterface, HasMetadataInterface
 
     /**
      * Now that we have an id, load the data in entityData array
-     *
-     * @return void
      */
     public function populate(): void
     {
@@ -595,15 +603,31 @@ abstract class AbstractEntity implements ModelInterface, HasMetadataInterface
         return $req->rowCount() > 0;
     }
 
+    // TODO deprecated
     public function getMetadata(): ?string
     {
-        $entityData = $this->read(false);
+        $entityData = $this->readAll(false);
         return $entityData['metadata'];
     }
 
     public function getTable(): string
     {
         return $this->type;
+    }
+
+    /**
+     * Update only one field in the metadata json
+     */
+    protected function updateJsonField(EntityParamsInterface $params): bool
+    {
+        // build field (input is double quoted to allow for whitespace in key)
+        $field = '$.extra_fields."' . $params->getField() . '".value';
+        $sql = 'UPDATE ' . $this->getTable() . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':field', $field);
+        $req->bindValue(':value', $params->getContent());
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     /**

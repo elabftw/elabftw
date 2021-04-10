@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const EntityC = new EntityClass(entity.type);
 
   // add extra fields elements from metadata json
-  const MetadataC = new Metadata(entity.type, String(entity.id));
+  const MetadataC = new Metadata(entity);
   MetadataC.display('edit');
 
   // UPLOAD FORM

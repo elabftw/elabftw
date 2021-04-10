@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Check;
@@ -31,7 +30,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->toggleLock();
         $this->Experiments->destroy();
         $this->Templates = new Templates($this->Users);
-        $this->Templates->create(new CreateTemplate('my template', 'is so cool'));
+        $this->Templates->create(new EntityParams('my template', '', array('body' => 'is so cool')));
         $new = $this->Experiments->create(new EntityParams('1'));
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments = new Experiments($this->Users, $new);

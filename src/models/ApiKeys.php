@@ -13,8 +13,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateApikeyParamsInterface;
-use Elabftw\Interfaces\DestroyableInterface;
-use Elabftw\Interfaces\ModelInterface;
+use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\ParamsInterface;
 use Elabftw\Traits\SetIdTrait;
 use function password_hash;
@@ -24,7 +23,7 @@ use PDO;
 /**
  * Api keys CRUD class
  */
-class ApiKeys implements DestroyableInterface, ModelInterface
+class ApiKeys implements CrudInterface
 {
     use SetIdTrait;
 
@@ -81,10 +80,8 @@ class ApiKeys implements DestroyableInterface, ModelInterface
 
     /**
      * Read all keys for current user
-     *
-     * @return array
      */
-    public function readAll(): array
+    public function read(): array
     {
         $sql = 'SELECT id, name, created_at, hash, can_write FROM api_keys WHERE userid = :userid AND team = :team';
         $req = $this->Db->prepare($sql);

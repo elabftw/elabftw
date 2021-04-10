@@ -71,6 +71,7 @@ enum Target {
   Date = 'date',
   Comment = 'comment',
   Finished = 'finished',
+  Metadata = 'metadata',
   RealName = 'real_name',
   Tag = 'tag',
   Title = 'title',

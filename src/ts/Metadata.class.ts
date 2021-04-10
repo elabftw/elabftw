@@ -5,25 +5,26 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import Crud from './Crud.class';
+import { Payload, Method, Model, Action, Entity, EntityType, Target, ResponseMsg } from './interfaces';
+import { Ajax } from './Ajax.class';
 import i18next from 'i18next';
+
 
 export function ResourceNotFoundException(message: string) {
   this.message = message;
   this.name = 'ResourceNotFoundException';
 }
 
-export class Metadata extends Crud {
-  type: string;
-  id: string;
-  what: string;
+export class Metadata {
+  entity: Entity;
+  model: EntityType;
+  sender: Ajax;
   metadataDiv: Element;
 
-  constructor(type: string, id: string) {
-    super('app/controllers/Ajax.php');
-    this.type = type;
-    this.id = id;
-    this.what = 'metadata';
+  constructor(entity: Entity) {
+    this.entity = entity;
+    this.model = entity.type,
+    this.sender = new Ajax();
     // this is the div that will hold all the generated fields from metadata json
     this.metadataDiv = document.getElementById('metadataDiv');
   }
@@ -32,17 +33,19 @@ export class Metadata extends Crud {
    * Get the json from the metadata column
    */
   read() {
-    return fetch(`${this.controller}?what=${this.what}&action=read&type=${this.type}&params[itemId]=${this.id}`).then(response => {
-      if (!response.ok) {
-        throw new Error('Error fetching metadata!');
-      }
-      return response.json();
-    }).then(data => {
+    const payload: Payload = {
+      method: Method.GET,
+      action: Action.Read,
+      model: this.model,
+      entity: this.entity,
+      target: Target.Metadata,
+    };
+    return this.sender.send(payload).then(json => {
       // if there are no metadata.json file available, return an empty object
-      if (data.res === false) {
+      if (json.res === false) {
         return {};
       }
-      return JSON.parse(data.msg);
+      return JSON.parse(json.value);
     });
   }
 
@@ -55,31 +58,33 @@ export class Metadata extends Crud {
     if (event.target.type === 'checkbox') {
       value = event.target.checked ? 'on': 'off';
     }
-    this.send({
-      action: 'updateExtraField',
-      what: this.what,
-      type: this.type,
-      params: {
-        itemId: this.id,
-        field: event.target.dataset.field,
-        value: value,
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Update,
+      model: this.model,
+      entity: this.entity,
+      target: Target.Metadata,
+      content: value,
+      extraParams: {
+        jsonField: event.target.dataset.field,
       },
-    });
+    };
+    return this.sender.send(payload);
   }
 
   /**
    * Save the whole json at once, coming from json editor save button
    */
   update(metadata) {
-    this.send({
-      action: 'update',
-      what: this.what,
-      type: this.type,
-      params: {
-        itemId: this.id,
-        template: metadata,
-      },
-    });
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Update,
+      model: this.model,
+      entity: this.entity,
+      target: Target.Metadata,
+      content: metadata,
+    };
+    return this.sender.send(payload);
   }
 
 

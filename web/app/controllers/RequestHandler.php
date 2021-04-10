@@ -44,6 +44,8 @@ try {
 
     if ($Request->headers->get('Content-Type') === 'application/json') {
         $Processor = new JsonProcessor($App->Users, $Request);
+    } elseif ($Request->getMethod() === 'GET') {
+        $Processor = new RequestProcessor($App->Users, $Request);
     } else {
         $Processor = new FormProcessor($App->Users, $Request);
     }
@@ -51,6 +53,7 @@ try {
     $action = $Processor->getAction();
     $Model = $Processor->getModel();
     $Params = $Processor->getParams();
+    $target = $Processor->getTarget();
 
 
     // Status actions can only be accessed by admin level
@@ -63,6 +66,18 @@ try {
         $res = $Model->create($Params);
         if ($Model instanceof ApiKeys) {
             $res = $Params->getKey();
+        }
+    } elseif ($action === 'read') {
+        if ($target === 'tinymce') {
+            // TODO maybe read should take a Params object to get the target. Yes.
+            // @phpstan-ignore-next-line
+            $res = $Model->readForUser();
+        } else {
+            $res = $Model->read();
+        }
+        // filter out the metadata if we only want that
+        if ($target === 'metadata') {
+            $res = $res['metadata'];
         }
     } elseif ($action === 'update') {
         // TODO should not exist, but it's here for now

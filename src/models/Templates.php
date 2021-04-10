@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CreateTemplateParamsInterface;
+use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -36,7 +36,7 @@ class Templates extends AbstractEntity
         $this->type = 'experiments_templates';
     }
 
-    public function create(CreateTemplateParamsInterface $params): int
+    public function create(EntityParamsInterface $params): int
     {
         $canread = 'team';
         $canwrite = 'user';
@@ -55,7 +55,7 @@ class Templates extends AbstractEntity
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':title', $params->getContent());
         $req->bindParam(':date', $date);
-        $req->bindValue(':body', $params->getBody());
+        $req->bindValue(':body', $params->getExtraBody());
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
@@ -100,7 +100,7 @@ class Templates extends AbstractEntity
     /**
      * Read a template
      */
-    public function read(bool $getTags = false): array
+    public function read(): array
     {
         $sql = "SELECT experiments_templates.id, experiments_templates.title, experiments_templates.body,
             experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,

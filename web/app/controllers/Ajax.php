@@ -52,7 +52,6 @@ try {
             break;
 
         case 'read':
-            // @phpstan-ignore-next-line
             $res = $Model->read();
             $Response->setData(array(
                 'res' => true,

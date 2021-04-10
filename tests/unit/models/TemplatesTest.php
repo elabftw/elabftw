@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Elabftw\EntityParams;
 
 class TemplatesTest extends \PHPUnit\Framework\TestCase
@@ -21,7 +20,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->Templates->create(new CreateTemplate('Test tpl', 'pwet'));
+        $this->Templates->create(new EntityParams('Test tpl', '', array('body' => 'pwet')));
     }
 
     public function testRead()

@@ -13,7 +13,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\ModelInterface;
+use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Traits\SetIdTrait;
 use function in_array;
 use PDO;
@@ -21,7 +21,7 @@ use PDO;
 /**
  * Everything related to the team groups
  */
-class TeamGroups implements ModelInterface
+class TeamGroups implements CrudInterface
 {
     use SetIdTrait;
 

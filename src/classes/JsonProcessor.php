@@ -24,6 +24,7 @@ class JsonProcessor extends AbstractProcessor
         $decoded = $request->toArray();
 
         $this->action = $decoded['action'] ?? '';
+        // TODO rename checkTarget()
         $this->target = $this->setTarget($decoded['target'] ?? '');
 
         if (isset($decoded['entity'])) {

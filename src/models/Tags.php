@@ -17,7 +17,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\ModelInterface;
+use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Traits\SetIdTrait;
 use function implode;
@@ -26,7 +26,7 @@ use PDO;
 /**
  * All about the tag
  */
-class Tags implements ModelInterface
+class Tags implements CrudInterface
 {
     use SetIdTrait;
 
@@ -83,6 +83,11 @@ class Tags implements ModelInterface
         }
 
         return $tagId;
+    }
+
+    public function read(): array
+    {
+        return $this->readAll();
     }
 
     /**

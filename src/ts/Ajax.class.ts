@@ -6,9 +6,8 @@
  * @package elabftw
  */
 import { notif } from './misc';
-import { Payload, ResponseMsg } from './interfaces';
-// TODO detect if session timedout in the response
-//if (xhr.getResponseHeader('X-Elab-Need-Auth') === '1') {
+import { Payload, Model, Method, ResponseMsg } from './interfaces';
+
 export class Ajax {
   type: string;
   id: string;
@@ -23,6 +22,7 @@ export class Ajax {
     }
   }
 
+  /** @deprecated */
   get(action: string): Promise<ResponseMsg> {
     return fetch(`${this.controller}?${action}=1&id=${this.id}&type=${this.type}`).then(response => {
       if (!response.ok) {
@@ -38,6 +38,7 @@ export class Ajax {
     });
   }
 
+  /** @deprecated */
   do(action: string): Promise<ResponseMsg> {
     // note: only works on Ajax.php controller
     return fetch(`${this.controller}?action=${action}&what=${this.type}`).then(response => {
@@ -55,6 +56,7 @@ export class Ajax {
   }
 
 
+  /** @deprecated */
   post(action: string): Promise<ResponseMsg> {
     const formData = new FormData();
     formData.append(action, '1');
@@ -79,7 +81,34 @@ export class Ajax {
   }
 
   send(payload: Payload): Promise<ResponseMsg> {
-    // add csrf token to the request in the header
+    // get request should not have a body, and that's a shame, it would make things simpler IMHO..
+    let response: Promise<Response>;
+    if (payload.method === Method.GET) {
+      response = this.sendGet(payload);
+    } else {
+      response = this.sendPost(payload);
+    }
+    return response.then(response => {
+      if (!response.ok) {
+        throw new Error('An unexpected error occured!');
+      }
+      // TODO I don't think this works well
+      if (response.headers.has('X-Elab-Need-Auth')) {
+        notif({res: false, msg: 'Your session expired!'});
+        throw new Error('Session expired!');
+      }
+      return response.json();
+    }).then(json => {
+      // we don't want notifs on get requests
+      if (payload.method === Method.POST) {
+        notif(json);
+      }
+      return json;
+    });
+  }
+
+  sendPost(payload: Payload): Promise<Response> {
+    // now doing POST method
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     return fetch('app/controllers/RequestHandler.php', {
       method: payload.method,
@@ -89,14 +118,10 @@ export class Ajax {
         'X-Requested-With': 'XMLHttpRequest',
       },
       body: JSON.stringify(payload),
-    }).then(response => {
-      if (!response.ok) {
-        throw new Error('An unexpected error occured!');
-      }
-      return response.json();
-    }).then(json => {
-      notif(json);
-      return json;
     });
+  }
+
+  sendGet(payload: Payload): Promise<Response> {
+    return fetch(`app/controllers/RequestHandler.php?action=${payload.action}&entity[id]=${payload.entity.id}&entity[type]=${payload.entity.type}&model=${payload.model}&target=${payload.target}`);
   }
 }

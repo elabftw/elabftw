@@ -15,4 +15,6 @@ interface ContentParamsInterface
     public function getContent(): string;
 
     public function getTarget(): string;
+
+    public function getBody(): string;
 }

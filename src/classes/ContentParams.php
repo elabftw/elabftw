@@ -42,4 +42,9 @@ class ContentParams implements ContentParamsInterface
         }
         return $c;
     }
+
+    public function getBody(): string
+    {
+        return Filter::body($this->content);
+    }
 }

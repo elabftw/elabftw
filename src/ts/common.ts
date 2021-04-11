@@ -71,7 +71,11 @@ $(document).ready(function() {
       };
       const AjaxC = new Ajax();
       AjaxC.send(payload).then(json => {
-        (document.getElementById('privacyModalBody') as HTMLDivElement).innerHTML = json.value as string;
+        let policy = json.value as string;
+        if (!policy) {
+          policy = 'No privacy policy is set.';
+        }
+        (document.getElementById('privacyModalBody') as HTMLDivElement).innerHTML = policy;
         // modal plugin requires jquery
         ($('#privacyModal') as any).modal('toggle');
       });

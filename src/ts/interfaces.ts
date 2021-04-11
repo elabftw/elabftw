@@ -60,8 +60,8 @@ enum Action {
 enum Model {
   Apikey = 'apikey',
   Comment = 'comment',
-  Config = 'config',
   Link = 'link',
+  PrivacyPolicy = 'privacypolicy',
   Status = 'status',
   Step = 'step',
   Tag = 'tag',

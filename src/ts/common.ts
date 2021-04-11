@@ -67,12 +67,10 @@ $(document).ready(function() {
       const payload: Payload = {
         method: Method.GET,
         action: Action.Read,
-        model: Model.Config,
-        target: Target.PrivacyPolicy,
+        model: Model.PrivacyPolicy,
       };
       const AjaxC = new Ajax();
       AjaxC.send(payload).then(json => {
-        console.log(json);
         (document.getElementById('privacyModalBody') as HTMLDivElement).innerHTML = json.value as string;
         // modal plugin requires jquery
         ($('#privacyModal') as any).modal('toggle');

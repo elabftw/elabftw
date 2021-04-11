@@ -15,5 +15,5 @@ namespace Elabftw\Interfaces;
  */
 interface ReadableInterface
 {
-    public function read(ContentParamsInterface $params): array;
+    public function read(ContentParamsInterface $params): array|string;
 }

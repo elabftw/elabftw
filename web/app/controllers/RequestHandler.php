@@ -70,7 +70,6 @@ try {
     }
 
     if ($action === 'create') {
-        // @phpstan-ignore-next-line
         $res = $Model->create($Params);
         if ($Model instanceof ApiKeys) {
             $res = $Params->getKey();
@@ -81,8 +80,6 @@ try {
         // TODO just use read but target list instead of public getList
         if ($target === 'list' && ($Model instanceof Users)) {
             $res = $Model->getList($Params);
-        } elseif ($target === 'privacypolicy' && $Model instanceof Config) {
-            $res = $Model->getPrivacyPolicy();
         } else {
             $res = $Model->read($Params);
         }
@@ -100,7 +97,6 @@ try {
                 throw new ImproperActionException('You cannot delete experiments!');
             }
         }
-        // @phpstan-ignore-next-line
         $res = $Model->destroy();
     } elseif ($action === 'duplicate' && $Model instanceof AbstractEntity) {
         $res = $Model->duplicate();

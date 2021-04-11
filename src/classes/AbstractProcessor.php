@@ -50,7 +50,7 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     protected ?int $id = null;
 
-    protected CrudInterface|Users|Config $Model;
+    protected CrudInterface|Users $Model;
 
     protected array $extra = array();
 
@@ -62,7 +62,7 @@ abstract class AbstractProcessor implements ProcessorInterface
         $this->process($request);
     }
 
-    public function getModel(): CrudInterface|Users|Config
+    public function getModel(): CrudInterface|Users
     {
         return $this->Model;
     }
@@ -127,13 +127,11 @@ abstract class AbstractProcessor implements ProcessorInterface
         return new Items($this->Users, $itemId);
     }
 
-    protected function buildModel(string $model): CrudInterface|Users|Config
+    protected function buildModel(string $model): CrudInterface|Users
     {
         switch ($model) {
             case 'apikey':
                 return new ApiKeys($this->Users, $this->id);
-            case 'config':
-                return new Config();
             case 'status':
                 return new Status($this->Users->team, $this->id);
             case 'comment':
@@ -144,8 +142,8 @@ abstract class AbstractProcessor implements ProcessorInterface
                 return new Steps($this->Entity, $this->id);
             case 'upload':
                 return new Uploads($this->Entity, $this->id);
-            //case 'privacyPolicy': TODO, do we really need a privacy policy class??
-            //    return new PrivacyPolicy(new Config());
+            case 'privacypolicy':
+                return new PrivacyPolicy(new Config());
             case 'teamgroup':
                 return new TeamGroups($this->Users, $this->id);
             case 'tag':
@@ -183,7 +181,7 @@ abstract class AbstractProcessor implements ProcessorInterface
             $this->Model instanceof Todolist ||
             $this->Model instanceof Links ||
             $this->Model instanceof Users ||
-            $this->Model instanceof Config) {
+            $this->Model instanceof PrivacyPolicy) {
             return new ContentParams($this->content, $this->target);
         }
         if ($this->Model instanceof Experiments || $this->Model instanceof Items || $this->Model instanceof Templates) {

@@ -9,8 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Exception;
-
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     private Config $Config;
@@ -39,24 +37,6 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'ban_time' => 42,
         );
 
-        $this->Config->update($post);
-        // now try bad path to cert
-        /* TODO
-        $post = array('stampcert' => 'invalid/path');
-        $this->expectException(\Exception::class);
-        $this->Config->update($post);
-         */
-        // try bad value for ban_time
-        $post = array('ban_time' => 'invalid');
-        $this->expectException(Exception::class);
-        $this->Config->update($post);
-        // try bad value for login_tries
-        $post = array('login_tries' => 'invalid');
-        $this->expectException(Exception::class);
-        $this->Config->update($post);
-        // try with no password
-        $post = array('smtp_password' => '');
-        $this->expectException(Exception::class);
         $this->Config->update($post);
     }
 

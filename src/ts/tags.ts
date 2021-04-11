@@ -9,8 +9,9 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import Tag from './Tag.class';
 import i18next from 'i18next';
-import { EntityType, Entity } from './interfaces';
 import { getCheckedBoxes, notif } from './misc';
+import { Ajax } from './Ajax.class';
+import { Payload, Method, Model, Action, Target, EntityType, Entity } from './interfaces';
 
 $(document).ready(function() {
   let type = $('#info').data('type');
@@ -18,9 +19,10 @@ $(document).ready(function() {
     type = 'experiments_templates';
   }
 
+  const AjaxC = new Ajax();
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
-  let entityType: EntityType;
+  let entityType: EntityType = EntityType.Experiment;
   if (about.type === 'experiments') {
     entityType = EntityType.Experiment;
   }
@@ -31,9 +33,14 @@ $(document).ready(function() {
     entityType = EntityType.Template;
   }
 
+  let entityId = null;
+  if (about.id) {
+    entityId = parseInt(about.id);
+  }
+
   const entity: Entity = {
     type: entityType,
-    id: parseInt(about.id),
+    id: entityId,
   };
 
   const TagC = new Tag(entity);
@@ -85,32 +92,27 @@ $(document).ready(function() {
         response(cache[term]);
         return;
       }
-      request.what = 'tag';
-      // so we need to have a type here so we can get an entity (Database will be default) and the Tags object is correctly built by the Processor
-      request.type = 'not-important-but-needs-to-be-here';
-      request.action = 'getList';
-      request.params = {
-        name: term,
+      const payload: Payload = {
+        method: Method.GET,
+        action: Action.Read,
+        model: Model.Tag,
+        entity: entity,
+        target: Target.List,
+        content: term,
       };
-      $.getJSON('app/controllers/Ajax.php', request, function(data) {
-        cache[term] = data;
-        response(data);
+      AjaxC.send(payload).then(json => {
+        cache[term] = json.value;
+        response(json.value);
       });
     }
   });
 
-  // make the tag editable
+  // make the tag editable (on admin.ts)
   $(document).on('mouseenter', '.tag-editable', function() {
     ($(this) as any).editable(function(value) {
-      $.post('app/controllers/Ajax.php', {
-        action: 'update',
-        what: 'tag',
-        params: {
-          tag: value,
-          id: $(this).data('tagid'),
-        },
-      });
-
+      // we need to have an entity so the Tags model is built correctly
+      // also it's a mandatory constructor param for Tag.class.ts
+      TagC.update(value, $(this).data('tagid'));
       return(value);
     }, {
       tooltip : i18next.t('click-to-edit'),

@@ -176,6 +176,9 @@ class Uploads implements CrudInterface
      */
     public function read(ContentParamsInterface $params): array
     {
+        if ($params->getTarget() === 'all') {
+            return $this->readAll();
+        }
         $sql = 'SELECT * FROM uploads WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

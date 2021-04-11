@@ -10,7 +10,7 @@ import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Apikey from './Apikey.class';
 import i18next from 'i18next';
-import { EntityType, Entity, Target } from './interfaces';
+import { EntityType, Target } from './interfaces';
 import EntityClass from './Entity.class';
 
 $(document).ready(function() {

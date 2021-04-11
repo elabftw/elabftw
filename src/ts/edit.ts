@@ -9,7 +9,7 @@ declare let key: any;
 declare let MathJax: any;
 import { displayMolFiles, display3DMolecules, insertParamAndReload, notif } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
-import { EntityType, Entity, Target } from './interfaces';
+import { EntityType, Target, Upload, Payload, Method, Action } from './interfaces';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEntity } from './misc';
@@ -17,6 +17,7 @@ import Dropzone from 'dropzone';
 import i18next from 'i18next';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
+import UploadClass from './Upload.class';
 import EntityClass from './Entity.class';
 
 // the dropzone is created programmatically, disable autodiscover
@@ -54,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     init: function(): void {
 
-      // add additional parameters (id and type) //TODO
+      // add additional parameters (id and type)
       this.on('sending', function(file: string, xhr: string, formData: FormData) {
         formData.append('upload', '1');
         formData.append('type', entity.type);
@@ -125,20 +126,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // GET MOL FILES
   function getListFromMolFiles(): void {
     const mols: any = [];
-    $.get('app/controllers/Ajax.php', {
-      action: 'readAll',
-      what: 'upload',
-      type: entity.type,
-      params: {
-        itemId: entity.id,
-      },
-    }).done(function(json) {
-      const uploadedFiles = json.msg;
-      uploadedFiles.forEach(function(upload: any) {
+    const UploadC = new UploadClass(entity);
+    UploadC.read().then(json => {
+      for (const upload of json.value as Array<Upload>) {
         if (upload.real_name.split('.').pop() === 'mol') {
           mols.push([upload.real_name, upload.long_name]);
         }
-      });
+      }
       if (mols.length === 0) {
         notif({res: false, msg: 'No mol files found.'});
         return;
@@ -316,6 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const tinyConfig = getTinymceBaseConfig('edit');
+
   const tinyConfigForEdit = {
     images_upload_handler: (blobInfo, success): void => { // eslint-disable-line @typescript-eslint/camelcase
       const dropZone = Dropzone.forElement('#elabftw-dropzone');
@@ -356,6 +351,21 @@ document.addEventListener('DOMContentLoaded', () => {
         dropZone.addFile(blobInfo.blob());
         dropZone.tinyImageSuccess = success;
       }
+    },
+    // use undocumented callback function to asynchronously get the templates
+    // see https://github.com/tinymce/tinymce/issues/5637#issuecomment-624982699
+    templates: (callback): void => {
+      const payload: Payload = {
+        method: Method.GET,
+        action: Action.Read,
+        model: EntityType.Template,
+        entity: {
+          type: EntityType.Template,
+          id: null,
+        },
+        target: Target.List,
+      };
+      (new Ajax()).send(payload).then(json => callback(json.value));
     },
     // use a custom function for the save button in toolbar
     save_onsavecallback: (): void => quickSave(entity), // eslint-disable-line @typescript-eslint/camelcase

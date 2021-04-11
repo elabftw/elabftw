@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import { notif } from './misc';
-import { Payload, Action, Model, Method, ResponseMsg } from './interfaces';
+import { Payload, Action, Method, ResponseMsg } from './interfaces';
 
 export class Ajax {
   type: string;
@@ -37,24 +37,6 @@ export class Ajax {
       return json;
     });
   }
-
-  /** @deprecated */
-  do(action: string): Promise<ResponseMsg> {
-    // note: only works on Ajax.php controller
-    return fetch(`${this.controller}?action=${action}&what=${this.type}`).then(response => {
-      if (!response.ok) {
-        throw new Error('An unexpected error occured!');
-      }
-      return response.json();
-    }).then(json => {
-      if (!json.res) {
-        notif(json);
-        throw new Error('An unexpected error occured!');
-      }
-      return json;
-    });
-  }
-
 
   /** @deprecated */
   post(action: string): Promise<ResponseMsg> {

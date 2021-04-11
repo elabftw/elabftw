@@ -20,9 +20,12 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
+use Elabftw\Models\Tags;
+use Elabftw\Models\Users;
 use Exception;
 use PDOException;
 use Swift_TransportException;
@@ -61,14 +64,28 @@ try {
     if ($Model instanceof Status && !$App->Session->get('is_admin')) {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
+    // only privacy policy is a valid target for reading from request
+    if ($Model instanceof Config && $target !== 'privacypolicy') {
+        throw new IllegalActionException('User tried to access config.');
+    }
 
     if ($action === 'create') {
+        // @phpstan-ignore-next-line
         $res = $Model->create($Params);
         if ($Model instanceof ApiKeys) {
             $res = $Params->getKey();
         }
     } elseif ($action === 'read') {
-        $res = $Model->read($Params);
+        // TODO because Users is not crud
+        // TODO have a listable interface
+        // TODO just use read but target list instead of public getList
+        if ($target === 'list' && ($Model instanceof Users)) {
+            $res = $Model->getList($Params);
+        } elseif ($target === 'privacypolicy' && $Model instanceof Config) {
+            $res = $Model->getPrivacyPolicy();
+        } else {
+            $res = $Model->read($Params);
+        }
     } elseif ($action === 'update') {
         // TODO should not exist, but it's here for now
         if ($Model instanceof ItemsTypes) {
@@ -83,9 +100,12 @@ try {
                 throw new ImproperActionException('You cannot delete experiments!');
             }
         }
+        // @phpstan-ignore-next-line
         $res = $Model->destroy();
     } elseif ($action === 'duplicate' && $Model instanceof AbstractEntity) {
         $res = $Model->duplicate();
+    } elseif ($action === 'deduplicate' && $Model instanceof Tags) {
+        $res = $Model->deduplicate();
     } elseif ($action === 'lock' && $Model instanceof AbstractEntity) {
         $res = $Model->toggleLock();
     }

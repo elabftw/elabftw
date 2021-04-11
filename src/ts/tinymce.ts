@@ -127,7 +127,6 @@ export function getTinymceBaseConfig(page: string): object {
     plugins += ' autosave';
   }
 
-
   return {
     mode: 'specific_textareas',
     editor_selector: 'mceditable', // eslint-disable-line @typescript-eslint/camelcase
@@ -171,7 +170,7 @@ export function getTinymceBaseConfig(page: string): object {
       // use # for autocompletion
       delimiter: '#',
       // get the source from json with get request
-      source: function (query: string, process: any) {
+      source: function (query: string, process: any): void {
         const url = 'app/controllers/EntityAjaxController.php';
         $.getJSON(url, {
           mention: 1,
@@ -224,8 +223,5 @@ export function getTinymceBaseConfig(page: string): object {
         }
       }
     ],
-    // this will GET templates from current user
-    //templates: 'app/controllers/Ajax.php?action=readForTinymce&what=template&type=experiments_templates'
-    templates: 'app/controllers/RequestHandler.php?action=read&target=tinymce&entity[type]=template'
   };
 }

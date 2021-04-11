@@ -6,19 +6,16 @@
  * @package elabftw
  */
 
-interface ActionReq {
-  action: string;
-  csrf?: string;
-  what: string;
-  type?: string;
-  params?: object;
-}
-
 interface ResponseMsg {
   res: boolean;
   msg: string;
   color?: string;
-  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedExperiments>;
+  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedExperiments> | Array<Upload> | object;
+}
+
+interface Upload {
+  real_name: string;
+  long_name: string;
 }
 
 interface Todoitem {
@@ -63,6 +60,7 @@ enum Action {
 enum Model {
   Apikey = 'apikey',
   Comment = 'comment',
+  Config = 'config',
   Link = 'link',
   Status = 'status',
   Step = 'step',
@@ -70,6 +68,7 @@ enum Model {
   TeamGroup = 'teamgroup',
   Todolist = 'todolist',
   Upload = 'upload',
+  User = 'user',
 }
 
 enum EntityType {
@@ -83,11 +82,13 @@ enum Target {
   All = 'all',
   Body = 'body',
   BoundEvent = 'boundevent',
-  Date = 'date',
   Comment = 'comment',
+  Date = 'date',
   Finished = 'finished',
+  List = 'list',
   Member = 'member',
   Metadata = 'metadata',
+  PrivacyPolicy = 'privacypolicy',
   RealName = 'real_name',
   Tag = 'tag',
   Title = 'title',
@@ -114,7 +115,6 @@ interface Payload {
 }
 
 export {
-  ActionReq,
   BoundEvent,
   CheckableItem,
   ResponseMsg,
@@ -127,4 +127,5 @@ export {
   EntityType,
   Entity,
   UnfinishedExperiments,
+  Upload,
 };

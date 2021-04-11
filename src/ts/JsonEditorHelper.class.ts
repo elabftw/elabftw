@@ -9,7 +9,7 @@ import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import i18next from 'i18next';
 import { notif } from './misc';
-import { Payload, Method, Model, Action, Entity, ResponseMsg } from './interfaces';
+import { Entity } from './interfaces';
 
 // This class is named helper because the jsoneditor lib already exports JSONEditor
 export default class JsonEditorHelper {

@@ -24,9 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // holds info about the page through data attributes
     const about = document.getElementById('info').dataset;
 
-    const type = about.type;
-    const id = about.id;
-
     const entity = getEntity();
     const JsonEditorHelperC = new JsonEditorHelper(entity);
     JsonEditorHelperC.init((about.page === 'edit' || about.page === 'template-edit'));

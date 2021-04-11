@@ -9,7 +9,7 @@ import 'jquery-jeditable/src/jquery.jeditable.js';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
 import { getEntity } from './misc';
-import { BoundEvent, Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedExperiments, Target, ResponseMsg } from './interfaces';
+import { BoundEvent, Payload, Method, Action, Target } from './interfaces';
 import { DateTime } from 'luxon';
 import EntityClass from './Entity.class';
 declare let key: any;
@@ -90,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // SHARE
     } else if (el.matches('[data-action="share"]')) {
       AjaxC.get('getShareLink').then(json => {
+        // TODO action read, target sharelink
         const link = (document.getElementById('shareLinkInput') as HTMLInputElement);
         link.value = (json.msg as string);
         link.style.display = 'inline';

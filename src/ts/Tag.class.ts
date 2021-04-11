@@ -34,6 +34,18 @@ export default class Tag {
     return this.sender.send(payload);
   }
 
+  update(content: string, id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Update,
+      model: Model.Tag,
+      entity: this.entity,
+      content: content,
+      id: id,
+    };
+    return this.sender.send(payload);
+  }
+
   // REMOVE THE TAG FROM AN ENTITY
   unreference(id: number): Promise<ResponseMsg> {
     const payload: Payload = {
@@ -53,6 +65,7 @@ export default class Tag {
       method: Method.POST,
       action: Action.Deduplicate,
       model: this.model,
+      entity: this.entity,
     };
     return this.sender.send(payload);
   }

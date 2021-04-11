@@ -7,8 +7,6 @@
  */
 import { Payload, Method, Model, Action, Target, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
-import { relativeMoment, makeSortableGreatAgain } from './misc';
-import i18next from 'i18next';
 
 export default class TeamGroup {
 
@@ -28,7 +26,6 @@ export default class TeamGroup {
       content: content,
     };
     return this.sender.send(payload);
-    const name = $('#teamGroupCreate').val() as string;
   }
 
   update(user: number, group: string, how: string): Promise<ResponseMsg> {

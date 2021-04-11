@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\TagParams;
 use Elabftw\Services\Check;
 
@@ -72,7 +73,7 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetList(): void
     {
-        $res = $this->Experiments->Tags->getList('tag2');
+        $res = $this->Experiments->Tags->read(new ContentParams('tag2', 'list'));
         $this->assertEquals('tag2222', $res[0]);
     }
 

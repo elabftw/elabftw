@@ -13,6 +13,8 @@ import TeamGroup from './TeamGroup.class';
 import Status from './Status.class';
 import i18next from 'i18next';
 import ItemType from './ItemType.class';
+import { Ajax } from './Ajax.class';
+import { Payload, Method, Model, Action, Target } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 
@@ -20,6 +22,7 @@ $(document).ready(function() {
   if (window.location.pathname !== '/admin.php') {
     return;
   }
+  const AjaxC = new Ajax();
 
   // activate editor for common template
   tinymce.init(getTinymceBaseConfig('admin'));
@@ -38,25 +41,28 @@ $(document).ready(function() {
     });
   });
 
-  // AUTOCOMPLETE
+  // AUTOCOMPLETE user list for team groups
   const cache = {};
   $(document).on('focus', '.addUserToGroup', function() {
     if (!$(this).data('autocomplete')) {
       $(this).autocomplete({
         source: function(request, response): void {
           const term = request.term;
+
           if (term in cache) {
             response(cache[term]);
             return;
           }
-          request.what = 'user';
-          request.action = 'getList';
-          request.params = {
-            name: term,
+          const payload: Payload = {
+            method: Method.GET,
+            action: Action.Read,
+            model: Model.User,
+            target: Target.List,
+            content: term,
           };
-          $.getJSON('app/controllers/Ajax.php', request, function(data) {
-            cache[term] = data;
-            response(data);
+          AjaxC.send(payload).then(json => {
+            cache[term] = json.value;
+            response(json.value);
           });
         }
       });
@@ -119,14 +125,15 @@ $(document).ready(function() {
   // edit the team group name
   $(document).on('mouseenter', 'h3.teamgroup_name', function() {
     ($(this) as any).editable(function(value) {
-      $.post('app/controllers/Ajax.php', {
-        action: 'update',
-        what: 'teamgroup',
-        params: {
-          name: value,
-          id: $(this).data('id'),
-        },
-      });
+      const payload: Payload = {
+        method: Method.POST,
+        action: Action.Update,
+        model: Model.TeamGroup,
+        content: value,
+        id: $(this).data('id'),
+      };
+
+      AjaxC.send(payload);
       return(value);
     }, {
       indicator : 'Saving...',

@@ -5,12 +5,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Model, Action, Entity, EntityType, Target, ResponseMsg } from './interfaces';
+import { Payload, Method, Action, Entity, EntityType, Target, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
 import i18next from 'i18next';
 
 
-export function ResourceNotFoundException(message: string) {
+export function ResourceNotFoundException(message: string): void {
   this.message = message;
   this.name = 'ResourceNotFoundException';
 }
@@ -32,7 +32,7 @@ export class Metadata {
   /**
    * Get the json from the metadata column
    */
-  read() {
+  read(): Promise<Record<string, any>> {
     const payload: Payload = {
       method: Method.GET,
       action: Action.Read,
@@ -52,7 +52,7 @@ export class Metadata {
   /**
    * Only save a single field value after a change
    */
-  handleEvent(event) {
+  handleEvent(event): Promise<ResponseMsg> {
     let value = event.target.value;
     // special case for checkboxes
     if (event.target.type === 'checkbox') {
@@ -75,7 +75,7 @@ export class Metadata {
   /**
    * Save the whole json at once, coming from json editor save button
    */
-  update(metadata) {
+  update(metadata): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,
       action: Action.Update,
@@ -228,7 +228,7 @@ export class Metadata {
   /**
    * Main public function to call to display the metadata in view or edit mode
    */
-  display(mode: string) {
+  display(mode: string): void {
     let displayFunction = this.view;
     if (mode === 'edit') {
       displayFunction = this.edit;
@@ -248,7 +248,7 @@ export class Metadata {
   /**
    * In view mode, display the extra fields
    */
-  view() {
+  view(): Promise<void> {
     return this.read().then(json => {
       // do nothing more if there is no extra_fields in our json
       if (!json.hasOwnProperty('extra_fields')) {
@@ -273,7 +273,7 @@ export class Metadata {
   /**
    * Get the metadata json and add input elements to DOM
    */
-  edit() {
+  edit(): Promise<void> {
     return this.read().then(json => {
       // do nothing more if there is no extra_fields in our json
       if (!json.hasOwnProperty('extra_fields')) {

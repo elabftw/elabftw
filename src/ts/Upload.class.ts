@@ -19,6 +19,17 @@ export default class Upload {
     this.sender = new Ajax();
   }
 
+  read(): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.GET,
+      action: Action.Read,
+      model: this.model,
+      entity: this.entity,
+      target: Target.All,
+    };
+    return this.sender.send(payload);
+  }
+
   update(content: string, id: number, target: Target): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,

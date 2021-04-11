@@ -173,9 +173,11 @@ class Check
             'date',
             'file',
             'finished',
+            'list',
+            'privacypolicy',
+            'member',
             'metadata',
             'real_name',
-            'tinymce',
             'title',
             // no target is also valid
             '',

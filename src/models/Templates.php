@@ -104,8 +104,8 @@ class Templates extends AbstractEntity
      */
     public function read(ContentParamsInterface $params): array
     {
-        if ($params->getTarget() === 'tinymce') {
-            return $this->readForUser();
+        if ($params->getTarget() === 'list') {
+            return $this->getList();
         }
 
         $sql = "SELECT experiments_templates.id, experiments_templates.title, experiments_templates.body,
@@ -224,5 +224,18 @@ class Templates extends AbstractEntity
             $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
         }
         return $this->getTemplatesList();
+    }
+
+    /**
+     * Build a list for tinymce Insert template... menu
+     */
+    private function getList(): array
+    {
+        $templates = $this->readForUser();
+        $res = array();
+        foreach ($templates as $template) {
+            $res[] = array('title' => $template['title'], 'description' => '', 'content' => $template['body']);
+        }
+        return $res;
     }
 }

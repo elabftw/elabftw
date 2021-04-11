@@ -87,6 +87,9 @@ class Tags implements CrudInterface
 
     public function read(ContentParamsInterface $params): array
     {
+        if ($params->getTarget() === 'list') {
+            return $this->getList($params->getContent());
+        }
         return $this->readAll();
     }
 
@@ -151,26 +154,6 @@ class Tags implements CrudInterface
         }
     }
 
-    /**
-     * Get an array of tags starting with the query ($term)
-     *
-     * @param string $term the beginning of the tag
-     * @return array the tag list filtered by the term
-     */
-    public function getList(string $term): array
-    {
-        $tagListArr = array();
-        $tagsArr = $this->readAll($term);
-
-        foreach ($tagsArr as $tag) {
-            $tagListArr[] = $tag['tag'];
-        }
-        return $tagListArr;
-    }
-
-    /**
-     * Update a tag
-     */
     public function update(ContentParamsInterface $params): bool
     {
         if ($this->Entity->Users->userData['is_admin'] !== '1') {
@@ -317,6 +300,22 @@ class Tags implements CrudInterface
             $itemIds[] = (int) $res['item_id'];
         }
         return $itemIds;
+    }
+
+    /**
+     * Get an array of tags starting with the query
+     *
+     * @return array the tag list filtered by the term for autocomplete
+     */
+    private function getList(string $term): array
+    {
+        $tagListArr = array();
+        $tagsArr = $this->readAll($term);
+
+        foreach ($tagsArr as $tag) {
+            $tagListArr[] = $tag['tag'];
+        }
+        return $tagListArr;
     }
 
     /**

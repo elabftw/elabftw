@@ -11,8 +11,8 @@ import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
 import { relativeMoment, displayMolFiles, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
-import Entity from './Entity.class';
-import { EntityType } from './interfaces';
+import EntityClass from './Entity.class';
+import { EntityType, Payload, Method, Model, Target, Entity, Action, ResponseMsg } from './interfaces';
 
 $(document).ready(function() {
   $.ajaxSetup({
@@ -64,14 +64,19 @@ $(document).ready(function() {
     const el = (event.target as HTMLElement);
     // SHOW PRIVACY POLICY
     if (el.matches('[data-action="show-privacy-policy"]')) {
-      const AjaxC = new Ajax('privacyPolicy', '0', 'app/controllers/Ajax.php');
-      AjaxC.do('read')
-        .then(json => typeof json.msg === 'string' ? json.msg : '')
-        .then(privacy => {
-          (document.getElementById('privacyModalBody') as HTMLDivElement).innerHTML = privacy;
-          // modal plugin requires jquery
-          ($('#privacyModal') as any).modal('toggle');
-        });
+      const payload: Payload = {
+        method: Method.GET,
+        action: Action.Read,
+        model: Model.Config,
+        target: Target.PrivacyPolicy,
+      };
+      const AjaxC = new Ajax();
+      AjaxC.send(payload).then(json => {
+        console.log(json);
+        (document.getElementById('privacyModalBody') as HTMLDivElement).innerHTML = json.value as string;
+        // modal plugin requires jquery
+        ($('#privacyModal') as any).modal('toggle');
+      });
 
     // LOGOUT
     } else if (el.matches('[data-action="logout"]')) {
@@ -83,7 +88,7 @@ $(document).ready(function() {
       const path = window.location.pathname;
       if (path.split('/').pop() === 'experiments.php') {
         const tplid = el.dataset.tplid;
-        (new Entity(EntityType.Experiment)).create(tplid).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
+        (new EntityClass(EntityType.Experiment)).create(tplid).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
       } else {
         // for database items, show a selection modal
         // modal plugin requires jquery
@@ -91,7 +96,7 @@ $(document).ready(function() {
       }
     } else if (el.matches('[data-action="create-item"]')) {
       const tplid = el.dataset.tplid;
-      (new Entity(EntityType.Item)).create(tplid).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
+      (new EntityClass(EntityType.Item)).create(tplid).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
     }
   });
 });

@@ -32,6 +32,7 @@ use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
+use function property_exists;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -49,9 +50,9 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     protected ?int $id = null;
 
-    protected CrudInterface $Model;
+    protected CrudInterface|Users|Config $Model;
 
-    protected array $extra;
+    protected array $extra = array();
 
     private Users $Users;
 
@@ -61,7 +62,7 @@ abstract class AbstractProcessor implements ProcessorInterface
         $this->process($request);
     }
 
-    public function getModel(): CrudInterface
+    public function getModel(): CrudInterface|Users|Config
     {
         return $this->Model;
     }
@@ -102,7 +103,9 @@ abstract class AbstractProcessor implements ProcessorInterface
         $this->id = $this->setId((int) ($decoded->id ?? 0));
         $this->Model = $this->buildModel($decoded->model ?? '');
         $this->content = $decoded->content ?? '';
-        $this->extra = $decoded->extraParams ?? array();
+        if (property_exists($decoded, 'extraParams')) {
+            $this->extra = (array) $decoded->extraParams;
+        }
     }
 
     abstract protected function process(Request $request): void;
@@ -124,11 +127,13 @@ abstract class AbstractProcessor implements ProcessorInterface
         return new Items($this->Users, $itemId);
     }
 
-    protected function buildModel(string $model): CrudInterface
+    protected function buildModel(string $model): CrudInterface|Users|Config
     {
         switch ($model) {
             case 'apikey':
                 return new ApiKeys($this->Users, $this->id);
+            case 'config':
+                return new Config();
             case 'status':
                 return new Status($this->Users->team, $this->id);
             case 'comment':
@@ -142,7 +147,7 @@ abstract class AbstractProcessor implements ProcessorInterface
             //case 'privacyPolicy': TODO, do we really need a privacy policy class??
             //    return new PrivacyPolicy(new Config());
             case 'teamgroup':
-                return new TeamGroups($this->Users);
+                return new TeamGroups($this->Users, $this->id);
             case 'tag':
                 return new Tags($this->Entity, $this->id);
             case 'experiment':
@@ -152,6 +157,8 @@ abstract class AbstractProcessor implements ProcessorInterface
                 return $this->Entity;
             case 'todolist':
                 return new Todolist((int) $this->Users->userData['userid'], $this->id);
+            case 'user':
+                return $this->Users;
             default:
                 throw new IllegalActionException('Bad model');
         }
@@ -174,7 +181,9 @@ abstract class AbstractProcessor implements ProcessorInterface
     {
         if ($this->Model instanceof Comments ||
             $this->Model instanceof Todolist ||
-            $this->Model instanceof Links) {
+            $this->Model instanceof Links ||
+            $this->Model instanceof Users ||
+            $this->Model instanceof Config) {
             return new ContentParams($this->content, $this->target);
         }
         if ($this->Model instanceof Experiments || $this->Model instanceof Items || $this->Model instanceof Templates) {
@@ -207,7 +216,7 @@ abstract class AbstractProcessor implements ProcessorInterface
             return new CreateApikey($this->content, $this->target, (int) $this->extra['canwrite']);
         }
         if ($this->Model instanceof Tags) {
-            return new TagParams($this->content);
+            return new TagParams($this->content, $this->target);
         }
         if ($this->Model instanceof Uploads) {
             return new UploadParams($this->content, $this->target);

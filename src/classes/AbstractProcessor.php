@@ -50,7 +50,7 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     protected ?int $id = null;
 
-    protected CrudInterface|Users $Model;
+    protected CrudInterface | Users $Model;
 
     protected array $extra = array();
 
@@ -62,7 +62,7 @@ abstract class AbstractProcessor implements ProcessorInterface
         $this->process($request);
     }
 
-    public function getModel(): CrudInterface|Users
+    public function getModel(): CrudInterface | Users
     {
         return $this->Model;
     }
@@ -127,7 +127,7 @@ abstract class AbstractProcessor implements ProcessorInterface
         return new Items($this->Users, $itemId);
     }
 
-    protected function buildModel(string $model): CrudInterface|Users
+    protected function buildModel(string $model): CrudInterface | Users
     {
         switch ($model) {
             case 'apikey':

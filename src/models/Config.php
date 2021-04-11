@@ -13,13 +13,11 @@ namespace Elabftw\Models;
 use function array_map;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Update;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
 use PDO;
 
@@ -39,18 +37,18 @@ class Config
     public function __construct()
     {
         $this->Db = Db::getConnection();
-        $this->configArr = $this->read(new ContentParams('', ''));
+        $this->configArr = $this->read();
         // this should only run once: just after a fresh install
         if (empty($this->configArr)) {
             $this->populate();
-            $this->configArr = $this->read(new ContentParams('', ''));
+            $this->configArr = $this->read();
         }
     }
 
     /**
      * Read the configuration values
      */
-    public function read(ContentParamsInterface $params): array
+    public function read(): array
     {
         $sql = 'SELECT * FROM config';
         $req = $this->Db->prepare($sql);
@@ -62,12 +60,6 @@ class Config
         return array_map(function ($v) {
             return $v[0];
         }, $config);
-    }
-
-    public function getPrivacyPolicy(): string
-    {
-        $all = $this->read(new ContentParams('', ''));
-        return $all['privacy_policy'];
     }
 
     /**

@@ -3997,16 +3997,16 @@
         },
         {
             "name": "codeception/codeception",
-            "version": "4.1.19",
+            "version": "4.1.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/Codeception.git",
-                "reference": "138dc9345a81ec994dcd6b9680c501a752a37b00"
+                "reference": "d8b16e13e1781dbc3a7ae8292117d520c89a9c5a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/Codeception/zipball/138dc9345a81ec994dcd6b9680c501a752a37b00",
-                "reference": "138dc9345a81ec994dcd6b9680c501a752a37b00",
+                "url": "https://api.github.com/repos/Codeception/Codeception/zipball/d8b16e13e1781dbc3a7ae8292117d520c89a9c5a",
+                "reference": "d8b16e13e1781dbc3a7ae8292117d520c89a9c5a",
                 "shasum": ""
             },
             "require": {
@@ -4080,7 +4080,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeception/Codeception/issues",
-                "source": "https://github.com/Codeception/Codeception/tree/4.1.19"
+                "source": "https://github.com/Codeception/Codeception/tree/4.1.20"
             },
             "funding": [
                 {
@@ -4088,7 +4088,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2021-03-28T13:26:08+00:00"
+            "time": "2021-04-02T16:41:51+00:00"
         },
         {
             "name": "codeception/lib-asserts",
@@ -4375,16 +4375,16 @@
         },
         {
             "name": "codeception/module-rest",
-            "version": "1.2.8",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/module-rest.git",
-                "reference": "4c8c6bd75f67a25ff91bdce0d6c135c5e7aa5e10"
+                "reference": "2cd9901c08a143dc80985696dcbe3cefc9f23ab9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/module-rest/zipball/4c8c6bd75f67a25ff91bdce0d6c135c5e7aa5e10",
-                "reference": "4c8c6bd75f67a25ff91bdce0d6c135c5e7aa5e10",
+                "url": "https://api.github.com/repos/Codeception/module-rest/zipball/2cd9901c08a143dc80985696dcbe3cefc9f23ab9",
+                "reference": "2cd9901c08a143dc80985696dcbe3cefc9f23ab9",
                 "shasum": ""
             },
             "require": {
@@ -4423,9 +4423,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeception/module-rest/issues",
-                "source": "https://github.com/Codeception/module-rest/tree/1.2.8"
+                "source": "https://github.com/Codeception/module-rest/tree/1.3.0"
             },
-            "time": "2021-03-02T06:47:59+00:00"
+            "time": "2021-04-08T08:23:09+00:00"
         },
         {
             "name": "codeception/module-webdriver",

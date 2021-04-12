@@ -83,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // so if the element has a data-type, take that instead
     if (e.currentTarget.dataset.type) {
       entity.type = e.currentTarget.dataset.type;
+      entity.id = e.currentTarget.dataset.id;
     }
     const stepId = e.currentTarget.dataset.stepid;
     StepC.finish(stepId).then(() => {

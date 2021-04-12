@@ -82,6 +82,9 @@ class Steps implements CrudInterface
 
     public function read(ContentParamsInterface $params): array
     {
+        if ($params->getTarget() === 'all') {
+            return $this->readAll();
+        }
         $this->Entity->canOrExplode('read');
 
         $sql = 'SELECT * FROM ' . $this->Entity->type . '_steps WHERE item_id = :id ORDER BY ordering';

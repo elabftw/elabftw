@@ -84,7 +84,7 @@ export default class Todolist {
         for (const stepsData of Object.entries(exp.steps)) {
           const stepId = stepsData[1][0];
           const stepBody = stepsData[1][1];
-          html += `<div><input type='checkbox' class='stepbox mr-1' id='todo_step_${stepId}' data-id='${exp.id}' data-type='experiments' data-stepid='${stepId}' />${stepBody}</div>`;
+          html += `<div><input type='checkbox' class='stepbox mr-1' id='todo_step_${stepId}' data-id='${exp.id}' data-type='${EntityType.Experiment}' data-stepid='${stepId}' />${stepBody}</div>`;
         }
         html += '</li>';
       }

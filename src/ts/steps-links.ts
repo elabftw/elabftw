@@ -81,12 +81,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // on the todolist we don't want to grab the type from the page
     // because it's only steps from experiments
     // so if the element has a data-type, take that instead
+    const newentity = entity;
     if (e.currentTarget.dataset.type) {
-      entity.type = e.currentTarget.dataset.type;
-      entity.id = e.currentTarget.dataset.id;
+      newentity.type = e.currentTarget.dataset.type;
+      newentity.id = e.currentTarget.dataset.id;
     }
     const stepId = e.currentTarget.dataset.stepid;
-    StepC.finish(stepId).then(() => {
+    const StepNew = new Step(newentity);
+    StepNew.finish(stepId).then(() => {
       // only reload children
       const loadUrl = window.location.href + ' #steps_div_' + entity.id + ' > *';
       // reload the step list

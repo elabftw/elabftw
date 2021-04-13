@@ -12,6 +12,7 @@ namespace Elabftw\Services;
 
 use DateTimeImmutable;
 use Elabftw\Controllers\DownloadController;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
@@ -105,7 +106,8 @@ class MakeBloxberg extends AbstractMake
     private function addToZip(string $pdf, int $uploadId): bool
     {
         // get info about the file to get the long_name
-        $zipFile = $this->Entity->Uploads->readFromId($uploadId);
+        $this->Entity->Uploads->setId($uploadId);
+        $zipFile = $this->Entity->Uploads->read(new ContentParams());
         // add the timestamped pdf to the zip archive
         $ZipArchive = new ZipArchive();
         // we need this to get the path to the file

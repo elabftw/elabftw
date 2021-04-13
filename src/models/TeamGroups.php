@@ -11,12 +11,12 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\TeamGroupParamsInterface;
+use Elabftw\Traits\SetIdTrait;
 use function in_array;
-use function mb_strlen;
 use PDO;
 
 /**
@@ -24,27 +24,27 @@ use PDO;
  */
 class TeamGroups implements CrudInterface
 {
+    use SetIdTrait;
+
     private Db $Db;
 
     private Users $Users;
 
-    public function __construct(Users $users)
+    public function __construct(Users $users, ?int $id = null)
     {
         $this->Users = $users;
         $this->Db = Db::getConnection();
+        $this->id = $id;
     }
 
     /**
      * Create a team group
      */
-    public function create(ParamsProcessor $params): int
+    public function create(ContentParamsInterface $params): int
     {
-        if (mb_strlen($params->name) < 2) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
-        }
-        $sql = 'INSERT INTO team_groups(name, team) VALUES(:name, :team)';
+        $sql = 'INSERT INTO team_groups(name, team) VALUES(:content, :team)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':name', $params->name);
+        $req->bindValue(':content', $params->getContent());
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
@@ -56,7 +56,7 @@ class TeamGroups implements CrudInterface
      *
      * @return array all team groups with users in group as array
      */
-    public function read(): array
+    public function read(ContentParamsInterface $params): array
     {
         $fullGroups = array();
 
@@ -132,73 +132,44 @@ class TeamGroups implements CrudInterface
         return (string) $res;
     }
 
-    /**
-     * Update the name of the group
-     * The request comes from jeditable
-     */
-    public function update(ParamsProcessor $params): string
+    public function update(TeamGroupParamsInterface $params): bool
     {
+        if ($params->getTarget() === 'member') {
+            return $this->updateMember($params);
+        }
         $sql = 'UPDATE team_groups SET name = :name WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':name', $params->name, PDO::PARAM_STR);
+        $req->bindValue(':name', $params->getContent(), PDO::PARAM_STR);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':id', $params->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        // the group name is returned so it gets back into jeditable input field
-        return $params->name;
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        return $this->Db->execute($req);
     }
 
-    /**
-     * Add or remove a member from a team group
-     *
-     * @param int $userid Id of the user
-     * @param int $groupid Id of the group
-     * @param string $action Can be 'add' or 'rm'
-     * @throws IllegalActionException if the action keyword is wrong
-     * @return void
-     */
-    public function updateMember(int $userid, int $groupid, string $action): void
-    {
-        if ($action === 'add') {
-            $sql = 'INSERT INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)';
-        } elseif ($action === 'rm') {
-            $sql = 'DELETE FROM users2team_groups WHERE userid = :userid AND groupid = :groupid';
-        } else {
-            throw new IllegalActionException('Bad action keyword');
-        }
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->bindParam(':groupid', $groupid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-    }
-
-    /**
-     * Delete a team group
-     */
-    public function destroy(int $id): bool
+    public function destroy(): bool
     {
         // TODO add fk to do that
         $sql = "UPDATE experiments SET canread = 'team', canwrite = 'user' WHERE canread = :id OR canwrite = :id";
         $req = $this->Db->prepare($sql);
         // note: setting PDO::PARAM_INT here will throw error because the column type is varchar
-        $req->bindParam(':id', $id, PDO::PARAM_STR);
+        $req->bindParam(':id', $this->id, PDO::PARAM_STR);
         $res1 = $this->Db->execute($req);
 
         // same for items but canwrite is team
         $sql = "UPDATE items SET canread = 'team', canwrite = 'team' WHERE canread = :id OR canwrite = :id";
         $req = $this->Db->prepare($sql);
         // note: setting PDO::PARAM_INT here will throw error because the column type is varchar
-        $req->bindParam(':id', $id, PDO::PARAM_STR);
+        $req->bindParam(':id', $this->id, PDO::PARAM_STR);
         $res2 = $this->Db->execute($req);
 
         $sql = 'DELETE FROM team_groups WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $res3 = $this->Db->execute($req);
 
         $sql = 'DELETE FROM users2team_groups WHERE groupid = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $res4 = $this->Db->execute($req);
 
         return $res1 && $res2 && $res3 && $res4;
@@ -273,5 +244,24 @@ class TeamGroups implements CrudInterface
             return array();
         }
         return $groups;
+    }
+
+    /**
+     * Add or remove a member from a team group
+     * How is add or rm
+     */
+    private function updateMember(TeamGroupParamsInterface $params): bool
+    {
+        if ($params->getHow() === 'add') {
+            $sql = 'INSERT INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)';
+        } elseif ($params->getHow() === 'rm') {
+            $sql = 'DELETE FROM users2team_groups WHERE userid = :userid AND groupid = :groupid';
+        } else {
+            throw new IllegalActionException('Bad action keyword');
+        }
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':userid', $params->getUserid(), PDO::PARAM_INT);
+        $req->bindValue(':groupid', $params->getGroup(), PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 }

@@ -15,6 +15,14 @@ use Monolog\Logger;
 
 class ExternalAuthTest extends \PHPUnit\Framework\TestCase
 {
+    private array $configArr;
+
+    private array $serverParams;
+
+    private Logger $log;
+
+    private ExternalAuth $ExternalAuth;
+
     protected function setUp(): void
     {
         $this->configArr = array(
@@ -39,7 +47,7 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testTryAuth()
+    public function testTryAuth(): void
     {
         $authResponse = $this->ExternalAuth->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);
@@ -52,7 +60,7 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
     }
 
     // now try with a non existing user
-    public function testTryAuthWithNonExistingUser()
+    public function testTryAuthWithNonExistingUser(): void
     {
         $serverParams = $this->serverParams;
         $serverParams['auth_email'] = 'nonexisting@yopmail.com';
@@ -66,7 +74,7 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
     }
 
     // now try with a non existing user and config is set to not create the user
-    public function testTryAuthWithNonExistingUserNoCreate()
+    public function testTryAuthWithNonExistingUserNoCreate(): void
     {
         $serverParams = $this->serverParams;
         $serverParams['auth_email'] = 'nonexisting2@yopmail.com';
@@ -82,7 +90,7 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
     }
 
     // now try without a team sent by server
-    public function testTryAuthWithoutTeamSentByServer()
+    public function testTryAuthWithoutTeamSentByServer(): void
     {
         // make sure we use the default team
         $this->serverParams['auth_team'] = null;
@@ -96,7 +104,7 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
     }
 
     // now try with throwing exception if no team is found
-    public function testTryAuthWithoutTeamGetException()
+    public function testTryAuthWithoutTeamGetException(): void
     {
         // because sysadmin configured it like that
         $this->configArr['saml_team_default'] = 0;

@@ -5,43 +5,51 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import Crud from './Crud.class';
-import i18next from 'i18next';
+import { Payload, Method, Model, Entity, Action, ResponseMsg } from './interfaces';
+import { Ajax } from './Ajax.class';
 
-export default class Comment extends Crud {
-  type: string;
+export default class Comment {
+  entity: Entity;
+  model: Model;
+  sender: Ajax;
 
-  constructor(type: string) {
-    super('app/controllers/Ajax.php');
-    this.type = type;
+  constructor(entity: Entity) {
+    this.entity = entity;
+    this.model = Model.Comment,
+    this.sender = new Ajax();
   }
 
-  create(): void {
-    this.send({
-      action: 'create',
-      what: 'comment',
-      type: this.type,
-      params: {
-        itemId: $('#info').data('id') as number,
-        comment: $('#commentsCreateArea').val() as string,
-      },
-    }).then(() => {
-      $('#comment_container').load(window.location.href + ' #comment');
-    });
+  create(content: string): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Create,
+      model: this.model,
+      entity: this.entity,
+      content: content,
+    };
+    return this.sender.send(payload);
   }
 
-  destroy(commentId: number): void {
-    if (confirm(i18next.t('generic-delete-warning'))) {
-      this.send({
-        action: 'destroy',
-        what: 'comment',
-        type: this.type,
-        params: {
-          id: commentId,
-        },
-      }).then(() => {
-        $('#comment_container').load(window.location.href + ' #comment');
-      });
-    }
+  update(content: string, id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Update,
+      model: this.model,
+      entity: this.entity,
+      content: content,
+      id : id,
+    };
+    return this.sender.send(payload);
+  }
+
+  destroy(id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Destroy,
+      model: this.model,
+      entity: this.entity,
+      id : id,
+    };
+    return this.sender.send(payload);
   }
 }

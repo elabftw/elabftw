@@ -5,53 +5,39 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import Crud from './Crud.class';
-import i18next from 'i18next';
+import { Payload, Method, Model, Entity, Action, ResponseMsg } from './interfaces';
+import { Ajax } from './Ajax.class';
 
-export default class Link extends Crud {
-  type: string;
+export default class Link {
+  entity: Entity;
+  model: Model;
+  sender: Ajax;
 
-  constructor(type: string) {
-    super('app/controllers/Ajax.php');
-    this.type = type;
+  constructor(entity: Entity) {
+    this.entity = entity;
+    this.model = Model.Link,
+    this.sender = new Ajax();
   }
 
-  create(targetId: number, itemId: number): void {
-    // only send request if there is a targetId
-    if (Number.isNaN(targetId)) {
-      return;
-    }
-    this.send({
-      action: 'create',
-      what: 'link',
-      type: this.type,
-      params: {
-        itemId: itemId,
-        id: targetId,
-      },
-    }).then(() => {
-      // only reload children of links_div_id
-      $('#links_div_' + itemId).load(window.location.href + ' #links_div_' + itemId + ' > *');
-      // clear input field
-      $('.linkinput').val('');
-    });
+  create(targetId: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Create,
+      model: this.model,
+      entity: this.entity,
+      content: String(targetId),
+    };
+    return this.sender.send(payload);
   }
 
-  destroy(elem): void {
-    const id = elem.data('id') as number;
-    if (confirm(i18next.t('link-delete-warning'))) {
-      this.send({
-        action: 'destroy',
-        what: 'link',
-        type: this.type,
-        params: {
-          itemId: id,
-          id: elem.data('linkid') as number,
-        },
-      }).then(() => {
-        // only reload children of links_div_id
-        $('#links_div_' + id).load(window.location.href + ' #links_div_' + id + ' > *');
-      });
-    }
+  destroy(id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Destroy,
+      model: this.model,
+      entity: this.entity,
+      id : id,
+    };
+    return this.sender.send(payload);
   }
 }

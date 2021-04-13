@@ -12,17 +12,19 @@ namespace Elabftw\Services;
 
 class MpdfQrProviderTest extends \PHPUnit\Framework\TestCase
 {
+    private MpdfQrProvider $Provider;
+
     protected function setUp(): void
     {
         $this->Provider = new MpdfQrProvider();
     }
 
-    public function testGetMimeType()
+    public function testGetMimeType(): void
     {
         $this->assertEquals('image/png', $this->Provider->getMimeType());
     }
 
-    public function testGetQRCodeImage()
+    public function testGetQRCodeImage(): void
     {
         $png = $this->Provider->getQRCodeIMage('blah', 100);
         $this->assertEquals('ff65e6a4d8308e73ec2f12c2aa9bbb632e9799a0', sha1($png));

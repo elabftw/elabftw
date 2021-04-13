@@ -14,7 +14,7 @@ use League\Flysystem\Memory\MemoryAdapter;
 
 class UploadsCleanerTest extends \PHPUnit\Framework\TestCase
 {
-    public function testCleanup()
+    public function testCleanup(): void
     {
         // create a non-persistant filesystem stored in memory
         $filesystem = new Filesystem(new MemoryAdapter());

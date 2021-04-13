@@ -12,18 +12,21 @@ namespace Elabftw\Controllers;
 
 use function dirname;
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\CreateTemplate;
+use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\DisplayParams;
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\EntityParams;
+use Elabftw\Elabftw\TagParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractCategory;
-use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Status;
@@ -51,7 +54,8 @@ class ApiController implements ControllerInterface
     private AbstractCategory $Category;
 
     /** @psalm-suppress PropertyNotSetInConstructor */
-    private AbstractEntity $Entity;
+    //@phpstan-ignore-next-line
+    private $Entity;
 
     /** @psalm-suppress PropertyNotSetInConstructor */
     private Scheduler $Scheduler;
@@ -82,11 +86,6 @@ class ApiController implements ControllerInterface
         $this->parseReq();
     }
 
-    /**
-     * Get Response from Request
-     *
-     * @return Response
-     */
     public function getResponse(): Response
     {
         try {
@@ -103,10 +102,10 @@ class ApiController implements ControllerInterface
                 if ($this->endpoint === 'experiments' || $this->endpoint === 'items') {
                     return $this->getEntity();
                 }
-                if ($this->endpoint === 'templates') {
+                if ($this->endpoint === 'templates' || $this->endpoint === 'items_types') {
                     return $this->getTemplate();
                 }
-                if ($this->endpoint === 'items_types' || $this->endpoint === 'status') {
+                if ($this->endpoint === 'status') {
                     return $this->getCategory();
                 }
                 if ($this->endpoint === 'bookable') {
@@ -157,7 +156,7 @@ class ApiController implements ControllerInterface
                 }
 
                 // CREATE AN EXPERIMENT/ITEM
-                if ($this->Entity instanceof Database) {
+                if ($this->Entity instanceof Items) {
                     return $this->createItem();
                 } elseif ($this->Entity instanceof Templates) {
                     return $this->createTemplate();
@@ -180,8 +179,6 @@ class ApiController implements ControllerInterface
 
     /**
      * Set the id and endpoints fields
-     *
-     * @return void
      */
     private function parseReq(): void
     {
@@ -209,15 +206,15 @@ class ApiController implements ControllerInterface
         if ($this->endpoint === 'experiments' || $this->endpoint === 'uploads' || $this->endpoint === 'backupzip' || $this->endpoint === 'tags') {
             $this->Entity = new Experiments($this->Users, $this->id);
         } elseif ($this->endpoint === 'items' || $this->endpoint === 'bookable') {
-            $this->Entity = new Database($this->Users, $this->id);
+            $this->Entity = new Items($this->Users, $this->id);
         } elseif ($this->endpoint === 'templates') {
             $this->Entity = new Templates($this->Users, $this->id);
         } elseif ($this->endpoint === 'items_types') {
-            $this->Category = new ItemsTypes($this->Users);
+            $this->Entity = new ItemsTypes($this->Users->team);
         } elseif ($this->endpoint === 'status') {
-            $this->Category = new Status($this->Users);
+            $this->Category = new Status($this->Users->team);
         } elseif ($this->endpoint === 'events') {
-            $this->Entity = new Database($this->Users, $this->id);
+            $this->Entity = new Items($this->Users, $this->id);
             $this->Scheduler = new Scheduler($this->Entity);
         } else {
             throw new ImproperActionException('Bad endpoint!');
@@ -320,12 +317,6 @@ class ApiController implements ControllerInterface
      * @apiSuccess {String} canwrite Write permission of the experiment
      *
      */
-
-    /**
-     * Get experiment or item, one or several
-     *
-     * @return Response
-     */
     private function getEntity(): Response
     {
         if ($this->id === null) {
@@ -381,10 +372,6 @@ class ApiController implements ControllerInterface
      * @apiSuccess {String} canread Read permission of the experiment
      * @apiSuccess {String} canwrite Write permission of the experiment
      *
-     */
-
-    /**
-     * Get template, one or several
      */
     private function getTemplate(): Response
     {
@@ -566,14 +553,14 @@ class ApiController implements ControllerInterface
             return new Response('You need to specify an ID!', 400);
         }
         // note: we don't really care about this entity yet
-        $Uploads = new Uploads($this->Entity);
-        $uploadData = $Uploads->readFromId($this->id);
+        $Uploads = new Uploads($this->Entity, $this->id);
+        $uploadData = $Uploads->read(new ContentParams());
         // now we know the id and type of the entity
         // so get the Entity to check for read permissions
         if ($uploadData['type'] === 'experiments') {
             $Entity = new Experiments($this->Users, (int) $uploadData['item_id']);
         } elseif ($uploadData['type'] === 'items') {
-            $Entity = new Database($this->Users, (int) $uploadData['item_id']);
+            $Entity = new Items($this->Users, (int) $uploadData['item_id']);
         } else {
             return new Response('Invalid upload id', 400);
         }
@@ -694,19 +681,9 @@ class ApiController implements ControllerInterface
      *       "id": 42
      *     }
      */
-
-    /**
-     * Create an experiment
-     *
-     * @return Response
-     */
     private function createExperiment(): Response
     {
-        if ($this->Entity instanceof Database) {
-            return new Response('Creating database items is not supported.', 400);
-        }
-        $params = new ParamsProcessor(array('id' => 0));
-        $id = $this->Entity->create($params);
+        $id = $this->Entity->create(new EntityParams('0'));
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
 
@@ -732,15 +709,9 @@ class ApiController implements ControllerInterface
      *       "id": 42
      *     }
      */
-
-    /**
-     * Create a template
-     *
-     * @return Response
-     */
     private function createTemplate(): Response
     {
-        $params = new ParamsProcessor(array('id' => 0));
+        $params = new EntityParams('created from api');
         $id = $this->Entity->create($params);
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
@@ -767,16 +738,10 @@ class ApiController implements ControllerInterface
      *       "id": 42
      *     }
      */
-
-    /**
-     * Create a database item
-     *
-     * @return Response
-     */
     private function createItem(): Response
     {
         // check that the id we have is a valid item type from our team
-        $ItemsTypes = new ItemsTypes($this->Users);
+        $ItemsTypes = new ItemsTypes($this->Users->team);
         $itemsTypesArr = $ItemsTypes->readAll();
         $validIds = array();
         foreach ($itemsTypesArr as $itemsTypes) {
@@ -789,8 +754,7 @@ class ApiController implements ControllerInterface
         if ($this->id === null) {
             return new Response('Invalid id', 400);
         }
-        $params = new ParamsProcessor(array('id' => $this->id));
-        $id = $this->Entity->create($params);
+        $id = $this->Entity->create(new EntityParams((string) $this->id));
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
 
@@ -817,15 +781,9 @@ class ApiController implements ControllerInterface
      *       "result": "success"
      *     }
      */
-
-    /**
-     * Create link from experiment to item
-     *
-     * @return Response
-     */
     private function createLink(): Response
     {
-        $this->Entity->Links->create(new ParamsProcessor(array('id' => (int) $this->Request->request->get('link'))));
+        $this->Entity->Links->create(new EntityParams($this->Request->request->get('link')));
         return new JsonResponse(array('result' => 'success'));
     }
 
@@ -857,15 +815,9 @@ class ApiController implements ControllerInterface
      *       "tag": "my tag"
      *     }
      */
-
-    /**
-     * Create tag
-     *
-     * @return Response
-     */
     private function createTag(): Response
     {
-        $this->Entity->Tags->create(new ParamsProcessor(array('tag' => $this->Request->request->get('tag') ?? '')));
+        $this->Entity->Tags->create(new TagParams($this->Request->request->get('tag') ?? ''));
         return new JsonResponse(array('result' => 'success'));
     }
 
@@ -901,12 +853,6 @@ class ApiController implements ControllerInterface
      *       "title": "Booked from API"
      *     }
      */
-
-    /**
-     * Create an event in the scheduler for an item
-     *
-     * @return Response
-     */
     private function createEvent(): Response
     {
         if ($this->id === null) {
@@ -938,12 +884,6 @@ class ApiController implements ControllerInterface
      * curl -X DELETE -H "Authorization: $TOKEN" https://elab.example.org/api/v1/events/13
      * @apiSuccess {String} result Success
      * @apiError {String} error Error message
-     */
-
-    /**
-     * Delete an event
-     *
-     * @return Response
      */
     private function destroyEvent(): Response
     {
@@ -987,12 +927,6 @@ class ApiController implements ControllerInterface
      *       "title": "New title"
      *     }
      */
-
-    /**
-     * Update experiment or item (title, date and body)
-     *
-     * @return Response
-     */
     private function updateEntity(): Response
     {
         $this->Entity->update(
@@ -1031,12 +965,6 @@ class ApiController implements ControllerInterface
      *       "category": "2"
      *     }
      */
-
-    /**
-     * Update experiment or item (title, date and body)
-     *
-     * @return Response
-     */
     private function updateCategory(): Response
     {
         $this->Entity->updateCategory((int) $this->Request->request->get('category'));
@@ -1070,16 +998,9 @@ class ApiController implements ControllerInterface
      * @apiSuccess {String} result Success
      * @apiError {String} error Error message
      */
-
-    /**
-     * Upload a file to an entity
-     *
-     * @return Response
-     */
     private function uploadFile(): Response
     {
-        $this->Entity->canOrExplode('write');
-        $this->Entity->Uploads->create($this->Request);
+        $this->Entity->Uploads->create(new CreateUpload($this->Request));
 
         return new JsonResponse(array('result' => 'success'));
     }

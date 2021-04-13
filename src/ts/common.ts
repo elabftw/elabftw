@@ -11,6 +11,8 @@ import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
 import { relativeMoment, displayMolFiles, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
+import EntityClass from './Entity.class';
+import { EntityType, Payload, Method, Model, Action } from './interfaces';
 
 $(document).ready(function() {
   $.ajaxSetup({
@@ -58,37 +60,45 @@ $(document).ready(function() {
     }
   });
 
-  // CLICK THE CREATE NEW BUTTON
-  // done with javascript because if it's a link the css is not clean
-  // and there is a gap with the separator
-  // also this allows different behavior for exp/items
-  $('.createNew').on('click', function() {
-    const path = window.location.pathname;
-    if (path.split('/').pop() === 'experiments.php') {
-      window.location.replace('?create=1');
-    } else {
-      // modal plugin requires jquery
-      ($('#createModal') as any).modal('toggle');
-    }
-  });
-
-  $('.logout').on('click', function() {
-    localStorage.removeItem('isTodolistOpen');
-    location.href = 'app/logout.php';
-  });
-
-  document.querySelector('.real-container').addEventListener('click', (event) => {
+  document.querySelector('#container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
     // SHOW PRIVACY POLICY
     if (el.matches('[data-action="show-privacy-policy"]')) {
-      const AjaxC = new Ajax('privacyPolicy', '0', 'app/controllers/Ajax.php');
-      const privacyPolicy = AjaxC.do('read')
-        .then(json => typeof json.msg === 'string' ? json.msg : '')
-        .then(privacy => {
-          (document.getElementById('privacyModalBody') as HTMLDivElement).innerHTML = privacy;
-          // modal plugin requires jquery
-          ($('#privacyModal') as any).modal('toggle');
-        });
+      const payload: Payload = {
+        method: Method.GET,
+        action: Action.Read,
+        model: Model.PrivacyPolicy,
+      };
+      const AjaxC = new Ajax();
+      AjaxC.send(payload).then(json => {
+        let policy = json.value as string;
+        if (!policy) {
+          policy = 'No privacy policy is set.';
+        }
+        (document.getElementById('privacyModalBody') as HTMLDivElement).innerHTML = policy;
+        // modal plugin requires jquery
+        ($('#privacyModal') as any).modal('toggle');
+      });
+
+    // LOGOUT
+    } else if (el.matches('[data-action="logout"]')) {
+      localStorage.removeItem('isTodolistOpen');
+      window.location.href = 'app/logout.php';
+
+    // CREATE EXPERIMENT or DATABASE item: main create button in top right
+    } else if (el.matches('[data-action="create-entity"]')) {
+      const path = window.location.pathname;
+      if (path.split('/').pop() === 'experiments.php') {
+        const tplid = el.dataset.tplid;
+        (new EntityClass(EntityType.Experiment)).create(tplid).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
+      } else {
+        // for database items, show a selection modal
+        // modal plugin requires jquery
+        ($('#createModal') as any).modal('toggle');
+      }
+    } else if (el.matches('[data-action="create-item"]')) {
+      const tplid = el.dataset.tplid;
+      (new EntityClass(EntityType.Item)).create(tplid).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
     }
   });
 });

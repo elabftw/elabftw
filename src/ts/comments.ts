@@ -6,46 +6,50 @@
  * @package elabftw
  */
 import Comment from './Comment.class';
-import { notif } from './misc';
 import i18next from 'i18next';
+import { Entity, EntityType } from './interfaces';
 
-$(document).ready(function() {
-  const type = $('#info').data('type');
-  const CommentC = new Comment(type);
+document.addEventListener('DOMContentLoaded', () => {
+  // holds info about the page through data attributes
+  const about = document.getElementById('info').dataset;
+  let entityType: EntityType;
+  if (about.type === 'experiments') {
+    entityType = EntityType.Experiment;
+  }
+  if (about.type === 'items') {
+    entityType = EntityType.Item;
+  }
+
+  const entity: Entity = {
+    type: entityType,
+    id: parseInt(about.id),
+  };
+
+  const CommentC = new Comment(entity);
 
   // CREATE COMMENTS
   $('#comment_container').on('click', '#commentsCreateButton', function() {
-    CommentC.create();
+    const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
+    CommentC.create(content).then(() => $('#comment_container').load(window.location.href + ' #comment'));
   });
 
-  // MAKE them editable on mousehover
-  $('#comment_container').on('mouseenter', '.comment-editable', function() {
-    ($(this) as any).editable('app/controllers/Ajax.php', {
+  // MAKE comments editable on mousehover
+  $(document).on('mouseenter', '.comment-editable', function() {
+    ($(this) as any).editable(function(input: string) {
+      CommentC.update(input, $(this).data('commentid'));
+      return(input);
+    }, {
       type : 'textarea',
-      submitdata: (revert, settings, submitdata) => {
-        return {
-          action: 'update',
-          what: 'comment',
-          type: $(this).data('type'),
-          params: {
-            itemId: $(this).data('itemid'),
-            comment: submitdata.value,
-            id: $(this).data('id'),
-          },
-        };
-      },
       width: '80%',
       height: '200',
       tooltip : i18next.t('click-to-edit'),
-      indicator : $(this).data('indicator'),
-      submit : $(this).data('submit'),
-      cancel : $(this).data('cancel'),
+      indicator : i18next.t('saving'),
+      submit : i18next.t('save'),
+      cancel : i18next.t('cancel'),
       style : 'display:inline',
       submitcssclass : 'button btn btn-primary mt-2',
       cancelcssclass : 'button btn btn-danger mt-2',
-      callback : function(data: string) {
-        const json = JSON.parse(data);
-        notif(json);
+      callback : function(json) {
         // show result in comment box
         if (json.res) {
           $(this).html(json.value);
@@ -56,6 +60,8 @@ $(document).ready(function() {
 
   // DESTROY COMMENTS
   $('#comment_container').on('click', '.commentsDestroy', function() {
-    CommentC.destroy($(this).data('id'));
+    if (confirm(i18next.t('generic-delete-warning'))) {
+      CommentC.destroy($(this).data('commentid')).then(() => $('#comment_container').load(window.location.href + ' #comment'));
+    }
   });
 });

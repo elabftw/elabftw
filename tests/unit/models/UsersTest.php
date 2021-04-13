@@ -6,17 +6,19 @@ use Elabftw\Maps\UserPreferences;
 
 class UsersTest extends \PHPUnit\Framework\TestCase
 {
+    private Users $Users;
+
     protected function setUp(): void
     {
         $this->Users= new Users(1, 1);
     }
 
-    public function testPopulate()
+    public function testPopulate(): void
     {
         $this->assertTrue(is_array($this->Users->userData));
     }
 
-    public function testUpdatePreferences()
+    public function testUpdatePreferences(): void
     {
         $prefsArr = array(
             'limit_nb' => '12',

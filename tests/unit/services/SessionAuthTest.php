@@ -13,7 +13,7 @@ use Elabftw\Elabftw\AuthResponse;
 
 class SessionAuthTest extends \PHPUnit\Framework\TestCase
 {
-    public function testTryAuth()
+    public function testTryAuth(): void
     {
         $AuthService = new SessionAuth();
         $authResponse = $AuthService->tryAuth();

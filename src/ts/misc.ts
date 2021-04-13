@@ -10,6 +10,7 @@ import 'jquery-ui/ui/widgets/sortable';
 import * as $3Dmol from '3dmol/build/3Dmol-nojquery.js';
 import { CheckableItem, ResponseMsg } from './interfaces';
 import { DateTime } from 'luxon';
+import { EntityType, Entity } from './interfaces';
 
 // DISPLAY TIME RELATIVE TO NOW
 // the datetime is taken from the title of the element so mouse hover will show raw datetime
@@ -22,8 +23,31 @@ export function relativeMoment(): void {
     });
 }
 
+// for view or edit mode, get type and id from the page to construct the entity object
+export function getEntity(): Entity {
+  // holds info about the page through data attributes
+  const about = document.getElementById('info').dataset;
+  let entityType: EntityType;
+  if (about.type === 'experiments') {
+    entityType = EntityType.Experiment;
+  }
+  if (about.type === 'items') {
+    entityType = EntityType.Item;
+  }
+  return {
+    type: entityType,
+    id: parseInt(about.id),
+  };
+}
+
+
 // PUT A NOTIFICATION IN TOP LEFT WINDOW CORNER
 export function notif(info: ResponseMsg): void {
+  // clear an existing one
+  if (document.getElementById('overlay')) {
+    document.getElementById('overlay').remove();
+  }
+
   const p = document.createElement('p');
   p.innerText = (info.msg as string);
   const result = info.res ? 'ok' : 'ko';

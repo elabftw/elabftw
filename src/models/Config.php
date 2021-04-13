@@ -17,8 +17,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Update;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Services\Check;
 use PDO;
 
 /**
@@ -64,55 +62,23 @@ class Config
 
     /**
      * Used in sysconfig.php to update config values
+     * NOTE: it is unlikely that someone with sysadmin level tries and edit requests to input incorrect values
+     * so there is no real need for ensuring the values make sense, client side validation is enough this time
      *
      * @param array<string, mixed> $post (conf_name => conf_value)
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
     public function update(array $post): void
     {
-        // do some data validation for some values
-        /* TODO add upload button
-        if (isset($post['stampcert'])) {
-            $cert_chain = filter_var($post['stampcert'], FILTER_SANITIZE_STRING);
-            if (!is_readable(realpath($cert_chain))) {
-                throw new Exception('Cannot read provided certificate file.');
+        $passwords = array('stamppass', 'smtp_password', 'ldap_password');
+
+        foreach ($passwords as $password) {
+            if (isset($post[$password]) && !empty($post[$password])) {
+                $post[$password] = Crypto::encrypt($post[$password], Key::loadFromAsciiSafeString(\SECRET_KEY));
+            // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one
+            } elseif (isset($post[$password])) {
+                unset($post[$password]);
             }
-        }
-         */
-
-        if (isset($post['stamppass']) && !empty($post['stamppass'])) {
-            $post['stamppass'] = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(\SECRET_KEY));
-        } elseif (isset($post['stamppass'])) {
-            unset($post['stamppass']);
-        }
-
-        // sanitize canonical URL
-        if (isset($post['url']) && !empty($post['url'])) {
-            $post['url'] = filter_var($post['url'], FILTER_SANITIZE_URL);
-        }
-        if (isset($post['url']) && $post['url'] === '') {
-            $post['url'] = null;
-        }
-
-        if (isset($post['login_tries']) && Check::id((int) $post['login_tries']) === false) {
-            throw new IllegalActionException('Bad value for number of login attempts!');
-        }
-        if (isset($post['ban_time']) && Check::id((int) $post['ban_time']) === false) {
-            throw new IllegalActionException('Bad value for number of login attempts!');
-        }
-
-        // encrypt SMTP password
-        if (isset($post['smtp_password']) && !empty($post['smtp_password'])) {
-            $post['smtp_password'] = Crypto::encrypt($post['smtp_password'], Key::loadFromAsciiSafeString(\SECRET_KEY));
-        } elseif (isset($post['smtp_password'])) {
-            unset($post['smtp_password']);
-        }
-
-        // encrypt LDAP password
-        if (isset($post['ldap_password']) && !empty($post['ldap_password'])) {
-            $post['ldap_password'] = Crypto::encrypt($post['ldap_password'], Key::loadFromAsciiSafeString(\SECRET_KEY));
-        } elseif (isset($post['ldap_password'])) {
-            unset($post['ldap_password']);
         }
 
         // loop the array and update config
@@ -128,29 +94,29 @@ class Config
     /**
      * Reset the timestamp password
      */
-    public function destroyStamppass(): void
+    public function destroyStamppass(): bool
     {
         $sql = "UPDATE config SET conf_value = NULL WHERE conf_name = 'stamppass'";
         $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**
      * Restore default values
      */
-    public function restoreDefaults(): void
+    public function restoreDefaults(): bool
     {
         $sql = 'DELETE FROM config';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
-        $this->populate();
+        return $this->populate();
     }
 
     /**
      * Insert the default values in the sql config table
      * Only run once of first ever page load
      */
-    private function populate(): void
+    private function populate(): bool
     {
         $Update = new Update($this, new Sql());
         $schema = $Update->getRequiredSchema();
@@ -243,6 +209,6 @@ class Config
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);
 
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 }

@@ -11,16 +11,17 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use function bin2hex;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Interfaces\CreatableInterface;
-use Elabftw\Interfaces\HasMetadataInterface;
+use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
@@ -34,9 +35,9 @@ use function random_bytes;
 use function sha1;
 
 /**
- * The mother class of Experiments and Database
+ * The mother class of Experiments, Items, Templates and ItemsTypes
  */
-abstract class AbstractEntity implements CreatableInterface, HasMetadataInterface
+abstract class AbstractEntity implements CrudInterface
 {
     use EntityTrait;
 
@@ -106,11 +107,6 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         }
     }
 
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
     /**
      * Duplicate an item
      *
@@ -121,7 +117,7 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
     /**
      * Lock/unlock
      */
-    public function toggleLock(): void
+    public function toggleLock(): bool
     {
         $permissions = $this->getPermissions();
         if (!$this->Users->userData['can_lock'] && !$permissions['write']) {
@@ -154,7 +150,7 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         $req = $this->Db->prepare($sql);
         $req->bindParam(':lockedby', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**
@@ -199,11 +195,11 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         // teamFilter is to restrict to the team for items only
         // as they have a team column
         $teamFilter = '';
-        if ($this instanceof Database) {
+        if ($this instanceof Items) {
             $teamFilter = ' AND users2teams.teams_id = entity.team';
         }
         // add pub/org/team filter
-        $sqlPublicOrg = '';
+        $sqlPublicOrg = "((entity.canread = 'public' OR entity.canread = 'organization') AND entity.userid = :userid) OR ";
         if ($this->Users->userData['show_public']) {
             $sqlPublicOrg = "entity.canread = 'public' OR entity.canread = 'organization' OR ";
         }
@@ -254,14 +250,24 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         return $itemsArr;
     }
 
+    public function read(ContentParamsInterface $params): array
+    {
+        if ($params->getTarget() === 'boundevent' && $this instanceof Experiments) {
+            return $this->getBoundEvents();
+        }
+        if ($params->getTarget() === 'metadata') {
+            return $this->readAll()['metadata'];
+        }
+        return $this->readAll();
+    }
+
     /**
      * Read all from one entity
      * Here be dragons!
      *
      * @param bool $getTags if true, might take a long time
-     * @return array
      */
-    public function read(bool $getTags = true): array
+    public function readAll(bool $getTags = true): array
     {
         if ($this->id === null) {
             throw new IllegalActionException('No id was set!');
@@ -331,83 +337,49 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
 
     /**
      * Update an entity. The revision is saved before so it can easily compare old and new body.
-     *
-     * @param string $title
-     * @param string $date
-     * @param string $body
-     * @throws ImproperActionException
-     * @throws DatabaseErrorException
-     * @return void
      */
-    public function update(string $title, string $date, string $body): void
+    //public function update(string $title, string $date, string $body): void
+    public function update(EntityParamsInterface $params): bool
     {
         $this->canOrExplode('write');
 
-        // don't update if locked
-        if ($this->entityData['locked']) {
-            throw new ImproperActionException(_('Cannot update a locked entity!'));
+        switch ($params->getTarget()) {
+            case 'title':
+                $content = $params->getTitle();
+                break;
+            case 'date':
+                $content = $params->getDate();
+                break;
+            case 'body':
+                $content = $params->getBody();
+                break;
+            case 'metadata':
+                if (!empty($params->getField())) {
+                    return $this->updateJsonField($params);
+                }
+                $content = $params->getMetadata();
+                break;
+            default:
+                throw new ImproperActionException('Invalid update target');
         }
 
-        // add a revision
-        $Config = new Config();
-        $Revisions = new Revisions(
-            $this,
-            (int) $Config->configArr['max_revisions'],
-            (int) $Config->configArr['min_delta_revisions'],
-        );
-        $Revisions->create($body);
-
-        $title = Filter::title($title);
-        $date = Filter::kdate($date);
-        $body = Filter::body($body);
-
-        $sql = 'UPDATE ' . $this->type . ' SET
-            title = :title,
-            date = :date,
-            body = :body
-            WHERE id = :id';
-
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':title', $title);
-        $req->bindParam(':date', $date);
-        $req->bindParam(':body', $body);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        $this->Db->execute($req);
-    }
-
-    public function updateTitle(string $title): void
-    {
-        $this->canOrExplode('write');
-        // don't update if locked
-        if ($this->entityData['locked']) {
-            throw new ImproperActionException(_('Cannot update a locked entity!'));
+        // save a revision for body target
+        if ($params->getTarget() === 'body') {
+            $Config = new Config();
+            $Revisions = new Revisions(
+                $this,
+                (int) $Config->configArr['max_revisions'],
+                (int) $Config->configArr['min_delta_revisions'],
+            );
+            $Revisions->create($content);
         }
 
-        $title = Filter::title($title);
-        $sql = 'UPDATE ' . $this->type . ' SET title = :title WHERE id = :id';
+        $sql = 'UPDATE ' . $this->type . ' SET ' . $params->getTarget() . ' = :content WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':title', $title);
+        $req->bindValue(':content', $content);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        $this->Db->execute($req);
-    }
-
-    public function updateDate(string $date): void
-    {
-        $this->canOrExplode('write');
-        // don't update if locked
-        if ($this->entityData['locked']) {
-            throw new ImproperActionException(_('Cannot update a locked entity!'));
-        }
-
-        $date = Filter::kdate($date);
-        $sql = 'UPDATE ' . $this->type . ' SET date = :date WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':date', $date);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**
@@ -505,7 +477,7 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
 
         $Permissions = new Permissions($this->Users, $item);
 
-        if ($this instanceof Experiments || $this instanceof Database || $this instanceof Templates) {
+        if ($this instanceof Experiments || $this instanceof Items || $this instanceof Templates) {
             return $Permissions->forEntity();
         }
 
@@ -580,8 +552,6 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
 
     /**
      * Now that we have an id, load the data in entityData array
-     *
-     * @return void
      */
     public function populate(): void
     {
@@ -590,7 +560,7 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         }
 
         // load the entity in entityData array
-        $this->entityData = $this->read();
+        $this->entityData = $this->read(new ContentParams());
     }
 
     /**
@@ -600,7 +570,7 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
      */
     public function getTimestampInfo(): array
     {
-        if ($this instanceof Database || $this->entityData['timestamped'] === '0') {
+        if ($this instanceof Items || $this->entityData['timestamped'] === '0') {
             return array();
         }
         $timestamper = $this->Users->read((int) $this->entityData['timestampedby']);
@@ -640,15 +610,24 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         return $req->rowCount() > 0;
     }
 
-    public function getMetadata(): ?string
-    {
-        $entityData = $this->read(false);
-        return $entityData['metadata'];
-    }
-
     public function getTable(): string
     {
         return $this->type;
+    }
+
+    /**
+     * Update only one field in the metadata json
+     */
+    protected function updateJsonField(EntityParamsInterface $params): bool
+    {
+        // build field (input is double quoted to allow for whitespace in key)
+        $field = '$.extra_fields."' . $params->getField() . '".value';
+        $sql = 'UPDATE ' . $this->getTable() . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':field', $field);
+        $req->bindValue(':value', $params->getContent());
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     /**
@@ -749,7 +728,7 @@ abstract class AbstractEntity implements CreatableInterface, HasMetadataInterfac
         if ($this instanceof Experiments) {
             $select .= ', entity.timestamped';
             $eventsColumn = 'experiment';
-        } elseif ($this instanceof Database) {
+        } elseif ($this instanceof Items) {
             $select .= ', categoryt.bookable';
             $eventsColumn = 'item';
         } else {

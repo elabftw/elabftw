@@ -17,8 +17,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Maps\UserPreferences;
-use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Templates;
 use Elabftw\Services\Filter;
 use Elabftw\Services\LocalAuth;
 use Elabftw\Services\MfaHelper;
@@ -105,33 +103,6 @@ try {
         }
     }
     // END TAB 2
-
-    // TAB 3 : EXPERIMENTS TEMPLATES
-
-    // EDIT TEMPLATES
-    if ($Request->request->has('tpl_form')) {
-        $tab = '3';
-
-        $Templates = new Templates($App->Users, (int) $Request->request->get('tpl_id'));
-        $Templates->update(
-            $Request->request->get('tpl_title'),
-            Filter::kdate(),
-            $Request->request->get('tpl_body'),
-        );
-        $templateId = '&templateid=' . $Request->request->get('tpl_id');
-    }
-    // END TAB 3
-
-    // TAB 4 : CREATE API KEY
-    if ($Request->request->has('createApiKey')) {
-        $tab = '4';
-        $ApiKeys = new ApiKeys($App->Users);
-        $key = $ApiKeys->create(
-            $Request->request->get('name'),
-            (int) $Request->request->get('canWrite')
-        );
-        $App->Session->getFlashBag()->add('warning', sprintf(_("This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again: %s"), $key));
-    }
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));
     $Response = new RedirectResponse('../../ucp.php?tab=' . $tab . $templateId);

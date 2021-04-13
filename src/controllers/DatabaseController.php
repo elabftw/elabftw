@@ -12,7 +12,7 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
-use Elabftw\Models\Database;
+use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 
 /**
@@ -20,17 +20,11 @@ use Elabftw\Models\ItemsTypes;
  */
 class DatabaseController extends AbstractEntityController
 {
-    /**
-     * Constructor
-     *
-     * @param App $app
-     * @param Database $entity
-     */
-    public function __construct(App $app, Database $entity)
+    public function __construct(App $app, Items $entity)
     {
         parent::__construct($app, $entity);
 
-        $Category = new ItemsTypes($this->App->Users);
+        $Category = new ItemsTypes($this->App->Users->team);
         $this->categoryArr = $Category->readAll();
     }
 

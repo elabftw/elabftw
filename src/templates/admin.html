@@ -149,7 +149,7 @@
     <!-- CREATE A GROUP -->
     <label for='teamGroupCreate'>{{ 'Create a group'|trans }}</label>
     <input class='form-control col-md-4 custom-control-inline' id='teamGroupCreate' type='text' />
-    <button type='submit' id='teamGroupCreateBtn' class='button btn btn-primary'>{{ 'Create'|trans }}</button>
+    <button type='submit' data-action='create-teamgroup' id='teamGroupCreateBtn' class='button btn btn-primary'>{{ 'Create'|trans }}</button>
     <!-- END CREATE GROUP -->
 
     <!-- SHOW EXISTING GROUPS -->
@@ -212,17 +212,40 @@
     <hr>
     <ul class='list-group sortable' data-axis='y' data-table='status'>
       {% for status in statusArr %}
-        <li id='status_{{ status.category_id }}' class='list-group-item'>
+        <li id='status_{{ status.category_id }}' data-statusid='status_{{ status.category_id }}' class='list-group-item'>
           <ul class='list-inline'>
-            <li class='list-inline-item'><label for='statusName_{{ status.category_id }}'>{{ 'Name'|trans }}</label> <input class='form-control' required type='text' id='statusName_{{ status.category_id }}' value='{{ status.category }}' /></li>
-            <li class='list-inline-item col-1 align-top'><label for='statusColor_{{ status.category_id }}'>{{ 'Color'|trans }}</label> <input class='form-control' type='color' id='statusColor_{{ status.category_id }}' value='#{{ status.color }}' />
-            </li>
-            <li class='list-inline-item'><input type='checkbox' id='statusTimestamp_{{ status.category_id }}' {{ status.is_timestampable ? " checked" }} /> <label for='statusTimestamp_{{ status.category_id }}'>{{ 'Allow timestamp'|trans }}</label></li>
-            <li class='list-inline-item'><input type='radio' name='defaultRadio' id='statusDefault_{{ status.category_id }}' {{ status.is_default ? " checked" }} /> <label for='statusDefault_{{ status.category_id }}'>{{ 'Default status'|trans }}</label></li>
-            <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button btn btn-primary statusSave'>{{ 'Save'|trans }}</button></li>
 
-            <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button btn btn-danger statusDestroy' >{{ 'Delete'|trans }}</button></li>
-            <li class='list-inline-item'><span class='draggable sortableHandle align-right'><i class='fas fa-sort fa-2x'></i></span></li>
+            <li class='list-inline-item'>
+              <label for='statusName_{{ status.category_id }}'>{{ 'Name'|trans }}</label>
+              <input class='form-control' required type='text' id='statusName_{{ status.category_id }}' value='{{ status.category }}' />
+            </li>
+
+            <li class='list-inline-item col-1 align-top'>
+              <label for='statusColor_{{ status.category_id }}'>{{ 'Color'|trans }}</label>
+              <input class='form-control' type='color' id='statusColor_{{ status.category_id }}' value='#{{ status.color }}' />
+            </li>
+            <li class='list-inline-item'>
+              <input type='checkbox' id='statusTimestamp_{{ status.category_id }}' {{ status.is_timestampable ? " checked" }} />
+              <label for='statusTimestamp_{{ status.category_id }}'>{{ 'Allow timestamp'|trans }}</label>
+            </li>
+
+            <li class='list-inline-item'>
+              <input type='radio' name='defaultRadio' id='statusDefault_{{ status.category_id }}' {{ status.is_default ? " checked" }} />
+              <label for='statusDefault_{{ status.category_id }}'>{{ 'Default status'|trans }}</label>
+            </li>
+
+            <li class='list-inline-item'>
+              <button data-statusid='{{ status.category_id }}' class='button btn btn-primary statusSave'>{{ 'Save'|trans }}</button>
+            </li>
+
+            <li class='list-inline-item'>
+              <button data-statusid='{{ status.category_id }}' data-action='destroy-status' class='button btn btn-danger' >{{ 'Delete'|trans }}</button>
+            </li>
+            <li class='list-inline-item'>
+              <span class='draggable sortableHandle align-right'>
+                <i class='fas fa-sort fa-2x'></i>
+              </span>
+            </li>
           </ul>
         </li>
       {% endfor %}

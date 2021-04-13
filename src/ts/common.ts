@@ -12,7 +12,7 @@ import 'bootstrap/js/src/modal.js';
 import { relativeMoment, displayMolFiles, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
-import { EntityType, Payload, Method, Model, Target, Entity, Action, ResponseMsg } from './interfaces';
+import { EntityType, Payload, Method, Model, Action } from './interfaces';
 
 $(document).ready(function() {
   $.ajaxSetup({

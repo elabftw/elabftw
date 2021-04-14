@@ -66,6 +66,10 @@ class ApiController implements ControllerInterface
 
     private bool $canWrite = false;
 
+    private int $limit = 15;
+
+    private int $offset = 0;
+
     private ?int $id;
 
     // experiments, items or uploads
@@ -182,18 +186,54 @@ class ApiController implements ControllerInterface
      */
     private function parseReq(): void
     {
-        $args = explode('/', rtrim($this->Request->query->get('req') ?? '', '/'));
+        /**
+         * so we receive the request already split in two by nginx
+         * first part is "req" and then if there is any query string it ends up in "args"
+         * generate an array with the request that looks like this
+         * for /api/v1/experiments/1:
+         *   array(5) {
+         *   [0]=>
+         *   string(0) ""
+         *   [1]=>
+         *   string(3) "api"
+         *   [2]=>
+         *   string(2) "v1"
+         *   [3]=>
+         *   string(11) "experiments"
+         *   [4]=>
+         *   string(1) "1"
+         *   }
+         */
+        $req = explode('/', rtrim($this->Request->query->get('req'), '/'));
+
+        // now parse the query string (part after ?)
+        $args = $this->Request->query->get('args') ?? '';
+        if (!empty($args)) {
+            // this is where we store the parsed query string parameters
+            $result = array('limit' => $this->limit, 'offset' => $this->offset);
+            // this function doesn't return anything
+            parse_str($args, $result);
+            // now assign our result to class properties
+            if (isset($result['limit'])) {
+                $this->limit = (int) $result['limit'];
+            }
+            if (isset($result['offset'])) {
+                $this->offset = (int) $result['offset'];
+            }
+        }
 
         // assign the id if there is one
         $id = null;
-        if (Check::id((int) end($args)) !== false) {
-            $id = (int) end($args);
+        if (Check::id((int) end($req)) !== false) {
+            $id = (int) end($req);
         }
         $this->id = $id;
 
         // assign the endpoint (experiments, items, uploads, items_types, status)
-        $this->endpoint = array_shift($args);
-        $this->param = array_shift($args) ?? '';
+        // 0 is "", 1 is "api", 2 is "v1"
+        $this->endpoint = $req[3];
+        // used by backup zip only for now
+        $this->param = $req[4] ?? '';
 
         // verify the key and load user info
         $ApiKeys = new ApiKeys(new Users());
@@ -322,18 +362,20 @@ class ApiController implements ControllerInterface
         if ($this->id === null) {
             $DisplayParams = new DisplayParams();
             $DisplayParams->adjust($this->App);
-            // default DisplayParams is 16, crank it up to 9000
-            // in the future maybe use limit/offset/page query params
-            $DisplayParams->limit = 9000;
+
+            // use our limit/offset
+            // remove 1 to limit as there is 1 added in the sql query
+            $DisplayParams->limit = $this->limit - 1;
+            $DisplayParams->offset = $this->offset;
             return new JsonResponse($this->Entity->readShow($DisplayParams, false));
         }
         $this->Entity->canOrExplode('read');
         // add the uploaded files
         $this->Entity->entityData['uploads'] = $this->Entity->Uploads->readAll();
         // add the linked items
-        $this->Entity->entityData['links'] = $this->Entity->Links->read();
+        $this->Entity->entityData['links'] = $this->Entity->Links->read(new ContentParams());
         // add the steps
-        $this->Entity->entityData['steps'] = $this->Entity->Steps->read();
+        $this->Entity->entityData['steps'] = $this->Entity->Steps->read(new ContentParams());
 
         return new JsonResponse($this->Entity->entityData);
     }
@@ -378,7 +420,7 @@ class ApiController implements ControllerInterface
         if ($this->id === null && $this->Entity instanceof Templates) {
             return new JsonResponse($this->Entity->getTemplatesList());
         }
-        $this->Entity->read();
+        $this->Entity->read(new ContentParams());
         $permissions = $this->Entity->getPermissions($this->Entity->entityData);
         if ($permissions['read'] === false) {
             throw new IllegalActionException('User tried to access a template without read permissions');
@@ -929,11 +971,15 @@ class ApiController implements ControllerInterface
      */
     private function updateEntity(): Response
     {
-        $this->Entity->update(
-            $this->Request->request->get('title') ?? 'Untitled',
-            $this->Request->request->get('date') ?? '',
-            $this->Request->request->get('body') ?? '',
-        );
+        if ($this->Request->request->has('title')) {
+            $this->Entity->update(new EntityParams($this->Request->request->get('title'), 'title'));
+        }
+        if ($this->Request->request->has('date')) {
+            $this->Entity->update(new EntityParams($this->Request->request->get('date'), 'date'));
+        }
+        if ($this->Request->request->has('body')) {
+            $this->Entity->update(new EntityParams($this->Request->request->get('body'), 'body'));
+        }
         return new JsonResponse(array('result' => 'success'));
     }
 

@@ -365,7 +365,7 @@ abstract class AbstractEntity implements CrudInterface
 
         // save a revision for body target
         if ($params->getTarget() === 'body') {
-            $Config = new Config();
+            $Config = Config::getConfig();
             $Revisions = new Revisions(
                 $this,
                 (int) $Config->configArr['max_revisions'],

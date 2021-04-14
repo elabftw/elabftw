@@ -294,7 +294,10 @@ class Tools
     {
         $Config = Config::getConfig();
 
-        return $Config->configArr['url'] ?? self::getUrlFromRequest($Request, $canonical);
+        if ($Config->configArr['url']) {
+            return $Config->configArr['url'];
+        }
+        return self::getUrlFromRequest($Request, $canonical);
     }
 
     /**

@@ -11,11 +11,10 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\ItemTypeParams;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Database;
 use Elabftw\Models\Idps;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
@@ -123,19 +122,17 @@ class PopulateDatabase extends Command
 
         // add more items types
         $Users1 = new Users(1, 1);
-        $ItemsTypes = new ItemsTypes($Users1);
+        $ItemsTypes = new ItemsTypes($Users1->team);
         foreach ($yaml['items_types'] as $items_types) {
-            $ItemsTypes->create(
-                new ParamsProcessor(
-                    array(
-                        'name' => $items_types['name'],
-                        'color' => $items_types['color'],
-                        'bookable' => (int) $items_types['bookable'],
-                        'template' => $items_types['template'],
-                    )
-                ),
-                $items_types['team']
-            );
+            $ItemsTypes->create(new ItemTypeParams(
+                $items_types['name'],
+                $items_types['color'],
+                $items_types['template'],
+                'team',
+                'team',
+                (int) $items_types['bookable'],
+                (int) $items_types['team'],
+            ));
         }
 
 

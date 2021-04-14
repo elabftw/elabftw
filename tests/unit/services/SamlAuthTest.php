@@ -19,6 +19,14 @@ use OneLogin\Saml2\Auth as SamlAuthLib;
 
 class SamlAuthTest extends \PHPUnit\Framework\TestCase
 {
+    private array $configArr;
+
+    private SamlAuthLib $SamlAuthLib;
+
+    private array $samlUserdata;
+
+    private array $settings;
+
     protected function setUp(): void
     {
         $this->configArr = array(
@@ -51,7 +59,7 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
         $this->settings = $Saml->getSettings($idpId);
     }
 
-    public function testTryAuth()
+    public function testTryAuth(): void
     {
         $AuthService = new SamlAuth($this->SamlAuthLib, $this->configArr, $this->settings);
         $authResponse = $AuthService->tryAuth();
@@ -59,7 +67,7 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('saml', $authResponse->isAuthBy);
     }
 
-    public function testAssertIdpResponse()
+    public function testAssertIdpResponse(): void
     {
         // happy path
         $AuthService = new SamlAuth($this->SamlAuthLib, $this->configArr, $this->settings);
@@ -71,7 +79,7 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $authResponse->selectedTeam);
     }
 
-    public function testAssertIdpResponseSyncTeams()
+    public function testAssertIdpResponseSyncTeams(): void
     {
         $configArr = $this->configArr;
         $configArr['saml_sync_teams'] = '1';
@@ -80,7 +88,7 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $authResponse->selectedTeam);
     }
 
-    public function testAssertIdpResponseFailedAuth()
+    public function testAssertIdpResponseFailedAuth(): void
     {
         // now try with a failed auth
         // don't use the real saml lib but create a mock
@@ -99,7 +107,7 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
     /**
      * Idp doesn't send back a team
      */
-    public function testAssertIdpResponseNoTeamResponse()
+    public function testAssertIdpResponseNoTeamResponse(): void
     {
         $samlUserdata = $this->samlUserdata;
         unset($samlUserdata['User.team']);
@@ -117,7 +125,7 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
     /**
      * Idp doesn't send back a team and there are no default team
      */
-    public function testAssertIdpResponseNoTeamResponseNoDefaultTeam()
+    public function testAssertIdpResponseNoTeamResponseNoDefaultTeam(): void
     {
         $samlUserdata = $this->samlUserdata;
         unset($samlUserdata['User.team']);
@@ -139,7 +147,7 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
     /**
      * Idp sends an array of teams
      */
-    public function testAssertIdpResponseTeamsArrayResponse()
+    public function testAssertIdpResponseTeamsArrayResponse(): void
     {
         $samlUserdata = $this->samlUserdata;
         $samlUserdata['User.team'] = array('Alpha');
@@ -157,7 +165,7 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
     /**
      * Idp sends an array of email
      */
-    public function testAssertIdpResponseEmailArrayResponse()
+    public function testAssertIdpResponseEmailArrayResponse(): void
     {
         $samlUserdata = $this->samlUserdata;
         $samlUserdata['User.email'] = array('phpunit@example.com');
@@ -175,7 +183,7 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
     /**
      * Idp doesn't send back an email
      */
-    public function testAssertIdpResponseNoEmail()
+    public function testAssertIdpResponseNoEmail(): void
     {
         $samlUserdata = $this->samlUserdata;
         unset($samlUserdata['User.email']);
@@ -193,7 +201,7 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
     /**
      * Try with errors in the response
      */
-    public function testAssertIdpResponseError()
+    public function testAssertIdpResponseError(): void
     {
         $this->SamlAuthLib = $this->createMock(SamlAuthLib::class);
         // FIXME do I really need to remake the mock entirely?
@@ -207,7 +215,7 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
     /**
      * With debug mode on and errors
      */
-    public function testAssertIdpResponseErrorDebug()
+    public function testAssertIdpResponseErrorDebug(): void
     {
         $this->SamlAuthLib = $this->createMock(SamlAuthLib::class);
         // FIXME do I really need to remake the mock entirely?

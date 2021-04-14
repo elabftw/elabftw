@@ -11,7 +11,7 @@ namespace Elabftw\Services;
 
 class CacheGeneratorTest extends \PHPUnit\Framework\TestCase
 {
-    public function testGenerate()
+    public function testGenerate(): void
     {
         $CacheGenerator = new CacheGenerator();
         $CacheGenerator->generate();

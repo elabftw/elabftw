@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Traits\SetIdTrait;
 use PDO;
 
 /**
@@ -20,11 +21,14 @@ use PDO;
  */
 class Idps implements DestroyableInterface
 {
+    use SetIdTrait;
+
     protected Db $Db;
 
-    public function __construct()
+    public function __construct(?int $id = null)
     {
         $this->Db = Db::getConnection();
+        $this->id = $id;
     }
 
     /**
@@ -136,11 +140,12 @@ class Idps implements DestroyableInterface
         return $res;
     }
 
-    public function destroy(int $id): bool
+    public function destroy(): bool
     {
         $sql = 'DELETE FROM idps WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
         return $this->Db->execute($req);
     }
 }

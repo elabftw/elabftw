@@ -10,8 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -27,29 +28,30 @@ class Steps implements CrudInterface
 
     protected Db $Db;
 
-    public function __construct(AbstractEntity $entity)
+    private ?int $id;
+
+    public function __construct(AbstractEntity $entity, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->Entity = $entity;
+        $this->id = $id;
     }
 
     /**
      * Add a step
      *
      */
-    public function create(ParamsProcessor $params): int
+    public function create(ContentParamsInterface $params): int
     {
         $this->Entity->canOrExplode('write');
         // make sure the newly added step is at the bottom
         // count the number of steps and add 1 to be sure we're last
-        $ordering = count($this->read()) + 1;
+        $ordering = count($this->read(new ContentParams())) + 1;
 
-        // remove any | as they are used in the group_concat
-        $body = str_replace('|', ' ', $params->template);
-        $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :body, :ordering)';
+        $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :content, :ordering)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':body', $body);
+        $req->bindValue(':content', $params->getContent());
         $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
         $this->Db->execute($req);
 
@@ -61,7 +63,6 @@ class Steps implements CrudInterface
      * Used when importing from zip archive (json)
      *
      * @param array<string, mixed> $step
-     * @return void
      */
     public function import(array $step): void
     {
@@ -79,32 +80,11 @@ class Steps implements CrudInterface
         $this->Db->execute($req);
     }
 
-    /**
-     * Toggle the finished column of a step
-     *
-     * @param int $stepid
-     * @return void
-     */
-    public function finish(int $stepid): void
+    public function read(ContentParamsInterface $params): array
     {
-        $this->Entity->canOrExplode('write');
-
-        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET finished = !finished,
-            finished_time = NOW()
-            WHERE id = :id AND item_id = :item_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $stepid, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-    }
-
-    /**
-     * Get steps for an entity
-     *
-     * @return array
-     */
-    public function read(): array
-    {
+        if ($params->getTarget() === 'all') {
+            return $this->readAll();
+        }
         $this->Entity->canOrExplode('read');
 
         $sql = 'SELECT * FROM ' . $this->Entity->type . '_steps WHERE item_id = :id ORDER BY ordering';
@@ -121,8 +101,6 @@ class Steps implements CrudInterface
 
     /**
      * Get the current unfinished steps from experiments owned by current user
-     *
-     * @return array
      */
     public function readAll(): array
     {
@@ -168,7 +146,6 @@ class Steps implements CrudInterface
      * @param int $id The id of the original entity
      * @param int $newId The id of the new entity that will receive the steps
      * @param bool $fromTpl do we duplicate from template?
-     * @return void
      */
     public function duplicate(int $id, int $newId, $fromTpl = false): void
     {
@@ -192,34 +169,45 @@ class Steps implements CrudInterface
         }
     }
 
-    /**
-     * Update the body of a step
-     *
-     */
-    public function update(ParamsProcessor $params): string
+    public function update(ContentParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
-
-        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET body = :body WHERE id = :id AND item_id = :item_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':body', $params->template, PDO::PARAM_STR);
-        $req->bindParam(':id', $params->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $params->template;
+        if ($params->getTarget() === 'body') {
+            return $this->updateBody($params->getContent());
+        }
+        if ($params->getTarget() === 'finished') {
+            return $this->toggleFinished();
+        }
+        return false;
     }
 
-    /**
-     * Delete a step
-     */
-    public function destroy(int $id): bool
+    public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');
 
         $sql = 'DELETE FROM ' . $this->Entity->type . '_steps WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    private function toggleFinished(): bool
+    {
+        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET finished = !finished,
+            finished_time = NOW() WHERE id = :id AND item_id = :item_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    private function updateBody(string $content): bool
+    {
+        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET body = :content WHERE id = :id AND item_id = :item_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':content', $content, PDO::PARAM_STR);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

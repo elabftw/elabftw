@@ -1,5 +1,5 @@
-<div class='row'>
-  <div class='col'>
+<div class='row' style='line-height: 160%'>
+  <div class='col col-md-12'>
     <!-- TAGS -->
     <i class='fas fa-tags'></i>
     <label>{{ 'Tags'|trans }}</label>
@@ -25,7 +25,7 @@
   <div class='col'>
     <div class='dropdown'>
       <a class='align-right clickable' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
-        <i class='fas fa-ellipsis-h fa-2x'></i>
+        <i class='fas fa-ellipsis-v fa-2x'></i>
       </a>
       <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
         <!-- MANAGE PERMISSIONS -->
@@ -47,18 +47,13 @@
 
 </div>
 
-<form action='app/controllers/UcpController.php' method='post'>
-  {{ App.Csrf.getHiddenInput|raw }}
-  <input type='hidden' name='tpl_form' />
-  <input type='hidden' name='tpl_id' value='{{ templateData.id }}' />
-  <label for='tplTitle'>{{ 'Title'|trans }}</label>
-  <input id='tplTitle' name='tpl_title' class='form-control' value='{{ templateData.title|raw }}' />
-  {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
-  <label for='e{{ templateData.id }}'>{{ 'Template content'|trans }}</label>
-  <textarea id='e{{ templateData.id }}' name='tpl_body' class='mceditable' style='height:500px;'>{{ templateData.body }}</textarea><br />
-  <div class='text-center'>
-    <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-  </div>
-</form>
+<label for='title_input'>{{ 'Title'|trans }}</label>
+<input id='title_input' class='form-control' data-id='{{ templateData.id }}' value='{{ templateData.title|raw }}' />
+{# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
+<label for='e{{ templateData.id }}'>{{ 'Template content'|trans }}</label>
+<textarea id='e{{ templateData.id }}' class='mceditable' style='height:500px;'>{{ templateData.body }}</textarea><br />
+<div class='text-center'>
+  <button data-action='update-template' data-id='{{ templateData.id }}' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+</div>
 {% include('steps-links-edit.html') %}
 {{ include('json-editor.html') }}

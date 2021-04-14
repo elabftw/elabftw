@@ -10,9 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
 use PDO;
@@ -20,7 +21,7 @@ use PDO;
 /**
  * All about the database items
  */
-class Database extends AbstractEntity
+class Items extends AbstractEntity
 {
     public function __construct(Users $users, ?int $id = null)
     {
@@ -29,11 +30,11 @@ class Database extends AbstractEntity
         $this->page = 'database';
     }
 
-    public function create(ParamsProcessor $params): int
+    public function create(EntityParamsInterface $params): int
     {
-        $category = $params->id;
-        $ItemsTypes = new ItemsTypes($this->Users, $category);
-        $itemsTypesArr = $ItemsTypes->read();
+        $category = (int) $params->getContent();
+        $ItemsTypes = new ItemsTypes($this->Users->team, $category);
+        $itemsTypesArr = $ItemsTypes->read(new ContentParams());
 
         // SQL for create DB item
         $sql = 'INSERT INTO items(team, title, date, body, userid, category, elabid, canread, canwrite, metadata)
@@ -101,7 +102,7 @@ class Database extends AbstractEntity
         return $newId;
     }
 
-    public function destroy(): void
+    public function destroy(): bool
     {
         $this->canOrExplode('write');
 
@@ -136,6 +137,6 @@ class Database extends AbstractEntity
         }
 
         // delete from pinned
-        $this->Pins->cleanup();
+        return $this->Pins->cleanup();
     }
 }

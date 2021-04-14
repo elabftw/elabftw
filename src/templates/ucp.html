@@ -365,43 +365,41 @@
 <div class='divhandle' id='tab4div'>
   <div class='box'>
     <h3>{{ 'API keys'|trans }}</h3>
-      <h5>{{ 'Existing keys'|trans }}</h5>
-      <table id='apiTable' class='table'>
-        <thead>
-          <tr>
-            <th scope='col'>#</th>
-            <th scope='col'>{{ 'Name'|trans }}</th>
-            <th scope='col'>{{ 'Permissions'|trans }}</th>
-            <th scope='col'>{{ 'Creation date'|trans }}</th>
-            <th scope='col'>{{ 'Action'|trans }}</th>
-          </tr>
-        </thead>
-    <tbody>
-      {% for key in apiKeysArr %}
+    <div id='newKeyPlaceholder'></div>
+    <h5>{{ 'Create new key'|trans }}</h5>
+      <label for='apikeyName'>{{ 'Name'|trans }}</label>
+      <input id='apikeyName' type='text' />
+      <label for='apikeyCanwrite'>{{ 'Permissions'|trans }}</label>
+      <select id='apikeyCanwrite' autocomplete='off'>
+        <option value='0'>{{ 'Read Only'|trans }}</option>
+        <option value='1'>{{ 'Read/Write'|trans }}</option>
+      </select>
+      <button class='button btn btn-primary' type='submit' data-action='create-apikey'>{{ 'Generate an API Key'|trans }}</button>
+
+    <h5>{{ 'Existing keys'|trans }}</h5>
+    <table id='apiTable' class='table'>
+      <thead>
+        <tr>
+          <th scope='col'>#</th>
+          <th scope='col'>{{ 'Name'|trans }}</th>
+          <th scope='col'>{{ 'Permissions'|trans }}</th>
+          <th scope='col'>{{ 'Creation date'|trans }}</th>
+          <th scope='col'>{{ 'Action'|trans }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for key in apiKeysArr %}
           <tr>
             <th scope='row'>{{ loop.index }}</th>
             <td>{{ key.name }}</td>
             <td>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
             <td>{{ key.created_at }}</td>
-            <td><a class='clickable keyDestroy' title='{{ 'Delete'|trans }}' data-id='{{ key.id }}'><i class='fas fa-trash-alt fa-2x'></i></a></td>
+            <td><a class='clickable' data-action='destroy-apikey' title='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt fa-2x'></i></a></td>
           </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+        {% endfor %}
+      </tbody>
+    </table>
 
-  <h5>{{ 'Create new key'|trans }}</h5>
-  <form method='post' action='app/controllers/UcpController.php' autocomplete='off'>
-      {{ App.Csrf.getHiddenInput|raw }}
-      <input type='hidden' name='createApiKey' />
-      <label for='name'>{{ 'Name'|trans }}</label>
-      <input id='name' name='name' type='text' required />
-      <label for='canWrite'>{{ 'Permissions'|trans }}</label>
-      <select name='canWrite' id='canWrite' autocomplete='off'>
-          <option value='0'>{{ 'Read Only'|trans }}</option>
-          <option value='1'>{{ 'Read/Write'|trans }}</option>
-      </select>
-      <button class='button btn btn-primary' type='submit'>{{ 'Generate an API Key'|trans }}</button>
-  </form>
   </div>
 </div>
 <!-- END PAGE -->

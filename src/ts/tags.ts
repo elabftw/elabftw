@@ -10,6 +10,8 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import Tag from './Tag.class';
 import i18next from 'i18next';
 import { getCheckedBoxes, notif } from './misc';
+import { Ajax } from './Ajax.class';
+import { Payload, Method, Model, Action, Target, EntityType, Entity } from './interfaces';
 
 $(document).ready(function() {
   let type = $('#info').data('type');
@@ -17,7 +19,31 @@ $(document).ready(function() {
     type = 'experiments_templates';
   }
 
-  const TagC = new Tag(type);
+  const AjaxC = new Ajax();
+  // holds info about the page through data attributes
+  const about = document.getElementById('info').dataset;
+  let entityType: EntityType = EntityType.Experiment;
+  if (about.type === 'experiments') {
+    entityType = EntityType.Experiment;
+  }
+  if (about.type === 'items') {
+    entityType = EntityType.Item;
+  }
+  if (about.type === 'experiments_templates') {
+    entityType = EntityType.Template;
+  }
+
+  let entityId = null;
+  if (about.id) {
+    entityId = parseInt(about.id);
+  }
+
+  const entity: Entity = {
+    type: entityType,
+    id: entityId,
+  };
+
+  const TagC = new Tag(entity);
 
   // CREATE TAG
   $(document).on('keypress blur', '.createTagInput', function(e) {
@@ -26,9 +52,10 @@ $(document).ready(function() {
     }
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
-      const itemId = $(this).data('id');
-      TagC.save($(this).val() as string, itemId);
-      $(this).val('');
+      TagC.create($(this).val() as string).then(() => {
+        $('#tags_div_' + entity.id).load(window.location.href + ' #tags_div_' + entity.id + ' > *');
+        $(this).val('');
+      });
     }
   });
 
@@ -50,7 +77,7 @@ $(document).ready(function() {
         return;
       }
       $.each(checked, function(index) {
-        TagC.save($('#createTagInputMultiple').val() as string, checked[index]['id']);
+        TagC.create($('#createTagInputMultiple').val() as string, checked[index]['id']);
       });
       $(this).val('');
     }
@@ -65,30 +92,27 @@ $(document).ready(function() {
         response(cache[term]);
         return;
       }
-      request.what = 'tag';
-      request.action = 'getList';
-      request.params = {
-        name: term,
+      const payload: Payload = {
+        method: Method.GET,
+        action: Action.Read,
+        model: Model.Tag,
+        entity: entity,
+        target: Target.List,
+        content: term,
       };
-      $.getJSON('app/controllers/Ajax.php', request, function(data) {
-        cache[term] = data;
-        response(data);
+      AjaxC.send(payload).then(json => {
+        cache[term] = json.value;
+        response(json.value);
       });
     }
   });
 
-  // make the tag editable
+  // make the tag editable (on admin.ts)
   $(document).on('mouseenter', '.tag-editable', function() {
     ($(this) as any).editable(function(value) {
-      $.post('app/controllers/Ajax.php', {
-        action: 'update',
-        what: 'tag',
-        params: {
-          tag: value,
-          id: $(this).data('tagid'),
-        },
-      });
-
+      // we need to have an entity so the Tags model is built correctly
+      // also it's a mandatory constructor param for Tag.class.ts
+      TagC.update(value, $(this).data('tagid'));
       return(value);
     }, {
       tooltip : i18next.t('click-to-edit'),
@@ -100,17 +124,28 @@ $(document).ready(function() {
 
   // UNREFERENCE (remove link between tag and entity)
   $(document).on('click', '.tagUnreference', function() {
-    TagC.unreference($(this).data('tagid'), $(this).data('id'));
+    if (confirm(i18next.t('tag-delete-warning'))) {
+      TagC.unreference($(this).data('tagid')).then(() => {
+        $('#tags_div_' + entity.id).load(window.location.href + ' #tags_div_' + entity.id + ' > *');
+      });
+    }
   });
 
   // DEDUPLICATE (from admin panel/tag manager)
   $(document).on('click', '.tagDeduplicate', function() {
-    TagC.deduplicate();
+    TagC.deduplicate().then(json => {
+      $('#tag_manager').load(window.location.href + ' #tag_manager > *');
+      // TODO notif this in js from json.value
+      //   $Response->setData(array('res' => true, 'msg' => sprintf(_('Deduplicated %d tags'), $deduplicated)));
+    });
   });
 
   // DESTROY (from admin panel/tag manager)
   $('#tag_manager').on('click', '.tagDestroy', function() {
-    TagC.destroy($(this).data('tagid'));
-
+    if (confirm(i18next.t('tag-delete-warning'))) {
+      TagC.destroy($(this).data('tagid')).then(() => {
+        $('#tag_manager').load(window.location.href + ' #tag_manager > *');
+      });
+    }
   });
 });

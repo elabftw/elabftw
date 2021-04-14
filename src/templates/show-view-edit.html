@@ -10,7 +10,7 @@
       </div>
       <div class='modal-body'>
         {% for category in categoryArr %}
-          <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='?create=true&tpl={{ category.category_id }}'>{{ category.category }}</a>
+          <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-item' data-tplid='{{ category.category_id }}'>{{ category.category }}</a>
         {% endfor %}
       </div>
     </div>

@@ -14,8 +14,8 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Check;
@@ -35,7 +35,7 @@ try {
     } elseif ($Request->query->get('type') === 'experiments_templates') {
         $Entity = new Templates($App->Users);
     } elseif ($Request->query->get('type') === 'items') {
-        $Entity = new Database($App->Users);
+        $Entity = new Items($App->Users);
     } else {
         throw new IllegalActionException('Bad type!');
     }

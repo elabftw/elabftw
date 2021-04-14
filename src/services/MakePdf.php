@@ -12,6 +12,7 @@ namespace Elabftw\Services;
 
 use DateTime;
 use function dirname;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\AbstractEntity;
@@ -101,18 +102,18 @@ class MakePdf extends AbstractMake
 
         $renderArr = array(
             'body' => $this->getBody(),
-            'commentsArr' => $this->Entity->Comments->read(),
+            'commentsArr' => $this->Entity->Comments->read(new ContentParams()),
             'css' => $this->getCss(),
             'date' => $date->format('Y-m-d'),
             'elabid' => $this->Entity->entityData['elabid'],
             'fullname' => $this->Entity->entityData['fullname'],
             'includeFiles' => $this->Entity->Users->userData['inc_files_pdf'],
-            'linksArr' => $this->Entity->Links->read(),
+            'linksArr' => $this->Entity->Links->read(new ContentParams()),
             'locked' => $locked,
             'lockDate' => $lockDate,
             'lockerName' => $lockerName,
             'pdfSig' => $Request->cookies->get('pdf_sig'),
-            'stepsArr' => $this->Entity->Steps->read(),
+            'stepsArr' => $this->Entity->Steps->read(new ContentParams()),
             'tags' => $this->Entity->entityData['tags'],
             'title' => $this->Entity->entityData['title'],
             'uploadsArr' => $this->Entity->Uploads->readAll(),

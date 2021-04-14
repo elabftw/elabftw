@@ -11,8 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
 use Elabftw\Traits\CsvTrait;
 
 /**
@@ -47,10 +45,7 @@ class MakeCsv extends AbstractMake
      */
     protected function getHeader(): array
     {
-        if ($this->Entity instanceof Experiments) {
-            return array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
-        }
-        return  array('id', 'date', 'title', 'description', 'category', 'elabid', 'url', 'rating');
+        return  array('id', 'date', 'title', 'content', 'category', 'elabid', 'rating', 'url');
     }
 
     /**
@@ -71,12 +66,9 @@ class MakeCsv extends AbstractMake
                     html_entity_decode(strip_tags(htmlspecialchars_decode((string) $this->Entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
                     htmlspecialchars_decode((string) $this->Entity->entityData['category'], ENT_QUOTES | ENT_COMPAT),
                     $this->Entity->entityData['elabid'],
+                    $row[] = $this->Entity->entityData['rating'],
                     $this->getUrl(),
                 );
-                // add rating if it's an item
-                if ($this->Entity instanceof Items) {
-                    $row[] = $this->Entity->entityData['rating'];
-                }
                 $rows[] = $row;
             }
         }

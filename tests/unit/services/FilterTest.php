@@ -13,26 +13,26 @@ use Elabftw\Exceptions\ImproperActionException;
 
 class FilterTest extends \PHPUnit\Framework\TestCase
 {
-    public function testKdate()
+    public function testKdate(): void
     {
         $this->assertEquals('19690721', Filter::kdate('19690721'));
         $this->assertEquals(date('Ymd'), Filter::kdate('3902348923'));
         $this->assertEquals(date('Ymd'), Filter::kdate('Sun is shining'));
     }
 
-    public function testSanitize()
+    public function testSanitize(): void
     {
         $this->assertEquals('', Filter::sanitize('<img></img>'));
     }
 
-    public function testTitle()
+    public function testTitle(): void
     {
         $this->assertEquals('My super title', Filter::title('My super title'));
         $this->assertEquals('Yep ', Filter::title("Yep\n"));
         $this->assertEquals('Untitled', Filter::title(''));
     }
 
-    public function testBody()
+    public function testBody(): void
     {
         $this->assertEquals('my body', Filter::body('my body'));
         $this->assertEquals('my body', Filter::body('my body<script></script>'));
@@ -41,7 +41,7 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         Filter::body($body);
     }
 
-    public function testForFilesystem()
+    public function testForFilesystem(): void
     {
         $this->assertEquals('blah', Filter::forFilesystem('=blah/'));
     }

@@ -9,10 +9,13 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\ResourceNotFoundException;
 
 class PrivacyPolicyTest extends \PHPUnit\Framework\TestCase
 {
+    private PrivacyPolicy $PrivacyPolicy;
+
     protected function setUp(): void
     {
         $this->PrivacyPolicy = new PrivacyPolicy(new Config());
@@ -21,22 +24,22 @@ class PrivacyPolicyTest extends \PHPUnit\Framework\TestCase
     public function testReadEmpty(): void
     {
         $this->expectException(ResourceNotFoundException::class);
-        $this->PrivacyPolicy->read();
+        $this->PrivacyPolicy->read(new ContentParams());
     }
 
     public function testUpdate(): void
     {
         $txt = 'Some privacy policy';
-        $this->PrivacyPolicy->update($txt);
+        $this->PrivacyPolicy->update(new ContentParams($txt));
         $this->setUp();
-        $this->assertEquals($txt, $this->PrivacyPolicy->read());
+        $this->assertEquals($txt, $this->PrivacyPolicy->read(new ContentParams()));
     }
 
     public function testClear(): void
     {
-        $this->PrivacyPolicy->clear();
+        $this->PrivacyPolicy->destroy();
         $this->setUp();
         $this->expectException(ResourceNotFoundException::class);
-        $this->PrivacyPolicy->read();
+        $this->PrivacyPolicy->read(new ContentParams());
     }
 }

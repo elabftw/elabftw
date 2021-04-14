@@ -8,8 +8,10 @@
 import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
+import { Entity, Target, EntityType } from './interfaces';
 import { notif, displayMolFiles, display3DMolecules } from './misc';
 import i18next from 'i18next';
+import Upload from './Upload.class';
 
 $(document).ready(function() {
   const pages = ['edit', 'view'];
@@ -19,25 +21,28 @@ $(document).ready(function() {
   displayMolFiles();
   display3DMolecules();
 
-  // REPLACE UPLOAD toggle form
-  $(document).on('click', '.replaceUpload', function() {
-    $(this).next('.replaceUploadForm').toggle();
-  });
+  // holds info about the page through data attributes
+  const about = document.getElementById('info').dataset;
+  let entityType: EntityType;
+  if (about.type === 'experiments') {
+    entityType = EntityType.Experiment;
+  }
+  if (about.type === 'items') {
+    entityType = EntityType.Item;
+  }
+
+  const entity: Entity = {
+    type: entityType,
+    id: parseInt(about.id),
+  };
+
+  const UploadC = new Upload(entity);
 
   // make file comments editable
   $(document).on('mouseenter', '.file-comment', function() {
-    ($('.editable') as any).editable(function(value: string) {
-      $.post('app/controllers/EntityAjaxController.php', {
-        updateFileComment : true,
-        type: $(this).data('type'),
-        comment : value,
-        commentId : $(this).attr('id'),
-        id: $(this).data('itemid')
-      }).done(function(json) {
-        notif(json);
-      });
-
-      return(value);
+    ($('.editable') as any).editable(function(input: string) {
+      UploadC.update(input, $(this).data('id'), Target.Comment);
+      return(input);
     }, {
       tooltip : i18next.t('upload-file-comment'),
       placeholder: i18next.t('upload-file-comment'),
@@ -72,24 +77,54 @@ $(document).ready(function() {
     });
   });
 
-  // DESTROY UPLOAD
-  $(document).on('click', '.uploadsDestroy', function() {
-    const itemid = $(this).data('itemid');
-    if (confirm($(this).data('msg'))) {
-      $.post('app/controllers/EntityAjaxController.php', {
-        uploadsDestroy: true,
-        uploadId: $(this).data('id'),
-        id: itemid,
-        type: $(this).data('type')
-      }).done(function(json) {
-        notif(json);
-        if (json.res) {
-          $('#filesdiv').load('?mode=edit&id=' + itemid + ' #filesdiv > *', function() {
-            displayMolFiles();
-            display3DMolecules(true);
-          });
-        }
+  function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
+    if (event.key === 'Enter' || event.type === 'blur') {
+      const newFilename = (event.target as HTMLInputElement).value;
+      UploadC.update(newFilename, event.target.dataset.id, Target.RealName).then(json => {
+        event.target.remove();
+        // change the link text with the new one
+        original.textContent = json.res ? newFilename : original.textContent;
+        parent.prepend(original);
       });
+    }
+  }
+
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // RENAME UPLOAD
+    if (el.matches('[data-action="rename-upload"]')) {
+      // find the corresponding filename element
+      // we replace the parent span to also remove the link for download
+      const filenameLink = document.getElementById('upload-filename_' + el.dataset.id);
+      const filenameInput = document.createElement('input');
+      filenameInput.dataset.id = el.dataset.id;
+      filenameInput.value = filenameLink.textContent;
+      const parentSpan = filenameLink.parentElement;
+      filenameInput.addEventListener('blur', event => {
+        processNewFilename(event, filenameLink, parentSpan);
+      });
+      filenameInput.addEventListener('keypress', event => {
+        processNewFilename(event, filenameLink, parentSpan);
+      });
+      filenameLink.replaceWith(filenameInput);
+
+    // REPLACE UPLOAD
+    } else if (el.matches('[data-action="replace-upload"]')) {
+      document.getElementById('replaceUploadForm_' + el.dataset.uploadid).style.display = '';
+
+    // DESTROY UPLOAD
+    } else if (el.matches('[data-action="destroy-upload"]')) {
+      const uploadId = parseInt(el.dataset.uploadid);
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        UploadC.destroy(uploadId).then(json => {
+          if (json.res) {
+            $('#filesdiv').load('?mode=edit&id=' + entity.id + ' #filesdiv > *', function() {
+              displayMolFiles();
+              display3DMolecules(true);
+            });
+          }
+        });
+      }
     }
   });
 

@@ -9,45 +9,51 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\StepParams;
 
 class StepsTest extends \PHPUnit\Framework\TestCase
 {
+    private Experiments $Experiments;
+
+    private Steps $Steps;
+
     protected function setUp(): void
     {
-        $this->Users = new Users(1);
-        $this->Experiments = new Experiments($this->Users, 1);
+        $this->Experiments = new Experiments(new Users(1, 1), 1);
         $this->Steps = $this->Experiments->Steps;
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
-        $this->Steps->create(new ParamsProcessor(array('template' => 'do this')));
+        $this->Steps->create(new StepParams('do this'));
     }
 
-    public function testFinish()
+    public function testFinish(): void
     {
-        $this->Steps->finish(1);
+        $this->Steps->update(new StepParams('', 'finished'));
     }
 
-    public function testRead()
+    public function testRead(): void
     {
-        $steps = $this->Steps->read();
+        $steps = $this->Steps->read(new ContentParams());
         $this->assertTrue(is_array($steps));
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
-        $id = $this->Steps->create(new ParamsProcessor(array('template' => 'do that')));
-        $this->Steps->update(new ParamsProcessor(array('id' => $id, 'template' => 'updated step body')));
-        $ourStep = array_filter($this->Steps->read(), function ($s) use ($id) {
+        $id = $this->Steps->create(new StepParams('do that'));
+        $Steps = new Steps($this->Experiments, $id);
+        $Steps->update(new StepParams('updated step body', 'body'));
+        $ourStep = array_filter($this->Steps->read(new ContentParams()), function ($s) use ($id) {
             return ((int) $s['id']) === $id;
         });
         $this->assertEquals(array_pop($ourStep)['body'], 'updated step body');
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
-        $this->assertTrue($this->Steps->destroy(1));
+        $Steps = new Steps($this->Experiments, 1);
+        $this->assertTrue($Steps->destroy());
     }
 }

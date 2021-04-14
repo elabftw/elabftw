@@ -15,8 +15,10 @@ parameters:
       path: %currentWorkingDirectory%/web
   excludePaths:
     - %currentWorkingDirectory%/src/langs/js-strings.php
+    - %currentWorkingDirectory%/src/tools/rector.php
 
   paths:
     - %currentWorkingDirectory%/src
     - %currentWorkingDirectory%/web
+    - %currentWorkingDirectory%/tests/unit
 

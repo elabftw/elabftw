@@ -18,17 +18,57 @@
             {% set ext = upload.real_name|getExt %}
 
             <div class='col-md-4 col-sm-6'>
-                <div class='thumbnail box' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>
-                    {% if mode == 'edit' %}
-                        <a class='uploadsDestroy clickable align-right' data-id='{{ upload.id }}' data-type='{{ upload.type }}'
-                            data-itemid='{{ upload.item_id }}' data-msg='{{ 'Delete this?'|trans }}' title='{{ 'Delete'|trans }}'>
-                            <i class='fas fa-trash-alt'></i>
+                <div class='thumbnail box' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' style='overflow: visible'>
+                  {% if mode == 'edit' %}
+                    <div class='dropdown'>
+                      <a class='clickable align-right p-2' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
+                        <i class='fas fa-ellipsis-v'></i>
+                      </a>
+                      <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
+
+                        <!-- INSERT IN TEXT in edit mode for images -->
+                        {% if mode == 'edit' and ext matches '/(jpg|jpeg|png|gif|svg)$/i' %}
+                          <a class='dropdown-item inserter clickable' data-link='{{ upload.long_name }}'>
+                            <i class='fas fa-image mr-1'></i>{{ 'Insert in text at cursor position'|trans }}</a>
+                        {% endif %}
+
+                        <!-- Edit filename -->
+                        <a class='dropdown-item clickable' data-action='rename-upload' data-id='{{ upload.id }}' data-type='{{ upload.type }}'
+                          data-itemid='{{ upload.item_id }}' data-msg='{{ 'Edit filename'|trans }}' title='{{ 'Edit filename'|trans }}'>
+                          <i class='fas fa-pencil-alt mr-1'></i>{{ 'Edit filename'|trans }}</a>
+
+
+                        <!-- Annotate image -->
+                        {% if mode == 'edit' and ext matches '/(jpg|jpeg|png|gif)$/i' %}
+                          <a class='dropdown-item clickable annotateImg' data-itemid='{{ upload.item_id }}' data-id='{{ upload.id }}' data-type='{{ upload.type }}' data-path='{{ upload.long_name }}'>
+                            <i class='fas fa-paint-brush mr-1'></i>{{ 'Annotate this image'|trans }}</a>
+                        {% endif %}
+
+                        <!-- Save mol file as image -->
+                        {% if mode == 'edit' and ext matches '/(mol)$/i' %}
+                          <a class='dropdown-item saveAsImage clickable' data-name='{{ upload.real_name }}'>
+                          <i class='fas fa-image mr-1'></i>{{ 'Save as image'|trans }}</a>
+                        {% endif %}
+
+
+                        <!-- Upload a new version -->
+                        <a class='dropdown-item clickable' data-action='replace-upload' data-uploadid='{{ upload.id }}'>
+                          <i class='fas fa-sync-alt mr-1'></i>{{ 'Upload a new version of this file'|trans }}</a>
+
+
+                        <div class='dropdown-divider'></div>
+                        <a class='dropdown-item hover-danger clickable' data-action='destroy-upload' data-uploadid='{{ upload.id }}'>
+                          <i class='fas fa-trash-alt fa-fw mr-1' title='{{ 'Delete'|trans }}'></i>{{ 'Delete'|trans }}
                         </a>
-                    {% endif %}
+                      <!--a class='uploadsDestroy clickable'  data-msg='{{ 'Delete this?'|trans }}' title='{{ 'Delete'|trans }}'-->
+                      </div>
+                    </div>
+                  {% endif %}
 
                     {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg)$/i' %}
                     {# don't make the thumbnail clickable if it's a tif #}
                       {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg)$/i' %}
+                      <div class='text-center'>
                         <a href='app/download.php?f={{ upload.long_name }}'
                            {% if upload.real_name matches '/(jpg|jpeg|png|gif)$/i' %}
                                data-fancybox='group'
@@ -40,12 +80,13 @@
                         {% endif %}
                     {% set thumb_name = upload.long_name ~ '_th.jpg' %}
                     {% if thumb_name is readable and App.Users.userData.uploads_layout %}
-                       <img class='thumb img-thumbnail rounded mx-auto d-block' src='app/download.php?f={{ upload.long_name }}_th.jpg' alt='thumbnail' />
+                       <img class='thumb img-thumbnail rounded' src='app/download.php?f={{ upload.long_name }}_th.jpg' alt='thumbnail' />
                    {% elseif App.Users.userData.uploads_layout %}
                       <i class='fas {{ Entity.Uploads.getIconFromExtension(ext) }} thumb rounded mx-auto d-block'></i>
                    {% endif %}
                      {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg)$/i' %}
                         </a>
+                      </div>
                      {% endif %}
                             {% elseif ext == 'mol' and App.Users.userData.chem_editor %}
                             <div class='text-center'>
@@ -94,9 +135,15 @@
             <i class='fas {{ Entity.Uploads.getIconFromExtension(ext) }} thumb rounded mx-auto d-block'></i>
             {% endif %}
 
-        <div class='caption'><i class='fas fa-download mr-1'></i>
-        <a href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&forceDownload' rel='noopener'>{{ upload.real_name }}</a>
-        <span class='smallgray' style='display:inline'> {{ (Entity.Uploads.getUploadsPath ~ upload.long_name)|filesize|formatBytes }} - {{ upload.datetime }}</span><br>
+        <div class='caption'>
+          <i class='fas fa-download mr-1'></i>
+          <span>
+              <a id='upload-filename_{{ upload.id }}' href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&forceDownload' rel='noopener'>{{ upload.real_name }}</a>
+            <span class='smallgray' style='display:inline'>
+              {{ (Entity.Uploads.getUploadsPath ~ upload.long_name)|filesize|formatBytes }} - {{ upload.datetime }}
+            </span>
+          </span>
+        <br>
         {# if we are in view mode, we don't show the comment if it's the default text. This is to avoid showing 'Click to add a comment' where in fact you can't click to add a comment because you are in view mode #}
 
         {% if mode == 'edit' or upload.comment != 'Click to add a comment' %}
@@ -104,7 +151,7 @@
           <p class='file-comment editable d-inline'
             data-type='{{ upload.type }}'
             data-itemid='{{ upload.item_id }}'
-            id='filecomment_{{ upload.id }}'>{{ upload.comment}}</p>
+            data-id='{{ upload.id }}'>{{ upload.comment}}</p>
         {% endif %}
 
         {% if ext matches '/(json)$/i' %}
@@ -113,41 +160,20 @@
           </div>
         {% endif %}
 
-        <!-- INSERT IN TEXT in edit mode for images -->
-        {% if mode == 'edit' and ext matches '/(jpg|jpeg|png|gif|svg)$/i' %}
-          <div class='inserter clickable' data-link='{{ upload.long_name }}'>
-            <i class='fas fa-image mr-1'></i><p class='d-inline'>{{ 'Insert in text at cursor position'|trans }}</p>
-          </div>
-        {% endif %}
-        <!-- Annotate image -->
-        {% if mode == 'edit' and ext matches '/(jpg|jpeg|png|gif)$/i' %}
-          <div class='clickable annotateImg' data-itemid='{{ upload.item_id }}' data-id='{{ upload.id }}' data-type='{{ upload.type }}' data-path='{{ upload.long_name }}'>
-            <i class='fas fa-paint-brush mr-1'></i><p class='d-inline'>{{ 'Annotate this image'|trans }}</p>
-          </div>
-        {% endif %}
-
-        {# SAVE AS IMAGE #}
-        {% if mode == 'edit' and ext matches '/(mol)$/i' %}
-        <div class='saveAsImage clickable' data-name='{{ upload.real_name }}'>
-          <i class='fas fa-image mr-1'></i><p class='d-inline'>{{ 'Save as image'|trans }}</p>
-        </div>
-        {% endif %}
-
         </div>
 
                   {% if mode == 'edit' %}
-                    <div class='clickable replaceUpload' data-itemid='{{ upload.item_id }}' data-id='{{ upload.id }}' data-type='{{ upload.type }}'>
-                      <i class='fas fa-sync-alt mr-1'></i><p class='d-inline'>{{ 'Upload a new version of this file'|trans }}</p>
-                    </div>
                     <!-- replace upload form -->
-                    <div class='replaceUploadForm' style='display:none'>
-                      <form enctype='multipart/form-data' action='app/controllers/EntityController.php' method='POST'>
-                        <input type='hidden' name='replace' />
-                        <input type='hidden' name='upload_id' value='{{ upload.id }}' />
-                        <input type='hidden' name='id' value='{{ upload.item_id }}' />
-                        <input type='hidden' name='type' value='{{ upload.type }}' />
+                    <div id='replaceUploadForm_{{ upload.id }}' style='display:none'>
+                      <form enctype='multipart/form-data' action='app/controllers/RequestHandler.php' method='POST'>
+                        <input type='hidden' name='action' value='update' />
+                        <input type='hidden' name='target' value='file' />
+                        <input type='hidden' name='entity_id' value='{{ upload.item_id }}' />
+                        <input type='hidden' name='entity_type' value='{{ upload.type }}' />
+                        <input type='hidden' name='id' value='{{ upload.id }}' />
+                        <input type='hidden' name='model' value='upload' />
                         {{ App.Csrf.getHiddenInput|raw }}
-                        <input type='file' style='display:inline' name='file' />
+                        <input type='file' style='display:inline' name='content' />
                         <button type='submit' class='button btn btn-primary'>OK</button>
                       </form>
                     </div>

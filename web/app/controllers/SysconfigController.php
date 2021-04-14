@@ -55,9 +55,9 @@ try {
         $tab = '8';
         $PrivacyPolicy = new PrivacyPolicy($App->Config);
         if ($Request->request->has('clear_policy')) {
-            $PrivacyPolicy->clear();
+            $PrivacyPolicy->destroy();
         } else {
-            $PrivacyPolicy->update($Request->request->get('privacy_policy'));
+            $PrivacyPolicy->update(new ContentParams($Request->request->get('privacy_policy')));
         }
     }
 

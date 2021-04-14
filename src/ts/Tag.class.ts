@@ -5,72 +5,80 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import Crud from './Crud.class';
-import i18next from 'i18next';
+import { Entity, Payload, Method, Model, Target, Action, ResponseMsg } from './interfaces';
+import { Ajax } from './Ajax.class';
 
-export default class Tag extends Crud {
-  type: string;
+export default class Tag {
+  entity: Entity;
+  model: Model;
+  sender: Ajax;
 
-  constructor(type: string) {
-    super('app/controllers/Ajax.php');
-    this.type = type;
+  constructor(entity: Entity) {
+    this.entity = entity;
+    this.model = Model.Tag,
+    this.sender = new Ajax();
   }
 
   // REFERENCE A TAG
-  save(tag: string, itemId: number): void {
-    // POST request
-    this.send({
-      action: 'create',
-      what: 'tag',
-      type: this.type,
-      params: {
-        tag: tag,
-        itemId: itemId,
-      },
-    }).then(() => {
-      $('#tags_div_' + itemId).load(window.location.href + ' #tags_div_' + itemId + ' > *');
-    });
+  create(content: string, itemId: number = null): Promise<ResponseMsg> {
+    if (itemId) {
+      this.entity.id = itemId;
+    }
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Create,
+      model: this.model,
+      entity: this.entity,
+      content: content,
+    };
+    return this.sender.send(payload);
+  }
+
+  update(content: string, id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Update,
+      model: Model.Tag,
+      entity: this.entity,
+      content: content,
+      id: id,
+    };
+    return this.sender.send(payload);
   }
 
   // REMOVE THE TAG FROM AN ENTITY
-  unreference(tagId: number, itemId: number): void {
-    if (confirm(i18next.t('tag-delete-warning'))) {
-      this.send({
-        action: 'unreference',
-        what: 'tag',
-        type: this.type,
-        params: {
-          id: tagId,
-          itemId: itemId,
-        },
-      }).then(() => {
-        $('#tags_div_' + itemId).load(window.location.href + ' #tags_div_' + itemId + ' > *');
-      });
-    }
+  unreference(id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Update,
+      model: this.model,
+      entity: this.entity,
+      target: Target.Tag,
+      id: id,
+    };
+    return this.sender.send(payload);
   }
 
   // DEDUPLICATE
-  deduplicate(): void {
-    this.send({
-      action: 'deduplicate',
-      what: 'tag',
-    }).then(() => {
-      $('#tag_manager').load(window.location.href + ' #tag_manager > *');
-    });
+  deduplicate(): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Deduplicate,
+      model: this.model,
+      entity: this.entity,
+    };
+    return this.sender.send(payload);
   }
 
   // REMOVE A TAG COMPLETELY (from admin panel/tag manager)
-  destroy(tagId: number): void {
-    if (confirm(i18next.t('tag-delete-warning'))) {
-      this.send({
-        action: 'destroy',
-        what: 'tag',
-        params: {
-          id: tagId,
-        },
-      }).then(() => {
-        $('#tag_manager').load(window.location.href + ' #tag_manager > *');
-      });
-    }
+  destroy(id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Destroy,
+      model: this.model,
+      entity: this.entity,
+      id: id,
+    };
+    return this.sender.send(payload);
   }
 }

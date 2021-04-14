@@ -4,13 +4,14 @@ namespace Elabftw\Models;
 
 class UploadsTest extends \PHPUnit\Framework\TestCase
 {
+    private Items $Entity;
+
     protected function setUp(): void
     {
-        $this->Users = new Users(1);
-        $this->Entity= new Database($this->Users);
+        $this->Entity = new Items(new Users(1, 1));
     }
 
-    public function testGetIconFromExtension()
+    public function testGetIconFromExtension(): void
     {
         $this->assertEquals('fa-file-archive', $this->Entity->Uploads->getIconFromExtension('zip'));
         $this->assertEquals('fa-file-code', $this->Entity->Uploads->getIconFromExtension('py'));

@@ -31,7 +31,7 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '4.0.0-dev';
+    public const INSTALLED_VERSION = '4.0.0-alpha';
 
     public Request $Request;
 
@@ -117,7 +117,7 @@ class App
 
         // team config
         $Teams = new Teams($this->Users);
-        $this->teamConfigArr = $Teams->read();
+        $this->teamConfigArr = $Teams->read(new ContentParams());
     }
 
     /**

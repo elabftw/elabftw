@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ItemsTypes;
@@ -26,13 +27,12 @@ class SearchController extends AbstractEntityController
         parent::__construct($app, $entity);
 
         // on search page, the categories can be status or itemstypes depending on where one searches
-        $ItemsTypes = new ItemsTypes($this->App->Users);
-        $Status = new Status($this->App->Users);
         if ($this->App->Request->query->get('type') !== 'experiments') {
-            $this->categoryArr = $ItemsTypes->readAll();
+            $Category = new Status($this->App->Users->team);
         } else {
-            $this->categoryArr = $Status->read();
+            $Category = new ItemsTypes($this->App->Users->team);
         }
+        $this->categoryArr = $Category->read(new ContentParams('', 'all'));
     }
 
     /**

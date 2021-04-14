@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\SortableTrait;
 
 /**
@@ -20,10 +21,11 @@ use Elabftw\Traits\SortableTrait;
 abstract class AbstractCategory implements CrudInterface
 {
     use SortableTrait;
+    use EntityTrait;
 
     protected Db $Db;
 
-    protected Users $Users;
+    protected int $team;
 
     /**
      * Get the color of an item type
@@ -38,5 +40,5 @@ abstract class AbstractCategory implements CrudInterface
     /**
      * Count all items of this type
      */
-    abstract protected function countItems(int $id): int;
+    abstract protected function countItems(): int;
 }

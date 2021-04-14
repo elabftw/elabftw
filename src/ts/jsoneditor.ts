@@ -8,6 +8,7 @@
 declare let key: any;
 
 import JsonEditorHelper from './JsonEditorHelper.class';
+import { getEntity } from './misc';
 
 // JSON editor related stuff
 document.addEventListener('DOMContentLoaded', () => {
@@ -23,10 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // holds info about the page through data attributes
     const about = document.getElementById('info').dataset;
 
-    const type = about.type;
-    const id = about.id;
-
-    const JsonEditorHelperC = new JsonEditorHelper(type, id);
+    const entity = getEntity();
+    const JsonEditorHelperC = new JsonEditorHelper(entity);
     JsonEditorHelperC.init((about.page === 'edit' || about.page === 'template-edit'));
 
     // LISTENERS
@@ -35,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (el.matches('[data-action="json-load-metadata"]')) {
         JsonEditorHelperC.loadMetadata();
       } else if (el.matches('[data-action="json-load-metadata-from-id"]')) {
-        JsonEditorHelperC.loadMetadataFromId(el.dataset.type, el.dataset.id);
+        JsonEditorHelperC.loadMetadataFromId(entity);
         // add the id of the currently edited item on the save button
         document.getElementById('itemsTypesJsonSave').dataset.id = el.dataset.id;
       } else if (el.matches('[data-action="json-load-file"]')) {
@@ -43,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (el.matches('[data-action="json-save-metadata"]')) {
         JsonEditorHelperC.saveMetadata();
       } else if (el.matches('[data-action="json-save-metadata-from-id"]')) {
-        JsonEditorHelperC.saveMetadataFromId(el.dataset.type, el.dataset.id);
+        JsonEditorHelperC.saveMetadataFromId(entity);
       } else if (el.matches('[data-action="json-save-file"]')) {
         JsonEditorHelperC.saveFile();
       } else if (el.matches('[data-action="json-save"]')) {

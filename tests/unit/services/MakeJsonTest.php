@@ -14,17 +14,19 @@ use Elabftw\Models\Users;
 
 class MakeJsonTest extends \PHPUnit\Framework\TestCase
 {
+    private MakeJson $Make;
+
     protected function setUp(): void
     {
         $this->Make = new MakeJson(new Experiments(new Users(1, 1)), '1 2 3');
     }
 
-    public function testGetFileName()
+    public function testGetFileName(): void
     {
         $this->assertEquals('export-elabftw.json', $this->Make->getFileName());
     }
 
-    public function testGetJson()
+    public function testGetJson(): void
     {
         $this->assertTrue(is_array($this->Make->getJson()));
     }

@@ -16,7 +16,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Database;
+use Elabftw\Models\Items;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
@@ -36,14 +36,14 @@ $Response->prepare($Request);
 
 try {
     $Teams = new Teams($App->Users);
-    $teamArr = $Teams->read();
+    $teamArr = $Teams->read(new ContentParams());
     $teamsStats = $Teams->getStats((int) $App->Users->userData['team']);
 
     $TeamGroups = new TeamGroups($App->Users);
-    $teamGroupsArr = $TeamGroups->read();
+    $teamGroupsArr = $TeamGroups->read(new ContentParams());
 
 
-    $Database = new Database($App->Users);
+    $Database = new Items($App->Users);
     // we only want the bookable type of items
     $Database->addFilter('categoryt.bookable', '1');
     $Scheduler = new Scheduler($Database);
@@ -64,11 +64,11 @@ try {
         if ($Request->query->get('item') === 'all'
             || !$Request->query->has('item')) {
         } else {
-            $Scheduler->Database->setId((int) $Request->query->get('item'));
+            $Scheduler->Items->setId((int) $Request->query->get('item'));
             $selectedItem = $Request->query->get('item');
             $allItems = false;
             // itemData is to display the name/category of the selected item
-            $itemData = $Scheduler->Database->read();
+            $itemData = $Scheduler->Items->read(new ContentParams());
             if (empty($itemData)) {
                 throw new ImproperActionException(_('Nothing to show with this id'));
             }
@@ -80,7 +80,7 @@ try {
     $templateData = array();
     if ($Request->query->has('templateid')) {
         $Templates->setId((int) $Request->query->get('templateid'));
-        $templateData = $Templates->read();
+        $templateData = $Templates->read(new ContentParams());
         $permissions = $Templates->getPermissions($templateData);
         if ($permissions['read'] === false) {
             throw new IllegalActionException('User tried to access a template without read permissions');

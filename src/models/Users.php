@@ -14,6 +14,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\EmailValidator;
@@ -178,9 +179,9 @@ class Users
     /**
      * Get users matching a search term for consumption in autocomplete
      */
-    public function getList(string $term): array
+    public function getList(ContentParamsInterface $params): array
     {
-        $usersArr = $this->readFromQuery($term);
+        $usersArr = $this->readFromQuery($params->getContent());
         $res = array();
         foreach ($usersArr as $user) {
             $res[] = $user['userid'] . ' - ' . $user['fullname'];

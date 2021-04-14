@@ -10,11 +10,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\EntityParams;
+use Elabftw\Elabftw\TagParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 use FilesystemIterator;
 use function mb_strlen;
@@ -55,7 +56,7 @@ class ImportZip extends AbstractImport
     public function __construct(Users $users, Request $request)
     {
         parent::__construct($users, $request);
-        $this->Entity = new Database($users);
+        $this->Entity = new Items($users);
     }
 
     /**
@@ -188,7 +189,12 @@ class ImportZip extends AbstractImport
             foreach ($item['links'] as $link) {
                 $linkText .= sprintf('<li>[%s] %s</li>', $link['name'], $link['title']);
             }
-            $this->Entity->update($item['title'], $item['date'], $item['body'] . $header . $linkText . $end);
+            $params = new EntityParams('title', $item['title']);
+            $this->Entity->update($params);
+            $params = new EntityParams('date', $item['date']);
+            $this->Entity->update($params);
+            $params = new EntityParams('body', $item['body'] . $header . $linkText . $end);
+            $this->Entity->update($params);
         }
         // add steps
         if (!empty($item['steps'])) {
@@ -207,7 +213,7 @@ class ImportZip extends AbstractImport
     {
         $tagsArr = explode('|', $tags);
         foreach ($tagsArr as $tag) {
-            $this->Entity->Tags->create(new ParamsProcessor(array('tag' => $tag)));
+            $this->Entity->Tags->create(new TagParams($tag));
         }
     }
 

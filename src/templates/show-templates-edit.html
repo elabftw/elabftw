@@ -41,7 +41,7 @@
             {% set lockIcon = 'fa-lock' %}
             {% set alt = templateData.lockedwhen %}
         {% endif %}
-        <a data-action='lock' data-id="{{ templateData.id }}" href='#' class='elab-tooltip'>
+        <a data-action='lock-template' data-id="{{ templateData.id }}" href='#' class='elab-tooltip'>
           <span>{{ alt }}</span>
           <i class='fas {{lockIcon}}'></i>
         </a>

@@ -160,6 +160,35 @@ class Check
     }
 
     /**
+     * A target is like a subpart of a model
+     * example: update the comment of an upload
+     */
+    public static function target(string $target): string
+    {
+        $allowed = array(
+            'all',
+            'body',
+            'boundevent',
+            'comment',
+            'date',
+            'file',
+            'finished',
+            'list',
+            'privacypolicy',
+            'member',
+            'metadata',
+            'real_name',
+            'title',
+            // no target is also valid
+            '',
+        );
+        if (!in_array($target, $allowed, true)) {
+            throw new IllegalActionException('Invalid target!');
+        }
+        return $target;
+    }
+
+    /**
      * Check if we have a correct value for read/write
      */
     public static function rw(string $rw): string

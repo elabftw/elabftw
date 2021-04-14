@@ -19,7 +19,9 @@ START TRANSACTION;
     ALTER TABLE `experiments_templates` ADD `metadata` JSON NULL DEFAULT NULL;
     ALTER TABLE `items_types` ADD `metadata` JSON NULL DEFAULT NULL;
     ALTER TABLE `items_types` ADD `canread` VARCHAR(255) NOT NULL DEFAULT 'team';
-    ALTER TABLE `items_types` ADD`canwrite` VARCHAR(255) NOT NULL DEFAULT 'team';
+    ALTER TABLE `items_types` ADD `canwrite` VARCHAR(255) NOT NULL DEFAULT 'team';
+    ALTER TABLE `experiments` ADD `rating` TINYINT(10) NOT NULL DEFAULT '0';
+    ALTER TABLE `items` CHANGE `rating` `rating` TINYINT(10) NOT NULL DEFAULT '0';
 
     ALTER TABLE `experiments_templates` CHANGE `name` `title` varchar(255) NOT NULL;
     ALTER TABLE `experiments_templates` ADD `date` int(10) UNSIGNED NOT NULL DEFAULT 20210101 AFTER `title`;

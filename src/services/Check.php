@@ -174,9 +174,10 @@ class Check
             'file',
             'finished',
             'list',
-            'privacypolicy',
             'member',
             'metadata',
+            'privacypolicy',
+            'rating',
             'real_name',
             'title',
             // no target is also valid

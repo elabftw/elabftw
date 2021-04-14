@@ -113,14 +113,12 @@
         {% endfor %}
       </select>
     </div>
-    {% if Entity.type == 'items' %}
-      <!-- STAR RATING -->
-      <div class='col-md-3' style='margin-top:15px'>
-        {% for i in range(1, 5) %}
-        <input data-rating='{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Entity.entityData.rating == i ? ' checked=checked' }} />
-        {% endfor %}
-      </div>
-    {% endif %}
+    <!-- STAR RATING -->
+    <div class='col-md-3' style='margin-top:15px'>
+      {% for i in range(1, 5) %}
+      <input data-rating='{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Entity.entityData.rating == i ? ' checked=checked' }} />
+      {% endfor %}
+    </div>
 
   </div>
 

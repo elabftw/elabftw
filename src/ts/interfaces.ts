@@ -89,6 +89,7 @@ enum Target {
   Member = 'member',
   Metadata = 'metadata',
   PrivacyPolicy = 'privacypolicy',
+  Rating = 'rating',
   RealName = 'real_name',
   Tag = 'tag',
   Title = 'title',

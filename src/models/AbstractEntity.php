@@ -353,6 +353,9 @@ abstract class AbstractEntity implements CrudInterface
             case 'body':
                 $content = $params->getBody();
                 break;
+            case 'rating':
+                $content = $params->getRating();
+                break;
             case 'metadata':
                 if (!empty($params->getField())) {
                     return $this->updateJsonField($params);
@@ -371,7 +374,7 @@ abstract class AbstractEntity implements CrudInterface
                 (int) $Config->configArr['max_revisions'],
                 (int) $Config->configArr['min_delta_revisions'],
             );
-            $Revisions->create($content);
+            $Revisions->create((string) $content);
         }
 
         $sql = 'UPDATE ' . $this->type . ' SET ' . $params->getTarget() . ' = :content WHERE id = :id';
@@ -482,6 +485,17 @@ abstract class AbstractEntity implements CrudInterface
         }
 
         return array('read' => false, 'write' => false);
+    }
+
+    public function updateRating(int $rating): void
+    {
+        $this->canOrExplode('write');
+
+        $sql = 'UPDATE ' . $this->type . ' SET rating = :rating WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':rating', $rating, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
     }
 
     /**

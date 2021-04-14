@@ -14,8 +14,8 @@ use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\Teams;
 use Elabftw\Services\MakeCsv;
 use Elabftw\Services\MakeJson;
@@ -42,7 +42,7 @@ class MakeController implements ControllerInterface
     public function __construct(App $app)
     {
         $this->App = $app;
-        $this->Entity = new Database($this->App->Users);
+        $this->Entity = new Items($this->App->Users);
         if ($this->App->Request->query->get('type') === 'experiments') {
             $this->Entity = new Experiments($this->App->Users);
         }

@@ -13,8 +13,8 @@ namespace Elabftw\Elabftw;
 use function count;
 use Elabftw\Controllers\SearchController;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
@@ -34,18 +34,18 @@ require_once 'app/init.inc.php';
 $App->pageTitle = _('Search');
 
 $Experiments = new Experiments($App->Users);
-$Database = new Database($App->Users);
+$Database = new Items($App->Users);
 $Tags = new Tags($Experiments);
 $tagsArr = $Tags->readAll();
 
-$itemsTypesArr = (new ItemsTypes($App->Users))->readAll();
-$categoryArr = $statusArr = (new Status($App->Users))->read();
+$itemsTypesArr = (new ItemsTypes($App->Users->team))->read(new ContentParams('', 'all'));
+$categoryArr = $statusArr = (new Status($App->Users->team))->read(new ContentParams());
 if ($Request->query->get('type') !== 'experiments') {
     $categoryArr = $itemsTypesArr;
 }
 
 $TeamGroups = new TeamGroups($App->Users);
-$teamGroupsArr = $TeamGroups->read();
+$teamGroupsArr = $TeamGroups->read(new ContentParams());
 
 $usersArr = $App->Users->readAllFromTeam();
 

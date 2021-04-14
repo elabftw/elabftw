@@ -7,6 +7,8 @@ START TRANSACTION;
     ALTER TABLE `users` ADD `password_hash` VARCHAR(255) NULL DEFAULT NULL AFTER `password`;
     ALTER TABLE `users` ADD `show_public` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0';
     ALTER TABLE `users` ADD `uploads_layout` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1';
+    ALTER TABLE `teams` ADD `user_create_tag` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1';
+    ALTER TABLE `teams` ADD `deletable_item` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1';
     INSERT INTO config (conf_name, conf_value) VALUES ('autologout_time', '0');
     INSERT INTO config (conf_name, conf_value) VALUES ('min_delta_revisions', '100');
     INSERT INTO config (conf_name, conf_value) VALUES ('saml_user_default', '1');

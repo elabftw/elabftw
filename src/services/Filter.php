@@ -62,7 +62,7 @@ class Filter
         if ($input === null) {
             return date('Ymd');
         }
-        // the search page's datetime inputs will return YYYY-MM-DD
+        // the date inputs will return YYYY-MM-DD
         // so strip the '-'
         $input = strtr($input, array('-' => ''));
         if (mb_strlen($input) === 8) {
@@ -82,9 +82,6 @@ class Filter
 
     /**
      * Simply sanitize string
-     *
-     * @param string $input
-     * @return string
      */
     public static function sanitize(string $input): string
     {
@@ -144,8 +141,11 @@ class Filter
      * @param string $input Body to sanitize
      * @return string The sanitized body or empty string if there is no input
      */
-    public static function body(string $input): string
+    public static function body(?string $input = null): string
     {
+        if ($input === null) {
+            return '';
+        }
         $whitelist = '<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol><dl><dt><dd>
             <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><th><td><code><video><audio><pagebreak><pre>
             <details><summary><figure><figcaption>';

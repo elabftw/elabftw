@@ -13,34 +13,34 @@ use Elabftw\Exceptions\ImproperActionException;
 
 class EmailValidatorTest extends \PHPUnit\Framework\TestCase
 {
-    public function testValidEmail()
+    public function testValidEmail(): void
     {
         $EmailValidator = new EmailValidator('blah@example.com');
         $EmailValidator->validate();
     }
 
-    public function testInvalidEmail()
+    public function testInvalidEmail(): void
     {
         $EmailValidator = new EmailValidator('blahexample.com');
         $this->expectException(ImproperActionException::class);
         $EmailValidator->validate();
     }
 
-    public function testDuplicateEmail()
+    public function testDuplicateEmail(): void
     {
         $EmailValidator = new EmailValidator('phpunit@example.com');
         $this->expectException(ImproperActionException::class);
         $EmailValidator->validate();
     }
 
-    public function testForbiddenDomain()
+    public function testForbiddenDomain(): void
     {
         $EmailValidator = new EmailValidator('yolololol@yopmail.com', 'example.org');
         $this->expectException(ImproperActionException::class);
         $EmailValidator->validate();
     }
 
-    public function testAllowedDomain()
+    public function testAllowedDomain(): void
     {
         $EmailValidator = new EmailValidator('yolololol@yopmail.com', 'yopmail.com');
         $EmailValidator->validate();

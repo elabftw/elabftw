@@ -10,7 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Models\AbstractEntity;
+use function json_decode;
 
 /**
  * Make a JSON export from one or several entities
@@ -23,9 +25,7 @@ class MakeJson extends AbstractMake
     /**
      * Give me an id list and a type, I make json export
      *
-     * @param AbstractEntity $entity
      * @param string $idList 4 8 15 16 23 42
-     * @return void
      */
     public function __construct(AbstractEntity $entity, string $idList)
     {
@@ -36,8 +36,6 @@ class MakeJson extends AbstractMake
 
     /**
      * Get the name of the generated file
-     *
-     * @return string
      */
     public function getFileName(): string
     {
@@ -47,15 +45,18 @@ class MakeJson extends AbstractMake
     /**
      * Loop over each id and add it to the JSON
      * This could be called the main function.
-     *
-     * @return array
      */
     public function getJson(): array
     {
         $res = array();
         foreach ($this->idArr as $id) {
             $this->Entity->setId((int) $id);
-            $res[] = $this->Entity->read(true);
+            $all = $this->Entity->read(new ContentParams());
+            // decode the metadata column because it's json
+            if (isset($all['metadata'])) {
+                $all['metadata'] = json_decode($all['metadata']);
+            }
+            $res[] = $all;
         }
 
         return $res;

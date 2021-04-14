@@ -14,8 +14,8 @@ use function basename;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Config;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 use Elabftw\Services\AnonAuth;
 use Elabftw\Services\CookieAuth;
@@ -137,7 +137,7 @@ class Auth implements AuthInterface
                 if ($page === '/experiments.php') {
                     $Entity = new Experiments(new Users(), (int) $this->Request->query->get('id'));
                 } elseif ($page === '/database.php') {
-                    $Entity = new Database(new Users(), (int) $this->Request->query->get('id'));
+                    $Entity = new Items(new Users(), (int) $this->Request->query->get('id'));
                 } else {
                     throw new UnauthorizedException();
                 }

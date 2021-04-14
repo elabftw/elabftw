@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\CreatableInterface;
+use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
 use PDO;
@@ -20,7 +20,7 @@ use PDO;
 /**
  * All about the experiments
  */
-class Experiments extends AbstractEntity implements CreatableInterface
+class Experiments extends AbstractEntity
 {
     public function __construct(Users $users, ?int $id = null)
     {
@@ -29,17 +29,17 @@ class Experiments extends AbstractEntity implements CreatableInterface
         $this->type = 'experiments';
     }
 
-    public function create(ParamsProcessor $params): int
+    public function create(EntityParamsInterface $params): int
     {
         $Templates = new Templates($this->Users);
         $Team = new Team((int) $this->Users->userData['team']);
 
         $metadata = null;
-        $tpl = $params->id;
+        $tpl = (int) $params->getContent();
         // do we want template ?
         if ($tpl > 0) {
             $Templates->setId($tpl);
-            $templateArr = $Templates->read();
+            $templateArr = $Templates->read(new ContentParams());
             $permissions = $Templates->getPermissions($templateArr);
             if ($permissions['read'] === false) {
                 throw new IllegalActionException('User tried to access a template without read permissions');
@@ -92,19 +92,6 @@ class Experiments extends AbstractEntity implements CreatableInterface
         }
 
         return $newId;
-    }
-
-    public function getBoundEvents(): array
-    {
-        $sql = 'SELECT team_events.* from team_events WHERE experiment = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
     }
 
     /**
@@ -192,7 +179,7 @@ class Experiments extends AbstractEntity implements CreatableInterface
      * Destroy an experiment and all associated data
      * The foreign key constraints will take care of associated tables
      */
-    public function destroy(): void
+    public function destroy(): bool
     {
         $this->canOrExplode('write');
 
@@ -205,7 +192,20 @@ class Experiments extends AbstractEntity implements CreatableInterface
         $this->Db->execute($req);
 
         // delete from pinned
-        $this->Pins->cleanup();
+        return $this->Pins->cleanup();
+    }
+
+    protected function getBoundEvents(): array
+    {
+        $sql = 'SELECT team_events.* from team_events WHERE experiment = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**

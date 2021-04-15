@@ -54,7 +54,6 @@ enum Action {
   Deduplicate = 'deduplicate',
   Duplicate = 'duplicate',
   Lock = 'lock',
-  Unreference = 'unreference',
 }
 
 enum Model {
@@ -91,8 +90,8 @@ enum Target {
   PrivacyPolicy = 'privacypolicy',
   Rating = 'rating',
   RealName = 'real_name',
-  Tag = 'tag',
   Title = 'title',
+  Unreference = 'unreference',
 }
 
 interface Entity {

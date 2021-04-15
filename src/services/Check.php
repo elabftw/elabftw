@@ -180,6 +180,7 @@ class Check
             'rating',
             'real_name',
             'title',
+            'unreference',
             // no target is also valid
             '',
         );

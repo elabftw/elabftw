@@ -68,7 +68,7 @@ class TagsTest extends \PHPUnit\Framework\TestCase
     public function testUnreference(): void
     {
         $Tags = new Tags($this->Experiments, 1);
-        $this->Experiments->Tags->unreference();
+        $Tags->update(new TagParams('', 'unreference'));
     }
 
     public function testGetList(): void

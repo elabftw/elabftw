@@ -1,53 +1,6 @@
-filter:
-    excluded_paths:
-        - 'vendor/*'
-        - 'tests/*'
-checks:
-    php:
-        simplify_boolean_return: true
-        return_doc_comments: true
-        return_doc_comment_if_not_inferrable: true
-        remove_extra_empty_lines: true
-        properties_in_camelcaps: true
-        parameters_in_camelcaps: true
-        parameter_doc_comments: true
-        param_doc_comment_if_not_inferrable: true
-        no_goto: true
-        more_specific_types_in_doc_comments: true
-        fix_line_ending: true
-        symfony_request_injection: false
-        no_exit: false
-coding_style:
-    php:
-        spaces:
-            around_operators:
-                concatenation: true
 build:
-    image: default-bionic
-    environment:
-        node: v12.20.1
-        php:
-            version: 8.0.1
-            compile_options: '--with-config-file-scan-dir=/home/scrutinizer/.phpenv/versions/8.0.1/etc/conf.d --prefix=/home/scrutinizer/.phpenv/versions/8.0.1 --libexecdir=/home/scrutinizer/.phpenv/versions/8.0.1/libexec --enable-sockets --enable-exif --with-zlib --with-zlib-dir=/usr --with-bz2 --enable-intl --with-openssl --enable-soap --with-tidy --enable-xmlreader --with-xsl --enable-ftp --enable-cgi --with-curl=/usr --with-tidy --enable-sysvsem --enable-sysvshm --enable-sysvmsg --enable-shmop --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --with-pdo-sqlite --with-pgsql --with-pdo-pgsql --enable-pcntl --with-readline --enable-mbstring --disable-debug --enable-fpm --enable-bcmath --enable-phpdbg --enable-gd --with-zip --with-mhash --with-apxs2=/usr/bin/apxs --enable-zts --with-sodium --with-gettext --enable-calendar --with-gmp --with-kerberos --with-pear=/home/scrutinizer/.phpenv/versions/8.0.1/pear --with-libdir=lib64 --with-ldap --with-libdir=lib/x86_64-linux-gnu'
-    tests:
-        override:
-            - command: 'vendor/bin/codecept run --skip api --skip acceptance'
     nodes:
         tests:
             dependencies:
                 before:
-                    - sudo DEBIAN_FRONTEND=noninteractive apt-get install -y libldap2-dev libssl-dev mysql-server
-                    - composer install
-                    - cp tests/config-ci.php config.php
-                    - sudo mysql -e "CREATE DATABASE phpunit;grant usage on *.* to phpunit@localhost identified by 'phpunit';grant all privileges on phpunit.* to phpunit@localhost;"
-                    - php bin/install start
-                    - php bin/console dev:populate tests/populate-config.yml
-                    - nvm use stable
-                    - npm install -g yarn
-                    - yarn install
                     - yarn buildnode
-                    - yarn buildcss
-        analysis:
-            tests:
-                override:
-                    - php-scrutinizer-run

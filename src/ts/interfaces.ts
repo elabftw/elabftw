@@ -10,7 +10,11 @@ interface ResponseMsg {
   res: boolean;
   msg: string;
   color?: string;
-  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedExperiments> | Array<Upload> | object;
+  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedExperiments> | Array<Upload> | object | MetadataJson;
+}
+
+interface MetadataJson {
+  metadata: string;
 }
 
 interface Upload {
@@ -121,6 +125,7 @@ export {
   Payload,
   Method,
   Action,
+  MetadataJson,
   Model,
   Target,
   Todoitem,

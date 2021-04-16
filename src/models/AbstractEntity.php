@@ -256,7 +256,7 @@ abstract class AbstractEntity implements CrudInterface
             return $this->getBoundEvents();
         }
         if ($params->getTarget() === 'metadata') {
-            return $this->readAll()['metadata'];
+            return array('metadata' => $this->readAll()['metadata']);
         }
         return $this->readAll();
     }

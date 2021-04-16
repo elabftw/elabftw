@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Action, Entity, EntityType, Target, ResponseMsg } from './interfaces';
+import { Payload, Method, Action, Entity, EntityType, Target, ResponseMsg, MetadataJson } from './interfaces';
 import { Ajax } from './Ajax.class';
 import i18next from 'i18next';
 
@@ -45,7 +45,8 @@ export class Metadata {
       if (json.res === false) {
         return {};
       }
-      return JSON.parse(json.value as string);
+      const fulljson = (json.value as MetadataJson);
+      return JSON.parse(fulljson.metadata);
     });
   }
 

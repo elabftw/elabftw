@@ -55,6 +55,6 @@ final class EntityParams extends ContentParams implements EntityParamsInterface
 
     public function getField(): string
     {
-        return Filter::sanitize($this->extra['jsonField']);
+        return Filter::sanitize($this->extra['jsonField'] ?? '');
     }
 }

@@ -22,12 +22,17 @@ describe('Experiments', () => {
     cy.contains('some step').should('not.exist')
   }
 
+  const entityDestroy = () => {
+    cy.get('a[title="More options"]').click().get('a[data-action="destroy"]').click()
+  }
+
   it('Create and edit an experiment', () => {
     cy.visit('/experiments.php')
     cy.contains('Create').click()
     entityEdit()
     cy.get('#category_select').select('Success').blur()
     cy.contains('Saved').should('be.visible')
+    entityDestroy()
   });
 
   it('Create and edit an item', () => {
@@ -35,5 +40,6 @@ describe('Experiments', () => {
     cy.contains('Create').click()
     cy.contains('Edit me').click()
     entityEdit()
+    entityDestroy()
   });
 });

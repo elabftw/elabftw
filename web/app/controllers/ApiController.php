@@ -40,10 +40,10 @@ $Response = new Response(Tools::error(), 500);
 
 try {
     // INIT APP OBJECT
-    // new Config will make the first SQL request
+    // Config::getConfig() will make the first SQL request
     // PDO will throw an exception if the SQL structure is not imported yet
     try {
-        $App = new App($Request, $Session, new Config(), new Logger('elabftw'), new Csrf($Request, $Session));
+        $App = new App($Request, $Session, Config::getConfig(), new Logger('elabftw'), new Csrf($Request, $Session));
     } catch (PDOException $e) {
         throw new ImproperActionException('The database structure is not loaded! Did you run the installer?');
     }

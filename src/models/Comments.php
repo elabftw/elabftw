@@ -108,7 +108,7 @@ class Comments implements CrudInterface
      */
     private function alertOwner(): int
     {
-        $Config = new Config();
+        $Config = Config::getConfig();
 
         // don't do it for Db items or if email is not configured
         if ($this->Entity instanceof Items || $Config->configArr['mail_from'] === 'notconfigured@example.com') {

@@ -50,7 +50,7 @@ class CheckDatabase extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $Config = new Config();
+        $Config = Config::getConfig();
         $Update = new Update($Config, new Sql());
 
         $current = (int) $Config->configArr['schema'];

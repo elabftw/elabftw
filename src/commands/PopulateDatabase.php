@@ -100,7 +100,7 @@ class PopulateDatabase extends Command
         $configArr = $yaml['config'] ?? array();
         $configArr['smtp_password'] = $input->getOption('smtppass') ?? 'afakepassword';
         $configArr['smtp_username'] = $input->getOption('smtpuser') ?? 'somesmtpuser';
-        $Config = new Config();
+        $Config = Config::getConfig();
         $Config->update($configArr);
 
         // create teams

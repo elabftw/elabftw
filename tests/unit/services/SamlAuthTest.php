@@ -54,7 +54,7 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
         $this->samlUserdata['User.team'] = 'Alpha';
         $this->SamlAuthLib->method('getAttributes')->willReturn($this->samlUserdata);
 
-        $Saml = new Saml(new Config(), new Idps());
+        $Saml = new Saml(Config::getConfig(), new Idps());
         $idpId = 1;
         $this->settings = $Saml->getSettings($idpId);
     }

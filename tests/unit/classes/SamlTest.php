@@ -18,7 +18,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Saml = new Saml(new Config(), new Idps());
+        $this->Saml = new Saml(Config::getConfig(), new Idps());
     }
 
     public function testgetSettings(): void

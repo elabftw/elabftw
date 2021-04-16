@@ -23,7 +23,7 @@ class AuthTest extends \PHPUnit\Framework\TestCase
     {
         $Request = Request::createFromGlobals();
         $Session = new Session();
-        $App = new App($Request, $Session, new Config(), new Logger('elabftw'), new Csrf($Request, $Session));
+        $App = new App($Request, $Session, Config::getConfig(), new Logger('elabftw'), new Csrf($Request, $Session));
         $this->Auth = new Auth($App);
     }
 

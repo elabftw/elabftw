@@ -292,7 +292,8 @@ class Tools
      */
     public static function getUrl(Request $Request, bool $canonical = false): string
     {
-        $Config = new Config();
+        $Config = Config::getConfig();
+
         if ($Config->configArr['url']) {
             return $Config->configArr['url'];
         }

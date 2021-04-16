@@ -20,7 +20,6 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
@@ -63,10 +62,6 @@ try {
     // TODO should probably not be here if we're going to use this to read too
     if ($Model instanceof Status && !$App->Session->get('is_admin')) {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
-    }
-    // only privacy policy is a valid target for reading from request
-    if ($Model instanceof Config && $target !== 'privacypolicy') {
-        throw new IllegalActionException('User tried to access config.');
     }
 
     if ($action === 'create') {

@@ -28,7 +28,7 @@ final class Config
     public array $configArr = array();
 
     protected Db $Db;
-    
+
     // store the single instance of the class
     private static ?Config $instance = null;
 
@@ -206,6 +206,7 @@ final class Config
             ('open_team', NULL),
             ('privacy_policy', NULL),
             ('announcement', NULL),
+            ('login_announcement', NULL),
             ('saml_nameidencrypted', 0),
             ('saml_authnrequestssigned', 0),
             ('saml_logoutrequestsigned', 0),

@@ -50,6 +50,14 @@ try {
         }
     }
 
+    if ($Request->request->has('login_announcement')) {
+        if ($Request->request->has('clear_login_announcement')) {
+            $App->Config->update(array('login_announcement' => null));
+        } else {
+            $App->Config->update(array('login_announcement' => $Request->request->get('login_announcement')));
+        }
+    }
+
     // PRIVACY POLICY
     if ($Request->request->has('privacy_policy')) {
         $tab = '8';

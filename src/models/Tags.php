@@ -159,6 +159,9 @@ class Tags implements CrudInterface
         if ($this->Entity->Users->userData['is_admin'] !== '1') {
             throw new IllegalActionException('Only an admin can update a tag!');
         }
+        if ($params->getTarget() === 'unreference') {
+            return $this->unreference();
+        }
 
         // use the team in the query to prevent one admin from editing tags from another team
         $sql = 'UPDATE tags SET tag = :tag WHERE id = :id AND team = :team';
@@ -201,31 +204,6 @@ class Tags implements CrudInterface
         }
 
         return count($idsToDelete);
-    }
-
-    /**
-     * Unreference a tag from an entity
-     */
-    public function unreference(): void
-    {
-        $this->Entity->canOrExplode('write');
-
-        $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id AND item_id = :item_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        // now check if another entity is referencing it, if not, remove it from the tags table
-        $sql = 'SELECT tag_id FROM tags2entity WHERE tag_id = :tag_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $tags = $req->fetchAll();
-
-        if (empty($tags)) {
-            $this->destroy();
-        }
     }
 
     /**
@@ -300,6 +278,32 @@ class Tags implements CrudInterface
             $itemIds[] = (int) $res['item_id'];
         }
         return $itemIds;
+    }
+
+    /**
+     * Unreference a tag from an entity
+     */
+    private function unreference(): bool
+    {
+        $this->Entity->canOrExplode('write');
+
+        $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id AND item_id = :item_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        // now check if another entity is referencing it, if not, remove it from the tags table
+        $sql = 'SELECT tag_id FROM tags2entity WHERE tag_id = :tag_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $tags = $req->fetchAll();
+
+        if (empty($tags)) {
+            $this->destroy();
+        }
+        return true;
     }
 
     /**

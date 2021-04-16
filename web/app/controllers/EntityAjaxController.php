@@ -165,12 +165,6 @@ try {
         $Entity->updatePermissions($Request->request->get('rw'), $Request->request->get('value'));
     }
 
-    // UPDATE RATING
-    if ($Request->request->has('rating') && $Entity instanceof Items) {
-        $Entity->setId((int) $Request->request->get('id'));
-        $Entity->updateRating((int) $Request->request->get('rating'));
-    }
-
     // CREATE UPLOAD
     if ($Request->request->has('upload')) {
         $Entity->Uploads->create(new CreateUpload($Request));

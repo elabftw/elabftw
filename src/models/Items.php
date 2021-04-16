@@ -56,17 +56,6 @@ class Items extends AbstractEntity
         return $this->Db->lastInsertId();
     }
 
-    public function updateRating(int $rating): void
-    {
-        $this->canOrExplode('write');
-
-        $sql = 'UPDATE items SET rating = :rating WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':rating', $rating, PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-    }
-
     /**
      * Duplicate an item
      *

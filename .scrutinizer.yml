@@ -1,0 +1,6 @@
+build:
+    nodes:
+        tests:
+            dependencies:
+                after:
+                    - yarn buildnode

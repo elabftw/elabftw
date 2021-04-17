@@ -14,12 +14,14 @@ use Elabftw\Models\Users;
 
 class TeamsHelperTest extends \PHPUnit\Framework\TestCase
 {
+    private TeamsHelper $TeamsHelper;
+
     protected function setUp(): void
     {
         $this->TeamsHelper = new TeamsHelper(1);
     }
 
-    public function testGetGroup()
+    public function testGetGroup(): void
     {
         $this->assertEquals(4, $this->TeamsHelper->getGroup());
         // now create a new team and try to get group

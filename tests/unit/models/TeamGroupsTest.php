@@ -2,51 +2,54 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ParamsProcessor;
-
+use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\TeamGroupParams;
 use Elabftw\Exceptions\IllegalActionException;
 
 class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 {
+    private TeamGroups $TeamGroups;
+
     protected function setUp(): void
     {
-        $Users = new Users(1, 1);
-        $this->TeamGroups = new TeamGroups($Users);
+        $this->TeamGroups = new TeamGroups(new Users(1, 1));
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
-        $this->TeamGroups->create(new ParamsProcessor(array('name' => 'Group Name')));
+        $this->TeamGroups->create(new ContentParams('Group Name'));
     }
 
-    public function testRead()
+    public function testRead(): void
     {
-        $this->assertTrue(is_array($this->TeamGroups->read()));
+        $this->assertTrue(is_array($this->TeamGroups->read(new ContentParams())));
     }
 
-    public function testReadName()
+    public function testReadName(): void
     {
-        $id = $this->TeamGroups->create(new ParamsProcessor(array('name' => 'Group Name')));
+        $id = $this->TeamGroups->create(new ContentParams('Group Name'));
         $this->assertEquals('Group Name', $this->TeamGroups->readName($id));
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
-        $this->assertEquals('New Name', $this->TeamGroups->update(new ParamsProcessor(array('name' => 'New Name', 'id' => 1))));
+        $this->TeamGroups->setId(1);
+        $this->assertTrue($this->TeamGroups->update(new TeamGroupParams('New Name')));
     }
 
-    public function testUpdateMember()
+    public function testUpdateMember(): void
     {
-        $this->TeamGroups->updateMember(1, 1, 'add');
+        $this->TeamGroups->update(new TeamGroupParams('', 'member', array('userid' => 1, 'group' => 1,'how' => 'add')));
         $this->assertTrue($this->TeamGroups->isInTeamGroup(1, 1));
-        $this->TeamGroups->updateMember(1, 1, 'rm');
+        $this->TeamGroups->update(new TeamGroupParams('', 'member', array('userid' => 1, 'group' => 1,'how' => 'rm')));
         $this->assertFalse($this->TeamGroups->isInTeamGroup(1, 1));
         $this->expectException(IllegalActionException::class);
-        $this->TeamGroups->updateMember(1, 1, 'yep');
+        $this->TeamGroups->update(new TeamGroupParams('', 'member', array('userid' => 1, 'group' => 1,'how' => 'yep')));
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
-        $this->TeamGroups->destroy(1);
+        $this->TeamGroups->setId(1);
+        $this->TeamGroups->destroy();
     }
 }

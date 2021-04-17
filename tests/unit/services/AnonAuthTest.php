@@ -14,6 +14,10 @@ use Elabftw\Exceptions\IllegalActionException;
 
 class AnonAuthTest extends \PHPUnit\Framework\TestCase
 {
+    private array $configArr;
+
+    private AnonAuth $AnonAuth;
+
     protected function setUp(): void
     {
         $this->configArr = array(
@@ -25,7 +29,7 @@ class AnonAuthTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testTryAuth()
+    public function testTryAuth(): void
     {
         $authResponse = $this->AnonAuth->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);

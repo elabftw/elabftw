@@ -5,61 +5,51 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import Crud from './Crud.class';
-import i18next from 'i18next';
+import { Payload, Method, Model, Action, Target, ResponseMsg } from './interfaces';
+import { Ajax } from './Ajax.class';
 
-export default class TeamGroup extends Crud {
+export default class TeamGroup {
+
+  model: Model;
+  sender: Ajax;
 
   constructor() {
-    super('app/controllers/Ajax.php');
+    this.model = Model.TeamGroup,
+    this.sender = new Ajax();
   }
 
-  create(): void {
-    const name = $('#teamGroupCreate').val() as string;
-    if (name.length > 0) {
-      this.send({
-        action: 'create',
-        what: 'teamgroup',
-        params: {
-          name: name,
-        },
-      }).then((json) => {
-        if (json.res) {
-          // only reload children
-          $('#team_groups_div').load('admin.php #team_groups_div > *');
-          $('#teamGroupCreate').val('');
-        }
-      });
-    }
+  create(content: string): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Create,
+      model: this.model,
+      content: content,
+    };
+    return this.sender.send(payload);
   }
 
-  update(how, user, group): void {
-    this.send({
-      action: 'updateMember',
-      what: 'teamgroup',
-      params: {
-        'user': user,
-        'group': group,
-        'how': how,
+  update(user: number, group: string, how: string): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Update,
+      model: this.model,
+      target: Target.Member,
+      extraParams: {
+        userid: user,
+        group: group,
+        how: how,
       },
-    }).then(() => {
-      // only reload children
-      $('#team_groups_div').load('admin.php #team_groups_div > *');
-    });
+    };
+    return this.sender.send(payload);
   }
 
-  destroy(id): void {
-    if (confirm(i18next.t('generic-delete-warning'))) {
-      this.send({
-        action: 'destroy',
-        what: 'teamgroup',
-        params: {
-          id: id,
-        },
-      }).then(() => {
-        // only reload children
-        $('#team_groups_div').load('admin.php #team_groups_div > *');
-      });
-    }
+  destroy(id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Destroy,
+      model: this.model,
+      id : id,
+    };
+    return this.sender.send(payload);
   }
 }

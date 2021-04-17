@@ -14,7 +14,7 @@ use Elabftw\Exceptions\InvalidCredentialsException;
 
 class MfaAuthTest extends \PHPUnit\Framework\TestCase
 {
-    public function testTryAuthWithInvalidCode()
+    public function testTryAuthWithInvalidCode(): void
     {
         $MfaHelper = new MfaHelper(1);
         $AuthService = new MfaAuth($MfaHelper, '12');
@@ -22,7 +22,7 @@ class MfaAuthTest extends \PHPUnit\Framework\TestCase
         $authResponse = $AuthService->tryAuth();
     }
 
-    public function testTryAuthWithValidCode()
+    public function testTryAuthWithValidCode(): void
     {
         $secret = (new MfaHelper(1))->generateSecret();
         $MfaHelper = new MfaHelper(1, $secret);

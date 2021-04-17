@@ -50,14 +50,22 @@ try {
         }
     }
 
+    if ($Request->request->has('login_announcement')) {
+        if ($Request->request->has('clear_login_announcement')) {
+            $App->Config->update(array('login_announcement' => null));
+        } else {
+            $App->Config->update(array('login_announcement' => $Request->request->get('login_announcement')));
+        }
+    }
+
     // PRIVACY POLICY
     if ($Request->request->has('privacy_policy')) {
         $tab = '8';
         $PrivacyPolicy = new PrivacyPolicy($App->Config);
         if ($Request->request->has('clear_policy')) {
-            $PrivacyPolicy->clear();
+            $PrivacyPolicy->destroy();
         } else {
-            $PrivacyPolicy->update($Request->request->get('privacy_policy'));
+            $PrivacyPolicy->update(new ContentParams($Request->request->get('privacy_policy')));
         }
     }
 

@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import tinymce from 'tinymce/tinymce';
-import { notif } from './misc';
 import { DateTime } from 'luxon';
 import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
@@ -48,25 +47,35 @@ import '../js/tinymce-langs/ru_RU.js';
 import '../js/tinymce-langs/sk_SK.js';
 import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
+import EntityClass from './Entity.class';
+import { Entity, EntityType, Target } from './interfaces';
 
-const type = $('#info').data('type');
+const about = document.getElementById('info').dataset;
+const type = about.type;
+const id = about.id;
+let entityType: EntityType;
+if (about.type === 'experiments') {
+  entityType = EntityType.Experiment;
+}
+if (about.type === 'items') {
+  entityType = EntityType.Item;
+}
+const entity: Entity = {
+  type: entityType,
+  id: parseInt(id),
+};
 
 // AUTOSAVE
 let typingTimer: any;                // timer identifier
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
 
 // called when you click the save button of tinymce
-export function quickSave(type: string, id: string): void {
-  $.post('app/controllers/EntityAjaxController.php', {
-    quickSave: true,
-    type : type,
-    id : id,
-    // we need this to get the updated content
-    title : (document.getElementById('title_input') as HTMLInputElement).value,
-    date : (document.getElementById('datepicker') as HTMLInputElement).value,
-    body : tinymce.activeEditor.getContent()
-  }).done(function(json, textStatus, xhr) {
+export function quickSave(entity: Entity): void {
+  const EntityC = new EntityClass(entity.type);
+  EntityC.update(entity.id, Target.Body, tinymce.activeEditor.getContent()).then(() => {
     // detect if the session timedout
+    // TODO
+    /*
     if (xhr.getResponseHeader('X-Elab-Need-Auth') === '1') {
       // store the modifications in local storage to prevent any data loss
       localStorage.setItem('body', tinymce.activeEditor.getContent());
@@ -77,7 +86,7 @@ export function quickSave(type: string, id: string): void {
       location.reload();
       return;
     }
-    notif(json);
+    */
   });
 }
 
@@ -108,7 +117,7 @@ function doneTyping(): void {
     alert('Too many characters!!! Cannot save properly!!!');
     return;
   }
-  quickSave(type, $('#info').data('id'));
+  quickSave(entity);
 }
 
 // options for tinymce to pass to tinymce.init()
@@ -117,7 +126,6 @@ export function getTinymceBaseConfig(page: string): object {
   if (page !== 'admin') {
     plugins += ' autosave';
   }
-
 
   return {
     mode: 'specific_textareas',
@@ -162,7 +170,7 @@ export function getTinymceBaseConfig(page: string): object {
       // use # for autocompletion
       delimiter: '#',
       // get the source from json with get request
-      source: function (query: string, process: any) {
+      source: function (query: string, process: any): void {
         const url = 'app/controllers/EntityAjaxController.php';
         $.getJSON(url, {
           mention: 1,
@@ -215,7 +223,5 @@ export function getTinymceBaseConfig(page: string): object {
         }
       }
     ],
-    // this will GET templates from current user
-    templates: 'app/controllers/Ajax.php?action=readForTinymce&what=template&type=experiments_templates'
   };
 }

@@ -9,6 +9,7 @@ import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import i18next from 'i18next';
 import { notif } from './misc';
+import { Entity } from './interfaces';
 
 // This class is named helper because the jsoneditor lib already exports JSONEditor
 export default class JsonEditorHelper {
@@ -19,12 +20,10 @@ export default class JsonEditorHelper {
   editor: JSONEditor;
   currentUploadId: string;
 
-  constructor(type: string, id: string) {
-    this.type = type;
-    this.id = id;
+  constructor(entity: Entity) {
     // this is the div that will hold the editor
     this.editorDiv = document.getElementById('jsonEditorContainer');
-    this.MetadataC = new Metadata(type, id);
+    this.MetadataC = new Metadata(entity);
   }
 
   // INIT
@@ -98,8 +97,8 @@ export default class JsonEditorHelper {
     this.editorDiv.dataset.what = 'metadata';
   }
 
-  loadMetadataFromId(type, id): void {
-    const MetadataC = new Metadata(type, id);
+  loadMetadataFromId(entity: Entity): void {
+    const MetadataC = new Metadata(entity);
     MetadataC.read().then(metadata => this.load(metadata));
     this.editorDiv.dataset.what = 'metadata';
   }
@@ -108,8 +107,8 @@ export default class JsonEditorHelper {
     this.MetadataC.update(JSON.stringify(this.editor.get()));
   }
 
-  saveMetadataFromId(type, id): void {
-    const MetadataC = new Metadata(type, id);
+  saveMetadataFromId(entity: Entity): void {
+    const MetadataC = new Metadata(entity);
     MetadataC.update(JSON.stringify(this.editor.get()));
   }
 

@@ -14,12 +14,14 @@ use Elabftw\Models\Idps;
 
 class SamlTest extends \PHPUnit\Framework\TestCase
 {
+    private Saml $Saml;
+
     protected function setUp(): void
     {
-        $this->Saml = new Saml(new Config(), new Idps());
+        $this->Saml = new Saml(Config::getConfig(), new Idps());
     }
 
-    public function testgetSettings()
+    public function testgetSettings(): void
     {
         $this->assertTrue(is_array($this->Saml->getSettings(1)));
     }

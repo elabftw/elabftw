@@ -10,13 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
-use Elabftw\Elabftw\ParamsProcessor;
-
 /**
  * For things that can be created
  */
 interface CreatableInterface
 {
-    // returns the new id inserted
-    public function create(ParamsProcessor $params): int;
+    public function create(ParamsInterface $params): int;
 }

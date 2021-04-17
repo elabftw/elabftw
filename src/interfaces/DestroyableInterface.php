@@ -15,5 +15,5 @@ namespace Elabftw\Interfaces;
  */
 interface DestroyableInterface
 {
-    public function destroy(int $id): bool;
+    public function destroy(): bool;
 }

@@ -10,15 +10,21 @@ declare let MathJax: any;
 import { getCheckedBoxes, insertParamAndReload, notif } from './misc';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
+import EntityClass from './Entity.class';
 
 $(document).ready(function(){
-  if ($('#info').data('page') !== 'show') {
+  const about = document.getElementById('info').dataset;
+  // only run in show mode
+  if (about.page !== 'show') {
     return;
   }
+  const EntityC = new EntityClass($('#type').data('type'));
 
-  // CREATE EXPERIMENT
+  // CREATE EXPERIMENT with shortcut
   key($('#shortcuts').data('create'), function() {
-    window.location.href = 'experiments.php?create=true';
+    EntityC.create('0').then(json => {
+      window.location.href = `experiments.php?mode=edit&id=${json.res}`;
+    });
   });
 
   // validate the form upon change. fix #451
@@ -203,13 +209,7 @@ $(document).ready(function(){
     }
     // loop on it and delete stuff
     $.each(checked, function(index) {
-      $.post('app/controllers/EntityAjaxController.php', {
-        lock: true,
-        id: checked[index]['id'],
-        type: $('#type').data('type')
-      }).done(function(json) {
-        notif(json);
-      });
+      EntityC.lock(checked[index]['id']);
     });
   });
 

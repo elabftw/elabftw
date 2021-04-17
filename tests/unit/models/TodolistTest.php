@@ -2,46 +2,48 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\OrderingParams;
-use Elabftw\Elabftw\ParamsProcessor;
-use Elabftw\Services\Check;
 
 class TodolistTest extends \PHPUnit\Framework\TestCase
 {
+    private Todolist $Todolist;
+
     protected function setUp(): void
     {
-        $this->Users = new Users(1);
-        $this->Todolist = new Todolist($this->Users);
+        $this->Todolist = new Todolist(1);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
-        $body = 'write more tests';
-        $this->assertTrue((bool) Check::id($this->Todolist->create(new ParamsProcessor(array('template' => $body)))));
+        $content = 'write more tests';
+        $this->assertIsInt($this->Todolist->create(new ContentParams($content)));
     }
 
-    public function testRead()
+    public function testRead(): void
     {
-        $this->assertTrue(is_array($this->Todolist->read()));
+        $this->assertTrue(is_array($this->Todolist->read(new ContentParams())));
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
-        $this->Todolist->update(new ParamsProcessor(array('id' => 1, 'template' => 'write more unit tests')));
+        $this->Todolist->setId(1);
+        $this->assertTrue($this->Todolist->update(new ContentParams('write way more tests')));
     }
 
-    public function testUpdateOrdering()
+    public function testUpdateOrdering(): void
     {
-        $body = 'write more tests';
-        $this->Todolist->create(new ParamsProcessor(array('template' => $body)));
-        $this->Todolist->create(new ParamsProcessor(array('template' => $body)));
+        $content = 'write more tests';
+        $this->Todolist->create(new ContentParams($content));
+        $this->Todolist->create(new ContentParams($content));
         $ordering = array('todoItem_3', 'todoItem_2', 'todoItem_4');
         $OrderingParams = new OrderingParams('todolist', $ordering);
         $this->Todolist->updateOrdering($OrderingParams);
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
-        $this->Todolist->destroy(1);
+        $this->Todolist->setId(1);
+        $this->Todolist->destroy();
     }
 }

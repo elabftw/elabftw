@@ -11,7 +11,7 @@ namespace Elabftw\Services;
 
 class DatabaseCleanerTest extends \PHPUnit\Framework\TestCase
 {
-    public function testCleanup()
+    public function testCleanup(): void
     {
         $DatabaseCleaner = new DatabaseCleaner();
         $DatabaseCleaner->cleanup();

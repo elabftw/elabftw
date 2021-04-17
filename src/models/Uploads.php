@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use function copy;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
@@ -18,9 +19,14 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Interfaces\CreateUploadParamsInterface;
+use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\UploadParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MakeThumbnail;
+use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\UploadTrait;
 use function exif_read_data;
 use function extension_loaded;
@@ -28,18 +34,20 @@ use function file_exists;
 use function function_exists;
 use Gmagick;
 use function in_array;
-use function mb_strlen;
 use PDO;
 use function rename;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use function unlink;
 
 /**
  * All about the file uploads
  */
-class Uploads implements DestroyableInterface
+class Uploads implements CrudInterface
 {
     use UploadTrait;
+
+    use SetIdTrait;
 
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
     private const BIG_FILE_THRESHOLD = 50000000;
@@ -50,20 +58,22 @@ class Uploads implements DestroyableInterface
 
     private string $hashAlgorithm = 'sha256';
 
-    public function __construct(AbstractEntity $entity)
+    public function __construct(AbstractEntity $entity, ?int $id = null)
     {
         $this->Entity = $entity;
         $this->Db = Db::getConnection();
+        $this->id = $id;
     }
 
     /**
      * Main method for normal file upload
      */
-    public function create(Request $request): void
+    public function create(CreateUploadParamsInterface $params): int
     {
         $this->Entity->canOrExplode('write');
 
-        $realName = Filter::forFilesystem($request->files->get('file')->getClientOriginalName());
+        //$realName = Filter::forFilesystem($request->files->get('file')->getClientOriginalName());
+        $realName = $params->getFilename();
         $this->checkExtension($realName);
         $ext = Tools::getExt($realName);
 
@@ -71,7 +81,8 @@ class Uploads implements DestroyableInterface
         $fullPath = $this->getUploadsPath() . $longName;
 
         // Try to move the file to its final place
-        $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
+        //$this->moveFile($request->files->get('file')->getPathname(), $fullPath);
+        $this->moveFile($params->getPathname(), $fullPath);
 
         // rotate the image if we can find the orientation in the exif data
         // maybe php-exif extension isn't loaded
@@ -93,6 +104,8 @@ class Uploads implements DestroyableInterface
         $this->dbInsert($realName, $longName, $this->getHash($fullPath));
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb();
+
+        return 0;
     }
 
     /**
@@ -159,28 +172,26 @@ class Uploads implements DestroyableInterface
     }
 
     /**
-     * Read info from an upload ID
-     *
-     * @param int $id id of the uploaded item
-     * @throws DatabaseErrorException
+     * Read from current id
      */
-    public function readFromId(int $id): array
+    public function read(ContentParamsInterface $params): array
     {
+        if ($params->getTarget() === 'all') {
+            return $this->readAll();
+        }
         $sql = 'SELECT * FROM uploads WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $res = $req->fetch();
         if ($res === false) {
-            throw new ImproperActionException('Nothing to show with this id');
+            throw new ResourceNotFoundException();
         }
         return $res;
     }
 
     /**
      * Read all uploads for an item
-     *
-     * @throws DatabaseErrorException
      */
     public function readAll(): array
     {
@@ -197,47 +208,18 @@ class Uploads implements DestroyableInterface
         return $res;
     }
 
-    /**
-     * Update the comment of a file. We also pass the itemid to make sure we update
-     * the comment associated with the item sent to the controller. Because write access
-     * is checked on this value.
-     *
-     * @param int $id id of the file
-     * @param string $comment
-     * @throws DatabaseErrorException
-     */
-    public function updateComment(int $id, string $comment): void
+    public function update(UploadParamsInterface $params): bool
     {
-        // check length
-        if (mb_strlen($comment) < 2) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
+        $this->Entity->canOrExplode('write');
+        if ($params->getTarget() === 'file') {
+            return $this->replace($params->getFile());
         }
-        $this->Entity->canOrExplode('write');
-        // SQL to update single file comment
-        $sql = 'UPDATE uploads SET comment = :comment WHERE id = :id AND item_id = :item_id';
+        $sql = 'UPDATE uploads SET ' . $params->getTarget() . ' = :content WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindValue(':content', $params->getContent());
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':comment', $comment);
-        $this->Db->execute($req);
-    }
-
-    /**
-     * Replace an uploaded file by another
-     */
-    public function replace(Request $request): void
-    {
-        $this->Entity->canOrExplode('write');
-        $upload = $this->readFromId((int) $request->request->get('upload_id'));
-        $fullPath = $this->getUploadsPath() . $upload['long_name'];
-        $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
-        $MakeThumbnail = new MakeThumbnail($fullPath);
-        $MakeThumbnail->makeThumb(true);
-
-        $sql = 'UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':id', $request->request->get('upload_id'), PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**
@@ -279,11 +261,16 @@ class Uploads implements DestroyableInterface
     /**
      * Destroy an upload
      */
-    public function destroy(int $id): bool
+    public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');
+        $uploadArr = $this->read(new ContentParams());
 
-        $uploadArr = $this->readFromId($id);
+        // check that the filename is not in the body. see #432
+        if (strpos($this->Entity->entityData['body'], $uploadArr['long_name'])) {
+            throw new ImproperActionException(_('Please make sure to remove any reference to this file in the body!'));
+        }
+
 
         // remove thumbnail
         $thumbPath = $this->getUploadsPath() . $uploadArr['long_name'] . '_th.jpg';
@@ -300,7 +287,7 @@ class Uploads implements DestroyableInterface
         // to avoid someone deleting files saying it's DB whereas it's exp
         $sql = 'DELETE FROM uploads WHERE id = :id AND type = :type';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
         return $this->Db->execute($req);
     }
@@ -313,8 +300,25 @@ class Uploads implements DestroyableInterface
         $uploadArr = $this->readAll();
 
         foreach ($uploadArr as $upload) {
-            $this->destroy((int) $upload['id']);
+            (new self($this->Entity, (int) $upload['id']))->destroy();
         }
+    }
+
+    /**
+     * Replace an uploaded file by another
+     */
+    private function replace(UploadedFile $file): bool
+    {
+        $upload = $this->read(new ContentParams());
+        $fullPath = $this->getUploadsPath() . $upload['long_name'];
+        $this->moveFile($file->getPathname(), $fullPath);
+        $MakeThumbnail = new MakeThumbnail($fullPath);
+        $MakeThumbnail->makeThumb(true);
+
+        $sql = 'UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     /**

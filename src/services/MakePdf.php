@@ -273,8 +273,7 @@ class MakePdf extends AbstractMake
         // add 'mathjax-svg' class to all mathjax SVGs
         $html = preg_replace('/(<mjx-container[^>]*><svg)/', '\1 class="mathjax-svg"', $html);
 
-        // change stroke to black and fill to white for all SVGs
-        $html = str_replace('stroke="currentColor"', 'stroke="#FFF"', $html);
+        // fill to white for all SVGs
         return str_replace('fill="currentColor"', 'fill="#000"', $html);
 
         // ˄˄˄˄˄˄˄˄˄˄

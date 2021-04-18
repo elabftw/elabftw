@@ -16,7 +16,6 @@ use function dirname;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ProcessFailedException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
@@ -91,128 +90,6 @@ class MakePdf extends AbstractMake
         $this->generate()->Output($this->filePath, 'F');
 
         return;
-
-/*
-        if (!$this->Entity->Users->userData['append_pdfs']) {
-            return;
-        }
-
-        $listOfPdfs = $this->getListOfPdfs();
-        if (count($listOfPdfs) === 0) {
-            // nothing to append
-            return;
-        }
-
-        // new tmp file that also holds appended PDFs
-        $outputFileName = $this->getTmpPath() . $this->getUniqueString();
-
-        // switch for testing the different pdf tools
-        // default is GhostScript
-        // but can be: mupdf, pdftk, or pdftk-java
-        $mergePdfs = 'pdftk-java';
-        switch ($mergePdfs) {
-            case 'pdftk':
-                // use pdfTK to merge PDFs
-                // https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/
-                // might not be available on newer alpine linux versions
-                // there is a port to java, see next case
-                $processArray = array_merge(
-                    array(
-                        'pdftk',
-                        $this->filePath,
-                    ),
-                    $listOfPdfs,
-                    array(
-                        'cat',
-                        'output',
-                        $outputFileName,
-                        'dont_ask',
-                    ),
-                );
-                break;
-
-            case 'pdftk-java':
-                // use pdfTK-java to merge PDFs
-                // this way it works on alpine
-                // repo https://gitlab.com/pdftk-java/pdftk
-                // need to get the jar from https://gitlab.com/pdftk-java/pdftk/-/jobs/924565145/artifacts/raw/build/libs/pdftk-all.jar
-                // for now the file has to be located in cache/elab
-                $processArray = array_merge(
-                    array(
-                        'java',
-                        '-jar',
-                        'pdftk-all.jar',
-                        $this->filePath,
-                    ),
-                    $listOfPdfs,
-                    array(
-                        'cat',
-                        'output',
-                        $outputFileName,
-                        'dont_ask',
-                    ),
-                );
-                break;
-
-            case 'mupdf':
-                // use muPDF's mutool to merge PDFs
-                // https://mupdf.com/
-                // https://pkgs.alpinelinux.org/package/edge/community/x86_64/mupdf
-                $processArray = array_merge(
-                    array(
-                        'mutool',
-                        'merge',
-                        '-o',
-                        $outputFileName,
-                        // '-O',
-                        // 'linearize',
-                        $this->filePath,
-                    ),
-                    $listOfPdfs
-                );
-                break;
-
-            default:
-                // default is GhostScript to merge PDFs
-                $processArray = array_merge(
-                    array(
-                        'gs',
-                        '-dBATCH',
-                        '-dNOPAUSE',
-                        //'-dPDFA=1', $this->Entity->Users->userData['pdfa']
-                        // https://stackoverflow.com/questions/1659147/how-to-use-ghostscript-to-convert-pdf-to-pdf-a-or-pdf-x
-                        // but it will be actually a new pdf that migth not represend all aspects of the original file
-                        '-sDEVICE=pdfwrite',
-                        '-dAutoRotatePages=/None',
-                        '-dAutoFilterColorImages=false',
-                        '-dAutoFilterGrayImages=false',
-                        '-dColorImageFilter=/FlateEncode',
-                        '-dGrayImageFilter=/FlateEncode',
-                        '-dDownsampleMonoImages=false',
-                        '-dDownsampleGrayImages=false',
-                        '-sOutputFile=' . $outputFileName,
-                        $this->filePath,
-                    ),
-                    $listOfPdfs
-                );
-        }
-
-        $process = new Process(
-            $processArray,
-            // set working directory for process
-            $this->getTmpPath()
-        );
-        $process->run();
-
-        // delete first tmp file
-        unlink($this->filePath);
-        // point to new tmp file with appended PDFs
-        $this->filePath = $outputFileName;
-
-        if (!$process->isSuccessful()) {
-            throw new SymfonyProcessFailedException($process);
-        }
-*/
     }
 
     /**
@@ -275,20 +152,6 @@ class MakePdf extends AbstractMake
     public function getPdf(): string
     {
         return $this->generate()->Output('', 'S');
-
-/*
-        if (!$this->Entity->Users->userData['append_pdfs']) {
-            return $this->generate()->Output('', 'S');
-        }
-
-        $this->outputToFile();
-        $content = file_get_contents($this->filePath);
-        unlink($this->filePath);
-        if ($content === false) {
-            throw new FilesystemErrorException('Could not creat merged PDF.');
-        }
-        return $content;
-*/
     }
 
     /**
@@ -337,26 +200,6 @@ class MakePdf extends AbstractMake
         }
 
         return $mpdf;
-    }
-
-    /**
-     * Get a list of all PDFs that are attached to an entity
-     *
-     * @return array
-     */
-    private function getListOfPdfs(): array
-    {
-        $uploadsArr = $this->Entity->Uploads->readAll();
-        $listOfPdfs = array();
-        if (count($uploadsArr) > 0) {
-            foreach ($uploadsArr as $upload) {
-                $filePath = dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
-                if (file_exists($filePath) && preg_match('/(pdf)$/i', Tools::getExt($upload['real_name']))) {
-                    array_push($listOfPdfs, $filePath);
-                }
-            }
-        }
-        return $listOfPdfs;
     }
 
     /**
@@ -444,6 +287,26 @@ class MakePdf extends AbstractMake
 
         // ˄˄˄˄˄˄˄˄˄˄
         // end
+    }
+
+    /**
+     * Get a list of all PDFs that are attached to an entity
+     *
+     * @return array Empty or array of arrays with ['path/to/file', 'real.name']
+     */
+    private function getListOfPdfs(): array
+    {
+        $uploadsArr = $this->Entity->Uploads->readAll();
+        $listOfPdfs = array();
+        if (count($uploadsArr) > 0) {
+            foreach ($uploadsArr as $upload) {
+                $filePath = dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
+                if (file_exists($filePath) && preg_match('/(pdf)$/i', Tools::getExt($upload['real_name']))) {
+                    array_push($listOfPdfs, array($filePath, $upload['real_name']));
+                }
+            }
+        }
+        return $listOfPdfs;
     }
 
     /**

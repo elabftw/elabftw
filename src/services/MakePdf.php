@@ -88,8 +88,6 @@ class MakePdf extends AbstractMake
     public function outputToFile(): void
     {
         $this->generate()->Output($this->filePath, 'F');
-
-        return;
     }
 
     /**

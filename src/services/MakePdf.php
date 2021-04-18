@@ -376,7 +376,7 @@ class MakePdf extends AbstractMake
                 // so we catch it here and tell the user
                 // this will have no noticeable effect during ZipStream as the http headers are send already
                 // ToDo: What to do with error during ZipStream?
-                throw new ProcessFailedException('PDF could not be merged due to incompatibility with file ' . ($pdf[1] ?? 'N/A'), 0, $e);
+                throw new ProcessFailedException('PDF could not be merged due to an incompatibility with file ' . ($pdf[1] ?? 'N/A'), 0, $e);
             }
         }
         return $mpdf;

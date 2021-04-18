@@ -357,7 +357,7 @@ class MakePdf extends AbstractMake
                         $pageDim = $mpdf->getTemplateSize($page);
 
                         if (is_array($pageDim)) { // satisfy phpstan
-                            // add a new (blank) page with the dimentions of the imported page
+                            // add a new (blank) page with the dimensions of the imported page
                             $mpdf->AddPageByArray(array(
                                 'orientation' => $pageDim['orientation'],
                                 'sheet-size' => array($pageDim['width'], $pageDim['height']),
@@ -375,7 +375,7 @@ class MakePdf extends AbstractMake
                 }
             } catch (FpdiException $e) {
                 // so we catch it here and tell the user
-                // this will have no noticable effect during ZipStream as the http headers are send already
+                // this will have no noticeable effect during ZipStream as the http headers are send already
                 // ToDo: What to do with error during ZipStream?
                 throw new ProcessFailedException('PDF could not be merged due to incompatibility with file ' . ($pdf[1] ?? 'N/A'), 0, $e);
             }

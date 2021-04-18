@@ -334,6 +334,10 @@ class MakePdf extends AbstractMake
 
     /**
      * Append PDFs attached to an entity
+     *
+     * @param Mpdf $mpdf
+     * @return Mpdf
+     * @throws ProcessFailedException
      */
     private function appendPDFs(Mpdf $mpdf): Mpdf
     {
@@ -341,24 +345,26 @@ class MakePdf extends AbstractMake
 
         if (count($listOfPdfs) > 0) {
             // there will be occasions where the merging will fail
-            // due to incompatibility of mpdf with the attached pdfs
+            // due to incompatibility of Mpdf with the attached pdfs
             try {
                 foreach ($listOfPdfs as $pdf) {
-                    $numberOfPages = $mpdf->setSourceFile($pdf);
+                    $numberOfPages = $mpdf->setSourceFile($pdf[0]);
 
                     for ($i=1; $i <= $numberOfPages; $i++) {
                         // Import the ith page of the source PDF file
                         $page = $mpdf->importPage($i);
 
-                        // this is not documented in the MPDF manual
+                        // getTemplateSize() is not documented in the MPDF manual
                         // @return array|bool An array with following keys: width, height, 0 (=width), 1 (=height), orientation (L or P)
                         $pageDim = $mpdf->getTemplateSize($page);
 
-                        // add a new (blank) page with the dimentions of the imported page
-                        $mpdf->AddPageByArray(array(
-                            'orientation' => $pageDim['orientation'],
-                            'sheet-size' => array($pageDim['width'], $pageDim['height']),
-                        ));
+                        if (is_array($pageDim)) { // satisfy phpstan
+                            // add a new (blank) page with the dimentions of the imported page
+                            $mpdf->AddPageByArray(array(
+                                'orientation' => $pageDim['orientation'],
+                                'sheet-size' => array($pageDim['width'], $pageDim['height']),
+                            ));
+                        }
 
                         // empty the header and footer
                         // can not be an empty string
@@ -371,7 +377,9 @@ class MakePdf extends AbstractMake
                 }
             } catch (FpdiException $e) {
                 // so we catch it here and tell the user
-                throw new ImproperActionException(_('PDF could not be merged.'));
+                // this will have no noticable effect during ZipStream as the http headers are send already
+                // ToDo: What to do with error during ZipStream?
+                throw new ProcessFailedException('PDF could not be merged due to incompatibility with file ' . ($pdf[1] ?? 'N/A'), 0, $e);
             }
         }
         return $mpdf;

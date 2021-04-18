@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use function array_push;
 use DateTime;
 use function dirname;
 use Elabftw\Elabftw\ContentParams;
@@ -300,7 +299,7 @@ class MakePdf extends AbstractMake
             foreach ($uploadsArr as $upload) {
                 $filePath = dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
                 if (file_exists($filePath) && preg_match('/(pdf)$/i', Tools::getExt($upload['real_name']))) {
-                    array_push($listOfPdfs, array($filePath, $upload['real_name']));
+                    $listOfPdfs[] = array($filePath, $upload['real_name']);
                 }
             }
         }

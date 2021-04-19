@@ -306,7 +306,7 @@ class MakePdf extends AbstractMake
             try {
                 $numberOfPages = $mpdf->setSourceFile($pdf[0]);
 
-                for ($i=1; $i <= $numberOfPages; $i++) {
+                for ($i = 1; $i <= $numberOfPages; $i++) {
                     // Import the ith page of the source PDF file
                     $page = $mpdf->importPage($i);
 
@@ -354,7 +354,7 @@ class MakePdf extends AbstractMake
 
         foreach ($uploadsArr as $upload) {
             $filePath = dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
-            if (file_exists($filePath) &&  strtolower(Tools::getExt($upload['real_name'])) === 'pdf') {
+            if (file_exists($filePath) && strtolower(Tools::getExt($upload['real_name'])) === 'pdf') {
                 $listOfPdfs[] = array($filePath, $upload['real_name']);
             }
         }

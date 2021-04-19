@@ -299,8 +299,10 @@ class MakePdf extends AbstractMake
         }
 
         foreach ($listOfPdfs as $pdf) {
-            // there will be occasions where the merging will fail
-            // due to incompatibility of Mpdf with the attached pdfs
+            // There will be cases where the merging will fail
+            // due to incompatibilities of Mpdf (actually fpdi) with the pdfs
+            // See https://manuals.setasign.com/fpdi-manual/v2/limitations/
+            // These cases will be caught and ignored
             try {
                 $numberOfPages = $mpdf->setSourceFile($pdf[0]);
 
@@ -321,7 +323,7 @@ class MakePdf extends AbstractMake
                     }
 
                     // empty the header and footer
-                    // can not be an empty string
+                    // cannot be an empty string
                     $mpdf->SetHTMLHeader(' ', '', true);
                     $mpdf->SetHTMLFooter(' ', '');
 
@@ -329,16 +331,6 @@ class MakePdf extends AbstractMake
                     $mpdf->useTemplate($page);
                 }
             } catch (FpdiException $e) {
-                // so we catch it here and tell the user
-                // this will have no noticeable effect during ZipStream as the http headers are send already
-                // ToDo: What to do with error during ZipStream?
-                //throw new ProcessFailedException('PDF could not be merged due to incompatibility with file ' . ($pdf[1] ?? 'N/A'), 0, $e);
-                //$flashBag = $this->Session->getBag('flashes');
-
-                //if ($flashBag instanceof FlashBag) {
-                //    $flashBag->add('ko', $pdf[1] . ' was not attached due to an incompatibility.');
-                //}
-
                 continue;
             }
         }

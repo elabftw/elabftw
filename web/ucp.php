@@ -41,6 +41,9 @@ try {
     $Templates = new Templates($App->Users);
     $templatesArr = $Templates->getWriteableTemplatesList();
     $templateData = array();
+    $stepsArr = array();
+    $linksArr = array();
+
     if ($Request->query->has('templateid')) {
         $Templates->setId((int) $Request->query->get('templateid'));
         $templateData = $Templates->read(new ContentParams());
@@ -53,6 +56,8 @@ try {
             (int) $App->Config->configArr['max_revisions'],
             (int) $App->Config->configArr['min_delta_revisions'],
         );
+        $stepsArr = $Templates->Steps->read(new ContentParams());
+        $linksArr = $Templates->Links->read(new ContentParams());
     }
 
     // TEAM GROUPS
@@ -66,6 +71,8 @@ try {
         'apiKeysArr' => $apiKeysArr,
         'langsArr' => Tools::getLangsArr(),
         'mode' => 'edit',
+        'stepsArr' => $stepsArr,
+        'linksArr' => $linksArr,
         'teamGroupsArr' => $teamGroupsArr,
         'templateData' => $templateData,
         'templatesArr' => $templatesArr,

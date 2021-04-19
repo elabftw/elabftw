@@ -83,6 +83,10 @@ class MakeMultiPdf extends AbstractMake
         if ($permissions['read']) {
             // write content
             $this->mpdf->WriteHTML($CurrentEntity->tex2svg($this->mpdf, $CurrentEntity->getContent()));
+
+            if ($this->Entity->Users->userData['append_pdfs']) {
+                $this->mpdf = $CurrentEntity->appendPDFs($this->mpdf);
+            }
         }
     }
 }

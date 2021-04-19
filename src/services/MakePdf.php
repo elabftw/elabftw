@@ -34,6 +34,7 @@ use function preg_replace;
 use Psr\Log\NullLogger;
 use setasign\Fpdi\FpdiException;
 use function str_replace;
+use function strtolower;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Process\Exception\ProcessFailedException as SymfonyProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -75,10 +76,6 @@ class MakePdf extends AbstractMake
         // see https://github.com/baselbers/mpdf/commit
         // 5cbaff4303604247f698afc6b13a51987a58f5bc#commitcomment-23217652
         error_reporting(E_ERROR);
-
-        // WIP
-        // ToDo: implemented user setting 'append_pdfs'
-        $this->Entity->Users->userData['append_pdfs'] = 1;
     }
 
     /**
@@ -287,22 +284,89 @@ class MakePdf extends AbstractMake
     }
 
     /**
+     * Append PDFs attached to an entity
+     *
+     * @param Mpdf $mpdf
+     * @return Mpdf
+     * @throws ProcessFailedException
+     */
+    public function appendPDFs(Mpdf $mpdf): Mpdf
+    {
+        $listOfPdfs = $this->getListOfPdfs();
+
+        if (empty($listOfPdfs)) {
+            return $mpdf;
+        }
+
+        foreach ($listOfPdfs as $pdf) {
+            // there will be occasions where the merging will fail
+            // due to incompatibility of Mpdf with the attached pdfs
+            try {
+                $numberOfPages = $mpdf->setSourceFile($pdf[0]);
+
+                for ($i=1; $i <= $numberOfPages; $i++) {
+                    // Import the ith page of the source PDF file
+                    $page = $mpdf->importPage($i);
+
+                    // getTemplateSize() is not documented in the MPDF manual
+                    // @return array|bool An array with following keys: width, height, 0 (=width), 1 (=height), orientation (L or P)
+                    $pageDim = $mpdf->getTemplateSize($page);
+
+                    if (is_array($pageDim)) { // satisfy phpstan
+                        // add a new (blank) page with the dimensions of the imported page
+                        $mpdf->AddPageByArray(array(
+                            'orientation' => $pageDim['orientation'],
+                            'sheet-size' => array($pageDim['width'], $pageDim['height']),
+                        ));
+                    }
+
+                    // empty the header and footer
+                    // can not be an empty string
+                    $mpdf->SetHTMLHeader(' ', '', true);
+                    $mpdf->SetHTMLFooter(' ', '');
+
+                    // add the content of the imported page
+                    $mpdf->useTemplate($page);
+                }
+            } catch (FpdiException $e) {
+                // so we catch it here and tell the user
+                // this will have no noticeable effect during ZipStream as the http headers are send already
+                // ToDo: What to do with error during ZipStream?
+                //throw new ProcessFailedException('PDF could not be merged due to incompatibility with file ' . ($pdf[1] ?? 'N/A'), 0, $e);
+                //$flashBag = $this->Session->getBag('flashes');
+
+                //if ($flashBag instanceof FlashBag) {
+                //    $flashBag->add('ko', $pdf[1] . ' was not attached due to an incompatibility.');
+                //}
+
+                continue;
+            }
+        }
+
+        return $mpdf;
+    }
+
+    /**
      * Get a list of all PDFs that are attached to an entity
      *
-     * @return array Empty or array of arrays with ['path/to/file', 'real.name']
+     * @return array Empty or array of arrays with information for PDFs array('path/to/file', 'real.name')
      */
     private function getListOfPdfs(): array
     {
         $uploadsArr = $this->Entity->Uploads->readAll();
         $listOfPdfs = array();
-        if (count($uploadsArr) > 0) {
-            foreach ($uploadsArr as $upload) {
-                $filePath = dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
-                if (file_exists($filePath) && preg_match('/(pdf)$/i', Tools::getExt($upload['real_name']))) {
-                    $listOfPdfs[] = array($filePath, $upload['real_name']);
-                }
+
+        if (empty($uploadsArr)) {
+            return $listOfPdfs;
+        }
+
+        foreach ($uploadsArr as $upload) {
+            $filePath = dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
+            if (file_exists($filePath) &&  strtolower(Tools::getExt($upload['real_name'])) === 'pdf') {
+                $listOfPdfs[] = array($filePath, $upload['real_name']);
             }
         }
+
         return $listOfPdfs;
     }
 
@@ -326,59 +390,6 @@ class MakePdf extends AbstractMake
             $mpdf->PDFA = true;
         }
 
-        return $mpdf;
-    }
-
-    /**
-     * Append PDFs attached to an entity
-     *
-     * @param Mpdf $mpdf
-     * @return Mpdf
-     * @throws ProcessFailedException
-     */
-    private function appendPDFs(Mpdf $mpdf): Mpdf
-    {
-        $listOfPdfs = $this->getListOfPdfs();
-
-        if (count($listOfPdfs) > 0) {
-            // there will be occasions where the merging will fail
-            // due to incompatibility of Mpdf with the attached pdfs
-            try {
-                foreach ($listOfPdfs as $pdf) {
-                    $numberOfPages = $mpdf->setSourceFile($pdf[0]);
-
-                    for ($i=1; $i <= $numberOfPages; $i++) {
-                        // Import the ith page of the source PDF file
-                        $page = $mpdf->importPage($i);
-
-                        // getTemplateSize() is not documented in the MPDF manual
-                        // @return array|bool An array with following keys: width, height, 0 (=width), 1 (=height), orientation (L or P)
-                        $pageDim = $mpdf->getTemplateSize($page);
-
-                        if (is_array($pageDim)) { // satisfy phpstan
-                            // add a new (blank) page with the dimensions of the imported page
-                            $mpdf->AddPageByArray(array(
-                                'orientation' => $pageDim['orientation'],
-                                'sheet-size' => array($pageDim['width'], $pageDim['height']),
-                            ));
-                        }
-
-                        // empty the header and footer
-                        // can not be an empty string
-                        $mpdf->SetHTMLHeader(' ', '', true);
-                        $mpdf->SetHTMLFooter(' ', '');
-
-                        // add the content of the imported page
-                        $mpdf->useTemplate($page);
-                    }
-                }
-            } catch (FpdiException $e) {
-                // so we catch it here and tell the user
-                // this will have no noticeable effect during ZipStream as the http headers are send already
-                // ToDo: What to do with error during ZipStream?
-                throw new ProcessFailedException('PDF could not be merged due to an incompatibility with file ' . ($pdf[1] ?? 'N/A'), 0, $e);
-            }
-        }
         return $mpdf;
     }
 

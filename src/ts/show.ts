@@ -14,10 +14,12 @@ import EntityClass from './Entity.class';
 
 $(document).ready(function(){
   const about = document.getElementById('info').dataset;
-  // only run in show mode
-  if (about.page !== 'show') {
+  // only run in show mode or on search page (which is kinda show mode too)
+  const pages = ['show', 'search'];
+  if (!pages.includes(about.page)) {
     return;
   }
+
   const EntityC = new EntityClass($('#type').data('type'));
 
   // CREATE EXPERIMENT with shortcut

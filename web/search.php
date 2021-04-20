@@ -44,8 +44,10 @@ if ($Request->query->get('type') !== 'experiments') {
     $categoryArr = $itemsTypesArr;
 }
 
+// TEAM GROUPS
 $TeamGroups = new TeamGroups($App->Users);
 $teamGroupsArr = $TeamGroups->read(new ContentParams());
+$visibilityArr = $TeamGroups->getVisibilityList();
 
 $usersArr = $App->Users->readAllFromTeam();
 
@@ -119,6 +121,7 @@ $renderArr = array(
     'title' => $title,
     'statusArr' => $statusArr,
     'usersArr' => $usersArr,
+    'visibilityArr' => $visibilityArr,
 );
 echo $App->render('search.html', $renderArr);
 

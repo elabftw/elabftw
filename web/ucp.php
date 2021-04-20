@@ -61,7 +61,6 @@ try {
     }
 
     // TEAM GROUPS
-    // Added Visibility clause
     $TeamGroups = new TeamGroups($App->Users);
     $visibilityArr = $TeamGroups->getVisibilityList();
 

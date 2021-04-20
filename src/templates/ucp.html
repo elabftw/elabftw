@@ -213,41 +213,17 @@
         <p>
         <label for='default-read-select'>{{ 'Default visibility for new experiments'|trans }}</label>
         <select id='default-read-select' name='default_read'>
-            <option value='organization'
-              {{ App.Users.userData.default_read == 'organization' ? " selected='selected'" }}
-            >{{ 'Organization'|trans }}</option>
-            <option value='team'
-              {{ App.Users.userData.default_read == 'team' ? " selected='selected'" }}
-            >{{ 'Team'|trans }}</option>
-            <option value='user'
-              {{ App.Users.userData.default_read == 'user' ? " selected='selected'" }}
-            >{{ 'User'|trans }}</option>
-            {% for teamGroup in teamGroupsArr %}
-                <option value='{{ teamGroup.id }}'
-                  {{ teamGroup.id == App.Users.userData.default_read ? " selected='selected'" }}
-                >{{ 'Group'|trans }} - {{ teamGroup.name }}
-                </option>
-            {% endfor %}
+          {% for key, value in visibilityArr %}
+            <option value='{{ key }}' {{ App.Users.userData.default_read == key ? " selected='selected'" }}>{{ value|trans }}</option>
+          {% endfor %}
         </select>
         </p>
         <p>
         <label for='default-write-select'>{{ 'Default write permission for new experiments'|trans }}</label>
         <select id='default-write-select' name='default_write'>
-            <option value='organization'
-              {{ App.Users.userData.default_write == 'organization' ? " selected='selected'" }}
-            >{{ 'Organization'|trans }}</option>
-            <option value='team'
-              {{ App.Users.userData.default_write == 'team' ? " selected='selected'" }}
-            >{{ 'Team'|trans }}</option>
-            <option value='user'
-              {{ App.Users.userData.default_write == 'user' ? " selected='selected'" }}
-            >{{ 'User'|trans }}</option>
-            {% for teamGroup in teamGroupsArr %}
-                <option value='{{ teamGroup.id }}'
-                  {{ teamGroup.id == App.Users.userData.default_write ? " selected='selected'" }}
-                >{{ 'Group'|trans }} - {{ teamGroup.name }}
-                </option>
-            {% endfor %}
+          {% for key, value in visibilityArr %}
+            <option value='{{ key }}' {{ App.Users.userData.default_write == key ? " selected='selected'" }}>{{ value|trans }}</option>
+          {% endfor %}
         </select>
         </p>
 

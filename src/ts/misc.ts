@@ -34,6 +34,9 @@ export function getEntity(): Entity {
   if (about.type === 'items') {
     entityType = EntityType.Item;
   }
+  if (about.type === 'experiments_templates') {
+    entityType = EntityType.Template;
+  }
   return {
     type: entityType,
     id: parseInt(about.id),

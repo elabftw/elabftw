@@ -174,11 +174,13 @@ class Check
             'file',
             'finished',
             'list',
-            'privacypolicy',
             'member',
             'metadata',
+            'privacypolicy',
+            'rating',
             'real_name',
             'title',
+            'unreference',
             // no target is also valid
             '',
         );

@@ -28,6 +28,11 @@
   </div>
 </div>
 
+<!-- LOGIN ANNOUNCEMENT -->
+{% if App.Config.configArr.login_announcement %}
+  {{ App.Config.configArr.login_announcement|msg('warning') }}
+{% endif %}
+
 <section class='text-center'>
     <img src='app/img/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
   {% if App.Session.has('team_selection_required') %}

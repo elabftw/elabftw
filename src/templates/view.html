@@ -144,14 +144,11 @@
   <div class='row'>
     <div class='col-6'>
       <p>
-        {% if Entity.type == 'experiments' %}
-          <i class='fas fa-clipboard-check' title='{{ 'Status'|trans }}'></i>
+        <i class='fas fa-clipboard-{{ Entity.type == 'experiments' ? 'check' : 'list' }}'></i>
           {{ Entity.entityData.category }}
-        {% else %}
           {% if Entity.entityData.rating > 0 %}
             {{ Entity.entityData.rating|stars|raw }}
           {% endif %}
-        {% endif %}
         <i class='fas fa-eye ml-2' title='{{ 'Visibility'|trans }}'></i> {{ Entity.getCan(Entity.entityData.canread) }}
         <i class='fas fa-pencil-alt ml-2' title='{{ 'Edit'|trans }}'></i> {{ Entity.getCan(Entity.entityData.canwrite) }}
       </p>

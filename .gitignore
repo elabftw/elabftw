@@ -19,6 +19,8 @@ web/test.php
 web/app/js/*.LICENSE.txt
 tests/_output/*
 tests/_support/_generated*
+tests/cypress/screenshots
+tests/cypress/videos
 uploads
 /vendor/
 web/app/css/tinymce/fonts/*.woff

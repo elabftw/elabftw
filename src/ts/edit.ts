@@ -158,24 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   // END GET MOL FILES
 
-  class Star {
-      controller: string;
-
-      constructor() {
-        this.controller = 'app/controllers/EntityAjaxController.php';
-      }
-
-      update(rating: any): void {
-        $.post(this.controller, {
-          rating: rating,
-          id: entity.id,
-          type: 'items',
-        }).done(function(json) {
-          notif(json);
-        });
-      }
-  }
-
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
@@ -293,12 +275,11 @@ document.addEventListener('DOMContentLoaded', () => {
     img.src = 'app/download.php?f=' + $(this).data('path');
   });
   // STAR RATING
-  const StarC = new Star();
   $(document).on('click', '.rating-cancel', function() {
-    StarC.update(0);
+    EntityC.update(entity.id, Target.Rating, '0');
   });
   $(document).on('click', '.star', function() {
-    StarC.update($(this).data('rating').current[0].innerText);
+    EntityC.update(entity.id, Target.Rating, $(this).data('rating').current[0].innerText);
   });
 
   // Object to hold control data for selected image

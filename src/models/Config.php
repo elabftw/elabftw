@@ -22,17 +22,22 @@ use PDO;
 /**
  * The general config table
  */
-class Config
+final class Config
 {
     // the array with all config
     public array $configArr = array();
 
     protected Db $Db;
 
+    // store the single instance of the class
+    private static ?Config $instance = null;
+
     /**
+     * Construct of a singleton is private
+     *
      * Get Db and load the configArr
      */
-    public function __construct()
+    private function __construct()
     {
         $this->Db = Db::getConnection();
         $this->configArr = $this->read();
@@ -41,6 +46,37 @@ class Config
             $this->populate();
             $this->configArr = $this->read();
         }
+    }
+
+    /**
+     * Disallow cloning the class
+     * @norector \Rector\DeadCode\Rector\ClassMethod\RemoveEmptyClassMethodRector
+     */
+    private function __clone()
+    {
+    }
+
+    /**
+     * Disallow wakeup also
+     * @norector \Rector\DeadCode\Rector\ClassMethod\RemoveEmptyClassMethodRector
+     */
+    public function __wakeup()
+    {
+    }
+
+    /**
+     * Return the instance of the class
+     *
+     * @throws DatabaseErrorException If config can not be loaded
+     * @return Config The instance of the class
+     */
+    public static function getConfig(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
     }
 
     /**
@@ -88,6 +124,7 @@ class Config
             $req->bindParam(':value', $value);
             $req->bindParam(':name', $name);
             $this->Db->execute($req);
+            $this->configArr[$name] = $value;
         }
     }
 
@@ -169,6 +206,7 @@ class Config
             ('open_team', NULL),
             ('privacy_policy', NULL),
             ('announcement', NULL),
+            ('login_announcement', NULL),
             ('saml_nameidencrypted', 0),
             ('saml_authnrequestssigned', 0),
             ('saml_logoutrequestsigned', 0),

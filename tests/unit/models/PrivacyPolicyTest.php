@@ -18,7 +18,7 @@ class PrivacyPolicyTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->PrivacyPolicy = new PrivacyPolicy(new Config());
+        $this->PrivacyPolicy = new PrivacyPolicy(Config::getConfig());
     }
 
     public function testReadEmpty(): void

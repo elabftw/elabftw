@@ -43,6 +43,11 @@ final class EntityParams extends ContentParams implements EntityParamsInterface
         return Filter::body($this->extra['body']);
     }
 
+    public function getRating(): int
+    {
+        return (int) $this->content;
+    }
+
     public function getMetadata(): string
     {
         return $this->content;
@@ -50,6 +55,6 @@ final class EntityParams extends ContentParams implements EntityParamsInterface
 
     public function getField(): string
     {
-        return Filter::sanitize($this->extra['jsonField']);
+        return Filter::sanitize($this->extra['jsonField'] ?? '');
     }
 }

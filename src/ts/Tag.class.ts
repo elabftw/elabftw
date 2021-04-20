@@ -53,7 +53,7 @@ export default class Tag {
       action: Action.Update,
       model: this.model,
       entity: this.entity,
-      target: Target.Tag,
+      target: Target.Unreference,
       id: id,
     };
     return this.sender.send(payload);

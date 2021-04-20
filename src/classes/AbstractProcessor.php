@@ -135,7 +135,7 @@ abstract class AbstractProcessor implements ProcessorInterface
             case 'status':
                 return new Status($this->Users->team, $this->id);
             case 'comment':
-                return new Comments($this->Entity, new Email(new Config(), $this->Users), $this->id);
+                return new Comments($this->Entity, new Email(Config::getConfig(), $this->Users), $this->id);
             case 'link':
                 return new Links($this->Entity, $this->id);
             case 'step':
@@ -143,7 +143,7 @@ abstract class AbstractProcessor implements ProcessorInterface
             case 'upload':
                 return new Uploads($this->Entity, $this->id);
             case 'privacypolicy':
-                return new PrivacyPolicy(new Config());
+                return new PrivacyPolicy(Config::getConfig());
             case 'teamgroup':
                 return new TeamGroups($this->Users, $this->id);
             case 'tag':

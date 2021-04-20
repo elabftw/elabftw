@@ -272,7 +272,7 @@ class Tools
     }
 
     /**
-     * Display the stars rating for a DB item
+     * Display the stars rating for an entity
      *
      * @param int $rating The number of stars to display
      * @return string HTML of the stars
@@ -292,7 +292,8 @@ class Tools
      */
     public static function getUrl(Request $Request, bool $canonical = false): string
     {
-        $Config = new Config();
+        $Config = Config::getConfig();
+
         if ($Config->configArr['url']) {
             return $Config->configArr['url'];
         }

@@ -10,7 +10,11 @@ interface ResponseMsg {
   res: boolean;
   msg: string;
   color?: string;
-  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedExperiments> | Array<Upload> | object;
+  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedExperiments> | Array<Upload> | object | MetadataJson;
+}
+
+interface MetadataJson {
+  metadata: string;
 }
 
 interface Upload {
@@ -54,7 +58,6 @@ enum Action {
   Deduplicate = 'deduplicate',
   Duplicate = 'duplicate',
   Lock = 'lock',
-  Unreference = 'unreference',
 }
 
 enum Model {
@@ -89,9 +92,10 @@ enum Target {
   Member = 'member',
   Metadata = 'metadata',
   PrivacyPolicy = 'privacypolicy',
+  Rating = 'rating',
   RealName = 'real_name',
-  Tag = 'tag',
   Title = 'title',
+  Unreference = 'unreference',
 }
 
 interface Entity {
@@ -121,6 +125,7 @@ export {
   Payload,
   Method,
   Action,
+  MetadataJson,
   Model,
   Target,
   Todoitem,

@@ -42,6 +42,8 @@ try {
     $TeamGroups = new TeamGroups($App->Users);
     $teamGroupsArr = $TeamGroups->read(new ContentParams());
 
+    $stepsArr = array();
+    $linksArr = array();
 
     $Database = new Items($App->Users);
     // we only want the bookable type of items
@@ -85,6 +87,8 @@ try {
         if ($permissions['read'] === false) {
             throw new IllegalActionException('User tried to access a template without read permissions');
         }
+        $stepsArr = $Templates->Steps->read(new ContentParams());
+        $linksArr = $Templates->Links->read(new ContentParams());
     }
 
     $template = 'team.html';
@@ -96,6 +100,8 @@ try {
         'itemsArr' => $itemsArr,
         'itemData' => $itemData,
         'selectedItem' => $selectedItem,
+        'stepsArr' => $stepsArr,
+        'linksArr' => $linksArr,
         'teamArr' => $teamArr,
         'teamGroupsArr' => $teamGroupsArr,
         'teamsStats' => $teamsStats,

@@ -36,13 +36,8 @@
         <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
         <select id='visibility' name='vis' class='form-control'>
           <option value=''>{{ 'Select visibility'|trans }}</option>
-          <option value='organization'{{ Request.query.get('vis') == 'organization' ? ' selected' }}>{{ 'Organization'|trans }}</option>
-          <option value='team'{{ Request.query.get('vis') == 'team' ? ' selected' }}>{{ 'Team'|trans }}</option>
-          <option value='user'{{ Request.query.get('vis') == 'user' ? ' selected' }}>{{ 'Only me'|trans }}</option>
-          {% for teamGroup in teamGroupsArr %}
-            <option value='{{ teamGroup.id }}'{{ Request.query.get('vis') == teamGroup.id ? ' selected' }}>
-              {{ 'Group'|trans }} {{ teamGroup.name }}
-            </option>
+          {% for key, value in visibilityArr %}
+            <option value='{{ key }}' {{ Request.query.get('vis') == key ? " selected='selected'" }}>{{ value|trans }}</option>
           {% endfor %}
         </select>
       </div>
@@ -156,4 +151,5 @@
   it avoids having to repeat the query params -->
 {{ not App.Request.query.has('type') ? '</form>' }}
 <a href='#' id='anchor'></a>
+<div id='shortcuts' data-create='{{ App.Users.userData.sc_create }}'></div>
 <div id='info' data-page='search'></div>

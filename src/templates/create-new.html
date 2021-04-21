@@ -8,7 +8,7 @@
         </button>
         <div class='dropdown-menu' aria-label='{{ 'Create new'|trans }}'>
           {% if Entity.type == 'experiments' %}
-            <a href='#' data-action='create-experiment' data-tplid='0' class='dropdown-item'>
+            <a href='#' data-action='create-entity' data-tplid='0' class='dropdown-item'>
               {% trans %}
               Experiment
               {% plural 1 %}
@@ -18,7 +18,7 @@
             <div class='dropdown-divider'></div>
             {% if templatesArr|length > 0 %}
               {% for tpl in templatesArr %}
-                <a href='#' data-action='create-experiment' data-tplid='{{ tpl.id }}' class='dropdown-item'>
+                <a href='#' data-action='create-entity' data-tplid='{{ tpl.id }}' class='dropdown-item'>
                   {{ tpl.title|raw }}
                 </a>
               {% endfor %}

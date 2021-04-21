@@ -80,7 +80,7 @@ try {
         }
     } elseif ($action === 'update') {
         // TODO should not exist, but it's here for now
-        if ($Model instanceof ItemsTypes) {
+        if ($Model instanceof ItemsTypes && ($target !== 'metadata')) {
             $res = $Model->updateAll($Params);
         } else {
             $res = $Model->update($Params);

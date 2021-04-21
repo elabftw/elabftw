@@ -10,10 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
-interface ItemTypeParamsInterface extends ContentParamsInterface
+interface ItemTypeParamsInterface extends EntityParamsInterface
 {
-    public function getBody(): string;
-
     public function getCanread(): string;
 
     // TODO named like this because clash with the canwrite from apikey that returns an int

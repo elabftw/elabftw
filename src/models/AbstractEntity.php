@@ -22,6 +22,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\EntityParamsInterface;
+use Elabftw\Interfaces\ItemTypeParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
@@ -339,7 +340,7 @@ abstract class AbstractEntity implements CrudInterface
      * Update an entity. The revision is saved before so it can easily compare old and new body.
      */
     //public function update(string $title, string $date, string $body): void
-    public function update(EntityParamsInterface $params): bool
+    public function update(EntityParamsInterface | ItemTypeParamsInterface $params): bool
     {
         $this->canOrExplode('write');
 

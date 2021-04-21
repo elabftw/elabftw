@@ -14,49 +14,31 @@ use Elabftw\Interfaces\ItemTypeParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 
-class ItemTypeParams extends ContentParams implements ItemTypeParamsInterface
+final class ItemTypeParams extends EntityParams implements ItemTypeParamsInterface
 {
-    private string $body;
-
-    private string $canread;
-
-    private string $canwrite;
-
-    private string $color;
-
-    private int $isBookable;
-
-    private ?int $team;
-
-    public function __construct(string $content, string $color, string $body = '', string $canread = 'team', string $canwrite = 'team', int $isBookable = 0, int $team = null)
+    public function __construct(string $content = '', string $target = '', ?array $extra = null)
     {
-        parent::__construct($content);
-        $this->body = $body;
-        $this->canread = $canread;
-        $this->canwrite = $canwrite;
-        $this->color = $color;
-        $this->isBookable = $isBookable;
-        $this->team = $team;
+        parent::__construct($content, $target, $extra);
     }
 
     public function getBody(): string
     {
-        return Filter::body($this->body);
+        return Filter::body($this->extra['body']);
     }
 
     public function getCanread(): string
     {
-        return Check::visibility($this->canread);
+        return Check::visibility($this->extra['canread']);
     }
 
     public function getCanwriteS(): string
     {
-        return Check::visibility($this->canwrite);
+        return Check::visibility($this->extra['canwrite']);
     }
 
     public function getColor(): string
     {
-        return Check::color($this->color);
+        return Check::color($this->extra['color']);
     }
 
     public function getContent(): string
@@ -66,14 +48,11 @@ class ItemTypeParams extends ContentParams implements ItemTypeParamsInterface
 
     public function getIsBookable(): int
     {
-        return $this->isBookable;
+        return (int) $this->extra['isBookable'];
     }
 
     public function getTeam(): int
     {
-        if ($this->team === null) {
-            return 0;
-        }
-        return $this->team;
+        return (int) ($this->extra['team'] ?? 0);
     }
 }

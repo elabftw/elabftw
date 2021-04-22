@@ -160,8 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       $.each(checked, function(index) {
+        let entityType = EntityType.Experiment;
+        if ($('#type').data('type') === 'items') {
+          entityType = EntityType.Item;
+        }
         const tmpEntity: Entity = {
-          type: entity.type,
+          type: entityType,
           id: checked[index]['id'],
         };
         const TmpLinkC = new Link(tmpEntity);

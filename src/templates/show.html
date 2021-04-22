@@ -17,7 +17,7 @@
       {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
   {% else %}
       {% if pinnedArr and not searchPage %}
-        <div class='row display-flex'>
+        <div id='pinned-entities' class='row display-flex'>
           {% set isPinned = true %}
           {% for item in pinnedArr|slice(0, DisplayParams.limit) %}
             {% include('show-item.html') %}
@@ -84,7 +84,7 @@
         {% endfor %}
         </div>
       {% else  %}
-        <table class='item-table'>
+        <table id='item-table'>
           <tr>
             <th>
               {{ 'Date'|trans }} <a class='orderBy clickable' data-orderby='date'><i class='fas fa-sort'></i></a>

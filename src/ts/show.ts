@@ -219,6 +219,22 @@ $(document).ready(function(){
     $.each(checked, function(index) {
       EntityC.lock(checked[index]['id']);
     });
+
+    // we need to wait a bit for the ajax return
+    setTimeout(() => {
+      if ($('#itemList').length) {
+        $.get(window.location.href, function(data) {
+          $('#itemList').html($(data).find('#itemList').html());
+          $('#pinned-entities').html($(data).find('#pinned-entities').html());
+        }, 'html');
+      }
+      if ($('#item-table').length) {
+        $.get(window.location.href, function(data) {
+          $('#item-table').html($(data).find('#item-table').html());
+          $('#pinned-entities').html($(data).find('#pinned-entities').html());
+        }, 'html');
+      }
+    }, 100);
   });
 
   // THE TIMESTAMP BUTTON FOR CHECKED BOXES

@@ -42,10 +42,10 @@ export class Metadata {
     };
     return this.sender.send(payload).then(json => {
       // if there are no metadata.json file available, return an empty object
-      if (json.res === false) {
+      const fulljson = (json.value as MetadataJson);
+      if (!fulljson.metadata) {
         return {};
       }
-      const fulljson = (json.value as MetadataJson);
       return JSON.parse(fulljson.metadata);
     });
   }

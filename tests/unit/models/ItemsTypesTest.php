@@ -23,14 +23,28 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateUpdateDestroy(): void
     {
+        $extra = array(
+            'color' => '#faaccc',
+            'body' => 'body',
+            'canread' => 'team',
+            'canwrite' => 'team',
+            'isBookable' => '0',
+        );
         $this->ItemsTypes->create(
-            new ItemTypeParams('new', '#fffccc', '<p>body</p>', 'team', 'team', 0)
+            new ItemTypeParams('new', 'all', $extra)
         );
         $itemsTypes = $this->ItemsTypes->readAll();
         $last = array_pop($itemsTypes);
         $this->ItemsTypes->setId((int) $last['category_id']);
+        $extra = array(
+            'color' => '#fffccc',
+            'body' => 'newbody',
+            'canread' => 'team',
+            'canwrite' => 'team',
+            'isBookable' => '1',
+        );
         $this->ItemsTypes->updateAll(
-            new ItemTypeParams('new', '#fffccc', 'newbody', 'team', 'team', 1)
+            new ItemTypeParams('new', 'all', $extra)
         );
         $this->assertEquals('newbody', $this->ItemsTypes->read(new ContentParams())['template']);
         $this->ItemsTypes->setId((int) $last['category_id']);

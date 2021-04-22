@@ -8,6 +8,7 @@
 declare let key: any;
 declare let MathJax: any;
 import { getCheckedBoxes, insertParamAndReload, notif } from './misc';
+import { EntityType } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
@@ -20,7 +21,12 @@ $(document).ready(function(){
     return;
   }
 
-  const EntityC = new EntityClass($('#type').data('type'));
+  let entityType = EntityType.Experiment;
+  if ($('#type').data('type') === 'items') {
+    entityType = EntityType.Item;
+  }
+
+  const EntityC = new EntityClass(entityType);
 
   // CREATE EXPERIMENT with shortcut
   key($('#shortcuts').data('create'), function() {
@@ -227,6 +233,7 @@ $(document).ready(function(){
     $.each(checked, function(index) {
       $.post('app/controllers/EntityAjaxController.php', {
         timestamp: true,
+        type: 'experiments',
         id: checked[index]['id'],
       }).done(function(json) {
         notif(json);

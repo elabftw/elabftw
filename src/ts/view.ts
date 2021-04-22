@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
       loading.appendChild(ring);
       overlay.appendChild(loading);
       document.getElementById('container').append(overlay);
-      AjaxC.post('bloxberg').then(() => window.location.replace(`experiments.php?mode=view&id=${entity.id}`));
+      AjaxC.post('bloxberg').then(() => window.location.replace(`?mode=view&id=${entity.id}`));
     }
   });
 });

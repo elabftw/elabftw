@@ -13,9 +13,9 @@ namespace Elabftw\Elabftw;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Services\Filter;
 
-final class EntityParams extends ContentParams implements EntityParamsInterface
+class EntityParams extends ContentParams implements EntityParamsInterface
 {
-    private ?array $extra;
+    protected ?array $extra;
 
     public function __construct(string $content, string $target = '', ?array $extra = null)
     {

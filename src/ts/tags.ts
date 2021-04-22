@@ -19,7 +19,11 @@ $(document).ready(function() {
     type = 'experiments_templates';
   }
 
+  if (!document.getElementById('info')) {
+    return;
+  }
   const AjaxC = new Ajax();
+
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
   let entityType: EntityType = EntityType.Experiment;

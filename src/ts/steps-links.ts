@@ -15,6 +15,9 @@ import { getCheckedBoxes, notif } from './misc';
 import { EntityType, Entity } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (!document.getElementById('info')) {
+    return;
+  }
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
   let entityType: EntityType;

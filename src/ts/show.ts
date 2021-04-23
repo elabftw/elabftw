@@ -14,6 +14,9 @@ import i18next from 'i18next';
 import EntityClass from './Entity.class';
 
 $(document).ready(function(){
+  if (!document.getElementById('info')) {
+    return;
+  }
   const about = document.getElementById('info').dataset;
   // only run in show mode or on search page (which is kinda show mode too)
   const pages = ['show', 'search'];

@@ -138,10 +138,10 @@ if ($Request->query->count() > 0) {
     }
 
     // RATING
-    if ($Request->query->get('rating') === 'no') {
-        $rating = 0;
-    } else {
-        $rating = (int) $Request->query->get('rating');
+    $rating = null;
+    $allowedRatings = array('null', '1', '2', '3', '4', '5');
+    if (in_array($Request->query->get('rating'), $allowedRatings, true)) {
+        $rating = $Request->query->get('rating');
     }
 
     // PREPARE SQL query
@@ -177,6 +177,13 @@ if ($Request->query->count() > 0) {
             $Entity->dateFilter = " AND entity.date BETWEEN '00000101' AND '$to'";
         }
 
+        // Rating search
+        if (!empty($rating)) {
+            // rating is whitelisted here
+            $Entity->addFilter('entity.rating', $rating);
+        }
+
+
         if ($Request->query->get('type') === 'experiments') {
 
             // USERID FILTER
@@ -196,11 +203,6 @@ if ($Request->query->count() > 0) {
                 $Entity->addFilter('entity.category', $status);
             }
         } else {
-            // Rating search
-            if (!empty($rating)) {
-                $Entity->addFilter('entity.rating', (string) $rating);
-            }
-
             // FILTER ON DATABASE ITEMS TYPES
             if (Check::id((int) $Request->query->get('type')) !== false) {
                 $Entity->addFilter('categoryt.id', $Request->query->get('type'));

@@ -110,6 +110,9 @@
             <th class='actions-item-table'>
               {{ 'Actions'|trans }}
             </th>
+            <th class='actions-item-rating'>
+              {{ 'Rating'|trans }} <a class='orderBy clickable' data-orderby='rating'><i class='fas fa-sort'></i></a>
+            </th>
           </tr>
         {% for item in itemsArr|slice(0, DisplayParams.limit) %}
           {% include('show-item-table.html') %}

@@ -38,6 +38,7 @@
         {% endif %}
         <option value='title'{{ App.Request.query.get('order') == 'title' ? ' selected' }}>{{ 'Title'|trans }}</option>
         <option value='user'{{ App.Request.query.get('order') == 'user' ? ' selected' }}>{{ 'User'|trans }}</option>
+        <option value='rating'{{ App.Request.query.get('order') == 'rating' ? ' selected' }}>{{ 'Rating'|trans }}</option>
       </select>
 
       <!-- SORT -->

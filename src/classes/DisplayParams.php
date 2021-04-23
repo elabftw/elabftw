@@ -75,6 +75,8 @@ class DisplayParams
                 return 'commentst.recent_comment';
             case 'user':
                 return 'entity.userid';
+            case 'rating':
+                return 'entity.rating';
             default:
                 return 'date';
         }

@@ -208,6 +208,11 @@
           {{ App.Users.userData.use_markdown == '1' ? " checked='checked'" }}
         />
         <label for='use_markdown'>{{ 'Disable the rich text editor and write Markdown directly'|trans }}</label>
+        <br>
+        <input id='use_isodate' type='checkbox' name='use_isodate'
+          {{ App.Users.userData.use_isodate == '1' ? " checked='checked'" }}
+        />
+        <label for='use_isodate'>{{ 'Use ISO datetime in the text editor instead of localized one'|trans }}</label>
         </p>
 
         <p>

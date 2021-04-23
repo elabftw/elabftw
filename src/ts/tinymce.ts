@@ -103,17 +103,19 @@ function getNow(): DateTime {
 }
 
 function getDatetime(): string {
+  const useIso = document.getElementById('user-prefs').dataset.isodate;
+  if (useIso === '1') {
+    const fullDatetime = getNow().toISO({ includeOffset: false });
+    // now we remove the milliseconds from that string
+    // 2021-04-23T18:57:28.633  ->  2021-04-23T18:57:28
+    return fullDatetime.slice(0, -4);
+  }
   return getNow().toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY);
 }
 
 // ctrl-shift-D will add the date in the tinymce editor
-function addDateOnCursor(): void {
-  tinymce.activeEditor.execCommand('mceInsertContent', false, `${getNow().toLocaleString(DateTime.DATE_HUGE)} `);
-}
-
-// ctrl-shift-T will add the time in the tinymce editor
-function addTimeOnCursor(): void {
-  tinymce.activeEditor.execCommand('mceInsertContent', false, `${getNow().toLocaleString(DateTime.TIME_WITH_SECONDS)} `);
+function addDatetimeOnCursor(): void {
+  tinymce.activeEditor.execCommand('mceInsertContent', false, `${getDatetime()} `);
 }
 
 function isOverCharLimit(): boolean {
@@ -210,8 +212,7 @@ export function getTinymceBaseConfig(page: string): object {
         }
       });
       // some shortcuts
-      editor.addShortcut('ctrl+shift+d', 'add date at cursor', addDateOnCursor);
-      editor.addShortcut('ctrl+shift+alt+d', 'add time at cursor', addTimeOnCursor);
+      editor.addShortcut('ctrl+shift+d', 'add date/time at cursor', addDatetimeOnCursor);
       editor.addShortcut('ctrl+=', 'subscript', () => editor.execCommand('subscript'));
       editor.addShortcut('ctrl+shift+=', 'superscript', () => editor.execCommand('superscript'));
 

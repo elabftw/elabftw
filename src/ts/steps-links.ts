@@ -15,6 +15,9 @@ import { getCheckedBoxes, notif } from './misc';
 import { EntityType, Entity } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (!document.getElementById('info')) {
+    return;
+  }
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
   let entityType: EntityType;
@@ -160,8 +163,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       $.each(checked, function(index) {
+        let entityType = EntityType.Experiment;
+        if ($('#type').data('type') === 'items') {
+          entityType = EntityType.Item;
+        }
         const tmpEntity: Entity = {
-          type: entity.type,
+          type: entityType,
           id: checked[index]['id'],
         };
         const TmpLinkC = new Link(tmpEntity);

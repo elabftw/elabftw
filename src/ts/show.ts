@@ -7,7 +7,7 @@
  */
 declare let key: any;
 declare let MathJax: any;
-import { getCheckedBoxes, insertParamAndReload, notif } from './misc';
+import { getCheckedBoxes, insertParamAndReload, notif, reloadTagsAndLocks } from './misc';
 import { EntityType } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
@@ -215,26 +215,17 @@ $(document).ready(function(){
       notif(nothingSelectedError);
       return;
     }
-    // loop on it and delete stuff
-    $.each(checked, function(index) {
-      EntityC.lock(checked[index]['id']);
+
+    // loop over it and lock entities
+    const results = [];
+    checked.forEach(checkBox => {
+      results.push(EntityC.lock(checkBox['id']));
     });
 
-    // we need to wait a bit for the ajax return
-    setTimeout(() => {
-      if ($('#itemList').length) {
-        $.get(window.location.href, function(data) {
-          $('#itemList').html($(data).find('#itemList').html());
-          $('#pinned-entities').html($(data).find('#pinned-entities').html());
-        }, 'html');
-      }
-      if ($('#item-table').length) {
-        $.get(window.location.href, function(data) {
-          $('#item-table').html($(data).find('#item-table').html());
-          $('#pinned-entities').html($(data).find('#pinned-entities').html());
-        }, 'html');
-      }
-    }, 100);
+    Promise.all(results).then(() => {
+      reloadTagsAndLocks('itemList');
+      reloadTagsAndLocks('item-table');
+    });
   });
 
   // THE TIMESTAMP BUTTON FOR CHECKED BOXES

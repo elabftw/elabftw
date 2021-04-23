@@ -81,7 +81,7 @@ $(document).ready(function() {
         return;
       }
 
-     // loop over it and add tags
+      // loop over it and add tags
       const results = [];
       checked.forEach(checkBox => {
         results.push(TagC.create((document.getElementById('createTagInputMultiple') as HTMLInputElement).value as string, checkBox['id']));

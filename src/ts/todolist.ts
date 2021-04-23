@@ -11,6 +11,10 @@ import Todolist from './Todolist.class';
 import i18next from 'i18next';
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (!document.getElementById('info')) {
+    return;
+  }
+
   const TodolistC = new Todolist();
 
   const pagesWithoutTodo = ['login', 'register', 'change-pass'];

@@ -24,6 +24,9 @@ import EntityClass from './Entity.class';
 Dropzone.autoDiscover = false;
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (!document.getElementById('info')) {
+    return;
+  }
 
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;

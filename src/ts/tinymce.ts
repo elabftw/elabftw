@@ -50,16 +50,23 @@ import '../js/tinymce-langs/zh_CN.js';
 import EntityClass from './Entity.class';
 import { Entity, EntityType, Target } from './interfaces';
 
-const about = document.getElementById('info').dataset;
-const type = about.type;
-const id = about.id;
+let about;
+let type = 'experiments';
+let id = '0';
 let entityType: EntityType;
-if (about.type === 'experiments') {
-  entityType = EntityType.Experiment;
+
+if (document.getElementById('info')) {
+  about = document.getElementById('info').dataset;
+  type = about.type;
+  id = about.id;
+  if (about.type === 'experiments') {
+    entityType = EntityType.Experiment;
+  }
+  if (about.type === 'items') {
+    entityType = EntityType.Item;
+  }
 }
-if (about.type === 'items') {
-  entityType = EntityType.Item;
-}
+
 const entity: Entity = {
   type: entityType,
   id: parseInt(id),

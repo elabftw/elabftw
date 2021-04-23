@@ -638,7 +638,7 @@ CREATE TABLE `users` (
   `sc_edit` varchar(1) NOT NULL DEFAULT 'e',
   `sc_submit` varchar(1) NOT NULL DEFAULT 's',
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
-  `show_team` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `show_team` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `show_team_templates` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `show_public` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `uploads_layout` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',

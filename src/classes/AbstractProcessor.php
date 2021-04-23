@@ -188,14 +188,7 @@ abstract class AbstractProcessor implements ProcessorInterface
             return new EntityParams($this->content, $this->target, $this->extra);
         }
         if ($this->Model instanceof ItemsTypes) {
-            return new ItemTypeParams(
-                $this->content,
-                $this->extra['color'],
-                $this->extra['body'],
-                $this->extra['canread'],
-                $this->extra['canwrite'],
-                (int) $this->extra['bookable'],
-            );
+            return new ItemTypeParams($this->content, $this->target, $this->extra);
         }
         if ($this->Model instanceof Steps) {
             return new StepParams($this->content, $this->target);

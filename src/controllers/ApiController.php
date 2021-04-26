@@ -136,7 +136,9 @@ class ApiController implements ControllerInterface
                 }
 
                 // TITLE DATE BODY UPDATE
-                if ($this->Request->request->has('date')) {
+                if ($this->Request->request->has('date') ||
+                    $this->Request->request->has('title') ||
+                    $this->Request->request->has('body')) {
                     return $this->updateEntity();
                 }
 

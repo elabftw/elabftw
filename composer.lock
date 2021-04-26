@@ -4428,16 +4428,16 @@
         },
         {
             "name": "codeception/module-webdriver",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/module-webdriver.git",
-                "reference": "63ea08880a44df809bdfbca08597e1b68cee9f87"
+                "reference": "ebbe729c630415e8caf6b0087e457906f0c6c0c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/module-webdriver/zipball/63ea08880a44df809bdfbca08597e1b68cee9f87",
-                "reference": "63ea08880a44df809bdfbca08597e1b68cee9f87",
+                "url": "https://api.github.com/repos/Codeception/module-webdriver/zipball/ebbe729c630415e8caf6b0087e457906f0c6c0c6",
+                "reference": "ebbe729c630415e8caf6b0087e457906f0c6c0c6",
                 "shasum": ""
             },
             "require": {
@@ -4478,9 +4478,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeception/module-webdriver/issues",
-                "source": "https://github.com/Codeception/module-webdriver/tree/1.2.0"
+                "source": "https://github.com/Codeception/module-webdriver/tree/1.2.1"
             },
-            "time": "2021-01-17T19:23:20+00:00"
+            "time": "2021-04-23T17:30:57+00:00"
         },
         {
             "name": "codeception/phpunit-wrapper",

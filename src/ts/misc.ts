@@ -157,3 +157,18 @@ export function getCheckedBoxes(): Array<CheckableItem> {
   });
   return checkedBoxes;
 }
+
+export function reloadTagsAndLocks(elementId): Promise<void | Response> {
+  if (document.getElementById(elementId)) {
+    return fetch(window.location.href).then(response => {
+      return response.text();
+    }).then(data => {
+      const parser = new DOMParser();
+      const html = parser.parseFromString(data, 'text/html');
+      document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
+      if (document.getElementById('pinned-entities')) {
+        document.getElementById('pinned-entities').innerHTML = html.getElementById('pinned-entities').innerHTML;
+      }
+    });
+  }
+}

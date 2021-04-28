@@ -9,7 +9,7 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import Tag from './Tag.class';
 import i18next from 'i18next';
-import { getCheckedBoxes, notif } from './misc';
+import { getCheckedBoxes, notif, reloadTagsAndLocks } from './misc';
 import { Ajax } from './Ajax.class';
 import { Payload, Method, Model, Action, Target, EntityType, Entity } from './interfaces';
 
@@ -80,9 +80,18 @@ $(document).ready(function() {
         notif(json);
         return;
       }
-      $.each(checked, function(index) {
-        TagC.create($('#createTagInputMultiple').val() as string, checked[index]['id']);
+
+      // loop over it and add tags
+      const results = [];
+      checked.forEach(checkBox => {
+        results.push(TagC.create((document.getElementById('createTagInputMultiple') as HTMLInputElement).value as string, checkBox['id']));
       });
+
+      Promise.all(results).then(() => {
+        reloadTagsAndLocks('itemList');
+        reloadTagsAndLocks('item-table');
+      });
+
       $(this).val('');
     }
   });

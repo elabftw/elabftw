@@ -17,6 +17,7 @@ config.php*
 node_modules/*
 web/test.php
 web/app/js/*.LICENSE.txt
+src/node/*.LICENSE.txt
 tests/_output/*
 tests/_support/_generated*
 tests/cypress/screenshots

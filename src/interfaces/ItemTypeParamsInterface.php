@@ -20,6 +20,4 @@ interface ItemTypeParamsInterface extends EntityParamsInterface
     public function getColor(): string;
 
     public function getIsBookable(): int;
-
-    public function getTeam(): int;
 }

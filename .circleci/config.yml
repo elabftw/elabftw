@@ -4,6 +4,7 @@ version: 2.1
 # code coverage orb
 orbs:
   codecov: codecov/codecov@1.0.2
+  cypress: cypress-io/cypress@1.28.0
 filters:
   branches:
     ignore:
@@ -100,6 +101,8 @@ jobs:
       - run:
           name: Run PHP-CS-Fixer
           command: yarn phpcs-dry
+      - cypress/run:
+          yarn: true
       - run:
           name: Run unit tests
           command: yarn run unit-ci

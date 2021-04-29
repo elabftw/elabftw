@@ -264,12 +264,7 @@ $(document).ready(function(){
     }
     // loop on it and delete stuff
     $.each(checked, function(index) {
-      $.post('app/controllers/EntityAjaxController.php', {
-        destroy: true,
-        id: checked[index]['id'],
-        type: $('#type').data('type')
-      }).done(function(json) {
-        notif(json);
+      EntityC.destroy(checked[index]['id']).then(json => {
         if (json.res) {
           $('#parent_' + checked[index]['randomid']).hide(200);
         }

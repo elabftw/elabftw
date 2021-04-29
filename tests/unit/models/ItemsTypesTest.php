@@ -28,7 +28,7 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
             'body' => 'body',
             'canread' => 'team',
             'canwrite' => 'team',
-            'isBookable' => '0',
+            'bookable' => '0',
         );
         $this->ItemsTypes->create(
             new ItemTypeParams('new', 'all', $extra)
@@ -41,7 +41,7 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
             'body' => 'newbody',
             'canread' => 'team',
             'canwrite' => 'team',
-            'isBookable' => '1',
+            'bookable' => '1',
         );
         $this->ItemsTypes->updateAll(
             new ItemTypeParams('new', 'all', $extra)

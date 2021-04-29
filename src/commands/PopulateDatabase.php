@@ -121,16 +121,14 @@ class PopulateDatabase extends Command
         }
 
         // add more items types
-        $Users1 = new Users(1, 1);
-        $ItemsTypes = new ItemsTypes($Users1->team);
         foreach ($yaml['items_types'] as $items_types) {
+            $ItemsTypes = new ItemsTypes((int) $items_types['team']);
             $extra = array(
                 'color' => $items_types['color'],
                 'body' => $items_types['template'],
                 'canread' => 'team',
                 'canwrite' => 'team',
                 'isBookable' => $items_types['bookable'],
-                'team' => $items_types['team'],
             );
             $ItemsTypes->create(new ItemTypeParams($items_types['name'], 'all', $extra));
         }

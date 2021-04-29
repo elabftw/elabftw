@@ -7,7 +7,7 @@
  */
 declare let key: any;
 declare let MathJax: any;
-import { getCheckedBoxes, insertParamAndReload, notif } from './misc';
+import { getCheckedBoxes, insertParamAndReload, notif, reloadTagsAndLocks } from './misc';
 import { EntityType } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
@@ -218,9 +218,16 @@ $(document).ready(function(){
       notif(nothingSelectedError);
       return;
     }
-    // loop on it and delete stuff
-    $.each(checked, function(index) {
-      EntityC.lock(checked[index]['id']);
+
+    // loop over it and lock entities
+    const results = [];
+    checked.forEach(checkBox => {
+      results.push(EntityC.lock(checkBox['id']));
+    });
+
+    Promise.all(results).then(() => {
+      reloadTagsAndLocks('itemList');
+      reloadTagsAndLocks('item-table');
     });
   });
 
@@ -257,12 +264,7 @@ $(document).ready(function(){
     }
     // loop on it and delete stuff
     $.each(checked, function(index) {
-      $.post('app/controllers/EntityAjaxController.php', {
-        destroy: true,
-        id: checked[index]['id'],
-        type: $('#type').data('type')
-      }).done(function(json) {
-        notif(json);
+      EntityC.destroy(checked[index]['id']).then(json => {
         if (json.res) {
           $('#parent_' + checked[index]['randomid']).hide(200);
         }

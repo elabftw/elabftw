@@ -88,9 +88,11 @@ jobs:
           paths:
           - ./node_modules
           - ./vendor
+          - ~/.yarn
+          - ~/.cache
       - run: php bin/install start
       - run: php bin/console dev:populate tests/populate-config.yml
-      # Tests
+      # Lint
       - run:
           name: Run Javascript linter
           command: yarn run jslint-ci
@@ -100,6 +102,7 @@ jobs:
       - run:
           name: Run PHP-CS-Fixer
           command: yarn phpcs-dry
+      # Tests
       - run:
           name: Run unit tests
           command: yarn run unit-ci
@@ -111,3 +114,9 @@ jobs:
           command: echo 'xdebug.mode=coverage' | sudo tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && ./vendor/bin/codecept run --skip api --skip acceptance --coverage --coverage-xml
       - codecov/upload:
           file: /home/circleci/elabftw/elabftw/tests/_output/coverage.xml
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build

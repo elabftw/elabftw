@@ -58,10 +58,12 @@ try {
     $target = $Processor->getTarget();
 
 
-    // Status actions can only be accessed by admin level
-    // TODO should probably not be here if we're going to use this to read too
-    if ($Model instanceof Status && !$App->Session->get('is_admin')) {
-        throw new IllegalActionException('Non admin user tried to access admin controller.');
+    // all non read actions for status and items types are limited to admins
+    if ($action !== 'read' &&
+        ($Model instanceof Status || $Model instanceof ItemsTypes) &&
+        !$App->Session->get('is_admin')
+        ) {
+        throw new IllegalActionException('Non admin user tried to edit status or items types.');
     }
 
     if ($action === 'create') {

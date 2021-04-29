@@ -60,7 +60,7 @@
                 <i class='fas fa-comments'></i>
               {% endif %}
 
-              {% if Entity.type == 'items' and item.rating > 0 %}
+              {% if item.rating > 0 %}
                 {{ item.rating|stars|raw }}
               {% endif %}
 

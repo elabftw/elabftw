@@ -489,55 +489,55 @@ table th {
 
 /* TABLE OF EXPERIMENTS */
 
-.item-table {
+#item-table {
     width: 100%;
-}
 
-.item-table th {
-    border-left: solid $darkgray;
-    border-right: solid $darkgray;
-}
+    th {
+        border-left: solid $darkgray;
+        border-right: solid $darkgray;
+    }
 
-.item-table th:first-child {
-    // So that the title has the left part matching
-    // the experiments
-    border-left: solid $darkgray 6px;
-}
+    th:first-child {
+        // So that the title has the left part matching
+        // the experiments
+        border-left: solid $darkgray 6px;
+    }
 
-.item-table td {
-    border-left: solid $bordersgray;
-    border-right: solid $bordersgray;
-}
+    td {
+        border-left: solid $bordersgray;
+        border-right: solid $bordersgray;
+    }
 
-.item-table .title {
-    font-size: 100%;
-}
+    .title {
+        font-size: 100%;
+    }
 
-.item-table .actions-item-table {
-    width: auto;
-}
+    .actions-item-table {
+        width: auto;
+    }
 
-.item-table .item-next {
-    max-width: 20ch;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
+    .item-next {
+        max-width: 20ch;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 
-.item-table .tags {
-    max-width: 20ch;
-    overflow: hidden;
-}
+    .tags {
+        max-width: 20ch;
+        overflow: hidden;
+    }
 
-// Force item-info and item-date not to break into two lines
-.item-table .item-info {
-    // Overwrite this
-    padding-left: 5px;
-    white-space: nowrap;
-}
+    // Force item-info and item-date not to break into two lines
+    .item-info {
+        // Overwrite this
+        padding-left: 5px;
+        white-space: nowrap;
+    }
 
-.item-table .item-date {
-    white-space: nowrap;
+    .item-date {
+        white-space: nowrap;
+    }
 }
 
 /* color one row every other row */

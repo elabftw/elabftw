@@ -128,7 +128,7 @@
         <label for='rating'>{{ 'And rating is'|trans }}</label>
         <select id='rating' name='rating' class='form-control'>
           <option value=''>{{ 'Select number of stars'|trans }}</option>
-          <option value='no'>{{ 'Unrated'|trans }}</option>
+          <option value='null'{{ Request.query.get('rating') == 'null' ? ' selected' }}>{{ 'Unrated'|trans }}</option>
           {% for i in range(1, 5) %}
             <option value='{{ i }}'{{ Request.query.get('rating') == i ? ' selected' }}>{{ i }}</option>
           {% endfor %}

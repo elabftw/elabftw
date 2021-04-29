@@ -679,6 +679,7 @@ abstract class AbstractEntity implements CrudInterface
                 entity.title,
                 entity.date,
                 entity.category,
+                entity.rating,
                 entity.userid,
                 entity.locked,
                 entity.canread,

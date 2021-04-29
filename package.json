@@ -63,7 +63,7 @@
     "snyk": "^1.360.0",
     "stylelint": "^13.8.0",
     "stylelint-config-sass-guidelines": "^7.1.0",
-    "ts-loader": "^8.0.0",
+    "ts-loader": "^9.1.1",
     "typescript": "^4.0.3",
     "webpack": "^5.9.0",
     "webpack-bundle-analyzer": "^4.1.0",

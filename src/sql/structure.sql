@@ -641,6 +641,7 @@ CREATE TABLE `users` (
   `show_team` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `show_team_templates` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `show_public` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `use_isodate` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `uploads_layout` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `chem_editor` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `json_editor` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',

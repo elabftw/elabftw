@@ -22,6 +22,33 @@ describe('Experiments', () => {
     cy.contains('some step').should('not.exist')
   }
 
+  const entityComment = () => {
+    // go in view mode
+    cy.contains('View mode').click()
+    cy.get('#commentsCreateArea').type('This is a very nice experiment')
+    cy.get('#commentsCreateButton').click()
+    cy.contains('Toto Le sysadmin commented').should('be.visible')
+    cy.get('.commentsDestroy').click()
+    cy.contains('Toto Le sysadmin commented').should('not.exist')
+    // go back in edit mode for destroy action
+    cy.get('.action-topmenu > [data-action="edit"]').click()
+  }
+
+  const entityDuplicate = () => {
+    // keep the original entity url in memory
+    cy.url().then(url => {
+      cy.log(url)
+      // go in view mode
+      cy.contains('View mode').click()
+      cy.get('[data-action="duplicate-entity"]').click()
+      cy.contains('Title').should('be.visible')
+      // destroy the duplicated entity now
+      cy.get('a[title="More options"]').click().get('a[data-action="destroy"]').click()
+      // go back to the original entity
+      cy.visit(url)
+    })
+  }
+
   const entityDestroy = () => {
     cy.get('a[title="More options"]').click().get('a[data-action="destroy"]').click()
   }
@@ -32,6 +59,8 @@ describe('Experiments', () => {
     entityEdit()
     cy.get('#category_select').select('Success').blur()
     cy.contains('Saved').should('be.visible')
+    entityComment()
+    entityDuplicate()
     entityDestroy()
   });
 
@@ -40,6 +69,10 @@ describe('Experiments', () => {
     cy.contains('Create').click()
     cy.contains('Edit me').click()
     entityEdit()
+    cy.get('#category_select').select('Microscope').blur()
+    cy.contains('Saved').should('be.visible')
+    entityComment()
+    entityDuplicate()
     entityDestroy()
   });
 });

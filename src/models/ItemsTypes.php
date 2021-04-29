@@ -38,11 +38,6 @@ class ItemsTypes extends AbstractEntity
 
     public function create(ItemTypeParamsInterface $params): int
     {
-        $team = $params->getTeam();
-        if ($team === 0) {
-            $team = $this->team;
-        }
-
         $sql = 'INSERT INTO items_types(name, color, bookable, template, team, canread, canwrite)
             VALUES(:content, :color, :bookable, :body, :team, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
@@ -50,7 +45,7 @@ class ItemsTypes extends AbstractEntity
         $req->bindValue(':color', $params->getColor(), PDO::PARAM_STR);
         $req->bindValue(':bookable', $params->getIsBookable(), PDO::PARAM_INT);
         $req->bindValue(':body', $params->getBody(), PDO::PARAM_STR);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->bindValue(':canread', $params->getCanread(), PDO::PARAM_STR);
         $req->bindValue(':canwrite', $params->getCanwriteS(), PDO::PARAM_STR);
         $this->Db->execute($req);
@@ -82,12 +77,6 @@ class ItemsTypes extends AbstractEntity
             return array();
         }
         return $res;
-    }
-
-    public function canOrExplode(string $rw): void
-    {
-        // TODO
-        return;
     }
 
     /**

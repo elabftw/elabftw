@@ -13,7 +13,7 @@ use Elabftw\Elabftw\Sql;
 
 class DatabaseInstallerTest extends \PHPUnit\Framework\TestCase
 {
-    public function testInstall()
+    public function testInstall(): void
     {
         $Sql = $this->createMock(Sql::class);
         $Sql->method('execFile')->willReturn(true);

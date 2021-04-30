@@ -15,7 +15,7 @@ use Elabftw\Exceptions\UnauthorizedException;
 
 class CookieAuthTest extends \PHPUnit\Framework\TestCase
 {
-    public function testTryAuthSuccess()
+    public function testTryAuthSuccess(): void
     {
         $token = '8669b095961a14edc0dd37fefa76e932938b830f2d02377a8f2154cc3f12719d';
         $CookieAuth = new CookieAuth($token, '1');
@@ -29,7 +29,7 @@ class CookieAuthTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('1', $res->selectedTeam);
     }
 
-    public function testTryAuthFail()
+    public function testTryAuthFail(): void
     {
         $token = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
         $CookieAuth = new CookieAuth($token, '1');
@@ -37,7 +37,7 @@ class CookieAuthTest extends \PHPUnit\Framework\TestCase
         $CookieAuth->tryAuth();
     }
 
-    public function testTryAuthBadTeam()
+    public function testTryAuthBadTeam(): void
     {
         $token = '8669b095961a14edc0dd37fefa76e932938b830f2d02377a8f2154cc3f12719d';
         $CookieAuth = new CookieAuth($token, '2');

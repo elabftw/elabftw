@@ -14,6 +14,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\EmailValidator;
@@ -67,7 +68,7 @@ class Users
      */
     public function create(string $email, array $teams, string $firstname = '', string $lastname = '', string $password = '', ?int $group = null, bool $forceValidation = false, bool $normalizeTeams = true, bool $alertAdmin = true): int
     {
-        $Config = new Config();
+        $Config = Config::getConfig();
         $Teams = new Teams($this);
 
         // make sure that all the teams in which the user will be are created/exist
@@ -178,9 +179,9 @@ class Users
     /**
      * Get users matching a search term for consumption in autocomplete
      */
-    public function getList(string $term): array
+    public function getList(ContentParamsInterface $params): array
     {
-        $usersArr = $this->readFromQuery($term);
+        $usersArr = $this->readFromQuery($params->getContent());
         $res = array();
         foreach ($usersArr as $user) {
             $res[] = $user['userid'] . ' - ' . $user['fullname'];
@@ -370,7 +371,7 @@ class Users
 
         // if we change the email, make sure it's valid
         if ($params['email'] !== $this->userData['email']) {
-            $Config = new Config();
+            $Config = Config::getConfig();
             $EmailValidator = new EmailValidator($params['email'], $Config->configArr['email_domain']);
             $EmailValidator->validate();
         }
@@ -433,7 +434,7 @@ class Users
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
         // send an email to the user
-        $Email = new Email(new Config(), $this);
+        $Email = new Email(Config::getConfig(), $this);
         $Email->alertUserIsValidated($this->userData['email']);
     }
 

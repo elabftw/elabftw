@@ -10,16 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
-/**
- * Interface for stuff that have metadata
- */
-interface HasMetadataInterface
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+
+interface UploadParamsInterface extends ContentParamsInterface
 {
-    public function getId(): int;
-
-    public function getTable(): string;
-
-    public function getMetadata(): ?string;
-
-    public function canOrExplode(string $rw): void;
+    public function getFile(): UploadedFile;
 }

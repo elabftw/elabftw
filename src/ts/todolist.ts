@@ -10,38 +10,38 @@ import 'jquery-jeditable/src/jquery.jeditable.js';
 import Todolist from './Todolist.class';
 import i18next from 'i18next';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
+  if (!document.getElementById('info')) {
+    return;
+  }
+
   const TodolistC = new Todolist();
 
+  const pagesWithoutTodo = ['login', 'register', 'change-pass'];
+  if (pagesWithoutTodo.includes(document.getElementById('info').dataset.page)) {
+    return;
+  }
+
+  // TOGGLE
   // reopen todolist panel if it was previously opened
   if (localStorage.getItem('isTodolistOpen') === '1') {
     TodolistC.toggle();
   }
-  // TOGGLE
   // use shortcut
   if ($('#todoSc').length) {
     key($('#todoSc').data('toggle'), function() {
       TodolistC.toggle();
     });
   }
-  // or click the button
-  $(document).on('click', '.todoToggle', function() {
-    TodolistC.toggle();
-  });
 
-  // EDIT
-  $(document).on('mouseenter', '.todoItem', function() {
-    ($(this) as any).editable(function(value) {
-      $.post('app/controllers/Ajax.php', {
-        action: 'update',
-        what: 'todolist',
-        params: {
-          template: value,
-          id: $(this).data('id'),
-        },
-      });
-
-      return(value);
+  // UPDATE TODOITEM
+  $(document).on('mouseenter', '.todoItem', function(ev) {
+    ($(ev.currentTarget) as any).editable(function(input) {
+      TodolistC.update(
+        ev.currentTarget.dataset.todoitemid,
+        input,
+      );
+      return(input);
     }, {
       tooltip : i18next.t('click-to-edit'),
       indicator : 'Saving...',
@@ -50,11 +50,50 @@ $(document).ready(function() {
     });
   });
 
-  $('#todo-form').submit(function(e) {
-    TodolistC.create(e);
+  // to avoid duplicating code between listeners (keydown and click on add)
+  function createTodoitem(): void {
+    const todoInput = (document.getElementById('todo') as HTMLInputElement);
+    const content = todoInput.value;
+    if (!content) { return; }
+
+    TodolistC.create(content).then(json => {
+      if (json.res) {
+        // reload the todolist
+        TodolistC.read();
+        // and clear the input
+        todoInput.value = '';
+      }
+    });
+  }
+
+  // save todo on enter
+  document.querySelector('#todo').addEventListener('keydown', (event: KeyboardEvent) => {
+    if (event.keyCode === 13) {
+      createTodoitem();
+    }
   });
 
-  $(document).on('click', '.destroyTodoItem', function() {
-    TodolistC.destroy($(this).data('id'));
+  // Add click listener and do action based on which element is clicked
+  document.querySelector('#container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // CREATE TODOITEM
+    if (el.matches('[data-action="create-todoitem"]')) {
+      createTodoitem();
+
+    // DESTROY TODOITEM
+    } else if (el.matches('[data-action="destroy-todoitem"]')) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        const todoitemId = parseInt(el.dataset.todoitemid);
+        TodolistC.destroy(todoitemId).then(json => {
+          if (json.res) {
+            // hide item
+            $('#todoItem_' + todoitemId).css('background', '#29AEB9').toggle('blind');
+          }
+        });
+      }
+    // TOGGLE TODOITEM
+    } else if (el.matches('[data-action="toggle-todolist"]')) {
+      TodolistC.toggle();
+    }
   });
 });

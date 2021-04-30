@@ -11,11 +11,13 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Interfaces\CrudInterface;
 
 /**
  * Privacy policy CRUD class
  */
-class PrivacyPolicy
+class PrivacyPolicy implements CrudInterface
 {
     private Config $Config;
 
@@ -24,18 +26,25 @@ class PrivacyPolicy
         $this->Config = $config;
     }
 
-    public function read(): string
+    public function create(ContentParamsInterface $params): int
+    {
+        return 0;
+    }
+
+    public function read(ContentParamsInterface $params): string
     {
         return $this->Config->configArr['privacy_policy'] ?? throw new ResourceNotFoundException('No policy set');
     }
 
-    public function update(string $policy): void
+    public function update(ContentParamsInterface $params): bool
     {
-        $this->Config->update(array('privacy_policy' => $policy));
+        $this->Config->update(array('privacy_policy' => $params->getBody()));
+        return true;
     }
 
-    public function clear(): void
+    public function destroy(): bool
     {
         $this->Config->update(array('privacy_policy' => null));
+        return true;
     }
 }

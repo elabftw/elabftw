@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import tinymce from 'tinymce/tinymce';
-import { notif } from './misc';
 import { DateTime } from 'luxon';
 import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
@@ -48,25 +47,42 @@ import '../js/tinymce-langs/ru_RU.js';
 import '../js/tinymce-langs/sk_SK.js';
 import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
+import EntityClass from './Entity.class';
+import { Entity, EntityType, Target } from './interfaces';
 
-const type = $('#info').data('type');
+let about;
+let type = 'experiments';
+let id = '0';
+let entityType: EntityType;
+
+if (document.getElementById('info')) {
+  about = document.getElementById('info').dataset;
+  type = about.type;
+  id = about.id;
+  if (about.type === 'experiments') {
+    entityType = EntityType.Experiment;
+  }
+  if (about.type === 'items') {
+    entityType = EntityType.Item;
+  }
+}
+
+const entity: Entity = {
+  type: entityType,
+  id: parseInt(id),
+};
 
 // AUTOSAVE
 let typingTimer: any;                // timer identifier
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
 
 // called when you click the save button of tinymce
-export function quickSave(type: string, id: string): void {
-  $.post('app/controllers/EntityAjaxController.php', {
-    quickSave: true,
-    type : type,
-    id : id,
-    // we need this to get the updated content
-    title : (document.getElementById('title_input') as HTMLInputElement).value,
-    date : (document.getElementById('datepicker') as HTMLInputElement).value,
-    body : tinymce.activeEditor.getContent()
-  }).done(function(json, textStatus, xhr) {
+export function quickSave(entity: Entity): void {
+  const EntityC = new EntityClass(entity.type);
+  EntityC.update(entity.id, Target.Body, tinymce.activeEditor.getContent()).then(() => {
     // detect if the session timedout
+    // TODO
+    /*
     if (xhr.getResponseHeader('X-Elab-Need-Auth') === '1') {
       // store the modifications in local storage to prevent any data loss
       localStorage.setItem('body', tinymce.activeEditor.getContent());
@@ -77,7 +93,7 @@ export function quickSave(type: string, id: string): void {
       location.reload();
       return;
     }
-    notif(json);
+    */
   });
 }
 
@@ -86,14 +102,20 @@ function getNow(): DateTime {
   return DateTime.now().setLocale(locale);
 }
 
-// ctrl-shift-D will add the date in the tinymce editor
-function addDateOnCursor(): void {
-  tinymce.activeEditor.execCommand('mceInsertContent', false, `${getNow().toLocaleString(DateTime.DATE_HUGE)} `);
+function getDatetime(): string {
+  const useIso = document.getElementById('user-prefs').dataset.isodate;
+  if (useIso === '1') {
+    const fullDatetime = getNow().toISO({ includeOffset: false });
+    // now we remove the milliseconds from that string
+    // 2021-04-23T18:57:28.633  ->  2021-04-23T18:57:28
+    return fullDatetime.slice(0, -4);
+  }
+  return getNow().toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY);
 }
 
-// ctrl-shift-T will add the time in the tinymce editor
-function addTimeOnCursor(): void {
-  tinymce.activeEditor.execCommand('mceInsertContent', false, `${getNow().toLocaleString(DateTime.TIME_WITH_SECONDS)} `);
+// ctrl-shift-D will add the date in the tinymce editor
+function addDatetimeOnCursor(): void {
+  tinymce.activeEditor.execCommand('mceInsertContent', false, `${getDatetime()} `);
 }
 
 function isOverCharLimit(): boolean {
@@ -108,7 +130,7 @@ function doneTyping(): void {
     alert('Too many characters!!! Cannot save properly!!!');
     return;
   }
-  quickSave(type, $('#info').data('id'));
+  quickSave(entity);
 }
 
 // options for tinymce to pass to tinymce.init()
@@ -118,7 +140,6 @@ export function getTinymceBaseConfig(page: string): object {
     plugins += ' autosave';
   }
 
-
   return {
     mode: 'specific_textareas',
     editor_selector: 'mceditable', // eslint-disable-line @typescript-eslint/camelcase
@@ -126,7 +147,7 @@ export function getTinymceBaseConfig(page: string): object {
     skin_url: 'app/css/tinymce', // eslint-disable-line @typescript-eslint/camelcase
     plugins: plugins,
     pagebreak_separator: '<pagebreak>', // eslint-disable-line @typescript-eslint/camelcase
-    toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
+    toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | save',
     removed_menuitems: 'newdocument, image', // eslint-disable-line @typescript-eslint/camelcase
     image_caption: true, // eslint-disable-line @typescript-eslint/camelcase
     images_reuse_filename: true, // eslint-disable-line @typescript-eslint/camelcase
@@ -162,7 +183,7 @@ export function getTinymceBaseConfig(page: string): object {
       // use # for autocompletion
       delimiter: '#',
       // get the source from json with get request
-      source: function (query: string, process: any) {
+      source: function (query: string, process: any): void {
         const url = 'app/controllers/EntityAjaxController.php';
         $.getJSON(url, {
           mention: 1,
@@ -182,9 +203,16 @@ export function getTinymceBaseConfig(page: string): object {
     setup: (editor: any): void => {
       // make the edges round
       editor.on('init', () => editor.getContainer().className += ' rounded');
+      // add date+time button
+      editor.ui.registry.addButton('adddate', {
+        icon: 'insert-time',
+        tooltip: 'Insert timestamp',
+        onAction: function (_) {
+          editor.insertContent(`${getDatetime()} `);
+        }
+      });
       // some shortcuts
-      editor.addShortcut('ctrl+shift+d', 'add date at cursor', addDateOnCursor);
-      editor.addShortcut('ctrl+shift+t', 'add time at cursor', addTimeOnCursor);
+      editor.addShortcut('ctrl+shift+d', 'add date/time at cursor', addDatetimeOnCursor);
       editor.addShortcut('ctrl+=', 'subscript', () => editor.execCommand('subscript'));
       editor.addShortcut('ctrl+shift+=', 'superscript', () => editor.execCommand('superscript'));
 
@@ -215,7 +243,5 @@ export function getTinymceBaseConfig(page: string): object {
         }
       }
     ],
-    // this will GET templates from current user
-    templates: 'app/controllers/Ajax.php?action=readForTinymce&what=template&type=experiments_templates'
   };
 }

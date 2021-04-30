@@ -11,17 +11,17 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\DisplayParams;
-use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Experiments;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Check;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -50,25 +50,14 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     public function getResponse(): Response
     {
-        // VIEW
-        if ($this->App->Request->query->get('mode') === 'view') {
-            return $this->view();
+        switch ($this->App->Request->query->get('mode')) {
+            case 'view':
+                return $this->view();
+            case 'edit':
+                return $this->edit();
+            default:
+                return $this->show();
         }
-
-        // EDIT
-        if ($this->App->Request->query->get('mode') === 'edit') {
-            return $this->edit();
-        }
-
-        // CREATE
-        if ($this->App->Request->query->has('create') && !$this->App->Session->get('is_anon')) {
-            $params = new ParamsProcessor(array('id' => $this->App->Request->query->get('tpl')));
-            $id = $this->Entity->create($params);
-            return new RedirectResponse('?mode=edit&id=' . (string) $id);
-        }
-
-        // DEFAULT MODE IS SHOW
-        return $this->show();
     }
 
     /**
@@ -174,11 +163,11 @@ abstract class AbstractEntityController implements ControllerInterface
         $renderArr = array(
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
-            'commentsArr' => $this->Entity->Comments->read(),
-            'linksArr' => $this->Entity->Links->read(),
+            'commentsArr' => $this->Entity->Comments->read(new ContentParams()),
+            'linksArr' => $this->Entity->Links->read(new ContentParams()),
             'mode' => 'view',
             'revNum' => $Revisions->readCount(),
-            'stepsArr' => $this->Entity->Steps->read(),
+            'stepsArr' => $this->Entity->Steps->read(new ContentParams()),
             'templatesArr' => $this->Templates->readForUser(),
             'timestampInfo' => $this->Entity->getTimestampInfo(),
             'uploadsArr' => $this->Entity->Uploads->readAll(),
@@ -227,11 +216,11 @@ abstract class AbstractEntityController implements ControllerInterface
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
             'lang' => Tools::getCalendarLang($this->App->Users->userData['lang'] ?? 'en_GB'),
-            'linksArr' => $this->Entity->Links->read(),
+            'linksArr' => $this->Entity->Links->read(new ContentParams()),
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',
             'revNum' => $Revisions->readCount(),
-            'stepsArr' => $this->Entity->Steps->read(),
+            'stepsArr' => $this->Entity->Steps->read(new ContentParams()),
             'templatesArr' => $this->Templates->readForUser(),
             'uploadsArr' => $this->Entity->Uploads->readAll(),
             'visibilityArr' => $TeamGroups->getVisibilityList(),

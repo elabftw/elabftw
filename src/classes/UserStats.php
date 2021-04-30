@@ -39,8 +39,8 @@ class UserStats
     public function getPieData(): array
     {
         // get all status name and id
-        $Status = new Status($this->Users);
-        $statusAll = $Status->read();
+        $Status = new Status($this->Users->team);
+        $statusAll = $Status->read(new ContentParams());
 
         $res = array();
 

@@ -53,6 +53,19 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       </form>
     </div>
 
+    <div class='box'>
+      <h3>{{ 'Login page announcement'|trans }}</h3>
+      <hr>
+      <p>{{ 'The following text will be displayed only on the login page.'|trans }}</p>
+      <form method='post' action='app/controllers/SysconfigController.php'>
+        <input class='form-control' type='text' name='login_announcement' value='{{ App.Config.configArr.login_announcement }}' />
+        <div class='mt-4 text-center'>
+          <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+          <button type='submit' name='clear_login_announcement' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
+        </div>
+      </form>
+    </div>
+
     <form class='box' method='post' action='app/controllers/SysconfigController.php'>
         <h3>{{ 'Settings'|trans }}</h3>
         <hr>

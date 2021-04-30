@@ -9,23 +9,24 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\ContentParams;
 use function is_array;
 
 class LinksTest extends \PHPUnit\Framework\TestCase
 {
+    private Experiments $Experiments;
+
     protected function setUp(): void
     {
-        $this->Users = new Users(1);
-        $this->Experiments = new Experiments($this->Users, 1);
+        $this->Experiments = new Experiments(new Users(1, 1), 1);
     }
 
-    public function testCreateReadDestroy()
+    public function testCreateReadDestroy(): void
     {
-        $this->Experiments->Links->create(new ParamsProcessor(array('id' => 1)));
-        $links = $this->Experiments->Links->read();
+        $id = $this->Experiments->Links->create(new ContentParams('1'));
+        $links = $this->Experiments->Links->read(new ContentParams());
         $this->assertTrue(is_array($links));
-        $last = array_pop($links);
-        $this->Experiments->Links->destroy((int) $last['linkid']);
+        $this->Experiments->Links->setId($id);
+        $this->Experiments->Links->destroy();
     }
 }

@@ -23,6 +23,8 @@ use GuzzleHttp\Psr7\Response;
 
 class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
 {
+    private MakeBloxberg $Make;
+
     protected function setUp(): void
     {
         // taken from the example response on the api doc
@@ -32,7 +34,9 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
         $zip = file_get_contents(dirname(__DIR__, 2) . '/_data/example.zip');
         // don't use the real guzzle client, but use a mock
         $mock = new MockHandler(array(
+            // @phpstan-ignore-next-line
             new Response(200, array(), $successResponseCertify),
+            // @phpstan-ignore-next-line
             new Response(200, array(), $zip),
             new RequestException('Server is down?', new Request('GET', 'test')),
         ));
@@ -41,17 +45,17 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
         $this->Make = new MakeBloxberg($client, new Experiments(new Users(1, 1), 1));
     }
 
-    public function testGetFileName()
+    public function testGetFileName(): void
     {
         $this->assertStringContainsString('bloxberg-proof_', $this->Make->getFileName());
     }
 
-    public function testTimestamp()
+    public function testTimestamp(): void
     {
         $this->assertTrue($this->Make->timestamp());
     }
 
-    public function testTimestampFail()
+    public function testTimestampFail(): void
     {
         $mock = new MockHandler(array(
             new RequestException('Server is down?', new Request('GET', 'test')),
@@ -63,9 +67,11 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
         $Make->timestamp();
     }
 
-    public function testTimestampZipFail()
+    public function testTimestampZipFail(): void
     {
+        $successResponseCertify = file_get_contents(dirname(__DIR__, 2) . '/_data/bloxberg-cert-response.json');
         $mock = new MockHandler(array(
+            // @phpstan-ignore-next-line
             new Response(200, array(), $successResponseCertify),
             new Response(200, array(), 'not a zip'),
         ));

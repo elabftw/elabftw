@@ -11,7 +11,7 @@ namespace Elabftw\Elabftw;
 
 class ToolsTest extends \PHPUnit\Framework\TestCase
 {
-    public function testFormatBytes()
+    public function testFormatBytes(): void
     {
         $this->assertEquals('0.98 KiB', Tools::formatBytes(1000));
         $this->assertEquals('1.66 KiB', Tools::formatBytes(1699));
@@ -20,7 +20,7 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('21.40 TiB', Tools::formatBytes(23534909234464));
     }
 
-    public function testFormatDate()
+    public function testFormatDate(): void
     {
         $this->assertEquals('1969.07.21', Tools::formatDate('19690721'));
         $this->assertEquals('1969-07-21', Tools::formatDate('19690721', '-'));
@@ -28,59 +28,59 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse(Tools::formatDate('196907211'));
     }
 
-    public function testGetExt()
+    public function testGetExt(): void
     {
         $this->assertEquals('gif', Tools::getExt('myfile.gif'));
         $this->assertEquals('gif', Tools::getExt('/path/to/myfile.gif'));
         $this->assertEquals('unknown', Tools::getExt('/path/to/myfilegif'));
     }
 
-    public function testMd2html()
+    public function testMd2html(): void
     {
         $md = '[a link](https://www.elabftw.net) **in bold** _in italic_';
         $html = '<p><a href="https://www.elabftw.net">a link</a> <strong>in bold</strong> <em>in italic</em></p>';
         $this->assertEquals($html, Tools::md2html($md));
     }
 
-    public function testError()
+    public function testError(): void
     {
         $this->assertEquals(Tools::error(), 'An error occurred!');
         $this->assertEquals(Tools::error(true), 'This section is out of your reach!');
     }
 
-    public function testGetCalendarLang()
+    public function testGetCalendarLang(): void
     {
         $this->assertEquals('ca', Tools::getCalendarLang('ca_ES'));
     }
 
-    public function testgetLangsArr()
+    public function testgetLangsArr(): void
     {
         $langsArr = Tools::getLangsArr();
         $this->assertTrue(is_array($langsArr));
         $this->assertEquals('German', $langsArr['de_DE']);
     }
 
-    public function testPrintArr()
+    public function testPrintArr(): void
     {
         $arr = array('Blah' => 42, array('Pwet', 1337));
         $out = '<ul><li><span style="color:red;">Blah</span><b> => </b><span style="color:blue;">42</span></li><li><span style="color:red;">0</span><b> => </b><span style="color:blue;"><ul><li><span style="color:red;">0</span><b> => </b><span style="color:blue;">Pwet</span></li><li><span style="color:red;">1</span><b> => </b><span style="color:blue;">1337</span></li></ul></span></li></ul>';
         $this->assertEquals($out, Tools::printArr($arr));
     }
 
-    public function testShowStar()
+    public function testShowStar(): void
     {
         $out = "<i style='color:#54aa08' class='fas fa-star' title='☻'></i><i style='color:#54aa08' class='fas fa-star' title='☻'></i><i style='color:gray' class='fas fa-star' title='☺'></i><i style='color:gray' class='fas fa-star' title='☺'></i><i style='color:gray' class='fas fa-star' title='☺'></i>";
         $this->assertEquals($out, Tools::showStars(2));
     }
 
-    public function testGetLimitOptions()
+    public function testGetLimitOptions(): void
     {
         $this->assertEquals(2, Tools::getLimitOptions(2)[0]);
         $this->assertEquals(12, Tools::getLimitOptions(12)[1]);
         $this->assertEquals(52, Tools::getLimitOptions(52)[3]);
     }
 
-    public function testQFilter()
+    public function testQFilter(): void
     {
         $input = array(
             'tags' => array('some tag', 'another tag'),

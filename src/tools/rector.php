@@ -8,14 +8,18 @@
  */
 declare(strict_types=1);
 
+use Rector\Core\Configuration\Option;
+use Rector\Core\ValueObject\PhpVersion;
+use Rector\Set\ValueObject\SetList;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-return static function (ContainerConfigurator $containerConfigurator): void { /** @phpstan-ignore-line */
-    $parameters = $containerConfigurator->parameters(); /** @phpstan-ignore-line */
+return static function (ContainerConfigurator $containerConfigurator): void {
+    $parameters = $containerConfigurator->parameters();
 
-    $parameters->set('php_version_features', '7.3');
+    $parameters->set(Option::PHP_VERSION_FEATURES, PhpVersion::PHP_80);
 
-    $parameters->set('sets', array('code-quality', 'twig-underscore-to-namespace', 'dead-code', 'phpstan'));
+    //$parameters->set(Option::SETS, array(SetList::CODE_QUALITY, 'twig-underscore-to-namespace', 'dead-code', 'phpstan'));
+    $parameters->set(Option::SETS, array(SetList::CODE_QUALITY, SetList::DEAD_CODE, SetList::PHP_80));
 
     $parameters->set('exclude_rectors', array('Rector\CodeQuality\Rector\Identical\SimplifyBoolIdenticalTrueRector', 'Rector\CodeQuality\Rector\If_\SimplifyIfElseToTernaryRector', 'Rector\SOLID\Rector\ClassMethod\UseInterfaceOverImplementationInConstructorRector', 'Rector\DeadCode\Rector\Concat\RemoveConcatAutocastRector', 'Rector\PHPStan\Rector\Cast\RecastingRemovalRector'));
 };

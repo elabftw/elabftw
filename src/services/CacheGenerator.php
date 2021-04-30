@@ -29,7 +29,7 @@ class CacheGenerator
      */
     public function generate(): void
     {
-        $TwigEnvironment = $this->getTwig(new Config());
+        $TwigEnvironment = $this->getTwig(Config::getConfig());
         $tplDir = dirname(__DIR__, 2) . '/src/templates';
         // iterate over all the templates
         foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($tplDir), RecursiveIteratorIterator::LEAVES_ONLY) as $file) {

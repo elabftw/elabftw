@@ -10,9 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CreatableInterface;
+use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -20,7 +21,7 @@ use PDO;
 /**
  * All about the templates
  */
-class Templates extends AbstractEntity implements CreatableInterface
+class Templates extends AbstractEntity
 {
     use SortableTrait;
 
@@ -37,7 +38,7 @@ class Templates extends AbstractEntity implements CreatableInterface
         $this->type = 'experiments_templates';
     }
 
-    public function create(ParamsProcessor $params): int
+    public function create(EntityParamsInterface $params): int
     {
         $canread = 'team';
         $canwrite = 'user';
@@ -54,9 +55,9 @@ class Templates extends AbstractEntity implements CreatableInterface
             VALUES(:team, :title, :date, :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':title', $params->name);
+        $req->bindValue(':title', $params->getContent());
         $req->bindParam(':date', $date);
-        $req->bindParam(':body', $params->template);
+        $req->bindValue(':body', $params->getExtraBody());
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
@@ -69,7 +70,7 @@ class Templates extends AbstractEntity implements CreatableInterface
      */
     public function duplicate(): int
     {
-        $template = $this->read();
+        $template = $this->read(new ContentParams());
 
         $date = Filter::kdate();
         $sql = 'INSERT INTO experiments_templates(team, title, date, body, userid, canread, canwrite)
@@ -101,8 +102,12 @@ class Templates extends AbstractEntity implements CreatableInterface
     /**
      * Read a template
      */
-    public function read(bool $getTags = false): array
+    public function read(ContentParamsInterface $params): array
     {
+        if ($params->getTarget() === 'list') {
+            return $this->getList();
+        }
+
         $sql = "SELECT experiments_templates.id, experiments_templates.title, experiments_templates.body,
             experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
             experiments_templates.locked, experiments_templates.lockedby, experiments_templates.lockedwhen,
@@ -124,18 +129,6 @@ class Templates extends AbstractEntity implements CreatableInterface
         $this->entityData = $res;
 
         return $res;
-    }
-
-    /**
-     * Read the templates for the user (in ucp or create new menu)
-     * depending on the user preference, we filter out on the owner or not
-     */
-    public function readForUser(): array
-    {
-        if (!$this->Users->userData['show_team_templates']) {
-            $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
-        }
-        return $this->getTemplatesList();
     }
 
     /**
@@ -210,7 +203,7 @@ class Templates extends AbstractEntity implements CreatableInterface
     /**
      * Delete template
      */
-    public function destroy(): void
+    public function destroy(): bool
     {
         $this->canOrExplode('write');
         $sql = 'DELETE FROM experiments_templates WHERE id = :id';
@@ -218,6 +211,31 @@ class Templates extends AbstractEntity implements CreatableInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $this->Tags->destroyAll();
+        return $this->Tags->destroyAll();
+    }
+
+    /**
+     * Read the templates for the user (in ucp or create new menu)
+     * depending on the user preference, we filter out on the owner or not
+     */
+    public function readForUser(): array
+    {
+        if (!$this->Users->userData['show_team_templates']) {
+            $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
+        }
+        return $this->getTemplatesList();
+    }
+
+    /**
+     * Build a list for tinymce Insert template... menu
+     */
+    private function getList(): array
+    {
+        $templates = $this->readForUser();
+        $res = array();
+        foreach ($templates as $template) {
+            $res[] = array('title' => $template['title'], 'description' => '', 'content' => $template['body']);
+        }
+        return $res;
     }
 }

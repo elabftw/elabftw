@@ -11,7 +11,7 @@ namespace Elabftw\Services;
 
 class TransformTest extends \PHPUnit\Framework\TestCase
 {
-    public function testPermission()
+    public function testPermission(): void
     {
         $this->assertEquals('Public', Transform::permission('public'));
         $this->assertEquals('Organization', Transform::permission('organization'));

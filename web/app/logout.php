@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 require_once dirname(__DIR__, 2) . '/config.php';
 
-$Config = new Config();
+$Config = Config::getConfig();
 $Session = new Session();
 $Session->start();
 $Request = Request::createFromGlobals();
@@ -62,7 +62,7 @@ setcookie('pdf_sig', '', $cookieOptions);
 if ($Session->get('is_auth_by') === 'saml') {
     //if ($Session->get('is_auth_by_saml')) {
     // initiate SAML SLO
-    $Saml = new Saml(new Config(), new Idps());
+    $Saml = new Saml(Config::getConfig(), new Idps());
     $settings = $Saml->getSettings();
     $samlAuthLib = new SamlAuthLib($settings);
     $samlAuthLib->logout();

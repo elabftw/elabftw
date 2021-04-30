@@ -5,52 +5,46 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import Crud from './Crud.class';
+import { Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedExperiments, Target, ResponseMsg } from './interfaces';
+import { Ajax } from './Ajax.class';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
 
+export default class Todolist {
 
-export default class Todolist extends Crud {
+  model: Model;
+  sender: Ajax;
 
   constructor() {
-    super('app/controllers/Ajax.php');
+    this.model = Model.Todolist,
+    this.sender = new Ajax();
   }
 
-  // add a todo item
-  create(e): void {
-    e.preventDefault();
-    const body = $('#todo').val();
-    if (body !== '') {
-      this.send({
-        action: 'create',
-        what: 'todolist',
-        params: {
-          template: body,
-        },
-      }).then((response) => {
-        if (response.res) {
-          // reload the todolist
-          this.read();
-          // and clear the input
-          $('#todo').val('');
-        }
-      });
-    }
+  create(content: string): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Create,
+      model: this.model,
+      content: content,
+    };
+    return this.sender.send(payload);
   }
 
-  read(): void {
-    $.get('app/controllers/Ajax.php', {
-      action: 'read',
-      what: 'todolist',
-    }).done(function(json) {
+  read(): Promise<void> {
+    const payload: Payload = {
+      method: Method.GET,
+      action: Action.Read,
+      model: this.model,
+    };
+    return this.sender.send(payload).then(json => {
       let html = '<ul id="todoItems-list" class="sortable" data-axis="y" data-table="todolist">';
-      for (const entry of json.msg) {
-        html += `<li id='todoItem_${entry.id}'>
-        <a class='clickable align-right destroyTodoItem' data-id='${entry.id}' title='` + i18next.t('generic-delete-warning') + `'>
+      for (const entry of json.value as Array<Todoitem>) {
+        html += `<li data-todoitemid=${entry.id} id='todoItem_${entry.id}'>
+        <a class='clickable align-right' data-action='destroy-todoitem' data-todoitemid='${entry.id}' title='` + i18next.t('generic-delete-warning') + `'>
           <i class='fas fa-trash-alt'></i>
         </a>
         <span style='font-size:90%;display:block;'><span class='draggable sortableHandle'><i class='fas fa-sort'></i></span> <span class='relative-moment' title='${entry.creation_time}'></span></span>
-        <span class='todoItem editable' data-id='${entry.id}'>${entry.body}</span>
+        <span class='todoItem editable' data-todoitemid='${entry.id}'>${entry.body}</span>
       </li>`;
       }
       html += '</ul>';
@@ -60,19 +54,37 @@ export default class Todolist extends Crud {
     });
   }
 
-  getSteps(): void {
-    $.get('app/controllers/Ajax.php', {
-      action: 'readAll',
-      what: 'step',
-      type: 'experiments',
-    }).done(function(json) {
+  update(id: number, content: string): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Update,
+      model: this.model,
+      id : id,
+      content: content,
+    };
+    return this.sender.send(payload);
+  }
+
+
+  getSteps(): Promise<void> {
+    const payload: Payload = {
+      method: Method.GET,
+      action: Action.Read,
+      entity: {
+        type: EntityType.Experiment,
+        id: null,
+      },
+      model: Model.Step,
+      target: Target.All,
+    };
+    return this.sender.send(payload).then(json => {
       let html = '';
-      for (const exp of json.msg) {
+      for (const exp of json.value as Array<UnfinishedExperiments>) {
         html += `<li><h3><a href='experiments.php?mode=view&id=${exp.id}'>${exp.title}</a></h3>`;
         for (const stepsData of Object.entries(exp.steps)) {
           const stepId = stepsData[1][0];
           const stepBody = stepsData[1][1];
-          html += `<div><input type='checkbox' class='stepbox mr-1' id='todo_step_${stepId}' data-id='${exp.id}' data-type='experiments' data-stepid='${stepId}' />${stepBody}</div>`;
+          html += `<div><input type='checkbox' class='stepbox mr-1' id='todo_step_${stepId}' data-id='${exp.id}' data-type='${EntityType.Experiment}' data-stepid='${stepId}' />${stepBody}</div>`;
         }
         html += '</li>';
       }
@@ -80,24 +92,7 @@ export default class Todolist extends Crud {
     });
   }
 
-  // remove one todo item
-  destroy(id): void {
-    this.send({
-      action: 'destroy',
-      what: 'todolist',
-      params: {
-        id: id,
-      },
-    }).then((response) => {
-      if (response.res) {
-        // hide item
-        $('#todoItem_' + id).css('background', '#29AEB9');
-        $('#todoItem_' + id).toggle('blind');
-      }
-    });
-  }
-
-  // TOGGLE
+  // TOGGLE TODOLIST VISIBILITY
   toggle(): void {
     if ($('#todoList').is(':visible')) {
       $('#container').css('width', '100%').css('margin-right', 'auto');
@@ -109,5 +104,15 @@ export default class Todolist extends Crud {
       localStorage.setItem('isTodolistOpen', '1');
     }
     $('#todoList').toggle();
+  }
+
+  destroy(id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Destroy,
+      model: this.model,
+      id : id,
+    };
+    return this.sender.send(payload);
   }
 }

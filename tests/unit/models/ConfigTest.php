@@ -9,22 +9,22 @@
 
 namespace Elabftw\Models;
 
-use Exception;
-
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
+    private Config $Config;
+
     protected function setUp(): void
     {
-        $this->Config= new Config();
+        $this->Config= Config::getConfig();
     }
 
-    public function testRead()
+    public function testRead(): void
     {
         $this->assertTrue(is_array($this->Config->configArr));
         $this->assertEquals('sha256', $this->Config->configArr['stamphash']);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $post = array(
             'smtp_address' => 'smtp.mailgun.org',
@@ -38,32 +38,14 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->Config->update($post);
-        // now try bad path to cert
-        /* TODO
-        $post = array('stampcert' => 'invalid/path');
-        $this->expectException(\Exception::class);
-        $this->Config->update($post);
-         */
-        // try bad value for ban_time
-        $post = array('ban_time' => 'invalid');
-        $this->expectException(Exception::class);
-        $this->Config->update($post);
-        // try bad value for login_tries
-        $post = array('login_tries' => 'invalid');
-        $this->expectException(Exception::class);
-        $this->Config->update($post);
-        // try with no password
-        $post = array('smtp_password' => '');
-        $this->expectException(Exception::class);
-        $this->Config->update($post);
     }
 
-    public function testDestroyStamppass()
+    public function testDestroyStamppass(): void
     {
         $this->Config->destroyStamppass();
     }
 
-    public function testRestoreDefaults()
+    public function testRestoreDefaults(): void
     {
         $this->Config->restoreDefaults();
     }

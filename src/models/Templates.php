@@ -220,6 +220,9 @@ class Templates extends AbstractEntity
      */
     public function readForUser(): array
     {
+        if (empty($this->Users->userData['userid'])) {
+            return array();
+        }
         if (!$this->Users->userData['show_team_templates']) {
             $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
         }

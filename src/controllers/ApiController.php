@@ -387,7 +387,7 @@ class ApiController implements ControllerInterface
      * @apiName GetTemplate
      * @apiGroup Entity
      * @apiDescription Get the data from templates or just one template if id is set.
-     * @apiUse GetTemplate
+     * @apiUse GetEntity
      * @apiExample {python} Python example
      * import elabapy
      * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")

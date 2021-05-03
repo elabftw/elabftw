@@ -39,7 +39,7 @@
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
-    "@types/bootstrap": "^4.0.0",
+    "@types/bootstrap": "^5.0.13",
     "@types/fancybox": "^3.5.2",
     "@types/file-saver": "^2.0.1",
     "@types/jquery": "^3.5.1",

@@ -1030,7 +1030,7 @@ class ApiController implements ControllerInterface
      * import elabapy
      * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
      * # upload your-file.jpg to experiment 42
-     * with open('your-file.jpg', 'r') as myfile:
+     * with open('your-file.jpg', 'r+b') as myfile:
      *     params = { 'file': myfile }
      *     print(manager.upload_to_experiment(42, params))
      * # upload your-file.jpg to database item 1337

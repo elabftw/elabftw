@@ -101,11 +101,11 @@ class Uploads implements CrudInterface
             }
         }
         // final sql
-        $this->dbInsert($realName, $longName, $this->getHash($fullPath));
+        $id = $this->dbInsert($realName, $longName, $this->getHash($fullPath));
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb();
 
-        return 0;
+        return $id;
     }
 
     /**

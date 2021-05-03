@@ -1048,8 +1048,8 @@ class ApiController implements ControllerInterface
      */
     private function uploadFile(): Response
     {
-        $this->Entity->Uploads->create(new CreateUpload($this->Request));
+        $id = $this->Entity->Uploads->create(new CreateUpload($this->Request));
 
-        return new JsonResponse(array('result' => 'success'));
+        return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
 }

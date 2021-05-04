@@ -213,8 +213,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const value = $(this).val();
     $.post('app/controllers/EntityAjaxController.php', {
       updateOwnership: true,
-      id: id,
-      type: type,
+      id: entity.id,
+      type: entity.type,
       value: value,
     }).done(function(json) {
       notif(json);

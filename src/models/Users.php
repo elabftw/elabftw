@@ -14,8 +14,10 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
+use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
@@ -36,9 +38,9 @@ class Users
 
     public array $userData = array();
 
-    protected Db $Db;
+    public int $team = 0;
 
-    private int $team = 0;
+    protected Db $Db;
 
     public function __construct(?int $userid = null, ?int $team = null)
     {
@@ -66,7 +68,7 @@ class Users
      */
     public function create(string $email, array $teams, string $firstname = '', string $lastname = '', string $password = '', ?int $group = null, bool $forceValidation = false, bool $normalizeTeams = true, bool $alertAdmin = true): int
     {
-        $Config = new Config();
+        $Config = Config::getConfig();
         $Teams = new Teams($this);
 
         // make sure that all the teams in which the user will be are created/exist
@@ -74,10 +76,9 @@ class Users
         if ($normalizeTeams) {
             $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
         }
-        // check for duplicate of email
-        if ($this->isDuplicateEmail($email)) {
-            throw new ImproperActionException(_('Someone is already using that email address!'));
-        }
+
+        $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);
+        $EmailValidator->validate();
 
         if ($password !== '') {
             Check::passwordLength($password);
@@ -156,22 +157,6 @@ class Users
     }
 
     /**
-     * Check we have not a duplicate email in DB
-     *
-     * @param string $email
-     * @return bool true if there is a duplicate
-     */
-    public function isDuplicateEmail(string $email): bool
-    {
-        $sql = 'SELECT email FROM users WHERE email = :email AND archived = 0';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $email);
-        $this->Db->execute($req);
-
-        return (bool) $req->rowCount();
-    }
-
-    /**
      * Get info about a user
      */
     public function read(int $userid): array
@@ -194,9 +179,9 @@ class Users
     /**
      * Get users matching a search term for consumption in autocomplete
      */
-    public function getList(string $term): array
+    public function getList(ContentParamsInterface $params): array
     {
-        $usersArr = $this->readFromQuery($term);
+        $usersArr = $this->readFromQuery($params->getContent());
         $res = array();
         foreach ($usersArr as $user) {
             $res[] = $user['userid'] . ' - ' . $user['fullname'];
@@ -380,9 +365,15 @@ class Users
         $params['firstname'] = filter_var($params['firstname'], FILTER_SANITIZE_STRING);
         $params['lastname'] = filter_var($params['lastname'], FILTER_SANITIZE_STRING);
         $params['email'] = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
+        if ($params['email'] === false) {
+            throw new ImproperActionException('Invalid email!');
+        }
 
-        if ($this->isDuplicateEmail($params['email']) && ($params['email'] != $this->userData['email'])) {
-            throw new ImproperActionException(_('Someone is already using that email address!'));
+        // if we change the email, make sure it's valid
+        if ($params['email'] !== $this->userData['email']) {
+            $Config = Config::getConfig();
+            $EmailValidator = new EmailValidator($params['email'], $Config->configArr['email_domain']);
+            $EmailValidator->validate();
         }
 
         // Check phone
@@ -443,7 +434,7 @@ class Users
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
         // send an email to the user
-        $Email = new Email(new Config(), $this);
+        $Email = new Email(Config::getConfig(), $this);
         $Email->alertUserIsValidated($this->userData['email']);
     }
 

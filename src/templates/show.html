@@ -17,7 +17,7 @@
       {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
   {% else %}
       {% if pinnedArr and not searchPage %}
-        <div class='row display-flex'>
+        <div id='pinned-entities' class='row display-flex'>
           {% set isPinned = true %}
           {% for item in pinnedArr|slice(0, DisplayParams.limit) %}
             {% include('show-item.html') %}
@@ -72,7 +72,9 @@
         <input type='text' id='linkInputMultiple' class='linkinput' placeholder='{{ 'Add a link'|trans }}' />
 
         <button id='lockChecked' class='button btn btn-primary'>{{ 'Lock'|trans }}</button>
-        <button id='timestampChecked' class='button btn btn-primary'>{{ 'Timestamp'|trans }}</button>
+        {% if Entity.type == 'experiments' %}
+          <button id='timestampChecked' class='button btn btn-primary'>{{ 'Timestamp'|trans }}</button>
+        {% endif %}
         <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
       </p>
       {% if App.Users.userData.display_mode == 'it' %}
@@ -82,7 +84,7 @@
         {% endfor %}
         </div>
       {% else  %}
-        <table class='item-table'>
+        <table id='item-table'>
           <tr>
             <th>
               {{ 'Date'|trans }} <a class='orderBy clickable' data-orderby='date'><i class='fas fa-sort'></i></a>
@@ -108,18 +110,21 @@
             <th class='actions-item-table'>
               {{ 'Actions'|trans }}
             </th>
+            <th class='actions-item-rating'>
+              {{ 'Rating'|trans }} <a class='orderBy clickable' data-orderby='rating'><i class='fas fa-sort'></i></a>
+            </th>
           </tr>
         {% for item in itemsArr|slice(0, DisplayParams.limit) %}
           {% include('show-item-table.html') %}
         {% endfor %}
         </table>
       {% endif %}
-      <div class='text-center pageButtons mt-2'>
+      <div class='text-center page-buttons mt-2'>
         {% if DisplayParams.offset != 0 %}
-          <button class='button btn btn-neutral previousPage'>{{ 'Previous page'|trans }}</button>
+          <button class='button btn btn-neutral previousPage' data-action='previous-page'>{{ 'Previous page'|trans }}</button>
         {% endif %}
         {% if DisplayParams.limit < itemsArr|length %}
-          <button class='button btn btn-primary nextPage'>{{ 'Next page'|trans }}</button>
+          <button class='button btn btn-primary nextPage' data-action='next-page'>{{ 'Next page'|trans }}</button>
         {% endif %}
       </div>
 

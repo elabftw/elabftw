@@ -11,10 +11,11 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\Email;
+use Elabftw\Traits\SetIdTrait;
 use PDO;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,27 +25,30 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Comments implements CrudInterface
 {
+    use SetIdTrait;
+
     public AbstractEntity $Entity;
 
     protected Db $Db;
 
     private Email $Email;
 
-    public function __construct(AbstractEntity $entity, Email $email)
+    public function __construct(AbstractEntity $entity, Email $email, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->Entity = $entity;
         $this->Email = $email;
+        $this->id = $id;
     }
 
-    public function create(ParamsProcessor $params): int
+    public function create(ContentParamsInterface $params): int
     {
         $sql = 'INSERT INTO ' . $this->Entity->type . '_comments(datetime, item_id, comment, userid)
-            VALUES(:datetime, :item_id, :comment, :userid)';
+            VALUES(:datetime, :item_id, :content, :userid)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':datetime', date('Y-m-d H:i:s'));
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':comment', $params->comment);
+        $req->bindValue(':content', $params->getContent());
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
         $this->Db->execute($req);
@@ -54,7 +58,7 @@ class Comments implements CrudInterface
         return $this->Db->lastInsertId();
     }
 
-    public function read(): array
+    public function read(ContentParamsInterface $params): array
     {
         $sql = 'SELECT ' . $this->Entity->type . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname
@@ -71,26 +75,27 @@ class Comments implements CrudInterface
         return $res;
     }
 
-    public function update(ParamsProcessor $params): string
+    public function update(ContentParamsInterface $params): bool
     {
+        $this->Entity->canOrExplode('read');
         $sql = 'UPDATE ' . $this->Entity->type . '_comments SET
-            comment = :comment
-            WHERE id = :id AND userid = :userid';
+            comment = :content
+            WHERE id = :id AND userid = :userid AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':comment', $params->comment, PDO::PARAM_STR);
-        $req->bindParam(':id', $params->id, PDO::PARAM_INT);
+        $req->bindValue(':content', $params->getContent(), PDO::PARAM_STR);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $params->comment;
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
-    public function destroy(int $id): bool
+    public function destroy(): bool
     {
-        $sql = 'DELETE FROM ' . $this->Entity->type . '_comments WHERE id = :id AND userid = :userid';
+        $sql = 'DELETE FROM ' . $this->Entity->type . '_comments WHERE id = :id AND userid = :userid AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
     }
@@ -103,10 +108,10 @@ class Comments implements CrudInterface
      */
     private function alertOwner(): int
     {
-        $Config = new Config();
+        $Config = Config::getConfig();
 
         // don't do it for Db items or if email is not configured
-        if ($this->Entity instanceof Database || $Config->configArr['mail_from'] === 'notconfigured@example.com') {
+        if ($this->Entity instanceof Items || $Config->configArr['mail_from'] === 'notconfigured@example.com') {
             return 0;
         }
 
@@ -132,12 +137,11 @@ class Comments implements CrudInterface
 
         // Create the message
         $Request = Request::createFromGlobals();
-        $url = Tools::getUrl($Request) . '/' . $this->Entity->page . '.php';
+        $url = Tools::getUrl($Request);
+        $bodyUrl = $url . '/' . $this->Entity->page . '.php';
         // not pretty but gets the job done
-        $url = str_replace('app/controllers/', '', $url);
-        $url .= '?mode=view&id=' . $this->Entity->id;
-
-        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
+        $bodyUrl = str_replace('app/controllers/', '', $bodyUrl);
+        $bodyUrl .= '?mode=view&id=' . $this->Entity->id;
 
         $message = (new Swift_Message())
         // Give the message a subject
@@ -150,8 +154,8 @@ class Comments implements CrudInterface
         ->setBody(sprintf(
             _('Hi. %s left a comment on your experiment. Have a look: %s'),
             $commenter['fullname'],
-            $url
-        ) . $footer);
+            $bodyUrl
+        ) . $this->Email->footer);
 
         return $this->Email->send($message);
     }

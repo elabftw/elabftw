@@ -7,18 +7,35 @@
  */
 declare let key: any;
 declare let MathJax: any;
-import { getCheckedBoxes, insertParamAndReload, notif } from './misc';
+import { getCheckedBoxes, insertParamAndReload, notif, reloadTagsAndLocks } from './misc';
+import { EntityType } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
+import EntityClass from './Entity.class';
 
 $(document).ready(function(){
-  if ($('#info').data('page') !== 'show') {
+  if (!document.getElementById('info')) {
+    return;
+  }
+  const about = document.getElementById('info').dataset;
+  // only run in show mode or on search page (which is kinda show mode too)
+  const pages = ['show', 'search'];
+  if (!pages.includes(about.page)) {
     return;
   }
 
-  // CREATE EXPERIMENT
+  let entityType = EntityType.Experiment;
+  if ($('#type').data('type') === 'items') {
+    entityType = EntityType.Item;
+  }
+
+  const EntityC = new EntityClass(entityType);
+
+  // CREATE EXPERIMENT with shortcut
   key($('#shortcuts').data('create'), function() {
-    window.location.href = 'experiments.php?create=true';
+    EntityC.create('0').then(json => {
+      window.location.href = `experiments.php?mode=edit&id=${json.res}`;
+    });
   });
 
   // validate the form upon change. fix #451
@@ -54,17 +71,6 @@ $(document).ready(function(){
       MathJax.typeset();
     });
   });
-
-  // PAGINATION
-  // previous page
-  $('.pageButtons').on('click', '.previousPage', function() {
-    insertParamAndReload('offset', $('#info').data('offset') - $('#info').data('limit'));
-  });
-  // next page
-  $('.pageButtons').on('click', '.nextPage', function() {
-    insertParamAndReload('offset', $('#info').data('offset') + $('#info').data('limit'));
-  });
-  // END PAGINATION
 
   // THE CHECKBOXES
   const nothingSelectedError = {
@@ -212,15 +218,16 @@ $(document).ready(function(){
       notif(nothingSelectedError);
       return;
     }
-    // loop on it and delete stuff
-    $.each(checked, function(index) {
-      $.post('app/controllers/EntityAjaxController.php', {
-        lock: true,
-        id: checked[index]['id'],
-        type: $('#type').data('type')
-      }).done(function(json) {
-        notif(json);
-      });
+
+    // loop over it and lock entities
+    const results = [];
+    checked.forEach(checkBox => {
+      results.push(EntityC.lock(checkBox['id']));
+    });
+
+    Promise.all(results).then(() => {
+      reloadTagsAndLocks('itemList');
+      reloadTagsAndLocks('item-table');
     });
   });
 
@@ -236,6 +243,7 @@ $(document).ready(function(){
     $.each(checked, function(index) {
       $.post('app/controllers/EntityAjaxController.php', {
         timestamp: true,
+        type: 'experiments',
         id: checked[index]['id'],
       }).done(function(json) {
         notif(json);
@@ -256,12 +264,7 @@ $(document).ready(function(){
     }
     // loop on it and delete stuff
     $.each(checked, function(index) {
-      $.post('app/controllers/EntityAjaxController.php', {
-        destroy: true,
-        id: checked[index]['id'],
-        type: $('#type').data('type')
-      }).done(function(json) {
-        notif(json);
+      EntityC.destroy(checked[index]['id']).then(json => {
         if (json.res) {
           $('#parent_' + checked[index]['randomid']).hide(200);
         }
@@ -296,5 +299,26 @@ $(document).ready(function(){
     }
     selectOrder.val(targetSort);
     selectOrder.closest('form').trigger('submit');
+  });
+
+  // Add click listener and do action based on which element is clicked
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // PAGINATION
+    // previous page
+    if (el.matches('[data-action="previous-page"]')) {
+      const info = (document.querySelector('#info') as HTMLElement);
+      const offset = parseInt(info.dataset.offset);
+      const limit = parseInt(info.dataset.limit);
+      insertParamAndReload('offset', offset - limit);
+
+    // next page
+    } else if (el.matches('[data-action="next-page"]')) {
+      const info = (document.querySelector('#info') as HTMLElement);
+      const offset = parseInt(info.dataset.offset);
+      const limit = parseInt(info.dataset.limit);
+      insertParamAndReload('offset', offset + limit);
+    // END PAGINATION
+    }
   });
 });

@@ -9,19 +9,51 @@ declare let ChemDoodle: any;
 import 'jquery-ui/ui/widgets/sortable';
 import * as $3Dmol from '3dmol/build/3Dmol-nojquery.js';
 import { CheckableItem, ResponseMsg } from './interfaces';
+import { DateTime } from 'luxon';
+import { EntityType, Entity } from './interfaces';
 
-const moment = require('moment'); // eslint-disable-line @typescript-eslint/no-var-requires
-
-// DISPLAY COMMENT TIME RELATIVE TO NOW
+// DISPLAY TIME RELATIVE TO NOW
+// the datetime is taken from the title of the element so mouse hover will show raw datetime
 export function relativeMoment(): void {
-  moment.locale($('#user-prefs').data('lang'));
-  $.each($('.relative-moment'), function(i, el) {
-    el.textContent = moment(el.title, 'YYYY-MM-DD H:m:s').fromNow();
-  });
+  const locale = document.getElementById('user-prefs').dataset.jslang;
+  document.querySelectorAll('.relative-moment')
+    .forEach((el) => {
+      const span = el as HTMLElement;
+      span.innerText = DateTime.fromFormat(span.title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale}).toRelative();
+    });
 }
+
+// for view or edit mode, get type and id from the page to construct the entity object
+export function getEntity(): Entity {
+  // holds info about the page through data attributes
+  const about = document.getElementById('info').dataset;
+  let entityType: EntityType;
+  if (about.type === 'experiments') {
+    entityType = EntityType.Experiment;
+  }
+  if (about.type === 'items') {
+    entityType = EntityType.Item;
+  }
+  if (about.type === 'experiments_templates') {
+    entityType = EntityType.Template;
+  }
+  if (about.type === 'items_types') {
+    entityType = EntityType.ItemType;
+  }
+  return {
+    type: entityType,
+    id: parseInt(about.id),
+  };
+}
+
 
 // PUT A NOTIFICATION IN TOP LEFT WINDOW CORNER
 export function notif(info: ResponseMsg): void {
+  // clear an existing one
+  if (document.getElementById('overlay')) {
+    document.getElementById('overlay').remove();
+  }
+
   const p = document.createElement('p');
   p.innerText = (info.msg as string);
   const result = info.res ? 'ok' : 'ko';
@@ -124,4 +156,19 @@ export function getCheckedBoxes(): Array<CheckableItem> {
     });
   });
   return checkedBoxes;
+}
+
+export function reloadTagsAndLocks(elementId): Promise<void | Response> {
+  if (document.getElementById(elementId)) {
+    return fetch(window.location.href).then(response => {
+      return response.text();
+    }).then(data => {
+      const parser = new DOMParser();
+      const html = parser.parseFromString(data, 'text/html');
+      document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
+      if (document.getElementById('pinned-entities')) {
+        document.getElementById('pinned-entities').innerHTML = html.getElementById('pinned-entities').innerHTML;
+      }
+    });
+  }
 }

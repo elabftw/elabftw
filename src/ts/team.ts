@@ -5,7 +5,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import Template from './Template.class';
+import EntityClass from './Entity.class';
+import { EntityType } from './interfaces';
 import { notif } from './misc';
 import i18next from 'i18next';
 import 'jquery-ui/ui/widgets/autocomplete';
@@ -234,8 +235,12 @@ document.addEventListener('DOMContentLoaded', () => {
     calendar.updateSize();
   }
 
-  // IMPORT TPL
-  $(document).on('click', '.importTpl', function() {
-    new Template().duplicate($(this).data('id'));
+  // Add click listener and do action based on which element is clicked
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // IMPORT TPL
+    if (el.matches('[data-action="import-template"]')) {
+      new EntityClass(EntityType.Template).duplicate(parseInt(el.dataset.id));
+    }
   });
 });

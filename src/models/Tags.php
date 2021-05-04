@@ -13,43 +13,53 @@ namespace Elabftw\Models;
 use function array_column;
 use function count;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\CreatableInterface;
-use Elabftw\Interfaces\DestroyableInterface;
-use Elabftw\Interfaces\UpdatableInterface;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Maps\Team;
+use Elabftw\Traits\SetIdTrait;
 use function implode;
 use PDO;
 
 /**
  * All about the tag
  */
-class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterface
+class Tags implements CrudInterface
 {
+    use SetIdTrait;
+
     public AbstractEntity $Entity;
 
     protected Db $Db;
 
-    public function __construct(AbstractEntity $entity)
+    public function __construct(AbstractEntity $entity, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->Entity = $entity;
+        $this->id = $id;
     }
 
     /**
      * Create a tag
      */
-    public function create(ParamsProcessor $params): int
+    public function create(ContentParamsInterface $params): int
     {
         $this->Entity->canOrExplode('write');
+
+        // check if we can actually create tags (for non-admins)
+        $Team = new Team($this->Entity->Users->team);
+        if ($Team->getUserCreateTag() === 0 && $this->Entity->Users->userData['is_admin'] === '0') {
+            throw new ImproperActionException(_('Users cannot create tags.'));
+        }
 
         $insertSql2 = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
         $insertReq2 = $this->Db->prepare($insertSql2);
         // check if the tag doesn't exist already for the team
         $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag', $params->tag);
+        $req->bindValue(':tag', $params->getContent());
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
         $tagId = (int) $req->fetchColumn();
@@ -58,7 +68,7 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
         if ($req->rowCount() === 0) {
             $insertSql = 'INSERT INTO tags (team, tag) VALUES (:team, :tag)';
             $insertReq = $this->Db->prepare($insertSql);
-            $insertReq->bindParam(':tag', $params->tag);
+            $insertReq->bindValue(':tag', $params->getContent());
             $insertReq->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
             $this->Db->execute($insertReq);
             $tagId = $this->Db->lastInsertId();
@@ -73,6 +83,14 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
         }
 
         return $tagId;
+    }
+
+    public function read(ContentParamsInterface $params): array
+    {
+        if ($params->getTarget() === 'list') {
+            return $this->getList($params->getContent());
+        }
+        return $this->readAll();
     }
 
     /**
@@ -136,41 +154,23 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
         }
     }
 
-    /**
-     * Get an array of tags starting with the query ($term)
-     *
-     * @param string $term the beginning of the tag
-     * @return array the tag list filtered by the term
-     */
-    public function getList(string $term): array
-    {
-        $tagListArr = array();
-        $tagsArr = $this->readAll($term);
-
-        foreach ($tagsArr as $tag) {
-            $tagListArr[] = $tag['tag'];
-        }
-        return $tagListArr;
-    }
-
-    /**
-     * Update a tag
-     */
-    public function update(ParamsProcessor $params): string
+    public function update(ContentParamsInterface $params): bool
     {
         if ($this->Entity->Users->userData['is_admin'] !== '1') {
             throw new IllegalActionException('Only an admin can update a tag!');
+        }
+        if ($params->getTarget() === 'unreference') {
+            return $this->unreference();
         }
 
         // use the team in the query to prevent one admin from editing tags from another team
         $sql = 'UPDATE tags SET tag = :tag WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $params->id, PDO::PARAM_INT);
-        $req->bindParam(':tag', $params->tag, PDO::PARAM_STR);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindValue(':tag', $params->getContent(), PDO::PARAM_STR);
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
 
-        return $params->tag;
+        return $this->Db->execute($req);
     }
 
     /**
@@ -207,37 +207,9 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
     }
 
     /**
-     * Unreference a tag from an entity
-     *
-     * @param int $tagId id of the tag
-     * @return void
-     */
-    public function unreference(int $tagId): void
-    {
-        $this->Entity->canOrExplode('write');
-
-        $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id AND item_id = :item_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        // now check if another entity is referencing it, if not, remove it from the tags table
-        $sql = 'SELECT tag_id FROM tags2entity WHERE tag_id = :tag_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $tags = $req->fetchAll();
-
-        if (empty($tags)) {
-            $this->destroy($tagId);
-        }
-    }
-
-    /**
      * Destroy a tag completely. Unreference it from everywhere and then delete it
      */
-    public function destroy(int $tagId): bool
+    public function destroy(): bool
     {
         if ($this->Entity->Users->userData['is_admin'] !== '1') {
             throw new IllegalActionException('Only an admin can update a tag!');
@@ -245,13 +217,13 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
         // first unreference the tag
         $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
+        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         // now delete it from the tags table
         $sql = 'DELETE FROM tags WHERE id = :tag_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
+        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
@@ -259,16 +231,14 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
      * Destroy all the tags for an item ID
      * Here the tag are not destroyed because it might be nice to keep the tags in memory
      * even when nothing is referencing it. Admin can manage tags anyway if it needs to be destroyed.
-     *
-     * @return void
      */
-    public function destroyAll(): void
+    public function destroyAll(): bool
     {
         $sql = 'DELETE FROM tags2entity WHERE item_id = :id AND item_type = :type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**
@@ -295,10 +265,13 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
         $tagIds = array_column($results, 'id');
 
         // look for item ids that have all the tags not only one of them
+        // note: you can't have a parameter for the IN clause
         $itemIds = array();
         $sql = 'SELECT item_id FROM `tags2entity` WHERE tag_id IN (' . implode(',', $tagIds) . ')
-            AND item_type = "' . $this->Entity->type . '" GROUP By item_id HAVING COUNT(DISTINCT tag_id) = ' . count($tagIds);
+            AND item_type = :type GROUP BY item_id HAVING COUNT(DISTINCT tag_id) = :count';
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':type', $this->Entity->type, PDO::PARAM_STR);
+        $req->bindValue(':count', count($tagIds), PDO::PARAM_INT);
         $req->execute();
         $results = $req->fetchAll();
         if ($results === false) {
@@ -308,6 +281,48 @@ class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterfa
             $itemIds[] = (int) $res['item_id'];
         }
         return $itemIds;
+    }
+
+    /**
+     * Unreference a tag from an entity
+     */
+    private function unreference(): bool
+    {
+        $this->Entity->canOrExplode('write');
+
+        $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id AND item_id = :item_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        // now check if another entity is referencing it, if not, remove it from the tags table
+        $sql = 'SELECT tag_id FROM tags2entity WHERE tag_id = :tag_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $tags = $req->fetchAll();
+
+        if (empty($tags)) {
+            $this->destroy();
+        }
+        return true;
+    }
+
+    /**
+     * Get an array of tags starting with the query
+     *
+     * @return array the tag list filtered by the term for autocomplete
+     */
+    private function getList(string $term): array
+    {
+        $tagListArr = array();
+        $tagsArr = $this->readAll($term);
+
+        foreach ($tagsArr as $tag) {
+            $tagListArr[] = $tag['tag'];
+        }
+        return $tagListArr;
     }
 
     /**

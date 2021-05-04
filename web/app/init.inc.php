@@ -48,10 +48,10 @@ try {
     // END CONFIG.PHP
 
     // INIT APP OBJECT
-    // new Config will make the first SQL request
+    // Config::getConfig() will make the first SQL request
     // PDO will throw an exception if the SQL structure is not imported yet
     try {
-        $App = new App($Request, $Session, new Config(), new Logger('elabftw'), new Csrf($Request, $Session));
+        $App = new App($Request, $Session, Config::getConfig(), new Logger('elabftw'), new Csrf($Request, $Session));
     } catch (DatabaseErrorException | PDOException $e) {
         throw new ImproperActionException('The database structure is not loaded! Did you run the installer?');
     }
@@ -127,6 +127,9 @@ try {
         $App->Users->userData['is_sysadmin'] = 0;
         $App->Users->userData['show_team'] = 1;
         $App->Users->userData['show_team_templates'] = 0;
+        $App->Users->userData['show_public'] = 0;
+        $App->Users->userData['lang'] = $App->Config->configArr['lang'];
+        $App->Users->userData['use_isodate'] = '0';
     }
 
     // START i18n

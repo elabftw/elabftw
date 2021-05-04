@@ -65,7 +65,7 @@ tr:nth-child(odd) {
 }
 
 .pdf-ul {
-    border: 1px solid #343434;
+    border: 1px solid #797979;
     border-radius: 5px;
     margin: 5px;
     padding: 7px;
@@ -130,4 +130,10 @@ figure.image figcaption {
     margin: 2px 0 6px 0;
     border: 1px solid gray;
     text-align: center;
+}
+
+/* This helps alignment for inline equations */
+img, /* <-- can be removed after PR https://github.com/mpdf/mpdf/pull/1405 is accepted and mpdf is bumped to next version */
+img.mathjax-svg { /* keep only this selector */
+    vertical-align: middle;
 }

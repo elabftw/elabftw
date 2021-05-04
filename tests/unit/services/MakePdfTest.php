@@ -11,19 +11,22 @@ namespace Elabftw\Models;
 
 use Elabftw\Services\MakePdf;
 
+//use League\Flysystem\Memory\MemoryAdapter;
+//use League\Flysystem\Filesystem;
+
 class MakePdfTest extends \PHPUnit\Framework\TestCase
 {
+    private MakePdf $MakePdf;
+
     protected function setUp(): void
     {
-        $this->Users = new Users(1);
-        $this->Entity = new Experiments($this->Users);
-        $this->MakePdf = new MakePdf($this->Entity);
+        $Entity = new Experiments(new Users(1, 1));
+        $this->MakePdf = new MakePdf($Entity);
     }
 
-    public function testOutput()
+    public function testOutput(): void
     {
-        // TODO use https://github.com/mikey179/vfsStream/wiki/Example
-        // see https://phpunit.de/manual/current/en/test-doubles.html#test-doubles.mocking-the-filesystem
+        // TODO makepdf should have a filesystem class in DI
         //$this->MakePdf->output(true, true);
         //$this->assertFileExists($this->MakePdf->filePath);
     }

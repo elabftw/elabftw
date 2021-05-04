@@ -99,6 +99,7 @@ class Update
             // schema57: add an elabid to existing database items
             if ($currentSchema === 57) {
                 $this->addElabidToItems();
+                $this->fixExperimentsRevisions();
             }
         }
 
@@ -140,6 +141,33 @@ class Update
             $req->bindParam(':id', $item['id'], PDO::PARAM_INT);
             $req->bindParam(':elabid', $elabid);
             $req->execute();
+        }
+    }
+
+    /**
+     * Remove revision without corresponding experiment and add
+     * missing constraints when users employed the structure.sql
+     *
+     * @return void
+     */
+    private function fixExperimentsRevisions(): void
+    {
+        $sql = 'SELECT * FROM information_schema.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME = :name1 OR CONSTRAINT_NAME= :name2';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':name1', 'fk_experiments_revisions_experiments_id');
+        $req->bindValue(':name2', 'fk_experiments_revisions_users_userid');
+        $req->execute();
+
+        if ($req->rowCount() === 0) {
+            // First of all delete revisions that do not belong to any experiment
+            $sql = 'DELETE FROM `experiments_revisions` WHERE `item_id` NOT IN (SELECT `id` FROM `experiments`)';
+            $this->Db->q($sql);
+
+            // Now, add the constraints
+            $sql = 'ALTER TABLE `experiments_revisions`
+                ADD CONSTRAINT `fk_experiments_revisions_experiments_id` FOREIGN KEY (`item_id`) REFERENCES `experiments`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+                ADD CONSTRAINT `fk_experiments_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;';
+            $this->Db->q($sql);
         }
     }
 }

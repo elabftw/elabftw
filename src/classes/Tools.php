@@ -272,7 +272,7 @@ class Tools
     }
 
     /**
-     * Display the stars rating for a DB item
+     * Display the stars rating for an entity
      *
      * @param int $rating The number of stars to display
      * @return string HTML of the stars
@@ -289,25 +289,27 @@ class Tools
      * Return a full URL of the elabftw install.
      * Will first check for config value of 'url' or try to guess from Request
      *
-     * @param Request $Request
-     * @return string the url
      */
-    public static function getUrl(Request $Request): string
+    public static function getUrl(Request $Request, bool $canonical = false): string
     {
-        $Config = new Config();
+        $Config = Config::getConfig();
 
-        return $Config->configArr['url'] ?? self::getUrlFromRequest($Request);
+        if ($Config->configArr['url']) {
+            return $Config->configArr['url'];
+        }
+        return self::getUrlFromRequest($Request, $canonical);
     }
 
     /**
      * Get the URL from the Request
      *
-     * @param Request $Request
-     * @return string the url
      */
-    public static function getUrlFromRequest(Request $Request): string
+    public static function getUrlFromRequest(Request $Request, bool $canonical = false): string
     {
-        $url = $Request->getScheme() . '://' . $Request->getHost() . ':' . (string) $Request->getPort() . $Request->getBasePath();
+        $url = $Request->getScheme() . '://' . $Request->getHost() . ':' . (string) $Request->getPort();
+        if (!$canonical) {
+            $url .= $Request->getBasePath();
+        }
         return \str_replace('app/controllers', '', $url);
     }
 

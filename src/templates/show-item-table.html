@@ -85,10 +85,14 @@
                 <i class='fas fa-comments'></i>
               {% endif %}
 
-              {% if Entity.type == 'items' and item.rating > 0 %}
+            </td>
+
+            <td class='item-rating'>
+              {% if item.rating > 0 %}
                 {{ item.rating|stars|raw }}
               {% endif %}
             </td>
+
           </tr>
           <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
           <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->

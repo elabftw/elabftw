@@ -14,8 +14,8 @@ use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\Teams;
 use Elabftw\Services\MakeCsv;
 use Elabftw\Services\MakeJson;
@@ -39,25 +39,15 @@ class MakeController implements ControllerInterface
     /** @var AbstractEntity $Entity */
     private $Entity;
 
-    /**
-     * Constructor
-     *
-     * @param App $app
-     */
     public function __construct(App $app)
     {
         $this->App = $app;
-        $this->Entity = new Database($this->App->Users);
+        $this->Entity = new Items($this->App->Users);
         if ($this->App->Request->query->get('type') === 'experiments') {
             $this->Entity = new Experiments($this->App->Users);
         }
     }
 
-    /**
-     * Get the response
-     *
-     * @return Response
-     */
     public function getResponse(): Response
     {
         switch ($this->App->Request->query->get('what')) {
@@ -87,11 +77,6 @@ class MakeController implements ControllerInterface
         }
     }
 
-    /**
-     * Create a CSV export
-     *
-     * @return Response
-     */
     private function makeCsv(): Response
     {
         $Make = new MakeCsv($this->Entity, $this->App->Request->query->get('id') ?? '0');
@@ -108,16 +93,11 @@ class MakeController implements ControllerInterface
         );
     }
 
-    /**
-     * Create a PDF export
-     *
-     * @return Response
-     */
     private function makePdf(): Response
     {
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
         $this->Entity->canOrExplode('read');
-        $Make = new MakePdf($this->Entity);
+        $Make = new MakePdf($this->Entity, true);
         return new Response(
             $Make->getPdf(),
             200,
@@ -130,11 +110,6 @@ class MakeController implements ControllerInterface
         );
     }
 
-    /**
-     * Create a JSON export
-     *
-     * @return JsonResponse
-     */
     private function makeJson(): JsonResponse
     {
         $Make = new MakeJson($this->Entity, $this->App->Request->query->get('id') ?? '');
@@ -150,11 +125,6 @@ class MakeController implements ControllerInterface
         );
     }
 
-    /**
-     * Create a multi entity PDF export
-     *
-     * @return Response
-     */
     private function makeMultiPdf(): Response
     {
         $Make = new MakeMultiPdf($this->Entity, $this->App->Request->query->get('id') ?? '0');
@@ -172,8 +142,6 @@ class MakeController implements ControllerInterface
 
     /**
      * Create a CSV report (only for sysadmin)
-     *
-     * @return Response
      */
     private function makeReport(): Response
     {
@@ -194,11 +162,6 @@ class MakeController implements ControllerInterface
         );
     }
 
-    /**
-     * Create a ZIP export
-     *
-     * @return Response
-     */
     private function makeZip(): Response
     {
         $Make = new MakeStreamZip($this->Entity, $this->App->Request->query->get('id') ?? '0');

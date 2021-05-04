@@ -60,4 +60,11 @@ class BannedUsers
         }
         return $res;
     }
+
+    public function clearAll(): bool
+    {
+        $sql = 'DELETE FROM banned_users';
+        $req = $this->Db->prepare($sql);
+        return $req->execute();
+    }
 }

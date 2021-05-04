@@ -6,19 +6,23 @@
  * @package elabftw
  */
 import { notif } from './misc';
-import { ResponseMsg } from './interfaces';
+import { Payload, Action, Method, ResponseMsg } from './interfaces';
 
 export class Ajax {
   type: string;
   id: string;
   controller: string;
 
-  constructor(type: string, id: string) {
+  constructor(type = 'experiments', id = '0', controller = '') {
     this.type = type;
     this.id = id;
-    this.controller = 'app/controllers/EntityAjaxController.php';
+    this.controller = controller;
+    if (controller === '') {
+      this.controller = 'app/controllers/EntityAjaxController.php';
+    }
   }
 
+  /** @deprecated */
   get(action: string): Promise<ResponseMsg> {
     return fetch(`${this.controller}?${action}=1&id=${this.id}&type=${this.type}`).then(response => {
       if (!response.ok) {
@@ -34,6 +38,7 @@ export class Ajax {
     });
   }
 
+  /** @deprecated */
   post(action: string): Promise<ResponseMsg> {
     const formData = new FormData();
     formData.append(action, '1');
@@ -55,5 +60,53 @@ export class Ajax {
       }
       return json;
     });
+  }
+
+  send(payload: Payload): Promise<ResponseMsg> {
+    // get request should not have a body, and that's a shame, it would make things simpler IMHO..
+    let response: Promise<Response>;
+    if (payload.method === Method.GET) {
+      response = this.sendGet(payload);
+    } else {
+      response = this.sendPost(payload);
+    }
+    return response.then(response => {
+      if (!response.ok) {
+        throw new Error('An unexpected error occured!');
+      }
+      // TODO I don't think this works well
+      if (response.headers.has('X-Elab-Need-Auth')) {
+        notif({res: false, msg: 'Your session expired!'});
+        throw new Error('Session expired!');
+      }
+      return response.json();
+    }).then(json => {
+      // we don't want notifs on get requests or create requests
+      if (payload.method === Method.POST && payload.action !== Action.Create) {
+        notif(json);
+      }
+      return json;
+    });
+  }
+
+  sendPost(payload: Payload): Promise<Response> {
+    // now doing POST method
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    return fetch('app/controllers/RequestHandler.php', {
+      method: payload.method,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrfToken,
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      body: JSON.stringify(payload),
+    });
+  }
+
+  sendGet(payload: Payload): Promise<Response> {
+    // encode the json in a percent encoded parameter
+    const encoded = encodeURIComponent(JSON.stringify(payload));
+    // p as in payload
+    return fetch(`app/controllers/RequestHandler.php?p=${encoded}`);
   }
 }

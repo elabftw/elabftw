@@ -9,15 +9,21 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\Email;
 
 class CommentsTest extends \PHPUnit\Framework\TestCase
 {
+    private Experiments $Entity;
+
+    private Email $mockEmail;
+
+    private Comments $Comments;
+
     protected function setUp(): void
     {
-        $this->Users = new Users(1);
-        $this->Entity = new Experiments($this->Users, 1);
+        $this->Entity = new Experiments(new Users(1, 1), 1);
 
         // create mock object for Email because we don't want to actually send emails
         $this->mockEmail = $this->getMockBuilder(\Elabftw\Services\Email::class)
@@ -32,26 +38,28 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
         $this->Comments = new Comments($this->Entity, $this->mockEmail);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
-        $this->assertIsInt($this->Comments->create(new ParamsProcessor(array('comment' => 'Ohai'))));
+        $this->assertIsInt($this->Comments->create(new ContentParams('Ohai')));
     }
 
-    public function testRead()
+    public function testRead(): void
     {
-        $this->assertIsArray($this->Comments->read());
+        $this->assertIsArray($this->Comments->read(new ContentParams()));
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
-        $this->Comments->Update(new ParamsProcessor(array('comment' => 'Updated', 'id' => 1)));
+        $this->Comments->setId(1);
+        $this->Comments->Update(new ContentParams('Updated'));
         // too short comment
         $this->expectException(ImproperActionException::class);
-        $this->Comments->Update(new ParamsProcessor(array('comment' => 'a', 'id' => 1)));
+        $this->Comments->Update(new ContentParams(''));
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
-        $this->Comments->destroy(1);
+        $this->Comments->setId(1);
+        $this->Comments->destroy();
     }
 }

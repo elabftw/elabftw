@@ -24,14 +24,11 @@ class Check
     /** the minimum password length */
     public const MIN_PASSWORD_LENGTH = 8;
 
-    /** cookie is a sha1 sum: 64 chars */
+    /** cookie is a sha256 sum: 64 chars */
     private const COOKIE_LENGTH = 64;
 
     /**
      * Check the number of character of a password
-     *
-     * @param string $password The password to check
-     * @throws ImproperActionException
      */
     public static function passwordLength(string $password): bool
     {
@@ -43,11 +40,8 @@ class Check
 
     /**
      * Check ID is valid (pos int)
-     *
-     * @param int $id
-     * @return int|false
      */
-    public static function id(int $id)
+    public static function id(int $id): int|false
     {
         $filter_options = array(
             'options' => array(
@@ -59,9 +53,6 @@ class Check
 
     /**
      * Check id and throw exception if it's wrong
-     *
-     * @param int $id
-     * @return int
      */
     public static function idOrExplode(int $id): int
     {
@@ -75,7 +66,6 @@ class Check
      * Get only the relevant part of the color: remove the #
      *
      * @param string $color #121212
-     * @return string
      */
     public static function color(string $color): string
     {
@@ -88,9 +78,6 @@ class Check
 
     /**
      * Check the limit value
-     *
-     * @param int $limit
-     * @return int
      */
     public static function limit(int $limit): int
     {
@@ -98,7 +85,7 @@ class Check
             'options' => array(
                 'default' => 15,
                 'min_range' => 1,
-                'max_range' => 500,
+                'max_range' => 9999,
             ),
             'flags' => FILTER_NULL_ON_FAILURE,
         );
@@ -107,9 +94,6 @@ class Check
 
     /**
      * Check the display size user setting
-     *
-     * @param string $input
-     * @return string
      */
     public static function displaySize(string $input): string
     {
@@ -123,25 +107,16 @@ class Check
         }
     }
 
+    /**
+     * Check the display mode (item or table)
+     */
     public static function displayMode(string $input): string
     {
-        switch ($input) {
-            // Item list (the usual)
-            case 'it':
-                return 'it';
-            // Table format
-            case 'tb':
-                return 'tb';
-            default:
-                return 'it';
-        }
+        return $input === 'tb' ? 'tb' : 'it';
     }
 
     /**
      * Check orderby param
-     *
-     * @param string $input
-     * @return string
      */
     public static function orderby(string $input): string
     {
@@ -153,10 +128,7 @@ class Check
     }
 
     /**
-     * Check sort param
-     *
-     * @param string $input
-     * @return string
+     * Check sort (asc/desc) param
      */
     public static function sort(string $input): string
     {
@@ -169,9 +141,6 @@ class Check
 
     /**
      * Check if we have a correct value for visibility
-     *
-     * @param string $visibility
-     * @return string
      */
     public static function visibility(string $visibility): string
     {
@@ -180,6 +149,7 @@ class Check
             'organization',
             'team',
             'user',
+            'useronly',
         );
 
         if (!in_array($visibility, $validArr, true) && self::id((int) $visibility) === false) {
@@ -190,10 +160,38 @@ class Check
     }
 
     /**
+     * A target is like a subpart of a model
+     * example: update the comment of an upload
+     */
+    public static function target(string $target): string
+    {
+        $allowed = array(
+            'all',
+            'body',
+            'boundevent',
+            'comment',
+            'date',
+            'file',
+            'finished',
+            'list',
+            'member',
+            'metadata',
+            'privacypolicy',
+            'rating',
+            'real_name',
+            'title',
+            'unreference',
+            // no target is also valid
+            '',
+        );
+        if (!in_array($target, $allowed, true)) {
+            throw new IllegalActionException('Invalid target!');
+        }
+        return $target;
+    }
+
+    /**
      * Check if we have a correct value for read/write
-     *
-     * @param string $rw
-     * @return string
      */
     public static function rw(string $rw): string
     {

@@ -53,6 +53,19 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       </form>
     </div>
 
+    <div class='box'>
+      <h3>{{ 'Login page announcement'|trans }}</h3>
+      <hr>
+      <p>{{ 'The following text will be displayed only on the login page.'|trans }}</p>
+      <form method='post' action='app/controllers/SysconfigController.php'>
+        <input class='form-control' type='text' name='login_announcement' value='{{ App.Config.configArr.login_announcement }}' />
+        <div class='mt-4 text-center'>
+          <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+          <button type='submit' name='clear_login_announcement' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
+        </div>
+      </form>
+    </div>
+
     <form class='box' method='post' action='app/controllers/SysconfigController.php'>
         <h3>{{ 'Settings'|trans }}</h3>
         <hr>
@@ -304,7 +317,13 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
   </form>
+
+  <hr>
+  <h3>{{ 'Bruteforce login protection' }}</h3>
+  <p id='bannedUsersCount'>{{ '%d users are currently prevented from logging on after too many failed tries.'|trans|format(bannedCount) }}</p>
+  <button type='submit' data-action='clear-banned' class='button btn btn-primary'>{{ 'Clear'|trans }}</button>
 </div>
+
 
 <!-- TAB 6 EMAIL -->
 <div class='divhandle' id='tab6div'>
@@ -466,6 +485,12 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                   <option {{ team.id == App.Config.configArr.saml_team_default ? 'selected' }} value='{{ team.id }}'>{{ team.name }}</option>
                 {% endfor %}
                 <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>Throw error!</option>
+              </select>
+
+              <label for='saml-user-default'>If the user doesn't exist yet, what to do?</label>
+              <select class='form-control col-md-4' name='saml_user_default' id='saml-user-default'>
+                <option {{ 1 == App.Config.configArr.saml_user_default ? 'selected' }} value='1'>Create the user on the fly</option>
+                <option {{ 0 == App.Config.configArr.saml_user_default ? 'selected' }} value='0'>Throw error, allowing a sysadmin to create the user</option>
               </select>
 
               <label for='saml-email'>What attribute to look for the email:</label>
@@ -709,6 +734,13 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>Throw error!</option>
         </select>
 
+        <label for='extauth-user-default'>If the user doesn't exist yet, what to do?</label>
+        <select class='form-control col-md-4' name='saml_user_default' id='extauth-user-default'>
+          <option {{ 1 == App.Config.configArr.saml_user_default ? 'selected' }} value='1'>Create the user on the fly</option>
+          <option {{ 0 == App.Config.configArr.saml_user_default ? 'selected' }} value='0'>Throw error, allowing a sysadmin to create the user</option>
+        </select>
+
+
         <label for='extauth-team-create'>Create team sent by server if it doesn't exist already:</label>
         <select class='form-control col-md-4' id='extauth-team-create' name='saml_team_create'>
             <option value='1'{{ App.Config.configArr.saml_team_create == '1' ? ' selected' }}>Yes</option>
@@ -780,18 +812,24 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <label for='ldap-team'>What attribute to look for the team name:</label>
         <input class='form-control col-md-4' type='text' id='ldap-team' name='ldap_team' value='{{ App.Config.configArr.ldap_team }}' />
 
-        <label for='extauth-team-create'>Create team sent by server if it doesn't exist already:</label>
-        <select class='form-control col-md-4' id='extauth-team-create' name='saml_team_create'>
+        <label for='ldap-team-create'>Create team sent by server if it doesn't exist already:</label>
+        <select class='form-control col-md-4' id='ldap-team-create' name='saml_team_create'>
             <option value='1'{{ App.Config.configArr.saml_team_create == '1' ? ' selected' }}>Yes</option>
             <option value='0'{{ App.Config.configArr.saml_team_create == '0' ? ' selected' }}>No</option>
         </select>
 
-        <label for='extauth-team-default'>If no team attribute is found, to which team user is assigned?</label>
-        <select class='form-control col-md-4' name='saml_team_default' id='extauth-team-default'>
+        <label for='ldap-team-default'>If no team attribute is found, to which team user is assigned?</label>
+        <select class='form-control col-md-4' name='saml_team_default' id='ldap-team-default'>
           {% for team in teamsArr %}
             <option {{ team.id == App.Config.configArr.saml_team_default ? 'selected' }} value='{{ team.id }}'>{{ team.name }}</option>
           {% endfor %}
           <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>Throw error!</option>
+        </select>
+
+        <label for='ldap-user-default'>If the user doesn't exist yet, what to do?</label>
+        <select class='form-control col-md-4' name='saml_user_default' id='ldap-user-default'>
+          <option {{ 1 == App.Config.configArr.saml_user_default ? 'selected' }} value='1'>Create the user on the fly</option>
+          <option {{ 0 == App.Config.configArr.saml_user_default ? 'selected' }} value='0'>Throw error, allowing a sysadmin to create the user</option>
         </select>
 
         <label for='ldap-email'>What attribute to look for the email:</label>
@@ -809,4 +847,5 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       </div>
     </form>
 </div>
+<div id='info' data-page='sysconfig'></div>
 {% endblock body %}

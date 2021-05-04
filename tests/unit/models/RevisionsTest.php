@@ -9,40 +9,46 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Elabftw\EntityParams;
 
 class RevisionsTest extends \PHPUnit\Framework\TestCase
 {
+    private Users $Users;
+
+    private Experiments $Experiments;
+
+    private Revisions $Revisions;
+
     protected function setUp(): void
     {
         $this->Users = new Users(1, 1);
         $this->Experiments = new Experiments($this->Users, 1);
-        $this->Revisions = new Revisions($this->Experiments);
+        $this->Revisions = new Revisions($this->Experiments, 10, 100);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $this->Revisions->create('Ohaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii');
     }
 
-    public function testReadAll()
+    public function testReadAll(): void
     {
         $this->assertTrue(is_array($this->Revisions->readAll()));
     }
 
-    public function testReadCount()
+    public function testReadCount(): void
     {
         $this->assertIsInt($this->Revisions->readCount());
-        $this->Revisions = new Revisions(new Database($this->Users, 1));
+        $this->Revisions = new Revisions(new Items($this->Users, 1), 10, 100);
         $this->assertIsInt($this->Revisions->readCount());
     }
 
-    public function testRestore()
+    public function testRestore(): void
     {
-        $this->Experiment = new Experiments($this->Users, 1);
-        $new = $this->Experiment->create(new ParamsProcessor(array('id' => 0)));
-        $this->Experiment->setId($new);
-        $this->Revisions = new Revisions($this->Experiment);
+        $Experiment = new Experiments($this->Users, 1);
+        $new = $Experiment->create(new EntityParams('0'));
+        $Experiment->setId($new);
+        $this->Revisions = new Revisions($Experiment, 10, 100);
         $this->Revisions->create('Ohai');
         $this->Revisions->restore($new);
         //$this->Experiments->toggleLock();
@@ -50,8 +56,9 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
         //$this->Revisions->restore(2);
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
-        $this->Revisions->destroy(1);
+        $this->Revisions->setId(1);
+        $this->Revisions->destroy();
     }
 }

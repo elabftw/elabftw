@@ -10,63 +10,57 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use function bin2hex;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\DestroyableInterface;
-use function filter_var;
+use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Interfaces\CreateApikeyParamsInterface;
+use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\ParamsInterface;
+use Elabftw\Traits\SetIdTrait;
 use function password_hash;
 use function password_verify;
 use PDO;
-use function random_bytes;
 
 /**
  * Api keys CRUD class
  */
-class ApiKeys implements DestroyableInterface
+class ApiKeys implements CrudInterface
 {
+    use SetIdTrait;
+
     private Db $Db;
 
     private Users $Users;
 
-    public function __construct(Users $users)
+    public function __construct(Users $users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->Users = $users;
+        $this->id = $id;
     }
 
     /**
      * Create a new key for current user
-     *
-     * @param string $name the friendly name of the key
-     * @param int $canWrite readonly or readwrite?
-     * @return string the key
      */
-    public function create(string $name, int $canWrite): string
-    //public function create(ParamsProcessor $params): string
+    public function create(CreateApikeyParamsInterface $params): int
     {
-        $name = filter_var($name, FILTER_SANITIZE_STRING);
-        $apiKey = bin2hex(random_bytes(42));
-        $hash = password_hash($apiKey, PASSWORD_BCRYPT);
+        $hash = password_hash($params->getKey(), PASSWORD_BCRYPT);
 
         $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':name', $name);
+        $req->bindValue(':name', $params->getContent());
         $req->bindParam(':hash', $hash);
-        $req->bindParam(':can_write', $canWrite, PDO::PARAM_INT);
+        $req->bindValue(':can_write', $params->getCanwrite(), PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        return $apiKey;
+        return $this->Db->lastInsertId();
     }
 
     /**
      * Create a known key so we can test against it in dev mode
      * This function should only be called from the dev:populate command
-     *
-     * @param string $apiKey
-     * @return void
      */
     public function createKnown(string $apiKey): void
     {
@@ -84,10 +78,8 @@ class ApiKeys implements DestroyableInterface
 
     /**
      * Read all keys for current user
-     *
-     * @return array
      */
-    public function readAll(): array
+    public function read(ContentParamsInterface $params): array
     {
         $sql = 'SELECT id, name, created_at, hash, can_write FROM api_keys WHERE userid = :userid AND team = :team';
         $req = $this->Db->prepare($sql);
@@ -125,14 +117,18 @@ class ApiKeys implements DestroyableInterface
         throw new ImproperActionException('No corresponding API key found!');
     }
 
-    /**
-     * Destroy an api key
-     */
-    public function destroy(int $id): bool
+    public function update(ParamsInterface $params): bool
     {
-        $sql = 'DELETE FROM api_keys WHERE id = :id';
+        return false;
+    }
+
+    public function destroy(): bool
+    {
+        $sql = 'DELETE FROM api_keys WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+
         return $this->Db->execute($req);
     }
 }

@@ -26,7 +26,7 @@ $Response = new Response();
 $Response->prepare($Request);
 
 try {
-    $Saml = new Saml(new Config(), new Idps());
+    $Saml = new Saml(Config::getConfig(), new Idps());
     $settingsArr = $Saml->getSettings();
     if (empty($settingsArr['sp']['entityId'])) {
         throw new ImproperActionException('No Service Provider configured. Aborting.');

@@ -12,17 +12,19 @@ namespace Elabftw\Services;
 
 class RevisionsCleanerTest extends \PHPUnit\Framework\TestCase
 {
+    private RevisionsCleaner $RevisionsCleaner;
+
     protected function setUp(): void
     {
         $this->RevisionsCleaner = new RevisionsCleaner();
     }
 
-    public function testCleanup()
+    public function testCleanup(): void
     {
         $this->assertEquals(0, $this->RevisionsCleaner->cleanup());
     }
 
-    public function testPrune()
+    public function testPrune(): void
     {
         $this->assertEquals(0, $this->RevisionsCleaner->prune());
     }

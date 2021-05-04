@@ -16,6 +16,7 @@ use DateTime;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
@@ -167,7 +168,7 @@ class MakeTimestamp extends AbstractMake
      */
     private function getTimestampParameters(Teams $teams): array
     {
-        $teamConfigArr = $teams->read();
+        $teamConfigArr = $teams->read(new ContentParams());
         // if there is a config in the team, use that
         // otherwise use the general config if we can
         if (mb_strlen($teamConfigArr['stampprovider'] ?? '') > 2) {

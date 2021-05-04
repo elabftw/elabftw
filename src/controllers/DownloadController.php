@@ -52,6 +52,11 @@ class DownloadController implements ControllerInterface
         $this->forceDownload = $forceDownload;
     }
 
+    public function getFilePath(): string
+    {
+        return $this->filePath;
+    }
+
     public function getResponse(): Response
     {
         $Response = new BinaryFileResponse($this->filePath);

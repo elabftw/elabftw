@@ -29,14 +29,14 @@ class CacheGenerator
      */
     public function generate(): void
     {
-        $TwigEnvironment = $this->getTwig(new Config());
+        $TwigEnvironment = $this->getTwig(Config::getConfig());
         $tplDir = dirname(__DIR__, 2) . '/src/templates';
         // iterate over all the templates
         foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($tplDir), RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
             // force compilation
             if ($file->isFile()) {
                 /** @psalm-suppress InternalMethod */
-                $TwigEnvironment->loadTemplate(str_replace($tplDir . '/', '', $file));
+                $TwigEnvironment->loadTemplate(str_replace($tplDir . '/', '', $file->getFilename()));
             }
         }
     }

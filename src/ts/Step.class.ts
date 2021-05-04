@@ -5,113 +5,64 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import Crud from './Crud.class';
-import { relativeMoment, makeSortableGreatAgain } from './misc';
-import i18next from 'i18next';
+import { Payload, Method, Model, Target, Entity, Action, ResponseMsg } from './interfaces';
+import { Ajax } from './Ajax.class';
 
-export default class Step extends Crud {
-  type: string;
+export default class Step {
+  entity: Entity;
+  model: Model;
+  sender: Ajax;
 
-  constructor(type: string) {
-    super('app/controllers/Ajax.php');
-    this.type = type;
+  constructor(entity: Entity) {
+    this.entity = entity;
+    this.model = Model.Step,
+    this.sender = new Ajax();
   }
 
-  create(elem): void {
-    const id = elem.dataset.id;
-    // get body
-    const body = elem.value;
-    // fix for user pressing enter with no input
-    if (body.length > 0) {
-      this.send({
-        action: 'create',
-        what: 'step',
-        type: this.type,
-        params: {
-          itemId: id,
-          template: body,
-        },
-      }).then(() => {
-        // only reload children
-        const loadUrl = window.location.href + ' #steps_div_' + id + ' > *';
-        // reload the step list
-        $('#steps_div_' + id).load(loadUrl, function() {
-          relativeMoment();
-          makeSortableGreatAgain();
-        });
-        // clear input field
-        elem.value = '';
-      });
-    } // end if input < 0
+  create(content: string): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Create,
+      model: this.model,
+      entity: this.entity,
+      content: content,
+    };
+    return this.sender.send(payload);
   }
 
-  update(input, itemId, stepId) {
-    return this.send({
-      action: 'update',
-      what: 'step',
-      type: this.type,
-      params: {
-        template: input,
-        itemId: itemId,
-        id: stepId,
-      },
-    });
+  update(content: string, id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Update,
+      model: this.model,
+      target: Target.Body,
+      entity: this.entity,
+      content: content,
+      id : id,
+    };
+    return this.sender.send(payload);
   }
 
-  finish(elem): void {
-    // the id of the exp/item/tpl
-    const id = elem.dataset.id;
-    const stepId = elem.dataset.stepid;
-    // on the todolist we don't want to grab the type from the page
-    // because it's only steps from experiments
-    // so if the element has a data-type, take that instead
-    let itemType = this.type;
-    if (elem.dataset.type) {
-      itemType = elem.dataset.type;
-    }
-
-    this.send({
-      action: 'finish',
-      what: 'step',
-      type: itemType,
-      params: {
-        itemId: id,
-        id: stepId,
-      },
-    }).then(() => {
-      // only reload children
-      const loadUrl = window.location.href + ' #steps_div_' + id + ' > *';
-      // reload the step list
-      $('#steps_div_' + id).load(loadUrl, function() {
-        relativeMoment();
-        makeSortableGreatAgain();
-      });
-      $('#todo_step_' + stepId).prop('checked', true);
-    });
+  finish(id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Update,
+      model: this.model,
+      target: Target.Finished,
+      entity: this.entity,
+      id : id,
+    };
+    return this.sender.send(payload);
   }
 
-  destroy(elem): void {
-    // the id of the exp/item/tpl
-    const id = elem.dataset.id;
-    const stepId = elem.dataset.stepid;
-    if (confirm(i18next.t('step-delete-warning'))) {
-      this.send({
-        action: 'destroy',
-        what: 'step',
-        type: this.type,
-        params: {
-          itemId: id,
-          id: stepId,
-        },
-      }).then(() => {
-        // only reload children
-        const loadUrl = window.location + ' #steps_div_' + id + ' > *';
-        // reload the step list
-        $('#steps_div_' + id).load(loadUrl, function() {
-          relativeMoment();
-          makeSortableGreatAgain();
-        });
-      });
-    }
+  destroy(id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Destroy,
+      model: this.model,
+      entity: this.entity,
+      id : id,
+    };
+    return this.sender.send(payload);
   }
 }

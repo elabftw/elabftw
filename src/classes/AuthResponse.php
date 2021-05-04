@@ -28,7 +28,7 @@ class AuthResponse
 
     public bool $isAnonymous = false;
 
-    public ?string $mfaSecret;
+    public ?string $mfaSecret = null;
 
     public bool $hasVerifiedMfa = false;
 

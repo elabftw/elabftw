@@ -387,7 +387,7 @@ class ApiController implements ControllerInterface
      * @apiName GetTemplate
      * @apiGroup Entity
      * @apiDescription Get the data from templates or just one template if id is set.
-     * @apiUse GetTemplate
+     * @apiUse GetEntity
      * @apiExample {python} Python example
      * import elabapy
      * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
@@ -1030,7 +1030,7 @@ class ApiController implements ControllerInterface
      * import elabapy
      * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
      * # upload your-file.jpg to experiment 42
-     * with open('your-file.jpg', 'r') as myfile:
+     * with open('your-file.jpg', 'r+b') as myfile:
      *     params = { 'file': myfile }
      *     print(manager.upload_to_experiment(42, params))
      * # upload your-file.jpg to database item 1337
@@ -1048,8 +1048,8 @@ class ApiController implements ControllerInterface
      */
     private function uploadFile(): Response
     {
-        $this->Entity->Uploads->create(new CreateUpload($this->Request));
+        $id = $this->Entity->Uploads->create(new CreateUpload($this->Request));
 
-        return new JsonResponse(array('result' => 'success'));
+        return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
 }

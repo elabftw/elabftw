@@ -127,6 +127,9 @@ try {
         $App->Users->userData['is_sysadmin'] = 0;
         $App->Users->userData['show_team'] = 1;
         $App->Users->userData['show_team_templates'] = 0;
+        $App->Users->userData['show_public'] = 0;
+        $App->Users->userData['lang'] = $App->Config->configArr['lang'];
+        $App->Users->userData['use_isodate'] = '0';
     }
 
     // START i18n

@@ -265,10 +265,13 @@ class Tags implements CrudInterface
         $tagIds = array_column($results, 'id');
 
         // look for item ids that have all the tags not only one of them
+        // note: you can't have a parameter for the IN clause
         $itemIds = array();
         $sql = 'SELECT item_id FROM `tags2entity` WHERE tag_id IN (' . implode(',', $tagIds) . ')
-            AND item_type = "' . $this->Entity->type . '" GROUP By item_id HAVING COUNT(DISTINCT tag_id) = ' . count($tagIds);
+            AND item_type = :type GROUP BY item_id HAVING COUNT(DISTINCT tag_id) = :count';
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':type', $this->Entity->type, PDO::PARAM_STR);
+        $req->bindValue(':count', count($tagIds), PDO::PARAM_INT);
         $req->execute();
         $results = $req->fetchAll();
         if ($results === false) {

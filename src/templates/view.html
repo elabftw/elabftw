@@ -122,10 +122,12 @@
     {% endif %}
 
     <!-- BLOXBERG BUTTON -->
-    <a href='#' class='elab-tooltip mr-1' data-action='bloxberg'>
-      <span>{{ 'Add to blockchain'|trans }}</span>
-      <i class='fas fa-cubes fa-2x'></i>
-    </a>
+    {% if not Entity.isReadOnly %}
+      <a href='#' class='elab-tooltip mr-1' data-action='bloxberg'>
+        <span>{{ 'Add to blockchain'|trans }}</span>
+        <i class='fas fa-cubes fa-2x'></i>
+      </a>
+    {% endif %}
   </div>
 
   <!-- build the tag array -->

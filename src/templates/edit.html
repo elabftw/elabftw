@@ -101,9 +101,7 @@
     </a>
     <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
       <!-- MANAGE PERMISSIONS -->
-      {% if Entity.type == 'items' or Entity.entityData.userid == App.Users.userData.userid or App.Session.get('is_admin') %}
-        <a class='clickable dropdown-item modalToggle' data-modal='permModal'><i class='fas fa-share-alt fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
-      {% endif %}
+      <a class='clickable dropdown-item modalToggle' data-modal='permModal'><i class='fas fa-share-alt fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
       <!-- TRANSFER OWNERSHIP -->
       {% if Entity.type == 'items' and Entity.entityData.userid == App.Users.userData.userid or App.Session.get('is_admin') %}
         <a class='clickable dropdown-item modalToggle' data-modal='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer Ownership'|trans }}</a>

@@ -200,7 +200,7 @@ abstract class AbstractEntity implements CrudInterface
             $teamFilter = ' AND users2teams.teams_id = entity.team';
         }
         // add pub/org/team filter
-        $sqlPublicOrg = "((entity.canread = 'public' OR entity.canread = 'organization') AND entity.userid = :userid) OR ";
+        $sqlPublicOrg = "(entity.canread = 'public' OR entity.canread = 'organization') OR ";
         if ($this->Users->userData['show_public']) {
             $sqlPublicOrg = "entity.canread = 'public' OR entity.canread = 'organization' OR ";
         }

@@ -103,7 +103,7 @@
       <!-- MANAGE PERMISSIONS -->
       <a class='clickable dropdown-item modalToggle' data-modal='permModal'><i class='fas fa-share-alt fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
       <!-- TRANSFER OWNERSHIP -->
-      {% if Entity.type == 'items' and Entity.entityData.userid == App.Users.userData.userid or App.Session.get('is_admin') %}
+      {% if Entity.type == 'items' and (Entity.entityData.userid == App.Users.userData.userid or App.Session.get('is_admin')) %}
         <a class='clickable dropdown-item modalToggle' data-modal='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer Ownership'|trans }}</a>
       {% endif %}
       <!-- SWITCH EDITOR -->

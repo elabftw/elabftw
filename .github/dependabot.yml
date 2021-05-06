@@ -1,0 +1,20 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: "02:00"
+  open-pull-requests-limit: 10
+  target-branch: hypernext
+  ignore:
+  - dependency-name: snyk
+    versions:
+    - ">= 0"
+- package-ecosystem: composer
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: "02:00"
+  open-pull-requests-limit: 10
+  target-branch: hypernext

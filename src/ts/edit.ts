@@ -216,9 +216,9 @@ document.addEventListener('DOMContentLoaded', () => {
       method: Method.POST,
       action: Action.Update,
       model: entity.type,
+      entity: entity,
       content: value,
-      targt: Target.UserId,
-      id: entity.id,
+      target: Target.UserId,
     };
     AjaxC.send(payload).then((json) => {
       if (json.res) {

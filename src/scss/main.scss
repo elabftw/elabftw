@@ -7,6 +7,7 @@
  */
 $darkgray: #343434;
 $maingray: #595959;
+$verylightgray: #f2f2f2;
 $lightgray: #626262;
 $lightgraybutnottoolight: #d6d6d6;
 $bordersgray: #dcdddc;
@@ -547,7 +548,7 @@ tr:nth-child(even) {
 }
 
 tr:nth-child(odd) {
-    background-color: $lightgray;
+    background-color: $verylightgray;
 }
 
 /* OVERLAY */

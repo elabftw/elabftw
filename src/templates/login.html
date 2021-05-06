@@ -142,7 +142,7 @@
         <input type='hidden' name='auth_type' value='anon'>
         {{ App.Csrf.getHiddenInput|raw }}
         <div class='form-group mx-auto col-md-4'>
-          <label for='anon_login_select'></label>
+          <label for='anon_login_select' class='sr-only'>{{ 'Select a team'|trans }}</label>
           <div class='input-group mb-2'>
             <div class='input-group-prepend'>
               <div class='input-group-text'>{{ 'Select a team'|trans }}</div>

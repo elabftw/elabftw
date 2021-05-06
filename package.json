@@ -34,7 +34,7 @@
     "popper.js": "1.16.*",
     "prismjs": "^1.23.0",
     "sass": "^1.23.7",
-    "tinymce": "^5.6.0"
+    "tinymce": "^5.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",

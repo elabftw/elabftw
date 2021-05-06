@@ -165,11 +165,6 @@ try {
         $Entity->updatePermissions($Request->request->get('rw'), $Request->request->get('value'));
     }
 
-    // UPDATE OWNERSHIP
-    if ($Request->request->has('updateOwnership')) {
-        $Entity->updateOwnership((int) $Request->request->get('value'));
-    }
-
     // CREATE UPLOAD
     if ($Request->request->has('upload')) {
         $Entity->Uploads->create(new CreateUpload($Request));

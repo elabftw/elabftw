@@ -79,7 +79,7 @@
       <div class='modal-body'>
         <!-- SELECT USER -->
         <label for='new_owner'>{{ 'New owner'|trans }}</label>
-        <select id='new_owner' class='updateOwner form-control'>
+        <select id='new_owner' class='form-control'>
           {% for user in Entity.Users.readAllFromTeam %}
             <option value='{{ user.userid }}'
             {{ Entity.entityData.userid == user.userid ? ' selected' }}

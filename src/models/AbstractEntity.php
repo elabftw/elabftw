@@ -363,6 +363,9 @@ abstract class AbstractEntity implements CrudInterface
                 }
                 $content = $params->getMetadata();
                 break;
+            case 'userid':
+                $content = $params->getUserId();
+                break;
             default:
                 throw new ImproperActionException('Invalid update target');
         }

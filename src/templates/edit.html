@@ -66,6 +66,34 @@
   </div>
 </div>
 
+<!-- Modal for ownership transfer -->
+<div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='ownerModalLabel'>{{ 'Transfer ownership'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <!-- SELECT USER -->
+        <label for='new_owner'>{{ 'New owner'|trans }}</label>
+        <select id='new_owner' class='form-control'>
+          {% for user in Entity.Users.readAllFromTeam %}
+            <option value='{{ user.userid }}'
+            {{ Entity.entityData.userid == user.userid ? ' selected' }}
+            >{{ user.fullname|raw }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
   <div class='dropdown'>
     <a class='clickable align-right' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
@@ -74,6 +102,10 @@
     <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
       <!-- MANAGE PERMISSIONS -->
       <a class='clickable dropdown-item modalToggle' data-modal='permModal'><i class='fas fa-share-alt fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
+      <!-- TRANSFER OWNERSHIP -->
+      {% if Entity.type == 'items' and (Entity.entityData.userid == App.Users.userData.userid or App.Session.get('is_admin')) %}
+        <a class='clickable dropdown-item modalToggle' data-modal='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer Ownership'|trans }}</a>
+      {% endif %}
       <!-- SWITCH EDITOR -->
       <a class='dropdown-item switchEditor' id='iHazEditor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</a>
       <!-- REVISIONS -->

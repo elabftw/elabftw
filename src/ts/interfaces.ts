@@ -96,6 +96,7 @@ enum Target {
   RealName = 'real_name',
   Title = 'title',
   Unreference = 'unreference',
+  UserId = 'userid',
 }
 
 interface Entity {

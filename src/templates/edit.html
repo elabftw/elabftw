@@ -115,9 +115,12 @@
     </div>
     <!-- STAR RATING -->
     <div class='col-md-3' style='margin-top:15px'>
-      {% for i in range(1, 5) %}
-      <input data-rating='{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Entity.entityData.rating == i ? ' checked=checked' }} />
-      {% endfor %}
+      <fieldset>
+        <legend class='sr-only'>{{ 'Rating'|trans }}</legend>
+        {% for i in range(1, 5) %}
+        <input aria-label='{{ 'Rating'|trans }}' data-rating='{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Entity.entityData.rating == i ? ' checked=checked' }} />
+        {% endfor %}
+      </fieldset>
     </div>
 
   </div>
@@ -149,9 +152,9 @@
 
   <!-- BODY -->
   {% if editor == 'md' %}
-    <textarea id='body_area' class='markdown-textarea' data-language='{{ lang }}' name='body'>{{ Entity.entityData.body|raw }}</textarea>
+  <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ lang }}' name='body'>{{ Entity.entityData.body|raw }}</textarea>
   {% else %}
-    <textarea id='body_area' class='mceditable invisible' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
+    <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
   {% endif %}
 
   <div class='mt-4 text-center'>

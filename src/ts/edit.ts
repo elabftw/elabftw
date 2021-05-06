@@ -39,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // add the title in the page name (see #324)
   document.title = (document.getElementById('title_input') as HTMLInputElement).value + ' - eLabFTW';
 
-  const AjaxC = new Ajax();
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
 
@@ -212,15 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // TRANSFER OWNERSHIP
   document.getElementById('new_owner').addEventListener('change', () => {
     const value = (document.getElementById('new_owner') as HTMLInputElement).value;
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Update,
-      model: entity.type,
-      entity: entity,
-      content: value,
-      target: Target.UserId,
-    };
-    AjaxC.send(payload).then((json) => {
+    EntityC.update(entity.id, Target.UserId, value).then(json => {
       if (json.res) {
         window.location.reload();
       }
@@ -368,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         target: Target.List,
       };
-      AjaxC.send(payload).then(json => callback(json.value));
+      (new Ajax()).send(payload).then(json => callback(json.value));
     },
     // use a custom function for the save button in toolbar
     save_onsavecallback: (): void => quickSave(entity), // eslint-disable-line @typescript-eslint/camelcase

@@ -2098,10 +2098,10 @@ anymatch@~3.1.1:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
-apidoc-core@^0.12.0:
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/apidoc-core/-/apidoc-core-0.12.0.tgz#96e5c04c17b92c288664ef3c8aa4c78cbfacccb6"
-  integrity sha512-VMhkJWz5IAyvWM0RnEbKNi1qe8se+id3/Ki3H/ePM8ih0KYTfaaSDxqo2w4uIVB1UVVKFvrTWyYUyQs7CEcoKQ==
+apidoc-core@^0.15.0:
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/apidoc-core/-/apidoc-core-0.15.0.tgz#4dfcc76cc76694bd4457ccbd8655c03a87a2e2a5"
+  integrity sha512-CJNjRs6R8nc774vUtbv9Uakos5/JbEFpBXgE6oiWUX7OpjI1s04xPuULEoQQJyQM427r5hr55GSHAm5/LRc5TQ==
   dependencies:
     fs-extra "^9.0.1"
     glob "^7.1.6"
@@ -2110,12 +2110,12 @@ apidoc-core@^0.12.0:
     lodash "^4.17.20"
     semver "~7.3.2"
 
-apidoc@^0.26.0:
-  version "0.26.0"
-  resolved "https://registry.yarnpkg.com/apidoc/-/apidoc-0.26.0.tgz#7073ed5c92f06a22a611569985f578231c26e3a9"
-  integrity sha512-IEw/Z7HMMbjeVjK2sZvZSwAln8AqalLzf3qLDtkcedXVhdxGm6W7UgIW6fshegqNTMLzm8CFEMi4Lxbeu0xKTw==
+apidoc@^0.27.1:
+  version "0.27.1"
+  resolved "https://registry.yarnpkg.com/apidoc/-/apidoc-0.27.1.tgz#2931dca6bb80a49154eb8375f6e49942f0d17ec8"
+  integrity sha512-CqbsmM1ew7LC2Lg2USaSWPxdtsIp7wb3dzR2DKHYvVSo+dYIY3K7oBsup5bpi6D1OkthTUxXvWvcrDyv7lPcnw==
   dependencies:
-    apidoc-core "^0.12.0"
+    apidoc-core "^0.15.0"
     commander "^2.20.0"
     fs-extra "^9.0.1"
     handlebars "^4.7.6"

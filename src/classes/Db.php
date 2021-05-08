@@ -95,7 +95,6 @@ final class Db
      * Prepare a query
      *
      * @param string $sql The SQL query
-     * @return PDOStatement
      */
     public function prepare(string $sql): PDOStatement
     {
@@ -108,8 +107,6 @@ final class Db
      *
      * @param PDOStatement $req
      * @param array<mixed>|null $arr optional array to execute
-     *
-     * @return bool
      */
     public function execute(PDOStatement $req, ?array $arr = null): bool
     {
@@ -118,7 +115,7 @@ final class Db
         } catch (PDOException $e) {
             throw new DatabaseErrorException('Error with SQL query', 515, $e);
         }
-        if ($res !== true) {
+        if (!$res) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
         return $res;
@@ -128,7 +125,6 @@ final class Db
      * Make a simple query
      *
      * @param string $sql The SQL query
-     * @return PDOStatement
      */
     public function q(string $sql): PDOStatement
     {
@@ -142,8 +138,6 @@ final class Db
 
     /**
      * Return the last id inserted
-     *
-     * @return int
      */
     public function lastInsertId(): int
     {
@@ -152,8 +146,6 @@ final class Db
 
     /**
      * Get number of SQL queries for the page
-     *
-     * @return int
      */
     public function getNumberOfQueries(): int
     {

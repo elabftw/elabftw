@@ -17,11 +17,8 @@ use Symfony\Component\HttpFoundation\Request;
 // todo should be called CreateUploadParams in Params namespace
 final class CreateUpload implements CreateUploadParamsInterface
 {
-    private Request $Request;
-
-    public function __construct(Request $request)
+    public function __construct(private Request $Request)
     {
-        $this->Request = $request;
     }
 
     public function getFilename(): string

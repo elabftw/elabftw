@@ -36,7 +36,7 @@ class Filter
 
     public static function toBinary(string $input): int
     {
-        return $input !== '' ? 1 : 0;
+        return $input ? 1 : 0;
     }
 
     /**

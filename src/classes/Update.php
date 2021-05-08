@@ -147,8 +147,6 @@ class Update
     /**
      * Remove revision without corresponding experiment and add
      * missing constraints when users employed the structure.sql
-     *
-     * @return void
      */
     private function fixExperimentsRevisions(): void
     {

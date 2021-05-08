@@ -112,7 +112,6 @@ class Uploads implements CrudInterface
      * Called from ImportZip class
      *
      * @param string $filePath absolute path to the file
-     * @param string $comment
      */
     public function createFromLocalFile(string $filePath, string $comment): void
     {

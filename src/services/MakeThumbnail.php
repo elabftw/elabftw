@@ -126,7 +126,7 @@ final class MakeThumbnail
         try {
             $image = new Imagick();
             $image->setBackgroundColor('white');
-        } catch (Exception $e) {
+        } catch (Exception) {
             return;
         }
         $image->readImage($this->filePath);
@@ -152,7 +152,7 @@ final class MakeThumbnail
         // originally introduced due to issue #415.
         try {
             $image = new Gmagick($this->filePath);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return;
         }
 

@@ -20,8 +20,6 @@ trait CsvTrait
 {
     /**
      * Create a CSV file from header and rows
-     *
-     * @return string
      */
     public function getCsv(): string
     {
@@ -42,15 +40,11 @@ trait CsvTrait
 
     /**
      * Get the column names
-     *
-     * @return array
      */
     abstract protected function getHeader(): array;
 
     /**
      * Get all the rows
-     *
-     * @return array
      */
     abstract protected function getRows(): array;
 }

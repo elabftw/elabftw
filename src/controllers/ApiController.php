@@ -554,8 +554,6 @@ class ApiController implements ControllerInterface
 
     /**
      * Get events from the team
-     *
-     * @return Response
      */
     private function getEvents(): Response
     {
@@ -612,7 +610,7 @@ class ApiController implements ControllerInterface
         try {
             // make sure we have read access to that entity
             $Entity->canOrExplode('read');
-        } catch (IllegalActionException $e) {
+        } catch (IllegalActionException) {
             return new Response('You do not have permission to access this resource.', 403);
         }
         $filePath = dirname(__DIR__, 2) . '/uploads/' . $uploadData['long_name'];
@@ -656,7 +654,6 @@ class ApiController implements ControllerInterface
      *         ]
      *     }
      */
-
     /**
      * @api {get} /status Get the list of status for current team
      * @apiName GetStatus
@@ -695,8 +692,6 @@ class ApiController implements ControllerInterface
 
     /**
      * Get items_types or status list for current team
-     *
-     * @return Response
      */
     private function getCategory(): Response
     {

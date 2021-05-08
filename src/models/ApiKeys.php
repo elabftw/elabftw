@@ -95,9 +95,6 @@ class ApiKeys implements CrudInterface
 
     /**
      * Get a user from an API key
-     *
-     * @param string $apiKey
-     * @return array
      */
     public function readFromApiKey(string $apiKey): array
     {

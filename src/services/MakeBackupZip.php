@@ -126,7 +126,7 @@ class MakeBackupZip extends AbstractMake
             return $this->Entity->entityData['category'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
         }
 
-        throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', get_class($this->Entity)));
+        throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', $this->Entity::class));
     }
 
     /**

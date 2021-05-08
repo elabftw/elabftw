@@ -33,7 +33,6 @@ class Permissions
     /**
      * Constructor
      *
-     * @param Users $users
      * @param array<string, mixed> $item
      */
     public function __construct(Users $users, array $item)

@@ -52,7 +52,7 @@ class UpdateTo34 extends Command
         }
         try {
             $Sql->execFile('prepare34-b.sql');
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $output->writeln(array(
                 'OK',
             ));

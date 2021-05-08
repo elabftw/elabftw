@@ -81,7 +81,7 @@ class Tools
         try {
             $converter = new CommonMarkConverter(array('allow_unsafe_links' => false, 'max_nesting_level' => 42), $environment);
             return trim($converter->convertToHtml($md), "\n");
-        } catch (UnexpectedEncodingException $e) {
+        } catch (UnexpectedEncodingException) {
             // fix for incorrect utf8 encoding, just return md and hope it's html
             // so at least the thing is displayed instead of triggering a fatal error
             return $md;
@@ -136,7 +136,6 @@ class Tools
      * Show the units in human format from bytes.
      *
      * @param int $bytes size in bytes
-     * @return string
      */
     public static function formatBytes(int $bytes): string
     {
@@ -182,7 +181,6 @@ class Tools
      * Display a generic error message
      *
      * @param bool $permission show the out of reach message for permission message
-     * @return string
      */
     public static function error(bool $permission = false): string
     {
@@ -196,7 +194,6 @@ class Tools
      * Return a lang to use with fullcalendar from the pref
      *
      * @param string $lang 'pt_BR' or 'fr_FR'
-     * @return string
      */
     public static function getCalendarLang(string $lang): string
     {
@@ -320,7 +317,6 @@ class Tools
      * @param string $andor behavior of the space character
      * @param string $column the column to search into
      * @param bool $isStrict do we add wildcard characters on each side of the query?
-     * @return string
      */
     public static function getSearchSql(string $query, string $andor = 'and', string $column = '', bool $isStrict = false): string
     {
@@ -352,7 +348,6 @@ class Tools
      * Get an array of integer with valid number of items per page based on the current limit
      *
      * @param int $input the current limit for the page
-     * @return array
      */
     public static function getLimitOptions(int $input): array
     {
@@ -377,7 +372,6 @@ class Tools
      * Transform a query object in a query string
      *
      * @param array<string, mixed> $query the query array given by Request
-     * @return string
      */
     public static function qFilter(array $query): string
     {

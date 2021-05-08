@@ -60,7 +60,7 @@ class ExternalAuth implements AuthInterface
         $Users = new Users();
         try {
             $Users->populateFromEmail($email);
-        } catch (ResourceNotFoundException $e) {
+        } catch (ResourceNotFoundException) {
             // the user doesn't exist yet in the db
             // what do we do? Lookup the config setting for that case
             if ($this->configArr['saml_user_default'] === '0') {

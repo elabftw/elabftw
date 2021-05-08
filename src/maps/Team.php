@@ -292,7 +292,6 @@ class Team implements MapInterface
      * Source can be sql query or post data
      *
      * @param array<string, mixed> $source
-     * @return void
      */
     public function hydrate(array $source): void
     {

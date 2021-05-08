@@ -17,8 +17,6 @@ interface CleanerInterface
 {
     /**
      * Cleanup
-     *
-     * @return int
      */
     public function cleanup(): int;
 }

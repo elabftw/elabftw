@@ -79,7 +79,7 @@ class LocalAuth implements AuthInterface
         try {
             $Users->populateFromEmail($this->email);
             // if the email is not found, transform the exception in the general invalidcredentials error
-        } catch (ResourceNotFoundException $e) {
+        } catch (ResourceNotFoundException) {
             throw new InvalidCredentialsException();
         }
         return (int) $Users->userData['userid'];

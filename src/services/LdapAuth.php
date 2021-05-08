@@ -56,7 +56,7 @@ class LdapAuth implements AuthInterface
         $Teams = new Teams($Users);
         try {
             $Users->populateFromEmail($this->email);
-        } catch (ResourceNotFoundException $e) {
+        } catch (ResourceNotFoundException) {
             // the user doesn't exist yet in the db
             // what do we do? Lookup the config setting for that case
             if ($this->configArr['saml_user_default'] === '0') {
@@ -75,10 +75,8 @@ class LdapAuth implements AuthInterface
                     throw new ImproperActionException('Could not find team ID to assign user!');
                 }
                 $teamFromLdap = array($teamId);
-            } else {
-                if (is_string($teamFromLdap)) {
-                    $teamFromLdap = array($teamFromLdap);
-                }
+            } elseif (is_string($teamFromLdap)) {
+                $teamFromLdap = array($teamFromLdap);
             }
             // normalize the team(s)
             $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teamFromLdap)[0];

@@ -30,12 +30,9 @@ class ApiKeys implements CrudInterface
 
     private Db $Db;
 
-    private Users $Users;
-
-    public function __construct(Users $users, ?int $id = null)
+    public function __construct(private Users $Users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->Users = $users;
         $this->id = $id;
     }
 

@@ -15,19 +15,10 @@ use Elabftw\Services\Check;
 
 final class StatusParams extends ContentParams implements StatusParamsInterface
 {
-    private string $color;
-
-    private bool $isTimestampable;
-
-    private bool $isDefault;
-
-    public function __construct(string $content, string $color, bool $isTimestampable = false, bool $isDefault = false)
+    public function __construct(string $content, private string $color, private bool $isTimestampable = false, private bool $isDefault = false)
     {
         parent::__construct($content);
         $this->content = $content;
-        $this->color = $color;
-        $this->isTimestampable = $isTimestampable;
-        $this->isDefault = $isDefault;
     }
 
     public function getColor(): string

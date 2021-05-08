@@ -23,11 +23,8 @@ use function substr;
  */
 class UploadsCleaner implements CleanerInterface
 {
-    private FilesystemInterface $filesystem;
-
-    public function __construct(FilesystemInterface $filesystem)
+    public function __construct(private FilesystemInterface $filesystem)
     {
-        $this->filesystem = $filesystem;
     }
 
     /**

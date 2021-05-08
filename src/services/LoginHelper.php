@@ -24,16 +24,10 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  */
 class LoginHelper
 {
-    private AuthResponse $AuthResponse;
-
-    private SessionInterface $Session;
-
     private Db $Db;
 
-    public function __construct(AuthResponse $authResponse, SessionInterface $session)
+    public function __construct(private AuthResponse $AuthResponse, private SessionInterface $Session)
     {
-        $this->AuthResponse = $authResponse;
-        $this->Session = $session;
         $this->Db = Db::getConnection();
     }
 

@@ -27,6 +27,5 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         Rector\SOLID\Rector\ClassMethod\UseInterfaceOverImplementationInConstructorRector::class,
         Rector\DeadCode\Rector\Concat\RemoveConcatAutocastRector::class,
         Rector\DeadCode\Rector\Cast\RecastingRemovalRector::class,
-        Rector\Php80\Rector\Class_\ClassPropertyAssignToConstructorPromotionRector::class,
     ));
 };

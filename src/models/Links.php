@@ -24,14 +24,11 @@ class Links implements CrudInterface
 {
     use SetIdTrait;
 
-    public AbstractEntity $Entity;
-
     protected Db $Db;
 
-    public function __construct(AbstractEntity $entity, ?int $id = null)
+    public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->Entity = $entity;
         $this->id = $id;
     }
 

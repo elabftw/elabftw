@@ -32,16 +32,13 @@ class LocalAuth implements AuthInterface
 
     private int $userid;
 
-    private string $password = '';
-
     private AuthResponse $AuthResponse;
 
-    public function __construct(string $email, string $password)
+    public function __construct(string $email, private string $password)
     {
         $this->Db = Db::getConnection();
         $this->email = Filter::sanitize($email);
         $this->userid = $this->getUseridFromEmail();
-        $this->password = $password;
         $this->AuthResponse = new AuthResponse('local');
     }
 

@@ -28,12 +28,9 @@ class DownloadController implements ControllerInterface
     // the human-friendly name that we will give to the downloaded file */
     private string $realName = 'unnamed_file';
 
-    // do we tell the browser to force the download?
-    private bool $forceDownload = false;
-
     private string $filePath;
 
-    public function __construct(string $longName, string $realName = null, bool $forceDownload = false)
+    public function __construct(string $longName, string $realName = null, private bool $forceDownload = false)
     {
         // Remove any path info to avoid hacking by adding relative path, etc.
         $longName = Filter::forFilesystem(basename($longName));
@@ -49,7 +46,6 @@ class DownloadController implements ControllerInterface
         if (empty($this->realName)) {
             $this->realName = 'unnamed_file';
         }
-        $this->forceDownload = $forceDownload;
     }
 
     public function getFilePath(): string

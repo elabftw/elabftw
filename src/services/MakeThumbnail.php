@@ -54,15 +54,12 @@ final class MakeThumbnail
         'application/postscript',
     );
 
-    private string $filePath;
-
     private string $thumbPath;
 
     private string $mime;
 
-    public function __construct(string $filePath)
+    public function __construct(private string $filePath)
     {
-        $this->filePath = $filePath;
         // make sure we can read the file
         if (is_readable($this->filePath) === false) {
             throw new FilesystemErrorException('File not found! (' . substr($this->filePath, 0, 42) . '…)');

@@ -27,8 +27,6 @@ class UserPreferences implements MapInterface
 {
     private Db $Db;
 
-    private int $id;
-
     private int $limit = 15;
 
     private string $displaySize = 'lg';
@@ -81,9 +79,8 @@ class UserPreferences implements MapInterface
 
     private string $defaultWrite = 'user';
 
-    public function __construct(int $id)
+    public function __construct(private int $id)
     {
-        $this->id = $id;
         $this->Db = Db::getConnection();
         $this->hydrate($this->read());
     }

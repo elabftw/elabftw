@@ -25,18 +25,15 @@ abstract class AbstractImport
 
     protected UploadedFile $UploadedFile;
 
-    protected Users $Users;
-
     // the item type category or userid where we do the import
     protected int $target;
 
     // read permission for the imported items
     protected string $canread;
 
-    public function __construct(Users $users, Request $request)
+    public function __construct(protected Users $Users, Request $request)
     {
         $this->Db = Db::getConnection();
-        $this->Users = $users;
         $this->target = (int) $request->request->get('target');
         $this->canread = Check::visibility($request->request->get('visibility') ?? '');
         $this->UploadedFile = $request->files->all()['file'];

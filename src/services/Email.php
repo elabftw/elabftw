@@ -32,14 +32,8 @@ class Email
 {
     public string $footer;
 
-    private Config $Config;
-
-    private Users $Users;
-
-    public function __construct(Config $config, Users $users)
+    public function __construct(private Config $Config, private Users $Users)
     {
-        $this->Config = $config;
-        $this->Users = $users;
         $this->footer = $this->makeFooter();
     }
 

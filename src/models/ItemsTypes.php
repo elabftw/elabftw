@@ -24,12 +24,9 @@ class ItemsTypes extends AbstractEntity
 {
     use SortableTrait;
 
-    private int $team;
-
-    public function __construct(int $team, ?int $id = null)
+    public function __construct(private int $team, ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->team = $team;
         $this->type = 'items_types';
         if ($id !== null) {
             $this->setId($id);

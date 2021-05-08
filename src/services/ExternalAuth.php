@@ -24,18 +24,9 @@ class ExternalAuth implements AuthInterface
 {
     private AuthResponse $AuthResponse;
 
-    private array $configArr;
-
-    private Logger $log;
-
-    private array $serverParams;
-
-    public function __construct(array $configArr, array $serverParams, Logger $log)
+    public function __construct(private array $configArr, private array $serverParams, private Logger $log)
     {
         $this->AuthResponse = new AuthResponse('external');
-        $this->configArr = $configArr;
-        $this->serverParams = $serverParams;
-        $this->log = $log;
     }
 
     public function tryAuth(): AuthResponse

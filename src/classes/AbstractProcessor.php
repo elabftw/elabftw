@@ -54,11 +54,8 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     protected array $extra = array();
 
-    private Users $Users;
-
-    public function __construct(Users $users, Request $request)
+    public function __construct(private Users $Users, Request $request)
     {
-        $this->Users = $users;
         $this->process($request);
     }
 

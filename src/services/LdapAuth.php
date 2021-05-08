@@ -24,22 +24,13 @@ use LdapRecord\Connection;
  */
 class LdapAuth implements AuthInterface
 {
-    private Connection $connection;
-
     private string $email = '';
-
-    private string $password = '';
 
     private AuthResponse $AuthResponse;
 
-    private array $configArr;
-
-    public function __construct(Connection $connection, array $configArr, string $email, string $password)
+    public function __construct(private Connection $connection, private array $configArr, string $email, private string $password)
     {
-        $this->connection = $connection;
-        $this->configArr = $configArr;
         $this->email = Filter::sanitize($email);
-        $this->password = $password;
         $this->AuthResponse = new AuthResponse('ldap');
     }
 

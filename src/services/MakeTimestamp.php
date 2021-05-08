@@ -46,8 +46,6 @@ class MakeTimestamp extends AbstractMake
     /** @var Experiments $Entity */
     protected $Entity;
 
-    private Config $Config;
-
     private string $pdfPath = '';
 
     // name of the pdf (elabid-timestamped.pdf)
@@ -71,12 +69,10 @@ class MakeTimestamp extends AbstractMake
     /**
      * Pdf is generated on instantiation and after you need to call timestamp()
      */
-    public function __construct(Config $config, Teams $teams, Experiments $entity)
+    public function __construct(private Config $Config, Teams $teams, Experiments $entity)
     {
         parent::__construct($entity);
         $this->Entity->canOrExplode('write');
-
-        $this->Config = $config;
 
         // initialize with info from config
         $this->stampParams = $this->getTimestampParameters($teams);

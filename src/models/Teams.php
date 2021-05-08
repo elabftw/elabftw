@@ -30,14 +30,11 @@ class Teams implements ReadableInterface, DestroyableInterface
 {
     use SetIdTrait;
 
-    public Users $Users;
-
     protected Db $Db;
 
-    public function __construct(Users $users, ?int $id = null)
+    public function __construct(public Users $Users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->Users = $users;
         $this->id = $id;
     }
 

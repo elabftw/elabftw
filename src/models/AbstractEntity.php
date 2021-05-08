@@ -52,8 +52,6 @@ abstract class AbstractEntity implements CrudInterface
 
     public Uploads $Uploads;
 
-    public Users $Users;
-
     public Pins $Pins;
 
     // experiments or items
@@ -89,7 +87,7 @@ abstract class AbstractEntity implements CrudInterface
      *
      * @param int|null $id the id of the entity
      */
-    public function __construct(Users $users, ?int $id = null)
+    public function __construct(public Users $Users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
 
@@ -97,7 +95,6 @@ abstract class AbstractEntity implements CrudInterface
         $this->Steps = new Steps($this);
         $this->Tags = new Tags($this);
         $this->Uploads = new Uploads($this);
-        $this->Users = $users;
         $this->Comments = new Comments($this, new Email(Config::getConfig(), $this->Users));
         $this->TeamGroups = new TeamGroups($this->Users);
         $this->Pins = new Pins($this);
@@ -463,9 +460,6 @@ abstract class AbstractEntity implements CrudInterface
         }
         if (empty($this->entityData) && !isset($item)) {
             $this->populate();
-            if (!($this->entityData !== null)) {
-                return array('read' => false, 'write' => false);
-            }
         }
         // don't try to read() again if we have the item (for show where there are several items to check)
         if (!isset($item)) {

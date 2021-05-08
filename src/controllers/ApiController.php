@@ -46,8 +46,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class ApiController implements ControllerInterface
 {
-    private App $App;
-
     private Request $Request;
 
     /** @psalm-suppress PropertyNotSetInConstructor */
@@ -78,10 +76,9 @@ class ApiController implements ControllerInterface
     // used by backupzip to get the period
     private string $param;
 
-    public function __construct(App $app)
+    public function __construct(private App $App)
     {
-        $this->App = $app;
-        $this->Request = $app->Request;
+        $this->Request = $App->Request;
         // Check if the Authorization Token was sent along
         if (!$this->Request->server->has('HTTP_AUTHORIZATION')) {
             throw new UnauthorizedException('No access token provided!');

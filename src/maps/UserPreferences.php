@@ -69,6 +69,8 @@ class UserPreferences implements MapInterface
 
     private int $incFilesPdf = 1;
 
+    private int $appendPdfs = 0;
+
     private int $chemEditor = 0;
 
     private int $jsonEditor = 0;
@@ -112,7 +114,8 @@ class UserPreferences implements MapInterface
             pdf_format = :new_pdf_format,
             use_markdown = :new_use_markdown,
             use_isodate = :new_use_isodate,
-            inc_files_pdf = :new_inc_files_pdf
+            inc_files_pdf = :new_inc_files_pdf,
+            append_pdfs = :new_append_pdfs
             WHERE userid = :userid;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':new_limit', $this->limit);
@@ -140,6 +143,7 @@ class UserPreferences implements MapInterface
         $req->bindParam(':new_use_markdown', $this->useMarkdown);
         $req->bindParam(':new_use_isodate', $this->useIsodate);
         $req->bindParam(':new_inc_files_pdf', $this->incFilesPdf);
+        $req->bindParam(':new_append_pdfs', $this->appendPdfs);
         $req->bindParam(':userid', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
@@ -236,6 +240,11 @@ class UserPreferences implements MapInterface
         $this->incFilesPdf = Filter::toBinary($setting);
     }
 
+    final public function setAppendPdfs(string $setting): void
+    {
+        $this->appendPdfs = Filter::toBinary($setting);
+    }
+
     final public function setChemEditor(string $setting): void
     {
         $this->chemEditor = Filter::toBinary($setting);
@@ -292,6 +301,7 @@ class UserPreferences implements MapInterface
         $this->setUseMarkdown($source['use_markdown'] ?? '0');
         $this->setUseIsodate($source['use_isodate'] ?? '0');
         $this->setIncFilesPdf($source['inc_files_pdf'] ?? '0');
+        $this->setAppendPdfs($source['append_pdfs'] ?? '0');
         $this->setChemEditor($source['chem_editor'] ?? '0');
         $this->setJsonEditor($source['json_editor'] ?? '0');
         $this->setDefaultRead($source['default_read'] ?? $this->defaultRead);
@@ -323,6 +333,7 @@ class UserPreferences implements MapInterface
             use_markdown,
             use_isodate,
             inc_files_pdf,
+            append_pdfs,
             chem_editor,
             json_editor,
             default_read,

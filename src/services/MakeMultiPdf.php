@@ -57,7 +57,10 @@ class MakeMultiPdf extends AbstractMake
             $this->addToPdf((int) $id);
 
             if ($key !== count($this->idArr) -1) {
-                $this->mpdf->WriteHTML('<pagebreak resetpagenum="1" />');
+                $this->mpdf->AddPageByArray(array(
+                    'sheet-size' => $this->Entity->Users->userData['pdf_format'],
+                    'resetpagenum' => 1,
+                ));
             }
         }
 
@@ -83,6 +86,10 @@ class MakeMultiPdf extends AbstractMake
         if ($permissions['read']) {
             // write content
             $this->mpdf->WriteHTML($CurrentEntity->tex2svg($this->mpdf, $CurrentEntity->getContent()));
+
+            if ($this->Entity->Users->userData['append_pdfs']) {
+                $this->mpdf = $CurrentEntity->appendPDFs($this->mpdf);
+            }
         }
     }
 }

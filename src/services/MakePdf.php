@@ -282,8 +282,6 @@ class MakePdf extends AbstractMake
      * Append PDFs attached to an entity
      *
      * @param Mpdf $mpdf
-     * @return Mpdf
-     * @throws ProcessFailedException
      */
     public function appendPDFs(Mpdf $mpdf): Mpdf
     {
@@ -325,7 +323,7 @@ class MakePdf extends AbstractMake
                     // add the content of the imported page
                     $mpdf->useTemplate($page);
                 }
-            } catch (FpdiException $e) {
+            } catch (FpdiException) {
                 continue;
             }
         }

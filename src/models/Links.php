@@ -24,14 +24,11 @@ class Links implements CrudInterface
 {
     use SetIdTrait;
 
-    public AbstractEntity $Entity;
-
     protected Db $Db;
 
-    public function __construct(AbstractEntity $entity, ?int $id = null)
+    public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->Entity = $entity;
         $this->id = $id;
     }
 
@@ -128,10 +125,8 @@ class Links implements CrudInterface
             // add all the teamgroups in which the user is
             $TeamGroups = new TeamGroups($this->Entity->Users);
             $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
-            if (!empty($teamgroupsOfUser)) {
-                foreach ($teamgroupsOfUser as $teamgroup) {
-                    $sql .= ' OR (entity.canread = ' . $teamgroup . ')';
-                }
+            foreach ($teamgroupsOfUser as $teamgroup) {
+                $sql .= ' OR (entity.canread = ' . $teamgroup . ')';
             }
 
             $sql .= ') ORDER by';

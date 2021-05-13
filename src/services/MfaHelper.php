@@ -39,15 +39,11 @@ class MfaHelper
     /** @var int MFA_SECRET_BITS entropy for the mfa secret */
     private const SECRET_BITS = 160;
 
-    public int $userid;
-
-    public ?string $secret;
-
     protected Db $Db;
 
     private TwoFactorAuth $TwoFactorAuth;
 
-    public function __construct(int $userid, ?string $secret = null)
+    public function __construct(public int $userid, public ?string $secret = null)
     {
         $this->TwoFactorAuth = new TwoFactorAuth(
             self::ISSUER,
@@ -57,8 +53,6 @@ class MfaHelper
             new MpdfQrProvider(),
         );
         $this->Db = Db::getConnection();
-        $this->userid = $userid;
-        $this->secret = $secret;
     }
 
     public function getQRCodeImageAsDataUri(string $email): string

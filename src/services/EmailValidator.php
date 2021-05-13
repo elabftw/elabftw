@@ -20,15 +20,12 @@ use function in_array;
  */
 class EmailValidator
 {
-    private string $email;
-
     private ?string $emailDomain;
 
     private Db $Db;
 
-    public function __construct(string $email, ?string $emailDomain = null)
+    public function __construct(private string $email, ?string $emailDomain = null)
     {
-        $this->email = $email;
         // if it's an empty string, make it null
         if ($emailDomain === '') {
             $emailDomain = null;

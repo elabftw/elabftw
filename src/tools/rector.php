@@ -21,5 +21,11 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     //$parameters->set(Option::SETS, array(SetList::CODE_QUALITY, 'twig-underscore-to-namespace', 'dead-code', 'phpstan'));
     $parameters->set(Option::SETS, array(SetList::CODE_QUALITY, SetList::DEAD_CODE, SetList::PHP_80));
 
-    $parameters->set('exclude_rectors', array('Rector\CodeQuality\Rector\Identical\SimplifyBoolIdenticalTrueRector', 'Rector\CodeQuality\Rector\If_\SimplifyIfElseToTernaryRector', 'Rector\SOLID\Rector\ClassMethod\UseInterfaceOverImplementationInConstructorRector', 'Rector\DeadCode\Rector\Concat\RemoveConcatAutocastRector', 'Rector\PHPStan\Rector\Cast\RecastingRemovalRector'));
+    $parameters->set(Option::SKIP, array(
+        Rector\CodeQuality\Rector\Identical\SimplifyBoolIdenticalTrueRector::class,
+        Rector\CodeQuality\Rector\If_\SimplifyIfElseToTernaryRector::class,
+        Rector\SOLID\Rector\ClassMethod\UseInterfaceOverImplementationInConstructorRector::class,
+        Rector\DeadCode\Rector\Concat\RemoveConcatAutocastRector::class,
+        Rector\DeadCode\Rector\Cast\RecastingRemovalRector::class,
+    ));
 };

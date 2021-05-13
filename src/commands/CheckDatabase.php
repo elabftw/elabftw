@@ -27,8 +27,6 @@ class CheckDatabase extends Command
 
     /**
      * Set the help messages
-     *
-     * @return void
      */
     protected function configure(): void
     {
@@ -44,8 +42,6 @@ class CheckDatabase extends Command
     /**
      * Execute
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @return int 0 if no need to upgrade, 1 if need to upgrade
      */
     protected function execute(InputInterface $input, OutputInterface $output): int

@@ -27,11 +27,8 @@ class MakeReport
 
     protected Db $Db;
 
-    private Teams $Teams;
-
-    public function __construct(Teams $teams)
+    public function __construct(private Teams $Teams)
     {
-        $this->Teams = $teams;
         $this->Db = Db::getConnection();
     }
 

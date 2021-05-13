@@ -29,8 +29,6 @@ class MfaCode extends Command
 
     /**
      * Set the help messages
-     *
-     * @return void
      */
     protected function configure(): void
     {
@@ -49,8 +47,6 @@ class MfaCode extends Command
     /**
      * Execute
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @return int 0
      */
     protected function execute(InputInterface $input, OutputInterface $output): int

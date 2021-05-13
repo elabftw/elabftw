@@ -34,7 +34,7 @@
 {% endif %}
 
 <section class='text-center'>
-    <img src='app/img/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
+    <img src='app/img/logo.png' alt='logo elabftw' class='col-md-3' />
   {% if App.Session.has('team_selection_required') %}
     <form method='post' action='app/controllers/LoginController.php'>
       <input type='hidden' name='auth_type' value='team'>
@@ -68,7 +68,7 @@
       <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off'>
         <!-- form key -->
         {{ App.Csrf.getHiddenInput|raw }}
-        <h2 class='mt-4'>{{ 'Login to your account'|trans }}</h2>
+        <h1 class='mt-4'>{{ 'Login to your account'|trans }}</h1>
         <br>
         <div class='col-md-4 mx-auto text-left form-group'>
           <label for='email'>{{ 'Email'|trans }}</label>
@@ -142,7 +142,7 @@
         <input type='hidden' name='auth_type' value='anon'>
         {{ App.Csrf.getHiddenInput|raw }}
         <div class='form-group mx-auto col-md-4'>
-          <label for='anon_login_select'></label>
+          <label for='anon_login_select' class='sr-only'>{{ 'Select a team'|trans }}</label>
           <div class='input-group mb-2'>
             <div class='input-group-prepend'>
               <div class='input-group-text'>{{ 'Select a team'|trans }}</div>

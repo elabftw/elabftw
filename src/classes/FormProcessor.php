@@ -25,10 +25,8 @@ class FormProcessor extends AbstractProcessor
     // @phpstan-ignore-next-line
     public function getParams()
     {
-        if ($this->Model instanceof Uploads) {
-            if ($this->target === 'file') {
-                return new UploadParams('', 'file', $this->uploadedFile);
-            }
+        if ($this->Model instanceof Uploads && $this->target === 'file') {
+            return new UploadParams('', 'file', $this->uploadedFile);
         }
         throw new IllegalActionException('Bad params');
     }

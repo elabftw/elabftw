@@ -19,8 +19,6 @@ interface ControllerInterface
 {
     /**
      * Get Response object
-     *
-     * @return Response
      */
     public function getResponse(): Response;
 }

@@ -17,12 +17,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 final class UploadParams extends ContentParams implements UploadParamsInterface
 {
-    private ?UploadedFile $file;
-
-    public function __construct(string $content, string $target, ?UploadedFile $file = null)
+    public function __construct(string $content, string $target, private ?\Symfony\Component\HttpFoundation\File\UploadedFile $file = null)
     {
         parent::__construct($content, $target);
-        $this->file = $file;
     }
 
     public function getContent(): string

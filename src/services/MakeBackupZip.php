@@ -25,8 +25,6 @@ class MakeBackupZip extends AbstractMake
 {
     private ZipStream $Zip;
 
-    private string $period = '15000101-30000101';
-
     // files to be deleted by destructor
     private array $trash = array();
 
@@ -35,7 +33,7 @@ class MakeBackupZip extends AbstractMake
     /**
      * Give me a time period, I make good zip for you
      */
-    public function __construct(AbstractEntity $entity, string $period)
+    public function __construct(AbstractEntity $entity, private string $period)
     {
         parent::__construct($entity);
 
@@ -47,8 +45,6 @@ class MakeBackupZip extends AbstractMake
         $opt = new ArchiveOptions();
         $opt->setFlushOutput(true);
         $this->Zip = new ZipStream(null, $opt);
-
-        $this->period = $period;
     }
 
     /**
@@ -126,7 +122,7 @@ class MakeBackupZip extends AbstractMake
             return $this->Entity->entityData['category'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
         }
 
-        throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', get_class($this->Entity)));
+        throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', $this->Entity::class));
     }
 
     /**

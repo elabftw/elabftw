@@ -27,10 +27,10 @@ abstract class AbstractMake
 
     public string $filePath = '';
 
+    protected Db $Db;
+
     /** @var AbstractEntity $Entity */
     protected $Entity;
-
-    protected Db $Db;
 
     public function __construct(AbstractEntity $entity)
     {

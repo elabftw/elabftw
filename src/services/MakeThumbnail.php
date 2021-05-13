@@ -54,15 +54,12 @@ final class MakeThumbnail
         'application/postscript',
     );
 
-    private string $filePath;
-
     private string $thumbPath;
 
     private string $mime;
 
-    public function __construct(string $filePath)
+    public function __construct(private string $filePath)
     {
-        $this->filePath = $filePath;
         // make sure we can read the file
         if (is_readable($this->filePath) === false) {
             throw new FilesystemErrorException('File not found! (' . substr($this->filePath, 0, 42) . '…)');
@@ -126,7 +123,7 @@ final class MakeThumbnail
         try {
             $image = new Imagick();
             $image->setBackgroundColor('white');
-        } catch (Exception $e) {
+        } catch (Exception) {
             return;
         }
         $image->readImage($this->filePath);
@@ -152,7 +149,7 @@ final class MakeThumbnail
         // originally introduced due to issue #415.
         try {
             $image = new Gmagick($this->filePath);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return;
         }
 

@@ -32,7 +32,6 @@ class ListBuilder
      * Get an array formatted for the autocomplete input (link and bind)
      *
      * @param string $term the query
-     * @return array
      */
     public function getAutocomplete(string $term): array
     {
@@ -50,7 +49,6 @@ class ListBuilder
      * for use with the mention plugin of tinymce (# autocomplete)
      *
      * @param string $term the query
-     * @return array
      */
     public function getMentionList(string $term): array
     {
@@ -83,7 +81,6 @@ class ListBuilder
      * Get a list of experiments/items with title containing $term
      *
      * @param string $term the query
-     * @return array
      */
     private function getList(string $term): array
     {

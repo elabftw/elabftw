@@ -16,14 +16,8 @@ namespace Elabftw\Elabftw;
  */
 class OrderingParams
 {
-    private string $table;
-
-    private array $ordering;
-
-    public function __construct(string $table, array $ordering)
+    public function __construct(private string $table, private array $ordering)
     {
-        $this->table = $table;
-        $this->ordering = $ordering;
     }
 
     public function getTable(): string

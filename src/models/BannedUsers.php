@@ -18,14 +18,11 @@ use PDO;
  */
 class BannedUsers
 {
-    public Config $Config;
-
     protected Db $Db;
 
-    public function __construct(Config $config)
+    public function __construct(public Config $Config)
     {
         $this->Db = Db::getConnection();
-        $this->Config = $config;
     }
 
     /**

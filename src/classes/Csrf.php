@@ -22,14 +22,8 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  */
 class Csrf
 {
-    private Request $Request;
-
-    private SessionInterface $Session;
-
-    public function __construct(Request $request, SessionInterface $session)
+    public function __construct(private Request $Request, private SessionInterface $Session)
     {
-        $this->Request = $request;
-        $this->Session = $session;
         if (!$this->Session->has('csrf')) {
             $this->Session->set('csrf', $this->generate());
         }
@@ -66,7 +60,7 @@ class Csrf
         } else {
             $res = $this->validateForm();
         }
-        if ($res === false) {
+        if (!$res) {
             throw new InvalidCsrfTokenException();
         }
     }

@@ -34,14 +34,11 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class MakeController implements ControllerInterface
 {
-    private App $App;
-
     /** @var AbstractEntity $Entity */
     private $Entity;
 
-    public function __construct(App $app)
+    public function __construct(private App $App)
     {
-        $this->App = $app;
         $this->Entity = new Items($this->App->Users);
         if ($this->App->Request->query->get('type') === 'experiments') {
             $this->Entity = new Experiments($this->App->Users);

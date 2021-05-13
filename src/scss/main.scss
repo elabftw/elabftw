@@ -6,8 +6,9 @@
  * @package elabftw
  */
 $darkgray: #343434;
-$maingray: #797979;
-$lightgray: #f2f2f2;
+$maingray: #595959;
+$verylightgray: #f2f2f2;
+$lightgray: #626262;
 $lightgraybutnottoolight: #d6d6d6;
 $bordersgray: #dcdddc;
 $elabblue: #29aeb9;
@@ -190,6 +191,7 @@ blockquote::before {
 }
 
 /* TITLES */
+h1,
 h2 {
     color: $maingray;
     font-size: 30px;
@@ -546,7 +548,7 @@ tr:nth-child(even) {
 }
 
 tr:nth-child(odd) {
-    background-color: $lightgray;
+    background-color: $verylightgray;
 }
 
 /* OVERLAY */
@@ -655,7 +657,6 @@ tr:nth-child(odd) {
     margin: 5px auto;
     min-width: 100%;
     opacity: var(--opacity);
-    overflow: hidden;
     padding: 5px 10px 0 5px;
 
     p {
@@ -866,7 +867,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .smallgray {
-    color: #a2a2a2;
+    color: $lightgray;
     display: block;
     font-size: 80%;
 }

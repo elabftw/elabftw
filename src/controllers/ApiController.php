@@ -46,8 +46,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class ApiController implements ControllerInterface
 {
-    private App $App;
-
     private Request $Request;
 
     /** @psalm-suppress PropertyNotSetInConstructor */
@@ -78,10 +76,9 @@ class ApiController implements ControllerInterface
     // used by backupzip to get the period
     private string $param;
 
-    public function __construct(App $app)
+    public function __construct(private App $App)
     {
-        $this->App = $app;
-        $this->Request = $app->Request;
+        $this->Request = $App->Request;
         // Check if the Authorization Token was sent along
         if (!$this->Request->server->has('HTTP_AUTHORIZATION')) {
             throw new UnauthorizedException('No access token provided!');
@@ -554,8 +551,6 @@ class ApiController implements ControllerInterface
 
     /**
      * Get events from the team
-     *
-     * @return Response
      */
     private function getEvents(): Response
     {
@@ -612,7 +607,7 @@ class ApiController implements ControllerInterface
         try {
             // make sure we have read access to that entity
             $Entity->canOrExplode('read');
-        } catch (IllegalActionException $e) {
+        } catch (IllegalActionException) {
             return new Response('You do not have permission to access this resource.', 403);
         }
         $filePath = dirname(__DIR__, 2) . '/uploads/' . $uploadData['long_name'];
@@ -656,7 +651,6 @@ class ApiController implements ControllerInterface
      *         ]
      *     }
      */
-
     /**
      * @api {get} /status Get the list of status for current team
      * @apiName GetStatus
@@ -695,8 +689,6 @@ class ApiController implements ControllerInterface
 
     /**
      * Get items_types or status list for current team
-     *
-     * @return Response
      */
     private function getCategory(): Response
     {
@@ -1034,7 +1026,7 @@ class ApiController implements ControllerInterface
      *     params = { 'file': myfile }
      *     print(manager.upload_to_experiment(42, params))
      * # upload your-file.jpg to database item 1337
-     * with open('your-file.jpg', 'r') as myfile:
+     * with open('your-file.jpg', 'r+b') as myfile:
      *     params = { 'file': myfile }
      *     print(manager.upload_to_item(1337, params))
      * @apiExample {shell} Curl example

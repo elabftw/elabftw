@@ -19,11 +19,8 @@ use Elabftw\Interfaces\CrudInterface;
  */
 class PrivacyPolicy implements CrudInterface
 {
-    private Config $Config;
-
-    public function __construct(Config $config)
+    public function __construct(private Config $Config)
     {
-        $this->Config = $config;
     }
 
     public function create(ContentParamsInterface $params): int

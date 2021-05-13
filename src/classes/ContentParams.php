@@ -18,14 +18,8 @@ class ContentParams implements ContentParamsInterface
 {
     protected const MIN_CONTENT_SIZE = 1;
 
-    protected string $content;
-
-    protected string $target;
-
-    public function __construct(string $content = '', string $target = '')
+    public function __construct(protected string $content = '', protected string $target = '')
     {
-        $this->content = $content;
-        $this->target = $target;
     }
 
     public function getTarget(): string

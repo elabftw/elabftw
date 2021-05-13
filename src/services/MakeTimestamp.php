@@ -46,8 +46,6 @@ class MakeTimestamp extends AbstractMake
     /** @var Experiments $Entity */
     protected $Entity;
 
-    private Config $Config;
-
     private string $pdfPath = '';
 
     // name of the pdf (elabid-timestamped.pdf)
@@ -71,12 +69,10 @@ class MakeTimestamp extends AbstractMake
     /**
      * Pdf is generated on instantiation and after you need to call timestamp()
      */
-    public function __construct(Config $config, Teams $teams, Experiments $entity)
+    public function __construct(private Config $Config, Teams $teams, Experiments $entity)
     {
         parent::__construct($entity);
         $this->Entity->canOrExplode('write');
-
-        $this->Config = $config;
 
         // initialize with info from config
         $this->stampParams = $this->getTimestampParameters($teams);
@@ -103,7 +99,6 @@ class MakeTimestamp extends AbstractMake
      * The realname is elabid-timestamped.pdf
      *
      * @throws ImproperActionException
-     * @return string
      */
     public function getFileName(): string
     {
@@ -121,7 +116,6 @@ class MakeTimestamp extends AbstractMake
      * Request a timestamp and parse the response.
      *
      * @throws ImproperActionException
-     * @return void
      */
     public function timestamp(): void
     {
@@ -149,8 +143,6 @@ class MakeTimestamp extends AbstractMake
 
     /**
      * Generate the pdf to timestamp
-     *
-     * @return void
      */
     private function generatePdf(): void
     {
@@ -163,7 +155,6 @@ class MakeTimestamp extends AbstractMake
     /**
      * Return the needed parameters to request/verify a timestamp
      *
-     * @param Teams $teams
      * @return array<string,string>
      */
     private function getTimestampParameters(Teams $teams): array
@@ -214,7 +205,6 @@ class MakeTimestamp extends AbstractMake
      *
      * @param array<string> $args arguments including the executable
      * @param string|null $cwd command working directory
-     * @return string
      */
     private function runProcess(array $args, ?string $cwd = null): string
     {
@@ -228,7 +218,6 @@ class MakeTimestamp extends AbstractMake
      * Creates a Timestamp Requestfile from a filename
      *
      * @throws ImproperActionException
-     * @return void
      */
     private function createRequestfile(): void
     {
@@ -250,7 +239,6 @@ class MakeTimestamp extends AbstractMake
      * Extracts the unix timestamp from the base64-encoded response string as returned by signRequestfile
      *
      * @throws ImproperActionException if unhappy
-     * @return string
      */
     private function getResponseTime(): string
     {
@@ -316,7 +304,6 @@ class MakeTimestamp extends AbstractMake
      * Contact the TSA and receive a token after successful timestamp
      *
      * @throws ImproperActionException
-     * @return \Psr\Http\Message\ResponseInterface
      */
     private function postData(): \Psr\Http\Message\ResponseInterface
     {
@@ -373,7 +360,6 @@ class MakeTimestamp extends AbstractMake
      *
      * @throws ImproperActionException
      * @param StreamInterface $binaryToken asn1 response from TSA
-     * @return void
      */
     private function saveToken(StreamInterface $binaryToken): void
     {
@@ -413,7 +399,6 @@ class MakeTimestamp extends AbstractMake
      * in the timestamp itself.
      *
      * @throws ImproperActionException
-     * @return bool
      */
     private function validate(): bool
     {
@@ -435,7 +420,7 @@ class MakeTimestamp extends AbstractMake
                 '-CAfile',
                 $certPath,
             ));
-        } catch (ProcessFailedException $e) {
+        } catch (ProcessFailedException) {
             // we are facing the OpenSSL bug discussed here:
             // https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182
             return $this->validateWithJava();
@@ -446,8 +431,6 @@ class MakeTimestamp extends AbstractMake
 
     /**
      * Check if we have java
-     *
-     * @return void
      */
     private function isJavaInstalled(): void
     {
@@ -463,7 +446,6 @@ class MakeTimestamp extends AbstractMake
      * We need this because of the openssl bug
      *
      * @throws ImproperActionException
-     * @return bool
      */
     private function validateWithJava(): bool
     {
@@ -491,7 +473,6 @@ class MakeTimestamp extends AbstractMake
      * I had this idea when realizing that if you comment an experiment, the hash won't be good anymore. Because the pdf will contain the new comments.
      * Keeping the pdf here is the best way to go, as this leaves room to leave comments.
      * @throws ImproperActionException
-     * @return void
      */
     private function sqlInsertPdf(): void
     {

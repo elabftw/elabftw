@@ -31,17 +31,7 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '4.0.0-beta';
-
-    public Request $Request;
-
-    public SessionInterface $Session;
-
-    public Config $Config;
-
-    public Logger $Log;
-
-    public Csrf $Csrf;
+    public const INSTALLED_VERSION = '4.0.0-beta2';
 
     public Users $Users;
 
@@ -57,11 +47,8 @@ class App
 
     protected Db $Db;
 
-    public function __construct(Request $request, SessionInterface $session, Config $config, Logger $log, Csrf $csrf)
+    public function __construct(public Request $Request, public SessionInterface $Session, public Config $Config, public Logger $Log, public Csrf $Csrf)
     {
-        $this->Request = $request;
-        $this->Session = $session;
-
         $flashBag = $this->Session->getBag('flashes');
         // add type check because SessionBagInterface doesn't have get(), only FlashBag has it
         if ($flashBag instanceof FlashBag) {
@@ -70,11 +57,7 @@ class App
             $this->warning = $flashBag->get('warning');
         }
 
-        $this->Config = $config;
-        $this->Log = $log;
         $this->Log->pushHandler(new ErrorLogHandler());
-        $this->Csrf = $csrf;
-
         $this->Users = new Users();
         $this->Db = Db::getConnection();
         // UPDATE SQL SCHEMA if necessary or show error message if version mismatch

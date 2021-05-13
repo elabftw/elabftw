@@ -92,7 +92,6 @@ class Status extends AbstractCategory
      * Get the color of a status
      *
      * @param int $id ID of the category
-     * @return string
      */
     public function readColor(int $id): string
     {

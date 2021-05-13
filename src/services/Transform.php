@@ -26,25 +26,14 @@ class Transform
      */
     public static function permission(string $permission): string
     {
-        switch ($permission) {
-            case 'public':
-                $res = _('Public');
-                break;
-            case 'organization':
-                $res = _('Organization');
-                break;
-            case 'team':
-                $res = _('Team');
-                break;
-            case 'user':
-                $res = _('Owner + Admin(s)');
-                break;
-            case 'useronly':
-                $res = _('Owner only');
-                break;
-            default:
-                $res = Tools::error();
-        }
+        $res = match ($permission) {
+            'public' => _('Public'),
+            'organization' => _('Organization'),
+            'team' => _('Team'),
+            'user' => _('Owner + Admin(s)'),
+            'useronly' => _('Owner only'),
+            default => Tools::error(),
+        };
         return ucfirst($res);
     }
 }

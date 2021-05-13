@@ -2821,7 +2821,7 @@ msgstr "Zurücksetzen"
 #: cache/twig/a8/a81b671dcdafd4e0fb72351983917725361b04e69e5b97c02580bc3178052681.php:388
 #: cache/twig/2a/2a0b3e508bf52451b28470cc0f94b4284a0f8f59635584108d2a68ca17ef0c56.php:762
 msgid "This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. You should add it in the 'uploads' folder. The file needs to be in %sPEM-encoded (ASCII)%s format!"
-msgstr "Dies sollte auf die Zertifikatskette zeigen, die von Ihrem externen Timestamping Anbieter genutzt wird, um die Timestamps zu signieren.%sLokaler Pfad relativ zum eLabFTW Installations-Verzeichnis. Sie sollten es im 'uploads'-Ordner hinzufügen. Die Datei muss %sPEM-enkodiertem%s (ASCII)%s-Format entsprechen!"
+msgstr "Dies sollte auf die Zertifikatskette zeigen, die von Ihrem externen Timestamping Anbieter genutzt wird, um die Timestamps zu signieren.%sLokaler Pfad relativ zum eLabFTW Installations-Verzeichnis. Sie sollten es im 'uploads'-Ordner hinzufügen. Die Datei muss %sPEM-enkodiertem (ASCII)%s-Format entsprechen!"
 
 #: cache/twig/8f/8f33d884c3c8a6722421e9295a5bd303c51657ab3330b2f20e575c1fdce4c016.php:1004
 #: cache/twig/8f/8f33d884c3c8a6722421e9295a5bd303c51657ab3330b2f20e575c1fdce4c016.php:1865

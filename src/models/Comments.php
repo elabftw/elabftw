@@ -27,17 +27,11 @@ class Comments implements CrudInterface
 {
     use SetIdTrait;
 
-    public AbstractEntity $Entity;
-
     protected Db $Db;
 
-    private Email $Email;
-
-    public function __construct(AbstractEntity $entity, Email $email, ?int $id = null)
+    public function __construct(public AbstractEntity $Entity, private Email $Email, ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->Entity = $entity;
-        $this->Email = $email;
         $this->id = $id;
     }
 

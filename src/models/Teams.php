@@ -30,14 +30,11 @@ class Teams implements ReadableInterface, DestroyableInterface
 {
     use SetIdTrait;
 
-    public Users $Users;
-
     protected Db $Db;
 
-    public function __construct(Users $users, ?int $id = null)
+    public function __construct(public Users $Users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->Users = $users;
         $this->id = $id;
     }
 
@@ -68,7 +65,6 @@ class Teams implements ReadableInterface, DestroyableInterface
     /**
      * Add one user to n teams
      *
-     * @param int $userid
      * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
      */
     public function addUserToTeams(int $userid, array $teamIdArr): void
@@ -90,7 +86,6 @@ class Teams implements ReadableInterface, DestroyableInterface
     /**
      * Remove a user from teams
      *
-     * @param int $userid
      * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
      */
     public function rmUserFromTeams(int $userid, array $teamIdArr): void
@@ -113,7 +108,6 @@ class Teams implements ReadableInterface, DestroyableInterface
      * When the user logs in, make sure that the teams they are part of
      * are the same teams than the one sent by an external auth
      *
-     * @param int $userid
      * @param array<array-key, mixed> $teams
      */
     public function synchronize(int $userid, array $teams): void

@@ -21,16 +21,10 @@ use function rtrim;
  */
 class Saml
 {
-    public Config $Config;
-
-    private Idps $Idps;
-
     private array $settings = array();
 
-    public function __construct(Config $config, Idps $idps)
+    public function __construct(public Config $Config, private Idps $Idps)
     {
-        $this->Config = $config;
-        $this->Idps = $idps;
     }
 
     /**

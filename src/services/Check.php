@@ -181,6 +181,7 @@ class Check
             'real_name',
             'title',
             'unreference',
+            'userid',
             // no target is also valid
             '',
         );

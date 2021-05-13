@@ -208,6 +208,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // TRANSFER OWNERSHIP
+  document.getElementById('new_owner').addEventListener('change', () => {
+    const value = (document.getElementById('new_owner') as HTMLInputElement).value;
+    EntityC.update(entity.id, Target.UserId, value).then(json => {
+      if (json.res) {
+        window.location.reload();
+      }
+    });
+  });
+
   // STATUS SELECT
   $(document).on('change', '#category_select', function() {
     const categoryId = $(this).val();

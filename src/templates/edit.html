@@ -66,6 +66,34 @@
   </div>
 </div>
 
+<!-- Modal for ownership transfer -->
+<div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='ownerModalLabel'>{{ 'Transfer ownership'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <!-- SELECT USER -->
+        <label for='new_owner'>{{ 'New owner'|trans }}</label>
+        <select id='new_owner' class='form-control'>
+          {% for user in Entity.Users.readAllFromTeam %}
+            <option value='{{ user.userid }}'
+            {{ Entity.entityData.userid == user.userid ? ' selected' }}
+            >{{ user.fullname|raw }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
   <div class='dropdown'>
     <a class='clickable align-right' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
@@ -74,6 +102,10 @@
     <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
       <!-- MANAGE PERMISSIONS -->
       <a class='clickable dropdown-item modalToggle' data-modal='permModal'><i class='fas fa-share-alt fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
+      <!-- TRANSFER OWNERSHIP -->
+      {% if Entity.type == 'items' and (Entity.entityData.userid == App.Users.userData.userid or App.Session.get('is_admin')) %}
+        <a class='clickable dropdown-item modalToggle' data-modal='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer Ownership'|trans }}</a>
+      {% endif %}
       <!-- SWITCH EDITOR -->
       <a class='dropdown-item switchEditor' id='iHazEditor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</a>
       <!-- REVISIONS -->
@@ -115,9 +147,12 @@
     </div>
     <!-- STAR RATING -->
     <div class='col-md-3' style='margin-top:15px'>
-      {% for i in range(1, 5) %}
-      <input data-rating='{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Entity.entityData.rating == i ? ' checked=checked' }} />
-      {% endfor %}
+      <fieldset>
+        <legend class='sr-only'>{{ 'Rating'|trans }}</legend>
+        {% for i in range(1, 5) %}
+        <input aria-label='{{ 'Rating'|trans }}' data-rating='{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Entity.entityData.rating == i ? ' checked=checked' }} />
+        {% endfor %}
+      </fieldset>
     </div>
 
   </div>
@@ -149,9 +184,9 @@
 
   <!-- BODY -->
   {% if editor == 'md' %}
-    <textarea id='body_area' class='markdown-textarea' data-language='{{ lang }}' name='body'>{{ Entity.entityData.body|raw }}</textarea>
+  <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ lang }}' name='body'>{{ Entity.entityData.body|raw }}</textarea>
   {% else %}
-    <textarea id='body_area' class='mceditable invisible' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
+    <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
   {% endif %}
 
   <div class='mt-4 text-center'>

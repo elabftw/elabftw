@@ -200,7 +200,7 @@ abstract class AbstractEntity implements CrudInterface
             $teamFilter = ' AND users2teams.teams_id = entity.team';
         }
         // add pub/org/team filter
-        $sqlPublicOrg = "(entity.canread = 'public' OR entity.canread = 'organization') OR ";
+        $sqlPublicOrg = "((entity.canread = 'public' OR entity.canread = 'organization') AND entity.userid = users2teams.users_id) OR ";
         if ($this->Users->userData['show_public']) {
             $sqlPublicOrg = "entity.canread = 'public' OR entity.canread = 'organization' OR ";
         }
@@ -362,6 +362,9 @@ abstract class AbstractEntity implements CrudInterface
                     return $this->updateJsonField($params);
                 }
                 $content = $params->getMetadata();
+                break;
+            case 'userid':
+                $content = $params->getUserId();
                 break;
             default:
                 throw new ImproperActionException('Invalid update target');

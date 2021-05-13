@@ -57,4 +57,9 @@ class EntityParams extends ContentParams implements EntityParamsInterface
     {
         return Filter::sanitize($this->extra['jsonField'] ?? '');
     }
+
+    public function getUserId(): int
+    {
+        return (int) $this->content;
+    }
 }

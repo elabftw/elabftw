@@ -20,16 +20,12 @@ class MakeCsv extends AbstractMake
 {
     use CsvTrait;
 
-    // list of id to make csv from, separated by spaces: 4 8 15 16 23 42
-    private string $idList;
-
     /**
      * Give me a list of "id id id" and a type, I make good csv for you
      */
-    public function __construct(AbstractEntity $entity, string $idList)
+    public function __construct(AbstractEntity $entity, private string $idList)
     {
         parent::__construct($entity);
-        $this->idList = $idList;
     }
 
     /**

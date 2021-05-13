@@ -39,11 +39,8 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
  */
 class LoginController implements ControllerInterface
 {
-    private App $App;
-
-    public function __construct(App $app)
+    public function __construct(private App $App)
     {
-        $this->App = $app;
     }
 
     public function getResponse(): Response

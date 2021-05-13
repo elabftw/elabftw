@@ -17,12 +17,9 @@ class TeamsHelper
 {
     private Db $Db;
 
-    private int $team;
-
-    public function __construct(int $team)
+    public function __construct(private int $team)
     {
         $this->Db = Db::getConnection();
-        $this->team = $team;
     }
 
     /**

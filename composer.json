@@ -44,7 +44,7 @@
     "roave/security-advisories": "dev-master",
     "codeception/codeception": "^4.0",
     "pyrech/composer-changelogs": "1.7.*",
-    "friendsofphp/php-cs-fixer": "^2.15",
+    "friendsofphp/php-cs-fixer": "^3.0.0",
     "codeception/module-webdriver": "^1.0.0",
     "codeception/module-db": "^1.0.0",
     "codeception/module-asserts": "^1.0.0",

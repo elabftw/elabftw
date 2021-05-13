@@ -32,21 +32,14 @@ class Email
 {
     public string $footer;
 
-    private Config $Config;
-
-    private Users $Users;
-
-    public function __construct(Config $config, Users $users)
+    public function __construct(private Config $Config, private Users $Users)
     {
-        $this->Config = $config;
-        $this->Users = $users;
         $this->footer = $this->makeFooter();
     }
 
     /**
      * Send an email
      *
-     * @param Swift_Message $message
      * @throws ImproperActionException
      * @return int number of email sent
      */
@@ -63,7 +56,6 @@ class Email
     /**
      * Send a test email
      *
-     * @param string $email
      * @throws ImproperActionException
      */
     public function testemailSend(string $email): bool
@@ -88,9 +80,6 @@ class Email
     /**
      * Send a mass email to all users
      *
-     * @param string $subject
-     * @param string $body
-     * @param bool $teamFilter
      * @return int number of emails sent
      */
     public function massEmail(string $subject, string $body, bool $teamFilter = false): int
@@ -127,9 +116,7 @@ class Email
     /**
      * Send an email to the admin of a team
      *
-     * @param int $team
      * @param array<string, mixed> $userInfo to get the email and name of new user
-     * @param bool $needValidation
      */
     public function alertAdmin(int $team, array $userInfo, bool $needValidation = true): void
     {

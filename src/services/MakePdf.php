@@ -198,10 +198,6 @@ class MakePdf extends AbstractMake
 
     /**
      * Convert Tex to SVG with Mathjax
-     *
-     * @param Mpdf $mpdf
-     * @param string $content
-     * @return string
      */
     public function tex2svg(Mpdf $mpdf, string $content): string
     {
@@ -248,7 +244,7 @@ class MakePdf extends AbstractMake
 
         // was there actually tex in the content?
         // if not we can skip the svg modifications and return the original content
-        if (!$html) {
+        if ($html === '') {
             return $content;
         }
 

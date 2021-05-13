@@ -24,17 +24,11 @@ class Steps implements CrudInterface
 {
     use SortableTrait;
 
-    public AbstractEntity $Entity;
-
     protected Db $Db;
 
-    private ?int $id;
-
-    public function __construct(AbstractEntity $entity, ?int $id = null)
+    public function __construct(public AbstractEntity $Entity, private ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->Entity = $entity;
-        $this->id = $id;
     }
 
     /**

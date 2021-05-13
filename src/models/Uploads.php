@@ -52,15 +52,12 @@ class Uploads implements CrudInterface
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
     private const BIG_FILE_THRESHOLD = 50000000;
 
-    public AbstractEntity $Entity;
-
     protected Db $Db;
 
     private string $hashAlgorithm = 'sha256';
 
-    public function __construct(AbstractEntity $entity, ?int $id = null)
+    public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
-        $this->Entity = $entity;
         $this->Db = Db::getConnection();
         $this->id = $id;
     }
@@ -112,7 +109,6 @@ class Uploads implements CrudInterface
      * Called from ImportZip class
      *
      * @param string $filePath absolute path to the file
-     * @param string $comment
      */
     public function createFromLocalFile(string $filePath, string $comment): void
     {

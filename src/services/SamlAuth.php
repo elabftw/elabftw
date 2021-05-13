@@ -28,20 +28,10 @@ use OneLogin\Saml2\Auth as SamlAuthLib;
  */
 class SamlAuth implements AuthInterface
 {
-    private array $configArr;
-
-    // saml settings for a particular idp
-    private array $settings;
-
-    private SamlAuthLib $SamlAuthLib;
-
     private AuthResponse $AuthResponse;
 
-    public function __construct(SamlAuthLib $samlAuthLib, array $configArr, array $settings)
+    public function __construct(private SamlAuthLib $SamlAuthLib, private array $configArr, private array $settings)
     {
-        $this->configArr = $configArr;
-        $this->settings = $settings;
-        $this->SamlAuthLib = $samlAuthLib;
         $this->AuthResponse = new AuthResponse('saml');
     }
 
@@ -165,7 +155,7 @@ class SamlAuth implements AuthInterface
         // user might not exist yet and populateFromEmail() will throw a ResourceNotFoundException
         try {
             $Users->populateFromEmail($email);
-        } catch (ResourceNotFoundException $e) {
+        } catch (ResourceNotFoundException) {
             // the user doesn't exist yet in the db
             // what do we do? Lookup the config setting for that case
             if ($this->configArr['saml_user_default'] === '0') {

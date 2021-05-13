@@ -14,12 +14,9 @@ use Elabftw\Interfaces\TeamGroupParamsInterface;
 
 final class TeamGroupParams extends ContentParams implements TeamGroupParamsInterface
 {
-    private ?array $extra;
-
-    public function __construct(string $content, string $target = '', ?array $extra = null)
+    public function __construct(string $content, string $target = '', private ?array $extra = null)
     {
         parent::__construct($content, $target);
-        $this->extra = $extra;
     }
 
     public function getUserid(): int

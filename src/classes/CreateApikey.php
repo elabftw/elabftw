@@ -16,14 +16,11 @@ use function random_bytes;
 
 final class CreateApikey extends ContentParams implements CreateApikeyParamsInterface
 {
-    private int $canwrite;
-
     private string $key = '';
 
-    public function __construct(string $content, string $target, int $canwrite)
+    public function __construct(string $content, string $target, private int $canwrite)
     {
         parent::__construct($content, $target);
-        $this->canwrite = $canwrite;
     }
 
     public function getCanwrite(): int

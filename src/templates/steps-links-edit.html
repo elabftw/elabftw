@@ -29,7 +29,7 @@
               </div>
               <div class='input-group-prepend'>
                 <div class='input-group-text'>
-                  <input type='checkbox' {{ Entity.type == 'experiments_templates' ? 'disabled' }} {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity_id }}' class='stepbox'>
+                  <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ Entity.type == 'experiments_templates' ? 'disabled' }} {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity_id }}' class='stepbox'>
                 </div>
               </div>
               <div class='pl-2 step-static form-control-plaintext {{ step.finished ? 'finished' }}'>
@@ -48,10 +48,10 @@
         <!-- ADD STEP -->
         <div class='input-group mb-3'>
             <div class='input-group-prepend'>
-                <span class='input-group-text'>{{ 'Add a step'|trans }}</span>
+              <span class='input-group-text'>{{ 'Add a step'|trans }}</span>
             </div>
 
-            <input type='text' size='60' class='form-control stepinput' data-id='{{ Entity_id }}' />
+            <input aria-label='{{ 'Add a step'|trans }}' type='text' size='60' class='form-control stepinput' data-id='{{ Entity_id }}' />
         </div>
 
     </section>
@@ -88,7 +88,7 @@
                 <div class='input-group-prepend'>
                     <span class='input-group-text'>{{ 'Add a link'|trans }}</span>
                 </div>
-                <input type='text' id='linkinput' class='form-control linkinput' data-id='{{ Entity_id }}' placeholder='{{ 'from the database'|trans }}' />
+                <input aria-label='{{ 'Add a link'|trans }}' type='text' id='linkinput' class='form-control linkinput' data-id='{{ Entity_id }}' placeholder='{{ 'from the database'|trans }}' />
             </div>
         </div>
     </section>

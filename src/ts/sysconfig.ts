@@ -37,7 +37,10 @@ $(document).ready(function() {
     return response.json();
   }).then(data => {
     latestVersionDiv.append(data.version);
-    if (data.version === currentVersion) {
+    // get versions as number only so we can compare properly
+    const numOnlyLatest = data.version.replace(/\D/g, '');
+    const numOnlyCurrent = currentVersion.replace(/\D/g, '');
+    if ((data.version === currentVersion) || (numOnlyCurrent > numOnlyLatest)) {
       // show a little green check if we have latest version
       const successIcon = document.createElement('i');
       successIcon.style.color = 'green';

@@ -22,12 +22,9 @@ class UsersHelper
 {
     private Db $Db;
 
-    private int $userid;
-
-    public function __construct(int $userid)
+    public function __construct(private int $userid)
     {
         $this->Db = Db::getConnection();
-        $this->userid = $userid;
     }
 
     /**

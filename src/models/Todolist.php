@@ -27,12 +27,9 @@ class Todolist implements CrudInterface
 
     protected Db $Db;
 
-    private int $userid;
-
-    public function __construct(int $userid, ?int $id = null)
+    public function __construct(private int $userid, ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->userid = $userid;
         $this->id = $id;
     }
 

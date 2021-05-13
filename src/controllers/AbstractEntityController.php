@@ -29,18 +29,15 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class AbstractEntityController implements ControllerInterface
 {
-    protected App $App;
-
-    /** @var AbstractEntity $Entity */
-    protected $Entity;
-
     protected Templates $Templates;
 
     protected array $categoryArr = array();
 
-    public function __construct(App $app, AbstractEntity $entity)
+    /** @var AbstractEntity $Entity */
+    protected $Entity;
+
+    public function __construct(protected App $App, AbstractEntity $entity)
     {
-        $this->App = $app;
         $this->Entity = $entity;
         $this->Templates = new Templates($entity->Users);
     }

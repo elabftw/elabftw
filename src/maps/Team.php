@@ -26,8 +26,6 @@ class Team implements MapInterface
 {
     private Db $Db;
 
-    private int $id;
-
     private string $commonTemplate = '';
 
     private string $name = '';
@@ -64,9 +62,8 @@ class Team implements MapInterface
 
     private int $visible;
 
-    public function __construct(int $id)
+    public function __construct(private int $id)
     {
-        $this->id = $id;
         $this->Db = Db::getConnection();
         $this->hydrate($this->read());
     }
@@ -292,7 +289,6 @@ class Team implements MapInterface
      * Source can be sql query or post data
      *
      * @param array<string, mixed> $source
-     * @return void
      */
     public function hydrate(array $source): void
     {

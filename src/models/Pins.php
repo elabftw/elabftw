@@ -21,12 +21,9 @@ class Pins
 {
     private Db $Db;
 
-    private AbstractEntity $Entity;
-
-    public function __construct(AbstractEntity $entity)
+    public function __construct(private AbstractEntity $Entity)
     {
         $this->Db = Db::getConnection();
-        $this->Entity = $entity;
     }
 
     /**

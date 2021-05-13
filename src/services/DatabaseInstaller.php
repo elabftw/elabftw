@@ -19,11 +19,8 @@ use Elabftw\Models\Users;
  */
 class DatabaseInstaller
 {
-    private Sql $Sql;
-
-    public function __construct(Sql $sql)
+    public function __construct(private Sql $Sql)
     {
-        $this->Sql = $sql;
     }
 
     /**

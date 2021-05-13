@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Models\Status;
 use Elabftw\Models\Users;
+use Elabftw\Services\UsersHelper;
 use PDO;
 
 /**
@@ -19,16 +20,10 @@ use PDO;
  */
 class UserStats
 {
-    private Users $Users;
-
-    private int $count;
-
     private Db $Db;
 
-    public function __construct(Users $users, int $count)
+    public function __construct(private Users $Users, private int $count)
     {
-        $this->Users = $users;
-        $this->count = $count;
         $this->Db = Db::getConnection();
     }
 
@@ -38,11 +33,17 @@ class UserStats
      */
     public function getPieData(): array
     {
+        $res = array();
+
+        // prevent division by zero error if user has no experiments
+        $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
+        if ($UsersHelper->countExperiments() === 0) {
+            return $res;
+        }
+
         // get all status name and id
         $Status = new Status($this->Users->team);
         $statusAll = $Status->read(new ContentParams());
-
-        $res = array();
 
         // populate arrays
         foreach ($statusAll as $status) {

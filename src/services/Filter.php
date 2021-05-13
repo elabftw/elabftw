@@ -41,9 +41,6 @@ class Filter
 
     /**
      * Return 0 or 1 if input is on. Used for UCP.
-     *
-     * @param string $input
-     * @return int
      */
     public static function onToBinary(string $input): int
     {
@@ -55,7 +52,6 @@ class Filter
      * return input if it is a valid date
      *
      * @param string|null $input 20160521 or 2020-03-31
-     * @return string
      */
     public static function kdate(?string $input = null): string
     {
@@ -162,7 +158,6 @@ class Filter
      * also remove | because we use this as separator for tags in SQL
      *
      * @param string $tag the tag to sanitize
-     * @return string
      */
     public static function tag(string $tag): string
     {

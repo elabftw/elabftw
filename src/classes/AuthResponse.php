@@ -32,11 +32,8 @@ class AuthResponse
 
     public bool $hasVerifiedMfa = false;
 
-    public string $isAuthBy;
-
-    public function __construct(string $authBy)
+    public function __construct(public string $isAuthBy)
     {
-        $this->isAuthBy = $authBy;
     }
 
     public function setTeams(): void

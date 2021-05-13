@@ -27,18 +27,9 @@ class Revisions implements DestroyableInterface
 
     private Db $Db;
 
-    private AbstractEntity $Entity;
-
-    private int $maxRevisions;
-
-    private int $minDelta;
-
-    public function __construct(AbstractEntity $entity, int $maxRevisions, int $minDelta, ?int $id = null)
+    public function __construct(private AbstractEntity $Entity, private int $maxRevisions, private int $minDelta, ?int $id = null)
     {
-        $this->Entity = $entity;
         $this->Db = Db::getConnection();
-        $this->maxRevisions = $maxRevisions;
-        $this->minDelta = $minDelta;
         $this->id = $id;
     }
 

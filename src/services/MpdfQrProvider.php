@@ -21,12 +21,6 @@ use RobThree\Auth\Providers\Qr\IQRCodeProvider;
  */
 class MpdfQrProvider implements IQRCodeProvider
 {
-    public array $background = array();
-
-    public array $color = array();
-
-    public int $compression;
-
     /**
      * Constructor
      *
@@ -34,11 +28,8 @@ class MpdfQrProvider implements IQRCodeProvider
      * @param array<int> $color RGB foreground and border color. Default [0, 0, 0].
      * @param int $compression Compression level: from 0 (default, no compression) to 9.
      */
-    public function __construct(array $background = array(255, 255, 255), array $color = array(0, 0, 0), int $compression = 0)
+    public function __construct(public array $background = array(255, 255, 255), public array $color = array(0, 0, 0), public int $compression = 0)
     {
-        $this->background = $background;
-        $this->color = $color;
-        $this->compression = $compression;
     }
 
     public function getMimeType(): string

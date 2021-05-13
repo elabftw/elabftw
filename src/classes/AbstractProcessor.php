@@ -54,11 +54,8 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     protected array $extra = array();
 
-    private Users $Users;
-
-    public function __construct(Users $users, Request $request)
+    public function __construct(private Users $Users, Request $request)
     {
-        $this->Users = $users;
         $this->process($request);
     }
 
@@ -83,8 +80,6 @@ abstract class AbstractProcessor implements ProcessorInterface
         if ($this->action === 'create' || $this->action === 'read' || $this->action === 'update') {
             return $this->getParamsObject();
         }
-        // all the other actions need no parameters
-        return;
     }
 
     protected function processJson(string $json): void
@@ -93,7 +88,7 @@ abstract class AbstractProcessor implements ProcessorInterface
         $this->action = $decoded->action ?? '';
         $this->setTarget($decoded->target ?? '');
 
-        if (isset($decoded->entity)) {
+        if (property_exists($decoded, 'entity') && $decoded->entity !== null) {
             $id = (int) $decoded->entity->id;
             if ($id === 0) {
                 $id = null;

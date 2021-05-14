@@ -32,7 +32,9 @@ use function preg_match;
 use function preg_match_all;
 use function preg_replace;
 use Psr\Log\NullLogger;
+use setasign\Fpdi\FpdiException;
 use function str_replace;
+use function strtolower;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Process\Exception\ProcessFailedException as SymfonyProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -277,6 +279,83 @@ class MakePdf extends AbstractMake
     }
 
     /**
+     * Append PDFs attached to an entity
+     *
+     * @param Mpdf $mpdf
+     */
+    public function appendPDFs(Mpdf $mpdf): Mpdf
+    {
+        $listOfPdfs = $this->getListOfPdfs();
+
+        if (empty($listOfPdfs)) {
+            return $mpdf;
+        }
+
+        foreach ($listOfPdfs as $pdf) {
+            // There will be cases where the merging will fail
+            // due to incompatibilities of Mpdf (actually fpdi) with the pdfs
+            // See https://manuals.setasign.com/fpdi-manual/v2/limitations/
+            // These cases will be caught and ignored
+            try {
+                $numberOfPages = $mpdf->setSourceFile($pdf[0]);
+
+                for ($i = 1; $i <= $numberOfPages; $i++) {
+                    // Import the ith page of the source PDF file
+                    $page = $mpdf->importPage($i);
+
+                    // getTemplateSize() is not documented in the MPDF manual
+                    // @return array|bool An array with following keys: width, height, 0 (=width), 1 (=height), orientation (L or P)
+                    $pageDim = $mpdf->getTemplateSize($page);
+
+                    if (is_array($pageDim)) { // satisfy phpstan
+                        // add a new (blank) page with the dimensions of the imported page
+                        $mpdf->AddPageByArray(array(
+                            'orientation' => $pageDim['orientation'],
+                            'sheet-size' => array($pageDim['width'], $pageDim['height']),
+                        ));
+                    }
+
+                    // empty the header and footer
+                    // cannot be an empty string
+                    $mpdf->SetHTMLHeader(' ', '', true);
+                    $mpdf->SetHTMLFooter(' ', '');
+
+                    // add the content of the imported page
+                    $mpdf->useTemplate($page);
+                }
+            } catch (FpdiException) {
+                continue;
+            }
+        }
+
+        return $mpdf;
+    }
+
+    /**
+     * Get a list of all PDFs that are attached to an entity
+     *
+     * @return array Empty or array of arrays with information for PDFs array('path/to/file', 'real.name')
+     */
+    private function getListOfPdfs(): array
+    {
+        $uploadsArr = $this->Entity->Uploads->readAll();
+        $listOfPdfs = array();
+
+        if (empty($uploadsArr)) {
+            return $listOfPdfs;
+        }
+
+        foreach ($uploadsArr as $upload) {
+            $filePath = dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
+            if (file_exists($filePath) && strtolower(Tools::getExt($upload['real_name'])) === 'pdf') {
+                $listOfPdfs[] = array($filePath, $upload['real_name']);
+            }
+        }
+
+        return $listOfPdfs;
+    }
+
+    /**
      * Build the pdf
      */
     private function generate(): Mpdf
@@ -285,6 +364,10 @@ class MakePdf extends AbstractMake
 
         // write content
         $mpdf->WriteHTML($this->tex2svg($mpdf, $this->getContent()));
+
+        if ($this->Entity->Users->userData['append_pdfs']) {
+            $mpdf = $this->appendPDFs($mpdf);
+        }
 
         if ($this->Entity->Users->userData['pdfa']) {
             // make sure we can read the pdf in a long time

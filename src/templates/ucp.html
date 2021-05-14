@@ -166,6 +166,11 @@
         />
         <label for='inc_files_pdf'>{{ 'Add attached files summary to the pdf'|trans }}</label>
         <br>
+        <input id='append_pdfs' type='checkbox' name='append_pdfs'
+          {{ App.Users.userData.append_pdfs == '1' ? " checked='checked'" }}
+        />
+        <label for='append_pdfs'>{{ 'Append attached PDFs to exported pdf'|trans }}</label>
+        <br>
         <input id='pdf_sig' type='checkbox' name='pdf_sig'
           {{ App.Request.cookies.get('pdf_sig') == '1' ? " checked='checked'" }}
         />

@@ -31,7 +31,7 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '4.0.0-beta3';
+    public const INSTALLED_VERSION = '4.0.0-beta4';
 
     public Users $Users;
 

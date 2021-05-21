@@ -39,11 +39,8 @@ class MakeBloxberg extends AbstractMake
     /** @var AbstractEntity $Entity */
     protected $Entity;
 
-    private Client $client;
-
-    public function __construct(Client $client, AbstractEntity $entity)
+    public function __construct(private Client $client, AbstractEntity $entity)
     {
-        $this->client = $client;
         parent::__construct($entity);
         $this->Entity->canOrExplode('write');
     }

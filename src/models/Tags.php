@@ -30,14 +30,11 @@ class Tags implements CrudInterface
 {
     use SetIdTrait;
 
-    public AbstractEntity $Entity;
-
     protected Db $Db;
 
-    public function __construct(AbstractEntity $entity, ?int $id = null)
+    public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->Entity = $entity;
         $this->id = $id;
     }
 
@@ -97,7 +94,6 @@ class Tags implements CrudInterface
      * Read all the tags from team
      *
      * @param string|null $term The beginning of the input for tag autocomplete
-     * @return array
      */
     public function readAll(?string $term = null): array
     {
@@ -126,7 +122,6 @@ class Tags implements CrudInterface
      *
      * @param int $newId The id of the new experiment/item that will receive the tags
      * @param bool $toExperiments convert to experiments type (when creating from tpl)
-     * @return void
      */
     public function copyTags(int $newId, bool $toExperiments = false): void
     {
@@ -196,11 +191,9 @@ class Tags implements CrudInterface
         if ($idsToDelete === false) {
             return 0;
         }
-        if (!empty($idsToDelete)) {
-            // loop on each tag that needs to be deduplicated and do the work
-            foreach ($idsToDelete as $idsList) {
-                $this->deduplicateFromIdsList($idsList['id_list']);
-            }
+        // loop on each tag that needs to be deduplicated and do the work
+        foreach ($idsToDelete as $idsList) {
+            $this->deduplicateFromIdsList($idsList['id_list']);
         }
 
         return count($idsToDelete);
@@ -246,7 +239,6 @@ class Tags implements CrudInterface
      *
      * @param array<array-key, string> $tags tags from the query string
      * @param int $team current logged in team
-     * @return array
      */
     public function getIdFromTags(array $tags, int $team): array
     {
@@ -330,7 +322,6 @@ class Tags implements CrudInterface
      * Update the references and delete the tags from the tags table
      *
      * @param string $idsList example: 23,42,1337
-     * @return void
      */
     private function deduplicateFromIdsList(string $idsList): void
     {

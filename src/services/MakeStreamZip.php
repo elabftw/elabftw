@@ -39,7 +39,6 @@ class MakeStreamZip extends AbstractMake
     /**
      * Give me an id list and a type, I make good zip for you
      *
-     * @param AbstractEntity $entity
      * @param string $idList 4 8 15 16 23 42
      */
     public function __construct(AbstractEntity $entity, string $idList)
@@ -135,7 +134,7 @@ class MakeStreamZip extends AbstractMake
             return $this->Entity->entityData['category'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
         }
 
-        throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', get_class($this->Entity)));
+        throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', $this->Entity::class));
     }
 
     /**

@@ -23,9 +23,6 @@ class ExperimentsController extends AbstractEntityController
 {
     /**
      * Constructor
-     *
-     * @param App $app
-     * @param Experiments $entity
      */
     public function __construct(App $app, Experiments $entity)
     {

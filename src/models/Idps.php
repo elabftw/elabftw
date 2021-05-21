@@ -34,12 +34,8 @@ class Idps implements DestroyableInterface
     /**
      * Create an IDP
      *
-     * @param string $name
-     * @param string $entityid
      * @param string $ssoUrl Single Sign On URL
-     * @param string $ssoBinding
      * @param string $sloUrl Single Log Out URL
-     * @param string $sloBinding
      * @param string $x509 Public x509 Certificate
      * @param string $active 0 or 1
      *
@@ -82,16 +78,10 @@ class Idps implements DestroyableInterface
     /**
      * Update info about an IDP
      *
-     * @param int $id
-     * @param string $name
-     * @param string $entityid
      * @param string $ssoUrl Single Sign On URL
-     * @param string $ssoBinding
      * @param string $sloUrl Single Log Out URL
-     * @param string $sloBinding
      * @param string $x509 Public x509 Certificate
      * @param string $active 0 or 1
-     * @return void
      */
     public function update(int $id, string $name, string $entityid, string $ssoUrl, string $ssoBinding, string $sloUrl, string $sloBinding, string $x509, string $active): void
     {

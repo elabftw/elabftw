@@ -20,16 +20,10 @@ use PDO;
  */
 class UserStats
 {
-    private Users $Users;
-
-    private int $count;
-
     private Db $Db;
 
-    public function __construct(Users $users, int $count)
+    public function __construct(private Users $Users, private int $count)
     {
-        $this->Users = $users;
-        $this->count = $count;
         $this->Db = Db::getConnection();
     }
 

@@ -24,9 +24,7 @@ trait TwigTrait
     /**
      * Prepare the Twig object
      *
-     * @param Config $config
      *
-     * @return \Twig\Environment
      */
     protected function getTwig(Config $config): \Twig\Environment
     {

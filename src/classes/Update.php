@@ -36,19 +36,13 @@ use function sha1;
 class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    private const REQUIRED_SCHEMA = 57;
-
-    public Config $Config;
+    private const REQUIRED_SCHEMA = 58;
 
     private Db $Db;
 
-    private Sql $Sql;
-
-    public function __construct(Config $config, Sql $sql)
+    public function __construct(public Config $Config, private Sql $Sql)
     {
-        $this->Config = $config;
         $this->Db = Db::getConnection();
-        $this->Sql = $sql;
     }
 
     /**
@@ -147,11 +141,19 @@ class Update
     /**
      * Remove revision without corresponding experiment and add
      * missing constraints when users employed the structure.sql
-     *
-     * @return void
      */
     private function fixExperimentsRevisions(): void
     {
+        // delete all experiments_revisions where userid doesn't exist anymore
+        // we do this to prevent having an integrity constraint violation when adding the constraint later
+        $sql = 'DELETE FROM experiments_revisions WHERE userid NOT IN (SELECT users.userid FROM users)';
+        $req = $this->Db->prepare($sql);
+        $req->execute();
+        // do the same for experiments
+        $sql = 'DELETE FROM experiments_revisions WHERE item_id NOT IN (SELECT experiments.id FROM experiments)';
+        $req = $this->Db->prepare($sql);
+        $req->execute();
+
         $sql = 'SELECT * FROM information_schema.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME = :name1 OR CONSTRAINT_NAME= :name2';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':name1', 'fk_experiments_revisions_experiments_id');

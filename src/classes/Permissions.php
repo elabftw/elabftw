@@ -22,24 +22,17 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Permissions
 {
-    private Users $Users;
-
     private Teams $Teams;
 
     private TeamGroups $TeamGroups;
 
-    private array $item;
-
     /**
      * Constructor
      *
-     * @param Users $users
      * @param array<string, mixed> $item
      */
-    public function __construct(Users $users, array $item)
+    public function __construct(private Users $Users, private array $item)
     {
-        $this->Users = $users;
-        $this->item = $item;
         $this->Teams = new Teams($this->Users);
         $this->TeamGroups = new TeamGroups($this->Users);
     }

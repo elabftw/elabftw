@@ -56,7 +56,7 @@
   </p>
 
   <div class='action-topmenu'>
-    {% if not Entity.isReadOnly %}
+    {% if not (Entity.isReadOnly or Entity.entityData.locked) %}
       <a class='elab-tooltip mr-1' href='#' data-action='edit'>
         <span>{{ 'Edit'|trans }}</span>
         <i class='fas fa-pencil-alt fa-2x' style='color:#29AEB9'></i>

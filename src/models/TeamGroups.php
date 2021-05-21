@@ -28,11 +28,8 @@ class TeamGroups implements CrudInterface
 
     private Db $Db;
 
-    private Users $Users;
-
-    public function __construct(Users $users, ?int $id = null)
+    public function __construct(private Users $Users, ?int $id = null)
     {
-        $this->Users = $users;
         $this->Db = Db::getConnection();
         $this->id = $id;
     }

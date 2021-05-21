@@ -142,11 +142,9 @@ class Users
         $Teams->addUserToTeams($userid, array_column($teams, 'id'));
         $userInfo = array('email' => $email, 'name' => $firstname . ' ' . $lastname);
         $Email = new Email($Config, $this);
-        if ($alertAdmin) {
-            // just skip this if we don't have proper normalized teams
-            if (isset($teams[0]['id'])) {
-                $Email->alertAdmin((int) $teams[0]['id'], $userInfo, !(bool) $validated);
-            }
+        // just skip this if we don't have proper normalized teams
+        if ($alertAdmin && isset($teams[0]['id'])) {
+            $Email->alertAdmin((int) $teams[0]['id'], $userInfo, !(bool) $validated);
         }
         if ($validated === 0) {
             $Email->alertUserNeedValidation($email);

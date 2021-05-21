@@ -173,11 +173,8 @@ class Templates extends AbstractEntity
                     experiments_templates.canread = 'organization' OR
                     (experiments_templates.canread = 'team' AND users2teams.users_id = experiments_templates.userid) OR
                     (experiments_templates.canread = 'user' AND experiments_templates.userid = :userid)";
-        // add all the teamgroups in which the user is
-        if (!empty($teamgroupsOfUser)) {
-            foreach ($teamgroupsOfUser as $teamgroup) {
-                $sql .= " OR (experiments_templates.canread = $teamgroup)";
-            }
+        foreach ($teamgroupsOfUser as $teamgroup) {
+            $sql .= " OR (experiments_templates.canread = $teamgroup)";
         }
         $sql .= ')';
 

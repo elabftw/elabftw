@@ -24,18 +24,9 @@ class ExternalAuth implements AuthInterface
 {
     private AuthResponse $AuthResponse;
 
-    private array $configArr;
-
-    private Logger $log;
-
-    private array $serverParams;
-
-    public function __construct(array $configArr, array $serverParams, Logger $log)
+    public function __construct(private array $configArr, private array $serverParams, private Logger $log)
     {
         $this->AuthResponse = new AuthResponse('external');
-        $this->configArr = $configArr;
-        $this->serverParams = $serverParams;
-        $this->log = $log;
     }
 
     public function tryAuth(): AuthResponse
@@ -60,7 +51,7 @@ class ExternalAuth implements AuthInterface
         $Users = new Users();
         try {
             $Users->populateFromEmail($email);
-        } catch (ResourceNotFoundException $e) {
+        } catch (ResourceNotFoundException) {
             // the user doesn't exist yet in the db
             // what do we do? Lookup the config setting for that case
             if ($this->configArr['saml_user_default'] === '0') {

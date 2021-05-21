@@ -27,12 +27,9 @@ class Scheduler
 {
     use EntityTrait;
 
-    public Items $Items;
-
-    public function __construct(Items $database)
+    public function __construct(public Items $Items)
     {
         $this->Db = Db::getConnection();
-        $this->Items = $database;
     }
 
     /**

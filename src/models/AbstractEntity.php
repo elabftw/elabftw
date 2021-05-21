@@ -52,8 +52,6 @@ abstract class AbstractEntity implements CrudInterface
 
     public Uploads $Uploads;
 
-    public Users $Users;
-
     public Pins $Pins;
 
     // experiments or items
@@ -87,10 +85,9 @@ abstract class AbstractEntity implements CrudInterface
     /**
      * Constructor
      *
-     * @param Users $users
      * @param int|null $id the id of the entity
      */
-    public function __construct(Users $users, ?int $id = null)
+    public function __construct(public Users $Users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
 
@@ -98,7 +95,6 @@ abstract class AbstractEntity implements CrudInterface
         $this->Steps = new Steps($this);
         $this->Tags = new Tags($this);
         $this->Uploads = new Uploads($this);
-        $this->Users = $users;
         $this->Comments = new Comments($this, new Email(Config::getConfig(), $this->Users));
         $this->TeamGroups = new TeamGroups($this->Users);
         $this->Pins = new Pins($this);
@@ -213,11 +209,8 @@ abstract class AbstractEntity implements CrudInterface
         }
         // add entities in useronly visibility only if we own them
         $sql .= " OR (entity.canread = 'useronly' AND entity.userid = :userid)";
-        // add all the teamgroups in which the user is
-        if (!empty($teamgroupsOfUser)) {
-            foreach ($teamgroupsOfUser as $teamgroup) {
-                $sql .= " OR (entity.canread = $teamgroup)";
-            }
+        foreach ($teamgroupsOfUser as $teamgroup) {
+            $sql .= " OR (entity.canread = $teamgroup)";
         }
         $sql .= ')';
 
@@ -309,8 +302,6 @@ abstract class AbstractEntity implements CrudInterface
      * Read the tags of the entity
      *
      * @param array<array-key, mixed> $items the results of all items from readShow()
-     *
-     * @return array
      */
     public function getTags(array $items): array
     {
@@ -393,8 +384,6 @@ abstract class AbstractEntity implements CrudInterface
      * Update read or write permissions for an entity
      *
      * @param string $rw read or write
-     * @param string $value
-     * @return void
      */
     public function updatePermissions(string $rw, string $value): void
     {
@@ -443,7 +432,6 @@ abstract class AbstractEntity implements CrudInterface
      *
      * @param string $rw read or write
      * @throws IllegalActionException
-     * @return void
      */
     public function canOrExplode(string $rw): void
     {
@@ -464,7 +452,6 @@ abstract class AbstractEntity implements CrudInterface
      * Here be dragons! Cognitive load > 9000
      *
      * @param array<string, mixed>|null $item one item array
-     * @return array
      */
     public function getPermissions(?array $item = null): array
     {
@@ -473,9 +460,6 @@ abstract class AbstractEntity implements CrudInterface
         }
         if (empty($this->entityData) && !isset($item)) {
             $this->populate();
-            if (!isset($this->entityData)) {
-                return array('read' => false, 'write' => false);
-            }
         }
         // don't try to read() again if we have the item (for show where there are several items to check)
         if (!isset($item)) {
@@ -506,7 +490,6 @@ abstract class AbstractEntity implements CrudInterface
      * Update the category for an entity
      *
      * @param int $category id of the category (status or items types)
-     * @return void
      */
     public function updateCategory(int $category): void
     {
@@ -525,7 +508,6 @@ abstract class AbstractEntity implements CrudInterface
      *
      * @param string $column the column on which to filter
      * @param string|null $value the value to look for
-     * @return void
      */
     public function addFilter(string $column, ?string $value): void
     {
@@ -542,7 +524,6 @@ abstract class AbstractEntity implements CrudInterface
      *
      * @param int $userid limit to this user
      * @param string $period 20201206-20210101
-     * @return array
      */
     public function getIdFromLastchange(int $userid, string $period): array
     {
@@ -583,8 +564,6 @@ abstract class AbstractEntity implements CrudInterface
 
     /**
      * Get token and pdf info for displaying in view mode
-     *
-     * @return array
      */
     public function getTimestampInfo(): array
     {
@@ -613,8 +592,6 @@ abstract class AbstractEntity implements CrudInterface
 
     /**
      * Check if the current entity is pin of current user
-     *
-     * @return bool
      */
     public function isPinned(): bool
     {
@@ -665,7 +642,6 @@ abstract class AbstractEntity implements CrudInterface
      *
      * @param bool $getTags do we get the tags too?
      * @param bool $fullSelect select all the columns of entity
-     * @return string
      * @phan-suppress PhanPluginPrintfVariableFormatString
      */
     private function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false): string

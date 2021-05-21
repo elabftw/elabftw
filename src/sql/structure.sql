@@ -657,6 +657,7 @@ CREATE TABLE `users` (
   `use_markdown` tinyint(1) NOT NULL DEFAULT '0',
   `use_ove` tinyint(1) NOT NULL DEFAULT '1',
   `inc_files_pdf` tinyint(1) NOT NULL DEFAULT '1',
+  `append_pdfs` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
   `archived` tinyint(1) NOT NULL DEFAULT '0',
   `pdfa` tinyint(1) NOT NULL DEFAULT '1',
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',

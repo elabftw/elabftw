@@ -16,6 +16,7 @@ use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\Email;
 use Elabftw\Traits\SetIdTrait;
+use function nl2br;
 use PDO;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,7 +43,7 @@ class Comments implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindValue(':datetime', date('Y-m-d H:i:s'));
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindValue(':content', $params->getContent());
+        $req->bindValue(':content', nl2br($params->getContent()));
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
         $this->Db->execute($req);
@@ -76,7 +77,7 @@ class Comments implements CrudInterface
             comment = :content
             WHERE id = :id AND userid = :userid AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent(), PDO::PARAM_STR);
+        $req->bindValue(':content', nl2br($params->getContent()), PDO::PARAM_STR);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);

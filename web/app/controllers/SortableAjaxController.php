@@ -49,7 +49,7 @@ try {
             if (!$App->Session->get('is_admin')) {
                 throw new IllegalActionException('Non admin user tried to access admin controller.');
             }
-            $Entity = new Status($App->Users);
+            $Entity = new Status($App->Users->team);
             break;
         case 'experiments_steps':
             $model = new Experiments($App->Users);

@@ -27,5 +27,4 @@ uploads
 /vendor/
 web/app/css/tinymce/fonts/*.woff
 .sass-cache
-src/ts/*.js
 src/ts/langs/*.js

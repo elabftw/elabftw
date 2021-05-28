@@ -6,10 +6,8 @@
  * @package elabftw
  */
 // this webpack loader removes the tracking code from 3Dmol
-// the actual loader 3Dmol-loader.js is generated from this file
-// with: tsc src/ts/3Dmol-loader.ts
 // I couldn't find another way to set the notrack:true option
-module.exports = function(source: string): string {
-  const get = /\$\.get\("https:\/\/3dmol\.csb\.pitt\.edu\/track\/report\.cgi"\);/g;
-  return source.replace(get, '');
+module.exports = function (source) {
+    var get = /\$\.get\("https:\/\/3dmol\.csb\.pitt\.edu\/track\/report\.cgi"\);/g;
+    return source.replace(get, '');
 };

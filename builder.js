@@ -89,8 +89,11 @@ module.exports = {
       {
         filename: 'vendor.min.css',
       }
-    )
+    ),
   ],
+  resolve: {
+    extensions: ['.ts', '.js'],
+  },
   module: {
     rules:[
       // ts loader

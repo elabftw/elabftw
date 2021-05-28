@@ -36,7 +36,7 @@
     "expose-loader": "^2.0.0",
     "file-loader": "^6.2.0",
     "file-saver": "2.0.*",
-    "grunt": "^1.2.1",
+    "grunt": "^1.4.1",
     "grunt-contrib-cssmin": "4.0.*",
     "grunt-contrib-uglify-es": "gruntjs/grunt-contrib-uglify#harmony",
     "grunt-shell": "3.0.*",

@@ -57,7 +57,7 @@ module.exports = function(grunt) {
       },
       // run yarn install
       yarninstall: {
-        command: 'yarn install --pure-lockfile'
+        command: 'yarn install --ignore-scripts --pure-lockfile'
       },
       tinymce: {
         // copy the mobile font file

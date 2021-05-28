@@ -21,16 +21,16 @@ Lato is a sanserif typeface family designed in the Summer 2010 and extended in t
 
 ================
 
-CONTENTS: 
+CONTENTS:
 
-This folder contains 18 font files in OpenType TT (.ttf) format. You can install these fonts on your computer and use in any desktop applications (such as Word, InDesign, Illustrator, Photoshop, Keynote or Pages). 
+This folder contains 18 font files in OpenType TT (.ttf) format. You can install these fonts on your computer and use in any desktop applications (such as Word, InDesign, Illustrator, Photoshop, Keynote or Pages).
 
 ================
 
 REVISION LOG:
 
 # Version 2.010 (2014-09-01)
-Improved some contour bugs and diacritics positioning. 
+Improved some contour bugs and diacritics positioning.
 Improved outline quality.
 Revised OTL features so that they work in browsers (ot-sanitise).
 Autohinted using ttfautohint 1.1.
@@ -41,7 +41,7 @@ Greatly expanded character set, revised metrics, four additional weights.
 
 # Version 1.104 (2011-11-08)
 Merged the distribution again
-Autohinted with updated ttfautohint 0.4 (which no longer causes Adobe and iOS problems) 
+Autohinted with updated ttfautohint 0.4 (which no longer causes Adobe and iOS problems)
 except the Hai and Lig weights which are hinted in FLS 5.1.
 
 # Version 1.102 (2011-10-28)

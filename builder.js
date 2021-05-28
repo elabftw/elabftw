@@ -73,7 +73,7 @@ module.exports = {
   mode: 'production',
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'web/app/js')
+    path: path.resolve(__dirname, 'web/assets')
   },
   optimization: {
     splitChunks: {
@@ -84,7 +84,13 @@ module.exports = {
   watchOptions: {
       ignored: /node_modules/
   },
-  plugins: [new MiniCssExtractPlugin()],
+  plugins: [
+    new MiniCssExtractPlugin(
+      {
+        filename: 'vendor.min.css',
+      }
+    )
+  ],
   module: {
     rules:[
       // ts loader

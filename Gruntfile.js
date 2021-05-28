@@ -15,7 +15,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'web/app/js/vendor.min.js': [
+          'web/assets/vendor.min.js': [
               'src/js/vendor/keymaster.js',
               'src/js/vendor/cornify.js',
               'src/js/vendor/jquery.rating.js',
@@ -27,7 +27,7 @@ module.exports = function(grunt) {
 
           'web/app/js/chemdoodle-canvas.min.js': 'web/app/js/src/chemdoodle-canvas.js',
 
-          'web/app/js/bootstrap-markdown.min.js': [
+          'web/assets/bootstrap-markdown.min.js': [
               'node_modules/marked/lib/marked.js',
               'node_modules/bootstrap-markdown-fa5/js/bootstrap-markdown.js',
               'node_modules/bootstrap-markdown-fa5/locale/*' ],

@@ -16,8 +16,8 @@ config.php*
 *.bundle.js
 node_modules/*
 web/test.php
-web/app/js/*.LICENSE.txt
-web/app/js/*.svg
+web/assets/*.LICENSE.txt
+web/assets/*.svg
 src/node/*.LICENSE.txt
 tests/_output/*
 tests/_support/_generated*

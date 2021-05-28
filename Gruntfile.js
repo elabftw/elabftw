@@ -46,26 +46,12 @@ module.exports = function(grunt) {
         }
       }
     },
-    shell: {
-      // run yarn install
-      yarninstall: {
-        command: 'yarn install --ignore-scripts --pure-lockfile'
-      },
-      tinymce: {
-        // copy the mobile font file
-        command: 'cp node_modules/tinymce/skins/ui/oxide/fonts/tinymce-mobile.woff web/app/css/tinymce/fonts/tinymce-mobile.woff'
-      }
-    }
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify-es');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks('grunt-shell');
 
   // before minifying js it is preferable to do 'yarn install' to update the dependencies
-  grunt.registerTask('yarn', 'shell:yarninstall');
-  grunt.registerTask('default', ['yarn', 'uglify', 'cssmin', 'tinymce']);
+  grunt.registerTask('default', ['uglify', 'cssmin']);
   grunt.registerTask('css', 'cssmin');
-  grunt.registerTask('tinymce', 'shell:tinymce');
-  grunt.registerTask('ts', ['shell:tsc']);
 };

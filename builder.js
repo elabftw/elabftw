@@ -13,6 +13,7 @@
  */
 const path = require('path');
 const webpack = require('webpack');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   entry: {
@@ -83,6 +84,7 @@ module.exports = {
   watchOptions: {
       ignored: /node_modules/
   },
+  plugins: [new MiniCssExtractPlugin()],
   module: {
     rules:[
       // ts loader
@@ -94,7 +96,14 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: 'css-loader',
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+        ],
+      },
+      {
+        test: /.(jpg|jpeg|png|svg)$/,
+        use: ['file-loader'],
       },
       // transpile things with babel so javascript works with Edge
       {

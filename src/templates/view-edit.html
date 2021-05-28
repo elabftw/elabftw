@@ -3,10 +3,6 @@
   <script src='app/js/chemdoodle.min.js?v={{ v }}'></script>
 {% endif %}
 
-{% if Entity.Users.userData.use_markdown or App.Request.query.get('editor') == 'md' %}
-  <link rel='stylesheet' href='app/css/bootstrap-markdown.min.css' type='text/css'>
-{% endif %}
-
 <div class='row'>
   <div class='col-md-10'>
     <!-- BACK TO LINK -->

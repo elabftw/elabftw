@@ -14,6 +14,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -80,6 +81,9 @@ module.exports = {
       chunks: 'all',
       name: 'vendor'
     },
+    minimizer: [
+      new CssMinimizerPlugin(),
+    ],
   },
   watchOptions: {
       ignored: /node_modules/

@@ -7,13 +7,15 @@
  */
 
 @page {
-    size: auto;
-    header: header;
+    /* stylelint-disable-next-line property-no-unknown */
     footer: footer;
+    /* stylelint-disable-next-line property-no-unknown */
+    header: header;
+    size: auto;
 }
 
 body {
-    font-family: "Lato", sans-serif;
+    font-family: 'Lato', sans-serif;
     font-kerning: normal;
 }
 
@@ -23,8 +25,8 @@ a {
 }
 
 code {
-    border: 1px dotted #ccc;
     background-color: #eee;
+    border: 1px dotted #ccc;
 }
 
 table {
@@ -44,10 +46,10 @@ table td {
 table th {
     background-color: #dcdddc;
     color: #797979;
-    text-transform: uppercase;
     font-size: 90%;
     padding: 5px;
     text-align: left;
+    text-transform: uppercase;
     width: 150px;
 }
 
@@ -72,36 +74,36 @@ tr:nth-child(odd) {
 }
 
 .elabid {
-    text-align: right;
-    color: black;
+    color: #000;
     font-size: 8pt;
+    text-align: right;
 }
 
 .barcode {
-    padding: 1.5mm;
+    color: #000;
     margin: 0;
+    padding: 1.5mm;
     vertical-align: middle;
-    color: black;
 }
 
 .attached-image {
-    max-width: 100%;
-    max-height: 5cm;
     border: 1px solid #dcdddc;
     margin-top: 0.5em;
+    max-height: 5cm;
+    max-width: 100%;
 }
 
 .noborder {
-    border: none;
+    border-style: none;
 }
 
 #infoblock {
+    background-color: #f2f2f2;
     border: 1px solid #dcdddc;
     border-radius: 5px;
-    background-color: #f2f2f2;
+    margin-top: 1em;
     padding-right: 15px;
     width: 100%;
-    margin-top: 1em;
 }
 
 #header {
@@ -110,11 +112,11 @@ tr:nth-child(odd) {
 
 .footer-block {
     background-color: #e2e2e2;
+    border-radius: 5px;
+    border-top: 1px solid #dcdddc;
+    font-size: 80%;
     padding: 10px 0;
     width: 100%;
-    font-size: 80%;
-    border-top: 1px solid #dcdddc;
-    border-radius: 5px;
 }
 
 .signatures {
@@ -126,14 +128,15 @@ tr:nth-child(odd) {
 }
 
 /* caption for tinymce */
-figure.image figcaption {
+.image figcaption {
+    border: 1px solid #ccc;
+    /* stylelint-disable-next-line shorthand-property-no-redundant-values */
     margin: 2px 0 6px 0;
-    border: 1px solid gray;
     text-align: center;
 }
 
 /* This helps alignment for inline equations */
 img, /* <-- can be removed after PR https://github.com/mpdf/mpdf/pull/1405 is accepted and mpdf is bumped to next version */
-img.mathjax-svg { /* keep only this selector */
+.mathjax-svg { /* keep only this selector */
     vertical-align: middle;
 }

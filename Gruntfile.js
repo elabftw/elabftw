@@ -26,19 +26,12 @@ module.exports = function(grunt) {
               'src/js/vendor/chemdoodle/chemdoodle-uis-unpacked.js'],
 
           'web/app/js/chemdoodle-canvas.min.js': 'web/app/js/src/chemdoodle-canvas.js',
-
-          'web/assets/bootstrap-markdown.min.js': [
-              'node_modules/marked/lib/marked.js',
-              'node_modules/bootstrap-markdown-fa5/js/bootstrap-markdown.js',
-              'node_modules/bootstrap-markdown-fa5/locale/*' ],
         }
       }
     },
     cssmin: {
       target: {
         files: {
-          'web/app/css/pdf.min.css': 'web/app/css/pdf.css',
-          'web/app/css/bootstrap-markdown.min.css': 'node_modules/bootstrap-markdown/css/bootstrap-markdown.min.css',
           'web/app/css/tinymce/skin.min.css': 'node_modules/tinymce/skins/ui/oxide/skin.css',
           'web/app/css/tinymce/content.min.css': 'node_modules/tinymce/skins/ui/oxide/content.css',
           'web/app/css/tinymce/content.mobile.min.css': 'node_modules/tinymce/skins/ui/oxide/content.mobile.css',

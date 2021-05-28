@@ -34,10 +34,6 @@ module.exports = function(grunt) {
         }
       }
     },
-    watch: {
-      files: ['<%= uglify.files %>'],
-      tasks: ['uglify']
-    },
     cssmin: {
       target: {
         files: {
@@ -67,7 +63,6 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify-es');
-  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-shell');
 

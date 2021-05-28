@@ -29,22 +29,10 @@ module.exports = function(grunt) {
         }
       }
     },
-    cssmin: {
-      target: {
-        files: {
-          'web/app/css/tinymce/skin.min.css': 'node_modules/tinymce/skins/ui/oxide/skin.css',
-          'web/app/css/tinymce/content.min.css': 'node_modules/tinymce/skins/ui/oxide/content.css',
-          'web/app/css/tinymce/content.mobile.min.css': 'node_modules/tinymce/skins/ui/oxide/content.mobile.css',
-          'web/app/css/tinymce/skin.mobile.min.css': 'node_modules/tinymce/skins/ui/oxide/skin.mobile.css',
-        }
-      }
-    },
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify-es');
-  grunt.loadNpmTasks('grunt-contrib-cssmin');
 
   // before minifying js it is preferable to do 'yarn install' to update the dependencies
-  grunt.registerTask('default', ['uglify', 'cssmin']);
-  grunt.registerTask('css', 'cssmin');
+  grunt.registerTask('default', ['uglify']);
 };

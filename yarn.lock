@@ -945,9 +945,9 @@
   integrity sha512-DPgxtHuJwBORpqRkPXzzOT+uoPRVJmaN7LR+pmeL6DQM90kj6G6GFUH1i/YpRH8NbML8ZGEDwB9f9u4UwD2pzg==
 
 "@deltablot/chemdoodle-web-mini@^9.2.1":
-  version "9.2.1"
-  resolved "https://registry.yarnpkg.com/@deltablot/chemdoodle-web-mini/-/chemdoodle-web-mini-9.2.1.tgz#126eb67f7e72a0f68ef93953a1ed6d17b57f39a4"
-  integrity sha512-PsOCVA5uyp51+BwIUdLJU5DgP5I1CuPScq1pXa9ne79+pUrsEDnjo5C/GAtOpb4qK8U4c9sB9FKr3tZGoTGSrw==
+  version "9.2.2"
+  resolved "https://registry.yarnpkg.com/@deltablot/chemdoodle-web-mini/-/chemdoodle-web-mini-9.2.2.tgz#0d41d877344b508d1da9addbdde65720e012524b"
+  integrity sha512-GWjCUQmk8teLVdfuxFCULljrjSA4R7ZgaJLP3/W4BnEH9MwPIvk1nvVRiMryAfJfgwaZEo3lPDR2vWnjNVYvKA==
 
 "@discoveryjs/json-ext@^0.5.0":
   version "0.5.3"

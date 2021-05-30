@@ -37,7 +37,9 @@ $theme-colors: (
 @import '../../node_modules/@fullcalendar/list/main';
 @import '../../node_modules/@fullcalendar/timegrid/main';
 @import '../../node_modules/@fancyapps/fancybox/dist/jquery.fancybox';
-@import '../../node_modules/jquery-ui/themes/base/all';
+@import '../../node_modules/jquery-ui/themes/base/core';
+@import '../../node_modules/jquery-ui/themes/base/autocomplete';
+@import '../../node_modules/jquery-ui/themes/base/sortable';
 
 @import 'autocomplete';
 @import 'footer';

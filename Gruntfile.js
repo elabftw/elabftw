@@ -18,8 +18,6 @@ module.exports = function(grunt) {
           'web/app/js/chemdoodle.min.js': [
               'src/js/vendor/chemdoodle/chemdoodle-unpacked.js',
               'src/js/vendor/chemdoodle/chemdoodle-uis-unpacked.js'],
-
-          'web/app/js/chemdoodle-canvas.min.js': 'web/app/js/src/chemdoodle-canvas.js',
         }
       }
     },

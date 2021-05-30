@@ -67,6 +67,11 @@ module.exports = {
       'prismjs/components/prism-r.js',
       'prismjs/components/prism-ruby.js',
     ],
+    jslibs: [
+      './src/js/vendor/cornify.js',
+      './src/js/vendor/jquery.rating.js',
+      './src/js/vendor/keymaster.js',
+    ],
   },
   // uncomment this to find where the error is coming from
   // makes the build slower
@@ -125,7 +130,7 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env'],
-            compact: false,
+            compact: true,
           }
         }
       },
@@ -135,6 +140,14 @@ module.exports = {
         loader: 'expose-loader',
         options: {
           exposes: ['$', 'jQuery'],
+        },
+      },
+      // expose key for keymaster globally
+      {
+        test: /keymaster.js/,
+        loader: 'expose-loader',
+        options: {
+          exposes: 'key',
         },
       },
       // use a custom loader for 3Dmol.js

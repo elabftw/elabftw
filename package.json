@@ -75,8 +75,8 @@
     "build": "webpack-cli --progress --config builder.js",
     "buildnode": "webpack-cli --progress --config node-builder.js",
     "buildall": "yarn install --ignore-scripts --pure-lockfile && yarn build && yarn buildnode && sass --quiet-deps --style compressed src/scss/main.scss:web/assets/elabftw.min.css src/scss/pdf.scss:web/assets/pdf.min.css && cp node_modules/tinymce/skins/ui/oxide/fonts/tinymce-mobile.woff web/app/css/tinymce/fonts/tinymce-mobile.woff && cp node_modules/tinymce/skins/ui/oxide/*.min.css web/app/css/tinymce/ && brotli -vf web/assets/*.css web/assets/*.js web/assets/*.svg",
-    "buildcss": "grunt css && sass --quiet-deps src/scss/main.scss:web/assets/elabftw.min.css",
-    "buildjs": "grunt ts && yarn build && yarn buildnode",
+    "buildcss": "sass --quiet-deps src/scss/main.scss:web/assets/elabftw.min.css",
+    "buildjs": "yarn build && yarn buildnode",
     "buildprofile": "webpack-cli --config builder.js --profile --json > stats.json",
     "buildnodeprofile": "webpack-cli --config node-builder.js --profile --json > node-stats.json",
     "clean": "rm -rf apidoc/html _srcdoc src/ts/*.js src/ts/*.js.map web/app/js/*bundle.js src/node/*bundle.js web/app/js/*.LICENSE.txt web/app/js/*.min.js web/app/css/*.min.css web/app/css/*.min.css.map",
@@ -103,8 +103,8 @@
     "unit-ci": "php vendor/bin/codecept run unit",
     "vulns": "snyk test",
     "watchcss": "sass --quiet-deps --watch src/scss/main.scss:web/assets/elabftw.min.css",
-    "watchjs": "grunt && webpack-cli --config builder.js --mode=development --watch --progress",
-    "watchnode": "grunt && webpack-cli --config node-builder.js --mode=development --watch --progress"
+    "watchjs": "webpack-cli --config builder.js --mode=development --watch --progress",
+    "watchnode": "webpack-cli --config node-builder.js --mode=development --watch --progress"
   },
   "repository": "git+https://github.com/elabftw/elabftw.git",
   "author": "Nicolas CARPi",

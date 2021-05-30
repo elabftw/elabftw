@@ -15,12 +15,6 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'web/assets/vendor.min.js': [
-              'src/js/vendor/keymaster.js',
-              'src/js/vendor/cornify.js',
-              'src/js/vendor/jquery.rating.js',
-          ],
-
           'web/app/js/chemdoodle.min.js': [
               'src/js/vendor/chemdoodle/chemdoodle-unpacked.js',
               'src/js/vendor/chemdoodle/chemdoodle-uis-unpacked.js'],

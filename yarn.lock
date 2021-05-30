@@ -3738,10 +3738,10 @@ exit-hook@^1.0.0:
   resolved "https://registry.yarnpkg.com/exit-hook/-/exit-hook-1.1.1.tgz#f05ca233b48c05d54fff07765df8507e95c02ff8"
   integrity sha1-8FyiM7SMBdVP/wd2XfhQfpXAL/g=
 
-expose-loader@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/expose-loader/-/expose-loader-2.0.0.tgz#1c323577db3d16f7817e4652024f2c545b3f6a70"
-  integrity sha512-WBpSGlNkn7YwbU2us7O+h0XsoFrB43Y/VCNSpRV4OZFXXKgw8W800BgNxLV0S97N3+KGnFYSCAJi1AV86NO22w==
+expose-loader@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/expose-loader/-/expose-loader-3.0.0.tgz#d6fe52efea6a957b88fe31c716a42e1b127fd225"
+  integrity sha512-X7ncrzmiQbJHOyLwuymECHk4NYvoPFwnsINMYFaRrm4fxuxR59hV1v65bho3TpIoWieP8WZmhz6micKny8orWg==
 
 extend@^3.0.0, extend@~3.0.2:
   version "3.0.2"

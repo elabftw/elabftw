@@ -74,7 +74,7 @@
     "apidoc": "apidoc -c apidoc -o apidoc/html -i src/controllers",
     "build": "webpack-cli --progress --config builder.js",
     "buildnode": "webpack-cli --progress --config node-builder.js",
-    "buildall": "yarn install --ignore-scripts --pure-lockfile && yarn build && yarn buildnode && sass --quiet-deps --style compressed src/scss/main.scss:web/assets/elabftw.min.css && sass --style compressed src/scss/pdf.scss:web/assets/pdf.min.css && cp node_modules/tinymce/skins/ui/oxide/fonts/tinymce-mobile.woff web/app/css/tinymce/fonts/tinymce-mobile.woff && cp node_modules/tinymce/skins/ui/oxide/*.min.css web/app/css/tinymce/",
+    "buildall": "yarn install --ignore-scripts --pure-lockfile && yarn build && yarn buildnode && sass --quiet-deps --style compressed src/scss/main.scss:web/assets/elabftw.min.css src/scss/pdf.scss:web/assets/pdf.min.css && cp node_modules/tinymce/skins/ui/oxide/fonts/tinymce-mobile.woff web/app/css/tinymce/fonts/tinymce-mobile.woff && cp node_modules/tinymce/skins/ui/oxide/*.min.css web/app/css/tinymce/",
     "buildcss": "grunt css && sass --quiet-deps src/scss/main.scss:web/assets/elabftw.min.css",
     "buildjs": "grunt ts && yarn build && yarn buildnode",
     "buildprofile": "webpack-cli --config builder.js --profile --json > stats.json",

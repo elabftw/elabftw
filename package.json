@@ -74,7 +74,7 @@
     "brotli": "brotli -vf web/assets/*.css web/assets/*.js web/assets/*.svg",
     "build": "webpack-cli --progress --config builder.js",
     "buildnode": "webpack-cli --progress --config node-builder.js",
-    "buildall": "yarn install --ignore-scripts --pure-lockfile && yarn buildjs && yarn buildcss && yarn chemdoodle && yarn tinymce && yarn brotli",
+    "buildall": "CYPRESS_INSTALL_BINARY=0 yarn install --pure-lockfile && yarn buildjs && yarn buildcss && yarn chemdoodle && yarn tinymce && yarn brotli",
     "buildcss": "sass --quiet-deps --style compressed src/scss/main.scss:web/assets/elabftw.min.css src/scss/pdf.scss:web/assets/pdf.min.css",
     "buildjs": "yarn build && yarn buildnode",
     "buildprofile": "webpack-cli --config builder.js --profile --json > stats.json",

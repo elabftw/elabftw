@@ -1,4 +1,5 @@
 *~
+*.br
 .php_cs.cache
 .php_cs
 .scannerwork

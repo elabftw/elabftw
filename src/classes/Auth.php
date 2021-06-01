@@ -88,6 +88,7 @@ class Auth implements AuthInterface
             'metadata.php',
             'register.php',
             'RegisterController.php',
+            'RequestHandler.php',
             'ResetPasswordController.php',
         );
 

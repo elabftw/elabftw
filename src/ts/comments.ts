@@ -8,6 +8,7 @@
 import Comment from './Comment.class';
 import i18next from 'i18next';
 import { Entity, EntityType } from './interfaces';
+import { relativeMoment } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -52,12 +53,19 @@ document.addEventListener('DOMContentLoaded', () => {
       style : 'display:inline',
       submitcssclass : 'button btn btn-primary mt-2',
       cancelcssclass : 'button btn btn-danger mt-2',
-      callback : function(json) {
-        // show result in comment box
-        if (json.res) {
-          $(this).html(json.value);
-        }
-      }
+      callback : () => {
+        // use setTimeout to give the time for sql to change the data before we fetch it
+        setTimeout(() => {
+          return fetch(window.location.href).then(response => {
+            return response.text();
+          }).then(data => {
+            const parser = new DOMParser();
+            const html = parser.parseFromString(data, 'text/html');
+            document.getElementById('comment').innerHTML = html.getElementById('comment').innerHTML;
+            relativeMoment();
+          });
+        }, 20);
+      },
     });
   });
 

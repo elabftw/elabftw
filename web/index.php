@@ -16,13 +16,11 @@ use Elabftw\Services\LoginHelper;
 use Elabftw\Services\SamlAuth;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuthLib;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 require_once 'app/init.inc.php';
 
 $location = '../../experiments.php';
-$Response = new RedirectResponse($location);
 
 try {
     // SAML: IDP will redirect to this page after user login on IDP website
@@ -46,18 +44,16 @@ try {
         $location = $App->Request->cookies->get('redirect') ?? $location;
     }
 
-    $Response = new RedirectResponse($location);
-    // TODO FIXME saml breaks if this line is removed
-    // this is a problem of the redirect response not working
-    // unless there is something shown/sent to the user before
-    // no idea why
-    var_dump($App->Request->request->get('SAMLResponse'));
+    // we don't use a RedirectResponse but show a temporary redirection page or it will not work properly
+    echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
+    exit;
 } catch (ImproperActionException $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
     $Response = new Response();
     $Response->prepare($Request);
     $Response->setContent($App->render($template, $renderArr));
+    $Response->send();
 } catch (Exception $e) {
     // log error and show general error message
     $App->Log->error('', array('Exception' => $e));
@@ -66,6 +62,5 @@ try {
     $Response = new Response();
     $Response->prepare($Request);
     $Response->setContent($App->render($template, $renderArr));
-} finally {
     $Response->send();
 }

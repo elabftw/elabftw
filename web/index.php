@@ -16,11 +16,13 @@ use Elabftw\Services\LoginHelper;
 use Elabftw\Services\SamlAuth;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuthLib;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 require_once 'app/init.inc.php';
 
 $location = '../../experiments.php';
+$Response = new RedirectResponse($location);
 
 try {
     // SAML: IDP will redirect to this page after user login on IDP website
@@ -42,11 +44,13 @@ try {
             $LoginHelper->login(false);
         }
         $location = $App->Request->cookies->get('redirect') ?? $location;
+        // we don't use a RedirectResponse but show a temporary redirection page or it will not work properly
+        echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
+        exit;
     }
 
-    // we don't use a RedirectResponse but show a temporary redirection page or it will not work properly
-    echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
-    exit;
+    $Response = new RedirectResponse($location);
+    $Response->send();
 } catch (ImproperActionException $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());

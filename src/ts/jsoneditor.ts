@@ -9,6 +9,7 @@ declare let key: any;
 
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { getEntity } from './misc';
+import 'jsoneditor/dist/jsoneditor.min.css';
 
 // JSON editor related stuff
 document.addEventListener('DOMContentLoaded', () => {

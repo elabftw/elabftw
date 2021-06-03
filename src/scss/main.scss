@@ -5,20 +5,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-$darkgray: #343434;
-$maingray: #595959;
-$verylightgray: #f2f2f2;
-$lightgray: #626262;
-$lightgraybutnottoolight: #d6d6d6;
-$bordersgray: #dcdddc;
-$elabblue: #29aeb9;
-$darkblue: #1f8591;
-$dangerred: #e6614c;
-$lightblue: #c4f9ff;
-$darkred: #dd1e00;
-$lightred: #ffc1b7;
-$green: #54aa08;
 
+@import 'variables';
 /* import this first to be able to modify bootstrap theme */
 @import '../../node_modules/bootstrap/scss/functions';
 @import '../../node_modules/bootstrap/scss/variables';
@@ -30,9 +18,21 @@ $theme-colors: (
 );
 @import '../../node_modules/bootstrap/scss/bootstrap';
 @import '../../node_modules/bootstrap-select/sass/bootstrap-select';
+@import '../../node_modules/prismjs/themes/prism';
+@import '../../node_modules/dropzone/dist/dropzone';
 @import '../../node_modules/@fullcalendar/common/main';
+@import '../../node_modules/@fullcalendar/bootstrap/main';
+@import '../../node_modules/@fullcalendar/list/main';
+@import '../../node_modules/@fullcalendar/timegrid/main';
+@import '../../node_modules/@fancyapps/fancybox/dist/jquery.fancybox';
+@import '../../node_modules/jquery-ui/themes/base/core';
+@import '../../node_modules/jquery-ui/themes/base/autocomplete';
+@import '../../node_modules/jquery-ui/themes/base/menu';
+@import '../../node_modules/jquery-ui/themes/base/sortable';
+@import '../../node_modules/jquery-ui/themes/base/theme';
 
 @import 'autocomplete';
+@import 'chemdoodle';
 @import 'footer';
 @import 'header';
 @import 'jquery-rating';

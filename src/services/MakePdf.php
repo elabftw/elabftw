@@ -379,11 +379,11 @@ class MakePdf extends AbstractMake
     }
 
     /**
-     * Get the contents of app/css/pdf.min.css
+     * Get the contents of assets/pdf.min.css
      */
     private function getCss(): string
     {
-        $css = file_get_contents(dirname(__DIR__, 2) . '/web/app/css/pdf.min.css');
+        $css = file_get_contents(dirname(__DIR__, 2) . '/web/assets/pdf.min.css');
         if ($css === false) {
             throw new FilesystemErrorException('Cannot read the minified css file!');
         }

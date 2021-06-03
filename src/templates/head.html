@@ -22,16 +22,15 @@
   <title>{{ block('title') }} - eLabFTW</title>
   <!-- see Gruntfile.js and builder.js to see what gets inside these files -->
   <!-- CSS -->
-  <link rel='stylesheet' media='all' href='app/css/elabftw.min.css?v={{ v }}' />
-  <link rel='stylesheet' media='all' href='app/css/vendor.min.css?v={{ v }}' />
+  <link rel='stylesheet' media='all' href='assets/vendor.min.css?v={{ v }}' />
+  <link rel='stylesheet' media='all' href='assets/elabftw.min.css?v={{ v }}' />
 
   <!-- all js dependencies bundled by webpack (see builder.js) -->
-  <script defer src='app/js/vendor.bundle.js?v={{ v }}'></script>
+  <script defer src='assets/vendor.bundle.js?v={{ v }}'></script>
   <!-- the main JS bundle with all the elabftw TS code (see builder.js) -->
-  <script defer src='app/js/main.bundle.js?v={{ v }}'></script>
-  <!-- concatenated JS built by grunt for non es6 libraries (see Gruntfile.js) -->
-  <script defer src='app/js/vendor.min.js?v={{ v }}'></script>
-  <script defer src='app/js/bootstrap-markdown.min.js?v={{ v }}'></script>
+  <script defer src='assets/main.bundle.js?v={{ v }}'></script>
+  <!-- rest of js libs -->
+  <script defer src='assets/jslibs.bundle.js?v={{ v }}'></script>
 
 </head>
 

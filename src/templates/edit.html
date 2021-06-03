@@ -250,7 +250,7 @@
     <i class='fas fa-dna mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Molecule drawer'|trans }}</h3>
     <button class='button btn btn-primary plusMinusButton' data-toggle='collapse' data-target='#chemDiv' aria-expanded='false' aria-controls='chemDiv'>+</button>
     <div id='chemDiv' class='collapse mt-2 text-center'>
-      <script src='app/js/chemdoodle-canvas.min.js?v={{ v }}'></script>
+      <script src='app/js/chemdoodle-canvas.js?v={{ v }}'></script>
     </div>
   </div>
 {% endif %}
@@ -263,7 +263,7 @@
     data-scsubmit='{{ Entity.Users.userData.sc_submit }}'>
 </div>
 <div id='shortcuts'
-    data-create='{{ Entity.Users.userData.sc_create }}'
+    data-create='{{ Entity.Users.userData.sc_create }}'>
 </div>
 
 {% endblock body %}

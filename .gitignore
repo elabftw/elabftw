@@ -1,4 +1,5 @@
 *~
+*.br
 .php_cs.cache
 .php_cs
 .scannerwork
@@ -16,7 +17,8 @@ config.php*
 *.bundle.js
 node_modules/*
 web/test.php
-web/app/js/*.LICENSE.txt
+web/assets/*.LICENSE.txt
+web/assets/*.svg
 src/node/*.LICENSE.txt
 tests/_output/*
 tests/_support/_generated*
@@ -26,5 +28,4 @@ uploads
 /vendor/
 web/app/css/tinymce/fonts/*.woff
 .sass-cache
-src/ts/*.js
 src/ts/langs/*.js

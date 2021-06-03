@@ -151,11 +151,11 @@ class Tags implements CrudInterface
 
     public function update(ContentParamsInterface $params): bool
     {
-        if ($this->Entity->Users->userData['is_admin'] !== '1') {
-            throw new IllegalActionException('Only an admin can update a tag!');
-        }
         if ($params->getTarget() === 'unreference') {
             return $this->unreference();
+        }
+        if ($this->Entity->Users->userData['is_admin'] !== '1') {
+            throw new IllegalActionException('Only an admin can update a tag!');
         }
 
         // use the team in the query to prevent one admin from editing tags from another team

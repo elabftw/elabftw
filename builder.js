@@ -13,6 +13,8 @@
  */
 const path = require('path');
 const webpack = require('webpack');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -65,6 +67,11 @@ module.exports = {
       'prismjs/components/prism-r.js',
       'prismjs/components/prism-ruby.js',
     ],
+    jslibs: [
+      './src/js/vendor/cornify.js',
+      './src/js/vendor/jquery.rating.js',
+      './src/js/vendor/keymaster.js',
+    ],
   },
   // uncomment this to find where the error is coming from
   // makes the build slower
@@ -72,16 +79,29 @@ module.exports = {
   mode: 'production',
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'web/app/js')
+    path: path.resolve(__dirname, 'web/assets')
   },
   optimization: {
     splitChunks: {
       chunks: 'all',
       name: 'vendor'
     },
+    minimizer: [
+      new CssMinimizerPlugin(),
+    ],
   },
   watchOptions: {
       ignored: /node_modules/
+  },
+  plugins: [
+    new MiniCssExtractPlugin(
+      {
+        filename: 'vendor.min.css',
+      }
+    ),
+  ],
+  resolve: {
+    extensions: ['.ts', '.js'],
   },
   module: {
     rules:[
@@ -94,7 +114,14 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: 'css-loader',
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+        ],
+      },
+      {
+        test: /.(jpg|jpeg|png|svg)$/,
+        use: ['file-loader'],
       },
       // transpile things with babel so javascript works with Edge
       {
@@ -103,7 +130,7 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env'],
-            compact: false,
+            compact: true,
           }
         }
       },
@@ -113,6 +140,14 @@ module.exports = {
         loader: 'expose-loader',
         options: {
           exposes: ['$', 'jQuery'],
+        },
+      },
+      // expose key for keymaster globally
+      {
+        test: /keymaster.js/,
+        loader: 'expose-loader',
+        options: {
+          exposes: 'key',
         },
       },
       // use a custom loader for 3Dmol.js

@@ -72,6 +72,9 @@ module.exports = {
       './src/js/vendor/jquery.rating.js',
       './src/js/vendor/keymaster.js',
     ],
+    '3Dmol-notrack': [
+      './src/ts/3Dmol-notrack.ts',
+    ],
   },
   // uncomment this to find where the error is coming from
   // makes the build slower
@@ -148,13 +151,6 @@ module.exports = {
         loader: 'expose-loader',
         options: {
           exposes: 'key',
-        },
-      },
-      // use a custom loader for 3Dmol.js
-      {
-        test: /3Dmol-nojquery.js$/,
-        use: {
-          loader: path.resolve('src/ts/3Dmol-loader.js'),
         },
       }
     ]

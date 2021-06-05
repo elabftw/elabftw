@@ -6,7 +6,7 @@
 <!-- STEPS -->
 {% if stepsArr %}
   <div class='mt-2'>
-    <h4 class='d-inline'>{{ 'Steps'|trans }}</h4>
+    <h3 class='d-inline'>{{ 'Steps'|trans }}</h3>
     <ul class='list-group mt-2' id='steps_div_{{ Entity_id }}' >
         {% for step in stepsArr %}
         <li class='list-group-item {{ step.finished ? 'finished' }}'>
@@ -25,7 +25,7 @@
 <!-- LINKS -->
 {% if linksArr %}
   <div class='mt-2'>
-    <h4 class='d-inline'>{{ 'Linked items'|trans }}</h4>
+    <h3 class='d-inline'>{{ 'Linked items'|trans }}</h3>
     <ul class='list-group'>
       {% for link in linksArr %}
         <li class='list-group-item'>
@@ -43,7 +43,7 @@
 {% if Entity.type == 'items' %}
   {% if relatedItemsArr %}
     <div class='mt-2'>
-      <h4 class='d-inline'>{{ 'Related items'|trans }}</h4>
+      <h3 class='d-inline'>{{ 'Related items'|trans }}</h3>
       <ul class='list-group'>
         {% for link in relatedItemsArr %}
           <li class='list-group-item'>
@@ -59,7 +59,7 @@
 
   {% if relatedExperimentsArr %}
     <div class='mt-2'>
-      <h4 class='d-inline'>{{ 'Related experiments'|trans }}</h4>
+      <h3 class='d-inline'>{{ 'Related experiments'|trans }}</h3>
       <ul class='list-group'>
         {% for link in relatedExperimentsArr %}
           <li class='list-group-item'>

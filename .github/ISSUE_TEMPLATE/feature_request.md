@@ -2,6 +2,7 @@
 
 name: Feature request
 about: I have a suggestion!
+labels: 'feature request'
 
 ---
 

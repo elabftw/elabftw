@@ -12,6 +12,7 @@
   <meta http-equiv='Content-type' content='text/html;charset=UTF-8' />
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <meta name='description' content='Electronic lab notebook - eLabFTW'>
   {% if App.Config.configArr.autologout_time != '0' %}
     <meta http-equiv='refresh' content='{{ App.Config.configArr.autologout_time }};url=app/logout.php' />
   {% endif %}
@@ -123,7 +124,7 @@
       <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
         <ul>
             <li class='tip'>
-                {{ 'There is a manual available %shere%s.'|trans|format("<a href='https://doc.elabftw.net/user-guide.html'>", "</a>")|raw }}
+                {{ 'Make sure to read the %suser guide%s.'|trans|format("<a href='https://doc.elabftw.net/user-guide.html'>", "</a>")|raw }}
             </li>
             <li class='tip'>
                 {{ "You can use a TODOlist by pressing '%s'."|trans|format(App.Users.userData.sc_todo) }}

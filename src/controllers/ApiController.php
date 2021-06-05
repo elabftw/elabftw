@@ -203,10 +203,10 @@ class ApiController implements ControllerInterface
          *   string(1) "1"
          *   }
          */
-        $req = explode('/', rtrim($this->Request->query->get('req'), '/'));
+        $req = explode('/', rtrim((string) $this->Request->query->get('req'), '/'));
 
         // now parse the query string (part after ?)
-        $args = $this->Request->query->get('args') ?? '';
+        $args = (string) ($this->Request->query->get('args') ?? '');
         if (!empty($args)) {
             // this is where we store the parsed query string parameters
             $result = array('limit' => $this->limit, 'offset' => $this->offset);
@@ -819,7 +819,7 @@ class ApiController implements ControllerInterface
      */
     private function createLink(): Response
     {
-        $this->Entity->Links->create(new EntityParams($this->Request->request->get('link')));
+        $this->Entity->Links->create(new EntityParams($this->Request->request->getDigits('link')));
         return new JsonResponse(array('result' => 'success'));
     }
 
@@ -853,7 +853,7 @@ class ApiController implements ControllerInterface
      */
     private function createTag(): Response
     {
-        $this->Entity->Tags->create(new TagParams($this->Request->request->get('tag') ?? ''));
+        $this->Entity->Tags->create(new TagParams((string) $this->Request->request->get('tag')));
         return new JsonResponse(array('result' => 'success'));
     }
 
@@ -896,9 +896,9 @@ class ApiController implements ControllerInterface
         }
         $this->Entity->setId($this->id);
         $id = $this->Scheduler->create(
-            $this->Request->request->get('start') ?? '',
-            $this->Request->request->get('end') ?? '',
-            $this->Request->request->get('title') ?? '',
+            (string) $this->Request->request->get('start'),
+            (string) $this->Request->request->get('end'),
+            (string) $this->Request->request->get('title'),
         );
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
@@ -966,13 +966,13 @@ class ApiController implements ControllerInterface
     private function updateEntity(): Response
     {
         if ($this->Request->request->has('title')) {
-            $this->Entity->update(new EntityParams($this->Request->request->get('title'), 'title'));
+            $this->Entity->update(new EntityParams((string) $this->Request->request->get('title'), 'title'));
         }
         if ($this->Request->request->has('date')) {
-            $this->Entity->update(new EntityParams($this->Request->request->get('date'), 'date'));
+            $this->Entity->update(new EntityParams($this->Request->request->getDigits('date'), 'date'));
         }
         if ($this->Request->request->has('body')) {
-            $this->Entity->update(new EntityParams($this->Request->request->get('body'), 'body'));
+            $this->Entity->update(new EntityParams((string) $this->Request->request->get('body'), 'body'));
         }
         return new JsonResponse(array('result' => 'success'));
     }

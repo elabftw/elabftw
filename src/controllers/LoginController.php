@@ -59,7 +59,7 @@ class LoginController implements ControllerInterface
                 );
 
                 // check the input code against the secret stored in session
-                if (!$MfaHelper->verifyCode($this->App->Request->request->get('mfa_code') ?? '')) {
+                if (!$MfaHelper->verifyCode($this->App->Request->request->getAlnum('mfa_code'))) {
                     if ($flashBag instanceof FlashBag) {
                         $flashBag->add($flashKey, _('The code you entered is not valid!'));
                     }
@@ -91,7 +91,7 @@ class LoginController implements ControllerInterface
 
 
         // get our Auth service and try to authenticate
-        $authType = $this->App->Request->request->get('auth_type');
+        $authType = $this->App->Request->request->getAlpha('auth_type');
         $AuthResponse = $this->getAuthService($authType)->tryAuth();
 
         /////////
@@ -132,7 +132,7 @@ class LoginController implements ControllerInterface
         $this->App->Session->remove('auth_userid');
 
         return new RedirectResponse(
-            $this->App->Request->cookies->get('redirect') ?? '../../experiments.php'
+            (string) ($this->App->Request->cookies->get('redirect') ?? '../../experiments.php')
         );
     }
 
@@ -156,11 +156,11 @@ class LoginController implements ControllerInterface
                     'use_tls' => (bool) $c['ldap_use_tls'],
                 );
                 $connection = new Connection($ldapConfig);
-                return new LdapAuth($connection, $c, $this->App->Request->request->get('email'), $this->App->Request->request->get('password'));
+                return new LdapAuth($connection, $c, (string) $this->App->Request->request->get('email'), (string) $this->App->Request->request->get('password'));
 
             // AUTH WITH LOCAL DATABASE
             case 'local':
-                return new LocalAuth($this->App->Request->request->get('email'), $this->App->Request->request->get('password'));
+                return new LocalAuth((string) $this->App->Request->request->get('email'), (string) $this->App->Request->request->get('password'));
 
             // AUTH WITH SAML
             case 'saml':
@@ -208,7 +208,7 @@ class LoginController implements ControllerInterface
                         (int) $this->App->Session->get('auth_userid'),
                         $this->App->Session->get('mfa_secret'),
                     ),
-                    $this->App->Request->request->get('mfa_code') ?? '',
+                    $this->App->Request->request->getAlnum('mfa_code'),
                 );
 
             default:

@@ -11,7 +11,10 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\DownloadController;
 use Elabftw\Exceptions\IllegalActionException;
+use function error_reporting;
 use Exception;
+use function set_time_limit;
+use function strpos;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -28,14 +31,14 @@ try {
     set_time_limit(0);
 
     // Check for LONG_NAME
-    $longName = $Request->query->get('f');
-    if ($longName === null || strpos($longName, "\0") !== false) {
+    $longName = (string) $Request->query->get('f');
+    if (strpos($longName, "\0") !== false) {
         throw new IllegalActionException('Missing parameter for download');
     }
 
     $DownloadController = new DownloadController(
         $longName,
-        $Request->query->get('name'),
+        (string) $Request->query->get('name'),
         $Request->query->has('forceDownload'),
     );
     $Response = $DownloadController->getResponse();

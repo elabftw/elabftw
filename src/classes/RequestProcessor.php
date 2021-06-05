@@ -19,6 +19,6 @@ class RequestProcessor extends AbstractProcessor
 {
     protected function process(Request $request): void
     {
-        $this->processJson($request->query->get('p'));
+        $this->processJson((string) $request->query->get('p'));
     }
 }

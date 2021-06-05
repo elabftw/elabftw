@@ -20,9 +20,7 @@ If you don't get a reply in the next 48h, it means I'm probably dead.
 
 ## Steps taken in the development process
 
-For every new commit, the dependencies are checked by [Snyk.io](https://snyk.io/) to look for vulnerabilities in the dependencies. A vulnerability found means a broken test suite.
-
-There is also GitHub notifying me of new vulnerabilities it finds in the dependencies.
+GitHub/Dependabot is regularly scanning the dependencies and will report if a version used has a known vulnerability.
 
 The code itself is checked by various static analyzers to try and detect bugs sooner. And best practices are used to prevent SQL injection (with prepared statements), XSS (with a Content-Security-Policy header), and other nasty things.
 

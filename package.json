@@ -35,7 +35,7 @@
     "css-loader": "^5.0.1",
     "css-minimizer-webpack-plugin": "^3.0.0",
     "dropzone": "^5.8.0",
-    "expose-loader": "^2.0.0",
+    "expose-loader": "^3.0.0",
     "file-loader": "^6.2.0",
     "file-saver": "2.0.*",
     "i18next": "^20.1.0",
@@ -63,7 +63,6 @@
     "apidoc": "^0.26.0",
     "cypress": "^7.1.0",
     "eslint": "^6.8.0",
-    "snyk": "^1.360.0",
     "stylelint": "^13.8.0",
     "stylelint-config-sass-guidelines": "^8.0.0"
   },
@@ -102,7 +101,6 @@
     "tinymce": "cp node_modules/tinymce/skins/ui/oxide/fonts/tinymce-mobile.woff web/app/css/tinymce/fonts/tinymce-mobile.woff && cp node_modules/tinymce/skins/ui/oxide/*.min.css web/app/css/tinymce/",
     "unit": "tests/run.sh unit",
     "unit-ci": "php vendor/bin/codecept run unit",
-    "vulns": "snyk test",
     "watchcss": "sass --quiet-deps --watch src/scss/main.scss:web/assets/elabftw.min.css",
     "watchjs": "webpack-cli --config builder.js --mode=development --watch --progress",
     "watchnode": "webpack-cli --config node-builder.js --mode=development --watch --progress"

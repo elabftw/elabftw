@@ -4,10 +4,6 @@ version: 2.1
 # code coverage orb
 orbs:
   codecov: codecov/codecov@1.0.2
-filters:
-  branches:
-    ignore:
-      - demo
 jobs:
   build:
     working_directory: ~/elabftw/elabftw
@@ -119,4 +115,8 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - build
+      - build:
+        filters:
+          branches:
+            ignore:
+              - demo

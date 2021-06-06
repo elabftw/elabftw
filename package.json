@@ -21,7 +21,7 @@
     "@fullcalendar/interaction": "^5.1.0",
     "@fullcalendar/list": "^5.1.0",
     "@fullcalendar/timegrid": "^5.1.0",
-    "@types/bootstrap": "^4.0.0",
+    "@types/bootstrap": "^5.0.15",
     "@types/fancybox": "^3.5.2",
     "@types/file-saver": "^2.0.1",
     "@types/jquery": "^3.5.1",

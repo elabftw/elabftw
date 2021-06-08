@@ -452,5 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $(document).on('blur', '#title_input', function() {
     const content = (document.getElementById('title_input') as HTMLInputElement).value;
     EntityC.update(entity.id, Target.Title, content);
+    // update the page's title
+    document.title = content + ' - eLabFTW';
   });
 });

@@ -31,6 +31,9 @@ try {
     if (!$App->Session->get('is_admin')) {
         throw new IllegalActionException('Non admin user tried to create a user.');
     }
+    if (!$App->Session->get('is_sysadmin') && $App->Config->configArr['admins_create_users'] === '0') {
+        throw new IllegalActionException('Admin tried to create user directly');
+    }
 
     // CSRF
     $App->Csrf->validate();

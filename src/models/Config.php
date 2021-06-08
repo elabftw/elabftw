@@ -199,6 +199,7 @@ final class Config
             ('saml_lastname', NULL),
             ('local_login', '1'),
             ('local_register', '1'),
+            ('admins_create_users', '1'),
             ('anon_users', '0'),
             ('url', NULL),
             ('schema', :schema),

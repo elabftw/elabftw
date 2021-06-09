@@ -83,15 +83,25 @@ class LoginController implements ControllerInterface
             return new RedirectResponse('../../ucp.php?tab=2');
         }
 
-        // store the rememberme choice in session
-        $this->App->Session->set('rememberme', false);
-        if ($this->App->Request->request->has('rememberme')) {
-            $this->App->Session->set('rememberme', true);
-        }
-
-
-        // get our Auth service and try to authenticate
+        // get our Auth service
         $authType = $this->App->Request->request->getAlpha('auth_type');
+
+        // store the rememberme choice in a cookie, not the session as it won't follow up for saml
+        $icanhazcookies = '0';
+        if ($this->App->Request->request->has('rememberme')) {
+            $icanhazcookies = '1';
+        }
+        $cookieOptions = array(
+            'expires' => time() + 300,
+            'path' => '/',
+            'domain' => '',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Strict',
+        );
+        setcookie('icanhazcookies', $icanhazcookies, $cookieOptions);
+
+        // try to authenticate
         $AuthResponse = $this->getAuthService($authType)->tryAuth();
 
         /////////
@@ -124,7 +134,7 @@ class LoginController implements ControllerInterface
 
         // All good now we can login the user
         $LoginHelper = new LoginHelper($AuthResponse, $this->App->Session);
-        $LoginHelper->login($this->App->Session->get('rememberme'));
+        $LoginHelper->login((bool) $icanhazcookies);
 
         // cleanup
         $this->App->Session->remove('failed_attempt');

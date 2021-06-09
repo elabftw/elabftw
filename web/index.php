@@ -41,7 +41,7 @@ try {
             $location = '../../login.php';
         } else {
             $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
-            $LoginHelper->login(false);
+            $LoginHelper->login((bool) $App->Request->cookies->get('icanhazcookies'));
         }
         $location = $App->Request->cookies->get('redirect') ?? $location;
         // we don't use a RedirectResponse but show a temporary redirection page or it will not work properly

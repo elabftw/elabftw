@@ -131,6 +131,11 @@
               {% endif %}
             {% endfor %}
           </select>
+          <!-- Remember me checkbox -->
+          <div class='form-check mt-2'>
+            <input type='checkbox' class='form-check-input' checked name='rememberme' id='rememberme' />
+            <label for='rememberme' class='form-check-label'>{{ 'Remember me'|trans }}</label>
+          </div>
           <button class='button btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
         </div>
       </form>

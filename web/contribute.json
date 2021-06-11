@@ -1,0 +1,27 @@
+{
+  "name": "eLabFTW",
+    "description": "The free and open source electronic lab notebook.",
+    "repository": {
+      "url": "https://github.com/elabftw/elabftw",
+      "license": "AGPL3",
+      "tests": "https://circleci.com/gh/elabftw/elabftw"
+    },
+    "participate": {
+      "home": "https://www.elabftw.net",
+      "docs": "https://doc.elabftw.net/contributing.html"
+    },
+    "bugs": {
+      "report": "https://github.com/elabftw/elabftw/issues/new/choose"
+    },
+    "urls": {
+      "demo": "https://demo.elabftw.net"
+    },
+    "keywords": [
+      "php",
+      "css",
+      "typescript",
+      "html5",
+      "jquery",
+      "mysql"
+    ]
+}

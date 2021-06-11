@@ -20,21 +20,38 @@
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
         <h3 id='eventTitle'></h3>
-        <div id='eventBound'></div>
-        <button id='rmBind' aria-hidden='true' class='button btn btn-danger' type='button'>{{ 'Unbind'|trans }}</button>
         <!-- BIND EXPERIMENT -->
+        <div id='eventBoundExp'></div>
+        <button data-action='scheduler-rm-bind' data-type='experiment' aria-hidden='true' class='button btn btn-danger' type='button'>{{ 'Unbind'|trans }}</button>
         <div class='mt-2'>
-          <h5>{{ 'Bind an experiment'|trans }}</h5>
-            <div class='input-group mb-3 ui-front'>
+          <i class='fas fa-link mr-1'></i><h5 class='d-inline'>{{ 'Bind an experiment'|trans }}</h5>
+            <div id='binddivexp' class='input-group mb-3'>
                 <div class='input-group-prepend'>
                     <span class='input-group-text'>{{ 'Search'|trans }}</span>
                 </div>
-                <input type='text' id='bindinput' class='form-control' />
+                <input type='text' id='bindexpinput' class='form-control' />
                 <div class='input-group-append'>
-                  <button id='goBind' class='btn btn-primary' type='button'>{{ 'Attach'|trans }}</button>
+                  <button class='btn btn-primary' data-input='bindexpinput' data-action='scheduler-bind-entity' data-type='experiment' type='button'>{{ 'Attach'|trans }}</button>
                 </div>
             </div>
         </div>
+        <!-- BIND ITEM -->
+        <div id='eventBoundDb'></div>
+        <button data-action='scheduler-rm-bind' data-type='item_link' aria-hidden='true' class='button btn btn-danger' type='button'>{{ 'Unbind'|trans }}</button>
+        <div class='mt-2'>
+          <i class='fas fa-link mr-1'></i><h5 class='d-inline'>{{ 'Bind an item'|trans }}</h5>
+            <div id='binddivdb' class='input-group mb-3'>
+                <div class='input-group-prepend'>
+                    <span class='input-group-text'>{{ 'Search'|trans }}</span>
+                </div>
+                <input type='text' id='binddbinput' class='form-control' />
+                <div class='input-group-append'>
+                  <button class='btn btn-primary' data-input='binddbinput'  data-action='scheduler-bind-entity' data-type='item_link' type='button'>{{ 'Attach'|trans }}</button>
+                </div>
+            </div>
+        </div>
+
+
         <h5>{{ 'Delete this event'|trans }}</h5>
         <button type='button' id='deleteEvent' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
       </div>

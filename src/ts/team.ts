@@ -157,19 +157,22 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // bind an experiment to the event
       $('[data-action="scheduler-bind-entity"]').on('click', function(): void {
-        $.post('app/controllers/SchedulerController.php', {
-          bind: true,
-          id: info.event.id,
-          entityid: parseInt(($('#' + $(this).data('input')).val() as string), 10),
-          type: $(this).data('type'),
-        }).done(function(json) {
-          notif(json);
-          if (json.res) {
-            $('#bindinput').val('');
-            ($('#eventModal') as any).modal('toggle');
-            window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
-          }
-        });
+        const entityid = parseInt(($('#' + $(this).data('input')).val() as string), 10);
+        if (entityid > 0) {
+          $.post('app/controllers/SchedulerController.php', {
+            bind: true,
+            id: info.event.id,
+            entityid: entityid,
+            type: $(this).data('type'),
+          }).done(function(json) {
+            notif(json);
+            if (json.res) {
+              $('#bindinput').val('');
+              ($('#eventModal') as any).modal('toggle');
+              window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
+            }
+          });
+        }
       });
       // remove the binding
       $('[data-action="scheduler-rm-bind"]').on('click', function(): void {

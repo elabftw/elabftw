@@ -104,7 +104,13 @@ export default class JsonEditorHelper {
   }
 
   saveMetadata(): void {
-    this.MetadataC.update(JSON.stringify(this.editor.get()));
+    try {
+      const metadata = this.editor.get();
+      this.MetadataC.update(JSON.stringify(metadata));
+    } catch (error) {
+      notif({res: false, msg: 'Error parsing the JSON! Error logged in console.'});
+      console.error(error);
+    }
   }
 
   saveMetadataFromId(entity: Entity): void {

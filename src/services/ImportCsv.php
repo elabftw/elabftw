@@ -13,6 +13,7 @@ namespace Elabftw\Services;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
+use Elabftw\Traits\EntityTrait;
 use function League\Csv\delimiter_detect;
 use League\Csv\Reader;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +23,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ImportCsv extends AbstractImport
 {
+    use EntityTrait;
+
     // number of items we got into the database
     public int $inserted = 0;
 
@@ -58,8 +61,8 @@ class ImportCsv extends AbstractImport
         $rows = $csv->getRecords();
 
         // SQL for importing
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread)
-            VALUES(:team, :title, :date, :body, :userid, :category, :canread)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, elabid)
+            VALUES(:team, :title, :date, :body, :userid, :category, :canread, :elabid)';
         $req = $this->Db->prepare($sql);
 
         $date = Filter::kdate();
@@ -70,6 +73,7 @@ class ImportCsv extends AbstractImport
                 throw new ImproperActionException('Could not find the title column!');
             }
             $body = $this->getBodyFromRow($row);
+            $elabid = $this->generateElabid();
 
             $req->bindParam(':team', $this->Users->userData['team']);
             $req->bindParam(':title', $row['title']);
@@ -78,6 +82,7 @@ class ImportCsv extends AbstractImport
             $req->bindParam(':userid', $this->Users->userData['userid']);
             $req->bindParam(':category', $this->target);
             $req->bindParam(':canread', $this->canread);
+            $req->bindParam(':elabid', $elabid);
             if ($req->execute() === false) {
                 throw new DatabaseErrorException('Error inserting data in database!');
             }

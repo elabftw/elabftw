@@ -51,7 +51,7 @@
   <p class='align-right d-inline'>
     <a class='elab-tooltip ml-2' data-action='pin' href='#'>
       <span>{{ 'Toggle pin'|trans }}</span>
-      <i class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }} fa-2x'></i>
+      <i title='{{ 'Toggle pin'|trans }}' class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }} fa-2x'></i>
     </a>
   </p>
 
@@ -59,36 +59,36 @@
     {% if not (Entity.isReadOnly or Entity.entityData.locked) %}
       <a class='elab-tooltip mr-1' href='#' data-action='edit'>
         <span>{{ 'Edit'|trans }}</span>
-        <i class='fas fa-pencil-alt fa-2x' style='color:#29AEB9'></i>
+        <i title='{{ 'Edit'|trans }}' class='fas fa-pencil-alt fa-2x' style='color:#29AEB9'></i>
       </a>
     {% endif %}
 
     {% if not App.Session.has('is_anon') %}
       <a class='elab-tooltip mr-1' href='#' data-action='duplicate-entity'>
         <span>{{ 'Duplicate'|trans }}</span>
-        <i class='far fa-copy fa-2x'></i>
+        <i title='{{ 'Duplicate'|trans }}' class='far fa-copy fa-2x'></i>
       </a>
     {% endif %}
 
     <a class='elab-tooltip mr-1' href='make.php?what=pdf&id={{ Entity.id }}&type={{ Entity.type }}'>
       <span>{{ 'Make a PDF'|trans }}</span>
-      <i class='fas fa-file-pdf fa-2x'></i>
+      <i title='{{ 'Make a PDF'|trans }}' class='fas fa-file-pdf fa-2x'></i>
     </a>
 
     <a class='elab-tooltip mr-1' href='make.php?what=zip&id={{ Entity.id }}&type={{ Entity.type }}'>
       <span>{{ 'Make a ZIP'|trans }}</span>
-      <i class='fas fa-file-archive fa-2x'></i>
+      <i title='{{ 'Make a ZIP'|trans }}' class='fas fa-file-archive fa-2x'></i>
     </a>
 
     {% if Entity.type == 'items' %}
       <a class='elab-tooltip mr-1' href='experiments.php?mode=show&related={{ Entity.id }}'>
         <span>{{ 'Show related'|trans }}</span>
-        <i class='fas fa-link fa-2x'></i>
+        <i title='{{ 'Show related'|trans }}' class='fas fa-link fa-2x'></i>
       </a>
       {% if Entity.entityData.bookable %}
         <a class='elab-tooltip mr-1' href='team.php?item={{ Entity.id }}'>
           <span>{{ 'Book item'|trans }}</span>
-          <i class='fas fa-calendar-plus fa-2x'></i>
+          <i title='{{ 'Book item'|trans }}' class='fas fa-calendar-plus fa-2x'></i>
         </a>
       {% endif %}
     {% endif %}
@@ -102,13 +102,13 @@
     {% endif %}
     <a class='elab-tooltip mr-1' href='#' data-action='lock-entity'>
         <span>{{ alt }}</span>
-        <i class='fas {{lockIcon}} fa-2x'></i>
+        <i title='{{ alt }}' class='fas {{lockIcon}} fa-2x'></i>
     </a>
 
     {% if not App.Session.has('is_anon') %}
       <a class='elab-tooltip mr-1' href='#' data-action='share'>
         <span>{{ 'Share'|trans }}</span>
-        <i class='fas fa-share-alt fa-2x'></i>
+        <i title='{{ 'Share'|trans }}' class='fas fa-share-alt fa-2x'></i>
       </a>
       <input type='text' aria-label='{{ 'Share'|trans }}' id='shareLinkInput' value='' style='display:none' />
     {% endif %}
@@ -117,7 +117,7 @@
     {% if not Entity.entityData.timestamped and Entity.isTimestampable and Entity.type == 'experiments' and not App.Session.has('is_anon') %}
       <a href='#' class='elab-tooltip mr-1 modalToggle' data-modal='timestampModal'>
         <span>{{ 'Timestamp Experiment'|trans }}</span>
-        <i class='far fa-calendar-check fa-2x'></i>
+        <i title='{{ 'Timestamp Experiment'|trans }}' class='far fa-calendar-check fa-2x'></i>
       </a>
     {% endif %}
 
@@ -125,7 +125,7 @@
     {% if not Entity.isReadOnly %}
       <a href='#' class='elab-tooltip mr-1' data-action='bloxberg'>
         <span>{{ 'Add to blockchain'|trans }}</span>
-        <i class='fas fa-cubes fa-2x'></i>
+        <i title='{{ 'Add to blockchain'|trans }}' class='fas fa-cubes fa-2x'></i>
       </a>
     {% endif %}
   </div>
@@ -146,29 +146,29 @@
   <div class='row'>
     <div class='col-6'>
       <p>
-        <i class='fas fa-clipboard-{{ Entity.type == 'experiments' ? 'check' : 'list' }}'></i>
+        <i aria-hidden='true' class='fas fa-clipboard-{{ Entity.type == 'experiments' ? 'check' : 'list' }}'></i>
           {{ Entity.entityData.category }}
           {% if Entity.entityData.rating > 0 %}
             {{ Entity.entityData.rating|stars|raw }}
           {% endif %}
-        <i class='fas fa-eye ml-2' title='{{ 'Visibility'|trans }}'></i> {{ Entity.getCan(Entity.entityData.canread) }}
-        <i class='fas fa-pencil-alt ml-2' title='{{ 'Edit'|trans }}'></i> {{ Entity.getCan(Entity.entityData.canwrite) }}
+        <i aria-hidden='true' class='fas fa-eye ml-2' title='{{ 'Visibility'|trans }}'></i> {{ Entity.getCan(Entity.entityData.canread) }}
+        <i aria-hidden='true' class='fas fa-pencil-alt ml-2' title='{{ 'Edit'|trans }}'></i> {{ Entity.getCan(Entity.entityData.canwrite) }}
       </p>
     </div>
   </div>
 
   <!-- DATE -->
   <div>
-    <i class='far fa-calendar-alt mr-1'></i>{{ 'Started on'|trans }} {{ Entity.entityData.date|kdate }}
+    <i aria-hidden='true' class='far fa-calendar-alt mr-1'></i>{{ 'Started on'|trans }} {{ Entity.entityData.date|kdate }}
   </div>
 
   <!-- TITLE : click on it to go to edit mode only if we are not in read only mode -->
-  <div class='title-view' {{ not Entity.isReadOnly and not Entity.entityData.locked ? 'data-action="edit"' }}>
+  <h2 class='title-view' {{ not Entity.isReadOnly and not Entity.entityData.locked ? 'data-action="edit"' }}>
       {% if Entity.type == 'items' %}
           <span style='color:#{{ Entity.entityData.color }}'>{{ Entity.entityData.category }}</span>
       {% endif %}
       {{ Entity.entityData.title|raw }}
-  </div>
+  </h2>
 
   <!-- SHOW EVENTS -->
   {% if Entity.entityData.events_id and Entity.type == 'items' %}<i class='far fa-calendar-alt'></i>
@@ -230,7 +230,7 @@
 {% if App.Session.get('is_auth') and not App.Session.has('is_anon') %}
     <section id='comment_container'>
         <div id='comment' class='box'>
-            <i class='fas fa-comments mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Comments'|trans }}</h3>
+            <i class='fas fa-comments mr-1 align-baseline'></i><h2 class='d-inline'>{{ 'Comments'|trans }}</h2>
 
             {% if commentsArr %}
                 {% for comment in commentsArr %}

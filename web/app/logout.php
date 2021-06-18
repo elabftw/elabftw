@@ -51,6 +51,7 @@ $cookieOptions = array(
 );
 setcookie('token', '', $cookieOptions);
 setcookie('token_team', '', $cookieOptions);
+setcookie('icanhazcookies', '', $cookieOptions);
 // if we get redirected by init.inc.php we want to keep this cookie
 // if the user requested logout, remove it
 if (!$Request->query->get('keep_redirect')) {

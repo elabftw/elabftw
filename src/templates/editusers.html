@@ -173,6 +173,7 @@
     </div>
 {% endif %}
 
+{% if App.Config.configArr.admins_create_users or App.Users.userData.is_sysadmin %}
 <form class='box' method='post' autocomplete='off' action='app/controllers/CreateUserController.php'>
   <h3>{{ 'Add account'|trans }}</h3>
   <p>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
@@ -233,3 +234,4 @@
     </div>
   </div>
 </form>
+{% endif %}

@@ -16,6 +16,9 @@ $theme-colors: (
     'danger': $dangerred,
     'neutral': $maingray,
 );
+/* make the non active link in navbar have slightly more contrast */
+$navbar-dark-color: $nottoodarkgray;
+$text-muted: $lightgray;
 @import '../../node_modules/bootstrap/scss/bootstrap';
 @import '../../node_modules/bootstrap-select/sass/bootstrap-select';
 @import '../../node_modules/prismjs/themes/prism';
@@ -39,9 +42,9 @@ $theme-colors: (
 @import 'tagcloud';
 @import 'todolist';
 
-
 /* Font is Lato */
 @font-face {
+    font-display: swap;
     font-family: 'Lato';
     src: url('fonts/lato-medium-webfont.ttf');
     src: url('fonts/lato-medium-webfont.eot');

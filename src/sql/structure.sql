@@ -536,6 +536,7 @@ CREATE TABLE `team_events` (
   `title` varchar(255) DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
   `experiment` int(10) UNSIGNED DEFAULT NULL,
+  `item_link` int(10) UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

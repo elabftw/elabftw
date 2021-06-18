@@ -69,7 +69,7 @@
                     {# don't make the thumbnail clickable if it's a tif #}
                       {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg)$/i' %}
                       <div class='text-center'>
-                        <a href='app/download.php?f={{ upload.long_name }}'
+                        <a class='text-break' href='app/download.php?f={{ upload.long_name }}'
                            {% if upload.real_name matches '/(jpg|jpeg|png|gif)$/i' %}
                                data-fancybox='group'
                            {% endif %}
@@ -80,7 +80,7 @@
                         {% endif %}
                     {% set thumb_name = upload.long_name ~ '_th.jpg' %}
                     {% if thumb_name is readable and App.Users.userData.uploads_layout %}
-                       <img class='thumb img-thumbnail rounded' src='app/download.php?f={{ upload.long_name }}_th.jpg' alt='thumbnail' />
+                       <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ upload.long_name }}_th.jpg' alt='thumbnail' />
                    {% elseif App.Users.userData.uploads_layout %}
                       <i class='fas {{ Entity.Uploads.getIconFromExtension(ext) }} thumb rounded mx-auto d-block'></i>
                    {% endif %}
@@ -138,7 +138,7 @@
         <div class='caption'>
           <i class='fas fa-download mr-1'></i>
           <span>
-              <a id='upload-filename_{{ upload.id }}' href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&forceDownload' rel='noopener'>{{ upload.real_name }}</a>
+              <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&forceDownload' rel='noopener'>{{ upload.real_name }}</a>
             <span class='smallgray' style='display:inline'>
               {{ (Entity.Uploads.getUploadsPath ~ upload.long_name)|filesize|formatBytes }} - {{ upload.datetime }}
             </span>

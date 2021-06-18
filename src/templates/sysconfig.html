@@ -132,6 +132,12 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
               <option {{ App.Config.configArr.local_register == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
           </select>
 
+          <label for='admins_create_users'>{{ 'Admins can create local accounts:'|trans }}</label>
+          <select id='admins_create_users' name='admins_create_users' class='form-control col-md-4'>
+              <option {{ App.Config.configArr.admins_create_users == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
+              <option {{ App.Config.configArr.admins_create_users == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
+          </select>
+
           <label for='local_login'>{{ 'Show local login form:'|trans }}</label>
           <select id='local_login' name='local_login' class='form-control col-md-4'>
               <option {{ App.Config.configArr.local_login == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>

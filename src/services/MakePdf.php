@@ -137,7 +137,11 @@ class MakePdf extends AbstractMake
             'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
         );
 
-        return $this->getTwig(Config::getConfig())->render('pdf.html', $renderArr);
+        $html = $this->getTwig(Config::getConfig())->render('pdf.html', $renderArr);
+
+        // now remove any img src pointing to outside world
+        // prevent blind ssrf (thwarted by CSP on webpage, but not in pdf)
+        return preg_replace('/img src=("|\')(ht|f|)tp/i', 'nope', $html);
     }
 
     /**
@@ -218,7 +222,7 @@ class MakePdf extends AbstractMake
         $contentDecode = html_entity_decode($content, ENT_HTML5, 'UTF-8');
         file_put_contents($filename, $contentDecode);
 
-        // apsolute path to tex2svg app
+        // absolute path to tex2svg app
         $appDir = dirname(__DIR__, 2) . '/src/node';
 
         // convert tex to svg with mathjax nodejs script

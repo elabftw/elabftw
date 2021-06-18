@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // on click activate modal window
     eventClick: function(info): void {
       if (!editable) { return; }
-      $('#rmBind').hide();
+      $('[data-action="scheduler-rm-bind"]').hide();
       ($('#eventModal') as any).modal('toggle');
       // delete button in modal
       $('#deleteEvent').on('click', function(): void {
@@ -148,29 +148,38 @@ document.addEventListener('DOMContentLoaded', () => {
       // fill the bound div
       $('#eventTitle').text(info.event.title);
       if (info.event.extendedProps.experiment != null) {
-        $('#eventBound').html('Event is bound to an <a href="experiments.php?mode=view&id=' + info.event.extendedProps.experiment + '">experiment</a>.');
-        $('#rmBind').show();
+        $('#eventBoundExp').html('Event is bound to an <a href="experiments.php?mode=view&id=' + info.event.extendedProps.experiment + '">experiment</a>.');
+        $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
+      }
+      if (info.event.extendedProps.item_link != null) {
+        $('#eventBoundDb').html('Event is bound to an <a href="database.php?mode=view&id=' + info.event.extendedProps.item_link + '">item</a>.');
+        $('[data-action="scheduler-rm-bind"][data-type="item_link"]').show();
       }
       // bind an experiment to the event
-      $('#goBind').on('click', function(): void {
-        $.post('app/controllers/SchedulerController.php', {
-          bind: true,
-          id: info.event.id,
-          expid: parseInt(($('#bindinput').val() as string), 10),
-        }).done(function(json) {
-          notif(json);
-          if (json.res) {
-            $('#bindinput').val('');
-            ($('#eventModal') as any).modal('toggle');
-            window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
-          }
-        });
+      $('[data-action="scheduler-bind-entity"]').on('click', function(): void {
+        const entityid = parseInt(($('#' + $(this).data('input')).val() as string), 10);
+        if (entityid > 0) {
+          $.post('app/controllers/SchedulerController.php', {
+            bind: true,
+            id: info.event.id,
+            entityid: entityid,
+            type: $(this).data('type'),
+          }).done(function(json) {
+            notif(json);
+            if (json.res) {
+              $('#bindinput').val('');
+              ($('#eventModal') as any).modal('toggle');
+              window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
+            }
+          });
+        }
       });
       // remove the binding
-      $('#rmBind').on('click', function(): void {
+      $('[data-action="scheduler-rm-bind"]').on('click', function(): void {
         $.post('app/controllers/SchedulerController.php', {
           unbind: true,
           id: info.event.id,
+          type: $(this).data('type'),
         }).done(function(json) {
           ($('#eventModal') as any).modal('toggle');
           notif(json);
@@ -178,8 +187,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
       // BIND AUTOCOMPLETE
+      // TODO refactor this
+      // NOTE: previously the input div had ui-front jquery ui class to make the autocomplete list show properly, but with the new item input below
+      // it didn't work well, so now the automplete uses appendTo option
       const cache = {};
-      $('#bindinput').autocomplete({
+      $('#bindexpinput').autocomplete({
+        appendTo: '#binddivexp',
         source: function(request: any, response: any): void {
           const term = request.term;
           if (term in cache) {
@@ -187,6 +200,20 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
           }
           $.getJSON('app/controllers/EntityAjaxController.php?source=experiments', request, function(data) {
+            cache[term] = data;
+            response(data);
+          });
+        }
+      });
+      $('#binddbinput').autocomplete({
+        appendTo: '#binddivdb',
+        source: function(request: any, response: any): void {
+          const term = request.term;
+          if (term in cache) {
+            response(cache[term]);
+            return;
+          }
+          $.getJSON('app/controllers/EntityAjaxController.php?source=items', request, function(data) {
             cache[term] = data;
             response(data);
           });

@@ -120,3 +120,4 @@ workflows:
           branches:
             ignore:
               - demo
+              - next

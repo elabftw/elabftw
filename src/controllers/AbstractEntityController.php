@@ -67,16 +67,16 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // CATEGORY FILTER
         if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {
-            $this->Entity->addFilter('categoryt.id', $this->App->Request->query->get('cat'));
+            $this->Entity->addFilter('categoryt.id', $this->App->Request->query->getDigits('cat'));
         }
 
         // TAG FILTER
-        if (!empty($this->App->Request->query->get('tags')[0])) {
+        if (!empty(((array) $this->App->Request->query->get('tags'))[0])) {
             // get all the ids with that tag
-            $tagsFromGet = $this->App->Request->query->get('tags') ?? array();
-            if (is_string($tagsFromGet)) {
-                $tagsFromGet = array();
-            }
+            $tagsFromGet = (array) $this->App->Request->query->get('tags');
+            $tagsFromGet = array_map(function ($t) {
+                return (string) $t;
+            }, $tagsFromGet);
             $ids = $this->Entity->Tags->getIdFromTags($tagsFromGet, (int) $this->App->Users->userData['team']);
             $idFilter = ' AND (';
             foreach ($ids as $id) {

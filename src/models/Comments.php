@@ -117,8 +117,8 @@ class Comments implements CrudInterface
         $this->Db->execute($req);
         $commenter = $req->fetch();
 
-        // get email of the XP owner
-        $sql = "SELECT email, userid, CONCAT(firstname, ' ', lastname) AS fullname FROM users
+        // get email, name and lang of the XP owner
+        $sql = "SELECT email, userid, lang, CONCAT(firstname, ' ', lastname) AS fullname FROM users
             WHERE userid = (SELECT userid FROM experiments WHERE id = :id)";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
@@ -137,6 +137,16 @@ class Comments implements CrudInterface
         // not pretty but gets the job done
         $bodyUrl = str_replace('app/controllers/', '', $bodyUrl);
         $bodyUrl .= '?mode=view&id=' . $this->Entity->id;
+
+        // set the lang to the target user, not the one commenting (see issue #2700)
+        $locale = $users['lang'] . '.utf8';
+        // configure gettext
+        $domain = 'messages';
+        putenv("LC_ALL=$locale");
+        setlocale(LC_ALL, $locale);
+        bindtextdomain($domain, dirname(__DIR__, 2) . '/src/langs');
+        textdomain($domain);
+        // END i18n
 
         $message = (new Swift_Message())
         // Give the message a subject

@@ -38,7 +38,7 @@
     "expose-loader": "^3.0.0",
     "file-loader": "^6.2.0",
     "file-saver": "2.0.*",
-    "i18next": "^20.1.0",
+    "i18next": "^20.3.2",
     "jquery": "^3.5.1",
     "jquery-jeditable": "2.0.*",
     "jquery-ui": "^1.12.1",

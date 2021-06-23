@@ -8,6 +8,7 @@
 import { Payload, Method, EntityType, Action, Target, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
 import tinymce from 'tinymce/tinymce';
+import { saveAs } from 'file-saver/dist/FileSaver.js';
 
 
 export default class Entity {

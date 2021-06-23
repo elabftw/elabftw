@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
           tinymceEditImage = {selected:false, uploadId:'', itemId:'', url:''};
         });
       // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
-      } else if (typeof blobInfo.blob().name=== 'undefined') {
+      } else if (typeof blobInfo.blob().name === 'undefined') {
         const filename = prompt('Enter filename with extension e.g. .jpeg');
         if (typeof filename !== 'undefined' && filename !== null) {
           const fileOfBlob = new File([blobInfo.blob()], filename);
@@ -369,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Hook into the SelectionChange event - This is to make sure we reset our control variable correctly
   tinymce.activeEditor.on('SelectionChange', () => {
     // Check if the user has selected an image
-    if (tinymce.activeEditor.selection.getNode().tagName == 'IMG')
+    if (tinymce.activeEditor.selection.getNode().tagName === 'IMG')
     {
       // Save all the details needed for replacing upload
       // Then check for and get those details when you are handling file uploads

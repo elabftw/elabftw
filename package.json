@@ -45,7 +45,7 @@
     "jsoneditor": "^9.0.3",
     "luxon": "^1.26.0",
     "marked": "^2.0.0",
-    "mathjax-full": "3.1.2",
+    "mathjax-full": "^3.2.0",
     "mini-css-extract-plugin": "^1.6.0",
     "popper.js": "1.16.*",
     "prismjs": "^1.23.0",

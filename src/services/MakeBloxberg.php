@@ -32,6 +32,9 @@ class MakeBloxberg extends AbstractMake
      */
     private const PUB_KEY = '0xc4d84f32cd6fd05e2e292c171f5209a678525002';
 
+    // the key provided by bloxberg owners to identify elabftw clients
+    private const API_KEY = '29b01bb9-36a2-410d-92cf-a469387503ba';
+
     private const CERT_URL = 'https://certify.bloxberg.org/createBloxbergCertificate';
 
     private const PROOF_URL = 'https://certify.bloxberg.org/generatePDF';
@@ -54,7 +57,11 @@ class MakeBloxberg extends AbstractMake
             // first request sends the hash to the certify endpoint
             $certifyResponse = json_decode($this->certify($pdfHash));
             // now we send the previous response to another endpoint to get the pdf back in a zip archive
-            $proofResponse = $this->client->post(self::PROOF_URL, array('json' => $certifyResponse));
+            $proofResponse = $this->client->post(self::PROOF_URL, array(
+                'headers' => array(
+                    'api_key' => self::API_KEY,
+                ),
+                'json' => $certifyResponse, ));
         } catch (RequestException $e) {
             throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);
         }
@@ -81,6 +88,9 @@ class MakeBloxberg extends AbstractMake
     private function certify(string $hash): string
     {
         $options = array(
+            'headers' => array(
+                'api_key' => self::API_KEY,
+            ),
             'json' => array(
                 'publicKey' => self::PUB_KEY,
                 'crid' => array('0x' . $hash),

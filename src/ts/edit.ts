@@ -76,13 +76,13 @@ document.addEventListener('DOMContentLoaded', () => {
             displayMolFiles();
             display3DMolecules(true);
             const dropZone = Dropzone.forElement('#elabftw-dropzone');
-
             // Check to make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
             if (typeof dropZone.tinyImageSuccess !== 'undefined' && dropZone.tinyImageSuccess !== null) {
-              let url = $('#uploadsDiv').children().last().find('img').attr('src');
-              // This is from the html element that shows the thumbnail. The ending appended to the original upload is: "_th.jpg"
-              // Removing this appendage allows us to have the original file. This is a hack to demonstrate the pasting functionality.
-              url = url.substring(0, url.length-7);
+              // Uses the newly updated HTML element for the uploads section to find the last file uploaded and use that to get the remote url for the image.
+              let url = $('#uploadsDiv').children().last().find('[id^=upload-filename]').attr('href');
+              // Slices out the url by finding the &name query param from the download link. This does not care about extensions or thumbnails.
+              url = url.slice(0, url.indexOf('&name='));
+              // This gives tinyMce the actual url of the uploaded image. TinyMce updates its editor to link to this rather than the temp location it sets up initially.
               dropZone.tinyImageSuccess(url);
               // This is to make sure that we do not end up adding a file to tinymce if a previous file was pasted and a consecutive file was uploaded using Dropzone.
               // The 'undefined' check is not enough. That is just for before any file was pasted.
@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
           tinymceEditImage = {selected:false, uploadId:'', itemId:'', url:''};
         });
       // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
-      } else if (typeof blobInfo.blob().name=== 'undefined') {
+      } else if (typeof blobInfo.blob().name === 'undefined') {
         const filename = prompt('Enter filename with extension e.g. .jpeg');
         if (typeof filename !== 'undefined' && filename !== null) {
           const fileOfBlob = new File([blobInfo.blob()], filename);
@@ -369,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Hook into the SelectionChange event - This is to make sure we reset our control variable correctly
   tinymce.activeEditor.on('SelectionChange', () => {
     // Check if the user has selected an image
-    if (tinymce.activeEditor.selection.getNode().tagName == 'IMG')
+    if (tinymce.activeEditor.selection.getNode().tagName === 'IMG')
     {
       // Save all the details needed for replacing upload
       // Then check for and get those details when you are handling file uploads

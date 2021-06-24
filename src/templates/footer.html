@@ -45,7 +45,9 @@
   <p class='footer-right'>
     {{ 'Powered by'|trans }}
     <a href='https://www.elabftw.net'>eLabFTW</a> {{ App.Session.has('is_auth') ? v }}<br>
-    <a href='#' data-action='show-privacy-policy'>{{ 'Privacy policy'|trans }}</a><br>
+    {% if App.Config.configArr.privacy_policy %}
+      <a href='#' data-action='show-privacy-policy'>{{ 'Privacy policy'|trans }}</a><br>
+    {% endif %}
         {{ 'Page generated in'|trans }} {{ App.getGenerationTime }} {{ 'seconds'|trans }}
     {% if App.Config.configArr.debug %}
         ({{ App.getNumberOfQueries }} SQL)

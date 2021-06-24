@@ -126,7 +126,7 @@ class SamlAuth implements AuthInterface
     private function getTeams(array $samlUserdata): array
     {
         $Teams = new Teams(new Users());
-        $teams = $samlUserdata[$this->configArr['saml_team'] ?? 'Nope'];
+        $teams = $samlUserdata[$this->configArr['saml_team'] ?? 'Nope'] ?? array();
 
         // if no team attribute is sent by the IDP, use the default team
         if (empty($teams)) {

@@ -70,7 +70,7 @@
     "analyzejs": "webpack-bundle-analyzer stats.json web/app/js",
     "apidoc": "apidoc -c apidoc -o apidoc/html -i src/controllers",
     "brotli": "brotli -vf web/assets/*.css web/assets/*.js web/assets/*.svg",
-    "zopfli": "zopfli -i1000 web/assets/*.css web/assets/*.js web/assets/images/*.png",
+    "zopfli": "zopfli -i1000 web/assets/*.css web/assets/*.js web/assets/*.svg",
     "build": "webpack-cli --progress --config builder.js",
     "buildnode": "webpack-cli --progress --config node-builder.js",
     "buildall": "CYPRESS_INSTALL_BINARY=0 yarn install --pure-lockfile && yarn buildjs && yarn buildcss && yarn chemdoodle && yarn tinymce && yarn brotli && yarn zopfli",

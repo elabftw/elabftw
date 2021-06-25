@@ -174,6 +174,10 @@ class SamlAuth implements AuthInterface
 
             // now try and get the teams
             $teams = $this->getTeams($samlUserdata);
+            // fix for when the $teams have incorrect dimension
+            if (!isset($teams[0]['id'])) {
+                $teams = $teams[0];
+            }
 
             // CREATE USER (and force validation of user, with user permissions)
             $Users = new Users($Users->create($email, $teams, $firstname, $lastname, '', 4, true, false));

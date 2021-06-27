@@ -74,16 +74,16 @@
         },
         {
             "name": "directorytree/ldaprecord",
-            "version": "v2.5.2",
+            "version": "v2.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DirectoryTree/LdapRecord.git",
-                "reference": "e8ac79c05138e676a933d4292699c1621645894b"
+                "reference": "cca4bcef8b4cdcb4f03beb11d876eaf322511bfd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/e8ac79c05138e676a933d4292699c1621645894b",
-                "reference": "e8ac79c05138e676a933d4292699c1621645894b",
+                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/cca4bcef8b4cdcb4f03beb11d876eaf322511bfd",
+                "reference": "cca4bcef8b4cdcb4f03beb11d876eaf322511bfd",
                 "shasum": ""
             },
             "require": {
@@ -143,7 +143,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-06-24T11:26:29+00:00"
+            "time": "2021-06-25T20:26:27+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -528,7 +528,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v8.48.1",
+            "version": "v8.48.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -576,16 +576,16 @@
         },
         {
             "name": "league/commonmark",
-            "version": "1.6.4",
+            "version": "1.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/commonmark.git",
-                "reference": "c3c8b7217c52572fb42aaf84211abccf75a151b2"
+                "reference": "44ffd8d3c4a9133e4bd0548622b09c55af39db5f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/c3c8b7217c52572fb42aaf84211abccf75a151b2",
-                "reference": "c3c8b7217c52572fb42aaf84211abccf75a151b2",
+                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/44ffd8d3c4a9133e4bd0548622b09c55af39db5f",
+                "reference": "44ffd8d3c4a9133e4bd0548622b09c55af39db5f",
                 "shasum": ""
             },
             "require": {
@@ -673,7 +673,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-06-19T20:08:14+00:00"
+            "time": "2021-06-26T11:57:13+00:00"
         },
         {
             "name": "league/csv",

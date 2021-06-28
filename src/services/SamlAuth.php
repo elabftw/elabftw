@@ -180,7 +180,7 @@ class SamlAuth implements AuthInterface
             }
 
             // CREATE USER (and force validation of user, with user permissions)
-            $Users = new Users($Users->create($email, $teams, $firstname, $lastname, '', 4, true, false));
+            $Users = new Users($Users->create($email, $teams, $firstname, $lastname, '', 4, true, false, false));
         }
         return $Users;
     }

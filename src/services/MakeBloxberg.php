@@ -32,20 +32,22 @@ class MakeBloxberg extends AbstractMake
      */
     private const PUB_KEY = '0xc4d84f32cd6fd05e2e292c171f5209a678525002';
 
-    // the key provided by bloxberg owners to identify elabftw clients
-    private const API_KEY = '29b01bb9-36a2-410d-92cf-a469387503ba';
-
     private const CERT_URL = 'https://certify.bloxberg.org/createBloxbergCertificate';
 
     private const PROOF_URL = 'https://certify.bloxberg.org/generatePDF';
 
+    private const API_KEY_URL = 'https://get.elabftw.net/?bloxbergapikey';
+
     /** @var AbstractEntity $Entity */
     protected $Entity;
+
+    private string $apiKey;
 
     public function __construct(private Client $client, AbstractEntity $entity)
     {
         parent::__construct($entity);
         $this->Entity->canOrExplode('write');
+        $this->apiKey = $this->getApiKey();
     }
 
     public function timestamp(): bool
@@ -59,7 +61,7 @@ class MakeBloxberg extends AbstractMake
             // now we send the previous response to another endpoint to get the pdf back in a zip archive
             $proofResponse = $this->client->post(self::PROOF_URL, array(
                 'headers' => array(
-                    'api_key' => self::API_KEY,
+                    'api_key' => $this->apiKey,
                 ),
                 'json' => $certifyResponse, ));
         } catch (RequestException $e) {
@@ -79,6 +81,15 @@ class MakeBloxberg extends AbstractMake
         return sprintf('bloxberg-proof_%s', $DateTime->format('c'));
     }
 
+    private function getApiKey(): string
+    {
+        $res = $this->client->get(self::API_KEY_URL);
+        if ($res->getStatusCode() !== 200) {
+            throw new ImproperActionException('Could not fetch api key. Please try again later.');
+        }
+        return (string) $res->getBody();
+    }
+
     private function getPdf(): string
     {
         $MakePdf = new MakePdf($this->Entity);
@@ -89,7 +100,7 @@ class MakeBloxberg extends AbstractMake
     {
         $options = array(
             'headers' => array(
-                'api_key' => self::API_KEY,
+                'api_key' => $this->apiKey,
             ),
             'json' => array(
                 'publicKey' => self::PUB_KEY,

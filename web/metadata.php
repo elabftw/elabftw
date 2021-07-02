@@ -39,7 +39,6 @@ try {
     if (empty($errors)) {
         $Response->setContent($metadata);
         $Response->headers->set('Content-Type', 'text/xml');
-        $Response->send();
     } else {
         throw new Error(
             'Invalid SP metadata: ' . implode(', ', $errors),

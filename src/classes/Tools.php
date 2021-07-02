@@ -74,7 +74,6 @@ class Tools
     public static function md2html(string $md): string
     {
         $config = array(
-            'html_input' => 'escape',
             'allow_unsafe_links' => false,
             'max_nesting_level' => 42,
         );

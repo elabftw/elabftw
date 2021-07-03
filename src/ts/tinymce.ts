@@ -65,6 +65,9 @@ if (document.getElementById('info')) {
   if (about.type === 'items') {
     entityType = EntityType.Item;
   }
+  if (about.type === 'experiments_templates') {
+    entityType = EntityType.Template;
+  }
 }
 
 const entity: Entity = {
@@ -217,7 +220,7 @@ export function getTinymceBaseConfig(page: string): object {
       editor.addShortcut('ctrl+shift+=', 'superscript', () => editor.execCommand('superscript'));
 
       // on edit page there is an autosave triggered
-      if (page === 'edit') {
+      if (page === 'edit' || page === 'ucp') {
         editor.on('keydown', () => clearTimeout(typingTimer));
         editor.on('keyup', () => {
           clearTimeout(typingTimer);

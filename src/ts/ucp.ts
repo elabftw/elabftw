@@ -43,7 +43,6 @@ $(document).ready(function() {
       // reload the page to change the icon and make the edit button disappear (#1897)
       const id = el.dataset.id;
       EntityC.lock(parseInt(id)).then(() => window.location.href = `?tab=3&templateid=${id}`);
-    // TODO autoupdatetitle on blur
     // UPDATE TEMPLATE
     } else if (el.matches('[data-action="update-template"]')) {
       const id = el.dataset.id;

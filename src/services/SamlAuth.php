@@ -126,7 +126,7 @@ class SamlAuth implements AuthInterface
     private function getTeams(array $samlUserdata): array
     {
         $Teams = new Teams(new Users());
-        $teams = $samlUserdata[$this->configArr['saml_team'] ?? 'Nope'];
+        $teams = $samlUserdata[$this->configArr['saml_team'] ?? 'Nope'] ?? array();
 
         // if no team attribute is sent by the IDP, use the default team
         if (empty($teams)) {
@@ -174,9 +174,13 @@ class SamlAuth implements AuthInterface
 
             // now try and get the teams
             $teams = $this->getTeams($samlUserdata);
+            // fix for when the $teams have incorrect dimension
+            if (!isset($teams[0]['id'])) {
+                $teams = $teams[0];
+            }
 
             // CREATE USER (and force validation of user, with user permissions)
-            $Users = new Users($Users->create($email, $teams, $firstname, $lastname, '', 4, true, false));
+            $Users = new Users($Users->create($email, $teams, $firstname, $lastname, '', 4, true, false, false));
         }
         return $Users;
     }

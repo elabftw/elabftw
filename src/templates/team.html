@@ -116,20 +116,20 @@
         </tr>
         {% for user in App.Users.readAllFromTeam %}
         <tr>
-            <td><a href='mailto:{{ user.email }}'>
-                    <span
-                    {# put sysadmin, admin and chiefs in bold #}
-                    {% if user.usergroup in range(1, 3) %}
-                        style='font-weight:bold'
-                    {% endif %}
-                    >{{ user.fullname|raw }}
-                    </span>
-                </a>
-            </td>
-            <td>{{ user.phone }}</td>
-            <td>{{ user.cellphone }}</td>
-            <td><a href='{{ user.website }}'>{{ user.website }}</a></td>
-            <td>{{ user.skype }}</td>
+          <td>
+            <a href='mailto:{{ user.email }}'>
+              <span>
+                {{ user.fullname|raw }}
+                {% if user.usergroup in range(1, 3) %}
+                  ({{ 'Admin'|trans }})
+                {% endif %}
+              </span>
+            </a>
+          </td>
+          <td>{{ user.phone }}</td>
+          <td>{{ user.cellphone }}</td>
+          <td><a href='{{ user.website }}'>{{ user.website }}</a></td>
+          <td>{{ user.skype }}</td>
         </tr>
         {% endfor %}
     </table>

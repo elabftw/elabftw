@@ -92,15 +92,9 @@
             <th class='title-item-table'>
               {{ 'Title'|trans }} <a class='orderBy clickable' data-orderby='title'><i class='fas fa-sort'></i></a>
             </th>
-            {% if Entity.type == 'experiments' %}
-              <th class='step-item-table'>
-                {{ 'Next step'|trans }}
-              </th>
-            {% elseif Entity.type == 'items' %}
-              <th class='step-item-table'>
-                {{ 'User'|trans }} <a class='orderBy clickable' data-orderby='user'><i class='fas fa-sort'></i></a>
-              </th>
-            {% endif %}
+            <th class='step-item-table'>
+              {{ 'Next step'|trans }}
+            </th>
             <th class='category-item-table'>
               {{ 'Category'|trans }} <a class='orderBy clickable' data-orderby='cat'><i class='fas fa-sort'></i></a>
             </th>
@@ -112,6 +106,9 @@
             </th>
             <th class='actions-item-rating'>
               {{ 'Rating'|trans }} <a class='orderBy clickable' data-orderby='rating'><i class='fas fa-sort'></i></a>
+            </th>
+            <th class='actions-item-owner'>
+              {{ 'Owner'|trans }} <a class='orderBy clickable' data-orderby='user'><i class='fas fa-sort'></i></a>
             </th>
           </tr>
         {% for item in itemsArr|slice(0, DisplayParams.limit) %}

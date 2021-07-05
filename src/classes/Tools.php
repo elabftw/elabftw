@@ -15,10 +15,8 @@ use function explode;
 use function filter_var;
 use function in_array;
 use InvalidArgumentException;
-use League\CommonMark\CommonMarkConverter;
-use League\CommonMark\Environment;
 use League\CommonMark\Exception\UnexpectedEncodingException;
-use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
+use League\CommonMark\GithubFlavoredMarkdownConverter;
 use function mb_strlen;
 use function pathinfo;
 use Symfony\Component\HttpFoundation\Request;
@@ -75,11 +73,13 @@ class Tools
      */
     public static function md2html(string $md): string
     {
-        $environment = Environment::createCommonMarkEnvironment();
-        $environment->addExtension(new GithubFlavoredMarkdownExtension());
+        $config = array(
+            'allow_unsafe_links' => false,
+            'max_nesting_level' => 42,
+        );
 
         try {
-            $converter = new CommonMarkConverter(array('allow_unsafe_links' => false, 'max_nesting_level' => 42), $environment);
+            $converter = new GithubFlavoredMarkdownConverter($config);
             return trim($converter->convertToHtml($md), "\n");
         } catch (UnexpectedEncodingException) {
             // fix for incorrect utf8 encoding, just return md and hope it's html

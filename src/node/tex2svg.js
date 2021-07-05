@@ -77,7 +77,7 @@ MathJax.startup.promise.then(() => {
     //
     //  If math was found output the resulting HTML
     //
-    if (html.math.toArray().length > 0) {
+    if (Array.from(html.math).length > 0) {
         console.log(adaptor.doctype(html.document));
         console.log(adaptor.outerHTML(adaptor.root(html.document)));
     }

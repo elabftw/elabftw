@@ -253,7 +253,8 @@ class Users
             users.cellphone,
             users.website,
             users.skype,
-            users.validated
+            users.validated,
+            users.usergroup
             FROM users
             CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
             LEFT JOIN teams ON (teams.id = :team)

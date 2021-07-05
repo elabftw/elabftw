@@ -104,7 +104,7 @@
       <a class='clickable dropdown-item modalToggle' data-modal='permModal'><i class='fas fa-share-alt fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
       <!-- TRANSFER OWNERSHIP -->
       {% if Entity.type == 'items' and (Entity.entityData.userid == App.Users.userData.userid or App.Session.get('is_admin')) %}
-        <a class='clickable dropdown-item modalToggle' data-modal='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer Ownership'|trans }}</a>
+        <a class='clickable dropdown-item modalToggle' data-modal='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer ownership'|trans }}</a>
       {% endif %}
       <!-- SWITCH EDITOR -->
       <a class='dropdown-item switchEditor' id='iHazEditor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</a>

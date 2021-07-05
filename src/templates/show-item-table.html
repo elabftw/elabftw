@@ -19,7 +19,7 @@
             </td>
 
             <!-- TITLE -->
-            <td class='title'>
+            <td class='title item-next'>
               <!-- checkbox -->
               <input class='item-checkbox' autocomplete='off' type='checkbox' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;' />
             {% if isPinned %}
@@ -32,31 +32,24 @@
               <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
             {% endif %}
               <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
-              {% if Entity.type == 'experiments' %}
-                <div>{{ owner|raw }}</div>
-              {% endif %}
             </td>
 
             <!-- NEXT STEP -->
-            {% if Entity.type == 'experiments' %}
-                {% if item.next_step|length > 0 %}
+            <td class='item-next'>
+              {% set next = '' %}
+              {% if item.next_step|length > 0 %}
                 {% set stepsArr = item.next_step|split('|') %}
                 {% set next = stepsArr|first %}
-                <td class='item-next'>
-                    <span class='item-next-step'>{{ next|raw }}</span>
-                </td>
-                {% else %}
-                    <td class='item-next'></td>
-                {% endif %}
-            {% endif %}
-            {% if Entity.type == 'items' %}
-              <td class='item-next'>
-                <span class='item-next-step'>{{ owner|raw }}</span>
-              </td>
-            {% endif %}
+              {% endif %}
+              <span class='item-next-step'>{{ next|raw }}</span>
+            </td>
+
+            <!-- CATEGORY -->
             <td class='item-next'>
               <span class='item-type' style='color:#{{ item.color }}'>{{ item.category }}</span>
             </td>
+
+            <!-- TAGS -->
             <td class='tags'>
             {% set itemtagsArr = tagsArr[item.id] %}
               {% if itemtagsArr|length > 0 %}
@@ -67,6 +60,8 @@
                 </span>
             {% endif %}
             </td>
+
+            <!-- ACTIONS -->
             <td class='item-info'>
               <!-- edit icon -->
               {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
@@ -91,6 +86,10 @@
               {% if item.rating > 0 %}
                 {{ item.rating|stars|raw }}
               {% endif %}
+            </td>
+
+            <td class='item-owner'>
+              {{ item.fullname|raw }}
             </td>
 
           </tr>

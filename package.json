@@ -42,7 +42,7 @@
     "jquery": "^3.5.1",
     "jquery-jeditable": "2.0.*",
     "jquery-ui": "^1.12.1",
-    "jsoneditor": "^9.0.3",
+    "jsoneditor": "^9.5.1",
     "luxon": "^1.26.0",
     "marked": "^2.0.0",
     "mathjax-full": "^3.2.0",

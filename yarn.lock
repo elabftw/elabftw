@@ -1202,10 +1202,10 @@
   resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.3.tgz#ff5e2f1902969d305225a047c8a0fd5c915cebef"
   integrity sha512-JYM8x9EGF163bEyhdJBpR2QX1R5naCJHC8ucJylJ3w9/CVBaskdQ8WqBf8MmQrd1kRvp/a4TS8HJ+bxzR7ZJYQ==
 
-"@types/tinymce@^4.6.0":
-  version "4.6.3"
-  resolved "https://registry.yarnpkg.com/@types/tinymce/-/tinymce-4.6.3.tgz#98c3ece2efc95df9523d586111d82fa20cbda043"
-  integrity sha512-055OQOwpAz3CU72gBXKdrani/RWi0ENtEILrSJZ5aKAoLmi3TLaWFqVqutrgUmZz64H5YJJvolGvsxb7MMw4QA==
+"@types/tinymce@^4.6.4":
+  version "4.6.4"
+  resolved "https://registry.yarnpkg.com/@types/tinymce/-/tinymce-4.6.4.tgz#c31d72ba55147233e2b8fa8ebb81960f23d74c32"
+  integrity sha512-7xo9AnZO9DXdS41zxmKHDzOEo+yxdj9KaZXokSLDYeZ9KcbzIHJJBppRrCoDA8PH2+k79Qj68B+Yj/ye2xQzow==
   dependencies:
     "@types/jquery" "*"
 

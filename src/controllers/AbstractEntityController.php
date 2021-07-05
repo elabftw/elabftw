@@ -69,6 +69,11 @@ abstract class AbstractEntityController implements ControllerInterface
         if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {
             $this->Entity->addFilter('categoryt.id', $this->App->Request->query->getDigits('cat'));
         }
+        // OWNER (USERID) FILTER
+        if ($this->App->Request->query->has('owner')) {
+            $owner = (int) $this->App->Request->query->get('owner');
+            $this->Entity->addFilter('entity.userid', (string) $owner);
+        }
 
         // TAG FILTER
         if (!empty(((array) $this->App->Request->query->get('tags'))[0])) {

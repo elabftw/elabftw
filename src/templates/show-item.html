@@ -4,7 +4,7 @@
       {% set owner = '' %}
       {% if (Entity.Users.userData.userid != item.userid) and not App.Session.has('is_anon') %}
         {% set opacity = '0.7' %}
-        {% set owner = item.fullname %}
+        {% set owner = "<a href='?owner=%s'>%s</a>"|format(item.userid, item.fullname) %}
       {% endif %}
       {% if Entity.Users.userData.single_column_layout %}
         <div class='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
@@ -44,7 +44,7 @@
                 <i class='fas fa-plus-circle link-like'></i>
               </span>
               <!-- category -->
-              <span class='item-category' style='color:#{{ item.color }}'>{{ item.category }}</span>
+              <span class='item-category'><a style='color:#{{ item.color }}' href='?cat={{ item.category_id }}'>{{ item.category }}</a></span>
               <!-- date -->
               <span class='item-date'><i class='far fa-calendar-alt mr-1'></i>{{ item.date|kdate }}</span>
               <!-- timestamp icon -->

@@ -109,6 +109,7 @@
     <table id='teamtable' class='table'>
         <tr>
             <th>{{ 'Name'|trans }}</th>
+            <th>{{ 'Email'|trans }}</th>
             <th>{{ 'Phone'|trans }}</th>
             <th>{{ 'Mobile'|trans }}</th>
             <th>{{ 'Website'|trans }}</th>
@@ -117,7 +118,7 @@
         {% for user in App.Users.readAllFromTeam %}
         <tr>
           <td>
-            <a href='mailto:{{ user.email }}'>
+            <a href='experiments.php?owner={{ user.userid }}'>
               <span>
                 {{ user.fullname|raw }}
                 {% if user.usergroup in range(1, 3) %}
@@ -126,6 +127,7 @@
               </span>
             </a>
           </td>
+          <td><a href='mailto:{{ user.email }}'>{{ user.email }}</a></td>
           <td>{{ user.phone }}</td>
           <td>{{ user.cellphone }}</td>
           <td><a href='{{ user.website }}'>{{ user.website }}</a></td>

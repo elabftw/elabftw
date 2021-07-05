@@ -75,13 +75,13 @@ try {
     // BIND
     if ($Request->request->has('bind')) {
         $Scheduler->setId((int) $Request->request->get('id'));
-        $Scheduler->bind((int) $Request->request->get('expid'));
+        $Scheduler->bind((int) $Request->request->get('entityid'), $Request->request->get('type'));
     }
 
     // UNBIND
     if ($Request->request->has('unbind')) {
         $Scheduler->setId((int) $Request->request->get('id'));
-        $Scheduler->unbind();
+        $Scheduler->unbind($Request->request->get('type'));
     }
 
     // DESTROY

@@ -82,13 +82,6 @@ export function displayMolFiles(): void {
     ChemDoodle.io.file.content($(this).data('molpath'), function(fileContent: string){
       const mol = ChemDoodle.readMOL(fileContent);
       const viewer = new ChemDoodle.ViewerCanvas(id, 250, 250);
-      // config some stuff in the viewer
-      viewer.specs.bonds_width_2D = 0.6; // eslint-disable-line @typescript-eslint/camelcase
-      viewer.specs.bonds_saturationWidth_2D = 0.18; // eslint-disable-line @typescript-eslint/camelcase
-      viewer.specs.bonds_hashSpacing_2D = 2.5; // eslint-disable-line @typescript-eslint/camelcase
-      viewer.specs.atoms_font_size_2D = 10; // eslint-disable-line @typescript-eslint/camelcase
-      viewer.specs.atoms_font_families_2D = ['Helvetica', 'Arial', 'sans-serif']; // eslint-disable-line @typescript-eslint/camelcase
-      viewer.specs.atoms_displayTerminalCarbonLabels_2D = true; // eslint-disable-line @typescript-eslint/camelcase
       // load it
       viewer.loadMolecule(mol);
     });

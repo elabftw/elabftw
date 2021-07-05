@@ -37,7 +37,7 @@ class EntityParams extends ContentParams implements EntityParamsInterface
 
     public function getExtraBody(): string
     {
-        return Filter::body($this->extra['body']);
+        return Filter::body($this->extra['body'] ?? '');
     }
 
     public function getRating(): int

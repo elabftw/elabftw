@@ -4,6 +4,7 @@ updates:
   directory: "/"
   schedule:
     interval: weekly
+    day: friday
     time: "02:00"
   open-pull-requests-limit: 10
   target-branch: hypernext
@@ -15,6 +16,7 @@ updates:
   directory: "/"
   schedule:
     interval: weekly
+    day: friday
     time: "02:00"
   open-pull-requests-limit: 10
   target-branch: hypernext

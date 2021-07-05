@@ -50,7 +50,8 @@ class DisplayParams
             $this->searchType = 'related';
             $this->setRelated($app);
         }
-        if ((Check::id((int) $app->Request->query->get('cat')) !== false) || !empty($app->Request->query->get('tags')[0])) {
+        // CATEGORY FILTER
+        if ((Check::id((int) $app->Request->query->get('cat')) !== false) || !empty(((array) $app->Request->query->get('tags'))[0])) {
             $this->searchType = 'something';
         }
     }
@@ -127,7 +128,7 @@ class DisplayParams
 
         // now get pref from the filter-order-sort menu
         if (!empty($app->Request->query->get('sort'))) {
-            $this->sort = Check::sort($app->Request->query->get('sort'));
+            $this->sort = Check::sort($app->Request->query->getAlpha('sort'));
         }
     }
 }

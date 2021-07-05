@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use function bin2hex;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
@@ -32,8 +31,6 @@ use Elabftw\Traits\EntityTrait;
 use function explode;
 use function is_bool;
 use PDO;
-use function random_bytes;
-use function sha1;
 
 /**
  * The mother class of Experiments, Items, Templates and ItemsTypes
@@ -623,18 +620,6 @@ abstract class AbstractEntity implements CrudInterface
         $req->bindValue(':value', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Generate unique elabID
-     * This function is called during the creation of an experiment.
-     *
-     * @return string unique elabid with date in front of it
-     */
-    protected function generateElabid(): string
-    {
-        $date = Filter::kdate();
-        return $date . '-' . sha1(bin2hex(random_bytes(16)));
     }
 
     /**

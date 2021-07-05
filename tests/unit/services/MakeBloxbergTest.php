@@ -33,7 +33,9 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
         // a small zip that will act as what we receive from the server
         $zip = file_get_contents(dirname(__DIR__, 2) . '/_data/example.zip');
         // don't use the real guzzle client, but use a mock
+        // https://docs.guzzlephp.org/en/stable/testing.html
         $mock = new MockHandler(array(
+            new Response(200, array(), 'a-fake-api-key'),
             // @phpstan-ignore-next-line
             new Response(200, array(), $successResponseCertify),
             // @phpstan-ignore-next-line
@@ -58,6 +60,7 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
     public function testTimestampFail(): void
     {
         $mock = new MockHandler(array(
+            new Response(200, array(), 'a-fake-api-key'),
             new RequestException('Server is down?', new Request('GET', 'test')),
         ));
         $handlerStack = HandlerStack::create($mock);
@@ -71,6 +74,7 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
     {
         $successResponseCertify = file_get_contents(dirname(__DIR__, 2) . '/_data/bloxberg-cert-response.json');
         $mock = new MockHandler(array(
+            new Response(200, array(), 'a-fake-api-key'),
             // @phpstan-ignore-next-line
             new Response(200, array(), $successResponseCertify),
             new Response(200, array(), 'not a zip'),

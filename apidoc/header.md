@@ -68,5 +68,6 @@ except HTTPError as e:
     print(e)
 ~~~
 
+Note: if your installation has a self-signed certificate, use `verify=False` when instantiating the Manager.
 
 You will find examples of `elabapy` usage in the documentation below.

@@ -137,7 +137,11 @@ class MakePdf extends AbstractMake
             'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
         );
 
-        return $this->getTwig(Config::getConfig())->render('pdf.html', $renderArr);
+        $html = $this->getTwig(Config::getConfig())->render('pdf.html', $renderArr);
+
+        // now remove any img src pointing to outside world
+        // prevent blind ssrf (thwarted by CSP on webpage, but not in pdf)
+        return preg_replace('/img src=("|\')(ht|f|)tp/i', 'nope', $html);
     }
 
     /**
@@ -218,7 +222,7 @@ class MakePdf extends AbstractMake
         $contentDecode = html_entity_decode($content, ENT_HTML5, 'UTF-8');
         file_put_contents($filename, $contentDecode);
 
-        // apsolute path to tex2svg app
+        // absolute path to tex2svg app
         $appDir = dirname(__DIR__, 2) . '/src/node';
 
         // convert tex to svg with mathjax nodejs script
@@ -243,9 +247,11 @@ class MakePdf extends AbstractMake
         unlink($filename);
 
         // was there actually tex in the content?
-        // if not we can skip the svg modifications and return the original content
+        // if not we can skip the svg modifications and return the content
+        // return the decoded content to avoid html entities issues in final pdf
+        // see #2760
         if ($html === '') {
-            return $content;
+            return $contentDecode;
         }
 
         // based on https://github.com/mpdf/mpdf-examples/blob/master/MathJaxProcess.php
@@ -379,11 +385,11 @@ class MakePdf extends AbstractMake
     }
 
     /**
-     * Get the contents of app/css/pdf.min.css
+     * Get the contents of assets/pdf.min.css
      */
     private function getCss(): string
     {
-        $css = file_get_contents(dirname(__DIR__, 2) . '/web/app/css/pdf.min.css');
+        $css = file_get_contents(dirname(__DIR__, 2) . '/web/assets/pdf.min.css');
         if ($css === false) {
             throw new FilesystemErrorException('Cannot read the minified css file!');
         }

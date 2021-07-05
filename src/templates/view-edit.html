@@ -1,10 +1,5 @@
 {% if Entity.Users.userData.chem_editor %}
-  <link rel='stylesheet' href='app/css/chemdoodle.css?v={{ v }}' type='text/css'>
-  <script src='app/js/chemdoodle.min.js?v={{ v }}'></script>
-{% endif %}
-
-{% if Entity.Users.userData.use_markdown or App.Request.query.get('editor') == 'md' %}
-  <link rel='stylesheet' href='app/css/bootstrap-markdown.min.css' type='text/css'>
+  <script src='assets/chemdoodle.min.js?v={{ v }}'></script>
 {% endif %}
 
 <div class='row'>

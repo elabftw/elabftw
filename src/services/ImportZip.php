@@ -17,6 +17,7 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
+use Elabftw\Traits\EntityTrait;
 use FilesystemIterator;
 use function mb_strlen;
 use PDO;
@@ -30,6 +31,8 @@ use ZipArchive;
  */
 class ImportZip extends AbstractImport
 {
+    use EntityTrait;
+
     // number of items we got into the database
     public int $inserted = 0;
 
@@ -145,6 +148,10 @@ class ImportZip extends AbstractImport
             $sql = 'INSERT into experiments(title, date, body, userid, canread, category, elabid)
                 VALUES(:title, :date, :body, :userid, :canread, :category, :elabid)';
         }
+
+        // make sure there is an elabid (might not exist for items before v4.0)
+        $elabid = $item['elabid'] ?? $this->generateElabid();
+
         $req = $this->Db->prepare($sql);
         if ($this->type === 'items') {
             $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
@@ -153,7 +160,7 @@ class ImportZip extends AbstractImport
         $req->bindParam(':date', $item['date']);
         $req->bindParam(':body', $item['body']);
         $req->bindValue(':canread', $this->canread);
-        $req->bindParam(':elabid', $item['elabid']);
+        $req->bindParam(':elabid', $elabid);
         if ($this->type === 'items') {
             $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':category', $this->target, PDO::PARAM_INT);

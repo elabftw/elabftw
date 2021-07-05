@@ -65,6 +65,9 @@ if (document.getElementById('info')) {
   if (about.type === 'items') {
     entityType = EntityType.Item;
   }
+  if (about.type === 'experiments_templates') {
+    entityType = EntityType.Template;
+  }
 }
 
 const entity: Entity = {
@@ -147,7 +150,7 @@ export function getTinymceBaseConfig(page: string): object {
     skin_url: 'app/css/tinymce', // eslint-disable-line @typescript-eslint/camelcase
     plugins: plugins,
     pagebreak_separator: '<pagebreak>', // eslint-disable-line @typescript-eslint/camelcase
-    toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | save',
+    toolbar1: 'undo redo | styleselect fontsizeselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | save',
     removed_menuitems: 'newdocument, image', // eslint-disable-line @typescript-eslint/camelcase
     image_caption: true, // eslint-disable-line @typescript-eslint/camelcase
     images_reuse_filename: true, // eslint-disable-line @typescript-eslint/camelcase
@@ -217,7 +220,7 @@ export function getTinymceBaseConfig(page: string): object {
       editor.addShortcut('ctrl+shift+=', 'superscript', () => editor.execCommand('superscript'));
 
       // on edit page there is an autosave triggered
-      if (page === 'edit') {
+      if (page === 'edit' || page === 'ucp') {
         editor.on('keydown', () => clearTimeout(typingTimer));
         editor.on('keyup', () => {
           clearTimeout(typingTimer);

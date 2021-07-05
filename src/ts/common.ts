@@ -13,6 +13,21 @@ import { relativeMoment, displayMolFiles, makeSortableGreatAgain } from './misc'
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { EntityType, Payload, Method, Model, Action } from './interfaces';
+import 'marked';
+import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
+import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.de.js';
+import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.es.js';
+import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.fr.js';
+import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.it.js';
+import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.ja.js';
+import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.kr.js';
+import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.nl.js';
+import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.pl.js';
+import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.ptBR.js';
+import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.ru.js';
+import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sl.js';
+import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sv.js';
+import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.zh.js';
 
 $(document).ready(function() {
   $.ajaxSetup({

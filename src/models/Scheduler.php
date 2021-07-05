@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 use DateTime;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Traits\EntityTrait;
@@ -191,30 +192,32 @@ class Scheduler
     }
 
     /**
-     * Bind an experiment to a calendar event
-     *
-     * @param int $expid id of the experiment
+     * Bind an entity to a calendar event
      */
-    public function bind(int $expid): void
+    public function bind(int $entityid, string $type): bool
     {
-        $sql = 'UPDATE team_events SET experiment = :experiment WHERE team = :team AND id = :id';
+        $this->validateBindType($type);
+
+        $sql = 'UPDATE team_events SET ' . $type . ' = :entity WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':experiment', $expid, PDO::PARAM_INT);
+        $req->bindParam(':entity', $entityid, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**
-     * Unbind an experiment from a calendar event
+     * Unbind an entity from a calendar event
      */
-    public function unbind(): void
+    public function unbind(string $type): bool
     {
-        $sql = 'UPDATE team_events SET experiment = NULL WHERE team = :team AND id = :id';
+        $this->validateBindType($type);
+
+        $sql = 'UPDATE team_events SET ' . $type . ' = NULL WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**
@@ -237,5 +240,13 @@ class Scheduler
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
+    }
+
+    private function validateBindType(string $type): void
+    {
+        $allowedTypes = array('experiment', 'item_link');
+        if (!in_array($type, $allowedTypes, true)) {
+            throw new IllegalActionException('Incorrect bind type for scheduler event');
+        }
     }
 }

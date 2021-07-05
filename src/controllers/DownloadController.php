@@ -56,7 +56,21 @@ class DownloadController implements ControllerInterface
     public function getResponse(): Response
     {
         $Response = new BinaryFileResponse($this->filePath);
-        $Response->headers->set('Content-Type', $this->getMimeType());
+        $mime = $this->getMimeType();
+        $Response->headers->set('Content-Type', $mime);
+
+        // force the download of everything (regardless of the forceDownload parameter)
+        // to avoid having html injected and interpreted as an elabftw page
+        $safeMimeTypes = array(
+            'application/pdf',
+            'image/gif',
+            'image/jpeg',
+            'image/png',
+            'video/mp4',
+        );
+        if (!in_array($mime, $safeMimeTypes, true)) {
+            $this->forceDownload = true;
+        }
 
         if ($this->forceDownload) {
             $Response->setContentDisposition(

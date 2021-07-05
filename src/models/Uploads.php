@@ -34,6 +34,7 @@ use function file_exists;
 use function function_exists;
 use Gmagick;
 use function in_array;
+use function is_uploaded_file;
 use PDO;
 use function rename;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -78,8 +79,7 @@ class Uploads implements CrudInterface
         $fullPath = $this->getUploadsPath() . $longName;
 
         // Try to move the file to its final place
-        //$this->moveFile($request->files->get('file')->getPathname(), $fullPath);
-        $this->moveFile($params->getPathname(), $fullPath);
+        $this->moveUploadedFile($params->getPathname(), $fullPath);
 
         // rotate the image if we can find the orientation in the exif data
         // maybe php-exif extension isn't loaded
@@ -307,7 +307,7 @@ class Uploads implements CrudInterface
     {
         $upload = $this->read(new ContentParams());
         $fullPath = $this->getUploadsPath() . $upload['long_name'];
-        $this->moveFile($file->getPathname(), $fullPath);
+        $this->moveUploadedFile($file->getPathname(), $fullPath);
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb(true);
 
@@ -342,28 +342,26 @@ class Uploads implements CrudInterface
     }
 
     /**
-     * Place a file somewhere
-     *
-     * @param string $orig from
-     * @param string $dest to
-     * @throws FilesystemErrorException
+     * Move an uploaded file somewhere
+     */
+    private function moveUploadedFile(string $orig, string $dest): void
+    {
+        if (!is_uploaded_file($orig)) {
+            throw new IllegalActionException('Trying to move a file that has not been uploaded');
+        }
+        $this->moveFile($orig, $dest);
+    }
+
+    /**
+     * Place a file somewhere. We don't use rename() but rather copy/unlink to avoid issues with rename() across filesystems
      */
     private function moveFile(string $orig, string $dest): void
     {
-        // fix for FreeBSD and rename across different filesystems
-        // see http://php.net/manual/en/function.rename.php#117590
-        if (PHP_OS === 'FreeBSD') {
-            if (copy($orig, $dest) !== true) {
-                throw new FilesystemErrorException('Error while moving the file. Check folder permissions!');
-            }
-            if (unlink($orig) !== true) {
-                throw new FilesystemErrorException('Error deleting file!');
-            }
-            return;
-        }
-
-        if (rename($orig, $dest) !== true) {
+        if (copy($orig, $dest) !== true) {
             throw new FilesystemErrorException('Error while moving the file. Check folder permissions!');
+        }
+        if (unlink($orig) !== true) {
+            throw new FilesystemErrorException('Error deleting file!');
         }
     }
 

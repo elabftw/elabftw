@@ -4,10 +4,6 @@ version: 2.1
 # code coverage orb
 orbs:
   codecov: codecov/codecov@1.0.2
-filters:
-  branches:
-    ignore:
-      - demo
 jobs:
   build:
     working_directory: ~/elabftw/elabftw
@@ -71,7 +67,7 @@ jobs:
       # copy the circleci config
       - run: sudo cp tests/config-ci.php config.php
       - run: sudo apt-get update
-      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y graphicsmagick libgraphicsmagick1-dev libldap2-dev
+      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y graphicsmagick libgraphicsmagick1-dev libldap2-dev brotli zopfli
       - run: sudo docker-php-ext-install gd gettext zip pdo_mysql exif ldap
       # The following line was run implicitly in your 1.0 builds based on what CircleCI inferred about the structure of your project. In 2.0 you need to be explicit about which commands should be run. In some cases you can discard inferred commands if they are not relevant to your project.
       - run:
@@ -119,4 +115,9 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - build
+      - build:
+        filters:
+          branches:
+            ignore:
+              - demo
+              - next

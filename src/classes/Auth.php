@@ -88,6 +88,7 @@ class Auth implements AuthInterface
             'metadata.php',
             'register.php',
             'RegisterController.php',
+            'RequestHandler.php',
             'ResetPasswordController.php',
         );
 
@@ -127,7 +128,7 @@ class Auth implements AuthInterface
         switch ($authType) {
             // AUTH WITH COOKIE
             case 'cookie':
-                return new CookieAuth($this->Request->cookies->get('token'), $this->Request->cookies->get('token_team'));
+                return new CookieAuth((string) $this->Request->cookies->get('token'), $this->Request->cookies->getDigits('token_team'));
             case 'session':
                 return new SessionAuth();
             case 'elabid':
@@ -141,7 +142,7 @@ class Auth implements AuthInterface
                 } else {
                     throw new UnauthorizedException();
                 }
-                $team = $Entity->getTeamFromElabid($this->Request->query->get('elabid'));
+                $team = $Entity->getTeamFromElabid((string) $this->Request->query->get('elabid'));
                 if ($team === 0) {
                     throw new UnauthorizedException();
                 }

@@ -10,9 +10,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
+use function bin2hex;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Check;
+use Elabftw\Services\Filter;
+use function random_bytes;
+use function sha1;
 
 /**
  * For things that are used by experiments, database, status, item types, templates, …
@@ -40,5 +44,15 @@ trait EntityTrait
         // prevent reusing of old data from previous id
         $this->entityData = array();
         $this->filters = array();
+    }
+
+    /**
+     * Generate unique elabID
+     *
+     * @return string unique elabid with date in front of it
+     */
+    protected function generateElabid(): string
+    {
+        return Filter::kdate() . '-' . sha1(bin2hex(random_bytes(16)));
     }
 }

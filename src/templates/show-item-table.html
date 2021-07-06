@@ -1,10 +1,5 @@
       {# dim the experiment a bit if it's not yours #}
       {% set randomId = random() %}
-      {% set opacity = '1' %}
-      {% set owner = '' %}
-      {% if (Entity.Users.userData.userid != item.userid) and not App.Session.has('is_anon') %}
-        {% set owner = item.fullname %}
-      {% endif %}
 
           <!-- here the item-show-{lg-md-xs} is always lg -->
           <tr class='item item-show item-show-lg {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='--left-color: #{{ item.color }}'>
@@ -89,7 +84,7 @@
             </td>
 
             <td class='item-owner'>
-              {{ item.fullname|raw }}
+              {{"<a href='?owner=%s'>%s</a>"|format(item.userid, item.fullname)|raw }}
             </td>
 
           </tr>

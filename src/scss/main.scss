@@ -1022,7 +1022,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 // raise above .viewer-ove
-.uploadsDestroy { /* stylelint-disable-line */
+.thumbnail > .dropdown {
     position: relative;
     z-index: 10;
 }

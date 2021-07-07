@@ -5,7 +5,6 @@ START TRANSACTION;
     ALTER TABLE `users` CHANGE `password` `password` VARCHAR(255) NULL DEFAULT NULL;
     ALTER TABLE `users` CHANGE `salt` `salt` VARCHAR(255) NULL DEFAULT NULL;
     ALTER TABLE `users` ADD `password_hash` VARCHAR(255) NULL DEFAULT NULL AFTER `password`;
-    ALTER TABLE `users` ADD `use_ove` tinyint(1) NOT NULL DEFAULT '1' AFTER `use_markdown`;
     ALTER TABLE `users` ADD `use_isodate` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0';
     ALTER TABLE `users` ADD `show_public` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0';
     ALTER TABLE `users` ADD `uploads_layout` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1';

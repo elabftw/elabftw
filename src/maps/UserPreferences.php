@@ -237,6 +237,7 @@ class UserPreferences implements MapInterface
     final public function setUseOve(string $setting): void
     {
         $this->useOve = Filter::toBinary($setting);
+    }
 
     final public function setUseIsodate(string $setting): void
     {

@@ -226,6 +226,7 @@ final class Config
             ('deletable_xp', 1),
             ('max_revisions', 10),
             ('min_delta_revisions', 100),
+            ('min_days_revisions', 23),
             ('extauth_remote_user', ''),
             ('extauth_firstname', ''),
             ('extauth_lastname', ''),

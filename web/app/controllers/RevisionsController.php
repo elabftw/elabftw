@@ -46,6 +46,7 @@ try {
         $Entity,
         (int) $App->Config->configArr['max_revisions'],
         (int) $App->Config->configArr['min_delta_revisions'],
+        (int) $App->Config->configArr['min_days_revisions'],
     );
 
     if ($Request->query->get('action') === 'restore') {

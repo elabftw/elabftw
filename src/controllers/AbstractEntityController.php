@@ -157,6 +157,7 @@ abstract class AbstractEntityController implements ControllerInterface
             $this->Entity,
             (int) $this->App->Config->configArr['max_revisions'],
             (int) $this->App->Config->configArr['min_delta_revisions'],
+            (int) $this->App->Config->configArr['min_days_revisions'],
         );
 
         $template = 'view.html';
@@ -207,6 +208,7 @@ abstract class AbstractEntityController implements ControllerInterface
             $this->Entity,
             (int) $this->App->Config->configArr['max_revisions'],
             (int) $this->App->Config->configArr['min_delta_revisions'],
+            (int) $this->App->Config->configArr['min_days_revisions'],
         );
 
         // VISIBILITY ARR

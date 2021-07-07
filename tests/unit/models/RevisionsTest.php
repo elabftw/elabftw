@@ -23,7 +23,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Users = new Users(1, 1);
         $this->Experiments = new Experiments($this->Users, 1);
-        $this->Revisions = new Revisions($this->Experiments, 10, 100);
+        $this->Revisions = new Revisions($this->Experiments, 10, 100, 10);
     }
 
     public function testCreate(): void
@@ -39,7 +39,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
     public function testReadCount(): void
     {
         $this->assertIsInt($this->Revisions->readCount());
-        $this->Revisions = new Revisions(new Items($this->Users, 1), 10, 100);
+        $this->Revisions = new Revisions(new Items($this->Users, 1), 10, 100, 10);
         $this->assertIsInt($this->Revisions->readCount());
     }
 
@@ -48,7 +48,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
         $Experiment = new Experiments($this->Users, 1);
         $new = $Experiment->create(new EntityParams('0'));
         $Experiment->setId($new);
-        $this->Revisions = new Revisions($Experiment, 10, 100);
+        $this->Revisions = new Revisions($Experiment, 10, 100, 10);
         $this->Revisions->create('Ohai');
         $this->Revisions->restore($new);
         //$this->Experiments->toggleLock();

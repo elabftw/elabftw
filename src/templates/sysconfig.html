@@ -102,6 +102,10 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           <input class='form-control col-md-4' type='number' min='1' max='999' value='{{ App.Config.configArr.min_delta_revisions }}' name='min_delta_revisions' id='min_delta_revisions' />
           <p class='smallgray'>{{ 'Setting this to a high value will help keeping the database size small.'|trans }}</p>
 
+          <label for='min_days_revisions'>{{ 'Number of days between changes to automatically create a revision:'|trans }}</label>
+          <input class='form-control col-md-4' type='number' min='1' max='999' value='{{ App.Config.configArr.min_days_revisions }}' name='min_days_revisions' id='min_days_revisions' />
+          <p class='smallgray'>{{ 'If the last change is at least this days old, a revision will be created regardless of the minimum characters setting.'|trans }}</p>
+
           <h3>{{ 'Registration and authentication configuration'|trans }}</h3>
 
           <label for='anon_users'>{{ 'Allow anonymous visitors to login and see Public experiments:'|trans }}</label>

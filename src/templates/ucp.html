@@ -85,9 +85,8 @@
 
       <label for='orderby'>{{ 'Order by:'|trans }}</label>
       <select id='orderby' name='orderby' class='form-control col-md-3'>
-          <option value='default' {{ App.Users.userData.orderby == null ? ' selected' }}>{{ 'Use default'|trans }}</option>
           <option value='cat' {{ App.Users.userData.orderby == 'cat' ? ' selected' }}>{{ 'Category'|trans }}</option>
-          <option value='date' {{ App.Users.userData.orderby == 'date' ? ' selected' }}>{{ 'Date'|trans }}</option>
+          <option value='date' {{ App.Users.userData.orderby == 'date' ? ' selected' }}>{{ 'Date'|trans }} {{ '(default)'|trans }}</option>
           <option value='title' {{ App.Users.userData.orderby == 'title' ? ' selected' }}>{{ 'Title'|trans }}</option>
           <option value='comment' {{ App.Users.userData.orderby == 'comment' ? ' selected' }}>{{ 'Comment'|trans }}</option>
           <option value='lastchange' {{ App.Users.userData.orderby == 'lastchange' ? ' selected' }}>{{ 'Last modified'|trans }}</option>

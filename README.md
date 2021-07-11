@@ -10,7 +10,6 @@
 
 [![CircleCI](https://circleci.com/gh/elabftw/elabftw/tree/master.svg?style=svg)](https://circleci.com/gh/elabftw/elabftw/tree/master)
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9942fbe6c6f14f488be69e51e93a1c10)](https://www.codacy.com/app/elabftw/elabftw)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/elabftw/elabftw/?branch=master)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2766/badge)](https://bestpractices.coreinfrastructure.org/projects/2766)
 [![Join the chat at https://gitter.im/elabftw/elabftw](https://badges.gitter.im/elabftw/elabftw.svg)](https://gitter.im/elabftw/elabftw?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)

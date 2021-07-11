@@ -55,6 +55,7 @@ try {
             $Templates,
             (int) $App->Config->configArr['max_revisions'],
             (int) $App->Config->configArr['min_delta_revisions'],
+            (int) $App->Config->configArr['min_days_revisions'],
         );
         $stepsArr = $Templates->Steps->read(new ContentParams());
         $linksArr = $Templates->Links->read(new ContentParams());

@@ -18,6 +18,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Traits\EntityTrait;
 use PDO;
+use function preg_replace;
 use function strlen;
 use function substr;
 
@@ -44,6 +45,10 @@ class Scheduler
     public function create(string $start, string $end, string $title): int
     {
         $title = filter_var($title, FILTER_SANITIZE_STRING);
+
+        // fix booking at midnight on monday not working. See #2765
+        // we add a second so it works
+        $start = preg_replace('/00:00:00/', '00:00:01', $start);
 
         $sql = 'INSERT INTO team_events(team, item, start, end, userid, title)
             VALUES(:team, :item, :start, :end, :userid, :title)';

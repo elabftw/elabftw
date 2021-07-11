@@ -101,9 +101,7 @@
                     <li class='list-inline-item'>
                       <label for='usersUpdateUsergroup_{{ user.userid }}'>{{ 'Group'|trans }}</label>
                       <select class='form-control custom-control-inline' name='usergroup' id='usersUpdateUsergroup_{{ user.userid }}'>
-                        {% if App.Session.get('is_sysadmin') %}
-                          <option value='1' {{ user.usergroup == '1' ? " selected='selected'" }}>Sysadmins</option>
-                        {% endif %}
+                        <option value='1' {{ user.usergroup == '1' ? " selected='selected'" }}>Sysadmins</option>
                         <option value='2' {{ user.usergroup == '2' ? " selected='selected'" }}>Admins</option>
                         <option value='3' {{ user.usergroup == '3' ? " selected='selected'" }}>Admins + Lock power</option>
                         <option value='4' {{ user.usergroup == '4' ? " selected='selected'" }}>Users</option>

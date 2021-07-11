@@ -50,6 +50,7 @@ class DisplayParams
             $this->searchType = 'related';
             $this->setRelated($app);
         }
+        // CATEGORY FILTER
         if ((Check::id((int) $app->Request->query->get('cat')) !== false) || !empty(((array) $app->Request->query->get('tags'))[0])) {
             $this->searchType = 'something';
         }

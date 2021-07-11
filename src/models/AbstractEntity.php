@@ -365,6 +365,7 @@ abstract class AbstractEntity implements CrudInterface
                 $this,
                 (int) $Config->configArr['max_revisions'],
                 (int) $Config->configArr['min_delta_revisions'],
+                (int) $Config->configArr['min_days_revisions'],
             );
             $Revisions->create((string) $content);
         }

@@ -178,6 +178,10 @@ document.addEventListener('DOMContentLoaded', () => {
           // set the editor as non dirty so we can navigate out without a warning to clear
           tinymce.activeEditor.setDirty(false);
         }
+      }).then(() => {
+        if (el.matches('[data-redirect="view"]')) {
+          window.location.replace('?mode=view&id=' + entity.id);
+        }
       });
 
     // DESTROY ENTITY

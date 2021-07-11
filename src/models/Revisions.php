@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use function count;
+use DateTimeImmutable;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\DestroyableInterface;
@@ -27,7 +28,7 @@ class Revisions implements DestroyableInterface
 
     private Db $Db;
 
-    public function __construct(private AbstractEntity $Entity, private int $maxRevisions, private int $minDelta, ?int $id = null)
+    public function __construct(private AbstractEntity $Entity, private int $maxRevisions, private int $minDelta, private int $minDays, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->id = $id;
@@ -36,12 +37,12 @@ class Revisions implements DestroyableInterface
     /**
      * Add a revision if the changeset is big enough
      */
-    public function create(string $body): void
+    public function create(string $body): bool
     {
-        // only save a revision if there is at least minimum of delta characters difference between the old version and the new one
-        $delta = abs(mb_strlen($this->Entity->entityData['body'] ?? '') - mb_strlen($body));
-        if ($delta < $this->minDelta) {
-            return;
+        $this->Entity->canOrExplode('write');
+
+        if (!$this->satisfyDeltaConstraint($body) && !$this->satisfyTimeConstraint()) {
+            return false;
         }
 
         // destroy the oldest revision if we're reaching the max count
@@ -55,7 +56,8 @@ class Revisions implements DestroyableInterface
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':body', $body);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
+
+        return $this->Db->execute($req);
     }
 
     /**
@@ -99,7 +101,7 @@ class Revisions implements DestroyableInterface
     public function restore(int $revId): void
     {
         // check for lock
-        if ($this->isLocked()) {
+        if ($this->Entity->entityData['locked']) {
             throw new ImproperActionException(_('You cannot restore a revision of a locked item!'));
         }
 
@@ -168,16 +170,23 @@ class Revisions implements DestroyableInterface
     }
 
     /**
-     * Check if item is locked before restoring it
+     * Check if the minimum number of character changes constraint is satisfied
+     * Returns true if there are enough changes
      */
-    private function isLocked(): bool
+    private function satisfyDeltaConstraint(string $body): bool
     {
-        $sql = 'SELECT locked FROM ' . $this->Entity->type . ' WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $locked = $req->fetch();
+        $delta = abs(mb_strlen($this->Entity->entityData['body'] ?? '') - mb_strlen($body));
+        return $delta >= $this->minDelta;
+    }
 
-        return $locked['locked'] == 1;
+    /**
+     * If the last change is too old, we'll want to create a revision regardless of delta constraint
+     */
+    private function satisfyTimeConstraint(): bool
+    {
+        $lastchange = new DateTimeImmutable($this->Entity->entityData['lastchange'] ?? 'now');
+        $now = new DateTimeImmutable();
+        $interval = $lastchange->diff($now);
+        return ((int) $interval->format('%a')) >= $this->minDays;
     }
 }

@@ -247,9 +247,11 @@ class MakePdf extends AbstractMake
         unlink($filename);
 
         // was there actually tex in the content?
-        // if not we can skip the svg modifications and return the original content
+        // if not we can skip the svg modifications and return the content
+        // return the decoded content to avoid html entities issues in final pdf
+        // see #2760
         if ($html === '') {
-            return $content;
+            return $contentDecode;
         }
 
         // based on https://github.com/mpdf/mpdf-examples/blob/master/MathJaxProcess.php

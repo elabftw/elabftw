@@ -81,6 +81,13 @@ class Permissions
             }
         }
 
+        // if the setting is 'user' (meaning user + admin(s)) check we are admin
+        if ($this->item['canread'] === 'user') {
+            if ($this->Users->userData['is_admin'] && $this->Teams->hasCommonTeamWithCurrent((int) $this->item['userid'], $this->Users->userData['team'])) {
+                return array('read' => true, 'write' => $write);
+            }
+        }
+
         // if the vis. setting is a team group, check we are in the group
         if (Check::id((int) $this->item['canread']) !== false && $this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canread'])) {
             return array('read' => true, 'write' => $write);

@@ -17,9 +17,13 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\QuantumException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Users;
 use Elabftw\Services\Email;
 use Exception;
+use function random_int;
+use function sleep;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -39,7 +43,14 @@ try {
         }
 
         // Get data from user
-        $App->Users->populateFromEmail($email);
+        try {
+            $App->Users->populateFromEmail($email);
+            // don't disclose if the email exists in the db or not
+        } catch (ResourceNotFoundException $e) {
+            // make the response slow to emulate an email being sent if there was an account associated
+            sleep(random_int(1, 6));
+            throw new QuantumException(_('If the account exists, an email has been sent.'));
+        }
 
         // If you are not validated, the password reset form won't work
         // this is because often users don't understand that their account needs to be
@@ -84,7 +95,9 @@ try {
         // now we try to send the email
         $Email->send($message);
 
-        $App->Session->getFlashBag()->add('ok', _('Email sent. Check your INBOX.'));
+        // show the same message as if the email didn't exist in the db
+        // this is done to prevent information disclosure
+        throw new QuantumException(_('If the account exists, an email has been sent.'));
     }
 
     // second part, update the password
@@ -113,6 +126,8 @@ try {
         $App->Log->info('Password was changed for this user', array('userid' => $App->Session->get('userid')));
         $App->Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
     }
+} catch (QuantumException $e) {
+    $App->Session->getFlashBag()->add('ok', $e->getMessage());
 } catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());

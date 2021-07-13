@@ -28,7 +28,7 @@
 
                         <!-- INSERT IN TEXT in edit mode for images -->
                         {% if mode == 'edit' and ext matches '/(jpg|jpeg|png|gif|svg)$/i' %}
-                          <a class='dropdown-item inserter clickable' data-link='{{ upload.long_name }}'>
+                          <a class='dropdown-item inserter clickable' data-link='{{ upload.long_name }}' data-uploadid='{{ upload.id }}'>
                             <i class='fas fa-image mr-1'></i>{{ 'Insert in text at cursor position'|trans }}</a>
                         {% endif %}
 

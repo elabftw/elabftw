@@ -302,11 +302,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Object to hold control data for selected image
-  let tinymceEditImage = {
+  const tinymceEditImage = {
     selected: false,
-    uploadId: '',
-    itemId: '',
-    url:'',
+    uploadId: 0,
+    url: '',
+    reset: function() {
+      this.selected = false;
+      this.uploadId = 0;
+      this.url = '';
+    },
   };
 
   const tinyConfig = getTinymceBaseConfig('edit');
@@ -317,24 +321,27 @@ document.addEventListener('DOMContentLoaded', () => {
       // Edgecase for editing an image using tinymce ImageTools
       // Check if it was selected. This is set by an event hook below
       if (tinymceEditImage.selected == true && confirm(i18next.t('replace-edited-file'))) {
-        // Use jquery to replace the file on the server
+        // Replace the file on the server
         const formData = new FormData();
+        formData.append('action', 'update');
+        formData.append('target', 'file');
         formData.append('replace', 'true');
-        formData.append('upload_id', tinymceEditImage.uploadId);
-        formData.append('id', tinymceEditImage.itemId);
-        formData.append('type', entity.type);
-        formData.append('file', blobInfo.blob());
+        formData.append('id', String(tinymceEditImage.uploadId));
+        formData.append('entity_id', String(entity.id));
+        formData.append('entity_type', entity.type);
+        formData.append('model', 'upload');
+        formData.append('csrf', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+        formData.append('content', blobInfo.blob());
 
         $.post({
-          url: 'app/controllers/EntityAjaxController.php',
+          url: 'app/controllers/RequestHandler.php',
           data: formData,
           processData: false,
-          contentType: false
-        }).done(function(json) {
-          notif(json);
+          contentType: false,
+        }).done(function() {
           // Send the same url we stored before the edit menu was clicked to tinymce
           success(tinymceEditImage.url);
-          tinymceEditImage = {selected:false, uploadId:'', itemId:'', url:''};
+          tinymceEditImage.reset();
         });
       // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
       } else if (typeof blobInfo.blob().name === 'undefined') {
@@ -375,25 +382,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // Hook into the SelectionChange event - This is to make sure we reset our control variable correctly
   tinymce.activeEditor.on('SelectionChange', () => {
     // Check if the user has selected an image
-    if (tinymce.activeEditor.selection.getNode().tagName === 'IMG')
-    {
+    if (tinymce.activeEditor.selection.getNode().tagName === 'IMG') {
       // Save all the details needed for replacing upload
       // Then check for and get those details when you are handling file uploads
-      let url = (tinymce.activeEditor.selection.getNode() as any).src;
+      const selectedImage = (tinymce.activeEditor.selection.getNode() as HTMLImageElement);
+      // the uploadid is added as a data-uploadid attribute when inserted in the text
+      // this allows us to know which corresponding upload is selected so we can replace it if needed (after a crop for instance)
+      const uploadId = parseInt(selectedImage.dataset.uploadid);
+      let url = selectedImage.src;
       url = url.slice(url.lastIndexOf('app/'));
       // Sometimes tinymce adds an identifier on modification
       // This checks for and removes it
       if (url.lastIndexOf('&') != -1){
         url = url.slice(0, url.lastIndexOf('&'));
       }
-      // Find the element in the uploads html section to got uploadid and itemid
-      const uploadsDestroyEl = $('a[href="' + url + '"]' ).prev();
       tinymceEditImage.selected = true;
-      tinymceEditImage.uploadId = uploadsDestroyEl.data('id');
-      tinymceEditImage.itemId = uploadsDestroyEl.data('itemid');
+      tinymceEditImage.uploadId = uploadId;
       tinymceEditImage.url = url;
     } else {
-      tinymceEditImage = {selected:false, uploadId:'', itemId:'', url:''};
+      tinymceEditImage.reset();
     }
   });
 
@@ -411,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const imgMdLink = '\n![image](' + url + ')\n';
       $('#body_area').val(before + imgMdLink + after);
     } else if (editor === 'tiny') {
-      const imgHtmlLink = '<img src="' + url + '" />';
+      const imgHtmlLink = '<img src="' + url + '" data-uploadid="' + $(this).data('uploadid') + '" />';
       tinymce.activeEditor.execCommand('mceInsertContent', false, imgHtmlLink);
     } else {
       alert('Error: could not find current editor!');

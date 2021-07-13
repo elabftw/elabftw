@@ -19,6 +19,7 @@ node_modules/*
 web/test.php
 web/assets/*.LICENSE.txt
 web/assets/*.svg
+web/assets/ove
 src/node/*.LICENSE.txt
 tests/_output/*
 tests/_support/_generated*

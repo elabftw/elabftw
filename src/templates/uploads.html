@@ -131,6 +131,12 @@
                                   id='3Dmol_{{ upload.id }}'>
                                 </div>
 
+            {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::DNA') and App.Users.userData.use_ove %}
+              <div class='viewer-ove'
+                data-href='app/download.php?f={{ upload.long_name }}'
+                data-real-name='{{ upload.real_name }}'
+                id='OVE_{{ upload.id }}'>
+              </div>
             {% elseif App.Users.userData.uploads_layout %}
             <i class='fas {{ Entity.Uploads.getIconFromExtension(ext) }} thumb rounded mx-auto d-block'></i>
             {% endif %}

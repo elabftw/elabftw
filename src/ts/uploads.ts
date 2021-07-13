@@ -10,6 +10,7 @@ import 'jquery-jeditable/src/jquery.jeditable.js';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Entity, Target, EntityType } from './interfaces';
 import { notif, displayMolFiles, display3DMolecules } from './misc';
+import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
 import Upload from './Upload.class';
 
@@ -20,6 +21,7 @@ $(document).ready(function() {
   }
   displayMolFiles();
   display3DMolecules();
+  displayPlasmidViewer();
 
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
@@ -121,6 +123,7 @@ $(document).ready(function() {
             $('#filesdiv').load('?mode=edit&id=' + entity.id + ' #filesdiv > *', function() {
               displayMolFiles();
               display3DMolecules(true);
+              displayPlasmidViewer();
             });
           }
         });

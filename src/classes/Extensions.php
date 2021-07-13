@@ -107,4 +107,31 @@ final class Extensions
         'mpeg',
         'flv',
     );
+
+    /** @var array DNA dna files */
+    public const DNA = array(
+        // DNA FASTA files
+        // this is problematic because of protein fasta files and the multi-fasta format
+        // only the first entry is shown for dna multi-fasta files
+        'fasta',
+        'fas',
+        'fa',
+        'fna',
+        'ffn',
+        // GENBANK files (.gb, .gbk)
+        'gb',
+        'gbk',
+        // GENBANK protein files (.gp)
+        'gp',
+        // APE files (.ape), basically genbank files
+        'ape',
+        // SBOL files (.xml)
+        // deactivated because xml is used for other data too
+        //'xml',
+        // SNAPGENE (.dna) files
+        'dna',
+        // GFF files
+        'gff',
+        'gff3',
+    );
 }

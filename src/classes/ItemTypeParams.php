@@ -48,6 +48,6 @@ final class ItemTypeParams extends EntityParams implements ItemTypeParamsInterfa
 
     public function getIsBookable(): int
     {
-        return (int) $this->extra['bookable'];
+        return (int) ($this->extra['bookable'] ?? 0);
     }
 }

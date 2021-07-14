@@ -29,7 +29,7 @@ export function displayPlasmidViewer(): void {
       return new File([theBlob], fileName, { lastModified: new Date().getTime(), type: theBlob.type });
     }
 
-    async function parseFile(fileContent): void {
+    async function parseFile(fileContent): Promise<void> {
       const parsedData = await anyToJson(fileContent, {
         fileName: realName,
         guessIfProtein: true

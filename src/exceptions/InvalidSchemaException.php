@@ -26,7 +26,7 @@ class InvalidSchemaException extends Exception
      */
     public function __construct($message = null, $code = 0, Exception $previous = null)
     {
-        $message = 'Database schema is different from required schema. Please read documentation/release notes to update the database.';
+        $message = '<h1>Almost there!</h1><h2>To finish the update, run the "bin/console db:update" command. For Docker users that would be:<br><pre>docker exec -it elabftw bin/console db:update</pre></h2>See <a href="https://doc.elabftw.net/how-to-update.html">documentation</a>.';
         parent::__construct($message, $code, $previous);
     }
 }

@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selected: false,
     uploadId: 0,
     url: '',
-    reset: function() {
+    reset: function(): void {
       this.selected = false;
       this.uploadId = 0;
       this.url = '';

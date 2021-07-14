@@ -210,7 +210,7 @@ export function getTinymceBaseConfig(page: string): object {
       editor.ui.registry.addButton('adddate', {
         icon: 'insert-time',
         tooltip: 'Insert timestamp',
-        onAction: function (_) {
+        onAction: function() {
           editor.insertContent(`${getDatetime()} `);
         }
       });

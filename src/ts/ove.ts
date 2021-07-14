@@ -29,7 +29,7 @@ export function displayPlasmidViewer(): void {
       return new File([theBlob], fileName, { lastModified: new Date().getTime(), type: theBlob.type });
     }
 
-    async function parseFile(fileContent) {
+    async function parseFile(fileContent): void {
       const parsedData = await anyToJson(fileContent, {
         fileName: realName,
         guessIfProtein: true
@@ -37,7 +37,6 @@ export function displayPlasmidViewer(): void {
       // we always return an array of results because some files my contain multiple sequences
       // parsedData[0].success //either true or false
       // parsedData[0].messages //either an array of strings giving any warnings or errors generated during the parsing process
-      
       // Test if fileContent was parsed successfully. if false: show notification
       if (parsedData.length === 0) {
         console.log('Problem with file: ' + realName);

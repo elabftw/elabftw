@@ -144,6 +144,7 @@ class Templates extends AbstractEntity
             return $t['canwrite'] === 'public' || $t['canwrite'] === 'organization' ||
                 ($t['canwrite'] === 'team' && ((int) $t['teams_id'] === $this->Users->userData['team'])) ||
                 ($t['canwrite'] === 'user' && $t['userid'] === $this->Users->userData['userid']) ||
+                ($t['canwrite'] === 'useronly' && $t['userid'] === $this->Users->userData['userid']) ||
                 (in_array($t['canwrite'], $teamgroupsOfUser, true));
         });
     }

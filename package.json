@@ -45,7 +45,7 @@
     "jquery-jeditable": "2.0.*",
     "jquery-ui": "^1.12.1",
     "jsoneditor": "^9.0.3",
-    "luxon": "^1.26.0",
+    "luxon": "^2.0.1",
     "marked": "^2.0.0",
     "mathjax-full": "^3.2.0",
     "mini-css-extract-plugin": "^1.6.0",

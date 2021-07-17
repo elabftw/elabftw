@@ -61,7 +61,7 @@ $(document).ready(function() {
 
   // Export mol in png
   $(document).on('click', '.saveAsImage', function() {
-    const molCanvasId = $(this).parent().siblings().find('canvas').attr('id');
+    const molCanvasId = $(this).data('canvasid');
     const png = (document.getElementById(molCanvasId) as any).toDataURL();
     $.post('app/controllers/EntityAjaxController.php', {
       saveAsImage: true,

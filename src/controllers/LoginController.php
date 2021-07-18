@@ -23,6 +23,7 @@ use Elabftw\Models\Idps;
 use Elabftw\Models\Users;
 use Elabftw\Services\AnonAuth;
 use Elabftw\Services\DeviceToken;
+use Elabftw\Services\DeviceTokenValidator;
 use Elabftw\Services\ExternalAuth;
 use Elabftw\Services\LdapAuth;
 use Elabftw\Services\LocalAuth;
@@ -164,9 +165,9 @@ class LoginController implements ControllerInterface
         if (!is_string($token)) {
             return;
         }
-        $DeviceToken = new DeviceToken($token);
+        $DeviceTokenValidator = new DeviceTokenValidator(DeviceToken::getConfig(), $token);
         try {
-            $DeviceToken->validate();
+            $DeviceTokenValidator->validate();
         } catch (RequiredConstraintsViolated $e) {
             // our device token is not valid
             // we need to check if we can allow untrusted devices to login for that user

@@ -63,8 +63,6 @@ class LoginHelper
 
     private function setDeviceToken(): void
     {
-        $DeviceToken = new DeviceToken();
-
         // set device token as a cookie
         $cookieOptions = array(
             'expires' => time() + 2592000,
@@ -75,7 +73,7 @@ class LoginHelper
             'samesite' => 'Strict',
         );
 
-        setcookie('devicetoken', $DeviceToken->getToken($this->AuthResponse->userid), $cookieOptions);
+        setcookie('devicetoken', DeviceToken::getToken($this->AuthResponse->userid), $cookieOptions);
     }
 
     /**

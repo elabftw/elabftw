@@ -9,28 +9,10 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Exceptions\InvalidDeviceTokenException;
-
 class DeviceTokenTest extends \PHPUnit\Framework\TestCase
 {
-    public function testValidateValidToken(): void
+    public function testGetToken(): void
     {
-        $validToken = (new DeviceToken())->getToken(1);
-        $DeviceToken = new DeviceToken($validToken);
-        $DeviceToken->validate();
-    }
-
-    public function testUndecodableToken(): void
-    {
-        $DeviceToken = new DeviceToken('..');
-        $this->expectException(InvalidDeviceTokenException::class);
-        $DeviceToken->validate();
-    }
-
-    public function testNotParsableToken(): void
-    {
-        $DeviceToken = new DeviceToken('this cannot be parsed!');
-        $this->expectException(InvalidDeviceTokenException::class);
-        $DeviceToken->validate();
+        $this->assertIsString(DeviceToken::getToken(1));
     }
 }

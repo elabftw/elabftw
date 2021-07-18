@@ -128,7 +128,7 @@ module.exports = {
       },
       {
         test: /.(jpg|jpeg|png|svg)$/,
-        use: ['file-loader'],
+        type: 'asset/resource',
       },
       // transpile things with babel so javascript works with Edge
       {

@@ -46,6 +46,7 @@ class LoginHelper
             $this->setToken();
         }
         $this->updateLastLogin();
+        $this->setDeviceToken();
     }
 
     /**
@@ -56,8 +57,25 @@ class LoginHelper
         $sql = 'UPDATE users SET last_login = :last_login WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':last_login', date('Y-m-d H:i:s'));
-        $req->bindParam(':userid', $this->AuthResponse->userid);
+        $req->bindParam(':userid', $this->AuthResponse->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
+    }
+
+    private function setDeviceToken(): void
+    {
+        $DeviceToken = new DeviceToken();
+
+        // set device token as a cookie
+        $cookieOptions = array(
+            'expires' => time() + 2592000,
+            'path' => '/',
+            'domain' => '',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Strict',
+        );
+
+        setcookie('devicetoken', $DeviceToken->getToken($this->AuthResponse->userid), $cookieOptions);
     }
 
     /**

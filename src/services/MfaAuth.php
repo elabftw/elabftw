@@ -32,7 +32,7 @@ class MfaAuth implements AuthInterface
         $Users = new Users($this->MfaHelper->userid);
 
         if (!$this->MfaHelper->verifyCode($this->code)) {
-            throw new InvalidCredentialsException('The code you entered is not valid!');
+            throw new InvalidCredentialsException($this->MfaHelper->userid);
         }
 
         $this->AuthResponse->hasVerifiedMfa = true;

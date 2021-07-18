@@ -18,6 +18,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
+use Elabftw\Models\AuthFail;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -29,13 +30,15 @@ $location = '../../login.php';
 $Response = new RedirectResponse($location);
 
 try {
-    // CSRF
-    $App->Csrf->validate();
-
     $Controller = new LoginController($App);
     $Response = $Controller->getResponse();
-} catch (ImproperActionException | InvalidCsrfTokenException | InvalidCredentialsException $e) {
-    $Auth->increaseFailedAttempt();
+} catch (InvalidCredentialsException $e) {
+    $loginTries = (int) $App->Config->configArr['login_tries'];
+    $AuthFail = new AuthFail($loginTries, $e->getCode(), $App->Request->cookies->get('devicetoken'));
+    $AuthFail->register();
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
+} catch (ImproperActionException | InvalidCsrfTokenException $e) {
+    //$Auth->increaseFailedAttempt();
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {

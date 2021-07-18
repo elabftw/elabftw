@@ -13,12 +13,12 @@ namespace Elabftw\Exceptions;
 use Exception;
 
 /**
- * Throw this if the auth is not good
+ * Throw this if the device token is not valid
  */
-class InvalidCredentialsException extends Exception
+class InvalidDeviceTokenException extends Exception
 {
-    public function __construct(int $userid)
+    public function __construct()
     {
-        parent::__construct(_('Invalid email/password combination.'), $userid);
+        parent::__construct('Invalid device token.');
     }
 }

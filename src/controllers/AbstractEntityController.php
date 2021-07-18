@@ -70,7 +70,7 @@ abstract class AbstractEntityController implements ControllerInterface
             $this->Entity->addFilter('categoryt.id', $this->App->Request->query->getDigits('cat'));
         }
         // OWNER (USERID) FILTER
-        if ($this->App->Request->query->has('owner')) {
+        if ($this->App->Request->query->has('owner') && !$isSearchPage) {
             $owner = (int) $this->App->Request->query->get('owner');
             $this->Entity->addFilter('entity.userid', (string) $owner);
         }

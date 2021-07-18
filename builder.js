@@ -13,7 +13,7 @@
  */
 const path = require('path');
 const webpack = require('webpack');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = {
@@ -105,6 +105,10 @@ module.exports = {
   ],
   resolve: {
     extensions: ['.ts', '.js'],
+    fallback: {
+      "stream": require.resolve("stream-browserify"),
+      "timers": require.resolve("timers-browserify"),
+    },
   },
   module: {
     rules:[
@@ -124,7 +128,7 @@ module.exports = {
       },
       {
         test: /.(jpg|jpeg|png|svg)$/,
-        use: ['file-loader'],
+        type: 'asset/resource',
       },
       // transpile things with babel so javascript works with Edge
       {

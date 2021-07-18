@@ -213,6 +213,11 @@
         />
         <label for='use_markdown'>{{ 'Disable the rich text editor and write Markdown directly'|trans }}</label>
         <br>
+        <input id='use_ove' type='checkbox' name='use_ove'
+          {{ App.Users.userData.use_ove == '1' ? " checked='checked'" }}
+        />
+        <label for='use_ove'>{{ 'Enable the plasmid viewer'|trans }}</label>
+        <br>
         <input id='use_isodate' type='checkbox' name='use_isodate'
           {{ App.Users.userData.use_isodate == '1' ? " checked='checked'" }}
         />

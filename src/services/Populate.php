@@ -110,9 +110,9 @@ class Populate
     public function createUser(Teams $Teams, array $user): void
     {
         $firstname = $user['firstname'] ?? $this->faker->firstName();
-        $lastname = $user['lastname'] ?? $this->faker->lastName(); // @phpstan-ignore-line
+        $lastname = $user['lastname'] ?? $this->faker->lastName();
         $password = $user['password'] ?? self::DEFAULT_PASSWORD;
-        $email = $user['email'] ?? $this->faker->safeEmail(); // @phpstan-ignore-line
+        $email = $user['email'] ?? $this->faker->safeEmail();
 
         $userid = $Teams->Users->create($email, array($user['team']), $firstname, $lastname, $password, null, true, true, false);
         $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));

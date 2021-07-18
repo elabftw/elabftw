@@ -46,7 +46,7 @@
 
                         <!-- Save mol file as image -->
                         {% if mode == 'edit' and ext matches '/(mol)$/i' %}
-                          <a class='dropdown-item saveAsImage clickable' data-name='{{ upload.real_name }}'>
+                          <a class='dropdown-item saveAsImage clickable' data-canvasid='molFile_{{ upload.id }}' data-name='{{ upload.real_name }}'>
                           <i class='fas fa-image mr-1'></i>{{ 'Save as image'|trans }}</a>
                         {% endif %}
 

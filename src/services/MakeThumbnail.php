@@ -127,8 +127,8 @@ final class MakeThumbnail
             return;
         }
         $image->readImage($this->filePath);
-        // fix pdf with black background
-        if ($this->mime === 'application/pdf' || $this->mime === 'application/postscript') {
+        // fix pdf with black background and png
+        if ($this->mime === 'application/pdf' || $this->mime === 'application/postscript' || $this->mime === 'image/png') {
             $image->setResolution(300, 300);
             $image->setImageFormat('jpg');
             $image->scaleImage(500, 500, true);

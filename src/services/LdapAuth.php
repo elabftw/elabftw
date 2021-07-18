@@ -43,9 +43,8 @@ class LdapAuth implements AuthInterface
         } catch (ObjectNotFoundException $e) {
             throw new InvalidCredentialsException();
         }
-        $uidOrCnConfig = $this->configArr['ldap_uid_cn'];
-        $uidOrCn = $record[$uidOrCnConfig][0];
-        if (!$this->connection->auth()->attempt($uidOrCnConfig . '=' . $uidOrCn . ',' . $this->configArr['ldap_base_dn'], $this->password)) {
+        $dn = $record['distinguishedname'] ?? $record['dn'];
+        if (!$this->connection->auth()->attempt($dn, $this->password)) {
             throw new InvalidCredentialsException();
         }
         $Users = new Users();

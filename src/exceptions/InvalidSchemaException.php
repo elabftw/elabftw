@@ -10,7 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Exceptions;
 
+use function dirname;
 use Exception;
+use function file_get_contents;
 
 /**
  * When the database schema is wrong.
@@ -19,14 +21,13 @@ class InvalidSchemaException extends Exception
 {
     /**
      * The message will always be the same here
-     *
-     * @param string $message
-     * @param int $code
-     * @param Exception|null $previous
      */
-    public function __construct($message = null, $code = 0, Exception $previous = null)
+    public function __construct(string $message = null, int $code = 0, Exception $previous = null)
     {
-        $message = '<h1>Almost there!</h1><h2>To finish the update, run the "bin/console db:update" command. For Docker users that would be:<br><pre>docker exec -it elabftw bin/console db:update</pre></h2>See <a href="https://doc.elabftw.net/how-to-update.html">documentation</a>.';
+        $message = file_get_contents(dirname(__DIR__) . '/templates/invalid-schema.html');
+        if ($message === false) {
+            $message = 'Run the bin/console db:update command to finish the update!';
+        }
         parent::__construct($message, $code, $previous);
     }
 }

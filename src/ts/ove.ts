@@ -237,7 +237,7 @@ export function displayPlasmidViewer(): void {
 
       // change button text from 'Open Editor' to 'Open Viewer'
       const oveButton = document.getElementById(viewerID).firstChild.firstChild.firstChild.firstChild.firstChild.firstChild as HTMLElement;
-      oveButton.innerHTML = 'Open Viewer';
+      oveButton.innerText = 'Open Viewer';
     }
 
     // load DNA data either as File (.dna files Snapgene) or as String

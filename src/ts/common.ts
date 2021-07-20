@@ -58,13 +58,21 @@ $(document).ready(function() {
   displayMolFiles();
 
   // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR/JSON EDITOR
-  $(document).on('click', '.plusMinusButton',  function() {
-    if ($(this).html() === '+') {
-      $(this).html('-').addClass('btn-neutral').removeClass('btn-primary');
-    } else {
-      $(this).html('+').removeClass('btn-neutral').addClass('btn-primary');
-    }
-  });
+  const plusMinusButton = document.querySelector('.plusMinusButton');
+  if (plusMinusButton) {
+    plusMinusButton.addEventListener('click', (event) => {
+      const el = (event.target as HTMLElement);
+      if (el.innerText === '+') {
+        el.classList.add('btn-neutral');
+        el.classList.remove('btn-primary');
+        el.innerText = '-';
+      } else {
+        el.classList.add('btn-primary');
+        el.classList.remove('btn-neutral');
+        el.innerText = '+';
+      }
+    });
+  }
 
   // SHOW/HIDE PASSWORDS
   $('.togglePassword').on('click', function(event) {

@@ -562,7 +562,8 @@ tr:nth-child(odd) {
     top: 10px;
     // keep this above 1200 for tinymce fullscreen mode
     // see #2419
-    z-index: 1985;
+    // and over 15000 for open vector editor fullscreen mode
+    z-index: 19850;
 }
 
 .overlay p {

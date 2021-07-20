@@ -646,7 +646,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <h4>Existing Identity Providers</h4>
             {% for idp in idpsArr %}
                 <div class='box' id='idps_div'>
-                  <a class='clickable idpsDestroy align-right' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
+                  <a class='clickable idpsDestroy float-right' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
                       <i class='fas fa-trash-alt fa-2x'></i>
                   </a>
                   <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>

@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // TODO action read, target sharelink
         const link = (document.getElementById('shareLinkInput') as HTMLInputElement);
         link.value = (json.msg as string);
-        link.style.display = 'inline';
+        link.hidden = false;
         link.focus();
         link.select();
       });

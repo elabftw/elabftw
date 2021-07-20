@@ -48,7 +48,7 @@
 {% endif %}
 
 <section class='item' style='padding:15px;border-left: 6px solid #{{ Entity.entityData.color }}'>
-  <p class='align-right d-inline'>
+  <p class='float-right d-inline'>
     <a class='elab-tooltip ml-2' data-action='pin' href='#'>
       <span>{{ 'Toggle pin'|trans }}</span>
       <i title='{{ 'Toggle pin'|trans }}' class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }} fa-2x'></i>
@@ -110,7 +110,7 @@
         <span>{{ 'Share'|trans }}</span>
         <i title='{{ 'Share'|trans }}' class='fas fa-share-alt fa-2x'></i>
       </a>
-      <input type='text' aria-label='{{ 'Share'|trans }}' id='shareLinkInput' value='' style='display:none' />
+      <input type='text' class='form-control' aria-label='{{ 'Share'|trans }}' id='shareLinkInput' value='' hidden />
     {% endif %}
 
     <!-- show timestamp button if not timestamped already -->
@@ -239,7 +239,7 @@
                         <span class='text-muted'>{{ comment.fullname|raw }} {{ 'commented'|trans }}</span>
                         <span title='{{ comment.datetime }}' class='text-muted relative-moment'></span>
                         {% if comment.userid == Entity.Users.userData.userid %}
-                            <a class='clickable commentsDestroy align-right' data-commentid='{{ comment.id }}' title='{{ 'Delete'|trans }}'>
+                            <a class='clickable commentsDestroy float-right' data-commentid='{{ comment.id }}' title='{{ 'Delete'|trans }}'>
                                 <i class='fas fa-trash-alt fa-lg'></i>
                             </a>
                         {% endif %}
@@ -261,7 +261,7 @@
 
 <!-- REVISIONS -->
 {% if revNum > 0 %}
-    <span class='align-right'><i class='fas fa-history mr-1'></i>
+    <span class='float-right'><i class='fas fa-history mr-1'></i>
         <a href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'>{{ revNum }}
             {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
     </span>

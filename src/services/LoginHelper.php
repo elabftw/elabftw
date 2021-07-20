@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use function bin2hex;
-use function date;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use function hash;
@@ -53,10 +52,9 @@ class LoginHelper
      */
     private function updateLastLogin(): void
     {
-        $sql = 'UPDATE users SET last_login = :last_login WHERE userid = :userid';
+        $sql = 'UPDATE users SET last_login = NOW() WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':last_login', date('Y-m-d H:i:s'));
-        $req->bindParam(':userid', $this->AuthResponse->userid);
+        $req->bindParam(':userid', $this->AuthResponse->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
     }
 

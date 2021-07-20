@@ -61,7 +61,7 @@ $(document).ready(function() {
 
   // Export mol in png
   $(document).on('click', '.saveAsImage', function() {
-    const molCanvasId = $(this).parent().siblings().find('canvas').attr('id');
+    const molCanvasId = $(this).data('canvasid');
     const png = (document.getElementById(molCanvasId) as any).toDataURL();
     $.post('app/controllers/EntityAjaxController.php', {
       saveAsImage: true,
@@ -112,7 +112,7 @@ $(document).ready(function() {
 
     // REPLACE UPLOAD
     } else if (el.matches('[data-action="replace-upload"]')) {
-      document.getElementById('replaceUploadForm_' + el.dataset.uploadid).style.display = '';
+      document.getElementById('replaceUploadForm_' + el.dataset.uploadid).hidden = false;
 
     // DESTROY UPLOAD
     } else if (el.matches('[data-action="destroy-upload"]')) {

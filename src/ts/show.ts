@@ -64,9 +64,10 @@ $(document).ready(function(){
       // get the width of the parent. The -30 is to make it smaller than parent even with the margins
       const width = $('#parent_' + randId).width() - 30;
       // add html content and adjust the width of the children
-      $('#' + randId).html(data.msg)
-        .css('width', width)
-        .toggle();
+      const div = document.getElementById(randId);
+      div.innerHTML = data.msg;
+      div.style.width = String(width);
+      div.toggleAttribute('hidden');
       // ask mathjax to reparse the page
       MathJax.typeset();
     });

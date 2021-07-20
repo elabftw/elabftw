@@ -18,6 +18,7 @@ use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use LdapRecord\Connection;
+use LdapRecord\Query\ObjectNotFoundException;
 
 /**
  * LDAP auth service
@@ -37,10 +38,13 @@ class LdapAuth implements AuthInterface
     public function tryAuth(): AuthResponse
     {
         $query = $this->connection->query()->setDn($this->configArr['ldap_base_dn']);
-        $record = $query->findbyOrFail('mail', $this->email);
-        $uidOrCnConfig = $this->configArr['ldap_uid_cn'];
-        $uidOrCn = $record[$uidOrCnConfig][0];
-        if (!$this->connection->auth()->attempt($uidOrCnConfig . '=' . $uidOrCn . ',' . $this->configArr['ldap_base_dn'], $this->password)) {
+        try {
+            $record = $query->findbyOrFail('mail', $this->email);
+        } catch (ObjectNotFoundException $e) {
+            throw new InvalidCredentialsException();
+        }
+        $dn = $record['distinguishedname'] ?? $record['dn'];
+        if (!$this->connection->auth()->attempt($dn, $this->password)) {
             throw new InvalidCredentialsException();
         }
         $Users = new Users();

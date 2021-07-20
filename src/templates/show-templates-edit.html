@@ -20,7 +20,7 @@
         </div>
         <button type='button' class='btn btn-primary' data-action='create-template'>{{ 'Create'|trans }}</button>
       </div>
-      <input type='file' aria-hidden='true' style='display: none' accept='.tpl' id='import_tpl' class='form-control mt-1'>
+      <input type='file' aria-hidden='true' hidden accept='.tpl' id='import_tpl' class='form-control mt-1'>
     </div>
   </div>
   <hr>
@@ -56,7 +56,7 @@
 
     <!-- REVISIONS -->
     {% if revNum > 0 %}
-    <span class='align-right'><i class='fas fa-history mr-1'></i>
+    <span class='float-right'><i class='fas fa-history mr-1'></i>
         <a href='revisions.php?type=experiments_templates&item_id={{ templateData.id }}'>{{ revNum }}
             {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
     </span>

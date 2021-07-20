@@ -389,8 +389,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                 <a href='app/controllers/SysconfigController.php?clearSmtppass=1'>",
                 "</a>"
             )|raw }}
-            <span class='button btn btn-primary mt-2 togglableNext'>{{ 'Edit'|trans }}</span>
-            <input class='form-control col-md-4' type='password' name='smtp_password' style='display:none' autocomplete='off' id='hidden_smtp_password' />
+            <span data-action='toggle-next' class='button btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
+            <input class='form-control col-md-4' type='password' name='smtp_password' hidden autocomplete='off' id='hidden_smtp_password' />
           </p>
         {% endif %}
       </div>
@@ -646,7 +646,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <h4>Existing Identity Providers</h4>
             {% for idp in idpsArr %}
                 <div class='box' id='idps_div'>
-                  <a class='clickable idpsDestroy align-right' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
+                  <a class='clickable idpsDestroy float-right' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
                       <i class='fas fa-trash-alt fa-2x'></i>
                   </a>
                   <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>
@@ -805,13 +805,15 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                 <a href='app/controllers/SysconfigController.php?clearLdappass=1'>",
                 "</a>"
             )|raw }}
-            <span class='button btn btn-primary mt-2 togglableNext'>{{ 'Edit'|trans }}</span>
-            <input class='form-control col-md-4' type='password' name='ldap_password' style='display:none' autocomplete='off' id='hidden_ldap_password' />
+            <span data-action='toggle-next' class='button btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
+            <input class='form-control col-md-4' type='password' name='ldap_password' hidden autocomplete='off' id='hidden_ldap_password' />
           </p>
         {% endif %}
 
+        <!--
         <label for='ldap-uid-cn'>Auth lookup with cn or uid?</label>
         <input class='form-control col-md-4' type='text' id='ldap-uid-cn' name='ldap_uid_cn' value='{{ App.Config.configArr.ldap_uid_cn }}' />
+        -->
 
         <label for='ldap_use_tls'>{{ 'Use TLS'|trans }}</label>
         <select class='form-control col-md-4' id='ldap_use_tls' name='ldap_use_tls'>

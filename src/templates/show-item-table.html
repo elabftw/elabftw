@@ -16,16 +16,11 @@
             <!-- TITLE -->
             <td class='title item-next'>
               <!-- checkbox -->
-              <input class='item-checkbox' autocomplete='off' type='checkbox' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;' />
-            {% if isPinned %}
-              <span class='align-right'><i class='fas fa-thumbtack' title="{{ 'Pinned'|trans }}"></i></span>
-            {% else %}
-              <span class='align-right'></span>
-            {% endif %}
-            <!-- lock icon -->
-            {% if item.locked %}
-              <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
-            {% endif %}
+              <input autocomplete='off' type='checkbox' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;' />
+              <!-- lock icon -->
+              {% if item.locked %}
+                <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
+              {% endif %}
               <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
             </td>
 
@@ -92,10 +87,10 @@
           <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
           <tr style='border-left: 4px solid #{{ item.color }}'>
             <td colspan='100%'>
-              <div class='togglableHidden' id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
+              <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
             </td>
           </tr>
 
           <!-- Perhaps not the most elegant solution, but helps keep the even/odd style of the table, which would be tricky in css -->
-          <tr class='d-none'></tr>
+          <tr hidden></tr>
         </div>

@@ -257,14 +257,16 @@ class Uploads implements CrudInterface
     /**
      * Destroy an upload
      */
-    public function destroy(): bool
+    public function destroy(bool $check = true): bool
     {
         $this->Entity->canOrExplode('write');
         $uploadArr = $this->read(new ContentParams());
 
-        // check that the filename is not in the body. see #432
-        if (strpos($this->Entity->entityData['body'], $uploadArr['long_name'])) {
-            throw new ImproperActionException(_('Please make sure to remove any reference to this file in the body!'));
+        if ($check) {
+            // check that the filename is not in the body. see #432
+            if (strpos($this->Entity->entityData['body'], $uploadArr['long_name'])) {
+                throw new ImproperActionException(_('Please make sure to remove any reference to this file in the body!'));
+            }
         }
 
 
@@ -296,7 +298,7 @@ class Uploads implements CrudInterface
         $uploadArr = $this->readAll();
 
         foreach ($uploadArr as $upload) {
-            (new self($this->Entity, (int) $upload['id']))->destroy();
+            (new self($this->Entity, (int) $upload['id']))->destroy(false);
         }
     }
 

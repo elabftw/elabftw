@@ -15,7 +15,7 @@
             <div class='input-group mb-2' id='step_{{ step.id }}'>
               <div class='input-group-prepend'>
                 <div class='input-group-text'>
-                  <a class='stepOrder draggable sortableHandle align-right'>
+                  <a class='stepOrder draggable sortableHandle float-right'>
                     <i class='fas fa-sort'></i>
                   </a>
                 </div>
@@ -67,7 +67,7 @@
                     <i class='fas fa-link mr-1'></i>
                     <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
                   {{ link.title|raw }}</a>
-                  <div class='align-right'>
+                  <div class='float-right'>
                     {% if Entity.type != 'experiments_templates' %}
                       <a class='linkImport clickable' data-linkid='{{ link.itemid }}' title='{{ 'Import'|trans }}'>
                         <i class='fas fa-lg fa-file-import'></i>

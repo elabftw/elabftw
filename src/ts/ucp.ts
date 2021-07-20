@@ -104,7 +104,7 @@ $(document).ready(function() {
   });
 
   $('#import-from-file').on('click', function() {
-    $('#import_tpl').toggle();
+    document.getElementById('import_tpl').hidden = false;
   });
 
   // CAN READ/WRITE SELECT PERMISSION
@@ -133,7 +133,8 @@ $(document).ready(function() {
 
   // input to upload an elabftw.tpl file
   document.getElementById('import_tpl').addEventListener('change', (event) => {
-    const title = (document.getElementById('import_tpl') as HTMLInputElement).value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
+    const el = (event.target as HTMLInputElement);
+    const title = el.value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
     if (!window.FileReader) {
       alert('Please use a modern web browser. Import aborted.');
       return false;
@@ -148,8 +149,6 @@ $(document).ready(function() {
           window.location.replace(`ucp.php?tab=3&templateid=${json.value}`);
         });
       });
-
-      $('#import_tpl').hide();
     };
     reader.readAsText(file);
   });

@@ -23,9 +23,9 @@ export function displayPlasmidViewer(): void {
     const filename = $(this).data('href');
     const realName = $(this).data('realName');
 
-    // helper function to convert Blob to File
+    // A Blob() is almost a File(): it's just missing two properties (lastModified and a name)
+    // we also add the optional (mime) type attribute
     function blobToFile(theBlob: Blob, fileName: string): File {
-      //A Blob() is almost a File() - it's just missing the two properties below which we add
       return new File([theBlob], fileName, { lastModified: new Date().getTime(), type: theBlob.type });
     }
 
@@ -33,13 +33,13 @@ export function displayPlasmidViewer(): void {
     function savePlasmidMapAsImage(opts): void {
       const reader = new FileReader();
       reader.readAsDataURL(opts.pngFile);
-      reader.onloadend = function (): void {
+      reader.onloadend = function(): void {
         $.post('app/controllers/EntityAjaxController.php', {
           saveAsImage: true,
           realName: realName,
           content: reader.result, // the png as data url
           id: $('#info').data('id'),
-          type: $('#info').data('type')
+          type: $('#info').data('type'),
         }).done(function(json) {
           notif(json);
         });
@@ -49,14 +49,14 @@ export function displayPlasmidViewer(): void {
     async function parseFile(fileContent): Promise<void> {
       const parsedData = await anyToJson(fileContent, {
         fileName: realName,
-        guessIfProtein: true
+        guessIfProtein: true,
       });
       // we always return an array of results because some files my contain multiple sequences
       // parsedData[0].success //either true or false
       // parsedData[0].messages //either an array of strings giving any warnings or errors generated during the parsing process
       // Test if fileContent was parsed successfully. if false: show notification
       if (parsedData.length === 0) {
-        console.log('Problem with file: ' + realName);
+        console.error('Problem with file: ' + realName);
         return;
       }
 
@@ -66,7 +66,7 @@ export function displayPlasmidViewer(): void {
       }
 
       if (parsedData[0].messages.length !== 0) {
-        console.log('File: ' + realName + '; ' + parsedData[0].messages[0]);
+        console.error('File: ' + realName + '; ' + parsedData[0].messages[0]);
         return;
       }
 

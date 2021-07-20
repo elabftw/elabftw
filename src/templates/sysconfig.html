@@ -389,8 +389,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                 <a href='app/controllers/SysconfigController.php?clearSmtppass=1'>",
                 "</a>"
             )|raw }}
-            <span class='button btn btn-primary mt-2 togglableNext'>{{ 'Edit'|trans }}</span>
-            <input class='form-control col-md-4' type='password' name='smtp_password' style='display:none' autocomplete='off' id='hidden_smtp_password' />
+            <span data-action='toggle-next' class='button btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
+            <input class='form-control col-md-4' type='password' name='smtp_password' hidden autocomplete='off' id='hidden_smtp_password' />
           </p>
         {% endif %}
       </div>
@@ -805,8 +805,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                 <a href='app/controllers/SysconfigController.php?clearLdappass=1'>",
                 "</a>"
             )|raw }}
-            <span class='button btn btn-primary mt-2 togglableNext'>{{ 'Edit'|trans }}</span>
-            <input class='form-control col-md-4' type='password' name='ldap_password' style='display:none' autocomplete='off' id='hidden_ldap_password' />
+            <span data-action='toggle-next' class='button btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
+            <input class='form-control col-md-4' type='password' name='ldap_password' hidden autocomplete='off' id='hidden_ldap_password' />
           </p>
         {% endif %}
 

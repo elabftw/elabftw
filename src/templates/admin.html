@@ -99,8 +99,8 @@
       </select>
       <span class='smallgray'>{{ 'Enforce the write permission for all experiments of users in this team.'|trans }}</span>
 
-      <span class='m-0 button btn btn-neutral togglableNext'>{{ 'Override general timestamping config'|trans }}</span>
-      <div class='togglableHidden mt-2'>
+      <span data-action='toggle-next' class='m-0 button btn btn-neutral'>{{ 'Override general timestamping config'|trans }}</span>
+      <div hidden class='mt-2'>
         <label for='stampprovider'>{{ 'URL for external timestamping service:'|trans }}</label>
         <input class='form-control col-md-4' type='url' placeholder='http://zeitstempel.dfn.de/' value='{{ App.teamConfigArr.stampprovider }}' name='stampprovider' id='stampprovider' />
         <span class='smallgray'>{{ 'This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'|trans|format("<a href='https://tools.ietf.org/html/rfc3161'>", "</a>")|raw }}</span>

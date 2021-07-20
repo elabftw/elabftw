@@ -1136,11 +1136,6 @@ the form-control fails to do that so we do the border ourselves */
     width: 100%;
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
-.togglableHidden {
-    display: none;
-}
-
 /* stylelint-disable selector-no-qualifying-type */
 input[type='color'] {
     padding: 5px 10px;

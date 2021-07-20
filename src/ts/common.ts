@@ -39,10 +39,13 @@ $(document).ready(function() {
   // set the language for js translated strings
   i18next.changeLanguage($('#user-prefs').data('lang'));
 
-  // TOGGLABLE
-  $(document).on('click', '.togglableNext', function() {
-    $(this).next().toggle();
-  });
+  // TOGGLABLE NEXT
+  const toggleNextElem = document.querySelector('[data-action="toggle-next"]');
+  if (toggleNextElem) {
+    toggleNextElem.addEventListener('click', (event) => {
+      (event.target as HTMLElement).nextElementSibling.toggleAttribute('hidden');
+    });
+  }
 
   // Toggle modal
   $('.modalToggle').on('click', function() {

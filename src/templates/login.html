@@ -63,7 +63,7 @@
       </form>
     {% else %}
 
-    {% if showLocal %}
+    {% if showLocal or App.Config.configArr.ldap_toggle %}
       <!-- Login form , the id is for an acceptance test -->
       <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off'>
         <!-- form key -->
@@ -93,11 +93,11 @@
         {% if App.Config.configArr.ldap_toggle %}
         <!-- Select login type (local or ldap) -->
         <div class='form-check form-check-inline'>
-          <input class='form-check-input' type='radio' name='auth_type' id='auth_type_local' value='local' checked>
+          <input class='form-check-input' type='radio' name='auth_type' id='auth_type_local' value='local' {{ App.Config.configArr.ldap_toggle == '0' ? 'checked' }}>
           <label class='form-check-label' for='auth_type_local'>{{ 'Local'|trans }}</label>
         </div>
         <div class='form-check form-check-inline'>
-          <input class='form-check-input' type='radio' name='auth_type' id='auth_type_ldap' value='ldap'>
+          <input class='form-check-input' type='radio' name='auth_type' id='auth_type_ldap' value='ldap' {{ App.Config.configArr.ldap_toggle == '1' ? 'checked' }}>
           <label class='form-check-label' for='auth_type_ldap'>LDAP</label>
         </div>
         {% else %}

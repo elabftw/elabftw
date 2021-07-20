@@ -810,8 +810,10 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           </p>
         {% endif %}
 
+        <!--
         <label for='ldap-uid-cn'>Auth lookup with cn or uid?</label>
         <input class='form-control col-md-4' type='text' id='ldap-uid-cn' name='ldap_uid_cn' value='{{ App.Config.configArr.ldap_uid_cn }}' />
+        -->
 
         <label for='ldap_use_tls'>{{ 'Use TLS'|trans }}</label>
         <select class='form-control col-md-4' id='ldap_use_tls' name='ldap_use_tls'>

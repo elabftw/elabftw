@@ -169,7 +169,8 @@
   </div>
 </div>
 <!-- TITLE -->
-<h1 {% if hideTitle %}style='display:none'{%endif%}>{% block title %}{{ App.pageTitle }}{% endblock %}</h1>
+<!-- login and register pages will have this title hidden -->
+<h1 {% if hideTitle %}hidden{%endif%}>{% block title %}{{ App.pageTitle }}{% endblock %}</h1>
 
 <!-- INFO BOX (FLASH MESSAGES) -->
 {% for ok in App.ok %}

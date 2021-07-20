@@ -33,7 +33,7 @@
     {% set pattern = '.{' ~ App.getMinPasswordLength ~ ',}' %}
 
     <form method='post' autocomplete='off' action='app/controllers/RegisterController.php'>
-      <input style='display:none' type='text' name='bot' value=''>
+      <input hidden type='text' name='bot' value=''>
       {{ App.Csrf.getHiddenInput|raw }}
 
       <div class='form-group mx-auto col-md-4'>

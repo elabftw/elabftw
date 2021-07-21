@@ -141,12 +141,12 @@ class ImportZip extends AbstractImport
      */
     private function dbInsert($item): void
     {
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, elabid)
-            VALUES(:team, :title, :date, :body, :userid, :category, :canread, :elabid)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, elabid, metadata)
+            VALUES(:team, :title, :date, :body, :userid, :category, :canread, :elabid, :metadata)';
 
         if ($this->type === 'experiments') {
-            $sql = 'INSERT into experiments(title, date, body, userid, canread, category, elabid)
-                VALUES(:title, :date, :body, :userid, :canread, :category, :elabid)';
+            $sql = 'INSERT into experiments(title, date, body, userid, canread, category, elabid, metadata)
+                VALUES(:title, :date, :body, :userid, :canread, :category, :elabid, :metadata)';
         }
 
         // make sure there is an elabid (might not exist for items before v4.0)
@@ -161,6 +161,7 @@ class ImportZip extends AbstractImport
         $req->bindParam(':body', $item['body']);
         $req->bindValue(':canread', $this->canread);
         $req->bindParam(':elabid', $elabid);
+        $req->bindParam(':metadata', $item['metadata']);
         if ($this->type === 'items') {
             $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':category', $this->target, PDO::PARAM_INT);

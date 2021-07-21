@@ -58,18 +58,12 @@ try {
     // UPDATE START
     if ($Request->request->has('updateStart')) {
         $Scheduler->setId((int) $Request->request->get('id'));
-        $eventArr = $Scheduler->readFromId();
-        if ((int) $eventArr['userid'] === $App->Session->get('userid')) {
-            $Scheduler->updateStart($Request->request->get('delta'));
-        }
+        $Scheduler->updateStart($Request->request->get('delta'));
     }
     // UPDATE END
     if ($Request->request->has('updateEnd')) {
         $Scheduler->setId((int) $Request->request->get('id'));
-        $eventArr = $Scheduler->readFromId();
-        if ((int) $eventArr['userid'] === $App->Session->get('userid')) {
-            $Scheduler->updateEnd($Request->request->get('end'));
-        }
+        $Scheduler->updateEnd($Request->request->get('end'));
     }
 
     // BIND

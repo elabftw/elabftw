@@ -269,8 +269,8 @@ CREATE TABLE `groups` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `is_sysadmin` tinyint(1) UNSIGNED NOT NULL,
-  `is_admin` text NOT NULL,
-  `can_lock` text NOT NULL,
+  `is_admin` tinyint(1) UNSIGNED NOT NULL,
+  `can_lock` tinyint(1) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

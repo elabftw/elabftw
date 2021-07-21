@@ -91,7 +91,7 @@
     "full": "yarn phpcs && yarn jslint && yarn csslint && yarn psalm && yarn phpstan && yarn test unit",
     "jslint": "eslint --ext .ts src/ts",
     "jslint-ci": "eslint --ext .ts --quiet src/ts",
-    "ove": "mkdir -p web/assets/ove/ && cp node_modules/@deltablot/open-vector-editor-umd/* web/assets/ove/",
+    "ove": "mkdir -p web/assets/ove/ && cp node_modules/@deltablot/open-vector-editor-umd/* web/assets/ove/ && rm -f web/assets/ove/open-vector-editor.js*",
     "phan": "phan --allow-polyfill-parser -k src/tools/phan-config.php",
     "phpcs": "./vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php -v --using-cache=no",
     "phpcs-dry": "./vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php -v --dry-run --stop-on-violation --using-cache=no",

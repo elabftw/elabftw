@@ -111,17 +111,6 @@ $(document).ready(function() {
     });
   });
 
-  // validate on enter
-  $('#teamGroupCreate').keypress(function (e) {
-    let keynum;
-    if (e.which) {
-      keynum = e.which;
-    }
-    if (keynum === 13) { // if the key that was pressed was Enter (ascii code 13)
-      const content = $('#teamGroupCreate').val() as string;
-      TeamGroupC.create(content);
-    }
-  });
   // edit the team group name
   $(document).on('mouseenter', 'h3.teamgroup_name', function() {
     ($(this) as any).editable(function(value) {

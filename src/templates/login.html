@@ -63,7 +63,7 @@
       </form>
     {% else %}
 
-    {% if showLocal %}
+    {% if showLocal or App.Config.configArr.ldap_toggle %}
       <!-- Login form , the id is for an acceptance test -->
       <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off'>
         <!-- form key -->
@@ -75,7 +75,7 @@
           <input class='form-control mb-4' id='email' name='email' type='email' value='{{ App.Session.has('email') ? App.Session.get('email') }}' required />
           <label for='password'>{{ 'Password'|trans }}</label>
           <!-- add tabindex=-1 to the forget password so we can switch from login to password with tab -->
-          <a class='align-right clickable underlined resetPassword modalToggle' tabindex='-1' data-modal='resetModal'>{{ 'Forgot password?'|trans }}</a>
+          <a class='float-right clickable underlined resetPassword modalToggle' tabindex='-1' data-modal='resetModal'>{{ 'Forgot password?'|trans }}</a>
           <div class='input-group'>
             <input class='form-control' id='password' name='password' type='password' required />
             <div class='input-group-append'>
@@ -93,11 +93,11 @@
         {% if App.Config.configArr.ldap_toggle %}
         <!-- Select login type (local or ldap) -->
         <div class='form-check form-check-inline'>
-          <input class='form-check-input' type='radio' name='auth_type' id='auth_type_local' value='local' checked>
+          <input class='form-check-input' type='radio' name='auth_type' id='auth_type_local' value='local' {{ App.Config.configArr.ldap_toggle == '0' ? 'checked' }}>
           <label class='form-check-label' for='auth_type_local'>{{ 'Local'|trans }}</label>
         </div>
         <div class='form-check form-check-inline'>
-          <input class='form-check-input' type='radio' name='auth_type' id='auth_type_ldap' value='ldap'>
+          <input class='form-check-input' type='radio' name='auth_type' id='auth_type_ldap' value='ldap' {{ App.Config.configArr.ldap_toggle == '1' ? 'checked' }}>
           <label class='form-check-label' for='auth_type_ldap'>LDAP</label>
         </div>
         {% else %}

@@ -240,6 +240,9 @@ document.addEventListener('DOMContentLoaded', () => {
         delta: info.delta,
         id: info.event.id,
       }).done(function(json) {
+        if (!json.res) {
+          info.revert();
+        }
         notif(json);
       });
     },
@@ -251,6 +254,9 @@ document.addEventListener('DOMContentLoaded', () => {
         end: info.endDelta,
         id: info.event.id,
       }).done(function(json) {
+        if (!json.res) {
+          info.revert();
+        }
         notif(json);
       });
     },

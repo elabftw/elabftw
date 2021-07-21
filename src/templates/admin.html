@@ -99,8 +99,8 @@
       </select>
       <span class='smallgray'>{{ 'Enforce the write permission for all experiments of users in this team.'|trans }}</span>
 
-      <span class='m-0 button btn btn-neutral togglableNext'>{{ 'Override general timestamping config'|trans }}</span>
-      <div class='togglableHidden mt-2'>
+      <span data-action='toggle-next' class='m-0 button btn btn-neutral'>{{ 'Override general timestamping config'|trans }}</span>
+      <div hidden class='mt-2'>
         <label for='stampprovider'>{{ 'URL for external timestamping service:'|trans }}</label>
         <input class='form-control col-md-4' type='url' placeholder='http://zeitstempel.dfn.de/' value='{{ App.teamConfigArr.stampprovider }}' name='stampprovider' id='stampprovider' />
         <span class='smallgray'>{{ 'This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'|trans|format("<a href='https://tools.ietf.org/html/rfc3161'>", "</a>")|raw }}</span>
@@ -158,7 +158,7 @@
       <h3>{{ 'Existing groups'|trans }}</h3>
       {% for teamGroup in teamGroupsArr %}
         <div class='box'>
-          <a class='clickable teamGroupDelete align-right' data-id='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>
+          <a class='clickable teamGroupDelete float-right' data-id='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>
             <i class='fas fa-trash-alt'></i>
           </a>
           <h3 title='Click to Edit' class='editable teamgroup_name' data-id='{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
@@ -242,7 +242,7 @@
               <button data-statusid='{{ status.category_id }}' data-action='destroy-status' class='button btn btn-danger' >{{ 'Delete'|trans }}</button>
             </li>
             <li class='list-inline-item'>
-              <span class='draggable sortableHandle align-right'>
+              <span class='draggable sortableHandle float-right'>
                 <i class='fas fa-sort fa-2x'></i>
               </span>
             </li>
@@ -320,7 +320,7 @@
       {% for itemType in itemsTypesArr %}
         <li id='itemstypes_{{ itemType.category_id }}' class='list-group-item'>
           <ul class='list-inline'>
-            <li class='list-inline-item'><span class='sortableHandle draggable align-right'><i class='fas fa-sort fa-2x'></i></span></li>
+            <li class='list-inline-item'><span class='sortableHandle draggable float-right'><i class='fas fa-sort fa-2x'></i></span></li>
             <li class='list-inline-item'>
               <label for='itemsTypesName_{{ itemType.category_id }}'>{{ 'Name'|trans }}</label>
               <input type='text' class='form-control' id='itemsTypesName_{{ itemType.category_id }}' value='{{ itemType.category }}' />

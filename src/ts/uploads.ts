@@ -112,7 +112,7 @@ $(document).ready(function() {
 
     // REPLACE UPLOAD
     } else if (el.matches('[data-action="replace-upload"]')) {
-      document.getElementById('replaceUploadForm_' + el.dataset.uploadid).style.display = '';
+      document.getElementById('replaceUploadForm_' + el.dataset.uploadid).hidden = false;
 
     // DESTROY UPLOAD
     } else if (el.matches('[data-action="destroy-upload"]')) {

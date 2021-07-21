@@ -7,11 +7,10 @@
             Attached files
             {% endtrans %}
         </h3>
-        {% if mode == 'edit' %}
-            <a class='clickable align-right togglableNext' title='{{ 'Toggle visibility'|trans }}'>
-                <i class='fas fa-eye'></i>
-            </a>
-        {% endif %}
+        <!-- toggle visibility of uploaded files -->
+        <a data-action='toggle-next' class='clickable float-right' title='{{ 'Toggle visibility'|trans }}'>
+          <i class='fas fa-eye'></i>
+        </a>
 
         <div class='row' id='uploadsDiv'>
         {% for upload in uploadsArr %}
@@ -21,7 +20,7 @@
                 <div class='thumbnail box' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' style='overflow: visible'>
                   {% if mode == 'edit' %}
                     <div class='dropdown'>
-                      <a class='clickable align-right p-2' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
+                      <a class='clickable float-right p-2' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
                         <i class='fas fa-ellipsis-v'></i>
                       </a>
                       <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
@@ -170,7 +169,7 @@
 
                   {% if mode == 'edit' %}
                     <!-- replace upload form -->
-                    <div id='replaceUploadForm_{{ upload.id }}' style='display:none'>
+                    <div id='replaceUploadForm_{{ upload.id }}' hidden>
                       <form enctype='multipart/form-data' action='app/controllers/RequestHandler.php' method='POST'>
                         <input type='hidden' name='action' value='update' />
                         <input type='hidden' name='target' value='file' />
@@ -180,7 +179,7 @@
                         <input type='hidden' name='model' value='upload' />
                         {{ App.Csrf.getHiddenInput|raw }}
                         <input type='file' style='display:inline' name='content' />
-                        <button type='submit' class='button btn btn-primary'>OK</button>
+                        <button type='submit' class='button btn btn-primary'>{{ 'OK'|trans }}</button>
                       </form>
                     </div>
                   {% endif %}

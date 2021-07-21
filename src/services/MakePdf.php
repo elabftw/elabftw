@@ -126,6 +126,7 @@ class MakePdf extends AbstractMake
             'locked' => $locked,
             'lockDate' => $lockDate,
             'lockerName' => $lockerName,
+            'metadata' => $this->Entity->entityData['metadata'],
             'pdfSig' => $Request->cookies->get('pdf_sig'),
             'stepsArr' => $this->Entity->Steps->read(new ContentParams()),
             'tags' => $this->Entity->entityData['tags'],

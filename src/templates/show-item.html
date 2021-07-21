@@ -13,7 +13,7 @@
       {% endif %}
           <section class='item item-show item-show-{{ App.Users.userData.display_size }} {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='--opacity:{{ opacity }}; --left-color: #{{ item.color }};'>
               {% if isPinned %}
-                <span class='align-right'><i class='fas fa-thumbtack' title="{{ 'Pinned'|trans }}"></i></span>
+                <span class='float-right'><i class='fas fa-thumbtack' title="{{ 'Pinned'|trans }}"></i></span>
               {% endif %}
 
             <p class='title'>
@@ -34,7 +34,7 @@
 
             <p class='item-info'>
               <!-- checkbox -->
-              <input class='item-checkbox' autocomplete='off' type='checkbox' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;vertical-align:-3px;' />
+              <input autocomplete='off' type='checkbox' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;vertical-align:-3px;' />
               <!-- edit icon -->
               {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
                 <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}' class='clickable' title='{{ 'Edit'|trans }}'><i class='fas fa-pencil-alt link-like'></i></a>
@@ -78,7 +78,7 @@
 
             <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
             <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
-            <div class='togglableHidden' id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
+            <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
 
           </section>
         </div>

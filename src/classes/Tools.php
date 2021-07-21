@@ -15,6 +15,7 @@ use function explode;
 use function filter_var;
 use function in_array;
 use InvalidArgumentException;
+use function json_decode;
 use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 use function mb_strlen;
@@ -342,6 +343,20 @@ class Tools
             }
         }
         return $sql . ')';
+    }
+
+    /**
+     * Process the metadata json string into a displayable array
+     */
+    public static function formatMetadata(string $json): string
+    {
+        $final = '';
+        $full = json_decode($json, true);
+        $extraFields = $full['extra_fields'];
+        foreach ($extraFields as $key => $value) {
+            $final .= '<h4>' . $key . '</h4><p>' . $value['value'] . '</p>';
+        }
+        return $final;
     }
 
     /**

@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<!--
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+-->
+<html lang='en'>
+  <head>
+    <meta http-equiv='Content-type' content='text/html;charset=UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <meta name='description' content='Electronic lab notebook - eLabFTW'>
+    <link rel='icon' type='image/ico' href='app/img/favicon.ico' />
+    <title>Database update required!</title>
+  </head>
+
+  <body>
+    <style>
+      body {
+        font-family: sans-serif;
+        background-color: #29aeb9;
+        color: #fff;
+        width: 80%;
+        margin: auto;
+        margin-top: 10%;
+      }
+      pre {
+        font-family: 'courier new';
+        background-color: #000;
+        padding: 10px;
+        border-radius: 5px;
+      }
+    </style>
+
+    <h1>Almost there!</h1>
+    <h2>To finish the update, run the "bin/console db:update" command. For Docker users that would be:</h2>
+      <pre>docker exec -it elabftw bin/console db:update</pre>
+      <p>See <a href="https://doc.elabftw.net/how-to-update.html">documentation</a>.</p>
+  </body>
+</html>

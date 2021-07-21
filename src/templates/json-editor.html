@@ -3,7 +3,7 @@
   <i class='fas fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
   <button class='button btn btn-primary plusMinusButton jsonEditorPlusMinusButton' data-toggle='collapse' data-target='#jsonEditorDiv' aria-expanded='false' aria-controls='jsonEditorDiv'>+</button>
   {% if mode == 'edit' %}
-    <button type='button' data-action='json-load-metadata' class='btn btn-neutral align-right'>{{ 'Load metadata'|trans }}</button>
+    <button type='button' data-action='json-load-metadata' class='btn btn-neutral float-right'>{{ 'Load metadata'|trans }}</button>
   {% endif %}
   <div id='jsonEditorDiv' class='collapse mt-2'>
     <h6 id='jsonEditorTitle'></h6>
@@ -22,13 +22,13 @@
             </div>
           </div>
         </div>
-        <button type='button' data-action='json-clear' class='btn btn-danger align-right'>{{ 'Clear'|trans }}</button>
+        <button type='button' data-action='json-clear' class='btn btn-danger float-right'>{{ 'Clear'|trans }}</button>
       </div>
     {% endif %}
     {% if mode == 'edit-item-type' %}
       <div class='mt-4 text-center'>
         <button type='button' id='itemsTypesJsonSave' data-action='json-save-metadata-from-id' data-type='items_types' data-id='' class='btn btn-primary'>{{ 'Save as metadata'|trans }}</button>
-        <button type='button' data-action='json-clear' class='btn btn-danger align-right'>{{ 'Clear'|trans }}</button>
+        <button type='button' data-action='json-clear' class='btn btn-danger float-right'>{{ 'Clear'|trans }}</button>
       </div>
     {% endif %}
   </div>

@@ -39,6 +39,13 @@
 
 {{ body|raw }}
 
+{% if metadata %}
+<section class='no-break'>
+  <h3>{{ 'Extra fields'|trans }}</h3>
+  {{ metadata|formatMetadata }}
+</section>
+{% endif %}
+
 {% if linksArr %}
   <section class='no-break'>
     <h3>{% trans %}

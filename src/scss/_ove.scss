@@ -1,0 +1,38 @@
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+.preview-mode-container {
+    .bp3-button.bp3-intent-primary {
+        background-color: $elabblue !important;
+        border: 1px solid transparent !important;
+        border-radius: 5px !important;
+        box-shadow: none !important;
+    }
+
+    .bp3-button.bp3-intent-primary:hover {
+        background-color: #22919a !important;
+        border-color: #20878f !important;
+        box-shadow: none !important;
+    }
+
+    .bp3-button.bp3-intent-primary:focus {
+        box-shadow: 0 0 0 0.2rem rgba(73, 186, 196, 0.5) !important;
+    }
+
+    .bp3-button-group.preview-mode-view-fullscreen:hover {
+        background: none !important;
+    }
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.veToolbar {
+    .bp3-button[class*='bp3-intent-'] .bp3-icon {
+        //$elabblue does not look as great here IMHO, it's to light
+        color: #20878f !important;
+    }
+}

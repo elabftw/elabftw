@@ -30,15 +30,22 @@
   </div>
 </div>
 
-<form class='box' method='get'>
-  <div class='form-group'>
-    <label for='search-users'>{{ 'Search users'|trans }}</label>
-    <input type='text' autocomplete='off' class='form-control col-md-4 custom-control-inline' id='search-users' value='{{ App.Request.query.get('q') }}' name='q' />
-    <!-- stay on correct tab -->
-    <input type='hidden' value='3' name='tab' />
-    <input type='submit' class='button btn btn-primary' value='{{ 'Search'|trans }}' />
+  <div class='box form-group'>
+    <form class='d-inline' method='get'>
+      <label for='search-users'>{{ 'Search users'|trans }}</label>
+      <input type='text' autocomplete='off' class='form-control col-md-4 custom-control-inline' id='search-users' value='{{ App.Request.query.get('q') }}' name='q' />
+      <!-- stay on correct tab -->
+      <input type='hidden' value='3' name='tab' />
+      <input type='submit' class='button btn btn-primary' value='{{ 'Search'|trans }}' />
+    </form>
+
+    <!-- add a second form with empty q param to show all users; added because it is not evident that searching for nothing shows all results -->
+    <form class='d-inline' method='get'>
+      <input type='hidden' value='3' name='tab' />
+      <input type='hidden' value='' name='q' />
+      <input type='submit' class='button btn btn-secondary' value='{{ 'Show all'|trans }}' />
+    </form>
   </div>
-</form>
 
 {% if isSearching %}
     <div class='box'>
@@ -115,8 +122,8 @@
                       </label>
                       <!-- add empty input to prevent FF from putting password in field because autocomplete doesn't work. from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox -->
                       <!-- chrome will continue to behave badly. See crbug.com/468153 and crbug.com/587466 -->
-                      <input type='text' style='display:none'>
-                      <input type='password' style='display:none'>
+                      <input type='text' hidden>
+                      <input type='password' hidden>
                       {% set pattern = '.{' ~ App.getMinPasswordLength ~ ',}' %}
                       <input autocomplete='new-password' class='form-control custom-control-inline' id='usersUpdatePassword_{{ user.userid }}' type='password' pattern='{{ pattern }}' value='' name='password' />
                     </li>

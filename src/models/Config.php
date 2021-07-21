@@ -239,7 +239,6 @@ final class Config
             ('ldap_base_dn', ''),
             ('ldap_username', NULL),
             ('ldap_password', NULL),
-            ('ldap_uid_cn', 'cn'),
             ('ldap_email', 'mail'),
             ('ldap_lastname', 'cn'),
             ('ldap_firstname', 'givenname'),

@@ -57,6 +57,7 @@ trait TwigTrait
         $qFilter = new \Twig\TwigFilter('qFilter', '\Elabftw\Elabftw\Tools::qFilter', $filterOptions);
         $langFilter = new \Twig\TwigFilter('jslang', '\Elabftw\Elabftw\Tools::getCalendarLang', $filterOptions);
         $limitOptions = new \Twig\TwigFunction('limitOptions', '\Elabftw\Elabftw\Tools::getLimitOptions');
+        $metadataFilter = new \Twig\TwigFilter('formatMetadata', '\Elabftw\Elabftw\Tools::formatMetadata', $filterOptions);
 
         // custom test to check for a file
         $test = new \Twig\TwigTest('readable', function (string $path) {
@@ -74,6 +75,7 @@ trait TwigTrait
         $TwigEnvironment->addFilter($qFilter);
         $TwigEnvironment->addFilter($langFilter);
         $TwigEnvironment->addFunction($limitOptions);
+        $TwigEnvironment->addFilter($metadataFilter);
 
         // i18n for twig
         $TwigEnvironment->addExtension(new \Twig\Extensions\I18nExtension());

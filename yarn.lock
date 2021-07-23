@@ -927,10 +927,10 @@
   resolved "https://registry.yarnpkg.com/@deltablot/chemdoodle-web-mini/-/chemdoodle-web-mini-9.2.2.tgz#0d41d877344b508d1da9addbdde65720e012524b"
   integrity sha512-GWjCUQmk8teLVdfuxFCULljrjSA4R7ZgaJLP3/W4BnEH9MwPIvk1nvVRiMryAfJfgwaZEo3lPDR2vWnjNVYvKA==
 
-"@deltablot/open-vector-editor-umd@^16.0.1":
-  version "16.0.1"
-  resolved "https://registry.yarnpkg.com/@deltablot/open-vector-editor-umd/-/open-vector-editor-umd-16.0.1.tgz#8fea3c832c4dc7cf92aba82a115c92ba32fe2734"
-  integrity sha512-qbWpvgWOp5wbF8XMZfUS3LgXr+iAMeE0kfw26xKL50nZ1b1bX0khaRdprVxQn7UqI0WJc3iO11kiCnHm1eQ55g==
+"@deltablot/open-vector-editor-umd@^16.3.5":
+  version "16.3.5"
+  resolved "https://registry.yarnpkg.com/@deltablot/open-vector-editor-umd/-/open-vector-editor-umd-16.3.5.tgz#b3b246b8848e473a14cc5caedd8a15c7e236d37f"
+  integrity sha512-IoLrReuUQY4fBabNO0oiVO0UVwBdC071x0Ib+Q7GYSJMtH0M3gh3Z5Bi0YyYSvbW96Sz2w7p87Od9rutw/aaLQ==
 
 "@discoveryjs/json-ext@^0.5.0":
   version "0.5.3"

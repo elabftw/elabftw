@@ -4,7 +4,6 @@ version: 2.1
 # code coverage orb
 orbs:
   codecov: codecov/codecov@1.0.2
-  cypress: cypress-io/cypress@1.28.0
 jobs:
   build:
     working_directory: ~/elabftw/elabftw
@@ -122,5 +121,3 @@ workflows:
             ignore:
               - demo
               - next
-      - cypress/run:
-          yarn: true

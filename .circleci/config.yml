@@ -122,4 +122,5 @@ workflows:
             ignore:
               - demo
               - next
-      - cypress/run
+      - cypress/run:
+          yarn: true

@@ -36,7 +36,7 @@ MathJax = {
         compileError: (doc, math, err) => {throw err},
         typesetError: (doc, math, err) => {throw err},
     }
-}
+};
 
 //
 //  Load all the needed components

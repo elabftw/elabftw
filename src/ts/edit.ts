@@ -48,7 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
   MetadataC.display('edit');
 
   // Which editor are we using? md or tiny
-  const editor = document.getElementById('iHazEditor').dataset.editor;
+  const editor = {
+    type: document.getElementById('iHazEditor').dataset.editor ?? 'tiny',
+    getContent: function(): string {
+      if (this.type === 'md') {
+        return (document.getElementById('body_area') as HTMLTextAreaElement).value;
+      }
+      return tinymce.activeEditor.getContent();
+    },
+    switch: function(): void {
+      insertParamAndReload('editor', this.type);
+    },
+  };
 
   // UPLOAD FORM
   new Dropzone('form#elabftw-dropzone', {
@@ -164,15 +175,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // END GET MOL FILES
 
   // Shared function to UPDATE ENTITY BODY via save shortcut and/or save button
-  function updateEntity(el): void {
-    let content: string;
-    if (editor === 'md') {
-      content = ((document.getElementById('body_area') as HTMLTextAreaElement).value as string);
-    } else {
-      content = tinymce.activeEditor.getContent();
-    }
-    EntityC.update(entity.id, Target.Body, content).then(json => {
-      if (json.res && editor !== 'md') {
+  function updateEntity(el?: HTMLElement): void {
+    EntityC.update(entity.id, Target.Body, editor.getContent()).then(json => {
+      if (json.res && editor.type === 'tiny') {
         // set the editor as non dirty so we can navigate out without a warning to clear
         tinymce.activeEditor.setDirty(false);
       }
@@ -184,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // KEYBOARD SHORTCUT
-  key(about.scsubmit, () => updateEntity(false));
+  key(about.scsubmit, () => updateEntity());
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
@@ -255,11 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // SWITCH EDITOR
   $(document).on('click', '.switchEditor', function() {
-    if (editor === 'md') {
-      insertParamAndReload('editor', 'tiny');
-    } else {
-      insertParamAndReload('editor', 'md');
-    }
+    editor.switch();
   });
 
   // DISPLAY MARKDOWN EDITOR
@@ -311,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // no tinymce stuff when md editor is selected
   let theEditor;
-  if (editor !== 'md') {
+  if (editor.type === 'tiny') {
     // Object to hold control data for selected image
     const tinymceEditImage = {
       selected: false,
@@ -429,9 +430,9 @@ document.addEventListener('DOMContentLoaded', () => {
       type : 'items',
       editor: editor
     }).done(function(json) {
-      if (editor === 'tiny') {
+      if (editor.type === 'tiny') {
         theEditor.insertContent(json.msg);
-      } else if (editor === 'md') {
+      } else if (editor.type === 'md') {
         const cursorPosition = $('#body_area').prop('selectionStart');
         const content = ($('#body_area').val() as string);
         const before = content.substring(0, cursorPosition);
@@ -449,14 +450,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // link to the image
     const url = 'app/download.php?f=' + $(this).data('link');
     // switch for markdown or tinymce editor
-    if (editor === 'md') {
+    if (editor.type === 'md') {
       const cursorPosition = $('#body_area').prop('selectionStart');
       const content = ($('#body_area').val() as string);
       const before = content.substring(0, cursorPosition);
       const after = content.substring(cursorPosition);
       const imgMdLink = '\n![image](' + url + ')\n';
       $('#body_area').val(before + imgMdLink + after);
-    } else if (editor === 'tiny') {
+    } else if (editor.type === 'tiny') {
       const imgHtmlLink = '<img src="' + url + '" data-uploadid="' + $(this).data('uploadid') + '" />';
       tinymce.activeEditor.execCommand('mceInsertContent', false, imgHtmlLink);
     } else {

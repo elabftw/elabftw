@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
+use function is_array;
 use LdapRecord\Connection;
 use LdapRecord\Query\ObjectNotFoundException;
 
@@ -44,6 +45,10 @@ class LdapAuth implements AuthInterface
             throw new InvalidCredentialsException();
         }
         $dn = $record['distinguishedname'] ?? $record['dn'];
+        // sometimes it might be an array, make sure we give a string to auth
+        if (is_array($dn)) {
+            $dn = $dn[0];
+        }
         if (!$this->connection->auth()->attempt($dn, $this->password)) {
             throw new InvalidCredentialsException();
         }

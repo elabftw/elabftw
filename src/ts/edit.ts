@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return tinymce.activeEditor.getContent();
     },
     switch: function(): void {
-      insertParamAndReload('editor', this.type);
+      insertParamAndReload('editor', this.type === 'tiny' ? 'md' : 'tiny');
     },
   };
 

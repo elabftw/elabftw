@@ -18,7 +18,7 @@ The code itself is checked by various static analyzers to try and detect bugs so
 
 If you scan the live demo for good practices and security headers, you'll find that eLabFTW scores very very high:
 
-[![observatory score a+](https://i.imgur.com/2qI796u.png)](https://observatory.mozilla.org/analyze/demo.elabftw.net)
+[![observatory score a+](https://i.imgur.com/mT9GH9I.png)](https://observatory.mozilla.org/analyze/demo.elabftw.net)
 
 ## Best practices
 

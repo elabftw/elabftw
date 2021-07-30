@@ -323,7 +323,7 @@
             <li class='list-inline-item'><span class='sortableHandle draggable float-right'><i class='fas fa-sort fa-2x'></i></span></li>
             <li class='list-inline-item'>
               <label for='itemsTypesName_{{ itemType.category_id }}'>{{ 'Name'|trans }}</label>
-              <input type='text' class='form-control' id='itemsTypesName_{{ itemType.category_id }}' value='{{ itemType.category }}' />
+              <input type='text' class='form-control' id='itemsTypesName_{{ itemType.category_id }}' value='{{ itemType.category|raw }}' />
             </li>
 
             <li class='list-inline-item col-1 align-top'>

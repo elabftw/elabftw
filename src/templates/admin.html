@@ -55,6 +55,12 @@
       </select>
       <span class='smallgray'>{{ 'An admin account will always be able to create tags.'|trans }}</span>
 
+      <label for='force_exp_tpl'>{{ 'Force experiment template use:'|trans }}</label>
+      <select class='form-control col-md-4' name='force_exp_tpl' id='force_exp_tpl'>
+        <option value='1'{{ App.teamConfigArr.force_exp_tpl ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+        <option value='0'{{ not App.teamConfigArr.force_exp_tpl ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+      </select>
+
       <label for='public_db'>{{ 'Anonymous visitors can see database items:'|trans }}</label>
       <select class='form-control col-md-4' name='public_db' id='public_db'>
         <option value='1'{{ App.teamConfigArr.public_db ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>

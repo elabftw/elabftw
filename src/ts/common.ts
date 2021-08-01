@@ -9,7 +9,7 @@ import $ from 'jquery';
 import { Ajax } from './Ajax.class';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { relativeMoment, displayMolFiles, makeSortableGreatAgain } from './misc';
+import { notif, relativeMoment, displayMolFiles, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { EntityType, Payload, Method, Model, Action } from './interfaces';
@@ -116,7 +116,13 @@ $(document).ready(function() {
       const path = window.location.pathname;
       if (path.split('/').pop() === 'experiments.php') {
         const tplid = el.dataset.tplid;
-        (new EntityClass(EntityType.Experiment)).create(tplid).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
+        (new EntityClass(EntityType.Experiment)).create(tplid).then(json => {
+          if (json.res) {
+            window.location.replace(`?mode=edit&id=${json.value}`);
+          } else {
+            notif(json);
+          }
+        });
       } else {
         // for database items, show a selection modal
         // modal plugin requires jquery

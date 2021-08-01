@@ -395,7 +395,7 @@ CREATE TABLE `items_revisions` (
 CREATE TABLE `items_types` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
-  `name` text NOT NULL,
+  `name` varchar(255) NOT NULL,
   `color` varchar(6) DEFAULT '000000',
   `template` text,
   `ordering` int(10) UNSIGNED DEFAULT NULL,

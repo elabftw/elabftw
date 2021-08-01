@@ -407,7 +407,7 @@ CREATE TABLE `items_revisions` (
 CREATE TABLE `items_types` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
-  `name` text NOT NULL,
+  `name` varchar(255) NOT NULL,
   `color` varchar(6) DEFAULT '000000',
   `template` text,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
@@ -522,6 +522,7 @@ CREATE TABLE `teams` (
   `deletable_xp` tinyint(1) UNSIGNED NOT NULL DEFAULT 1,
   `deletable_item` tinyint(1) UNSIGNED NOT NULL DEFAULT 1,
   `user_create_tag` tinyint(1) UNSIGNED NOT NULL DEFAULT 1,
+  `force_exp_tpl` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `link_name` text NOT NULL,
   `link_href` text NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

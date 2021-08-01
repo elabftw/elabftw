@@ -34,7 +34,7 @@
 
             <p class='item-info'>
               <!-- checkbox -->
-              <input autocomplete='off' type='checkbox' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;vertical-align:-3px;' />
+              <input autocomplete='off' type='checkbox' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;vertical-align:0.5px;' />
               <!-- edit icon -->
               {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
                 <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}' class='clickable' title='{{ 'Edit'|trans }}'><i class='fas fa-pencil-alt link-like'></i></a>

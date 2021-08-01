@@ -18,7 +18,7 @@
         <option value=''>{{ Entity.type == 'experiments' ? 'Filter status'|trans : 'Filter by type'|trans }}</option>
         {% for category in categoryArr %}
           <option value='{{ category.category_id }}'{{ App.Request.query.get('cat') == category.category_id ? ' selected'}}>
-          {{ category.category }}</option>
+          {{ category.category|raw }}</option>
         {% endfor %}
 
       </select>

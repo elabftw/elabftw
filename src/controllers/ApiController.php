@@ -49,7 +49,7 @@ class ApiController implements ControllerInterface
     private Request $Request;
 
     /** @psalm-suppress PropertyNotSetInConstructor */
-    private AbstractCategory $Category;
+    private AbstractCategory | ItemsTypes $Category;
 
     /** @psalm-suppress PropertyNotSetInConstructor */
     //@phpstan-ignore-next-line
@@ -103,10 +103,10 @@ class ApiController implements ControllerInterface
                 if ($this->endpoint === 'experiments' || $this->endpoint === 'items') {
                     return $this->getEntity();
                 }
-                if ($this->endpoint === 'templates' || $this->endpoint === 'items_types') {
+                if ($this->endpoint === 'templates') {
                     return $this->getTemplate();
                 }
-                if ($this->endpoint === 'status') {
+                if ($this->endpoint === 'status' || $this->endpoint === 'items_types') {
                     return $this->getCategory();
                 }
                 if ($this->endpoint === 'bookable') {
@@ -249,7 +249,7 @@ class ApiController implements ControllerInterface
         } elseif ($this->endpoint === 'templates') {
             $this->Entity = new Templates($this->Users, $this->id);
         } elseif ($this->endpoint === 'items_types') {
-            $this->Entity = new ItemsTypes($this->Users->team);
+            $this->Category = new ItemsTypes($this->Users->team);
         } elseif ($this->endpoint === 'status') {
             $this->Category = new Status($this->Users->team);
         } elseif ($this->endpoint === 'events') {

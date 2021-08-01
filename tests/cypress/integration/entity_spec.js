@@ -17,7 +17,7 @@ describe('Experiments', () => {
     cy.get('.stepinput').type('some step').blur()
     cy.get('.step-static').contains('some step')
     cy.get('.stepbox').click()
-    cy.get('.text-muted').contains('completed in')
+    cy.get('.text-muted').contains('completed')
     cy.get('.stepDestroy').click()
     cy.contains('some step').should('not.exist')
   }

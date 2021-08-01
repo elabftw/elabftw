@@ -44,7 +44,7 @@ module.exports = {
       'bootstrap/js/src/dropdown.js',
       './src/ts/fontawesome.ts',
       // mathjax config must be loaded before mathjax lib
-      './web/app/js/src/mathjax-config.js',
+      './src/js/mathjax-config.js',
       // load tex with all the extensions
       'mathjax-full/es5/tex-svg-full.js',
       'prismjs',

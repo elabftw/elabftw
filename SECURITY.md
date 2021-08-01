@@ -8,15 +8,7 @@ All security bugs will be considered seriously.
 
 Thank you for improving the security of **eLabFTW** with a responsible disclosure.
 
-Please send me an email (preferentially encrypted) to the address listed here:
-
-~~~bash
-gpg --search-keys "Nicolas CARPi"
-~~~
-
-Alternatively, you can contact me securely through my [Keybase profile](https://keybase.io/nicolascarpi).
-
-If you don't get a reply in the next 48h, it means I'm probably dead.
+If you have found a security issue within this project, please contact me securely through my [Keybase profile](https://keybase.io/nicolascarpi).
 
 ## Steps taken in the development process
 
@@ -26,7 +18,7 @@ The code itself is checked by various static analyzers to try and detect bugs so
 
 If you scan the live demo for good practices and security headers, you'll find that eLabFTW scores very very high:
 
-[![observatory score a+](https://i.imgur.com/2qI796u.png)](https://observatory.mozilla.org/analyze/demo.elabftw.net)
+[![observatory score a+](https://i.imgur.com/mT9GH9I.png)](https://observatory.mozilla.org/analyze/demo.elabftw.net)
 
 ## Best practices
 
@@ -46,13 +38,17 @@ Here is a list of steps you should follow to increase the security of your insta
 
 **eLabFTW**'s container has been fine tuned for maximizing safety. For instance, the default PHP configuration has been modified to make the session identifier longer, in a specific folder with tight permissions, a lot of functions not used in elabftw are forbidden, the cookies have the httpOnly, SameSite and secure flags, and other details that might not be easily modifiable if installed outside Docker.
 
-Nginx also has a custom configuration with secure headers sent to the client.
+Nginx also has a custom configuration and binary compilation options with secure headers sent to the client.
 
 Running **eLabFTW** outside Docker is possible, of course, but discouraged.
 
-### But Docker is bad and GNU+Linux is bad
+### Using a BSD family OS
 
-Ok you're one of the BSD people, right? And you like to run things your way, in a jail. That's fine. Just make sure to check the [configuration examples](https://github.com/elabftw/elabdoc/tree/master/config_examples), as they contain the secure configuration lines you need to have.
+If your webserver is of the BSD family, Docker is not an option. Before installing eLabFTW on a BSD, consider the higher amount of maintenance that will be required on updates, as webserver configuration will change over time. It is recommended to use [nginx](https://nginx.org/) as a webserver so you can copy/paste the configuration from the official Docker image.
+
+It is recommended to use a jail and make sure to have an appropriate webserver configuration (especially the security headers).
+
+You will find configuration files for nginx in [this folder](https://github.com/elabftw/elabimg/tree/master/src/nginx).
 
 ### Stay updated
 
@@ -60,4 +56,4 @@ Subscribe to the [Newsletter](http://eepurl.com/bTjcMj) to receive a notificatio
 
 ### Have backups
 
-See https://doc.elabftw.net/backup.html. And secure your backups ;)
+See [Backup Documentation](https://doc.elabftw.net/backup.html). And secure your backups on a filesystem with immutable snapshots! ;)

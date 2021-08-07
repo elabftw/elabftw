@@ -738,12 +738,6 @@ ALTER TABLE `api_keys`
   ADD KEY `fk_api_keys_users_id` (`userid`);
 
 --
--- Indexes for table `authfail`
---
-ALTER TABLE `authfail`
-  ADD KEY `fk_authfail_userid` (`users_id`);
-
---
 -- Indexes for table `experiments`
 --
 ALTER TABLE `experiments`
@@ -835,12 +829,6 @@ ALTER TABLE `todolist`
 ALTER TABLE `api_keys`
   ADD CONSTRAINT `fk_api_keys_users_id` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_api_keys_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `authfail`
---
-ALTER TABLE `authfail`
-  ADD CONSTRAINT `fk_authfail_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `experiments`

@@ -31,7 +31,7 @@ $(document).ready(function(){
 
   const EntityC = new EntityClass(entityType);
 
-  // CREATE EXPERIMENT with shortcut
+  // CREATE EXPERIMENT or DATABASE item with shortcut
   key(document.getElementById('shortcuts').dataset.create, function() {
     if (about.type === 'experiments') {
       const el = document.querySelector('[data-action="create-entity"]') as HTMLButtonElement;

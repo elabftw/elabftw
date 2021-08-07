@@ -20,7 +20,7 @@ class AuthFail
 {
     protected Db $Db;
 
-    public function __construct(private int $loginTries, private int $userid, private ?string $deviceToken = null)
+    public function __construct(private int $loginTries = 0, private int $userid = 0, private ?string $deviceToken = null)
     {
         $this->Db = Db::getConnection();
     }
@@ -35,6 +35,14 @@ class AuthFail
             return $this->countAndLockUser();
         }
         return $this->countAndLockDevice();
+    }
+
+    public function getLockoutDevicesCount(): int
+    {
+        $sql = 'SELECT COUNT(id) FROM lockout_devices WHERE locked_at > (NOW() - INTERVAL 1 HOUR)';
+        $req = $this->Db->prepare($sql);
+        $req->execute();
+        return (int) $req->fetchColumn();
     }
 
     /**

@@ -292,6 +292,14 @@ class Users
         return $res;
     }
 
+    public function getLockedUsersCount(): int
+    {
+        $sql = 'SELECT COUNT(userid) FROM users WHERE allow_untrusted = 0';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
     /**
      * Update user from the editusers template
      *

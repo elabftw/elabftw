@@ -15,6 +15,7 @@ namespace Elabftw\Elabftw;
 use function count;
 use function dirname;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Models\AuthFail;
 use Elabftw\Models\BannedUsers;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
@@ -41,6 +42,7 @@ try {
     }
 
     $BannedUsers = new BannedUsers($App->Config);
+    $AuthFail = new AuthFail();
     $Idps = new Idps();
     $idpsArr = $Idps->readAll();
     $Teams = new Teams($App->Users);
@@ -77,6 +79,8 @@ try {
     $template = 'sysconfig.html';
     $renderArr = array(
         'bannedCount' => count($BannedUsers->readAll()),
+        'nologinUsersCount' => $App->Users->getLockedUsersCount(),
+        'lockoutDevicesCount' => $AuthFail->getLockoutDevicesCount(),
         'elabimgVersion' => $elabimgVersion,
         'fromSysconfig' => true,
         'idpsArr' => $idpsArr,

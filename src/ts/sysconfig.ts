@@ -163,10 +163,26 @@ $(document).ready(function() {
       const AjaxC = new Ajax('bannedusers', '0', 'app/controllers/SysconfigAjaxController.php');
       AjaxC.post('clear-banned').then(json => {
         if (json.res) {
-          document.getElementById('bannedUsersCount').innerText = '';
+          $('#bruteforceDiv').load('sysconfig.php #bruteforceDiv > *');
         }
         notif(json);
       });
+    }
+    // CLEAR-LOCKEDUSERS and CLEAR-LOCKOUTDEVICES
+    if (el.matches('[data-action="clear-nologinusers"]') || el.matches('[data-action="clear-lockoutdevices"]')) {
+      const formData  = new FormData();
+      formData.append(el.dataset.action, 'yep');
+      formData.append('csrf', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+      fetch('app/controllers/SysconfigAjaxController.php', {
+        method: 'POST',
+        body: formData,
+      }).then(response => response.json())
+        .then(json => {
+          if (json.res) {
+            $('#bruteforceDiv').load('sysconfig.php #bruteforceDiv > *');
+          }
+          notif(json);
+        });
     }
   });
 

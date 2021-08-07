@@ -25,17 +25,29 @@ $(document).ready(function(){
   }
 
   let entityType = EntityType.Experiment;
-  if ($('#type').data('type') === 'items') {
+  if (about.type === 'items') {
     entityType = EntityType.Item;
   }
 
   const EntityC = new EntityClass(entityType);
 
   // CREATE EXPERIMENT with shortcut
-  key($('#shortcuts').data('create'), function() {
-    EntityC.create('0').then(json => {
-      window.location.href = `experiments.php?mode=edit&id=${json.res}`;
-    });
+  key(document.getElementById('shortcuts').dataset.create, function() {
+    if (about.type === 'experiments') {
+      const el = document.querySelector('[data-action="create-entity"]') as HTMLButtonElement;
+      const tplid = el.dataset.tplid;
+      EntityC.create(tplid).then(json => {
+        if (json.res) {
+          window.location.replace(`?mode=edit&id=${json.value}`);
+        } else {
+          notif(json);
+        }
+      });
+    } else {
+      // for database items, show a selection modal
+      // modal plugin requires jquery
+      ($('#createModal') as any).modal('toggle');
+    }
   });
 
   // validate the form upon change. fix #451

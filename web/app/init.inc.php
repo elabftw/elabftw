@@ -8,17 +8,14 @@
 
 namespace Elabftw\Elabftw;
 
-use function basename;
 use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Users;
 use Elabftw\Services\LoginHelper;
 use Exception;
-use function in_array;
 use Monolog\Logger;
 use PDOException;
 use function setcookie;
@@ -100,54 +97,7 @@ try {
         }
     }
 
-    // load the Users with a userid if we are auth and not anon
-    if ($App->Session->has('is_auth') && $App->Session->get('userid') !== 0) {
-        $App->loadUser(new Users(
-            $App->Session->get('userid'),
-            $App->Session->get('team'),
-        ));
-    }
-
-    // ANONYMOUS
-    if ($App->Session->get('is_anon') === 1) {
-        // anon user only has access to a subset of pages
-        $allowedPages = array('index.php', 'experiments.php', 'database.php', 'search.php', 'make.php');
-        if (!in_array(basename($App->Request->getScriptName()), $allowedPages, true)) {
-            throw new ImproperActionException('Anonymous user cannot access this page');
-        }
-        $Users = new Users();
-        $Users->userData['team'] = $App->Session->get('team');
-        $App->loadUser($Users);
-        // create a fake Users object with default data for anon user
-        $App->Users->userData['team'] = $App->Session->get('team');
-        $App->Users->userData['limit_nb'] = 15;
-        $App->Users->userData['anon'] = true;
-        $App->Users->userData['fullname'] = 'Anon Ymous';
-        $App->Users->userData['is_admin'] = 0;
-        $App->Users->userData['is_sysadmin'] = 0;
-        $App->Users->userData['show_team'] = 1;
-        $App->Users->userData['show_team_templates'] = 0;
-        $App->Users->userData['show_public'] = 0;
-        $App->Users->userData['lang'] = $App->Config->configArr['lang'];
-        $App->Users->userData['use_isodate'] = '0';
-    }
-
-    // START i18n
-    // get the lang
-    if ($App->Session->has('is_auth') && $App->Session->get('userid') !== 0) {
-        // set lang based on user pref
-        $locale = $App->Users->userData['lang'] . '.utf8';
-    } else {
-        // load server configured lang if logged out
-        $locale = $App->Config->configArr['lang'] . '.utf8';
-    }
-    // configure gettext
-    $domain = 'messages';
-    putenv("LC_ALL=$locale");
-    setlocale(LC_ALL, $locale);
-    bindtextdomain($domain, dirname(__DIR__, 2) . '/src/langs');
-    textdomain($domain);
-    // END i18n
+    $App->boot();
 } catch (UnauthorizedException $e) {
     // do nothing here, controller will display the error
 } catch (ImproperActionException | InvalidSchemaException | Exception $e) {

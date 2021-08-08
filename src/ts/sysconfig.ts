@@ -8,7 +8,6 @@
 import { notif } from './misc';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
-import { Ajax } from './Ajax.class';
 import { getTinymceBaseConfig } from './tinymce';
 
 $(document).ready(function() {

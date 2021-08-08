@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -18,13 +19,12 @@ class AuthTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Auth = new Auth(Config::getConfig(), Request::createFromGlobals(), false);
+        $this->Auth = new Auth(Config::getConfig(), Request::createFromGlobals());
     }
 
-    public function testTryAuthWithSession(): void
+    public function testTryAuth(): void
     {
-        $Auth = new Auth(Config::getConfig(), Request::createFromGlobals(), true);
-        $res = $Auth->tryAuth();
-        $this->assertEquals($res->isAuthBy, 'session');
+        $this->expectException(UnauthorizedException::class);
+        $this->Auth->tryAuth();
     }
 }

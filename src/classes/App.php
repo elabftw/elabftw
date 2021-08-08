@@ -99,6 +99,14 @@ class App
         return Check::MIN_PASSWORD_LENGTH;
     }
 
+    //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//
+    //     _                 _      //
+    //    | |__   ___   ___ | |_    //
+    //    | '_ \ / _ \ / _ \| __|   //
+    //    | |_) | (_) | (_) | |_    //
+    //    |_.__/ \___/ \___/ \__|   //
+    //                              //
+    //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//
     public function boot(): void
     {
         // load the Users with a userid if we are auth and not anon
@@ -119,7 +127,7 @@ class App
 
             $this->loadUser(new AnonymousUser(
                 $this->Session->get('team'),
-                $this->Config->configArr['lang'],
+                $this->getLang(),
             ));
         }
 

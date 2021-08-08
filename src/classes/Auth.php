@@ -18,7 +18,6 @@ use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 use Elabftw\Services\AnonAuth;
 use Elabftw\Services\CookieAuth;
-use Elabftw\Services\SessionAuth;
 use function in_array;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -27,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Auth implements AuthInterface
 {
-    public function __construct(private Config $Config, private Request $Request, private bool $isAuthBySession)
+    public function __construct(private Config $Config, private Request $Request)
     {
     }
 
@@ -46,38 +45,8 @@ class Auth implements AuthInterface
         return $AuthService->tryAuth();
     }
 
-    /**
-     * Check if we need to bother with authentication of current user
-     *
-     * @return bool True if we are authentified (or if we don't need to be)
-     */
-    public function needAuth(): bool
-    {
-        // pages where you don't need to be logged in
-        // only the script name, not the path because we use basename() on it
-        $nologinArr = array(
-            'change-pass.php',
-            'index.php',
-            'login.php',
-            'LoginController.php',
-            'metadata.php',
-            'register.php',
-            'RegisterController.php',
-            'RequestHandler.php',
-            'ResetPasswordController.php',
-        );
-
-        return !in_array(basename($this->Request->getScriptName()), $nologinArr, true);
-    }
-
     private function getAuthType(): string
     {
-        // if we are already logged in with the session, skip everything
-        // same if we don't need to be authenticated
-        if ($this->isAuthBySession) {
-            return 'session';
-        }
-
         // try to login with the elabid for an entity in view mode
         $page = basename($this->Request->getScriptName());
         if ($this->Request->query->has('elabid')
@@ -104,8 +73,6 @@ class Auth implements AuthInterface
             // AUTH WITH COOKIE
             case 'cookie':
                 return new CookieAuth((string) $this->Request->cookies->get('token'), $this->Request->cookies->getDigits('token_team'));
-            case 'session':
-                return new SessionAuth();
             case 'elabid':
                 // now we need to know in which team we autologin the user
                 // use the page from the request to determine if it's from items or experiments

@@ -36,10 +36,6 @@ class LoginHelper
      */
     public function login(bool $setCookie): void
     {
-        // no need to login again if the session is valid
-        if ($this->AuthResponse->isAuthBy === 'session') {
-            return;
-        }
         $this->populateSession();
         if ($setCookie) {
             $this->setToken();

@@ -63,7 +63,7 @@ try {
     //    \____\___|_|  |_.__/ \___|_|   \__,_|___/   //
     //                                                //
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
-    $Auth = new Auth($App);
+    $Auth = new Auth($App->Config, $App->Request, $App->Session->has('is_auth'));
     if ($Auth->needAuth()) {
         try {
             // this will throw an UnauthorizedException if we don't have a valid auth

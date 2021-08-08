@@ -61,23 +61,6 @@ CREATE TABLE `authfail` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `banned_users`
---
-
-CREATE TABLE `banned_users` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `fingerprint` char(32) NOT NULL,
-  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- RELATIONSHIPS FOR TABLE `banned_users`:
---
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `config`
 --
 

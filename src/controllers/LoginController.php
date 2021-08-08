@@ -145,7 +145,6 @@ class LoginController implements ControllerInterface
         $LoginHelper->login((bool) $icanhazcookies);
 
         // cleanup
-        $this->App->Session->remove('failed_attempt');
         $this->App->Session->remove('rememberme');
         $this->App->Session->remove('auth_userid');
 

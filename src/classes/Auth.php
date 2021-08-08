@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -6,7 +6,6 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -22,24 +21,14 @@ use Elabftw\Services\CookieAuth;
 use Elabftw\Services\SessionAuth;
 use function in_array;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
- * Provide methods to login a user
+ * Provide methods to authenticate a user
  */
 class Auth implements AuthInterface
 {
-    private Config $Config;
-
-    private SessionInterface $Session;
-
-    private Request $Request;
-
-    public function __construct(App $app)
+    public function __construct(private Config $Config, private Request $Request, private bool $isAuthBySession)
     {
-        $this->Config = $app->Config;
-        $this->Request = $app->Request;
-        $this->Session = $app->Session;
     }
 
     /**
@@ -55,20 +44,6 @@ class Auth implements AuthInterface
     {
         $AuthService = $this->getAuthService($this->getAuthType());
         return $AuthService->tryAuth();
-    }
-
-    /**
-     * Increase the failed attempts counter
-     */
-    public function increaseFailedAttempt(): void
-    {
-        if (!$this->Session->has('failed_attempt')) {
-            $this->Session->set('failed_attempt', 1);
-        } else {
-            $n = $this->Session->get('failed_attempt');
-            $n++;
-            $this->Session->set('failed_attempt', $n);
-        }
     }
 
     /**
@@ -99,7 +74,7 @@ class Auth implements AuthInterface
     {
         // if we are already logged in with the session, skip everything
         // same if we don't need to be authenticated
-        if ($this->Session->has('is_auth')) {
+        if ($this->isAuthBySession) {
             return 'session';
         }
 

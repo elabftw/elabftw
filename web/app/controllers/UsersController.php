@@ -14,7 +14,6 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Models\Users;
 use Elabftw\Services\UsersHelper;
 use Exception;
@@ -65,7 +64,7 @@ try {
     }
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));
-} catch (ImproperActionException | InvalidCsrfTokenException $e) {
+} catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {

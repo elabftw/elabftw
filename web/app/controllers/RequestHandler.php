@@ -15,7 +15,6 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AbstractEntity;
@@ -122,7 +121,7 @@ try {
         'res' => false,
         'msg' => _('Error sending email'),
     ));
-} catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException | ResourceNotFoundException | PDOException $e) {
+} catch (ImproperActionException | UnauthorizedException | ResourceNotFoundException | PDOException $e) {
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),

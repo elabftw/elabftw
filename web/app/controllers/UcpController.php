@@ -15,7 +15,6 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Maps\UserPreferences;
 use Elabftw\Services\Filter;
 use Elabftw\Services\LocalAuth;
@@ -106,7 +105,7 @@ try {
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));
     $Response = new RedirectResponse('../../ucp.php?tab=' . $tab . $templateId);
-} catch (ImproperActionException | InvalidCsrfTokenException $e) {
+} catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {

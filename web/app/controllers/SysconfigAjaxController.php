@@ -14,7 +14,6 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Maps\Team;
 use Elabftw\Models\Idps;
@@ -90,7 +89,7 @@ try {
         $Db = Db::getConnection();
         $Db->q('DELETE FROM lockout_devices');
     }
-} catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
+} catch (ImproperActionException | UnauthorizedException $e) {
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),

@@ -180,7 +180,6 @@ class LoginController implements ControllerInterface
                 throw new InvalidCredentialsException((int) $Users->userData['userid']);
             }
             // here the devicetoken is invalid but we allow to continue auth because account is not locked for untrusted devices
-            // TODO remove invalid token?
         }
     }
 

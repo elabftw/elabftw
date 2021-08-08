@@ -112,10 +112,10 @@ final class Db
         try {
             $res = $req->execute($arr);
         } catch (PDOException $e) {
-            throw new DatabaseErrorException('Error with SQL query', 515, $e);
+            throw new DatabaseErrorException($e);
         }
         if (!$res) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
+            throw new DatabaseErrorException();
         }
         return $res;
     }
@@ -129,7 +129,7 @@ final class Db
     {
         $res = $this->connection->query($sql);
         if ($res === false) {
-            throw new DatabaseErrorException('Error executing query!');
+            throw new DatabaseErrorException();
         }
 
         return $res;

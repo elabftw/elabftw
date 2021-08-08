@@ -76,7 +76,7 @@ class Tags implements CrudInterface
         $insertReq2->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
 
         if ($insertReq2->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
+            throw new DatabaseErrorException();
         }
 
         return $tagId;

@@ -89,7 +89,7 @@ final class Config
         $this->Db->execute($req);
         $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
         if ($config === false) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
+            throw new DatabaseErrorException();
         }
         return array_map(function ($v) {
             return $v[0];

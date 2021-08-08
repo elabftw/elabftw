@@ -45,13 +45,15 @@ class App
 
     public string $pageTitle = 'Lab manager';
 
+    public string $linkName = 'Documentation';
+
+    public string $linkHref = 'https://doc.elabftw.net';
+
     public array $ok = array();
 
     public array $ko = array();
 
     public array $warning = array();
-
-    public array $teamConfigArr = array();
 
     protected Db $Db;
 
@@ -165,10 +167,11 @@ class App
     private function loadUser(AuthenticatedUser | AnonymousUser $users): void
     {
         $this->Users = $users;
-
-        // team config
+        // we have an user in a team, load the top menu link
         $Teams = new Teams($this->Users);
-        $this->teamConfigArr = $Teams->read(new ContentParams());
+        $teamConfigArr = $Teams->read(new ContentParams());
+        $this->linkName = $teamConfigArr['link_name'];
+        $this->linkHref = $teamConfigArr['link_href'];
     }
 
     /**

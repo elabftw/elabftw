@@ -49,6 +49,7 @@ try {
 
     $itemsTypesArr = $ItemsTypes->readAll();
     $statusArr = $Status->read(new ContentParams());
+    $teamConfigArr = $Teams->read(new ContentParams());
     $teamGroupsArr = $TeamGroups->read(new ContentParams());
     $teamsArr = $Teams->readAll();
     $allTeamUsersArr = $App->Users->readAllFromTeam();
@@ -80,6 +81,7 @@ try {
         'isSearching' => $isSearching,
         'itemsTypesArr' => $itemsTypesArr,
         'statusArr' => $statusArr,
+        'teamConfigArr' => $teamConfigArr,
         'teamGroupsArr' => $teamGroupsArr,
         'visibilityArr' => $TeamGroups->getVisibilityList(),
         'teamsArr' => $teamsArr,

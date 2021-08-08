@@ -23,6 +23,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Exception;
 use PDOException;
@@ -88,7 +89,9 @@ try {
         }
     } elseif ($action === 'destroy') {
         if ($Model instanceof Experiments) {
-            if ((!$App->teamConfigArr['deletable_xp'] && !$App->Session->get('is_admin'))
+            $Teams = new Teams($App->Users);
+            $teamConfigArr = $Teams->read(new ContentParams());
+            if ((!$teamConfigArr['deletable_xp'] && !$App->Session->get('is_admin'))
                 || $App->Config->configArr['deletable_xp'] === '0') {
                 throw new ImproperActionException('You cannot delete experiments!');
             }

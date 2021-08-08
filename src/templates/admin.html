@@ -36,91 +36,91 @@
       {{ App.Csrf.getHiddenInput|raw }}
       <label for='deletable_xp'>{{ 'Users can delete experiments:'|trans }}</label>
       <select class='form-control col-md-4' name='deletable_xp' id='deletable_xp'>
-        <option value='1'{{ App.teamConfigArr.deletable_xp ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-        <option value='0'{{ not App.teamConfigArr.deletable_xp ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+        <option value='1'{{ teamConfigArr.deletable_xp ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+        <option value='0'{{ not teamConfigArr.deletable_xp ? " selected='selected'" }}>{{ 'No'|trans }}</option>
       </select>
       <span class='smallgray'>{{ 'An admin account will always be able to delete experiments.'|trans }}</span>
 
       <label for='deletable_item'>{{ 'Users can delete items:'|trans }}</label>
       <select class='form-control col-md-4' name='deletable_item' id='deletable_item'>
-        <option value='1'{{ App.teamConfigArr.deletable_item ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-        <option value='0'{{ not App.teamConfigArr.deletable_item ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+        <option value='1'{{ teamConfigArr.deletable_item ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+        <option value='0'{{ not teamConfigArr.deletable_item ? " selected='selected'" }}>{{ 'No'|trans }}</option>
       </select>
       <span class='smallgray'>{{ 'An admin account will always be able to delete items.'|trans }}</span>
 
       <label for='user_create_tag'>{{ 'Users can create tags:'|trans }}</label>
       <select class='form-control col-md-4' name='user_create_tag' id='user_create_tag'>
-        <option value='1'{{ App.teamConfigArr.user_create_tag ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-        <option value='0'{{ not App.teamConfigArr.user_create_tag ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+        <option value='1'{{ teamConfigArr.user_create_tag ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+        <option value='0'{{ not teamConfigArr.user_create_tag ? " selected='selected'" }}>{{ 'No'|trans }}</option>
       </select>
       <span class='smallgray'>{{ 'An admin account will always be able to create tags.'|trans }}</span>
 
       <label for='force_exp_tpl'>{{ 'Force experiment template use:'|trans }}</label>
       <select class='form-control col-md-4' name='force_exp_tpl' id='force_exp_tpl'>
-        <option value='1'{{ App.teamConfigArr.force_exp_tpl ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-        <option value='0'{{ not App.teamConfigArr.force_exp_tpl ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+        <option value='1'{{ teamConfigArr.force_exp_tpl ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+        <option value='0'{{ not teamConfigArr.force_exp_tpl ? " selected='selected'" }}>{{ 'No'|trans }}</option>
       </select>
 
       <label for='public_db'>{{ 'Anonymous visitors can see database items:'|trans }}</label>
       <select class='form-control col-md-4' name='public_db' id='public_db'>
-        <option value='1'{{ App.teamConfigArr.public_db ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-        <option value='0'{{ not App.teamConfigArr.public_db ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+        <option value='1'{{ teamConfigArr.public_db ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+        <option value='0'{{ not teamConfigArr.public_db ? " selected='selected'" }}>{{ 'No'|trans }}</option>
       </select>
 
       <label for='link_name'>{{ 'Name of the link in the top menu:'|trans }}</label>
-      <input class='form-control col-md-4' type='text' value='{{ App.teamConfigArr.link_name }}' name='link_name' id='link_name' />
+      <input class='form-control col-md-4' type='text' value='{{ teamConfigArr.link_name }}' name='link_name' id='link_name' />
 
       <label for='link_href'>{{ 'Address where this link should point:'|trans }}</label>
-      <input class='mb-4 form-control col-md-4' type='text' value='{{ App.teamConfigArr.link_href }}' name='link_href' id='link_href' />
+      <input class='mb-4 form-control col-md-4' type='text' value='{{ teamConfigArr.link_href }}' name='link_href' id='link_href' />
 
       <label for='do_force_canread'>{{ 'Enforce read permissions?'|trans }}</label>
       <select class='form-control col-md-4' name='do_force_canread' id='do_force_canread'>
-        <option value='1'{{ App.teamConfigArr.do_force_canread ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-        <option value='0'{{ not App.teamConfigArr.do_force_canread ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+        <option value='1'{{ teamConfigArr.do_force_canread ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+        <option value='0'{{ not teamConfigArr.do_force_canread ? " selected='selected'" }}>{{ 'No'|trans }}</option>
       </select>
       <span class='smallgray'>{{ 'Select if you want to enforce read permissions on experiments'|trans }}</span>
 
       <label for='force_canread'>{{ 'Enforced read permissions on experiments'|trans }}</label>
       <select class='form-control col-md-4' name='force_canread' id='force_canread'>
-        <option value='public'{{ App.teamConfigArr.force_canread == 'public' ? " selected='selected'" }}>{{ 'Public'|trans }}</option>
-        <option value='organization'{{ App.teamConfigArr.force_canread == 'organization' ? " selected='selected'" }}>{{ 'Organization'|trans }}</option>
-        <option value='team'{{ App.teamConfigArr.force_canread == 'team' ? " selected='selected'" }}>{{ 'Team'|trans }}</option>
-        <option value='user'{{ App.teamConfigArr.force_canread == 'user' ? " selected='selected'" }}>{{ 'User'|trans }}</option>
+        <option value='public'{{ teamConfigArr.force_canread == 'public' ? " selected='selected'" }}>{{ 'Public'|trans }}</option>
+        <option value='organization'{{ teamConfigArr.force_canread == 'organization' ? " selected='selected'" }}>{{ 'Organization'|trans }}</option>
+        <option value='team'{{ teamConfigArr.force_canread == 'team' ? " selected='selected'" }}>{{ 'Team'|trans }}</option>
+        <option value='user'{{ teamConfigArr.force_canread == 'user' ? " selected='selected'" }}>{{ 'User'|trans }}</option>
       </select>
       <span class='smallgray'>{{ 'Enforce the read permission for all experiments of users in this team.'|trans }}</span>
 
       <label for='do_force_canwrite'>{{ 'Enforce write permissions?'|trans }}</label>
       <select class='form-control col-md-4' name='do_force_canwrite' id='do_force_canwrite'>
-        <option value='1'{{ App.teamConfigArr.do_force_canwrite ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-        <option value='0'{{ not App.teamConfigArr.do_force_canwrite ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+        <option value='1'{{ teamConfigArr.do_force_canwrite ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+        <option value='0'{{ not teamConfigArr.do_force_canwrite ? " selected='selected'" }}>{{ 'No'|trans }}</option>
       </select>
       <span class='smallgray'>{{ 'Select if you want to enforce write permissions on experiments'|trans }}</span>
 
       <label for='force_canwrite'>{{ 'Enforced write permissions on experiments'|trans }}</label>
       <select class='form-control col-md-4' name='force_canwrite' id='force_canwrite'>
-        <option value='public'{{ App.teamConfigArr.force_canwrite == 'public' ? " selected='selected'" }}>{{ 'Public'|trans }}</option>
-        <option value='organization'{{ App.teamConfigArr.force_canwrite == 'organization' ? " selected='selected'" }}>{{ 'Organization'|trans }}</option>
-        <option value='team'{{ App.teamConfigArr.force_canwrite == 'team' ? " selected='selected'" }}>{{ 'Team'|trans }}</option>
-        <option value='user'{{ App.teamConfigArr.force_canwrite == 'user' ? " selected='selected'" }}>{{ 'User'|trans }}</option>
+        <option value='public'{{ teamConfigArr.force_canwrite == 'public' ? " selected='selected'" }}>{{ 'Public'|trans }}</option>
+        <option value='organization'{{ teamConfigArr.force_canwrite == 'organization' ? " selected='selected'" }}>{{ 'Organization'|trans }}</option>
+        <option value='team'{{ teamConfigArr.force_canwrite == 'team' ? " selected='selected'" }}>{{ 'Team'|trans }}</option>
+        <option value='user'{{ teamConfigArr.force_canwrite == 'user' ? " selected='selected'" }}>{{ 'User'|trans }}</option>
       </select>
       <span class='smallgray'>{{ 'Enforce the write permission for all experiments of users in this team.'|trans }}</span>
 
       <span data-action='toggle-next' class='m-0 button btn btn-neutral'>{{ 'Override general timestamping config'|trans }}</span>
       <div hidden class='mt-2'>
         <label for='stampprovider'>{{ 'URL for external timestamping service:'|trans }}</label>
-        <input class='form-control col-md-4' type='url' placeholder='http://zeitstempel.dfn.de/' value='{{ App.teamConfigArr.stampprovider }}' name='stampprovider' id='stampprovider' />
+        <input class='form-control col-md-4' type='url' placeholder='http://zeitstempel.dfn.de/' value='{{ teamConfigArr.stampprovider }}' name='stampprovider' id='stampprovider' />
         <span class='smallgray'>{{ 'This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'|trans|format("<a href='https://tools.ietf.org/html/rfc3161'>", "</a>")|raw }}</span>
 
         <!-- TODO provide an upload button -->
         <label for='stampcert'>{{ 'Chain of certificates of the external timestamping service:'|trans }}</label>
-        <input class='form-control col-md-4' type='text' placeholder='app/dfn-cert/pki.dfn.pem' value='{{ App.teamConfigArr.stampcert }}' name='stampcert' id='stampcert' />
+        <input class='form-control col-md-4' type='text' placeholder='app/dfn-cert/pki.dfn.pem' value='{{ teamConfigArr.stampcert }}' name='stampcert' id='stampcert' />
         <span class='smallgray'>{{ "This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. You should add it in the 'uploads' folder. The file needs to be in %sPEM-encoded (ASCII)%s format!"|trans|format("<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>")|raw }}</span>
         <label for='stamplogin'>{{ 'Login for external timestamping service:'|trans }}</label>
-        <input class='form-control col-md-4' autocomplete='off' type='text' value='{{ App.teamConfigArr.stamplogin }}' name='stamplogin' id='stamplogin' />
+        <input class='form-control col-md-4' autocomplete='off' type='text' value='{{ teamConfigArr.stamplogin }}' name='stamplogin' id='stamplogin' />
         <span class='smallgray'>{{ 'This should be the login associated with your timestamping service provider'|trans }}</span>
 
         <label for='stamppass'>{{ 'Password for external timestamping service:'|trans }}</label>
-        {% if App.teamConfigArr.stamppass|length > 1 %}
+        {% if teamConfigArr.stamppass|length > 1 %}
         <p>{{ 'A password is already set.'|trans }}
         {{ '%sClear it%s or change it below:'|trans|format("
         <a href='app/controllers/AdminController.php?clearStamppass=1'>",
@@ -135,7 +135,7 @@
       <br>
       <label for="common_template">{{ 'Common Experiment Template'|trans }}</label>
       <textarea style='height:400px' class='mceditable' name="common_template" id='common_template'>
-          {{ App.teamConfigArr.common_template|raw }}
+          {{ teamConfigArr.common_template|raw }}
       </textarea>
       <span class='smallgray'>{{ 'This is the default text when someone creates an experiment.'|trans }}</span>
 

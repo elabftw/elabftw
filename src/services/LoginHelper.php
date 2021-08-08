@@ -36,15 +36,12 @@ class LoginHelper
      */
     public function login(bool $setCookie): void
     {
-        // no need to login again if the session is valid
-        if ($this->AuthResponse->isAuthBy === 'session') {
-            return;
-        }
         $this->populateSession();
         if ($setCookie) {
             $this->setToken();
         }
         $this->updateLastLogin();
+        $this->setDeviceToken();
     }
 
     /**
@@ -56,6 +53,21 @@ class LoginHelper
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->AuthResponse->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
+    }
+
+    private function setDeviceToken(): void
+    {
+        // set device token as a cookie
+        $cookieOptions = array(
+            'expires' => time() + 2592000,
+            'path' => '/',
+            'domain' => '',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Strict',
+        );
+
+        setcookie('devicetoken', DeviceToken::getToken($this->AuthResponse->userid), $cookieOptions);
     }
 
     /**

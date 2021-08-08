@@ -13,7 +13,6 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
@@ -64,18 +63,24 @@ class Users
     }
 
     /**
-     * Create a new user. If no password is provided, it's because we create it from SAML.
+     * Create a new user
      */
-    public function create(string $email, array $teams, string $firstname = '', string $lastname = '', string $password = '', ?int $group = null, bool $forceValidation = false, bool $normalizeTeams = true, bool $alertAdmin = true): int
-    {
+    public function create(
+        string $email,
+        array $teams,
+        string $firstname = '',
+        string $lastname = '',
+        string $password = '',
+        ?int $group = null,
+        bool $forceValidation = false,
+        bool $alertAdmin = true,
+    ): int {
         $Config = Config::getConfig();
         $Teams = new Teams($this);
 
         // make sure that all the teams in which the user will be are created/exist
         // this might throw an exception if the team doesn't exist and we can't create it on the fly
-        if ($normalizeTeams) {
-            $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
-        }
+        $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
 
         $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);
         $EmailValidator->validate();
@@ -188,24 +193,6 @@ class Users
     }
 
     /**
-     * Select by email
-     */
-    public function populateFromEmail(string $email): void
-    {
-        $sql = 'SELECT userid
-            FROM users
-            WHERE email = :email AND archived = 0 AND validated = 1 LIMIT 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $email);
-        $this->Db->execute($req);
-        $res = $req->fetchColumn();
-        if ($res === false) {
-            throw new ResourceNotFoundException(_('Email not found in database!'));
-        }
-        $this->populate((int) $res);
-    }
-
-    /**
      * Search users based on query. It searches in email, firstname, lastname or team name
      *
      * @param string $query the searched term
@@ -290,6 +277,14 @@ class Users
             return array();
         }
         return $res;
+    }
+
+    public function getLockedUsersCount(): int
+    {
+        $sql = 'SELECT COUNT(userid) FROM users WHERE allow_untrusted = 0';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
     }
 
     /**

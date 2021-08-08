@@ -84,7 +84,7 @@ class ImportCsv extends AbstractImport
             $req->bindParam(':canread', $this->canread);
             $req->bindParam(':elabid', $elabid);
             if ($req->execute() === false) {
-                throw new DatabaseErrorException('Error inserting data in database!');
+                throw new DatabaseErrorException();
             }
             $this->inserted++;
         }

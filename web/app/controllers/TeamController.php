@@ -15,7 +15,6 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Services\Email;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -41,7 +40,7 @@ try {
         $sent = $Email->massEmail($Request->request->get('subject'), $Request->request->get('body'), true);
         $App->Session->getFlashBag()->add('ok', sprintf(_('Email sent to %d users'), $sent));
     }
-} catch (ImproperActionException | InvalidCsrfTokenException $e) {
+} catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {

@@ -10,9 +10,6 @@ parameters:
     -
       message: '#Variable \$Request might not be defined.*#'
       path: %currentWorkingDirectory%/web
-    -
-      message: '#Variable \$Auth might not be defined.*#'
-      path: %currentWorkingDirectory%/web
   excludePaths:
     - %currentWorkingDirectory%/src/langs/js-strings.php
     - %currentWorkingDirectory%/src/tools/rector.php

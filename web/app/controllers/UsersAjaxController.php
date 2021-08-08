@@ -15,7 +15,6 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users;
 use Elabftw\Services\UsersHelper;
@@ -77,7 +76,7 @@ try {
 
         $targetUser->destroy();
     }
-} catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
+} catch (ImproperActionException | UnauthorizedException $e) {
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),

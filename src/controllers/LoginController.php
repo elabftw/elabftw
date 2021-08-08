@@ -15,10 +15,15 @@ use Defuse\Crypto\Key;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Saml;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidCredentialsException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Interfaces\ControllerInterface;
+use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Idps;
 use Elabftw\Services\AnonAuth;
+use Elabftw\Services\DeviceToken;
+use Elabftw\Services\DeviceTokenValidator;
 use Elabftw\Services\ExternalAuth;
 use Elabftw\Services\LdapAuth;
 use Elabftw\Services\LocalAuth;
@@ -27,6 +32,7 @@ use Elabftw\Services\MfaAuth;
 use Elabftw\Services\MfaHelper;
 use Elabftw\Services\SamlAuth;
 use Elabftw\Services\TeamAuth;
+use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use LdapRecord\Connection;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 use function setcookie;
@@ -41,6 +47,8 @@ class LoginController implements ControllerInterface
 {
     public function __construct(private App $App)
     {
+        $App->Csrf->validate();
+        $this->validateDeviceToken();
     }
 
     public function getResponse(): Response
@@ -137,13 +145,41 @@ class LoginController implements ControllerInterface
         $LoginHelper->login((bool) $icanhazcookies);
 
         // cleanup
-        $this->App->Session->remove('failed_attempt');
         $this->App->Session->remove('rememberme');
         $this->App->Session->remove('auth_userid');
 
         return new RedirectResponse(
             (string) ($this->App->Request->cookies->get('redirect') ?? '../../experiments.php')
         );
+    }
+
+    /**
+     * See https://owasp.org/www-community/Slow_Down_Online_Guessing_Attacks_with_Device_Cookies
+     */
+    private function validateDeviceToken(): void
+    {
+        // a devicetoken cookie might or might not exist, so this can be null
+        $token = $this->App->Request->cookies->get('devicetoken');
+        // nothing to do if no device token is sent along
+        if (!is_string($token)) {
+            return;
+        }
+        $DeviceTokenValidator = new DeviceTokenValidator(DeviceToken::getConfig(), $token);
+        try {
+            $DeviceTokenValidator->validate();
+        } catch (RequiredConstraintsViolated $e) {
+            // our device token is not valid
+            // we need to check if we can allow untrusted devices to login for that user
+            // figure out what is the userid from the email sent with the request
+            // might throw ResourceNotFoundException if the user doesn't exist
+            $Users = ExistingUser::fromEmail((string) $this->App->Request->request->get('email'));
+            // check if authentication is locked for untrusted clients for that user
+            if ($Users->userData['allow_untrusted'] === '0') {
+                // reject any attempt whatsoever if this account is locked for untrusted devices
+                throw new InvalidCredentialsException((int) $Users->userData['userid']);
+            }
+            // here the devicetoken is invalid but we allow to continue auth because account is not locked for untrusted devices
+        }
     }
 
     private function getAuthService(string $authType): AuthInterface

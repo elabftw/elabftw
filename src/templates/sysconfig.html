@@ -329,9 +329,19 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
   </form>
 
   <hr>
-  <h3>{{ 'Bruteforce login protection' }}</h3>
-  <p id='bannedUsersCount'>{{ '%d users are currently prevented from logging on after too many failed tries.'|trans|format(bannedCount) }}</p>
-  <button type='submit' data-action='clear-banned' class='button btn btn-primary'>{{ 'Clear'|trans }}</button>
+  <div id='bruteforceDiv'>
+    <h3>{{ 'Bruteforce login protection' }}</h3>
+    <div class='mb-1'>
+      <span>{{ '%d users are currently prevented from logging in from unknown devices.'|trans|format(nologinUsersCount) }}</span>
+      <button type='submit' data-action='clear-nologinusers' {{ nologinUsersCount == 0 ? 'disabled' }} class='button btn btn-primary'>{{ 'Clear'|trans }}</button>
+
+    </div>
+
+    <div>
+      <span>{{ '%d devices are currently denied authentication.'|trans|format(lockoutDevicesCount) }}</span>
+      <button type='submit' data-action='clear-lockoutdevices' {{ lockoutDevicesCount == 0 ? 'disabled' }} class='button btn btn-primary'>{{ 'Clear'|trans }}</button>
+    </div>
+  </div>
 </div>
 
 

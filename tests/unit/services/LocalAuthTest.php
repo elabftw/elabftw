@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Exceptions\InvalidCredentialsException;
+use Elabftw\Exceptions\QuantumException;
 
 class LocalAuthTest extends \PHPUnit\Framework\TestCase
 {
@@ -31,7 +32,7 @@ class LocalAuthTest extends \PHPUnit\Framework\TestCase
 
     public function testTryAuthWithInvalidEmail(): void
     {
-        $this->expectException(InvalidCredentialsException::class);
+        $this->expectException(QuantumException::class);
         $AuthService = new LocalAuth('invalid@example.com', 'nopenope');
     }
 

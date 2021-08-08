@@ -6,7 +6,7 @@ version: '3'
 services:
 # our first container is nginx + php-fpm + elabftw
     web:
-        image: elabftw/elabimg:dev
+        image: elabftw/elabimg:hypernext
         container_name: elabtmp
         # drop some capabilities
         cap_drop:
@@ -39,6 +39,7 @@ services:
             - TZ=Europe/Paris
             - USE_REDIS=false
             - ENABLE_IPV6=true
+            - DEV_MODE=true
         volumes:
             - ..:/elabftw
             - ../_coverage:/elabftw/tests/_output/coverage

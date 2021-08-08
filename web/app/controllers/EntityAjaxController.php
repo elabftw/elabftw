@@ -13,7 +13,6 @@ namespace Elabftw\Elabftw;
 use function dirname;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -199,7 +198,7 @@ try {
             'color' => $Category->readColor((int) $Request->request->get('categoryId')),
         ));
     }
-} catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException | PDOException $e) {
+} catch (ImproperActionException | UnauthorizedException | PDOException $e) {
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),

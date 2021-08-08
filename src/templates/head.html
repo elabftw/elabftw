@@ -6,7 +6,7 @@
  * @license AGPL-3.0
  * @package elabftw
 -->
-<html lang='{{ App.getLangForHtmlAttribute }}'>
+<html lang='{{ App.getLang() | slice(0, 2) }}'>
 
 <head>
   <meta http-equiv='Content-type' content='text/html;charset=UTF-8' />
@@ -75,7 +75,7 @@
 
             <a class='nav-item nav-link {{ App.Request.getScriptName|split('/')|last == 'search.php' ? 'active' }}'
                 href='search.php'>{{ 'Search'|trans }}</a>
-            <a class='nav-item nav-link' href='{{ App.teamConfigArr.link_href }}' target='_blank' rel='noopener'>{{ App.teamConfigArr.link_name }}</a>
+            <a class='nav-item nav-link' href='{{ App.linkHref }}' target='_blank' rel='noopener'>{{ App.linkName }}</a>
 
         </div>
 

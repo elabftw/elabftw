@@ -15,7 +15,6 @@ use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -403,18 +402,10 @@ class Uploads implements CrudInterface
 
     /**
      * Make the final SQL request to store the file
-     *
-     * @param string $realName The clean name of the file
-     * @param string $longName The sha512 name
-     * @param string $hash The hash string of our file
-     * @param string|null $comment The file comment
-     * @throws DatabaseErrorException
      */
     private function dbInsert(string $realName, string $longName, string $hash, ?string $comment = null): int
     {
-        if ($comment === null) {
-            $comment = 'Click to add a comment';
-        }
+        $comment ??= 'Click to add a comment';
 
         $sql = 'INSERT INTO uploads(
             real_name,

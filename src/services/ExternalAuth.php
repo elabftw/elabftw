@@ -14,7 +14,8 @@ use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Models\Users;
+use Elabftw\Models\ExistingUser;
+use Elabftw\Models\ValidatedUser;
 use Monolog\Logger;
 
 /**
@@ -48,9 +49,8 @@ class ExternalAuth implements AuthInterface
         }
 
         // get userid
-        $Users = new Users();
         try {
-            $Users->populateFromEmail($email);
+            $Users = ExistingUser::fromEmail($email);
         } catch (ResourceNotFoundException) {
             // the user doesn't exist yet in the db
             // what do we do? Lookup the config setting for that case
@@ -58,8 +58,7 @@ class ExternalAuth implements AuthInterface
                 throw new ImproperActionException('Could not find an existing user. Ask a Sysadmin to create your account.');
             }
             // CREATE USER (and force validation of user)
-            $Users->create($email, $teams, $firstname, $lastname, '', null, true);
-            $Users->populateFromEmail($email);
+            $Users = ValidatedUser::fromExternal($email, $teams, $firstname, $lastname);
             $this->log->info('New user (' . $email . ') autocreated from external auth');
         }
         $this->AuthResponse->userid = (int) $Users->userData['userid'];

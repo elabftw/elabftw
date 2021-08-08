@@ -9,9 +9,15 @@
 
 namespace Elabftw\Exceptions;
 
+use Exception;
+
 /**
- * For errors that make the execution halt but can happen and are not malicious
+ * Throw this if the device token is not valid
  */
-final class ImproperActionException extends WithMessageException
+class InvalidDeviceTokenException extends Exception
 {
+    public function __construct()
+    {
+        parent::__construct(_('This browser cannot login anymore because of too many failed attempts.'));
+    }
 }

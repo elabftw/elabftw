@@ -12,7 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
+use Elabftw\Models\ValidatedUser;
 use Elabftw\Services\Check;
 use Exception;
 use Swift_TransportException;
@@ -47,12 +47,11 @@ try {
     }
 
     // Create user
-    $userid = $App->Users->create(
+    $Users = ValidatedUser::fromAdmin(
         $Request->request->get('email'),
         array($Request->request->get('team')),
         $Request->request->get('firstname'),
         $Request->request->get('lastname'),
-        '',
         (int) $Request->request->get('usergroup'),
     );
 
@@ -65,7 +64,7 @@ try {
     // but log it and display general error. See #841
     $App->Log->error('', array('exception' => $e));
     $App->Session->getFlashBag()->add('ko', Tools::error());
-} catch (ImproperActionException | InvalidCsrfTokenException $e) {
+} catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {

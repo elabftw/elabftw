@@ -14,7 +14,6 @@ use function array_map;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Update;
 use Elabftw\Exceptions\DatabaseErrorException;
 use PDO;
@@ -89,7 +88,7 @@ final class Config
         $this->Db->execute($req);
         $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
         if ($config === false) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
+            throw new DatabaseErrorException();
         }
         return array_map(function ($v) {
             return $v[0];
@@ -155,8 +154,7 @@ final class Config
      */
     private function populate(): bool
     {
-        $Update = new Update($this, new Sql());
-        $schema = $Update->getRequiredSchema();
+        $schema = Update::getRequiredSchema();
 
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
             ('admin_validate', '1'),

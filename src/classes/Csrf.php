@@ -1,19 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * \Elabftw\Elabftw\Csrf.php
- *
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
 use Defuse\Crypto\Key;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
+use Elabftw\Exceptions\ImproperActionException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -61,7 +58,8 @@ class Csrf
             $res = $this->validateForm();
         }
         if (!$res) {
-            throw new InvalidCsrfTokenException();
+            // an invalid csrf token is most likely the result of an expired session
+            throw new ImproperActionException(_('Your session expired.'));
         }
     }
 

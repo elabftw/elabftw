@@ -19,6 +19,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Users;
 use Elabftw\Services\Email;
 use Exception;
@@ -44,7 +45,7 @@ try {
 
         // Get data from user
         try {
-            $App->Users->populateFromEmail($email);
+            $App->Users = ExistingUser::fromEmail($email);
             // don't disclose if the email exists in the db or not
         } catch (ResourceNotFoundException $e) {
             // make the response slow to emulate an email being sent if there was an account associated

@@ -39,28 +39,23 @@ CREATE TABLE `api_keys` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
+-- Table structure for table `authfail`
+--
+
+CREATE TABLE `authfail` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `users_id` int(10) UNSIGNED NOT NULL,
+  `attempt_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `device_token` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
 -- RELATIONSHIPS FOR TABLE `api_keys`:
 --   `userid`
 --       `users` -> `userid`
 --   `team`
 --       `teams` -> `id`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `banned_users`
---
-
-CREATE TABLE `banned_users` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `fingerprint` char(32) NOT NULL,
-  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- RELATIONSHIPS FOR TABLE `banned_users`:
 --
 
 -- --------------------------------------------------------
@@ -413,6 +408,17 @@ CREATE TABLE `items_types` (
 --
 
 -- --------------------------------------------------------
+--
+-- Table structure for table `lockout_devices`
+--
+
+CREATE TABLE `lockout_devices` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `locked_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `device_token` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 --
 -- Table structure for table `pin2users`
@@ -666,6 +672,8 @@ CREATE TABLE `users` (
   `display_size` varchar(2) NOT NULL DEFAULT 'lg',
   `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it',
   `last_login` DATETIME NULL DEFAULT NULL,
+  `allow_untrusted` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `auth_lock_time` datetime DEFAULT NULL,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

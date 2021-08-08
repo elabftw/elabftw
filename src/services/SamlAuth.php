@@ -18,8 +18,10 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Config;
+use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
+use Elabftw\Models\ValidatedUser;
 use function is_array;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 
@@ -151,10 +153,8 @@ class SamlAuth implements AuthInterface
 
     private function getUsers(string $email, array $samlUserdata): Users
     {
-        $Users = new Users();
-        // user might not exist yet and populateFromEmail() will throw a ResourceNotFoundException
         try {
-            $Users->populateFromEmail($email);
+            $Users = ExistingUser::fromEmail($email);
         } catch (ResourceNotFoundException) {
             // the user doesn't exist yet in the db
             // what do we do? Lookup the config setting for that case
@@ -180,7 +180,7 @@ class SamlAuth implements AuthInterface
             }
 
             // CREATE USER (and force validation of user, with user permissions)
-            $Users = new Users($Users->create($email, $teams, $firstname, $lastname, '', 4, true, false, false));
+            $Users = ValidatedUser::fromExternal($email, $teams, $firstname, $lastname);
         }
         return $Users;
     }

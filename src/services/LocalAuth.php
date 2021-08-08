@@ -12,9 +12,12 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
+use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Users;
 use function password_hash;
 use function password_needs_rehash;
@@ -65,19 +68,18 @@ class LocalAuth implements AuthInterface
         $this->Db->execute($req);
         $res = $req->fetchColumn();
         if ($res === false || $res === null) {
-            throw new InvalidCredentialsException();
+            throw new ImproperActionException('Could not find salt!');
         }
         return (string) $res;
     }
 
     private function getUseridFromEmail(): int
     {
-        $Users = new Users();
         try {
-            $Users->populateFromEmail($this->email);
-            // if the email is not found, transform the exception in the general invalidcredentials error
-        } catch (ResourceNotFoundException) {
-            throw new InvalidCredentialsException();
+            $Users = ExistingUser::fromEmail($this->email);
+        } catch (ResourceNotFoundException $e) {
+            // here we rethrow an quantum exception because we don't want to let the user know if the email exists or not
+            throw new QuantumException(_('Invalid email/password combination.'));
         }
         return (int) $Users->userData['userid'];
     }
@@ -128,7 +130,7 @@ class LocalAuth implements AuthInterface
         $this->Db->execute($req);
 
         if ($req->rowCount() !== 1) {
-            throw new InvalidCredentialsException();
+            throw new InvalidCredentialsException($this->userid);
         }
     }
 
@@ -141,7 +143,7 @@ class LocalAuth implements AuthInterface
         $res = $req->fetch();
         // verify password
         if (password_verify($this->password, $res['password_hash']) !== true) {
-            throw new InvalidCredentialsException();
+            throw new InvalidCredentialsException($this->userid);
         }
         // check if it needs rehash (new algo)
         if (password_needs_rehash($res['password_hash'], PASSWORD_DEFAULT)) {

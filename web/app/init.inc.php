@@ -74,6 +74,7 @@ try {
     // pages where you don't need to be logged in
     // only the script name, not the path because we use basename() on it
     $nologinArr = array(
+        'ApiController.php',
         'change-pass.php',
         'index.php',
         'login.php',

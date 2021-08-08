@@ -21,6 +21,7 @@ use Elabftw\Traits\SortableTrait;
 abstract class AbstractCategory implements CrudInterface
 {
     use SortableTrait;
+
     use EntityTrait;
 
     protected Db $Db;

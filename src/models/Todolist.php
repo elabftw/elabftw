@@ -23,6 +23,7 @@ use PDO;
 class Todolist implements CrudInterface
 {
     use SetIdTrait;
+
     use SortableTrait;
 
     protected Db $Db;

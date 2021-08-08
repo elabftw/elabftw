@@ -655,7 +655,6 @@ CREATE TABLE `users` (
   `json_editor` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `validated` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `lang` varchar(5) NOT NULL DEFAULT 'en_GB',
-  `api_key` varchar(255) DEFAULT NULL,
   `default_read` varchar(255) NULL DEFAULT 'team',
   `default_write` varchar(255) NULL DEFAULT 'user',
   `single_column_layout` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',

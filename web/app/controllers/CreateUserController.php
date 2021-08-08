@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\ValidatedUser;
 use Elabftw\Services\Check;
 use Exception;
 use Swift_TransportException;
@@ -46,12 +47,11 @@ try {
     }
 
     // Create user
-    $userid = $App->Users->create(
+    $Users = ValidatedUser::fromAdmin(
         $Request->request->get('email'),
         array($Request->request->get('team')),
         $Request->request->get('firstname'),
         $Request->request->get('lastname'),
-        '',
         (int) $Request->request->get('usergroup'),
     );
 

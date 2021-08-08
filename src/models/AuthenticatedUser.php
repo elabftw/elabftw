@@ -12,7 +12,7 @@ namespace Elabftw\Models;
 /**
  * An authenticated user
  */
-final class AuthenticatedUser extends Users
+final class AuthenticatedUser extends ExistingUser
 {
     public function __construct(public int $userid, public int $team)
     {

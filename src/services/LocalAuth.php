@@ -17,6 +17,7 @@ use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Users;
 use function password_hash;
 use function password_needs_rehash;
@@ -74,9 +75,8 @@ class LocalAuth implements AuthInterface
 
     private function getUseridFromEmail(): int
     {
-        $Users = new Users();
         try {
-            $Users->populateFromEmail($this->email);
+            $Users = ExistingUser::fromEmail($this->email);
         } catch (ResourceNotFoundException $e) {
             // here we rethrow an quantum exception because we don't want to let the user know if the email exists or not
             throw new QuantumException(_('Invalid email/password combination.'));

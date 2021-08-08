@@ -19,8 +19,8 @@ use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Interfaces\ControllerInterface;
+use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Idps;
-use Elabftw\Models\Users;
 use Elabftw\Services\AnonAuth;
 use Elabftw\Services\DeviceToken;
 use Elabftw\Services\DeviceTokenValidator;
@@ -171,9 +171,8 @@ class LoginController implements ControllerInterface
             // our device token is not valid
             // we need to check if we can allow untrusted devices to login for that user
             // figure out what is the userid from the email sent with the request
-            $Users = new Users();
             // might throw ResourceNotFoundException if the user doesn't exist
-            $Users->populateFromEmail((string) $this->App->Request->request->get('email'));
+            $Users = ExistingUser::fromEmail((string) $this->App->Request->request->get('email'));
             // check if authentication is locked for untrusted clients for that user
             if ($Users->userData['allow_untrusted'] === '0') {
                 // reject any attempt whatsoever if this account is locked for untrusted devices

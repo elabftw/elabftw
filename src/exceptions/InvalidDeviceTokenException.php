@@ -19,6 +19,6 @@ class InvalidDeviceTokenException extends Exception
 {
     public function __construct()
     {
-        parent::__construct('Invalid device token.');
+        parent::__construct(_('This browser cannot login anymore because of too many failed attempts.'));
     }
 }

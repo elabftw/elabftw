@@ -18,6 +18,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
+use Elabftw\Exceptions\InvalidDeviceTokenException;
 use Elabftw\Models\AuthFail;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -37,7 +38,7 @@ try {
     $AuthFail = new AuthFail($loginTries, $e->getCode(), $App->Request->cookies->get('devicetoken'));
     $AuthFail->register();
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
-} catch (ImproperActionException | InvalidCsrfTokenException $e) {
+} catch (ImproperActionException | InvalidCsrfTokenException | InvalidDeviceTokenException $e) {
     //$Auth->increaseFailedAttempt();
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());

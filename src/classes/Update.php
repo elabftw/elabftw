@@ -39,7 +39,7 @@ class Update
 
     private Db $Db;
 
-    public function __construct(public Config $Config, private Sql $Sql)
+    public function __construct(private int $currentSchema, private Sql $Sql)
     {
         $this->Db = Db::getConnection();
     }
@@ -47,7 +47,7 @@ class Update
     /**
      * Get the current required schema
      */
-    public function getRequiredSchema(): int
+    public static function getRequiredSchema(): int
     {
         return self::REQUIRED_SCHEMA;
     }
@@ -57,9 +57,7 @@ class Update
      */
     public function checkSchema(): void
     {
-        $currentSchema = (int) $this->Config->configArr['schema'];
-
-        if ($currentSchema !== self::REQUIRED_SCHEMA) {
+        if ($this->currentSchema !== self::REQUIRED_SCHEMA) {
             throw new InvalidSchemaException();
         }
     }
@@ -69,28 +67,26 @@ class Update
      */
     public function runUpdateScript(): void
     {
-        $currentSchema = (int) $this->Config->configArr['schema'];
-
         // do nothing if we're up to date
-        if ($currentSchema === self::REQUIRED_SCHEMA) {
+        if ($this->currentSchema === self::REQUIRED_SCHEMA) {
             return;
         }
 
         // old style update functions have been removed, so add a block to prevent upgrade from very very old to newest directly
-        if ($currentSchema < 37) {
+        if ($this->currentSchema < 37) {
             throw new ImproperActionException('Please update first to latest version from 1.8 branch before updating to 2.0 branch! See documentation.');
         }
 
-        if ($currentSchema < 41) {
+        if ($this->currentSchema < 41) {
             throw new ImproperActionException('Please update first to latest version from 2.0 branch before updating to 3.0 branch! See documentation.');
         }
 
         // new style with SQL files instead of functions
-        while ($currentSchema < self::REQUIRED_SCHEMA) {
-            ++$currentSchema;
-            $this->Sql->execFile('schema' . (string) ($currentSchema) . '.sql');
+        while ($this->currentSchema < self::REQUIRED_SCHEMA) {
+            ++$this->currentSchema;
+            $this->Sql->execFile('schema' . (string) ($this->currentSchema) . '.sql');
             // schema57: add an elabid to existing database items
-            if ($currentSchema === 57) {
+            if ($this->currentSchema === 57) {
                 $this->addElabidToItems();
                 $this->fixExperimentsRevisions();
             }

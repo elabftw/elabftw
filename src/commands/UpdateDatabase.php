@@ -56,7 +56,7 @@ class UpdateDatabase extends Command
             ));
 
             $Config = Config::getConfig();
-            $Update = new Update($Config, new Sql());
+            $Update = new Update((int) $Config->configArr['schema'], new Sql());
             $Update->runUpdateScript();
             $output->writeln('All done.');
         }

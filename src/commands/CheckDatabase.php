@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Update;
 use Elabftw\Models\Config;
 use Symfony\Component\Console\Command\Command;
@@ -47,10 +46,9 @@ class CheckDatabase extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $Config = Config::getConfig();
-        $Update = new Update($Config, new Sql());
-
         $current = (int) $Config->configArr['schema'];
-        $required = $Update->getRequiredSchema();
+
+        $required = Update::getRequiredSchema();
 
         $output->writeln(array(
             'Database check',

@@ -69,7 +69,7 @@ class App
         $this->Users = new Users();
         $this->Db = Db::getConnection();
         // UPDATE SQL SCHEMA if necessary or show error message if version mismatch
-        $Update = new Update($this->Config, new Sql());
+        $Update = new Update((int) $this->Config->configArr['schema'], new Sql());
         $Update->checkSchema();
     }
 

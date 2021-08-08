@@ -14,7 +14,6 @@ use function array_map;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Update;
 use Elabftw\Exceptions\DatabaseErrorException;
 use PDO;
@@ -155,8 +154,7 @@ final class Config
      */
     private function populate(): bool
     {
-        $Update = new Update($this, new Sql());
-        $schema = $Update->getRequiredSchema();
+        $schema = Update::getRequiredSchema();
 
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
             ('admin_validate', '1'),

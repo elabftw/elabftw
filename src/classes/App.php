@@ -162,7 +162,7 @@ class App
     /**
      * Load a user object in our user field
      */
-    private function loadUser(Users $users): void
+    private function loadUser(AuthenticatedUser | AnonymousUser $users): void
     {
         $this->Users = $users;
 

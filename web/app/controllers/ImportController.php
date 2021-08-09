@@ -32,9 +32,6 @@ try {
         throw new IllegalActionException('Non admin user tried to access import controller.');
     }
 
-    // CSRF
-    $App->Csrf->validate();
-
     // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
     \set_time_limit(0);
 

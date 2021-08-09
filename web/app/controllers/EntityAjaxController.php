@@ -42,9 +42,6 @@ $Response->setData(array(
 ));
 
 try {
-    // CSRF
-    $App->Csrf->validate();
-
     // id of the item (experiment or database item)
     $id = null;
 

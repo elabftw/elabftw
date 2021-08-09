@@ -47,7 +47,6 @@ class LoginController implements ControllerInterface
 {
     public function __construct(private App $App)
     {
-        $App->Csrf->validate();
         $this->validateDeviceToken();
     }
 

@@ -33,7 +33,7 @@
     <hr>
     <form class='form-group' method='post' action='app/controllers/AdminController.php' autocomplete='off'>
       <input type='hidden' value='true' name='teamsUpdateFull' />
-      {{ App.Csrf.getToken|csrf }}
+      {{ App.Session.get('csrf')|csrf }}
       <label for='deletable_xp'>{{ 'Users can delete experiments:'|trans }}</label>
       <select class='form-control col-md-4' name='deletable_xp' id='deletable_xp'>
         <option value='1'{{ teamConfigArr.deletable_xp ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
@@ -421,7 +421,7 @@
         <option value='tab'>{{ 'Tab'|trans }}</option>
       </select>
 
-      {{ App.Csrf.getToken|csrf }}
+      {{ App.Session.get('csrf')|csrf }}
       <label for='csvuploader' class='d-block'>{{ '4. Select a CSV file to import:'|trans }}</label>
       <input id='csvuploader' name='file' type='file' accept='.csv' />
       <input name='type' type='hidden' value='csv' />
@@ -461,7 +461,7 @@
           {% endfor %}
       </select>
 
-      {{ App.Csrf.getToken|csrf }}
+      {{ App.Session.get('csrf')|csrf }}
       <label class='d-block' for='zipuploader'>{{ '3. Select a ZIP file to import:'|trans }}</label>
       <input id='zipuploader' name='file' type='file' accept='.zip' />
       <input name='type' type='hidden' value='zip' />

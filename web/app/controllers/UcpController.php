@@ -32,9 +32,6 @@ $Response = new RedirectResponse('../../ucp.php?tab=' . $tab);
 $templateId = '';
 
 try {
-    // CSRF
-    $App->Csrf->validate();
-
     // TAB 1 : PREFERENCES
     if ($Request->request->has('lang')) {
         $Prefs = new UserPreferences((int) $App->Users->userData['userid']);

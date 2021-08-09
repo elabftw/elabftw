@@ -35,9 +35,6 @@ try {
         throw new IllegalActionException('Admin tried to create user directly');
     }
 
-    // CSRF
-    $App->Csrf->validate();
-
     if ((Check::id((int) $Request->request->get('team')) === false) ||
         !$Request->request->get('firstname') ||
         !$Request->request->get('lastname') ||

@@ -41,9 +41,6 @@ $Response->setData(array(
 $res = '';
 
 try {
-    // CSRF
-    $App->Csrf->validate();
-
     if ($Request->headers->get('Content-Type') === 'application/json') {
         $Processor = new JsonProcessor($App->Users, $Request);
     } elseif ($Request->getMethod() === 'GET') {

@@ -31,9 +31,6 @@ try {
         throw new IllegalActionException('Anonymous user tried to send email to team');
     }
 
-    // CSRF
-    $App->Csrf->validate();
-
     // EMAIL TEAM
     if ($Request->request->has('emailTeam')) {
         $Email = new Email($App->Config, $App->Users);

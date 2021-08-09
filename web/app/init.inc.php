@@ -63,12 +63,13 @@ try {
         // or generate a new one and add it into the session
         $Session->set('csrf', $Csrf->getToken());
     }
+    $Csrf->validate();
     // END CSRF
 
     try {
         // Config::getConfig() will make the first SQL request
         // PDO will throw an exception if the SQL structure is not imported yet
-        $App = new App($Request, $Session, Config::getConfig(), new Logger('elabftw'), $Csrf);
+        $App = new App($Request, $Session, Config::getConfig(), new Logger('elabftw'));
     } catch (DatabaseErrorException | PDOException $e) {
         throw new ImproperActionException('The database structure is not loaded! Did you run the installer?');
     }

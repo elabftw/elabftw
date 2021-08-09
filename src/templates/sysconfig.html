@@ -706,7 +706,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         {% endif %}
 
         <form method='post' action='app/controllers/SysconfigController.php'>
-            {{ App.Csrf.getToken|csrf }}
+            {{ App.Session.get('csrf')|csrf }}
             <textarea name='privacy_policy' class='mceditable'>
                 {{ App.Config.configArr.privacy_policy|default(privacyPolicyTemplate)|raw }}
             </textarea>

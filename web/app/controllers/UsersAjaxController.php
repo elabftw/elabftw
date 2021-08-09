@@ -33,9 +33,6 @@ $Response->setData(array(
 ));
 
 try {
-    // CSRF
-    $App->Csrf->validate();
-
     // you need to be at least admin to validate/archive/delete a user
     if (!$App->Session->get('is_admin')) {
         throw new IllegalActionException('Non admin user tried to edit another user.');

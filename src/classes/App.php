@@ -60,7 +60,7 @@ class App
 
     protected Db $Db;
 
-    public function __construct(public Request $Request, public SessionInterface $Session, public Config $Config, public Logger $Log, public Csrf $Csrf)
+    public function __construct(public Request $Request, public SessionInterface $Session, public Config $Config, public Logger $Log)
     {
         $flashBag = $this->Session->getBag('flashes');
         // add type check because SessionBagInterface doesn't have get(), only FlashBag has it

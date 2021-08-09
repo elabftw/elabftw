@@ -151,7 +151,7 @@
 <section class='box'>
     <h5><i class='fas fa-envelope'></i> {{ 'Send an email to all team members'|trans }}</h5>
     <form id='emailTeamForm' method="post" action="app/controllers/TeamController.php">
-        {{ App.Csrf.getToken|csrf }}
+        {{ App.Session.get('csrf')|csrf }}
         <input type='hidden' name='emailTeam' />
         <div class="form-group">
             <label for="emailSubject">{{ 'Subject'|trans }}</label>

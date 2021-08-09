@@ -33,10 +33,6 @@ if ($Request->request->has('fromSysconfig')) {
 $Response = new RedirectResponse($location);
 
 try {
-
-    // CSRF
-    $App->Csrf->validate();
-
     // UPDATE USERS
     if ($Request->request->has('usersUpdate')) {
         // you need to be at least admin to edit a user

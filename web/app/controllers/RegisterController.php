@@ -33,9 +33,6 @@ try {
         throw new IllegalActionException('The bot field was filled on register page. Possible automated registration attempt.');
     }
 
-    // CSRF
-    $App->Csrf->validate();
-
     if ((Check::id((int) $Request->request->get('team')) === false) ||
         !$Request->request->get('firstname') ||
         !$Request->request->get('lastname') ||

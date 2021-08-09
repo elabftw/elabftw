@@ -32,7 +32,7 @@ class Sql
     /**
      * Read a SQL file from a folder and execute the contents
      */
-    public function execFile(string $filename): bool
+    public function execFile(string $filename): void
     {
         $lines = $this->getLines($filename);
         // temporary variable, used to store current query
@@ -49,7 +49,6 @@ class Sql
                 $queryline = '';
             }
         }
-        return true;
     }
 
     /**

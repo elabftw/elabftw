@@ -25,7 +25,7 @@ class SqlTest extends \PHPUnit\Framework\TestCase
 
     public function testExecFile(): void
     {
-        $this->assertTrue($this->Sql->execFile('dummy.sql'));
+        $this->Sql->execFile('dummy.sql');
     }
 
     public function testExecNonExistingFile(): void

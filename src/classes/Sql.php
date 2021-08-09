@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use function array_filter;
 use function explode;
 use League\Flysystem\FilesystemInterface;
 use RuntimeException;

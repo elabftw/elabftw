@@ -74,7 +74,6 @@ export class Ajax {
       if (!response.ok) {
         throw new Error('An unexpected error occured!');
       }
-      // TODO I don't think this works well
       if (response.headers.has('X-Elab-Need-Auth')) {
         notif({res: false, msg: 'Your session expired!'});
         throw new Error('Session expired!');
@@ -107,6 +106,10 @@ export class Ajax {
     // encode the json in a percent encoded parameter
     const encoded = encodeURIComponent(JSON.stringify(payload));
     // p as in payload
-    return fetch(`app/controllers/RequestHandler.php?p=${encoded}`);
+    return fetch(`app/controllers/RequestHandler.php?p=${encoded}`, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      }
+    });
   }
 }

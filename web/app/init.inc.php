@@ -19,6 +19,7 @@ use Elabftw\Services\LoginHelper;
 use Exception;
 use function header;
 use function in_array;
+use function is_readable;
 use Monolog\Logger;
 use PDOException;
 use function setcookie;
@@ -27,9 +28,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
+ *   _       _ _
+ *  (_)_ __ (_) |_
+ *  | | '_ \| | __|
+ *  | | | | | | |_
+ *  |_|_| |_|_|\__|
+ *
  * This must be included on top of every page.
- * It loads the config file, connects to the database,
- * includes functions and locale, tries to update the db schema and redirects anonymous visitors.
+ * It is the entrypoint of the app.
  */
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
@@ -40,22 +46,13 @@ $Request->setSession($Session);
 
 try {
     // CONFIG.PHP
-    // Make sure config.php is readable
+    // Make sure config.php is readable and load it
     $configFilePath = dirname(__DIR__, 2) . '/config.php';
     if (!is_readable($configFilePath)) {
         throw new ImproperActionException('The config file is missing! Did you run the installer?');
     }
     require_once $configFilePath;
     // END CONFIG.PHP
-
-    //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//
-    //     _                 _      //
-    //    | |__   ___   ___ | |_    //
-    //    | '_ \ / _ \ / _ \| __|   //
-    //    | |_) | (_) | (_) | |_    //
-    //    |_.__/ \___/ \___/ \__|   //
-    //                              //
-    //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//
 
     // CSRF
     $Csrf = new Csrf($Request);

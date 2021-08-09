@@ -75,33 +75,6 @@ class App
         $Update->checkSchema();
     }
 
-    /**
-     * Get the page generation time (called in the footer)
-     */
-    public function getGenerationTime(): float
-    {
-        return round(microtime(true) - $this->Request->server->get('REQUEST_TIME_FLOAT'), 5);
-    }
-
-    public function getMemoryUsage(): int
-    {
-        return memory_get_usage();
-    }
-
-    public function getNumberOfQueries(): int
-    {
-        $Db = Db::getConnection();
-        return $Db->getNumberOfQueries();
-    }
-
-    /**
-     * Get the minimum password length for injecting in templates
-     */
-    public function getMinPasswordLength(): int
-    {
-        return Check::MIN_PASSWORD_LENGTH;
-    }
-
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//
     //     _                 _      //
     //    | |__   ___   ___ | |_    //

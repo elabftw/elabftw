@@ -73,13 +73,6 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($out, Tools::showStars(2));
     }
 
-    public function testGetLimitOptions(): void
-    {
-        $this->assertEquals(2, Tools::getLimitOptions(2)[0]);
-        $this->assertEquals(12, Tools::getLimitOptions(12)[1]);
-        $this->assertEquals(52, Tools::getLimitOptions(52)[3]);
-    }
-
     public function testQFilter(): void
     {
         $input = array(

@@ -33,5 +33,6 @@ final class AnonymousUser extends Users
         $this->userData['lang'] = $this->lang;
         $this->userData['use_isodate'] = '0';
         $this->userData['uploads_layout'] = '1';
+        $this->userData['display_mode'] = 'it';
     }
 }

@@ -8,8 +8,7 @@
   <h4 class='mt-4'>{{ 'Two Factor Authentication'|trans }}</h4>
   <form method='post' action='app/controllers/LoginController.php' autocomplete='off'>
     <input type='hidden' name='auth_type' value='mfa'>
-    <!-- form key -->
-    {{ App.Csrf.getHiddenInput|raw }}
+    {{ App.Csrf.getToken|csrf }}
     {% if App.Session.has('enable_mfa') %}
       <p>{{ 'Open your authenticator application and scan the QR code.'|trans }}</p>
       <p><img src='{{ mfaQRCodeImageDataUri|raw }}'></p>

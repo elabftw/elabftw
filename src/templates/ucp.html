@@ -48,7 +48,7 @@
 <!-- TAB 1 - USER PREFERENCES -->
 <div class='divhandle' id='tab1div'>
   <form class='form-group' action='app/controllers/UcpController.php' method='post'>
-    {{ App.Csrf.getHiddenInput|raw }}
+    {{ App.Csrf.getToken|csrf }}
     <!-- LANGUAGE -->
     <section class='box'>
       <h3>{{ 'Language'|trans }}</h3>
@@ -256,7 +256,7 @@
     <div class='box'>
 
     <form class='form-group' method='post' action='app/controllers/UcpController.php'>
-      {{ App.Csrf.getHiddenInput|raw }}
+      {{ App.Csrf.getToken|csrf }}
       <div class='row'>
         <div class='col-md-6'>
           <h4>{{ 'Modify your personal informations'|trans }}</h4>

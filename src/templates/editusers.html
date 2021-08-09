@@ -10,7 +10,7 @@
       </div>
       <form method='post' action='app/controllers/SysconfigController.php'>
         <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
-            {{ App.Csrf.getHiddenInput|raw }}
+            {{ App.Csrf.getToken|csrf }}
             <input type='hidden' id='editUserToTeamUserid' name='userid' value='' />
             <input type='hidden' id='editUserToTeamAction' name='action' value='' />
             <input type='hidden' name='editUserToTeam' value='1' />
@@ -74,7 +74,7 @@
                 <form method='post' action='app/controllers/UsersController.php'>
                   <div class='form-group'>
                     <input type='hidden' value='true' name='usersUpdate' />
-                    {{ App.Csrf.getHiddenInput()|raw }}
+                    {{ App.Csrf.getToken|csrf }}
                     {% if fromSysconfig %}
                       <input type='hidden' value='1' name='fromSysconfig' />
                     {% endif %}
@@ -183,7 +183,7 @@
   <h3>{{ 'Add account'|trans }}</h3>
   <p>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
   <div class='form-group'>
-    {{ App.Csrf.getHiddenInput|raw }}
+    {{ App.Csrf.getToken|csrf }}
     {# because the select will be disabled, the team won't be sent, so add it as hidden for admin page #}
     {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
       <input type='hidden' name='team' value='{{ App.Users.userData.team }}' />

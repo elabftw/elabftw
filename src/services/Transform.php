@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Tools;
+use function sprintf;
 use function ucfirst;
 
 /**
@@ -35,5 +36,13 @@ class Transform
             default => Tools::error(),
         };
         return ucfirst($res);
+    }
+
+    /**
+     * Create a hidden input element for injecting CSRF token
+     */
+    public static function csrf(string $token): string
+    {
+        return sprintf("<input type='hidden' name='csrf' value='%s' />", $token);
     }
 }

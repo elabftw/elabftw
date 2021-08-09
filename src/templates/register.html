@@ -34,7 +34,7 @@
 
     <form method='post' autocomplete='off' action='app/controllers/RegisterController.php'>
       <input hidden type='text' name='bot' value=''>
-      {{ App.Csrf.getHiddenInput|raw }}
+      {{ App.Csrf.getToken|csrf }}
 
       <div class='form-group mx-auto col-md-4'>
         <!-- TEAM -->

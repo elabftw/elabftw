@@ -56,10 +56,22 @@ try {
     //    |_.__/ \___/ \___/ \__|   //
     //                              //
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//
-    // Config::getConfig() will make the first SQL request
-    // PDO will throw an exception if the SQL structure is not imported yet
+
+    // CSRF
+    $Csrf = new Csrf($Request);
+    if ($Session->has('csrf')) {
+        // if a token is already present in session, add it into the class
+        $Csrf->setToken($Session->get('csrf'));
+    } else {
+        // or generate a new one and add it into the session
+        $Session->set('csrf', $Csrf->getToken());
+    }
+    // END CSRF
+
     try {
-        $App = new App($Request, $Session, Config::getConfig(), new Logger('elabftw'), new Csrf($Request, $Session));
+        // Config::getConfig() will make the first SQL request
+        // PDO will throw an exception if the SQL structure is not imported yet
+        $App = new App($Request, $Session, Config::getConfig(), new Logger('elabftw'), $Csrf);
     } catch (DatabaseErrorException | PDOException $e) {
         throw new ImproperActionException('The database structure is not loaded! Did you run the installer?');
     }

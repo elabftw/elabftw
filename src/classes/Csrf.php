@@ -12,34 +12,33 @@ namespace Elabftw\Elabftw;
 use Defuse\Crypto\Key;
 use Elabftw\Exceptions\ImproperActionException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Prevent CSRF attacks
  */
 class Csrf
 {
-    public function __construct(private Request $Request, private SessionInterface $Session)
+    private string $token = '';
+
+    public function __construct(private Request $Request)
     {
-        if (!$this->Session->has('csrf')) {
-            $this->Session->set('csrf', $this->generate());
-        }
     }
 
     /**
-     * Return the form key for inclusion in HTML
-     */
-    public function getHiddenInput(): string
-    {
-        return "<input type='hidden' name='csrf' value='" . $this->getToken() . "' />";
-    }
-
-    /**
-     * Read token from session
+     * Generate a token if needed
      */
     public function getToken(): string
     {
-        return $this->Session->get('csrf');
+        if ($this->token === '') {
+            $this->token = $this->generate();
+        }
+
+        return $this->token;
+    }
+
+    public function setToken(string $token): void
+    {
+        $this->token = $token;
     }
 
     /**

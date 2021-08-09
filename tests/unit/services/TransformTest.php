@@ -20,4 +20,11 @@ class TransformTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Owner only', Transform::permission('useronly'));
         $this->assertEquals('An error occurred!', Transform::permission('user2'));
     }
+
+    public function testCsrf(): void
+    {
+        $token = 'fake-token';
+        $input = Transform::csrf($token);
+        $this->assertEquals("<input type='hidden' name='csrf' value='$token' />", $input);
+    }
 }

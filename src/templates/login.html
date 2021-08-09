@@ -37,8 +37,7 @@
   {% if App.Session.has('team_selection_required') %}
     <form method='post' action='app/controllers/LoginController.php'>
       <input type='hidden' name='auth_type' value='team'>
-      <!-- form key -->
-      {{ App.Csrf.getHiddenInput|raw }}
+      {{ App.Csrf.getToken|csrf }}
       <div class='col-md-4 mx-auto mt-4 text-left form-group'>
         <label for='team_selection_select'>{{ 'Your account is linked to several teams. Select in which team you want to log in'|trans }}</label>
         <select name='selected_team' id='team_selection_select' class='form-control'>
@@ -53,8 +52,7 @@
     <!-- user is already authed with external auth, so just present a continue button
       we don't autologin anymore -->
       <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off'>
-        <!-- form key -->
-        {{ App.Csrf.getHiddenInput|raw }}
+        {{ App.Csrf.getToken|csrf }}
         <input type='hidden' name='auth_type' value='external'>
         <h2 class='mt-4'>{{ 'You are already authenticated'|trans }}</h2>
         <br>
@@ -65,8 +63,7 @@
     {% if showLocal or App.Config.configArr.ldap_toggle %}
       <!-- Login form , the id is for an acceptance test -->
       <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off'>
-        <!-- form key -->
-        {{ App.Csrf.getHiddenInput|raw }}
+        {{ App.Csrf.getToken|csrf }}
         <h1 class='mt-4'>{{ 'Login to your account'|trans }}</h1>
         <br>
         <div class='col-md-4 mx-auto text-left form-group'>
@@ -120,7 +117,7 @@
       <br>
       <form method='post' class='form-group' id='saml-login' action='app/controllers/LoginController.php' autocomplete='off'>
         <input type='hidden' name='auth_type' value='saml'>
-        {{ App.Csrf.getHiddenInput|raw }}
+        {{ App.Csrf.getToken|csrf }}
         <div class='form-group col-md-4 mx-auto'>
           <label for='idp_login_select'>{{ 'Select an identity provider'|trans }}</label>
           <select name='idpId' class='form-control' id='idp_login_select'>
@@ -146,7 +143,7 @@
       <br>
       <form method='post' class='form-group' id='anon-login' action='app/controllers/LoginController.php' autocomplete='off'>
         <input type='hidden' name='auth_type' value='anon'>
-        {{ App.Csrf.getHiddenInput|raw }}
+        {{ App.Csrf.getToken|csrf }}
         <div class='form-group mx-auto col-md-4'>
           <label for='anon_login_select' class='sr-only'>{{ 'Select a team'|trans }}</label>
           <div class='input-group mb-2'>

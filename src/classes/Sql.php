@@ -11,9 +11,10 @@ namespace Elabftw\Elabftw;
 
 use function explode;
 use League\Flysystem\FilesystemInterface;
-use function mb_strlen;
-use PHP_EOL;
+use RuntimeException;
+use function str_ends_with;
 use function str_starts_with;
+use function trim;
 
 /**
  * For SQL operations from files
@@ -32,22 +33,15 @@ class Sql
      */
     public function execFile(string $filename): bool
     {
-        $content = $this->filesystem->read($filename);
-        // @phpstan-ignore-next-line
-        $lines = explode(PHP_EOL, $content);
+        $lines = $this->getLines($filename);
         // temporary variable, used to store current query
         $queryline = '';
         // loop through each line
         foreach ($lines as $line) {
-            // Skip it if it's a comment or blank line
-            if (empty($line) || str_starts_with($line, '--') || str_starts_with($line, '/*')) {
-                continue;
-            }
-
             // Add this line to the current segment
-            $queryline .= $line;
+            $queryline .= trim($line);
             // If it has a semicolon at the end, it's the end of the query
-            if (trim($line)[mb_strlen(trim($line)) - 1] === ';') {
+            if (str_ends_with($line, ';')) {
                 // Perform the query
                 $this->Db->q($queryline);
                 // Reset temp variable to empty
@@ -55,5 +49,21 @@ class Sql
             }
         }
         return true;
+    }
+
+    /**
+     * Read a file and return the significant lines as array
+     */
+    private function getLines(string $filename): array
+    {
+        $content = $this->filesystem->read($filename);
+        if ($content === false) {
+            throw new RuntimeException();
+        }
+        $linesArr = explode(PHP_EOL, $content);
+        // now filter out the uninteresting lines
+        return array_filter($linesArr, function ($v) {
+            return !empty($v) && !str_starts_with($v, '--') && !str_starts_with($v, '/*');
+        });
     }
 }

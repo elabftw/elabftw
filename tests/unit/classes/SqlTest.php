@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\FileNotFoundException;
 use League\Flysystem\Filesystem as Fs;
+use RuntimeException;
 
 class SqlTest extends \PHPUnit\Framework\TestCase
 {
@@ -31,5 +32,14 @@ class SqlTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(FileNotFoundException::class);
         $this->Sql->execFile('purple.sql');
+    }
+
+    public function testBrokenFilesystem(): void
+    {
+        $fsMock = $this->createMock(Fs::class);
+        $fsMock->method('read')->willReturn(false);
+        $Sql = new Sql($fsMock);
+        $this->expectException(RuntimeException::class);
+        $Sql->execFile('osef');
     }
 }

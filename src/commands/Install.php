@@ -14,6 +14,8 @@ use Defuse\Crypto\Key;
 use function dirname;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Services\DatabaseInstaller;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem as Fs;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -141,7 +143,7 @@ class Install extends Command
 
         $output->writeln('<info>=> Initializing MySQL database...</info>');
         require_once dirname(__DIR__, 2) . '/config.php';
-        $Installer = new DatabaseInstaller(new Sql());
+        $Installer = new DatabaseInstaller(new Sql(new Fs(new Local(dirname(__DIR__) . '/sql'))));
         $Installer->install();
         $output->writeln('<info>✓ Installation successful! You can now start using your eLabFTW instance.</info>');
         return 0;

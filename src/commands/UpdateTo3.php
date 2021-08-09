@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Sql;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem as Fs;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -41,7 +43,7 @@ class UpdateTo3 extends Command
             'Preparing database for 3.0 update',
             '=================================',
         ));
-        $Sql = new Sql();
+        $Sql = new Sql(new Fs(new Local(dirname(__DIR__) . '/sql')));
         $Sql->execFile('prepare30.sql');
         $output->writeln('Database ready to be cleaned. Now running db:clean command...');
 

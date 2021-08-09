@@ -22,6 +22,8 @@ use Elabftw\Services\Check;
 use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
 use function in_array;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem as Fs;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use function putenv;
@@ -72,7 +74,7 @@ class App
         $this->Users = new Users();
         $this->Db = Db::getConnection();
         // UPDATE SQL SCHEMA if necessary or show error message if version mismatch
-        $Update = new Update((int) $this->Config->configArr['schema'], new Sql());
+        $Update = new Update((int) $this->Config->configArr['schema'], new Sql(new Fs(new Local(dirname(__DIR__) . '/sql'))));
         $Update->checkSchema();
     }
 

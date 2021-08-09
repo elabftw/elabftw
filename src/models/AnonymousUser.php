@@ -24,7 +24,6 @@ final class AnonymousUser extends Users
     {
         $this->userData['team'] = $this->team;
         $this->userData['limit_nb'] = 15;
-        $this->userData['anon'] = true;
         $this->userData['fullname'] = 'Anon Ymous';
         $this->userData['is_admin'] = 0;
         $this->userData['is_sysadmin'] = 0;

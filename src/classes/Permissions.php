@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Models\AnonymousUser;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
@@ -61,7 +62,7 @@ class Permissions
         }
 
         // starting from here, if we are anon we can't possibly have read access
-        if (isset($this->Users->userData['anon'])) {
+        if ($this->Users instanceof AnonymousUser) {
             return array('read' => false, 'write' => false);
         }
 
@@ -113,7 +114,7 @@ class Permissions
         }
 
         // starting from here, if we are anon we can't possibly have write access
-        if (isset($this->Users->userData['anon'])) {
+        if ($this->Users instanceof AnonymousUser) {
             return false;
         }
 

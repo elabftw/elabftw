@@ -14,7 +14,12 @@ use Elabftw\Exceptions\ImproperActionException;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Prevent CSRF attacks
+ * Prevent Cross Site Request Forgery (CSRF) attacks
+ * See https://owasp.org/www-community/attacks/csrf
+ *
+ * A token is generated and stored in the session. It will be the same during all user session.
+ * When a POST request is made, the sent token (in 'csrf' field or as header for Ajax requests) is checked against
+ * the stored one and an exception is thrown if they don't match, preventing the request to go through.
  */
 class Csrf
 {
@@ -42,7 +47,7 @@ class Csrf
     }
 
     /**
-     * Validate the form key against the one previously set in Session
+     * Validate the csrf token against the one we have
      */
     public function validate(): void
     {

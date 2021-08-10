@@ -45,6 +45,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       <hr>
       <p>{{ "The following text will be displayed to all users on all pages while it's active."|trans }}</p>
       <form method='post' action='app/controllers/SysconfigController.php'>
+        {{ App.Session.get('csrf')|csrf }}
         <input class='form-control' type='text' name='announcement' value='{{ App.Config.configArr.announcement }}' />
         <div class='mt-4 text-center'>
           <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
@@ -58,6 +59,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       <hr>
       <p>{{ 'The following text will be displayed only on the login page.'|trans }}</p>
       <form method='post' action='app/controllers/SysconfigController.php'>
+        {{ App.Session.get('csrf')|csrf }}
         <input class='form-control' type='text' name='login_announcement' value='{{ App.Config.configArr.login_announcement }}' />
         <div class='mt-4 text-center'>
           <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
@@ -67,6 +69,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     </div>
 
     <form class='box' method='post' action='app/controllers/SysconfigController.php'>
+        {{ App.Session.get('csrf')|csrf }}
         <h3>{{ 'Settings'|trans }}</h3>
         <hr>
         <div class='form-group'>
@@ -254,6 +257,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 <!-- TAB 4 TIMESTAMP -->
 <div class='divhandle box' id='tab4div'>
     <form method='post' action='app/controllers/SysconfigController.php'>
+      {{ App.Session.get('csrf')|csrf }}
       <div class='form-group'>
         <h3>{{ 'Timestamping Configuration'|trans }}</h3>
         <hr>
@@ -294,6 +298,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
   <h3>{{ 'Security Settings'|trans }}</h3>
   <hr>
   <form class='form-group' method='post' action='app/controllers/SysconfigController.php'>
+    {{ App.Session.get('csrf')|csrf }}
     <input type='hidden' name='updateConfig' value='true' />
 
     <label for='admin_validate'>{{ 'Users need validation by admin after registration:'|trans }}</label>
@@ -351,6 +356,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     <h3>{{ 'E-mail Settings'|trans }}</h3>
     <hr>
     <form class='form-group' method='post' action='app/controllers/SysconfigController.php'>
+      {{ App.Session.get('csrf')|csrf }}
       <input type='hidden' name='updateConfig' value='true' />
       <p>{{ "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific %ssmtp2go.com%s account and add the information here."|trans|format("<a href='https://www.smtp2go.com/?s=eLabFTW'>", "</a>")|raw }}</p>
 
@@ -442,6 +448,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     {{ 'Note: an XML file with the configuration is available %shere%s.'|format("<a href='metadata.php'>", "</a>")|msg('ok', false) }}
     <div class='box'>
         <form method='post' action='app/controllers/SysconfigController.php'>
+            {{ App.Session.get('csrf')|csrf }}
             <h3>Service provider (this instance of eLabFTW)</h3>
             <div class='form-group'>
               <input type='hidden' name='updateConfig' value='true' />
@@ -615,6 +622,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <div class='box'>
             <h4>Add new Identity Provider</h4>
             <form method='post' action='app/controllers/IdpsController.php'>
+              {{ App.Session.get('csrf')|csrf }}
               <div class='form-group'>
                 <input type='hidden' name='idpsCreate' />
 
@@ -661,6 +669,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                   </a>
                   <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>
                   <form method='post' action='app/controllers/IdpsController.php'>
+                    {{ App.Session.get('csrf')|csrf }}
                     <div class='form-group'>
                       <input type='hidden' name='idpsUpdate' />
                       <input type='hidden' name='id' value='{{ idp.id }}' />
@@ -721,6 +730,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 <!-- TAB 9 EXTERNAL AUTH -->
 <div class='divhandle box' id='tab9div'>
     <form method='post' action='app/controllers/SysconfigController.php'>
+      {{ App.Session.get('csrf')|csrf }}
       <div class='form-group'>
         <h3>{{ 'External authentication mapping'|trans }}</h3>
         <hr>
@@ -778,6 +788,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 <!-- TAB 10 LDAP -->
 <div class='divhandle box' id='tab10div'>
     <form method='post' action='app/controllers/SysconfigController.php'>
+      {{ App.Session.get('csrf')|csrf }}
       <div class='form-group'>
         <h3>{{ 'LDAP configuration'|trans }}</h3>
         <hr>

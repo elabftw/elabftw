@@ -30,7 +30,7 @@ class SearchController extends AbstractEntityController
         if ($this->App->Request->query->get('type') === 'experiments') {
             $Category = new Status($this->App->Users->team);
         } else {
-            $Category = new ItemsTypes($this->App->Users->team);
+            $Category = new ItemsTypes($this->App->Users);
         }
         $this->categoryArr = $Category->read(new ContentParams('', 'all'));
     }

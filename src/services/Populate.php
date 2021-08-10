@@ -52,7 +52,7 @@ class Populate
             $Category = new Status($Entity->Users->team);
             $tpl = 0;
         } else {
-            $Category = new ItemsTypes($Entity->Users->team);
+            $Category = new ItemsTypes($Entity->Users);
             $tpl = (int) $Category->readAll()[0]['category_id'];
         }
         $categories = $Category->readAll();

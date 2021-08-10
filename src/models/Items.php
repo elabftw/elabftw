@@ -33,7 +33,7 @@ class Items extends AbstractEntity
     public function create(EntityParamsInterface $params): int
     {
         $category = (int) $params->getContent();
-        $ItemsTypes = new ItemsTypes($this->Users->team, $category);
+        $ItemsTypes = new ItemsTypes($this->Users, $category);
         $itemsTypesArr = $ItemsTypes->read(new ContentParams());
 
         // SQL for create DB item

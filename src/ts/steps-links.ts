@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       $.each(checked, function(index) {
         let entityType = EntityType.Experiment;
-        if ($('#type').data('type') === 'items') {
+        if (about.type === 'items') {
           entityType = EntityType.Item;
         }
         const tmpEntity: Entity = {

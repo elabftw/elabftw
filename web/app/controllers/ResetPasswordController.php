@@ -27,6 +27,7 @@ use function random_int;
 use function sleep;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use function time;
 
 require_once dirname(__DIR__) . '/init.inc.php';
 
@@ -60,20 +61,11 @@ try {
             throw new ImproperActionException('Your account is not validated. An admin of your team needs to validate it!');
         }
 
-        // Get IP
-        if ($Request->server->has('HTTP_CLIENT_IP')) {
-            $ip = $Request->server->get('HTTP_CLIENT_IP');
-        } elseif ($Request->server->has('HTTP_X_FORWARDED_FOR')) {
-            $ip = $Request->server->get('HTTP_X_FORWARDED_FOR');
-        } else {
-            $ip = $Request->server->get('REMOTE_ADDR');
-        }
-
         // the key (token) is the encrypted user's mail address
         $key = Crypto::encrypt($email, Key::loadFromAsciiSafeString(\SECRET_KEY));
 
         // the deadline is the encrypted epoch of now +1 hour
-        $deadline = \time() + 3600;
+        $deadline = time() + 3600;
         $deadline = Crypto::encrypt((string) $deadline, Key::loadFromAsciiSafeString(\SECRET_KEY));
 
         // build the reset link
@@ -92,7 +84,7 @@ try {
         // Set the To addresses with an associative array
         ->setTo(array($email => $App->Users->userData['fullname']))
         // Give it a body
-        ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $Request->server->get('HTTP_USER_AGENT'), $resetLink) . $Email->footer);
+        ->setBody(sprintf(_('Hi. Someone (probably you) requested a new password on eLabFTW. Please follow this link to reset your password: %s'), $resetLink) . $Email->footer);
         // now we try to send the email
         $Email->send($message);
 

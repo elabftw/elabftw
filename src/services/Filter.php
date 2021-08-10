@@ -12,6 +12,8 @@ namespace Elabftw\Services;
 
 use Elabftw\Exceptions\ImproperActionException;
 use function filter_var;
+use HTMLPurifier;
+use HTMLPurifier_Config;
 use function htmlspecialchars_decode;
 use function mb_strlen;
 use function strip_tags;
@@ -140,7 +142,9 @@ class Filter
         if (strlen($body) > self::MAX_BODY_SIZE) {
             throw new ImproperActionException('Content is too big! Cannot save!');
         }
-        return $body;
+        $config = HTMLPurifier_Config::createDefault();
+        $purifier = new HTMLPurifier($config);
+        return $purifier->purify($body);
     }
 
     /**

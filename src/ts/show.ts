@@ -173,7 +173,7 @@ $(document).ready(function(){
         updateCategory : true,
         id: checked[index]['id'],
         categoryId : $('#catChecked').val(),
-        type : $('#type').data('type')
+        type : about.type
       }));
     });
     // reload the page once it's done
@@ -200,7 +200,7 @@ $(document).ready(function(){
         rw: 'read',
         id: checked[index]['id'],
         value: $('#visChecked').val(),
-        type : $('#type').data('type')
+        type : about.type
       }));
     });
     // reload the page once it's done
@@ -220,7 +220,7 @@ $(document).ready(function(){
       notif(nothingSelectedError);
       return;
     }
-    window.location.href = `make.php?what=${what}&type=${$('#type').data('type')}&id=${checked.map(value => value.id).join('+')}`;
+    window.location.href = `make.php?what=${what}&type=${about.type}&id=${checked.map(value => value.id).join('+')}`;
   });
 
   // THE LOCK BUTTON FOR CHECKED BOXES

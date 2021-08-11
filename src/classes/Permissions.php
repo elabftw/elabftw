@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Models\AnonymousUser;
+use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
@@ -66,7 +67,7 @@ class Permissions
             return array('read' => false, 'write' => false);
         }
 
-        if ($this->item['canread'] === 'organization') {
+        if ($this->item['canread'] === 'organization' && $this->Users instanceof AuthenticatedUser) {
             return array('read' => true, 'write' => $write);
         }
 
@@ -119,7 +120,7 @@ class Permissions
         }
 
         // if any logged in user can write, we can as we are not anon
-        if ($this->item['canwrite'] === 'organization') {
+        if ($this->item['canwrite'] === 'organization' && $this->Users instanceof AuthenticatedUser) {
             return true;
         }
 

@@ -187,7 +187,7 @@ try {
         if ($Entity instanceof Experiments) {
             $Category = new Status($App->Users->team);
         } else {
-            $Category = new ItemsTypes($App->Users->team);
+            $Category = new ItemsTypes($App->Users);
         }
         $Response->setData(array(
             'res' => true,

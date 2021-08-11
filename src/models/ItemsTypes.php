@@ -24,9 +24,12 @@ class ItemsTypes extends AbstractEntity
 {
     use SortableTrait;
 
-    public function __construct(private int $team, ?int $id = null)
+    private int $team;
+
+    public function __construct(public Users $Users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
+        $this->team = $this->Users->team;
         $this->type = 'items_types';
         if ($id !== null) {
             $this->setId($id);
@@ -59,7 +62,7 @@ class ItemsTypes extends AbstractEntity
             return $this->readAll();
         }
 
-        $sql = 'SELECT template, canread, canwrite, metadata FROM items_types WHERE id = :id AND team = :team';
+        $sql = 'SELECT team, template, canread, canwrite, metadata FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);

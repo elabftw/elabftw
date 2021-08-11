@@ -24,7 +24,7 @@ class DatabaseController extends AbstractEntityController
     {
         parent::__construct($app, $entity);
 
-        $Category = new ItemsTypes($this->App->Users->team);
+        $Category = new ItemsTypes($this->App->Users);
         $this->categoryArr = $Category->readAll();
     }
 

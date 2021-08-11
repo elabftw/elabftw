@@ -38,7 +38,7 @@ $Database = new Items($App->Users);
 $Tags = new Tags($Experiments);
 $tagsArr = $Tags->readAll();
 
-$itemsTypesArr = (new ItemsTypes($App->Users->team))->read(new ContentParams('', 'all'));
+$itemsTypesArr = (new ItemsTypes($App->Users))->read(new ContentParams('', 'all'));
 $categoryArr = $statusArr = (new Status($App->Users->team))->read(new ContentParams());
 if ($Request->query->get('type') !== 'experiments') {
     $categoryArr = $itemsTypesArr;

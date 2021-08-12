@@ -37,7 +37,9 @@
         font-size: 120%;
     }
 
-    #todoItemsDiv, #todoStepsItem, hr {
+    #todoItemsDiv,
+    #todoStepsItem,
+    hr {
         clear: both;
     }
 
@@ -59,8 +61,7 @@
     .custom-control-input:active ~ 
     .custom-control-label::before,
     .custom-control-input:focus ~
-    .custom-control-label::before,
-    {
+    .custom-control-label::before {
         background-color: #fff !important;
         box-shadow: 0 0 0 0.1rem rgba(73, 186, 196, 0.5) !important;
     }

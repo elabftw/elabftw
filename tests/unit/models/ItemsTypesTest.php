@@ -18,7 +18,7 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->ItemsTypes= new ItemsTypes(1);
+        $this->ItemsTypes= new ItemsTypes(new Users(1, 1));
     }
 
     public function testCreateUpdateDestroy(): void

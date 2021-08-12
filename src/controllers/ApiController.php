@@ -249,7 +249,7 @@ class ApiController implements ControllerInterface
         } elseif ($this->endpoint === 'templates') {
             $this->Entity = new Templates($this->Users, $this->id);
         } elseif ($this->endpoint === 'items_types') {
-            $this->Category = new ItemsTypes($this->Users->team);
+            $this->Category = new ItemsTypes($this->Users);
         } elseif ($this->endpoint === 'status') {
             $this->Category = new Status($this->Users->team);
         } elseif ($this->endpoint === 'events') {
@@ -777,7 +777,7 @@ class ApiController implements ControllerInterface
     private function createItem(): Response
     {
         // check that the id we have is a valid item type from our team
-        $ItemsTypes = new ItemsTypes($this->Users->team);
+        $ItemsTypes = new ItemsTypes($this->Users);
         $itemsTypesArr = $ItemsTypes->readAll();
         $validIds = array();
         foreach ($itemsTypesArr as $itemsTypes) {

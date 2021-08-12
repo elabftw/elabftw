@@ -469,6 +469,9 @@ abstract class AbstractEntity implements CrudInterface
         if ($this instanceof Experiments || $this instanceof Items || $this instanceof Templates) {
             return $Permissions->forEntity();
         }
+        if ($this instanceof ItemsTypes) {
+            return $Permissions->forItemType();
+        }
 
         return array('read' => false, 'write' => false);
     }

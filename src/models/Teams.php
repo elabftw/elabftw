@@ -152,7 +152,9 @@ class Teams implements ReadableInterface, DestroyableInterface
         $Status->createDefault();
 
         // create default item type
-        $ItemsTypes = new ItemsTypes($newId);
+        $user = new Users();
+        $user->team = $newId;
+        $ItemsTypes = new ItemsTypes($user);
         $extra = array(
             'color' => '#32a100',
             'body' => '<p>Go to the admin panel to edit/add more items types!</p>',

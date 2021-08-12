@@ -117,7 +117,7 @@ abstract class AbstractProcessor implements ProcessorInterface
         } elseif ($type === 'template') {
             return new Templates($this->Users, $itemId);
         } elseif ($type === 'itemtype') {
-            return new ItemsTypes($this->Users->team, $itemId);
+            return new ItemsTypes($this->Users, $itemId);
         }
         return new Items($this->Users, $itemId);
     }

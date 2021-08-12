@@ -42,7 +42,7 @@ try {
             if (!$App->Session->get('is_admin')) {
                 throw new IllegalActionException('Non admin user tried to access admin controller.');
             }
-            $Entity = new ItemsTypes($App->Users->team);
+            $Entity = new ItemsTypes($App->Users);
             break;
         case 'status':
             if (!$App->Session->get('is_admin')) {

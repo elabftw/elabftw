@@ -13,7 +13,6 @@ use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\StepParams;
 use Elabftw\Exceptions\IllegalActionException;
 
-
 class StepsTest extends \PHPUnit\Framework\TestCase
 {
     private Experiments $Experiments;

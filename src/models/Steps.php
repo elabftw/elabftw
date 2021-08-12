@@ -124,7 +124,7 @@ class Steps implements CrudInterface
      */
     public function readAllTeam(): array
     {
-        $teamgroupsOfUser = (new TeamGroups($this->Entity->Users))->getGroupsFromUser();
+        $teamgroupsOfUser = array_column((new TeamGroups($this->Entity->Users))->readGroupsFromUser(), 'id');
         $teamgroups = '';
         foreach ($teamgroupsOfUser as $teamgroup) {
             $teamgroups .= " OR entity.canread = $teamgroup";

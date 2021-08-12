@@ -35,7 +35,7 @@ class CsrfTest extends \PHPUnit\Framework\TestCase
         $request = Request::create('/', 'POST');
         $request->headers->set('X-Requested-With', 'XMLHttpRequest');
         $Csrf = new Csrf($request);
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(InvalidCsrfTokenException::class);
         $Csrf->validate();
     }
 
@@ -43,7 +43,7 @@ class CsrfTest extends \PHPUnit\Framework\TestCase
     {
         $request = Request::create('/', 'POST');
         $Csrf = new Csrf($request);
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(InvalidCsrfTokenException::class);
         $Csrf->validate();
     }
 

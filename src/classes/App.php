@@ -42,7 +42,7 @@ class App
 
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '4.0.11';
+    public const INSTALLED_VERSION = '4.1.0-BETA';
 
     public Users $Users;
 
@@ -96,7 +96,7 @@ class App
         // ANONYMOUS
         if ($this->Session->get('is_anon') === 1) {
             // anon user only has access to a subset of pages
-            $allowedPages = array('index.php', 'experiments.php', 'database.php', 'search.php', 'make.php', 'RequestHandler.php');
+            $allowedPages = array('index.php', 'experiments.php', 'database.php', 'search.php', 'make.php', 'logout.php', 'RequestHandler.php');
             if (!in_array(basename($this->Request->getScriptName()), $allowedPages, true)) {
                 throw new UnauthorizedException();
             }

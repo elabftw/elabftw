@@ -138,7 +138,7 @@ class Templates extends AbstractEntity
     public function getWriteableTemplatesList(): array
     {
         $TeamGroups = new TeamGroups($this->Users);
-        $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
+        $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
 
         return array_filter($this->getTemplatesList(), function ($t) use ($teamgroupsOfUser) {
             return $t['canwrite'] === 'public' || $t['canwrite'] === 'organization' ||
@@ -156,7 +156,7 @@ class Templates extends AbstractEntity
     public function getTemplatesList(): array
     {
         $TeamGroups = new TeamGroups($this->Users);
-        $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
+        $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
 
         $sql = "SELECT DISTINCT experiments_templates.id, experiments_templates.title, experiments_templates.body,
                 experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,

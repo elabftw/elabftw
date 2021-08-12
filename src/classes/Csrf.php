@@ -10,7 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use Defuse\Crypto\Key;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -60,7 +60,7 @@ class Csrf
 
         if ($this->getRequestToken() !== $this->getToken()) {
             // an invalid csrf token is most likely the result of an expired session
-            throw new ImproperActionException(_('Your session expired.'));
+            throw new InvalidCsrfTokenException();
         }
     }
 

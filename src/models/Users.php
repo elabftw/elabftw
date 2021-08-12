@@ -419,6 +419,17 @@ class Users
     }
 
     /**
+     * Invalidate token on logout action
+     */
+    public function invalidateToken(): void
+    {
+        $sql = 'UPDATE users SET token = null WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+    }
+
+    /**
      * Validate current user instance
      */
     public function validate(): void

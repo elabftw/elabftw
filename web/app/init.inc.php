@@ -12,6 +12,7 @@ use function basename;
 use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
@@ -88,11 +89,12 @@ try {
         'change-pass.php',
         'index.php',
         'login.php',
+        'logout.php',
         'LoginController.php',
         'metadata.php',
         'register.php',
         'RegisterController.php',
-        'RequestHandler.php',
+        'UnauthRequestHandler.php',
         'ResetPasswordController.php',
     );
 
@@ -106,13 +108,13 @@ try {
     }
 
     $App->boot();
-} catch (UnauthorizedException $e) {
+} catch (UnauthorizedException | InvalidCsrfTokenException $e) {
     // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
 
     // maybe we clicked an email link and we want to be redirected to the page upon successful login
     // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
-    // don't store a redirect cookie if we have been logged out and the redirect is to a controller page
-    if (!stripos($Request->getRequestUri(), 'controllers')) {
+    // don't store a redirect cookie if we have been logged out and the redirect is to a controller page (or the logout page)
+    if (!stripos($Request->getRequestUri(), 'controllers') && !stripos($Request->getRequestUri(), 'logout')) {
         $cookieOptions = array(
             'expires' => time() + 300,
             'path' => '/',
@@ -128,8 +130,8 @@ try {
     header('X-Elab-Need-Auth: 1');
     // don't send a GET app/logout.php if it's an ajax call because it messes up the jquery ajax
     if ($Request->headers->get('X-Requested-With') !== 'XMLHttpRequest') {
-        // NO DON'T USE  THE FULL URL HERE BECAUSE IF SERVER IS HTTP it will fail badly
-        header('Location: app/logout.php?keep_redirect=1');
+        $url = sprintf('%s://%s/app/logout.php?keep_redirect=1', $Request->server->get('REQUEST_SCHEME'), $Request->server->get('HTTP_HOST'));
+        header('Location: ' . $url);
     }
     exit;
 } catch (ImproperActionException | InvalidSchemaException | Exception $e) {

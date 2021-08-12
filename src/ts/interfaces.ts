@@ -47,6 +47,7 @@ interface CheckableItem {
 enum Method {
   POST = 'POST',
   GET = 'GET',
+  UNAUTHGET = 'UNAUTHGET',
 }
 
 enum Action {

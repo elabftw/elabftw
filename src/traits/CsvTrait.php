@@ -35,7 +35,7 @@ trait CsvTrait
         // add UTF8 BOM
         $csv->setOutputBOM(Reader::BOM_UTF8);
 
-        return $csv->getContent();
+        return $csv->toString();
     }
 
     /**

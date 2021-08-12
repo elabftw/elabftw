@@ -9,7 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Symfony\Component\HttpFoundation\Request;
 
 class CsrfTest extends \PHPUnit\Framework\TestCase

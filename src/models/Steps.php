@@ -111,14 +111,25 @@ class Steps implements CrudInterface
 
         $scope = ' WHERE entity.userid = :userid';
         if ($team === true) {
-            $scope = " WHERE entity.team = :teamid AND (entity.canread = 'public' OR entity.canread = 'organization' OR entity.canread = 'team' OR ((entity.canread = 'user' OR entity.canread = 'useronly') AND entity.userid = :userid)";
-
             $teamgroupsOfUser = (new TeamGroups($this->Entity->Users))->getGroupsFromUser();
+            $teamgroups = '';
             foreach ($teamgroupsOfUser as $teamgroup) {
-                $scope .= " OR (entity.canread = $teamgroup)";
+                $teamgroups .= " OR entity.canread = $teamgroup";
             }
 
-            $scope .= ')';
+            $scope = " WHERE entity.team = :teamid
+                AND (
+                    entity.canread = 'public'
+                    OR entity.canread = 'organization'
+                    OR entity.canread = 'team'
+                    $teamgroups
+                    OR (entity.userid = :userid
+                        AND (
+                            entity.canread = 'user'
+                            OR entity.canread = 'useronly'
+                        )
+                    )
+                )";
         }
 
         $sql = 'SELECT entity.id, entity.title, stepst.finished, stepst.steps_body, stepst.steps_id

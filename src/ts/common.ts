@@ -91,7 +91,7 @@ $(document).ready(function() {
     // SHOW PRIVACY POLICY
     if (el.matches('[data-action="show-privacy-policy"]')) {
       const payload: Payload = {
-        method: Method.GET,
+        method: Method.UNAUTHGET,
         action: Action.Read,
         model: Model.PrivacyPolicy,
       };

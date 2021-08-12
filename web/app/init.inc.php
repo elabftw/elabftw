@@ -94,7 +94,7 @@ try {
         'metadata.php',
         'register.php',
         'RegisterController.php',
-        'RequestHandler.php',
+        'UnauthRequestHandler.php',
         'ResetPasswordController.php',
     );
 

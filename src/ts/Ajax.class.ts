@@ -67,6 +67,8 @@ export class Ajax {
     let response: Promise<Response>;
     if (payload.method === Method.GET) {
       response = this.sendGet(payload);
+    } else if (payload.method === Method.UNAUTHGET) {
+      response = this.sendUnauthGet(payload);
     } else {
       response = this.sendPost(payload);
     }
@@ -107,6 +109,17 @@ export class Ajax {
     const encoded = encodeURIComponent(JSON.stringify(payload));
     // p as in payload
     return fetch(`app/controllers/RequestHandler.php?p=${encoded}`, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      }
+    });
+  }
+
+  sendUnauthGet(payload: Payload): Promise<Response> {
+    // encode the json in a percent encoded parameter
+    const encoded = encodeURIComponent(JSON.stringify(payload));
+    // p as in payload
+    return fetch(`app/controllers/UnauthRequestHandler.php?p=${encoded}`, {
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
       }

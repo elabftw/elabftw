@@ -127,7 +127,8 @@ try {
     // used by ajax requests to detect a timed out session
     header('X-Elab-Need-Auth: 1');
     // don't send a GET app/logout.php if it's an ajax call because it messes up the jquery ajax
-    if ($Request->headers->get('X-Requested-With') !== 'XMLHttpRequest') {
+    // also don't redirect to logout page if we come from it (user going to logout page without being logged in!)
+    if (($Request->headers->get('X-Requested-With') !== 'XMLHttpRequest') && ($Request->server->get('SCRIPT_NAME') !== '/app/logout.php')) {
         // NO DON'T USE  THE FULL URL HERE BECAUSE IF SERVER IS HTTP it will fail badly
         header('Location: app/logout.php?keep_redirect=1');
     }

@@ -3,15 +3,43 @@
       <i class='fas fa-times fa-2x'></i>
   </a>
   <h2>{{ 'Todolist'|trans }}</h2>
-  <input aria-label='{{ 'Add'|trans }}' id='todo' />
-  <button class='button btn btn-primary' data-action='create-todoitem'>{{ 'Add'|trans }}</button>
+  <div class='form-inline d-inline-flex justify-content-center'>
+    <input class='mb-2' aria-label='{{ 'Add'|trans }}' id='todo' />
+    <button class='button btn btn-primary mb-2' data-action='create-todoitem'>{{ 'Add'|trans }}</button>
+  </div>
+  <a data-action='toggle-next' class='clickable float-right' title='{{ 'Toggle visibility'|trans }}'>
+    <i class='fas fa-eye fa-2x'></i>
+  </a>
 
   <!-- this div will be filled with the list of todo items by js -->
   <div id='todoItemsDiv'></div>
 
   <hr>
   <h2>{{ 'Unfinished steps'|trans }}</h2>
-  <div id='todoStepsDiv'></div>
+  <h3 class='d-inline-block'>{{ 'Experiments'|trans }}</h3>
+  <!-- toggle visibility of experiment steps -->
+  <a data-action='toggle-next' class='clickable float-right' title='{{ 'Toggle visibility'|trans }}'>
+    <i class='fas fa-eye fa-2x'></i>
+  </a>
+  <ul id='todoStepsExperiment' class='pl-0'></ul>
+
+  <hr>
+  <div class='d-inline-block mb-2'>
+    <h3 class='d-inline'>{{ 'Items'|trans }}</h3>
+    <div class='d-inline-flex justify-content-center ml-4'>
+        <div class='switch-label'>{{ 'User'|trans }}</div>
+        <div class='custom-control custom-switch' style='padding-left: 1.3rem'>
+            <input type='checkbox' id='itemsStepsScope' class='custom-control-input' {{ App.Users.userData.items_steps_scope == '1' ? 'checked ' : '' -}} aria-label='{{ 'Show items steps for team'|trans }}'>
+            <label class='custom-control-label' for='itemsStepsScope' style='margin-top: 3px;'></label>
+        </div>
+        <div class='switch-label'>{{ 'Team'|trans }}</div>
+    </div>
+  </div>
+  <!-- toggle visibility of items steps -->
+  <a data-action='toggle-next' class='clickable float-right' title='{{ 'Toggle visibility'|trans }}'>
+    <i class='fas fa-eye fa-2x'></i>
+  </a>
+  <ul id='todoStepsItem' class='pl-0'></ul>
 </div>
 
 

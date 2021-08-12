@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Traits\SortableTrait;
@@ -77,8 +78,11 @@ class Steps implements CrudInterface
     public function read(ContentParamsInterface $params): array
     {
         if ($params->getTarget() === 'all') {
-            return $this->readAll();
+            return $this->readAll($this->Entity->type);
+        } elseif ($params->getTarget() === 'all_team') {
+            return $this->readAll($this->Entity->type, true);
         }
+
         $this->Entity->canOrExplode('read');
 
         $sql = 'SELECT * FROM ' . $this->Entity->type . '_steps WHERE item_id = :id ORDER BY ordering';
@@ -94,22 +98,46 @@ class Steps implements CrudInterface
     }
 
     /**
-     * Get the current unfinished steps from experiments owned by current user
+     * Get the current unfinished steps from experiments or items owned by current user or items from team
+     *
+     * @param string $table Which table do we read from? experiments or items
+     * @param bool $team Steps from the team or only user, only for items
      */
-    public function readAll(): array
+    public function readAll(string $table, bool $team = false): array
     {
-        $sql = "SELECT experiments.id, experiments.title, stepst.finished, stepst.steps_body, stepst.steps_id
-            FROM experiments
+        if ($table === 'experiments' && $team === true) {
+            throw new IllegalActionException('Only the items steps of the whole team can be viewed.');
+        }
+
+        $scope = ' WHERE entity.userid = :userid';
+        if ($team === true) {
+            $scope = " WHERE entity.team = :teamid AND (entity.canread = 'public' OR entity.canread = 'organization' OR entity.canread = 'team' OR ((entity.canread = 'user' OR entity.canread = 'useronly') AND entity.userid = :userid)";
+
+            $teamgroupsOfUser = (new TeamGroups($this->Entity->Users))->getGroupsFromUser();
+            foreach ($teamgroupsOfUser as $teamgroup) {
+                $scope .= " OR (entity.canread = $teamgroup)";
+            }
+
+            $scope .= ')';
+        }
+
+        $sql = 'SELECT entity.id, entity.title, stepst.finished, stepst.steps_body, stepst.steps_id
+            FROM ' . $table . " as entity
             CROSS JOIN (
                 SELECT item_id, finished,
-                GROUP_CONCAT(experiments_steps.body ORDER BY experiments_steps.ordering SEPARATOR '|') AS steps_body,
-                GROUP_CONCAT(experiments_steps.id ORDER BY experiments_steps.ordering SEPARATOR '|') AS steps_id
-                FROM experiments_steps
-                WHERE finished = 0 GROUP BY item_id) AS stepst ON (stepst.item_id = experiments.id)
-            WHERE userid = :userid GROUP BY experiments.id ORDER BY experiments.id DESC";
+                GROUP_CONCAT(entity_steps.body ORDER BY entity_steps.ordering SEPARATOR '|') AS steps_body,
+                GROUP_CONCAT(entity_steps.id ORDER BY entity_steps.ordering SEPARATOR '|') AS steps_id
+                FROM " . $table . '_steps as entity_steps
+                WHERE finished = 0 GROUP BY item_id) AS stepst ON (stepst.item_id = entity.id)';
+        $sql .= $scope;
+        $sql .= ' GROUP BY entity.id ORDER BY entity.id DESC';
+            
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        if ($team === true) {
+            $req->bindParam(':teamid', $this->Entity->Users->team, PDO::PARAM_INT);
+        }
         $this->Db->execute($req);
 
         $res = $req->fetchAll();

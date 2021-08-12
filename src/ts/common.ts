@@ -40,10 +40,12 @@ $(document).ready(function() {
   i18next.changeLanguage($('#user-prefs').data('lang'));
 
   // TOGGLABLE NEXT
-  const toggleNextElem = document.querySelector('[data-action="toggle-next"]');
-  if (toggleNextElem) {
-    toggleNextElem.addEventListener('click', (event) => {
-      (event.target as HTMLElement).nextElementSibling.toggleAttribute('hidden');
+  const toggleNextElem = document.querySelectorAll('[data-action="toggle-next"]');
+  if (toggleNextElem.length > 0) {
+    toggleNextElem.forEach(el => {
+      el.addEventListener('click', (event) => {
+        (event.target as HTMLElement).nextElementSibling.toggleAttribute('hidden');
+      });
     });
   }
 

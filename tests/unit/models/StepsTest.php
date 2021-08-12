@@ -11,6 +11,8 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\StepParams;
+use Elabftw\Exceptions\IllegalActionException;
+
 
 class StepsTest extends \PHPUnit\Framework\TestCase
 {
@@ -38,6 +40,21 @@ class StepsTest extends \PHPUnit\Framework\TestCase
     {
         $steps = $this->Steps->read(new ContentParams());
         $this->assertTrue(is_array($steps));
+    }
+
+    public function testReadAll(): void
+    {
+        $steps = $this->Steps->readAll('items');
+        $this->assertTrue(is_array($steps));
+
+        $steps = $this->Steps->readAll('items', true);
+        $this->assertTrue(is_array($steps));
+
+        $steps = $this->Steps->readAll('experiments');
+        $this->assertTrue(is_array($steps));
+
+        $this->expectException(IllegalActionException::class);
+        $steps = $this->Steps->readAll('experiments', true);
     }
 
     public function testUpdate(): void

@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedExperiments, Target, ResponseMsg } from './interfaces';
+import { Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedEntities, Target, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
@@ -37,7 +37,7 @@ export default class Todolist {
       model: this.model,
     };
     return this.sender.send(payload).then(json => {
-      let html = '<ul id="todoItems-list" class="sortable" data-axis="y" data-table="todolist">';
+      let html = '<ul id="todoItems-list" class="sortable pl-0" data-axis="y" data-table="todolist">';
       for (const entry of json.value as Array<Todoitem>) {
         html += `<li data-todoitemid=${entry.id} id='todoItem_${entry.id}'>
         <a class='clickable float-right' data-action='destroy-todoitem' data-todoitemid='${entry.id}' title='` + i18next.t('generic-delete-warning') + `'>
@@ -66,29 +66,32 @@ export default class Todolist {
   }
 
 
-  getSteps(): Promise<void> {
+  getSteps(type: EntityType, target: Target): Promise<void> {
     const payload: Payload = {
       method: Method.GET,
       action: Action.Read,
       entity: {
-        type: EntityType.Experiment,
+        type: type,
         id: null,
       },
       model: Model.Step,
-      target: Target.All,
+      target: target,
     };
     return this.sender.send(payload).then(json => {
-      let html = '';
-      for (const exp of json.value as Array<UnfinishedExperiments>) {
-        html += `<li><h3><a href='experiments.php?mode=view&id=${exp.id}'>${exp.title}</a></h3>`;
-        for (const stepsData of Object.entries(exp.steps)) {
-          const stepId = stepsData[1][0];
-          const stepBody = stepsData[1][1];
-          html += `<div><input type='checkbox' class='stepbox mr-1' id='todo_step_${stepId}' data-id='${exp.id}' data-type='${EntityType.Experiment}' data-stepid='${stepId}' />${stepBody}</div>`;
+      if (json.res) {
+        let html = '';
+        for (const entity of json.value as Array<UnfinishedEntities>) {
+          html += `<li><h4><a href='${type === EntityType.Item ? 'database' : 'experiments'}.php?mode=view&id=${entity.id}'>${entity.title}</a></h4>`;
+          for (const stepsData of Object.entries(entity.steps)) {
+            const stepId = stepsData[1][0];
+            const stepBody = stepsData[1][1];
+            html += `<div><input type='checkbox' class='stepbox mr-1' id='todo_step_${stepId}' data-id='${entity.id}' data-type='${type}' data-stepid='${stepId}' />${stepBody}</div>`;
+          }
+          html += '</li>';
         }
-        html += '</li>';
+        const typeClassName = 'todoSteps' + type.charAt(0).toUpperCase() + type.slice(1);
+        document.getElementById(typeClassName).innerHTML = html;
       }
-      $('#todoStepsDiv').html(html);
     });
   }
 
@@ -99,8 +102,19 @@ export default class Todolist {
       localStorage.setItem('isTodolistOpen', '0');
     } else {
       $('#container').css('width', '70%').css('margin-right', '0');
+      // todo list
       this.read();
-      this.getSteps();
+
+      // unfinished experiments steps
+      this.getSteps(EntityType.Experiment, Target.All);
+
+      // unfinished items steps of the entire team or just for items owned by the user
+      const scopeSwitch = document.getElementById('itemsStepsScope') as HTMLInputElement;
+      scopeSwitch.addEventListener('change', (event) => {
+        this.itemsStepsScope(event.target as HTMLInputElement);
+      });
+      this.itemsStepsScope(scopeSwitch);
+
       localStorage.setItem('isTodolistOpen', '1');
     }
     $('#todoList').toggle();
@@ -114,5 +128,10 @@ export default class Todolist {
       id : id,
     };
     return this.sender.send(payload);
+  }
+
+  itemsStepsScope(el: HTMLInputElement): void {
+    const itemTarget = (el.checked ? Target.AllTeam : Target.All);
+    this.getSteps(EntityType.Item, itemTarget);
   }
 }

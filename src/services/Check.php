@@ -167,6 +167,7 @@ class Check
     {
         $allowed = array(
             'all',
+            'all_team',
             'body',
             'boundevent',
             'comment',

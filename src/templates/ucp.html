@@ -198,6 +198,11 @@
         />
         <label for='show_public'>{{ 'Show experiments/database items from outside the team'|trans }}</label>
         <br>
+        <input id='items_steps_scope' type='checkbox' name='items_steps_scope'
+          {{ App.Users.userData.items_steps_scope == '1' ? " checked='checked'" }}
+        />
+        <label for='items_steps_scope'>{{ 'Show unfinished steps for all items of the team in the todolist by default'|trans }}</label>
+        <br>
         <input id='chem_editor' type='checkbox' name='chem_editor'
           {{ App.Users.userData.chem_editor == '1' ? " checked='checked'" }}
         />

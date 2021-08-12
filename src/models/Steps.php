@@ -12,7 +12,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Traits\SortableTrait;
@@ -80,7 +79,7 @@ class Steps implements CrudInterface
         if ($params->getTarget() === 'all') {
             return $this->readAll($this->Entity->type);
         } elseif ($params->getTarget() === 'all_team') {
-            return $this->readAll($this->Entity->type, true);
+            return $this->readAllTeam();
         }
 
         $this->Entity->canOrExplode('read');
@@ -98,57 +97,18 @@ class Steps implements CrudInterface
     }
 
     /**
-     * Get the current unfinished steps from experiments or items owned by current user or items from team
+     * Get unfinished experiments or items steps owned by user
      *
      * @param string $table Which table do we read from? experiments or items
-     * @param bool $team Steps from the team or only user, only for items
      */
-    public function readAll(string $table, bool $team = false): array
+    public function readAll(string $table): array
     {
-        if ($table === 'experiments' && $team === true) {
-            throw new IllegalActionException('Only the items steps of the whole team can be viewed.');
-        }
+        $whereClause = ' WHERE entity.userid = :userid';
 
-        $scope = ' WHERE entity.userid = :userid';
-        if ($team === true) {
-            $teamgroupsOfUser = (new TeamGroups($this->Entity->Users))->getGroupsFromUser();
-            $teamgroups = '';
-            foreach ($teamgroupsOfUser as $teamgroup) {
-                $teamgroups .= " OR entity.canread = $teamgroup";
-            }
-
-            $scope = " WHERE entity.team = :teamid
-                AND (
-                    entity.canread = 'public'
-                    OR entity.canread = 'organization'
-                    OR entity.canread = 'team'
-                    $teamgroups
-                    OR (entity.userid = :userid
-                        AND (
-                            entity.canread = 'user'
-                            OR entity.canread = 'useronly'
-                        )
-                    )
-                )";
-        }
-
-        $sql = 'SELECT entity.id, entity.title, stepst.finished, stepst.steps_body, stepst.steps_id
-            FROM ' . $table . " as entity
-            CROSS JOIN (
-                SELECT item_id, finished,
-                GROUP_CONCAT(entity_steps.body ORDER BY entity_steps.ordering SEPARATOR '|') AS steps_body,
-                GROUP_CONCAT(entity_steps.id ORDER BY entity_steps.ordering SEPARATOR '|') AS steps_id
-                FROM " . $table . '_steps as entity_steps
-                WHERE finished = 0 GROUP BY item_id) AS stepst ON (stepst.item_id = entity.id)';
-        $sql .= $scope;
-        $sql .= ' GROUP BY entity.id ORDER BY entity.id DESC';
-            
+        $sql = $this->getReadAllSql($table, $whereClause);
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        if ($team === true) {
-            $req->bindParam(':teamid', $this->Entity->Users->team, PDO::PARAM_INT);
-        }
         $this->Db->execute($req);
 
         $res = $req->fetchAll();
@@ -156,21 +116,47 @@ class Steps implements CrudInterface
             return array();
         }
 
-        // clean up the results so we get a nice array with experiment id/title and steps with their id/body
-        // use reference to edit in place
-        foreach ($res as &$exp) {
-            $stepIDs = explode('|', $exp['steps_id']);
-            $stepsBodies = explode('|', $exp['steps_body']);
+        return $this->cleanUpReadAllSQLResults($res);
+    }
 
-            $expSteps = array();
-            foreach ($stepIDs as $key => $stepID) {
-                $expSteps[] = array($stepID, $stepsBodies[$key]);
-            }
-            $exp['steps'] = $expSteps;
-            unset($exp['steps_body'], $exp['steps_id'], $exp['finished']);
+    /**
+     * Get unfinished items steps from team
+     */
+    public function readAllTeam(): array
+    {
+        $teamgroupsOfUser = (new TeamGroups($this->Entity->Users))->getGroupsFromUser();
+        $teamgroups = '';
+        foreach ($teamgroupsOfUser as $teamgroup) {
+            $teamgroups .= " OR entity.canread = $teamgroup";
         }
 
-        return $res;
+        $whereClause = " WHERE entity.team = :teamid
+            AND (
+                entity.canread = 'public'
+                OR entity.canread = 'organization'
+                OR entity.canread = 'team'
+                $teamgroups
+                OR (entity.userid = :userid
+                    AND (
+                        entity.canread = 'user'
+                        OR entity.canread = 'useronly'
+                    )
+                )
+            )";
+
+        $sql = $this->getReadAllSql('items', $whereClause);
+
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':teamid', $this->Entity->Users->team, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+
+        return $this->cleanUpReadAllSQLResults($res);
     }
 
     /**
@@ -243,5 +229,49 @@ class Steps implements CrudInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    /*
+     * Provide SQL statement to get unfinished steps
+     *
+     * @param string $table Which table do we read from? experiments or items
+     * @param string $whereClause SQL WHERE clause
+     */
+    private function getReadAllSql(string $table, string $whereClause): string
+    {
+        $sql = 'SELECT entity.id, entity.title, stepst.finished, stepst.steps_body, stepst.steps_id
+            FROM ' . $table . " as entity
+            CROSS JOIN (
+                SELECT item_id, finished,
+                GROUP_CONCAT(entity_steps.body ORDER BY entity_steps.ordering SEPARATOR '|') AS steps_body,
+                GROUP_CONCAT(entity_steps.id ORDER BY entity_steps.ordering SEPARATOR '|') AS steps_id
+                FROM " . $table . '_steps as entity_steps
+                WHERE finished = 0 GROUP BY item_id) AS stepst ON (stepst.item_id = entity.id)';
+        $sql .= $whereClause;
+        $sql .= ' GROUP BY entity.id ORDER BY entity.id DESC';
+        return $sql;
+    }
+
+    /*
+     * Clean up the readAll(Team) results so we get a nice array with entity id/title and steps with their id/body
+     * use reference to edit in place
+     *
+     *@param array $res Unfinished steps SQL result array
+     */
+    private function cleanUpReadAllSQLResults(array $res): array
+    {
+        foreach ($res as &$exp) {
+            $stepIDs = explode('|', $exp['steps_id']);
+            $stepsBodies = explode('|', $exp['steps_body']);
+
+            $expSteps = array();
+            foreach ($stepIDs as $key => $stepID) {
+                $expSteps[] = array($stepID, $stepsBodies[$key]);
+            }
+            $exp['steps'] = $expSteps;
+            unset($exp['steps_body'], $exp['steps_id'], $exp['finished']);
+        }
+
+        return $res;
     }
 }

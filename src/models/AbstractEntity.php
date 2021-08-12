@@ -172,7 +172,7 @@ abstract class AbstractEntity implements CrudInterface
     public function readShow(DisplayParams $displayParams, bool $extended = false): array
     {
         $sql = $this->getReadSqlBeforeWhere($extended, $extended);
-        $teamgroupsOfUser = $this->TeamGroups->getGroupsFromUser();
+        $teamgroupsOfUser = array_column($this->TeamGroups->readGroupsFromUser(), 'id');
 
         // there might or might not be a condition for the WHERE, so make sure there is at least one
         $sql .= ' WHERE 1=1';

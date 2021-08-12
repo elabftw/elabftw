@@ -124,7 +124,7 @@ class Links implements CrudInterface
 
             // add all the teamgroups in which the user is
             $TeamGroups = new TeamGroups($this->Entity->Users);
-            $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
+            $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
             foreach ($teamgroupsOfUser as $teamgroup) {
                 $sql .= ' OR (entity.canread = ' . $teamgroup . ')';
             }

@@ -947,6 +947,9 @@ class ApiController implements ControllerInterface
      * # update experiment 42
      * params = { "title": "New title", "date": "20200504", "body": "New body content" }
      * print(manager.post_experiment(42, params))
+     * # append to the body
+     * params = { "bodyappend": "appended text<br>" }
+     * print(manager.post_experiment(42, params))
      * # update database item 42
      * print(manager.post_item(42, params))
      * @apiExample {shell} Curl example

@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
           $('#filesdiv').load(`?mode=edit&id=${String(entity.id)} #filesdiv > *`, function() {
             displayMolFiles();
             display3DMolecules(true);
-            displayPlasmidViewer();
+            displayPlasmidViewer(about);
             const dropZone = Dropzone.forElement('#elabftw-dropzone');
             // Check to make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
             if (typeof dropZone.tinyImageSuccess !== 'undefined' && dropZone.tinyImageSuccess !== null) {

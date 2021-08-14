@@ -15,16 +15,18 @@ import i18next from 'i18next';
 import Upload from './Upload.class';
 
 $(document).ready(function() {
-  const pages = ['edit', 'view'];
-  if (!pages.includes($('#info').data('page'))) {
-    return;
-  }
-  displayMolFiles();
-  display3DMolecules();
-  displayPlasmidViewer();
-
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
+
+  const pages = ['edit', 'view'];
+  if (!pages.includes(about.page)) {
+    return;
+  }
+
+  displayMolFiles();
+  display3DMolecules();
+  displayPlasmidViewer(about);
+
   let entityType: EntityType;
   if (about.type === 'experiments') {
     entityType = EntityType.Experiment;
@@ -123,7 +125,7 @@ $(document).ready(function() {
             $('#filesdiv').load('?mode=edit&id=' + entity.id + ' #filesdiv > *', function() {
               displayMolFiles();
               display3DMolecules(true);
-              displayPlasmidViewer();
+              displayPlasmidViewer(about);
             });
           }
         });

@@ -37,7 +37,7 @@ $(document).ready(function() {
   });
 
   // set the language for js translated strings
-  i18next.changeLanguage($('#user-prefs').data('lang'));
+  i18next.changeLanguage(document.getElementById('user-prefs').dataset.lang);
 
   // TOGGLABLE NEXT
   const toggleNextElem = document.querySelector('[data-action="toggle-next"]');
@@ -58,19 +58,21 @@ $(document).ready(function() {
   displayMolFiles();
 
   // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR/JSON EDITOR
-  const plusMinusButton = document.querySelector('.plusMinusButton');
+  const plusMinusButton = document.getElementsByClassName('plusMinusButton');
   if (plusMinusButton) {
-    plusMinusButton.addEventListener('click', (event) => {
-      const el = (event.target as HTMLElement);
-      if (el.innerText === '+') {
-        el.classList.add('btn-neutral');
-        el.classList.remove('btn-primary');
-        el.innerText = '-';
-      } else {
-        el.classList.add('btn-primary');
-        el.classList.remove('btn-neutral');
-        el.innerText = '+';
-      }
+    Array.from(plusMinusButton).forEach(element => {
+      element.addEventListener('click', (event) => {
+        const el = (event.target as HTMLElement);
+        if (el.innerText === '+') {
+          el.classList.add('btn-neutral');
+          el.classList.remove('btn-primary');
+          el.innerText = '-';
+        } else {
+          el.classList.add('btn-primary');
+          el.classList.remove('btn-neutral');
+          el.innerText = '+';
+        }
+      });
     });
   }
 
@@ -86,7 +88,7 @@ $(document).ready(function() {
     }
   });
 
-  document.querySelector('#container').addEventListener('click', (event) => {
+  document.getElementById('container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
     // SHOW PRIVACY POLICY
     if (el.matches('[data-action="show-privacy-policy"]')) {

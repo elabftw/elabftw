@@ -64,13 +64,13 @@ $(document).ready(function() {
   // Export mol in png
   $(document).on('click', '.saveAsImage', function() {
     const molCanvasId = $(this).data('canvasid');
-    const png = (document.getElementById(molCanvasId) as any).toDataURL();
+    const png = (document.getElementById(molCanvasId) as HTMLCanvasElement).toDataURL();
     $.post('app/controllers/EntityAjaxController.php', {
       saveAsImage: true,
       realName: $(this).data('name'),
       content: png,
-      id: $('#info').data('id'),
-      type: $('#info').data('type')
+      id: about.id,
+      type: about.type
     }).done(function(json) {
       notif(json);
       if (json.res) {

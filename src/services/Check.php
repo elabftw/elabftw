@@ -168,6 +168,7 @@ class Check
         $allowed = array(
             'all',
             'body',
+            'bodyappend',
             'boundevent',
             'comment',
             'date',

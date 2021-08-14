@@ -135,6 +135,7 @@ class ApiController implements ControllerInterface
                 // TITLE DATE BODY UPDATE
                 if ($this->Request->request->has('date') ||
                     $this->Request->request->has('title') ||
+                    $this->Request->request->has('bodyappend') ||
                     $this->Request->request->has('body')) {
                     return $this->updateEntity();
                 }
@@ -951,9 +952,12 @@ class ApiController implements ControllerInterface
      * @apiExample {shell} Curl example
      * export TOKEN="3148"
      * # update experiment 42
+     * # you can independently update the title, date or body, or all at the same time
      * curl -X POST -F "title=a new title" -F "body=a new body" -F "date=20200504" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments/42
-     * # update database item 42
-     * curl -X POST -F "title=a new title" -F "body=a new body" -F "date=20200504" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
+     * # update database item 42 title only
+     * curl -X POST -F "title=a new title" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
+     * # you can also append to the body
+     * curl -X POST -F "bodyappend=appended text" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
      * @apiSuccess {String} result Success
      * @apiError {String} error Error message
      * @apiParamExample {Json} Request-Example:
@@ -973,6 +977,9 @@ class ApiController implements ControllerInterface
         }
         if ($this->Request->request->has('body')) {
             $this->Entity->update(new EntityParams((string) $this->Request->request->get('body'), 'body'));
+        }
+        if ($this->Request->request->has('bodyappend')) {
+            $this->Entity->update(new EntityParams((string) $this->Request->request->get('bodyappend'), 'bodyappend'));
         }
         return new JsonResponse(array('result' => 'success'));
     }

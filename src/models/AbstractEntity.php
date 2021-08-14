@@ -342,6 +342,9 @@ abstract class AbstractEntity implements CrudInterface
             case 'body':
                 $content = $params->getBody();
                 break;
+            case 'bodyappend':
+                $content = $this->entityData['body'] . $params->getBody();
+                break;
             case 'rating':
                 $content = $params->getRating();
                 break;
@@ -359,7 +362,7 @@ abstract class AbstractEntity implements CrudInterface
         }
 
         // save a revision for body target
-        if ($params->getTarget() === 'body') {
+        if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
             $Config = Config::getConfig();
             $Revisions = new Revisions(
                 $this,
@@ -370,7 +373,13 @@ abstract class AbstractEntity implements CrudInterface
             $Revisions->create((string) $content);
         }
 
-        $sql = 'UPDATE ' . $this->type . ' SET ' . $params->getTarget() . ' = :content WHERE id = :id';
+        $column = $params->getTarget();
+        // special case for bodyappend that is a column + mode
+        if ($column === 'bodyappend') {
+            $column = 'body';
+        }
+
+        $sql = 'UPDATE ' . $this->type . ' SET ' . $column . ' = :content WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $content);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

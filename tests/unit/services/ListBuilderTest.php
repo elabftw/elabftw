@@ -19,7 +19,7 @@ class ListBuilderTest extends \PHPUnit\Framework\TestCase
 
     private ListBuilder $ListBuilderDb;
 
-    protected function setup(): void
+    protected function setUp(): void
     {
         $this->ListBuilderExp = new ListBuilder(new Experiments(new Users(1, 1)));
         $this->ListBuilderDb = new ListBuilder(new Items(new Users(1, 1)));

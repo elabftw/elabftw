@@ -16,12 +16,13 @@ import anyToJson from 'bio-parsers/es/parsers/anyToJson';
 import { notif } from './misc';
 
 // DISPLAY Plasmids FILES
-export function displayPlasmidViewer(): void {
+export function displayPlasmidViewer(about: DOMStringMap): void {
   const editor: any = {};
-  $('.viewer-ove').each(function() {
-    const viewerID = $(this).attr('id');
-    const filename = $(this).data('href');
-    const realName = $(this).data('realName');
+  Array.from(document.getElementsByClassName('viewer-ove')).forEach(el => {
+    const oveDivDataset = (el as HTMLDivElement).dataset;
+    const viewerID = el.id;
+    const filename = oveDivDataset.href;
+    const realName = oveDivDataset.realName;
 
     // A Blob() is almost a File(): it's just missing two properties (lastModified and a name)
     // we also add the optional (mime) type attribute
@@ -38,8 +39,8 @@ export function displayPlasmidViewer(): void {
           saveAsImage: true,
           realName: realName,
           content: reader.result, // the png as data url
-          id: $('#info').data('id'),
-          type: $('#info').data('type'),
+          id: about.id,
+          type: about.type,
         }).done(function(json) {
           notif(json);
         });
@@ -128,8 +129,8 @@ export function displayPlasmidViewer(): void {
         generatePng: true,
         handleFullscreenClose: function(): void { // event could be used as parameter
           editor[viewerID].close();
-          $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv > *', function() {
-            displayPlasmidViewer();
+          $('#filesdiv').load('?mode=' + about.page + '&id=' + about.id + ' #filesdiv > *', function() {
+            displayPlasmidViewer(about);
           });
         },
         onCopy: function(event, copiedSequenceData, editorState): void {

@@ -30,7 +30,7 @@
     <h2 class='mb-2 mt-2'>{{ 'Create your account'|trans }}</h2>
     <!-- Register form -->
     {# min pass length minimum, no maximum #}
-    {% set pattern = '.{' ~ App.getMinPasswordLength ~ ',}' %}
+    {% set pattern = '.{' ~ minPasswordLength() ~ ',}' %}
 
     <form method='post' autocomplete='off' action='app/controllers/RegisterController.php'>
       <input hidden type='text' name='bot' value=''>

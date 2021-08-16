@@ -13,6 +13,7 @@ namespace Elabftw\Services;
 use function bin2hex;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
+use Elabftw\Models\Users;
 use function hash;
 use PDO;
 use function random_bytes;
@@ -98,10 +99,9 @@ class LoginHelper
 
         // NORMAL LOGIN
         // load the permissions
-        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
-        $permissions = $UsersHelper->getPermissions();
-        $this->Session->set('is_admin', $permissions['is_admin']);
-        $this->Session->set('is_sysadmin', $permissions['is_sysadmin']);
+        $Users = new Users($this->AuthResponse->userid);
+        $this->Session->set('is_admin', $Users->userData['is_admin']);
+        $this->Session->set('is_sysadmin', $Users->userData['is_sysadmin']);
     }
 
     /**

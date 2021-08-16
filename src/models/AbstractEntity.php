@@ -327,7 +327,6 @@ abstract class AbstractEntity implements CrudInterface
     /**
      * Update an entity. The revision is saved before so it can easily compare old and new body.
      */
-    //public function update(string $title, string $date, string $body): void
     public function update(EntityParamsInterface | ItemTypeParamsInterface $params): bool
     {
         $this->canOrExplode('write');
@@ -341,6 +340,9 @@ abstract class AbstractEntity implements CrudInterface
                 break;
             case 'body':
                 $content = $params->getBody();
+                break;
+            case 'bodyappend':
+                $content = $this->entityData['body'] . $params->getBody();
                 break;
             case 'rating':
                 $content = $params->getRating();
@@ -359,7 +361,7 @@ abstract class AbstractEntity implements CrudInterface
         }
 
         // save a revision for body target
-        if ($params->getTarget() === 'body') {
+        if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
             $Config = Config::getConfig();
             $Revisions = new Revisions(
                 $this,
@@ -370,7 +372,13 @@ abstract class AbstractEntity implements CrudInterface
             $Revisions->create((string) $content);
         }
 
-        $sql = 'UPDATE ' . $this->type . ' SET ' . $params->getTarget() . ' = :content WHERE id = :id';
+        $column = $params->getTarget();
+        // special case for bodyappend that is a column + mode
+        if ($column === 'bodyappend') {
+            $column = 'body';
+        }
+
+        $sql = 'UPDATE ' . $this->type . ' SET ' . $column . ' = :content WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $content);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

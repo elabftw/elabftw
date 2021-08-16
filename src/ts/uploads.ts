@@ -15,16 +15,18 @@ import i18next from 'i18next';
 import Upload from './Upload.class';
 
 $(document).ready(function() {
-  const pages = ['edit', 'view'];
-  if (!pages.includes($('#info').data('page'))) {
-    return;
-  }
-  displayMolFiles();
-  display3DMolecules();
-  displayPlasmidViewer();
-
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
+
+  const pages = ['edit', 'view'];
+  if (!pages.includes(about.page)) {
+    return;
+  }
+
+  displayMolFiles();
+  display3DMolecules();
+  displayPlasmidViewer(about);
+
   let entityType: EntityType;
   if (about.type === 'experiments') {
     entityType = EntityType.Experiment;
@@ -62,13 +64,13 @@ $(document).ready(function() {
   // Export mol in png
   $(document).on('click', '.saveAsImage', function() {
     const molCanvasId = $(this).data('canvasid');
-    const png = (document.getElementById(molCanvasId) as any).toDataURL();
+    const png = (document.getElementById(molCanvasId) as HTMLCanvasElement).toDataURL();
     $.post('app/controllers/EntityAjaxController.php', {
       saveAsImage: true,
       realName: $(this).data('name'),
       content: png,
-      id: $('#info').data('id'),
-      type: $('#info').data('type')
+      id: about.id,
+      type: about.type
     }).done(function(json) {
       notif(json);
       if (json.res) {
@@ -123,7 +125,7 @@ $(document).ready(function() {
             $('#filesdiv').load('?mode=edit&id=' + entity.id + ' #filesdiv > *', function() {
               displayMolFiles();
               display3DMolecules(true);
-              displayPlasmidViewer();
+              displayPlasmidViewer(about);
             });
           }
         });

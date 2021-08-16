@@ -169,6 +169,7 @@ class Check
             'all',
             'all_team',
             'body',
+            'bodyappend',
             'boundevent',
             'comment',
             'date',

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,12 +6,9 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
 use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -22,6 +19,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Users;
 use Elabftw\Services\Email;
+use Elabftw\Services\ResetPasswordKey;
 use Exception;
 use function random_int;
 use function sleep;
@@ -32,10 +30,12 @@ use function time;
 require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new RedirectResponse('../../login.php');
+$ResetPasswordKey = new ResetPasswordKey(time(), \SECRET_KEY);
 
 try {
     $Email = new Email($App->Config, new Users());
 
+    // PART 1: we receive the email from the login page/forgot password form
     if ($Request->request->has('email')) {
         $email = $Request->request->get('email');
 
@@ -44,9 +44,9 @@ try {
             throw new ImproperActionException(_('Email provided is invalid.'));
         }
 
-        // Get data from user
+        // Get user data from provided email
         try {
-            $App->Users = ExistingUser::fromEmail($email);
+            $Users = ExistingUser::fromEmail($email);
             // don't disclose if the email exists in the db or not
         } catch (ResourceNotFoundException $e) {
             // make the response slow to emulate an email being sent if there was an account associated
@@ -54,25 +54,20 @@ try {
             throw new QuantumException(_('If the account exists, an email has been sent.'));
         }
 
-        // If you are not validated, the password reset form won't work
+        // If user is not validated, the password reset form won't work
         // this is because often users don't understand that their account needs to be
         // validated and just reset their password twenty times
-        if ($App->Users->userData['validated'] === '0') {
-            throw new ImproperActionException('Your account is not validated. An admin of your team needs to validate it!');
+        if ($Users->userData['validated'] === '0') {
+            throw new ImproperActionException(_('Your account is not validated. An admin of your team needs to validate it!'));
         }
 
-        // the key (token) is the encrypted user's mail address
-        $key = Crypto::encrypt($email, Key::loadFromAsciiSafeString(\SECRET_KEY));
-
-        // the deadline is the encrypted epoch of now +1 hour
-        $deadline = time() + 3600;
-        $deadline = Crypto::encrypt((string) $deadline, Key::loadFromAsciiSafeString(\SECRET_KEY));
+        $key = $ResetPasswordKey->generate($Users->userData['email']);
 
         // build the reset link
         $resetLink = Tools::getUrl($Request) . '/change-pass.php';
         // not pretty but gets the job done
         $resetLink = str_replace('app/controllers/', '', $resetLink);
-        $resetLink .= '?key=' . $key . '&deadline=' . $deadline . '&userid=' . $App->Users->userData['userid'];
+        $resetLink .= '?key=' . $key;
 
         // Send an email with the reset link
         // Create the message
@@ -82,7 +77,7 @@ try {
         // Set the From address with an associative array
         ->setFrom(array($App->Config->configArr['mail_from'] => 'eLabFTW'))
         // Set the To addresses with an associative array
-        ->setTo(array($email => $App->Users->userData['fullname']))
+        ->setTo(array($email => $Users->userData['fullname']))
         // Give it a body
         ->setBody(sprintf(_('Hi. Someone (probably you) requested a new password on eLabFTW. Please follow this link to reset your password: %s'), $resetLink) . $Email->footer);
         // now we try to send the email
@@ -96,30 +91,20 @@ try {
         throw new QuantumException(_('If the account exists, an email has been sent.'));
     }
 
-    // second part, update the password
+    // PART 2: update the password
     if ($Request->request->has('password')) {
         // verify both passwords are the same
         // and show useful error message if not
         if ($Request->request->get('password') !== $Request->request->get('cpassword')) {
             throw new ImproperActionException(_('The passwords do not match!'));
         }
-        $App->Users->populate((int) $Request->request->get('userid'));
 
-        // Validate key
-        if ($App->Users->userData['email'] != Crypto::decrypt($Request->request->get('key'), Key::loadFromAsciiSafeString(\SECRET_KEY))) {
-            throw new ImproperActionException(_('Wrong key for resetting password'));
-        }
-
-        // check deadline here too (fix #297)
-        $deadline = Crypto::decrypt($Request->request->get('deadline'), Key::loadFromAsciiSafeString(SECRET_KEY));
-
-        if ($deadline < time()) {
-            throw new ImproperActionException(_('Invalid link. Reset links are only valid for one hour.'));
-        }
-
+        // verify the key received is valid
+        // we get the Users object from the email encrypted in the key
+        $Users = $ResetPasswordKey->validate($Request->request->get('key'));
         // Replace new password in database
-        $App->Users->updatePassword($Request->request->get('password'));
-        $App->Log->info('Password was changed for this user', array('userid' => $App->Session->get('userid')));
+        $Users->updatePassword($Request->request->get('password'));
+        $App->Log->info('Password was changed for this user', array('userid' => $Users->userData['userid']));
         $App->Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
     }
 } catch (QuantumException $e) {

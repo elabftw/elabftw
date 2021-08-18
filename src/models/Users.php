@@ -467,6 +467,21 @@ class Users
         $this->Db->execute($req);
     }
 
+    public function allowUntrustedLogin(): bool
+    {
+        $sql = 'SELECT allow_untrusted, auth_lock_time > (NOW() - INTERVAL 1 HOUR) AS currently_locked FROM users WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $req->execute();
+        $res = $req->fetch();
+
+        if ($res['allow_untrusted'] === '1') {
+            return true;
+        }
+        // check for the time when it was locked
+        return $res['currently_locked'] === '0';
+    }
+
     /**
      * Destroy user. Will completely remove everything from the user.
      */

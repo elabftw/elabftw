@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\InvalidDeviceTokenException;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Encoding\CannotDecodeContent;
 use Lcobucci\JWT\Token\InvalidTokenStructure;
@@ -26,7 +25,7 @@ class DeviceTokenValidator
     {
     }
 
-    public function validate(): void
+    public function validate(): bool
     {
         $Db = Db::getConnection();
         try {
@@ -38,11 +37,12 @@ class DeviceTokenValidator
             $req->bindParam(':device_token', $this->deviceToken);
             $req->execute();
             if ($req->fetchColumn() > 0) {
-                throw new InvalidDeviceTokenException();
+                return false;
             }
             // group all the possible exceptions into one because we don't really care the reason why the token might be invalid
         } catch (CannotDecodeContent | InvalidTokenStructure | RequiredConstraintsViolated $e) {
-            throw new InvalidDeviceTokenException();
+            return false;
         }
+        return true;
     }
 }

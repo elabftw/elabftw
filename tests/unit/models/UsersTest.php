@@ -25,6 +25,12 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($this->Users->userData));
     }
 
+    public function testAllowUntrustedLogin(): void
+    {
+        $this->assertFalse($this->Users->allowUntrustedLogin());
+        $this->assertTrue((new Users(2, 1))->allowUntrustedLogin());
+    }
+
     public function testUpdatePreferences(): void
     {
         $prefsArr = array(

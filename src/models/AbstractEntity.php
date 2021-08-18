@@ -579,7 +579,7 @@ abstract class AbstractEntity implements CrudInterface
         if ($this instanceof Items || $this->entityData['timestamped'] === '0') {
             return array();
         }
-        $timestamper = $this->Users->read((int) $this->entityData['timestampedby']);
+        $timestamper = new Users((int) $this->entityData['timestampedby']);
 
         $Uploads = new Uploads(new Experiments($this->Users, (int) $this->entityData['id']));
         $Uploads->Entity->type = 'exp-pdf-timestamp';
@@ -592,7 +592,7 @@ abstract class AbstractEntity implements CrudInterface
         $bloxbergProof = $Uploads->readAll();
 
         return array(
-            'timestamper' => $timestamper,
+            'timestamper' => $timestamper->userData,
             'pdf' => $pdf,
             'token' => $token,
             'bloxbergProof' => $bloxbergProof,

@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Maps\UserPreferences;
 
 class UsersTest extends \PHPUnit\Framework\TestCase
@@ -24,6 +25,8 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testPopulate(): void
     {
         $this->assertTrue(is_array($this->Users->userData));
+        $this->expectException(ResourceNotFoundException::class);
+        new Users(1337);
     }
 
     public function testAllowUntrustedLogin(): void

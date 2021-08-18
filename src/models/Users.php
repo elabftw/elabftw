@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
@@ -57,7 +57,7 @@ class Users
     public function populate(int $userid): void
     {
         Check::idOrExplode($userid);
-        $this->userData = $this->read($userid);
+        $this->userData = $this->getUserData($userid);
         $this->userData['team'] = $this->team;
     }
 
@@ -159,29 +159,9 @@ class Users
     }
 
     /**
-     * Get info about a user
-     */
-    public function read(int $userid): array
-    {
-        $sql = "SELECT users.*, CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            groups.can_lock, groups.is_admin, groups.is_sysadmin FROM users
-            LEFT JOIN `groups` ON groups.id = users.usergroup
-            WHERE users.userid = :userid";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->fetch();
-        if ($res === false) {
-            throw new IllegalActionException('User not found.');
-        }
-
-        return $res;
-    }
-
-    /**
      * Get users matching a search term for consumption in autocomplete
      */
-    public function getList(ContentParamsInterface $params): array
+    public function read(ContentParamsInterface $params): array
     {
         $usersArr = $this->readFromQuery($params->getContent());
         $res = array();
@@ -271,15 +251,10 @@ class Users
      */
     public function update(array $params): void
     {
+        $this->checkEmail($params['email']);
+
         $firstname = Filter::sanitize($params['firstname']);
         $lastname = Filter::sanitize($params['lastname']);
-        // check email is valid if we are changing it
-        $email = $params['email'];
-        if ($email !== $this->userData['email']) {
-            $Config = Config::getConfig();
-            $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);
-            $EmailValidator->validate();
-        }
 
         // (Sys)admins can only disable 2FA
         $mfaSql = '';
@@ -325,19 +300,10 @@ class Users
      */
     public function updateAccount(array $params): void
     {
-        $params['firstname'] = filter_var($params['firstname'], FILTER_SANITIZE_STRING);
-        $params['lastname'] = filter_var($params['lastname'], FILTER_SANITIZE_STRING);
-        $params['email'] = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
-        if ($params['email'] === false) {
-            throw new ImproperActionException('Invalid email!');
-        }
+        $this->checkEmail($params['email']);
 
-        // if we change the email, make sure it's valid
-        if ($params['email'] !== $this->userData['email']) {
-            $Config = Config::getConfig();
-            $EmailValidator = new EmailValidator($params['email'], $Config->configArr['email_domain']);
-            $EmailValidator->validate();
-        }
+        $params['firstname'] = Filter::sanitize($params['firstname']);
+        $params['lastname'] = Filter::sanitize($params['lastname']);
 
         // Check phone
         $params['phone'] = filter_var($params['phone'], FILTER_SANITIZE_STRING);
@@ -461,5 +427,37 @@ class Users
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    /**
+     * Get info about a user
+     */
+    private function getUserData(int $userid): array
+    {
+        $sql = "SELECT users.*, CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            groups.can_lock, groups.is_admin, groups.is_sysadmin FROM users
+            LEFT JOIN `groups` ON groups.id = users.usergroup
+            WHERE users.userid = :userid";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $res = $req->fetch();
+        if ($res === false) {
+            throw new ResourceNotFoundException();
+        }
+
+        return $res;
+    }
+
+    private function checkEmail(string $email): void
+    {
+        // do nothing if the email sent is the same as the existing one
+        if ($email === $this->userData['email']) {
+            return;
+        }
+        // if the sent email is different from the existing one, check it's valid (not duplicate and respects domain constraint)
+        $Config = Config::getConfig();
+        $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);
+        $EmailValidator->validate();
     }
 }

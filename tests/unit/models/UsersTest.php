@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Maps\UserPreferences;
 
 class UsersTest extends \PHPUnit\Framework\TestCase
@@ -55,5 +56,58 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         // reload from db
         $u = new Users(1, 1);
         $this->assertEquals($u->userData['limit_nb'], '12');
+    }
+
+    public function testGetLockedUsersCount(): void
+    {
+        $this->assertIsInt($this->Users->getLockedUsersCount());
+    }
+
+    public function testUpdatePassword(): void
+    {
+        $Users = new Users(4);
+        $this->assertTrue($Users->updatePassword('some-password'));
+    }
+
+    public function testUpdateTooShortPassword(): void
+    {
+        $Users = new Users(4);
+        $this->expectException(ImproperActionException::class);
+        $Users->updatePassword('short');
+    }
+
+    public function testInvalidateToken(): void
+    {
+        $this->assertTrue($this->Users->invalidateToken());
+    }
+
+    public function testValidate(): void
+    {
+        // current user is already validated but that's ok
+        $this->assertTrue($this->Users->validate());
+    }
+
+    public function testToggleArchive(): void
+    {
+        $Users = new Users(4);
+        $this->assertTrue($Users->toggleArchive());
+    }
+
+    public function testLockExperiments(): void
+    {
+        $Users = new Users(4);
+        $this->assertTrue($this->Users->lockExperiments());
+    }
+
+    public function testDestroy(): void
+    {
+        $Users = ExistingUser::fromScratch('osef@example.com', array('Alpha'), 'f', 'l', 4, false, false);
+        $this->assertTrue($Users->destroy());
+    }
+
+    public function testDestroyWithExperiments(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->Users->destroy();
     }
 }

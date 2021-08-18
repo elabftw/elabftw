@@ -16,7 +16,9 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Models\Config;
 use Elabftw\Models\Users;
+use Elabftw\Services\Email;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -48,7 +50,11 @@ try {
     // VALIDATE USER
     if ($Request->request->has('usersValidate')) {
         // all good, validate user
-        $targetUser->validate();
+        if ($targetUser->validate()) {
+            // send an email to the user
+            $Email = new Email(Config::getConfig(), $targetUser);
+            $Email->alertUserIsValidated($targetUser->userData['email']);
+        }
     }
 
     // ARCHIVE USER TOGGLE

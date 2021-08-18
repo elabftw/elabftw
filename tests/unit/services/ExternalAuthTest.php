@@ -60,6 +60,7 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
     }
 
     // now try with a non existing user
+    // user will be created of the fly
     public function testTryAuthWithNonExistingUser(): void
     {
         $serverParams = $this->serverParams;
@@ -70,7 +71,7 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
             $this->log,
         );
         $authResponse = $ExternalAuth->tryAuth();
-        $this->assertEquals(8, $authResponse->userid);
+        $this->assertIsInt($authResponse->userid);
     }
 
     // now try with a non existing user and config is set to not create the user

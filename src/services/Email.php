@@ -190,7 +190,7 @@ class Email
 
         // now let's get the URL so we can have a nice link in the email
         $Request = Request::createFromGlobals();
-        $url = \rtrim(Tools::getUrl($Request), '/') . '/login.php';
+        $url = rtrim(Tools::getUrl($Request), '/') . '/login.php';
 
         // Create the message
         $message = (new Swift_Message())

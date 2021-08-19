@@ -56,7 +56,7 @@ class UserPreferences implements MapInterface
     private int $showTeamTemplates = 0;
 
     private int $showPublic = 0;
-    
+
     private int $itemsStepsScope = 0;
 
     private int $cjkFonts = 0;

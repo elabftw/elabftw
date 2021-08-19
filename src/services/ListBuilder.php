@@ -59,8 +59,11 @@ class ListBuilder
 
         if ($this->Entity instanceof Items) {
             foreach ($itemsArr as $item) {
-                $mentionArr[] = array('name' => "<a href='database.php?mode=view&id=" .
-                    $item['id'] . "'>[" . $item['category'] . '] ' . $item['title'] . '</a>',
+                $mentionArr[] = array(
+                    'name' => "<a href='database.php?mode=view&id=" . $item['id']. "'>["
+                        . $item['category'] . '] ' . $item['title'] . '</a>',
+                    'id' => $item['id'],
+                    'type' => 'item',
                 );
             }
         }
@@ -68,8 +71,11 @@ class ListBuilder
         // experiments have a different category name (Experiment)
         if ($this->Entity instanceof Experiments) {
             foreach ($itemsArr as $item) {
-                $mentionArr[] = array('name' => "<a href='experiments.php?mode=view&id=" .
-                    $item['id'] . "'>[" . ngettext('Experiment', 'Experiments', 1) . '] ' . $item['title'] . '</a>',
+                $mentionArr[] = array(
+                    'name' => "<a href='experiments.php?mode=view&id=" . $item['id'] . "'>["
+                        . ngettext('Experiment', 'Experiments', 1) . '] ' . $item['title'] . '</a>',
+                    'id' => $item['id'],
+                    'type' => 'experiment',
                 );
             }
         }

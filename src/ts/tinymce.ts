@@ -21,7 +21,6 @@ import 'tinymce/plugins/imagetools';
 import 'tinymce/plugins/insertdatetime';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/lists';
-import '../../web/app/js/plugins/mention/plugin.js';
 import 'tinymce/plugins/pagebreak';
 import 'tinymce/plugins/paste';
 import 'tinymce/plugins/save';
@@ -47,7 +46,9 @@ import '../js/tinymce-langs/ru_RU.js';
 import '../js/tinymce-langs/sk_SK.js';
 import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
+import '../js/tinymce-plugins/mention/plugin.js';
 import EntityClass from './Entity.class';
+import Link from './Link.class';
 import { Entity, EntityType, Target } from './interfaces';
 
 let about;
@@ -186,7 +187,7 @@ export function getTinymceBaseConfig(page: string): object {
       // use # for autocompletion
       delimiter: '#',
       // get the source from json with get request
-      source: function (query: string, process: any): void {
+      source: function (query: string, process: Function): void {
         const url = 'app/controllers/EntityAjaxController.php';
         $.getJSON(url, {
           mention: 1,
@@ -195,7 +196,19 @@ export function getTinymceBaseConfig(page: string): object {
         }).done(function(data) {
           process(data);
         });
-      }
+      },
+      insert: function (data): string {
+        if (data.type === EntityType.Item) {
+          const LinkC = new Link(entity);
+          LinkC.create(parseInt(data.id)).then((json) => {
+            if (json.res === true) {
+              // only reload children of links_div_id
+              $('#links_div_' + entity.id).load(window.location.href + ' #links_div_' + entity.id + ' > *');
+            }
+          });
+        }
+        return '<span>' + data.name + '</span>';
+      },
     },
     mobile: {
       theme: 'mobile',

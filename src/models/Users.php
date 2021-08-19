@@ -189,7 +189,8 @@ class Users
         $sql = "SELECT DISTINCT users.userid,
             users.firstname, users.lastname, users.email, users.mfa_secret,
             users.validated, users.usergroup, users.archived, users.last_login,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            users.cellphone, users.phone, users.website, users.skype
             FROM users
             CROSS JOIN users2teams ON (users2teams.users_id = users.userid " . $teamFilterSql . ')
             WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
@@ -213,27 +214,7 @@ class Users
      */
     public function readAllFromTeam(): array
     {
-        $sql = "SELECT DISTINCT users.userid, CONCAT (users.firstname, ' ', users.lastname) AS fullname,
-            users.email,
-            users.phone,
-            users.cellphone,
-            users.website,
-            users.skype,
-            users.validated,
-            users.usergroup
-            FROM users
-            CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
-            LEFT JOIN teams ON (teams.id = :team)
-            WHERE teams.id = :team ORDER BY fullname";
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':team', $this->team);
-        $this->Db->execute($req);
-
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
+        return $this->readFromQuery('', true);
     }
 
     public function getLockedUsersCount(): int
@@ -249,7 +230,7 @@ class Users
      *
      * @param array<string, mixed> $params POST
      */
-    public function update(array $params): void
+    public function update(array $params): bool
     {
         $this->checkEmail($params['email']);
 
@@ -257,15 +238,14 @@ class Users
         $lastname = Filter::sanitize($params['lastname']);
 
         // (Sys)admins can only disable 2FA
+        // input is disabled if there is no mfa active so no need for an else case
         $mfaSql = '';
-        if (!isset($params['use_mfa']) || $params['use_mfa'] === 'off') {
+        if ($params['use_mfa'] === 'off') {
             $mfaSql = ', mfa_secret = null';
-        } elseif ($params['use_mfa'] === 'on' && !$this->userData['mfa_secret']) {
-            throw new ImproperActionException('Only users themselves can activate two factor authentication!');
         }
 
         $validated = 0;
-        if ($params['validated'] == 1) {
+        if ($params['validated'] === '1') {
             $validated = 1;
         }
 
@@ -286,11 +266,11 @@ class Users
         $req = $this->Db->prepare($sql);
         $req->bindParam(':firstname', $firstname);
         $req->bindParam(':lastname', $lastname);
-        $req->bindParam(':email', $email);
-        $req->bindParam(':validated', $validated);
+        $req->bindParam(':email', $params['email']);
         $req->bindParam(':usergroup', $usergroup);
+        $req->bindParam(':validated', $validated);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**
@@ -298,7 +278,7 @@ class Users
      *
      * @param array<string, mixed> $params
      */
-    public function updateAccount(array $params): void
+    public function updateAccount(array $params): bool
     {
         $this->checkEmail($params['email']);
 
@@ -334,7 +314,7 @@ class Users
         $req->bindParam(':skype', $params['skype']);
         $req->bindParam(':website', $params['website']);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**

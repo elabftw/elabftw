@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Maps\UserPreferences;
@@ -33,6 +34,59 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertFalse($this->Users->allowUntrustedLogin());
         $this->assertTrue((new Users(2, 1))->allowUntrustedLogin());
+    }
+
+    public function testRead(): void
+    {
+        $res = $this->Users->read(new ContentParams('php'));
+        $this->assertEquals('1 - Phpunit TestUser', $res[0]);
+    }
+
+    public function testReadAllFromTeam(): void
+    {
+        $this->assertIsArray($this->Users->readAllFromTeam());
+    }
+
+    public function testUpdate(): void
+    {
+        $post = array(
+            'email' => 'tata@yopmail.com',
+            'firstname' => 'Tata',
+            'lastname' => 'Yep',
+            'password' => '',
+            'usergroup' => '2',
+            'validated' => '1',
+            'use_mfa' => 'off',
+        );
+        $this->assertTrue((new Users(4))->update($post));
+    }
+
+    public function testUpdateWithEmailAndPasswordChange(): void
+    {
+        $post = array(
+            'email' => 'tata2@yopmail.com',
+            'firstname' => 'Tata',
+            'lastname' => 'Yep',
+            'password' => 'new super password',
+            'usergroup' => '2',
+            'validated' => '1',
+            'use_mfa' => 'off',
+        );
+        $this->assertTrue((new Users(4))->update($post));
+    }
+
+    public function testUpdateAccount(): void
+    {
+        $post = array(
+            'email' => 'tata@yopmail.com',
+            'firstname' => 'Tata',
+            'lastname' => 'Yep',
+            'phone' => '+336123456',
+            'cellphone' => 'Nope',
+            'skype' => 'suxx',
+            'website' => 'https://www.elabftw.net',
+        );
+        $this->assertTrue((new Users(4))->updateAccount($post));
     }
 
     public function testUpdatePreferences(): void

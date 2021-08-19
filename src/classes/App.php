@@ -96,7 +96,16 @@ class App
         // ANONYMOUS
         if ($this->Session->get('is_anon') === 1) {
             // anon user only has access to a subset of pages
-            $allowedPages = array('index.php', 'experiments.php', 'database.php', 'search.php', 'make.php', 'logout.php', 'RequestHandler.php');
+            $allowedPages = array(
+                'database.php',
+                'download.php',
+                'experiments.php',
+                'index.php',
+                'logout.php',
+                'make.php',
+                'RequestHandler.php',
+                'search.php',
+            );
             if (!in_array(basename($this->Request->getScriptName()), $allowedPages, true)) {
                 throw new UnauthorizedException();
             }

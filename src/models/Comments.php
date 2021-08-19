@@ -63,11 +63,7 @@ class Comments implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
+        return $this->Db->fetchAll($req);
     }
 
     public function update(ContentParamsInterface $params): bool

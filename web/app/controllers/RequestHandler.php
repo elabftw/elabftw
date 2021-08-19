@@ -24,7 +24,6 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Users;
 use Exception;
 use PDOException;
 use Swift_TransportException;
@@ -69,14 +68,7 @@ try {
             $res = $Params->getKey();
         }
     } elseif ($action === 'read') {
-        // TODO because Users is not crud
-        // TODO have a listable interface
-        // TODO just use read but target list instead of public getList
-        if ($target === 'list' && ($Model instanceof Users)) {
-            $res = $Model->getList($Params);
-        } else {
-            $res = $Model->read($Params);
-        }
+        $res = $Model->read($Params);
     } elseif ($action === 'update') {
         // TODO should not exist, but it's here for now
         if ($Model instanceof ItemsTypes && ($target !== 'metadata')) {

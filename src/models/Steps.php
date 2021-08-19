@@ -89,11 +89,7 @@ class Steps implements CrudInterface
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
+        return $this->Db->fetchAll($req);
     }
 
     /**
@@ -111,10 +107,7 @@ class Steps implements CrudInterface
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
+        $res = $this->Db->fetchAll($req);
 
         return $this->cleanUpReadAllSQLResults($res);
     }

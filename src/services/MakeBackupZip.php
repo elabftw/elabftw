@@ -97,10 +97,7 @@ class MakeBackupZip extends AbstractMake
             $req = $this->Db->prepare($sql);
             $req->bindParam(':id', $id, PDO::PARAM_INT);
             $req->execute();
-            $uploads = $req->fetchAll();
-            if ($uploads === false) {
-                $uploads = array();
-            }
+            $uploads = $this->Db->fetchAll($req);
             foreach ($uploads as $upload) {
                 // add it to the .zip
                 $this->Zip->addFileFromPath(

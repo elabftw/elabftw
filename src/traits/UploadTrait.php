@@ -71,10 +71,7 @@ trait UploadTrait
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $uploads = $req->fetchAll();
-        if ($uploads === false) {
-            return 0;
-        }
+        $uploads = $this->Db->fetchAll($req);
         $diskUsage = 0;
         foreach ($uploads as $upload) {
             $diskUsage += filesize($this->getUploadsPath() . $upload['long_name']);

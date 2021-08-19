@@ -9,7 +9,6 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Exceptions\InvalidDeviceTokenException;
 use Lcobucci\JWT\Configuration;
 
 class DeviceTokenValidatorTest extends \PHPUnit\Framework\TestCase
@@ -31,14 +30,12 @@ class DeviceTokenValidatorTest extends \PHPUnit\Framework\TestCase
     public function testUndecodableToken(): void
     {
         $DeviceTokenValidator = new DeviceTokenValidator($this->config, '..');
-        $this->expectException(InvalidDeviceTokenException::class);
-        $DeviceTokenValidator->validate();
+        $this->assertFalse($DeviceTokenValidator->validate());
     }
 
     public function testNotParsableToken(): void
     {
         $DeviceTokenValidator = new DeviceTokenValidator($this->config, 'this cannot be parsed!');
-        $this->expectException(InvalidDeviceTokenException::class);
-        $DeviceTokenValidator->validate();
+        $this->assertFalse($DeviceTokenValidator->validate());
     }
 }

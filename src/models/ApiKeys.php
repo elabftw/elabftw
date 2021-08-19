@@ -83,11 +83,7 @@ class ApiKeys implements CrudInterface
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
+        return $this->Db->fetchAll($req);
     }
 
     /**
@@ -98,11 +94,7 @@ class ApiKeys implements CrudInterface
         $sql = 'SELECT hash, userid, can_write, team FROM api_keys';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
-        $keysArr = $req->fetchAll();
-        if ($keysArr === false) {
-            $keysArr = array();
-        }
-
+        $keysArr = $this->Db->fetchAll($req);
         foreach ($keysArr as $key) {
             if (password_verify($apiKey, $key['hash'])) {
                 return array('userid' => $key['userid'], 'canWrite' => $key['can_write'], 'team' => $key['team']);

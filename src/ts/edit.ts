@@ -428,7 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
       getBody : true,
       id : id,
       type : 'items',
-      editor: editor
+      editor: editor.type,
     }).done(function(json) {
       if (editor.type === 'tiny') {
         theEditor.insertContent(json.msg);

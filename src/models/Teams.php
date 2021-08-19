@@ -194,11 +194,7 @@ class Teams implements ReadableInterface, DestroyableInterface
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
+        return $this->Db->fetchAll($req);
     }
 
     /**

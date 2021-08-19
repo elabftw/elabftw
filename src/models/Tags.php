@@ -187,10 +187,7 @@ class Tags implements CrudInterface
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $idsToDelete = $req->fetchAll();
-        if ($idsToDelete === false) {
-            return 0;
-        }
+        $idsToDelete = $this->Db->fetchAll($req);
         // loop on each tag that needs to be deduplicated and do the work
         foreach ($idsToDelete as $idsList) {
             $this->deduplicateFromIdsList($idsList['id_list']);

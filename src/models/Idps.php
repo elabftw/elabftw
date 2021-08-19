@@ -59,20 +59,12 @@ class Idps implements DestroyableInterface
         return $this->Db->lastInsertId();
     }
 
-    /**
-     * Read all IDPs
-     */
     public function readAll(): array
     {
         $sql = 'SELECT * FROM idps';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
-
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
+        return $this->Db->fetchAll($req);
     }
 
     /**

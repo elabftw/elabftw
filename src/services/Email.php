@@ -223,11 +223,7 @@ class Email
         }
         $Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return array_column($res, 'email');
+        return array_column($Db->fetchAll($req), 'email');
     }
 
     private function makeFooter(): string

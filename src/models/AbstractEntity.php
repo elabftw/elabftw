@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function array_column;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
@@ -233,12 +234,7 @@ abstract class AbstractEntity implements CrudInterface
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $itemsArr = $req->fetchAll();
-        if ($itemsArr === false) {
-            $itemsArr = array();
-        }
-
-        return $itemsArr;
+        return $this->Db->fetchAll($req);
     }
 
     public function read(ContentParamsInterface $params): array
@@ -313,10 +309,7 @@ abstract class AbstractEntity implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':type', $this->type);
         $this->Db->execute($req);
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
+        $res = $this->Db->fetchAll($req);
         $allTags = array();
         foreach ($res as $tags) {
             $allTags[$tags['item_id']][] = $tags;
@@ -547,15 +540,7 @@ abstract class AbstractEntity implements CrudInterface
         $req->bindParam(':to', $to);
         $this->Db->execute($req);
 
-        $idArr = array();
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        foreach ($res as $item) {
-            $idArr[] = $item['id'];
-        }
-        return $idArr;
+        return array_column($this->Db->fetchAll($req), 'id');
     }
 
     /**

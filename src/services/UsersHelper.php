@@ -71,8 +71,8 @@ class UsersHelper
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($res === false || empty($res)) {
+        $res = $this->Db->fetchAll($req);
+        if (empty($res)) {
             throw new ImproperActionException('Could not find a team for this user!');
         }
         return $res;

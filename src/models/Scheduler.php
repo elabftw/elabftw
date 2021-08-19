@@ -90,11 +90,7 @@ class Scheduler
         $req->bindParam(':end', $end);
         $this->Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
+        return $this->Db->fetchAll($req);
     }
 
     /**
@@ -123,11 +119,7 @@ class Scheduler
         $req->bindParam(':end', $end);
         $this->Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
+        return $this->Db->fetchAll($req);
     }
 
     /**

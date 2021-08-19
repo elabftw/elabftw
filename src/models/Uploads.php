@@ -196,11 +196,7 @@ class Uploads implements CrudInterface
         $req->bindParam(':type', $this->Entity->type);
         $this->Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
+        return $this->Db->fetchAll($req);
     }
 
     public function update(UploadParamsInterface $params): bool

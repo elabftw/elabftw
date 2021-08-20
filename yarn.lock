@@ -1755,10 +1755,10 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.2.0.tgz#75f502eeaf9ffde42fc98829645be4ea76bd9e2d"
   integrity sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==
 
-bio-parsers@^8.3.13:
-  version "8.3.14"
-  resolved "https://registry.yarnpkg.com/bio-parsers/-/bio-parsers-8.3.14.tgz#ae5807a00733cfc6efdc64bbabcb058b89e81b49"
-  integrity sha512-shO0YXueLZ0038/ruUpisQfILa8iNBm7l6K1pAGyTJoC/hj2zAbdrMxRsnU8Qp4RbGdnbRz0W7NkwfEHZ0PnJg==
+bio-parsers@^8.3.16:
+  version "8.3.16"
+  resolved "https://registry.yarnpkg.com/bio-parsers/-/bio-parsers-8.3.16.tgz#20ea3019b86f245410563a75b21c63e34c1c212f"
+  integrity sha512-4+gE7zokSl64yXn7w9SnrIR3iSGY9QZ2N+IKJxyjQxRcY2BrBDc7txysxS3S0P0YUY8y3VpMXiF6dWq2aEHp4g==
   dependencies:
     "@gmod/gff" "^1.1.2"
     buffer "^6.0.3"

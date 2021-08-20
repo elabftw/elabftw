@@ -1110,10 +1110,10 @@
   resolved "https://registry.yarnpkg.com/@trysound/sax/-/sax-0.1.1.tgz#3348564048e7a2d7398c935d466c0414ebb6a669"
   integrity sha512-Z6DoceYb/1xSg5+e+ZlPZ9v0N16ZvZ+wYMraFue4HYrE4ttONKtsvruIRf6t9TBR0YvSOfi1hUU0fJfBLCDYow==
 
-"@types/bootstrap@^5.0.17":
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/@types/bootstrap/-/bootstrap-5.1.1.tgz#45455155d8af0c7828d5466d91ada314d1a08839"
-  integrity sha512-W/fEBlqwaJFh+3sCz/H88LPsLt/zLsEECFlrAOkrRPjWuo/ETl8u0JefIerCdc8+WukowQS1f60eIJOwkCBwhg==
+"@types/bootstrap@^5.1.2":
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/@types/bootstrap/-/bootstrap-5.1.2.tgz#24f08f1957ff5859633f4bf620e921d296e6c3a2"
+  integrity sha512-dSQvMi2dMyNwJU6LZjP0pimuBowsMUvGScYdfqqeiDUoj9TxXZCpfu0cTl94U0Zvw/tdH9j/9ToOhi4LKNLZhg==
   dependencies:
     "@popperjs/core" "^2.9.2"
     "@types/jquery" "*"

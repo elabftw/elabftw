@@ -86,7 +86,7 @@ const cornifyAdd = function() {
             css.id = '__cornify_css';
             css.type = 'text/css';
             css.rel = 'stylesheet';
-            css.href = 'app/css/cornify.css';
+            css.href = 'assets/cornify.min.css';
             css.media = 'screen';
             head.appendChild(css);
         }

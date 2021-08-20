@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -78,7 +77,8 @@ class Steps implements CrudInterface
     {
         if ($params->getTarget() === 'all') {
             return $this->readAll($this->Entity->type);
-        } elseif ($params->getTarget() === 'all_team') {
+        }
+        if ($params->getTarget() === 'all_team') {
             return $this->readAllTeam();
         }
 
@@ -144,12 +144,7 @@ class Steps implements CrudInterface
         $req->bindParam(':teamid', $this->Entity->Users->team, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-
-        return $this->cleanUpReadAllSQLResults($res);
+        return $this->cleanUpReadAllSQLResults($this->Db->fetchAll($req));
     }
 
     /**
@@ -253,16 +248,16 @@ class Steps implements CrudInterface
      */
     private function cleanUpReadAllSQLResults(array $res): array
     {
-        foreach ($res as &$exp) {
-            $stepIDs = explode('|', $exp['steps_id']);
-            $stepsBodies = explode('|', $exp['steps_body']);
+        foreach ($res as &$entity) {
+            $stepIDs = explode('|', $entity['steps_id']);
+            $stepsBodies = explode('|', $entity['steps_body']);
 
-            $expSteps = array();
+            $entitySteps = array();
             foreach ($stepIDs as $key => $stepID) {
-                $expSteps[] = array($stepID, $stepsBodies[$key]);
+                $entitySteps[] = array($stepID, $stepsBodies[$key]);
             }
-            $exp['steps'] = $expSteps;
-            unset($exp['steps_body'], $exp['steps_id'], $exp['finished']);
+            $entity['steps'] = $entitySteps;s
+            unset($entity['steps_body'], $entity['steps_id'], $entity['finished']);
         }
 
         return $res;

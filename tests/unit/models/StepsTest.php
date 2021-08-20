@@ -36,23 +36,19 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead(): void
     {
-        $steps = $this->Steps->read(new ContentParams());
-        $this->assertTrue(is_array($steps));
+        $this->assertIsArray($this->Steps->read(new ContentParams()));
     }
 
     public function testReadAll(): void
     {
-        $steps = $this->Steps->readAll('items');
-        $this->assertTrue(is_array($steps));
+        $this->assertIsArray($this->Steps->readAll('items'));
 
-        $steps = $this->Steps->readAll('experiments');
-        $this->assertTrue(is_array($steps));
+        $this->assertIsArray($this->Steps->readAll('experiments'));
     }
 
     public function testReadAllTeam(): void
     {
-        $steps = $this->Steps->readAllTeam();
-        $this->assertTrue(is_array($steps));
+        $this->assertIsArray($this->Steps->readAllTeam());
     }
 
     public function testUpdate(): void

@@ -79,7 +79,7 @@
     "build": "webpack-cli --progress --config builder.js",
     "buildnode": "webpack-cli --progress --config node-builder.js",
     "buildall": "CYPRESS_INSTALL_BINARY=0 yarn install --pure-lockfile && yarn buildjs && yarn buildcss && yarn chemdoodle && yarn tinymce && yarn ove && yarn brotli && yarn zopfli",
-    "buildcss": "sass --quiet-deps --style compressed src/scss/main.scss:web/assets/elabftw.min.css src/scss/pdf.scss:web/assets/pdf.min.css",
+    "buildcss": "sass --quiet-deps --style compressed src/scss/main.scss:web/assets/elabftw.min.css src/scss/pdf.scss:web/assets/pdf.min.css src/scss/cornify.scss:web/assets/cornify.min.css",
     "buildjs": "yarn build && yarn buildnode",
     "buildprofile": "webpack-cli --config builder.js --profile --json > stats.json",
     "buildnodeprofile": "webpack-cli --config node-builder.js --profile --json > node-stats.json",

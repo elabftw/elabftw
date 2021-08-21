@@ -221,9 +221,12 @@
         },
 
         highlighter: function (text) {
-            return text.replace(new RegExp('(' + this.query.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1') + ')', 'ig'), function ($1, match) {
-                return '<strong>' + match + '</strong>';
-            });
+            if (this.query.length > 0) {
+                return text.replace(new RegExp('(' + this.query.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1') + ')', 'ig'), function (match) {
+                    return '<strong>' + match + '</strong>';
+                });
+            }
+            return text;
         },
 
         show: function () {

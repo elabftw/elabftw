@@ -60,10 +60,10 @@ class ListBuilder
         if ($this->Entity instanceof Items) {
             foreach ($itemsArr as $item) {
                 $mentionArr[] = array(
-                    'name' => "<a href='database.php?mode=view&id=" . $item['id']. "'>["
-                        . $item['category'] . '] ' . $item['title'] . '</a>',
+                    'name' => sprintf('[%s] %s', $item['category'], $item['title']),
                     'id' => $item['id'],
-                    'type' => 'item',
+                    'type' => $this->Entity->type,
+                    'page' => $this->Entity->page,
                 );
             }
         }
@@ -72,10 +72,10 @@ class ListBuilder
         if ($this->Entity instanceof Experiments) {
             foreach ($itemsArr as $item) {
                 $mentionArr[] = array(
-                    'name' => "<a href='experiments.php?mode=view&id=" . $item['id'] . "'>["
-                        . ngettext('Experiment', 'Experiments', 1) . '] ' . $item['title'] . '</a>',
+                    'name' => sprintf('[%s] %s', ngettext('Experiment', 'Experiments', 1), $item['title']),
                     'id' => $item['id'],
-                    'type' => 'experiment',
+                    'type' => $this->Entity->type,
+                    'page' => $this->Entity->page,
                 );
             }
         }

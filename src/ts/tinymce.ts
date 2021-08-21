@@ -198,7 +198,7 @@ export function getTinymceBaseConfig(page: string): object {
         });
       },
       insert: function (data): string {
-        if (data.type === EntityType.Item) {
+        if (data.type === 'items') {
           const LinkC = new Link(entity);
           LinkC.create(parseInt(data.id)).then((json) => {
             if (json.res === true) {
@@ -207,7 +207,7 @@ export function getTinymceBaseConfig(page: string): object {
             }
           });
         }
-        return '<span>' + data.name + '</span>';
+        return "<span><a href='" + data.page + '.php?mode=view&id=' + data.id + "'>" + data.name + '</a></span>';
       },
     },
     mobile: {

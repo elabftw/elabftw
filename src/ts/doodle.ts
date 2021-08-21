@@ -156,16 +156,18 @@ $(document).ready(function() {
    * touch events
    */
   doodleCanvas.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
-    const touch = e.touches[0];
-    isPainting = true;
-    addClick(touch.clientX - rect.left, touch.clientY - rect.top, false);
+    if (e.touches.length === 1) {
+      e.preventDefault();
+      const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+      const touch = e.touches[0];
+      isPainting = true;
+      addClick(touch.clientX - rect.left, touch.clientY - rect.top, false);
+    }
   }, false);
 
   doodleCanvas.addEventListener('touchmove', (e) => {
-    e.preventDefault();
     if (isPainting) {
+      e.preventDefault();
       const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
       const touch = e.touches[0];
       addClick(touch.clientX - rect.left, touch.clientY - rect.top, true);

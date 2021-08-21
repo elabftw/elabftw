@@ -207,7 +207,7 @@ export function getTinymceBaseConfig(page: string): object {
             }
           });
         }
-        return "<span><a href='" + data.page + '.php?mode=view&id=' + data.id + "'>" + data.name + '</a></span>';
+        return `<span><a href='${data.page}.php?mode=view&id=${data.id}'>${data.name}</a></span>`;
       },
     },
     mobile: {

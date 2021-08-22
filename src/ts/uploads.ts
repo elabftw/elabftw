@@ -134,9 +134,9 @@ $(document).ready(function() {
 
   // Create an observer instance linked to the callback function(mutationsList, observer)
   const filesDivObserver = new MutationObserver(() => {
-      displayMolFiles();
-      display3DMolecules(true);
-      displayPlasmidViewer(about);
+    displayMolFiles();
+    display3DMolecules(true);
+    displayPlasmidViewer(about);
   });
 
   // Start observing the target node for configured mutations

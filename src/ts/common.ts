@@ -9,7 +9,7 @@ import $ from 'jquery';
 import { Ajax } from './Ajax.class';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { notif, relativeMoment, displayMolFiles, makeSortableGreatAgain } from './misc';
+import { notif, relativeMoment, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { EntityType, Payload, Method, Model, Action } from './interfaces';
@@ -55,7 +55,6 @@ $(document).ready(function() {
 
   makeSortableGreatAgain();
   relativeMoment();
-  displayMolFiles();
 
   // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR/JSON EDITOR
   const plusMinusButton = document.getElementsByClassName('plusMinusButton');

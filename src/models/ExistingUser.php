@@ -17,6 +17,11 @@ use Elabftw\Exceptions\ResourceNotFoundException;
  */
 class ExistingUser extends Users
 {
+    public static function fromId(int $id): Users
+    {
+        return new self($id);
+    }
+
     public static function fromEmail(string $email): Users
     {
         $Db = Db::getConnection();

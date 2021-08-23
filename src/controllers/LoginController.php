@@ -165,7 +165,11 @@ class LoginController implements ControllerInterface
         }
         // if the token is not valid, verify we can login from untrusted devices for that user
         if ($isTokenValid === false) {
-            $Users = ExistingUser::fromEmail((string) $this->App->Request->request->get('email'));
+            if ($this->App->Session->get('team_selection_required') === true) {
+                $Users = ExistingUser::fromId((int) $this->App->Session->get('auth_userid'));
+            } else {
+                $Users = ExistingUser::fromEmail((string) $this->App->Request->request->get('email'));
+            }
             // check if authentication is locked for untrusted clients for that user
             if ($Users->allowUntrustedLogin() === false) {
                 // reject any attempt whatsoever if this account is locked for untrusted devices

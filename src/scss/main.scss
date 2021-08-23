@@ -1077,6 +1077,11 @@ the form-control fails to do that so we do the border ourselves */
     margin: 10px 0;
 }
 
+#doodleStrokeWidthContainer {
+    align-items: center;
+    display: flex;
+}
+
 /* don't register clicks with the svg (fontawesome icons)
  * this way the click event is registered by the parent and all is well
  */

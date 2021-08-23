@@ -122,11 +122,7 @@ $(document).ready(function() {
       if (confirm(i18next.t('generic-delete-warning'))) {
         UploadC.destroy(uploadId).then(json => {
           if (json.res) {
-            $('#filesdiv').load('?mode=edit&id=' + entity.id + ' #filesdiv > *', function() {
-              displayMolFiles();
-              display3DMolecules(true);
-              displayPlasmidViewer(about);
-            });
+            $('#filesdiv').load('?mode=edit&id=' + entity.id + ' #filesdiv > *');
           }
         });
       }
@@ -135,4 +131,14 @@ $(document).ready(function() {
 
   // ACTIVATE FANCYBOX
   $('[data-fancybox]').fancybox();
+
+  // Create an observer instance linked to the callback function(mutationsList, observer)
+  const filesDivObserver = new MutationObserver(() => {
+    displayMolFiles();
+    display3DMolecules(true);
+    displayPlasmidViewer(about);
+  });
+
+  // Start observing the target node for configured mutations
+  filesDivObserver.observe(document.getElementById('filesdiv'), {childList: true});
 });

@@ -64,7 +64,10 @@ try {
         // or generate a new one and add it into the session
         $Session->set('csrf', $Csrf->getToken());
     }
-    $Csrf->validate();
+    // at the moment we don't validate csrf for saml login FIXME TODO
+    if (basename($Request->getScriptName()) !== 'index.php') {
+        $Csrf->validate();
+    }
     // END CSRF
 
     try {

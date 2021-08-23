@@ -28,7 +28,11 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
             'https://test.example.org/slo',
             'slo:binding',
             'x509',
-            '1'
+            '1',
+            'emailattr',
+            'teamattr',
+            'fnameattr',
+            'lnameattr'
         );
         $this->Idps->update(
             $id,
@@ -39,7 +43,11 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
             'https://test.example.org/slo',
             'slo:binding',
             'x509',
-            '1'
+            '1',
+            'emailattr',
+            'teamattr',
+            'fnameattr',
+            'lnameattr'
         );
         $idp = $this->Idps->getActive($id);
         $this->assertEquals('Updated', $idp['name']);

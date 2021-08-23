@@ -155,6 +155,10 @@ class LoginController implements ControllerInterface
      */
     private function validateDeviceToken(): void
     {
+        // skip for multi team auth
+        if ($this->App->Session->has('auth_userid')) {
+            return;
+        }
         $isTokenValid = false;
         // a devicetoken cookie might or might not exist, so this can be null
         $token = $this->App->Request->cookies->get('devicetoken');

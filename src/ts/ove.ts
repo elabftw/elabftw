@@ -129,9 +129,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         generatePng: true,
         handleFullscreenClose: function(): void { // event could be used as parameter
           editor[viewerID].close();
-          $('#filesdiv').load('?mode=' + about.page + '&id=' + about.id + ' #filesdiv > *', function() {
-            displayPlasmidViewer(about);
-          });
+          $('#filesdiv').load('?mode=' + about.page + '&id=' + about.id + ' #filesdiv > *');
         },
         onCopy: function(event, copiedSequenceData, editorState): void {
           // the copiedSequenceData is the subset of the sequence that has been copied in the teselagen sequence format

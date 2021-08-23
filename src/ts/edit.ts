@@ -7,8 +7,7 @@
  */
 declare let key: any;
 declare let MathJax: any;
-import { displayMolFiles, display3DMolecules, insertParamAndReload, notif } from './misc';
-import { displayPlasmidViewer } from './ove';
+import { insertParamAndReload, notif } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Payload, Method, Action } from './interfaces';
 import './doodle';
@@ -88,9 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // reload the #filesdiv once the file is uploaded
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
           $('#filesdiv').load(`?mode=edit&id=${String(entity.id)} #filesdiv > *`, function() {
-            displayMolFiles();
-            display3DMolecules(true);
-            displayPlasmidViewer(about);
             const dropZone = Dropzone.forElement('#elabftw-dropzone');
             // Check to make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
             if (typeof dropZone.tinyImageSuccess !== 'undefined' && dropZone.tinyImageSuccess !== null) {

@@ -1,14 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * \Elabftw\Elabftw\Saml
- *
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -21,35 +18,22 @@ use function rtrim;
  */
 class Saml
 {
-    private array $settings = array();
-
     public function __construct(public Config $Config, private Idps $Idps)
     {
     }
 
     /**
      * Get the settings array
+     * On login we don't have an id but we don't need the settings
+     * from a particular idp (just the service provider)
+     * So getActive will just grab the first active one
      *
      * @param int|null $id id of the selected idp
      */
     public function getSettings(?int $id = null): array
     {
-        $this->setSettings($id);
-        return $this->settings;
-    }
-
-    /**
-     * Set the settings array to $this->settings
-     * On login we don't have an id but we don't need the settings
-     * from a particular idp (just the service provider)
-     *
-     * @param int|null $id id of the idp we want
-     */
-    private function setSettings(?int $id = null): void
-    {
-        $idpsArr = $this->Idps->getActive($id);
-
-        $this->settings = array(
+        $idp = $this->Idps->getActive($id);
+        return array(
             // If 'strict' is True, then the PHP Toolkit will reject unsigned
             // or unencrypted messages if it expects them signed or encrypted
             // Also will reject the messages if not strictly follow the SAML
@@ -119,27 +103,27 @@ class Saml
             // Identity Provider Data that we want connect with our SP
             'idp' => array(
                 // Identifier of the IdP entity  (must be a URI)
-                'entityId' => $idpsArr['entityid'],
+                'entityId' => $idp['entityid'],
                 // SSO endpoint info of the IdP. (Authentication Request protocol)
                 'singleSignOnService' => array(
                     // URL Target of the IdP where the SP will send the Authentication Request Message
-                    'url' => $idpsArr['sso_url'],
+                    'url' => $idp['sso_url'],
                     // SAML protocol binding to be used when returning the <Response>
                     // message.  Onelogin Toolkit supports for this endpoint the
                     // HTTP-POST binding only
-                    'binding' => $idpsArr['sso_binding'],
+                    'binding' => $idp['sso_binding'],
                 ),
                 // SLO endpoint info of the IdP.
                 'singleLogoutService' => array(
                     // URL Location of the IdP where the SP will send the SLO Request
-                    'url' => $idpsArr['slo_url'],
+                    'url' => $idp['slo_url'],
                     // SAML protocol binding to be used when returning the <Response>
                     // message.  Onelogin Toolkit supports for this endpoint the
                     // HTTP-Redirect binding only
-                    'binding' => $idpsArr['slo_binding'],
+                    'binding' => $idp['slo_binding'],
                 ),
                 // Public x509 certificate of the IdP
-                'x509cert' => $idpsArr['x509'],
+                'x509cert' => $idp['x509'],
                 /*
                  *  Instead of use the whole x509cert you can use a fingerprint
                  *  (openssl x509 -noout -fingerprint -in "idp.crt" to generate it,
@@ -151,6 +135,10 @@ class Saml
                  */
                 // 'certFingerprint' => '',
                 // 'certFingerprintAlgorithm' => 'sha1',
+                'emailAttr' => $idp['email_attr'],
+                'teamAttr' => $idp['team_attr'],
+                'fnameAttr' => $idp['fname_attr'],
+                'lnameAttr' => $idp['lname_attr'],
             ),
             // Security settings
             'security' => array(

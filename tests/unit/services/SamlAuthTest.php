@@ -32,11 +32,7 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
         $this->configArr = array(
             'debug' => '0',
             'saml_sync_teams' => '0',
-            'saml_email' => 'User.email',
-            'saml_team' => 'User.team',
             'saml_team_default' => '2',
-            'saml_firstname' => 'User.firstname',
-            'saml_lastname' => 'User.lastname',
         );
 
         // don't use the real saml lib but create a mock

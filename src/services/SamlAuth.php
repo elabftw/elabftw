@@ -91,7 +91,7 @@ class SamlAuth implements AuthInterface
 
     private function getEmail(array $samlUserdata): string
     {
-        $email = $samlUserdata[$this->configArr['saml_email']];
+        $email = $samlUserdata[$this->settings['idp']['emailAttr']];
 
         if (is_array($email)) {
             $email = $email[0];
@@ -105,10 +105,10 @@ class SamlAuth implements AuthInterface
 
     private function getTeamsFromIdpResponse(array $samlUserdata): array
     {
-        if (empty($this->configArr['saml_team'])) {
+        if (empty($this->settings['idp']['teamAttr'])) {
             throw new ImproperActionException('Cannot synchronize team(s) from IDP if no value is set for looking up team(s) in IDP response!');
         }
-        $teams = $samlUserdata[$this->configArr['saml_team']];
+        $teams = $samlUserdata[$this->settings['idp']['teamAttr']];
         if (empty($teams)) {
             throw new ImproperActionException('Could not find team(s) in IDP response!');
         }
@@ -127,8 +127,7 @@ class SamlAuth implements AuthInterface
 
     private function getTeams(array $samlUserdata): array
     {
-        $Teams = new Teams(new Users());
-        $teams = $samlUserdata[$this->configArr['saml_team'] ?? 'Nope'] ?? array();
+        $teams = $samlUserdata[$this->settings['idp']['teamAttr'] ?? 'Nope'] ?? array();
 
         // if no team attribute is sent by the IDP, use the default team
         if (empty($teams)) {
@@ -137,16 +136,16 @@ class SamlAuth implements AuthInterface
             if ($teamId === 0) {
                 throw new ImproperActionException('Could not find team ID to assign user!');
             }
-            return $Teams->getTeamsFromIdOrNameOrOrgidArray(array($teamId));
+            return array($teamId);
         }
 
         if (is_array($teams)) {
-            return $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
+            return ($teams);
         }
 
         if (is_string($teams)) {
             // maybe it's a string containing several teams separated by commas
-            return $Teams->getTeamsFromIdOrNameOrOrgidArray(explode(',', $teams));
+            return explode(',', $teams);
         }
         throw new ImproperActionException('Could not find team ID to assign user!');
     }
@@ -163,21 +162,17 @@ class SamlAuth implements AuthInterface
             }
 
             // GET FIRSTNAME AND LASTNAME
-            $firstname = $samlUserdata[$this->configArr['saml_firstname']];
+            $firstname = $samlUserdata[$this->settings['idp']['fnameAttr'] ?? 'Unknown'] ?? 'Unknown';
             if (is_array($firstname)) {
                 $firstname = $firstname[0];
             }
-            $lastname = $samlUserdata[$this->configArr['saml_lastname']];
+            $lastname = $samlUserdata[$this->settings['idp']['lnameAttr'] ?? 'Unknown'] ?? 'Unknown';
             if (is_array($lastname)) {
                 $lastname = $lastname[0];
             }
 
             // now try and get the teams
             $teams = $this->getTeams($samlUserdata);
-            // fix for when the $teams have incorrect dimension
-            if (!isset($teams[0]['id'])) {
-                $teams = $teams[0];
-            }
 
             // CREATE USER (and force validation of user, with user permissions)
             $Users = ValidatedUser::fromExternal($email, $teams, $firstname, $lastname);

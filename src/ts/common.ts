@@ -30,6 +30,24 @@ import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sv.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.zh.js';
 
 $(document).ready(function() {
+
+  // HEARTBEAT
+  // this function is to check periodically that we are still authenticated
+  // and show a message if we the session is not valid anymore but we are still on a page requiring auth
+  // only run if we are an auth user by checking the presence of this element in the footer
+  if (document.getElementById('is-auth')) {
+    // check every 5 minutes
+    const heartRate = 300000;
+    setInterval(() => {
+      const response = fetch('app/controllers/HeartBeat.php').then(response => {
+        if (!response.ok) {
+          alert('Your session expired!');
+          window.location.replace('login.php');
+        }
+      });
+    }, heartRate);
+  }
+
   $.ajaxSetup({
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')

@@ -39,6 +39,7 @@ $text-muted: $lightgray;
 @import 'footer';
 @import 'header';
 @import 'jquery-rating';
+@import 'jsoneditor';
 @import 'ove';
 @import 'tagcloud';
 @import 'todolist';
@@ -1203,22 +1204,6 @@ input[type='color'] {
             display: table-cell;
         }
     }
-}
-
-/* jsoneditor */
-.jsoneditor {
-    min-height: 220px;
-    overflow: hidden;
-    resize: vertical;
-}
-
-div.jsoneditor,
-div.jsoneditor-menu {
-    border-color: $elabblue;
-}
-
-div.jsoneditor-menu {
-    background-color: $elabblue;
 }
 
 .action-topmenu {

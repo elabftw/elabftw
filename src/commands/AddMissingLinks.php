@@ -27,7 +27,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class AddMissingLinks extends Command
 {
     // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'db:addMissingLinks';
+    protected static $defaultName = 'links:sync';
 
     /**
      * Set the help messages
@@ -36,11 +36,11 @@ class AddMissingLinks extends Command
     {
         $this
             // the short description shown while running "php bin/console list"
-            ->setDescription('Add missing links to >linked items< table')
+            ->setDescription('Make sure links in body are also properly added as "Linked items"')
 
             // the full command description shown when running the command with
             // the "--help" option
-            ->setHelp('Find links to items in the body of entities and add them to the >linked items< table.');
+            ->setHelp('Find links to items in the body of entities and add them to the "Linked items" of that entity.');
     }
 
     /**

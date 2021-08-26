@@ -11,6 +11,7 @@ namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Links;
@@ -43,11 +44,6 @@ class AddMissingLinks extends Command
             ->setHelp('Find links to items in the body of entities and add them to the "Linked items" of that entity.');
     }
 
-    /**
-     * Execute
-     *
-     * @return int 0
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $Db = Db::getConnection();
@@ -83,9 +79,15 @@ class AddMissingLinks extends Command
 
                     preg_match_all('/database\.php\?mode=view&amp;id=([0-9]+)/', $data['body'], $matches);
                     foreach ($matches[1] as $match) {
-                        $out = (new Links($entity))->create(new ContentParams($match));
-                        if ((int) $out !== 0) {
-                            $count++;
+                        try {
+                            $out = (new Links($entity))->create(new ContentParams($match));
+                            if ((int) $out !== 0) {
+                                $count++;
+                            }
+                        } catch (IllegalActionException $e) {
+                            // maybe the db item doesn't exist anymore or we no longer have access to it
+                            // so just skip that one
+                            continue;
                         }
                     }
                 }

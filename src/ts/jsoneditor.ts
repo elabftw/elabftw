@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const entity = getEntity();
     const JsonEditorHelperC = new JsonEditorHelper(entity);
     JsonEditorHelperC.init((about.page === 'edit' || about.page === 'template-edit'));
-    
+
     if (about.type == 'experiments_templates') {
       const entityWithId = {
         type: entity.type,

@@ -186,8 +186,6 @@ export default class JsonEditorHelper {
         }
       });
     }
-    // Add support for 'Save as' by resetting the currentUploadId to undefined
-    //this.currentUploadId = undefined;
   }
 
   clear(): void {

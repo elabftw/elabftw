@@ -53,6 +53,7 @@ if (!$Request->query->get('keep_redirect')) {
     setcookie('redirect', '', $cookieOptions);
 }
 setcookie('pdf_sig', '', $cookieOptions);
+setcookie('kickreason', '', $cookieOptions);
 
 // this will be present if we logged in through SAML
 if ($App->Session->get('is_auth_by') === 'saml') {

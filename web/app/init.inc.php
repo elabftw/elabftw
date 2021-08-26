@@ -64,7 +64,10 @@ try {
         // or generate a new one and add it into the session
         $Session->set('csrf', $Csrf->getToken());
     }
-    $Csrf->validate();
+    // at the moment we don't validate csrf for saml login FIXME TODO
+    if (basename($Request->getScriptName()) !== 'index.php') {
+        $Csrf->validate();
+    }
     // END CSRF
 
     try {
@@ -110,6 +113,16 @@ try {
     $App->boot();
 } catch (UnauthorizedException | InvalidCsrfTokenException $e) {
     // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
+    $cookieOptions = array(
+        'expires' => time() + 30,
+        'path' => '/',
+        'domain' => '',
+        'secure' => true,
+        'httponly' => true,
+        'samesite' => 'Strict',
+    );
+    // 1 is unauth or session expired, this is here to show a friendly message of the login page after an invalid request
+    setcookie('kickreason', '1', $cookieOptions);
 
     // maybe we clicked an email link and we want to be redirected to the page upon successful login
     // so we store the url in a cookie expiring in 5 minutes to redirect to it after login

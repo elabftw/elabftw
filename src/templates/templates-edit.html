@@ -56,4 +56,5 @@
   <button data-action='update-template' data-id='{{ templateData.id }}' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
 </div>
 {% include('steps-links-edit.html') %}
+{% set mode = 'edit-template' %}
 {{ include('json-editor.html') }}

@@ -36,7 +36,9 @@ class FormProcessor extends AbstractProcessor
         $this->action = $request->request->getAlpha('action');
         $this->setTarget($request->request->getAlpha('target'));
         $type = 'experiment';
-        if ($request->request->get('entity_type') === 'items') {
+        if ($request->request->get('entity_type') === 'items'
+            || $request->request->get('entity_type') === 'item'
+        ) {
             $type = 'item';
         }
         $this->Entity = $this->getEntity($type, (int) $request->request->get('entity_id'));

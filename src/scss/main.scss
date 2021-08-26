@@ -1206,6 +1206,12 @@ input[type='color'] {
 }
 
 /* jsoneditor */
+.jsoneditor {
+    min-height: 220px;
+    overflow: hidden;
+    resize: vertical;
+}
+
 div.jsoneditor,
 div.jsoneditor-menu {
     border-color: $elabblue;

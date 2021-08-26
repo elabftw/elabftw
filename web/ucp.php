@@ -70,7 +70,6 @@ try {
         'Entity' => $Templates,
         'apiKeysArr' => $apiKeysArr,
         'langsArr' => Tools::getLangsArr(),
-        'mode' => 'edit',
         'stepsArr' => $stepsArr,
         'linksArr' => $linksArr,
         'teamGroupsArr' => $teamGroupsArr,

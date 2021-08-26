@@ -13,17 +13,19 @@ import { Entity } from './interfaces';
 
 // This class is named helper because the jsoneditor lib already exports JSONEditor
 export default class JsonEditorHelper {
-  type: string;
-  id: string;
-  editorDiv: HTMLElement;
+  entity: Entity;
+  editorDiv: HTMLDivElement;
   MetadataC: Metadata;
   editor: JSONEditor;
   currentUploadId: string;
+  editorTitle: HTMLElement;
 
   constructor(entity: Entity) {
     // this is the div that will hold the editor
-    this.editorDiv = document.getElementById('jsonEditorContainer');
+    this.entity = entity;
+    this.editorDiv = document.getElementById('jsonEditorContainer') as HTMLDivElement;
     this.MetadataC = new Metadata(entity);
+    this.editorTitle = document.getElementById('jsonEditorTitle');
   }
 
   // INIT
@@ -37,7 +39,7 @@ export default class JsonEditorHelper {
       modes: modes,
       onModeChange: (newMode): void => {
         if (newMode === 'code' || newMode === 'text') {
-          this.editorDiv.style.height = '500px';
+          (this.editorDiv.firstChild as HTMLDivElement).style.height = '500px';
         }
       }
     };
@@ -85,14 +87,14 @@ export default class JsonEditorHelper {
         }
       });
     // add the filename as a title
-    document.getElementById('jsonEditorTitle').innerText = `${i18next.t('filename')}: ${name}`;
+    this.editorTitle.innerText = `${i18next.t('filename')}: ${name}`;
     this.currentUploadId = uploadid;
     this.editorDiv.dataset.what = 'file';
   }
 
   loadMetadata(): void {
     // set the title
-    document.getElementById('jsonEditorTitle').innerText = i18next.t('editing-metadata');
+    this.editorTitle.innerText = i18next.t('editing-metadata');
     this.MetadataC.read().then(metadata => this.load(metadata));
     this.editorDiv.dataset.what = 'metadata';
   }
@@ -105,8 +107,7 @@ export default class JsonEditorHelper {
 
   saveMetadata(): void {
     try {
-      const metadata = this.editor.get();
-      this.MetadataC.update(JSON.stringify(metadata));
+      this.MetadataC.update(JSON.stringify(this.editor.get()));
     } catch (error) {
       notif({res: false, msg: 'Error parsing the JSON! Error logged in console.'});
       console.error(error);
@@ -121,14 +122,23 @@ export default class JsonEditorHelper {
   // save a file or metadata depending on what was loaded
   save(): void {
     if (this.editorDiv.dataset.what === 'file') {
-      return this.saveFile();
-    } else if (this.editorDiv.dataset.what === 'metadata') {
+      return this.saveFile(false);
+    }
+
+    if (this.editorDiv.dataset.what === 'metadata') {
       return this.saveMetadata();
+    }
+
+    // toggle save menu so user can select what to save: file or metadata
+    if (this.editorDiv.dataset.what === '') {
+      if ($('#json-save-dropdown').next('div').is(':hidden')) {
+        $('#json-save-dropdown').dropdown('toggle');
+      }
     }
   }
 
-  saveFile(): void {
-    if (typeof this.currentUploadId === 'undefined') {
+  saveFile(newFile = true): void {
+    if (typeof this.currentUploadId === 'undefined' || newFile === true) {
       // we are creating a new file
       let realName = prompt(i18next.t('request-filename'));
       if (realName === null) {
@@ -139,11 +149,11 @@ export default class JsonEditorHelper {
         realName = realName.slice(0, -5);
       }
       // add the new name for the file as a title
-      $('#jsonEditorTitle').html(i18next.t('filename') + ': ' + realName + '.json');
+      this.editorTitle.innerText = i18next.t('filename') + ': ' + realName + '.json';
       $.post('app/controllers/EntityAjaxController.php', {
         addFromString: true,
-        type: this.type,
-        id: this.id,
+        type: this.entity.type,
+        id: this.entity.id,
         realName: realName,
         fileType: 'json',
         string: JSON.stringify(this.editor.get())
@@ -156,14 +166,18 @@ export default class JsonEditorHelper {
       // we are editing an existing file
       const formData = new FormData();
       const blob = new Blob([JSON.stringify(this.editor.get())], { type: 'application/json' });
-      formData.append('replace', 'true');
-      formData.append('upload_id', this.currentUploadId);
-      formData.append('id', this.id);
-      formData.append('type', this.type);
-      formData.append('file', blob);
+      formData.append('action', 'update');
+      formData.append('target', 'file');
+      formData.append('entity_id', this.entity.id.toString());
+      formData.append('entity_type', this.entity.type);
+      formData.append('id', this.currentUploadId);
+      formData.append('model', 'upload');
+      formData.append('csrf', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+      formData.append('content', blob);
+      formData.append('extraParam', 'jsoneditor');
 
       $.post({
-        url: 'app/controllers/EntityAjaxController.php',
+        url: 'app/controllers/RequestHandler.php',
         data: formData,
         processData: false,
         contentType: false,
@@ -173,11 +187,13 @@ export default class JsonEditorHelper {
       });
     }
     // Add support for 'Save as' by resetting the currentUploadId to undefined
-    this.currentUploadId = undefined;
+    //this.currentUploadId = undefined;
   }
 
   clear(): void {
+    this.editorTitle.innerText = '';
     this.currentUploadId = undefined;
     this.editor.set({});
+    this.editorDiv.dataset.what = '';
   }
 }

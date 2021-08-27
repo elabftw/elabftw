@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $(document).on('click', '.recover-yes', function() {
     EntityC.update(entity.id, Target.Body, localStorage.getItem('body')).then(() => {
       localStorage.clear();
-      document.location.reload(true);
+      document.location.reload();
     });
   });
 

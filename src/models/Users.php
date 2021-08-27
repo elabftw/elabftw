@@ -356,6 +356,12 @@ class Users
      */
     public function toggleArchive(): bool
     {
+        if ($this->userData['archived']) {
+            if ($this->getUnarchivedCount() > 0) {
+                throw new ImproperActionException('Cannot unarchive this user because they have another active account with the same email!');
+            }
+        }
+
         $sql = 'UPDATE users SET archived = IF(archived = 1, 0, 1), token = null WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
@@ -403,6 +409,16 @@ class Users
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    // if the user is already archived, make sure there is no other account with the same email
+    private function getUnarchivedCount(): int
+    {
+        $sql = 'SELECT COUNT(email) FROM users WHERE email = :email AND archived = 0';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':email', $this->userData['email']);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
     }
 
     /**

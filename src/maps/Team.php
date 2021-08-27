@@ -18,6 +18,7 @@ use Elabftw\Interfaces\MapInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use PDO;
+use const SECRET_KEY;
 
 /**
  * One team
@@ -218,7 +219,7 @@ class Team implements MapInterface
 
     final public function setStamppass(string $setting): void
     {
-        $this->stamppass = Crypto::encrypt($setting, Key::loadFromAsciiSafeString(\SECRET_KEY));
+        $this->stamppass = Crypto::encrypt($setting, Key::loadFromAsciiSafeString(SECRET_KEY));
     }
 
     final public function setStampcert(?string $setting): void

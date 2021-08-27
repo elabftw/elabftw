@@ -54,6 +54,11 @@ return $config->setRules(array(
     'trailing_comma_in_multiline' => true,
     'trim_array_spaces' => true,
     'unary_operator_spaces' => true,
+    'global_namespace_import' => [
+        'import_classes' => true,
+        'import_functions' => true,
+        'import_constants' => true,
+    ],
 ))
     ->setFinder($finder)
     ->setRiskyAllowed(true)

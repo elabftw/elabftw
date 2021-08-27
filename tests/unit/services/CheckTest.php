@@ -14,6 +14,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use function hash;
 use function random_bytes;
+use TypeError;
 
 class CheckTest extends \PHPUnit\Framework\TestCase
 {
@@ -26,7 +27,7 @@ class CheckTest extends \PHPUnit\Framework\TestCase
 
     public function testId(): void
     {
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
         // @phpstan-ignore-next-line
         $this->assertFalse(Check::id('yep'));
         $this->assertFalse(Check::id(-42));

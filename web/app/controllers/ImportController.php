@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -18,12 +19,13 @@ use Elabftw\Services\ImportCsv;
 use Elabftw\Services\ImportZip;
 use Exception;
 use League\Csv\SyntaxError;
+use function set_time_limit;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Import a zip or a csv
  */
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new RedirectResponse('../../admin.php');
 
@@ -33,7 +35,7 @@ try {
     }
 
     // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
-    \set_time_limit(0);
+    set_time_limit(0);
 
     if ($Request->request->get('type') === 'csv') {
         $Import = new ImportCsv($App->Users, $App->Request);

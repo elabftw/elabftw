@@ -10,6 +10,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use const DB_CERT_PATH;
+use const DB_HOST;
+use const DB_NAME;
+use const DB_PASSWORD;
+use const DB_PORT;
+use const DB_USER;
 use Elabftw\Exceptions\DatabaseErrorException;
 use PDO;
 use PDOException;
@@ -42,8 +48,8 @@ final class Db
         $pdo_options[PDO::ATTR_PERSISTENT] = true;
         // only return a named array
         $pdo_options[PDO::ATTR_DEFAULT_FETCH_MODE] = PDO::FETCH_ASSOC;
-        if (defined('DB_CERT_PATH') && !empty(\DB_CERT_PATH)) {
-            $pdo_options[PDO::MYSQL_ATTR_SSL_CA] = \DB_CERT_PATH;
+        if (defined('DB_CERT_PATH') && !empty(DB_CERT_PATH)) {
+            $pdo_options[PDO::MYSQL_ATTR_SSL_CA] = DB_CERT_PATH;
         }
 
         // be backward compatible
@@ -52,10 +58,10 @@ final class Db
         }
 
         $this->connection = new PDO(
-            'mysql:host=' . \DB_HOST . ';port=' . \DB_PORT . ';dbname=' .
-            \DB_NAME,
-            \DB_USER,
-            \DB_PASSWORD,
+            'mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' .
+            DB_NAME,
+            DB_USER,
+            DB_PASSWORD,
             $pdo_options
         );
     }

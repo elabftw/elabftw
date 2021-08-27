@@ -35,6 +35,8 @@ use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use Elabftw\Services\MakeBackupZip;
+use function implode;
+use function in_array;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -178,7 +180,7 @@ class ApiController implements ControllerInterface
 
         // send error 405 for Method Not Allowed, with Allow header as per spec:
         // https://tools.ietf.org/html/rfc7231#section-7.4.1
-        return new Response('Invalid HTTP request method!', 405, array('Allow' => \implode(', ', $this->allowedMethods)));
+        return new Response('Invalid HTTP request method!', 405, array('Allow' => implode(', ', $this->allowedMethods)));
     }
 
     /**
@@ -784,7 +786,7 @@ class ApiController implements ControllerInterface
         foreach ($itemsTypesArr as $itemsTypes) {
             $validIds[] = $itemsTypes['category_id'];
         }
-        if (!\in_array((string) $this->id, $validIds, true)) {
+        if (!in_array((string) $this->id, $validIds, true)) {
             return new Response('Cannot create an item with an item type id not in your team!', 403);
         }
 

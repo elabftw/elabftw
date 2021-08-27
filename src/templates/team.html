@@ -115,7 +115,8 @@
             <th>{{ 'Website'|trans }}</th>
             <th>{{ 'Skype'|trans }}</th>
         </tr>
-        {% for user in App.Users.readAllFromTeam %}
+        <!-- archived users are hidden on this page -->
+        {% for user in App.Users.readAllFromTeam()|filter(u => u.archived == 0) %}
         <tr>
           <td>
             <a href='experiments.php?owner={{ user.userid }}'>

@@ -4131,10 +4131,10 @@ markdown-it@^11.0.0:
     mdurl "^1.0.1"
     uc.micro "^1.0.5"
 
-marked@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-3.0.0.tgz#ac8369b7ddeef15fbbce870d14f321bdb20ca4e2"
-  integrity sha512-IF2MYfFafPsLIhzLTu63secRBwOmIY+vwS+ei6qg8F+bTS+MxH6ONYRmuseGdZqF44qvoi3nP/rlpClBdgLbiQ==
+marked@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-3.0.2.tgz#60ce97d6aec34dd882ab4bb4df82494666854e17"
+  integrity sha512-TMJQQ79Z0e3rJYazY0tIoMsFzteUGw9fB3FD+gzuIT3zLuG9L9ckIvUfF51apdJkcqc208jJN2KbtPbOvXtbjA==
 
 mathjax-full@^3.2.0:
   version "3.2.0"

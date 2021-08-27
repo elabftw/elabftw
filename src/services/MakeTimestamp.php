@@ -15,6 +15,7 @@ namespace Elabftw\Services;
 use DateTime;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use function dirname;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -22,14 +23,18 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Teams;
+use function file_get_contents;
 use GuzzleHttp\Exception\RequestException;
 use function hash_file;
+use function is_dir;
 use function is_readable;
 use function mb_strlen;
+use function mkdir;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use PDO;
 use Psr\Http\Message\StreamInterface;
+use const SECRET_KEY;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -173,7 +178,7 @@ class MakeTimestamp extends AbstractMake
         $login = $config['stamplogin'];
 
         if (($config['stamppass'] ?? '') !== '') {
-            $password = Crypto::decrypt($config['stamppass'], Key::loadFromAsciiSafeString(\SECRET_KEY));
+            $password = Crypto::decrypt($config['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
         } else {
             $password = '';
         }
@@ -322,7 +327,7 @@ class MakeTimestamp extends AbstractMake
             // add a timeout, because if you need proxy, but don't have it, it will mess up things
             // in seconds
             'timeout' => 5,
-            'body' => \file_get_contents($this->requestfilePath),
+            'body' => file_get_contents($this->requestfilePath),
         );
 
         if ($this->stampParams['stamplogin'] && $this->stampParams['stamppassword']) {
@@ -365,8 +370,8 @@ class MakeTimestamp extends AbstractMake
     {
         $longName = $this->getLongName() . '.asn1';
         $filePath = $this->getUploadsPath() . $longName;
-        $dir = \dirname($filePath);
-        if (!\is_dir($dir) && !\mkdir($dir, 0700, true) && !\is_dir($dir)) {
+        $dir = dirname($filePath);
+        if (!is_dir($dir) && !mkdir($dir, 0700, true) && !is_dir($dir)) {
             throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
         }
         if (!file_put_contents($filePath, $binaryToken)) {
@@ -402,7 +407,7 @@ class MakeTimestamp extends AbstractMake
      */
     private function validate(): bool
     {
-        $certPath = \dirname(__DIR__, 2) . '/' . $this->stampParams['stampcert'];
+        $certPath = dirname(__DIR__, 2) . '/' . $this->stampParams['stampcert'];
 
         if (!is_readable($certPath)) {
             throw new ImproperActionException('Cannot read the certificate file!');
@@ -451,7 +456,7 @@ class MakeTimestamp extends AbstractMake
     {
         $this->isJavaInstalled();
 
-        $cwd = \dirname(__DIR__, 2) . '/src/dfn-cert/timestampverifier/';
+        $cwd = dirname(__DIR__, 2) . '/src/dfn-cert/timestampverifier/';
         try {
             $output = $this->runProcess(array(
                 './verify.sh',

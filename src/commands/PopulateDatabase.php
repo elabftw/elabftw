@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
+use const DB_NAME;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ItemTypeParams;
 use Elabftw\Elabftw\Sql;
@@ -150,9 +151,9 @@ class PopulateDatabase extends Command
     {
         $Db = Db::getConnection();
         $Sql = new Sql(new Fs(new Local(dirname(__DIR__) . '/sql')));
-        $Db->q('DROP database ' . \DB_NAME);
-        $Db->q('CREATE database ' . \DB_NAME);
-        $Db->q('USE ' . \DB_NAME);
+        $Db->q('DROP database ' . DB_NAME);
+        $Db->q('CREATE database ' . DB_NAME);
+        $Db->q('USE ' . DB_NAME);
 
         // load structure
         $Sql->execFile('structure.sql');

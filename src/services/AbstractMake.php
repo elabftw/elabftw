@@ -10,11 +10,15 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use function bin2hex;
+use function dirname;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Traits\UploadTrait;
+use function hash;
+use function random_bytes;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -50,7 +54,7 @@ abstract class AbstractMake
      */
     protected function getLongName(): string
     {
-        $hash = \hash('sha512', \bin2hex(\random_bytes(16)));
+        $hash = hash('sha512', bin2hex(random_bytes(16)));
         $folder = substr($hash, 0, 2);
 
         return $folder . '/' . $hash;
@@ -64,7 +68,7 @@ abstract class AbstractMake
      */
     protected function getTmpPath(): string
     {
-        $tmpPath = \dirname(__DIR__, 2) . '/cache/elab/';
+        $tmpPath = dirname(__DIR__, 2) . '/cache/elab/';
         if (!is_dir($tmpPath) && !mkdir($tmpPath, 0700, true) && !is_dir($tmpPath)) {
             throw new FilesystemErrorException("Unable to create the cache directory ($tmpPath)");
         }

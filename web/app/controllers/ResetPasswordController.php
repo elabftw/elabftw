@@ -22,6 +22,7 @@ use Elabftw\Services\Email;
 use Elabftw\Services\ResetPasswordKey;
 use Exception;
 use function random_int;
+use const SECRET_KEY;
 use function sleep;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -30,7 +31,7 @@ use function time;
 require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new RedirectResponse('../../login.php');
-$ResetPasswordKey = new ResetPasswordKey(time(), \SECRET_KEY);
+$ResetPasswordKey = new ResetPasswordKey(time(), SECRET_KEY);
 
 try {
     $Email = new Email($App->Config, new Users());

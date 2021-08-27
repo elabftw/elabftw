@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Exceptions\ImproperActionException;
+use function str_repeat;
 
 class FilterTest extends \PHPUnit\Framework\TestCase
 {
@@ -37,7 +38,7 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('my body', Filter::body('my body'));
         $this->assertEquals('my body', Filter::body('my body<script></script>'));
         $this->expectException(ImproperActionException::class);
-        $body = \str_repeat('a', 4120001);
+        $body = str_repeat('a', 4120001);
         Filter::body($body);
     }
 

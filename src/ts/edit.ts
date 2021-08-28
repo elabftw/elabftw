@@ -6,7 +6,6 @@
  * @package elabftw
  */
 declare let key: any;
-declare let MathJax: any;
 import { notif } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Payload, Method, Action } from './interfaces';
@@ -20,7 +19,6 @@ import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
 import UploadClass from './Upload.class';
 import EntityClass from './Entity.class';
-import marked from 'marked';
 
 // the dropzone is created programmatically, disable autodiscover
 Dropzone.autoDiscover = false;
@@ -38,9 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // add the title in the page name (see #324)
-  document.title = (document.getElementById('title_input') as HTMLInputElement).value + ' - eLabFTW';
-
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
 
@@ -50,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Which editor are we using? md or tiny
   const editor = getEditor();
+  editor.init();
 
   // UPLOAD FORM
   new Dropzone('form#elabftw-dropzone', {
@@ -260,28 +256,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // DISPLAY MARKDOWN EDITOR
-  if ($('#body_area').hasClass('markdown-textarea')) {
-    ($('.markdown-textarea') as any).markdown({
-      onPreview: function(ed) {
-        // ask mathjax to reparse the page
-        // if we call typeset directly it doesn't work
-        // so add a timeout
-        setTimeout(function() {
-          MathJax.typeset();
-        }, 1);
-        // parse with marked and return the html
-        return marked(ed.$textarea.val());
-      }
-    });
-  }
+  // TITLE STUFF
+  const titleInput = document.getElementById('title_input') as HTMLInputElement;
+  // add the title in the page name (see #324)
+  document.title = titleInput.value + ' - eLabFTW';
 
   // If the title is 'Untitled', clear it on focus
-  document.getElementById('title_input').addEventListener('focus', event => {
+  titleInput.addEventListener('focus', event => {
     const el = event.target as HTMLInputElement;
     if (el.value === i18next.t('entity-default-title')) {
       el.value = '';
     }
+  });
+
+  titleInput.addEventListener('blur', () => {
+    const content = titleInput.value;
+    EntityC.update(entity.id, Target.Title, content);
+    // update the page's title
+    document.title = content + ' - eLabFTW';
   });
 
   // ANNOTATE IMAGE
@@ -440,12 +432,5 @@ document.addEventListener('DOMContentLoaded', () => {
   $(document).on('blur', '#date_input', function() {
     const content = (document.getElementById('date_input') as HTMLInputElement).value;
     EntityC.update(entity.id, Target.Date, content);
-  });
-
-  $(document).on('blur', '#title_input', function() {
-    const content = (document.getElementById('title_input') as HTMLInputElement).value;
-    EntityC.update(entity.id, Target.Title, content);
-    // update the page's title
-    document.title = content + ' - eLabFTW';
   });
 });

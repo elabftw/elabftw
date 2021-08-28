@@ -7,9 +7,12 @@
  */
 import { insertParamAndReload } from './misc';
 import tinymce from 'tinymce/tinymce';
+declare let MathJax: any;
+import marked from 'marked';
 
 interface EditorInterface {
   type: string;
+  init(): void;
   getContent(): string;
   setContent(content: string): void;
   switch(): void;
@@ -27,6 +30,9 @@ class TinyEditor extends Editor implements EditorInterface {
     super();
     this.type = 'tiny';
   }
+  init(): void {
+    return;
+  }
   getContent(): string {
     return tinymce.activeEditor.getContent();
   }
@@ -39,6 +45,20 @@ class MdEditor extends Editor implements EditorInterface {
   constructor() {
     super();
     this.type = 'md';
+  }
+  init(): void {
+    ($('.markdown-textarea') as any).markdown({
+      onPreview: function(ed) {
+        // ask mathjax to reparse the page
+        // if we call typeset directly it doesn't work
+        // so add a timeout
+        setTimeout(function() {
+          MathJax.typeset();
+        }, 1);
+        // parse with marked and return the html
+        return marked(ed.$textarea.val());
+      }
+    });
   }
   getContent(): string {
     return (document.getElementById('body_area') as HTMLTextAreaElement).value;

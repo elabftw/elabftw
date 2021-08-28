@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // check every 5 minutes
     const heartRate = 300000;
     setInterval(() => {
-      const response = fetch('app/controllers/HeartBeat.php').then(response => {
+      fetch('app/controllers/HeartBeat.php').then(response => {
         if (!response.ok) {
           alert('Your session expired!');
           window.location.replace('login.php');

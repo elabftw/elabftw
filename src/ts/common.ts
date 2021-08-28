@@ -97,29 +97,6 @@ $(document).ready(function() {
     });
   }
 
-  // SHOW/HIDE PASSWORDS
-  const togglePassButtons = document.querySelectorAll('[data-action="toggle-password"]');
-  if (togglePassButtons) {
-    togglePassButtons.forEach(btn => {
-      btn.addEventListener('click', event => {
-        const el = event.target as HTMLElement;
-
-        // toggle eye icon
-        const icon = el.firstChild as HTMLElement;
-        icon.classList.toggle('fa-eye');
-        icon.classList.toggle('fa-eye-slash');
-
-        // toggle input type
-        const input = document.getElementById(el.dataset.target);
-        let attribute = 'password';
-        if (input.getAttribute('type') === 'password') {
-          attribute = 'text';
-        }
-        input.setAttribute('type', attribute);
-      });
-    });
-  }
-
   document.getElementById('container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
     // SHOW PRIVACY POLICY
@@ -139,6 +116,21 @@ $(document).ready(function() {
         // modal plugin requires jquery
         ($('#privacyModal') as any).modal('toggle');
       });
+
+    // PASSWORD VISIBILITY TOGGLE
+    } else if (el.matches('[data-action="toggle-password"]')) {
+      // toggle eye icon
+      const icon = el.firstChild as HTMLElement;
+      icon.classList.toggle('fa-eye');
+      icon.classList.toggle('fa-eye-slash');
+
+      // toggle input type
+      const input = document.getElementById(el.dataset.target);
+      let attribute = 'password';
+      if (input.getAttribute('type') === 'password') {
+        attribute = 'text';
+      }
+      input.setAttribute('type', attribute);
 
     // LOGOUT
     } else if (el.matches('[data-action="logout"]')) {

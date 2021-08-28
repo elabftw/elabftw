@@ -20,6 +20,7 @@ import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
 import UploadClass from './Upload.class';
 import EntityClass from './Entity.class';
+import marked from 'marked';
 
 // the dropzone is created programmatically, disable autodiscover
 Dropzone.autoDiscover = false;
@@ -262,13 +263,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // DISPLAY MARKDOWN EDITOR
   if ($('#body_area').hasClass('markdown-textarea')) {
     ($('.markdown-textarea') as any).markdown({
-      onPreview: function() {
+      onPreview: function(ed) {
         // ask mathjax to reparse the page
         // if we call typeset directly it doesn't work
         // so add a timeout
         setTimeout(function() {
           MathJax.typeset();
         }, 1);
+        // parse with marked and return the html
+        return marked(ed.$textarea.val());
       }
     });
   }

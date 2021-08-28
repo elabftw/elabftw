@@ -13,7 +13,6 @@ import { notif, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { EntityType, Payload, Method, Model, Action } from './interfaces';
-import 'marked';
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.de.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.es.js';

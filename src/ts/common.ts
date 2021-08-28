@@ -63,7 +63,7 @@ $(document).ready(function() {
   const toggleNextElem = document.querySelectorAll('[data-action="toggle-next"]');
   if (toggleNextElem) {
     toggleNextElem.forEach(el => {
-      el.addEventListener('click', (event) => {
+      el.addEventListener('click', event => {
         (event.target as HTMLElement).nextElementSibling.toggleAttribute('hidden');
       });
     });
@@ -98,16 +98,27 @@ $(document).ready(function() {
   }
 
   // SHOW/HIDE PASSWORDS
-  $('.togglePassword').on('click', function(event) {
-    event.preventDefault();
-    $(this).find('[data-fa-i2svg]').toggleClass('fa-eye fa-eye-slash');
-    const input = $($(this).data('toggle'));
-    if (input.attr('type') === 'password') {
-      input.attr('type', 'text');
-    } else {
-      input.attr('type', 'password');
-    }
-  });
+  const togglePassButtons = document.querySelectorAll('[data-action="toggle-password"]');
+  if (togglePassButtons) {
+    togglePassButtons.forEach(btn => {
+      btn.addEventListener('click', event => {
+        const el = event.target as HTMLElement;
+
+        // toggle eye icon
+        const icon = el.firstChild as HTMLElement;
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
+
+        // toggle input type
+        const input = document.getElementById(el.dataset.target);
+        let attribute = 'password';
+        if (input.getAttribute('type') === 'password') {
+          attribute = 'text';
+        }
+        input.setAttribute('type', attribute);
+      });
+    });
+  }
 
   document.getElementById('container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);

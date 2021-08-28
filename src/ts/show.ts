@@ -13,7 +13,7 @@ import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 
-$(document).ready(function(){
+document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
     return;
   }

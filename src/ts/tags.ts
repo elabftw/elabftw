@@ -13,7 +13,7 @@ import { getCheckedBoxes, notif, reloadTagsAndLocks } from './misc';
 import { Ajax } from './Ajax.class';
 import { Payload, Method, Model, Action, Target, EntityType, Entity } from './interfaces';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   let type = $('#info').data('type');
   if (type === undefined) {
     type = 'experiments_templates';

@@ -14,7 +14,7 @@ import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
 import Upload from './Upload.class';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
 

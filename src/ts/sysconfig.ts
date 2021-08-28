@@ -11,7 +11,7 @@ import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/sysconfig.php') {
     return;
   }

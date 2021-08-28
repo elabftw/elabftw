@@ -8,7 +8,7 @@
 import { notif } from './misc';
 import i18next from 'i18next';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('info').dataset.page !== 'edit') {
     return;
   }

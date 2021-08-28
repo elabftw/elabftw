@@ -29,7 +29,7 @@ import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sl.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sv.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.zh.js';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
 
   // HEARTBEAT
   // this function is to check periodically that we are still authenticated
@@ -87,6 +87,11 @@ $(document).ready(function() {
     });
   }
 
+  /**
+   * MAIN click event listener bound to container
+   * this will listen for click events on the container and if the element
+   * matches a known action then that action is triggered
+   */
   document.getElementById('container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
     // SHOW PRIVACY POLICY

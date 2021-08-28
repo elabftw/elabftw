@@ -14,7 +14,7 @@ import { EntityType, Target } from './interfaces';
 import EntityClass from './Entity.class';
 import Tab from './Tab.class';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/ucp.php') {
     return;
   }

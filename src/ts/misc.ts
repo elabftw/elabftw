@@ -16,11 +16,10 @@ import { EntityType, Entity } from './interfaces';
 // the datetime is taken from the title of the element so mouse hover will show raw datetime
 export function relativeMoment(): void {
   const locale = document.getElementById('user-prefs').dataset.jslang;
-  document.querySelectorAll('.relative-moment')
-    .forEach((el) => {
-      const span = el as HTMLElement;
-      span.innerText = DateTime.fromFormat(span.title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale}).toRelative();
-    });
+  document.querySelectorAll('.relative-moment').forEach(el => {
+    const span = el as HTMLElement;
+    span.innerText = DateTime.fromFormat(span.title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale}).toRelative();
+  });
 }
 
 // for view or edit mode, get type and id from the page to construct the entity object

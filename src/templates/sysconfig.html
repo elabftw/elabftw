@@ -16,21 +16,21 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
 <div id='versionNotifZone'></div>
 
-<ul id='menu'>
-        <li class='tabhandle' id='tab1'>{{ 'Server'|trans }}</li>
-        <li class='tabhandle' id='tab2'>{{ 'Teams'|trans }}</li>
-        <li class='tabhandle' id='tab3'>{{ 'Users'|trans }}</li>
-        <li class='tabhandle' id='tab4'>{{ 'Timestamp'|trans }}</li>
-        <li class='tabhandle' id='tab5'>{{ 'Security'|trans }}</li>
-        <li class='tabhandle' id='tab6'>{{ 'Email'|trans }}</li>
-        <li class='tabhandle' id='tab7'>SAML</li>
-        <li class='tabhandle' id='tab8'>{{ 'Privacy policy'|trans }}</li>
-        <li class='tabhandle' id='tab9'>{{ 'External auth'|trans }}</li>
-        <li class='tabhandle' id='tab10'>LDAP</li><span class='beta'>beta</span>
+<ul class='tabbed-menu'>
+  <li data-action='switch-tab' data-tabtarget='1'>{{ 'Server'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='2'>{{ 'Teams'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='3'>{{ 'Users'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='4'>{{ 'Timestamp'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='5'>{{ 'Security'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='6'>{{ 'Email'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='7'>SAML</li>
+  <li data-action='switch-tab' data-tabtarget='8'>{{ 'Privacy policy'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='9'>{{ 'External auth'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='10'>LDAP</li><span class='beta'>beta</span>
 </ul>
 
 <!-- TAB 1 SERVER -->
-<div class='divhandle' id='tab1div'>
+<div data-tabcontent='1' hidden>
     <!-- STATS -->
     <div class='box'>
       <h3>{{ 'Usage Statistics'|trans }}</h3>
@@ -175,7 +175,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 </div>
 
 <!-- TAB 2 TEAMS -->
-<div class='divhandle' id='tab2div'>
+<div data-tabcontent='2' hidden>
     <div id='teamsDiv' class='form-group'>
         <!-- CREATE TEAM -->
         <div class='box'>
@@ -250,12 +250,12 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 </div>
 
 <!-- TAB 3 USERS -->
-<div class='divhandle' id='tab3div'>
-    {% include('editusers.html') %}
+<div data-tabcontent='3' hidden>
+  {% include('editusers.html') %}
 </div>
 
 <!-- TAB 4 TIMESTAMP -->
-<div class='divhandle box' id='tab4div'>
+<div class='box' data-tabcontent='4' hidden>
     <form method='post' action='app/controllers/SysconfigController.php'>
       {{ App.Session.get('csrf')|csrf }}
       <div class='form-group'>
@@ -294,7 +294,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 </div>
 
 <!-- TAB 5 SECURITY -->
-<div class='divhandle box' id='tab5div'>
+<div class='box' data-tabcontent='5' hidden>
   <h3>{{ 'Security Settings'|trans }}</h3>
   <hr>
   <form class='form-group' method='post' action='app/controllers/SysconfigController.php'>
@@ -351,7 +351,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
 
 <!-- TAB 6 EMAIL -->
-<div class='divhandle' id='tab6div'>
+<div data-tabcontent='6' hidden>
   <div class='box'>
     <h3>{{ 'E-mail Settings'|trans }}</h3>
     <hr>
@@ -443,7 +443,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 </div>
 
 <!-- TAB 7 SAML -->
-<div class='divhandle' id='tab7div'>
+<div data-tabcontent='7' hidden>
     {{ 'Note: the documentation about SAML is available %shere%s.'|format("<a href='https://doc.elabftw.net/saml.html'>", "</a>")|msg('ok', false) }}
     {{ 'Note: an XML file with the configuration is available %shere%s.'|format("<a href='metadata.php'>", "</a>")|msg('ok', false) }}
     <div class='box'>
@@ -739,29 +739,27 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 </div>
 
 <!-- TAB 8 PRIVACY POLICY -->
-<div class='divhandle' id='tab8div'>
-    <div class='box'>
-        <h3>{{ 'Adjust your privacy policy notice'|trans }}</h3>
-        <hr>
-        {% if App.Config.configArr.privacy_policy is null %}
-            {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
-        {% endif %}
+<div class='box' data-tabcontent='8' hidden>
+  <h3>{{ 'Adjust your privacy policy notice'|trans }}</h3>
+  <hr>
+  {% if App.Config.configArr.privacy_policy is null %}
+    {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
+  {% endif %}
 
-        <form method='post' action='app/controllers/SysconfigController.php'>
-            {{ App.Session.get('csrf')|csrf }}
-            <textarea name='privacy_policy' class='mceditable'>
-                {{ App.Config.configArr.privacy_policy|default(privacyPolicyTemplate)|raw }}
-            </textarea>
-            <div class='mt-4 text-center'>
-                <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-                <button class='button btn btn-danger' type='submit' name='clear_policy'>{{ 'Clear'|trans }}</button>
-            </div>
-        </form>
+  <form method='post' action='app/controllers/SysconfigController.php'>
+    {{ App.Session.get('csrf')|csrf }}
+    <textarea name='privacy_policy' class='mceditable'>
+      {{ App.Config.configArr.privacy_policy|default(privacyPolicyTemplate)|raw }}
+    </textarea>
+    <div class='mt-4 text-center'>
+      <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+      <button class='button btn btn-danger' type='submit' name='clear_policy'>{{ 'Clear'|trans }}</button>
     </div>
+  </form>
 </div>
 
 <!-- TAB 9 EXTERNAL AUTH -->
-<div class='divhandle box' id='tab9div'>
+<div class='box' data-tabcontent='9' hidden>
     <form method='post' action='app/controllers/SysconfigController.php'>
       {{ App.Session.get('csrf')|csrf }}
       <div class='form-group'>
@@ -819,7 +817,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 </div>
 
 <!-- TAB 10 LDAP -->
-<div class='divhandle box' id='tab10div'>
+<div class='box' data-tabcontent='10' hidden>
     <form method='post' action='app/controllers/SysconfigController.php'>
       {{ App.Session.get('csrf')|csrf }}
       <div class='form-group'>

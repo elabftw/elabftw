@@ -35,11 +35,16 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { config } from '@fortawesome/fontawesome-svg-core';
+import Tab from './Tab.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/team.php') {
     return;
   }
+
+  const TabMenu = new Tab();
+  TabMenu.init(document.querySelector('.tabbed-menu'));
+
   // use this setting to prevent bug in fullcalendar
   // see https://github.com/fullcalendar/fullcalendar/issues/5544
   config.autoReplaceSvg = 'nest';

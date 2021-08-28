@@ -236,24 +236,24 @@ label {
 }
 
 /*  MENU is below main nav */
-#menu {
+.tabbed-menu {
     border-bottom: 1px solid $bordersgray;
     line-height: 200%;
     margin: 30px 0 20px;
     padding: 0;
-}
 
-#menu li {
-    color: $maingray;
-    cursor: pointer;
-    display: inline;
-    margin-right: 2%;
-    text-transform: uppercase;
-}
+    li {
+        color: $maingray;
+        cursor: pointer;
+        display: inline;
+        margin-right: 2%;
+        text-transform: uppercase;
+    }
 
-#menu .selected {
-    border-bottom: 5px solid $elabblue;
-    padding-bottom: 0;
+    .selected {
+        border-bottom: 5px solid $elabblue;
+        padding-bottom: 0;
+    }
 }
 
 /* ALERT */

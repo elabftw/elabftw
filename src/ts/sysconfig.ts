@@ -9,11 +9,15 @@ import { notif } from './misc';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
+import Tab from './Tab.class';
 
 $(document).ready(function() {
   if (window.location.pathname !== '/sysconfig.php') {
     return;
   }
+
+  const TabMenu = new Tab();
+  TabMenu.init(document.querySelector('.tabbed-menu'));
 
   // GET the latest version information
   const updateUrl = 'https://get.elabftw.net/updates.json';

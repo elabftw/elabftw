@@ -18,6 +18,10 @@ export function relativeMoment(): void {
   const locale = document.getElementById('user-prefs').dataset.jslang;
   document.querySelectorAll('.relative-moment').forEach(el => {
     const span = el as HTMLElement;
+    // do nothing if it's already loaded, prevent infinite loop with mutation observer
+    if (span.innerText) {
+      return;
+    }
     span.innerText = DateTime.fromFormat(span.title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale}).toRelative();
   });
 }

@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // STEPS
   const StepC = new Step(entity);
+  relativeMoment();
 
   // CREATE
   $(document).on('keypress blur', '.stepinput', function(e) {

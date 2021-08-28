@@ -9,7 +9,7 @@ import $ from 'jquery';
 import { Ajax } from './Ajax.class';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { notif, relativeMoment, makeSortableGreatAgain } from './misc';
+import { notif, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { EntityType, Payload, Method, Model, Action } from './interfaces';
@@ -60,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
   i18next.changeLanguage(document.getElementById('user-prefs').dataset.lang);
 
   makeSortableGreatAgain();
-  relativeMoment();
 
   // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR/JSON EDITOR
   const plusMinusButton = document.getElementsByClassName('plusMinusButton');
@@ -86,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * this will listen for click events on the container and if the element
    * matches a known action then that action is triggered
    */
-  document.getElementById('container').addEventListener('click', (event) => {
+  document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     // SHOW PRIVACY POLICY
     if (el.matches('[data-action="show-privacy-policy"]')) {

@@ -31,10 +31,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const CommentC = new Comment(entity);
 
-  // CREATE COMMENTS
-  $('#comment_container').on('click', '#commentsCreateButton', function() {
-    const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
-    CommentC.create(content).then(() => $('#comment_container').load(window.location.href + ' #comment'));
+  // observe the comment container for changes
+  // this observer will make the relative dates displayed again
+  new MutationObserver(() => relativeMoment())
+    .observe(document.getElementById('commentsDiv'), {childList: true, subtree: true});
+
+  document.getElementById('commentsDiv').addEventListener('click', event => {
+    const el = (event.target as HTMLElement);
+    // CREATE COMMENT
+    if (el.matches('[data-action="create-comment"]')) {
+      const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
+      CommentC.create(content).then(() => $('#commentsDiv').load(window.location.href + ' #comment'));
+
+    // DESTROY COMMENT
+    } else if (el.matches('[data-action="destroy-comment"]')) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        CommentC.destroy(parseInt(el.dataset.target, 10)).then(() => $('#commentsDiv').load(window.location.href + ' #comment'));
+      }
+    }
   });
 
   // MAKE comments editable on mousehover
@@ -62,17 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const parser = new DOMParser();
             const html = parser.parseFromString(data, 'text/html');
             document.getElementById('comment').innerHTML = html.getElementById('comment').innerHTML;
-            relativeMoment();
           });
         }, 20);
       },
     });
-  });
-
-  // DESTROY COMMENTS
-  $('#comment_container').on('click', '.commentsDestroy', function() {
-    if (confirm(i18next.t('generic-delete-warning'))) {
-      CommentC.destroy($(this).data('commentid')).then(() => $('#comment_container').load(window.location.href + ' #comment'));
-    }
   });
 });

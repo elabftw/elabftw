@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ACTIVATE FANCYBOX
   $('[data-fancybox]').fancybox();
 
-  // Create an observer instance linked to the callback function(mutationsList, observer)
+  // Create an observer instance linked to the callback function(mutationList, observer)
   const filesDivObserver = new MutationObserver(() => {
     displayMolFiles();
     display3DMolecules(true);

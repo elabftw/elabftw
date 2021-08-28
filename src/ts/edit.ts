@@ -274,9 +274,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // If the title is 'Untitled', clear it on focus
-  $('#title_input').focus(function(){
-    if ($(this).val() === i18next.t('entity-default-title')) {
-      $('#title_input').val('');
+  document.getElementById('title_input').addEventListener('focus', event => {
+    const el = event.target as HTMLInputElement;
+    if (el.value === i18next.t('entity-default-title')) {
+      el.value = '';
     }
   });
 

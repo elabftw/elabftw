@@ -194,6 +194,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="update-entity-body"]')) {
       updateEntity(el);
 
+    // SWITCH EDITOR
+    } else if (el.matches('[data-action="switch-editor"]')) {
+      editor.switch();
+
     // DESTROY ENTITY
     } else if (el.matches('[data-action="destroy"]')) {
       if (confirm(i18next.t('entity-delete-warning'))) {
@@ -252,11 +256,6 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#main_section').css('border-left', css);
       }
     });
-  });
-
-  // SWITCH EDITOR
-  $(document).on('click', '.switchEditor', function() {
-    editor.switch();
   });
 
   // DISPLAY MARKDOWN EDITOR

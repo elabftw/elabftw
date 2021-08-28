@@ -170,7 +170,7 @@ export function getTinymceBaseConfig(page: string): object {
         $.getJSON(url, {
           mention: 1,
           term: query,
-          type: type,
+          type: entity.type,
         }).done(function(data) {
           process(data);
         });

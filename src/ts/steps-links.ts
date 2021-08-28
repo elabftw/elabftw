@@ -12,7 +12,7 @@ import Step from './Step.class';
 import i18next from 'i18next';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
 import { getCheckedBoxes, notif, getEntity } from './misc';
-import { EntityType, Entity } from './interfaces';
+import { Entity } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -148,12 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       $.each(checked, function(index) {
-        let entityType = EntityType.Experiment;
-        if (about.type === 'items') {
-          entityType = EntityType.Item;
-        }
         const tmpEntity: Entity = {
-          type: entityType,
+          type: entity.type,
           id: checked[index]['id'],
         };
         const TmpLinkC = new Link(tmpEntity);

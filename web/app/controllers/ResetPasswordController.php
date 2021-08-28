@@ -94,12 +94,6 @@ try {
 
     // PART 2: update the password
     if ($Request->request->has('password')) {
-        // verify both passwords are the same
-        // and show useful error message if not
-        if ($Request->request->get('password') !== $Request->request->get('cpassword')) {
-            throw new ImproperActionException(_('The passwords do not match!'));
-        }
-
         // verify the key received is valid
         // we get the Users object from the email encrypted in the key
         $Users = $ResetPasswordKey->validate($Request->request->get('key'));

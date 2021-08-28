@@ -36,7 +36,6 @@ module.exports = {
       './src/ts/search.ts',
       './src/ts/show.ts',
       './src/ts/sysconfig.ts',
-      './src/ts/change-pass.ts',
       'bootstrap/js/src/alert.js',
       'bootstrap/js/src/button.js',
       'bootstrap/js/src/collapse.js',

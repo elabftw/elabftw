@@ -48,6 +48,8 @@ $(document).ready(function() {
     }, heartRate);
   }
 
+  // DEPRECATED, this can go away once all $.post disappeared and everyone uses custom Ajax class
+  // TODO
   $.ajaxSetup({
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
@@ -58,10 +60,12 @@ $(document).ready(function() {
   i18next.changeLanguage(document.getElementById('user-prefs').dataset.lang);
 
   // TOGGLABLE NEXT
-  const toggleNextElem = document.querySelector('[data-action="toggle-next"]');
+  const toggleNextElem = document.querySelectorAll('[data-action="toggle-next"]');
   if (toggleNextElem) {
-    toggleNextElem.addEventListener('click', (event) => {
-      (event.target as HTMLElement).nextElementSibling.toggleAttribute('hidden');
+    toggleNextElem.forEach(el => {
+      el.addEventListener('click', (event) => {
+        (event.target as HTMLElement).nextElementSibling.toggleAttribute('hidden');
+      });
     });
   }
 

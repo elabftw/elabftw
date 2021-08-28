@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE MODAL
     } else if (el.matches('[data-action="toggle-modal"]')) {
       // TODO this requires jquery for now. Not in BS5.
-      ($('#' + el.dataset.target) as any).modal('toggle');
+      ($('#' + el.dataset.target) as JQuery<HTMLDivElement>).modal('toggle');
       // special code to select the existing permissions for templates on ucp/templates-edit page
       if (window.location.pathname === '/ucp.php') {
         (document.querySelector(`#canread_select option[value="${el.dataset.read}"]`) as HTMLOptionElement).selected = true;

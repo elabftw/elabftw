@@ -7,11 +7,12 @@
  */
 declare let key: any;
 declare let MathJax: any;
-import { insertParamAndReload, notif } from './misc';
+import { notif } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Payload, Method, Action } from './interfaces';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
+import { getEditor } from './Editor.class';
 import { getEntity } from './misc';
 import Dropzone from 'dropzone';
 import i18next from 'i18next';
@@ -47,18 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
   MetadataC.display('edit');
 
   // Which editor are we using? md or tiny
-  const editor = {
-    type: document.getElementById('iHazEditor').dataset.editor ?? 'tiny',
-    getContent: function(): string {
-      if (this.type === 'md') {
-        return (document.getElementById('body_area') as HTMLTextAreaElement).value;
-      }
-      return tinymce.activeEditor.getContent();
-    },
-    switch: function(): void {
-      insertParamAndReload('editor', this.type === 'tiny' ? 'md' : 'tiny');
-    },
-  };
+  const editor = getEditor();
 
   // UPLOAD FORM
   new Dropzone('form#elabftw-dropzone', {
@@ -197,6 +187,18 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="switch-editor"]')) {
       editor.switch();
 
+    // IMPORT BODY OF LINKED ITEM INTO EDITOR
+    } else if (el.matches('[data-action="import-link"]')) {
+      // this is here because here tinymce exists and is reachable
+      // before this code was in steps-links.ts but it was not working
+      const id = el.dataset.target;
+      $.get('app/controllers/EntityAjaxController.php', {
+        getBody : true,
+        id : id,
+        type : 'items',
+        editor: editor.type,
+      }).done(json => editor.setContent(json.msg));
+
     // DESTROY ENTITY
     } else if (el.matches('[data-action="destroy"]')) {
       if (confirm(i18next.t('entity-delete-warning'))) {
@@ -305,7 +307,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // no tinymce stuff when md editor is selected
-  let theEditor;
   if (editor.type === 'tiny') {
     // Object to hold control data for selected image
     const tinymceEditImage = {
@@ -409,35 +410,8 @@ document.addEventListener('DOMContentLoaded', () => {
         tinymceEditImage.reset();
       }
     });
-
-    theEditor = tinymce.editors[0];
   }
 
-  // IMPORT BODY OF LINKED ITEM INTO EDITOR
-  // this is here because here tinymce exists and is reachable
-  // before this code was in steps-links.ts but it was not working
-  function importBody(elem, theEditor): void {
-    const id = elem.data('linkid');
-    $.get('app/controllers/EntityAjaxController.php', {
-      getBody : true,
-      id : id,
-      type : 'items',
-      editor: editor.type,
-    }).done(function(json) {
-      if (editor.type === 'tiny') {
-        theEditor.insertContent(json.msg);
-      } else if (editor.type === 'md') {
-        const cursorPosition = $('#body_area').prop('selectionStart');
-        const content = ($('#body_area').val() as string);
-        const before = content.substring(0, cursorPosition);
-        const after = content.substring(cursorPosition);
-        $('#body_area').val(before + json.msg + after);
-
-      } else {
-        alert('Error: could not find current editor!');
-      }
-    });
-  }
 
   // INSERT IMAGE AT CURSOR POSITION IN TEXT
   $(document).on('click', '.inserter',  function() {
@@ -457,10 +431,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       alert('Error: could not find current editor!');
     }
-  });
-
-  $(document).on('click', '.linkImport', function() {
-    importBody($(this), theEditor);
   });
 
   $(document).on('blur', '#date_input', function() {

@@ -7,7 +7,7 @@
  */
 import { insertParamAndReload } from './misc';
 import tinymce from 'tinymce/tinymce';
-declare let MathJax: any;
+import { MathJax } from 'mathjax-full/es5/tex-svg-full';
 import marked from 'marked';
 
 interface EditorInterface {

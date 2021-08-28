@@ -414,19 +414,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // link to the image
     const url = 'app/download.php?f=' + $(this).data('link');
     // switch for markdown or tinymce editor
+    let content;
     if (editor.type === 'md') {
-      const cursorPosition = $('#body_area').prop('selectionStart');
-      const content = ($('#body_area').val() as string);
-      const before = content.substring(0, cursorPosition);
-      const after = content.substring(cursorPosition);
-      const imgMdLink = '\n![image](' + url + ')\n';
-      $('#body_area').val(before + imgMdLink + after);
+      content = '\n![image](' + url + ')\n';
     } else if (editor.type === 'tiny') {
-      const imgHtmlLink = '<img src="' + url + '" data-uploadid="' + $(this).data('uploadid') + '" />';
-      tinymce.activeEditor.execCommand('mceInsertContent', false, imgHtmlLink);
-    } else {
-      alert('Error: could not find current editor!');
+      content = '<img src="' + url + '" data-uploadid="' + $(this).data('uploadid') + '" />';
     }
+    editor.setContent(content);
   });
 
   $(document).on('blur', '#date_input', function() {

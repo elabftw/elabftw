@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TOGGLE NEXT ACTION
     } else if (el.matches('[data-action="toggle-next"]')) {
-      (event.target as HTMLElement).nextElementSibling.toggleAttribute('hidden');
+      el.nextElementSibling.toggleAttribute('hidden');
 
     // PASSWORD VISIBILITY TOGGLE
     } else if (el.matches('[data-action="toggle-password"]')) {

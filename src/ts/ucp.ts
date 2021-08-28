@@ -12,6 +12,7 @@ import Apikey from './Apikey.class';
 import i18next from 'i18next';
 import { EntityType, Target } from './interfaces';
 import EntityClass from './Entity.class';
+import Tab from './Tab.class';
 
 $(document).ready(function() {
   if (window.location.pathname !== '/ucp.php') {
@@ -25,6 +26,9 @@ $(document).ready(function() {
 
   const ApikeyC = new Apikey();
   const EntityC = new EntityClass(EntityType.Template);
+
+  const TabMenu = new Tab();
+  TabMenu.init(document.querySelector('.tabbed-menu'));
 
   // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {

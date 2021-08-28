@@ -17,12 +17,16 @@ import { Ajax } from './Ajax.class';
 import { Payload, Method, Model, Action, Target } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
+import Tab from './Tab.class';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/admin.php') {
     return;
   }
   const AjaxC = new Ajax();
+
+  const TabMenu = new Tab();
+  TabMenu.init(document.querySelector('.tabbed-menu'));
 
   // activate editor for common template
   tinymce.init(getTinymceBaseConfig('admin'));

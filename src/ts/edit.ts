@@ -63,7 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // UPLOAD FORM
   new Dropzone('form#elabftw-dropzone', {
     // i18n message to user
-    //dictDefaultMessage: $('#info').data('upmsg'),
     dictDefaultMessage: i18next.t('dropzone-upload-area'),
     maxFilesize: $('#info').data('maxsize'), // MB
     timeout: 900000,

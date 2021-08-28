@@ -13,6 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
     return;
   }
+  // holds info about the page through data attributes
+  const about = document.getElementById('info').dataset;
+
+  // only run in edit mode
+  if (about.page !== 'view') {
+    return;
+  }
   const CommentC = new Comment(getEntity());
 
   // observe the comment container for changes

@@ -15,6 +15,7 @@ export default class Tab {
   // display the current tab and add an event listen so we can switch tabs
   init(menu: HTMLElement): void {
     this.display(this.currentTab);
+    document.getElementById('loading-spinner').remove();
     // add a listener on actionable elements from the menu
     menu.querySelectorAll('[data-action="switch-tab"]').forEach(el => {
       el.addEventListener('click', () => {

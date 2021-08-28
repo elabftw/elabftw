@@ -1224,3 +1224,26 @@ div.jsoneditor-menu {
 .fa-2x {
     font-size: 1.3em;
 }
+
+/* loading spinner */
+.lds-dual-ring::after {
+    animation: lds-dual-ring 1.3s linear infinite;
+    border: 8px solid $elabblue;
+    border-color: $elabblue transparent $elabblue transparent;
+    border-radius: 50%;
+    content: ' ';
+    display: block;
+    height: 150px;
+    margin: 4px;
+    width: 150px;
+}
+
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

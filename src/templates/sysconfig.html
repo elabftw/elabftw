@@ -29,6 +29,11 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
   <li data-action='switch-tab' data-tabtarget='10'>LDAP</li><span class='beta'>beta</span>
 </ul>
 
+<!-- loading spinner -->
+<div class='d-flex justify-content-center' id='loading-spinner'>
+  <div class='lds-dual-ring'></div>
+</div>
+
 <!-- TAB 1 SERVER -->
 <div data-tabcontent='1' hidden>
     <!-- STATS -->

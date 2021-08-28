@@ -59,16 +59,6 @@ $(document).ready(function() {
   // set the language for js translated strings
   i18next.changeLanguage(document.getElementById('user-prefs').dataset.lang);
 
-  // TOGGLABLE NEXT
-  const toggleNextElem = document.querySelectorAll('[data-action="toggle-next"]');
-  if (toggleNextElem) {
-    toggleNextElem.forEach(el => {
-      el.addEventListener('click', event => {
-        (event.target as HTMLElement).nextElementSibling.toggleAttribute('hidden');
-      });
-    });
-  }
-
   // Toggle modal
   $('.modalToggle').on('click', function() {
     ($('#' + $(this).data('modal')) as any).modal('toggle');
@@ -116,6 +106,10 @@ $(document).ready(function() {
         // modal plugin requires jquery
         ($('#privacyModal') as any).modal('toggle');
       });
+
+    // TOGGLE NEXT ACTION
+    } else if (el.matches('[data-action="toggle-next"]')) {
+      (event.target as HTMLElement).nextElementSibling.toggleAttribute('hidden');
 
     // PASSWORD VISIBILITY TOGGLE
     } else if (el.matches('[data-action="toggle-password"]')) {

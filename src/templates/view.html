@@ -115,7 +115,7 @@
 
     <!-- show timestamp button if not timestamped already -->
     {% if not Entity.entityData.timestamped and Entity.isTimestampable and Entity.type == 'experiments' and not App.Session.has('is_anon') %}
-      <a href='#' class='elab-tooltip mr-1 modalToggle' data-modal='timestampModal'>
+      <a href='#' class='elab-tooltip mr-1' data-action='toggle-modal' data-target='timestampModal'>
         <span>{{ 'Timestamp Experiment'|trans }}</span>
         <i title='{{ 'Timestamp Experiment'|trans }}' class='far fa-calendar-check fa-2x'></i>
       </a>

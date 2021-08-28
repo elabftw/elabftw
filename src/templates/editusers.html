@@ -65,8 +65,8 @@
                       <span class='btn btn-secondary clickable' data-team='{{ team.id }}'>{{ team.name }}</span>
                     {% endfor %}
                     {% if App.Session.get('is_sysadmin') %}
-                    <span class='btn btn-primary clickable editUserToTeam modalToggle' data-modal='editUserToTeamModal' data-action='add' data-userid='{{ user.userid }}'><i class='color-white fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
-                    <span class='btn btn-danger clickable editUserToTeam modalToggle' data-modal='editUserToTeamModal' data-action='rm' data-userid='{{ user.userid }}'><i class='color-white fas fa-minus-circle'></i> {{ 'Remove team'|trans }}</span>
+                    <span class='btn btn-primary clickable editUserToTeam' data-action='toggle-modal' data-target='editUserToTeamModal' data-action='add' data-userid='{{ user.userid }}'><i class='color-white fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
+                    <span class='btn btn-danger clickable editUserToTeam' data-action='toggle-modal' data-target='editUserToTeamModal' data-action='rm' data-userid='{{ user.userid }}'><i class='color-white fas fa-minus-circle'></i> {{ 'Remove team'|trans }}</span>
                     {% endif %}
                 </li>
 

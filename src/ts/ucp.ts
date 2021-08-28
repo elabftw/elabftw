@@ -127,14 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // select the already selected permission for templates
-  $(document).on('click', '.modalToggle', function() {
-    const read = $(this).data('read');
-    const write = $(this).data('write');
-    $('#canread_select option[value="' + read + '"]').prop('selected', true);
-    $('#canwrite_select option[value="' + write + '"]').prop('selected', true);
-  });
-
   // input to upload an elabftw.tpl file
   document.getElementById('import_tpl').addEventListener('change', (event) => {
     const el = (event.target as HTMLInputElement);

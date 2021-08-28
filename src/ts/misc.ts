@@ -28,6 +28,9 @@ export function relativeMoment(): void {
 
 // for view or edit mode, get type and id from the page to construct the entity object
 export function getEntity(): Entity {
+  if (!document.getElementById('info')) {
+    throw new Error('Could not find entity info!');
+  }
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
   let entityType: EntityType;
@@ -43,9 +46,13 @@ export function getEntity(): Entity {
   if (about.type === 'items_types') {
     entityType = EntityType.ItemType;
   }
+  let entityId = null;
+  if (about.id) {
+    entityId = parseInt(about.id);
+  }
   return {
     type: entityType,
-    id: parseInt(about.id),
+    id: entityId,
   };
 }
 

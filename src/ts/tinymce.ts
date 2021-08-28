@@ -49,32 +49,10 @@ import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-plugins/mention/plugin.js';
 import EntityClass from './Entity.class';
 import Link from './Link.class';
-import { Entity, EntityType, Target } from './interfaces';
+import { Entity, Target } from './interfaces';
+import { getEntity } from './misc';
 
-let about;
-let type = 'experiments';
-let id = '0';
-let entityType: EntityType;
-
-if (document.getElementById('info')) {
-  about = document.getElementById('info').dataset;
-  type = about.type;
-  id = about.id;
-  if (about.type === 'experiments') {
-    entityType = EntityType.Experiment;
-  }
-  if (about.type === 'items') {
-    entityType = EntityType.Item;
-  }
-  if (about.type === 'experiments_templates') {
-    entityType = EntityType.Template;
-  }
-}
-
-const entity: Entity = {
-  type: entityType,
-  id: parseInt(id),
-};
+const entity = getEntity();
 
 // AUTOSAVE
 let typingTimer: any;                // timer identifier

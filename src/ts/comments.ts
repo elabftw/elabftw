@@ -7,29 +7,13 @@
  */
 import Comment from './Comment.class';
 import i18next from 'i18next';
-import { Entity, EntityType } from './interfaces';
-import { relativeMoment } from './misc';
+import { relativeMoment, getEntity } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
     return;
   }
-  // holds info about the page through data attributes
-  const about = document.getElementById('info').dataset;
-  let entityType: EntityType;
-  if (about.type === 'experiments') {
-    entityType = EntityType.Experiment;
-  }
-  if (about.type === 'items') {
-    entityType = EntityType.Item;
-  }
-
-  const entity: Entity = {
-    type: entityType,
-    id: parseInt(about.id),
-  };
-
-  const CommentC = new Comment(entity);
+  const CommentC = new Comment(getEntity());
 
   // observe the comment container for changes
   // this observer will make the relative dates displayed again

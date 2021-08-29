@@ -7,13 +7,12 @@
  */
 declare let key: any;
 declare let MathJax: any;
-import { getCheckedBoxes, insertParamAndReload, notif, reloadTagsAndLocks } from './misc';
-import { EntityType } from './interfaces';
+import { getCheckedBoxes, insertParamAndReload, notif, reloadTagsAndLocks, getEntity } from './misc';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 
-$(document).ready(function(){
+document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
     return;
   }
@@ -24,12 +23,12 @@ $(document).ready(function(){
     return;
   }
 
-  let entityType = EntityType.Experiment;
-  if (about.type === 'items') {
-    entityType = EntityType.Item;
-  }
+  const entity = getEntity();
+  // PAGINATION
+  const offset = parseInt(about.offset);
+  const limit = parseInt(about.limit);
 
-  const EntityC = new EntityClass(entityType);
+  const EntityC = new EntityClass(entity.type);
 
   // CREATE EXPERIMENT or DATABASE item with shortcut
   key(document.getElementById('shortcuts').dataset.create, function() {
@@ -315,21 +314,13 @@ $(document).ready(function(){
   });
 
   // Add click listener and do action based on which element is clicked
-  document.querySelector('.real-container').addEventListener('click', (event) => {
+  document.querySelector('.real-container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
-    // PAGINATION
     // previous page
     if (el.matches('[data-action="previous-page"]')) {
-      const info = (document.querySelector('#info') as HTMLElement);
-      const offset = parseInt(info.dataset.offset);
-      const limit = parseInt(info.dataset.limit);
       insertParamAndReload('offset', offset - limit);
-
     // next page
     } else if (el.matches('[data-action="next-page"]')) {
-      const info = (document.querySelector('#info') as HTMLElement);
-      const offset = parseInt(info.dataset.offset);
-      const limit = parseInt(info.dataset.limit);
       insertParamAndReload('offset', offset + limit);
     // END PAGINATION
     }

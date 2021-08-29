@@ -10,13 +10,13 @@
       <!-- TEAM -->
       <h5>{{ 'Member of:'|trans }}
       {% for team in teamsArr %}
-        <span class='btn btn-secondary'>{{ team.name }}</span>
+        <span class='btn btn-secondary disabled'>{{ team.name }}</span>
       {% endfor %}
       </h5>
       {% if teamGroupsArr %}
         <h5>{{ 'Groups'|trans }}:
           {% for group in teamGroupsArr %}
-          <span class='btn btn-secondary'>{{ group.name }}</span>
+          <span class='btn btn-secondary disabled'>{{ group.name }}</span>
           {% endfor %}
         </h5>
       {% endif %}

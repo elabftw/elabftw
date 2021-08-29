@@ -16,15 +16,21 @@ import { EntityType, Entity } from './interfaces';
 // the datetime is taken from the title of the element so mouse hover will show raw datetime
 export function relativeMoment(): void {
   const locale = document.getElementById('user-prefs').dataset.jslang;
-  document.querySelectorAll('.relative-moment')
-    .forEach((el) => {
-      const span = el as HTMLElement;
-      span.innerText = DateTime.fromFormat(span.title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale}).toRelative();
-    });
+  document.querySelectorAll('.relative-moment').forEach(el => {
+    const span = el as HTMLElement;
+    // do nothing if it's already loaded, prevent infinite loop with mutation observer
+    if (span.innerText) {
+      return;
+    }
+    span.innerText = DateTime.fromFormat(span.title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale}).toRelative();
+  });
 }
 
 // for view or edit mode, get type and id from the page to construct the entity object
 export function getEntity(): Entity {
+  if (!document.getElementById('info')) {
+    throw new Error('Could not find entity info!');
+  }
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
   let entityType: EntityType;
@@ -40,9 +46,13 @@ export function getEntity(): Entity {
   if (about.type === 'items_types') {
     entityType = EntityType.ItemType;
   }
+  let entityId = null;
+  if (about.id) {
+    entityId = parseInt(about.id);
+  }
   return {
     type: entityType,
-    id: parseInt(about.id),
+    id: entityId,
   };
 }
 

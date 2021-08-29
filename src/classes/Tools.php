@@ -19,6 +19,7 @@ use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 use function mb_strlen;
 use function pathinfo;
+use function str_replace;
 use Symfony\Component\HttpFoundation\Request;
 use function trim;
 
@@ -307,7 +308,7 @@ class Tools
         if (!$canonical) {
             $url .= $Request->getBasePath();
         }
-        return \str_replace('app/controllers', '', $url);
+        return str_replace('app/controllers', '', $url);
     }
 
     /**

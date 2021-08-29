@@ -21,7 +21,9 @@ use Elabftw\Models\Users;
 use Elabftw\Services\Email;
 use Elabftw\Services\ResetPasswordKey;
 use Exception;
+use function nl2br;
 use function random_int;
+use const SECRET_KEY;
 use function sleep;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -30,7 +32,7 @@ use function time;
 require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new RedirectResponse('../../login.php');
-$ResetPasswordKey = new ResetPasswordKey(time(), \SECRET_KEY);
+$ResetPasswordKey = new ResetPasswordKey(time(), SECRET_KEY);
 
 try {
     $Email = new Email($App->Config, new Users());
@@ -68,6 +70,11 @@ try {
         // not pretty but gets the job done
         $resetLink = str_replace('app/controllers/', '', $resetLink);
         $resetLink .= '?key=' . $key;
+        $htmlResetLink = '<a href="' . $resetLink . '">' . _('Reset password') . '</a>';
+
+        $rawBody = _('Hi. Someone (probably you) requested a new password on eLabFTW.%s Please follow this link to reset your password: %s %sThis link is only valid for %s minutes.');
+        $htmlBody = sprintf($rawBody, '<br>', $htmlResetLink, '<br>', $ResetPasswordKey::LINK_LIFETIME);
+        $textBody = sprintf($rawBody, "\n", $resetLink, "\n", $ResetPasswordKey::LINK_LIFETIME);
 
         // Send an email with the reset link
         // Create the message
@@ -79,7 +86,9 @@ try {
         // Set the To addresses with an associative array
         ->setTo(array($email => $Users->userData['fullname']))
         // Give it a body
-        ->setBody(sprintf(_('Hi. Someone (probably you) requested a new password on eLabFTW. Please follow this link to reset your password: %s'), $resetLink) . $Email->footer);
+        ->setBody($htmlBody . nl2br($Email->footer), 'text/html')
+        // also add a text body
+        ->addPart($textBody . $Email->footer, 'text/plain');
         // now we try to send the email
         $Email->send($message);
 
@@ -93,12 +102,6 @@ try {
 
     // PART 2: update the password
     if ($Request->request->has('password')) {
-        // verify both passwords are the same
-        // and show useful error message if not
-        if ($Request->request->get('password') !== $Request->request->get('cpassword')) {
-            throw new ImproperActionException(_('The passwords do not match!'));
-        }
-
         // verify the key received is valid
         // we get the Users object from the email encrypted in the key
         $Users = $ResetPasswordKey->validate($Request->request->get('key'));

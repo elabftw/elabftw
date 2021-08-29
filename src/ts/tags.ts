@@ -9,44 +9,18 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import Tag from './Tag.class';
 import i18next from 'i18next';
-import { getCheckedBoxes, notif, reloadTagsAndLocks } from './misc';
+import { getCheckedBoxes, notif, reloadTagsAndLocks, getEntity } from './misc';
 import { Ajax } from './Ajax.class';
-import { Payload, Method, Model, Action, Target, EntityType, Entity } from './interfaces';
+import { Payload, Method, Model, Action, Target } from './interfaces';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   let type = $('#info').data('type');
   if (type === undefined) {
     type = 'experiments_templates';
   }
 
-  if (!document.getElementById('info')) {
-    return;
-  }
   const AjaxC = new Ajax();
-
-  // holds info about the page through data attributes
-  const about = document.getElementById('info').dataset;
-  let entityType: EntityType = EntityType.Experiment;
-  if (about.type === 'experiments') {
-    entityType = EntityType.Experiment;
-  }
-  if (about.type === 'items') {
-    entityType = EntityType.Item;
-  }
-  if (about.type === 'experiments_templates') {
-    entityType = EntityType.Template;
-  }
-
-  let entityId = null;
-  if (about.id) {
-    entityId = parseInt(about.id);
-  }
-
-  const entity: Entity = {
-    type: entityType,
-    id: entityId,
-  };
-
+  const entity = getEntity();
   const TagC = new Tag(entity);
 
   // CREATE TAG

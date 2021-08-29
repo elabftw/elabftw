@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 require_once dirname(__DIR__) . '/init.inc.php';
 
 $tab = '1';
+$query = '';
 try {
     if (!$App->Session->get('is_sysadmin')) {
         throw new IllegalActionException('Non sysadmin user tried to access sysadmin controller.');
@@ -106,6 +107,7 @@ try {
     // ADD USER TO TEAM
     if ($Request->request->has('editUserToTeam')) {
         $tab = '3';
+        $query = '&q=' . $Request->request->getAlpha('query');
         $Teams = new Teams($App->Users);
         if ($Request->request->get('action') === 'add') {
             $Teams->addUserToTeams(
@@ -139,6 +141,6 @@ try {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error());
 } finally {
-    $Response = new RedirectResponse('../../sysconfig.php?tab=' . $tab);
+    $Response = new RedirectResponse('../../sysconfig.php?tab=' . $tab . $query);
     $Response->send();
 }

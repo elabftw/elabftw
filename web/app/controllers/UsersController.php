@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -22,7 +23,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 /**
  * Users info from admin or sysadmin page
  */
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 if ($Request->request->has('fromSysconfig')) {
     $location = '../../sysconfig.php?tab=3';

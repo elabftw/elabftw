@@ -21,6 +21,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use PDO;
 use function rtrim;
+use const SECRET_KEY;
 use Swift_Mailer;
 use Swift_Message;
 use Swift_SendmailTransport;
@@ -289,7 +290,7 @@ class Email
                 $transport->setUsername($this->Config->configArr['smtp_username'])
                 ->setPassword(Crypto::decrypt(
                     $this->Config->configArr['smtp_password'],
-                    Key::loadFromAsciiSafeString(\SECRET_KEY)
+                    Key::loadFromAsciiSafeString(SECRET_KEY)
                 ));
             }
         } else {

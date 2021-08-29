@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use function count;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CleanerInterface;
 
@@ -78,7 +79,7 @@ class DatabaseCleaner implements CleanerInterface
         $req->execute();
         $res = $req->fetchAll();
         if (!empty($res)) {
-            echo 'Found ' . (string) \count($res) . ' rows to delete in ' . $table . "\n";
+            echo 'Found ' . (string) count($res) . ' rows to delete in ' . $table . "\n";
             $this->deleteFrom($table, $res);
         }
     }

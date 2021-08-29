@@ -69,7 +69,7 @@
                   {{ link.title|raw }}</a>
                   <div class='float-right'>
                     {% if Entity.type != 'experiments_templates' %}
-                      <a class='linkImport clickable' data-linkid='{{ link.itemid }}' title='{{ 'Import'|trans }}'>
+                      <a data-action='import-link' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}'>
                         <i class='fas fa-lg fa-file-import'></i>
                       </a>
                     {% endif %}

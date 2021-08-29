@@ -67,14 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // save todo on enter
-  document.querySelector('#todo').addEventListener('keydown', (event: KeyboardEvent) => {
+  document.getElementById('todo').addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.keyCode === 13) {
       createTodoitem();
     }
   });
 
   // Add click listener and do action based on which element is clicked
-  document.querySelector('#container').addEventListener('click', (event) => {
+  document.getElementById('container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
     // CREATE TODOITEM
     if (el.matches('[data-action="create-todoitem"]')) {

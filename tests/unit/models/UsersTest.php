@@ -150,6 +150,17 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($Users->toggleArchive());
     }
 
+    public function testUnArchiveButAnotherUserExists(): void
+    {
+        // this user is archived already
+        $Users = new Users(4);
+        // create another active user with the same email
+        $NewUser = ExistingUser::fromScratch($Users->userData['email'], array('Alpha'), 'f', 'l', 4, false, false);
+        // try to unarchive
+        $this->expectException(ImproperActionException::class);
+        $Users->toggleArchive();
+    }
+
     public function testLockExperiments(): void
     {
         $Users = new Users(4);

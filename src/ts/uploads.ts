@@ -8,13 +8,13 @@
 import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
-import { Entity, Target, EntityType } from './interfaces';
-import { notif, displayMolFiles, display3DMolecules } from './misc';
+import { Target } from './interfaces';
+import { notif, displayMolFiles, display3DMolecules, getEntity } from './misc';
 import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
 import Upload from './Upload.class';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
 
@@ -26,20 +26,7 @@ $(document).ready(function() {
   displayMolFiles();
   display3DMolecules();
   displayPlasmidViewer(about);
-
-  let entityType: EntityType;
-  if (about.type === 'experiments') {
-    entityType = EntityType.Experiment;
-  }
-  if (about.type === 'items') {
-    entityType = EntityType.Item;
-  }
-
-  const entity: Entity = {
-    type: entityType,
-    id: parseInt(about.id),
-  };
-
+  const entity = getEntity();
   const UploadC = new Upload(entity);
 
   // make file comments editable
@@ -132,7 +119,7 @@ $(document).ready(function() {
   // ACTIVATE FANCYBOX
   $('[data-fancybox]').fancybox();
 
-  // Create an observer instance linked to the callback function(mutationsList, observer)
+  // Create an observer instance linked to the callback function(mutationList, observer)
   const filesDivObserver = new MutationObserver(() => {
     displayMolFiles();
     display3DMolecules(true);

@@ -12,8 +12,9 @@ import Apikey from './Apikey.class';
 import i18next from 'i18next';
 import { EntityType, Target } from './interfaces';
 import EntityClass from './Entity.class';
+import Tab from './Tab.class';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/ucp.php') {
     return;
   }
@@ -25,6 +26,9 @@ $(document).ready(function() {
 
   const ApikeyC = new Apikey();
   const EntityC = new EntityClass(EntityType.Template);
+
+  const TabMenu = new Tab();
+  TabMenu.init(document.querySelector('.tabbed-menu'));
 
   // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {
@@ -121,14 +125,6 @@ $(document).ready(function() {
     }).done(function(json) {
       notif(json);
     });
-  });
-
-  // select the already selected permission for templates
-  $(document).on('click', '.modalToggle', function() {
-    const read = $(this).data('read');
-    const write = $(this).data('write');
-    $('#canread_select option[value="' + read + '"]').prop('selected', true);
-    $('#canwrite_select option[value="' + write + '"]').prop('selected', true);
   });
 
   // input to upload an elabftw.tpl file

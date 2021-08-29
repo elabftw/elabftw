@@ -15,6 +15,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Maps\UserPreferences;
 use Elabftw\Services\Filter;
 use Elabftw\Services\LocalAuth;
@@ -62,15 +63,15 @@ try {
         // check that we got the good password
         // TODO what if we don't have a password (external, saml, ldap login), should we allow changing parameters on this page?
         $LocalAuth = new LocalAuth($App->Users->userData['email'], $Request->request->get('currpass'));
-        $AuthResponse = $LocalAuth->tryAuth();
+        try {
+            $AuthResponse = $LocalAuth->tryAuth();
+        } catch (InvalidCredentialsException $e) {
+            throw new ImproperActionException('The current password is not valid!');
+        }
         $App->Users->updateAccount($Request->request->all());
 
         // CHANGE PASSWORD
         if (!empty($Request->request->get('newpass'))) {
-            // check the confirm password
-            if ($Request->request->get('newpass') !== $Request->request->get('cnewpass')) {
-                throw new ImproperActionException(_('The passwords do not match!'));
-            }
             $App->Users->updatePassword($Request->request->get('newpass'));
         }
 

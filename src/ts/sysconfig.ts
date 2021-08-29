@@ -80,6 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
     editUserToTeam(userid, action): void {
       $('#editUserToTeamUserid').attr('value', userid);
       $('#editUserToTeamAction').attr('value', action);
+      const params = new URLSearchParams(document.location.search);
+      $('#editUserToTeamQuery').attr('value', params.get('q'));
     },
     create: function(): void {
       const name = $('#teamsName').val();
@@ -134,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     notif({'msg': 'Feature not yet implemented :)', 'res': true});
   });
   $(document).on('click', '.editUserToTeam', function() {
-    Teams.editUserToTeam($(this).data('userid'), $(this).data('action'));
+    Teams.editUserToTeam($(this).data('userid'), $(this).data('useraction'));
   });
 
   // MAIL METHOD in a function because is also called in document ready

@@ -13,6 +13,8 @@
             {{ App.Session.get('csrf')|csrf }}
             <input type='hidden' id='editUserToTeamUserid' name='userid' value='' />
             <input type='hidden' id='editUserToTeamAction' name='action' value='' />
+            <!-- so we can redirect back to the correct page -->
+            <input type='hidden' id='editUserToTeamQuery' name='query' value='' />
             <input type='hidden' name='editUserToTeam' value='1' />
             <label for='teamSelect'>{{ 'Select a team'|trans }}</label>
             <select id='teamSelect' class='form-control' name='team'>
@@ -62,11 +64,11 @@
                 <li class='list-inline-item mb-2'>
                   <label for='usersUpdateTeam_{{ user.userid }}'>{{ 'Team(s)'|trans }}</label>
                     {% for team in user.teams %}
-                      <span class='btn btn-secondary'>{{ team.name }}</span>
+                      <span class='btn btn-secondary disabled'>{{ team.name }}</span>
                     {% endfor %}
                     {% if App.Session.get('is_sysadmin') %}
-                    <span class='btn btn-primary clickable editUserToTeam' data-action='toggle-modal' data-target='editUserToTeamModal' data-action='add' data-userid='{{ user.userid }}'><i class='color-white fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
-                    <span class='btn btn-danger clickable editUserToTeam' data-action='toggle-modal' data-target='editUserToTeamModal' data-action='rm' data-userid='{{ user.userid }}'><i class='color-white fas fa-minus-circle'></i> {{ 'Remove team'|trans }}</span>
+                    <span class='btn btn-primary clickable editUserToTeam' data-action='toggle-modal' data-target='editUserToTeamModal' data-useraction='add' data-userid='{{ user.userid }}'><i class='color-white fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
+                    <span class='btn btn-danger clickable editUserToTeam' data-action='toggle-modal' data-target='editUserToTeamModal' data-useraction='rm' data-userid='{{ user.userid }}'><i class='color-white fas fa-minus-circle'></i> {{ 'Remove team'|trans }}</span>
                     {% endif %}
                 </li>
 

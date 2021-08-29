@@ -44,7 +44,9 @@ export default class Tab {
     // and select the one we want
     document.querySelector(`[data-tabtarget="${tabid}"]`).classList.add('selected');
     // show the tab change in the url
-    history.replaceState(null, '', `?tab=${tabid}`);
+    const params = new URLSearchParams(document.location.search);
+    params.set('tab', String(tabid));
+    history.replaceState(null, '', `?${params.toString()}`);
     // remember where we are
     this.currentTab = tabid;
   }

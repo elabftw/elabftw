@@ -24,12 +24,12 @@ use function time;
  */
 class ResetPasswordKey
 {
+    // time in minutes after which the reset link is expired
+    public const LINK_LIFETIME = 15;
+
     // this is our separator for separating the email and deadline encrypted in the key
     // it doesn't need to be secret or unique, just random enough so it's not found in the email
     protected const SEPARATOR = '17E8C262D020414D959A1ELABFTWIZDABESTELN';
-
-    // time in minutes after which the reset link is expired
-    protected const LINK_LIFETIME = 15;
 
     /**
      * $now is the time in epoch

@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // GET the latest version information
   const updateUrl = 'https://get.elabftw.net/updates.json';
-  const currentVersionDiv = document.querySelector('#currentVersion') as HTMLElement;
-  const latestVersionDiv = document.querySelector('#latestVersion');
+  const currentVersionDiv = document.getElementById('currentVersion') as HTMLElement;
+  const latestVersionDiv = document.getElementById('latestVersion');
   const currentVersion = currentVersionDiv.innerText;
   // Note: this doesn't work on Chrome
   // see: https://bugs.chromium.org/p/chromium/issues/detail?id=571722

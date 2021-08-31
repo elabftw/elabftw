@@ -7,7 +7,7 @@
  */
 declare let key: any;
 declare let MathJax: any;
-import { getCheckedBoxes, insertParamAndReload, notif, reloadTagsAndLocks, getEntity } from './misc';
+import { getCheckedBoxes, insertParamAndReload, notif, reloadEntitiesShow, getEntity } from './misc';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
@@ -238,8 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     Promise.all(results).then(() => {
-      reloadTagsAndLocks('itemList');
-      reloadTagsAndLocks('item-table');
+      reloadEntitiesShow();
     });
   });
 

@@ -12,6 +12,16 @@ import { CheckableItem, ResponseMsg } from './interfaces';
 import { DateTime } from 'luxon';
 import { EntityType, Entity } from './interfaces';
 
+// get html of current page reloaded via get
+function fetchCurrentPage(): Promise<Document>{
+  return fetch(window.location.href).then(response => {
+    return response.text();
+  }).then(data => {
+    const parser = new DOMParser();
+    return parser.parseFromString(data, 'text/html');
+  });
+}
+
 // DISPLAY TIME RELATIVE TO NOW
 // the datetime is taken from the title of the element so mouse hover will show raw datetime
 export function relativeMoment(): void {
@@ -161,17 +171,23 @@ export function getCheckedBoxes(): Array<CheckableItem> {
   return checkedBoxes;
 }
 
-export function reloadTagsAndLocks(elementId): Promise<void | Response> {
-  if (document.getElementById(elementId)) {
-    return fetch(window.location.href).then(response => {
-      return response.text();
-    }).then(data => {
-      const parser = new DOMParser();
-      const html = parser.parseFromString(data, 'text/html');
-      document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
-      if (document.getElementById('pinned-entities')) {
-        document.getElementById('pinned-entities').innerHTML = html.getElementById('pinned-entities').innerHTML;
-      }
-    });
+// reload the entities in show mode
+export async function reloadEntitiesShow(): Promise<void | Response> {
+  // get the html
+  const html = await fetchCurrentPage();
+  // reload items
+  document.getElementById('itemList').innerHTML = html.getElementById('itemList').innerHTML;
+  // also reload any pinned entities present
+  if (document.getElementById('pinned-entities')) {
+    document.getElementById('pinned-entities').innerHTML = html.getElementById('pinned-entities').innerHTML;
   }
+}
+
+export async function reloadElement(elementId): Promise<void> {
+  if (!document.getElementById(elementId)) {
+    console.error('Could not find element to reload!');
+    return;
+  }
+  const html = await fetchCurrentPage();
+  document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
 }

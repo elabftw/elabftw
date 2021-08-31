@@ -9,7 +9,7 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import Tag from './Tag.class';
 import i18next from 'i18next';
-import { getCheckedBoxes, notif, reloadTagsAndLocks, getEntity } from './misc';
+import { getCheckedBoxes, notif, reloadEntitiesShow, getEntity } from './misc';
 import { Ajax } from './Ajax.class';
 import { Payload, Method, Model, Action, Target } from './interfaces';
 
@@ -62,8 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       Promise.all(results).then(() => {
-        reloadTagsAndLocks('itemList');
-        reloadTagsAndLocks('item-table');
+        reloadEntitiesShow();
       });
 
       $(this).val('');

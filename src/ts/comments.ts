@@ -7,7 +7,7 @@
  */
 import Comment from './Comment.class';
 import i18next from 'i18next';
-import { relativeMoment, getEntity } from './misc';
+import { relativeMoment, reloadElement, getEntity } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -60,15 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
       cancelcssclass : 'button btn btn-danger mt-2',
       callback : () => {
         // use setTimeout to give the time for sql to change the data before we fetch it
-        setTimeout(() => {
-          return fetch(window.location.href).then(response => {
-            return response.text();
-          }).then(data => {
-            const parser = new DOMParser();
-            const html = parser.parseFromString(data, 'text/html');
-            document.getElementById('comment').innerHTML = html.getElementById('comment').innerHTML;
-          });
-        }, 20);
+        setTimeout(() => reloadElement('comment'), 20);
       },
     });
   });

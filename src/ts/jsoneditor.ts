@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (about.type == 'experiments_templates') {
       const entityWithId = {
         type: entity.type,
-        id: parseInt(about.id),
+        id: parseInt(about.id, 10),
       };
       JsonEditorHelperC.loadMetadataFromId(entityWithId);
       document.getElementById('templateJsonSave').dataset.id = about.id;
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (el.matches('[data-action="json-load-metadata-from-id"]')) {
         const entityWithId = {
           type: entity.type,
-          id: parseInt(el.dataset.id),
+          id: parseInt(el.dataset.id, 10),
         };
         JsonEditorHelperC.loadMetadataFromId(entityWithId);
         // add the id of the currently edited item on the save button
@@ -58,13 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (el.matches('[data-action="json-save-metadata-from-id"]')) {
         const entityWithId = {
           type: entity.type,
-          id: parseInt(document.getElementById('templateJsonSave').dataset.id),
+          id: parseInt(document.getElementById('templateJsonSave').dataset.id, 10),
         };
         JsonEditorHelperC.saveMetadataFromId(entityWithId);
       } else if (el.matches('[data-action="json-save-file"]')) {
-        JsonEditorHelperC.saveFile();
+        JsonEditorHelperC.saveNewFile();
       } else if (el.matches('[data-action="json-save"]')) {
-        // need the stopPropagation here to toggle json-save dropdown when save button is pressed
+        // need the stopPropagation here to toggle #json-save-dropdown when save button is pressed
         event.stopPropagation();
         JsonEditorHelperC.save();
       } else if (el.matches('[data-action="json-clear"]')) {

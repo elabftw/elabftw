@@ -21,8 +21,8 @@ export default class JsonEditorHelper {
   editorTitle: HTMLElement;
 
   constructor(entity: Entity) {
-    // this is the div that will hold the editor
     this.entity = entity;
+    // this is the div that will hold the editor
     this.editorDiv = document.getElementById('jsonEditorContainer') as HTMLDivElement;
     this.MetadataC = new Metadata(entity);
     this.editorTitle = document.getElementById('jsonEditorTitle');
@@ -54,7 +54,7 @@ export default class JsonEditorHelper {
 
   load(json: Record<string, any>): void {
     // show the editor (use jQuery selector here for collapse())
-    ($('#jsonEditorDiv') as any).collapse('show');
+    ($('#jsonEditorDiv') as JQuery<HTMLDivElement>).collapse('show');
     // toggle the +/- button
     const plusMinusButton = document.querySelector('.jsonEditorPlusMinusButton') as HTMLButtonElement;
     if (plusMinusButton.innerText === '+') {
@@ -122,7 +122,7 @@ export default class JsonEditorHelper {
   // save a file or metadata depending on what was loaded
   save(): void {
     if (this.editorDiv.dataset.what === 'file') {
-      return this.saveFile(false);
+      return this.saveFile();
     }
 
     if (this.editorDiv.dataset.what === 'metadata') {
@@ -137,55 +137,55 @@ export default class JsonEditorHelper {
     }
   }
 
-  saveFile(newFile = true): void {
-    if (typeof this.currentUploadId === 'undefined' || newFile === true) {
-      // we are creating a new file
-      let realName = prompt(i18next.t('request-filename'));
-      if (realName === null) {
-        return;
-      }
-      // strip the filename of the .json extension from the name if available
-      if (realName.slice(-5).includes('.json')) {
-        realName = realName.slice(0, -5);
-      }
-      // add the new name for the file as a title
-      this.editorTitle.innerText = i18next.t('filename') + ': ' + realName + '.json';
-      $.post('app/controllers/EntityAjaxController.php', {
-        addFromString: true,
-        type: this.entity.type,
-        id: this.entity.id,
-        realName: realName,
-        fileType: 'json',
-        string: JSON.stringify(this.editor.get())
-      }).done(function(json) {
-        $('#filesdiv').load(window.location.href + ' #filesdiv > *');
-        this.currentUploadId = String(json.uploadId);
-        notif(json);
-      });
-    } else {
-      // we are editing an existing file
-      const formData = new FormData();
-      const blob = new Blob([JSON.stringify(this.editor.get())], { type: 'application/json' });
-      formData.append('action', 'update');
-      formData.append('target', 'file');
-      formData.append('entity_id', this.entity.id.toString());
-      formData.append('entity_type', this.entity.type);
-      formData.append('id', this.currentUploadId);
-      formData.append('model', 'upload');
-      formData.append('csrf', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-      formData.append('content', blob);
-      formData.append('extraParam', 'jsoneditor');
-
-      $.post({
-        url: 'app/controllers/RequestHandler.php',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: (json) => {
-          notif(json);
-        }
-      });
+  // create a new file
+  saveNewFile(): void {
+    let realName = prompt(i18next.t('request-filename'));
+    if (realName === null) {
+      return;
     }
+    // strip the filename of the .json extension from the name if available
+    if (realName.slice(-5).includes('.json')) {
+      realName = realName.slice(0, -5);
+    }
+    // add the new name for the file as a title
+    this.editorTitle.innerText = i18next.t('filename') + ': ' + realName + '.json';
+    $.post('app/controllers/EntityAjaxController.php', {
+      addFromString: true,
+      type: this.entity.type,
+      id: this.entity.id,
+      realName: realName,
+      fileType: 'json',
+      string: JSON.stringify(this.editor.get())
+    }).done(function(json) {
+      $('#filesdiv').load(window.location.href + ' #filesdiv > *');
+      this.currentUploadId = String(json.uploadId);
+      notif(json);
+    });
+  }
+
+  // edit an existing file
+  saveFile(): void {
+    const formData = new FormData();
+    const blob = new Blob([JSON.stringify(this.editor.get())], { type: 'application/json' });
+    formData.append('action', 'update');
+    formData.append('target', 'file');
+    formData.append('entity_id', this.entity.id.toString());
+    formData.append('entity_type', this.entity.type);
+    formData.append('id', this.currentUploadId);
+    formData.append('model', 'upload');
+    formData.append('csrf', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+    formData.append('content', blob);
+    formData.append('extraParam', 'jsoneditor');
+
+    $.post({
+      url: 'app/controllers/RequestHandler.php',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: (json) => {
+        notif(json);
+      }
+    });
   }
 
   clear(): void {

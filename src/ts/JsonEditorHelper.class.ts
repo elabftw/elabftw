@@ -156,8 +156,14 @@ export default class JsonEditorHelper {
       realName: realName,
       fileType: 'json',
       string: JSON.stringify(this.editor.get())
-    }).done(function(json) {
-      $('#filesdiv').load(window.location.href + ' #filesdiv > *');
+    }).done(json => {
+      fetch(window.location.href).then(response => {
+        return response.text();
+      }).then(data => {
+        const parser = new DOMParser();
+        const html = parser.parseFromString(data, 'text/html');
+        document.getElementById('filesdiv').innerHTML = html.getElementById('filesdiv').innerHTML;
+      });
       this.currentUploadId = String(json.uploadId);
       notif(json);
     });

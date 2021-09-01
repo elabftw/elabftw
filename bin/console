@@ -10,9 +10,10 @@
 namespace Elabftw\Commands;
 
 use Symfony\Component\Console\Application;
+use function dirname;
 
-require \dirname(__DIR__) . '/vendor/autoload.php';
-require_once \dirname(__DIR__) . '/config.php';
+require dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__) . '/config.php';
 
 $Application = new Application();
 
@@ -26,5 +27,6 @@ $Application->add(new GenCache());
 $Application->add(new PopulateDatabase());
 $Application->add(new PruneRevisions());
 $Application->add(new MfaCode());
+$Application->add(new AddMissingLinks());
 
 $Application->run();

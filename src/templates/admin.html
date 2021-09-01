@@ -16,18 +16,23 @@
 {% endif %}
 
 <!-- ADMIN PANEL MAIN MENU -->
-<ul id='menu'>
-  <li class='tabhandle' id='tab1'>{{ 'Team'|trans }}</li>
-  <li class='tabhandle' id='tab2'>{{ 'Groups'|trans }}</li>
-  <li class='tabhandle' id='tab3'>{{ 'Users'|trans }}</li>
-  <li class='tabhandle' id='tab4'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</li>
-  <li class='tabhandle' id='tab5'>{{ 'Types of items'|trans }}</li>
-  <li class='tabhandle' id='tab6'>{{ 'Import'|trans }}</li>
-  <li class='tabhandle' id='tab7'>{{ 'Tag manager'|trans }}</li>
+<ul class='tabbed-menu'>
+  <li data-action='switch-tab' data-tabtarget='1'>{{ 'Team'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='2'>{{ 'Groups'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='3'>{{ 'Users'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='4'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</li>
+  <li data-action='switch-tab' data-tabtarget='5'>{{ 'Types of items'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='6'>{{ 'Import'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='7'>{{ 'Tag manager'|trans }}</li>
 </ul>
 
+<!-- loading spinner -->
+<div class='d-flex justify-content-center' id='loading-spinner'>
+  <div class='lds-dual-ring'></div>
+</div>
+
 <!-- TAB 1 TEAM CONFIG -->
-<div class='divhandle' id='tab1div'>
+<div data-tabcontent='1' hidden>
   <div class='box'>
     <h3>{{ 'Configure your Team'|trans }}</h3>
     <hr>
@@ -147,7 +152,7 @@
 </div>
 
 <!-- TAB 2 TEAM GROUPS -->
-<div class='divhandle' id='tab2div'>
+<div data-tabcontent='2' hidden>
   <div class='box form-group'>
     <h3>{{ 'Manage Groups of Users'|trans }}</h3>
     <hr>
@@ -180,12 +185,12 @@
 <!-- END TEAM GROUPS -->
 
 <!-- TAB 3 USERS -->
-<div class='divhandle' id='tab3div'>
+<div data-tabcontent='3' hidden>
   {{ include('editusers.html') }}
 </div>
 
 <!-- TAB 4 STATUS -->
-<div class='divhandle' id='tab4div'>
+<div data-tabcontent='4' hidden>
   <div class='box'>
     <h3>{{ 'Add a New Status'|trans }}</h3>
     <hr>
@@ -260,7 +265,7 @@
 </div>
 
 <!-- TAB 5 ITEMS TYPES-->
-<div class='divhandle' id='tab5div'>
+<div data-tabcontent='5' hidden>
   <div class='box'>
     <h3>{{ 'Add a new type of item'|trans }}</h3>
     <hr>
@@ -388,7 +393,7 @@
 </div>
 
 <!-- TAB 6 IMPORT -->
-<div class='divhandle' id='tab6div'>
+<div data-tabcontent='6' hidden>
   <div class='box'>
     <h3>{{ 'Import a CSV File'|trans }}</h3>
     <hr>
@@ -475,7 +480,7 @@
 </div>
 
 <!-- TAB 7 TAG MANAGER -->
-<div class='divhandle' id='tab7div'>
+<div data-tabcontent='7' hidden>
   <div class='box'>
     <h3>{{ 'Manage tags of the team'|trans }}</h3>
     <p>{{ 'From here you can edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags.'|trans }}</p>

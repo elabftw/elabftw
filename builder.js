@@ -22,7 +22,6 @@ module.exports = {
       './src/ts/common.ts',
       './src/ts/i18n.ts',
       './src/ts/steps-links.ts',
-      './src/ts/tabs.ts',
       './src/ts/tags.ts',
       './src/ts/admin.ts',
       './src/ts/edit.ts',
@@ -37,7 +36,6 @@ module.exports = {
       './src/ts/search.ts',
       './src/ts/show.ts',
       './src/ts/sysconfig.ts',
-      './src/ts/change-pass.ts',
       'bootstrap/js/src/alert.js',
       'bootstrap/js/src/button.js',
       'bootstrap/js/src/collapse.js',
@@ -74,6 +72,9 @@ module.exports = {
     ],
     '3Dmol-notrack': [
       './src/ts/3Dmol-notrack.ts',
+    ],
+    'chemdoodle-canvas': [
+      './src/js/chemdoodle-canvas.js',
     ],
   },
   // uncomment this to find where the error is coming from

@@ -14,6 +14,7 @@ use Defuse\Crypto\Key;
 use function dirname;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Services\DatabaseInstaller;
+use function is_writable;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem as Fs;
 use Symfony\Component\Console\Command\Command;
@@ -76,7 +77,7 @@ class Install extends Command
         } else {
             $output->writeln('<info>✓ No config file present. One will be created.</info>');
             // check if the folder is writable for saving the config file
-            if (!\is_writable($elabRoot)) {
+            if (!is_writable($elabRoot)) {
                 $msg = sprintf('The eLabFTW folder (%s) is not writable by the current user. Adjust permissions and try again.', $elabRoot);
                 $output->writeln('<error>ERROR: ' . $msg . '</error>');
                 return 1;

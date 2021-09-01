@@ -91,7 +91,7 @@ class ImportCsv extends AbstractImport
     }
 
     /**
-     * Generate a body from a row. Add column name in bold and content after that.
+     * Generate a body from a row. Add column name and content after that.
      *
      * @param array<string, string> $row row from the csv
      */
@@ -106,7 +106,7 @@ class ImportCsv extends AbstractImport
             if (filter_var($content, FILTER_VALIDATE_URL)) {
                 $content = '<a href="' . $content . '">' . $content . '</a>';
             }
-            $body .= '<p><strong>' . (string) $subheader . ':</strong> ' . $content . '</p>';
+            $body .= '<p>' . (string) $subheader . ': ' . $content . '</p>';
         }
 
         return $body;

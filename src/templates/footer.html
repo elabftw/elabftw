@@ -66,6 +66,11 @@
   data-isodate='{{ App.Session.has('is_auth') ? App.Users.userData.use_isodate : '0' }}'
   ></div>
 
+{% if App.Session.has('is_auth') %}
+  <!-- this is here for the heartbeat -->
+  <div id='is-auth'></div>
+{% endif %}
+
 <!-- Modal for privacy policy -->
 <div class='modal fade' id='privacyModal' tabindex='-1' role='dialog' aria-labelledby='privacyModalLabel' aria-hidden='true'>
   <div class='modal-dialog' role='document'>

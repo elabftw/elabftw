@@ -23,6 +23,6 @@ class SamlTest extends \PHPUnit\Framework\TestCase
 
     public function testgetSettings(): void
     {
-        $this->assertTrue(is_array($this->Saml->getSettings(1)));
+        $this->assertIsArray($this->Saml->getSettings(1));
     }
 }

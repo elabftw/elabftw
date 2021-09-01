@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ValidatedUser;
@@ -18,7 +19,7 @@ use Exception;
 use Swift_TransportException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 // default location to redirect to
 $location = '../../admin.php?tab=3';

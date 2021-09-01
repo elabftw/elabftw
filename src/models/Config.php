@@ -17,6 +17,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Update;
 use Elabftw\Exceptions\DatabaseErrorException;
 use PDO;
+use const SECRET_KEY;
 
 /**
  * The general config table
@@ -109,7 +110,7 @@ final class Config
 
         foreach ($passwords as $password) {
             if (isset($post[$password]) && !empty($post[$password])) {
-                $post[$password] = Crypto::encrypt($post[$password], Key::loadFromAsciiSafeString(\SECRET_KEY));
+                $post[$password] = Crypto::encrypt($post[$password], Key::loadFromAsciiSafeString(SECRET_KEY));
             // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one
             } elseif (isset($post[$password])) {
                 unset($post[$password]);
@@ -188,13 +189,9 @@ final class Config
             ('saml_nameidformat', NULL),
             ('saml_x509', NULL),
             ('saml_privatekey', NULL),
-            ('saml_team', NULL),
             ('saml_team_create', '1'),
             ('saml_team_default', NULL),
             ('saml_user_default', '1'),
-            ('saml_email', NULL),
-            ('saml_firstname', NULL),
-            ('saml_lastname', NULL),
             ('local_login', '1'),
             ('local_register', '1'),
             ('admins_create_users', '1'),

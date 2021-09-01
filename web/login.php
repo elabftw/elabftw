@@ -81,6 +81,11 @@ try {
     $Teams = new Teams($App->Users);
     $teamsArr = $Teams->readAll();
 
+    if ($Request->cookies->has('kickreason')) {
+        // at the moment there is only one reason
+        $App->ko[] = _('Your session expired.');
+    }
+
     $template = 'login.html';
     $renderArr = array(
         'idpsArr' => $idpsArr,

@@ -70,7 +70,7 @@ class Check
     public static function color(string $color): string
     {
         $color = filter_var(substr($color, 1, 7), FILTER_SANITIZE_STRING);
-        if ($color === false || \mb_strlen($color) !== 6) {
+        if ($color === false || mb_strlen($color) !== 6) {
             throw new ImproperActionException('Bad color');
         }
         return $color;

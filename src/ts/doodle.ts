@@ -8,16 +8,20 @@
 import { notif } from './misc';
 import i18next from 'i18next';
 
-$(document).ready(function() {
-  if ($('#info').data('page') !== 'edit') {
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('info').dataset.page !== 'edit') {
     return;
   }
+
   // store the clicks
   let clickX = [];
   let clickY = [];
   // bool to store the state of painting
   let isPainting;
-  const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
+  let wasPainting;
+
+  const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
+  const context: CanvasRenderingContext2D = doodleCanvas.getContext('2d');
 
   function draw(dragging: boolean): void {
     // get last items in arrays
@@ -35,22 +39,22 @@ $(document).ready(function() {
     path.lineTo(x, y);
     path.closePath();
 
-    if ($('#doodleEraser').is(':checked')) {
+    context.globalCompositeOperation = 'source-over';
+    context.strokeStyle = (document.getElementById('doodleStrokeStyle') as HTMLInputElement).value as string;
+    if ((document.getElementById('doodleEraser') as HTMLInputElement).checked) {
       context.globalCompositeOperation = 'destination-out';
       context.strokeStyle = 'rgba(0,0,0,1)';
-    } else {
-      context.globalCompositeOperation = 'source-over';
-      context.strokeStyle = $('#doodleStrokeStyle').val() as string;
     }
+
     context.lineJoin = 'round';
-    context.lineWidth = $('#doodleStrokeWidth').val() as number;
+    context.lineWidth = Number((document.getElementById('doodleStrokeWidth') as HTMLInputElement).value);
 
     context.stroke(path);
   }
 
   function addText(x: number, y: number, text: string): void {
     context.font = '18px Arial';
-    context.fillStyle = $('#doodleStrokeStyle').val() as string;
+    context.fillStyle = (document.getElementById('doodleStrokeStyle') as HTMLInputElement).value as string;
     context.fillText(text, x, y);
   }
 
@@ -60,16 +64,17 @@ $(document).ready(function() {
     draw(dragging);
   }
 
-  $('#doodle-anchor').on('click', '.clearCanvas', function() {
+  document.getElementById('clearCanvas').addEventListener('click', () => {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     clickX = [];
     clickY = [];
   });
 
-  $('#doodle-anchor').on('click', '.saveCanvas', function() {
-    const image = ($('#doodleCanvas')[0] as HTMLCanvasElement).toDataURL();
-    let type = $(this).data('type');
-    const id = $(this).data('id');
+  document.getElementById('saveCanvas').addEventListener('click', (e) => {
+    const image = doodleCanvas.toDataURL();
+    const elDataset = (e.target as HTMLButtonElement).dataset;
+    let type = elDataset.type;
+    const id = elDataset.id;
     const realName = prompt(i18next.t('request-filename'));
     if (realName == null) {
       return;
@@ -90,67 +95,91 @@ $(document).ready(function() {
     });
   });
 
-  $('#doodleCanvas').mousedown(function(e) {
+
+  /**
+   * mouse events
+   */
+  doodleCanvas.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+
     // if ctrl key is pressed, we ask for text to insert
     if (e.ctrlKey) {
       const text = prompt('Text to insert:');
       if (text === null) {
         return;
       }
-      addText(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, text);
+      addText(e.clientX - rect.left, e.clientY - rect.top, text);
     } else {
       isPainting = true;
-      addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, false);
+      addClick(e.clientX - rect.left, e.clientY - rect.top, false);
     }
   });
 
-  $('#doodleCanvas').mousemove(function(e) {
+  doodleCanvas.addEventListener('mousemove', (e) => {
+    e.preventDefault();
     if (isPainting) {
-      addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+      const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+      addClick(e.clientX - rect.left, e.clientY - rect.top, true);
     }
   });
 
-  $('#doodleCanvas').mouseup(function() {
-    isPainting = false;
+  doodleCanvas.addEventListener('mouseleave', (e) => {
+    e.preventDefault();
+    if (isPainting) {
+      const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+      addClick(e.clientX - rect.left, e.clientY - rect.top, true);
+      isPainting = false;
+      if (e.buttons !== 0) {
+        wasPainting = true;
+      }
+    }
   });
 
-  $('#doodleCanvas').mouseleave(function() {
-    isPainting = false;
+  doodleCanvas.addEventListener('mouseenter', (e) => {
+    e.preventDefault();
+    if (e.buttons !== 0 && wasPainting) {
+      isPainting = true;
+      wasPainting = false;
+      const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+      addClick(e.clientX - rect.left, e.clientY - rect.top, false);
+    }
   });
 
-  const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
-  doodleCanvas.addEventListener('touchstart', function(e) {
-    const rect = this.getBoundingClientRect();
-    const touch = e.touches[0];
-    isPainting = true;
-    addClick(touch.clientX - rect.left, touch.clientY - rect.top, false);
+  doodleCanvas.addEventListener('mouseup', (e) => {
+    e.preventDefault();
+    isPainting = false;
+    wasPainting = false;
+  });
+
+  /**
+   * touch events
+   */
+  doodleCanvas.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      e.preventDefault();
+      const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+      const touch = e.touches[0];
+      isPainting = true;
+      addClick(touch.clientX - rect.left, touch.clientY - rect.top, false);
+    }
   }, false);
 
-  doodleCanvas.addEventListener('touchmove', function(e) {
+  doodleCanvas.addEventListener('touchmove', (e) => {
     if (isPainting) {
-      const rect = this.getBoundingClientRect();
+      e.preventDefault();
+      const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
       const touch = e.touches[0];
       addClick(touch.clientX - rect.left, touch.clientY - rect.top, true);
     }
   }, false);
 
-  doodleCanvas.addEventListener('touchend', function() {
+  doodleCanvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
     isPainting = false;
   }, false);
 
-  doodleCanvas.addEventListener('touchcancel', function() {
+  doodleCanvas.addEventListener('touchcancel', () => {
     isPainting = false;
-  }, false);
-
-  doodleCanvas.addEventListener('touchstart', function (e) {
-    e.preventDefault();
-  }, false);
-
-  doodleCanvas.addEventListener('touchend', function (e) {
-    e.preventDefault();
-  }, false);
-
-  doodleCanvas.addEventListener('touchmove', function (e) {
-    e.preventDefault();
   }, false);
 });

@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-$(document).ready(function(){
+document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/search.php') {
     return;
   }

@@ -236,24 +236,24 @@ label {
 }
 
 /*  MENU is below main nav */
-#menu {
+.tabbed-menu {
     border-bottom: 1px solid $bordersgray;
     line-height: 200%;
     margin: 30px 0 20px;
     padding: 0;
-}
 
-#menu li {
-    color: $maingray;
-    cursor: pointer;
-    display: inline;
-    margin-right: 2%;
-    text-transform: uppercase;
-}
+    li {
+        color: $maingray;
+        cursor: pointer;
+        display: inline;
+        margin-right: 2%;
+        text-transform: uppercase;
+    }
 
-#menu .selected {
-    border-bottom: 5px solid $elabblue;
-    padding-bottom: 0;
+    .selected {
+        border-bottom: 5px solid $elabblue;
+        padding-bottom: 0;
+    }
 }
 
 /* ALERT */
@@ -489,9 +489,9 @@ table th {
     text-transform: uppercase;
 }
 
-/* TABLE OF EXPERIMENTS */
+/* TABLE SHOW MODE */
 
-#item-table {
+.item-table {
     width: 100%;
 
     th {
@@ -930,7 +930,7 @@ the form-control fails to do that so we do the border ourselves */
     footer,
     #menu,
     #filesdiv,
-    #comment_container,
+    #commentsDiv,
     #withSelected,
     .item-info > .clickable,
     .real-container > span,
@@ -1077,6 +1077,11 @@ the form-control fails to do that so we do the border ourselves */
     margin: 10px 0;
 }
 
+#doodleStrokeWidthContainer {
+    align-items: center;
+    display: flex;
+}
+
 /* don't register clicks with the svg (fontawesome icons)
  * this way the click event is registered by the parent and all is well
  */
@@ -1218,4 +1223,27 @@ div.jsoneditor-menu {
 
 .fa-2x {
     font-size: 1.3em;
+}
+
+/* loading spinner */
+.lds-dual-ring::after {
+    animation: lds-dual-ring 1.3s linear infinite;
+    border: 8px solid $elabblue;
+    border-color: $elabblue transparent $elabblue transparent;
+    border-radius: 50%;
+    content: ' ';
+    display: block;
+    height: 150px;
+    margin: 4px;
+    width: 150px;
+}
+
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }

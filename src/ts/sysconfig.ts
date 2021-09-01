@@ -9,16 +9,20 @@ import { notif } from './misc';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
+import Tab from './Tab.class';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/sysconfig.php') {
     return;
   }
 
+  const TabMenu = new Tab();
+  TabMenu.init(document.querySelector('.tabbed-menu'));
+
   // GET the latest version information
   const updateUrl = 'https://get.elabftw.net/updates.json';
-  const currentVersionDiv = document.querySelector('#currentVersion') as HTMLElement;
-  const latestVersionDiv = document.querySelector('#latestVersion');
+  const currentVersionDiv = document.getElementById('currentVersion') as HTMLElement;
+  const latestVersionDiv = document.getElementById('latestVersion');
   const currentVersion = currentVersionDiv.innerText;
   // Note: this doesn't work on Chrome
   // see: https://bugs.chromium.org/p/chromium/issues/detail?id=571722
@@ -76,6 +80,8 @@ $(document).ready(function() {
     editUserToTeam(userid, action): void {
       $('#editUserToTeamUserid').attr('value', userid);
       $('#editUserToTeamAction').attr('value', action);
+      const params = new URLSearchParams(document.location.search);
+      $('#editUserToTeamQuery').attr('value', params.get('q'));
     },
     create: function(): void {
       const name = $('#teamsName').val();
@@ -130,7 +136,7 @@ $(document).ready(function() {
     notif({'msg': 'Feature not yet implemented :)', 'res': true});
   });
   $(document).on('click', '.editUserToTeam', function() {
-    Teams.editUserToTeam($(this).data('userid'), $(this).data('action'));
+    Teams.editUserToTeam($(this).data('userid'), $(this).data('useraction'));
   });
 
   // MAIL METHOD in a function because is also called in document ready

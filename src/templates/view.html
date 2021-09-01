@@ -115,7 +115,7 @@
 
     <!-- show timestamp button if not timestamped already -->
     {% if not Entity.entityData.timestamped and Entity.isTimestampable and Entity.type == 'experiments' and not App.Session.has('is_anon') %}
-      <a href='#' class='elab-tooltip mr-1 modalToggle' data-modal='timestampModal'>
+      <a href='#' class='elab-tooltip mr-1' data-action='toggle-modal' data-target='timestampModal'>
         <span>{{ 'Timestamp Experiment'|trans }}</span>
         <i title='{{ 'Timestamp Experiment'|trans }}' class='far fa-calendar-check fa-2x'></i>
       </a>
@@ -228,7 +228,7 @@
 {% endif %}
 
 {% if App.Session.get('is_auth') and not App.Session.has('is_anon') %}
-    <section id='comment_container'>
+    <section id='commentsDiv'>
         <div id='comment' class='box'>
             <i class='fas fa-comments mr-1 align-baseline'></i><h2 class='d-inline'>{{ 'Comments'|trans }}</h2>
 
@@ -239,7 +239,7 @@
                         <span class='text-muted'>{{ comment.fullname|raw }} {{ 'commented'|trans }}</span>
                         <span title='{{ comment.datetime }}' class='text-muted relative-moment'></span>
                         {% if comment.userid == Entity.Users.userData.userid %}
-                            <a class='clickable commentsDestroy float-right' data-commentid='{{ comment.id }}' title='{{ 'Delete'|trans }}'>
+                            <a class='float-right' data-action='destroy-comment' data-target='{{ comment.id }}' title='{{ 'Delete'|trans }}'>
                                 <i class='fas fa-trash-alt fa-lg'></i>
                             </a>
                         {% endif %}
@@ -252,7 +252,7 @@
 
             <textarea id='commentsCreateArea' autocomplete='off' placeholder='{{ 'Add a comment'|trans }}' aria-label='Comment area'></textarea>
             <div id='commentsCreateButtonDiv' class='mt-4 text-center'>
-                <button class='button btn btn-primary' id='commentsCreateButton' data-expid='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
+                <button class='button btn btn-primary' data-action='create-comment'>{{ 'Save'|trans }}</button>
             </div>
         </div>
     </section>

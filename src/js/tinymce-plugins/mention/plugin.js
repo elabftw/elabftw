@@ -8,7 +8,7 @@
     module.exports = f(require('jquery'));
 
   // RequireJS
-  } else if (typeof define === 'function'  && define.amd) {
+  } else if (typeof define === 'function' && define.amd) {
     define(['jquery'], f);
 
   // <script>
@@ -59,10 +59,10 @@
         constructor: AutoComplete,
 
         renderInput: function () {
-            var rawHtml =  '<span id="autocomplete">' +
-                                '<span id="autocomplete-delimiter">' + this.options.delimiter + '</span>' +
-                                '<span id="autocomplete-searchtext"><span class="dummy">\uFEFF</span></span>' +
-                            '</span>';
+            var rawHtml = '<span id="autocomplete">'
+                + '<span id="autocomplete-delimiter">' + this.options.delimiter + '</span>'
+                + '<span id="autocomplete-searchtext"><span class="dummy">\uFEFF</span></span>'
+                + '</span>';
 
             this.editor.execCommand('mceInsertContent', false, rawHtml);
             this.editor.focus();
@@ -221,16 +221,22 @@
         },
 
         highlighter: function (text) {
-            return text.replace(new RegExp('(' + this.query.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1') + ')', 'ig'), function ($1, match) {
-                return '<strong>' + match + '</strong>';
-            });
+            if (this.query.length > 0) {
+                return text.replace(new RegExp('(' + this.query.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1') + ')', 'ig'), function (match) {
+                    return '<strong>' + match + '</strong>';
+                });
+            }
+            return text;
         },
 
         show: function () {
             var offset = this.editor.inline ? this.offsetInline() : this.offset();
 
             this.$dropdown = $(this.renderDropdown())
-                                .css({ 'top': offset.top, 'left': offset.left });
+                .css({
+                    'top': offset.top,
+                    'left': offset.left
+                });
 
             $('body').append(this.$dropdown);
 
@@ -276,9 +282,9 @@
         },
 
         render: function (item) {
-            return '<li>' +
-                        '<a href="javascript:;"><span>' + item[this.options.queryBy] + '</span></a>' +
-                    '</li>';
+            return '<li>'
+                + '<a href="javascript:;"><span>' + item[this.options.queryBy] + '</span></a>'
+                + '</li>';
         },
 
         autoCompleteClick: function (e) {

@@ -19,6 +19,7 @@ use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 use function mb_strlen;
 use function pathinfo;
+use function str_replace;
 use Symfony\Component\HttpFoundation\Request;
 use function trim;
 
@@ -67,9 +68,6 @@ class Tools
 
     /**
      * Convert markdown to html
-     *
-     * @param string $md Markdown code
-     * @return string HTML code
      */
     public static function md2html(string $md): string
     {
@@ -80,7 +78,7 @@ class Tools
 
         try {
             $converter = new GithubFlavoredMarkdownConverter($config);
-            return trim($converter->convertToHtml($md), "\n");
+            return trim($converter->convertToHtml($md)->getContent(), "\n");
         } catch (UnexpectedEncodingException) {
             // fix for incorrect utf8 encoding, just return md and hope it's html
             // so at least the thing is displayed instead of triggering a fatal error
@@ -307,7 +305,7 @@ class Tools
         if (!$canonical) {
             $url .= $Request->getBasePath();
         }
-        return \str_replace('app/controllers', '', $url);
+        return str_replace('app/controllers', '', $url);
     }
 
     /**

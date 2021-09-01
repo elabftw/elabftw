@@ -12,6 +12,26 @@
 
 # set to true to skip confirmation
 skip_confirm: false
+
+# put some config options that fit with a dev env
+# so we don't have to put them back in again after a populate command
+config:
+  # skip admin validation of new accounts
+  admin_validate: 0
+  # set debug mode ON
+  debug: 1
+  # the url of the dev install
+  url: "https://elab.local:3148"
+  # set the mail_from config
+  mailfrom: elabftw@example.com
+  ldap_base_dn: dc=example,dc=org
+  ldap_host: ldap
+  # this is the default password of osixia/openldap docker container
+  ldap_password: admin
+  ldap_username: cn=admin,dc=example,dc=org
+  # increase this a bit
+  login_tries: 10
+
 # the url of the dev install
 url: "https://elab.local:3148"
 # set the mail_from config

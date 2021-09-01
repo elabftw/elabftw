@@ -9,6 +9,8 @@
 
 namespace Elabftw\Elabftw;
 
+use InvalidArgumentException;
+
 class ToolsTest extends \PHPUnit\Framework\TestCase
 {
     public function testFormatBytes(): void
@@ -24,7 +26,7 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals('1969.07.21', Tools::formatDate('19690721'));
         $this->assertEquals('1969-07-21', Tools::formatDate('19690721', '-'));
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->assertFalse(Tools::formatDate('196907211'));
     }
 

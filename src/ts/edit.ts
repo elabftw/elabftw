@@ -6,13 +6,12 @@
  * @package elabftw
  */
 declare let key: any;
-declare let MathJax: any;
-import { displayMolFiles, display3DMolecules, insertParamAndReload, notif } from './misc';
-import { displayPlasmidViewer } from './ove';
+import { notif } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Payload, Method, Action } from './interfaces';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
+import { getEditor } from './Editor.class';
 import { getEntity } from './misc';
 import Dropzone from 'dropzone';
 import i18next from 'i18next';
@@ -37,9 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // add the title in the page name (see #324)
-  document.title = (document.getElementById('title_input') as HTMLInputElement).value + ' - eLabFTW';
-
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
 
@@ -48,23 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
   MetadataC.display('edit');
 
   // Which editor are we using? md or tiny
-  const editor = {
-    type: document.getElementById('iHazEditor').dataset.editor ?? 'tiny',
-    getContent: function(): string {
-      if (this.type === 'md') {
-        return (document.getElementById('body_area') as HTMLTextAreaElement).value;
-      }
-      return tinymce.activeEditor.getContent();
-    },
-    switch: function(): void {
-      insertParamAndReload('editor', this.type === 'tiny' ? 'md' : 'tiny');
-    },
-  };
+  const editor = getEditor();
+  editor.init();
 
   // UPLOAD FORM
   new Dropzone('form#elabftw-dropzone', {
     // i18n message to user
-    //dictDefaultMessage: $('#info').data('upmsg'),
     dictDefaultMessage: i18next.t('dropzone-upload-area'),
     maxFilesize: $('#info').data('maxsize'), // MB
     timeout: 900000,
@@ -88,9 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // reload the #filesdiv once the file is uploaded
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
           $('#filesdiv').load(`?mode=edit&id=${String(entity.id)} #filesdiv > *`, function() {
-            displayMolFiles();
-            display3DMolecules(true);
-            displayPlasmidViewer(about);
             const dropZone = Dropzone.forElement('#elabftw-dropzone');
             // Check to make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
             if (typeof dropZone.tinyImageSuccess !== 'undefined' && dropZone.tinyImageSuccess !== null) {
@@ -126,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $(document).on('click', '.recover-yes', function() {
     EntityC.update(entity.id, Target.Body, localStorage.getItem('body')).then(() => {
       localStorage.clear();
-      document.location.reload(true);
+      document.location.reload();
     });
   });
 
@@ -198,6 +180,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="update-entity-body"]')) {
       updateEntity(el);
 
+    // SWITCH EDITOR
+    } else if (el.matches('[data-action="switch-editor"]')) {
+      editor.switch();
+
+    // IMPORT BODY OF LINKED ITEM INTO EDITOR
+    } else if (el.matches('[data-action="import-link"]')) {
+      // this is here because here tinymce exists and is reachable
+      // before this code was in steps-links.ts but it was not working
+      const id = el.dataset.target;
+      $.get('app/controllers/EntityAjaxController.php', {
+        getBody : true,
+        id : id,
+        type : 'items',
+        editor: editor.type,
+      }).done(json => editor.setContent(json.msg));
+
     // DESTROY ENTITY
     } else if (el.matches('[data-action="destroy"]')) {
       if (confirm(i18next.t('entity-delete-warning'))) {
@@ -258,30 +256,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // SWITCH EDITOR
-  $(document).on('click', '.switchEditor', function() {
-    editor.switch();
-  });
-
-  // DISPLAY MARKDOWN EDITOR
-  if ($('#body_area').hasClass('markdown-textarea')) {
-    ($('.markdown-textarea') as any).markdown({
-      onPreview: function() {
-        // ask mathjax to reparse the page
-        // if we call typeset directly it doesn't work
-        // so add a timeout
-        setTimeout(function() {
-          MathJax.typeset();
-        }, 1);
-      }
-    });
-  }
+  // TITLE STUFF
+  const titleInput = document.getElementById('title_input') as HTMLInputElement;
+  // add the title in the page name (see #324)
+  document.title = titleInput.value + ' - eLabFTW';
 
   // If the title is 'Untitled', clear it on focus
-  $('#title_input').focus(function(){
-    if ($(this).val() === i18next.t('entity-default-title')) {
-      $('#title_input').val('');
+  titleInput.addEventListener('focus', event => {
+    const el = event.target as HTMLInputElement;
+    if (el.value === i18next.t('entity-default-title')) {
+      el.value = '';
     }
+  });
+
+  titleInput.addEventListener('blur', () => {
+    const content = titleInput.value;
+    EntityC.update(entity.id, Target.Title, content);
+    // update the page's title
+    document.title = content + ' - eLabFTW';
   });
 
   // ANNOTATE IMAGE
@@ -311,7 +303,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // no tinymce stuff when md editor is selected
-  let theEditor;
   if (editor.type === 'tiny') {
     // Object to hold control data for selected image
     const tinymceEditImage = {
@@ -415,69 +406,25 @@ document.addEventListener('DOMContentLoaded', () => {
         tinymceEditImage.reset();
       }
     });
-
-    theEditor = tinymce.editors[0];
   }
 
-  // IMPORT BODY OF LINKED ITEM INTO EDITOR
-  // this is here because here tinymce exists and is reachable
-  // before this code was in steps-links.ts but it was not working
-  function importBody(elem, theEditor): void {
-    const id = elem.data('linkid');
-    $.get('app/controllers/EntityAjaxController.php', {
-      getBody : true,
-      id : id,
-      type : 'items',
-      editor: editor.type,
-    }).done(function(json) {
-      if (editor.type === 'tiny') {
-        theEditor.insertContent(json.msg);
-      } else if (editor.type === 'md') {
-        const cursorPosition = $('#body_area').prop('selectionStart');
-        const content = ($('#body_area').val() as string);
-        const before = content.substring(0, cursorPosition);
-        const after = content.substring(cursorPosition);
-        $('#body_area').val(before + json.msg + after);
-
-      } else {
-        alert('Error: could not find current editor!');
-      }
-    });
-  }
 
   // INSERT IMAGE AT CURSOR POSITION IN TEXT
   $(document).on('click', '.inserter',  function() {
     // link to the image
     const url = 'app/download.php?f=' + $(this).data('link');
     // switch for markdown or tinymce editor
+    let content;
     if (editor.type === 'md') {
-      const cursorPosition = $('#body_area').prop('selectionStart');
-      const content = ($('#body_area').val() as string);
-      const before = content.substring(0, cursorPosition);
-      const after = content.substring(cursorPosition);
-      const imgMdLink = '\n![image](' + url + ')\n';
-      $('#body_area').val(before + imgMdLink + after);
+      content = '\n![image](' + url + ')\n';
     } else if (editor.type === 'tiny') {
-      const imgHtmlLink = '<img src="' + url + '" data-uploadid="' + $(this).data('uploadid') + '" />';
-      tinymce.activeEditor.execCommand('mceInsertContent', false, imgHtmlLink);
-    } else {
-      alert('Error: could not find current editor!');
+      content = '<img src="' + url + '" data-uploadid="' + $(this).data('uploadid') + '" />';
     }
-  });
-
-  $(document).on('click', '.linkImport', function() {
-    importBody($(this), theEditor);
+    editor.setContent(content);
   });
 
   $(document).on('blur', '#date_input', function() {
     const content = (document.getElementById('date_input') as HTMLInputElement).value;
     EntityC.update(entity.id, Target.Date, content);
-  });
-
-  $(document).on('blur', '#title_input', function() {
-    const content = (document.getElementById('title_input') as HTMLInputElement).value;
-    EntityC.update(entity.id, Target.Title, content);
-    // update the page's title
-    document.title = content + ' - eLabFTW';
   });
 });

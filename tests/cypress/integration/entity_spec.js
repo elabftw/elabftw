@@ -28,7 +28,7 @@ describe('Experiments', () => {
     cy.get('#commentsCreateArea').type('This is a very nice experiment')
     cy.get('#commentsCreateButton').click()
     cy.contains('Toto Le sysadmin commented').should('be.visible')
-    cy.get('.commentsDestroy').click()
+    cy.get('[data-action="destroy-comment"]').click()
     cy.contains('Toto Le sysadmin commented').should('not.exist')
     // go back in edit mode for destroy action
     cy.get('.action-topmenu > [data-action="edit"]').click()

@@ -101,13 +101,13 @@
     </a>
     <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
       <!-- MANAGE PERMISSIONS -->
-      <a class='clickable dropdown-item modalToggle' data-modal='permModal'><i class='fas fa-share-alt fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
+      <a class='dropdown-item' data-action='toggle-modal' data-target='permModal'><i class='fas fa-share-alt fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
       <!-- TRANSFER OWNERSHIP -->
       {% if Entity.type == 'items' and (Entity.entityData.userid == App.Users.userData.userid or App.Session.get('is_admin')) %}
-        <a class='clickable dropdown-item modalToggle' data-modal='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer ownership'|trans }}</a>
+        <a class='dropdown-item' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer ownership'|trans }}</a>
       {% endif %}
-      <!-- SWITCH EDITOR -->
-      <a class='dropdown-item switchEditor' id='iHazEditor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</a>
+      <!-- SWITCH EDITOR the data-editor is here to indicate which is the current editor -->
+      <a class='dropdown-item' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</a>
       <!-- REVISIONS -->
       {% if revNum > 0 %}
         <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ revNum }} {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
@@ -222,10 +222,10 @@
       </div>
 
       <div class='col-xs-12 col-sm-6 col-md-4 col-lg-4' id='doodle_controls'>
-        <p>
+        <div id='doodleStrokeWidthContainer'>
           <label for='doodleStrokeWidth'>{{ 'Stroke width'|trans }}</label>
           <input type='range' min='1' max='20' name='strokeWidth' value='5' id='doodleStrokeWidth' />
-        </p>
+        </div>
 
         <p>
           <label for='doodleStrokeStyle'>{{ 'Color'|trans }}</label>
@@ -237,8 +237,8 @@
         </p>
 
         <p>
-          <button class='button btn btn-danger clearCanvas'>{{ 'Clear'|trans }}</button>
-          <button class='button btn btn-primary saveCanvas' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
+          <button id='clearCanvas' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
+          <button id='saveCanvas' class='button btn btn-primary' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
         <p>
       </div>
     </div>
@@ -251,7 +251,7 @@
     <i class='fas fa-dna mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Molecule drawer'|trans }}</h3>
     <button class='button btn btn-primary plusMinusButton' data-toggle='collapse' data-target='#chemDiv' aria-expanded='false' aria-controls='chemDiv'>+</button>
     <div id='chemDiv' class='collapse mt-2 text-center'>
-      <script src='app/js/chemdoodle-canvas.js?v={{ v }}'></script>
+      <script src='assets/chemdoodle-canvas.bundle.js?v={{ v }}'></script>
     </div>
   </div>
 {% endif %}

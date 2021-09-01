@@ -33,6 +33,7 @@ use Elabftw\Services\SamlAuth;
 use Elabftw\Services\TeamAuth;
 use LdapRecord\Connection;
 use OneLogin\Saml2\Auth as SamlAuthLib;
+use const SECRET_KEY;
 use function setcookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -155,6 +156,10 @@ class LoginController implements ControllerInterface
      */
     private function validateDeviceToken(): void
     {
+        // skip for multi team auth
+        if ($this->App->Session->has('auth_userid')) {
+            return;
+        }
         $isTokenValid = false;
         // a devicetoken cookie might or might not exist, so this can be null
         $token = $this->App->Request->cookies->get('devicetoken');
@@ -183,7 +188,7 @@ class LoginController implements ControllerInterface
                 $ldapPassword = null;
                 // assume there is a password to decrypt if username is not null
                 if ($c['ldap_username']) {
-                    $ldapPassword = Crypto::decrypt($c['ldap_password'], Key::loadFromAsciiSafeString(\SECRET_KEY));
+                    $ldapPassword = Crypto::decrypt($c['ldap_password'], Key::loadFromAsciiSafeString(SECRET_KEY));
                 }
                 $ldapConfig = array(
                     'hosts' => array($c['ldap_host']),

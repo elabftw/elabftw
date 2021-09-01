@@ -143,7 +143,7 @@ try {
     header('X-Elab-Need-Auth: 1');
     // don't send a GET app/logout.php if it's an ajax call because it messes up the jquery ajax
     if ($Request->headers->get('X-Requested-With') !== 'XMLHttpRequest') {
-        $url = sprintf('%s://%s/app/logout.php?keep_redirect=1', $Request->server->get('REQUEST_SCHEME'), $Request->server->get('HTTP_HOST'));
+        $url = $Request->getSchemeAndHttpHost() . '/app/logout.php?keep_redirect=1';
         header('Location: ' . $url);
     }
     exit;

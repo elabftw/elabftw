@@ -57,7 +57,7 @@ class UserPreferences implements MapInterface
 
     private int $showPublic = 0;
 
-    private int $itemsStepsScope = 0;
+    private int $todolistStepsShowTeam = 0;
 
     private int $cjkFonts = 0;
 
@@ -106,7 +106,7 @@ class UserPreferences implements MapInterface
             show_team = :new_show_team,
             show_team_templates = :new_show_team_templates,
             show_public = :new_show_public,
-            items_steps_scope = :new_items_steps_scope,
+            todolist_steps_show_team = :new_todolist_steps_show_team,
             chem_editor = :new_chem_editor,
             json_editor = :new_json_editor,
             lang = :new_lang,
@@ -136,7 +136,7 @@ class UserPreferences implements MapInterface
         $req->bindParam(':new_show_team', $this->showTeam);
         $req->bindParam(':new_show_team_templates', $this->showTeamTemplates);
         $req->bindParam(':new_show_public', $this->showPublic);
-        $req->bindParam(':new_items_steps_scope', $this->itemsStepsScope);
+        $req->bindParam(':new_todolist_steps_show_team', $this->todolistStepsShowTeam);
         $req->bindParam(':new_chem_editor', $this->chemEditor);
         $req->bindParam(':new_json_editor', $this->jsonEditor);
         $req->bindParam(':new_lang', $this->lang);
@@ -215,9 +215,9 @@ class UserPreferences implements MapInterface
         $this->showPublic = Filter::toBinary($setting);
     }
 
-    final public function setItemsStepsScope(string $setting): void
+    final public function setTodolistStepsShowTeam(string $setting): void
     {
-        $this->itemsStepsScope = Filter::toBinary($setting);
+        $this->todolistStepsShowTeam = Filter::toBinary($setting);
     }
 
     final public function setCjkFonts(string $setting): void
@@ -313,7 +313,7 @@ class UserPreferences implements MapInterface
         $this->setShowTeam($source['show_team'] ?? '0');
         $this->setShowTeamTemplates($source['show_team_templates'] ?? '0');
         $this->setShowPublic($source['show_public'] ?? '0');
-        $this->setItemsStepsScope($source['items_steps_scope'] ?? '0');
+        $this->setTodolistStepsShowTeam($source['todolist_steps_show_team'] ?? '0');
         $this->setCjkFonts($source['cjk_fonts'] ?? '0');
         $this->setPdfa($source['pdfa'] ?? '0');
         $this->setPdfFormat($source['pdf_format'] ?? $this->pdfFormat);
@@ -347,7 +347,7 @@ class UserPreferences implements MapInterface
             show_team,
             show_team_templates,
             show_public,
-            items_steps_scope,
+            todolist_steps_show_team,
             cjk_fonts,
             pdfa,
             pdf_format,

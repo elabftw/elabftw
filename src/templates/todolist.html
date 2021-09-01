@@ -29,7 +29,7 @@
     <div class='d-inline-flex justify-content-center ml-4'>
         <div class='switch-label'>{{ 'User'|trans }}</div>
         <div class='custom-control custom-switch' style='padding-left: 1.3rem'>
-            <input type='checkbox' id='itemsStepsScope' class='custom-control-input' {{ App.Users.userData.items_steps_scope == '1' ? 'checked ' : '' -}} aria-label='{{ 'Show items steps for team'|trans }}'>
+            <input type='checkbox' id='itemsStepsScope' class='custom-control-input' autocomplete='off' {{ App.Users.userData.todolist_steps_show_team == '1' ? 'checked ' : '' -}} aria-label='{{ 'Show items steps for team'|trans }}'>
             <label class='custom-control-label' for='itemsStepsScope' style='margin-top: 3px;'></label>
         </div>
         <div class='switch-label'>{{ 'Team'|trans }}</div>

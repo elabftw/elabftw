@@ -135,7 +135,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // LOGOUT
     } else if (el.matches('[data-action="logout"]')) {
-      localStorage.removeItem('isTodolistOpen');
+      const storageItems = ['isTodolistOpen', 'itemsStepsScopeIsTeam', 'todoItemsDiv', 'todoStepsExperiment', 'todoStepsItem'];
+      storageItems.forEach(item => {
+        localStorage.removeItem(item);
+      });
       window.location.href = 'app/logout.php';
 
     // CREATE EXPERIMENT or DATABASE item: main create button in top right

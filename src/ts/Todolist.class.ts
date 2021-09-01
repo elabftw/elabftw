@@ -110,7 +110,7 @@ export default class Todolist {
 
       // unfinished items steps of the entire team or just for items owned by the user
       const scopeSwitch = document.getElementById('itemsStepsScope') as HTMLInputElement;
-      scopeSwitch.addEventListener('change', (event) => {
+      scopeSwitch.addEventListener('change', event => {
         this.itemsStepsScope(event.target as HTMLInputElement);
       });
       this.itemsStepsScope(scopeSwitch);

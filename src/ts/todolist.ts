@@ -29,14 +29,34 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   // use shortcut
   if ($('#todoSc').length) {
-    key($('#todoSc').data('toggle'), function() {
+    key($('#todoSc').data('toggle'), () => {
       TodolistC.toggle();
     });
   }
+  // sublists i.e. actual todo-list and unfinished item/experiment steps
+  const sublistDivs = ['todoItemsDiv', 'todoStepsExperiment', 'todoStepsItem'];
+  sublistDivs.forEach(list => {
+    if (localStorage.getItem(list + '-isClosed') === '1') {
+      document.getElementById(list).toggleAttribute('hidden');
+    }
+  });
+  // itemsStepsScope i.e. user (0) or team (1)
+  const itemsStepsScope = document.getElementById('itemsStepsScope') as HTMLInputElement;
+  const storageItemsStepsScope = localStorage.getItem('itemsStepsScopeIsTeam');
+  // local storage has priority over default setting team
+  if (itemsStepsScope.checked && storageItemsStepsScope === '0') {
+    itemsStepsScope.checked = false;
+  // set storage value if default setting is team
+  } else if (itemsStepsScope.checked) {
+    localStorage.setItem('itemsStepsScopeIsTeam', '1');
+  // check box if it was checked before
+  } else if (storageItemsStepsScope === '1') {
+    itemsStepsScope.checked = true;
+  }
 
   // UPDATE TODOITEM
-  $(document).on('mouseenter', '.todoItem', function(ev) {
-    ($(ev.currentTarget) as any).editable(function(input) {
+  $(document).on('mouseenter', '.todoItem', ev => {
+    ($(ev.currentTarget) as any).editable(input => {
       TodolistC.update(
         ev.currentTarget.dataset.todoitemid,
         input,
@@ -74,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Add click listener and do action based on which element is clicked
-  document.getElementById('container').addEventListener('click', (event) => {
+  document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     // CREATE TODOITEM
     if (el.matches('[data-action="create-todoitem"]')) {
@@ -94,6 +114,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE TODOITEM
     } else if (el.matches('[data-action="toggle-todolist"]')) {
       TodolistC.toggle();
+    // TOGGLE SUBLISTS i.e. actual todo-list and unfinished item/experiment steps
+    } else if (el.matches('[data-action="toggle-next"]')) {
+      const sublist = el.nextElementSibling.id + '-isClosed';
+      if (!localStorage.getItem(sublist)) {
+        localStorage.setItem(sublist, '1');
+      } else if (localStorage.getItem(sublist) === '1') {
+        localStorage.removeItem(sublist);
+      }
+    // 
+    } else if (el.id === 'itemsStepsScope') {
+      const storageName = 'itemsStepsScopeIsTeam';
+      const storageValue = localStorage.getItem(storageName);
+      if (!storageValue || storageValue === '0') {
+        localStorage.setItem(storageName, '1');
+      } else if (storageValue === '1') {
+        localStorage.setItem(storageName, '0');
+      }
     }
   });
 });

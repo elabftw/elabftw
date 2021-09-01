@@ -8,7 +8,7 @@
 import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import i18next from 'i18next';
-import { notif } from './misc';
+import { notif, reloadElement } from './misc';
 import { Entity } from './interfaces';
 
 // This class is named helper because the jsoneditor lib already exports JSONEditor
@@ -157,13 +157,7 @@ export default class JsonEditorHelper {
       fileType: 'json',
       string: JSON.stringify(this.editor.get())
     }).done(json => {
-      fetch(window.location.href).then(response => {
-        return response.text();
-      }).then(data => {
-        const parser = new DOMParser();
-        const html = parser.parseFromString(data, 'text/html');
-        document.getElementById('filesdiv').innerHTML = html.getElementById('filesdiv').innerHTML;
-      });
+      reloadElement('filesdiv');
       this.currentUploadId = String(json.uploadId);
       notif(json);
     });

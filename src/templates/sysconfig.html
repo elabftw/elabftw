@@ -322,12 +322,6 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     <input class='form-control col-md-4' type='number' value='{{ App.Config.configArr.login_tries }}' name='login_tries' id='login_tries' />
     <p class='smallgray'>{{ '3 might be too few. See for yourself :)'|trans }}</p>
 
-    <label for='ban_time'>{{ 'Time of the ban after failed login attempts (in minutes):'|trans }}</label>
-    <input class='form-control col-md-4' type='number' value='{{ App.Config.configArr.ban_time }}' name='ban_time' id='ban_time' />
-    <p class='smallgray'>
-      {{ 'To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems.'|trans }}
-    </p>
-
     <label for='autologout_time'>{{ 'Time after which inactive sessions are invalidated (force logout) (in seconds):'|trans }}</label>
     <input class='form-control col-md-4' type='number' value='{{ App.Config.configArr.autologout_time }}' name='autologout_time' id='autologout_time' />
     <p class='smallgray'>

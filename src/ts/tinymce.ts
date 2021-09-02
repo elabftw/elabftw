@@ -58,7 +58,7 @@ if (document.getElementById('info')) {
 }
 
 // AUTOSAVE
-let typingTimer: any;                // timer identifier
+let typingTimer;                // timer identifier
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
 
 // called when you click the save button of tinymce

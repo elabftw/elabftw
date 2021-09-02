@@ -1,0 +1,24 @@
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+/* jsoneditor related css */
+
+.jsoneditor {
+    min-height: 220px;
+    overflow: hidden;
+    resize: vertical;
+}
+
+.jsoneditor,
+.jsoneditor-menu {
+    border-color: $elabblue;
+}
+
+.jsoneditor-menu {
+    background-color: $elabblue;
+}

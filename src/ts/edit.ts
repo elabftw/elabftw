@@ -378,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
         (new Ajax()).send(payload).then(json => callback(json.value));
       },
       // use a custom function for the save button in toolbar
-      save_onsavecallback: (): void => quickSave(entity), // eslint-disable-line @typescript-eslint/camelcase
+      save_onsavecallback: (): void => quickSave(), // eslint-disable-line @typescript-eslint/camelcase
     };
 
     tinymce.init(Object.assign(tinyConfig, tinyConfigForEdit));

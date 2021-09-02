@@ -52,7 +52,9 @@ import Link from './Link.class';
 import { Entity, Target } from './interfaces';
 import { getEntity } from './misc';
 
-const entity = getEntity();
+if (document.getElementById('info')) {
+  const entity = getEntity();
+}
 
 // AUTOSAVE
 let typingTimer: any;                // timer identifier

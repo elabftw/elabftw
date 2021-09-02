@@ -52,8 +52,9 @@ import Link from './Link.class';
 import { Entity, Target } from './interfaces';
 import { getEntity } from './misc';
 
+let entity;
 if (document.getElementById('info')) {
-  const entity = getEntity();
+  entity = getEntity();
 }
 
 // AUTOSAVE

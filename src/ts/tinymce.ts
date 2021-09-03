@@ -164,7 +164,7 @@ export function getTinymceBaseConfig(page: string): object {
       // use # for autocompletion
       delimiter: '#',
       // get the source from json with get request
-      source: function (query: string, process: Function): void {
+      source: function(query: string, process: Function): void {
         const url = 'app/controllers/EntityAjaxController.php';
         $.getJSON(url, {
           mention: 1,
@@ -174,7 +174,7 @@ export function getTinymceBaseConfig(page: string): object {
           process(data);
         });
       },
-      insert: function (data): string {
+      insert: function(data): string {
         if (data.type === 'items') {
           const LinkC = new Link(entity);
           LinkC.create(parseInt(data.id)).then((json) => {

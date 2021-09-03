@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // INVERT SELECTION
   $('#invertSelection').on('click', function() {
-    ($('.item input[type=checkbox]') as JQuery<HTMLInputElement>).each(function () {
+    ($('.item input[type=checkbox]') as JQuery<HTMLInputElement>).each(function() {
       this.checked = !this.checked;
       if ($(this).prop('checked')) {
         $(this).parent().parent().css('background-color', bgColor);
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // reload the page once it's done
     // a simple reload would not work here
     // we need to use when/then
-    $.when.apply(null, ajaxs).then(function (){
+    $.when.apply(null, ajaxs).then(function(){
       window.location.reload();
     });
   });
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // reload the page once it's done
     // a simple reload would not work here
     // we need to use when/then
-    $.when.apply(null, ajaxs).then(function (){
+    $.when.apply(null, ajaxs).then(function(){
       window.location.reload();
     });
     notif({'msg': 'Saved', 'res': true});

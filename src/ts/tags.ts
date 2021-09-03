@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // we need to have an entity so the Tags model is built correctly
       // also it's a mandatory constructor param for Tag.class.ts
       TagC.update(value, $(this).data('tagid'));
-      return(value);
+      return (value);
     }, {
       tooltip : i18next.t('click-to-edit'),
       indicator : 'Saving...',

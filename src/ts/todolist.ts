@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ev.currentTarget.dataset.todoitemid,
         input,
       );
-      return(input);
+      return (input);
     }, {
       tooltip : i18next.t('click-to-edit'),
       indicator : 'Saving...',

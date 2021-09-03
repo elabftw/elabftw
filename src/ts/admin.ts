@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       AjaxC.send(payload);
-      return(value);
+      return (value);
     }, {
       indicator : 'Saving...',
       submit : 'Save',

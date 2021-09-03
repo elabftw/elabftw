@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
       realName: $(this).data('name'),
       content: png,
       id: about.id,
-      type: about.type
+      type: about.type,
     }).done(function(json) {
       notif(json);
       if (json.res) {

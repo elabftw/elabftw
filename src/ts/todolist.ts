@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tooltip : i18next.t('click-to-edit'),
       indicator : 'Saving...',
       onblur: 'submit',
-      style : 'display:inline'
+      style : 'display:inline',
     });
   });
 

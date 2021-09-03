@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         action: Action.Read,
         entity: entity,
         model: entity.type,
-        target: Target.BoundEvent
+        target: Target.BoundEvent,
       };
       AjaxC.send(payload).then(json => {
         const bookingsDiv = document.getElementById('boundBookings');

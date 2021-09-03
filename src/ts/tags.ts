@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (checked.length === 0) {
         const json = {
           'msg': 'Nothing selected!',
-          'res': false
+          'res': false,
         };
         notif(json);
         return;
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cache[term] = json.value;
         response(json.value);
       });
-    }
+    },
   });
 
   // make the tag editable (on admin.ts)

@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCategory : true,
         id: checked[index]['id'],
         categoryId : $('#catChecked').val(),
-        type : about.type
+        type : about.type,
       }));
     });
     // reload the page once it's done
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rw: 'read',
         id: checked[index]['id'],
         value: $('#visChecked').val(),
-        type : about.type
+        type : about.type,
       }));
     });
     // reload the page once it's done

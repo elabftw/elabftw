@@ -57,7 +57,7 @@ class MdEditor extends Editor implements EditorInterface {
         }, 1);
         // parse with marked and return the html
         return marked(ed.$textarea.val());
-      }
+      },
     });
   }
   getContent(): string {

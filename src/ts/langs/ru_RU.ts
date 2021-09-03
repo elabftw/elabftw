@@ -19,7 +19,7 @@ const t = {
     "tag-delete-warning": "Удалить этот тег?",
     "upload-file-comment": "Файловый комментарий",
     "template-title": "Template title",
-  }
+  },
 };
 
 export default t;

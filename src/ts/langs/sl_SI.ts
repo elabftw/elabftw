@@ -19,7 +19,7 @@ const t = {
     "tag-delete-warning": "Želite izbrisati to oznako?",
     "upload-file-comment": "Komentar datoteke",
     "template-title": "Template title",
-  }
+  },
 };
 
 export default t;

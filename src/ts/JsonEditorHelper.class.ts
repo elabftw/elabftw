@@ -41,7 +41,7 @@ export default class JsonEditorHelper {
         if (newMode === 'code' || newMode === 'text') {
           (this.editorDiv.firstChild as HTMLDivElement).style.height = '500px';
         }
-      }
+      },
     };
 
     // instanciate the editor
@@ -155,7 +155,7 @@ export default class JsonEditorHelper {
       id: this.entity.id,
       realName: realName,
       fileType: 'json',
-      string: JSON.stringify(this.editor.get())
+      string: JSON.stringify(this.editor.get()),
     }).done(json => {
       reloadElement('filesdiv');
       this.currentUploadId = String(json.uploadId);
@@ -184,7 +184,7 @@ export default class JsonEditorHelper {
       contentType: false,
       success: (json) => {
         notif(json);
-      }
+      },
     });
   }
 

@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $(this).attr('disabled', 'disabled').text('Please wait…');
     $.post('app/controllers/UsersAjaxController.php', {
       usersValidate: true,
-      userid: $(this).data('userid')
+      userid: $(this).data('userid'),
     }).done(function(json) {
       notif(json);
       if (json.res) {
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cache[term] = json.value;
             response(json.value);
           });
-        }
+        },
       });
     }
   });
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
       cancel : 'Cancel',
       cancelcssclass : 'button btn btn-danger',
       submitcssclass : 'button btn btn-primary',
-      style : 'display:inline'
+      style : 'display:inline',
     });
   });
 

@@ -156,7 +156,7 @@ library.add(
   faUpload,
   faUser,
   faUserCircle,
-  faUsers
+  faUsers,
 );
 
 // REGULAR

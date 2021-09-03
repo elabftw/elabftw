@@ -19,7 +19,7 @@ const t = {
     "tag-delete-warning": "Odstrániť túto značku?",
     "upload-file-comment": "Komentár k súboru",
     "template-title": "Template title",
-  }
+  },
 };
 
 export default t;

@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         start: info.startStr,
         end: info.endStr,
         title: title,
-        item: $('#info').data('item')
+        item: $('#info').data('item'),
       }).done(function(json) {
         notif(json);
         if (json.res) {
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
       $('#deleteEvent').on('click', function(): void {
         $.post('app/controllers/SchedulerController.php', {
           destroy: true,
-          id: info.event.id
+          id: info.event.id,
         }).done(function(json) {
           notif(json);
           if (json.res) {
@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cache[term] = data;
             response(data);
           });
-        }
+        },
       });
       $('#binddbinput').autocomplete({
         appendTo: '#binddivdb',
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cache[term] = data;
             response(data);
           });
-        }
+        },
       });
 
     },

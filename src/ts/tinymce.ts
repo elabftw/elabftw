@@ -49,17 +49,15 @@ import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-plugins/mention/plugin.js';
 import EntityClass from './Entity.class';
 import Link from './Link.class';
-import { Entity, Target } from './interfaces';
+import { Target } from './interfaces';
 import { getEntity } from './misc';
 
-const entity = getEntity();
-
 // AUTOSAVE
-let typingTimer: any;                // timer identifier
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
 
 // called when you click the save button of tinymce
-export function quickSave(entity: Entity): void {
+export function quickSave(): void {
+  const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
   EntityC.update(entity.id, Target.Body, tinymce.activeEditor.getContent()).then(() => {
     // detect if the session timedout
@@ -112,7 +110,7 @@ function doneTyping(): void {
     alert('Too many characters!!! Cannot save properly!!!');
     return;
   }
-  quickSave(entity);
+  quickSave();
 }
 
 // options for tinymce to pass to tinymce.init()
@@ -121,6 +119,7 @@ export function getTinymceBaseConfig(page: string): object {
   if (page !== 'admin') {
     plugins += ' autosave';
   }
+  const entity = getEntity();
 
   return {
     mode: 'specific_textareas',
@@ -195,6 +194,8 @@ export function getTinymceBaseConfig(page: string): object {
     },
     // keyboard shortcut to insert today's date at cursor in editor
     setup: (editor: any): void => {
+      // holds the timer setTimeout function
+      let typingTimer;
       // make the edges round
       editor.on('init', () => editor.getContainer().className += ' rounded');
       // add date+time button

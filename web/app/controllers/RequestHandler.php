@@ -94,7 +94,7 @@ try {
         $res = $Model->toggleLock();
     }
 
-    if ($Processor instanceof FormProcessor) {
+    if ($Processor instanceof FormProcessor && !($Request->request->get('extraParam') === 'jsoneditor')) {
         $Response = new RedirectResponse('../../' . $Processor->Entity->page . '.php?mode=edit&id=' . $Processor->Entity->id);
         $Response->send();
         exit;

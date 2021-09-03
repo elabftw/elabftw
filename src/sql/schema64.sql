@@ -6,5 +6,6 @@ START TRANSACTION;
     UPDATE `idps` SET idps.fname_attr = (SELECT config.conf_value FROM config WHERE config.conf_name = 'saml_firstname');
     UPDATE `idps` SET idps.lname_attr = (SELECT config.conf_value FROM config WHERE config.conf_name = 'saml_lastname');
     DELETE FROM config WHERE conf_name = 'saml_email' OR conf_name = 'saml_firstname' OR conf_name = 'saml_lastname' OR conf_name = 'saml_team';
+    DELETE FROM config WHERE conf_name = 'ban_time';
     UPDATE `config` SET `conf_value` = 64 WHERE `conf_name` = 'schema';
 COMMIT;

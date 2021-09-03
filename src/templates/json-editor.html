@@ -13,7 +13,7 @@
         <div class='btn-group'>
           <button type='button' data-action='json-save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
           <div class='btn-group dropright' role='group'>
-            <button type='button' class='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+            <button type='button' id='json-save-dropdown' class='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
               <span class='sr-only'>{{ 'Toggle JSON editor save menu'|trans }}</span>
             </button>
             <div class='dropdown-menu'>
@@ -25,9 +25,9 @@
         <button type='button' data-action='json-clear' class='btn btn-danger float-right'>{{ 'Clear'|trans }}</button>
       </div>
     {% endif %}
-    {% if mode == 'edit-item-type' %}
+    {% if mode == 'edit-template' %}
       <div class='mt-4 text-center'>
-        <button type='button' id='itemsTypesJsonSave' data-action='json-save-metadata-from-id' data-type='items_types' data-id='' class='btn btn-primary'>{{ 'Save as metadata'|trans }}</button>
+        <button type='button' id='templateJsonSave' data-action='json-save-metadata-from-id' data-id='' class='btn btn-primary'>{{ 'Save as metadata'|trans }}</button>
         <button type='button' data-action='json-clear' class='btn btn-danger float-right'>{{ 'Clear'|trans }}</button>
       </div>
     {% endif %}

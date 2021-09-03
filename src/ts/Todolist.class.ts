@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedEntities, Target, ResponseMsg } from './interfaces';
+import { Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedEntities, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
@@ -66,16 +66,16 @@ export default class Todolist {
   }
 
 
-  getSteps(type: EntityType, target: Target): Promise<void> {
+  getUnfinishedStep(type: EntityType, content: string): Promise<void> {
     const payload: Payload = {
       method: Method.GET,
       action: Action.Read,
+      model: Model.UnfinishedStep,
       entity: {
         type: type,
         id: null,
       },
-      model: Model.Step,
-      target: target,
+      content: content,
     };
     return this.sender.send(payload).then(json => {
       if (json.res) {
@@ -106,14 +106,14 @@ export default class Todolist {
       this.read();
 
       // unfinished experiments steps
-      this.getSteps(EntityType.Experiment, Target.All);
+      this.getUnfinishedStep(EntityType.Experiment, 'user');
 
       // unfinished items steps of the entire team or just for items owned by the user
-      const scopeSwitch = document.getElementById('itemsStepsScope') as HTMLInputElement;
+      const scopeSwitch = document.getElementById('todolistStepsShowTeam') as HTMLInputElement;
       scopeSwitch.addEventListener('change', event => {
-        this.itemsStepsScope(event.target as HTMLInputElement);
+        this.todolistStepsShowTeam(event.target as HTMLInputElement);
       });
-      this.itemsStepsScope(scopeSwitch);
+      this.todolistStepsShowTeam(scopeSwitch);
 
       localStorage.setItem('isTodolistOpen', '1');
     }
@@ -130,8 +130,7 @@ export default class Todolist {
     return this.sender.send(payload);
   }
 
-  itemsStepsScope(el: HTMLInputElement): void {
-    const itemTarget = (el.checked ? Target.AllTeam : Target.All);
-    this.getSteps(EntityType.Item, itemTarget);
+  todolistStepsShowTeam(element: HTMLInputElement): void {
+    this.getUnfinishedStep(EntityType.Item, (element.checked ? 'team' : 'user'));
   }
 }

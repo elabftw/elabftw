@@ -15,12 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  const TodolistC = new Todolist();
-
   const pagesWithoutTodo = ['login', 'register', 'change-pass'];
   if (pagesWithoutTodo.includes(document.getElementById('info').dataset.page)) {
     return;
   }
+
+  const TodolistC = new Todolist();
 
   // TOGGLE
   // reopen todolist panel if it was previously opened
@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
       TodolistC.toggle();
     });
   }
+
+
   // sublists i.e. actual todo-list and unfinished item/experiment steps
   const sublistDivs = ['todoItemsDiv', 'todoStepsExperiment', 'todoStepsItem'];
   sublistDivs.forEach(list => {
@@ -40,18 +42,19 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById(list).toggleAttribute('hidden');
     }
   });
-  // itemsStepsScope i.e. user (0) or team (1)
-  const itemsStepsScope = document.getElementById('itemsStepsScope') as HTMLInputElement;
-  const storageItemsStepsScope = localStorage.getItem('itemsStepsScopeIsTeam');
-  // local storage has priority over default setting team
-  if (itemsStepsScope.checked && storageItemsStepsScope === '0') {
-    itemsStepsScope.checked = false;
+
+  // todolistItemsStepsShowTeam i.e. user (0) or team (1)
+  const todolistStepsShowTeam = document.getElementById('todolistStepsShowTeam') as HTMLInputElement;
+  const storageTodolistStepsShowTeam = localStorage.getItem('todolistStepsShowTeam');
+  // local storage has priority over default setting >show team steps<
+  if (todolistStepsShowTeam.checked && storageTodolistStepsShowTeam === '0') {
+    todolistStepsShowTeam.checked = false;
   // set storage value if default setting is team
-  } else if (itemsStepsScope.checked) {
-    localStorage.setItem('itemsStepsScopeIsTeam', '1');
+  } else if (todolistStepsShowTeam.checked) {
+    localStorage.setItem('todolistStepsShowTeam', '1');
   // check box if it was checked before
-  } else if (storageItemsStepsScope === '1') {
-    itemsStepsScope.checked = true;
+  } else if (storageTodolistStepsShowTeam === '1') {
+    todolistStepsShowTeam.checked = true;
   }
 
   // UPDATE TODOITEM
@@ -122,14 +125,13 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (localStorage.getItem(sublist) === '1') {
         localStorage.removeItem(sublist);
       }
-    // 
-    } else if (el.id === 'itemsStepsScope') {
-      const storageName = 'itemsStepsScopeIsTeam';
-      const storageValue = localStorage.getItem(storageName);
+    // TOGGLE ItemsStepsShowTeam
+    } else if (el.id === 'todolistStepsShowTeam') {
+      const storageValue = localStorage.getItem('todolistStepsShowTeam');
       if (!storageValue || storageValue === '0') {
-        localStorage.setItem(storageName, '1');
+        localStorage.setItem('todolistStepsShowTeam', '1');
       } else if (storageValue === '1') {
-        localStorage.setItem(storageName, '0');
+        localStorage.setItem('todolistStepsShowTeam', '0');
       }
     }
   });

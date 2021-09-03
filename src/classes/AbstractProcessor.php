@@ -28,6 +28,7 @@ use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
+use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
@@ -135,6 +136,8 @@ abstract class AbstractProcessor implements ProcessorInterface
                 return new Links($this->Entity, $this->id);
             case 'step':
                 return new Steps($this->Entity, $this->id);
+            case 'unfinishedstep':
+                return new UnfinishedSteps($this->Entity);
             case 'upload':
                 return new Uploads($this->Entity, $this->id);
             case 'privacypolicy':

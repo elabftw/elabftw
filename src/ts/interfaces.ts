@@ -68,6 +68,7 @@ enum Model {
   PrivacyPolicy = 'privacypolicy',
   Status = 'status',
   Step = 'step',
+  UnfinishedStep = 'unfinishedstep',
   Tag = 'tag',
   TeamGroup = 'teamgroup',
   Todolist = 'todolist',
@@ -84,7 +85,6 @@ enum EntityType {
 
 enum Target {
   All = 'all',
-  AllTeam = 'all_team',
   Body = 'body',
   BoundEvent = 'boundevent',
   Comment = 'comment',

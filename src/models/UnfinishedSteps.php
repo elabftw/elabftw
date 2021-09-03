@@ -9,26 +9,26 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Interfaces\ContentParamsInterface;
 use PDO;
 
 /**
- * All about unfinished steps
+ * Read the unfinished steps of items or experiments to display in todo-list
+ * For items unfinished steps of the user or the team are returned
+ * For experiments only unfinished steps of the user are returned
  */
-class UnfinishedSteps
+class UnfinishedSteps extends Steps
 {
-    public function __construct(public AbstractEntity $Entity, private ?strind $scope = null)
+    public function __construct(public AbstractEntity $Entity)
     {
         parent::__construct($Entity);
     }
 
     public function read(ContentParamsInterface $params): array
     {
-        if ($params->getTarget() === 'all') {
-            $whereClause = ' WHERE entity.userid = :userid';
-        }
-        if ($params->getTarget() === 'all_team') {
+        $whereClause = ' WHERE entity.userid = :userid';
+
+        if ($params->getContent() === 'team') {
             $teamgroupsOfUser = array_column((new TeamGroups($this->Entity->Users))->readGroupsFromUser(), 'id');
             $teamgroups = '';
             foreach ($teamgroupsOfUser as $teamgroup) {
@@ -50,27 +50,6 @@ class UnfinishedSteps
                 )";
         }
 
-        $sql = $this->getReadAllSql($whereClause);
-
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        if ($this->Entity->type === 'items') {
-            $req->bindParam(':teamid', $this->Entity->Users->team, PDO::PARAM_INT);
-        }
-        $this->Db->execute($req);
-
-        $res = $this->Db->fetchAll($req);
-
-        return $this->cleanUpReadAllSQLResults($res);
-    }
-
-    /*
-     * Provide SQL statement to get unfinished steps
-     *
-     * @param string $whereClause SQL WHERE clause
-     */
-    private function getReadAllSql(string $whereClause): string
-    {
         $sql = 'SELECT entity.id, entity.title, stepst.finished, stepst.steps_body, stepst.steps_id
             FROM ' . $this->Entity->type . " as entity
             CROSS JOIN (
@@ -81,17 +60,19 @@ class UnfinishedSteps
                 WHERE finished = 0 GROUP BY item_id) AS stepst ON (stepst.item_id = entity.id)';
         $sql .= $whereClause;
         $sql .= ' GROUP BY entity.id ORDER BY entity.id DESC';
-        return $sql;
-    }
 
-    /*
-     * Clean up the read results so we get a nice array with entity id/title and steps with their id/body
-     * use reference to edit in place
-     *
-     *@param array $res Unfinished steps SQL result array
-     */
-    private function cleanUpReadAllSQLResults(array $res): array
-    {
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        if ($this->Entity->type === 'items'
+            && $params->getContent() === 'team') {
+            $req->bindParam(':teamid', $this->Entity->Users->team, PDO::PARAM_INT);
+        }
+        $this->Db->execute($req);
+
+        $res = $this->Db->fetchAll($req);
+
+        // Clean up the results so we get a nice array with entity id/title and steps with their id/body
+        // use reference to edit in place
         foreach ($res as &$entity) {
             $stepIDs = explode('|', $entity['steps_id']);
             $stepsBodies = explode('|', $entity['steps_body']);
@@ -100,7 +81,7 @@ class UnfinishedSteps
             foreach ($stepIDs as $key => $stepID) {
                 $entitySteps[] = array($stepID, $stepsBodies[$key]);
             }
-            $entity['steps'] = $entitySteps;s
+            $entity['steps'] = $entitySteps;
             unset($entity['steps_body'], $entity['steps_id'], $entity['finished']);
         }
 

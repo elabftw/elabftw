@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tooltip : i18next.t('click-to-edit'),
       indicator : 'Saving...',
       onblur: 'submit',
-      style : 'display:inline'
+      style : 'display:inline',
     });
   });
 
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (checked.length === 0) {
         const json = {
           'msg': 'Nothing selected!',
-          'res': false
+          'res': false,
         };
         notif(json);
         return;
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cache[term] = data;
         response(data);
       });
-    }
+    },
   });
 
   // DESTROY

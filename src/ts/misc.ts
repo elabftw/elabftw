@@ -151,11 +151,11 @@ export function makeSortableGreatAgain(): void {
       const ordering = $(this).sortable('toArray');
       $.post('app/controllers/SortableAjaxController.php', {
         table: $(this).data('table'),
-        ordering: ordering
+        ordering: ordering,
       }).done(function(json) {
         notif(json);
       });
-    }
+    },
   });
 }
 

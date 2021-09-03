@@ -19,7 +19,7 @@ const t = {
     "tag-delete-warning": "Schlagwort löschen?",
     "upload-file-comment": "Dateikommentar",
     "template-title": "Vorlagentitel",
-  }
+  },
 };
 
 export default t;

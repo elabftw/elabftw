@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $(document).on('mouseenter', '.file-comment', function() {
     ($('.editable') as any).editable(function(input: string) {
       UploadC.update(input, $(this).data('id'), Target.Comment);
-      return(input);
+      return (input);
     }, {
       tooltip : i18next.t('upload-file-comment'),
       placeholder: i18next.t('upload-file-comment'),
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
       realName: $(this).data('name'),
       content: png,
       id: about.id,
-      type: about.type
+      type: about.type,
     }).done(function(json) {
       notif(json);
       if (json.res) {

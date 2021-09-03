@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const name = $('#teamsName').val();
       $.post(this.controller, {
         teamsCreate: true,
-        teamsName: name
+        teamsName: name,
       }).done(function(data) {
         Teams.destructor(data);
       });
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
       (document.getElementById('teamsDestroyButton_' + id) as HTMLButtonElement).disabled = true;
       $.post(this.controller, {
         teamsDestroy: true,
-        teamsDestroyId: id
+        teamsDestroyId: id,
       }).done(function(data) {
         Teams.destructor(data);
       });
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (json.res) {
         $('#teamsDiv').load('sysconfig.php #teamsDiv > *');
       }
-    }
+    },
   };
 
   $(document).on('click', '#teamsCreateButton', function() {
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $.post('app/controllers/SysconfigAjaxController.php', {
       massEmail: true,
       subject: $('#massSubject').val(),
-      body: $('#massBody').val()
+      body: $('#massBody').val(),
     }).done(function(json) {
       notif(json);
       if (json.res) {
@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#testemailButton').text('Sending…');
     $.post('app/controllers/SysconfigAjaxController.php', {
       testemailSend: true,
-      testemailEmail: email
+      testemailEmail: email,
     }).done(function(json) {
       notif(json);
       if (json.res) {
@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (confirm(i18next.t('generic-delete-warning'))) {
       $.post('app/controllers/SysconfigAjaxController.php', {
         idpsDestroy: true,
-        id: $(this).data('id')
+        id: $(this).data('id'),
       }).done(function(json) {
         notif(json);
         if (json.res) {

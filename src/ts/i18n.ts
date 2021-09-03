@@ -43,7 +43,7 @@ i18next.init({
     'ru_RU',
     'sl_SI',
     'sk_SK',
-    'zh_CN'
+    'zh_CN',
   ],
   fallbackLng: 'en_GB',
   /* eslint-disable @typescript-eslint/camelcase */

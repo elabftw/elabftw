@@ -111,7 +111,7 @@ export class Ajax {
     return fetch(`app/controllers/RequestHandler.php?p=${encoded}`, {
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
-      }
+      },
     });
   }
 
@@ -122,7 +122,7 @@ export class Ajax {
     return fetch(`app/controllers/UnauthRequestHandler.php?p=${encoded}`, {
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
-      }
+      },
     });
   }
 }

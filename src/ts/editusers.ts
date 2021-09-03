@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and user will not be able to login anymore.')) {
       $.post('app/controllers/UsersAjaxController.php', {
         toggleArchiveUser: true,
-        userid: $(this).data('userid')
+        userid: $(this).data('userid'),
       }).done(function(json) {
         notif(json);
         if (json.res) {
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const elem = $(this);
       $.post('app/controllers/UsersAjaxController.php', {
         usersDestroy: true,
-        userid: elem.data('userid')
+        userid: elem.data('userid'),
       }).done(function(json) {
         notif(json);
         if (json.res) {

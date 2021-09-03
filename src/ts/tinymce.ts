@@ -152,19 +152,19 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'Perl', value: 'perl'},
       {text: 'Python', value: 'python'},
       {text: 'R', value: 'r'},
-      {text: 'Ruby', value: 'ruby'}
+      {text: 'Ruby', value: 'ruby'},
     ],
     language: $('#user-prefs').data('lang'),
     charmap_append: [ // eslint-disable-line @typescript-eslint/camelcase
       [0x2640, 'female sign'],
-      [0x2642, 'male sign']
+      [0x2642, 'male sign'],
     ],
     height: '500',
     mentions: {
       // use # for autocompletion
       delimiter: '#',
       // get the source from json with get request
-      source: function (query: string, process: Function): void {
+      source: function(query: string, process: Function): void {
         const url = 'app/controllers/EntityAjaxController.php';
         $.getJSON(url, {
           mention: 1,
@@ -174,7 +174,7 @@ export function getTinymceBaseConfig(page: string): object {
           process(data);
         });
       },
-      insert: function (data): string {
+      insert: function(data): string {
         if (data.type === 'items') {
           const LinkC = new Link(entity);
           LinkC.create(parseInt(data.id)).then((json) => {
@@ -190,7 +190,7 @@ export function getTinymceBaseConfig(page: string): object {
     mobile: {
       theme: 'mobile',
       plugins: [ 'save', 'lists', 'link' ],
-      toolbar: [ 'undo', 'redo', 'bold', 'italic', 'underline', 'bullist', 'numlist', 'link' ]
+      toolbar: [ 'undo', 'redo', 'bold', 'italic', 'underline', 'bullist', 'numlist', 'link' ],
     },
     // keyboard shortcut to insert today's date at cursor in editor
     setup: (editor: any): void => {
@@ -204,7 +204,7 @@ export function getTinymceBaseConfig(page: string): object {
         tooltip: 'Insert timestamp',
         onAction: function() {
           editor.insertContent(`${getDatetime()} `);
-        }
+        },
       });
       // some shortcuts
       editor.addShortcut('ctrl+shift+d', 'add date/time at cursor', addDatetimeOnCursor);
@@ -227,16 +227,16 @@ export function getTinymceBaseConfig(page: string): object {
         selector: 'img',
         styles: {
           'float': 'left',
-          'margin': '0 10px 0 10px'
-        }
+          'margin': '0 10px 0 10px',
+        },
       }, {
         title: 'Image Right',
         selector: 'img',
         styles: {
           'float': 'right',
-          'margin': '0 0 10px 10px'
-        }
-      }
+          'margin': '0 0 10px 10px',
+        },
+      },
     ],
   };
 }

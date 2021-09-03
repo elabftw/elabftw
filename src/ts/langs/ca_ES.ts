@@ -19,7 +19,7 @@ const t = {
     "tag-delete-warning": "Vols suprimir aquesta etiqueta?",
     "upload-file-comment": "Comentari d’arxiu",
     "template-title": "Template title",
-  }
+  },
 };
 
 export default t;

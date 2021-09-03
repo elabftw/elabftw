@@ -77,10 +77,10 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
       const convertToFeaturedDNASequence = function(openVESequence): void {
         data.sequenceData = {
           features: [],
-          sequence: openVESequence.sequence
+          sequence: openVESequence.sequence,
         };
         data.registryData = {
-          name: openVESequence.name
+          name: openVESequence.name,
         };
         const featureMap = {};
 
@@ -93,7 +93,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
           if (existingFeature) {
             existingFeature.locations.push({
               genbankStart: feature.start + 1,
-              end: feature.end + 1
+              end: feature.end + 1,
             });
           } else {
             featureMap[feature.id] = {
@@ -103,10 +103,10 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
               forward: feature.forward,
               notes: [{
                 name: 'note',
-                value: feature.notes
+                value: feature.notes,
               }],
               start: feature.start,
-              end: feature.end
+              end: feature.end,
             };
           }
         }
@@ -160,8 +160,8 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
             'translations',
             'cutsites',
             'orfs',
-            'genbank'
-          ]
+            'genbank',
+          ],
         },
         ToolBarProps: {
           toolList: [
@@ -182,7 +182,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
             //'editTool',
             'findTool',
             //'visibilityTool'
-          ]
+          ],
         },
         StatusBarProps: {
           showCircularity: false,
@@ -202,28 +202,28 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         // clear the sequenceDataHistory if there is any left over from a previous sequence
         sequenceDataHistory: {},
         annotationVisibility: {
-          features: true
+          features: true,
         },
         panelsShown: [
           [{
             id: 'circular',
             name: 'Plasmid Map',
-            active: true
+            active: true,
           }, {
             id: 'rail',
             name: 'Linear Map',
-            active: false
+            active: false,
           }],
           [{
             id: 'sequence',
             name: 'Linear Sequence Map',
-            active: true
+            active: true,
           }, {
             id: 'properties',
             name: 'Properties',
-            active: false
-          }]
-        ]
+            active: false,
+          }],
+        ],
       };
 
       // Change layout for linear sequences

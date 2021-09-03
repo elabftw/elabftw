@@ -19,7 +19,7 @@ const t = {
     "tag-delete-warning": "删除这个标签？",
     "upload-file-comment": "档案评论",
     "template-title": "Template title",
-  }
+  },
 };
 
 export default t;

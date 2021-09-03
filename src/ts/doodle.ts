@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
       realName: realName,
       id: id,
       fileType: 'png',
-      string: image
+      string: image,
     }).done(function(json) {
       if (type === 'items') {
         type = 'database';

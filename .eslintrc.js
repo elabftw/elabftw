@@ -10,28 +10,19 @@
  */
 
 module.exports = {
-    'parser':  '@typescript-eslint/parser',
-    'extends': 'plugin:@typescript-eslint/recommended',
-    'parserOptions': {
-        'ecmaVersion': 2018,
-        'sourceType': 'module'
-    },
-    'rules': {
-        'indent': [
-            'error',
-            2
-        ],
-        'linebreak-style': [
-            'error',
-            'unix'
-        ],
-        'quotes': [
-            'error',
-            'single'
-        ],
-        'semi': [
-            'error',
-            'always'
-        ]
-    }
+  'parser':  '@typescript-eslint/parser',
+  'extends': 'plugin:@typescript-eslint/recommended',
+  'parserOptions': {
+    'ecmaVersion': 2018,
+    'sourceType': 'module',
+  },
+  'rules': {
+    'comma-dangle': ['error', 'always-multiline'],
+    'indent': ['error', 2],
+    'keyword-spacing': ['error', {'before': true, 'after': true}],
+    'linebreak-style': ['error', 'unix'],
+    'quotes': ['error', 'single'],
+    'semi': ['error', 'always'],
+    'space-before-function-paren': ['error', 'never'],
+  }
 };

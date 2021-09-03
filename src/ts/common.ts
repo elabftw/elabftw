@@ -51,8 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // TODO
   $.ajaxSetup({
     headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
+      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+    },
   });
 
   // set the language for js translated strings

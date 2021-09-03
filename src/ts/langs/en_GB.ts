@@ -23,7 +23,7 @@ const t = {
     "tag-delete-warning": "Delete this tag?",
     "template-title": "Template title",
     "upload-file-comment": "File comment",
-  }
+  },
 };
 
 export default t;

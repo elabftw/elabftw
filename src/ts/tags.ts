@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (checked.length === 0) {
         const json = {
           'msg': 'Nothing selected!',
-          'res': false
+          'res': false,
         };
         notif(json);
         return;
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cache[term] = json.value;
         response(json.value);
       });
-    }
+    },
   });
 
   // make the tag editable (on admin.ts)
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // we need to have an entity so the Tags model is built correctly
       // also it's a mandatory constructor param for Tag.class.ts
       TagC.update(value, $(this).data('tagid'));
-      return(value);
+      return (value);
     }, {
       tooltip : i18next.t('click-to-edit'),
       indicator : 'Saving...',

@@ -9,7 +9,6 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Filter;
 
@@ -23,9 +22,8 @@ final class UnfinishedStepsParams extends ContentParams implements ContentParams
     {
         $scope = Filter::sanitize($this->extra[$key] ?? 'user');
 
-        if (!($scope === 'user'
-            || $scope === 'team')) {
-            throw new ImproperActionException(Tools::error());
+        if (!($scope === 'user' || $scope === 'team')) {
+            $scope = 'user';
         }
 
         return $scope;

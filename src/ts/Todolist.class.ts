@@ -26,7 +26,7 @@ export default class Todolist {
     // unfinished steps scopeSwitch i.e. user (0) or team (1)
     const scopeSwitch = document.getElementById('todolistStepsShowTeam') as HTMLInputElement;
     const storageScopeSwitch = localStorage.getItem('todolistStepsShowTeam');
-    // local storage has priority over default user setting
+    // local storage has priority over default setting >show team steps<
     if (scopeSwitch.checked && storageScopeSwitch === '0') {
       scopeSwitch.checked = false;
       localStorage.setItem('todolistStepsShowTeam', '0');

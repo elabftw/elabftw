@@ -137,7 +137,7 @@ abstract class AbstractProcessor implements ProcessorInterface
             case 'step':
                 return new Steps($this->Entity, $this->id);
             case 'unfinishedstep':
-                return new UnfinishedSteps($this->Entity, new UnfinishedStepsParams($this->extra));
+                return new UnfinishedSteps($this->Entity);
             case 'upload':
                 return new Uploads($this->Entity, $this->id);
             case 'privacypolicy':
@@ -187,6 +187,9 @@ abstract class AbstractProcessor implements ProcessorInterface
         }
         if ($this->Model instanceof ItemsTypes) {
             return new ItemTypeParams($this->content, $this->target, $this->extra);
+        }
+        if ($this->Model instanceof UnfinishedSteps) {
+            return new UnfinishedStepsParams($this->extra);
         }
         if ($this->Model instanceof Steps) {
             return new StepParams($this->content, $this->target);

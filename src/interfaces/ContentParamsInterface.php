@@ -17,4 +17,6 @@ interface ContentParamsInterface
     public function getTarget(): string;
 
     public function getBody(): string;
+
+    public function getExtra(string $key): string;
 }

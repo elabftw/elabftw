@@ -10,18 +10,18 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\UnfinishedStepsParamsInterface;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Filter;
 
-final class UnfinishedStepsParams extends ContentParams implements UnfinishedStepsParamsInterface
+final class UnfinishedStepsParams extends ContentParams implements ContentParamsInterface
 {
-    public function __construct(private ?array $extra = null)
+    public function __construct(protected ?array $extra = null)
     {
     }
 
-    public function getScope(): string
+    public function getExtra(string $key): string
     {
-        $scope = Filter::sanitize($this->extra['scope'] ?? 'user');
+        $scope = Filter::sanitize($this->extra[$key] ?? 'user');
 
         if (!($scope === 'user'
             || $scope === 'team')) {

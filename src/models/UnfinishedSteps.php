@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\UnfinishedStepsParamsInterface;
 use PDO;
 
 /**
@@ -20,19 +19,16 @@ use PDO;
  */
 class UnfinishedSteps extends Steps
 {
-    private string $scope;
-
-    public function __construct(public AbstractEntity $Entity, private UnfinishedStepsParamsInterface $params)
+    public function __construct(public AbstractEntity $Entity)
     {
         parent::__construct($Entity);
-        $this->scope = $params->getScope();
     }
 
     public function read(ContentParamsInterface $params): array
     {
         $whereClause = ' WHERE entity.userid = :userid';
 
-        if ($this->scope === 'team') {
+        if ($params->getExtra('scope') === 'team') {
             $teamgroupsOfUser = array_column((new TeamGroups($this->Entity->Users))->readGroupsFromUser(), 'id');
             $teamgroups = '';
             foreach ($teamgroupsOfUser as $teamgroup) {
@@ -64,7 +60,7 @@ class UnfinishedSteps extends Steps
                 WHERE finished = 0 GROUP BY item_id) AS stepst ON (stepst.item_id = entity.id)';
 
         if ($this->Entity->type === 'experiments'
-            && $this->scope === 'team') {
+            && $params->getExtra('scope') === 'team') {
             $sql .= 'JOIN users2teams ON (users2teams.users_id = entity.userid AND users2teams.teams_id = :teamid)';
         }
 
@@ -73,7 +69,7 @@ class UnfinishedSteps extends Steps
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        if ($this->scope === 'team') {
+        if ($params->getExtra('scope') === 'team') {
             $req->bindParam(':teamid', $this->Entity->Users->team, PDO::PARAM_INT);
         }
         $this->Db->execute($req);

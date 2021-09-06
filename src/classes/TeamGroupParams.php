@@ -14,7 +14,7 @@ use Elabftw\Interfaces\TeamGroupParamsInterface;
 
 final class TeamGroupParams extends ContentParams implements TeamGroupParamsInterface
 {
-    public function __construct(string $content, string $target = '', private ?array $extra = null)
+    public function __construct(string $content, string $target = '', protected ?array $extra = null)
     {
         parent::__construct($content, $target);
     }

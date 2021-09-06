@@ -97,11 +97,11 @@ abstract class AbstractProcessor implements ProcessorInterface
             $this->Entity = $this->getEntity($decoded->entity->type, $id);
         }
         $this->id = $this->setId((int) ($decoded->id ?? 0));
+        $this->Model = $this->buildModel($decoded->model ?? '');
+        $this->content = $decoded->content ?? '';
         if (property_exists($decoded, 'extraParams')) {
             $this->extra = (array) $decoded->extraParams;
         }
-        $this->Model = $this->buildModel($decoded->model ?? '');
-        $this->content = $decoded->content ?? '';
     }
 
     abstract protected function process(Request $request): void;

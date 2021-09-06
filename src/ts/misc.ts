@@ -191,3 +191,16 @@ export async function reloadElement(elementId): Promise<void> {
   const html = await fetchCurrentPage();
   document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
 }
+
+export function clearLocalStorage(): void {
+  const storageItems = [
+    'isTodolistOpen',
+    'todoItemsDiv-isClosed',
+    'todolistStepsShowTeam',
+    'todoStepsExperiment-isClosed',
+    'todoStepsItem-isClosed',
+  ];
+  storageItems.forEach(item => {
+    localStorage.removeItem(item);
+  });
+}

@@ -15,17 +15,8 @@
   <div id='todoItemsDiv'></div>
 
   <hr>
-  <h2>{{ 'Unfinished steps'|trans }}</h2>
-  <h3 class='d-inline-block'>{{ 'Experiments'|trans }}</h3>
-  <!-- toggle visibility of experiment steps -->
-  <a data-action='toggle-next' class='clickable float-right' title='{{ 'Toggle visibility'|trans }}'>
-    <i class='fas fa-eye fa-2x'></i>
-  </a>
-  <ul id='todoStepsExperiment' class='pl-0'></ul>
-
-  <hr>
   <div class='d-inline-block mb-2'>
-    <h3 class='d-inline'>{{ 'Items'|trans }}</h3>
+    <h2 class='d-inline'>{{ 'Unfinished steps'|trans }}</h2>
     <div class='d-inline-flex justify-content-center ml-4'>
         <div class='switch-label'>{{ 'User'|trans }}</div>
         <div class='custom-control custom-switch' style='padding-left: 1.3rem'>
@@ -34,7 +25,16 @@
         </div>
         <div class='switch-label'>{{ 'Team'|trans }}</div>
     </div>
-  </div>
+  </div>  
+  <h3 class='d-inline-block'>{{ 'Experiments'|trans }}</h3>
+  <!-- toggle visibility of experiment steps -->
+  <a data-action='toggle-next' class='clickable float-right' title='{{ 'Toggle visibility'|trans }}'>
+    <i class='fas fa-eye fa-2x'></i>
+  </a>
+  <ul id='todoStepsExperiment' class='pl-0'></ul>
+
+  <hr>
+  <h3 class='d-inline'>{{ 'Items'|trans }}</h3>
   <!-- toggle visibility of items steps -->
   <a data-action='toggle-next' class='clickable float-right' title='{{ 'Toggle visibility'|trans }}'>
     <i class='fas fa-eye fa-2x'></i>

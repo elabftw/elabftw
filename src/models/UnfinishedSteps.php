@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Interfaces\UnfinishedStepsParamsInterface;
 use PDO;
 
 /**
@@ -19,24 +20,27 @@ use PDO;
  */
 class UnfinishedSteps extends Steps
 {
-    public function __construct(public AbstractEntity $Entity)
+    private string $scope;
+
+    public function __construct(public AbstractEntity $Entity, private UnfinishedStepsParamsInterface $params)
     {
         parent::__construct($Entity);
+        $this->scope = $params->getScope();
     }
 
     public function read(ContentParamsInterface $params): array
     {
         $whereClause = ' WHERE entity.userid = :userid';
 
-        if ($params->getContent() === 'team') {
+        if ($this->scope === 'team') {
             $teamgroupsOfUser = array_column((new TeamGroups($this->Entity->Users))->readGroupsFromUser(), 'id');
             $teamgroups = '';
             foreach ($teamgroupsOfUser as $teamgroup) {
                 $teamgroups .= " OR entity.canread = $teamgroup";
             }
 
-            $whereClause = " WHERE entity.team = :teamid
-                AND (
+            $whereClause = ' WHERE' . ($this->Entity->type === 'items' ? ' entity.team = :teamid AND' : '') .
+                " (
                     entity.canread = 'public'
                     OR entity.canread = 'organization'
                     OR entity.canread = 'team'
@@ -58,21 +62,35 @@ class UnfinishedSteps extends Steps
                 GROUP_CONCAT(entity_steps.id ORDER BY entity_steps.ordering SEPARATOR '|') AS steps_id
                 FROM " . $this->Entity->type . '_steps as entity_steps
                 WHERE finished = 0 GROUP BY item_id) AS stepst ON (stepst.item_id = entity.id)';
+
+        if ($this->Entity->type === 'experiments'
+            && $this->scope === 'team') {
+            $sql .= 'JOIN users2teams ON (users2teams.users_id = entity.userid AND users2teams.teams_id = :teamid)';
+        }
+
         $sql .= $whereClause;
         $sql .= ' GROUP BY entity.id ORDER BY entity.id DESC';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        if ($this->Entity->type === 'items'
-            && $params->getContent() === 'team') {
+        if ($this->scope === 'team') {
             $req->bindParam(':teamid', $this->Entity->Users->team, PDO::PARAM_INT);
         }
         $this->Db->execute($req);
 
         $res = $this->Db->fetchAll($req);
 
-        // Clean up the results so we get a nice array with entity id/title and steps with their id/body
-        // use reference to edit in place
+        return $this->cleanUpResult($res);
+    }
+
+    /*
+     * Clean up the read result so we get a nice array with entity id/title and steps with their id/body
+     * use reference to edit in place
+     *
+     *@param array $res Unfinished steps SQL result array
+     */
+    private function cleanUpResult(array $res): array
+    {
         foreach ($res as &$entity) {
             $stepIDs = explode('|', $entity['steps_id']);
             $stepsBodies = explode('|', $entity['steps_body']);

@@ -97,11 +97,11 @@ abstract class AbstractProcessor implements ProcessorInterface
             $this->Entity = $this->getEntity($decoded->entity->type, $id);
         }
         $this->id = $this->setId((int) ($decoded->id ?? 0));
-        $this->Model = $this->buildModel($decoded->model ?? '');
-        $this->content = $decoded->content ?? '';
         if (property_exists($decoded, 'extraParams')) {
             $this->extra = (array) $decoded->extraParams;
         }
+        $this->Model = $this->buildModel($decoded->model ?? '');
+        $this->content = $decoded->content ?? '';
     }
 
     abstract protected function process(Request $request): void;
@@ -137,7 +137,7 @@ abstract class AbstractProcessor implements ProcessorInterface
             case 'step':
                 return new Steps($this->Entity, $this->id);
             case 'unfinishedstep':
-                return new UnfinishedSteps($this->Entity);
+                return new UnfinishedSteps($this->Entity, new UnfinishedStepsParams($this->extra));
             case 'upload':
                 return new Uploads($this->Entity, $this->id);
             case 'privacypolicy':

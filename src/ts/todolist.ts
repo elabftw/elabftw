@@ -5,7 +5,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare let key: any;
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import Todolist from './Todolist.class';
 import i18next from 'i18next';
@@ -21,41 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const TodolistC = new Todolist();
-
-  // TOGGLE
-  // reopen todolist panel if it was previously opened
-  if (localStorage.getItem('isTodolistOpen') === '1') {
-    TodolistC.toggle();
-  }
-  // use shortcut
-  if ($('#todoSc').length) {
-    key($('#todoSc').data('toggle'), () => {
-      TodolistC.toggle();
-    });
-  }
-
-
-  // sublists i.e. actual todo-list and unfinished item/experiment steps
-  const sublistDivs = ['todoItemsDiv', 'todoStepsExperiment', 'todoStepsItem'];
-  sublistDivs.forEach(list => {
-    if (localStorage.getItem(list + '-isClosed') === '1') {
-      document.getElementById(list).toggleAttribute('hidden');
-    }
-  });
-
-  // todolistItemsStepsShowTeam i.e. user (0) or team (1)
-  const todolistStepsShowTeam = document.getElementById('todolistStepsShowTeam') as HTMLInputElement;
-  const storageTodolistStepsShowTeam = localStorage.getItem('todolistStepsShowTeam');
-  // local storage has priority over default setting >show team steps<
-  if (todolistStepsShowTeam.checked && storageTodolistStepsShowTeam === '0') {
-    todolistStepsShowTeam.checked = false;
-  // set storage value if default setting is team
-  } else if (todolistStepsShowTeam.checked) {
-    localStorage.setItem('todolistStepsShowTeam', '1');
-  // check box if it was checked before
-  } else if (storageTodolistStepsShowTeam === '1') {
-    todolistStepsShowTeam.checked = true;
-  }
 
   // UPDATE TODOITEM
   $(document).on('mouseenter', '.todoItem', ev => {
@@ -124,14 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(sublist, '1');
       } else if (localStorage.getItem(sublist) === '1') {
         localStorage.removeItem(sublist);
-      }
-    // TOGGLE ItemsStepsShowTeam
-    } else if (el.id === 'todolistStepsShowTeam') {
-      const storageValue = localStorage.getItem('todolistStepsShowTeam');
-      if (!storageValue || storageValue === '0') {
-        localStorage.setItem('todolistStepsShowTeam', '1');
-      } else if (storageValue === '1') {
-        localStorage.setItem('todolistStepsShowTeam', '0');
       }
     }
   });

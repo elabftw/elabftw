@@ -5,6 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare let key: any;
 import { Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedEntities, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
@@ -14,10 +15,55 @@ export default class Todolist {
 
   model: Model;
   sender: Ajax;
+  unfinishedStepsScope: string;
+  initialLoad = true;
 
   constructor() {
     this.model = Model.Todolist,
     this.sender = new Ajax();
+    this.unfinishedStepsScope = 'user';
+
+    // unfinished steps scopeSwitch i.e. user (0) or team (1)
+    const scopeSwitch = document.getElementById('todolistStepsShowTeam') as HTMLInputElement;
+    const storageScopeSwitch = localStorage.getItem('todolistStepsShowTeam');
+    // local storage has priority over default user setting
+    if (scopeSwitch.checked && storageScopeSwitch === '0') {
+      scopeSwitch.checked = false;
+      localStorage.setItem('todolistStepsShowTeam', '0');
+    // set storage value if default setting is team
+    } else if (scopeSwitch.checked) {
+      localStorage.setItem('todolistStepsShowTeam', '1');
+      this.unfinishedStepsScope = 'team';
+    // check box if it was checked before
+    } else if (storageScopeSwitch === '1') {
+      scopeSwitch.checked = true;
+      this.unfinishedStepsScope = 'team';
+    }
+
+    scopeSwitch.addEventListener('change', () => {
+      this.toogleUnfinishedStepsScope();
+    });
+
+    // TOGGLE
+    // reopen todolist panel if it was previously opened
+    if (localStorage.getItem('isTodolistOpen') === '1') {
+      this.toggle();
+    }
+    // use shortcut
+    const todoSc = document.getElementById('todoSc');
+    if (todoSc) {
+      key(todoSc.dataset.toggle, () => {
+        this.toggle();
+      });
+    }
+
+    // sublists i.e. actual todo-list and unfinished item/experiment steps
+    const sublistDivs = ['todoItemsDiv', 'todoStepsExperiment', 'todoStepsItem'];
+    sublistDivs.forEach(list => {
+      if (localStorage.getItem(list + '-isClosed') === '1') {
+        document.getElementById(list).toggleAttribute('hidden');
+      }
+    });
   }
 
   create(content: string): Promise<ResponseMsg> {
@@ -48,7 +94,7 @@ export default class Todolist {
       </li>`;
       }
       html += '</ul>';
-      $('#todoItemsDiv').html(html);
+      document.getElementById('todoItemsDiv').innerHTML = html;
       makeSortableGreatAgain();
       relativeMoment();
     });
@@ -65,8 +111,18 @@ export default class Todolist {
     return this.sender.send(payload);
   }
 
+  toogleUnfinishedStepsScope(): void {
+    localStorage.setItem('todolistStepsShowTeam', (localStorage.getItem('todolistStepsShowTeam') === '0' ? '1' : '0'));
+    this.unfinishedStepsScope = (this.unfinishedStepsScope === 'user' ? 'team' : 'user');
+    this.loadUnfinishedStep();
+  }
 
-  getUnfinishedStep(type: EntityType, content: string): Promise<void> {
+  loadUnfinishedStep(): void  {
+    this.getUnfinishedStep(EntityType.Experiment);
+    this.getUnfinishedStep(EntityType.Item);
+  }
+
+  getUnfinishedStep(type: EntityType): Promise<void> {
     const payload: Payload = {
       method: Method.GET,
       action: Action.Read,
@@ -75,7 +131,7 @@ export default class Todolist {
         type: type,
         id: null,
       },
-      content: content,
+      extraParams: {'scope': this.unfinishedStepsScope},
     };
     return this.sender.send(payload).then(json => {
       if (json.res) {
@@ -89,8 +145,8 @@ export default class Todolist {
           }
           html += '</li>';
         }
-        const typeClassName = 'todoSteps' + type.charAt(0).toUpperCase() + type.slice(1);
-        document.getElementById(typeClassName).innerHTML = html;
+        const typeIdName = 'todoSteps' + type.charAt(0).toUpperCase() + type.slice(1);
+        document.getElementById(typeIdName).innerHTML = html;
       }
     });
   }
@@ -102,19 +158,12 @@ export default class Todolist {
       localStorage.setItem('isTodolistOpen', '0');
     } else {
       $('#container').css('width', '70%').css('margin-right', '0');
-      // todo list
-      this.read();
-
-      // unfinished experiments steps
-      this.getUnfinishedStep(EntityType.Experiment, 'user');
-
-      // unfinished items steps of the entire team or just for items owned by the user
-      const scopeSwitch = document.getElementById('todolistStepsShowTeam') as HTMLInputElement;
-      scopeSwitch.addEventListener('change', event => {
-        this.todolistStepsShowTeam(event.target as HTMLInputElement);
-      });
-      this.todolistStepsShowTeam(scopeSwitch);
-
+      // lazy load content only once
+      if (this.initialLoad) {
+        this.read();
+        this.loadUnfinishedStep();
+        this.initialLoad = false;
+      }
       localStorage.setItem('isTodolistOpen', '1');
     }
     $('#todoList').toggle();
@@ -128,9 +177,5 @@ export default class Todolist {
       id : id,
     };
     return this.sender.send(payload);
-  }
-
-  todolistStepsShowTeam(element: HTMLInputElement): void {
-    this.getUnfinishedStep(EntityType.Item, (element.checked ? 'team' : 'user'));
   }
 }

@@ -9,7 +9,7 @@ import $ from 'jquery';
 import { Ajax } from './Ajax.class';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { notif, makeSortableGreatAgain } from './misc';
+import { clearLocalStorage, notif, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { EntityType, Payload, Method, Model, Action } from './interfaces';
@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(() => {
       fetch('app/controllers/HeartBeat.php').then(response => {
         if (!response.ok) {
+          clearLocalStorage();
           alert('Your session expired!');
           window.location.replace('login.php');
         }
@@ -135,10 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // LOGOUT
     } else if (el.matches('[data-action="logout"]')) {
-      const storageItems = ['isTodolistOpen', 'itemsStepsScopeIsTeam', 'todoItemsDiv', 'todoStepsExperiment', 'todoStepsItem'];
-      storageItems.forEach(item => {
-        localStorage.removeItem(item);
-      });
+      clearLocalStorage();
       window.location.href = 'app/logout.php';
 
     // CREATE EXPERIMENT or DATABASE item: main create button in top right

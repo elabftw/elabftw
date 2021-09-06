@@ -15,9 +15,9 @@ use Elabftw\Services\Filter;
 
 class EntityParams extends ContentParams implements EntityParamsInterface
 {
-    public function __construct(string $content, string $target = '', protected ?array $extra = null)
+    public function __construct(string $content, string $target = '', ?array $extra = null)
     {
-        parent::__construct($content, $target);
+        parent::__construct($content, $target, $extra);
     }
 
     public function getTitle(): string

@@ -26,14 +26,15 @@ export default class Todolist {
     // unfinished steps scopeSwitch i.e. user (0) or team (1)
     const scopeSwitch = document.getElementById('todolistStepsShowTeam') as HTMLInputElement;
     const storageScopeSwitch = localStorage.getItem('todolistStepsShowTeam');
-    // local storage has priority over default setting >show team steps<
+    // local storage has priority over default setting todolist_steps_show_team
     if (scopeSwitch.checked && storageScopeSwitch === '0') {
       scopeSwitch.checked = false;
-      localStorage.setItem('todolistStepsShowTeam', '0');
+
     // set storage value if default setting is team
     } else if (scopeSwitch.checked) {
       localStorage.setItem('todolistStepsShowTeam', '1');
       this.unfinishedStepsScope = 'team';
+
     // check box if it was checked before
     } else if (storageScopeSwitch === '1') {
       scopeSwitch.checked = true;
@@ -45,7 +46,7 @@ export default class Todolist {
     });
 
     // TOGGLE
-    // reopen todolist panel if it was previously opened
+    // reopen to-do list panel if it was previously opened
     if (localStorage.getItem('isTodolistOpen') === '1') {
       this.toggle();
     }
@@ -57,9 +58,9 @@ export default class Todolist {
       });
     }
 
-    // sublists i.e. actual todo-list and unfinished item/experiment steps
-    const sublistDivs = ['todoItemsDiv', 'todoStepsExperiment', 'todoStepsItem'];
-    sublistDivs.forEach(list => {
+    // actual lists i.e. to-do list and unfinished item/experiment steps
+    const lists = ['todoItems', 'todoStepsExperiment', 'todoStepsItem'];
+    lists.forEach(list => {
       if (localStorage.getItem(list + '-isClosed') === '1') {
         document.getElementById(list).toggleAttribute('hidden');
       }
@@ -83,7 +84,7 @@ export default class Todolist {
       model: this.model,
     };
     return this.sender.send(payload).then(json => {
-      let html = '<ul id="todoItems-list" class="sortable pl-0" data-axis="y" data-table="todolist">';
+      let html = '';
       for (const entry of json.value as Array<Todoitem>) {
         html += `<li data-todoitemid=${entry.id} id='todoItem_${entry.id}'>
         <a class='clickable float-right' data-action='destroy-todoitem' data-todoitemid='${entry.id}' title='` + i18next.t('generic-delete-warning') + `'>
@@ -93,8 +94,7 @@ export default class Todolist {
         <span class='todoItem editable' data-todoitemid='${entry.id}'>${entry.body}</span>
       </li>`;
       }
-      html += '</ul>';
-      document.getElementById('todoItemsDiv').innerHTML = html;
+      document.getElementById('todoItems').innerHTML = html;
       makeSortableGreatAgain();
       relativeMoment();
     });

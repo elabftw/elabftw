@@ -78,9 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
       }
+
     // TOGGLE TODOITEM
     } else if (el.matches('[data-action="toggle-todolist"]')) {
       TodolistC.toggle();
+
     // TOGGLE SUBLISTS i.e. actual todo-list and unfinished item/experiment steps
     } else if (el.matches('[data-action="toggle-next"]')) {
       const sublist = el.nextElementSibling.id + '-isClosed';

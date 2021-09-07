@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -136,7 +135,7 @@ abstract class AbstractProcessor implements ProcessorInterface
                 return new Links($this->Entity, $this->id);
             case 'step':
                 return new Steps($this->Entity, $this->id);
-            case 'unfinishedstep':
+            case 'unfinishedsteps':
                 return new UnfinishedSteps($this->Entity);
             case 'upload':
                 return new Uploads($this->Entity, $this->id);

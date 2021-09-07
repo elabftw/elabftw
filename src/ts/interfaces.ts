@@ -68,7 +68,7 @@ enum Model {
   PrivacyPolicy = 'privacypolicy',
   Status = 'status',
   Step = 'step',
-  UnfinishedStep = 'unfinishedstep',
+  UnfinishedSteps = 'unfinishedsteps',
   Tag = 'tag',
   TeamGroup = 'teamgroup',
   Todolist = 'todolist',

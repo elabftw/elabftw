@@ -13,13 +13,13 @@ use Elabftw\Interfaces\ContentParamsInterface;
 use PDO;
 
 /**
- * Read the unfinished steps of items or experiments to display in todo-list
- * For items unfinished steps of the user or the team are returned
- * For experiments only unfinished steps of the user are returned
+ * Read the unfinished steps of items or experiments to display in to-do list.
+ * By default the unfinished steps of a user are returned.
+ * extraParams['scope'] provides a switch to return unfinished steps of the entire team.
  */
 class UnfinishedSteps extends Steps
 {
-    public function __construct(public AbstractEntity $Entity)
+    public function __construct(AbstractEntity $Entity)
     {
         parent::__construct($Entity);
     }

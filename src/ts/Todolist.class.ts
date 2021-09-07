@@ -112,7 +112,7 @@ export default class Todolist {
   }
 
   toogleUnfinishedStepsScope(): void {
-    localStorage.setItem('todolistStepsShowTeam', (localStorage.getItem('todolistStepsShowTeam') === '0' ? '1' : '0'));
+    localStorage.setItem('todolistStepsShowTeam', (localStorage.getItem('todolistStepsShowTeam') === '1' ? '0' : '1'));
     this.unfinishedStepsScope = (this.unfinishedStepsScope === 'user' ? 'team' : 'user');
     this.loadUnfinishedStep();
   }
@@ -126,7 +126,7 @@ export default class Todolist {
     const payload: Payload = {
       method: Method.GET,
       action: Action.Read,
-      model: Model.UnfinishedStep,
+      model: Model.UnfinishedSteps,
       entity: {
         type: type,
         id: null,

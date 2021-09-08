@@ -131,7 +131,9 @@ export default class Todolist {
         type: type,
         id: null,
       },
-      extraParams: {'scope': this.unfinishedStepsScope},
+      extraParams: {
+        scope: this.unfinishedStepsScope,
+      },
     };
     return this.sender.send(payload).then(json => {
       if (json.res) {

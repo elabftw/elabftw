@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\UnfinishedStepsParams;
 
 class UnfinishedStepsTest extends \PHPUnit\Framework\TestCase
@@ -21,8 +20,6 @@ class UnfinishedStepsTest extends \PHPUnit\Framework\TestCase
     private UnfinishedStepsParams $StepsParamsUser;
 
     private UnfinishedStepsParams $StepsParamsTeam;
-
-    private ContentParams $ContentParams;
 
     protected function setUp(): void
     {

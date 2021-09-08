@@ -8,18 +8,17 @@
 
 #todoList {
     background: $darkgray;
-    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
     display: none;
     height: 100%;
     left: 0;
-    min-width: 300px;
     overflow: hidden;
     overflow-y: auto;
     padding: 20px;
     position: fixed;
     text-align: center;
     top: 0;
-    width: 30%;
+    width: max(30%, 300px);
     z-index: 9001;
 
     li {

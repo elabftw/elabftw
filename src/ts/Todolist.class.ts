@@ -154,10 +154,10 @@ export default class Todolist {
   // TOGGLE TODOLIST VISIBILITY
   toggle(): void {
     if ($('#todoList').is(':visible')) {
-      $('#container').css('width', '100%').css('margin-right', 'auto');
+      $('#container').css('width', '100%').css('margin-left', 'auto');
       localStorage.setItem('isTodolistOpen', '0');
     } else {
-      $('#container').css('width', '70%').css('margin-right', '0');
+      $('#container').css('width', '70%').css('margin-left', 'max(30%, 300px)');
       // lazy load content only once
       if (this.initialLoad) {
         this.read();

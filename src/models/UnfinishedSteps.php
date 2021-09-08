@@ -26,30 +26,6 @@ class UnfinishedSteps extends Steps
 
     public function read(ContentParamsInterface $params): array
     {
-        $whereClause = ' WHERE entity.userid = :userid';
-
-        if ($params->getExtra('scope') === 'team') {
-            $teamgroupsOfUser = array_column((new TeamGroups($this->Entity->Users))->readGroupsFromUser(), 'id');
-            $teamgroups = '';
-            foreach ($teamgroupsOfUser as $teamgroup) {
-                $teamgroups .= " OR entity.canread = $teamgroup";
-            }
-
-            $whereClause = ' WHERE' . ($this->Entity->type === 'items' ? ' entity.team = :teamid AND' : '') .
-                " (
-                    entity.canread = 'public'
-                    OR entity.canread = 'organization'
-                    OR entity.canread = 'team'
-                    $teamgroups
-                    OR (entity.userid = :userid
-                        AND (
-                            entity.canread = 'user'
-                            OR entity.canread = 'useronly'
-                        )
-                    )
-                )";
-        }
-
         $sql = 'SELECT entity.id, entity.title, stepst.finished, stepst.steps_body, stepst.steps_id
             FROM ' . $this->Entity->type . " as entity
             CROSS JOIN (
@@ -57,14 +33,16 @@ class UnfinishedSteps extends Steps
                 GROUP_CONCAT(entity_steps.body ORDER BY entity_steps.ordering SEPARATOR '|') AS steps_body,
                 GROUP_CONCAT(entity_steps.id ORDER BY entity_steps.ordering SEPARATOR '|') AS steps_id
                 FROM " . $this->Entity->type . '_steps as entity_steps
-                WHERE finished = 0 GROUP BY item_id) AS stepst ON (stepst.item_id = entity.id)';
+                WHERE finished = 0 GROUP BY item_id
+            ) AS stepst ON (stepst.item_id = entity.id)';
 
         if ($this->Entity->type === 'experiments'
             && $params->getExtra('scope') === 'team') {
-            $sql .= 'JOIN users2teams ON (users2teams.users_id = entity.userid AND users2teams.teams_id = :teamid)';
+            $sql .= ' JOIN users2teams ON (users2teams.users_id = entity.userid AND users2teams.teams_id = :teamid)';
         }
 
-        $sql .= $whereClause;
+        $sql .= $params->getExtra('scope') === 'team' ? $this->getTeamWhereClause() : ' WHERE entity.userid = :userid';
+
         $sql .= ' GROUP BY entity.id ORDER BY entity.id DESC';
 
         $req = $this->Db->prepare($sql);
@@ -100,5 +78,27 @@ class UnfinishedSteps extends Steps
         }
 
         return $res;
+    }
+
+    private function getTeamWhereClause(): string
+    {
+        $teamgroupsOfUser = array_column((new TeamGroups($this->Entity->Users))->readGroupsFromUser(), 'id');
+        $teamgroups = '';
+        foreach ($teamgroupsOfUser as $teamgroup) {
+            $teamgroups .= " OR entity.canread = $teamgroup";
+        }
+
+        return ' WHERE' . ($this->Entity->type === 'items' ? ' entity.team = :teamid AND' : '') . " (
+            entity.canread = 'public'
+            OR entity.canread = 'organization'
+            OR entity.canread = 'team'
+            $teamgroups
+            OR (entity.userid = :userid
+                AND (
+                    entity.canread = 'user'
+                    OR entity.canread = 'useronly'
+                )
+            )
+        )";
     }
 }

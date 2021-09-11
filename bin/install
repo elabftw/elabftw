@@ -10,12 +10,14 @@
  */
 namespace Elabftw\Commands;
 
+use function dirname;
 use Symfony\Component\Console\Application;
 
-require \dirname(__DIR__) . '/vendor/autoload.php';
+require dirname(__DIR__) . '/vendor/autoload.php';
 
 $Application = new Application();
 
 $Application->add(new Install());
+$Application->add(new GenSecretKey());
 
 $Application->run();

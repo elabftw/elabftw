@@ -133,7 +133,7 @@
       <i class='fas fa-clipboard-check'></i>
       <label for='category_select'>
       {% if Entity.type == 'experiments' %}
-        {{ 'Status'|trans }}
+        {% trans %}Status{% plural 1 %}Status{% endtrans %}
       {% else %}
         {{ 'Category'|trans }}
       {% endif %}

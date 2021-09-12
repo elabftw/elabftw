@@ -65,7 +65,6 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.12.0",
     "@typescript-eslint/parser": "^2.12.0",
-    "apidoc": "^0.26.0",
     "cypress": "^8.0.0",
     "eslint": "^6.8.0",
     "stylelint": "^13.8.0",
@@ -73,7 +72,7 @@
   },
   "scripts": {
     "analyzejs": "webpack-bundle-analyzer stats.json web/app/js",
-    "apidoc": "apidoc -c apidoc -o apidoc/html -i src/controllers",
+    "apidoc": "apidoc -c apidoc/apidoc.json -o apidoc/html -i src/controllers",
     "brotli": "brotli -vf web/assets/*.css web/assets/*.js web/assets/*.svg web/assets/ove/*.css web/assets/ove/*.js",
     "zopfli": "zopfli -i1000 web/assets/*.css web/assets/*.js web/assets/*.svg web/assets/ove/*.css web/assets/ove/*.js",
     "build": "webpack-cli --progress --config builder.js",

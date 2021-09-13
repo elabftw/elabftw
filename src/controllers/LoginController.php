@@ -46,7 +46,6 @@ class LoginController implements ControllerInterface
 {
     public function __construct(private App $App)
     {
-        $this->validateDeviceToken();
     }
 
     public function getResponse(): Response
@@ -203,6 +202,8 @@ class LoginController implements ControllerInterface
 
             // AUTH WITH LOCAL DATABASE
             case 'local':
+                // only local auth validates device token
+                $this->validateDeviceToken();
                 return new LocalAuth((string) $this->App->Request->request->get('email'), (string) $this->App->Request->request->get('password'));
 
             // AUTH WITH SAML

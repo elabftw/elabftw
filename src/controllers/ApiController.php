@@ -630,7 +630,7 @@ class ApiController implements ControllerInterface
      * @apiExample {shell} Curl example
      * export TOKEN="3148"
      * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items_types
-     * @apiSuccess {String[]} None list of items_types for the team
+     * @apiSuccess {Json[]} None list of items_types for the team
      * @apiSuccessExample {Json} Success-Response:
      *     HTTP/2 200 OK
      *     {
@@ -667,7 +667,7 @@ class ApiController implements ControllerInterface
      * @apiExample {shell} Curl example
      * export TOKEN="3148"
      * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/status
-     * @apiSuccess {String[]} None list of status for the team
+     * @apiSuccess {Json[]} None list of status for the team
      * @apiSuccessExample {Json} Success-Response:
      *     HTTP/2 200 OK
      *     {

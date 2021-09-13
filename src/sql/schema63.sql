@@ -7,7 +7,6 @@ START TRANSACTION;
     CREATE TABLE `lockout_devices` ( `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT, `locked_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `device_token` VARCHAR(255) NOT NULL, PRIMARY KEY (`id`));
     ALTER TABLE `teams` ADD `force_exp_tpl` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0';
     ALTER TABLE `items_types` CHANGE `name` `name` VARCHAR(255) NOT NULL;
-    ALTER TABLE `users` DROP COLUMN `api_key`;
     DROP TABLE `banned_users`;
     UPDATE `config` SET `conf_value` = 63 WHERE `conf_name` = 'schema';
 COMMIT;

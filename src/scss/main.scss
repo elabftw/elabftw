@@ -1173,16 +1173,18 @@ input[type='color'] {
 
 /* scroll to top of page button */
 .floating-middle-right {
-    cursor: pointer;
     position: fixed;
     right: 0.8%;
     top: calc(100vh - 15rem);
-    transition: all 0.5s ease;
 
     /* make the up arrow white or we can't see it */
     svg {
         color: #fff;
     }
+}
+
+#backToTopButton {
+    transition: all 0.5s ease;
 }
 
 /* loading spinner */

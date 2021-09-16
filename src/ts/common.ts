@@ -79,6 +79,49 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // BACK TO TOP BUTTON
+  const btn = document.createElement('div');
+  btn.dataset.action = 'scroll-top';
+  // make it look like a button, and on the right side of the screen, not too close from the bottom
+  btn.classList.add('btn', 'btn-neutral', 'floating-middle-right');
+  // element is invisible at first so we can make it visible so it triggers a css transition and appears progressively
+  btn.style.opacity = '0';
+  // will not be shown for small screens, only large ones
+  btn.classList.add('d-none', 'd-xl-inline', 'd-lg-inline');
+  // the button is an up arrow
+  btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+  // give it an id so we can remove it easily
+  btn.setAttribute('id', 'backToTopButton');
+
+  // called when viewport approaches the footer
+  const intersectionCallback = (entries): void => {
+    // if we haven't scrolled much (not a long content or screen is big), do nothing
+    if (window.scrollY < 100) {
+      return;
+    }
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !document.getElementById('backToTopButton')) {
+        const addedBtn = document.getElementById('container').appendChild(btn);
+        // here we use requestAnimationFrame or the browser won't see the change and the css transition won't be triggered
+        requestAnimationFrame(() => {
+          addedBtn.style.opacity = '100';
+        });
+      } else {
+        // if we're not intersecting, remove the button if it's here
+        if (document.getElementById('backToTopButton')) {
+          document.getElementById('backToTopButton').remove();
+        }
+      }
+    });
+  };
+
+  // rootMargin: allow bigger margin for footer
+  const observer = new IntersectionObserver(intersectionCallback, { rootMargin: '600px' });
+  // the footer is our trigger element
+  observer.observe(document.querySelector('footer'));
+  // END BACK TO TOP BUTTON
+
+
   /**
    * MAIN click event listener bound to container
    * this will listen for click events on the container and if the element
@@ -102,6 +145,13 @@ document.addEventListener('DOMContentLoaded', () => {
         (document.getElementById('privacyModalBody') as HTMLDivElement).innerHTML = policy;
         // modal plugin requires jquery
         ($('#privacyModal') as any).modal('toggle');
+      });
+
+    // SCROLL TO TOP
+    } else if (el.matches('[data-action="scroll-top"]')) {
+      document.documentElement.scrollTo({
+        top: 0,
+        behavior: 'smooth',
       });
 
     // TOGGLE NEXT ACTION

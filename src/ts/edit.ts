@@ -173,12 +173,53 @@ document.addEventListener('DOMContentLoaded', () => {
   // KEYBOARD SHORTCUT
   key(about.scsubmit, () => updateEntity());
 
+  // BACK TO TOP BUTTON
+  const btn = document.createElement('div');
+  btn.dataset.action = 'scroll-top';
+  // make it look like a button, and on the right side of the screen, not too close from the bottom
+  btn.classList.add('btn', 'btn-neutral', 'floating-middle-right');
+  // will not be shown for small screens, only large ones
+  btn.classList.add('d-none', 'd-xl-inline', 'd-lg-inline');
+  // the button is an up arrow
+  btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+  // give it an id so we can remove it easily
+  btn.setAttribute('id', 'backToTopButton');
+
+  // called when viewport approaches the footer
+  const intersectionCallback = (entries): void => {
+    // The callback will return an array of entries, even if you are only observing a single item
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !document.getElementById('backToTopButton')) {
+        document.getElementById('container').appendChild(btn);
+      } else {
+        // if we're not intersecting, remove the button if it's here
+        if (document.getElementById('backToTopButton')) {
+          document.getElementById('backToTopButton').remove();
+        }
+      }
+    });
+  };
+
+  // rootMargin: allow bigger margin for footer
+  const observer = new IntersectionObserver(intersectionCallback, { rootMargin: '600px' });
+  // the footer is our trigger element
+  observer.observe(document.querySelector('footer'));
+  // END BACK TO TOP BUTTON
+
   // Add click listener and do action based on which element is clicked
-  document.querySelector('.real-container').addEventListener('click', (event) => {
+  // use #container here because the scroll button is outside the .real-container
+  document.querySelector('#container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     // UPDATE ENTITY BODY
     if (el.matches('[data-action="update-entity-body"]')) {
       updateEntity(el);
+
+    // SCROLL TO TOP
+    } else if (el.matches('[data-action="scroll-top"]')) {
+      document.documentElement.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
 
     // SWITCH EDITOR
     } else if (el.matches('[data-action="switch-editor"]')) {

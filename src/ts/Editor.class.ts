@@ -5,9 +5,9 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare let MathJax: any;
 import { insertParamAndReload } from './misc';
 import tinymce from 'tinymce/tinymce';
-import { MathJax } from 'mathjax-full/es5/tex-svg-full';
 import marked from 'marked';
 
 interface EditorInterface {
@@ -48,11 +48,11 @@ class MdEditor extends Editor implements EditorInterface {
   }
   init(): void {
     ($('.markdown-textarea') as any).markdown({
-      onPreview: function(ed) {
+      onPreview: ed => {
         // ask mathjax to reparse the page
         // if we call typeset directly it doesn't work
         // so add a timeout
-        setTimeout(function() {
+        setTimeout(() => {
           MathJax.typeset();
         }, 1);
         // parse with marked and return the html

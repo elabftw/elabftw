@@ -105,7 +105,7 @@
         <i title='{{ alt }}' class='fas {{lockIcon}} fa-2x'></i>
     </a>
 
-    {% if not App.Session.has('is_anon') %}
+    {% if not App.Session.has('is_anon') and App.Config.configArr.anon_users %}
       <a class='elab-tooltip mr-1' href='#' data-action='share'>
         <span>{{ 'Share'|trans }}</span>
         <i title='{{ 'Share'|trans }}' class='fas fa-share-alt fa-2x'></i>

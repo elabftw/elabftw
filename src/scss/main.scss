@@ -1172,6 +1172,22 @@ input[type='color'] {
     font-size: 1.3em;
 }
 
+/* scroll to top of page button */
+.floating-middle-right {
+    position: fixed;
+    right: 0.8%;
+    top: calc(100vh - 15rem);
+
+    /* make the up arrow white or we can't see it */
+    svg {
+        color: #fff;
+    }
+}
+
+#backToTopButton {
+    transition: all 0.5s ease;
+}
+
 /* loading spinner */
 .lds-dual-ring::after {
     animation: lds-dual-ring 1.3s linear infinite;

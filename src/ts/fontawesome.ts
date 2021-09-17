@@ -14,6 +14,7 @@ import { library, dom } from '@fortawesome/fontawesome-svg-core';
 
 // SOLID
 import {
+  faArrowUp,
   faBold,
   faBug,
   faCalendarPlus,
@@ -87,6 +88,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
+  faArrowUp,
   faBold,
   faBug,
   faCalendarPlus,

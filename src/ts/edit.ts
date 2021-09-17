@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
   key(about.scsubmit, () => updateEntity());
 
   // Add click listener and do action based on which element is clicked
-  document.querySelector('.real-container').addEventListener('click', (event) => {
+  document.querySelector('.real-container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     // UPDATE ENTITY BODY
     if (el.matches('[data-action="update-entity-body"]')) {

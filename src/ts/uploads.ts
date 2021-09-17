@@ -16,7 +16,10 @@ import Upload from './Upload.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   // holds info about the page through data attributes
-  const about = document.getElementById('info').dataset;
+  const about = document.getElementById('info')?.dataset;
+  if (typeof about === 'undefined') {
+    return;
+  }
 
   const pages = ['edit', 'view'];
   if (!pages.includes(about.page)) {

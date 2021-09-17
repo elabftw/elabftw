@@ -31,8 +31,7 @@ START TRANSACTION;
     ALTER TABLE `experiments_templates`
         ADD `locked` tinyint(3) UNSIGNED DEFAULT NULL,
         ADD `lockedby` int(10) UNSIGNED DEFAULT NULL,
-        ADD `lockedwhen` timestamp NULL DEFAULT NULL
-    AFTER `userid`;
+        ADD `lockedwhen` timestamp NULL DEFAULT NULL;
 
     ALTER TABLE `teams` ADD `common_template` text AFTER `name`;
 

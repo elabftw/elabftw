@@ -39,7 +39,7 @@ export function relativeMoment(): void {
 // for view or edit mode, get type and id from the page to construct the entity object
 export function getEntity(): Entity {
   if (!document.getElementById('info')) {
-    throw new Error('Could not find entity info!');
+    return;
   }
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;

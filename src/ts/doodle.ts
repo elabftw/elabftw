@@ -9,7 +9,7 @@ import { notif } from './misc';
 import i18next from 'i18next';
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (document.getElementById('info').dataset.page !== 'edit') {
+  if (document.getElementById('info')?.dataset?.page !== 'edit') {
     return;
   }
 

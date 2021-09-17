@@ -6,11 +6,12 @@
  * @package elabftw
  */
 declare let key: any;
-declare let MathJax: any;
 import { getCheckedBoxes, insertParamAndReload, notif, reloadEntitiesShow, getEntity } from './misc';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
+import { MathJaxObject } from 'mathjax-full/js/components/startup';
+declare const MathJax: MathJaxObject;
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {

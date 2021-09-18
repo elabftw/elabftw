@@ -44,7 +44,7 @@ module.exports = {
       // mathjax config must be loaded before mathjax lib
       './src/js/mathjax-config.js',
       // load tex with all the extensions
-      'mathjax-full/es5/tex-svg-full.js',
+      './src/ts/mathjax.ts',
       'prismjs',
       // see list in tinymce.ts for codesample plugin settings
       'prismjs/components/prism-bash.js',

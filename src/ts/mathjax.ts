@@ -6,21 +6,18 @@
  * @package elabftw
  */
 
-// Based on https://github.com/mathjax/MathJax-demos-web/blob/master/custom-component/custom-component.js
-// but modified to match 'mathjax-full/components/src/tex-svg-full/tex-svg-full.js
-// and with lazy typesetting (new in version 3.2.0, see https://www.mathjax.org/MathJax-v3.2.0-available/#lazy)
-// and the custom config used by eLabFTW (previously in src/js/mathjax-config.js)
+/*
+ * Based on https://github.com/mathjax/MathJax-demos-web/blob/master/custom-component/custom-component.js
+ * but modified to match 'mathjax-full/components/src/tex-svg-full/tex-svg-full.js
+ * and with lazy typesetting (new in version 3.2.0, see https://www.mathjax.org/MathJax-v3.2.0-available/#lazy)
+ * and the custom config used by eLabFTW (previously in src/js/mathjax-config.js)
+*/
 
-
-//
 //  Initialize the MathJax startup code
-//
 import 'mathjax-full/components/src/startup/lib/startup.js';
 
-//
 //  Get the loader module and indicate the modules that
 //  will be loaded by hand below
-//
 import { Loader } from 'mathjax-full/js/components/loader.js';
 Loader.preLoad(
   'loader',
@@ -35,9 +32,7 @@ Loader.preLoad(
   'a11y/assistive-mml',
 );
 
-//
 // Update the configuration
-//
 import { MathJaxObject as MJObject } from 'mathjax-full/js/components/startup';
 // We need this because defaultPageReady() is not part of the MathJaxObject interface.
 // See https://github.com/mathjax/MathJax/issues/2774
@@ -48,6 +43,7 @@ interface MathJaxObject extends MJObject {
 }
 declare const MathJax: MathJaxObject;
 
+// Now insert the config
 import { insert } from 'mathjax-full/js/util/Options.js';
 insert(
   MathJax.config,
@@ -79,10 +75,8 @@ insert(
   false,
 );
 
-//
 // Load the components that we want to use
 // (the ones listed in the preLoad() call above)
-//
 import 'mathjax-full/components/src/core/core.js';
 
 import 'mathjax-full/components/src/input/tex-full/tex-full.js';
@@ -96,9 +90,6 @@ import 'mathjax-full/components/src/ui/lazy/lazy.js';
 
 import 'mathjax-full/components/src/a11y/assistive-mml/assistive-mml.js';
 
-//
 // Loading this component will cause all the normal startup
 // operations to be performed when this component is loaded
-//
 import 'mathjax-full/components/src/startup/startup.js';
-

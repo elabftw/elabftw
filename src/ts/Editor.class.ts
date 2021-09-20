@@ -5,10 +5,11 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare let MathJax: any;
 import { insertParamAndReload } from './misc';
 import tinymce from 'tinymce/tinymce';
 import marked from 'marked';
+import { MathJaxObject } from 'mathjax-full/js/components/startup';
+declare const MathJax: MathJaxObject;
 
 interface EditorInterface {
   type: string;

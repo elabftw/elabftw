@@ -546,7 +546,8 @@ abstract class AbstractEntity implements CrudInterface
     public function addMetadataFilter(string $key, string $value): void
     {
         $this->isMetadataSearch = true;
-        $this->metadataKey = '$.extra_fields.' . Filter::sanitize($key);
+        // Note: the key is double quoted so spaces are not an issue
+        $this->metadataKey = '$.extra_fields."' . Filter::sanitize($key) . '"';
         $this->metadataValuePath = $this->metadataKey . '.value';
         $this->metadataValue = Filter::sanitize($value);
         $this->metadataFilter = " AND JSON_CONTAINS_PATH(metadata, 'one', :metadata_key) ";

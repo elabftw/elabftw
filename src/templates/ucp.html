@@ -59,7 +59,7 @@
       <h3>{{ 'Language'|trans }}</h3>
       <hr>
       <select class='form-control col-md-3' id='lang' name='lang'>
-        {% for lang, text in langsArr %}
+        {% for lang, text in langsArr|sort %}
           <option value='{{ lang }}'
             {{ App.Users.userData.lang == lang ? ' selected' }}
             >{{ text }}</option>

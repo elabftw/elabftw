@@ -54,7 +54,6 @@ class MakePdf extends AbstractMake implements FileMakerInterface
         $this->longName = $this->getLongName() . '.pdf';
 
         $this->mpdf = $mpdfProvider->getInstance();
-        $this->mpdf->SetAuthor($this->Entity->Users->userData['fullname']);
         $this->mpdf->SetTitle($this->Entity->entityData['title']);
         $this->mpdf->SetKeywords(str_replace('|', ' ', $this->Entity->entityData['tags'] ?? ''));
 
@@ -111,7 +110,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
     /**
      * Append PDFs attached to an entity
      */
-    public function appendPDFs(): void
+    private function appendPDFs(): void
     {
         $listOfPdfs = $this->getListOfPdfs();
 

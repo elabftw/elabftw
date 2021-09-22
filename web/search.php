@@ -184,13 +184,9 @@ if ($Request->query->count() > 0) {
         }
 
         // Metadata search
-        if ($Request->query->get('metakey')) {
-            $metakey = Filter::sanitize($Request->query->get('metakey'));
-            $metavalue = Filter::sanitize($Request->query->get('metavalue'));
-            $Entity->addMetadataFilter($metakey, $metavalue);
+        if ($Request->query->has('metakey')) {
+            $Entity->addMetadataFilter($Request->query->get('metakey'), $Request->query->get('metavalue'));
         }
-
-
 
         if ($Request->query->get('type') === 'experiments') {
 

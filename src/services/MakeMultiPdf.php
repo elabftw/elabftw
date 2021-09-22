@@ -40,6 +40,11 @@ class MakeMultiPdf extends AbstractMake implements FileMakerInterface
         $this->mpdf = $mpdfProvider->getInstance();
     }
 
+    public function getContentType(): string
+    {
+        return 'application/pdf';
+    }
+
     /**
      * Get the name of the generated file
      */

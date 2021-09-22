@@ -14,6 +14,8 @@ namespace Elabftw\Interfaces;
  */
 interface FileMakerInterface
 {
+    public function getContentType(): string;
+
     public function getFileContent(): string;
 
     public function getFileName(): string;

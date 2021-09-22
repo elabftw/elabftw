@@ -183,7 +183,7 @@ class MakeStreamZip extends AbstractMake
     private function addCsv(int $id): void
     {
         $MakeCsv = new MakeCsv($this->Entity, (string) $id);
-        $this->Zip->addFile($this->folder . '/' . $this->folder . '.csv', $MakeCsv->getCsv());
+        $this->Zip->addFile($this->folder . '/' . $this->folder . '.csv', $MakeCsv->getFileContent());
     }
 
     /**

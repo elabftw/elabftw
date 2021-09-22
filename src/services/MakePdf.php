@@ -73,6 +73,11 @@ class MakePdf extends AbstractMake implements FileMakerInterface
         error_reporting(E_ERROR);
     }
 
+    public function getContentType(): string
+    {
+        return 'application/pdf';
+    }
+
     /**
      * Generate pdf and output it to a file
      */

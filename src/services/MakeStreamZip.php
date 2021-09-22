@@ -163,7 +163,13 @@ class MakeStreamZip extends AbstractMake
      */
     private function addPdf(): void
     {
-        $MakePdf = new MakePdf($this->Entity, true);
+        $userData = $this->Entity->Users->userData;
+        $MpdfProvider = new MpdfProvider(
+            $userData['fullname'],
+            $userData['pdf_format'],
+            (bool) $userData['pdfa'],
+        );
+        $MakePdf = new MakePdf($MpdfProvider, $this->Entity, true);
         $MakePdf->outputToFile();
         $this->Zip->addFileFromPath($this->folder . '/' . $MakePdf->getFileName(), $MakePdf->filePath);
         $this->trash[] = $MakePdf->filePath;

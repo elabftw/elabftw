@@ -13,6 +13,8 @@ namespace Elabftw\Controllers;
 use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\ControllerInterface;
+use Elabftw\Interfaces\FileMakerInterface;
+use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -21,8 +23,10 @@ use Elabftw\Services\MakeCsv;
 use Elabftw\Services\MakeJson;
 use Elabftw\Services\MakeMultiPdf;
 use Elabftw\Services\MakePdf;
+use Elabftw\Services\MakeQrPdf;
 use Elabftw\Services\MakeReport;
 use Elabftw\Services\MakeStreamZip;
+use Elabftw\Services\MpdfProvider;
 use function substr_count;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,6 +67,9 @@ class MakeController implements ControllerInterface
                 }
                 return $this->makeMultiPdf();
 
+            case 'qrPdf':
+                return $this->makeQrPdf();
+
             case 'report':
                 return $this->makeReport();
 
@@ -94,13 +101,37 @@ class MakeController implements ControllerInterface
     {
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
         $this->Entity->canOrExplode('read');
-        $Make = new MakePdf($this->Entity, true);
+        return $this->getPdfResponse(new MakePdf($this->getMpdfProvider(), $this->Entity, true));
+    }
+
+    private function makeMultiPdf(): Response
+    {
+        return $this->getPdfResponse(new MakeMultiPdf($this->getMpdfProvider(), $this->Entity, (string) $this->App->Request->query->get('id')));
+    }
+
+    private function makeQrPdf(): Response
+    {
+        return $this->getPdfResponse(new MakeQrPdf($this->getMpdfProvider(), $this->Entity, (string) $this->App->Request->query->get('id')));
+    }
+
+    private function getMpdfProvider(): MpdfProviderInterface
+    {
+        $userData = $this->App->Users->userData;
+        return new MpdfProvider(
+            $userData['fullname'],
+            $userData['pdf_format'],
+            (bool) $userData['pdfa'],
+        );
+    }
+
+    private function getPdfResponse(FileMakerInterface $Maker): Response
+    {
         return new Response(
-            $Make->getPdf(),
+            $Maker->getFileContent(),
             200,
             array(
                 'Content-Type' => 'application/pdf',
-                'Content-disposition' => 'inline; filename="' . $Make->getFileName() . '"',
+                'Content-disposition' => 'inline; filename="' . $Maker->getFileName() . '"',
                 'Cache-Control' => 'no-store',
                 'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',
             )
@@ -115,21 +146,6 @@ class MakeController implements ControllerInterface
             200,
             array(
                 'Content-Type' => 'application/json',
-                'Content-disposition' => 'inline; filename="' . $Make->getFileName() . '"',
-                'Cache-Control' => 'no-store',
-                'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',
-            )
-        );
-    }
-
-    private function makeMultiPdf(): Response
-    {
-        $Make = new MakeMultiPdf($this->Entity, (string) $this->App->Request->query->get('id'));
-        return new Response(
-            $Make->getMultiPdf(),
-            200,
-            array(
-                'Content-Type' => 'application/pdf',
                 'Content-disposition' => 'inline; filename="' . $Make->getFileName() . '"',
                 'Cache-Control' => 'no-store',
                 'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',

@@ -7,9 +7,10 @@
  * @package elabftw
  */
 
-namespace Elabftw\Models;
+namespace Elabftw\Services;
 
-use Elabftw\Services\MakePdf;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\Users;
 
 //use League\Flysystem\Memory\MemoryAdapter;
 //use League\Flysystem\Filesystem;
@@ -20,14 +21,14 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $Entity = new Experiments(new Users(1, 1));
-        $this->MakePdf = new MakePdf($Entity);
+        $Entity = new Experiments(new Users(1, 1), 1);
+        $Entity->canOrExplode('read');
+        $MpdfProvider = new MpdfProvider('Toto');
+        $this->MakePdf = new MakePdf($MpdfProvider, $Entity, true);
     }
 
-    public function testOutput(): void
+    public function testGetFileContent(): void
     {
-        // TODO makepdf should have a filesystem class in DI
-        //$this->MakePdf->output(true, true);
-        //$this->assertFileExists($this->MakePdf->filePath);
+        $this->assertIsString($this->MakePdf->getFileContent());
     }
 }

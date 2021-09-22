@@ -151,7 +151,13 @@ class MakeTimestamp extends AbstractMake
      */
     private function generatePdf(): void
     {
-        $MakePdf = new MakePdf($this->Entity);
+        $userData = $this->Entity->Users->userData;
+        $MpdfProvider = new MpdfProvider(
+            $userData['fullname'],
+            $userData['pdf_format'],
+            (bool) $userData['pdfa'],
+        );
+        $MakePdf = new MakePdf($MpdfProvider, $this->Entity);
         $MakePdf->outputToFile();
         $this->pdfPath = $MakePdf->filePath;
         $this->pdfLongName = $MakePdf->longName;

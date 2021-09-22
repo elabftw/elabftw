@@ -17,6 +17,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Traits\UploadTrait;
+use function file_get_contents;
 use function hash;
 use function random_bytes;
 use Symfony\Component\HttpFoundation\Request;
@@ -74,6 +75,18 @@ abstract class AbstractMake
         }
 
         return $tmpPath;
+    }
+
+    /**
+     * Get the contents of assets/pdf.min.css
+     */
+    protected function getCss(): string
+    {
+        $css = file_get_contents(dirname(__DIR__, 2) . '/web/assets/pdf.min.css');
+        if ($css === false) {
+            throw new FilesystemErrorException('Cannot read the minified css file!');
+        }
+        return $css;
     }
 
     /**

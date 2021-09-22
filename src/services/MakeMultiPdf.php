@@ -13,18 +13,17 @@ namespace Elabftw\Services;
 use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
-use Mpdf\Mpdf;
+use Elabftw\Traits\PdfTrait;
 
 /**
  * Make a PDF from several experiments or db items
  */
 class MakeMultiPdf extends AbstractMake implements FileMakerInterface
 {
+    use PdfTrait;
+
     // the input ids but in an array
     private array $idArr = array();
-
-    // The mpdf object which contains all information for the multi entiy PDF file
-    private Mpdf $mpdf;
 
     /**
      * Give me an id list and a type, I make multi entity PDF for you
@@ -38,11 +37,6 @@ class MakeMultiPdf extends AbstractMake implements FileMakerInterface
         $this->idArr = explode(' ', $idList);
 
         $this->mpdf = $mpdfProvider->getInstance();
-    }
-
-    public function getContentType(): string
-    {
-        return 'application/pdf';
     }
 
     /**

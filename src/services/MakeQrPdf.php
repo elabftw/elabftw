@@ -15,8 +15,8 @@ use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
+use Elabftw\Traits\PdfTrait;
 use Elabftw\Traits\TwigTrait;
-use Mpdf\Mpdf;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -26,16 +26,13 @@ class MakeQrPdf extends AbstractMake implements FileMakerInterface
 {
     use TwigTrait;
 
+    use PdfTrait;
+
     // the input ids but in an array
     private array $idArr = array();
 
-    // The mpdf object which contains all information for the multi entiy PDF file
-    private Mpdf $mpdf;
-
     /**
-     * Give me an id list and a type, I make multi entity PDF for you
-     *
-     * @param string $idList 4 8 15 16 23 42
+     * The idList is a space separated string of ids
      */
     public function __construct(MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, string $idList)
     {
@@ -43,11 +40,6 @@ class MakeQrPdf extends AbstractMake implements FileMakerInterface
 
         $this->idArr = explode(' ', $idList);
         $this->mpdf = $mpdfProvider->getInstance();
-    }
-
-    public function getContentType(): string
-    {
-        return 'application/pdf';
     }
 
     /**

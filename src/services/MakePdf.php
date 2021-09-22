@@ -20,6 +20,7 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
+use Elabftw\Traits\PdfTrait;
 use Elabftw\Traits\TwigTrait;
 use function is_dir;
 use function mkdir;
@@ -37,9 +38,9 @@ class MakePdf extends AbstractMake implements FileMakerInterface
 {
     use TwigTrait;
 
-    public string $longName;
+    use PdfTrait;
 
-    private Mpdf $mpdf;
+    public string $longName;
 
     /**
      * Constructor
@@ -71,11 +72,6 @@ class MakePdf extends AbstractMake implements FileMakerInterface
         // see https://github.com/baselbers/mpdf/commit
         // 5cbaff4303604247f698afc6b13a51987a58f5bc#commitcomment-23217652
         error_reporting(E_ERROR);
-    }
-
-    public function getContentType(): string
-    {
-        return 'application/pdf';
     }
 
     /**

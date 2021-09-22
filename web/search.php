@@ -183,6 +183,10 @@ if ($Request->query->count() > 0) {
             $Entity->addFilter('entity.rating', $rating);
         }
 
+        // Metadata search
+        if ($Request->query->has('metakey')) {
+            $Entity->addMetadataFilter($Request->query->get('metakey'), $Request->query->get('metavalue'));
+        }
 
         if ($Request->query->get('type') === 'experiments') {
 

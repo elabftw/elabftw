@@ -80,6 +80,18 @@ abstract class AbstractEntity implements CrudInterface
 
     protected TeamGroups $TeamGroups;
 
+    private string $metadataFilter = '';
+
+    private string $metadataHaving = '';
+
+    private bool $isMetadataSearch = false;
+
+    private string $metadataKey = '';
+
+    private string $metadataValuePath = '';
+
+    private string $metadataValue = '';
+
     /**
      * Constructor
      *
@@ -182,6 +194,8 @@ abstract class AbstractEntity implements CrudInterface
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
 
+        $sql .= $this->metadataFilter;
+
         // experiments related to something?
         if ($displayParams->searchType === 'related') {
             $sql .= ' AND linkst.link_id = ' . $displayParams->related;
@@ -218,7 +232,9 @@ abstract class AbstractEntity implements CrudInterface
             $this->bodyFilter,
             Tools::getSearchSql($displayParams->query),
             $this->idFilter,
-            'GROUP BY id ORDER BY',
+            'GROUP BY id',
+            $this->metadataHaving,
+            'ORDER BY',
             $displayParams->getOrderSql(),
             $displayParams->sort,
             ', entity.id',
@@ -232,6 +248,12 @@ abstract class AbstractEntity implements CrudInterface
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        if ($this->isMetadataSearch) {
+            $req->bindParam(':metadata_key', $this->metadataKey);
+            $req->bindParam(':metadata_value_path', $this->metadataValuePath);
+            $req->bindParam(':metadata_value', $this->metadataValue);
+        }
+
         $this->Db->execute($req);
 
         return $this->Db->fetchAll($req);
@@ -521,6 +543,17 @@ abstract class AbstractEntity implements CrudInterface
         $this->filters[] = array('column' => $column, 'value' => $value);
     }
 
+    public function addMetadataFilter(string $key, string $value): void
+    {
+        $this->isMetadataSearch = true;
+        // Note: the key is double quoted so spaces are not an issue
+        $this->metadataKey = '$.extra_fields."' . Filter::sanitize($key) . '"';
+        $this->metadataValuePath = $this->metadataKey . '.value';
+        $this->metadataValue = Filter::sanitize($value);
+        $this->metadataFilter = " AND JSON_CONTAINS_PATH(entity.metadata, 'one', :metadata_key) ";
+        $this->metadataHaving = ' HAVING JSON_UNQUOTE(JSON_EXTRACT(entity.metadata, :metadata_value_path)) LIKE :metadata_value';
+    }
+
     /**
      * Get an array of id changed since the lastchange date supplied
      *
@@ -645,6 +678,7 @@ abstract class AbstractEntity implements CrudInterface
                 entity.locked,
                 entity.canread,
                 entity.canwrite,
+                entity.metadata,
                 entity.lastchange,';
         }
         $select .= "uploads.up_item_id, uploads.has_attachment,

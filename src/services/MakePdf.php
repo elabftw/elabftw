@@ -14,7 +14,6 @@ use function dirname;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
-use Elabftw\Exceptions\ProcessFailedException;
 use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
@@ -22,24 +21,14 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
-use function file_put_contents;
-use function html_entity_decode;
 use function is_dir;
 use function mkdir;
 use Mpdf\Mpdf;
-use Mpdf\SizeConverter;
-use function preg_match;
-use function preg_match_all;
 use function preg_replace;
-use Psr\Log\NullLogger;
 use setasign\Fpdi\FpdiException;
 use function str_replace;
 use function strtolower;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Process\Exception\ProcessFailedException as SymfonyProcessFailedException;
-use Symfony\Component\Process\Process;
-use function tempnam;
-use function unlink;
 
 /**
  * Create a pdf from an Entity
@@ -115,82 +104,8 @@ class MakePdf extends AbstractMake implements FileMakerInterface
      */
     public function getContent(): string
     {
-        $content = $this->getHtml();
-
-        // we use a custom tmp dir
-        $tmpDir = dirname(__DIR__, 2) . '/cache/mathjax/';
-        if (!is_dir($tmpDir) && !mkdir($tmpDir, 0700, true) && !is_dir($tmpDir)) {
-            throw new FilesystemErrorException("Could not create the $tmpDir directory! Please check permissions on this folder.");
-        }
-
-        // temporary file to hold the content
-        $filename = tempnam($tmpDir, '');
-        if (!$filename) {
-            throw new FilesystemErrorException("Could not create a temporary file in $tmpDir! Please check permissions on this folder.");
-        }
-
-        // decode html entities, otherwise it crashes
-        // compare to https://github.com/mathjax/MathJax-demos-node/issues/16
-        $contentDecode = html_entity_decode($content, ENT_HTML5, 'UTF-8');
-        file_put_contents($filename, $contentDecode);
-
-        // absolute path to tex2svg app
-        $appDir = dirname(__DIR__, 2) . '/src/node';
-
-        // convert tex to svg with mathjax nodejs script
-        // returns nothing if there is no tex
-        // use tex2svg.bundle.js script located in src/node
-        // tex2svg.bundle.js is webpacked src/node/tex2svg.js
-        $process = new Process(
-            array(
-                'node',
-                $appDir . '/tex2svg.bundle.js',
-                $filename,
-            )
-        );
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            unlink($filename);
-            throw new ProcessFailedException('PDF generation failed during Tex rendering.', 0, new SymfonyProcessFailedException($process));
-        }
-
-        $html = $process->getOutput();
-        unlink($filename);
-
-        // was there actually tex in the content?
-        // if not we can skip the svg modifications and return the content
-        // return the decoded content to avoid html entities issues in final pdf
-        // see #2760
-        if ($html === '') {
-            return $contentDecode;
-        }
-
-        // based on https://github.com/mpdf/mpdf-examples/blob/master/MathJaxProcess.php
-        // ˅˅˅˅˅˅˅˅˅˅
-        $sizeConverter = new SizeConverter($this->mpdf->dpi, $this->mpdf->default_font_size, $this->mpdf, new NullLogger());
-
-        // scale SVG size according to pdf + font settings
-        // only select mathjax svg
-        preg_match_all('/<mjx-container[^>]*><svg([^>]*)/', $html, $mathJaxSvg);
-        foreach ($mathJaxSvg[1] as $svgAttributes) {
-            preg_match('/width="(.*?)"/', $svgAttributes, $wr);
-            preg_match('/height="(.*?)"/', $svgAttributes, $hr);
-
-            if ($wr && $hr) {
-                $w = $sizeConverter->convert($wr[1], 0, $this->mpdf->FontSize) * $this->mpdf->dpi / 25.4;
-                $h = $sizeConverter->convert($hr[1], 0, $this->mpdf->FontSize) * $this->mpdf->dpi / 25.4;
-
-                $html = str_replace('width="' . $wr[1] . '"', 'width="' . $w . '"', $html);
-                $html = str_replace('height="' . $hr[1] . '"', 'height="' . $h . '"', $html);
-            }
-        }
-
-        // add 'mathjax-svg' class to all mathjax SVGs
-        $html = preg_replace('/(<mjx-container[^>]*><svg)/', '\1 class="mathjax-svg"', $html);
-
-        // fill to white for all SVGs
-        return str_replace('fill="currentColor"', 'fill="#000"', $html);
+        $Tex2Svg = new Tex2Svg($this->mpdf, $this->getHtml());
+        return $Tex2Svg->getContent();
     }
 
     /**

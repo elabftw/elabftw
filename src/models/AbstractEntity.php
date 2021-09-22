@@ -550,8 +550,8 @@ abstract class AbstractEntity implements CrudInterface
         $this->metadataKey = '$.extra_fields."' . Filter::sanitize($key) . '"';
         $this->metadataValuePath = $this->metadataKey . '.value';
         $this->metadataValue = Filter::sanitize($value);
-        $this->metadataFilter = " AND JSON_CONTAINS_PATH(metadata, 'one', :metadata_key) ";
-        $this->metadataHaving = ' HAVING JSON_UNQUOTE(JSON_EXTRACT(metadata, :metadata_value_path)) = :metadata_value';
+        $this->metadataFilter = " AND JSON_CONTAINS_PATH(entity.metadata, 'one', :metadata_key) ";
+        $this->metadataHaving = ' HAVING JSON_UNQUOTE(JSON_EXTRACT(entity.metadata, :metadata_value_path)) = :metadata_value';
     }
 
     /**

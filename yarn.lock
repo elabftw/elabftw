@@ -5717,16 +5717,15 @@ ve-range-utils@^2.5.9:
     lodash "^4.17.4"
     validate.io-nonnegative-integer-array "^1.0.1"
 
-ve-sequence-utils@^5.1.1:
-  version "5.1.5"
-  resolved "https://registry.yarnpkg.com/ve-sequence-utils/-/ve-sequence-utils-5.1.5.tgz#15ef26ed0bca2b8eab756e3b141a07ca3090772f"
-  integrity sha512-WYplmnpoklPVELNTk2SQdfHhKsds+HSS167DzyACtb1tKpHyudEO33ECp9gcAjo1D0MocFtpAsvMV5A/3qe/cg==
+ve-sequence-utils@^5.1.6:
+  version "5.1.6"
+  resolved "https://registry.yarnpkg.com/ve-sequence-utils/-/ve-sequence-utils-5.1.6.tgz#a0b5b113fb1748f779676b120240e26737955824"
+  integrity sha512-T2Xw+W9g9TbsFkUA4N5CzD0+hs1CQ11YnG8JQgqkJvIMrms2sJZT6Qxsj6WrUiU8Y0XhuAbIKkPlLhjD/JWzOg==
   dependencies:
     bson-objectid "^1.1.1"
     escape-string-regexp "^1.0.5"
     jsondiffpatch "^0.3.11"
     string-splice "^1.3.0"
-    validate.io-nonnegative-integer-array "^1.0.1"
 
 vendors@^1.0.3:
   version "1.0.4"

@@ -5709,13 +5709,12 @@ vanilla-picker@^2.11.2:
   dependencies:
     "@sphinxxxx/color-conversion" "^2.2.2"
 
-ve-range-utils@^2.5.9:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/ve-range-utils/-/ve-range-utils-2.6.1.tgz#fa21ef3f0c5134ba626879486f137df47a83dab4"
-  integrity sha512-Q9xOE9URSDKuwt5wDGCvZl8Q/ptVn0zbY9n2XG6IZB9xSUbVZOZAvIBW3SexCTJCQZCHNyy1edVfl1QGYSAF1g==
+ve-range-utils@^2.6.3:
+  version "2.6.3"
+  resolved "https://registry.yarnpkg.com/ve-range-utils/-/ve-range-utils-2.6.3.tgz#ef7e36efcfba563860f6ff89350ad8f6ae28f244"
+  integrity sha512-HiUuyaiqKRirrc1/5P4/XpnFOvb1Z+lpcwyHn+mc1LecXipNViBIVfCQU8LIxbScFXuvTzgClS1ywdJRvs6HWA==
   dependencies:
     lodash "^4.17.4"
-    validate.io-nonnegative-integer-array "^1.0.1"
 
 ve-sequence-utils@^5.1.1:
   version "5.1.5"

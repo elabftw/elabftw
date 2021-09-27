@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use function filter_var;
 use HTMLPurifier;
@@ -143,6 +144,11 @@ class Filter
             throw new ImproperActionException('Content is too big! Cannot save!');
         }
         $config = HTMLPurifier_Config::createDefault();
+        $tmpDir = dirname(__DIR__, 2) . '/cache/purifier';
+        if (!is_dir($tmpDir) && !mkdir($tmpDir, 0700, true) && !is_dir($tmpDir)) {
+            throw new FilesystemErrorException("Could not create the $tmpDir directory! Please check permissions on this folder.");
+        }
+        $config->set('Cache.SerializerPath', $tmpDir);
         $purifier = new HTMLPurifier($config);
         return $purifier->purify($body);
     }

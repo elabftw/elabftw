@@ -111,15 +111,9 @@ class MakePdf extends AbstractMake implements FileMakerInterface
     /**
      * Append PDFs attached to an entity
      */
-    private function appendPDFs(): void
+    private function appendPdfs(array $pdfs): void
     {
-        $listOfPdfs = $this->getListOfPdfs();
-
-        if (empty($listOfPdfs)) {
-            return;
-        }
-
-        foreach ($listOfPdfs as $pdf) {
+        foreach ($pdfs as $pdf) {
             // There will be cases where the merging will fail
             // due to incompatibilities of Mpdf (actually fpdi) with the pdfs
             // See https://manuals.setasign.com/fpdi-manual/v2/limitations/
@@ -151,6 +145,8 @@ class MakePdf extends AbstractMake implements FileMakerInterface
                     // add the content of the imported page
                     $this->mpdf->useTemplate($page);
                 }
+                // not all pdf will be able to be integrated, so for the one that will trigger an exception
+            // we simply ignore it
             } catch (FpdiException) {
                 continue;
             }
@@ -221,7 +217,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
      *
      * @return array Empty or array of arrays with information for PDFs array('path/to/file', 'real.name')
      */
-    private function getListOfPdfs(): array
+    private function getAttachedPdfs(): array
     {
         $uploadsArr = $this->Entity->Uploads->readAll();
         $listOfPdfs = array();
@@ -249,7 +245,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
         $this->mpdf->WriteHTML($this->getContent());
 
         if ($this->Entity->Users->userData['append_pdfs']) {
-            $this->appendPDFs();
+            $this->appendPdfs($this->getAttachedPdfs());
         }
 
         return $this->mpdf;

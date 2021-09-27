@@ -42,7 +42,7 @@ class App
 
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '4.1.0-BETA4';
+    public const INSTALLED_VERSION = '4.1.0-BETA5';
 
     public Users $Users;
 

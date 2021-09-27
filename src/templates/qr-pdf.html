@@ -28,14 +28,11 @@
 <sethtmlpageheader name='header' value='on' show-this-page='1' />
 <sethtmlpagefooter name='footer' value='on' />
 
-<table>
-  {% for entity in entityArr %}
-    <tr>
-      <td class='noborder'>
-          <barcode code='{{ entity.url }}' type='QR' class='barcode' size='0.8' error='M' />
-          {{ entity.date }} | {{ entity.title }}
-          {{ entity.tags|replace({'|': ' '}) }}
-      </td>
-    </tr>
-  {% endfor %}
-</table>
+{% for entity in entityArr %}
+  <div class='row'>
+    <div class='col col-md-3'>
+      <barcode code='{{ entity.url }}' type='QR' class='barcode' size='1' error='M' />
+      {{ entity.date }} | {{ entity.title }} <span class='tags'>{{ entity.tags|replace({'|': ' '}) }}</span>
+    </div>
+  </div>
+{% endfor %}

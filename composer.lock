@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f4d4d9143b446db30864803cc570f676",
+    "content-hash": "3ef26097304b2146d2bd68ce5a5384a1",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -6680,16 +6680,16 @@
         },
         {
             "name": "pyrech/composer-changelogs",
-            "version": "v1.7.1",
+            "version": "v1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pyrech/composer-changelogs.git",
-                "reference": "1e35272e283e2c07b7ca5f1ba54ae425b6126001"
+                "reference": "ac488e7ade963b91b661f11bb97f17851f75b350"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pyrech/composer-changelogs/zipball/1e35272e283e2c07b7ca5f1ba54ae425b6126001",
-                "reference": "1e35272e283e2c07b7ca5f1ba54ae425b6126001",
+                "url": "https://api.github.com/repos/pyrech/composer-changelogs/zipball/ac488e7ade963b91b661f11bb97f17851f75b350",
+                "reference": "ac488e7ade963b91b661f11bb97f17851f75b350",
                 "shasum": ""
             },
             "require": {
@@ -6698,8 +6698,9 @@
             },
             "require-dev": {
                 "composer/composer": "^1.0.0-alpha10@dev || ^2.0@dev",
-                "composer/semver": "^1.2 || ^2.0",
-                "phpunit/phpunit": "^7.5"
+                "composer/semver": "^1.2 || ^2.0 || ^3.2",
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "symfony/phpunit-bridge": "^5.2"
             },
             "type": "composer-plugin",
             "extra": {
@@ -6729,9 +6730,9 @@
             ],
             "support": {
                 "issues": "https://github.com/pyrech/composer-changelogs/issues",
-                "source": "https://github.com/pyrech/composer-changelogs/tree/master"
+                "source": "https://github.com/pyrech/composer-changelogs/tree/v1.8.0"
             },
-            "time": "2020-04-27T13:47:46+00:00"
+            "time": "2021-09-06T12:40:43+00:00"
         },
         {
             "name": "roave/security-advisories",

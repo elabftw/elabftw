@@ -144,7 +144,12 @@ try {
     // don't send a GET app/logout.php if it's an ajax call because it messes up the jquery ajax
     if ($Request->headers->get('X-Requested-With') !== 'XMLHttpRequest') {
         // Note: we assume https here, this will cause an issue if you try to access it in http, but anyway this should never be done so I guess it's okay.
-        $url = 'https://' . $Request->getHost() . ':' . $Request->getPort() . '/app/logout.php?keep_redirect=1';
+        if ($App->Config->configArr['url']) {
+            $url = $App->Config->configArr['url'];
+        } else {
+            $url = 'https://' . $Request->getHost() . ':' . $Request->getPort();
+        }
+        $url .= '/app/logout.php?keep_redirect=1';
         header('Location: ' . $url);
     }
     exit;

@@ -10,13 +10,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Traits\CsvTrait;
 
 /**
  * Make a CSV file from a list of id and a type
  */
-class MakeCsv extends AbstractMake
+class MakeCsv extends AbstractMake implements FileMakerInterface
 {
     use CsvTrait;
 

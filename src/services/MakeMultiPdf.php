@@ -10,33 +10,33 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Interfaces\FileMakerInterface;
+use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
-use Mpdf\Mpdf;
+use Elabftw\Traits\PdfTrait;
 
 /**
  * Make a PDF from several experiments or db items
  */
-class MakeMultiPdf extends AbstractMake
+class MakeMultiPdf extends AbstractMake implements FileMakerInterface
 {
+    use PdfTrait;
+
     // the input ids but in an array
     private array $idArr = array();
-
-    // The mpdf object which contains all information for the multi entiy PDF file
-    private Mpdf $mpdf;
 
     /**
      * Give me an id list and a type, I make multi entity PDF for you
      *
      * @param string $idList 4 8 15 16 23 42
      */
-    public function __construct(AbstractEntity $entity, string $idList)
+    public function __construct(private MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, string $idList)
     {
         parent::__construct($entity);
 
         $this->idArr = explode(' ', $idList);
 
-        $makePdf = new MakePdf($this->Entity, true);
-        $this->mpdf = $makePdf->initializeMpdf(true);
+        $this->mpdf = $mpdfProvider->getInstance();
     }
 
     /**
@@ -51,7 +51,7 @@ class MakeMultiPdf extends AbstractMake
      * Loop over each id and add it to the PDF
      * This could be called the main function.
      */
-    public function getMultiPdf(): string
+    public function getFileContent(): string
     {
         foreach ($this->idArr as $key => $id) {
             $this->addToPdf((int) $id);
@@ -62,12 +62,6 @@ class MakeMultiPdf extends AbstractMake
                     'resetpagenum' => 1,
                 ));
             }
-        }
-
-        if ($this->Entity->Users->userData['pdfa']) {
-            // make sure we can read the pdf in a long time
-            // will embed the font and make the pdf bigger
-            $this->mpdf->PDFA = true;
         }
 
         return $this->mpdf->Output('', 'S');
@@ -81,15 +75,12 @@ class MakeMultiPdf extends AbstractMake
     private function addToPdf(int $id): void
     {
         $this->Entity->setId($id);
-        $CurrentEntity = new MakePdf($this->Entity, true);
         $permissions = $this->Entity->getPermissions();
+        $CurrentEntity = new MakePdf($this->mpdfProvider, $this->Entity, true);
         if ($permissions['read']) {
             // write content
-            $this->mpdf->WriteHTML($CurrentEntity->tex2svg($this->mpdf, $CurrentEntity->getContent()));
-
-            if ($this->Entity->Users->userData['append_pdfs']) {
-                $this->mpdf = $CurrentEntity->appendPDFs($this->mpdf);
-            }
+            // FIXME: in multi mode, the attached files are currently not appended
+            $this->mpdf->WriteHTML($CurrentEntity->getContent());
         }
     }
 }

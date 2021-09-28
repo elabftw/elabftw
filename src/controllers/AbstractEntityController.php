@@ -21,6 +21,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
+use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -203,6 +204,13 @@ abstract class AbstractEntityController implements ControllerInterface
             throw new ImproperActionException(_('This item is locked. You cannot edit it!'));
         }
 
+        // last modifier name
+        $lastModifierFullname = '';
+        if ($this->Entity->entityData['lastchangeby'] !== null) {
+            $lastModifier = new Users((int) $this->Entity->entityData['lastchangeby']);
+            $lastModifierFullname = $lastModifier->userData['fullname'];
+        }
+
         // REVISIONS
         $Revisions = new Revisions(
             $this->Entity,
@@ -220,6 +228,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
             'lang' => Tools::getCalendarLang($this->App->Users->userData['lang'] ?? 'en_GB'),
+            'lastModifierFullname' => $lastModifierFullname,
             'linksArr' => $this->Entity->Links->read(new ContentParams()),
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',

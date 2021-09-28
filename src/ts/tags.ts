@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // AUTOCOMPLETE
   const cache = {};
-  ($('.createTagInput') as any).autocomplete({
+  ($('.createTagInput, .createTagInputMultiple') as any).autocomplete({
     source: function(request: any, response: any) {
       const term  = request.term;
       if (term in cache) {

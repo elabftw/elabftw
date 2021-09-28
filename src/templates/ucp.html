@@ -265,7 +265,7 @@
           <h4>{{ 'Modify your personal informations'|trans }}</h4>
           <label for='currpass'>{{ 'Enter your password to edit your profile.'|trans }}</label>
           <div class='input-group'>
-            <input class='form-control' id='currpass' name='currpass' type='password' autocomplete='off' pattern='.{8,}' required />
+            <input class='form-control' id='currpass' name='currpass' type='password' autocomplete='current-password' pattern='.{8,}' required />
             <div class='input-group-append'>
               <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='currpass'><i class='fas fa-eye' aria-hidden='true'></i></span>
             </div>
@@ -277,7 +277,7 @@
           <h4>{{ 'Modify your password'|trans }}</h4>
           <label for='newpass'>{{ 'New password'|trans }}</label>
           <div class='input-group'>
-            <input class='form-control' id='newpass' autocomplete='new-password' name='newpass' type='password' pattern='.{8,}' />
+            <input class='form-control' id='newpass' autocomplete='new-password' name='newpass' type='password' pattern='.{8,}' autocomplete='new-password' />
             <div class='input-group-append'>
               <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='newpass'><i class='fas fa-eye' aria-hidden='true'></i></span>
             </div>
@@ -331,7 +331,7 @@
             </div>
             <div class='col-md-6'>
                 <label for='website'>{{ 'Website'|trans }}</label>
-                <input class='form-control' id='website' name='website' type='url' value='{{ App.Users.userData.website }}' />
+                <input class='form-control' id='website' name='website' type='url' value='{{ App.Users.userData.website }}' autocomplete='url' />
             </div>
         </div>
 

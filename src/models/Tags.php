@@ -45,12 +45,6 @@ class Tags implements CrudInterface
     {
         $this->Entity->canOrExplode('write');
 
-        // check if we can actually create tags (for non-admins)
-        $Team = new Team($this->Entity->Users->team);
-        if ($Team->getUserCreateTag() === 0 && $this->Entity->Users->userData['is_admin'] === '0') {
-            throw new ImproperActionException(_('Users cannot create tags.'));
-        }
-
         $insertSql2 = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
         $insertReq2 = $this->Db->prepare($insertSql2);
         // check if the tag doesn't exist already for the team
@@ -63,6 +57,12 @@ class Tags implements CrudInterface
 
         // tag doesn't exist already
         if ($req->rowCount() === 0) {
+            // check if we can actually create tags (for non-admins)
+            $Team = new Team($this->Entity->Users->team);
+            if ($Team->getUserCreateTag() === 0 && $this->Entity->Users->userData['is_admin'] === '0') {
+                throw new ImproperActionException(_('Users cannot create tags.'));
+            }
+
             $insertSql = 'INSERT INTO tags (team, tag) VALUES (:team, :tag)';
             $insertReq = $this->Db->prepare($insertSql);
             $insertReq->bindValue(':tag', $params->getContent());

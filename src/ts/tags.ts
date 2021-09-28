@@ -30,7 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
-      TagC.create($(this).val() as string).then(() => {
+      TagC.create($(this).val() as string).then(json => {
+        if (json.res === false) {
+          notif(json);
+        }
         $('#tags_div_' + entity.id).load(window.location.href + ' #tags_div_' + entity.id + ' > *');
         $(this).val('');
       });

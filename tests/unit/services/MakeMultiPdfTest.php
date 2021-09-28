@@ -12,23 +12,24 @@ namespace Elabftw\Services;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 
-//use League\Flysystem\Memory\MemoryAdapter;
-//use League\Flysystem\Filesystem;
-
-class MakePdfTest extends \PHPUnit\Framework\TestCase
+class MakeMultiPdfTest extends \PHPUnit\Framework\TestCase
 {
-    private MakePdf $MakePdf;
+    private MakeMultiPdf $MakePdf;
 
     protected function setUp(): void
     {
-        $Entity = new Experiments(new Users(1, 1), 1);
-        $Entity->canOrExplode('read');
+        $Entity = new Experiments(new Users(1, 1));
         $MpdfProvider = new MpdfProvider('Toto');
-        $this->MakePdf = new MakePdf($MpdfProvider, $Entity, true);
+        $this->MakePdf = new MakeMultiPdf($MpdfProvider, $Entity, '1 2 3');
     }
 
     public function testGetFileContent(): void
     {
         $this->assertIsString($this->MakePdf->getFileContent());
+    }
+
+    public function testGetFileName(): void
+    {
+        $this->assertEquals('multientries.elabftw.pdf', $this->MakePdf->getFileName());
     }
 }

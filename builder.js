@@ -15,6 +15,7 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -41,10 +42,7 @@ module.exports = {
       'bootstrap/js/src/collapse.js',
       'bootstrap/js/src/dropdown.js',
       './src/ts/fontawesome.ts',
-      // mathjax config must be loaded before mathjax lib
-      './src/js/mathjax-config.js',
-      // load tex with all the extensions
-      'mathjax-full/es5/tex-svg-full.js',
+      './src/ts/mathjax.ts',
       'prismjs',
       // see list in tinymce.ts for codesample plugin settings
       'prismjs/components/prism-bash.js',
@@ -90,8 +88,10 @@ module.exports = {
       chunks: 'all',
       name: 'vendor'
     },
+    minimize: true,
     minimizer: [
       new CssMinimizerPlugin(),
+      new TerserPlugin(),
     ],
   },
   watchOptions: {

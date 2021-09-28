@@ -138,6 +138,24 @@
     </div>
     <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
 
+    <!-- NEW ROW -->
+    <div class='row'>
+      <h4 class='ml-3'>{{ 'Extra fields search'|trans }}</h4>
+    </div>
+
+    <div class='row'>
+      <div class='col-md-4'>
+        <label for='metakey'>{{ 'Name of field'|trans }}</label>
+        <input type='text' class='form-control' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' />
+      </div>
+
+      <div class='col-md-4'>
+        <label for='metavalue'>{{ 'Value'|trans }}</label>
+        <input type='text' class='form-control' name='metavalue' value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}' />
+        <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
+      </div>
+    </div>
+
     <div style='margin:30px;' class='text-center'>
       <button id='searchButton' class='button btn btn-primary' value='Submit' type='submit'>
         {{ 'Launch search'|trans }}

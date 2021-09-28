@@ -338,6 +338,16 @@ class Tools
         return $sql . ')';
     }
 
+    public static function getIdFilterSql(array $idArr): string
+    {
+        $idFilter = ' AND (';
+        foreach ($idArr as $id) {
+            $idFilter .= 'entity.id = ' . $id . ' OR ';
+        }
+        $idFilter = rtrim($idFilter, ' OR ');
+        return $idFilter .= ')';
+    }
+
     /**
      * Process the metadata json string into a displayable array
      */

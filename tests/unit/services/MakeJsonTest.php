@@ -28,6 +28,6 @@ class MakeJsonTest extends \PHPUnit\Framework\TestCase
 
     public function testGetJson(): void
     {
-        $this->assertTrue(is_array($this->Make->getJson()));
+        $this->assertIsString($this->Make->getFileContent());
     }
 }

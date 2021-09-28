@@ -51,7 +51,7 @@
         <!-- EMAIL -->
         <div class='row'>
           <label for='email'>{{ 'Email'|trans }}</label>
-          <input name='email' class='form-control' type='email' id='email' required />
+          <input name='email' class='form-control' type='email' id='email' autocomplete='email' required />
           {% if App.Config.configArr.email_domain %}
             <p class='smallgray'>
               {{ 'Only emails @%s are authorized to register'|trans|format(App.Config.configArr.email_domain) }}
@@ -63,7 +63,7 @@
         <div class='row'>
           <label for='password'>{{ 'Password'|trans }}</label>
           <div class='input-group'>
-            <input name='password' type='password' class='form-control' title='8 characters minimum' id='password' pattern='{{ pattern }}' required />
+            <input name='password' type='password' class='form-control' title='8 characters minimum' id='password' pattern='{{ pattern }}' autocomplete='new-password' required />
             <div class='input-group-append'>
               <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='password'><i class='fas fa-eye' aria-hidden='true'></i></span>
             </div>
@@ -73,13 +73,13 @@
         <!-- FIRSTNAME -->
         <div class='row'>
           <label for='firstname'>{{ 'Firstname'|trans }}</label>
-          <input name='firstname' class='form-control' type='text' id='firstname' required />
+          <input name='firstname' class='form-control' type='text' id='firstname' autocomplete='given-name' required />
         </div>
 
         <!-- LASTNAME -->
         <div class='row'>
           <label for='lastname'>{{ 'Lastname'|trans }}</label>
-          <input name='lastname' class='form-control' type='text' id='lastname' required />
+          <input name='lastname' class='form-control' type='text' id='lastname' autocomplete='family-name' required />
         </div>
 
         <!-- PRIVACY POLICY -->

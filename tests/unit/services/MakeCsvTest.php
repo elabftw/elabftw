@@ -32,11 +32,11 @@ class MakeCsvTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCsvExp(): void
     {
-        $csv = $this->MakeExp->getCsv();
+        $this->assertIsString($this->MakeExp->getFileContent());
     }
 
     public function testGetCsvDb(): void
     {
-        $csv = $this->MakeDb->getCsv();
+        $this->assertIsString($this->MakeDb->getFileContent());
     }
 }

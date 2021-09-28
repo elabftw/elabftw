@@ -28,6 +28,6 @@ class MakeReportTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCsv(): void
     {
-        $this->assertIsString($this->Make->getCsv());
+        $this->assertIsString($this->Make->getFileContent());
     }
 }

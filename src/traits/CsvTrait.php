@@ -21,7 +21,7 @@ trait CsvTrait
     /**
      * Create a CSV file from header and rows
      */
-    public function getCsv(): string
+    public function getFileContent(): string
     {
         // load the CSV document from a string
         $csv = Writer::createFromString('');
@@ -36,6 +36,11 @@ trait CsvTrait
         $csv->setOutputBOM(Reader::BOM_UTF8);
 
         return $csv->toString();
+    }
+
+    public function getContentType(): string
+    {
+        return 'text/csv; charset=UTF-8';
     }
 
     /**

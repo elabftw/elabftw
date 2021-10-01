@@ -1695,7 +1695,7 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.2.0.tgz#75f502eeaf9ffde42fc98829645be4ea76bd9e2d"
   integrity sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==
 
-bio-parsers@^8.3.13:
+bio-parsers@^8.3.16:
   version "8.3.16"
   resolved "https://registry.yarnpkg.com/bio-parsers/-/bio-parsers-8.3.16.tgz#20ea3019b86f245410563a75b21c63e34c1c212f"
   integrity sha512-4+gE7zokSl64yXn7w9SnrIR3iSGY9QZ2N+IKJxyjQxRcY2BrBDc7txysxS3S0P0YUY8y3VpMXiF6dWq2aEHp4g==
@@ -5717,14 +5717,14 @@ vanilla-picker@^2.11.2:
   dependencies:
     "@sphinxxxx/color-conversion" "^2.2.2"
 
-ve-range-utils@^2.5.9:
+ve-range-utils@^2.6.3:
   version "2.6.3"
   resolved "https://registry.yarnpkg.com/ve-range-utils/-/ve-range-utils-2.6.3.tgz#ef7e36efcfba563860f6ff89350ad8f6ae28f244"
   integrity sha512-HiUuyaiqKRirrc1/5P4/XpnFOvb1Z+lpcwyHn+mc1LecXipNViBIVfCQU8LIxbScFXuvTzgClS1ywdJRvs6HWA==
   dependencies:
     lodash "^4.17.4"
 
-ve-sequence-utils@^5.1.1:
+ve-sequence-utils@^5.1.6:
   version "5.1.6"
   resolved "https://registry.yarnpkg.com/ve-sequence-utils/-/ve-sequence-utils-5.1.6.tgz#a0b5b113fb1748f779676b120240e26737955824"
   integrity sha512-T2Xw+W9g9TbsFkUA4N5CzD0+hs1CQ11YnG8JQgqkJvIMrms2sJZT6Qxsj6WrUiU8Y0XhuAbIKkPlLhjD/JWzOg==

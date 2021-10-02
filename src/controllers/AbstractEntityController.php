@@ -18,6 +18,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
@@ -211,6 +212,12 @@ abstract class AbstractEntityController implements ControllerInterface
             $lastModifierFullname = $lastModifier->userData['fullname'];
         }
 
+
+        // the items categoryArr for add link input
+        $ItemsTypes = new ItemsTypes($this->App->Users);
+        $itemsCategoryArr = $ItemsTypes->readAll();
+
+
         // REVISIONS
         $Revisions = new Revisions(
             $this->Entity,
@@ -227,6 +234,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $renderArr = array(
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
+            'itemsCategoryArr' => $itemsCategoryArr,
             'lang' => Tools::getCalendarLang($this->App->Users->userData['lang'] ?? 'en_GB'),
             'lastModifierFullname' => $lastModifierFullname,
             'linksArr' => $this->Entity->Links->read(new ContentParams()),

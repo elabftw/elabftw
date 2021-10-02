@@ -106,7 +106,8 @@ try {
         } else {
             $Entity = new Items($App->Users);
         }
-        $ListBuilder = new ListBuilder($Entity);
+        $catFilter = (int) $Request->query->get('filter');
+        $ListBuilder = new ListBuilder($Entity, $catFilter);
         // fix issue with Malformed UTF-8 characters, possibly incorrectly encoded
         // see #2404
         $responseArr = $ListBuilder->getAutocomplete($Request->query->get('term'));

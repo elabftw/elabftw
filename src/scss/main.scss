@@ -1172,6 +1172,12 @@ input[type='color'] {
     font-size: 1.3em;
 }
 
+/* fix border radius for custom-select. brl = border radius left */
+.brl-none {
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
+
 /* scroll to top of page button */
 .floating-middle-right {
     position: fixed;

@@ -28,6 +28,10 @@ class ListBuilderTest extends \PHPUnit\Framework\TestCase
     public function testGetAutocomplete(): void
     {
         $this->assertTrue(is_array($this->ListBuilderExp->getAutocomplete('a')));
+        $ListBuilderExpFiltered = new ListBuilder(new Experiments(new Users(1, 1)), 1);
+        $ListBuilderDbFiltered = new ListBuilder(new Items(new Users(1, 1)), 1);
+        $this->assertTrue(is_array($ListBuilderExpFiltered->getAutocomplete('a')));
+        $this->assertTrue(is_array($ListBuilderDbFiltered->getAutocomplete('a')));
     }
 
     public function testGetMentionList(): void

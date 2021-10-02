@@ -1,0 +1,16 @@
+<div class='side-panel' id='favtags-panel'>
+  <a class='clickable float-right' data-action='toggle-favtags' title='{{ 'Close'|trans }}'>
+      <i class='fas fa-times fa-2x'></i>
+  </a>
+  <h2>{{ 'Favorite tags'|trans }}</h2>
+  <ul>
+    {% for favtag in favTagsArr %}
+      <a href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ favtag.tag|url_encode }}'>
+        <li class='favtag tag {{ App.Request.query.get('tags')[0] == favtag.tag ? 'selected' : ''}}'>{{ favtag.tag }}</li>
+      </a>
+    {% endfor %}
+  </ul>
+
+  <h3>{{ 'Add a tag as favorite'|trans }}</h3>
+  <input type='text' class='createFavTagInput' placeholder='{{ 'Search for tags'|trans }}' />
+</div>

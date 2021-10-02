@@ -7,9 +7,10 @@
  */
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
+import FavTag from './FavTag.class';
 import Tag from './Tag.class';
 import i18next from 'i18next';
-import { getCheckedBoxes, notif, reloadEntitiesShow, getEntity } from './misc';
+import { getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement } from './misc';
 import { Ajax } from './Ajax.class';
 import { Payload, Method, Model, Action, Target } from './interfaces';
 
@@ -72,29 +73,56 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // CREATE FAVORITE TAG
+  $(document).on('keypress blur', '.createFavTagInput', function(e) {
+    const FavTagC = new FavTag();
+    if ($(this).val() === '') {
+      return;
+    }
+    // Enter is ascii code 13
+    if (e.which === 13 || e.type === 'focusout') {
+      FavTagC.create($(this).val() as string).then(json => {
+        if (json.res === false) {
+          notif(json);
+        }
+        reloadElement('favtags-panel');
+        $(this).val('');
+      });
+    }
+  });
+
   // AUTOCOMPLETE
   const cache = {};
-  ($('.createTagInput, .createTagInputMultiple') as any).autocomplete({
-    source: function(request: any, response: any) {
-      const term  = request.term;
-      if (term in cache) {
-        response(cache[term]);
-        return;
-      }
-      const payload: Payload = {
-        method: Method.GET,
-        action: Action.Read,
-        model: Model.Tag,
-        entity: entity,
-        target: Target.List,
-        content: term,
-      };
-      AjaxC.send(payload).then(json => {
-        cache[term] = json.value;
-        response(json.value);
-      });
-    },
-  });
+
+  function addAutocompleteToTagInputs() {
+    // TODO data-autocomplete=tags
+    ($('.createTagInput, .createTagInputMultiple, .createFavTagInput') as any).autocomplete({
+      source: function(request: any, response: any) {
+        const term  = request.term;
+        if (term in cache) {
+          response(cache[term]);
+          return;
+        }
+        const payload: Payload = {
+          method: Method.GET,
+          action: Action.Read,
+          model: Model.Tag,
+          entity: entity,
+          target: Target.List,
+          content: term,
+        };
+        AjaxC.send(payload).then(json => {
+          cache[term] = json.value;
+          response(json.value);
+        });
+      },
+    });
+  }
+
+  addAutocompleteToTagInputs();
+  new MutationObserver(() => addAutocompleteToTagInputs())
+    .observe(document.getElementById('favtags-panel'), {childList: true, subtree: true});
+
 
   // make the tag editable (on admin.ts)
   $(document).on('mouseenter', '.tag-editable', function() {

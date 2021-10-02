@@ -31,13 +31,15 @@ class UserPreferences implements MapInterface
 
     private string $displaySize = 'lg';
 
-    // Can have two values: 'it' for item list (the default mode),
+    // Can have two values: 'it' for item list (the default mode)
     // and 'tb' for tabular view
     private string $displayMode = 'it';
 
     private string $orderby = 'date';
 
     private int $singleColumnLayout = 0;
+
+    private int $showFavtags = 0;
 
     private int $uploadsLayout = 1;
 
@@ -110,6 +112,7 @@ class UserPreferences implements MapInterface
             default_read = :new_default_read,
             default_write = :new_default_write,
             single_column_layout = :new_layout,
+            show_favtags = :new_show_favtags,
             uploads_layout = :new_uploads_layout,
             cjk_fonts = :new_cjk_fonts,
             pdfa = :new_pdfa,
@@ -139,6 +142,7 @@ class UserPreferences implements MapInterface
         $req->bindParam(':new_default_read', $this->defaultRead);
         $req->bindParam(':new_default_write', $this->defaultWrite);
         $req->bindParam(':new_layout', $this->singleColumnLayout);
+        $req->bindParam(':new_show_favtags', $this->showFavtags);
         $req->bindParam(':new_uploads_layout', $this->uploadsLayout);
         $req->bindParam(':new_cjk_fonts', $this->cjkFonts);
         $req->bindParam(':new_pdfa', $this->pdfa);
@@ -180,6 +184,11 @@ class UserPreferences implements MapInterface
     final public function setSingleColumnLayout(string $setting): void
     {
         $this->singleColumnLayout = Filter::toBinary($setting);
+    }
+
+    final public function setShowFavtags(string $setting): void
+    {
+        $this->showFavtags = Filter::toBinary($setting);
     }
 
     final public function setUploadsLayout(string $setting): void
@@ -296,6 +305,7 @@ class UserPreferences implements MapInterface
         $this->setSort($source['sort'] ?? $this->sort);
         $this->setOrderby($source['orderby'] ?? $this->orderby);
         $this->setSingleColumnLayout($source['single_column_layout'] ?? '0');
+        $this->setShowFavtags($source['show_favtags'] ?? '0');
         $this->setUploadsLayout($source['uploads_layout'] ?? '0');
         $this->setShortcut('create', $source['sc_create'] ?? $this->shortcuts['create']);
         $this->setShortcut('edit', $source['sc_edit'] ?? $this->shortcuts['edit']);
@@ -329,6 +339,7 @@ class UserPreferences implements MapInterface
             sort,
             orderby,
             single_column_layout,
+            show_favtags,
             uploads_layout,
             sc_create,
             sc_edit,

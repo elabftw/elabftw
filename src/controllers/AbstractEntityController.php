@@ -18,6 +18,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
@@ -118,12 +119,17 @@ abstract class AbstractEntityController implements ControllerInterface
         // store the query parameters in the Session
         $this->App->Session->set('lastquery', $this->App->Request->query->all());
 
+        // FAVTAGS
+        $FavTags = new FavTags($this->App->Users);
+        $favTagsArr = $FavTags->read(new ContentParams());
+
         $template = 'show.html';
 
         $renderArr = array(
             'DisplayParams' => $DisplayParams,
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
+            'favTagsArr' => $favTagsArr,
             'pinnedArr' => $this->Entity->Pins->getPinned(),
             'itemsArr' => $itemsArr,
             // generate light show page

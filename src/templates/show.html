@@ -84,7 +84,7 @@
           {% include('show-item.html') %}
         {% endfor %}
         </div>
-      {% else  %}
+      {% elseif App.Users.userData.display_mode == 'tb' %}
         <table id='itemList' class='item-table'>
           <tr>
             <th>
@@ -117,6 +117,8 @@
         {% endfor %}
         </table>
       {% endif %}
+
+      <!-- PREVIOUS/NEXT PAGE buttons -->
       <div class='text-center page-buttons mt-2'>
         {% if DisplayParams.offset != 0 %}
           <button class='button btn btn-neutral previousPage' data-action='previous-page'>{{ 'Previous page'|trans }}</button>

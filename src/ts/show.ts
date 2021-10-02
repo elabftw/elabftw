@@ -6,10 +6,11 @@
  * @package elabftw
  */
 declare let key: any;
-import { getCheckedBoxes, insertParamAndReload, notif, reloadEntitiesShow, getEntity } from './misc';
+import { getCheckedBoxes, insertParamAndReload, notif, reloadEntitiesShow, getEntity, reloadElement } from './misc';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
+import FavTag from './FavTag.class';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 
@@ -30,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const limit = parseInt(about.limit);
 
   const EntityC = new EntityClass(entity.type);
+  const FavTagC = new FavTag();
 
   // CREATE EXPERIMENT or DATABASE item with shortcut
   key(document.getElementById('shortcuts').dataset.create, function() {
@@ -314,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Add click listener and do action based on which element is clicked
-  document.querySelector('.real-container').addEventListener('click', event => {
+  document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     // previous page
     if (el.matches('[data-action="previous-page"]')) {
@@ -322,7 +324,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // next page
     } else if (el.matches('[data-action="next-page"]')) {
       insertParamAndReload('offset', offset + limit);
-    // END PAGINATION
+    // TOGGLE FAVTAGS PANEL
+    } else if (el.matches('[data-action="toggle-favtags"]')) {
+      FavTagC.toggle();
+    } else if (el.matches('[data-action="destroy-favtags"]')) {
+      FavTagC.destroy(parseInt(el.dataset.id, 10));
+      reloadElement('favtags-panel');
     }
   });
+
+  // FAVTAGS PANEL
+  if (localStorage.getItem('isFavtagsOpen') === '1') {
+    FavTagC.toggle();
+  }
 });

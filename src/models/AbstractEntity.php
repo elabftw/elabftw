@@ -393,11 +393,11 @@ abstract class AbstractEntity implements CrudInterface
             $column = 'body';
         }
 
-        $sql = 'UPDATE ' . $this->type . ' SET ' . $column . ' = :content WHERE id = :id';
+        $sql = 'UPDATE ' . $this->type . ' SET ' . $column . ' = :content, lastchangeby = :userid WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $content);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 

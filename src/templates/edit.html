@@ -94,6 +94,12 @@
   </div>
 </div>
 
+<!-- show message if it was recently modified -->
+{% set lastchangeDiff = 'now'|date('U') - Entity.entityData.lastchange|date('U') %}
+{% if (lastchangeDiff < 600) and not Entity.entityData.lastchangeby is null and Entity.entityData.lastchangeby != Entity.Users.userData.userid %}
+  {{ 'Warning: this entry was modified %s seconds ago by %s.'|trans|format(lastchangeDiff, lastModifierFullname)|msg('warning', false) }}
+{% endif %}
+
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
   <div class='dropdown'>
     <a class='clickable float-right' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>

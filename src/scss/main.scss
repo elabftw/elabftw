@@ -513,6 +513,7 @@ table th {
 
     .title {
         font-size: 100%;
+        min-width: 400px;
     }
 
     .actions-item-table {
@@ -520,7 +521,7 @@ table th {
     }
 
     .item-next {
-        max-width: 20ch;
+        max-width: 14ch;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -1170,6 +1171,12 @@ input[type='color'] {
 
 .fa-2x {
     font-size: 1.3em;
+}
+
+/* fix border radius for custom-select. brl = border radius left */
+.brl-none {
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
 }
 
 /* scroll to top of page button */

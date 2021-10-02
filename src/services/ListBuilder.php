@@ -22,7 +22,7 @@ class ListBuilder
     /** @var AbstractEntity $Entity */
     private $Entity;
 
-    public function __construct(AbstractEntity $entity)
+    public function __construct(AbstractEntity $entity, private int $catFilter = 0)
     {
         $this->Entity = $entity;
     }
@@ -91,6 +91,9 @@ class ListBuilder
     {
         $term = filter_var($term, FILTER_SANITIZE_STRING);
         $this->Entity->titleFilter = " AND entity.title LIKE '%$term%'";
+        if ($this->catFilter !== 0) {
+            $this->Entity->addFilter('categoryt.id', (string) $this->catFilter);
+        }
 
         return $this->Entity->readShow(new DisplayParams());
     }

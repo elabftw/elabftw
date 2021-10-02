@@ -177,7 +177,7 @@ if ($Request->query->count() > 0) {
         }
 
         // Metadata search
-        if ($Request->query->has('metakey')) {
+        if ($Request->query->get('metakey')) {
             $Entity->addMetadataFilter($Request->query->get('metakey'), $Request->query->get('metavalue'));
         }
 

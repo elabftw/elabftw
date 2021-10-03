@@ -376,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('favtags-opener').removeAttribute('hidden');
 
   // FAVTAGS PANEL
-  if (localStorage.getItem('isFavtagsOpen') === '1') {
+  if (localStorage.getItem('isfavtagOpen') === '1') {
     FavTagC.toggle();
   }
 });

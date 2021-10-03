@@ -340,7 +340,10 @@ document.addEventListener('DOMContentLoaded', () => {
         el.classList.remove('selected');
       });
       el.classList.add('selected');
-
+    } else if (el.matches('[data-action="toggle-favtags-edit"]')) {
+      document.querySelectorAll('[data-action="destroy-favtags"]').forEach(el => {
+        el.toggleAttribute('hidden');
+      });
     } else if (el.matches('[data-action="destroy-favtags"]')) {
       FavTagC.destroy(parseInt(el.dataset.id, 10));
       reloadElement('favtags-panel');

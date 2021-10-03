@@ -317,6 +317,20 @@ document.addEventListener('DOMContentLoaded', () => {
     selectOrder.closest('form').trigger('submit');
   });
 
+  document.querySelector('[data-action="favtags-search"]').addEventListener('keyup', event => {
+    const el = (event.target as HTMLInputElement);
+    const query = el.value;
+    // find all links that are endpoints
+    document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
+      // begin by showing all so they don't stay hidden
+      el.removeAttribute('hidden');
+      // now simply hide the ones that don't match the query
+      if (!(el as HTMLElement).innerText.toLowerCase().includes(query)) {
+        el.setAttribute('hidden', '');
+      }
+    });
+  });
+
   // Add click listener and do action based on which element is clicked
   document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
@@ -342,6 +356,13 @@ document.addEventListener('DOMContentLoaded', () => {
         el.classList.remove('selected');
       });
       el.classList.add('selected');
+    } else if (el.matches('[data-action="clear-favtags-search"]')) {
+      const searchInput = (document.querySelector('[data-action="favtags-search"]') as HTMLInputElement);
+      searchInput.value = '';
+      searchInput.focus();
+      document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
+        el.removeAttribute('hidden');
+      });
     } else if (el.matches('[data-action="toggle-favtags-edit"]')) {
       document.querySelectorAll('[data-action="destroy-favtags"]').forEach(el => {
         el.toggleAttribute('hidden');

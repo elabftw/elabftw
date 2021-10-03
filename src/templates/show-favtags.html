@@ -4,6 +4,12 @@
         <i class='fas fa-chevron-left fa-2x'></i>
     </a>
     <h3>{{ 'Favorite tags'|trans }}</h3>
+    <div class='input-group'>
+      <input data-action='favtags-search' class='form-control form-inline' type='text' placeholder='{{ 'Filter'|trans }}' />
+      <div class='input-group-append'>
+        <button data-action='clear-favtags-search' class='btn btn-outline-secondary'><i class='fas fa-times'></i></button>
+      </div>
+    </div>
   </div>
   <ul>
     {% for favtag in favTagsArr %}

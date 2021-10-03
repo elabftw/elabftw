@@ -105,13 +105,6 @@
       </select>
 
       <div>
-      <input id='favtags' class='mt-2' type='checkbox' name='show_favtags'
-          {{ App.Users.userData.show_favtags == '1' ? " checked='checked'" }}
-      />
-      <label for='favtags'>{{ 'Show favorite tags on main page'|trans }}</label>
-      </div>
-
-      <div>
       <input id='layout' class='mt-2' type='checkbox' name='single_column_layout'
           {{ App.Users.userData.single_column_layout == '1' ? " checked='checked'" }}
       />

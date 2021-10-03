@@ -9,8 +9,8 @@
 
 <!-- TODOLIST / FAVTAGS side panels (only for logged in users) -->
 {% if App.Session.get('is_auth') and not App.Session.get('is_anon') %}
-  {% include('todolist.html') %}
-  {% include('show-favtags.html') %}
+  {% include('todolist-panel.html') %}
+  {% include('favtags-panel.html') %}
 {% endif %}
 
 <!-- FOOTER -->

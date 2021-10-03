@@ -98,7 +98,7 @@ export default class Todolist {
       $('#container').css('width', '100%').css('margin-right', 'auto');
       localStorage.setItem('isTodolistOpen', '0');
     } else {
-      $('#container').css('width', '70%').css('margin-right', '0');
+      $('#container').css('width', '75%').css('margin-right', '0');
       this.read();
       this.getSteps();
       localStorage.setItem('isTodolistOpen', '1');

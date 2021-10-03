@@ -35,7 +35,7 @@ export default class FavTag {
       $('#container').css('width', '100%').css('margin-right', 'auto');
       localStorage.setItem('isFavtagsOpen', '0');
     } else {
-      $('#container').css('width', '70%').css('margin-right', '0');
+      $('#container').css('width', '75%').css('margin-right', '0');
       localStorage.setItem('isFavtagsOpen', '1');
     }
     $('#favtags-panel').toggle();

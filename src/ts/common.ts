@@ -193,7 +193,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const path = window.location.pathname;
       if (path.split('/').pop() === 'experiments.php') {
         const tplid = el.dataset.tplid;
-        (new EntityClass(EntityType.Experiment)).create(tplid).then(json => {
+        const urlParams = new URLSearchParams(document.location.search);
+        const tags = urlParams.getAll('tags[]');
+        (new EntityClass(EntityType.Experiment)).create(tplid, tags).then(json => {
           if (json.res) {
             window.location.replace(`?mode=edit&id=${json.value}`);
           } else {
@@ -207,7 +209,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else if (el.matches('[data-action="create-item"]')) {
       const tplid = el.dataset.tplid;
-      (new EntityClass(EntityType.Item)).create(tplid).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
+      const urlParams = new URLSearchParams(document.location.search);
+      const tags = urlParams.getAll('tags[]');
+      (new EntityClass(EntityType.Item)).create(tplid, tags).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
     }
   });
 });

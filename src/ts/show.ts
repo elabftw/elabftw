@@ -38,7 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (about.type === 'experiments') {
       const el = document.querySelector('[data-action="create-entity"]') as HTMLButtonElement;
       const tplid = el.dataset.tplid;
-      EntityC.create(tplid).then(json => {
+      const urlParams = new URLSearchParams(document.location.search);
+      const tags = urlParams.getAll('tags[]');
+      EntityC.create(tplid, tags).then(json => {
         if (json.res) {
           window.location.replace(`?mode=edit&id=${json.value}`);
         } else {
@@ -327,6 +329,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE FAVTAGS PANEL
     } else if (el.matches('[data-action="toggle-favtags"]')) {
       FavTagC.toggle();
+    } else if (el.matches('[data-action="toggle-addfav"]')) {
+      document.getElementById('createFavTagInput').removeAttribute('hidden');
     } else if (el.matches('[data-action="destroy-favtags"]')) {
       FavTagC.destroy(parseInt(el.dataset.id, 10));
       reloadElement('favtags-panel');

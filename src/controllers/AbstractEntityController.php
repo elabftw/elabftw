@@ -93,9 +93,10 @@ abstract class AbstractEntityController implements ControllerInterface
             $trimmedFilter = rtrim($idFilter, ' OR ') . ')';
             // don't add it if it's empty (for instance we search in items for a tag that only exists on experiments)
             if ($trimmedFilter === ' AND ()') {
-                throw new ImproperActionException(_("Sorry. I couldn't find anything :("));
+                $this->Entity->idFilter = ' AND entity.id = 0';
+            } else {
+                $this->Entity->idFilter = $trimmedFilter;
             }
-            $this->Entity->idFilter = $trimmedFilter;
         }
 
         // create the DisplayParams object from the query

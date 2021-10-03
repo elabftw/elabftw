@@ -94,9 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // AUTOCOMPLETE
   const cache = {};
 
-  function addAutocompleteToTagInputs() {
-    // TODO data-autocomplete=tags
-    ($('.createTagInput, .createTagInputMultiple, .createFavTagInput') as any).autocomplete({
+  function addAutocompleteToTagInputs(): void {
+    ($('[data-autocomplete="tags"]') as any).autocomplete({
       source: function(request: any, response: any) {
         const term  = request.term;
         if (term in cache) {

@@ -13,8 +13,13 @@ import { DateTime } from 'luxon';
 import { EntityType, Entity } from './interfaces';
 
 // get html of current page reloaded via get
-function fetchCurrentPage(): Promise<Document>{
-  return fetch(window.location.href).then(response => {
+function fetchCurrentPage(tag = ''): Promise<Document>{
+  const url = new URL(window.location.href);
+  if (tag) {
+    url.searchParams.delete('tags[]');
+    url.searchParams.set('tags[]', tag);
+  }
+  return fetch(url.toString()).then(response => {
     return response.text();
   }).then(data => {
     const parser = new DOMParser();
@@ -172,9 +177,9 @@ export function getCheckedBoxes(): Array<CheckableItem> {
 }
 
 // reload the entities in show mode
-export async function reloadEntitiesShow(): Promise<void | Response> {
+export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
   // get the html
-  const html = await fetchCurrentPage();
+  const html = await fetchCurrentPage(tag);
   // reload items
   document.getElementById('itemList').innerHTML = html.getElementById('itemList').innerHTML;
   // also reload any pinned entities present

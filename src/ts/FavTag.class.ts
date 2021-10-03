@@ -33,10 +33,12 @@ export default class FavTag {
   toggle(): void {
     if ($('#favtags-panel').is(':visible')) {
       $('#container').css('width', '100%').css('margin-right', 'auto');
+      document.getElementById('favtags-opener').removeAttribute('hidden');
       localStorage.setItem('isFavtagsOpen', '0');
     } else {
       $('#container').css('width', '75%').css('margin-right', '0');
       localStorage.setItem('isFavtagsOpen', '1');
+      document.getElementById('favtags-opener').toggleAttribute('hidden', true);
     }
     $('#favtags-panel').toggle();
   }

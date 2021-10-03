@@ -625,7 +625,7 @@ tr:nth-child(odd) {
 /* SIDE PANEL */
 .side-panel {
     background: $darkgray;
-    /*box-shadow: 0 10px 10px rgba(0, 0, 0, 0.8);*/
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.8);
     display: none;
     height: 100%;
     left: 0;

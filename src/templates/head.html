@@ -93,7 +93,6 @@
               <a class='dropdown-item' href='ucp.php'><i class='fas fa-cogs fa-fw'></i> {{ 'User panel'|trans }}</a>
               <a class='dropdown-item' href='profile.php'><i class='fas fa-user fa-fw'></i> {{ 'My Profile'|trans }}</a>
               <a class='dropdown-item' data-action='toggle-todolist' href='#'><i class='fas fa-list fa-fw'></i> {{ 'Todolist'|trans }}</a>
-              <a class='dropdown-item' data-action='toggle-favtags' href='#'><i class='fas fa-list fa-fw'></i> {{ 'Favorite tags'|trans }}</a>
               {% if App.Session.get('is_admin') %}
                 <a class='dropdown-item' href='admin.php'><i class='fas fa-tools fa-fw'></i> {{ 'Admin panel'|trans }}</a>
               {% endif %}
@@ -111,6 +110,9 @@
     {% endif %}
 </nav>
 
+<a class='clickable float-left' data-action='toggle-favtags' id='favtags-opener' title='{{ 'Open'|trans }}'>
+  <i class='fas fa-chevron-right fa-2x'></i>
+</a>
 <div class='real-container'>
 
 <noscript><!-- show warning if javascript is disabled -->

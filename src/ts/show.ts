@@ -331,6 +331,16 @@ document.addEventListener('DOMContentLoaded', () => {
       FavTagC.toggle();
     } else if (el.matches('[data-action="toggle-addfav"]')) {
       document.getElementById('createFavTagInput').toggleAttribute('hidden');
+    } else if (el.matches('[data-action="add-tag-filter"]')) {
+      reloadEntitiesShow(el.dataset.tag);
+      const params = new URLSearchParams(document.location.search);
+      params.set('tags[]', el.dataset.tag);
+      history.replaceState(null, '', `?${params.toString()}`);
+      document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
+        el.classList.remove('selected');
+      });
+      el.classList.add('selected');
+
     } else if (el.matches('[data-action="destroy-favtags"]')) {
       FavTagC.destroy(parseInt(el.dataset.id, 10));
       reloadElement('favtags-panel');

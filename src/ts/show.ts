@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="toggle-favtags"]')) {
       FavTagC.toggle();
     } else if (el.matches('[data-action="toggle-addfav"]')) {
-      document.getElementById('createFavTagInput').removeAttribute('hidden');
+      document.getElementById('createFavTagInput').toggleAttribute('hidden');
     } else if (el.matches('[data-action="destroy-favtags"]')) {
       FavTagC.destroy(parseInt(el.dataset.id, 10));
       reloadElement('favtags-panel');

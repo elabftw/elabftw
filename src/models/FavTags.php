@@ -56,7 +56,8 @@ class FavTags implements CrudInterface
     public function read(ContentParamsInterface $params): array
     {
         $sql = 'SELECT users_id, tags_id, tag FROM favtags2users
-           LEFT JOIN tags ON (tags.id = favtags2users.tags_id) WHERE users_id = :userid';
+           LEFT JOIN tags ON (tags.id = favtags2users.tags_id) WHERE users_id = :userid
+           ORDER BY tags.tag';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);

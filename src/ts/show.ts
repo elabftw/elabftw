@@ -330,7 +330,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="toggle-favtags"]')) {
       FavTagC.toggle();
     } else if (el.matches('[data-action="toggle-addfav"]')) {
-      document.getElementById('createFavTagInput').toggleAttribute('hidden');
+      const input = document.getElementById('createFavTagInput');
+      input.toggleAttribute('hidden');
+      input.focus();
     } else if (el.matches('[data-action="add-tag-filter"]')) {
       reloadEntitiesShow(el.dataset.tag);
       const params = new URLSearchParams(document.location.search);

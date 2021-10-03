@@ -1,4 +1,4 @@
-<div class='side-panel' id='todoList'>
+<div class='side-panel' id='todolistPanel' hidden>
   <div class='m-2'>
     <a class='clickable float-right' data-action='toggle-todolist' title='{{ 'Close'|trans }}'>
         <i class='fas fa-chevron-left fa-2x'></i>
@@ -14,6 +14,5 @@
   <h3 class='ml-2'>{{ 'Unfinished steps'|trans }}</h3>
   <div id='todoStepsDiv'></div>
 </div>
-
 
 <div id='todoSc' data-toggle='{{ App.Users.userData.sc_todo }}'></div>

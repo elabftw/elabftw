@@ -6,15 +6,14 @@
  * @package elabftw
  */
 import { Payload, Method, Model, Action, ResponseMsg } from './interfaces';
-import { Ajax } from './Ajax.class';
+import SidePanel from './SidePanel.class';
+import TodoList from './Todolist.class';
 
-export default class FavTag {
-  model: Model;
-  sender: Ajax;
+export default class FavTag extends SidePanel {
 
   constructor() {
-    this.model = Model.FavTag,
-    this.sender = new Ajax();
+    super(Model.FavTag);
+    this.panelId = 'favtagsPanel';
   }
 
   // ADD A TAG AS FAVORITE
@@ -29,20 +28,6 @@ export default class FavTag {
     return this.sender.send(payload);
   }
 
-  // TOGGLE FAVTAGS PANEL VISIBILITY
-  toggle(): void {
-    if ($('#favtags-panel').is(':visible')) {
-      $('#container').css('width', '100%').css('margin-right', 'auto');
-      document.getElementById('favtags-opener').removeAttribute('hidden');
-      localStorage.setItem('isFavtagsOpen', '0');
-    } else {
-      $('#container').css('width', '75%').css('margin-right', '0');
-      localStorage.setItem('isFavtagsOpen', '1');
-      document.getElementById('favtags-opener').toggleAttribute('hidden', true);
-    }
-    $('#favtags-panel').toggle();
-  }
-
   // REMOVE A FAVORITE TAG
   destroy(id: number): Promise<ResponseMsg> {
     const payload: Payload = {
@@ -52,5 +37,13 @@ export default class FavTag {
       id: id,
     };
     return this.sender.send(payload);
+  }
+
+  toggle(): void {
+    // force todolist to close if it's open
+    (new TodoList).hide();
+    super.toggle();
+    // toggle the opener icon (>)
+    document.getElementById('favtags-opener').toggleAttribute('hidden');
   }
 }

@@ -6,18 +6,16 @@
  * @package elabftw
  */
 import { Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedExperiments, Target, ResponseMsg } from './interfaces';
-import { Ajax } from './Ajax.class';
+import SidePanel from './SidePanel.class';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
+import FavTag from './FavTag.class';
 import i18next from 'i18next';
 
-export default class Todolist {
-
-  model: Model;
-  sender: Ajax;
+export default class Todolist extends SidePanel {
 
   constructor() {
-    this.model = Model.Todolist,
-    this.sender = new Ajax();
+    super(Model.Todolist);
+    this.panelId = 'todolistPanel';
   }
 
   create(content: string): Promise<ResponseMsg> {
@@ -94,16 +92,13 @@ export default class Todolist {
 
   // TOGGLE TODOLIST VISIBILITY
   toggle(): void {
-    if ($('#todoList').is(':visible')) {
-      $('#container').css('width', '100%').css('margin-right', 'auto');
-      localStorage.setItem('isTodolistOpen', '0');
-    } else {
-      $('#container').css('width', '75%').css('margin-right', '0');
+    // force favtags to close if it's open
+    (new FavTag).hide();
+    super.toggle();
+    if (!document.getElementById(this.panelId).hasAttribute('hidden')) {
       this.read();
       this.getSteps();
-      localStorage.setItem('isTodolistOpen', '1');
     }
-    $('#todoList').toggle();
   }
 
   destroy(id: number): Promise<ResponseMsg> {

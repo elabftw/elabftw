@@ -185,7 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // LOGOUT
     } else if (el.matches('[data-action="logout"]')) {
-      localStorage.removeItem('isTodolistOpen');
+      localStorage.removeItem('istodolistOpen');
+      localStorage.removeItem('isfavtagsOpen');
       window.location.href = 'app/logout.php';
 
     // CREATE EXPERIMENT or DATABASE item: main create button in top right

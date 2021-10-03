@@ -626,7 +626,6 @@ tr:nth-child(odd) {
 .side-panel {
     background: $darkgray;
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.8);
-    display: none;
     height: 100%;
     left: 0;
     overflow: hidden;
@@ -634,7 +633,7 @@ tr:nth-child(odd) {
     padding-top: 10px;
     position: fixed;
     top: 0;
-    width: 25%;
+    width: 22%;
 
     h2,
     h3,

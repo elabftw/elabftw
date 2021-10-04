@@ -11,10 +11,10 @@
 
   {% set count = itemsArr|length %}
 
-  {% if count == 0 and searchType != '' %}
+  {% if count == 0 %}
     <div class='row display-flex' id='itemList'>
+      {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
     </div>
-    {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
   {% elseif count == 0 and searchType == '' and not App.Session.get('is_anon') and not App.Request.query.get('offset') %}
       {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
   {% else %}

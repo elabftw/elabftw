@@ -65,17 +65,23 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     public function show(bool $isSearchPage = false): Response
     {
+        // create the DisplayParams object from the query
+        $DisplayParams = new DisplayParams();
+        $DisplayParams->adjust($this->App);
+
         // VISIBILITY LIST
         $TeamGroups = new TeamGroups($this->Entity->Users);
 
         // CATEGORY FILTER
         if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {
             $this->Entity->addFilter('categoryt.id', $this->App->Request->query->getDigits('cat'));
+            $DisplayParams->searchType = 'category';
         }
         // OWNER (USERID) FILTER
         if ($this->App->Request->query->has('owner') && !$isSearchPage) {
             $owner = (int) $this->App->Request->query->get('owner');
             $this->Entity->addFilter('entity.userid', (string) $owner);
+            $DisplayParams->searchType = 'user';
         }
 
         // TAG FILTER
@@ -97,11 +103,8 @@ abstract class AbstractEntityController implements ControllerInterface
             } else {
                 $this->Entity->idFilter = $trimmedFilter;
             }
+            $DisplayParams->searchType = 'tags';
         }
-
-        // create the DisplayParams object from the query
-        $DisplayParams = new DisplayParams();
-        $DisplayParams->adjust($this->App);
 
         // only show public to anon
         if ($this->App->Session->get('is_anon')) {

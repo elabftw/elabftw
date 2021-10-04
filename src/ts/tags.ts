@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (json.res === false) {
           notif(json);
         }
-        reloadElement('favtags-panel');
+        reloadElement('favtagsPanel');
         $(this).val('');
       });
     }
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   addAutocompleteToTagInputs();
   new MutationObserver(() => addAutocompleteToTagInputs())
-    .observe(document.getElementById('favtags-panel'), {childList: true, subtree: true});
+    .observe(document.getElementById('favtagsPanel'), {childList: true, subtree: true});
 
 
   // make the tag editable (on admin.ts)

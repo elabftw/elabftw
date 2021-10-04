@@ -369,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     } else if (el.matches('[data-action="destroy-favtags"]')) {
       FavTagC.destroy(parseInt(el.dataset.id, 10));
-      reloadElement('favtags-panel');
+      reloadElement('favtagsPanel');
     }
   });
 

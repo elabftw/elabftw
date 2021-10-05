@@ -343,12 +343,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE FAVTAGS PANEL
     } else if (el.matches('[data-action="toggle-favtags"]')) {
       FavTagC.toggle();
+    // TOGGLE text input to add a new favorite tag
     } else if (el.matches('[data-action="toggle-addfav"]')) {
       const input = document.getElementById('createFavTagInput');
       input.toggleAttribute('hidden');
       input.focus();
+    // a tag has been clicked/selected, add it in url and load the page
     } else if (el.matches('[data-action="add-tag-filter"]')) {
-      reloadEntitiesShow(el.dataset.tag);
       const params = new URLSearchParams(document.location.search);
       params.set('tags[]', el.dataset.tag);
       history.replaceState(null, '', `?${params.toString()}`);
@@ -356,6 +357,8 @@ document.addEventListener('DOMContentLoaded', () => {
         el.classList.remove('selected');
       });
       el.classList.add('selected');
+      reloadEntitiesShow(el.dataset.tag);
+    // clear the filter input for favtags
     } else if (el.matches('[data-action="clear-favtags-search"]')) {
       const searchInput = (document.querySelector('[data-action="favtags-search"]') as HTMLInputElement);
       searchInput.value = '';
@@ -363,13 +366,14 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
         el.removeAttribute('hidden');
       });
+    // toggle visibility of the trash icon for favtags
     } else if (el.matches('[data-action="toggle-favtags-edit"]')) {
       document.querySelectorAll('[data-action="destroy-favtags"]').forEach(el => {
         el.toggleAttribute('hidden');
       });
+    // remove a favtag
     } else if (el.matches('[data-action="destroy-favtags"]')) {
-      FavTagC.destroy(parseInt(el.dataset.id, 10));
-      reloadElement('favtagsPanel');
+      FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElement('favtagsPanel'));
     }
   });
 

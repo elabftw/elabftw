@@ -4,4 +4,4 @@ build:
             dependencies:
                 after:
                     - yarn buildnode
-                    - yarn buildgrammar
+                    - yarn buildparser

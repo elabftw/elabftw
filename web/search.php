@@ -22,7 +22,6 @@ use Elabftw\Models\TeamGroups;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
-use function rtrim;
 
 /**
  * The search page

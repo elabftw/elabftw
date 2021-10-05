@@ -96,7 +96,7 @@ class DepthValidatorVisitor implements Visitor
 
     private function isDepthExceed(int $depth): bool
     {
-        if (!$this->limit) {
+        if ($this->limit === null) {
             return false;
         }
 //        error_log(print_r($depth, true));

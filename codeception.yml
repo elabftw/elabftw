@@ -8,6 +8,8 @@ coverage:
             - src/traits/*
             - src/maps/*
             - src/controllers/*
+        exclude:
+            - src/services/advancedSearchQuery/grammar/Parser.php
 actor: Tester
 paths:
     tests: tests

@@ -32,6 +32,7 @@ use Elabftw\Traits\EntityTrait;
 use function explode;
 use function is_bool;
 use PDO;
+use PDOStatement;
 
 /**
  * The mother class of Experiments, Items, Templates and ItemsTypes
@@ -260,17 +261,8 @@ abstract class AbstractEntity implements CrudInterface
             $req->bindParam(':metadata_value', $this->metadataValue);
         }
 
-        if ($this->bodyFilterBindValues) {
-            foreach ($this->bodyFilterBindValues as $bindValue) {
-                $req->bindValue($bindValue['param'], $bindValue['value'], $bindValue['type']);
-            }
-        }
-
-        if ($this->titleFilterBindValues) {
-            foreach ($this->titleFilterBindValues as $bindValue) {
-                $req->bindValue($bindValue['param'], $bindValue['value'], $bindValue['type']);
-            }
-        }
+        $this->bindFilterValues($this->titleFilterBindValues, $req);
+        $this->bindFilterValues($this->bodyFilterBindValues, $req);
 
         $this->Db->execute($req);
 
@@ -785,5 +777,14 @@ abstract class AbstractEntity implements CrudInterface
 
         // replace all %1$s by 'experiments' or 'items'
         return sprintf(implode(' ', $sqlArr), $this->type);
+    }
+
+    private function bindFilterValues(array $bindValues, PDOStatement $req): void
+    {
+        if (!empty($bindValues)) {
+            foreach ($bindValues as $bindValue) {
+                $req->bindValue($bindValue['param'], $bindValue['value'], $bindValue['type']);
+            }
+        }
     }
 }

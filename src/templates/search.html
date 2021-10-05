@@ -79,65 +79,64 @@
     <!-- NEW ROW -->
     <div class='row'>
 
-      <!-- TITLE -->
       <div class='col-md-6'>
-        <label for='title'>{{ 'And title contains'|trans }}</label>
-        <input id='title' class='form-control' name='title' type='text' value='{{ title }}'/>
+        <!-- TITLE -->
+        <div>
+          <label for='title'>{{ 'And title contains'|trans }}</label>
+          <input id='title' class='form-control {{- titleError ? ' is-invalid' }}' name='title' type='text' placeholder='term1 termA AND termB !(termC OR "exact term")' value='{{ title }}' {{- titleError ? " aria-describedby='titleFeedback'" }} />
+          {% if titleError %}
+            <div id='titleFeedback' class='invalid-feedback'>{{ titleError|raw }}</div>
+          {% endif %}
+        </div>
+        <!-- END TITLE -->
+        <!-- BODY -->
+        <div>
+          <label for='body'>{{ 'And body contains'|trans }}</label>
+          <input id='body' class='form-control {{- bodyError ? ' is-invalid' }}' name='body' type='text' placeholder='term1 termA AND termB !(termC OR "exact term")' value='{{ body }}' {{- bodyError ? " aria-describedby='bodyFeedback'" }} />
+          {% if bodyError %}
+            <div id='bodyFeedback' class='invalid-feedback'>{{ bodyError|raw }}</div>
+          {% endif %}
+          <small class='form-text text-muted'>
+            {{ "Tip: you can use '%' as wildcard"|trans }}
+          </small>
+        </div>
+        <!-- END BODY -->
       </div>
-      <!-- END TITLE -->
 
-      <!-- STATUS -->
       <div class='col-md-4'>
-        <label for='status'>{{ 'And status is'|trans }}</label>
-        <select id='status' name='status' class='form-control'>
-          <option value=''>{{ 'Select status'|trans }}</option>
-          {% for status in statusArr %}
-            <option value='{{ status.category_id }}'{{ Request.query.get('status') == status.category_id ? ' selected' }}>
-              {{ status.category }}
-            </option>
-          {% endfor %}
-        </select>
+        <!-- STATUS -->
+        <div>
+          <label for='status'>{{ 'And status is'|trans }}</label>
+          <select id='status' name='status' class='form-control'>
+            <option value=''>{{ 'Select status'|trans }}</option>
+            {% for status in statusArr %}
+              <option value='{{ status.category_id }}'{{ Request.query.get('status') == status.category_id ? ' selected' }}>
+                {{ status.category }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <!-- END STATUS -->
+        <!-- RATING -->
+        <div>
+          <label for='rating'>{{ 'And rating is'|trans }}</label>
+          <select id='rating' name='rating' class='form-control'>
+            <option value=''>{{ 'Select number of stars'|trans }}</option>
+            <option value='null'{{ Request.query.get('rating') == 'null' ? ' selected' }}>{{ 'Unrated'|trans }}</option>
+            {% for i in range(1, 5) %}
+              <option value='{{ i }}'{{ Request.query.get('rating') == i ? ' selected' }}>{{ i }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <!-- END RATING -->
       </div>
-      <!-- END STATUS -->
-
     </div>
     <!-- NEW ROW -->
     <div class='row'>
-
-      <!-- BODY -->
       <div class='col-md-6'>
-        <label for='body'>{{ 'And body contains'|trans }}</label>
-        <input id='body' class='form-control' name='body' type='text' value='{{ body }}'/>
-
-        <label for='strict'>{{ 'Strict mode'|trans }}</label>
-        <input id='strict' class='mt-2 mr-3 custom-control-sm' type='checkbox' name='strict'
-          {{ Request.query.get('strict') == 'on' ? " checked='checked'" }}
-        />
-        <!-- AND / OR -->
-        <label for='andor'>{{ 'Space means'|trans }}</label>
-        <select class='mt-2 custom-control-sm' id='andor' name='andor'>
-          <option value='and'{{ Request.query.get('andor') == 'and' ? ' selected' }}>{{ 'and'|trans }}</option>
-          <option value='or'{{ Request.query.get('andor') == 'or' ? ' selected' }}>{{ 'or'|trans }}</option>
-        </select>
-
+        <pre>{{ whereClause|raw }}</pre>
       </div>
-      <!-- END TITLE/BODY block -->
-
-      <!-- RATING -->
-      <div class='col-md-4'>
-        <label for='rating'>{{ 'And rating is'|trans }}</label>
-        <select id='rating' name='rating' class='form-control'>
-          <option value=''>{{ 'Select number of stars'|trans }}</option>
-          <option value='null'{{ Request.query.get('rating') == 'null' ? ' selected' }}>{{ 'Unrated'|trans }}</option>
-          {% for i in range(1, 5) %}
-            <option value='{{ i }}'{{ Request.query.get('rating') == i ? ' selected' }}>{{ i }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <!-- END RATING -->
     </div>
-    <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
-
     <!-- NEW ROW -->
     <div class='row'>
       <h4 class='ml-3'>{{ 'Extra fields search'|trans }}</h4>

@@ -19,10 +19,10 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
+use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
-use function filter_var;
-use function trim;
+use function rtrim;
 
 /**
  * The search page
@@ -50,12 +50,6 @@ $visibilityArr = $TeamGroups->getVisibilityList();
 
 $usersArr = $App->Users->readAllFromTeam();
 
-// ANDOR
-$andor = ' AND ';
-if ($Request->query->has('andor') && $Request->query->get('andor') === 'or') {
-    $andor = ' OR ';
-}
-
 // WHERE do we search?
 if ($Request->query->get('type') === 'experiments') {
     $Entity = $Experiments;
@@ -63,28 +57,42 @@ if ($Request->query->get('type') === 'experiments') {
     $Entity = $Database;
 }
 
-// ARE WE STRICT?
-// strict mode means we don't add wildcard characters around the query
-$isStrict = false;
-if ($Request->query->get('strict') === 'on') {
-    $isStrict = true;
-}
-
 // TITLE
 $title = '';
+$titleError = false;
 if ($Request->query->has('title') && !empty($Request->query->get('title'))) {
-    $title = filter_var(trim($Request->query->get('title')), FILTER_SANITIZE_STRING);
-    if ($title !== false) {
-        $Entity->titleFilter = Tools::getSearchSql($title, $andor, 'title', $isStrict);
+    $title = $Request->query->get('title');
+
+    $advancedQuery = new AdvancedSearchQuery($title, 'title');
+    $whereClause = $advancedQuery->getWhereClause();
+    if ($whereClause) {
+        $Entity->titleFilter = $whereClause['where'];
+        $Entity->titleFilterBindValues = $whereClause['bindValues'];
+    }
+
+    $exception = $advancedQuery->getException();
+    if ($exception) {
+        $titleError = $exception;
     }
 }
 
 // BODY
 $body = '';
+$bodyError = false;
+$whereClause = '';
 if ($Request->query->has('body') && !empty($Request->query->get('body'))) {
-    $body = filter_var(trim($Request->query->get('body')), FILTER_SANITIZE_STRING);
-    if ($body !== false) {
-        $Entity->bodyFilter = Tools::getSearchSql($body, $andor, 'body', $isStrict);
+    $body = $Request->query->get('body');
+
+    $advancedQuery = new AdvancedSearchQuery($body, 'body');
+    $whereClause = $advancedQuery->getWhereClause();
+    if ($whereClause) {
+        $Entity->bodyFilter = $whereClause['where'];
+        $Entity->bodyFilterBindValues = $whereClause['bindValues'];
+    }
+
+    $exception = $advancedQuery->getException();
+    if ($exception) {
+        $bodyError = $exception;
     }
 }
 
@@ -111,16 +119,18 @@ $renderArr = array(
     'Request' => $Request,
     'Experiments' => $Experiments,
     'Database' => $Database,
-    'andor' => $andor,
     'body' => $body,
+    'bodyError' => $bodyError,
     'categoryArr' => $categoryArr,
     'itemsTypesArr' => $itemsTypesArr,
     'tagsArr' => $tagsArr,
     'teamGroupsArr' => $teamGroupsArr,
     'title' => $title,
+    'titleError' => $titleError,
     'statusArr' => $statusArr,
     'usersArr' => $usersArr,
     'visibilityArr' => $visibilityArr,
+    'whereClause' => print_r($whereClause, true),
 );
 echo $App->render('search.html', $renderArr);
 
@@ -206,12 +216,13 @@ if ($Request->query->count() > 0) {
             }
         }
 
-
-        try {
-            $Controller = new SearchController($App, $Entity);
-            echo $Controller->show(true)->getContent();
-        } catch (ImproperActionException $e) {
-            echo Tools::displayMessage($e->getMessage(), 'ko', false);
+        if (!$bodyError && !$titleError) {
+            try {
+                $Controller = new SearchController($App, $Entity);
+                echo $Controller->show(true)->getContent();
+            } catch (ImproperActionException $e) {
+                echo Tools::displayMessage($e->getMessage(), 'ko', false);
+            }
         }
     }
 } else {

@@ -71,10 +71,16 @@ abstract class AbstractEntity implements CrudInterface
     public string $titleFilter = '';
 
     // inserted in sql
+    public array $titleFilterBindValues = array();
+
+    // inserted in sql
     public string $dateFilter = '';
 
     // inserted in sql
     public string $bodyFilter = '';
+
+    // inserted in sql
+    public array $bodyFilterBindValues = array();
 
     public bool $isReadOnly = false;
 
@@ -252,6 +258,18 @@ abstract class AbstractEntity implements CrudInterface
             $req->bindParam(':metadata_key', $this->metadataKey);
             $req->bindParam(':metadata_value_path', $this->metadataValuePath);
             $req->bindParam(':metadata_value', $this->metadataValue);
+        }
+
+        if ($this->bodyFilterBindValues) {
+            foreach ($this->bodyFilterBindValues as $bindValue) {
+                $req->bindValue($bindValue['param'], $bindValue['value'], $bindValue['type']);
+            }
+        }
+
+        if ($this->titleFilterBindValues) {
+            foreach ($this->titleFilterBindValues as $bindValue) {
+                $req->bindValue($bindValue['param'], $bindValue['value'], $bindValue['type']);
+            }
         }
 
         $this->Db->execute($req);

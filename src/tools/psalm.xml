@@ -20,6 +20,7 @@
             <directory name="../../cache" />
             <directory name="../../uploads" />
             <directory name="../../vendor" />
+            <file name="../../src/services/advancedSearchQuery/grammar/Parser.php" />
         </ignoreFiles>
     </projectFiles>
 

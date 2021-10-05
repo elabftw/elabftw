@@ -6,7 +6,7 @@
  * @package elabftw
  */
 declare let key: any;
-import { getCheckedBoxes, insertParamAndReload, notif, reloadEntitiesShow, getEntity, reloadElement } from './misc';
+import { getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement } from './misc';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
@@ -26,10 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const entity = getEntity();
-  // PAGINATION
-  const offset = parseInt(about.offset);
-  const limit = parseInt(about.limit);
-
+  const limit = parseInt(about.limit, 10);
   const EntityC = new EntityClass(entity.type);
   const FavTagC = new FavTag();
 
@@ -59,34 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // for instance the tags input allow multiple selection, so we don't want to submit on change
   $('.autosubmit').on('change', function() {
     $(this).closest('form').submit();
-  });
-
-  // TOGGLE BODY
-  // toggleBody is the little +/- image
-  $('.toggleBody').on('click', function() {
-    const randId = $(this).data('randid');
-    // transform the + in - and vice versa
-    $(this).find('[data-fa-i2svg]').toggleClass('fa-minus-circle fa-plus-circle');
-    // get the id to show the toggleBody
-    const id = $(this).data('id');
-    // get html of body
-    $.get('app/controllers/EntityAjaxController.php', {
-      getBody: true,
-      id: id,
-      type: $(this).data('type'),
-      editor: 'tiny',
-      // and put it in the div and show the div
-    }).done(function(data) {
-      // get the width of the parent. The -30 is to make it smaller than parent even with the margins
-      const width = $('#parent_' + randId).width() - 30;
-      // add html content and adjust the width of the children
-      const div = document.getElementById(randId);
-      div.innerHTML = data.msg;
-      div.style.width = String(width);
-      div.toggleAttribute('hidden');
-      // ask mathjax to reparse the page
-      MathJax.typeset();
-    });
   });
 
   // THE CHECKBOXES
@@ -331,15 +300,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // get offset as number
+  function getOffset(): number {
+    const params = new URLSearchParams(document.location.search);
+    let currentOffset = params.get('offset');
+    if (!currentOffset) {
+      currentOffset = '0';
+    }
+    return parseInt(currentOffset, 10);
+  }
+
   // Add click listener and do action based on which element is clicked
   document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
+    const params = new URLSearchParams(document.location.search);
     // previous page
     if (el.matches('[data-action="previous-page"]')) {
-      insertParamAndReload('offset', offset - limit);
+      params.set('offset', String(getOffset() - limit));
+      history.replaceState(null, '', `?${params.toString()}`);
+      reloadEntitiesShow();
     // next page
     } else if (el.matches('[data-action="next-page"]')) {
-      insertParamAndReload('offset', offset + limit);
+      params.set('offset', String(getOffset() + limit));
+      history.replaceState(null, '', `?${params.toString()}`);
+      reloadEntitiesShow();
     // TOGGLE FAVTAGS PANEL
     } else if (el.matches('[data-action="toggle-favtags"]')) {
       FavTagC.toggle();
@@ -350,8 +334,9 @@ document.addEventListener('DOMContentLoaded', () => {
       input.focus();
     // a tag has been clicked/selected, add it in url and load the page
     } else if (el.matches('[data-action="add-tag-filter"]')) {
-      const params = new URLSearchParams(document.location.search);
       params.set('tags[]', el.dataset.tag);
+      // clear out any offset from a previous query
+      params.delete('offset');
       history.replaceState(null, '', `?${params.toString()}`);
       document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
         el.classList.remove('selected');
@@ -374,6 +359,30 @@ document.addEventListener('DOMContentLoaded', () => {
     // remove a favtag
     } else if (el.matches('[data-action="destroy-favtags"]')) {
       FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElement('favtagsPanel'));
+    } else if (el.matches('[data-action="toggle-body"]')) {
+      const randId = el.dataset.randid;
+      // transform the + in - and vice versa
+      $(el).find('[data-fa-i2svg]').toggleClass('fa-minus-circle fa-plus-circle');
+      // get the id to show the toggleBody
+      const id = $(el).data('id');
+      // get html of body
+      $.get('app/controllers/EntityAjaxController.php', {
+        getBody: true,
+        id: id,
+        type: el.dataset.type,
+        editor: 'tiny',
+        // and put it in the div and show the div
+      }).done(function(data) {
+        // get the width of the parent. The -30 is to make it smaller than parent even with the margins
+        const width = $('#parent_' + randId).width() - 30;
+        // add html content and adjust the width of the children
+        const div = document.getElementById(randId);
+        div.innerHTML = data.msg;
+        div.style.width = String(width);
+        div.toggleAttribute('hidden');
+        // ask mathjax to reparse the page
+        MathJax.typeset();
+      });
     }
   });
 

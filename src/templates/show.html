@@ -11,6 +11,8 @@
 
   {% set count = itemsArr|length %}
 
+  <div id='showModeContent'>
+
   {% if count == 0 and searchType != '' %}
     <div class='row display-flex' id='itemList'>
       {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
@@ -89,7 +91,8 @@
         {% endfor %}
         </div>
       {% elseif App.Users.userData.display_mode == 'tb' %}
-        <table id='itemList' class='item-table'>
+      <div id='itemList'>
+        <table class='item-table'>
           <tr>
             <th>
               {{ 'Date'|trans }} <a class='orderBy clickable' data-orderby='date'><i class='fas fa-sort'></i></a>
@@ -120,6 +123,7 @@
           {% include('show-item-table.html') %}
         {% endfor %}
         </table>
+      </div> <!-- end itemList -->
       {% endif %}
 
       <!-- PREVIOUS/NEXT PAGE buttons -->
@@ -139,8 +143,8 @@
       data-page='show'
       data-type='{{ Entity.type }}'
       data-locale='{{ App.Users.userData.lang }}'
-      data-limit='{{ DisplayParams.limit }}'
-      data-offset='{{ DisplayParams.offset }}'>
+      data-limit='{{ DisplayParams.limit }}'>
   </div>
+</div>
 
 {% endblock body %}

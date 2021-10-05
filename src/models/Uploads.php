@@ -36,6 +36,7 @@ use function in_array;
 use function is_uploaded_file;
 use PDO;
 use function rename;
+use function strtolower;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use function unlink;
@@ -82,7 +83,7 @@ class Uploads implements CrudInterface
 
         // rotate the image if we can find the orientation in the exif data
         // maybe php-exif extension isn't loaded
-        if (function_exists('exif_read_data') && in_array($ext, Extensions::HAS_EXIF, true)) {
+        if (function_exists('exif_read_data') && in_array(strtolower($ext), Extensions::HAS_EXIF, true)) {
             $exifData = exif_read_data($fullPath);
             if ($exifData !== false && extension_loaded('gmagick')) {
                 $image = new Gmagick($fullPath);

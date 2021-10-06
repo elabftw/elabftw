@@ -10,22 +10,30 @@ fs.readFile('./src/node/grammar/queryGrammar.pegjs', (err, data) => {
   }
 
   // php parser
-  fs.writeFile(
-    './src/services/advancedSearchQuery/grammar/Parser.php',
-    pegjs.generate(data.toString(), {
-      cache: true,
-      plugins: [phpegjs],
-      phppegjs: {
-        parserNamespace: 'Elabftw\\Services\\AdvancedSearchQuery\\Grammar',
-        parserClassName: 'Parser',
-        //typeHint: true,
-        //stricTypes: true,
-      },
-    }),
+  fs.mkdir(
+    './cache/advancedSearchQuery',
+    { recursive: true, mode: 0777 },
     err => {
       if (err) {
         throw err;
       }
+
+      fs.writeFile(
+        './cache/advancedSearchQuery/Parser.php',
+        pegjs.generate(data.toString(), {
+          cache: true,
+          plugins: [phpegjs],
+          phppegjs: {
+            parserNamespace: 'Elabftw\\Services\\AdvancedSearchQuery\\Grammar',
+            parserClassName: 'Parser',
+          },
+        }),
+        err => {
+          if (err) {
+            throw err;
+          }
+        },
+      );
     },
   );
 

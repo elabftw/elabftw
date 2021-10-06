@@ -13,7 +13,6 @@ parameters:
   excludePaths:
     - %currentWorkingDirectory%/src/langs/js-strings.php
     - %currentWorkingDirectory%/src/tools/rector.php
-    - %currentWorkingDirectory%/src/services/advancedSearchQuery/grammar/Parser.php
 
   paths:
     - %currentWorkingDirectory%/src

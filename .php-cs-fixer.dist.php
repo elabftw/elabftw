@@ -12,7 +12,6 @@ $finder = PhpCsFixer\Finder::create()
     ->name('/\.php|\.php.dist$/')
     ->exclude('tests/_output')
     ->exclude('tests/_support')
-    ->notPath('services/advancedSearchQuery/grammar/Parser.php')
     ->in(['bin', 'src', 'tests', 'web'])
 ;
 

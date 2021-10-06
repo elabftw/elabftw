@@ -781,10 +781,8 @@ abstract class AbstractEntity implements CrudInterface
 
     private function bindFilterValues(array $bindValues, PDOStatement $req): void
     {
-        if (!empty($bindValues)) {
-            foreach ($bindValues as $bindValue) {
-                $req->bindValue($bindValue['param'], $bindValue['value'], $bindValue['type']);
-            }
+        foreach ($bindValues as $bindValue) {
+            $req->bindValue($bindValue['param'], $bindValue['value'], $bindValue['type']);
         }
     }
 }

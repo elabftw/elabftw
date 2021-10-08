@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // TOGGLE
   // reopen todolist panel if it was previously opened
-  if (localStorage.getItem('isTodolistOpen') === '1') {
+  if (localStorage.getItem('istodolistOpen') === '1') {
     TodolistC.toggle();
   }
   // use shortcut

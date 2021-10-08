@@ -216,6 +216,6 @@ if ($Request->query->count() > 0) {
     }
 } else {
     // no search
-    echo $App->render('todolist.html', array());
+    echo $App->render('todolist-panel.html', array());
     echo $App->render('footer.html', array());
 }

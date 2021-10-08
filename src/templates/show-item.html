@@ -40,7 +40,7 @@
                 <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}' class='clickable' title='{{ 'Edit'|trans }}'><i class='fas fa-pencil-alt link-like'></i></a>
               {% endif %}
               <!-- toggle body -->
-              <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} class='toggleBody clickable' title='{{ 'Toggle content'|trans }}'>
+              <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} data-action='toggle-body' class='clickable' title='{{ 'Toggle content'|trans }}'>
                 <i class='fas fa-plus-circle link-like'></i>
               </span>
               <!-- category -->

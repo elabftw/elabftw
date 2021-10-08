@@ -11,10 +11,16 @@
 
   {% set count = itemsArr|length %}
 
+  <div id='showModeContent'>
+
   {% if count == 0 and searchType != '' %}
+    <div class='row display-flex' id='itemList'>
       {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
+    </div>
   {% elseif count == 0 and searchType == '' and not App.Session.get('is_anon') and not App.Request.query.get('offset') %}
+    <div class='row display-flex' id='itemList'>
       {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
+    </div>
   {% else %}
       {% if pinnedArr and not searchPage %}
         <div id='pinned-entities' class='row display-flex'>
@@ -67,7 +73,7 @@
         </select>
 
         <!-- Add a tag -->
-        <input type='text' id='createTagInputMultiple' class='createTagInputMultiple' placeholder='{{ 'Add a tag'|trans }}' />
+        <input type='text' id='createTagInputMultiple' class='createTagInputMultiple' data-autocomplete='tags' placeholder='{{ 'Add a tag'|trans }}' />
 
         <!-- Add a link -->
         <input type='text' id='linkInputMultiple' class='linkinput' placeholder='{{ 'Add a link'|trans }}' />
@@ -84,8 +90,9 @@
           {% include('show-item.html') %}
         {% endfor %}
         </div>
-      {% else  %}
-        <table id='itemList' class='item-table'>
+      {% elseif App.Users.userData.display_mode == 'tb' %}
+      <div id='itemList'>
+        <table class='item-table'>
           <tr>
             <th>
               {{ 'Date'|trans }} <a class='orderBy clickable' data-orderby='date'><i class='fas fa-sort'></i></a>
@@ -116,7 +123,10 @@
           {% include('show-item-table.html') %}
         {% endfor %}
         </table>
+      </div> <!-- end itemList -->
       {% endif %}
+
+      <!-- PREVIOUS/NEXT PAGE buttons -->
       <div class='text-center page-buttons mt-2'>
         {% if DisplayParams.offset != 0 %}
           <button class='button btn btn-neutral previousPage' data-action='previous-page'>{{ 'Previous page'|trans }}</button>
@@ -133,8 +143,8 @@
       data-page='show'
       data-type='{{ Entity.type }}'
       data-locale='{{ App.Users.userData.lang }}'
-      data-limit='{{ DisplayParams.limit }}'
-      data-offset='{{ DisplayParams.offset }}'>
+      data-limit='{{ DisplayParams.limit }}'>
   </div>
+</div>
 
 {% endblock body %}

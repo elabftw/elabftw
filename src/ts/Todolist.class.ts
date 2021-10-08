@@ -6,18 +6,16 @@
  * @package elabftw
  */
 import { Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedExperiments, Target, ResponseMsg } from './interfaces';
-import { Ajax } from './Ajax.class';
+import SidePanel from './SidePanel.class';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
+import FavTag from './FavTag.class';
 import i18next from 'i18next';
 
-export default class Todolist {
-
-  model: Model;
-  sender: Ajax;
+export default class Todolist extends SidePanel {
 
   constructor() {
-    this.model = Model.Todolist,
-    this.sender = new Ajax();
+    super(Model.Todolist);
+    this.panelId = 'todolistPanel';
   }
 
   create(content: string): Promise<ResponseMsg> {
@@ -40,7 +38,7 @@ export default class Todolist {
       let html = '<ul id="todoItems-list" class="sortable" data-axis="y" data-table="todolist">';
       for (const entry of json.value as Array<Todoitem>) {
         html += `<li data-todoitemid=${entry.id} id='todoItem_${entry.id}'>
-        <a class='clickable float-right' data-action='destroy-todoitem' data-todoitemid='${entry.id}' title='` + i18next.t('generic-delete-warning') + `'>
+        <a class='clickable float-right mr-2' data-action='destroy-todoitem' data-todoitemid='${entry.id}' title='` + i18next.t('generic-delete-warning') + `'>
           <i class='fas fa-trash-alt'></i>
         </a>
         <span style='font-size:90%;display:block;'><span class='draggable sortableHandle'><i class='fas fa-sort'></i></span> <span class='relative-moment' title='${entry.creation_time}'></span></span>
@@ -94,16 +92,13 @@ export default class Todolist {
 
   // TOGGLE TODOLIST VISIBILITY
   toggle(): void {
-    if ($('#todoList').is(':visible')) {
-      $('#container').css('width', '100%').css('margin-right', 'auto');
-      localStorage.setItem('isTodolistOpen', '0');
-    } else {
-      $('#container').css('width', '70%').css('margin-right', '0');
+    // force favtags to close if it's open
+    (new FavTag).hide();
+    super.toggle();
+    if (!document.getElementById(this.panelId).hasAttribute('hidden')) {
       this.read();
       this.getSteps();
-      localStorage.setItem('isTodolistOpen', '1');
     }
-    $('#todoList').toggle();
   }
 
   destroy(id: number): Promise<ResponseMsg> {

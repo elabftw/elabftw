@@ -23,8 +23,11 @@ trait SetIdTrait
     /**
      * Check and set id
      */
-    public function setId(int $id): void
+    public function setId(?int $id): void
     {
+        if ($id === null) {
+            return;
+        }
         if (Check::id($id) === false) {
             throw new IllegalActionException('The id parameter is not valid!');
         }

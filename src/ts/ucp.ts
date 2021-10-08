@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const title = prompt(i18next.t('template-title'));
       if (title) {
         // no body on template creation
-        EntityC.create(title).then(json => {
+        EntityC.create(title, []).then(json => {
           window.location.replace(`ucp.php?tab=3&templateid=${json.value}`);
         });
       }
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const reader = new FileReader();
     reader.onload = function(event): void {
       const body = event.target.result as string;
-      EntityC.create(title).then(json => {
+      EntityC.create(title, []).then(json => {
         const newid = parseInt(json.value as string);
         EntityC.update(newid, Target.Body, body).then(() => {
           window.location.replace(`ucp.php?tab=3&templateid=${json.value}`);

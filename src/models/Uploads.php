@@ -47,7 +47,6 @@ use function unlink;
 class Uploads implements CrudInterface
 {
     use UploadTrait;
-
     use SetIdTrait;
 
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */

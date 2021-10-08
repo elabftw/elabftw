@@ -23,7 +23,6 @@ use Elabftw\Traits\UploadTrait;
 class MakeReport implements FileMakerInterface
 {
     use CsvTrait;
-
     use UploadTrait;
 
     protected Db $Db;

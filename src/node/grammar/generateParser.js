@@ -1,8 +1,8 @@
 /* eslint-env node */
 
 const fs = require('fs');
-const pegjs = require('pegjs');
-const phpegjs = require('phpegjs');
+const peggy = require('peggy');
+const phpeggy = require('phpeggy');
 
 fs.readFile('./src/node/grammar/queryGrammar.pegjs', (err, data) => {
   if (err) {
@@ -20,10 +20,10 @@ fs.readFile('./src/node/grammar/queryGrammar.pegjs', (err, data) => {
 
       fs.writeFile(
         './cache/advancedSearchQuery/Parser.php',
-        pegjs.generate(data.toString(), {
+        peggy.generate(data.toString(), {
           cache: true,
-          plugins: [phpegjs],
-          phppegjs: {
+          plugins: [phpeggy],
+          phpeggy: {
             parserNamespace: 'Elabftw\\Services\\AdvancedSearchQuery\\Grammar',
             parserClassName: 'Parser',
           },
@@ -40,7 +40,7 @@ fs.readFile('./src/node/grammar/queryGrammar.pegjs', (err, data) => {
   // js parser
   // fs.writeFile(
     // './src/js/queryParser.js',
-    // pegjs.generate(data.toString(), {
+    // peggy.generate(data.toString(), {
       // cache: true,
       // output: 'source',
     // }),

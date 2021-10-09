@@ -11,6 +11,8 @@ import * as $3Dmol from '3dmol/build/3Dmol-nojquery.js';
 import { CheckableItem, ResponseMsg } from './interfaces';
 import { DateTime } from 'luxon';
 import { EntityType, Entity } from './interfaces';
+import { MathJaxObject } from 'mathjax-full/js/components/startup';
+declare const MathJax: MathJaxObject;
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -186,6 +188,8 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
   if (document.getElementById('pinned-entities')) {
     document.getElementById('pinned-entities').innerHTML = html.getElementById('pinned-entities').innerHTML;
   }
+  // ask mathjax to reparse the page
+  MathJax.typeset();
 }
 
 export async function reloadElement(elementId): Promise<void> {

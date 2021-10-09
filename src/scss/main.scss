@@ -622,6 +622,54 @@ tr:nth-child(odd) {
     }
 }
 
+/* SIDE PANEL */
+.side-panel {
+    background: $darkgray;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.8);
+    height: 100%;
+    left: 0;
+    overflow: hidden;
+    overflow-y: auto;
+    padding-top: 10px;
+    position: fixed;
+    top: 0;
+    width: 22%;
+
+    h2,
+    h3,
+    svg {
+        color: $lightwhite;
+    }
+
+    .header {
+        margin-bottom: 10px;
+    }
+
+    ul {
+        padding-left: 0;
+    }
+
+    li {
+        background-color: $lightgray;
+        color: $lightwhite;
+        font-size: 18px;
+        list-style-type: none;
+        padding: 5px 0 5px 10px;
+        text-align: left;
+
+        /* see why this line is lint-disabled: https://github.com/stylelint/stylelint/issues/5020 */
+        &.selected { /* stylelint-disable-line selector-no-qualifying-type */
+            background-color: $elabblue;
+            color: $lightwhite;
+            cursor: initial;
+        }
+
+        &:hover:not(.selected) {
+            background-color: $maingray;
+        }
+    }
+}
+
 /* display_size stuff */
 
 .item-show-xs {

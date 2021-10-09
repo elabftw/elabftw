@@ -39,7 +39,6 @@ use function textdomain;
 class App
 {
     use UploadTrait;
-
     use TwigTrait;
 
     public const INSTALLED_VERSION = '4.1.0';

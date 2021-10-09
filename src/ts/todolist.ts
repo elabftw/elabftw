@@ -5,6 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare let key: any;
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import Todolist from './Todolist.class';
 import i18next from 'i18next';
@@ -14,12 +15,24 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  const TodolistC = new Todolist();
+
   const pagesWithoutTodo = ['login', 'register', 'change-pass'];
   if (pagesWithoutTodo.includes(document.getElementById('info').dataset.page)) {
     return;
   }
 
-  const TodolistC = new Todolist();
+  // TOGGLE
+  // reopen todolist panel if it was previously opened
+  if (localStorage.getItem('istodolistOpen') === '1') {
+    TodolistC.toggle();
+  }
+  // use shortcut
+  if ($('#todoSc').length) {
+    key($('#todoSc').data('toggle'), function() {
+      TodolistC.toggle();
+    });
+  }
 
   // UPDATE TODOITEM
   $(document).on('mouseenter', '.todoItem', ev => {

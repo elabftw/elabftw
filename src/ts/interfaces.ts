@@ -65,6 +65,7 @@ enum Model {
   Apikey = 'apikey',
   Comment = 'comment',
   Link = 'link',
+  FavTag = 'favtag',
   PrivacyPolicy = 'privacypolicy',
   Status = 'status',
   Step = 'step',

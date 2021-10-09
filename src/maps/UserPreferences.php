@@ -30,7 +30,7 @@ class UserPreferences implements MapInterface
 
     private string $displaySize = 'lg';
 
-    // Can have two values: 'it' for item list (the default mode),
+    // Can have two values: 'it' for item list (the default mode)
     // and 'tb' for tabular view
     private string $displayMode = 'it';
 

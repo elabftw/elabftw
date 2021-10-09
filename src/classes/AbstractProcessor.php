@@ -17,6 +17,7 @@ use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\FavTags;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
@@ -133,6 +134,8 @@ abstract class AbstractProcessor implements ProcessorInterface
                 return new Comments($this->Entity, new Email(Config::getConfig(), $this->Users), $this->id);
             case 'link':
                 return new Links($this->Entity, $this->id);
+            case 'favtag':
+                return new FavTags($this->Users, $this->id);
             case 'step':
                 return new Steps($this->Entity, $this->id);
             case 'unfinishedsteps':
@@ -177,6 +180,7 @@ abstract class AbstractProcessor implements ProcessorInterface
         if ($this->Model instanceof Comments ||
             $this->Model instanceof Todolist ||
             $this->Model instanceof Links ||
+            $this->Model instanceof FavTags ||
             $this->Model instanceof Users ||
             $this->Model instanceof PrivacyPolicy) {
             return new ContentParams($this->content, $this->target);

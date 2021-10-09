@@ -25,7 +25,6 @@ use Symfony\Component\HttpFoundation\Request;
 class MakeQrPdf extends AbstractMake implements FileMakerInterface
 {
     use TwigTrait;
-
     use PdfTrait;
 
     // the input ids but in an array

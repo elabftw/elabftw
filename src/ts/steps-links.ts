@@ -163,23 +163,25 @@ document.addEventListener('DOMContentLoaded', () => {
   let cache: any = {};
   // this is the select category filter on add link input
   const catFilterEl = (document.getElementById('addLinkCatFilter') as HTMLInputElement);
-  // when we change the category filter, reset the cache
-  catFilterEl.addEventListener('change', () => {
-    cache = {};
-  });
-  $('.linkinput').autocomplete({
-    source: function(request: any, response: any) {
-      const term = request.term;
-      if (term in cache) {
-        response(cache[term]);
-        return;
-      }
-      $.getJSON(`app/controllers/EntityAjaxController.php?source=items&filter=${catFilterEl.value}`, request, function(data) {
-        cache[term] = data;
-        response(data);
-      });
-    },
-  });
+  if (catFilterEl) {
+    // when we change the category filter, reset the cache
+    catFilterEl.addEventListener('change', () => {
+      cache = {};
+    });
+    $('.linkinput').autocomplete({
+      source: function(request: any, response: any) {
+        const term = request.term;
+        if (term in cache) {
+          response(cache[term]);
+          return;
+        }
+        $.getJSON(`app/controllers/EntityAjaxController.php?source=items&filter=${catFilterEl.value}`, request, function(data) {
+          cache[term] = data;
+          response(data);
+        });
+      },
+    });
+  }
 
   // DESTROY
   $(document).on('click', '.linkDestroy', function() {

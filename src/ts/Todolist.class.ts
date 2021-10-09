@@ -5,22 +5,20 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare let key: any;
-import { Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedEntities, ResponseMsg } from './interfaces';
-import { Ajax } from './Ajax.class';
+import { Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedEntities, Target, ResponseMsg } from './interfaces';
+import SidePanel from './SidePanel.class';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
+import FavTag from './FavTag.class';
 import i18next from 'i18next';
 
-export default class Todolist {
+export default class Todolist extends SidePanel {
 
-  model: Model;
-  sender: Ajax;
   unfinishedStepsScope: string;
   initialLoad = true;
 
   constructor() {
-    this.model = Model.Todolist,
-    this.sender = new Ajax();
+    super(Model.Todolist);
+    this.panelId = 'todolistPanel';
     this.unfinishedStepsScope = 'user';
 
     // unfinished steps scopeSwitch i.e. user (0) or team (1)
@@ -44,19 +42,6 @@ export default class Todolist {
     scopeSwitch.addEventListener('change', () => {
       this.toogleUnfinishedStepsScope();
     });
-
-    // TOGGLE
-    // reopen to-do list panel if it was previously opened
-    if (localStorage.getItem('isTodolistOpen') === '1') {
-      this.toggle();
-    }
-    // use shortcut
-    const todoSc = document.getElementById('todoSc');
-    if (todoSc) {
-      key(todoSc.dataset.toggle, () => {
-        this.toggle();
-      });
-    }
 
     // actual lists i.e. to-do list and unfinished item/experiment steps
     const lists = ['todoItems', 'todoStepsExperiment', 'todoStepsItem'];
@@ -87,7 +72,7 @@ export default class Todolist {
       let html = '';
       for (const entry of json.value as Array<Todoitem>) {
         html += `<li data-todoitemid=${entry.id} id='todoItem_${entry.id}'>
-        <a class='clickable float-right' data-action='destroy-todoitem' data-todoitemid='${entry.id}' title='` + i18next.t('generic-delete-warning') + `'>
+        <a class='clickable float-right mr-2' data-action='destroy-todoitem' data-todoitemid='${entry.id}' title='` + i18next.t('generic-delete-warning') + `'>
           <i class='fas fa-trash-alt'></i>
         </a>
         <span style='font-size:90%;display:block;'><span class='draggable sortableHandle'><i class='fas fa-sort'></i></span> <span class='relative-moment' title='${entry.creation_time}'></span></span>
@@ -155,20 +140,14 @@ export default class Todolist {
 
   // TOGGLE TODOLIST VISIBILITY
   toggle(): void {
-    if ($('#todoList').is(':visible')) {
-      $('#container').css('width', '100%').css('margin-left', 'auto');
-      localStorage.setItem('isTodolistOpen', '0');
-    } else {
-      $('#container').css('width', '70%').css('margin-left', 'max(30%, 300px)');
-      // lazy load content only once
-      if (this.initialLoad) {
-        this.read();
-        this.loadUnfinishedStep();
-        this.initialLoad = false;
-      }
-      localStorage.setItem('isTodolistOpen', '1');
+    // force favtags to close if it's open
+    (new FavTag).hide();
+    super.toggle();
+    if (!document.getElementById(this.panelId).hasAttribute('hidden')) {
+      this.read();
+      this.loadUnfinishedStep();
+      this.initialLoad = false;
     }
-    $('#todoList').toggle();
   }
 
   destroy(id: number): Promise<ResponseMsg> {

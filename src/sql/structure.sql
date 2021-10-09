@@ -260,6 +260,15 @@ CREATE TABLE `experiments_templates_revisions` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `favtags2users`
+--
+
+CREATE TABLE `favtags2users` (
+  `users_id` int UNSIGNED NOT NULL,
+  `tags_id` int UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
 -- Table structure for table `groups`
 --
 
@@ -762,6 +771,13 @@ ALTER TABLE `experiments_templates`
   ADD KEY `fk_experiments_templates_teams_id` (`team`);
 
 --
+-- Indexes for table `favtags2users`
+--
+ALTER TABLE `favtags2users`
+  ADD KEY `fk_favtags2users_tags_id` (`tags_id`),
+  ADD KEY `fk_favtags2users_users_id` (`users_id`);
+
+--
 -- Indexes for table `items`
 --
 ALTER TABLE `items`
@@ -867,6 +883,13 @@ ALTER TABLE `experiments_templates`
 ALTER TABLE `experiments_templates_revisions`
   ADD CONSTRAINT `fk_experiments_templates_revisions_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_experiments_templates_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `favtags2users`
+--
+ALTER TABLE `favtags2users`
+  ADD CONSTRAINT `fk_favtags2users_tags_id` FOREIGN KEY (`tags_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_favtags2users_users_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `items`

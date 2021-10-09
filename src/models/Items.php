@@ -16,6 +16,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
+use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 
 /**
@@ -23,6 +24,8 @@ use PDO;
  */
 class Items extends AbstractEntity
 {
+    use InsertTagsTrait;
+
     public function __construct(Users $users, ?int $id = null)
     {
         parent::__construct($users, $id);
@@ -53,7 +56,11 @@ class Items extends AbstractEntity
             'metadata' => $itemsTypesArr['metadata'],
         ));
 
-        return $this->Db->lastInsertId();
+        $newId = $this->Db->lastInsertId();
+
+        $this->insertTags($params->getTags(), $newId);
+
+        return $newId;
     }
 
     /**

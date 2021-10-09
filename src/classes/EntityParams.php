@@ -25,6 +25,11 @@ class EntityParams extends ContentParams implements EntityParamsInterface
         return Filter::title($this->content);
     }
 
+    public function getTags(): array
+    {
+        return $this->extra['tags'] ?? array();
+    }
+
     public function getDate(): string
     {
         return Filter::kdate($this->content);

@@ -17,7 +17,7 @@
           {% endfor %}
         {% endif %}
       </span>
-      <input type='text' style='width:auto' class='createTagInput ml-1' id='createTagInput_{{ templateData.id }}' data-id='{{ templateData.id }}' placeholder='{{ 'Add a tag'|trans }}' />
+      <input type='text' style='width:auto' data-autocomplete='tags' class='ml-1 createTagInput' id='createTagInput_{{ templateData.id }}' data-id='{{ templateData.id }}' placeholder='{{ 'Add a tag'|trans }}' />
     </div>
   </div>
 

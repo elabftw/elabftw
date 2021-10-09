@@ -37,7 +37,6 @@ use Symfony\Component\HttpFoundation\Request;
 class MakePdf extends AbstractMake implements FileMakerInterface
 {
     use TwigTrait;
-
     use PdfTrait;
 
     public string $longName;

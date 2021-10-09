@@ -16,6 +16,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
+use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 
 /**
@@ -23,6 +24,8 @@ use PDO;
  */
 class Experiments extends AbstractEntity
 {
+    use InsertTagsTrait;
+
     public function __construct(Users $users, ?int $id = null)
     {
         parent::__construct($users, $id);
@@ -95,6 +98,8 @@ class Experiments extends AbstractEntity
             $Tags = new Tags($Templates);
             $Tags->copyTags($newId, true);
         }
+
+        $this->insertTags($params->getTags(), $newId);
 
         return $newId;
     }

@@ -25,11 +25,11 @@
   <div class='clear'></div>
   <div class='d-inline-block mt-2 mx-2'>
       <h3 class='d-inline'>{{ 'Unfinished steps'|trans }}</h3>
-      <div class='d-inline-flex justify-content-center'>
+      <div class='d-inline-flex justify-content-center switch-btn'>
           <div class='switch-label'>{{ 'User'|trans }}</div>
           <div class='custom-control custom-switch' style='padding-left: 1.3rem'>
-              <input type='checkbox' id='todolistStepsShowTeam' class='custom-control-input' 
-                autocomplete='off' {{ App.Users.userData.todolist_steps_show_team == '1' ? 'checked ' : '' -}} 
+              <input type='checkbox' id='todolistStepsShowTeam' class='custom-control-input'
+                autocomplete='off' {{ App.Users.userData.todolist_steps_show_team == '1' ? 'checked ' : '' -}}
                 aria-label='{{ 'Show items steps for team'|trans }}'>
               <label class='custom-control-label' for='todolistStepsShowTeam' style='margin-top: 3px;'></label>
           </div>

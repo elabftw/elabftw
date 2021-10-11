@@ -98,7 +98,7 @@ export default class Todolist extends SidePanel {
           for (const stepsData of Object.entries(entity.steps)) {
             const stepId = stepsData[1][0];
             const stepBody = stepsData[1][1];
-            html += `<div><input type='checkbox' class='stepbox mr-1' id='todo_step_${stepId}' data-id='${entity.id}' data-type='${type}' data-stepid='${stepId}' />${stepBody}</div>`;
+            html += `<div><input type='checkbox' class='stepbox mr-2' id='todo_step_${stepId}' data-id='${entity.id}' data-type='${type}' data-stepid='${stepId}' />${stepBody}</div>`;
           }
           html += '</li>';
         }

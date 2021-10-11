@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const cache = {};
 
   function addAutocompleteToTagInputs(): void {
-    ($('[data-autocomplete="tags"]') as any).autocomplete({
+    ($('[data-autocomplete="tags"]') as JQuery<HTMLInputElement>).autocomplete({
       source: function(request: any, response: any) {
         const term  = request.term;
         if (term in cache) {
@@ -119,9 +119,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   addAutocompleteToTagInputs();
-  new MutationObserver(() => addAutocompleteToTagInputs())
-    .observe(document.getElementById('favtagsPanel'), {childList: true, subtree: true});
-
+  if (document.getElementById('favtagsPanel')) {
+    new MutationObserver(() => addAutocompleteToTagInputs())
+      .observe(document.getElementById('favtagsPanel'), {childList: true, subtree: true});
+  }
 
   // make the tag editable (on admin.ts)
   $(document).on('mouseenter', '.tag-editable', function() {

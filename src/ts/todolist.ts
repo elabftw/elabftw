@@ -5,34 +5,71 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare let key: any;
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import Todolist from './Todolist.class';
 import i18next from 'i18next';
+import { Model } from './interfaces';
+declare let key: any;
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
     return;
   }
 
-  const TodolistC = new Todolist();
-
   const pagesWithoutTodo = ['login', 'register', 'change-pass'];
   if (pagesWithoutTodo.includes(document.getElementById('info').dataset.page)) {
     return;
   }
 
+  let unfinishedStepsScope = 'user';
+  // unfinished steps scopeSwitch i.e. user (0) or team (1)
+  let scopeSwitch = document.getElementById(Model.Todolist + 'StepsShowTeam') as HTMLInputElement;
+  const storageScopeSwitch = localStorage.getItem(Model.Todolist + 'StepsShowTeam');
+  // local storage has priority over default setting todolist_steps_show_team
+  if (scopeSwitch.checked && storageScopeSwitch === '0') {
+    scopeSwitch.checked = false;
+
+  // set storage value if default setting is team
+  } else if (scopeSwitch.checked) {
+    localStorage.setItem(Model.Todolist + 'StepsShowTeam', '1');
+    unfinishedStepsScope = 'team';
+
+  // check box if it was checked before
+  } else if (storageScopeSwitch === '1') {
+    scopeSwitch.checked = true;
+    unfinishedStepsScope = 'team';
+  }
+
+  // actual lists i.e. to-do list and unfinished item/experiment steps
+  const lists = ['todoItems', 'todoStepsExperiment', 'todoStepsItem'];
+  lists.forEach(list => {
+    if (localStorage.getItem(list + '-isClosed') === '1') {
+      document.getElementById(list).toggleAttribute('hidden');
+    }
+  });
+
+  const TodolistC = new Todolist();
+  TodolistC.unfinishedStepsScope = unfinishedStepsScope;
+
   // TOGGLE
-  // reopen todolist panel if it was previously opened
-  if (localStorage.getItem('istodolistOpen') === '1') {
+  // reopen to-do list panel if it was previously opened
+  if (localStorage.getItem(`is${TodolistC.model}Open`) === '1') {
     TodolistC.toggle();
   }
   // use shortcut
-  if ($('#todoSc').length) {
-    key($('#todoSc').data('toggle'), function() {
+  const todoSc = document.getElementById('todoSc');
+  if (todoSc) {
+    key(todoSc.dataset.toggle, () => {
       TodolistC.toggle();
     });
   }
+
+  scopeSwitch = document.getElementById(TodolistC.model + 'StepsShowTeam') as HTMLInputElement;
+  scopeSwitch.addEventListener('change', () => {
+    if (!document.getElementById(TodolistC.panelId).hasAttribute('hidden')){
+      TodolistC.toogleUnfinishedStepsScope();
+    }
+  });
 
   // UPDATE TODOITEM
   $(document).on('mouseenter', '.todoItem', ev => {

@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedEntities, Target, ResponseMsg } from './interfaces';
+import { Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedEntities, ResponseMsg } from './interfaces';
 import SidePanel from './SidePanel.class';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
 import FavTag from './FavTag.class';
@@ -20,36 +20,6 @@ export default class Todolist extends SidePanel {
     super(Model.Todolist);
     this.panelId = 'todolistPanel';
     this.unfinishedStepsScope = 'user';
-
-    // unfinished steps scopeSwitch i.e. user (0) or team (1)
-    const scopeSwitch = document.getElementById('todolistStepsShowTeam') as HTMLInputElement;
-    const storageScopeSwitch = localStorage.getItem('todolistStepsShowTeam');
-    // local storage has priority over default setting todolist_steps_show_team
-    if (scopeSwitch.checked && storageScopeSwitch === '0') {
-      scopeSwitch.checked = false;
-
-    // set storage value if default setting is team
-    } else if (scopeSwitch.checked) {
-      localStorage.setItem('todolistStepsShowTeam', '1');
-      this.unfinishedStepsScope = 'team';
-
-    // check box if it was checked before
-    } else if (storageScopeSwitch === '1') {
-      scopeSwitch.checked = true;
-      this.unfinishedStepsScope = 'team';
-    }
-
-    scopeSwitch.addEventListener('change', () => {
-      this.toogleUnfinishedStepsScope();
-    });
-
-    // actual lists i.e. to-do list and unfinished item/experiment steps
-    const lists = ['todoItems', 'todoStepsExperiment', 'todoStepsItem'];
-    lists.forEach(list => {
-      if (localStorage.getItem(list + '-isClosed') === '1') {
-        document.getElementById(list).toggleAttribute('hidden');
-      }
-    });
   }
 
   create(content: string): Promise<ResponseMsg> {
@@ -97,7 +67,7 @@ export default class Todolist extends SidePanel {
   }
 
   toogleUnfinishedStepsScope(): void {
-    localStorage.setItem('todolistStepsShowTeam', (localStorage.getItem('todolistStepsShowTeam') === '1' ? '0' : '1'));
+    localStorage.setItem(this.model + 'StepsShowTeam', (localStorage.getItem(this.model + 'StepsShowTeam') === '1' ? '0' : '1'));
     this.unfinishedStepsScope = (this.unfinishedStepsScope === 'user' ? 'team' : 'user');
     this.loadUnfinishedStep();
   }
@@ -124,7 +94,7 @@ export default class Todolist extends SidePanel {
       if (json.res) {
         let html = '';
         for (const entity of json.value as Array<UnfinishedEntities>) {
-          html += `<li><h4><a href='${type === EntityType.Item ? 'database' : 'experiments'}.php?mode=view&id=${entity.id}'>${entity.title}</a></h4>`;
+          html += `<li><p><a href='${type === EntityType.Item ? 'database' : 'experiments'}.php?mode=view&id=${entity.id}'>${entity.title}</a></p>`;
           for (const stepsData of Object.entries(entity.steps)) {
             const stepId = stepsData[1][0];
             const stepBody = stepsData[1][1];
@@ -140,10 +110,14 @@ export default class Todolist extends SidePanel {
 
   // TOGGLE TODOLIST VISIBILITY
   toggle(): void {
+    if (!document.getElementById('favtagsPanel').hasAttribute('hidden')) {
+      document.getElementById('favtags-opener').removeAttribute('hidden');
+    }
     // force favtags to close if it's open
     (new FavTag).hide();
     super.toggle();
-    if (!document.getElementById(this.panelId).hasAttribute('hidden')) {
+    // lazy load content only once
+    if (!document.getElementById(this.panelId).hasAttribute('hidden') && this.initialLoad) {
       this.read();
       this.loadUnfinishedStep();
       this.initialLoad = false;

@@ -203,7 +203,8 @@ export async function reloadElement(elementId): Promise<void> {
 
 export function clearLocalStorage(): void {
   const storageItems = [
-    'isTodolistOpen',
+    'isfavtagOpen',
+    'istodolistOpen',
     'todoItems-isClosed',
     'todolistStepsShowTeam',
     'todoStepsExperiment-isClosed',

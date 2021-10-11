@@ -7,13 +7,15 @@
     <div class='input-group'>
       <input data-action='favtags-search' class='form-control form-inline' type='text' placeholder='{{ 'Filter'|trans }}' />
       <div class='input-group-append'>
-        <button data-action='clear-favtags-search' class='btn btn-outline-secondary'><i class='fas fa-times'></i></button>
+        <button data-action='clear-favtags-search' class='btn btn-outline-secondary'><i class='fas fa-times fa-fw'></i></button>
       </div>
     </div>
   </div>
   <ul>
     {% for favtag in favTagsArr %}
-    <li data-action='add-tag-filter' data-tag='{{ favtag.tag }}' class='clickable {{ App.Request.query.get('tags')[0] == favtag.tag ? 'selected' : ''}}'>{{ favtag.tag }}<a href='#' class='float-right mr-2' data-id='{{ favtag.tags_id }}' data-action='destroy-favtags' hidden><i class='fas fa-trash-alt'></i></a></li>
+    <li data-action='add-tag-filter' data-tag='{{ favtag.tag }}' class='clickable {{ App.Request.query.get('tags')[0] == favtag.tag ? 'selected' : ''}}'>
+      {{ favtag.tag }}<a href='#' class='float-right mr-2' data-id='{{ favtag.tags_id }}' data-action='destroy-favtags' hidden><i class='fas fa-trash-alt'></i></a>
+    </li>
     {% endfor %}
   </ul>
   <div class='m-2'>

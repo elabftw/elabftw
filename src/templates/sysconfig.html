@@ -290,7 +290,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           <p>A password is already set.
           <a href='app/controllers/SysconfigController.php?clearStamppass=1'>Clear it</a> or change it below:</p>
         {% endif %}
-        <input class='form-control col-md-4' autocomplete='off' type='password' name='stamppass' id='stamppass' />
+        <input class='form-control col-md-4' autocomplete='off' maxlength='200' type='password' name='stamppass' id='stamppass' />
         <div class='mt-4 text-center'>
           <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
         </div>

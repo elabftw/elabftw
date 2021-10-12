@@ -1,3 +1,12 @@
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @author Marcel Bolten <github@marcelbolten.de>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
 or_expression
     = _* expression:and_expression _* tail:or? {
         return new OrExpression($expression, $tail);

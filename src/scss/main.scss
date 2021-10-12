@@ -635,6 +635,10 @@ tr:nth-child(odd) {
     top: 0;
     width: max(22%, 300px);
 
+    hr {
+        background-color: $lightwhite;
+    }
+
     h2,
     h3,
     svg {

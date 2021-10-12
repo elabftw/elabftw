@@ -43,6 +43,10 @@ class MpdfProvider implements MpdfProviderInterface
         // make sure we can read the pdf in a long time
         // will embed the font and make the pdf bigger
         $mpdf->PDFA = $this->pdfa;
+        // force pdfa compliance (things like removing alpha channel of png images)
+        if ($this->pdfa) {
+            $mpdf->PDFAauto = true;
+        }
 
         // make sure header and footer are not overlapping the body text
         $mpdf->setAutoTopMargin = 'stretch';

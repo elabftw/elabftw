@@ -76,8 +76,20 @@ class MakeReport implements FileMakerInterface
             // get disk usage for all uploaded files
             $diskUsage = $this->getDiskUsage((int) $user['userid']);
 
-            // remove mfa column
-            unset($allUsers[$key]['mfa_secret']);
+            // remove unused columns as they will mess up the csv
+            // these columns can be null
+            $unusedColumns = array(
+                'mfa_secret',
+                'phone',
+                'cellphone',
+                'skype',
+                'website',
+                'token',
+                'auth_lock_time',
+            );
+            foreach ($unusedColumns as $column) {
+                unset($allUsers[$key][$column]);
+            }
 
             $allUsers[$key]['team(s)'] = $teams;
             $allUsers[$key]['diskusage_in_bytes'] = $diskUsage;

@@ -149,16 +149,16 @@
         },
         {
             "name": "directorytree/ldaprecord",
-            "version": "v2.7.0",
+            "version": "v2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DirectoryTree/LdapRecord.git",
-                "reference": "7ba3ad1d2297acd37f18b524948258e101beaa07"
+                "reference": "facd1f590d49636fddee64b866246d1650197830"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/7ba3ad1d2297acd37f18b524948258e101beaa07",
-                "reference": "7ba3ad1d2297acd37f18b524948258e101beaa07",
+                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/facd1f590d49636fddee64b866246d1650197830",
+                "reference": "facd1f590d49636fddee64b866246d1650197830",
                 "shasum": ""
             },
             "require": {
@@ -167,7 +167,7 @@
                 "illuminate/contracts": "^5.0|^6.0|^7.0|^8.0",
                 "nesbot/carbon": "^1.0|^2.0",
                 "php": ">=7.3",
-                "psr/log": "^1.0",
+                "psr/log": "*",
                 "psr/simple-cache": "^1.0",
                 "tightenco/collect": "^5.6|^6.0|^7.0|^8.0"
             },
@@ -218,7 +218,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-09-14T16:18:28+00:00"
+            "time": "2021-10-11T13:39:30+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -302,16 +302,16 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "3.1.1",
+            "version": "3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "c81f18a3efb941d8c4d2e025f6183b5c6d697307"
+                "reference": "ee0db30118f661fb166bcffbf5d82032df484697"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/c81f18a3efb941d8c4d2e025f6183b5c6d697307",
-                "reference": "c81f18a3efb941d8c4d2e025f6183b5c6d697307",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/ee0db30118f661fb166bcffbf5d82032df484697",
+                "reference": "ee0db30118f661fb166bcffbf5d82032df484697",
                 "shasum": ""
             },
             "require": {
@@ -358,7 +358,7 @@
             ],
             "support": {
                 "issues": "https://github.com/egulias/EmailValidator/issues",
-                "source": "https://github.com/egulias/EmailValidator/tree/3.1.1"
+                "source": "https://github.com/egulias/EmailValidator/tree/3.1.2"
             },
             "funding": [
                 {
@@ -366,7 +366,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-04-01T18:37:14+00:00"
+            "time": "2021-10-11T09:18:27+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",

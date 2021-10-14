@@ -38,7 +38,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // add extra fields elements from metadata json
   const MetadataC = new Metadata(entity);
-  MetadataC.display('view');
+  MetadataC.display('view').then(() => {
+    // go over all the type: url elements and create a link dynamically
+    document.querySelectorAll('[data-gen-link="true"]').forEach(el => {
+      const link = document.createElement('a');
+      const url = (el as HTMLSpanElement).innerText;
+      link.href = url;
+      link.text = url;
+      el.replaceWith(link);
+    });
+  });
 
   // EDIT SHORTCUT
   key(about.scedit, () => window.location.href = `?mode=edit&id=${entity.id}`);

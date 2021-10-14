@@ -44,6 +44,7 @@ final class MakeThumbnail
      * @var array ALLOWED_MIMES
      */
     private const ALLOWED_MIMES = array(
+        'image/heic',
         'image/png',
         'image/jpeg',
         'image/gif',

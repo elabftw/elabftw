@@ -64,9 +64,9 @@
                     </div>
                   {% endif %}
 
-                    {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg)$/i' %}
+                    {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
                     {# don't make the thumbnail clickable if it's a tif #}
-                      {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg)$/i' %}
+                      {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
                       <div class='text-center'>
                         <a class='text-break' href='app/download.php?f={{ upload.long_name }}'
                            {% if upload.real_name matches '/(jpg|jpeg|png|gif)$/i' %}
@@ -83,7 +83,7 @@
                    {% elseif App.Users.userData.uploads_layout %}
                       <i class='fas {{ Entity.Uploads.getIconFromExtension(ext) }} thumb rounded mx-auto d-block'></i>
                    {% endif %}
-                     {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg)$/i' %}
+                     {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
                         </a>
                       </div>
                      {% endif %}

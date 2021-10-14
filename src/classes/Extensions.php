@@ -47,6 +47,7 @@ final class Extensions
     /** @var array IMAGE image files */
     public const IMAGE = array(
         'gif',
+        'heic',
         'jpeg',
         'jpg',
         'png',

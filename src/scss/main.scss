@@ -625,7 +625,7 @@ tr:nth-child(odd) {
 /* SIDE PANEL */
 .side-panel {
     background: $darkgray;
-    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
     height: 100%;
     left: 0;
     overflow: hidden;
@@ -633,16 +633,16 @@ tr:nth-child(odd) {
     padding-top: 10px;
     position: fixed;
     top: 0;
-    width: 22%;
+    width: max(22%, 300px);
+
+    hr {
+        background-color: $lightwhite;
+    }
 
     h2,
     h3,
     svg {
         color: $lightwhite;
-    }
-
-    .header {
-        margin-bottom: 10px;
     }
 
     ul {
@@ -1175,7 +1175,8 @@ input[type='color'] {
  * adding row/columns will mess up the left alignment of the navbar
  */
 #main-nav {
-    padding-right: 120px !important;
+    background-color: inherit;
+    margin-right: 120px !important;
 }
 
 /* pure css pie chart based on: https://codepen.io/chriscoyier/pen/RPLqMg */
@@ -1240,6 +1241,12 @@ input[type='color'] {
 
 #backToTopButton {
     transition: all 0.5s ease;
+}
+
+.switch-btn {
+    border: 1px solid $lightwhite;
+    border-radius: 5px;
+    padding: 3px;
 }
 
 /* loading spinner */

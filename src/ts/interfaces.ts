@@ -10,7 +10,7 @@ interface ResponseMsg {
   res: boolean;
   msg: string;
   color?: string;
-  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedExperiments> | Array<Upload> | object | MetadataJson;
+  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedEntities> | Array<Upload> | object | MetadataJson;
 }
 
 interface MetadataJson {
@@ -28,7 +28,7 @@ interface Todoitem {
   creation_time: string;
 }
 
-interface UnfinishedExperiments {
+interface UnfinishedEntities {
   id: number;
   title: string;
   steps: Array<string>;
@@ -69,6 +69,7 @@ enum Model {
   PrivacyPolicy = 'privacypolicy',
   Status = 'status',
   Step = 'step',
+  UnfinishedSteps = 'unfinishedsteps',
   Tag = 'tag',
   TeamGroup = 'teamgroup',
   Todolist = 'todolist',
@@ -134,6 +135,6 @@ export {
   Todoitem,
   EntityType,
   Entity,
-  UnfinishedExperiments,
+  UnfinishedEntities,
   Upload,
 };

@@ -28,6 +28,7 @@ use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
+use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
@@ -137,6 +138,8 @@ abstract class AbstractProcessor implements ProcessorInterface
                 return new FavTags($this->Users, $this->id);
             case 'step':
                 return new Steps($this->Entity, $this->id);
+            case 'unfinishedsteps':
+                return new UnfinishedSteps($this->Entity);
             case 'upload':
                 return new Uploads($this->Entity, $this->id);
             case 'privacypolicy':
@@ -187,6 +190,9 @@ abstract class AbstractProcessor implements ProcessorInterface
         }
         if ($this->Model instanceof ItemsTypes) {
             return new ItemTypeParams($this->content, $this->target, $this->extra);
+        }
+        if ($this->Model instanceof UnfinishedSteps) {
+            return new UnfinishedStepsParams($this->extra);
         }
         if ($this->Model instanceof Steps) {
             return new StepParams($this->content, $this->target);

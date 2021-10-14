@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -18,7 +17,7 @@ class ContentParams implements ContentParamsInterface
 {
     protected const MIN_CONTENT_SIZE = 1;
 
-    public function __construct(protected string $content = '', protected string $target = '')
+    public function __construct(protected string $content = '', protected string $target = '', protected ?array $extra = null)
     {
     }
 
@@ -40,5 +39,10 @@ class ContentParams implements ContentParamsInterface
     public function getBody(): string
     {
         return Filter::body($this->content);
+    }
+
+    public function getExtra(string $key): string
+    {
+        return Filter::sanitize($this->extra[$key] ?? '');
     }
 }

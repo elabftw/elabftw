@@ -1,6 +1,5 @@
 -- Schema 66
 START TRANSACTION;
-    ALTER TABLE `users` ADD `todolist_steps_show_team` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0';
     CREATE TABLE `favtags2users` (
       `users_id` int(10) UNSIGNED NOT NULL,
       `tags_id` int(10) UNSIGNED NOT NULL

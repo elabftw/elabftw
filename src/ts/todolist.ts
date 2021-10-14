@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // unfinished steps scopeSwitch i.e. user (0) or team (1)
   let scopeSwitch = document.getElementById(Model.Todolist + 'StepsShowTeam') as HTMLInputElement;
   const storageScopeSwitch = localStorage.getItem(Model.Todolist + 'StepsShowTeam');
-  // local storage has priority over default setting todolist_steps_show_team
+  // adjust scope from localStorage
   if (scopeSwitch.checked && storageScopeSwitch === '0') {
     scopeSwitch.checked = false;
 

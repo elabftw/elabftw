@@ -31,7 +31,6 @@ use function exif_read_data;
 use function extension_loaded;
 use function file_exists;
 use function function_exists;
-use Imagick;
 use function in_array;
 use function is_uploaded_file;
 use PDO;
@@ -86,7 +85,6 @@ class Uploads implements CrudInterface
         if (function_exists('exif_read_data') && in_array(strtolower($ext), Extensions::HAS_EXIF, true)) {
             $exifData = exif_read_data($fullPath);
             if ($exifData !== false && extension_loaded('imagick')) {
-                $image = new Imagick($fullPath);
                 $rotationAngle = $this->getRotationAngle($exifData);
             }
         }

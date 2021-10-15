@@ -1134,10 +1134,10 @@
   resolved "https://registry.yarnpkg.com/@types/file-saver/-/file-saver-2.0.3.tgz#b734c4f5a04d20615eaed3dc106e2ab321082009"
   integrity sha512-MBIou8pd/41jkff7s97B47bc9+p0BszqqDJsO51yDm49uUxeKzrfuNl5fSLC6BpLEWKA8zlwyqALVmXrFwoBHQ==
 
-"@types/jquery@*", "@types/jquery@^3.5.1":
-  version "3.5.6"
-  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.5.6.tgz#97ac8e36dccd8ad8ed3f3f3b48933614d9fd8cf0"
-  integrity sha512-SmgCQRzGPId4MZQKDj9Hqc6kSXFNWZFHpELkyK8AQhf8Zr6HKfCzFv9ZC1Fv3FyQttJZOlap3qYb12h61iZAIg==
+"@types/jquery@*", "@types/jquery@^3.5.7":
+  version "3.5.7"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.5.7.tgz#07614671f79c6ad70633bb2d8977f01cea242e27"
+  integrity sha512-Why+9t1KuqWtIqYKtbk6wgWbE1PjyXJOyGkpmTUh0RX5p4HL7nnRuBkjAO9P2r9tGQP6bLWxl77jRLew3V5xXg==
   dependencies:
     "@types/sizzle" "*"
 

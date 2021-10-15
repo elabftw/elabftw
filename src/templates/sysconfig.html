@@ -11,6 +11,11 @@
     {{ 'Please finalize install: %slink to documentation%s.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#setting-up-email'>", "</a>")|msg('ko') }}
 {% endif %}
 
+<!-- show error if the instance url is not configured -->
+{% if not App.Config.configArr.url %}
+    {{ 'Make sure to set the Installation URL in the Server Settings.'|msg('ko') }}
+{% endif %}
+
 <p>Docker image version: {{ elabimgVersion }}<br />
 MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 

@@ -20,7 +20,7 @@ export default class SidePanel {
 
   hide(): void {
     // make container great again
-    $('#container').css('width', '100%').css('margin-right', 'auto');
+    $('#container').css('width', '100%').css('margin-left', 'auto');
     // hide panel
     document.getElementById(this.panelId).toggleAttribute('hidden', true);
     // store the current state
@@ -28,7 +28,7 @@ export default class SidePanel {
   }
 
   show(): void {
-    $('#container').css('width', '78%').css('margin-right', '0');
+    $('#container').css('width', '78%').css('margin-left', 'max(22%, 300px)');
     // show panel
     document.getElementById(this.panelId).removeAttribute('hidden');
     // store the current state
@@ -43,5 +43,4 @@ export default class SidePanel {
       this.hide();
     }
   }
-
 }

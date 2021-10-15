@@ -31,7 +31,6 @@ use function exif_read_data;
 use function extension_loaded;
 use function file_exists;
 use function function_exists;
-use Gmagick;
 use function in_array;
 use function is_uploaded_file;
 use PDO;
@@ -80,25 +79,18 @@ class Uploads implements CrudInterface
         // Try to move the file to its final place
         $this->moveUploadedFile($params->getPathname(), $fullPath);
 
-        // rotate the image if we can find the orientation in the exif data
-        // maybe php-exif extension isn't loaded
+        // if the image has exif with rotation data, read it so the thumbnail can have a correct orientation
+        // only the thumbnail is rotated, the original image stays untouched
+        $rotationAngle = 0;
         if (function_exists('exif_read_data') && in_array(strtolower($ext), Extensions::HAS_EXIF, true)) {
             $exifData = exif_read_data($fullPath);
-            if ($exifData !== false && extension_loaded('gmagick')) {
-                $image = new Gmagick($fullPath);
-                // default is 75
-                $image->setCompressionQuality(100);
+            if ($exifData !== false && extension_loaded('imagick')) {
                 $rotationAngle = $this->getRotationAngle($exifData);
-                // only do it if needed
-                if ($rotationAngle !== 0) {
-                    $image->rotateimage('#000', $rotationAngle);
-                    $image->write($fullPath);
-                }
             }
         }
         // final sql
         $id = $this->dbInsert($realName, $longName, $this->getHash($fullPath));
-        $MakeThumbnail = new MakeThumbnail($fullPath);
+        $MakeThumbnail = new MakeThumbnail($fullPath, $rotationAngle);
         $MakeThumbnail->makeThumb();
 
         return $id;

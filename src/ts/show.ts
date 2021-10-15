@@ -286,18 +286,20 @@ document.addEventListener('DOMContentLoaded', () => {
     selectOrder.closest('form').trigger('submit');
   });
 
-  document.querySelector('[data-action="favtags-search"]').addEventListener('keyup', event => {
+  document.getElementById('favtagsPanel').addEventListener('keyup', event => {
     const el = (event.target as HTMLInputElement);
     const query = el.value;
-    // find all links that are endpoints
-    document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
-      // begin by showing all so they don't stay hidden
-      el.removeAttribute('hidden');
-      // now simply hide the ones that don't match the query
-      if (!(el as HTMLElement).innerText.toLowerCase().includes(query)) {
-        el.setAttribute('hidden', '');
-      }
-    });
+    if (el.matches('[data-action="favtags-search"]')) {
+      // find all links that are endpoints
+      document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
+        // begin by showing all so they don't stay hidden
+        el.removeAttribute('hidden');
+        // now simply hide the ones that don't match the query
+        if (!(el as HTMLElement).innerText.toLowerCase().includes(query)) {
+          el.setAttribute('hidden', '');
+        }
+      });
+    }
   });
 
   // get offset as number
@@ -319,19 +321,23 @@ document.addEventListener('DOMContentLoaded', () => {
       params.set('offset', String(getOffset() - limit));
       history.replaceState(null, '', `?${params.toString()}`);
       reloadEntitiesShow();
+
     // next page
     } else if (el.matches('[data-action="next-page"]')) {
       params.set('offset', String(getOffset() + limit));
       history.replaceState(null, '', `?${params.toString()}`);
       reloadEntitiesShow();
+
     // TOGGLE FAVTAGS PANEL
     } else if (el.matches('[data-action="toggle-favtags"]')) {
       FavTagC.toggle();
+
     // TOGGLE text input to add a new favorite tag
     } else if (el.matches('[data-action="toggle-addfav"]')) {
       const input = document.getElementById('createFavTagInput');
       input.toggleAttribute('hidden');
       input.focus();
+
     // a tag has been clicked/selected, add it in url and load the page
     } else if (el.matches('[data-action="add-tag-filter"]')) {
       params.set('tags[]', el.dataset.tag);
@@ -343,6 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       el.classList.add('selected');
       reloadEntitiesShow(el.dataset.tag);
+
     // clear the filter input for favtags
     } else if (el.matches('[data-action="clear-favtags-search"]')) {
       const searchInput = (document.querySelector('[data-action="favtags-search"]') as HTMLInputElement);
@@ -351,14 +358,17 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
         el.removeAttribute('hidden');
       });
+
     // toggle visibility of the trash icon for favtags
     } else if (el.matches('[data-action="toggle-favtags-edit"]')) {
       document.querySelectorAll('[data-action="destroy-favtags"]').forEach(el => {
         el.toggleAttribute('hidden');
       });
+
     // remove a favtag
     } else if (el.matches('[data-action="destroy-favtags"]')) {
       FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElement('favtagsPanel'));
+
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;
       // transform the + in - and vice versa

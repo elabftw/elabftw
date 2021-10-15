@@ -1,18 +1,58 @@
 <div class='side-panel' id='todolistPanel' hidden>
-  <div class='m-2'>
-    <a class='clickable float-right' data-action='toggle-todolist' title='{{ 'Close'|trans }}'>
-        <i class='fas fa-chevron-left fa-2x'></i>
-    </a>
-    <h3>{{ 'Todolist'|trans }}</h3>
-    <input class='form-control' aria-label='{{ 'Add'|trans }}' id='todo' />
-    <button class='button btn btn-primary' data-action='create-todoitem'>{{ 'Add'|trans }}</button>
+  <a class='clickable float-right mr-2 mt-2' data-action='toggle-todolist' title='{{ 'Close'|trans }}'>
+    <i class='fas fa-chevron-left fa-2x'></i>
+  </a>
+  <h3 class='d-inline-block mx-2 mt-2'>{{ 'Todolist'|trans }}</h3>
+  <a data-action='toggle-next' class='clickable ml-2' title='{{ 'Toggle visibility'|trans }}'>
+    <i class='fas fa-eye fa-2x'></i>
+  </a>
+
+
+  <div class='mx-2'>
+      <div class='input-group mb-2'>
+        <input id='todo' type='text' class='form-control form-inline' aria-label='{{ 'Add'|trans }}' placeholder='{{ 'New item'|trans }}'>
+        <div class='input-group-append'>
+          <button class='btn btn-outline-secondary' type='button' title='{{ 'Add'|trans }}' data-action='create-todoitem' aria-label='{{ 'Add'|trans }}'>
+            <i class='fas fa-plus-circle fa-fw' title='{{ 'Add'|trans }}'></i>
+          </button>
+        </div>
+      </div>
+
+    <!-- this list will be filled with the to-do items by js -->
+    <ul id='todoItems' class='sortable' data-axis='y' data-table='todolist'></ul>
   </div>
 
-  <!-- this div will be filled with the list of todo items by js -->
-  <div id='todoItemsDiv'></div>
+  <div class='clear'><hr></div>
+  <div class='d-flex mx-2'>
+    <div class='mr-auto'>
+    <h3 class='mr-auto'>{{ 'Unfinished steps'|trans }}</h3>
+    </div>
+    <div class='d-inline-flex justify-content-center switch-btn'>
+      <div class='switch-label'>{{ 'User'|trans }}</div>
+      <div class='custom-control custom-switch' style='padding-left: 1.3rem'>
+        <input type='checkbox' id='todolistStepsShowTeam' class='custom-control-input'
+          autocomplete='off'
+          aria-label='{{ 'Show items steps for team'|trans }}'>
+        <label class='custom-control-label' for='todolistStepsShowTeam' style='margin-top: 3px;'></label>
+      </div>
+      <div class='switch-label'>{{ 'Team'|trans }}</div>
+    </div>
+  </div>
 
-  <h3 class='ml-2'>{{ 'Unfinished steps'|trans }}</h3>
-  <div id='todoStepsDiv'></div>
+  <h3 class='d-inline-block mx-2 mt-2'>{{ 'Experiments'|trans }}</h3>
+  <!-- toggle visibility of experiment steps -->
+  <a data-action='toggle-next' class='clickable ml-2' title='{{ 'Toggle visibility'|trans }}'>
+    <i class='fas fa-eye fa-2x'></i>
+  </a>
+  <ul id='todoStepsExperiment'></ul>
+
+  <div class='clear'></div>
+  <h3 class='d-inline-block mx-2 mt-2'>{{ 'Items'|trans }}</h3>
+  <!-- toggle visibility of items steps -->
+  <a data-action='toggle-next' class='clickable ml-2' title='{{ 'Toggle visibility'|trans }}'>
+    <i class='fas fa-eye fa-2x'></i>
+  </a>
+  <ul id='todoStepsItem'></ul>
 </div>
 
 <div id='todoSc' data-toggle='{{ App.Users.userData.sc_todo }}'></div>

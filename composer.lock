@@ -6745,16 +6745,16 @@
         },
         {
             "name": "pyrech/composer-changelogs",
-            "version": "v1.8.0",
+            "version": "v1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pyrech/composer-changelogs.git",
-                "reference": "ac488e7ade963b91b661f11bb97f17851f75b350"
+                "reference": "ddd2274bcad5d6bd5137825a3d6d3e8553f75aae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pyrech/composer-changelogs/zipball/ac488e7ade963b91b661f11bb97f17851f75b350",
-                "reference": "ac488e7ade963b91b661f11bb97f17851f75b350",
+                "url": "https://api.github.com/repos/pyrech/composer-changelogs/zipball/ddd2274bcad5d6bd5137825a3d6d3e8553f75aae",
+                "reference": "ddd2274bcad5d6bd5137825a3d6d3e8553f75aae",
                 "shasum": ""
             },
             "require": {
@@ -6795,9 +6795,9 @@
             ],
             "support": {
                 "issues": "https://github.com/pyrech/composer-changelogs/issues",
-                "source": "https://github.com/pyrech/composer-changelogs/tree/v1.8.0"
+                "source": "https://github.com/pyrech/composer-changelogs/tree/v1.8.1"
             },
-            "time": "2021-09-06T12:40:43+00:00"
+            "time": "2021-10-12T22:14:22+00:00"
         },
         {
             "name": "roave/security-advisories",

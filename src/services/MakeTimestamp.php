@@ -41,7 +41,7 @@ use Symfony\Component\Process\Process;
 class MakeTimestamp extends AbstractMake
 {
     /** default hash algo for file */
-    private const HASH_ALGORITHM = 'sha256';
+    private const TS_HASH = 'sha256';
 
     /** @var Experiments $Entity */
     protected $Entity;
@@ -151,7 +151,7 @@ class MakeTimestamp extends AbstractMake
 
         $allowedAlgos = array('sha256', 'sha384', 'sha512');
         if (!in_array($hash, $allowedAlgos, true)) {
-            $hash = self::HASH_ALGORITHM;
+            $hash = self::TS_HASH;
         }
 
         return array(

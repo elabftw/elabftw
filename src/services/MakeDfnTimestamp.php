@@ -24,6 +24,8 @@ class MakeDfnTimestamp extends MakeTimestamp
 
     protected const TS_CERT = 'dfn.pem';
 
+    protected const TS_HASH = 'sha256';
+
     /**
      * Return the needed parameters to request/verify a timestamp
      *
@@ -36,7 +38,7 @@ class MakeDfnTimestamp extends MakeTimestamp
             'stamppassword' => '',
             'stampprovider' => self::TS_URL,
             'stampcert' => dirname(__DIR__) . '/ts-certs/' . self::TS_CERT,
-            'hash' => 'sha256',
+            'hash' => self::TS_HASH,
             );
     }
 

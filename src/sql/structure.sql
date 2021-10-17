@@ -539,6 +539,7 @@ CREATE TABLE `teams` (
   `force_canwrite` varchar(255) NOT NULL DEFAULT 'user',
   `do_force_canread` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `do_force_canwrite` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
+  `override_tsa` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `visible` tinyint(1) UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

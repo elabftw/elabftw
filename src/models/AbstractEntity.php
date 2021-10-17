@@ -515,7 +515,7 @@ abstract class AbstractEntity implements CrudInterface
      *
      * @param int $category id of the category (status or items types)
      */
-    public function updateCategory(int $category): void
+    public function updateCategory(int $category): bool
     {
         $this->canOrExplode('write');
 
@@ -523,7 +523,7 @@ abstract class AbstractEntity implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':category', $category, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**

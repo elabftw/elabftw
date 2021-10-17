@@ -22,7 +22,9 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Services\ListBuilder;
 use Elabftw\Services\MakeBloxberg;
+use Elabftw\Services\MakeDfnTimestamp;
 use Elabftw\Services\MakeTimestamp;
+use Elabftw\Services\MakeUniversignTimestamp;
 use Exception;
 use GuzzleHttp\Client;
 use function mb_convert_encoding;
@@ -134,8 +136,28 @@ try {
 
     // TIMESTAMP
     if ($Request->request->has('timestamp') && $Entity instanceof Experiments) {
-        $MakeTimestamp = new MakeTimestamp($App->Config, new Teams($App->Users), $Entity);
-        $MakeTimestamp->timestamp();
+        // figure out which TSA we want
+        // by default, use the sysconfig one
+        $tsAuthority = $App->Config->configArr['ts_authority'];
+
+        // if the current team chose to override the default, use that
+        $Teams = new Teams($App->Users);
+        $teamConfigArr = $Teams->read(new ContentParams());
+        if ($teamConfigArr['override_tsa'] === '1') {
+            $tsAuthority = $teamConfigArr['ts_authority'];
+        }
+
+        // library doing the http request
+        $client = new \GuzzleHttp\Client();
+
+        if ($tsAuthority === 'dfn') {
+            $Maker = new MakeDfnTimestamp($App->Config->configArr, $Entity, $client);
+        } elseif ($tsAuthority === 'universign') {
+            $Maker = new MakeUniversignTimestamp($App->Config->configArr, $Entity, $client);
+        } else {
+            $Maker = new MakeTimestamp($App->Config->configArr, $Entity, $client);
+        }
+        $Maker->timestamp();
     }
 
     // BLOXBERG

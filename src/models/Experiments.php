@@ -109,10 +109,9 @@ class Experiments extends AbstractEntity
      */
     public function isTimestampable(): bool
     {
-        $currentCategory = (int) $this->entityData['category_id'];
-        $sql = 'SELECT is_timestampable FROM status WHERE id = :category;';
+        $sql = 'SELECT is_timestampable FROM status WHERE id = (SELECT category FROM experiments WHERE id = :id)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':category', $currentCategory, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return (bool) $req->fetchColumn();
     }

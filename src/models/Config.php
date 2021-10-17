@@ -172,6 +172,7 @@ final class Config
             ('smtp_password', ''),
             ('smtp_port', '587'),
             ('smtp_username', ''),
+            ('ts_authority', 'dfn'),
             ('stamplogin', ''),
             ('stamppass', ''),
             ('stampshare', '1'),

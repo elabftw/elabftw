@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Alexander Minges <alexander.minges@gmail.com>
@@ -8,27 +8,22 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use DateTime;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use function dirname;
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Teams;
 use function file_get_contents;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use function hash_file;
 use function is_dir;
 use function is_readable;
-use function mb_strlen;
 use function mkdir;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
@@ -71,18 +66,15 @@ class MakeTimestamp extends AbstractMake
     // where we store the asn1 token
     private string $responsefilePath = '';
 
-    /**
-     * Pdf is generated on instantiation and after you need to call timestamp()
-     */
-    public function __construct(private Config $Config, Teams $teams, Experiments $entity)
+    public function __construct(protected array $configArr, Experiments $entity, private ClientInterface $client)
     {
         parent::__construct($entity);
         $this->Entity->canOrExplode('write');
 
-        // initialize with info from config
-        $this->stampParams = $this->getTimestampParameters($teams);
+        // stampParams contains login/pass/cert/url/hash information
+        $this->stampParams = $this->getTimestampParameters();
 
-        /** set the name of the pdf (elabid + -timestamped.pdf) */
+        // set the name of the pdf (elabid + -timestamped.pdf)
         $this->pdfRealName = $this->getFileName();
         $this->requestfilePath = $this->getTmpPath() . $this->getUniqueString();
         // we don't keep this file around
@@ -90,8 +82,7 @@ class MakeTimestamp extends AbstractMake
     }
 
     /**
-     * Delete all temporary files
-     *
+     * Delete all temporary files once the processus is completed
      */
     public function __destruct()
     {
@@ -110,9 +101,7 @@ class MakeTimestamp extends AbstractMake
         $sql = 'SELECT elabid FROM experiments WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        if (!$req->execute()) {
-            throw new ImproperActionException('Cannot get elabid!');
-        }
+        $this->Db->execute($req);
         return $req->fetch(PDO::FETCH_COLUMN) . '-timestamped.pdf';
     }
 
@@ -122,7 +111,7 @@ class MakeTimestamp extends AbstractMake
      *
      * @throws ImproperActionException
      */
-    public function timestamp(): void
+    public function timestamp(): bool
     {
         if (!$this->Entity->isTimestampable()) {
             throw new ImproperActionException('Timestamping is not allowed for this experiment.');
@@ -142,8 +131,103 @@ class MakeTimestamp extends AbstractMake
         $this->validate();
 
         // SQL
-        $this->Entity->updateTimestamp($this->getResponseTime(), $this->responsefilePath);
-        $this->sqlInsertPdf();
+        $responseTime = $this->formatResponseTime($this->getTimestampFromResponseFile());
+        $this->Entity->updateTimestamp($responseTime, $this->responsefilePath);
+        return $this->sqlInsertPdf();
+    }
+
+    /**
+     * Return the needed parameters to request/verify a timestamp
+     *
+     * @return array<string,string>
+     */
+    protected function getTimestampParameters(): array
+    {
+        $config = $this->configArr;
+
+        $login = $config['stamplogin'];
+
+        $password = '';
+        if (($config['stamppass'] ?? '') !== '') {
+            $password = Crypto::decrypt($config['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
+        }
+        $provider = $config['stampprovider'];
+        $cert = $config['stampcert'];
+        $hash = $config['stamphash'];
+
+        $allowedAlgos = array('sha256', 'sha384', 'sha512');
+        if (!in_array($hash, $allowedAlgos, true)) {
+            $hash = self::HASH_ALGORITHM;
+        }
+
+        return array(
+            'stamplogin' => $login,
+            'stamppassword' => $password,
+            'stampprovider' => $provider,
+            'stampcert' => $cert,
+            'hash' => $hash,
+            );
+    }
+
+    protected function getTimestampFromResponseFile(): string
+    {
+        if (!is_readable($this->responsefilePath)) {
+            throw new ImproperActionException('The token is not readable.');
+        }
+
+        $output = $this->runProcess(array(
+            'openssl',
+            'ts',
+            '-reply',
+            '-in',
+            $this->responsefilePath,
+            '-text',
+        ));
+
+        /*
+         * Format of output:
+         *
+         * Status info:
+         *   Status: Granted.
+         *   Status description: unspecified
+         *   Failure info: unspecified
+         *
+         *   TST info:
+         *   Version: 1
+         *   Policy OID: 1.3.6.1.4.1.15819.5.2.2
+         *   Hash Algorithm: sha256
+         *   Message data:
+         *       0000 - 3a 9a 6c 32 12 7f b0 c7-cd e0 c9 9e e2 66 be a9   :.l2.........f..
+         *       0010 - 20 b9 b1 83 3d b1 7c 16-e4 ac b0 5f 43 bc 40 eb    ...=.|...._C.@.
+         *   Serial number: 0xA7452417D851301981FA9A7CC2CF776B5934D3E5
+         *   Time stamp: Apr 27 13:37:34.363 2015 GMT
+         *   Accuracy: unspecified seconds, 0x01 millis, unspecified micros
+         *   Ordering: yes
+         *   Nonce: unspecified
+         *   TSA: DirName:/CN=Universign Timestamping Unit 012/OU=0002 43912916400026/O=Cryptolog International/C=FR
+         *   Extensions:
+         */
+
+        $matches = array();
+        $lines = explode("\n", $output);
+        foreach ($lines as $line) {
+            if (preg_match("~^Time\sstamp\:\s(.*)~", $line, $matches)) {
+                return $matches[1];
+            }
+        }
+        throw new ImproperActionException('Could not get response time!');
+    }
+
+    /**
+     * Convert the time found in the response file to the correct format for sql insertion
+     */
+    protected function formatResponseTime(string $timestamp): string
+    {
+        $time = strtotime($timestamp);
+        if ($time === false) {
+            throw new ImproperActionException('Could not get response time!');
+        }
+        return date('Y-m-d H:i:s', $time);
     }
 
     /**
@@ -161,54 +245,6 @@ class MakeTimestamp extends AbstractMake
         $MakePdf->outputToFile();
         $this->pdfPath = $MakePdf->filePath;
         $this->pdfLongName = $MakePdf->longName;
-    }
-
-    /**
-     * Return the needed parameters to request/verify a timestamp
-     *
-     * @return array<string,string>
-     */
-    private function getTimestampParameters(Teams $teams): array
-    {
-        $teamConfigArr = $teams->read(new ContentParams());
-        // if there is a config in the team, use that
-        // otherwise use the general config if we can
-        if (mb_strlen($teamConfigArr['stampprovider'] ?? '') > 2) {
-            $config = $teamConfigArr;
-        } elseif ($this->Config->configArr['stampshare']) {
-            $config = $this->Config->configArr;
-        } else {
-            throw new ImproperActionException(_('Please configure Timestamping in the admin panel.'));
-        }
-
-        $login = $config['stamplogin'];
-
-        if (($config['stamppass'] ?? '') !== '') {
-            $password = Crypto::decrypt($config['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
-        } else {
-            $password = '';
-        }
-        $provider = $config['stampprovider'];
-        $cert = $config['stampcert'];
-        // fix for previous value of stampcert that was not updated when the cert was moved
-        if ($cert === 'app/dfn-cert/pki.dfn.pem') {
-            $cert = 'src/dfn-cert/pki.dfn.pem';
-            $this->Config->update(array('stampcert' => $cert));
-        }
-        $hash = $config['stamphash'];
-
-        $allowedAlgos = array('sha256', 'sha384', 'sha512');
-        if (!in_array($hash, $allowedAlgos, true)) {
-            $hash = self::HASH_ALGORITHM;
-        }
-
-        return array(
-            'stamplogin' => $login,
-            'stamppassword' => $password,
-            'stampprovider' => $provider,
-            'stampcert' => $cert,
-            'hash' => $hash,
-            );
     }
 
     /**
@@ -247,79 +283,12 @@ class MakeTimestamp extends AbstractMake
     }
 
     /**
-     * Extracts the unix timestamp from the base64-encoded response string as returned by signRequestfile
-     *
-     * @throws ImproperActionException if unhappy
-     */
-    private function getResponseTime(): string
-    {
-        if (!is_readable($this->responsefilePath)) {
-            throw new ImproperActionException('The token is not readable.');
-        }
-
-        $output = $this->runProcess(array(
-            'openssl',
-            'ts',
-            '-reply',
-            '-in',
-            $this->responsefilePath,
-            '-text',
-        ));
-
-        /*
-         * Format of answer:
-         *
-         * Status info:
-         *   Status: Granted.
-         *   Status description: unspecified
-         *   Failure info: unspecified
-         *
-         *   TST info:
-         *   Version: 1
-         *   Policy OID: 1.3.6.1.4.1.15819.5.2.2
-         *   Hash Algorithm: sha256
-         *   Message data:
-         *       0000 - 3a 9a 6c 32 12 7f b0 c7-cd e0 c9 9e e2 66 be a9   :.l2.........f..
-         *       0010 - 20 b9 b1 83 3d b1 7c 16-e4 ac b0 5f 43 bc 40 eb    ...=.|...._C.@.
-         *   Serial number: 0xA7452417D851301981FA9A7CC2CF776B5934D3E5
-         *   Time stamp: Apr 27 13:37:34.363 2015 GMT
-         *   Accuracy: unspecified seconds, 0x01 millis, unspecified micros
-         *   Ordering: yes
-         *   Nonce: unspecified
-         *   TSA: DirName:/CN=Universign Timestamping Unit 012/OU=0002 43912916400026/O=Cryptolog International/C=FR
-         *   Extensions:
-         */
-        $matches = array();
-        $lines = explode("\n", $output);
-        foreach ($lines as $line) {
-            if (preg_match("~^Time\sstamp\:\s(.*)~", $line, $matches)) {
-                $responseTime = date('Y-m-d H:i:s', strtotime($matches[1]));
-                // workaround for faulty php strtotime function, that does not handle times in format "Feb 25 23:29:13.331 2015 GMT"
-                // currently this accounts for the format used presumably by Universign.eu
-                if ($responseTime === '') {
-                    $date = DateTime::createFromFormat('M j H:i:s.u Y T', $matches[1]);
-                    if ($date instanceof DateTime) {
-                        // Return formatted time as this is what we will store in the database.
-                        // PHP will take care of correct timezone conversions (if configured correctly)
-                        return date('Y-m-d H:i:s', $date->getTimestamp());
-                    }
-                } else {
-                    return $responseTime;
-                }
-            }
-        }
-        throw new ImproperActionException('Could not get response time!');
-    }
-
-    /**
      * Contact the TSA and receive a token after successful timestamp
      *
      * @throws ImproperActionException
      */
     private function postData(): \Psr\Http\Message\ResponseInterface
     {
-        $client = new \GuzzleHttp\Client();
-
         $options = array(
             // add user agent
             // http://developer.github.com/v3/#user-agent-required
@@ -329,7 +298,7 @@ class MakeTimestamp extends AbstractMake
                 'Content-Transfer-Encoding' => 'base64',
             ),
             // add proxy if there is one
-            'proxy' => $this->Config->configArr['proxy'],
+            'proxy' => $this->configArr['proxy'],
             // add a timeout, because if you need proxy, but don't have it, it will mess up things
             // in seconds
             'timeout' => 5,
@@ -344,7 +313,7 @@ class MakeTimestamp extends AbstractMake
         }
 
         try {
-            return $client->request('POST', $this->stampParams['stampprovider'], $options);
+            return $this->client->request('POST', $this->stampParams['stampprovider'], $options);
         } catch (RequestException $e) {
             throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);
         }
@@ -372,7 +341,7 @@ class MakeTimestamp extends AbstractMake
      * @throws ImproperActionException
      * @param StreamInterface $binaryToken asn1 response from TSA
      */
-    private function saveToken(StreamInterface $binaryToken): void
+    private function saveToken(StreamInterface $binaryToken): bool
     {
         $longName = $this->getLongName() . '.asn1';
         $filePath = $this->getUploadsPath() . $longName;
@@ -400,9 +369,7 @@ class MakeTimestamp extends AbstractMake
         $req->bindValue(':type', 'timestamp-token');
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->stampParams['hash']);
-        if (!$req->execute()) {
-            throw new ImproperActionException('Cannot insert into SQL!');
-        }
+        return $this->Db->execute($req);
     }
 
     /**
@@ -413,7 +380,7 @@ class MakeTimestamp extends AbstractMake
      */
     private function validate(): bool
     {
-        $certPath = dirname(__DIR__, 2) . '/' . $this->stampParams['stampcert'];
+        $certPath = $this->stampParams['stampcert'];
 
         if (!is_readable($certPath)) {
             throw new ImproperActionException('Cannot read the certificate file!');
@@ -483,9 +450,8 @@ class MakeTimestamp extends AbstractMake
      * Add also our pdf to the attached files of the experiment, this way it is kept safely :)
      * I had this idea when realizing that if you comment an experiment, the hash won't be good anymore. Because the pdf will contain the new comments.
      * Keeping the pdf here is the best way to go, as this leaves room to leave comments.
-     * @throws ImproperActionException
      */
-    private function sqlInsertPdf(): void
+    private function sqlInsertPdf(): bool
     {
         $hash = $this->getHash($this->pdfPath);
 
@@ -500,8 +466,6 @@ class MakeTimestamp extends AbstractMake
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->stampParams['hash']);
 
-        if (!$req->execute()) {
-            throw new ImproperActionException('Cannot insert into SQL!');
-        }
+        return $this->Db->execute($req);
     }
 }

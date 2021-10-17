@@ -92,17 +92,11 @@ class MakeTimestamp extends AbstractMake
     }
 
     /**
-     * The realname is elabid-timestamped.pdf
-     *
-     * @throws ImproperActionException
+     * The realname is $elabid-timestamped.pdf
      */
     public function getFileName(): string
     {
-        $sql = 'SELECT elabid FROM experiments WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $req->fetch(PDO::FETCH_COLUMN) . '-timestamped.pdf';
+        return $this->Entity->entityData['elabid'] . '-timestamped.pdf';
     }
 
     /**

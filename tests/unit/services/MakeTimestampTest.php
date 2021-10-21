@@ -65,7 +65,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
     {
         $mockResponse = $this->readFixtureToken('universign');
         $client = $this->getClient($mockResponse);
-        $this->configArr['stamplogin'] = 'fakelogin@example.com';
+        $this->configArr['ts_login'] = 'fakelogin@example.com';
         // create a fake encrypted password
         $this->configArr['ts_password'] = Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(SECRET_KEY));
         $Maker = new MakeUniversignTimestamp($this->configArr, $this->getFreshTimestampableEntity(), $client);

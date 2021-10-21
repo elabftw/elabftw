@@ -143,7 +143,7 @@ try {
         // if the current team chose to override the default, use that
         $Teams = new Teams($App->Users);
         $teamConfigArr = $Teams->read(new ContentParams());
-        if ($teamConfigArr['override_tsa'] === '1') {
+        if ($teamConfigArr['ts_override'] === '1') {
             $tsAuthority = $teamConfigArr['ts_authority'];
         }
 

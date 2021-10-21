@@ -14,6 +14,7 @@ use Defuse\Crypto\Key;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Filter;
+use const SECRET_KEY;
 use function str_contains;
 
 class ContentParams implements ContentParamsInterface

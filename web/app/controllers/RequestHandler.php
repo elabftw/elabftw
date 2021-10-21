@@ -68,12 +68,12 @@ try {
     }
 
 
-    if ($action === 'create') {
+    if ($action === 'create' && !$Model instanceof Config) {
         $res = $Model->create($Params);
         if ($Model instanceof ApiKeys) {
             $res = $Params->getKey();
         }
-    } elseif ($action === 'read') {
+    } elseif ($action === 'read' && !$Model instanceof Config) {
         $res = $Model->read($Params);
     } elseif ($action === 'update') {
         // TODO should not exist, but it's here for now

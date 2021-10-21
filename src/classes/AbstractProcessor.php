@@ -80,7 +80,8 @@ abstract class AbstractProcessor implements ProcessorInterface
     public function getParams()
     {
         if ($this->action === 'create' || $this->action === 'read' || $this->action === 'update') {
-            return $this->getParamsObject();
+            $ParamsBuilder = new ParamsBuilder($this->Model, $this->content, $this->target, $this->extra);
+            return $ParamsBuilder->getParams();
         }
     }
 
@@ -177,54 +178,5 @@ abstract class AbstractProcessor implements ProcessorInterface
             throw new IllegalActionException('Bad id');
         }
         return $id;
-    }
-
-    // @phpstan-ignore-next-line
-    private function getParamsObject()
-    {
-        if ($this->Model instanceof Comments ||
-            $this->Model instanceof Config ||
-            $this->Model instanceof Todolist ||
-            $this->Model instanceof Links ||
-            $this->Model instanceof FavTags ||
-            $this->Model instanceof Users ||
-            $this->Model instanceof Teams ||
-            $this->Model instanceof PrivacyPolicy) {
-            return new ContentParams($this->content, $this->target);
-        }
-        if ($this->Model instanceof Experiments || $this->Model instanceof Items || $this->Model instanceof Templates) {
-            return new EntityParams($this->content, $this->target, $this->extra);
-        }
-        if ($this->Model instanceof ItemsTypes) {
-            return new ItemTypeParams($this->content, $this->target, $this->extra);
-        }
-        if ($this->Model instanceof UnfinishedSteps) {
-            return new UnfinishedStepsParams($this->extra);
-        }
-        if ($this->Model instanceof Steps) {
-            return new StepParams($this->content, $this->target);
-        }
-        if ($this->Model instanceof Status) {
-            return new StatusParams(
-                $this->content,
-                $this->extra['color'],
-                (bool) $this->extra['isTimestampable'],
-                (bool) $this->extra['isDefault']
-            );
-        }
-        if ($this->Model instanceof ApiKeys) {
-            // TODO only giv extra as third param and the get function will extract the correct stuff from it?
-            // will help with homogeneisation of Params class
-            return new CreateApikey($this->content, $this->target, (int) $this->extra['canwrite']);
-        }
-        if ($this->Model instanceof Tags) {
-            return new TagParams($this->content, $this->target);
-        }
-        if ($this->Model instanceof Uploads) {
-            return new UploadParams($this->content, $this->target);
-        }
-        if ($this->Model instanceof TeamGroups) {
-            return new TeamGroupParams($this->content, $this->target, $this->extra);
-        }
     }
 }

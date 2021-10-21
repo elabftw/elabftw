@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
         method: Method.POST,
         action: Action.Update,
         model: Model.Team,
-        target: Target.OverrideTsa,
+        target: Target.TsOverride,
         content: value ? '1' : '0',
       };
       AjaxC.send(payload).then(json => {

@@ -139,32 +139,28 @@ class MakeTimestamp extends AbstractMake
     protected function getTimestampParameters(): array
     {
         $config = $this->configArr;
-        // make sure we use system configuration if override_tsa is not active
-        if ($config['override_tsa'] === '0') {
+        // make sure we use system configuration if override is not active
+        if ($config['ts_override'] === '0') {
             $config = Config::getConfig()->configArr;
         }
-
-        $login = $config['stamplogin'];
 
         $password = '';
         if (($config['ts_password'] ?? '') !== '') {
             $password = Crypto::decrypt($config['ts_password'], Key::loadFromAsciiSafeString(SECRET_KEY));
         }
-        $provider = $config['stampprovider'];
-        $cert = $config['stampcert'];
-        $hash = $config['stamphash'];
 
+        $hash = $config['ts_hash'];
         $allowedAlgos = array('sha256', 'sha384', 'sha512');
         if (!in_array($hash, $allowedAlgos, true)) {
             $hash = self::TS_HASH;
         }
 
         return array(
-            'stamplogin' => $login,
+            'ts_login' => $config['ts_login'],
             'ts_password' => $password,
-            'stampprovider' => $provider,
-            'stampcert' => $cert,
-            'hash' => $hash,
+            'ts_url' => $config['ts_url'],
+            'ts_cert' => $config['ts_cert'],
+            'ts_hash' => $hash,
             );
     }
 
@@ -304,15 +300,15 @@ class MakeTimestamp extends AbstractMake
             'body' => file_get_contents($this->requestfilePath),
         );
 
-        if ($this->stampParams['stamplogin'] && $this->stampParams['ts_password']) {
+        if ($this->stampParams['ts_login'] && $this->stampParams['ts_password']) {
             $options['auth'] = array(
-                $this->stampParams['stamplogin'],
+                $this->stampParams['ts_login'],
                 $this->stampParams['ts_password'],
             );
         }
 
         try {
-            return $this->client->request('POST', $this->stampParams['stampprovider'], $options);
+            return $this->client->request('POST', $this->stampParams['ts_url'], $options);
         } catch (RequestException $e) {
             throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);
         }
@@ -379,7 +375,7 @@ class MakeTimestamp extends AbstractMake
      */
     private function validate(): bool
     {
-        $certPath = $this->stampParams['stampcert'];
+        $certPath = $this->stampParams['ts_cert'];
 
         if (!is_readable($certPath)) {
             throw new ImproperActionException('Cannot read the certificate file!');

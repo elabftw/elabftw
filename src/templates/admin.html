@@ -483,12 +483,12 @@
 
     <!-- allow the team admin to select another tsa -->
     <div class='form-check mt-2'>
-      <input data-action='override-timestamp' {{ teamConfigArr.override_tsa ? 'checked' : '' }} autocomplete='off' class='form-check-input' type='checkbox' id='overrideTimestamp' />
+      <input data-action='override-timestamp' {{ teamConfigArr.ts_override ? 'checked' : '' }} autocomplete='off' class='form-check-input' type='checkbox' id='overrideTimestamp' />
       <label class='form-check-label' for='overrideTimestamp'>{{ 'Override general timestamping config'|trans }}</label>
     </div>
 
-    <!-- this block is only showed if the override_tsa is set to true (1) -->
-    <div class='mt-2' {{ teamConfigArr.override_tsa != '1' ? 'hidden' : '' }} id='overrideTimestampContent'>
+    <!-- this block is only showed if the override is set to true (1) -->
+    <div class='mt-2' {{ teamConfigArr.ts_override != '1' ? 'hidden' : '' }} id='overrideTimestampContent'>
       {% include('ts-config.html') %}
     </div>
   </div>

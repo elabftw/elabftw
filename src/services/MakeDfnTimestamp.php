@@ -34,11 +34,11 @@ class MakeDfnTimestamp extends MakeTimestamp
     protected function getTimestampParameters(): array
     {
         return array(
-            'stamplogin' => '',
+            'ts_login' => '',
             'ts_password' => '',
-            'stampprovider' => self::TS_URL,
-            'stampcert' => dirname(__DIR__) . '/ts-certs/' . self::TS_CERT,
-            'hash' => self::TS_HASH,
+            'ts_url' => self::TS_URL,
+            'ts_cert' => dirname(__DIR__) . '/ts-certs/' . self::TS_CERT,
+            'ts_hash' => self::TS_HASH,
             );
     }
 

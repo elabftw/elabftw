@@ -10,9 +10,9 @@
 </select>
 
 <div id='ts_loginpass' {{ tsConfigArr.ts_authority == 'dfn' ? 'hidden' : '' }}>
-  <!-- STAMPLOGIN -->
-  <label for='stamplogin'>{{ 'Login for external timestamping service:'|trans }}</label>
-  <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='stamplogin' type='text' value='{{ tsConfigArr.stamplogin }}' id='stamplogin' autocomplete='off' />
+  <!-- TIMESTAMP LOGIN -->
+  <label for='ts_login'>{{ 'Login for external timestamping service:'|trans }}</label>
+  <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='ts_login' type='text' value='{{ tsConfigArr.ts_login }}' id='ts_login' autocomplete='off' />
 
   <!-- TIMESTAMP PASSWORD -->
   <label for='ts_password'>{{ 'Password for external timestamping service:'|trans }}</label>
@@ -24,11 +24,11 @@
 </div>
 
 <div id='ts_urlcert' {{ tsConfigArr.ts_authority != 'custom' ? 'hidden' : '' }}>
-  <label for='stampprovider'>{{ 'URL for external timestamping service:'|trans }}</label>
-  <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='stampprovider' type='url' placeholder='https://tsa.example.com' value='{{ tsConfigArr.stampprovider }}' id='stampprovider' autocomplete='off' />
+  <label for='ts_url'>{{ 'URL for external timestamping service:'|trans }}</label>
+  <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='ts_url' type='url' placeholder='https://tsa.example.com' value='{{ tsConfigArr.ts_url }}' id='ts_url' autocomplete='off' />
   <p class='smallgray'>{{ 'This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'|trans|format("<a href='https://tools.ietf.org/html/rfc3161'>", "</a>")|raw }}</p>
 
-  <label for='stampcert'>{{ 'Chain of certificates of the external timestamping service:'|trans }}</label>
-  <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='stampcert' type='text' placeholder='path/to/cert.pem' value='{{ tsConfigArr.stampcert }}' name='stampcert' id='stampcert' />
+  <label for='ts_cert'>{{ 'Chain of certificates of the external timestamping service:'|trans }}</label>
+  <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='ts_cert' type='text' placeholder='path/to/cert.pem' value='{{ tsConfigArr.ts_cert }}' id='ts_cert' />
   <p class='smallgray'>{{ "This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. You should add it in the 'uploads' folder. The file needs to be in %sPEM-encoded (ASCII)%s format!"|trans|format("<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>")|raw }}</p>
 </div>

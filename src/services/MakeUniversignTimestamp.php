@@ -40,10 +40,9 @@ class MakeUniversignTimestamp extends MakeTimestamp
     {
         $config = $this->configArr;
 
-        if (empty($config['stamplogin'])) {
+        if (empty($config['ts_login'])) {
             throw new ImproperActionException('Universign timestamping requires a login!');
         }
-        $login = $config['stamplogin'];
 
         if (empty($config['ts_password'])) {
             throw new ImproperActionException('Universign timestamping requires a password!');
@@ -51,11 +50,11 @@ class MakeUniversignTimestamp extends MakeTimestamp
         $password = Crypto::decrypt($config['ts_password'], Key::loadFromAsciiSafeString(SECRET_KEY));
 
         return array(
-            'stamplogin' => $login,
+            'ts_login' => $config['ts_login'],
             'ts_password' => $password,
-            'stampprovider' => self::TS_URL,
-            'stampcert' => dirname(__DIR__) . '/ts-certs/' . self::TS_CERT,
-            'hash' => self::TS_HASH,
+            'ts_url' => self::TS_URL,
+            'ts_cert' => dirname(__DIR__) . '/ts-certs/' . self::TS_CERT,
+            'ts_hash' => self::TS_HASH,
             );
     }
 

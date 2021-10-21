@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
@@ -31,6 +32,6 @@ class DatabaseInstaller
         $this->Sql->execFile('structure.sql');
 
         $Teams = new Teams(new Users());
-        $Teams->create('Default team');
+        $Teams->create(new ContentParams('Default team'));
     }
 }

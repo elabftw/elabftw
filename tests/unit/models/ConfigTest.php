@@ -9,6 +9,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
+
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     private Config $Config;
@@ -26,17 +28,25 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate(): void
     {
+        $this->assertTrue($this->Config->update(new ContentParams('some-login', 'stamplogin')));
+        $this->assertTrue($this->Config->update(new ContentParams('some-pass', 'stamppass')));
+        $this->assertTrue($this->Config->update(new ContentParams('1', 'stampshare')));
+        $this->assertTrue($this->Config->update(new ContentParams('https://tsa.example.org', 'stampprovider')));
+        $this->assertTrue($this->Config->update(new ContentParams('/path/to/cert.pem', 'stampcert')));
+        $this->assertTrue($this->Config->update(new ContentParams('custom', 'ts_authority')));
+    }
+
+    public function testUpdateAll(): void
+    {
         $post = array(
             'smtp_address' => 'smtp.mailgun.org',
             'smtp_encryption' => 'tls',
             'smtp_password' => 'yep',
             'smtp_port' => 587,
-            'stampcert' => 'src/dfn-cert/pki.dfn.pem',
-            'stamppass' => '',
             'login_tries' => 15,
         );
 
-        $this->Config->update($post);
+        $this->Config->updateAll($post);
     }
 
     public function testDestroyStamppass(): void
@@ -46,6 +56,6 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     public function testRestoreDefaults(): void
     {
-        $this->Config->restoreDefaults();
+        $this->Config->destroy();
     }
 }

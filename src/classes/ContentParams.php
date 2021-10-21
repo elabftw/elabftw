@@ -9,6 +9,8 @@
 
 namespace Elabftw\Elabftw;
 
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Filter;
@@ -28,6 +30,11 @@ class ContentParams implements ContentParamsInterface
 
     public function getContent(): string
     {
+        // if we're dealing with a password, return the encrypted version as content
+        if ($this->target === 'stamppass') {
+            return Crypto::encrypt($this->content, Key::loadFromAsciiSafeString(SECRET_KEY));
+        }
+
         // check for length
         $c = Filter::sanitize($this->content);
         if (mb_strlen($c) < self::MIN_CONTENT_SIZE) {

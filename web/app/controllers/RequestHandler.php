@@ -19,6 +19,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
@@ -61,6 +62,11 @@ try {
         ) {
         throw new IllegalActionException('Non admin user tried to edit status or items types.');
     }
+    // only sysadmins can update the config
+    if ($action === 'update' && $Model instanceof Config && !$App->Users->userData['is_sysadmin']) {
+        throw new IllegalActionException('Non sysadmin user tried to update instance config.');
+    }
+
 
     if ($action === 'create') {
         $res = $Model->create($Params);
@@ -86,6 +92,8 @@ try {
             }
         }
         $res = $Model->destroy();
+    } elseif ($action === 'destroystamppass' && ($Model instanceof Config || $Model instanceof Teams)) {
+        $res = $Model->destroyStamppass();
     } elseif ($action === 'duplicate' && $Model instanceof AbstractEntity) {
         $res = $Model->duplicate();
     } elseif ($action === 'deduplicate' && $Model instanceof Tags) {

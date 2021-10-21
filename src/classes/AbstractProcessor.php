@@ -26,6 +26,7 @@ use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
@@ -51,7 +52,7 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     protected ?int $id = null;
 
-    protected CrudInterface | Users $Model;
+    protected CrudInterface | Users | Config $Model;
 
     protected array $extra = array();
 
@@ -60,7 +61,7 @@ abstract class AbstractProcessor implements ProcessorInterface
         $this->process($request);
     }
 
-    public function getModel(): CrudInterface | Users
+    public function getModel(): CrudInterface | Users | Config
     {
         return $this->Model;
     }
@@ -123,11 +124,13 @@ abstract class AbstractProcessor implements ProcessorInterface
         return new Items($this->Users, $itemId);
     }
 
-    protected function buildModel(string $model): CrudInterface | Users
+    protected function buildModel(string $model): CrudInterface | Users | Config
     {
         switch ($model) {
             case 'apikey':
                 return new ApiKeys($this->Users, $this->id);
+            case 'config':
+                return Config::getConfig();
             case 'status':
                 return new Status($this->Users->team, $this->id);
             case 'comment':
@@ -144,6 +147,8 @@ abstract class AbstractProcessor implements ProcessorInterface
                 return new Uploads($this->Entity, $this->id);
             case 'privacypolicy':
                 return new PrivacyPolicy(Config::getConfig());
+            case 'team':
+                return new Teams($this->Users, $this->Users->team);
             case 'teamgroup':
                 return new TeamGroups($this->Users, $this->id);
             case 'tag':
@@ -178,10 +183,12 @@ abstract class AbstractProcessor implements ProcessorInterface
     private function getParamsObject()
     {
         if ($this->Model instanceof Comments ||
+            $this->Model instanceof Config ||
             $this->Model instanceof Todolist ||
             $this->Model instanceof Links ||
             $this->Model instanceof FavTags ||
             $this->Model instanceof Users ||
+            $this->Model instanceof Teams ||
             $this->Model instanceof PrivacyPolicy) {
             return new ContentParams($this->content, $this->target);
         }

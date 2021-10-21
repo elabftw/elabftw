@@ -16,7 +16,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
-        $this->assertIsInt($this->Teams->create('Test team'));
+        $this->assertIsInt($this->Teams->create(new ContentParams('Test team')));
     }
 
     public function testRead(): void
@@ -26,7 +26,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy(): void
     {
-        $id = $this->Teams->create('Destroy me');
+        $id = $this->Teams->create(new ContentParams('Destroy me'));
         $this->Teams->setId($id);
         $this->Teams->destroy();
         // try to destroy a team with data

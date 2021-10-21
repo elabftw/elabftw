@@ -17,6 +17,7 @@ use function dirname;
 use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use function file_get_contents;
 use GuzzleHttp\ClientInterface;
@@ -138,6 +139,10 @@ class MakeTimestamp extends AbstractMake
     protected function getTimestampParameters(): array
     {
         $config = $this->configArr;
+        // make sure we use system configuration if override_tsa is not active
+        if ($config['override_tsa'] === '0') {
+            $config = Config::getConfig()->configArr;
+        }
 
         $login = $config['stamplogin'];
 

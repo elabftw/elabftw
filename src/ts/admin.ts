@@ -258,4 +258,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
   const colorInput = '#' + Math.floor(Math.random()*16777215).toString(16);
   $('.randomColor').val(colorInput);
+
+  document.getElementById('container').addEventListener('click', event => {
+    const el = (event.target as HTMLElement);
+    if (el.matches('[data-action="override-timestamp"]')) {
+      document.getElementById('overrideTimestampContent').toggleAttribute('hidden');
+      const value = (document.getElementById('overrideTimestamp') as HTMLInputElement).checked;
+      const payload: Payload = {
+        method: Method.POST,
+        action: Action.Update,
+        model: Model.Team,
+        target: Target.OverrideTsa,
+        content: value ? '1' : '0',
+      };
+      AjaxC.send(payload).then(json => {
+        notif(json);
+      });
+    }
+  });
 });

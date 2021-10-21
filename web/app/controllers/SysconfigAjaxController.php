@@ -43,7 +43,7 @@ try {
 
     // CREATE TEAM
     if ($Request->request->has('teamsCreate')) {
-        $Teams->create($Request->request->get('teamsName'));
+        $Teams->create(new ContentParams($Request->request->get('teamsName')));
     }
 
     // UPDATE TEAM

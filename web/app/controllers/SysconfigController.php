@@ -122,12 +122,6 @@ try {
         }
     }
 
-    // CLEAR STAMP PASS
-    if ($Request->query->get('clearStamppass')) {
-        $tab = '4';
-        $App->Config->destroyStamppass();
-    }
-
     $App->Session->getFlashBag()->add('ok', _('Saved'));
 } catch (ImproperActionException $e) {
     // show message to user

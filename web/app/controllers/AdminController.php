@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -16,13 +15,11 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Maps\Team;
-use Elabftw\Models\Teams;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Deal with requests sent from the admin page
- *
  */
 require_once dirname(__DIR__) . '/init.inc.php';
 
@@ -33,18 +30,11 @@ try {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
 
-    $Teams = new Teams($App->Users);
-
     // UPDATE TEAM SETTINGS (first tab of admin panel)
     if ($Request->request->has('teamsUpdateFull')) {
         $Team = new Team((int) $App->Users->userData['team']);
         $Team->hydrate($Request->request->all());
         $Team->save();
-    }
-
-    // CLEAR STAMP PASS
-    if ($Request->query->get('clearStamppass')) {
-        $Teams->destroyStamppass();
     }
 
     // DISPLAY RESULT

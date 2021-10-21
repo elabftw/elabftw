@@ -9,10 +9,10 @@ import $ from 'jquery';
 import { Ajax } from './Ajax.class';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { clearLocalStorage, notif, makeSortableGreatAgain } from './misc';
+import { clearLocalStorage, notif, makeSortableGreatAgain, reloadElement } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
-import { EntityType, Payload, Method, Model, Action } from './interfaces';
+import { EntityType, Payload, Target, Method, Model, Action } from './interfaces';
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.de.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.es.js';
@@ -121,6 +121,57 @@ document.addEventListener('DOMContentLoaded', () => {
   // the footer is our trigger element
   observer.observe(document.querySelector('footer'));
   // END BACK TO TOP BUTTON
+
+  // Add a listener for all elements triggered by an event
+  // and POST an update request
+  // select will be on change, text inputs on blur
+  function listenTrigger(): void {
+    document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
+      el.addEventListener(el.dataset.trigger, event => {
+        event.preventDefault();
+        const payload: Payload = {
+          method: Method.POST,
+          action: el.dataset.action as Action ?? Action.Update,
+          model: el.dataset.model as Model,
+          target: el.dataset.target as Target,
+          content: el.value,
+        };
+        (new Ajax()).send(payload)
+          .then(json => notif(json))
+          .then(() => {
+            if (el.dataset.reload) {
+              reloadElement(el.dataset.reload);
+            }
+          });
+      });
+    });
+  }
+  // use a mutation observer on container to make sure that newly added elements are listened to
+  new MutationObserver(() => listenTrigger())
+    .observe(document.getElementById('container'), {childList: true, subtree: true});
+
+
+  /**
+   * Timestamp provider select
+   */
+  if (document.getElementById('ts_authority')) {
+    const select = (document.getElementById('ts_authority') as HTMLSelectElement);
+    select.addEventListener('change', () => {
+      if (select.value === 'dfn') {
+        // mask all
+        document.getElementById('ts_loginpass').toggleAttribute('hidden', true);
+        document.getElementById('ts_urlcert').toggleAttribute('hidden', true);
+      } else if (select.value === 'universign') {
+        // only make loginpass visible
+        document.getElementById('ts_loginpass').removeAttribute('hidden');
+        document.getElementById('ts_urlcert').toggleAttribute('hidden', true);
+      } else if (select.value === 'custom') {
+        // show all
+        document.getElementById('ts_loginpass').removeAttribute('hidden');
+        document.getElementById('ts_urlcert').removeAttribute('hidden');
+      }
+    });
+  }
 
 
   /**

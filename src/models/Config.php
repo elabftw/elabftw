@@ -141,7 +141,7 @@ final class Config
      */
     public function destroyStamppass(): bool
     {
-        $sql = "UPDATE config SET conf_value = NULL WHERE conf_name = 'stamppass'";
+        $sql = "UPDATE config SET conf_value = NULL WHERE conf_name = 'ts_password'";
         $req = $this->Db->prepare($sql);
         return $this->Db->execute($req);
     }
@@ -182,7 +182,7 @@ final class Config
             ('smtp_username', ''),
             ('ts_authority', 'dfn'),
             ('stamplogin', ''),
-            ('stamppass', ''),
+            ('ts_password', NULL),
             ('stampshare', '1'),
             ('stampprovider', 'http://zeitstempel.dfn.de/'),
             ('stampcert', 'src/dfn-cert/pki.dfn.pem'),

@@ -14,14 +14,13 @@
   <label for='stamplogin'>{{ 'Login for external timestamping service:'|trans }}</label>
   <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='stamplogin' type='text' value='{{ tsConfigArr.stamplogin }}' id='stamplogin' autocomplete='off' />
 
-  <!-- STAMPPASS -->
-  <label for='stamppass'>{{ 'Password for external timestamping service:'|trans }}</label>
-  {% if tsConfigArr.stamppass|length > 1 %}
+  <!-- TIMESTAMP PASSWORD -->
+  <label for='ts_password'>{{ 'Password for external timestamping service:'|trans }}</label>
+  {% if tsConfigArr.ts_password %}
     <p>A password is already set.
-    <!-- TODO have same endpoint to clear stamppass for sysconfig or admin -->
-    <a href='#' data-trigger='click' data-model='{{ model }}' data-target='stamppass' data-action='destroystamppass' data-reload='ts_loginpass'>Clear it</a> or change it below:</p>
+    <a href='#' data-trigger='click' data-model='{{ model }}' data-target='ts_password' data-action='destroystamppass' data-reload='ts_loginpass'>Clear it</a> or change it below:</p>
   {% endif %}
-  <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='stamppass' data-reload='ts_loginpass' autocomplete='off' maxlength='200' type='password' id='stamppass' />
+  <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='ts_password' data-reload='ts_loginpass' autocomplete='off' maxlength='200' type='password' id='ts_password' />
 </div>
 
 <div id='ts_urlcert' {{ tsConfigArr.ts_authority != 'custom' ? 'hidden' : '' }}>

@@ -45,14 +45,14 @@ class MakeUniversignTimestamp extends MakeTimestamp
         }
         $login = $config['stamplogin'];
 
-        if (empty($config['stamppass'])) {
+        if (empty($config['ts_password'])) {
             throw new ImproperActionException('Universign timestamping requires a password!');
         }
-        $password = Crypto::decrypt($config['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
+        $password = Crypto::decrypt($config['ts_password'], Key::loadFromAsciiSafeString(SECRET_KEY));
 
         return array(
             'stamplogin' => $login,
-            'stamppassword' => $password,
+            'ts_password' => $password,
             'stampprovider' => self::TS_URL,
             'stampcert' => dirname(__DIR__) . '/ts-certs/' . self::TS_CERT,
             'hash' => self::TS_HASH,

@@ -147,8 +147,8 @@ class MakeTimestamp extends AbstractMake
         $login = $config['stamplogin'];
 
         $password = '';
-        if (($config['stamppass'] ?? '') !== '') {
-            $password = Crypto::decrypt($config['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
+        if (($config['ts_password'] ?? '') !== '') {
+            $password = Crypto::decrypt($config['ts_password'], Key::loadFromAsciiSafeString(SECRET_KEY));
         }
         $provider = $config['stampprovider'];
         $cert = $config['stampcert'];
@@ -161,7 +161,7 @@ class MakeTimestamp extends AbstractMake
 
         return array(
             'stamplogin' => $login,
-            'stamppassword' => $password,
+            'ts_password' => $password,
             'stampprovider' => $provider,
             'stampcert' => $cert,
             'hash' => $hash,
@@ -304,10 +304,10 @@ class MakeTimestamp extends AbstractMake
             'body' => file_get_contents($this->requestfilePath),
         );
 
-        if ($this->stampParams['stamplogin'] && $this->stampParams['stamppassword']) {
+        if ($this->stampParams['stamplogin'] && $this->stampParams['ts_password']) {
             $options['auth'] = array(
                 $this->stampParams['stamplogin'],
-                $this->stampParams['stamppassword'],
+                $this->stampParams['ts_password'],
             );
         }
 

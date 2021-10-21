@@ -234,7 +234,7 @@ class Teams implements CrudInterface
      */
     public function destroyStamppass(): bool
     {
-        $sql = 'UPDATE teams SET stamppass = NULL WHERE id = :id';
+        $sql = 'UPDATE teams SET ts_password = NULL WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Users->userData['team'], PDO::PARAM_INT);
 

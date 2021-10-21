@@ -29,7 +29,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     public function testUpdate(): void
     {
         $this->assertTrue($this->Config->update(new ContentParams('some-login', 'stamplogin')));
-        $this->assertTrue($this->Config->update(new ContentParams('some-pass', 'stamppass')));
+        $this->assertTrue($this->Config->update(new ContentParams('some-pass', 'ts_password')));
         $this->assertTrue($this->Config->update(new ContentParams('1', 'stampshare')));
         $this->assertTrue($this->Config->update(new ContentParams('https://tsa.example.org', 'stampprovider')));
         $this->assertTrue($this->Config->update(new ContentParams('/path/to/cert.pem', 'stampcert')));

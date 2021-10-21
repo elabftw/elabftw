@@ -529,7 +529,7 @@ CREATE TABLE `teams` (
   `link_href` text NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `stamplogin` text,
-  `stamppass` text,
+  `ts_password` text,
   `stampprovider` text,
   `stampcert` text,
   `stamphash` varchar(10) DEFAULT 'sha256',

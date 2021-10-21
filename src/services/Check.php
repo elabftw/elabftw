@@ -182,7 +182,7 @@ class Check
             'rating',
             'real_name',
             'stamplogin',
-            'stamppass',
+            'ts_password',
             'stampprovider',
             'stampcert',
             'stampshare',

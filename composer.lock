@@ -149,16 +149,16 @@
         },
         {
             "name": "directorytree/ldaprecord",
-            "version": "v2.7.1",
+            "version": "v2.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DirectoryTree/LdapRecord.git",
-                "reference": "facd1f590d49636fddee64b866246d1650197830"
+                "reference": "afa60843892afb099b8dda2ab73982d407a2916c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/facd1f590d49636fddee64b866246d1650197830",
-                "reference": "facd1f590d49636fddee64b866246d1650197830",
+                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/afa60843892afb099b8dda2ab73982d407a2916c",
+                "reference": "afa60843892afb099b8dda2ab73982d407a2916c",
                 "shasum": ""
             },
             "require": {
@@ -218,7 +218,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-10-11T13:39:30+00:00"
+            "time": "2021-10-13T20:28:53+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -726,7 +726,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v8.63.0",
+            "version": "v8.66.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",

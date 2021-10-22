@@ -270,7 +270,7 @@ class MakeTimestamp extends AbstractMake
             '-data',
             $this->pdfPath,
             '-cert',
-            '-' . $this->stampParams['hash'],
+            '-' . $this->stampParams['ts_hash'],
             '-no_nonce',
             '-out',
             $this->requestfilePath,
@@ -323,7 +323,7 @@ class MakeTimestamp extends AbstractMake
      */
     private function getHash($file): string
     {
-        $hash = hash_file($this->stampParams['hash'], $file);
+        $hash = hash_file($this->stampParams['ts_hash'], $file);
         if ($hash === false) {
             throw new ImproperActionException('The file is not readable.');
         }
@@ -363,7 +363,7 @@ class MakeTimestamp extends AbstractMake
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':type', 'timestamp-token');
         $req->bindParam(':hash', $hash);
-        $req->bindParam(':hash_algorithm', $this->stampParams['hash']);
+        $req->bindParam(':hash_algorithm', $this->stampParams['ts_hash']);
         return $this->Db->execute($req);
     }
 

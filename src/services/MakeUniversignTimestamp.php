@@ -24,8 +24,7 @@ use const SECRET_KEY;
  */
 class MakeUniversignTimestamp extends MakeTimestamp
 {
-    // TODO switch to prod url https://ws.universign.eu/tsa
-    protected const TS_URL = 'https://sign.test.cryptolog.com/tsa';
+    protected const TS_URL = 'https://ws.universign.eu/tsa';
 
     protected const TS_CERT = 'universign.pem';
 

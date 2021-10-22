@@ -25,6 +25,7 @@ use Elabftw\Services\MakeBloxberg;
 use Elabftw\Services\MakeDfnTimestamp;
 use Elabftw\Services\MakeTimestamp;
 use Elabftw\Services\MakeUniversignTimestamp;
+use Elabftw\Services\MakeUniversignTimestampDev;
 use Exception;
 use GuzzleHttp\Client;
 use function mb_convert_encoding;
@@ -153,7 +154,12 @@ try {
         if ($tsAuthority === 'dfn') {
             $Maker = new MakeDfnTimestamp($App->Config->configArr, $Entity, $client);
         } elseif ($tsAuthority === 'universign') {
-            $Maker = new MakeUniversignTimestamp($App->Config->configArr, $Entity, $client);
+            if ($App->Config->configArr['debug']) {
+                // this will use the sandbox endpoint
+                $Maker = new MakeUniversignTimestampDev($App->Config->configArr, $Entity, $client);
+            } else {
+                $Maker = new MakeUniversignTimestamp($App->Config->configArr, $Entity, $client);
+            }
         } else {
             $Maker = new MakeTimestamp($App->Config->configArr, $Entity, $client);
         }

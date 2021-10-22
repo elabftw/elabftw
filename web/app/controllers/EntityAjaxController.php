@@ -137,31 +137,30 @@ try {
 
     // TIMESTAMP
     if ($Request->request->has('timestamp') && $Entity instanceof Experiments) {
-        // figure out which TSA we want
-        // by default, use the sysconfig one
-        $tsAuthority = $App->Config->configArr['ts_authority'];
+        // by default, use the instance config
+        $config = $App->Config->configArr;
 
         // if the current team chose to override the default, use that
         $Teams = new Teams($App->Users);
         $teamConfigArr = $Teams->read(new ContentParams());
         if ($teamConfigArr['ts_override'] === '1') {
-            $tsAuthority = $teamConfigArr['ts_authority'];
+            $config = $teamConfigArr;
         }
 
         // library doing the http request
         $client = new \GuzzleHttp\Client();
 
-        if ($tsAuthority === 'dfn') {
-            $Maker = new MakeDfnTimestamp($App->Config->configArr, $Entity, $client);
-        } elseif ($tsAuthority === 'universign') {
+        if ($config['ts_authority'] === 'dfn') {
+            $Maker = new MakeDfnTimestamp($config, $Entity, $client);
+        } elseif ($config['ts_authority'] === 'universign') {
             if ($App->Config->configArr['debug']) {
                 // this will use the sandbox endpoint
-                $Maker = new MakeUniversignTimestampDev($App->Config->configArr, $Entity, $client);
+                $Maker = new MakeUniversignTimestampDev($config, $Entity, $client);
             } else {
-                $Maker = new MakeUniversignTimestamp($App->Config->configArr, $Entity, $client);
+                $Maker = new MakeUniversignTimestamp($config, $Entity, $client);
             }
         } else {
-            $Maker = new MakeTimestamp($App->Config->configArr, $Entity, $client);
+            $Maker = new MakeTimestamp($config, $Entity, $client);
         }
         $Maker->timestamp();
     }

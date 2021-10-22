@@ -139,10 +139,6 @@ class MakeTimestamp extends AbstractMake
     protected function getTimestampParameters(): array
     {
         $config = $this->configArr;
-        // make sure we use system configuration if override is not active
-        if ($config['ts_override'] === '0') {
-            $config = Config::getConfig()->configArr;
-        }
 
         $password = '';
         if (($config['ts_password'] ?? '') !== '') {

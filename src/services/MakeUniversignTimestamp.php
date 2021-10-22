@@ -51,7 +51,8 @@ class MakeUniversignTimestamp extends MakeTimestamp
         return array(
             'ts_login' => $config['ts_login'],
             'ts_password' => $password,
-            'ts_url' => self::TS_URL,
+            // use static here so the dev class ts_url override is taken into account
+            'ts_url' => static::TS_URL,
             'ts_cert' => dirname(__DIR__) . '/ts-certs/' . self::TS_CERT,
             'ts_hash' => self::TS_HASH,
             );

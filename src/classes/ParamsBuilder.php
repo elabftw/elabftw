@@ -37,9 +37,9 @@ class ParamsBuilder
 {
     public function __construct(
         private CrudInterface | Users | Config $model,
-        private ?string $content,
-        private ?string $target,
-        private ?array $extra,
+        private string $content = '',
+        private string $target = '',
+        private array $extra = array(),
     ) {
     }
 

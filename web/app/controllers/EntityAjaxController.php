@@ -27,6 +27,7 @@ use Elabftw\Services\MakeDigicertTimestamp;
 use Elabftw\Services\MakeTimestamp;
 use Elabftw\Services\MakeUniversignTimestamp;
 use Elabftw\Services\MakeUniversignTimestampDev;
+use Elabftw\Services\TimestampUtils;
 use Exception;
 use GuzzleHttp\Client;
 use function mb_convert_encoding;
@@ -165,7 +166,8 @@ try {
         } else {
             $Maker = new MakeTimestamp($config, $Entity, $client);
         }
-        $Maker->timestamp();
+        $params = $Maker->getTimestampParameters();
+        $Maker->timestamp(new TimestampUtils($params));
     }
 
     // BLOXBERG

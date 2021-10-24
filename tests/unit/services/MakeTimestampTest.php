@@ -44,7 +44,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         // default status is not timestampable
         $Maker = new MakeTimestamp($this->configArr, $Entity, $this->getClient(''));
         $this->expectException(ImproperActionException::class);
-        $Maker->timestamp();
+        $Maker->timestamp(new TimestampUtils(array(), '', ''));
     }
 
     public function testGetFileName(): void
@@ -55,12 +55,28 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 
     public function testDfnTimestamp(): void
     {
-        $mockResponse = $this->readFixtureToken('dfn');
+        $fixturePaths = $this->getFixturePaths('dfn');
+        $mockResponse = $this->readFile($fixturePaths['asn1']);
         $client = $this->getClient($mockResponse);
         $Maker = new MakeDfnTimestamp($this->configArr, $this->getFreshTimestampableEntity(), $client);
-        $this->assertTrue($Maker->timestamp());
+        $tsConfig = $Maker->getTimestampParameters();
+        $TimestampUtils = new TimestampUtils(
+            $tsConfig,
+            $fixturePaths['pdf'],
+            $fixturePaths['asn1'],
+        );
+        $this->assertTrue($Maker->timestamp($TimestampUtils));
     }
 
+    public function getFixturePaths(string $tsa): array
+    {
+        return array(
+            'pdf' => dirname(__DIR__, 2) . '/_data/' . $tsa . '.pdf',
+            'asn1' => dirname(__DIR__, 2) . '/_data/' . $tsa . '.asn1',
+        );
+    }
+
+    /*
     public function testDigicertTimestamp(): void
     {
         $mockResponse = $this->readFixtureToken('digicert');
@@ -79,14 +95,15 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $Maker = new MakeUniversignTimestamp($this->configArr, $this->getFreshTimestampableEntity(), $client);
         $this->assertTrue($Maker->timestamp());
     }
+     */
 
-    private function readFixtureToken(string $tsa): string
+    private function readFile(string $filePath): string
     {
-        $token = file_get_contents(dirname(__DIR__, 2) . '/_data/' . $tsa . '-token.asn1');
-        if ($token === false) {
-            throw new RunTimeException('Could not read fixture token!');
+        $content = file_get_contents($filePath);
+        if ($content === false) {
+            throw new RunTimeException('Could not read fixture file!');
         }
-        return $token;
+        return $content;
     }
 
     private function getClient(string $mockResponse): Client

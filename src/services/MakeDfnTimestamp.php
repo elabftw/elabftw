@@ -19,9 +19,11 @@ use function dirname;
  */
 class MakeDfnTimestamp extends MakeTimestamp
 {
-    protected const TS_URL = 'https://zeitstempel.dfn.de';
+    protected const TS_URL = 'http://zeitstempel.dfn.de';
 
     protected const TS_CERT = 'dfn.pem';
+
+    protected const TS_CHAIN = 'dfn-chain.pem';
 
     protected const TS_HASH = 'sha256';
 
@@ -30,7 +32,7 @@ class MakeDfnTimestamp extends MakeTimestamp
      *
      * @return array<string,string>
      */
-    protected function getTimestampParameters(): array
+    public function getTimestampParameters(): array
     {
         return array(
             'ts_login' => '',
@@ -38,6 +40,7 @@ class MakeDfnTimestamp extends MakeTimestamp
             'ts_url' => self::TS_URL,
             'ts_cert' => dirname(__DIR__) . '/ts-certs/' . self::TS_CERT,
             'ts_hash' => self::TS_HASH,
+            'ts_chain' => dirname(__DIR__) . '/ts-certs/' . self::TS_CHAIN,
             );
     }
 }

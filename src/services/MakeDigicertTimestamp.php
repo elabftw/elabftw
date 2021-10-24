@@ -30,7 +30,7 @@ class MakeDigicertTimestamp extends MakeTimestamp
      *
      * @return array<string,string>
      */
-    protected function getTimestampParameters(): array
+    public function getTimestampParameters(): array
     {
         return array(
             'ts_login' => '',

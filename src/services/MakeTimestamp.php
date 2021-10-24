@@ -26,12 +26,9 @@ use function hash_file;
 use function is_dir;
 use function is_readable;
 use function mkdir;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use PDO;
 use Psr\Http\Message\StreamInterface;
 use const SECRET_KEY;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 /**
@@ -106,7 +103,7 @@ class MakeTimestamp extends AbstractMake
      *
      * @throws ImproperActionException
      */
-    public function timestamp(): bool
+    public function timestamp(TimestampUtils $TimestampUtils): bool
     {
         if (!$this->Entity->isTimestampable()) {
             throw new ImproperActionException('Timestamping is not allowed for this experiment.');
@@ -122,10 +119,11 @@ class MakeTimestamp extends AbstractMake
         // save the token to .asn1 file
         $this->saveToken($this->postData()->getBody());
 
-        // validate everything so we are sure it is OK
-        if (!$this->validate()) {
-            throw new ImproperActionException('Could not validate the timestamped data!');
+        // verify everything so we are sure it is OK
+        if (!$TimestampUtils->isReady) {
+            $TimestampUtils->setDataTokenPaths($this->pdfPath, $this->responsefilePath);
         }
+        $TimestampUtils->verify();
 
         // SQL
         $responseTime = $this->formatResponseTime($this->getTimestampFromResponseFile());
@@ -138,7 +136,7 @@ class MakeTimestamp extends AbstractMake
      *
      * @return array<string,string>
      */
-    protected function getTimestampParameters(): array
+    public function getTimestampParameters(): array
     {
         $config = $this->configArr;
 
@@ -159,6 +157,7 @@ class MakeTimestamp extends AbstractMake
             'ts_url' => $config['ts_url'],
             'ts_cert' => $config['ts_cert'],
             'ts_hash' => $hash,
+            'ts_chain' => '/etc/ssl/cert.pem',
             );
     }
 
@@ -363,85 +362,6 @@ class MakeTimestamp extends AbstractMake
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->stampParams['ts_hash']);
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Validates a file against its timestamp and optionally check a provided time for consistence with the time encoded
-     * in the timestamp itself.
-     *
-     * @throws ImproperActionException
-     */
-    private function validate(): bool
-    {
-        $certPath = $this->stampParams['ts_cert'];
-
-        if (!is_readable($certPath)) {
-            throw new ImproperActionException('Cannot read the certificate file!');
-        }
-
-        try {
-            $this->runProcess(array(
-                'openssl',
-                'ts',
-                '-verify',
-                '-data',
-                $this->pdfPath,
-                '-in',
-                $this->responsefilePath,
-                '-CAfile',
-                '/etc/ssl/cert.pem',
-                '-untrusted',
-                $certPath,
-            ));
-        } catch (ProcessFailedException) {
-            // we are facing the OpenSSL bug discussed here:
-            // https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182
-            if ($this instanceof MakeDfnTimestamp) {
-                return $this->validateWithJava();
-            }
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Check if we have java
-     */
-    private function isJavaInstalled(): void
-    {
-        try {
-            $this->runProcess(array('which', 'java'));
-        } catch (ProcessFailedException $e) {
-            throw new ImproperActionException("Could not validate the timestamp due to a bug in OpenSSL library. See <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>issue #242</a>. Tried to validate with failsafe method but Java is not installed.", (int) $e->getCode(), $e);
-        }
-    }
-
-    /**
-     * Validate the timestamp with java and BouncyCastle lib
-     * We need this because of the openssl bug
-     *
-     * @throws ImproperActionException
-     */
-    private function validateWithJava(): bool
-    {
-        $this->isJavaInstalled();
-
-        $cwd = dirname(__DIR__, 2) . '/src/dfn-cert/timestampverifier/';
-        try {
-            $output = $this->runProcess(array(
-                './verify.sh',
-                $this->requestfilePath,
-                $this->responsefilePath,
-            ), $cwd);
-        } catch (ProcessFailedException $e) {
-            $Log = new Logger('elabftw');
-            $Log->pushHandler(new ErrorLogHandler());
-            $Log->error('', array(array('userid' => $this->Entity->Users->userData['userid']), array('Error', $e)));
-            $msg = 'Could not validate the timestamp with java failsafe method. Maybe your java version is too old? Please report this bug on GitHub.';
-            throw new ImproperActionException($msg, (int) $e->getCode(), $e);
-        }
-        return (bool) stripos($output, 'matches');
     }
 
     /**

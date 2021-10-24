@@ -528,7 +528,7 @@ CREATE TABLE `teams` (
   `link_name` text NOT NULL,
   `link_href` text NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `ts_authority` varchar(255) NOT NULL DEFAULT 'dfn',
+  `ts_authority` varchar(255) NOT NULL DEFAULT 'digicert',
   `ts_login` varchar(255) NULL DEFAULT NULL,
   `ts_password` varchar(255) NULL DEFAULT NULL,
   `ts_url` varchar(255) NULL DEFAULT NULL,

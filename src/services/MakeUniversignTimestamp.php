@@ -26,6 +26,8 @@ class MakeUniversignTimestamp extends MakeTimestamp
 {
     protected const TS_URL = 'https://ws.universign.eu/tsa';
 
+    protected const TS_CHAIN = 'universign-chain.pem';
+
     protected const TS_CERT = 'universign.pem';
 
     protected const TS_HASH = 'sha256';
@@ -35,7 +37,7 @@ class MakeUniversignTimestamp extends MakeTimestamp
      *
      * @return array<string,string>
      */
-    protected function getTimestampParameters(): array
+    public function getTimestampParameters(): array
     {
         $config = $this->configArr;
 
@@ -55,6 +57,7 @@ class MakeUniversignTimestamp extends MakeTimestamp
             'ts_url' => static::TS_URL,
             'ts_cert' => dirname(__DIR__) . '/ts-certs/' . self::TS_CERT,
             'ts_hash' => self::TS_HASH,
+            'ts_chain' => dirname(__DIR__) . '/ts-certs/' . self::TS_CHAIN,
             );
     }
 

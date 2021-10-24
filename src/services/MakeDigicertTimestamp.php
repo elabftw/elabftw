@@ -14,14 +14,14 @@ namespace Elabftw\Services;
 use function dirname;
 
 /**
- * RFC3161 timestamping with the free to use DFN timestamping service
- * https://www.pki.dfn.de/faqpki/faq-zeitstempel/
+ * RFC3161 timestamping with Digicert timestamping service
+ * https://knowledge.digicert.com/generalinformation/INFO4231.html
  */
-class MakeDfnTimestamp extends MakeTimestamp
+class MakeDigicertTimestamp extends MakeTimestamp
 {
-    protected const TS_URL = 'https://zeitstempel.dfn.de';
+    protected const TS_URL = 'http://timestamp.digicert.com';
 
-    protected const TS_CERT = 'dfn.pem';
+    protected const TS_CERT = 'digicert.pem';
 
     protected const TS_HASH = 'sha256';
 

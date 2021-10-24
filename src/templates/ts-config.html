@@ -6,10 +6,11 @@
 <select class='form-control col-md-4' data-trigger='change' data-model='{{ model }}' data-target='ts_authority' id='ts_authority' autocomplete='off'>
   <option value='dfn' {{ tsConfigArr.ts_authority == 'dfn' ? ' selected' }}>{{ 'DFN (default, no account required)'|trans }}</option>
   <option value='universign' {{ tsConfigArr.ts_authority == 'universign' ? 'selected' }}>{{ 'Universign (requires account)'|trans }}</option>
+  <option value='digicert' {{ tsConfigArr.ts_authority == 'digicert' ? 'selected' }}>{{ 'Digicert (free, no account required)'|trans }}</option>
   <option value='custom' {{ tsConfigArr.ts_authority == 'custom' ? 'selected' }}>{{ 'Custom TSA'|trans }}</option>
 </select>
 
-<div id='ts_loginpass' {{ tsConfigArr.ts_authority == 'dfn' ? 'hidden' : '' }}>
+<div id='ts_loginpass' {{ tsConfigArr.ts_authority == 'dfn' or tsConfigArr.ts_authority == 'digicert' ? 'hidden' : '' }}>
   <!-- TIMESTAMP LOGIN -->
   <label for='ts_login'>{{ 'Login for external timestamping service:'|trans }}</label>
   <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='ts_login' type='text' value='{{ tsConfigArr.ts_login }}' id='ts_login' autocomplete='off' />

@@ -201,7 +201,16 @@ class Teams implements CrudInterface
         }
 
         $column = $params->getTarget();
-        $content = $params->getContent();
+        try {
+            $content = $params->getContent();
+            // allow ts_login to be empty
+        } catch (ImproperActionException $e) {
+            if ($column === 'ts_login') {
+                $content = null;
+            } else {
+                throw new ImproperActionException('Input is too short!', 400, $e);
+            }
+        }
 
         $sql = 'UPDATE teams SET ' . $column . ' = :content WHERE id = :id';
         $req = $this->Db->prepare($sql);

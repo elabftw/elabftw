@@ -23,6 +23,7 @@ use Elabftw\Models\Templates;
 use Elabftw\Services\ListBuilder;
 use Elabftw\Services\MakeBloxberg;
 use Elabftw\Services\MakeDfnTimestamp;
+use Elabftw\Services\MakeDigicertTimestamp;
 use Elabftw\Services\MakeTimestamp;
 use Elabftw\Services\MakeUniversignTimestamp;
 use Elabftw\Services\MakeUniversignTimestampDev;
@@ -159,6 +160,8 @@ try {
             } else {
                 $Maker = new MakeUniversignTimestamp($config, $Entity, $client);
             }
+        } elseif ($config['ts_authority'] === 'digicert') {
+            $Maker = new MakeDigicertTimestamp($config, $Entity, $client);
         } else {
             $Maker = new MakeTimestamp($config, $Entity, $client);
         }

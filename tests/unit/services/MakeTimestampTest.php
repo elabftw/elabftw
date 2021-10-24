@@ -61,6 +61,14 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($Maker->timestamp());
     }
 
+    public function testDigicertTimestamp(): void
+    {
+        $mockResponse = $this->readFixtureToken('digicert');
+        $client = $this->getClient($mockResponse);
+        $Maker = new MakeDigicertTimestamp($this->configArr, $this->getFreshTimestampableEntity(), $client);
+        $this->assertTrue($Maker->timestamp());
+    }
+
     public function testUniversignTimestamp(): void
     {
         $mockResponse = $this->readFixtureToken('universign');

@@ -475,7 +475,7 @@
     <h3>{{ 'Configure timestamping'|trans }}</h3>
     <hr>
     {{ 'The general timestamping configuration is set to %s.'|trans|format(App.Config.configArr.ts_authority|capitalize) }}
-    {% if App.Config.configArr.stampshare %}
+    {% if App.Config.configArr.ts_share %}
       {{ 'You can use the general configuration or setup another below.'|trans }}
     {% else %}
       {{ 'Timestamping service credentials sharing is disabled. You need to enter your own credentials.'|trans }}

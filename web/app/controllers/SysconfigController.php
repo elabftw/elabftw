@@ -77,10 +77,6 @@ try {
             $tab = '1';
         }
 
-        if ($Request->request->has('stampshare')) {
-            $tab = '4';
-        }
-
         if ($Request->request->has('admin_validate')) {
             $tab = '5';
         }

@@ -140,16 +140,16 @@ document.addEventListener('DOMContentLoaded', () => {
           .then(json => notif(json))
           .then(() => {
             if (el.dataset.reload) {
-              reloadElement(el.dataset.reload);
+              reloadElement(el.dataset.reload).then(() => {
+                // make sure we listen to the new element too
+                listenTrigger();
+              });
             }
           });
       });
     });
   }
-  // use a mutation observer on container to make sure that newly added elements are listened to
-  new MutationObserver(() => listenTrigger())
-    .observe(document.getElementById('container'), {childList: true, subtree: true});
-
+  listenTrigger();
 
   /**
    * Timestamp provider select

@@ -12,6 +12,7 @@ namespace Elabftw\Services;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\EntityParams;
+use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
@@ -42,14 +43,14 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         // create a new experiment for timestamping tests
         $Entity->setId($Entity->create(new EntityParams('ts test')));
         // default status is not timestampable
-        $Maker = new MakeTimestamp($this->configArr, $Entity, $this->getClient(''));
+        $Maker = new MakeTimestamp($this->configArr, $Entity);
         $this->expectException(ImproperActionException::class);
-        $Maker->timestamp(new TimestampUtils(array(), '', ''));
+        $Maker->generatePdf();
     }
 
     public function testGetFileName(): void
     {
-        $Maker = new MakeTimestamp($this->configArr, $this->getFreshTimestampableEntity(), $this->getClient(''));
+        $Maker = new MakeTimestamp($this->configArr, $this->getFreshTimestampableEntity());
         $this->assertStringContainsString('-timestamped.pdf', $Maker->getFileName());
     }
 
@@ -58,15 +59,43 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $fixturePaths = $this->getFixturePaths('dfn');
         $mockResponse = $this->readFile($fixturePaths['asn1']);
         $client = $this->getClient($mockResponse);
-        $Maker = new MakeDfnTimestamp($this->configArr, $this->getFreshTimestampableEntity(), $client);
-        $tsConfig = $Maker->getTimestampParameters();
-        $TimestampUtils = new TimestampUtils(
-            $tsConfig,
-            $fixturePaths['pdf'],
-            $fixturePaths['asn1'],
-        );
+        $Maker = new MakeDfnTimestamp($this->configArr, $this->getFreshTimestampableEntity());
+        $pdfPath = $Maker->generatePdf();
+        // create a custom response object with fixture token
+        $tsResponse = new TimestampResponse();
+        $tsResponse->setTokenPath($fixturePaths['asn1']);
+        $tsResponse->setTokenName('some-name');
+        $this->assertTrue($Maker->saveTimestamp($tsResponse));
+    }
+
+    public function testDigicertTimestamp(): void
+    {
+        $fixturePaths = $this->getFixturePaths('digicert');
+        $mockResponse = $this->readFile($fixturePaths['asn1']);
+        $client = $this->getClient($mockResponse);
+        $Maker = new MakeDigicertTimestamp($this->configArr, $this->getFreshTimestampableEntity());
+        $pdfPath = $Maker->generatePdf();
+        // create a custom response object with fixture token
+        $tsResponse = new TimestampResponse();
+        $tsResponse->setTokenPath($fixturePaths['asn1']);
+        $tsResponse->setTokenName('some-name');
+        $this->assertTrue($Maker->saveTimestamp($tsResponse));
+    }
+
+    /*
+    public function testDfnTimestamp(): void
+    {
+        $fixturePaths = $this->getFixturePaths('dfn');
+        $mockResponse = $this->readFile($fixturePaths['asn1']);
+        $client = $this->getClient($mockResponse);
+        $Maker = new MakeDfnTimestamp($this->configArr, $this->getFreshTimestampableEntity());
+        $TimestampUtils = new TimestampUtils($client, $Maker, new TimestampResponse());
+        $tsResponse = $TimestampUtils->timestamp();
+        $Maker->saveTimestamp($tsResponse);
+
         $this->assertTrue($Maker->timestamp($TimestampUtils));
     }
+     */
 
     public function getFixturePaths(string $tsa): array
     {

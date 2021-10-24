@@ -13,23 +13,13 @@ namespace Elabftw\Services;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
-use function dirname;
-use Elabftw\Elabftw\App;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\TimestampResponseInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
-use function file_get_contents;
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\RequestException;
 use function hash_file;
-use function is_dir;
-use function is_readable;
-use function mkdir;
 use PDO;
-use Psr\Http\Message\StreamInterface;
 use const SECRET_KEY;
-use Symfony\Component\Process\Process;
 
 /**
  * Timestamp an experiment with RFC 3161
@@ -41,10 +31,10 @@ class MakeTimestamp extends AbstractMake
     /** default hash algo for file */
     private const TS_HASH = 'sha256';
 
+    public string $pdfPath = '';
+
     /** @var Experiments $Entity */
     protected $Entity;
-
-    private string $pdfPath = '';
 
     // name of the pdf (elabid-timestamped.pdf)
     private string $pdfRealName = '';
@@ -55,16 +45,7 @@ class MakeTimestamp extends AbstractMake
     // config (url, login, password, cert)
     private array $stampParams = array();
 
-    // things that get deleted with destruct method
-    private array $trash = array();
-
-    // where we store the request file
-    private string $requestfilePath = '';
-
-    // where we store the asn1 token
-    private string $responsefilePath = '';
-
-    public function __construct(protected array $configArr, Experiments $entity, private ClientInterface $client)
+    public function __construct(protected array $configArr, Experiments $entity)
     {
         parent::__construct($entity);
         $this->Entity->canOrExplode('write');
@@ -74,19 +55,6 @@ class MakeTimestamp extends AbstractMake
 
         // set the name of the pdf (elabid + -timestamped.pdf)
         $this->pdfRealName = $this->getFileName();
-        $this->requestfilePath = $this->getTmpPath() . $this->getUniqueString();
-        // we don't keep this file around
-        $this->trash[] = $this->requestfilePath;
-    }
-
-    /**
-     * Delete all temporary files once the processus is completed
-     */
-    public function __destruct()
-    {
-        foreach ($this->trash as $file) {
-            unlink($file);
-        }
     }
 
     /**
@@ -97,37 +65,14 @@ class MakeTimestamp extends AbstractMake
         return $this->Entity->entityData['elabid'] . '-timestamped.pdf';
     }
 
-    /**
-     * The main function.
-     * Request a timestamp and parse the response.
-     *
-     * @throws ImproperActionException
-     */
-    public function timestamp(TimestampUtils $TimestampUtils): bool
+    public function saveTimestamp(TimestampResponseInterface $tsResponse): bool
     {
-        if (!$this->Entity->isTimestampable()) {
-            throw new ImproperActionException('Timestamping is not allowed for this experiment.');
-        }
-
-        // generate the pdf of the experiment that will be timestamped
-        $this->generatePdf();
-
-        // create the request file that will be sent to the TSA
-        $this->createRequestfile();
-
-        // get an answer from the TSA and
-        // save the token to .asn1 file
-        $this->saveToken($this->postData()->getBody());
-
-        // verify everything so we are sure it is OK
-        if (!$TimestampUtils->isReady) {
-            $TimestampUtils->setDataTokenPaths($this->pdfPath, $this->responsefilePath);
-        }
-        $TimestampUtils->verify();
+        // keep track of the asn1 toke ni the db
+        $this->sqlInsertToken($tsResponse);
 
         // SQL
-        $responseTime = $this->formatResponseTime($this->getTimestampFromResponseFile());
-        $this->Entity->updateTimestamp($responseTime, $this->responsefilePath);
+        $responseTime = $this->formatResponseTime($tsResponse->getTimestampFromResponseFile());
+        $this->Entity->updateTimestamp($responseTime, $tsResponse->getTokenName());
         return $this->sqlInsertPdf();
     }
 
@@ -161,53 +106,25 @@ class MakeTimestamp extends AbstractMake
             );
     }
 
-    protected function getTimestampFromResponseFile(): string
+    /**
+     * Generate the pdf to timestamp
+     */
+    public function generatePdf(): string
     {
-        if (!is_readable($this->responsefilePath)) {
-            throw new ImproperActionException('The token is not readable.');
+        if (!$this->Entity->isTimestampable()) {
+            throw new ImproperActionException('Timestamping is not allowed for this experiment.');
         }
-
-        $output = $this->runProcess(array(
-            'openssl',
-            'ts',
-            '-reply',
-            '-in',
-            $this->responsefilePath,
-            '-text',
-        ));
-
-        /*
-         * Format of output:
-         *
-         * Status info:
-         *   Status: Granted.
-         *   Status description: unspecified
-         *   Failure info: unspecified
-         *
-         *   TST info:
-         *   Version: 1
-         *   Policy OID: 1.3.6.1.4.1.15819.5.2.2
-         *   Hash Algorithm: sha256
-         *   Message data:
-         *       0000 - 3a 9a 6c 32 12 7f b0 c7-cd e0 c9 9e e2 66 be a9   :.l2.........f..
-         *       0010 - 20 b9 b1 83 3d b1 7c 16-e4 ac b0 5f 43 bc 40 eb    ...=.|...._C.@.
-         *   Serial number: 0xA7452417D851301981FA9A7CC2CF776B5934D3E5
-         *   Time stamp: Apr 27 13:37:34.363 2015 GMT
-         *   Accuracy: unspecified seconds, 0x01 millis, unspecified micros
-         *   Ordering: yes
-         *   Nonce: unspecified
-         *   TSA: DirName:/CN=Universign Timestamping Unit 012/OU=0002 43912916400026/O=Cryptolog International/C=FR
-         *   Extensions:
-         */
-
-        $matches = array();
-        $lines = explode("\n", $output);
-        foreach ($lines as $line) {
-            if (preg_match("~^Time\sstamp\:\s(.*)~", $line, $matches)) {
-                return $matches[1];
-            }
-        }
-        throw new ImproperActionException('Could not get response time!');
+        $userData = $this->Entity->Users->userData;
+        $MpdfProvider = new MpdfProvider(
+            $userData['fullname'],
+            $userData['pdf_format'],
+            (bool) $userData['pdfa'],
+        );
+        $MakePdf = new MakePdf($MpdfProvider, $this->Entity);
+        $MakePdf->outputToFile();
+        $this->pdfPath = $MakePdf->filePath;
+        $this->pdfLongName = $MakePdf->longName;
+        return $this->pdfPath;
     }
 
     /**
@@ -220,95 +137,6 @@ class MakeTimestamp extends AbstractMake
             throw new ImproperActionException('Could not get response time!');
         }
         return date('Y-m-d H:i:s', $time);
-    }
-
-    /**
-     * Generate the pdf to timestamp
-     */
-    private function generatePdf(): void
-    {
-        $userData = $this->Entity->Users->userData;
-        $MpdfProvider = new MpdfProvider(
-            $userData['fullname'],
-            $userData['pdf_format'],
-            (bool) $userData['pdfa'],
-        );
-        $MakePdf = new MakePdf($MpdfProvider, $this->Entity);
-        $MakePdf->outputToFile();
-        $this->pdfPath = $MakePdf->filePath;
-        $this->pdfLongName = $MakePdf->longName;
-    }
-
-    /**
-     * Run a process
-     *
-     * @param array<string> $args arguments including the executable
-     * @param string|null $cwd command working directory
-     */
-    private function runProcess(array $args, ?string $cwd = null): string
-    {
-        $Process = new Process($args, $cwd);
-        $Process->mustRun();
-
-        return $Process->getOutput();
-    }
-
-    /**
-     * Creates a Timestamp Requestfile from a filename
-     *
-     * @throws ImproperActionException
-     */
-    private function createRequestfile(): void
-    {
-        $this->runProcess(array(
-            'openssl',
-            'ts',
-            '-query',
-            '-data',
-            $this->pdfPath,
-            '-cert',
-            '-' . $this->stampParams['ts_hash'],
-            '-no_nonce',
-            '-out',
-            $this->requestfilePath,
-        ));
-    }
-
-    /**
-     * Contact the TSA and receive a token after successful timestamp
-     *
-     * @throws ImproperActionException
-     */
-    private function postData(): \Psr\Http\Message\ResponseInterface
-    {
-        $options = array(
-            // add user agent
-            // http://developer.github.com/v3/#user-agent-required
-            'headers' => array(
-                'User-Agent' => 'Elabftw/' . App::INSTALLED_VERSION,
-                'Content-Type' => 'application/timestamp-query',
-                'Content-Transfer-Encoding' => 'base64',
-            ),
-            // add proxy if there is one
-            'proxy' => $this->configArr['proxy'],
-            // add a timeout, because if you need proxy, but don't have it, it will mess up things
-            // in seconds
-            'timeout' => 5,
-            'body' => file_get_contents($this->requestfilePath),
-        );
-
-        if ($this->stampParams['ts_login'] && $this->stampParams['ts_password']) {
-            $options['auth'] = array(
-                $this->stampParams['ts_login'],
-                $this->stampParams['ts_password'],
-            );
-        }
-
-        try {
-            return $this->client->request('POST', $this->stampParams['ts_url'], $options);
-        } catch (RequestException $e) {
-            throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);
-        }
     }
 
     /**
@@ -329,32 +157,18 @@ class MakeTimestamp extends AbstractMake
 
     /**
      * Save the binaryToken to a .asn1 file
-     *
-     * @throws ImproperActionException
-     * @param StreamInterface $binaryToken asn1 response from TSA
      */
-    private function saveToken(StreamInterface $binaryToken): bool
+    private function sqlInsertToken(TimestampResponseInterface $tsResponse): bool
     {
-        $longName = $this->getLongName() . '.asn1';
-        $filePath = $this->getUploadsPath() . $longName;
-        $dir = dirname($filePath);
-        if (!is_dir($dir) && !mkdir($dir, 0700, true) && !is_dir($dir)) {
-            throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
-        }
-        if (!file_put_contents($filePath, $binaryToken)) {
-            throw new FilesystemErrorException('Cannot save token to disk!');
-        }
-        $this->responsefilePath = $filePath;
-
         $realName = $this->pdfRealName . '.asn1';
-        $hash = $this->getHash($this->responsefilePath);
+        $hash = $this->getHash($tsResponse->getTokenPath());
 
         // keep a trace of where we put the token
         $sql = 'INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, hash, hash_algorithm)
             VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :hash, :hash_algorithm)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':real_name', $realName);
-        $req->bindParam(':long_name', $longName);
+        $req->bindValue(':long_name', $tsResponse->getTokenName());
         $req->bindValue(':comment', 'Timestamp token');
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);

@@ -149,25 +149,30 @@ try {
             $config = $teamConfigArr;
         }
 
-        // library doing the http request
-        $client = new \GuzzleHttp\Client();
-
         if ($config['ts_authority'] === 'dfn') {
-            $Maker = new MakeDfnTimestamp($config, $Entity, $client);
+            $Maker = new MakeDfnTimestamp($config, $Entity);
         } elseif ($config['ts_authority'] === 'universign') {
             if ($App->Config->configArr['debug']) {
                 // this will use the sandbox endpoint
-                $Maker = new MakeUniversignTimestampDev($config, $Entity, $client);
+                $Maker = new MakeUniversignTimestampDev($config, $Entity);
             } else {
-                $Maker = new MakeUniversignTimestamp($config, $Entity, $client);
+                $Maker = new MakeUniversignTimestamp($config, $Entity);
             }
         } elseif ($config['ts_authority'] === 'digicert') {
-            $Maker = new MakeDigicertTimestamp($config, $Entity, $client);
+            $Maker = new MakeDigicertTimestamp($config, $Entity);
         } else {
-            $Maker = new MakeTimestamp($config, $Entity, $client);
+            $Maker = new MakeTimestamp($config, $Entity);
         }
-        $params = $Maker->getTimestampParameters();
-        $Maker->timestamp(new TimestampUtils($params));
+
+        $dataPath = $Maker->generatePdf();
+        $TimestampUtils = new TimestampUtils(
+            new Client(),
+            $dataPath,
+            $Maker->getTimestampParameters(),
+            new TimestampResponse(),
+        );
+        $tsResponse = $TimestampUtils->timestamp();
+        $Maker->saveTimestamp($tsResponse);
     }
 
     // BLOXBERG

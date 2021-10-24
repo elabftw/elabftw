@@ -11,40 +11,82 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\App;
+use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\TimestampResponseInterface;
+use Elabftw\Traits\ProcessTrait;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\RequestException;
 use function is_readable;
-use Symfony\Component\Process\Process;
+use Psr\Http\Message\StreamInterface;
 
 /**
- * Timestamp utilities
+ * Trusted Timestamping (RFC3161) utility class
  */
-class TimestampUtils
+class TimestampUtils extends AbstractMake
 {
-    public bool $isReady = false;
+    use ProcessTrait;
+
+    private array $trash = array();
 
     public function __construct(
+        private ClientInterface $client,
+        private string $dataPath,
         private array $tsConfig,
-        // this can be set with fixture files in tests
-        private string $dataPath = '',
-        private string $tokenPath = '',
+        private TimestampResponseInterface $tsResponse
     ) {
-        if (!empty($dataPath) && !empty($tokenPath)) {
-            $this->isReady = true;
-        }
-    }
-
-    public function setDataTokenPaths(string $dataPath, string $tokenPath): void
-    {
-        $this->dataPath = $dataPath;
-        $this->tokenPath = $tokenPath;
-        $this->isReady = true;
     }
 
     /**
-     * Create a Timestamp Requestfile from a file
-     *
-    public function createRequestfile($filePath): void
+     * Delete all temporary files once the processus is completed
+     */
+    public function __destruct()
     {
+        foreach ($this->trash as $file) {
+            unlink($file);
+        }
+    }
+
+    public function getFileName(): string
+    {
+        return '';
+    }
+
+    /**
+     * Do the timestamp, verify it and return path to saved token on disk along with extracted timestamp
+     */
+    public function timestamp(): TimestampResponseInterface
+    {
+        $requestFilePath = $this->createRequestfile();
+        $response = $this->postData($requestFilePath);
+        $this->saveToken($response->getBody());
+        $this->verify();
+        return $this->tsResponse;
+    }
+
+    private function saveToken(StreamInterface $binaryToken): void
+    {
+        $longName = $this->getLongName() . '.asn1';
+        $filePath = $this->getUploadsPath() . $longName;
+        $dir = dirname($filePath);
+        if (!is_dir($dir) && !mkdir($dir, 0700, true) && !is_dir($dir)) {
+            throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
+        }
+        if (!file_put_contents($filePath, $binaryToken)) {
+            throw new FilesystemErrorException('Cannot save token to disk!');
+        }
+        $this->tsResponse->setTokenPath($filePath);
+        $this->tsResponse->setTokenName($longName);
+    }
+
+    /**
+     * Create a temporary Timestamp Requestfile from a file
+     */
+    private function createRequestfile(): string
+    {
+        $requestFilePath = $this->getTmpPath() . $this->getUniqueString();
+
         $this->runProcess(array(
             'openssl',
             'ts',
@@ -55,16 +97,50 @@ class TimestampUtils
             '-' . $this->tsConfig['ts_hash'],
             '-no_nonce',
             '-out',
-            $filePath,
+            $requestFilePath,
         ));
+        // remove this file once we are done
+        $this->trash[] = $requestFilePath;
+        return $requestFilePath;
     }
+
+    /**
+     * Contact the TSA and receive a token after successful timestamp
      */
-    public function verify(): bool
+    private function postData(string $requestFilePath): \Psr\Http\Message\ResponseInterface
     {
-        if (!$this->isReady) {
-            throw new ImproperActionException('Data not set for ts verification!');
+        $options = array(
+            // add user agent
+            // http://developer.github.com/v3/#user-agent-required
+            'headers' => array(
+                'User-Agent' => 'Elabftw/' . App::INSTALLED_VERSION,
+                'Content-Type' => 'application/timestamp-query',
+                'Content-Transfer-Encoding' => 'base64',
+            ),
+            // add proxy if there is one
+            'proxy' => $this->tsConfig['proxy'] ?? '',
+            // add a timeout, because if you need proxy, but don't have it, it will mess up things
+            // in seconds
+            'timeout' => 5,
+            'body' => file_get_contents($requestFilePath),
+        );
+
+        if ($this->tsConfig['ts_login'] && $this->tsConfig['ts_password']) {
+            $options['auth'] = array(
+                $this->tsConfig['ts_login'],
+                $this->tsConfig['ts_password'],
+            );
         }
 
+        try {
+            return $this->client->request('POST', $this->tsConfig['ts_url'], $options);
+        } catch (RequestException $e) {
+            throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);
+        }
+    }
+
+    private function verify(): bool
+    {
         if (!is_readable($this->tsConfig['ts_cert'])) {
             throw new ImproperActionException('Cannot read the certificate file!');
         }
@@ -76,7 +152,7 @@ class TimestampUtils
             '-data',
             $this->dataPath,
             '-in',
-            $this->tokenPath,
+            $this->tsResponse->getTokenPath(),
             '-CAfile',
             $this->tsConfig['ts_chain'],
             '-untrusted',
@@ -84,19 +160,5 @@ class TimestampUtils
         ));
         // a ProcessFailedException will be thrown if it fails
         return true;
-    }
-
-    /**
-     * Run a process
-     *
-     * @param array<string> $args arguments including the executable
-     * @param string|null $cwd command working directory
-     */
-    private function runProcess(array $args, ?string $cwd = null): string
-    {
-        $Process = new Process($args, $cwd);
-        $Process->mustRun();
-
-        return $Process->getOutput();
     }
 }

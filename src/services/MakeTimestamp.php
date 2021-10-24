@@ -123,7 +123,9 @@ class MakeTimestamp extends AbstractMake
         $this->saveToken($this->postData()->getBody());
 
         // validate everything so we are sure it is OK
-        $this->validate();
+        if (!$this->validate()) {
+            throw new ImproperActionException('Could not validate the timestamped data!');
+        }
 
         // SQL
         $responseTime = $this->formatResponseTime($this->getTimestampFromResponseFile());
@@ -387,12 +389,17 @@ class MakeTimestamp extends AbstractMake
                 '-in',
                 $this->responsefilePath,
                 '-CAfile',
+                '/etc/ssl/cert.pem',
+                '-untrusted',
                 $certPath,
             ));
         } catch (ProcessFailedException) {
             // we are facing the OpenSSL bug discussed here:
             // https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182
-            return $this->validateWithJava();
+            if ($this instanceof MakeDfnTimestamp) {
+                return $this->validateWithJava();
+            }
+            return false;
         }
 
         return true;

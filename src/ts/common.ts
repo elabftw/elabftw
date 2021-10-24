@@ -156,8 +156,9 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   if (document.getElementById('ts_authority')) {
     const select = (document.getElementById('ts_authority') as HTMLSelectElement);
+    const noAccountTsa = ['dfn', 'digicert'];
     select.addEventListener('change', () => {
-      if (select.value === 'dfn' || select.value === 'digicert') {
+      if (noAccountTsa.includes(select.value)) {
         // mask all
         document.getElementById('ts_loginpass').toggleAttribute('hidden', true);
         document.getElementById('ts_urlcert').toggleAttribute('hidden', true);

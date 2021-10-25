@@ -60,7 +60,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $mockResponse = $this->readFile($fixturePaths['asn1']);
         $client = $this->getClient($mockResponse);
         $Maker = new MakeDfnTimestamp($this->configArr, $this->getFreshTimestampableEntity());
-        $pdfPath = $Maker->generatePdf();
+        $Maker->generatePdf();
         // create a custom response object with fixture token
         $tsResponse = new TimestampResponse();
         $tsResponse->setTokenPath($fixturePaths['asn1']);
@@ -74,7 +74,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $mockResponse = $this->readFile($fixturePaths['asn1']);
         $client = $this->getClient($mockResponse);
         $Maker = new MakeDigicertTimestamp($this->configArr, $this->getFreshTimestampableEntity());
-        $pdfPath = $Maker->generatePdf();
+        $Maker->generatePdf();
         // create a custom response object with fixture token
         $tsResponse = new TimestampResponse();
         $tsResponse->setTokenPath($fixturePaths['asn1']);
@@ -82,49 +82,31 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($Maker->saveTimestamp($tsResponse));
     }
 
-    /*
-    public function testDfnTimestamp(): void
+    public function testUniversignTimestamp(): void
     {
-        $fixturePaths = $this->getFixturePaths('dfn');
+        $fixturePaths = $this->getFixturePaths('universign');
         $mockResponse = $this->readFile($fixturePaths['asn1']);
         $client = $this->getClient($mockResponse);
-        $Maker = new MakeDfnTimestamp($this->configArr, $this->getFreshTimestampableEntity());
-        $TimestampUtils = new TimestampUtils($client, $Maker, new TimestampResponse());
-        $tsResponse = $TimestampUtils->timestamp();
-        $Maker->saveTimestamp($tsResponse);
-
-        $this->assertTrue($Maker->timestamp($TimestampUtils));
+        $config = array();
+        $config['ts_login'] = 'fakelogin@example.com';
+        // create a fake encrypted password
+        $config['ts_password'] = Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(SECRET_KEY));
+        $Maker = new MakeUniversignTimestamp($config, $this->getFreshTimestampableEntity());
+        $Maker->generatePdf();
+        // create a custom response object with fixture token
+        $tsResponse = new TimestampResponse();
+        $tsResponse->setTokenPath($fixturePaths['asn1']);
+        $tsResponse->setTokenName('some-name');
+        $this->assertTrue($Maker->saveTimestamp($tsResponse));
     }
-     */
 
-    public function getFixturePaths(string $tsa): array
+    private function getFixturePaths(string $tsa): array
     {
         return array(
             'pdf' => dirname(__DIR__, 2) . '/_data/' . $tsa . '.pdf',
             'asn1' => dirname(__DIR__, 2) . '/_data/' . $tsa . '.asn1',
         );
     }
-
-    /*
-    public function testDigicertTimestamp(): void
-    {
-        $mockResponse = $this->readFixtureToken('digicert');
-        $client = $this->getClient($mockResponse);
-        $Maker = new MakeDigicertTimestamp($this->configArr, $this->getFreshTimestampableEntity(), $client);
-        $this->assertTrue($Maker->timestamp());
-    }
-
-    public function testUniversignTimestamp(): void
-    {
-        $mockResponse = $this->readFixtureToken('universign');
-        $client = $this->getClient($mockResponse);
-        $this->configArr['ts_login'] = 'fakelogin@example.com';
-        // create a fake encrypted password
-        $this->configArr['ts_password'] = Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(SECRET_KEY));
-        $Maker = new MakeUniversignTimestamp($this->configArr, $this->getFreshTimestampableEntity(), $client);
-        $this->assertTrue($Maker->timestamp());
-    }
-     */
 
     private function readFile(string $filePath): string
     {

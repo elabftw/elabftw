@@ -14,6 +14,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\TimestampResponseInterface;
 use Elabftw\Traits\ProcessTrait;
+use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use function is_readable;
@@ -22,9 +23,10 @@ use Psr\Http\Message\StreamInterface;
 /**
  * Trusted Timestamping (RFC3161) utility class
  */
-class TimestampUtils extends AbstractMake
+class TimestampUtils
 {
     use ProcessTrait;
+    use UploadTrait;
 
     private array $trash = array();
 
@@ -44,11 +46,6 @@ class TimestampUtils extends AbstractMake
         foreach ($this->trash as $file) {
             unlink($file);
         }
-    }
-
-    public function getFileName(): string
-    {
-        return '';
     }
 
     /**

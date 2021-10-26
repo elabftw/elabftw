@@ -28,16 +28,6 @@ class TimestampUtilsTest extends \PHPUnit\Framework\TestCase
     {
     }
 
-    public function testgetFileName(): void
-    {
-        $fixturePaths = $this->getFixturePaths('dfn');
-        $mockResponse = $this->readFile($fixturePaths['asn1']);
-        $client = $this->getClient($mockResponse);
-        $Maker = new MakeDfnTimestamp(array(), $this->getFreshTimestampableEntity());
-        $tsUtils = new TimestampUtils($client, $fixturePaths['pdf'], $Maker->getTimestampParameters(), new TimestampResponse());
-        $this->assertIsString($tsUtils->getFileName());
-    }
-
     public function testTimestamp(): void
     {
         $fixturePaths = $this->getFixturePaths('dfn');

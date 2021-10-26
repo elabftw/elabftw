@@ -22,6 +22,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use Elabftw\Traits\PdfTrait;
 use Elabftw\Traits\TwigTrait;
+use Elabftw\Traits\UploadTrait;
 use function is_dir;
 use function mkdir;
 use Mpdf\Mpdf;
@@ -38,6 +39,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
 {
     use TwigTrait;
     use PdfTrait;
+    use UploadTrait;
 
     public string $longName;
 

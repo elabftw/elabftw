@@ -100,6 +100,16 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($Maker->saveTimestamp($tsResponse));
     }
 
+    public function testGlobalSign(): void
+    {
+        $Maker = new MakeGlobalSignTimestamp(array(), $this->getFreshTimestampableEntity());
+    }
+
+    public function testSectigo(): void
+    {
+        $Maker = new MakeSectigoTimestamp(array(), $this->getFreshTimestampableEntity());
+    }
+
     public function testUniversignTimestampNoLogin(): void
     {
         $this->expectException(ImproperActionException::class);

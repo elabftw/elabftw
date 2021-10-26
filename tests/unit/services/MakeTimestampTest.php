@@ -100,6 +100,37 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($Maker->saveTimestamp($tsResponse));
     }
 
+    public function testUniversignTimestampNoLogin(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $Maker = new MakeUniversignTimestamp(array(), $this->getFreshTimestampableEntity());
+    }
+
+    public function testUniversignTimestampNoPassword(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $Maker = new MakeUniversignTimestamp(array('ts_login' => 'some-login'), $this->getFreshTimestampableEntity());
+    }
+
+    public function testUniversignTimestampBadResponseTime(): void
+    {
+        $config = array();
+        $fixturePaths = $this->getFixturePaths('universign');
+
+        $config['ts_login'] = 'fakelogin@example.com';
+        // create a fake encrypted password
+        $config['ts_password'] = Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(SECRET_KEY));
+        $Maker = new MakeUniversignTimestamp($config, $this->getFreshTimestampableEntity());
+        $Maker->generatePdf();
+        // create a custom response object with fixture token
+        $tsResponseMock = $this->createMock(TimestampResponse::class);
+        $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('2000');
+        $tsResponseMock->method('getTokenPath')->willReturn($fixturePaths['asn1']);
+        $tsResponseMock->method('getTokenName')->willReturn('some-name');
+        $this->expectException(ImproperActionException::class);
+        $Maker->saveTimestamp($tsResponseMock);
+    }
+
     private function getFixturePaths(string $tsa): array
     {
         return array(

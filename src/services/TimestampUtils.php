@@ -139,8 +139,9 @@ class TimestampUtils extends AbstractMake
 
     private function verify(): bool
     {
-        if (!is_readable($this->tsConfig['ts_cert'])) {
-            throw new ImproperActionException('Cannot read the certificate file!');
+        if (!is_readable($this->tsConfig['ts_chain'])) {
+            // no readable certificate chain means we don't do the verification
+            return false;
         }
 
         $this->runProcess(array(

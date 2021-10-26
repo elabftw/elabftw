@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 use DateTime;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
-use function dirname;
 use Elabftw\Exceptions\ImproperActionException;
 use const SECRET_KEY;
 
@@ -23,10 +22,6 @@ use const SECRET_KEY;
 class MakeUniversignTimestamp extends MakeTimestamp
 {
     protected const TS_URL = 'https://ws.universign.eu/tsa';
-
-    protected const TS_CHAIN = 'universign-chain.pem';
-
-    protected const TS_CERT = 'universign.pem';
 
     protected const TS_HASH = 'sha256';
 
@@ -53,9 +48,10 @@ class MakeUniversignTimestamp extends MakeTimestamp
             'ts_password' => $password,
             // use static here so the dev class ts_url override is taken into account
             'ts_url' => static::TS_URL,
-            'ts_cert' => dirname(__DIR__) . '/ts-certs/' . self::TS_CERT,
             'ts_hash' => self::TS_HASH,
-            'ts_chain' => dirname(__DIR__) . '/ts-certs/' . self::TS_CHAIN,
+            // no need to verify for this provider
+            'ts_cert' => '',
+            'ts_chain' => '',
             );
     }
 

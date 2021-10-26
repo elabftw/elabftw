@@ -180,7 +180,7 @@ final class Config
             ('smtp_password', ''),
             ('smtp_port', '587'),
             ('smtp_username', ''),
-            ('ts_authority', 'digicert'),
+            ('ts_authority', 'dfn'),
             ('ts_login', NULL),
             ('ts_password', NULL),
             ('ts_share', '1'),

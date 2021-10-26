@@ -1,6 +1,6 @@
 -- Schema 67
 START TRANSACTION;
-    INSERT INTO config (conf_name, conf_value) VALUES ('ts_authority', 'digicert');
+    INSERT INTO config (conf_name, conf_value) VALUES ('ts_authority', 'dfn');
     UPDATE `config` SET `conf_name` = 'ts_login' WHERE `conf_name` = 'stamplogin';
     UPDATE `config` SET `conf_name` = 'ts_password' WHERE `conf_name` = 'stamppass';
     UPDATE `config` SET `conf_name` = 'ts_url' WHERE `conf_name` = 'stampprovider';

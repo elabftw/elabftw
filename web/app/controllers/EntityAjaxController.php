@@ -24,6 +24,8 @@ use Elabftw\Services\ListBuilder;
 use Elabftw\Services\MakeBloxberg;
 use Elabftw\Services\MakeDfnTimestamp;
 use Elabftw\Services\MakeDigicertTimestamp;
+use Elabftw\Services\MakeGlobalSignTimestamp;
+use Elabftw\Services\MakeSectigoTimestamp;
 use Elabftw\Services\MakeTimestamp;
 use Elabftw\Services\MakeUniversignTimestamp;
 use Elabftw\Services\MakeUniversignTimestampDev;
@@ -160,6 +162,10 @@ try {
             }
         } elseif ($config['ts_authority'] === 'digicert') {
             $Maker = new MakeDigicertTimestamp($config, $Entity);
+        } elseif ($config['ts_authority'] === 'sectigo') {
+            $Maker = new MakeSectigoTimestamp($config, $Entity);
+        } elseif ($config['ts_authority'] === 'globalsign') {
+            $Maker = new MakeGlobalSignTimestamp($config, $Entity);
         } else {
             $Maker = new MakeTimestamp($config, $Entity);
         }

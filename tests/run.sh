@@ -27,7 +27,7 @@ sudo chmod +r config.php
 docker compose -f tests/docker-compose.yml up -d
 # give some time for the mysql process to start
 echo "Waiting for MySQL to start..."
-sleep 20
+sleep 25
 # install the database
 docker exec -it elabtmp bin/install start
 # populate the database

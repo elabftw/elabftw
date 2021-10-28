@@ -22,7 +22,14 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Services\ListBuilder;
 use Elabftw\Services\MakeBloxberg;
+use Elabftw\Services\MakeDfnTimestamp;
+use Elabftw\Services\MakeDigicertTimestamp;
+use Elabftw\Services\MakeGlobalSignTimestamp;
+use Elabftw\Services\MakeSectigoTimestamp;
 use Elabftw\Services\MakeTimestamp;
+use Elabftw\Services\MakeUniversignTimestamp;
+use Elabftw\Services\MakeUniversignTimestampDev;
+use Elabftw\Services\TimestampUtils;
 use Exception;
 use GuzzleHttp\Client;
 use function mb_convert_encoding;
@@ -134,8 +141,44 @@ try {
 
     // TIMESTAMP
     if ($Request->request->has('timestamp') && $Entity instanceof Experiments) {
-        $MakeTimestamp = new MakeTimestamp($App->Config, new Teams($App->Users), $Entity);
-        $MakeTimestamp->timestamp();
+        // by default, use the instance config
+        $config = $App->Config->configArr;
+
+        // if the current team chose to override the default, use that
+        $Teams = new Teams($App->Users);
+        $teamConfigArr = $Teams->read(new ContentParams());
+        if ($teamConfigArr['ts_override'] === '1') {
+            $config = $teamConfigArr;
+        }
+
+        if ($config['ts_authority'] === 'dfn') {
+            $Maker = new MakeDfnTimestamp($config, $Entity);
+        } elseif ($config['ts_authority'] === 'universign') {
+            if ($App->Config->configArr['debug']) {
+                // this will use the sandbox endpoint
+                $Maker = new MakeUniversignTimestampDev($config, $Entity);
+            } else {
+                $Maker = new MakeUniversignTimestamp($config, $Entity);
+            }
+        } elseif ($config['ts_authority'] === 'digicert') {
+            $Maker = new MakeDigicertTimestamp($config, $Entity);
+        } elseif ($config['ts_authority'] === 'sectigo') {
+            $Maker = new MakeSectigoTimestamp($config, $Entity);
+        } elseif ($config['ts_authority'] === 'globalsign') {
+            $Maker = new MakeGlobalSignTimestamp($config, $Entity);
+        } else {
+            $Maker = new MakeTimestamp($config, $Entity);
+        }
+
+        $dataPath = $Maker->generatePdf();
+        $TimestampUtils = new TimestampUtils(
+            new Client(),
+            $dataPath,
+            $Maker->getTimestampParameters(),
+            new TimestampResponse(),
+        );
+        $tsResponse = $TimestampUtils->timestamp();
+        $Maker->saveTimestamp($tsResponse);
     }
 
     // BLOXBERG

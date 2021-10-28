@@ -10,15 +10,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Maps;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MapInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use PDO;
-use const SECRET_KEY;
 
 /**
  * One team
@@ -44,14 +41,6 @@ class Team implements MapInterface
     private string $linkName = 'Documentation';
 
     private string $linkHref = 'https://doc.elabftw.net';
-
-    private string $stamplogin = '';
-
-    private string $stamppass = '';
-
-    private string $stampprovider = '';
-
-    private string $stampcert = '';
 
     private string $orgid = '';
 
@@ -210,35 +199,6 @@ class Team implements MapInterface
         $this->forceCanwrite = Check::visibility($setting);
     }
 
-    final public function setStamplogin(?string $setting): void
-    {
-        if (!empty($setting)) {
-            $this->stamplogin = Filter::sanitize($setting);
-        }
-    }
-
-    final public function setStamppass(string $setting): void
-    {
-        $this->stamppass = Crypto::encrypt($setting, Key::loadFromAsciiSafeString(SECRET_KEY));
-    }
-
-    final public function setStampcert(?string $setting): void
-    {
-        if (!empty($setting)) {
-            $this->stampcert = Filter::sanitize($setting);
-        }
-    }
-
-    final public function setStampprovider(?string $url): void
-    {
-        if (!empty($url)) {
-            if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-                throw new ImproperActionException('Timestamping provider is not a valid URL');
-            }
-            $this->stampprovider = $url;
-        }
-    }
-
     final public function setOrgid(?string $setting): void
     {
         if ($setting !== null) {
@@ -268,10 +228,6 @@ class Team implements MapInterface
             force_canread = :force_canread,
             do_force_canwrite = :do_force_canwrite,
             force_canwrite = :force_canwrite,
-            stamplogin = :stamplogin,
-            stamppass = :stamppass,
-            stampprovider = :stampprovider,
-            stampcert = :stampcert,
             visible = :visible
             WHERE id = :id';
         $req = $this->Db->prepare($sql);
@@ -289,10 +245,6 @@ class Team implements MapInterface
         $req->bindParam(':do_force_canwrite', $this->doForceCanwrite, PDO::PARAM_INT);
         $req->bindParam(':force_canread', $this->forceCanread);
         $req->bindParam(':force_canwrite', $this->forceCanwrite);
-        $req->bindParam(':stamplogin', $this->stamplogin);
-        $req->bindParam(':stamppass', $this->stamppass);
-        $req->bindParam(':stampprovider', $this->stampprovider);
-        $req->bindParam(':stampcert', $this->stampcert);
         $req->bindParam(':visible', $this->visible);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
@@ -316,12 +268,6 @@ class Team implements MapInterface
         $this->setForceExpTpl($source['force_exp_tpl'] ?? (string) $this->forceExpTpl);
         $this->setLinkName($source['link_name'] ?? $this->linkName);
         $this->setLinkHref($source['link_href'] ?? $this->linkHref);
-        $this->setStamplogin($source['stamplogin'] ?? $this->stamplogin);
-        if (!empty($source['stamppass'])) {
-            $this->setStamppass($source['stamppass']);
-        }
-        $this->stampprovider = $source['stampprovider'] ?? $this->stampprovider;
-        $this->setStampcert($source['stampcert'] ?? $this->stampcert);
         $this->setPublicDb($source['public_db'] ?? (string) $this->publicDb);
         $this->setDoForceCanread($source['do_force_canread'] ?? (string) $this->doForceCanread);
         $this->setDoForceCanwrite($source['do_force_canwrite'] ?? (string) $this->doForceCanwrite);

@@ -372,7 +372,7 @@ abstract class AbstractEntity implements CrudInterface
                 $content = $params->getUserId();
                 break;
             default:
-                throw new ImproperActionException('Invalid update target');
+                throw new ImproperActionException('Invalid update target' . $params->getTarget());
         }
 
         // save a revision for body target

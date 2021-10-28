@@ -10,8 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use function bin2hex;
-use function dirname;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\TagParams;
 use Elabftw\Exceptions\ImproperActionException;
@@ -20,10 +18,10 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 use Elabftw\Traits\EntityTrait;
+use Elabftw\Traits\UploadTrait;
 use FilesystemIterator;
 use function mb_strlen;
 use PDO;
-use function random_bytes;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,6 +33,7 @@ use ZipArchive;
 class ImportZip extends AbstractImport
 {
     use EntityTrait;
+    use UploadTrait;
 
     // number of items we got into the database
     public int $inserted = 0;
@@ -86,7 +85,7 @@ class ImportZip extends AbstractImport
     public function import(): void
     {
         // this is where we will extract the zip
-        $this->tmpPath = dirname(__DIR__, 2) . '/cache/elab/' . bin2hex(random_bytes(16));
+        $this->tmpPath = $this->getTmpPath() . $this->getUniqueString();
         if (!is_dir($this->tmpPath) && !mkdir($this->tmpPath, 0700, true) && !is_dir($this->tmpPath)) {
             throw new ImproperActionException('Unable to create temporary folder! (' . $this->tmpPath . ')');
         }
@@ -200,11 +199,11 @@ class ImportZip extends AbstractImport
             foreach ($item['links'] as $link) {
                 $linkText .= sprintf('<li>[%s] %s</li>', $link['name'], $link['title']);
             }
-            $params = new EntityParams('title', $item['title']);
+            $params = new EntityParams($item['title'], 'title');
             $this->Entity->update($params);
-            $params = new EntityParams('date', $item['date']);
+            $params = new EntityParams($item['date'], 'date');
             $this->Entity->update($params);
-            $params = new EntityParams('body', $item['body'] . $header . $linkText . $end);
+            $params = new EntityParams($item['body'] . $header . $linkText . $end, 'body');
             $this->Entity->update($params);
         }
         // add steps

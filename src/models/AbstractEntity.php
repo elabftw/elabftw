@@ -678,8 +678,12 @@ abstract class AbstractEntity implements CrudInterface
                 entity.locked,
                 entity.canread,
                 entity.canwrite,
-                entity.metadata,
                 entity.lastchange,';
+            // don't include the metadata column unless we really need it
+            // see https://stackoverflow.com/questions/29575835/error-1038-out-of-sort-memory-consider-increasing-sort-buffer-size
+            if ($this->isMetadataSearch) {
+                $select .= 'entity.metadata,';
+            }
         }
         $select .= "uploads.up_item_id, uploads.has_attachment,
             SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step ORDER BY steps_ordering, steps_id SEPARATOR '|'), '|', 1) AS next_step,

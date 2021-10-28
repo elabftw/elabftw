@@ -97,7 +97,7 @@ try {
             $tab = '10';
         }
 
-        $App->Config->update($Request->request->all());
+        $App->Config->updateAll($Request->request->all());
     }
 
     // ADD USER TO TEAM

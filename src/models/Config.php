@@ -194,7 +194,7 @@ final class Config
             ('saml_entityid', NULL),
             ('saml_acs_binding', NULL),
             ('saml_slo_binding', NULL),
-            ('saml_nameidformat', NULL),
+            ('saml_nameidformat', 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'),
             ('saml_x509', NULL),
             ('saml_privatekey', NULL),
             ('saml_team_create', '1'),

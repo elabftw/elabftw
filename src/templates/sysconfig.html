@@ -472,10 +472,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                 <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ App.Config.configArr.saml_slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
               </select>
 
-              <!-- this is not used by elabftw
               <label for='saml-nameidformat'>NameIDFormat. Default is "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress".</label>
               <input class='form-control col-md-6' type='text' id='saml-nameidformat' name='saml_nameidformat' placeholder='urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress' value='{{ App.Config.configArr.saml_nameidformat }}' />
-              -->
 
               <label for='x509'>x509 Certificate in PEM format</label>
               <textarea class='form-control col-md-6' id='x509' name='saml_x509'>{{ App.Config.configArr.saml_x509 }}</textarea>

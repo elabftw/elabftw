@@ -11,13 +11,13 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use function array_diff;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ItemTypeParams;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\DestroyableInterface;
-use Elabftw\Interfaces\ReadableInterface;
-use Elabftw\Services\Filter;
+use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SetIdTrait;
@@ -26,7 +26,7 @@ use PDO;
 /**
  * All about the teams
  */
-class Teams implements ReadableInterface, DestroyableInterface
+class Teams implements CrudInterface
 {
     use SetIdTrait;
 
@@ -128,13 +128,10 @@ class Teams implements ReadableInterface, DestroyableInterface
 
     /**
      * Add a new team
-     *
-     * @param string $name The new name of the team
-     * @return int the new team id
      */
-    public function create(string $name): int
+    public function create(ContentParamsInterface $params): int
     {
-        $name = Filter::sanitize($name);
+        $name = $params->getContent();
 
         // add to the teams table
         $sql = 'INSERT INTO teams (name, common_template, link_name, link_href) VALUES (:name, :common_template, :link_name, :link_href)';
@@ -197,6 +194,31 @@ class Teams implements ReadableInterface, DestroyableInterface
         return $this->Db->fetchAll($req);
     }
 
+    public function update(ContentParamsInterface $params): bool
+    {
+        if (!$this->Users->userData['is_admin']) {
+            throw new IllegalActionException('Non admin user tried to update a team setting.');
+        }
+
+        $column = $params->getTarget();
+        try {
+            $content = $params->getContent();
+            // allow ts_login to be empty
+        } catch (ImproperActionException $e) {
+            if ($column === 'ts_login') {
+                $content = null;
+            } else {
+                throw new ImproperActionException('Input is too short!', 400, $e);
+            }
+        }
+
+        $sql = 'UPDATE teams SET ' . $column . ' = :content WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':content', $content);
+        $req->bindParam(':id', $this->Users->userData['team'], PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
     /**
      * Delete a team only if all the stats are at zero
      */
@@ -221,7 +243,7 @@ class Teams implements ReadableInterface, DestroyableInterface
      */
     public function destroyStamppass(): bool
     {
-        $sql = 'UPDATE teams SET stamppass = NULL WHERE id = :id';
+        $sql = 'UPDATE teams SET ts_password = NULL WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Users->userData['team'], PDO::PARAM_INT);
 
@@ -283,7 +305,7 @@ class Teams implements ReadableInterface, DestroyableInterface
     {
         $Config = Config::getConfig();
         if ($Config->configArr['saml_team_create']) {
-            return $this->create($name);
+            return $this->create(new ContentParams($name));
         }
         throw new ImproperActionException('The administrator disabled team creation on login. Contact your administrator for creating the team beforehand.');
     }

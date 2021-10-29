@@ -56,6 +56,7 @@ enum Action {
   Update = 'update',
   Destroy = 'destroy',
 
+  DestroyStamppass = 'destroystamppass',
   Deduplicate = 'deduplicate',
   Duplicate = 'duplicate',
   Lock = 'lock',
@@ -64,6 +65,7 @@ enum Action {
 enum Model {
   Apikey = 'apikey',
   Comment = 'comment',
+  Config = 'config',
   Link = 'link',
   FavTag = 'favtag',
   PrivacyPolicy = 'privacypolicy',
@@ -71,6 +73,7 @@ enum Model {
   Step = 'step',
   UnfinishedSteps = 'unfinishedsteps',
   Tag = 'tag',
+  Team = 'team',
   TeamGroup = 'teamgroup',
   Todolist = 'todolist',
   Upload = 'upload',
@@ -94,6 +97,8 @@ enum Target {
   List = 'list',
   Member = 'member',
   Metadata = 'metadata',
+  TsOverride = 'ts_override',
+  TsAuthority = 'ts_authority',
   PrivacyPolicy = 'privacypolicy',
   Rating = 'rating',
   RealName = 'real_name',

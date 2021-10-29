@@ -1,0 +1,33 @@
+{% set tsConfigArr = App.Request.getScriptName|split('/')|last == 'admin.php' ? teamConfigArr : App.Config.configArr %}
+{% set model = App.Request.getScriptName|split('/')|last == 'admin.php' ? 'team' : 'config' %}
+
+<!-- SELECT TIMESTAMPING EXTERNAL SERVICE -->
+<label for='ts_authority'>{{ 'Select timestamping authority (TSA):'|trans }}</label>
+<select class='form-control col-md-4' data-trigger='change' data-model='{{ model }}' data-target='ts_authority' id='ts_authority' autocomplete='off'>
+  <option value='dfn' {{ tsConfigArr.ts_authority == 'dfn' ? ' selected' }}>{{ 'DFN (free, no account required)'|trans }}</option>
+  <option value='universign' {{ tsConfigArr.ts_authority == 'universign' ? 'selected' }}>{{ 'Universign (requires account)'|trans }}</option>
+  <option value='digicert' {{ tsConfigArr.ts_authority == 'digicert' ? 'selected' }}>{{ 'Digicert (free, no account required)'|trans }}</option>
+  <option value='sectigo' {{ tsConfigArr.ts_authority == 'sectigo' ? 'selected' }}>{{ 'Sectigo (free, no account required)'|trans }}</option>
+  <option value='globalsign' {{ tsConfigArr.ts_authority == 'globalsign' ? 'selected' }}>{{ 'GlobalSign (free, no account required)'|trans }}</option>
+  <option value='custom' {{ tsConfigArr.ts_authority == 'custom' ? 'selected' }}>{{ 'Custom TSA'|trans }}</option>
+</select>
+
+<div id='ts_loginpass' {{ tsConfigArr.ts_authority == 'dfn' or tsConfigArr.ts_authority == 'digicert' or tsConfigArr.ts_authority == 'sectigo' or tsConfigArr.ts_authority == 'globalsign' ? 'hidden' : '' }}>
+  <!-- TIMESTAMP LOGIN -->
+  <label for='ts_login'>{{ 'Login for external timestamping service:'|trans }}</label>
+  <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='ts_login' type='text' value='{{ tsConfigArr.ts_login }}' id='ts_login' autocomplete='off' />
+
+  <!-- TIMESTAMP PASSWORD -->
+  <label for='ts_password'>{{ 'Password for external timestamping service:'|trans }}</label>
+  {% if tsConfigArr.ts_password %}
+    <p>A password is already set.
+    <a href='#' data-trigger='click' data-model='{{ model }}' data-target='ts_password' data-action='destroystamppass' data-reload='ts_loginpass'>Clear it</a> or change it below:</p>
+  {% endif %}
+  <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='ts_password' data-reload='ts_loginpass' autocomplete='off' maxlength='200' type='password' id='ts_password' />
+</div>
+
+<div id='ts_urldiv' {{ tsConfigArr.ts_authority != 'custom' ? 'hidden' : '' }}>
+  <label for='ts_url'>{{ 'URL for external timestamping service:'|trans }}</label>
+  <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='ts_url' type='url' placeholder='https://tsa.example.com' value='{{ tsConfigArr.ts_url }}' id='ts_url' autocomplete='off' />
+  <p class='smallgray'>{{ 'This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'|trans|format("<a href='https://tools.ietf.org/html/rfc3161'>", "</a>")|raw }}</p>
+</div>

@@ -77,10 +77,6 @@ try {
             $tab = '1';
         }
 
-        if ($Request->request->has('stampshare')) {
-            $tab = '4';
-        }
-
         if ($Request->request->has('admin_validate')) {
             $tab = '5';
         }
@@ -101,7 +97,7 @@ try {
             $tab = '10';
         }
 
-        $App->Config->update($Request->request->all());
+        $App->Config->updateAll($Request->request->all());
     }
 
     // ADD USER TO TEAM
@@ -120,12 +116,6 @@ try {
                 array($Request->request->get('team')),
             );
         }
-    }
-
-    // CLEAR STAMP PASS
-    if ($Request->query->get('clearStamppass')) {
-        $tab = '4';
-        $App->Config->destroyStamppass();
     }
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));

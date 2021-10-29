@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use const DB_NAME;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ItemTypeParams;
 use Elabftw\Elabftw\Sql;
@@ -104,13 +105,13 @@ class PopulateDatabase extends Command
         $configArr['smtp_password'] = $input->getOption('smtppass') ?? 'afakepassword';
         $configArr['smtp_username'] = $input->getOption('smtpuser') ?? 'somesmtpuser';
         $Config = Config::getConfig();
-        $Config->update($configArr);
+        $Config->updateAll($configArr);
 
         // create teams
         $Users = new Users();
         $Teams = new Teams($Users);
         foreach ($yaml['teams'] as $team) {
-            $Teams->create($team);
+            $Teams->create(new ContentParams($team));
         }
 
         $iterations = $yaml['iterations'] ?? self::DEFAULT_ITERATIONS;

@@ -16,6 +16,7 @@ use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Update;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Interfaces\ContentParamsInterface;
 use PDO;
 use const SECRET_KEY;
 
@@ -43,7 +44,7 @@ final class Config
         $this->configArr = $this->read();
         // this should only run once: just after a fresh install
         if (empty($this->configArr)) {
-            $this->populate();
+            $this->create();
             $this->configArr = $this->read();
         }
     }
@@ -66,9 +67,6 @@ final class Config
 
     /**
      * Return the instance of the class
-     *
-     * @throws DatabaseErrorException If config can not be loaded
-     * @return Config The instance of the class
      */
     public static function getConfig(): self
     {
@@ -79,9 +77,6 @@ final class Config
         return self::$instance;
     }
 
-    /**
-     * Read the configuration values
-     */
     public function read(): array
     {
         $sql = 'SELECT * FROM config';
@@ -96,17 +91,30 @@ final class Config
         }, $config);
     }
 
+    public function update(ContentParamsInterface $params): bool
+    {
+        $column = $params->getTarget();
+        $content = $params->getContent();
+
+        $sql = 'UPDATE config SET conf_value = :value WHERE conf_name = :name';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':value', $content);
+        $req->bindParam(':name', $column);
+        return $this->Db->execute($req);
+    }
+
     /**
      * Used in sysconfig.php to update config values
      * NOTE: it is unlikely that someone with sysadmin level tries and edit requests to input incorrect values
      * so there is no real need for ensuring the values make sense, client side validation is enough this time
      *
+     * @deprecated
      * @param array<string, mixed> $post (conf_name => conf_value)
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    public function update(array $post): void
+    public function updateAll(array $post): void
     {
-        $passwords = array('stamppass', 'smtp_password', 'ldap_password');
+        $passwords = array('smtp_password', 'ldap_password');
 
         foreach ($passwords as $password) {
             if (isset($post[$password]) && !empty($post[$password])) {
@@ -133,7 +141,7 @@ final class Config
      */
     public function destroyStamppass(): bool
     {
-        $sql = "UPDATE config SET conf_value = NULL WHERE conf_name = 'stamppass'";
+        $sql = "UPDATE config SET conf_value = NULL WHERE conf_name = 'ts_password'";
         $req = $this->Db->prepare($sql);
         return $this->Db->execute($req);
     }
@@ -141,19 +149,19 @@ final class Config
     /**
      * Restore default values
      */
-    public function restoreDefaults(): bool
+    public function destroy(): bool
     {
         $sql = 'DELETE FROM config';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
-        return $this->populate();
+        return $this->create();
     }
 
     /**
      * Insert the default values in the sql config table
      * Only run once of first ever page load
      */
-    private function populate(): bool
+    public function create(): bool
     {
         $schema = Update::getRequiredSchema();
 
@@ -172,12 +180,13 @@ final class Config
             ('smtp_password', ''),
             ('smtp_port', '587'),
             ('smtp_username', ''),
-            ('stamplogin', ''),
-            ('stamppass', ''),
-            ('stampshare', '1'),
-            ('stampprovider', 'http://zeitstempel.dfn.de/'),
-            ('stampcert', 'src/dfn-cert/pki.dfn.pem'),
-            ('stamphash', 'sha256'),
+            ('ts_authority', 'dfn'),
+            ('ts_login', NULL),
+            ('ts_password', NULL),
+            ('ts_share', '1'),
+            ('ts_url', 'NULL'),
+            ('ts_cert', NULL),
+            ('ts_hash', 'sha256'),
             ('saml_toggle', '0'),
             ('saml_debug', '0'),
             ('saml_strict', '1'),
@@ -185,7 +194,7 @@ final class Config
             ('saml_entityid', NULL),
             ('saml_acs_binding', NULL),
             ('saml_slo_binding', NULL),
-            ('saml_nameidformat', NULL),
+            ('saml_nameidformat', 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'),
             ('saml_x509', NULL),
             ('saml_privatekey', NULL),
             ('saml_team_create', '1'),

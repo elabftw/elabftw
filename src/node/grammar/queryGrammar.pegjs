@@ -42,18 +42,15 @@ not
     }
 
 andOp '"AND", "&"'
-  = $('AND'_+)
-  / $('and'_+)
+  = $('AND'i_+)
   / $('&')
 
 orOp '"OR", "|"'
-  = $('OR'_+)
-  / $('or'_+)
+  = $('OR'i_+)
   / $('|')
 
 notOp '"NOT", "!"'
-  = $('NOT'_+)
-  / $('not'_+)
+  = $('NOT'i_+)
   / $('!')
 
 Parenthesis 'expression in parenthesis'
@@ -79,12 +76,12 @@ List_String1
     [^\n\r\f\\']
     / '\\' nl
       {
-        return '';
+        return "";
       }
     / escape
   )+
     {
-      return join('', $chars);
+      return join("", $chars);
     }
 
 List2
@@ -98,16 +95,16 @@ List_String2
     [^\n\r\f\\"]
     / '\\' nl
       {
-        return '';
+        return "";
       }
     / escape
   )+
     {
-      return join('', $chars);
+      return join("", $chars);
     }
 
 Literal 'term'
-  = !orOp !andOp !notOp literal:$(String)+
+  = !orOp !andOp !notOp literal:$(String)
     {
       return new SimpleValueWrapper($literal);
     }
@@ -117,12 +114,12 @@ String
     [^\n\r\f\\"\\'() ]
     / '\\' nl
       {
-        return '';
+        return "";
       }
     / escape
   )+
     {
-      return join('', $chars);
+      return join("", $chars);
     }
 
 escape

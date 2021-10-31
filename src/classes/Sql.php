@@ -15,6 +15,7 @@ use League\Flysystem\FilesystemInterface;
 use RuntimeException;
 use function str_ends_with;
 use function str_starts_with;
+use Symfony\Component\Console\Output\OutputInterface;
 use function trim;
 
 /**
@@ -24,7 +25,7 @@ class Sql
 {
     private Db $Db;
 
-    public function __construct(private FilesystemInterface $filesystem)
+    public function __construct(private FilesystemInterface $filesystem, private ?OutputInterface $output = null)
     {
         $this->Db = Db::getConnection();
     }
@@ -43,6 +44,10 @@ class Sql
             $queryline .= trim($line);
             // If it has a semicolon at the end, it's the end of the query
             if (str_ends_with($line, ';')) {
+                // display which query we are running
+                if ($this->output !== null) {
+                    $this->output->writeln('Executing: ' . $queryline);
+                }
                 // Perform the query
                 $this->Db->q($queryline);
                 // Reset temp variable to empty

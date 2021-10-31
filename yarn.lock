@@ -3312,7 +3312,7 @@ jquery-jeditable@2.0.*:
   dependencies:
     jquery "^3.5.1"
 
-jquery-ui@^1.12.1:
+jquery-ui@^1.13.0:
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/jquery-ui/-/jquery-ui-1.13.0.tgz#ab5ac65f37ca093c51b3478c4097f55bbc008f36"
   integrity sha512-Osf7ECXNTYHtKBkn9xzbIf9kifNrBhfywFEKxOeB/OVctVmLlouV9mfc2qXCp6uyO4Pn72PXKOnj09qXetopCw==

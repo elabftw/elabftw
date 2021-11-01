@@ -71,9 +71,6 @@ try {
             $allItems = false;
             // itemData is to display the name/category of the selected item
             $itemData = $Scheduler->Items->read(new ContentParams());
-            if (empty($itemData)) {
-                throw new ImproperActionException(_('Nothing to show with this id'));
-            }
         }
     }
 

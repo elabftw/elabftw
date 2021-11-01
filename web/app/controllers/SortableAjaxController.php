@@ -68,6 +68,10 @@ try {
             $model = new Templates($App->Users);
             $Entity = $model->Steps;
             break;
+        case 'items_types_steps':
+            $model = new ItemsTypes($App->Users);
+            $Entity = $model->Steps;
+            break;
         default:
             throw new IllegalActionException('Bad table for updateOrdering.');
     }

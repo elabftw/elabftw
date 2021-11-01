@@ -47,7 +47,20 @@ try {
     $TeamGroups = new TeamGroups($App->Users);
     $Teams = new Teams($App->Users);
 
-    $itemsTypesArr = $ItemsTypes->readAll();
+    $itemsCategoryArr = $ItemsTypes->readAll();
+    $templateData = array();
+    $stepsArr = array();
+    $linksArr = array();
+    if ($Request->query->has('templateid')) {
+        $ItemsTypes->setId((int) $App->Request->query->get('templateid'));
+        $templateData = $ItemsTypes->read(new ContentParams());
+        $permissions = $ItemsTypes->getPermissions($templateData);
+        if ($permissions['write'] === false) {
+            throw new IllegalActionException('User tried to access a template without write permissions');
+        }
+        $stepsArr = $ItemsTypes->Steps->read(new ContentParams());
+        $linksArr = $ItemsTypes->Links->read(new ContentParams());
+    }
     $statusArr = $Status->read(new ContentParams());
     $teamConfigArr = $Teams->read(new ContentParams());
     $teamGroupsArr = $TeamGroups->read(new ContentParams());
@@ -79,12 +92,15 @@ try {
         'tagsArr' => $tagsArr,
         'fromSysconfig' => false,
         'isSearching' => $isSearching,
-        'itemsTypesArr' => $itemsTypesArr,
+        'itemsCategoryArr' => $itemsCategoryArr,
         'statusArr' => $statusArr,
         'teamConfigArr' => $teamConfigArr,
         'teamGroupsArr' => $teamGroupsArr,
         'visibilityArr' => $TeamGroups->getVisibilityList(),
         'teamsArr' => $teamsArr,
+        'templateData' => $templateData,
+        'stepsArr' => $stepsArr,
+        'linksArr' => $linksArr,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,
     );

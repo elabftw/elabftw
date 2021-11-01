@@ -408,8 +408,8 @@ CREATE TABLE `items_types` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
   `name` varchar(255) NOT NULL,
-  `color` varchar(6) DEFAULT '000000',
-  `template` text,
+  `color` varchar(6) DEFAULT '29aeb9',
+  `body` text NULL DEFAULT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `bookable` tinyint(1) UNSIGNED DEFAULT '0',
   `canread` varchar(255) NOT NULL DEFAULT 'team',
@@ -425,6 +425,33 @@ CREATE TABLE `items_types` (
 --   `team`
 --       `teams` -> `id`
 --
+
+--
+-- Table structure for table `items_types_links`
+--
+
+CREATE TABLE `items_types_links` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `item_id` int UNSIGNED NOT NULL,
+  `link_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `items_types_steps`
+--
+
+CREATE TABLE `items_types_steps` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `item_id` int UNSIGNED NOT NULL,
+  `body` text NOT NULL,
+  `ordering` int UNSIGNED DEFAULT NULL,
+  `finished` tinyint(1) NOT NULL DEFAULT '0',
+  `finished_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 --
@@ -799,6 +826,18 @@ ALTER TABLE `items_types`
   ADD KEY `fk_items_types_teams_id` (`team`);
 
 --
+-- Indexes for table `items_types_links`
+--
+ALTER TABLE `items_types_links`
+  ADD KEY `fk_items_types_links_items_id` (`item_id`),
+  ADD KEY `fk_items_types_links_items_id2` (`link_id`);
+
+--
+-- Indexes for table `items_types_steps`
+--
+ALTER TABLE `items_types_steps`
+  ADD KEY `fk_items_types_steps_items_id` (`item_id`);
+--
 -- Indexes for table `status`
 --
 ALTER TABLE `status`
@@ -918,6 +957,19 @@ ALTER TABLE `items_revisions`
 --
 ALTER TABLE `items_types`
   ADD CONSTRAINT `fk_items_types_teams_id` FOREIGN KEY (`team`) REFERENCES `teams`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `items_types_links`
+--
+ALTER TABLE `items_types_links`
+  ADD CONSTRAINT `fk_items_types_links_items_id` FOREIGN KEY (`link_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_items_types_links_items_types_id` FOREIGN KEY (`item_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `items_types_steps`
+--
+ALTER TABLE `items_types_steps`
+  ADD CONSTRAINT `fk_items_types_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `status`

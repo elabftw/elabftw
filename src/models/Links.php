@@ -159,7 +159,7 @@ class Links implements CrudInterface
     {
         $table = $this->Entity->type;
         if ($fromTpl) {
-            $table = 'experiments_templates';
+            $table = $this->Entity instanceof Experiments ? 'experiments_templates' : 'items_types';
         }
         $linksql = 'SELECT link_id FROM ' . $table . '_links WHERE item_id = :id';
         $linkreq = $this->Db->prepare($linksql);

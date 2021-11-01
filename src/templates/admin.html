@@ -240,130 +240,101 @@
 
 <!-- TAB 5 ITEMS TYPES-->
 <div data-tabcontent='5' hidden>
-  <div class='box'>
-    <h3>{{ 'Add a new type of item'|trans }}</h3>
-    <hr>
-    <div class='form-row align-items-center mb-2'>
-      <div class='col-auto'>
-        <label for='itemsTypesName'>{{ 'Name'|trans }}</label>
-        <input class='form-control' type='text' id='itemsTypesName' />
-      </div>
-
-      <div class='col-1'>
-        <label for='itemsTypesColor'>{{ 'Color'|trans }}</label>
-        <input class='form-control randomColor' type='color' id='itemsTypesColor' />
-      </div>
-
-      <div class='col-auto'>
-        <div class='form-check mt-4'>
-          <input class='form-check-input' type='checkbox' id='itemsTypesBookable' />
-          <label class='form-check-label' for='itemsTypesBookable'>{{ 'Bookable'|trans }} {{ 'in the %sscheduler%s'|trans|format("<a href='team.php'>", "</a>")|raw }}</label>
-        </div>
-      </div>
-    </div>
-
-    <textarea class='mceditable' id='itemsTypesTemplate'></textarea>
-
+  <div class='box' style='min-height: 600px;'>
     <div class='row'>
-      <div class='col-md-3'>
-        <!-- CAN READ -->
-        <i class='fas fa-eye' title='Visibility'></i>
-        <label for='canread_select'>{{ 'Visibility'|trans }}</label>
-        <select id='canread_select' class='form-control'>
-          {% for key, value in visibilityArr %}
-            <option value='{{ key }}'
-            {{ key == 'team' ? ' selected' }}
-            >{{ value|trans }}</option>
+      <div class='col'>
+        <h3>{{ 'Database Items Types'|trans }}</h3>
+      </div>
+      <!-- CREATE NEW BUTTON -->
+      <div class='col text-right'>
+        <button type='button' class='btn btn-primary' data-action='itemstypes-create'>{{ 'Create'|trans }}</button>
+      </div>
+    </div>
+
+    <form class='row'>
+      <div class='col-md-10'>
+        <input type='hidden' name='tab' value='5' />
+        <select class='form-control selectpicker' name='templateid' required data-show-subtext='true' data-live-search='true'>
+          {% for template in itemsCategoryArr %}
+            <option value='{{ template.category_id }}'{{ App.Request.query.get('templateid') == template.category_id ? ' selected' }}>{{ template.category|raw }}</option>
           {% endfor %}
         </select>
       </div>
 
-      <div class='col-md-3'>
-        <!-- CAN WRITE -->
-        <i class='fas fa-pencil-alt' title='Can write'></i>
-        <label for='canwrite_select'>{{ 'Can write'|trans }}</label>
-        <select id='canwrite_select' class='form-control'>
-          {% for key, value in visibilityArr %}
-            <option value='{{ key }}'
-            {{ key == 'team' ? ' selected' }}
-            >{{ value|trans }}</option>
-          {% endfor %}
-        </select>
+      <div class='col-md-2'>
+        <button class='btn btn-primary'>{{ 'Go'|trans }}</button>
       </div>
-    </div>
 
-    <div class='mt-4 text-center'>
-      <button id='itemsTypesCreate' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-    </div>
+    </form>
+    <hr>
+
+    <!-- templateData will be loaded with content from an item type if templateid is present is url -->
+    {% if templateData %}
+      <ul class='list-inline'>
+        <li class='list-inline-item'>
+          <label for='itemsTypesName'>{{ 'Name'|trans }}</label>
+          <input type='text' class='form-control' id='itemsTypesName' value='{{ templateData.name|raw }}' />
+        </li>
+
+        <li class='list-inline-item col-1 align-top'>
+          <label for='itemsTypesColor'>{{ 'Color'|trans }}</label>
+          <input class='form-control' type='color' id='itemsTypesColor' value='#{{ templateData.color }}' />
+        </li>
+
+        <li class='list-inline-item'>
+          <input id='itemsTypesBookable' type='checkbox' {{ templateData.bookable ? " checked" }} />
+          <label for='itemsTypesBookable'>{{ 'Bookable'|trans }}</label>
+        </li>
+
+        <li class='list-inline-item'>
+          <label for='itemsTypesCanread'>{{ 'Visibility'|trans }}</label>
+          <select id='itemsTypesCanread' class='form-control'>
+            {% for key, value in visibilityArr %}
+              <option value='{{ key }}'
+              {{ key == templateData.canread ? ' selected' }}
+              >{{ value|trans }}</option>
+            {% endfor %}
+          </select>
+        </li>
+
+        <li class='list-inline-item'>
+          <label for='itemsTypesCanwrite'>{{ 'Can write'|trans }}</label>
+          <select id='itemsTypesCanwrite' class='form-control'>
+            {% for key, value in visibilityArr %}
+              <option value='{{ key }}'
+              {{ key == templateData.canwrite ? ' selected' }}
+              >{{ value|trans }}</option>
+            {% endfor %}
+          </select>
+        </li>
+      </ul>
+
+      <textarea class='mceditable' id='itemsTypesBody'>{{ templateData.body }}</textarea>
+
+      {% set mode = 'edit-template' %}
+      {% include('steps-links-edit.html') %}
+      <!-- METADATA editor for items types -->
+      {{ include('json-editor.html') }}
+
+      <div class='text-center'>
+        <button class='button btn btn-primary' data-id='{{ templateData.id }}' data-action='itemstypes-update'>{{ 'Save'|trans }}</button>
+        <button class='button btn btn-danger' data-id='{{ templateData.id }}' data-action='itemstypes-destroy'>{{ 'Delete'|trans }}</button>
+      </div>
+    {% endif %}
+
   </div>
 
-
+  <!-- SORT ITEMS TYPES -->
   <div class='box'>
-    <h3>{{ 'Database Items Types'|trans }}</h3>
+    <h3>{{ 'Sort items types'|trans }}</h3>
     <hr>
     <ul class='list-group form-group sortable' data-axis='y' data-table='items_types'>
-      {% for itemType in itemsTypesArr %}
-        <li id='itemstypes_{{ itemType.category_id }}' class='list-group-item'>
-          <ul class='list-inline'>
-            <li class='list-inline-item'><span class='sortableHandle draggable float-right'><i class='fas fa-sort fa-2x'></i></span></li>
-            <li class='list-inline-item'>
-              <label for='itemsTypesName_{{ itemType.category_id }}'>{{ 'Name'|trans }}</label>
-              <input type='text' class='form-control' id='itemsTypesName_{{ itemType.category_id }}' value='{{ itemType.category|raw }}' />
-            </li>
-
-            <li class='list-inline-item col-1 align-top'>
-              <label for='itemsTypesColor_{{ itemType.category_id }}'>{{ 'Color'|trans }}</label>
-              <input class='form-control' type='color' id='itemsTypesColor_{{ itemType.category_id }}' value='#{{ itemType.color }}' />
-            </li>
-            <li class='list-inline-item'>
-              <input id='itemsTypesBookable_{{ itemType.category_id }}' type='checkbox' {{ itemType.bookable ? " checked" }} />
-              <label for='itemsTypesBookable_{{ itemType.category_id }}'>{{ 'Bookable'|trans }}</label>
-            </li>
-            <li class='list-inline-item'>
-              <button data-id='{{ itemType.category_id }}' class='button btn btn-neutral itemsTypesShowEditor'>{{ 'Edit the template'|trans }}</button>
-            </li>
-            <li class='list-inline-item'>
-              <button data-id='{{ itemType.category_id }}' data-type='items_types' data-action='json-load-metadata-from-id' class='button btn btn-neutral'>{{ 'Edit metadata'|trans }}</button>
-            </li>
-            <li class='list-inline-item'>
-              <label for='itemsTypesSelectCanread_{{ itemType.category_id }}'>{{ 'Visibility'|trans }}</label>
-              <select id='itemsTypesSelectCanread_{{ itemType.category_id }}' data-id='{{ itemType.category_id }}' class='itemsTypesSelectCanread form-control'>
-                {% for key, value in visibilityArr %}
-                  <option value='{{ key }}'
-                  {{ key == itemType.canread ? ' selected' }}
-                  >{{ value|trans }}</option>
-                {% endfor %}
-              </select>
-            </li>
-
-            <li class='list-inline-item itemsTypesCanwrite'>
-              <label for='itemsTypesSelectCanwrite_{{ itemType.category_id }}'>{{ 'Can write'|trans }}</label>
-              <select id='itemsTypesSelectCanwrite_{{ itemType.category_id }}' data-id='{{ itemType.category_id }}' class='itemsTypesSelectCanwrite form-control'>
-                {% for key, value in visibilityArr %}
-                  <option value='{{ key }}'
-                  {{ key == itemType.canwrite ? ' selected' }}
-                  >{{ value|trans }}</option>
-                {% endfor %}
-              </select>
-            </li>
-            <li class='list-inline-item'>
-              <button data-id='{{ itemType.category_id }}' class='button btn btn-primary itemsTypesUpdate'>{{ 'Save'|trans }}</button>
-            </li>
-            <li class='list-inline-item'>
-              <button data-id='{{ itemType.category_id }}' class='button btn btn-danger itemsTypesDestroy'>{{ 'Delete'|trans }}</button>
-            </li>
-            <li class='list-inline-item mt-2 itemsTypesEditor' id='itemsTypesEditor_{{ itemType.category_id }}'>
-              <textarea class='' id='itemsTypesTemplate_{{ itemType.category_id }}'>{{ itemType.template }}</textarea>
-            </li>
-          </ul>
-        </li>
+      {% for itemType in itemsCategoryArr %}
+      <li class='box' id='itemstypes_{{ itemType.category_id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-sort fa-2x'></i></span>{{ itemType.category | raw }}</li>
       {% endfor %}
     </ul>
   </div>
 
-  <!-- METADATA editor for items types -->
-  {% set mode = 'edit-template' %}
-  {{ include('json-editor.html') }}
 </div>
 
 <!-- TAB 6 IMPORT -->
@@ -379,7 +350,7 @@
       <label for='target_csv'>{{ '1. Select a type of item to import to:'|trans }}</label>
       <select class='form-control col-md-4' id='target_csv' autocomplete='off' name='target'>
         <option selected disabled>--------</option>
-        {% for itemsType in itemsTypesArr %}
+        {% for itemsType in itemsCategoryArr %}
         <option value='{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
         {% endfor %}
       </select>
@@ -422,7 +393,7 @@
       <select class='form-control col-md-4' id='target_zip' autocomplete='off' name='target'>
         <option selected disabled>-------</option>
         <option disabled>{{ 'Import in database'|trans }}</option>
-        {% for itemsType in itemsTypesArr %}
+        {% for itemsType in itemsCategoryArr %}
           <option value='{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
         {% endfor %}
         <option disabled>{{ 'Import in experiments'|trans }}</option>
@@ -494,6 +465,6 @@
   </div>
 </div>
 
-<div id='info' data-page='template-edit' data-type='items_types'></div>
+<div id='info' data-page='template-edit' data-type='items_types' data-id='{{ App.Request.query.get('templateid') }}'></div>
 
 {% endblock body %}

@@ -18,7 +18,6 @@ use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\EntityParamsInterface;
@@ -289,9 +288,6 @@ abstract class AbstractEntity implements CrudInterface
         $this->Db->execute($req);
 
         $item = $req->fetch();
-        if ($item === false) {
-            throw new ResourceNotFoundException();
-        }
 
         $permissions = $this->getPermissions($item);
         if ($permissions['read'] === false) {

@@ -61,7 +61,7 @@ try {
         $stepsArr = $ItemsTypes->Steps->read(new ContentParams());
         $linksArr = $ItemsTypes->Links->read(new ContentParams());
     }
-    $statusArr = $Status->read(new ContentParams());
+    $statusArr = $Status->readAll();
     $teamConfigArr = $Teams->read(new ContentParams());
     $teamGroupsArr = $TeamGroups->read(new ContentParams());
     $teamsArr = $Teams->readAll();

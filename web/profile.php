@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,11 +6,9 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function count;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Services\UsersHelper;
@@ -27,19 +25,14 @@ $Response = new Response();
 $Response->prepare($Request);
 
 try {
+    $UsersHelper = new UsersHelper((int) $App->Users->userData['userid']);
     // get total number of experiments
-    $Entity = new Experiments($App->Users);
-    $Entity->addFilter('entity.userid', $App->Users->userData['userid']);
-    $DisplayParams = new DisplayParams();
-    $DisplayParams->limit = 9999999;
-    $itemsArr = $Entity->readShow($DisplayParams);
-    $count = count($itemsArr);
+    $count = $UsersHelper->countExperiments();
 
     // generate stats for the pie chart with experiments status
     $UserStats = new UserStats($App->Users, $count);
 
     // get the teams
-    $UsersHelper = new UsersHelper((int) $App->Users->userData['userid']);
     $teams = $UsersHelper->getTeamsFromUserid();
 
     // get the team groups in which the user is

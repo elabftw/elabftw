@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\StatusParams;
 use Elabftw\Exceptions\ImproperActionException;
@@ -61,15 +60,21 @@ class Status extends AbstractCategory
         );
     }
 
-    public function readAll(): array
+    public function read(ContentParamsInterface $params): array
     {
-        return $this->read(new ContentParams());
+        $sql = 'SELECT id as category_id, name as category, color, is_timestampable, is_default
+            FROM status WHERE team = :team AND id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $this->Db->fetch($req);
     }
 
     /**
      * SQL to get all status from team
      */
-    public function read(ContentParamsInterface $params): array
+    public function readAll(): array
     {
         $sql = 'SELECT status.id AS category_id,
             status.name AS category,
@@ -82,25 +87,6 @@ class Status extends AbstractCategory
         $this->Db->execute($req);
 
         return $this->Db->fetchAll($req);
-    }
-
-    /**
-     * Get the color of a status
-     *
-     * @param int $id ID of the category
-     */
-    public function readColor(int $id): string
-    {
-        $sql = 'SELECT color FROM status WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $res = $req->fetchColumn();
-        if ($res === false || $res === null) {
-            return '00FF00';
-        }
-        return (string) $res;
     }
 
     /**

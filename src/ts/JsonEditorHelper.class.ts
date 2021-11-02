@@ -50,9 +50,12 @@ export default class JsonEditorHelper {
     if (editable) {
       this.editor.setMode('tree');
     }
+    if (this.editorDiv.dataset.preloadJson === '1') {
+      this.loadMetadata();
+    }
   }
 
-  load(json: Record<string, any>): void {
+  focus(): void {
     // show the editor (use jQuery selector here for collapse())
     ($('#jsonEditorDiv') as JQuery<HTMLDivElement>).collapse('show');
     // toggle the +/- button
@@ -62,8 +65,6 @@ export default class JsonEditorHelper {
       plusMinusButton.classList.add('btn-neutral');
       plusMinusButton.classList.remove('btn-primary');
     }
-    // load the json content into the editor
-    this.editor.set(json);
     // and scroll page into editor view
     document.getElementById('jsonEditorContainer').scrollIntoView();
   }
@@ -78,7 +79,10 @@ export default class JsonEditorHelper {
         }
         return response.json();
       })
-      .then(json => this.load(json))
+      .then(json => {
+        this.editor.set(json);
+        this.focus();
+      })
       .catch(e => {
         if (e instanceof SyntaxError) {
           notif({ 'res': false, 'msg': i18next.t('json-parse-error') });
@@ -95,13 +99,16 @@ export default class JsonEditorHelper {
   loadMetadata(): void {
     // set the title
     this.editorTitle.innerText = i18next.t('editing-metadata');
-    this.MetadataC.read().then(metadata => this.load(metadata));
+    this.MetadataC.read().then(metadata => this.editor.set(metadata));
     this.editorDiv.dataset.what = 'metadata';
   }
 
   loadMetadataFromId(entity: Entity): void {
     const MetadataC = new Metadata(entity);
-    MetadataC.read().then(metadata => this.load(metadata));
+    MetadataC.read().then(metadata => {
+      this.editor.set(metadata);
+      this.focus();
+    });
     this.editorDiv.dataset.what = 'metadata';
   }
 

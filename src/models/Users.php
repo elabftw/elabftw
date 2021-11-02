@@ -12,7 +12,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
@@ -433,12 +432,7 @@ class Users
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $res = $req->fetch();
-        if ($res === false) {
-            throw new ResourceNotFoundException();
-        }
-
-        return $res;
+        return $this->Db->fetch($req);
     }
 
     private function checkEmail(string $email): void

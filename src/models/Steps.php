@@ -96,7 +96,7 @@ class Steps implements CrudInterface
     {
         $table = $this->Entity->type;
         if ($fromTpl) {
-            $table = 'experiments_templates';
+            $table = $this->Entity instanceof Experiments ? 'experiments_templates' : 'items_types';
         }
         $stepsql = 'SELECT body, ordering FROM ' . $table . '_steps WHERE item_id = :id';
         $stepreq = $this->Db->prepare($stepsql);

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -21,10 +20,7 @@ class MakeCsv extends AbstractMake implements FileMakerInterface
 {
     use CsvTrait;
 
-    /**
-     * Give me a list of "id id id" and a type, I make good csv for you
-     */
-    public function __construct(AbstractEntity $entity, private string $idList)
+    public function __construct(AbstractEntity $entity, private array $idArr)
     {
         parent::__construct($entity);
     }
@@ -51,8 +47,7 @@ class MakeCsv extends AbstractMake implements FileMakerInterface
     protected function getRows(): array
     {
         $rows = array();
-        $idArr = explode(' ', $this->idList);
-        foreach ($idArr as $id) {
+        foreach ($this->idArr as $id) {
             $this->Entity->setId((int) $id);
             $permissions = $this->Entity->getPermissions();
             if ($permissions['read']) {

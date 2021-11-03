@@ -21,8 +21,9 @@ class MakeCsvTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->MakeExp = new MakeCsv(new Experiments(new Users(1, 1)), '1 2 3');
-        $this->MakeDb = new MakeCsv(new Items(new Users(1, 1)), '1 2 3');
+        $idArr = array('1', '2', '3');
+        $this->MakeExp = new MakeCsv(new Experiments(new Users(1, 1)), $idArr);
+        $this->MakeDb = new MakeCsv(new Items(new Users(1, 1)), $idArr);
     }
 
     public function testGetFileName(): void

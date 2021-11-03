@@ -9,6 +9,7 @@
 
 namespace Elabftw\Controllers;
 
+use function count;
 use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\ControllerInterface;
@@ -26,7 +27,6 @@ use Elabftw\Services\MakeQrPdf;
 use Elabftw\Services\MakeReport;
 use Elabftw\Services\MakeStreamZip;
 use Elabftw\Services\MpdfProvider;
-use function substr_count;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -39,11 +39,20 @@ class MakeController implements ControllerInterface
     /** @var AbstractEntity $Entity */
     private $Entity;
 
+    // an array of id to process
+    private array $idArr = array();
+
     public function __construct(private App $App)
     {
         $this->Entity = new Items($this->App->Users);
         if ($this->App->Request->query->get('type') === 'experiments') {
             $this->Entity = new Experiments($this->App->Users);
+        }
+        // generate the id array
+        if ($this->App->Request->query->has('category')) {
+            $this->idArr = $this->Entity->getIdFromCategory((int) $this->App->Request->query->get('category'));
+        } elseif ($this->App->Request->query->has('id')) {
+            $this->idArr = explode(' ', (string) $this->App->Request->query->get('id'));
         }
     }
 
@@ -60,7 +69,7 @@ class MakeController implements ControllerInterface
                 return $this->makePdf();
 
             case 'multiPdf':
-                if (substr_count((string) $this->App->Request->query->get('id'), ' ') === 0) {
+                if (count($this->idArr) === 1) {
                     return $this->makePdf();
                 }
                 return $this->makeMultiPdf();
@@ -84,12 +93,12 @@ class MakeController implements ControllerInterface
 
     private function makeCsv(): Response
     {
-        return $this->getFileResponse(new MakeCsv($this->Entity, (string) $this->App->Request->query->get('id')));
+        return $this->getFileResponse(new MakeCsv($this->Entity, $this->idArr));
     }
 
     private function makeJson(): Response
     {
-        return $this->getFileResponse(new MakeJson($this->Entity, (string) $this->App->Request->query->get('id')));
+        return $this->getFileResponse(new MakeJson($this->Entity, $this->idArr));
     }
 
     private function makePdf(): Response
@@ -101,12 +110,12 @@ class MakeController implements ControllerInterface
 
     private function makeMultiPdf(): Response
     {
-        return $this->getFileResponse(new MakeMultiPdf($this->getMpdfProvider(), $this->Entity, (string) $this->App->Request->query->get('id')));
+        return $this->getFileResponse(new MakeMultiPdf($this->getMpdfProvider(), $this->Entity, $this->idArr));
     }
 
     private function makeQrPdf(): Response
     {
-        return $this->getFileResponse(new MakeQrPdf($this->getMpdfProvider(), $this->Entity, (string) $this->App->Request->query->get('id')));
+        return $this->getFileResponse(new MakeQrPdf($this->getMpdfProvider(), $this->Entity, $this->idArr));
     }
 
     private function makeReport(): Response
@@ -116,7 +125,7 @@ class MakeController implements ControllerInterface
 
     private function makeZip(): Response
     {
-        $Make = new MakeStreamZip($this->Entity, (string) $this->App->Request->query->get('id'));
+        $Make = new MakeStreamZip($this->Entity, $this->idArr);
         $Response = new StreamedResponse();
         $Response->headers->set('X-Accel-Buffering', 'no');
         $Response->headers->set('Content-Type', 'application/zip');

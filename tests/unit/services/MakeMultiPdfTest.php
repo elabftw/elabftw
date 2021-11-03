@@ -18,9 +18,10 @@ class MakeMultiPdfTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
+        $idArr = array('1', '2', '3');
         $Entity = new Experiments(new Users(1, 1));
         $MpdfProvider = new MpdfProvider('Toto');
-        $this->MakePdf = new MakeMultiPdf($MpdfProvider, $Entity, '1 2 3');
+        $this->MakePdf = new MakeMultiPdf($MpdfProvider, $Entity, $idArr);
     }
 
     public function testGetFileContent(): void

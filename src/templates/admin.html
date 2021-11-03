@@ -23,8 +23,9 @@
   <li data-action='switch-tab' data-tabtarget='4'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</li>
   <li data-action='switch-tab' data-tabtarget='5'>{{ 'Types of items'|trans }}</li>
   <li data-action='switch-tab' data-tabtarget='6'>{{ 'Import'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='7'>{{ 'Tag manager'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='8'>{{ 'Timestamp'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='7'>{{ 'Export'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='8'>{{ 'Tag manager'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='9'>{{ 'Timestamp'|trans }}</li>
 </ul>
 
 <!-- loading spinner -->
@@ -424,8 +425,35 @@
   </div>
 </div>
 
-<!-- TAB 7 TAG MANAGER -->
+<!-- TAB 7 EXPORT -->
 <div data-tabcontent='7' hidden>
+  <div class='box'>
+    <h3>{{ 'Export database items'|trans }}</h3>
+    <hr>
+    <label for='categoryExport'>{{ 'Select what to export:'|trans }}</label>
+    <select class='form-control col-md-4' id='categoryExport' autocomplete='off'>
+      {% for itemsType in itemsCategoryArr %}
+        <option value='{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
+      {% endfor %}
+    </select>
+    <label for='categoryExportFormat'>{{ 'Select export format:'|trans }}</label>
+    <select class='form-control col-md-4' id='categoryExportFormat' autocomplete='off'>
+      <option value='zip'>{{ 'Make Zip'|trans }}</option>
+      <option value='csv'>{{ 'Make Csv'|trans }}</option>
+      <option value='multiPdf'>{{ 'Make PDF'|trans }}</option>
+      <option value='qrPdf'>{{ 'Make QR codes PDF'|trans }}</option>
+      <option value='json'>{{ 'Make JSON'|trans }}</option>
+    </select>
+
+
+    <div class='mt-2'>
+      <button data-action='export' class='button btn btn-primary'>{{ 'Export'|trans }}</button>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 8 TAG MANAGER -->
+<div data-tabcontent='8' hidden>
   <div class='box'>
     <h3>{{ 'Manage tags of the team'|trans }}</h3>
     <hr>
@@ -440,8 +468,8 @@
   </div>
 </div>
 
-<!-- TAB 8 TIMESTAMP -->
-<div data-tabcontent='8' hidden>
+<!-- TAB 9 TIMESTAMP -->
+<div data-tabcontent='9' hidden>
   <div class='box'>
     <h3>{{ 'Configure timestamping'|trans }}</h3>
     <hr>

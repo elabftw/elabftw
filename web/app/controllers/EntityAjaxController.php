@@ -226,17 +226,19 @@ try {
 
     // UPDATE CATEGORY (item type or status)
     if ($Request->request->has('updateCategory')) {
-        $Entity->updateCategory((int) $Request->request->get('categoryId'));
+        $id = (int) $Request->request->get('categoryId');
+        $Entity->updateCategory($id);
         // get the color of the status/item type for updating the css
         if ($Entity instanceof Experiments) {
-            $Category = new Status($App->Users->team);
+            $Category = new Status($App->Users->team, $id);
         } else {
-            $Category = new ItemsTypes($App->Users);
+            $Category = new ItemsTypes($App->Users, $id);
         }
+        $categoryArr = $Category->read(new ContentParams());
         $Response->setData(array(
             'res' => true,
             'msg' => _('Saved'),
-            'color' => $Category->readColor((int) $Request->request->get('categoryId')),
+            'color' => $categoryArr['color'],
         ));
     }
 } catch (ImproperActionException | UnauthorizedException | PDOException $e) {

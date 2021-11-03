@@ -9,29 +9,24 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\FavTags;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Links;
-use Elabftw\Models\PrivacyPolicy;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
-use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 
 /**
- * Build the params object
+ * Return the corresponding parameters object based on the model
  */
 class ParamsBuilder
 {
@@ -43,19 +38,8 @@ class ParamsBuilder
     ) {
     }
 
-    // @phpstan-ignore-next-line
-    public function getParams()
+    public function getParams(): ContentParamsInterface
     {
-        if ($this->model instanceof Comments ||
-            $this->model instanceof Config ||
-            $this->model instanceof Todolist ||
-            $this->model instanceof Links ||
-            $this->model instanceof FavTags ||
-            $this->model instanceof Users ||
-            $this->model instanceof Teams ||
-            $this->model instanceof PrivacyPolicy) {
-            return new ContentParams($this->content, $this->target);
-        }
         if ($this->model instanceof Experiments || $this->model instanceof Items || $this->model instanceof Templates) {
             return new EntityParams($this->content, $this->target, $this->extra);
         }
@@ -77,8 +61,6 @@ class ParamsBuilder
             );
         }
         if ($this->model instanceof ApiKeys) {
-            // TODO only giv extra as third param and the get function will extract the correct stuff from it?
-            // will help with homogeneisation of Params class
             return new CreateApikey($this->content, $this->target, (int) $this->extra['canwrite']);
         }
         if ($this->model instanceof Tags) {
@@ -90,5 +72,6 @@ class ParamsBuilder
         if ($this->model instanceof TeamGroups) {
             return new TeamGroupParams($this->content, $this->target, $this->extra);
         }
+        return new ContentParams($this->content, $this->target);
     }
 }

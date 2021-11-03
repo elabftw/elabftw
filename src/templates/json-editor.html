@@ -1,4 +1,5 @@
 <!-- JSON EDITOR -->
+<!-- json metadata is preloaded for templates -->
 <section class='box' id='json-editor'>
   <i class='fas fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
   <button class='button btn btn-primary plusMinusButton jsonEditorPlusMinusButton' data-toggle='collapse' data-target='#jsonEditorDiv' aria-expanded='false' aria-controls='jsonEditorDiv'>+</button>
@@ -7,7 +8,7 @@
   {% endif %}
   <div id='jsonEditorDiv' class='collapse mt-2'>
     <h6 id='jsonEditorTitle'></h6>
-    <div id='jsonEditorContainer' data-what=''></div>
+    <div id='jsonEditorContainer' {{ mode == 'edit-template' ? 'data-preload-json="1"' : '' }}></div>
     {% if mode == 'edit' %}
       <div class='mt-4 text-center'>
         <div class='btn-group'>
@@ -27,7 +28,7 @@
     {% endif %}
     {% if mode == 'edit-template' %}
       <div class='mt-4 text-center'>
-        <button type='button' id='templateJsonSave' data-action='json-save-metadata-from-id' data-id='' class='btn btn-primary'>{{ 'Save as metadata'|trans }}</button>
+        <button type='button' id='templateJsonSave' data-action='json-save-metadata-from-id' data-id='{{ templateData.id }}' class='btn btn-primary'>{{ 'Save as metadata'|trans }}</button>
         <button type='button' data-action='json-clear' class='btn btn-danger float-right'>{{ 'Clear'|trans }}</button>
       </div>
     {% endif %}

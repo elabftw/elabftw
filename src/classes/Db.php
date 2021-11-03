@@ -17,6 +17,7 @@ use const DB_PASSWORD;
 use const DB_PORT;
 use const DB_USER;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -127,7 +128,23 @@ final class Db
     }
 
     /**
-     * Force fetchAll to return an array or throw exception if result is false
+     * Force fetch() to return an array or throw exception if result is false
+     * because this is hard to test
+     */
+    public function fetch(PDOStatement $req): array
+    {
+        if ($req->rowCount() === 0) {
+            throw new ResourceNotFoundException();
+        }
+        $res = $req->fetch();
+        if ($res === false || $res === null) {
+            return array();
+        }
+        return $res;
+    }
+
+    /**
+     * Force fetchAll() to return an array or throw exception if result is false
      * because this is hard to test
      */
     public function fetchAll(PDOStatement $req): array

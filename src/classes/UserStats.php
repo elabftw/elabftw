@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,13 +6,11 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
 use Elabftw\Models\Status;
 use Elabftw\Models\Users;
-use Elabftw\Services\UsersHelper;
 use PDO;
 
 /**
@@ -22,6 +20,9 @@ class UserStats
 {
     private Db $Db;
 
+    /**
+     * Count is the number of experiments of the user
+     */
     public function __construct(private Users $Users, private int $count)
     {
         $this->Db = Db::getConnection();
@@ -36,14 +37,13 @@ class UserStats
         $res = array();
 
         // prevent division by zero error if user has no experiments
-        $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
-        if ($UsersHelper->countExperiments() === 0) {
+        if ($this->count === 0) {
             return $res;
         }
 
         // get all status name and id
         $Status = new Status($this->Users->team);
-        $statusAll = $Status->read(new ContentParams());
+        $statusAll = $Status->readAll();
 
         // populate arrays
         foreach ($statusAll as $status) {

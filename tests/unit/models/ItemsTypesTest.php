@@ -46,7 +46,7 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
         $this->ItemsTypes->updateAll(
             new ItemTypeParams('new', 'all', $extra)
         );
-        $this->assertEquals('newbody', $this->ItemsTypes->read(new ContentParams())['template']);
+        $this->assertEquals('newbody', $this->ItemsTypes->read(new ContentParams())['body']);
         $this->ItemsTypes->setId((int) $last['category_id']);
         $this->ItemsTypes->destroy();
     }

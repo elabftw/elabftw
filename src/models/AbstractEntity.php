@@ -18,7 +18,6 @@ use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\EntityParamsInterface;
@@ -133,7 +132,7 @@ abstract class AbstractEntity implements CrudInterface
      */
     public function toggleLock(): bool
     {
-        $permissions = $this->getPermissions();
+        $this->getPermissions();
         if (!$this->Users->userData['can_lock'] && $this->entityData['userid'] !== $this->Users->userData['userid']) {
             throw new ImproperActionException(_("You don't have the rights to lock/unlock this."));
         }
@@ -299,9 +298,6 @@ abstract class AbstractEntity implements CrudInterface
         $this->Db->execute($req);
 
         $item = $req->fetch();
-        if ($item === false) {
-            throw new ResourceNotFoundException();
-        }
 
         $permissions = $this->getPermissions($item);
         if ($permissions['read'] === false) {

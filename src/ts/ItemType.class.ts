@@ -7,8 +7,6 @@
  */
 import { Payload, Method, Entity, Action, EntityType, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
-import { getTinymceBaseConfig } from './tinymce';
-import tinymce from 'tinymce/tinymce';
 
 
 export default class ItemType {
@@ -21,7 +19,7 @@ export default class ItemType {
     this.sender = new Ajax();
   }
 
-  create(content: string, color: string, bookable: number, body: string, canread: string, canwrite: string): Promise<ResponseMsg> {
+  create(content: string): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,
       action: Action.Create,
@@ -31,21 +29,8 @@ export default class ItemType {
         id: null,
       },
       content: content,
-      extraParams: {
-        color: color,
-        bookable: bookable,
-        body: body,
-        canread: canread,
-        canwrite: canwrite,
-      },
     };
     return this.sender.send(payload);
-  }
-
-  showEditor(id): void {
-    $('#itemsTypesTemplate_' + id).addClass('mceditable');
-    tinymce.init(getTinymceBaseConfig('items_types'));
-    $('#itemsTypesEditor_' + id).toggle();
   }
 
   update(id: number, content: string, color: string, bookable: number, body: string, canread: string, canwrite: string): Promise<ResponseMsg> {

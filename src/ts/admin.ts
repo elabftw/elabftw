@@ -178,9 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // ITEMS TYPES
   const ItemTypeC = new ItemType();
 
-  // CREATE
-  $('.itemsTypesEditor').hide();
-  $(document).on('click', '#itemsTypesCreate', function() {
+  // UPDATE
+  function itemsTypesUpdate(id: number): void {
     const nameInput = (document.getElementById('itemsTypesName') as HTMLInputElement);
     const name = nameInput.value;
     if (name === '') {
@@ -195,50 +194,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (checkbox) {
       bookable = 1;
     }
-    const template = tinymce.get('itemsTypesTemplate').getContent();
 
-    const canread= (document.getElementById('canread_select') as HTMLSelectElement).value;
-    const canwrite= (document.getElementById('canwrite_select') as HTMLSelectElement).value;
-    // set the editor as non dirty so we can navigate out without a warning to clear
-    tinymce.activeEditor.setDirty(false);
-    // TODO don't reload the whole page, just what we need
-    ItemTypeC.create(name, color, bookable, template, canread, canwrite).then(() => window.location.replace('admin.php?tab=5'));
-  });
-
-  // TOGGLE BODY
-  $(document).on('click', '.itemsTypesShowEditor', function() {
-    ItemTypeC.showEditor($(this).data('id'));
-  });
-
-  // UPDATE
-  $(document).on('click', '.itemsTypesUpdate', function() {
-    const id = $(this).data('id');
-    const nameInput = (document.getElementById('itemsTypesName_' + id) as HTMLInputElement);
-    const name = nameInput.value;
-    if (name === '') {
-      notif({'res': false, 'msg': 'Name cannot be empty'});
-      nameInput.style.borderColor = 'red';
-      nameInput.focus();
-      return;
-    }
-    const color = (document.getElementById('itemsTypesColor_' + id) as HTMLInputElement).value;
-    const checkbox = $('#itemsTypesBookable_' + id).is(':checked');
-    let bookable = 0;
-    if (checkbox) {
-      bookable = 1;
-    }
-
-    const canread = (document.querySelector(`.itemsTypesSelectCanread[data-id="${id}"`) as HTMLSelectElement).value;
-    const canwrite = (document.querySelector(`.itemsTypesSelectCanwrite[data-id="${id}"`) as HTMLSelectElement).value;
-    // if tinymce is hidden, it'll fail to trigger
-    // so we toggle it quickly to grab the content
-    if ($('#itemsTypesTemplate_' + id).is(':hidden')) {
-      ItemTypeC.showEditor(id);
-    }
-    const template = tinymce.get('itemsTypesTemplate_' + id).getContent();
-    $('#itemsTypesEditor_' + id).toggle();
+    const canread = (document.getElementById('itemsTypesCanread') as HTMLSelectElement).value;
+    const canwrite = (document.getElementById('itemsTypesCanwrite') as HTMLSelectElement).value;
+    const template = tinymce.get('itemsTypesBody').getContent();
     ItemTypeC.update(id, name, color, bookable, template, canread, canwrite);
-  });
+  }
 
   // DESTROY
   $(document).on('click', '.itemsTypesDestroy', function() {
@@ -274,6 +235,18 @@ document.addEventListener('DOMContentLoaded', () => {
       AjaxC.send(payload).then(json => {
         notif(json);
       });
+    // UPDATE ITEMS TYPES
+    } else if (el.matches('[data-action="itemstypes-update"]')) {
+      itemsTypesUpdate(parseInt(el.dataset.id, 10));
+    // CREATE ITEMS TYPES
+    } else if (el.matches('[data-action="itemstypes-create"]')) {
+      const title = prompt(i18next.t('template-title'));
+      if (title) {
+        // no body on template creation
+        ItemTypeC.create(title).then(json => {
+          window.location.replace(`admin.php?tab=5&templateid=${json.value}`);
+        });
+      }
     }
   });
 });

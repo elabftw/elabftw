@@ -643,6 +643,17 @@ abstract class AbstractEntity implements CrudInterface
         return $this->type;
     }
 
+    public function getIdFromCategory(int $category): array
+    {
+        $sql = 'SELECT id FROM ' . $this->getTable() . ' WHERE team = :team AND category = :category';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
+        $req->bindParam(':category', $category);
+        $req->execute();
+        $res = $this->Db->fetchAll($req);
+        return array_column($res, 'id');
+    }
+
     /**
      * Update only one field in the metadata json
      */

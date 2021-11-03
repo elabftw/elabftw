@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -22,20 +21,9 @@ class MakeMultiPdf extends AbstractMake implements FileMakerInterface
 {
     use PdfTrait;
 
-    // the input ids but in an array
-    private array $idArr = array();
-
-    /**
-     * Give me an id list and a type, I make multi entity PDF for you
-     *
-     * @param string $idList 4 8 15 16 23 42
-     */
-    public function __construct(private MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, string $idList)
+    public function __construct(private MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, private array $idArr)
     {
         parent::__construct($entity);
-
-        $this->idArr = explode(' ', $idList);
-
         $this->mpdf = $mpdfProvider->getInstance();
     }
 
@@ -53,10 +41,11 @@ class MakeMultiPdf extends AbstractMake implements FileMakerInterface
      */
     public function getFileContent(): string
     {
+        $idCount = count($this->idArr);
         foreach ($this->idArr as $key => $id) {
             $this->addToPdf((int) $id);
 
-            if ($key !== count($this->idArr) -1) {
+            if ($key !== $idCount - 1) {
                 $this->mpdf->AddPageByArray(array(
                     'sheet-size' => $this->Entity->Users->userData['pdf_format'],
                     'resetpagenum' => 1,
@@ -69,8 +58,6 @@ class MakeMultiPdf extends AbstractMake implements FileMakerInterface
 
     /**
      * This is where the magic happens
-     *
-     * @param int $id The id of the current item
      */
     private function addToPdf(int $id): void
     {

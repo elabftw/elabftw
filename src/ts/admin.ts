@@ -247,6 +247,10 @@ document.addEventListener('DOMContentLoaded', () => {
           window.location.replace(`admin.php?tab=5&templateid=${json.value}`);
         });
       }
+    } else if (el.matches('[data-action="export"]')) {
+      const source = (document.getElementById('categoryExport') as HTMLSelectElement).value;
+      const format = (document.getElementById('categoryExportFormat') as HTMLSelectElement).value;
+      window.location.href = `make.php?what=${format}&category=${source}`;
     }
   });
 });

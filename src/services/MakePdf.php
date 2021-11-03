@@ -254,7 +254,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
 
     private function getBody(): string
     {
-        $body = Tools::md2html($this->Entity->entityData['body']);
+        $body = Tools::md2html($this->Entity->entityData['body'] ?? '');
         // we need to fix the file path in the body so it shows properly into the pdf for timestamping (issue #131)
         return str_replace('src="app/download.php?f=', 'src="' . dirname(__DIR__, 2) . '/uploads/', $body);
     }

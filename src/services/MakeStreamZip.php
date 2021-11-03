@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -26,9 +25,6 @@ class MakeStreamZip extends AbstractMake
 {
     private ZipStream $Zip;
 
-    // the input ids but in an array
-    private array $idArr = array();
-
     // files to be deleted by destructor
     private array $trash = array();
 
@@ -37,12 +33,7 @@ class MakeStreamZip extends AbstractMake
     // array that will be converted to json
     private array $jsonArr = array();
 
-    /**
-     * Give me an id list and a type, I make good zip for you
-     *
-     * @param string $idList 4 8 15 16 23 42
-     */
-    public function __construct(AbstractEntity $entity, string $idList)
+    public function __construct(AbstractEntity $entity, private array $idArr)
     {
         parent::__construct($entity);
 
@@ -52,8 +43,6 @@ class MakeStreamZip extends AbstractMake
         }
 
         $this->Zip = new ZipStream();
-
-        $this->idArr = explode(' ', $idList);
     }
 
     /**
@@ -182,7 +171,7 @@ class MakeStreamZip extends AbstractMake
      */
     private function addCsv(int $id): void
     {
-        $MakeCsv = new MakeCsv($this->Entity, (string) $id);
+        $MakeCsv = new MakeCsv($this->Entity, array($id));
         $this->Zip->addFile($this->folder . '/' . $this->folder . '.csv', $MakeCsv->getFileContent());
     }
 

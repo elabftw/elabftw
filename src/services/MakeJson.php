@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -21,19 +20,9 @@ use function json_encode;
  */
 class MakeJson extends AbstractMake implements FileMakerInterface
 {
-    // the input ids but in an array
-    private array $idArr = array();
-
-    /**
-     * Give me an id list and a type, I make json export
-     *
-     * @param string $idList 4 8 15 16 23 42
-     */
-    public function __construct(AbstractEntity $entity, string $idList)
+    public function __construct(AbstractEntity $entity, private array $idArr)
     {
         parent::__construct($entity);
-
-        $this->idArr = explode(' ', $idList);
     }
 
     /**

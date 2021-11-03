@@ -107,7 +107,6 @@ class DepthValidatorVisitor implements Visitor
         if ($this->limit === null) {
             return false;
         }
-//        error_log(print_r($depth, true));
         return $depth > $this->limit;
     }
 }

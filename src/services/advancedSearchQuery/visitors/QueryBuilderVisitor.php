@@ -34,6 +34,8 @@ class QueryBuilderVisitor implements Visitor
     public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): WhereCollector
     {
         $value = $simpleValueWrapper->getValue();
+        // Generate a unique named parameter identifier used with PDO::prepare and bindValue in src/models/AbstractEntity.php.
+        // Cannot use question mark (?) parameter because of the other named parameters.
         $param = ':' . bin2hex(random_bytes(5));
 
         return new WhereCollector(

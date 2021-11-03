@@ -20,6 +20,7 @@ class AdvancedSearchQuery
 {
     protected string $exception = '';
 
+    // $depthLimit can be used to limit the depth of the abstract syntax tree. In other words the complexity of the query.
     public function __construct(private string $expertQuery, private string $column, private ?int $depthLimit = null)
     {
     }

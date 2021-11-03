@@ -38,6 +38,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
     {
         $query = 'TEST TEST1';
 
+        // Depth of abstract syntax tree is set to 1 with the last parameter
         $advancedSearchQuery = (new AdvancedSearchQuery($query, 'body', 1));
         $advancedSearchQuery->getWhereClause();
         $this->assertEquals('Query is too complex.', $advancedSearchQuery->getException());

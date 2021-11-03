@@ -161,7 +161,7 @@
 
 <!-- TAB 3 USERS -->
 <div data-tabcontent='3' hidden>
-  {{ include('editusers.html') }}
+  {% include 'editusers.html' %}
 </div>
 
 <!-- TAB 4 STATUS -->
@@ -313,9 +313,9 @@
       <textarea class='mceditable' id='itemsTypesBody'>{{ templateData.body }}</textarea>
 
       {% set mode = 'edit-template' %}
-      {% include('steps-links-edit.html') %}
+      {% include 'steps-links-edit.html' %}
       <!-- METADATA editor for items types -->
-      {{ include('json-editor.html') }}
+      {% include 'json-editor.html' %}
 
       <div class='text-center'>
         <button class='button btn btn-primary' data-id='{{ templateData.id }}' data-action='itemstypes-update'>{{ 'Save'|trans }}</button>
@@ -488,7 +488,7 @@
 
     <!-- this block is only showed if the override is set to true (1) -->
     <div class='mt-2' {{ teamConfigArr.ts_override != '1' ? 'hidden' : '' }} id='overrideTimestampContent'>
-      {% include('ts-config.html') %}
+      {% include 'ts-config.html' %}
     </div>
   </div>
 </div>

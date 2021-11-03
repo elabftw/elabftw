@@ -1,7 +1,7 @@
 <div class='box' style='min-height: 600px;'>
   <h3>{{ 'Experiments Templates'|trans }}</h3>
   <hr>
-  {% include('show-templates-select.html') %}
+  {% include 'show-templates-select.html' %}
 
   {% if templateData %}
     <div class='row mt-3'>
@@ -31,6 +31,6 @@
       </div>
     </div>
 
-    {% include('templates-view.html') %}
+    {% include 'templates-view.html' %}
   {% endif %}
 </div>

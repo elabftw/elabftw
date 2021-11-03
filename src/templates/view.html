@@ -28,10 +28,10 @@
 
 {% embed 'view-edit.html' %}
   {% block createnew %}
-    {% include('create-new.html') %}
+    {% include 'create-new.html' %}
   {% endblock %}
   {% block createmodal %}
-    {% include('show-view-edit.html') %}
+    {% include 'show-view-edit.html' %}
   {% endblock %}
 {% endembed %}
 
@@ -204,7 +204,7 @@
 
   <div id='metadataDiv' class='col-md-6'></div>
 
-  {% include('steps-links-view.html') %}
+  {% include 'steps-links-view.html' %}
 
   <div class='row'>
     <div class='col-6'>
@@ -220,11 +220,11 @@
 </section>
 
 
-{{ include('uploads.html') }}
+{% include 'uploads.html' %}
 
 <!-- only show the json editor if there is at least one file with a .json extension -->
 {% if uploadsArr|filter(u => u.real_name|getExt == 'json') %}
-  {{ include('json-editor.html') }}
+  {% include 'json-editor.html' %}
 {% endif %}
 
 {% if App.Session.get('is_auth') and not App.Session.has('is_anon') %}

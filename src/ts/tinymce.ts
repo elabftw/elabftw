@@ -122,8 +122,7 @@ export function getTinymceBaseConfig(page: string): object {
   const entity = getEntity();
 
   return {
-    mode: 'specific_textareas',
-    editor_selector: 'mceditable', // eslint-disable-line @typescript-eslint/camelcase
+    selector: 'mceditable',
     browser_spellcheck: true, // eslint-disable-line @typescript-eslint/camelcase
     skin_url: 'app/css/tinymce', // eslint-disable-line @typescript-eslint/camelcase
     plugins: plugins,

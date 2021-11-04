@@ -188,7 +188,7 @@
       </div>
 
       <div class='col-auto mt-4'>
-        <button class='button btn btn-primary' id='statusCreate'>{{ 'Save'|trans }}</button>
+        <button class='button btn btn-primary' data-action='create-status'>{{ 'Save'|trans }}</button>
       </div>
     </div>
   </div>
@@ -221,7 +221,7 @@
             </li>
 
             <li class='list-inline-item'>
-              <button data-statusid='{{ status.category_id }}' class='button btn btn-primary statusSave'>{{ 'Save'|trans }}</button>
+              <button data-statusid='{{ status.category_id }}' class='button btn btn-primary' data-action='update-status'>{{ 'Save'|trans }}</button>
             </li>
 
             <li class='list-inline-item'>

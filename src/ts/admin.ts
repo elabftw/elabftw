@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // STATUS
   const StatusC = new Status();
 
-  document.getElementById('statusCreate').addEventListener('click', () => {
+  document.querySelector('[data-action="create-status"]').addEventListener('click', () => {
     const content = (document.getElementById('statusName') as HTMLInputElement).value;
     const color = (document.getElementById('statusColor') as HTMLInputElement).value;
     const isTimestampable = (document.getElementById('statusTimestamp') as HTMLInputElement).checked;
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  document.querySelectorAll('.statusSave').forEach(el => {
+  document.querySelectorAll('[data-action="update-status"]').forEach(el => {
     el.addEventListener('click', ev => {
       const statusId = parseInt((ev.target as HTMLElement).dataset.statusid);
       const content = (document.getElementById('statusName_' + statusId) as HTMLInputElement).value;

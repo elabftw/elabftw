@@ -12,6 +12,7 @@ namespace Elabftw\Commands;
 
 use Defuse\Crypto\Key;
 use function dirname;
+use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Services\DatabaseInstaller;
 use function is_writable;
@@ -19,6 +20,7 @@ use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem as Fs;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
@@ -40,7 +42,8 @@ class Install extends Command
 
             // the full command description shown when running the command with
             // the "--help" option
-            ->setHelp('Ask information to connect to the MySQL database, create the config file and load the database structure.');
+            ->setHelp('Ask information to connect to the MySQL database, create the config file and load the database structure.')
+            ->addOption('reset', 'r', InputOption::VALUE_NONE, 'Delete and recreate the database before installing the structure.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -144,6 +147,13 @@ class Install extends Command
 
         $output->writeln('<info>=> Initializing MySQL database...</info>');
         require_once dirname(__DIR__, 2) . '/config.php';
+        if ($input->getOption('reset')) {
+            $output->writeln('<info>=> Resetting MySQL database...</info>');
+            $Db = Db::getConnection();
+            $Db->q('DROP DATABASE ' . DB_NAME);
+            $Db->q('CREATE DATABASE ' . DB_NAME);
+            $Db->q('USE ' . DB_NAME);
+        }
         $Installer = new DatabaseInstaller(new Sql(new Fs(new Local(dirname(__DIR__) . '/sql'))));
         $Installer->install();
         $output->writeln('<info>✓ Installation successful! You can now start using your eLabFTW instance.</info>');

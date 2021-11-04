@@ -13,7 +13,6 @@ set -eu
 
 # make sure we tear down everything when script ends
 cleanup() {
-    docker compose -f tests/docker-compose.yml down
     sudo cp -v config.php.dev config.php
     sudo chown 101:101 config.php
 }
@@ -23,13 +22,15 @@ trap cleanup EXIT
 sudo cp -v config.php config.php.dev
 sudo cp -v tests/config-home.php config.php
 sudo chmod +r config.php
-# launch a fresh environment
-docker compose -f tests/docker-compose.yml up -d
-# give some time for the mysql process to start
-echo "Waiting for MySQL to start..."
-sleep 25
+# launch a fresh environment if needed
+if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
+    docker compose -f tests/docker-compose.yml up -d
+    # give some time for the mysql process to start
+    echo "Waiting for MySQL to start..."
+    sleep 25
+fi
 # install the database
-docker exec -it elabtmp bin/install start
+docker exec -it elabtmp bin/install start -r
 # populate the database
 docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
 # run tests

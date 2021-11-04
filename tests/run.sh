@@ -38,7 +38,7 @@ docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
 # this is because for some weird reason, when xdebug is enabled, there is an ssl verification error
 # during the acceptance/api tests
 if [ "${1:-}" != "unit" ]; then
-    docker exec -it elabtmp php vendor/bin/codecept run --skip unit
+    docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip acceptance
 fi
 # now install xdebug in the container so we can do code coverage
 docker exec -it elabtmp bash -c "apk add --update php8-pecl-xdebug && echo 'zend_extension=xdebug.so' >> /etc/php8/php.ini && echo 'xdebug.mode=coverage' >> /etc/php8/php.ini"

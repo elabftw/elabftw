@@ -18,10 +18,10 @@
     </a>
   {% endblock %}
   {% block createnew %}
-    {% include('create-new.html') %}
+    {% include 'create-new.html' %}
   {% endblock %}
   {% block createmodal %}
-    {% include('show-view-edit.html') %}
+    {% include 'show-view-edit.html' %}
   {% endblock %}
 {% endembed %}
 
@@ -202,7 +202,7 @@
 
   <div id='metadataDiv' class='col-md-6'></div>
 
-  {% include('steps-links-edit.html') %}
+  {% include 'steps-links-edit.html' %}
 </section>
 
 <!-- UPLOAD FORM -->
@@ -211,10 +211,10 @@
   <form action='app/controllers/EntityAjaxController.php' class='dropzone' id='elabftw-dropzone'></form>
 </section>
 
-{{ include('uploads.html') }}
+{% include 'uploads.html' %}
 
 {% if Entity.Users.userData.json_editor %}
-  {{ include('json-editor.html') }}
+  {% include 'json-editor.html' %}
 {% endif %}
 
 <!-- DOODLE -->

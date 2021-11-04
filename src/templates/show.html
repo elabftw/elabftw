@@ -3,9 +3,9 @@
 {% block body %}
 
   {% if not searchPage %}
-    {% include('show-view-edit.html') %}
+    {% include 'show-view-edit.html' %}
   {% endif %}
-  {% include('filter-order-sort.html') %}
+  {% include 'filter-order-sort.html' %}
 
   <hr>
 
@@ -26,7 +26,7 @@
         <div id='pinned-entities' class='row display-flex'>
           {% set isPinned = true %}
           {% for item in pinnedArr|slice(0, DisplayParams.limit) %}
-            {% include('show-item.html') %}
+            {% include 'show-item.html' %}
           {% endfor %}
           {% set isPinned = false %}
         </div>
@@ -87,7 +87,7 @@
       {% if App.Users.userData.display_mode == 'it' %}
         <div class='row display-flex' id='itemList'>
         {% for item in itemsArr|slice(0, DisplayParams.limit) %}
-          {% include('show-item.html') %}
+          {% include 'show-item.html' %}
         {% endfor %}
         </div>
       {% elseif App.Users.userData.display_mode == 'tb' %}
@@ -120,7 +120,7 @@
             </th>
           </tr>
         {% for item in itemsArr|slice(0, DisplayParams.limit) %}
-          {% include('show-item-table.html') %}
+          {% include 'show-item-table.html' %}
         {% endfor %}
         </table>
       </div> <!-- end itemList -->

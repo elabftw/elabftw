@@ -59,21 +59,16 @@ const doneTypingInterval = 7000;  // time in ms between end of typing and save
 export function quickSave(): void {
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
-  EntityC.update(entity.id, Target.Body, tinymce.activeEditor.getContent()).then(() => {
-    // detect if the session timedout
-    // TODO
-    /*
-    if (xhr.getResponseHeader('X-Elab-Need-Auth') === '1') {
-      // store the modifications in local storage to prevent any data loss
-      localStorage.setItem('body', tinymce.activeEditor.getContent());
-      localStorage.setItem('id', id);
-      localStorage.setItem('type', type);
-      localStorage.setItem('date', new Date().toLocaleString());
-      // reload the page so user gets redirected to the login page
-      location.reload();
-      return;
-    }
-    */
+  EntityC.update(entity.id, Target.Body, tinymce.activeEditor.getContent()).catch(() => {
+    // detect if the session timedout (Session expired error is thrown)
+    // store the modifications in local storage to prevent any data loss
+    localStorage.setItem('body', tinymce.activeEditor.getContent());
+    localStorage.setItem('id', String(entity.id));
+    localStorage.setItem('type', entity.type);
+    localStorage.setItem('date', new Date().toLocaleString());
+    // reload the page so user gets redirected to the login page
+    location.reload();
+    return;
   });
 }
 
@@ -122,7 +117,7 @@ export function getTinymceBaseConfig(page: string): object {
   const entity = getEntity();
 
   return {
-    selector: 'mceditable',
+    selector: '.mceditable',
     browser_spellcheck: true, // eslint-disable-line @typescript-eslint/camelcase
     skin_url: 'app/css/tinymce', // eslint-disable-line @typescript-eslint/camelcase
     plugins: plugins,

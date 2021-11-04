@@ -235,9 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
       AjaxC.send(payload).then(json => {
         notif(json);
       });
-    // UPDATE ITEMS TYPES
-    } else if (el.matches('[data-action="itemstypes-update"]')) {
-      itemsTypesUpdate(parseInt(el.dataset.id, 10));
     // CREATE ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-create"]')) {
       const title = prompt(i18next.t('template-title'));
@@ -247,6 +244,15 @@ document.addEventListener('DOMContentLoaded', () => {
           window.location.replace(`admin.php?tab=5&templateid=${json.value}`);
         });
       }
+    // UPDATE ITEMS TYPES
+    } else if (el.matches('[data-action="itemstypes-update"]')) {
+      itemsTypesUpdate(parseInt(el.dataset.id, 10));
+    // DESTROY ITEMS TYPES
+    } else if (el.matches('[data-action="itemstypes-destroy"]')) {
+      ItemTypeC.destroy(parseInt(el.dataset.id, 10)).then(json => {
+        notif(json);
+        window.location.href = '?tab=5';
+      });
     } else if (el.matches('[data-action="export"]')) {
       const source = (document.getElementById('categoryExport') as HTMLSelectElement).value;
       const format = (document.getElementById('categoryExportFormat') as HTMLSelectElement).value;

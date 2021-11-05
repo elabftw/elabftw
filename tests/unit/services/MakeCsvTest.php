@@ -40,4 +40,9 @@ class MakeCsvTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertIsString($this->MakeDb->getFileContent());
     }
+
+    public function testGetContentType(): void
+    {
+        $this->assertEquals('text/csv; charset=UTF-8', $this->MakeDb->getContentType());
+    }
 }

@@ -135,7 +135,7 @@ export function display3DMolecules(autoload = false): void {
 }
 
 // insert a get param in the url and reload the page
-export function insertParamAndReload(key: string, value: any): void {
+export function insertParamAndReload(key: string, value: string): void {
   const params = new URLSearchParams(document.location.search.slice(1));
   params.set(key, value);
   // reload the page

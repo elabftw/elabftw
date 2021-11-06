@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       // for database items, show a selection modal
       // modal plugin requires jquery
-      ($('#createModal') as any).modal('toggle');
+      ($('#createModal') as JQuery).modal('toggle');
     }
   });
 

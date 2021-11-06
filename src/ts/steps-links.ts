@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // AUTOCOMPLETE
-  let cache: any = {};
+  let cache = {};
   // this is the select category filter on add link input
   const catFilterEl = (document.getElementById('addLinkCatFilter') as HTMLInputElement);
   if (catFilterEl) {
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
       cache = {};
     });
     $('.linkinput').autocomplete({
-      source: function(request: any, response: any) {
+      source: function(request: Record<string, string>, response: (data) => void): void {
         const term = request.term;
         if (term in cache) {
           response(cache[term]);

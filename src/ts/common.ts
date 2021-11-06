@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         (document.getElementById('privacyModalBody') as HTMLDivElement).innerHTML = policy;
         // modal plugin requires jquery
-        ($('#privacyModal') as any).modal('toggle');
+        ($('#privacyModal') as JQuery).modal('toggle');
       });
 
     // SCROLL TO TOP
@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         // for database items, show a selection modal
         // modal plugin requires jquery
-        ($('#createModal') as any).modal('toggle');
+        ($('#createModal') as JQuery).modal('toggle');
       }
     } else if (el.matches('[data-action="create-item"]')) {
       const tplid = el.dataset.tplid;

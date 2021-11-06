@@ -32,7 +32,7 @@ export class Metadata {
   /**
    * Get the json from the metadata column
    */
-  read(): Promise<Record<string, any>> {
+  read(): Promise<Record<string, unknown>> {
     const payload: Payload = {
       method: Method.GET,
       action: Action.Read,

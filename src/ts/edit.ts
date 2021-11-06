@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       let listHtml = '<ul class="text-left">';
-      mols.forEach(function(mol: any, index: any) {
+      mols.forEach(function(mol: [string, string], index: number) {
         listHtml += '<li style="color:#29aeb9" class="clickable loadableMolLink" data-target="app/download.php?f=' + mols[index][1] + '">' + mols[index][0] + '</li>';
       });
       $('.getMolButton').text('Refresh list');

@@ -45,7 +45,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
           notif(json);
         });
       };
-    };
+    }
 
     async function parseFile(fileContent): Promise<void> {
       const parsedData = await anyToJson(fileContent, {
@@ -85,7 +85,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         const featureMap = {};
 
         for (const prop in openVESequence.features) {
-          if (!openVESequence.features.hasOwnProperty(prop))
+          if (!Object.prototype.hasOwnProperty.call(openVESequence.features, prop))
             continue;
 
           const feature = openVESequence.features[prop];
@@ -111,7 +111,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
           }
         }
         for (const property in featureMap) {
-          if (!featureMap.hasOwnProperty(property))
+          if (!Object.prototype.hasOwnProperty.call(featureMap, property))
             continue;
           data.sequenceData.features.push(featureMap[property]);
         }

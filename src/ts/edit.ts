@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tinyConfig = getTinymceBaseConfig('edit');
 
     const tinyConfigForEdit = {
-      images_upload_handler: (blobInfo, success): void => { // eslint-disable-line @typescript-eslint/camelcase
+      images_upload_handler: (blobInfo, success): void => {
         const dropZone = Dropzone.forElement('#elabftw-dropzone');
         // Edgecase for editing an image using tinymce ImageTools
         // Check if it was selected. This is set by an event hook below
@@ -378,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
         (new Ajax()).send(payload).then(json => callback(json.value));
       },
       // use a custom function for the save button in toolbar
-      save_onsavecallback: (): void => quickSave(), // eslint-disable-line @typescript-eslint/camelcase
+      save_onsavecallback: (): void => quickSave(),
     };
 
     tinymce.init(Object.assign(tinyConfig, tinyConfigForEdit));

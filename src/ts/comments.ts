@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // MAKE comments editable on mousehover
+  // MAKE comments editable on mousehover
   $(document).on('mouseenter', '.comment-editable', function() {
     ($(this) as any).editable(function(input: string) {
       CommentC.update(input, $(this).data('commentid'));

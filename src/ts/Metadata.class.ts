@@ -32,7 +32,7 @@ export class Metadata {
   /**
    * Get the json from the metadata column
    */
-  read(): Promise<Record<string, any>> {
+  read(): Promise<Record<string, unknown>> {
     const payload: Payload = {
       method: Method.GET,
       action: Action.Read,
@@ -196,14 +196,14 @@ export class Metadata {
     // add the unique id to the element
     element.id = uniqid;
 
-    if (description.hasOwnProperty('value')) {
+    if (Object.prototype.hasOwnProperty.call(description, 'value')) {
       if (element.type === 'checkbox') {
         element.checked = description.value === 'on' ? true : false;
       }
       element.value = description.value;
     }
 
-    if (description.hasOwnProperty('required')) {
+    if (Object.prototype.hasOwnProperty.call(description, 'required')) {
       element.required = true;
     }
 
@@ -264,7 +264,7 @@ export class Metadata {
   view(): Promise<void> {
     return this.read().then(json => {
       // do nothing more if there is no extra_fields in our json
-      if (!json.hasOwnProperty('extra_fields')) {
+      if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
         return;
       }
       this.metadataDiv.append(this.getHeaderDiv());
@@ -289,7 +289,7 @@ export class Metadata {
   edit(): Promise<void> {
     return this.read().then(json => {
       // do nothing more if there is no extra_fields in our json
-      if (!json.hasOwnProperty('extra_fields')) {
+      if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
         return;
       }
       this.metadataDiv.append(this.getHeaderDiv());

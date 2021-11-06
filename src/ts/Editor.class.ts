@@ -7,7 +7,7 @@
  */
 import { insertParamAndReload } from './misc';
 import tinymce from 'tinymce/tinymce';
-import marked from 'marked';
+import { marked } from 'marked';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 

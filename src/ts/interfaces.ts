@@ -124,7 +124,7 @@ interface Payload {
   content?: string;
   target?: Target;
   id?: number;
-  extraParams?: {};
+  extraParams?: Record<string, unknown>;
 }
 
 export {

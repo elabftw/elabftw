@@ -46,7 +46,6 @@ i18next.init({
     'zh_CN',
   ],
   fallbackLng: 'en_GB',
-  /* eslint-disable @typescript-eslint/camelcase */
   resources: {
     ca_ES: caES,
     de_DE: deDE,

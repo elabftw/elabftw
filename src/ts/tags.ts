@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function addAutocompleteToTagInputs(): void {
     ($('[data-autocomplete="tags"]') as JQuery<HTMLInputElement>).autocomplete({
-      source: function(request: any, response: any) {
+      source: function(request: Record<string, string>, response: (data) => void): void {
         const term  = request.term;
         if (term in cache) {
           response(cache[term]);

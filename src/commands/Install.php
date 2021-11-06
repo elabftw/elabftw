@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
+use const DB_NAME;
 use Defuse\Crypto\Key;
 use function dirname;
 use Elabftw\Elabftw\Db;

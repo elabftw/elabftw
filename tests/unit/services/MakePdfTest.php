@@ -31,4 +31,9 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertIsString($this->MakePdf->getFileContent());
     }
+
+    public function testGetContentType(): void
+    {
+        $this->assertEquals('application/pdf', $this->MakePdf->getContentType());
+    }
 }

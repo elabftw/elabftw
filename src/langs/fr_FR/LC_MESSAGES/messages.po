@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-30 17:10+0200\n"
+"POT-Creation-Date: 2021-11-06 00:59+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi <spam@yopmail.com>\n"
 "Language-Team: \n"
@@ -22,8 +22,9 @@ msgid "Validate"
 msgstr "Valider"
 
 #: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:95
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:311
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:369
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:319
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:377
+#: cache/twig/fc/fc21d45e19c5aa8ab23745918d6d666555dec604163e838fd7d8228e8d9d4870.php:107
 #: cache/twig/03/035cf9be9108fb6380fe7f5356efbc074d222bff3fc2db1ea6823a5f18cbcb18.php:519
 #: cache/twig/ea/eaa002bd5913a011b98ab13930a5393d2c104bd71a7667f586638a2000e1612b.php:111
 #: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:181
@@ -37,7 +38,7 @@ msgid "Groups"
 msgstr "Groupes"
 
 #: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:103
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:97
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:109
 msgid "Users"
 msgstr "Utilisateurs"
 
@@ -58,387 +59,323 @@ msgid "Import"
 msgstr "Import"
 
 #: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:119
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1185
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:242
+#: web/make.php:27
+msgid "Export"
+msgstr "Export"
+
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:123
 msgid "Tag manager"
 msgstr "Gestionnaire de tag"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:133
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:127
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:287
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:113
+#: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:83
+msgid "Timestamp"
+msgstr "Horodatage"
+
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:141
 msgid "Configure your Team"
 msgstr "Configurez votre équipe"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:144
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:152
 msgid "Users can delete experiments:"
 msgstr "Les utilisateurs peuvent supprimer leurs expériences :"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:151
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:174
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:197
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:220
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:239
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:276
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:334
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:159
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:182
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:205
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:228
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:247
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:284
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:342
 #: cache/twig/03/035cf9be9108fb6380fe7f5356efbc074d222bff3fc2db1ea6823a5f18cbcb18.php:370
 #: cache/twig/03/035cf9be9108fb6380fe7f5356efbc074d222bff3fc2db1ea6823a5f18cbcb18.php:397
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:305
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:372
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:395
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:448
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:467
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:486
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:682
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:778
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:873
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1710
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1794
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2111
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:729
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:317
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:384
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:407
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:460
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:479
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:498
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:694
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:782
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:824
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1659
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1743
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2060
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:731
 msgid "Yes"
 msgstr "Oui"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:157
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:180
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:203
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:226
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:245
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:282
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:340
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:165
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:188
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:211
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:234
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:253
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:290
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:348
 #: cache/twig/03/035cf9be9108fb6380fe7f5356efbc074d222bff3fc2db1ea6823a5f18cbcb18.php:376
 #: cache/twig/03/035cf9be9108fb6380fe7f5356efbc074d222bff3fc2db1ea6823a5f18cbcb18.php:403
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:311
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:378
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:401
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:454
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:473
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:492
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:688
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:784
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:879
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1716
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1798
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2117
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:735
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:323
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:390
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:413
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:466
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:485
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:504
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:700
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:788
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:830
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1665
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1747
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2066
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:737
 msgid "No"
 msgstr "Non"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:162
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:170
 msgid "An admin account will always be able to delete experiments."
 msgstr "Un compte administrateur pourra toujours supprimer des expériences."
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:167
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:175
 msgid "Users can delete items:"
 msgstr "Les utilisateurs peuvent supprimer les entrées de la base de données :"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:185
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:193
 msgid "An admin account will always be able to delete items."
 msgstr "Un compte administrateur pourra toujours supprimer des entrées."
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:190
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:198
 msgid "Users can create tags:"
 msgstr "Les utilisateurs peuvent créer des tags :"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:208
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:216
 msgid "An admin account will always be able to create tags."
 msgstr "Un compte administrateur pourra toujours créer des tags."
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:213
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:221
 msgid "Force experiment template use:"
 msgstr "Forcer la création d'expériences à partir de modèles :"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:232
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:240
 msgid "Anonymous visitors can see database items:"
 msgstr "Les visiteurs anonymes peuvent voir les objets de la base de données :"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:251
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:259
 msgid "Name of the link in the top menu:"
 msgstr "Nom du lien dans le menu du haut :"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:260
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:268
 msgid "Address where this link should point:"
 msgstr "Adresse vers laquelle ce lien pointe :"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:269
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:277
 msgid "Enforce read permissions?"
 msgstr "Imposer permissions de lecture ?"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:287
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:295
 msgid "Select if you want to enforce read permissions on experiments"
 msgstr ""
 "Sélectionner pour imposer les permissions de lecture sur les expériences"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:292
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:300
 msgid "Enforced read permissions on experiments"
 msgstr "Permission de lecture imposée sur les expériences"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:299
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:357
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:307
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:365
 #: src/services/Transform.php:31 src/models/TeamGroups.php:101
 msgid "Public"
 msgstr "Publique"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:305
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:363
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:313
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:371
 #: src/services/Transform.php:32
 msgid "Organization"
 msgstr "Organisme"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:317
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:375
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:325
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:383
+#: cache/twig/fc/fc21d45e19c5aa8ab23745918d6d666555dec604163e838fd7d8228e8d9d4870.php:94
 #: cache/twig/c7/c718ae08e5dbd84583c9dd65d39486e892c4f8a1d0ca5bc3f8c83ece723d7169.php:160
 msgid "User"
 msgstr "Utilisateur"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:322
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:330
 msgid "Enforce the read permission for all experiments of users in this team."
 msgstr ""
 "Imposer les permissions d'écriture pour toutes les expériences des "
 "utilisateurs de cette équipe."
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:327
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:335
 msgid "Enforce write permissions?"
 msgstr "Imposer permissions d'écriture ?"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:345
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:353
 msgid "Select if you want to enforce write permissions on experiments"
 msgstr ""
 "Sélectionner pour imposer les permissions d'écriture sur les expériences"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:350
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:358
 msgid "Enforced write permissions on experiments"
 msgstr "Permission d'écriture imposée sur les expériences"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:380
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:388
 msgid "Enforce the write permission for all experiments of users in this team."
 msgstr ""
 "Imposer les permissions d'écriture sur toutes les expériences des "
 "utilisateurs de cette équipe."
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:385
-msgid "Override general timestamping config"
-msgstr "Outrepasser les préférences générales d'horodatage"
-
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:390
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:794
-msgid "URL for external timestamping service:"
-msgstr "URL pour le service de timestamping :"
-
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:398
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:802
-#, php-format
-msgid ""
-"This should be the URL used for %sRFC 3161%s-compliant timestamping requests."
-msgstr "URL utilisée pour les requêtes %sRFC 3161%s."
-
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:404
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:807
-msgid "Chain of certificates of the external timestamping service:"
-msgstr "Certificat pour le service externe de timestamping :"
-
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:412
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:815
-#, php-format
-msgid ""
-"This should point to the chain of certificates used by your external "
-"timestamping provider to sign the timestamps.%sLocal path relative to "
-"eLabFTW installation directory. You should add it in the 'uploads' folder. "
-"The file needs to be in %sPEM-encoded (ASCII)%s format!"
-msgstr ""
-"Endroit où est stocké le certificat utilisé par le service d'horodatage."
-"%sChemin relatif au dossier racine d'eLabFTW. Le fichier doit être dans le "
-"format %sPEM-encoded (ASCII)%s!"
-
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:416
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:820
-msgid "Login for external timestamping service:"
-msgstr "Identifiant pour le service externe d'horodatage :"
-
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:424
-msgid ""
-"This should be the login associated with your timestamping service provider"
-msgstr "Votre login pour le service d'horodatage"
-
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:429
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:828
-msgid "Password for external timestamping service:"
-msgstr "Mot de passe pour le service externe d'horodatage :"
-
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:436
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1113
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2084
-msgid "A password is already set."
-msgstr "Un mot de passe existe déjà."
-
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:440
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1117
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2088
-#, php-format
-msgid "%sClear it%s or change it below:"
-msgstr "%sEffacer%s ou modifier ci-dessous :"
-
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:451
-msgid "Your timestamping service provider password"
-msgstr "Votre mot de passe pour le service d'horodatage"
-
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:458
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:394
 msgid "Common Experiment Template"
 msgstr "Modèle d'expérience commun"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:468
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:404
 msgid "This is the default text when someone creates an experiment."
 msgstr "Ceci est le texte par défaut affiché lorsqu'une expérience est créée."
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:483
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:419
 msgid "Manage Groups of Users"
 msgstr "Gérez des groupes d'utilisateurs"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:490
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:426
 msgid "Create a group"
 msgstr "Créer un groupe"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:495
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:431
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:682
 #: cache/twig/72/72e0ad64593f60b73e85afbe4e1fee557b163302797598d1095f6ca6e29c2aca.php:71
 #: cache/twig/0d/0da566e2e5827507015192dabf8a293415917d836f23e63bd4fa52d7703d103e.php:136
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:372
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:374
 msgid "Create"
 msgstr "Créer"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:504
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:440
 msgid "Existing groups"
 msgstr "Groupes existants"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:517
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:538
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:712
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1018
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1305
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:453
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:474
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:648
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:856
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1218
 #: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:294
 #: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:296
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:285
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:645
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1546
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:938
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:293
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:657
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1495
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:940
 #: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:154
 #: cache/twig/5d/5dc2ab18999c1c5ac2ef66f2b3183aef57a5250520998ce685376e8aa8efb778.php:192
 #: cache/twig/5d/5dc2ab18999c1c5ac2ef66f2b3183aef57a5250520998ce685376e8aa8efb778.php:194
 #: cache/twig/5d/5dc2ab18999c1c5ac2ef66f2b3183aef57a5250520998ce685376e8aa8efb778.php:201
 #: cache/twig/84/84f97e0ca68a3d70b2fe50ff47f5d8d1c24bb30196071aa1ee8816c105273ed9.php:218
-#: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:619
+#: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:617
 msgid "Delete"
 msgstr "Supprimer"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:549
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:553
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:485
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:489
 msgid "Add user"
 msgstr "Ajouter cet utilisateur"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:580
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:516
 msgid "Add a New Status"
 msgstr "Ajouter un nouveau statut"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:587
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:644
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:744
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:874
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1750
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:851
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:883
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:523
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:580
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:732
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1699
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:853
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:885
 #: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:287
 msgid "Name"
 msgstr "Nom"
 
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:531
 #: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:595
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:659
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:752
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:889
-#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:575
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:743
+#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:573
 msgid "Color"
 msgstr "Couleur"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:605
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:679
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:541
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:615
 msgid "Allow timestamp"
 msgstr "Autoriser l'horodatage"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:613
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:703
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:845
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1010
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:549
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:639
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:850
 #: cache/twig/03/035cf9be9108fb6380fe7f5356efbc074d222bff3fc2db1ea6823a5f18cbcb18.php:412
-#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:65
+#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:69
 #: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:509
-#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:598
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:186
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:218
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:503
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:575
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:702
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:843
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:934
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1135
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1521
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1722
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1805
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1847
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1986
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2198
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:655
+#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:596
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:198
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:230
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:515
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:587
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:714
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:885
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1086
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1470
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1671
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1754
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1796
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1935
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2147
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:657
 #: cache/twig/f5/f5d81b13d277df06e80c3e2dec9dacda552c41aa7fbac5a6916ca13b6ff456e7.php:183
-#: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:654
+#: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:652
 msgid "Save"
 msgstr "Enregistrer"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:622
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:558
 msgid "Edit an Existing Status"
 msgstr "Éditer un statut existant"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:694
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:630
 msgid "Default status"
 msgstr "Statut par défaut"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:737
-msgid "Add a new type of item"
-msgstr "Ajouter une nouvelle catégorie d'items"
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:675
+msgid "Database Items Types"
+msgstr "Catégories d'items de la base de données"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:762
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:909
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:716
+#: cache/twig/c7/c718ae08e5dbd84583c9dd65d39486e892c4f8a1d0ca5bc3f8c83ece723d7169.php:262
+#: cache/twig/5d/5d223dd4fe6e3b9fe4ece8a7d34c4a762cd37204e913cbac5944e118c769cff4.php:68
+msgid "Go"
+msgstr "Aller"
+
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:758
 msgid "Bookable"
 msgstr "Réservable"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:764
-#, php-format
-msgid "in the %sscheduler%s"
-msgstr "dans le %splanificateur%s"
-
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:778
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:933
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:765
 #: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:90
 #: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:93
 #: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:407
 msgid "Visibility"
 msgstr "Visibilité"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:812
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:972
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:797
 #: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:121
 #: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:121
 msgid "Can write"
 msgstr "Peut modifier"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:854
-msgid "Database Items Types"
-msgstr "Catégories d'items de la base de données"
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:869
+msgid "Sort items types"
+msgstr "Ordonner les types d'items"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:917
-msgid "Edit the template"
-msgstr "Éditer le modèle"
-
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:925
-msgid "Edit metadata"
-msgstr "Éditer les métadonnées"
-
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1058
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:902
 msgid "Import a CSV File"
 msgstr "Importer un fichier CSV"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1064
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:908
 msgid ""
 "Import a .csv (Excel spreadsheet) file into the database. First you need to "
 "open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv. "
@@ -451,48 +388,48 @@ msgstr ""
 "import de 3 lignes pour voir si tout fonctionne correctement avant "
 "d'importer un gros fichier."
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1071
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:915
 msgid "1. Select a type of item to import to:"
 msgstr "1. Choisissez une catégorie d'item dans laquelle importer :"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1096
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1229
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:940
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1073
 msgid "2. Select a visibility:"
 msgstr "2. Sélectionner la visibilité :"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1126
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:970
 msgid "3. Select a delimiter:"
 msgstr "3. Sélectionner un délimiteur :"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1131
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:975
 msgid "semicolon"
 msgstr "point-virgule"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1135
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:979
 msgid "comma"
 msgstr "virgule"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1139
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:983
 msgid "Tab"
 msgstr "Tab"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1149
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:993
 msgid "4. Select a CSV file to import:"
 msgstr "4. Sélectionner un fichier CSV à importer :"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1156
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1000
 msgid "Import CSV"
 msgstr "Importer un CSV"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1165
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1009
 msgid "Import a ZIP File"
 msgstr "Importer un fichier ZIP"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1171
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1015
 msgid "Import a .elabftw.zip archive."
 msgstr "Cette page permet l'import d'archive .elabftw.zip."
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1173
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1017
 msgid ""
 "You should make a backup of your database before importing thousands of "
 "items!"
@@ -500,31 +437,68 @@ msgstr ""
 "Faîtes une sauvegarde de votre base de données (SQL) avant d'importer des "
 "milliers d'items !"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1180
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1024
 msgid "1. Select where to import:"
 msgstr "1. Choisissez où importer :"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1186
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1030
 msgid "Import in database"
 msgstr "Importer dans la base de données"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1206
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1050
 msgid "Import in experiments"
 msgstr "Importer dans les expériences"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1263
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1107
 msgid "3. Select a ZIP file to import:"
 msgstr "3. Sélectionner un fichier ZIP à importer :"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1271
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1115
 msgid "Import ZIP"
 msgstr "Importer un ZIP"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1284
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1128
+msgid "Export database items"
+msgstr "Exporter des entrées de la base de données"
+
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1133
+msgid "Select what to export:"
+msgstr "Choisissez quoi exporter :"
+
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1156
+msgid "Select export format:"
+msgstr "Sélectionner le format d'export"
+
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1161
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:246
+msgid "Make Zip"
+msgstr "Faire un Zip"
+
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1165
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:250
+msgid "Make Csv"
+msgstr "Faire un Csv"
+
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1169
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:254
+msgid "Make PDF"
+msgstr "Faire un PDF"
+
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1173
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:258
+msgid "Make QR codes PDF"
+msgstr "Faire un PDF de QR codes"
+
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1177
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:262
+msgid "Make JSON"
+msgstr "Faire JSON"
+
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1196
 msgid "Manage tags of the team"
 msgstr "Gestion des tags de l'équipe"
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1288
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1201
 msgid ""
 "From here you can edit or delete the tags for your team. Click the tag to "
 "edit it. Then click the deduplicate button to merge similar tags."
@@ -533,9 +507,145 @@ msgstr ""
 "tag pour l'éditer. Puis cliquez sur le bouton de déduplication pour "
 "fusionner les tags similaires."
 
-#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1292
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1205
 msgid "Deduplicate"
 msgstr "Dédupliquer"
+
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1239
+msgid "Configure timestamping"
+msgstr "Configurez l'horodatage"
+
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1244
+#, php-format
+msgid "The general timestamping configuration is set to %s."
+msgstr "La configuration d'horodatage de l'instance est %s."
+
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1251
+msgid "You can use the general configuration or setup another below."
+msgstr ""
+"Vous pouvez utiliser la configuration du système ou l'ajuster ci-dessous"
+
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1257
+msgid ""
+"Timestamping service credentials sharing is disabled. You need to enter your "
+"own credentials."
+msgstr ""
+"Le partage des identifiants pour le service d'horodatage est désactivé. Vous "
+"devez entrer vos propres identifiants."
+
+#: cache/twig/f1/f109fd6c01294897b7d6bdc26887323d2dcc10c77447d98a0aca30dcafed91a4.php:1271
+msgid "Override general timestamping config"
+msgstr "Outrepasser les préférences générales d'horodatage"
+
+#: cache/twig/fc/fc21d45e19c5aa8ab23745918d6d666555dec604163e838fd7d8228e8d9d4870.php:40
+#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:84
+#: cache/twig/ea/eaa002bd5913a011b98ab13930a5393d2c104bd71a7667f586638a2000e1612b.php:79
+#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:153
+#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:208
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:150
+#: cache/twig/e5/e53bcb7ad7d939b769d1e51cf702f5be9742aee92ee1aa5c85796a9580fb6214.php:223
+#: cache/twig/f9/f9f545f389195d8586b138ed159b0a5ac7e765454444412349b6b0d9242bdb54.php:41
+#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:384
+msgid "Close"
+msgstr "Fermer"
+
+#: cache/twig/fc/fc21d45e19c5aa8ab23745918d6d666555dec604163e838fd7d8228e8d9d4870.php:46
+#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:245
+msgid "Todolist"
+msgstr "Todoliste"
+
+#: cache/twig/fc/fc21d45e19c5aa8ab23745918d6d666555dec604163e838fd7d8228e8d9d4870.php:50
+#: cache/twig/fc/fc21d45e19c5aa8ab23745918d6d666555dec604163e838fd7d8228e8d9d4870.php:119
+#: cache/twig/fc/fc21d45e19c5aa8ab23745918d6d666555dec604163e838fd7d8228e8d9d4870.php:133
+#: cache/twig/5d/5dc2ab18999c1c5ac2ef66f2b3183aef57a5250520998ce685376e8aa8efb778.php:53
+msgid "Toggle visibility"
+msgstr "Afficher/Masquer"
+
+#: cache/twig/fc/fc21d45e19c5aa8ab23745918d6d666555dec604163e838fd7d8228e8d9d4870.php:60
+#: cache/twig/fc/fc21d45e19c5aa8ab23745918d6d666555dec604163e838fd7d8228e8d9d4870.php:67
+#: cache/twig/fc/fc21d45e19c5aa8ab23745918d6d666555dec604163e838fd7d8228e8d9d4870.php:69
+#: cache/twig/fc/fc21d45e19c5aa8ab23745918d6d666555dec604163e838fd7d8228e8d9d4870.php:73
+msgid "Add"
+msgstr "Ajouter"
+
+#: cache/twig/fc/fc21d45e19c5aa8ab23745918d6d666555dec604163e838fd7d8228e8d9d4870.php:62
+msgid "New item"
+msgstr "Nouvel item"
+
+#: cache/twig/fc/fc21d45e19c5aa8ab23745918d6d666555dec604163e838fd7d8228e8d9d4870.php:88
+msgid "Unfinished steps"
+msgstr "Étapes non finies"
+
+#: cache/twig/fc/fc21d45e19c5aa8ab23745918d6d666555dec604163e838fd7d8228e8d9d4870.php:101
+msgid "Show items steps for team"
+msgstr "Montrer les étapes de base de données pour l'équipe"
+
+#: cache/twig/fc/fc21d45e19c5aa8ab23745918d6d666555dec604163e838fd7d8228e8d9d4870.php:114
+#: cache/twig/0d/0da566e2e5827507015192dabf8a293415917d836f23e63bd4fa52d7703d103e.php:62
+#: cache/twig/52/52c774e8c239705417a8d56b3b0f1f11471c73f50dd6f81a0f3a5fa8a2c85994.php:53
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:159
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:728
+#: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:266
+#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:161
+#: cache/twig/be/bebff3c82c76f5fba50f53a399b60d75c9437c42a429c3531e72d1d901858ecb.php:135
+#: web/experiments.php:27 src/services/ListBuilder.php:74
+msgid "Experiment"
+msgid_plural "Experiments"
+msgstr[0] "Expérience"
+msgstr[1] "Expériences"
+
+#: cache/twig/fc/fc21d45e19c5aa8ab23745918d6d666555dec604163e838fd7d8228e8d9d4870.php:128
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:165
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:736
+#: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:272
+msgid "Items"
+msgstr "Items"
+
+#: cache/twig/64/64d22754a0cbf045b4889afdf6367d389365a78ccf94eb87cf3eb5fa41dde731.php:45
+msgid "Select timestamping authority (TSA):"
+msgstr "Sélectionner l'autorité d'horodatage (TSA) :"
+
+#: cache/twig/64/64d22754a0cbf045b4889afdf6367d389365a78ccf94eb87cf3eb5fa41dde731.php:55
+msgid "DFN (free, no account required)"
+msgstr "DFN (gratuit, pas de compte requis)"
+
+#: cache/twig/64/64d22754a0cbf045b4889afdf6367d389365a78ccf94eb87cf3eb5fa41dde731.php:61
+msgid "Universign (requires account)"
+msgstr "Universign (requiert un compte)"
+
+#: cache/twig/64/64d22754a0cbf045b4889afdf6367d389365a78ccf94eb87cf3eb5fa41dde731.php:67
+msgid "Digicert (free, no account required)"
+msgstr "Digicert (gratuit, pas de compte requis)"
+
+#: cache/twig/64/64d22754a0cbf045b4889afdf6367d389365a78ccf94eb87cf3eb5fa41dde731.php:73
+msgid "Sectigo (free, no account required)"
+msgstr "Sectigo (gratuit, pas de compte requis)"
+
+#: cache/twig/64/64d22754a0cbf045b4889afdf6367d389365a78ccf94eb87cf3eb5fa41dde731.php:79
+msgid "GlobalSign (free, no account required)"
+msgstr "GlobalSign (gratuit, pas de compte requis)"
+
+#: cache/twig/64/64d22754a0cbf045b4889afdf6367d389365a78ccf94eb87cf3eb5fa41dde731.php:85
+msgid "Custom TSA"
+msgstr "Autre TSA"
+
+#: cache/twig/64/64d22754a0cbf045b4889afdf6367d389365a78ccf94eb87cf3eb5fa41dde731.php:96
+msgid "Login for external timestamping service:"
+msgstr "Identifiant pour le service externe d'horodatage :"
+
+#: cache/twig/64/64d22754a0cbf045b4889afdf6367d389365a78ccf94eb87cf3eb5fa41dde731.php:108
+msgid "Password for external timestamping service:"
+msgstr "Mot de passe pour le service externe d'horodatage :"
+
+#: cache/twig/64/64d22754a0cbf045b4889afdf6367d389365a78ccf94eb87cf3eb5fa41dde731.php:133
+msgid "URL for external timestamping service:"
+msgstr "URL pour le service de timestamping :"
+
+#: cache/twig/64/64d22754a0cbf045b4889afdf6367d389365a78ccf94eb87cf3eb5fa41dde731.php:143
+#, php-format
+msgid ""
+"This should be the URL used for %sRFC 3161%s-compliant timestamping requests."
+msgstr "URL utilisée pour les requêtes %sRFC 3161%s."
 
 #: cache/twig/b3/b30d0310b67656424a146616f8ef80a83ea4a29cc0e35ef4f2a5dc8ea6460f4d.php:70
 msgid "Go back"
@@ -554,16 +664,16 @@ msgid "Pinned"
 msgstr "Épinglé"
 
 #: cache/twig/89/897ac7c30ba377dbd8270702a71dffc91bfbfc11503bdf04f5c928cca3425652.php:126
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:350
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:360
 #: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:495
 msgid "Next step"
 msgstr "Étape suivante"
 
 #: cache/twig/89/897ac7c30ba377dbd8270702a71dffc91bfbfc11503bdf04f5c928cca3425652.php:155
 #: cache/twig/03/035cf9be9108fb6380fe7f5356efbc074d222bff3fc2db1ea6823a5f18cbcb18.php:95
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1123
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2094
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:382
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1074
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2043
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:384
 #: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:154
 #: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:158
 #: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:413
@@ -612,8 +722,8 @@ msgid "Change teams for user"
 msgstr "Changer l'équipe d'un utilisateur"
 
 #: cache/twig/03/035cf9be9108fb6380fe7f5356efbc074d222bff3fc2db1ea6823a5f18cbcb18.php:66
-#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:356
-#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:362
+#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:368
+#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:374
 #: cache/twig/ea/eaa002bd5913a011b98ab13930a5393d2c104bd71a7667f586638a2000e1612b.php:116
 msgid "Select a team"
 msgstr "Choisissez une équipe"
@@ -664,16 +774,16 @@ msgstr "ID utilisateur"
 #: cache/twig/03/035cf9be9108fb6380fe7f5356efbc074d222bff3fc2db1ea6823a5f18cbcb18.php:240
 #: cache/twig/03/035cf9be9108fb6380fe7f5356efbc074d222bff3fc2db1ea6823a5f18cbcb18.php:560
 #: cache/twig/ea/eaa002bd5913a011b98ab13930a5393d2c104bd71a7667f586638a2000e1612b.php:181
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1888
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:751
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1837
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:753
 msgid "Firstname"
 msgstr "Prénom"
 
 #: cache/twig/03/035cf9be9108fb6380fe7f5356efbc074d222bff3fc2db1ea6823a5f18cbcb18.php:256
 #: cache/twig/03/035cf9be9108fb6380fe7f5356efbc074d222bff3fc2db1ea6823a5f18cbcb18.php:569
 #: cache/twig/ea/eaa002bd5913a011b98ab13930a5393d2c104bd71a7667f586638a2000e1612b.php:190
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1897
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:762
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1846
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:764
 msgid "Lastname"
 msgstr "Nom"
 
@@ -681,9 +791,9 @@ msgstr "Nom"
 #: cache/twig/03/035cf9be9108fb6380fe7f5356efbc074d222bff3fc2db1ea6823a5f18cbcb18.php:551
 #: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:189
 #: cache/twig/ea/eaa002bd5913a011b98ab13930a5393d2c104bd71a7667f586638a2000e1612b.php:142
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:109
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1906
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:688
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:121
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1855
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:690
 #: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:65
 #: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:291
 msgid "Email"
@@ -744,35 +854,35 @@ msgstr ""
 msgid "create"
 msgstr "créer"
 
-#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:41
+#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:42
 msgid "JSON Editor"
 msgstr "Éditeur JSON"
 
-#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:49
+#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:50
 msgid "Load metadata"
 msgstr "Charger les métadonnées"
 
-#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:71
+#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:75
 msgid "Toggle JSON editor save menu"
 msgstr "Afficher/Masquer éditeur JSON"
 
-#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:77
+#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:81
 msgid "Save as file"
 msgstr "Enregistrer dans un fichier"
 
-#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:81
-#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:100
+#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:85
+#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:106
 msgid "Save as metadata"
 msgstr "Enregistrer comme métadonnées"
 
-#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:88
-#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:104
-#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:590
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:190
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:222
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:954
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:968
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1851
+#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:92
+#: cache/twig/e9/e9a13e3e7f38b2afa91515a342c7139f5059b26d1bba6e3da2dd913d55e04565.php:110
+#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:588
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:202
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:234
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:905
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:919
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1800
 msgid "Clear"
 msgstr "Effacer"
 
@@ -788,17 +898,6 @@ msgstr "Entrez votre adresse email"
 msgid "Send reset link"
 msgstr "Envoyer un lien de réinitialisation"
 
-#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:84
-#: cache/twig/ea/eaa002bd5913a011b98ab13930a5393d2c104bd71a7667f586638a2000e1612b.php:79
-#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:153
-#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:208
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:150
-#: cache/twig/e5/e53bcb7ad7d939b769d1e51cf702f5be9742aee92ee1aa5c85796a9580fb6214.php:223
-#: cache/twig/6a/6addb0d381c92c0c3532c664b9e86eb3f3512f30e9021b89de6aefc08c1aec00.php:40
-#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:377
-msgid "Close"
-msgstr "Fermer"
-
 #: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:118
 msgid ""
 "Your account is linked to several teams. Select in which team you want to "
@@ -808,9 +907,9 @@ msgstr ""
 "voulez vous connecter"
 
 #: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:142
-#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:254
-#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:329
-#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:387
+#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:266
+#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:341
+#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:399
 #: web/login.php:31
 msgid "Login"
 msgstr "Connexion"
@@ -829,37 +928,37 @@ msgstr "Connectez-vous à votre compte"
 
 #: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:197
 #: cache/twig/ea/eaa002bd5913a011b98ab13930a5393d2c104bd71a7667f586638a2000e1612b.php:164
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2071
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2020
 msgid "Password"
 msgstr "Mot de passe"
 
-#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:202
+#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:205
 msgid "Forgot password?"
 msgstr "Mot de passe oublié ?"
 
-#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:216
-#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:324
+#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:222
+#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:336
 msgid "Remember me"
 msgstr "Rester connecté"
 
-#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:233
+#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:242
 msgid "Local"
 msgstr "Local"
 
-#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:262
+#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:274
 #, php-format
 msgid "Don't have an account? %sRegister%s now!"
 msgstr "Pas de compte ? %sCréez un compte%s maintenant !"
 
-#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:280
+#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:292
 msgid "Login through your institution"
 msgstr "Se connecter avec l'institution"
 
-#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:292
+#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:304
 msgid "Select an identity provider"
 msgstr "Sélectionner un fournisseur d'identité"
 
-#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:344
+#: cache/twig/ca/caf31fea014577eb1ca17cf375c7bc228b58f03552a3682502a9759f9f6ae985.php:356
 msgid "Login as anonymous visitor"
 msgstr "Se connecter en visiteur anonyme"
 
@@ -877,7 +976,7 @@ msgstr "Classer par"
 
 #: cache/twig/c7/c718ae08e5dbd84583c9dd65d39486e892c4f8a1d0ca5bc3f8c83ece723d7169.php:111
 #: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:332
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:356
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:366
 #: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:271
 msgid "Category"
 msgstr "Catégorie"
@@ -887,7 +986,7 @@ msgid "Id"
 msgstr "Id"
 
 #: cache/twig/c7/c718ae08e5dbd84583c9dd65d39486e892c4f8a1d0ca5bc3f8c83ece723d7169.php:123
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:338
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:348
 #: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:277
 #: cache/twig/cf/cfc54ae9bd35f9b5aee27c9b40d5821c5417ef10c2214d609420fd06cf6eff9d.php:65
 msgid "Date"
@@ -902,7 +1001,7 @@ msgstr "Dernière modification"
 #: cache/twig/c7/c718ae08e5dbd84583c9dd65d39486e892c4f8a1d0ca5bc3f8c83ece723d7169.php:166
 #: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:367
 #: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:376
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:374
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:384
 msgid "Rating"
 msgstr "Note"
 
@@ -916,7 +1015,7 @@ msgstr[1] "Commentaires"
 
 #: cache/twig/c7/c718ae08e5dbd84583c9dd65d39486e892c4f8a1d0ca5bc3f8c83ece723d7169.php:154
 #: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:398
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:344
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:354
 #: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:285
 #: cache/twig/f5/f5d81b13d277df06e80c3e2dec9dacda552c41aa7fbac5a6916ca13b6ff456e7.php:157
 msgid "Title"
@@ -942,16 +1041,11 @@ msgstr "Résultats par page"
 
 #: cache/twig/c7/c718ae08e5dbd84583c9dd65d39486e892c4f8a1d0ca5bc3f8c83ece723d7169.php:237
 #: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:409
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:362
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:372
 #: cache/twig/cf/cfc54ae9bd35f9b5aee27c9b40d5821c5417ef10c2214d609420fd06cf6eff9d.php:74
 #: cache/twig/f5/f5d81b13d277df06e80c3e2dec9dacda552c41aa7fbac5a6916ca13b6ff456e7.php:43
 msgid "Tags"
 msgstr "Tags"
-
-#: cache/twig/c7/c718ae08e5dbd84583c9dd65d39486e892c4f8a1d0ca5bc3f8c83ece723d7169.php:262
-#: cache/twig/5d/5d223dd4fe6e3b9fe4ece8a7d34c4a762cd37204e913cbac5944e118c769cff4.php:68
-msgid "Go"
-msgstr "Aller"
 
 #: cache/twig/72/72e0ad64593f60b73e85afbe4e1fee557b163302797598d1095f6ca6e29c2aca.php:52
 #: cache/twig/0d/0da566e2e5827507015192dabf8a293415917d836f23e63bd4fa52d7703d103e.php:48
@@ -973,7 +1067,7 @@ msgstr "Vérouiller/Déverouiller"
 
 #: cache/twig/72/72e0ad64593f60b73e85afbe4e1fee557b163302797598d1095f6ca6e29c2aca.php:165
 #: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:285
-#: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:680
+#: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:678
 msgid "revision available"
 msgid_plural "revisions available"
 msgstr[0] "révision disponible"
@@ -992,19 +1086,6 @@ msgstr "Appartenant à %s"
 msgid "Create new"
 msgstr "Créer"
 
-#: cache/twig/0d/0da566e2e5827507015192dabf8a293415917d836f23e63bd4fa52d7703d103e.php:62
-#: cache/twig/52/52c774e8c239705417a8d56b3b0f1f11471c73f50dd6f81a0f3a5fa8a2c85994.php:53
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:147
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:716
-#: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:266
-#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:161
-#: cache/twig/be/bebff3c82c76f5fba50f53a399b60d75c9437c42a429c3531e72d1d901858ecb.php:135
-#: web/experiments.php:27 src/services/ListBuilder.php:74
-msgid "Experiment"
-msgid_plural "Experiments"
-msgstr[0] "Expérience"
-msgstr[1] "Expériences"
-
 #: cache/twig/0d/0da566e2e5827507015192dabf8a293415917d836f23e63bd4fa52d7703d103e.php:93
 msgid "No templates found"
 msgstr "Pas de modèles"
@@ -1018,7 +1099,7 @@ msgid "go back to login page"
 msgstr "retour à la page de connexion"
 
 #: cache/twig/ea/eaa002bd5913a011b98ab13930a5393d2c104bd71a7667f586638a2000e1612b.php:64
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:114
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:126
 #: cache/twig/e5/e53bcb7ad7d939b769d1e51cf702f5be9742aee92ee1aa5c85796a9580fb6214.php:140
 #: cache/twig/e5/e53bcb7ad7d939b769d1e51cf702f5be9742aee92ee1aa5c85796a9580fb6214.php:212
 msgid "Privacy policy"
@@ -1039,7 +1120,7 @@ msgid "I agree with the %sPrivacy Policy%s"
 msgstr "J'accepte la %spolitique de confidentialité%s"
 
 #: cache/twig/23/23bb7c13bcc330dc3c2702c0287e2480e91b0b0b5266266a5bacda7a20e2a916.php:85
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:702
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:704
 msgid "New password"
 msgstr "Nouveau mot de passe"
 
@@ -1083,7 +1164,7 @@ msgid "Started on"
 msgstr "Démarrée le"
 
 #: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:478
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:261
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:269
 #: cache/twig/f5/f5d81b13d277df06e80c3e2dec9dacda552c41aa7fbac5a6916ca13b6ff456e7.php:94
 msgid "Add a tag"
 msgstr "Ajouter un tag"
@@ -1101,128 +1182,96 @@ msgstr "Enregistrer et revenir en arrière"
 msgid "Attach a file"
 msgstr "Joindre un fichier"
 
-#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:554
+#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:552
 msgid "Draw something"
 msgstr "Dessiner quelquechose"
 
-#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:567
+#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:565
 msgid "Stroke width"
 msgstr "Épaisseur du trait"
 
-#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:583
+#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:581
 msgid "Eraser"
 msgstr "Effaceur"
 
-#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:614
+#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:612
 msgid "Molecule drawer"
 msgstr "Éditeur de molécule"
 
-#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:997
+#: cache/twig/e8/e8c0fd50a851c3fe20aebe81914f5fd00ea84e7223841ba5a174abc61d5e1813.php:995
 msgid "View mode"
 msgstr "Mode vue"
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:77
-#: src/controllers/AbstractEntityController.php:94
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:81
 msgid "Sorry. I couldn't find anything :("
 msgstr "Désolé, aucun résultat pour ces critères :("
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:84
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:91
 msgid "Welcome to eLabFTW. Use the 'Create new' button to get started!"
 msgstr ""
 "Bienvenue sur eLabFTW. Cliquez le bouton 'Créer une expérience' pour "
 "démarrer!"
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:143
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:147
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:151
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:155
 msgid "Expand all"
 msgstr "Développer tout"
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:145
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:153
 msgid "Collapse all"
 msgstr "Replier tout"
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:149
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:157
 msgid "Select all"
 msgstr "Sélectionner tout"
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:153
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:161
 msgid "Clear selection"
 msgstr "Tout déselectionner"
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:157
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:165
 msgid "Invert selection"
 msgstr "Inverser la sélection"
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:163
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:171
 msgid "With selected:"
 msgstr "Avec sélection :"
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:173
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:181
 msgid "Change status"
 msgstr "Changer le statut"
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:179
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:187
 msgid "Change item type"
 msgstr "Changer le type d'objet"
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:209
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:217
 msgid "Change visibility"
 msgstr "Sélectionner la visibilité"
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:234
-#: web/make.php:27
-msgid "Export"
-msgstr "Export"
-
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:238
-msgid "Make Zip"
-msgstr "Faire un Zip"
-
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:242
-msgid "Make Csv"
-msgstr "Faire un Csv"
-
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:246
-msgid "Make PDF"
-msgstr "Faire un PDF"
-
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:250
-msgid "Make QR codes PDF"
-msgstr "Faire un PDF de QR codes"
-
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:254
-msgid "Make JSON"
-msgstr "Faire JSON"
-
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:267
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:275
 #: cache/twig/84/84f97e0ca68a3d70b2fe50ff47f5d8d1c24bb30196071aa1ee8816c105273ed9.php:241
 #: cache/twig/84/84f97e0ca68a3d70b2fe50ff47f5d8d1c24bb30196071aa1ee8816c105273ed9.php:246
 msgid "Add a link"
 msgstr "Ajouter un lien"
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:272
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:280
 msgid "Lock"
 msgstr "Vérouiller"
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:279
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:101
-#: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:83
-msgid "Timestamp"
-msgstr "Horodatage"
-
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:368
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:378
 msgid "Actions"
 msgstr "Actions"
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:380
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:390
 msgid "Owner"
 msgstr "Propriétaire seulement"
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:430
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:443
 msgid "Previous page"
 msgstr "Page précédente"
 
-#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:439
+#: cache/twig/fd/fd17ef3bdb71d234014c5dfb1c4daae443eac4831cbc82049a9f3b9051f51c13.php:452
 msgid "Next page"
 msgstr "Page suivante"
 
@@ -1347,50 +1396,44 @@ msgstr "Dernière version :"
 msgid "Please finalize install: %slink to documentation%s."
 msgstr "L'installation n'est pas terminée ! %sLien vers la documentation%s."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:89
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:101
 msgid "Server"
 msgstr "Serveur"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:93
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:139
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1915
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:105
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:151
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1864
 msgid "Teams"
 msgstr "Équipes"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:105
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:117
 msgid "Security"
 msgstr "Securité"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:118
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:130
 msgid "External auth"
 msgstr "Authentification externe"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:134
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:146
 msgid "Usage Statistics"
 msgstr "Statistiques d'utilisation"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:143
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:710
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:155
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:722
 #: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:262
 #: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:281
 msgid "Members"
 msgstr "Membres"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:153
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:724
-#: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:272
-msgid "Items"
-msgstr "Items"
-
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:160
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:172
 msgid "Generate report"
 msgstr "Générer un rapport"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:167
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:179
 msgid "Announcement"
 msgstr "Annonce"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:172
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:184
 msgid ""
 "The following text will be displayed to all users on all pages while it's "
 "active."
@@ -1398,27 +1441,27 @@ msgstr ""
 "Ce texte sera montré à tous les utilisateurs sur toutes les pages tant qu'il "
 "est actif."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:199
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:211
 msgid "Login page announcement"
 msgstr "Annonce sur la page de login"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:204
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:216
 msgid "The following text will be displayed only on the login page."
 msgstr "Ce texte sera montré sur la page de login."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:235
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:247
 msgid "Settings"
 msgstr "Paramètres"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:242
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:254
 msgid "Language:"
 msgstr "Langage :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:272
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:284
 msgid "Installation URL:"
 msgstr "URL de l'installation :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:280
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:292
 msgid ""
 "The canonical address of the eLabFTW installation. If this value is empty, "
 "eLabFTW will try to guess it, but in some instances, it might not be correct "
@@ -1429,11 +1472,11 @@ msgstr ""
 "être correct, il est donc préférable d'ajuster cette valeur. Exemple : "
 "https://elabftw.example.org"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:285
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:297
 msgid "Address of the Proxy:"
 msgstr "Adresse du proxy :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:293
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:305
 msgid ""
 "If you are behind a firewall/proxy, enter the address here. Example: http://"
 "proxy.example.com:3128"
@@ -1441,11 +1484,11 @@ msgstr ""
 "Si vous êtes derrière un pare-feu, entrez l'adresse ici. Exemple : http://"
 "proxy.example.cm:3128"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:298
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:310
 msgid "Admins can always delete experiments:"
 msgstr "Les admins peuvent toujours supprimer des expériences:"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:316
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:328
 msgid ""
 "Setting this to «no» will completely remove the ability to delete "
 "experiments for everyone."
@@ -1453,11 +1496,11 @@ msgstr ""
 "Mettre sur «non» pour empêcher complètement la suppression des expériences "
 "pour tout le monde."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:321
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:333
 msgid "Maximum number of stored revisions per entry:"
 msgstr "Nombre maximum de revisions stockées par entrée :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:329
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:341
 msgid ""
 "Setting this to a low value will help keeping the database size small. "
 "Setting this to 0 will allow infinite number of revisions stored."
@@ -1465,7 +1508,7 @@ msgstr ""
 "Un nombre bas permet de conserver une taille de base de données modeste. 0 "
 "permet un nombre infini de révisions stockées."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:334
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:346
 msgid ""
 "Minimum number of characters that need to be changed in order to create a "
 "new revision per entry:"
@@ -1473,18 +1516,18 @@ msgstr ""
 "Nombre de caractères minimum changés nécessaires à la création d'une "
 "nouvelle révision :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:342
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:354
 msgid "Setting this to a high value will help keeping the database size small."
 msgstr ""
 "Un nombre haut permet de conserver une taille de base de données modeste."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:347
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:359
 msgid "Number of days between changes to automatically create a revision:"
 msgstr ""
 "Nombre de jours entre des changements pour automatiquement créer une "
 "révision :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:355
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:367
 msgid ""
 "If the last change is at least this days old, a revision will be created "
 "regardless of the minimum characters setting."
@@ -1492,17 +1535,17 @@ msgstr ""
 "Si le dernier changement date d'au moins ce nombre de jours, une révision "
 "sera créée sans prise en compte du seuil minimum de caractères."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:360
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:372
 msgid "Registration and authentication configuration"
 msgstr "Configuration de l'enregistrement et l'authentification"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:365
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:377
 msgid "Allow anonymous visitors to login and see Public experiments:"
 msgstr ""
 "Permettre aux visiteurs anonymes de s'authentifier et voir les expériences "
 "publiques:"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:383
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:395
 msgid ""
 "This allows users without an account to login into a team and see the "
 "experiments with public visibility. Administrators of each team can choose "
@@ -1513,11 +1556,11 @@ msgstr ""
 "de chaque équipe peuvent choisir si les items de la base de données seront "
 "visibles."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:388
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:400
 msgid "Switch this instance in open science mode:"
 msgstr "Basculer cette instance on mode \"open science\" :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:406
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:418
 msgid ""
 "This allows search engines to crawl the site. Visitors will be automatically "
 "logged in in the specified team."
@@ -1525,28 +1568,28 @@ msgstr ""
 "Cela permet aux moteurs de recherche d'indexer le site. Les visiteurs seront "
 "automatiquement authentifiés dans l'équipe spécifiée."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:411
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:423
 msgid "Select which team will be open to the world in open science mode:"
 msgstr ""
 "Sélectionner quelle équipe sera ouverte au monde en mode \"open science\" :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:436
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:448
 msgid "This has no effect if open science mode is disabled."
 msgstr "Cela n'a pas d'effet si le mode \"open science\" est désactivé."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:441
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:453
 msgid "Enable local account creation:"
 msgstr "Autoriser la création de comptes locaux:"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:460
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:472
 msgid "Admins can create local accounts:"
 msgstr "Les administrateurs peuvent créer des comptes locaux :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:479
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:491
 msgid "Show local login form:"
 msgstr "Afficher le formulaire d'authentification locale:"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:497
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:509
 msgid ""
 "You can still show the local login form by appending ?letmein to the login "
 "page URL."
@@ -1554,72 +1597,72 @@ msgstr ""
 "Vous pourrez toujours afficher le formulaire en ajoutant ?letmein à l'URL de "
 "la page de login."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:512
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:524
 #: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:57
 msgid "Information"
 msgstr "Information"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:518
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:530
 msgid "Operating System"
 msgstr "Système d'exploitation"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:524
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:536
 msgid "PHP Version"
 msgstr "Version PHP"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:530
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:542
 msgid "Largest integer supported"
 msgstr "Plus grand entier pris en charge"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:536
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:548
 msgid "PHP configuration directory"
 msgstr "Répertoire de configuration de PHP"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:542
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:554
 msgid "Maximum file size for uploaded files"
 msgstr "Taille maximale pour les fichiers téléversés"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:551
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:563
 msgid "Timezone"
 msgstr "Fuseau horaire"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:569
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:581
 msgid "Add a New Team"
 msgstr "Ajouter une nouvelle équipe"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:583
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:595
 msgid "Edit Existing Teams"
 msgstr "Éditer les équipes existantes"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:604
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:616
 msgid "Team Name"
 msgstr "Nom de l'équipe"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:621
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:633
 msgid "Team Organisation ID"
 msgstr "Organisation ID pour l'équipe"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:658
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:670
 msgid "Archive"
 msgstr "Archive"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:672
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:684
 msgid "Visible on registration page"
 msgstr "Visible sur la page de création de compte"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:728
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:740
 msgid "Created"
 msgstr "Créée"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:764
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:770
 msgid "Timestamping Configuration"
 msgstr "Configuration de l'horodatage"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:771
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:775
 msgid "The teams can use the credentials below to timestamp:"
 msgstr "Les équipes peuvent utiliser les informations de connexion suivantes :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:789
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:793
 msgid ""
 "You can control if the teams can use the global timestamping account. If set "
 "to <em>no</em> the team admin must add login information in the admin panel."
@@ -1629,41 +1672,41 @@ msgstr ""
 "l'équipe devra renseigner ses informations de connexion dans le panneau "
 "d'administration."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:854
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:805
 msgid "Security Settings"
 msgstr "Paramètres de sécurité"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:866
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:817
 msgid "Users need validation by admin after registration:"
 msgstr "Les nouveaux inscrits nécessitent une validation par l'admin :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:884
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:835
 msgid "Set to yes for added security."
 msgstr "Mettez oui pour plus de sécurité."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:889
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:840
 msgid "Enforce a domain name for emails"
 msgstr "Forcer un nom de domaine pour les emails"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:897
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:848
 msgid ""
 "Only email addresses at this domain will be allowed to register an account."
 msgstr "Seules les adresses appartenant à ce domaine pourront créer un compte."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:901
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:852
 msgid "You can add several domains by separating them with a comma."
 msgstr ""
 "Vous pouvez ajouter plusieurs domaines en les séparant par une virgule."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:906
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:857
 msgid "Number of allowed login attempts:"
 msgstr "Nombre d'essais de connexion autorisés :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:914
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:865
 msgid "3 might be too few. See for yourself :)"
 msgstr "3 n'est peut-être pas assez. À vous de voir :)"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:919
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:870
 msgid ""
 "Time after which inactive sessions are invalidated (force logout) (in "
 "seconds):"
@@ -1671,27 +1714,27 @@ msgstr ""
 "Temps après lequel les sessions sont inactivées (déconnexion forcée) (en "
 "secondes) :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:928
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:879
 msgid "Set to 0 to disable this feature."
 msgstr "Mettre à 0 pour désactiver."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:948
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:899
 #, php-format
 msgid "%d users are currently prevented from logging in from unknown devices."
 msgstr ""
 "%d utilisateurs sont empêchés de s'authentifier depuis des appareils "
 "inconnus."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:962
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:913
 #, php-format
 msgid "%d devices are currently denied authentication."
 msgstr "%d appareils sont empêchés de s'authentifier."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:980
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:931
 msgid "E-mail Settings"
 msgstr "Paramètres email"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:991
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:942
 #, php-format
 msgid ""
 "Without a valid way to send emails, users won't be able to reset their "
@@ -1702,98 +1745,109 @@ msgstr ""
 "réinitialiser leur mots de passe. Il est recommandé de créer un compte "
 "spécifique %ssmtp2go.com%s et d'ajouter les informations ici."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:996
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:947
 msgid "Send e-mails via:"
 msgstr "Envoyer les emails via :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1004
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:955
 msgid "Select mailing method..."
 msgstr "Choisir une méthode d'envoi..."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1010
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:961
 msgid "SMTP (recommended)"
 msgstr "SMTP (recommandé)"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1016
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:967
 msgid "Local MTA"
 msgstr "MTA local"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1023
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:974
 msgid "Sender address:"
 msgstr "Adresse de l'expéditeur:"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1034
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:985
 msgid "Path to sendmail:"
 msgstr "Chemin du binaire sendmail :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1045
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:996
 msgid "Address of the SMTP server:"
 msgstr "Adresse du serveur SMTP :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1054
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1005
 msgid "SMTP encryption:"
 msgstr "Encryption :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1069
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1020
 msgid "None"
 msgstr "Aucune"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1074
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1025
 msgid "Probably TLS"
 msgstr "Probablement TLS"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1079
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1030
 msgid "SMTP Port:"
 msgstr "Port SMTP :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1087
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1038
 msgid "Default is 587."
 msgstr "Le port par défaut est 587."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1092
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1043
 msgid "SMTP username:"
 msgstr "Nom d'utilisateur SMTP :"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1100
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1051
 msgid "SMTP password"
 msgstr "Mot de passe SMTP"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1145
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1064
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2033
+msgid "A password is already set."
+msgstr "Un mot de passe existe déjà."
+
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1068
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2037
+#, php-format
+msgid "%sClear it%s or change it below:"
+msgstr "%sEffacer%s ou modifier ci-dessous :"
+
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1096
 msgid "Send a test email"
 msgstr "Envoyer un email de test"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1154
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1180
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1105
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1131
 #: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:418
 msgid "Send"
 msgstr "Envoyer"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1163
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1114
 msgid "Send a Mass Email"
 msgstr "Envoyer un email en masse"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1168
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1119
 msgid "Email Subject"
 msgstr "Sujet de l'email"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1174
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1125
 msgid "Email Body"
 msgstr "Corps de l'email"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1819
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1768
 msgid "Adjust your privacy policy notice"
 msgstr "Ajuster la politique de confidentialité"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1827
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1776
 msgid "Note: the text below is a template and must be edited and saved."
 msgstr ""
 "Note : le text ci-dessous est un modèle et doit être édité et sauvegardé."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1867
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1816
 msgid "External authentication mapping"
 msgstr "Configuration de l'authentification externe"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1874
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1823
 msgid ""
 "If the server manages authentication, then you can provide here the "
 "environment variables names for user information."
@@ -1801,47 +1855,47 @@ msgstr ""
 "Si le serveur s'occupe de l'authentificaton, vous pouvez configurer ici les "
 "variables d'environnement pour l'utilisateur."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1879
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1828
 msgid "Remote user"
 msgstr "Utilisateur distant"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1924
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1873
 msgid "Logout URL"
 msgstr "Déconnexion URL"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2003
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1952
 msgid "LDAP configuration"
 msgstr "Configuration LDAP"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2010
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1959
 msgid "This page allows you to configure LDAP authentication."
 msgstr "Cette page vous permet de configurer l'authentification LDAP."
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2015
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1964
 msgid "Toggle LDAP login"
 msgstr "Activer/Désactiver l'authentification LDAP"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2030
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1979
 msgid "LDAP Host"
 msgstr "Hôte LDAP"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2038
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1987
 msgid "Domain name or IP address"
 msgstr "Nom de domaine ou adresse IP"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2043
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:1992
 msgid "LDAP Port"
 msgstr "Port LDAP"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2051
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2000
 msgid "Default: 389 LDAPS: 636"
 msgstr "Défaut: 389 LDAPS: 636"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2062
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2011
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
-#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2104
+#: cache/twig/07/07337afa2bdec171fe3fae54928ab709402229d5561eafe0d6a38d565093084a.php:2053
 msgid "Use TLS"
 msgstr "Utiliser TLS"
 
@@ -1859,7 +1913,7 @@ msgid "Templates"
 msgstr "Modèles"
 
 #: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:65
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:842
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:844
 msgid "API keys"
 msgstr "Clés API"
 
@@ -1923,48 +1977,48 @@ msgstr "Ordre:"
 msgid "Use default"
 msgstr "Utiliser la valeur par défaut"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:334
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:335
 msgid "Use single column layout"
 msgstr "Utiliser la mise en page en une seule colonne"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:346
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:348
 msgid "Display attached files with thumbnails"
 msgstr "Montrer les miniatures des fichiers attachés"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:354
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:356
 msgid "Keyboard Shortcuts"
 msgstr "Raccourcis clavier"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:358
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:360
 msgid "Only lowercase letters are allowed."
 msgstr "Seules les lettres minuscules sont acceptées."
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:363
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:895
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:365
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:897
 msgid "Action"
 msgstr "Action"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:367
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:369
 msgid "Shortcut"
 msgstr "Raccourci"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:392
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:394
 msgid "Submit"
 msgstr "Valider"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:402
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:404
 msgid "TODO list"
 msgstr "TODO liste"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:416
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:418
 msgid "PDF configuration"
 msgstr "Configuration PDF"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:422
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:424
 msgid "Select paper format for PDF"
 msgstr "Sélectionner le format de papier pour le PDF"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:448
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:450
 msgid ""
 "Enable Chinese, Japanese and Korean fonts in PDF generation (WARNING: this "
 "will dramatically increase the file size unless you disable PDF/A)"
@@ -1973,20 +2027,20 @@ msgstr ""
 "génération des PDF (ATTENTION : cela grossit la taille des fichiers PDF de "
 "manière non négligeable sauf si vous désactivez PDF/A)"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:459
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:461
 msgid ""
 "Generate PDF/A compliant pdfs (will embed the fonts and make the file bigger)"
 msgstr "Générer des PDF/A (intègre les polices et rend le fichier plus lourd)"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:470
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:472
 msgid "Add attached files summary to the pdf"
 msgstr "Ajouter un sommaire des fichiers attachés au pdf"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:481
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:483
 msgid "Append attached PDFs to exported pdf"
 msgstr "Ajouter les PDFs en pièce jointe au PDF exporté"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:492
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:494
 msgid ""
 "Enable french style signature block in pdf export (setting is only set for "
 "this browser)"
@@ -1994,134 +2048,134 @@ msgstr ""
 "Ajouter un block de signature à la française sur les exports pdf (préférence "
 "seulement pour ce navigateur)"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:503
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:505
 msgid "Miscellaneous"
 msgstr "Divers"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:514
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:516
 msgid "Show experiments from the team on the Experiments page"
 msgstr "Montrer les expériences de l'équipe sur la page d'Expériences"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:525
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:527
 msgid "Show templates from the team on the Templates page and in the menus"
 msgstr ""
 "Montrer les modèles de l'équipe sur la page des Modèles et dans les menus"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:536
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:538
 msgid "Show experiments/database items from outside the team"
 msgstr "Montrer les expériences/entrées en dehors de l'équipe"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:547
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:549
 msgid "Display the molecule editor in edit mode"
 msgstr "Afficher l'éditeur de molécule en mode édition"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:558
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:560
 msgid "Display the JSON editor in edit mode"
 msgstr "Afficher l'éditeur JSON en mode édition"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:569
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:571
 msgid "Disable the rich text editor and write Markdown directly"
 msgstr "Désactiver l'éditeur de texte riche et écrire du Markdown directement"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:580
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:582
 msgid "Enable the plasmid viewer"
 msgstr "Activer le visualiseur de plasmide"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:591
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:593
 msgid "Use ISO datetime in the text editor instead of localized one"
 msgstr ""
 "Utiliser le temps ISO dans l'éditeur de texte à la place de celui localisé"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:598
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:600
 msgid "Default visibility for new experiments"
 msgstr "Visibilité par défaut pour les nouvelles expériences"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:625
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:627
 msgid "Default write permission for new experiments"
 msgstr "Permission d'édition par défaut pour les nouvelles expériences"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:674
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:676
 msgid "Modify your personal informations"
 msgstr "Modifier vos informations personnelles"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:678
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:680
 msgid "Enter your password to edit your profile."
 msgstr "Entrez votre mot de passe pour éditer votre profil."
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:698
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:700
 msgid "Modify your password"
 msgstr "Modifier votre mot de passe"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:716
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:718
 #: cache/twig/57/57fba3c42df4ca8411f8d474ae12d336ce34d4e144be66be4507e74d77e279d0.php:55
 #: web/login.php:48
 msgid "Two Factor Authentication"
 msgstr "Authentification à deux facteurs"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:722
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:724
 msgid "Use two-factor authentication?"
 msgstr "Utilise l'authentification deux facteurs ?"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:744
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:746
 msgid "Modify your identity"
 msgstr "Modifier votre identité"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:774
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:776
 msgid "Modify your contact information"
 msgstr "Modifier vos informations de contact"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:780
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:782
 #: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:295
 msgid "Phone"
 msgstr "Téléphone"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:790
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:792
 #: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:299
 msgid "Mobile"
 msgstr "Mobile"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:802
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:804
 #: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:307
 msgid "Skype"
 msgstr "Skype"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:812
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:814
 #: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:303
 msgid "Website"
 msgstr "Site web"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:824
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:826
 msgid "Update profile"
 msgstr "Mettre à jour le profil"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:847
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:849
 msgid "Create new key"
 msgstr "Créer une nouvelle clé"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:856
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:887
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:858
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:889
 msgid "Permissions"
 msgstr "Permissions"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:861
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:930
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:863
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:932
 msgid "Read Only"
 msgstr "Lecture seule"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:865
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:930
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:867
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:932
 msgid "Read/Write"
 msgstr "Lecture/Écriture"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:870
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:872
 msgid "Generate an API Key"
 msgstr "Générer une clé pour l'API"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:875
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:877
 msgid "Existing keys"
 msgstr "Clés existantes"
 
-#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:891
+#: cache/twig/07/0728d34a5ad7502317d42bf0945f35c1ca48f810c686edc86811997bb61f41c0.php:893
 msgid "Creation date"
 msgstr "Date de création"
 
@@ -2225,10 +2279,6 @@ msgstr "Sujet"
 #: cache/twig/16/16da6707aeb2b5c25ca0fbca9947266943ed0cc515a9b52b81ba5d4391eb5d8a.php:411
 msgid "Content"
 msgstr "Contenu"
-
-#: cache/twig/5d/5dc2ab18999c1c5ac2ef66f2b3183aef57a5250520998ce685376e8aa8efb778.php:53
-msgid "Toggle visibility"
-msgstr "Afficher/Masquer"
 
 #: cache/twig/5d/5dc2ab18999c1c5ac2ef66f2b3183aef57a5250520998ce685376e8aa8efb778.php:106
 msgid "Insert in text at cursor position"
@@ -2369,6 +2419,18 @@ msgstr "Utilisation mémoire :"
 msgid "bytes"
 msgstr "octets"
 
+#: cache/twig/f9/f9f545f389195d8586b138ed159b0a5ac7e765454444412349b6b0d9242bdb54.php:47
+msgid "Favorite tags"
+msgstr "Tags favoris"
+
+#: cache/twig/f9/f9f545f389195d8586b138ed159b0a5ac7e765454444412349b6b0d9242bdb54.php:52
+msgid "Filter"
+msgstr "Filtre"
+
+#: cache/twig/f9/f9f545f389195d8586b138ed159b0a5ac7e765454444412349b6b0d9242bdb54.php:88
+msgid "Add a tag as favorite"
+msgstr "Ajouter un tag comme favori"
+
 #: cache/twig/f5/f5d81b13d277df06e80c3e2dec9dacda552c41aa7fbac5a6916ca13b6ff456e7.php:135
 msgid "Download template"
 msgstr "Télécharger ce modèle"
@@ -2376,20 +2438,6 @@ msgstr "Télécharger ce modèle"
 #: cache/twig/f5/f5d81b13d277df06e80c3e2dec9dacda552c41aa7fbac5a6916ca13b6ff456e7.php:170
 msgid "Template content"
 msgstr "Contenu du modèle"
-
-#: cache/twig/6a/6addb0d381c92c0c3532c664b9e86eb3f3512f30e9021b89de6aefc08c1aec00.php:46
-#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:245
-msgid "Todolist"
-msgstr "Todoliste"
-
-#: cache/twig/6a/6addb0d381c92c0c3532c664b9e86eb3f3512f30e9021b89de6aefc08c1aec00.php:50
-#: cache/twig/6a/6addb0d381c92c0c3532c664b9e86eb3f3512f30e9021b89de6aefc08c1aec00.php:54
-msgid "Add"
-msgstr "Ajouter"
-
-#: cache/twig/6a/6addb0d381c92c0c3532c664b9e86eb3f3512f30e9021b89de6aefc08c1aec00.php:63
-msgid "Unfinished steps"
-msgstr "Étapes non finies"
 
 #: cache/twig/2a/2ae93349c9818aff29bf753fd7fb344d7322dd08b07ceb2d65dea233aa7c72bd.php:72
 #: cache/twig/84/84f97e0ca68a3d70b2fe50ff47f5d8d1c24bb30196071aa1ee8816c105273ed9.php:94
@@ -2422,6 +2470,10 @@ msgstr "Ajouter une étape"
 #: cache/twig/84/84f97e0ca68a3d70b2fe50ff47f5d8d1c24bb30196071aa1ee8816c105273ed9.php:250
 msgid "from the database"
 msgstr "depuis la base de données"
+
+#: cache/twig/84/84f97e0ca68a3d70b2fe50ff47f5d8d1c24bb30196071aa1ee8816c105273ed9.php:256
+msgid "Any category"
+msgstr "N'importe quelle catégorie"
 
 #: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:58
 #: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:317
@@ -2502,15 +2554,15 @@ msgstr "%s%d%sVoir réservations%s"
 msgid "Last modified on %s"
 msgstr "Dernière modification le %s"
 
-#: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:588
+#: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:586
 msgid "Comments"
 msgstr "Commentaires"
 
-#: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:606
+#: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:604
 msgid "commented"
 msgstr "a laissé un commentaire"
 
-#: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:649
+#: cache/twig/1f/1f1d9e345749ecd3cd90c3ab85afd81552696f7544d0385eff9393c53e2adbe4.php:647
 #: src/langs/js-strings.php:9
 msgid "Add a comment"
 msgstr "Ajouter un commentaire"
@@ -2532,7 +2584,7 @@ msgid "My Profile"
 msgstr "Profil"
 
 #: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:271
-#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:301
+#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:308
 msgid "Help"
 msgstr "Aide"
 
@@ -2540,24 +2592,28 @@ msgstr "Aide"
 msgid "Logout"
 msgstr "Déconnexion"
 
-#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:315
+#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:289
+msgid "Open favorite tags"
+msgstr "Ouvrir les tags favoris"
+
+#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:322
 #, php-format
 msgid "Make sure to read the %suser guide%s."
 msgstr "Soyez certain de lire le %sguide utilisateur%s."
 
-#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:321
+#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:328
 #, php-format
 msgid "You can use a TODOlist by pressing '%s'."
 msgstr "Vous pouvez afficher une TODOliste en pressant '%s'."
 
-#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:327
+#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:334
 #, php-format
 msgid "You can have experiments templates (%sControl Panel%s)."
 msgstr ""
 "Vous pouvez avoir des modèles d'expériences (%sPanneau de contrôle "
 "utilisateur%s)."
 
-#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:333
+#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:340
 msgid ""
 "You can make links inside the text by typing # and an autocomplete menu will "
 "spawn with a list of Experiments/Items."
@@ -2565,7 +2621,7 @@ msgstr ""
 "Vous pouvez ajouter des liens dans le texte en tapant # et un menu "
 "d'autocomplétion va apparaître avec une liste d'expériences/objets."
 
-#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:339
+#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:346
 #, php-format
 msgid ""
 "The admin of a team can edit the status and the types of items available "
@@ -2574,7 +2630,7 @@ msgstr ""
 "L'administrateur d'une équipe peut éditer les statuts et les types d'items "
 "disponibles (%sPanneau d'administration%s)."
 
-#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:345
+#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:352
 msgid ""
 "If you press Ctrl Shift D in the editor, the date will appear under the "
 "cursor."
@@ -2582,22 +2638,22 @@ msgstr ""
 "Si vous faîtes Ctrl Maj D dans la fenêtre d'édition, la date apparaîtra sous "
 "le curseur."
 
-#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:351
+#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:358
 #, php-format
 msgid "Custom shortcuts are available (%sControl Panel%s)."
 msgstr ""
 "Des raccourcis claviers personnalisables sont disponibles (%sPanneau de "
 "contrôle utilisateur%s)."
 
-#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:357
+#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:364
 msgid "You can duplicate experiments in one click."
 msgstr "Vous pouvez dupliquer des expériences en un seul clic."
 
-#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:363
+#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:370
 msgid "Click a tag to list all items with this tag."
 msgstr "Cliquez un tag pour lister tous les items avec ce tag."
 
-#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:369
+#: cache/twig/30/305cf649b2b746843a3724ae4486550239852f3568a412c6790ee883dfbcc734.php:376
 msgid ""
 "Once timestamped an experiment cannot be unlocked or modified. Only comments "
 "can be added."
@@ -2629,7 +2685,7 @@ msgstr "Statistiques"
 msgid "experiments done since"
 msgstr "expériences réalisées depuis"
 
-#: web/profile.php:24
+#: web/profile.php:22
 msgid "Profile"
 msgstr "Profil"
 
@@ -2652,27 +2708,27 @@ msgstr "Email envoyé à %d utilisateurs"
 
 #: web/app/controllers/SortableAjaxController.php:36
 #: web/app/controllers/SysconfigAjaxController.php:34
-#: web/app/controllers/RequestHandler.php:104
-#: web/app/controllers/EntityAjaxController.php:41
-#: web/app/controllers/EntityAjaxController.php:145
-#: web/app/controllers/EntityAjaxController.php:194
+#: web/app/controllers/RequestHandler.php:112
+#: web/app/controllers/EntityAjaxController.php:48
+#: web/app/controllers/EntityAjaxController.php:189
+#: web/app/controllers/EntityAjaxController.php:240
 #: web/app/controllers/RevisionsController.php:60
 #: web/app/controllers/UcpController.php:104
 #: web/app/controllers/UnauthRequestHandler.php:27
 #: web/app/controllers/UsersAjaxController.php:34
-#: web/app/controllers/SysconfigController.php:131
-#: web/app/controllers/AdminController.php:51
+#: web/app/controllers/SysconfigController.php:121
+#: web/app/controllers/AdminController.php:41
 #: web/app/controllers/UsersController.php:63
 #: web/app/controllers/IdpsController.php:73
 #: web/app/controllers/SchedulerController.php:32
 msgid "Saved"
 msgstr "Enregistré"
 
-#: web/app/controllers/RequestHandler.php:114
+#: web/app/controllers/RequestHandler.php:122
 msgid "Error sending email"
 msgstr "Erreur lors de l'envoi d'email"
 
-#: web/app/controllers/EntityAjaxController.php:178
+#: web/app/controllers/EntityAjaxController.php:222
 msgid "File uploaded successfully"
 msgstr "Le fichier a été envoyé avec succès"
 
@@ -2759,11 +2815,6 @@ msgstr "%sDéconnectez-vous%s avant d'enregistrer un autre compte."
 msgid "No local account creation is allowed!"
 msgstr "La création de compte est désactivée !"
 
-#: web/team.php:75 src/exceptions/ResourceNotFoundException.php:22
-#: src/models/ItemsTypes.php:72
-msgid "Nothing to show with this id"
-msgstr "Rien à afficher avec cet ID"
-
 #: web/ucp.php:29
 msgid "User Control Panel"
 msgstr "Panneau de configuration utilisateur"
@@ -2784,11 +2835,11 @@ msgstr "Le code entré est invalide !"
 msgid "Two Factor Authentication is now enabled!"
 msgstr "L'authentification à deux facteurs est désormais active !"
 
-#: src/controllers/AbstractEntityController.php:204
+#: src/controllers/AbstractEntityController.php:215
 msgid "This item is locked. You cannot edit it!"
 msgstr "Cet objet est cadenassé. Vous ne pouvez pas l'éditer !"
 
-#: src/classes/StepParams.php:26 src/classes/ContentParams.php:35
+#: src/classes/StepParams.php:26 src/classes/ContentParams.php:43
 #: src/services/Filter.php:166 src/services/Filter.php:171
 #, php-format
 msgid "Input is too short! (minimum: %d)"
@@ -2869,7 +2920,7 @@ msgid "Password must contain at least %d characters."
 msgstr "Le mot de passe doit contenir au moins %d caractères."
 
 #: src/services/Filter.php:103 src/langs/js-strings.php:18
-#: src/models/Items.php:45 src/models/Experiments.php:58
+#: src/models/Items.php:46 src/models/Experiments.php:61
 msgid "Untitled"
 msgstr "Sans titre"
 
@@ -2885,10 +2936,6 @@ msgstr ""
 #: src/exceptions/InvalidCredentialsException.php:21
 msgid "Invalid email/password combination."
 msgstr "Combinaison email/mot de passe invalide."
-
-#: src/services/MakeTimestamp.php:181
-msgid "Please configure Timestamping in the admin panel."
-msgstr "Configurez d'abord l'horodatage dans le panneau d'administration."
 
 #: src/langs/js-strings.php:12
 msgid "Drop files here to upload"
@@ -2957,7 +3004,11 @@ msgstr ""
 "Vous ne pouvez pas vous connecter avec ce navigateur en raison d'un trop "
 "grand nombre d'échecs de connexion."
 
-#: src/models/Items.php:101
+#: src/exceptions/ResourceNotFoundException.php:22
+msgid "Nothing to show with this id"
+msgstr "Rien à afficher avec cet ID"
+
+#: src/models/Items.php:103
 msgid "Users cannot delete items."
 msgstr "Les utilisateurs ne peuvent supprimer les entrées."
 
@@ -2976,11 +3027,11 @@ msgstr ""
 msgid "Users cannot create tags."
 msgstr "Les utilisateurs ne peuvent pas créer de tags."
 
-#: src/models/Uploads.php:261
+#: src/models/Uploads.php:248
 msgid "Please make sure to remove any reference to this file in the body!"
 msgstr "Soyez sûr de retirer toute référence à ce fichier dans l'expérience !"
 
-#: src/models/Status.php:137
+#: src/models/Status.php:123
 msgid "Remove all experiments with this status before deleting this status."
 msgstr ""
 "Supprimez toutes les expériences avec ce statut avant de supprimer ce statut."
@@ -3001,11 +3052,11 @@ msgstr "Seulement les admins et moi"
 msgid "Only me"
 msgstr "Seulement moi"
 
-#: src/models/AbstractEntity.php:131
+#: src/models/AbstractEntity.php:130
 msgid "You don't have the rights to lock/unlock this."
 msgstr "Vous n'avez pas les droits suffisants pour vérouiller/déverouiller."
 
-#: src/models/AbstractEntity.php:147
+#: src/models/AbstractEntity.php:146
 #, php-format
 msgid ""
 "This experiment was locked by %s. You don't have the rights to unlock this."
@@ -3013,17 +3064,17 @@ msgstr ""
 "Cette expérience a été cadenassée par %s. Vous n'avez pas les droits "
 "nécessaire pour la décadenasser."
 
-#: src/models/AbstractEntity.php:153
+#: src/models/AbstractEntity.php:152
 msgid "You cannot unlock or edit in any way a timestamped experiment."
 msgstr ""
 "Vous ne pouvez pas dévérouiller ou éditer de quelque façon que ce soit une "
 "expérience horodatée."
 
-#: src/models/AbstractEntity.php:418 src/models/AbstractEntity.php:423
+#: src/models/AbstractEntity.php:414 src/models/AbstractEntity.php:419
 msgid "Read permissions enforced by admin. Aborting change."
 msgstr "Permission d'écriture imposée par l'admin. Annulation du changement."
 
-#: src/models/ItemsTypes.php:138
+#: src/models/ItemsTypes.php:103
 msgid "Remove all database items with this type before deleting this type."
 msgstr ""
 "Supprimez tous les items de la base de données de cette catégorie avant de "
@@ -3033,9 +3084,51 @@ msgstr ""
 msgid "You cannot restore a revision of a locked item!"
 msgstr "Vous ne pouvez pas restaurer une révision d'un item vérouillé !"
 
-#: src/models/Experiments.php:56
+#: src/models/Experiments.php:59
 msgid "Experiments must use a template!"
 msgstr "Les expériences doivent utiliser un modèle !"
+
+#, fuzzy
+#~ msgid "Experiments"
+#~ msgstr "Expérience"
+
+#~ msgid "Chain of certificates of the external timestamping service:"
+#~ msgstr "Certificat pour le service externe de timestamping :"
+
+#, php-format
+#~ msgid ""
+#~ "This should point to the chain of certificates used by your external "
+#~ "timestamping provider to sign the timestamps.%sLocal path relative to "
+#~ "eLabFTW installation directory. You should add it in the 'uploads' "
+#~ "folder. The file needs to be in %sPEM-encoded (ASCII)%s format!"
+#~ msgstr ""
+#~ "Endroit où est stocké le certificat utilisé par le service d'horodatage."
+#~ "%sChemin relatif au dossier racine d'eLabFTW. Le fichier doit être dans "
+#~ "le format %sPEM-encoded (ASCII)%s!"
+
+#~ msgid ""
+#~ "This should be the login associated with your timestamping service "
+#~ "provider"
+#~ msgstr "Votre login pour le service d'horodatage"
+
+#~ msgid "Your timestamping service provider password"
+#~ msgstr "Votre mot de passe pour le service d'horodatage"
+
+#~ msgid "Add a new type of item"
+#~ msgstr "Ajouter une nouvelle catégorie d'items"
+
+#, php-format
+#~ msgid "in the %sscheduler%s"
+#~ msgstr "dans le %splanificateur%s"
+
+#~ msgid "Edit the template"
+#~ msgstr "Éditer le modèle"
+
+#~ msgid "Edit metadata"
+#~ msgstr "Éditer les métadonnées"
+
+#~ msgid "Please configure Timestamping in the admin panel."
+#~ msgstr "Configurez d'abord l'horodatage dans le panneau d'administration."
 
 #~ msgid "Confirm new password"
 #~ msgstr "Confirmer le nouveau mot de passe"

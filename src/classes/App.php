@@ -27,6 +27,7 @@ use League\Flysystem\Filesystem as Fs;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use function putenv;
+use RuntimeException;
 use function setlocale;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
@@ -127,7 +128,13 @@ class App
      */
     public function render(string $template, array $variables): string
     {
-        return $this->getTwig($this->Config)->render($template, array_merge(array('App' => $this), $variables));
+        try {
+            return $this->getTwig($this->Config)->render($template, array_merge(array('App' => $this), $variables));
+        } catch (RuntimeException $e) {
+            echo '<h1>Error writing to twig cache directory. Check folder permissions.</h1>';
+            echo '<h2>Error message: ' . $e->getMessage() . '</h2>';
+            exit;
+        }
     }
 
     /**

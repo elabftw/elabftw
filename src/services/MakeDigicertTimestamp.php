@@ -34,7 +34,7 @@ class MakeDigicertTimestamp extends MakeTimestamp
             'ts_login' => '',
             'ts_password' => '',
             'ts_url' => self::TS_URL,
-            'ts_cert' => dirname(__DIR__) . '/ts-certs/' . self::TS_CERT,
+            'ts_cert' => dirname(__DIR__) . '/certs/' . self::TS_CERT,
             'ts_hash' => self::TS_HASH,
             // digicert root cert is already in the trusted certs list provided by ca-certificates package
             'ts_chain' => '/etc/ssl/cert.pem',

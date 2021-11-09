@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import tinymce from 'tinymce/tinymce';
+import { Editor } from 'tinymce/tinymce';
 import { DateTime } from 'luxon';
 import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
@@ -187,7 +188,7 @@ export function getTinymceBaseConfig(page: string): object {
       toolbar: [ 'undo', 'redo', 'bold', 'italic', 'underline', 'bullist', 'numlist', 'link' ],
     },
     // keyboard shortcut to insert today's date at cursor in editor
-    setup: (editor: any): void => {
+    setup: (editor: Editor): void => {
       // holds the timer setTimeout function
       let typingTimer;
       // make the edges round

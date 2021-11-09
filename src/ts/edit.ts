@@ -14,6 +14,7 @@ import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
 import { getEntity } from './misc';
 import Dropzone from 'dropzone';
+import { File } from 'dropzone';
 import i18next from 'i18next';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
@@ -48,7 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
   editor.init();
 
   // UPLOAD FORM
-  new Dropzone('form#elabftw-dropzone', {
+  const dropZoneElement = '#elabftw-dropzone';
+  new Dropzone(dropZoneElement, {
     // i18n message to user
     dictDefaultMessage: i18next.t('dropzone-upload-area'),
     maxFilesize: $('#info').data('maxsize'), // MB
@@ -66,14 +68,14 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       // once it is done
-      this.on('complete', function(answer: any) {
+      this.on('complete', function(answer: File) {
         // check the answer we get back from the controller
         const json = JSON.parse(answer.xhr.responseText);
         notif(json);
         // reload the #filesdiv once the file is uploaded
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
           $('#filesdiv').load(`?mode=edit&id=${String(entity.id)} #filesdiv > *`, function() {
-            const dropZone = Dropzone.forElement('#elabftw-dropzone');
+            const dropZone = Dropzone.forElement(dropZoneElement);
             // Check to make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
             if (typeof dropZone.tinyImageSuccess !== 'undefined' && dropZone.tinyImageSuccess !== null) {
               // Uses the newly updated HTML element for the uploads section to find the last file uploaded and use that to get the remote url for the image.
@@ -123,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // GET MOL FILES
   function getListFromMolFiles(): void {
-    const mols: any = [];
+    const mols = [];
     const UploadC = new UploadClass(entity);
     UploadC.read().then(json => {
       for (const upload of json.value as Array<Upload>) {

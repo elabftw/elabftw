@@ -36,9 +36,9 @@ class MakeDfnTimestamp extends MakeTimestamp
             'ts_login' => '',
             'ts_password' => '',
             'ts_url' => self::TS_URL,
-            'ts_cert' => dirname(__DIR__) . '/ts-certs/' . self::TS_CERT,
+            'ts_cert' => dirname(__DIR__) . '/certs/' . self::TS_CERT,
             'ts_hash' => self::TS_HASH,
-            'ts_chain' => dirname(__DIR__) . '/ts-certs/' . self::TS_CHAIN,
+            'ts_chain' => dirname(__DIR__) . '/certs/' . self::TS_CHAIN,
             );
     }
 }

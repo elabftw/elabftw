@@ -137,7 +137,7 @@ echo $App->render('search.html', $renderArr);
  * Here the search begins
  * If there is a search, there will be get parameters, so this is our main switch
  */
-if ($Request->query->count() > 0) {
+if ($Request->query->count() > 0 && !$bodyError && !$titleError) {
 
     // STATUS
     $status = '';
@@ -215,13 +215,12 @@ if ($Request->query->count() > 0) {
             }
         }
 
-        if (!$bodyError && !$titleError) {
-            try {
-                $Controller = new SearchController($App, $Entity);
-                echo $Controller->show(true)->getContent();
-            } catch (ImproperActionException $e) {
-                echo Tools::displayMessage($e->getMessage(), 'ko', false);
-            }
+
+        try {
+            $Controller = new SearchController($App, $Entity);
+            echo $Controller->show(true)->getContent();
+        } catch (ImproperActionException $e) {
+            echo Tools::displayMessage($e->getMessage(), 'ko', false);
         }
     }
 } else {

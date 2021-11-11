@@ -39,6 +39,9 @@ class LocalAuth implements AuthInterface
 
     public function __construct(string $email, private string $password)
     {
+        if (empty($password)) {
+            throw new QuantumException(_('Invalid email/password combination.'));
+        }
         $this->Db = Db::getConnection();
         $this->email = Filter::sanitize($email);
         $this->userid = $this->getUseridFromEmail();

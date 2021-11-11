@@ -22,6 +22,12 @@ class LocalAuthTest extends \PHPUnit\Framework\TestCase
         $this->AuthService = new LocalAuth('phpunit@example.com', 'phpunitftw');
     }
 
+    public function testEmptyPassword(): void
+    {
+        $this->expectException(QuantumException::class);
+        $AuthService = new LocalAuth('phpunit@example.com', '');
+    }
+
     public function testTryAuth(): void
     {
         $authResponse = $this->AuthService->tryAuth();

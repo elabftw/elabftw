@@ -47,6 +47,7 @@ class Email
 
     /**
      * Send an email
+     * TODO make private?
      */
     public function send(RawMessage $email): bool
     {
@@ -109,17 +110,13 @@ class Email
         return count($emails);
     }
 
-    public function alertNewComment(Address $to, string $bodyUrl, string $commenter): bool
+    public function sendEmail(Address $to, string $subject, string $body): bool
     {
         $message = (new Memail())
-        ->subject(_('[eLabFTW] New comment posted'))
+        ->subject($subject)
         ->from($this->from)
         ->to($to)
-        ->text(sprintf(
-            _('Hi. %s left a comment on your experiment. Have a look: %s'),
-            $commenter,
-            $bodyUrl
-        ) . $this->footer);
+        ->text($body . $this->footer);
 
         return $this->send($message);
     }

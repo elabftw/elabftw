@@ -12,14 +12,12 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CreateCommentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\Email;
 use Elabftw\Traits\SetIdTrait;
 use function nl2br;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mime\Address;
 
 /**
  * All about the comments
@@ -36,7 +34,7 @@ class Comments implements CrudInterface
         $this->id = $id;
     }
 
-    public function create(CreateCommentParamsInterface $params): int
+    public function create(ContentParamsInterface $params): int
     {
         $sql = 'INSERT INTO ' . $this->Entity->type . '_comments(datetime, item_id, comment, userid)
             VALUES(:datetime, :item_id, :content, :userid)';
@@ -48,7 +46,7 @@ class Comments implements CrudInterface
 
         $this->Db->execute($req);
 
-        $this->alertOwner($params->getEmail());
+        $this->alertOwner();
         return $this->Db->lastInsertId();
     }
 
@@ -91,13 +89,13 @@ class Comments implements CrudInterface
     }
 
     /**
-     * Send an email to the experiment owner to alert a comment was posted
+     * Create a notification to the experiment owner to alert a comment was posted
      * (issue #160). Only send for an experiment.
      */
-    private function alertOwner(Email $email): bool
+    private function alertOwner(): bool
     {
-        // don't do it for Db items
-        if ($this->Entity instanceof Items) {
+        // only for experiments
+        if (!$this->Entity instanceof Experiments) {
             return false;
         }
 
@@ -129,20 +127,8 @@ class Comments implements CrudInterface
         $bodyUrl = str_replace('app/controllers/', '', $bodyUrl);
         $bodyUrl .= '?mode=view&id=' . $this->Entity->id;
 
-        // set the lang to the target user, not the one commenting (see issue #2700)
-        $locale = $users['lang'] . '.utf8';
-        // configure gettext
-        $domain = 'messages';
-        putenv("LC_ALL=$locale");
-        setlocale(LC_ALL, $locale);
-        bindtextdomain($domain, dirname(__DIR__, 2) . '/src/langs');
-        textdomain($domain);
-        // END i18n
-
-        return $email->alertNewComment(
-            new Address($users['email'], $users['fullname']),
-            $bodyUrl,
-            $commenter['fullname'],
-        );
+        $Notifications = new Notifications();
+        $Notifications->createNewComment((int) $users['userid'], $commenter['fullname'], $bodyUrl);
+        return true;
     }
 }

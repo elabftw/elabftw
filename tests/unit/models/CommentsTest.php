@@ -10,18 +10,12 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
-use Elabftw\Elabftw\CreateComment;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Services\Email;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 
 class CommentsTest extends \PHPUnit\Framework\TestCase
 {
     private Experiments $Entity;
-
-    private Email $mockEmail;
 
     private Comments $Comments;
 
@@ -29,25 +23,12 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Entity = new Experiments(new Users(1, 1), 1);
 
-        // create mock object for Email because we don't want to actually send emails
-        $this->mockEmail = $this->getMockBuilder(\Elabftw\Services\Email::class)
-             ->disableOriginalConstructor()
-             ->setMethods(array('send'))
-             ->getMock();
-
-        $this->mockEmail->expects($this->any())
-             ->method('send')
-             ->will($this->returnValue(true));
-
         $this->Comments = new Comments($this->Entity);
     }
 
     public function testCreate(): void
     {
-        $logger = new Logger('elabftw');
-        $logger->pushHandler(new ErrorLogHandler());
-        $Email = new Email(Config::getConfig(), $logger);
-        $this->assertIsInt($this->Comments->create(new CreateComment('Ohai', '', $Email)));
+        $this->assertIsInt($this->Comments->create(new ContentParams('Ohai')));
     }
 
     public function testRead(): void

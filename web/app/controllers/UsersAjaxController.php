@@ -52,7 +52,7 @@ try {
         // all good, validate user
         if ($targetUser->validate()) {
             // send an email to the user
-            $Email = new Email(Config::getConfig(), $targetUser);
+            $Email = new Email(Config::getConfig(), $App->Log);
             $Email->alertUserIsValidated($targetUser->userData['email']);
         }
     }

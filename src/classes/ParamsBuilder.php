@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2021 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -24,6 +25,9 @@ use Elabftw\Models\Templates;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Elabftw\Services\Email;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 
 /**
  * Return the corresponding parameters object based on the model
@@ -45,6 +49,12 @@ class ParamsBuilder
         }
         if ($this->model instanceof ItemsTypes) {
             return new ItemTypeParams($this->content, $this->target, $this->extra);
+        }
+        if ($this->model instanceof Comments) {
+            $logger = new Logger('elabftw');
+            $logger->pushHandler(new ErrorLogHandler());
+            $Email = new Email(Config::getConfig(), $logger);
+            return new CreateComment($this->content, $this->target, $Email);
         }
         if ($this->model instanceof UnfinishedSteps) {
             return new UnfinishedStepsParams($this->extra);

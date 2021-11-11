@@ -27,7 +27,6 @@ use Elabftw\Models\Tags;
 use Elabftw\Models\Teams;
 use Exception;
 use PDOException;
-use Swift_TransportException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -111,15 +110,6 @@ try {
         'res' => true,
         'msg' => _('Saved'),
         'value' => $res,
-    ));
-} catch (Swift_TransportException $e) {
-    // for swift error, don't display error to user as it might contain sensitive information
-    // but log it and display general error. See #841
-    $App->Log->error('', array('exception' => $e));
-    $Response = new JsonResponse();
-    $Response->setData(array(
-        'res' => false,
-        'msg' => _('Error sending email'),
     ));
 } catch (ImproperActionException | UnauthorizedException | ResourceNotFoundException | PDOException $e) {
     $Response->setData(array(

@@ -16,7 +16,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ValidatedUser;
 use Elabftw\Services\Check;
 use Exception;
-use Swift_TransportException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 require_once dirname(__DIR__) . '/init.inc.php';
@@ -57,11 +56,6 @@ try {
 
     // log user creation
     $App->Log->info('New user created');
-} catch (Swift_TransportException $e) {
-    // for swift error, don't display error to user as it might contain sensitive information
-    // but log it and display general error. See #841
-    $App->Log->error('', array('exception' => $e));
-    $App->Session->getFlashBag()->add('ko', Tools::error());
 } catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());

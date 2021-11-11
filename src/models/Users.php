@@ -22,6 +22,8 @@ use Elabftw\Services\UsersHelper;
 use function filter_var;
 use function hash;
 use function mb_strlen;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 use function password_hash;
 use PDO;
 use function time;
@@ -144,7 +146,9 @@ class Users
         // now add the user to the team
         $Teams->addUserToTeams($userid, array_column($teams, 'id'));
         $userInfo = array('email' => $email, 'name' => $firstname . ' ' . $lastname);
-        $Email = new Email($Config, $this);
+        $logger = new Logger('elabftw');
+        $logger->pushHandler(new ErrorLogHandler());
+        $Email = new Email($Config, $logger);
         // just skip this if we don't have proper normalized teams
         if ($alertAdmin && isset($teams[0]['id'])) {
             $Email->alertAdmin((int) $teams[0]['id'], $userInfo, !(bool) $validated);

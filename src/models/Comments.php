@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,20 +6,20 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Interfaces\CreateCommentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\Email;
 use Elabftw\Traits\SetIdTrait;
 use function nl2br;
 use PDO;
-use Swift_Message;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mime\Address;
 
 /**
  * All about the comments
@@ -30,13 +30,13 @@ class Comments implements CrudInterface
 
     protected Db $Db;
 
-    public function __construct(public AbstractEntity $Entity, private Email $Email, ?int $id = null)
+    public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->id = $id;
     }
 
-    public function create(ContentParamsInterface $params): int
+    public function create(CreateCommentParamsInterface $params): int
     {
         $sql = 'INSERT INTO ' . $this->Entity->type . '_comments(datetime, item_id, comment, userid)
             VALUES(:datetime, :item_id, :content, :userid)';
@@ -48,8 +48,7 @@ class Comments implements CrudInterface
 
         $this->Db->execute($req);
 
-        $this->alertOwner();
-
+        $this->alertOwner($params->getEmail());
         return $this->Db->lastInsertId();
     }
 
@@ -94,16 +93,14 @@ class Comments implements CrudInterface
     /**
      * Send an email to the experiment owner to alert a comment was posted
      * (issue #160). Only send for an experiment.
-     *
-     * @return int number of email sent
      */
-    private function alertOwner(): int
+    private function alertOwner(Email $email): bool
     {
         $Config = Config::getConfig();
 
-        // don't do it for Db items or if email is not configured
-        if ($this->Entity instanceof Items || $Config->configArr['mail_from'] === 'notconfigured@example.com') {
-            return 0;
+        // don't do it for Db items
+        if ($this->Entity instanceof Items) {
+            return false;
         }
 
         // get the first and lastname of the commenter
@@ -123,7 +120,7 @@ class Comments implements CrudInterface
 
         // don't send an email if we are commenting on our own XP
         if ($users['userid'] === $this->Entity->Users->userData['userid']) {
-            return 1;
+            return false;
         }
 
         // Create the message
@@ -144,20 +141,10 @@ class Comments implements CrudInterface
         textdomain($domain);
         // END i18n
 
-        $message = (new Swift_Message())
-        // Give the message a subject
-        ->setSubject(_('[eLabFTW] New comment posted'))
-        // Set the From address with an associative array
-        ->setFrom(array($Config->configArr['mail_from'] => 'eLabFTW'))
-        // Set the To addresses with an associative array
-        ->setTo(array($users['email'] => $users['fullname']))
-        // Give it a body
-        ->setBody(sprintf(
-            _('Hi. %s left a comment on your experiment. Have a look: %s'),
+        return $email->alertNewComment(
+            new Address($users['email'], $users['fullname']),
+            $bodyUrl,
             $commenter['fullname'],
-            $bodyUrl
-        ) . $this->Email->footer);
-
-        return $this->Email->send($message);
+        );
     }
 }

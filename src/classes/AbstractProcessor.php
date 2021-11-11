@@ -33,7 +33,6 @@ use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
-use Elabftw\Services\Email;
 use function property_exists;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -135,7 +134,7 @@ abstract class AbstractProcessor implements ProcessorInterface
             case 'status':
                 return new Status($this->Users->team, $this->id);
             case 'comment':
-                return new Comments($this->Entity, new Email(Config::getConfig(), $this->Users), $this->id);
+                return new Comments($this->Entity, $this->id);
             case 'link':
                 return new Links($this->Entity, $this->id);
             case 'favtag':

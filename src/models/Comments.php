@@ -96,8 +96,6 @@ class Comments implements CrudInterface
      */
     private function alertOwner(Email $email): bool
     {
-        $Config = Config::getConfig();
-
         // don't do it for Db items
         if ($this->Entity instanceof Items) {
             return false;

@@ -245,53 +245,29 @@ class Email
      */
     private function getMailer(): MailerInterface
     {
+        // Use locally installed MTA (aka sendmail)
+        $dsn = 'sendmail://default';
 
-        /*
-        // Choose mail transport method; either smtp or sendmail
+        // Override default dsn if we use SMTP
         if ($this->Config->configArr['mail_method'] === 'smtp') {
-            if ($this->Config->configArr['smtp_encryption'] === 'none') {
-                $transport = new Swift_SmtpTransport(
-                    $this->Config->configArr['smtp_address'],
-                    $this->Config->configArr['smtp_port']
-                );
-            } else {
-                $transport = new Swift_SmtpTransport(
-                    $this->Config->configArr['smtp_address'],
-                    $this->Config->configArr['smtp_port'],
-                    $this->Config->configArr['smtp_encryption']
-                );
-            }
-
+            $username = '';
+            $password = '';
             if ($this->Config->configArr['smtp_password']) {
-                $transport->setUsername($this->Config->configArr['smtp_username'])
-                ->setPassword(Crypto::decrypt(
+                $username = $this->Config->configArr['smtp_username'];
+                $password = Crypto::decrypt(
                     $this->Config->configArr['smtp_password'],
                     Key::loadFromAsciiSafeString(SECRET_KEY)
-                ));
+                );
             }
-        } else {
-            // Use locally installed MTA (aka sendmail); Default
-            $transport = new Swift_SendmailTransport($this->Config->configArr['sendmail_path'] . ' -bs');
-        }
-         */
 
-        $username = '';
-        $password = '';
-        if ($this->Config->configArr['smtp_password']) {
-            $username = $this->Config->configArr['smtp_username'];
-            $password = Crypto::decrypt(
-                $this->Config->configArr['smtp_password'],
-                Key::loadFromAsciiSafeString(SECRET_KEY)
+            $dsn = sprintf(
+                'smtp://%s:%s@%s:%d',
+                $username,
+                $password,
+                $this->Config->configArr['smtp_address'],
+                $this->Config->configArr['smtp_port'],
             );
         }
-
-        $dsn = sprintf(
-            'smtp://%s:%s@%s:%d',
-            $username,
-            $password,
-            $this->Config->configArr['smtp_address'],
-            $this->Config->configArr['smtp_port'],
-        );
 
         $transport = Transport::fromDsn($dsn);
         return new Mailer($transport);

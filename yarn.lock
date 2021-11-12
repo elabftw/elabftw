@@ -1447,7 +1447,7 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-ace-builds@^1.4.12:
+ace-builds@^1.4.13:
   version "1.4.13"
   resolved "https://registry.yarnpkg.com/ace-builds/-/ace-builds-1.4.13.tgz#186f42d3849ebcc6a48b93088a058489897514c1"
   integrity sha512-SOLzdaQkY6ecPKYRDDg+MY1WoGgXA34cIvYJNNoBMGGUswHmlauU2Hy0UL96vW0Fs/LgFbMUjD+6vqzWTldIYQ==
@@ -3379,12 +3379,12 @@ jsondiffpatch@^0.3.11:
     chalk "^2.3.0"
     diff-match-patch "^1.0.0"
 
-jsoneditor@^9.0.3:
-  version "9.5.6"
-  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-9.5.6.tgz#b2abca2aeb34bb5291025d0eeddcb2845e0d90a9"
-  integrity sha512-smu4CKCOeJiizGGGYQ7ZAvCclnuJP7gX/wcoHw/DWiJMUZq+3KjJNDhYnVTRgi+Zk0UlPngA4egmuJre/H2mXg==
+jsoneditor@^9.5.7:
+  version "9.5.7"
+  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-9.5.7.tgz#b74d0c2cf64febe102b1b0a91d693f48d1f90917"
+  integrity sha512-RWI1YqIhb2XzLcnSHMta7LROItQg49FhSd7KNPWr81HyCj2pc0m25no4BpzygmxW9320r9PnYKJwZsqL2PpdrQ==
   dependencies:
-    ace-builds "^1.4.12"
+    ace-builds "^1.4.13"
     ajv "^6.12.6"
     javascript-natural-sort "^0.7.1"
     jmespath "^0.15.0"
@@ -3392,7 +3392,7 @@ jsoneditor@^9.0.3:
     jsonrepair "^2.2.1"
     mobius1-selectr "^2.4.13"
     picomodal "^3.0.0"
-    vanilla-picker "^2.11.2"
+    vanilla-picker "^2.12.1"
 
 jsonfile@^6.0.1:
   version "6.1.0"
@@ -5256,7 +5256,7 @@ validate.io-number@^1.0.3:
   resolved "https://registry.yarnpkg.com/validate.io-number/-/validate.io-number-1.0.3.tgz#f63ffeda248bf28a67a8d48e0e3b461a1665baf8"
   integrity sha1-9j/+2iSL8opnqNSODjtGGhZluvg=
 
-vanilla-picker@^2.11.2:
+vanilla-picker@^2.12.1:
   version "2.12.1"
   resolved "https://registry.yarnpkg.com/vanilla-picker/-/vanilla-picker-2.12.1.tgz#6e619eecf553891b8d2d042b745a23c91f19f34c"
   integrity sha512-2qrEP9VYylKXbyzXKsbu2dferBTvqnlsr29XjHwFE+/MEp0VNj6oEUESLDtKZ7DWzGdSv1x/+ujqFZF+KsO3cg==

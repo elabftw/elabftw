@@ -264,8 +264,10 @@ CREATE TABLE `experiments_templates_revisions` (
 --
 
 CREATE TABLE `favtags2users` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `users_id` int UNSIGNED NOT NULL,
-  `tags_id` int UNSIGNED NOT NULL
+  `tags_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --

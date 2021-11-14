@@ -11,6 +11,7 @@ namespace Elabftw\Services;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Users;
@@ -29,7 +30,8 @@ class ResetPasswordKey
 
     // this is our separator for separating the email and deadline encrypted in the key
     // it doesn't need to be secret or unique, just random enough so it's not found in the email
-    protected const SEPARATOR = '17E8C262D020414D959A1ELABFTWIZDABESTELN';
+    // also include forbidden characters
+    protected const SEPARATOR = '@BiB6y21q>,6;,*C;A.b$$BpD"Mal<%1*';
 
     /**
      * $now is the time in epoch
@@ -54,7 +56,12 @@ class ResetPasswordKey
     public function validate(string $key): Users
     {
         $decryptedKey = Crypto::decrypt($key, Key::loadFromAsciiSafeString($this->secretKey));
-        [$email, $deadline] = explode(self::SEPARATOR, $decryptedKey);
+        $exploded = explode(self::SEPARATOR, $decryptedKey);
+        if (count($exploded) !== 2) {
+            throw new IllegalActionException('Something is wrong with the number of exploded values during password reset.');
+        }
+        $email = $exploded[0];
+        $deadline = $exploded[1];
 
         if ($deadline < $this->now) {
             throw new ImproperActionException(sprintf(_('This link has expired! Password reset links are only valid for %s minutes.'), self::LINK_LIFETIME));

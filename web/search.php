@@ -78,7 +78,6 @@ if ($Request->query->has('title') && !empty($Request->query->get('title'))) {
 // BODY
 $body = '';
 $bodyError = false;
-$whereClause = '';
 if ($Request->query->has('body') && !empty($Request->query->get('body'))) {
     $body = $Request->query->get('body');
 
@@ -129,7 +128,6 @@ $renderArr = array(
     'statusArr' => $statusArr,
     'usersArr' => $usersArr,
     'visibilityArr' => $visibilityArr,
-    'whereClause' => print_r($whereClause, true),
 );
 echo $App->render('search.html', $renderArr);
 

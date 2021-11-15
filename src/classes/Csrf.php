@@ -1,91 +1,75 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * \Elabftw\Elabftw\Csrf.php
- *
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
 use Defuse\Crypto\Key;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
- * Prevent CSRF attacks
+ * Prevent Cross Site Request Forgery (CSRF) attacks
+ * See https://owasp.org/www-community/attacks/csrf
+ *
+ * A token is generated and stored in the session. It will be the same during all user session.
+ * When a POST request is made, the sent token (in 'csrf' field or as header for Ajax requests) is checked against
+ * the stored one and an exception is thrown if they don't match, preventing the request to go through.
  */
 class Csrf
 {
-    public function __construct(private Request $Request, private SessionInterface $Session)
+    private string $token = '';
+
+    public function __construct(private Request $Request)
     {
-        if (!$this->Session->has('csrf')) {
-            $this->Session->set('csrf', $this->generate());
-        }
     }
 
     /**
-     * Return the form key for inclusion in HTML
-     */
-    public function getHiddenInput(): string
-    {
-        return "<input type='hidden' name='csrf' value='" . $this->getToken() . "' />";
-    }
-
-    /**
-     * Read token from session
+     * Get the token and generate one if needed
      */
     public function getToken(): string
     {
-        return $this->Session->get('csrf');
+        if ($this->token === '') {
+            $this->token = Key::createNewRandomKey()->saveToAsciiSafeString();
+        }
+
+        return $this->token;
+    }
+
+    public function setToken(string $token): void
+    {
+        $this->token = $token;
     }
 
     /**
-     * Validate the form key against the one previously set in Session
+     * Validate the csrf token against the one we have
      */
     public function validate(): void
     {
-        // get requests are not checked
-        if ($this->Request->server->get('REQUEST_METHOD') === 'GET') {
+        // get requests are not checked, same for api requests or the reset password page
+        if (($this->Request->server->get('REQUEST_METHOD') === 'GET') ||
+            ($this->Request->server->get('SCRIPT_NAME') === '/app/controllers/ResetPasswordController.php') ||
+            ($this->Request->server->get('SCRIPT_NAME') === '/app/controllers/ApiController.php')) {
             return;
         }
-        // detect ajax request
-        if ($this->Request->headers->get('X-Requested-With') === 'XMLHttpRequest') {
-            $res = $this->validateAjax();
-        } else {
-            $res = $this->validateForm();
-        }
-        if (!$res) {
+
+        if ($this->getRequestToken() !== $this->getToken()) {
+            // an invalid csrf token is most likely the result of an expired session
             throw new InvalidCsrfTokenException();
         }
     }
 
-    /**
-     * Generate a CSRF token
-     */
-    private function generate(): string
+    private function getRequestToken(): string
     {
-        return Key::createNewRandomKey()->saveToAsciiSafeString();
-    }
-
-    /**
-     * AJAX requests find the token in header
-     */
-    private function validateAjax(): bool
-    {
-        return $this->Request->headers->get('X-CSRF-Token') === $this->getToken();
-    }
-
-    /**
-     * Normal forms send the token with hidden field
-     */
-    private function validateForm(): bool
-    {
-        return $this->Request->request->get('csrf') === $this->getToken();
+        // an Ajax request will have the token in the headers
+        if ($this->Request->headers->get('X-Requested-With') === 'XMLHttpRequest') {
+            return (string) $this->Request->headers->get('X-CSRF-Token');
+        }
+        return (string) $this->Request->request->get('csrf');
     }
 }

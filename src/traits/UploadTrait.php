@@ -45,9 +45,22 @@ trait UploadTrait
     }
 
     /**
+     * Get the temporary files folder absolute path
+     * Create the folder if it doesn't exist
+     */
+    protected function getTmpPath(): string
+    {
+        $tmpPath = dirname(__DIR__, 2) . '/cache/elab/';
+        if (!is_dir($tmpPath) && !mkdir($tmpPath, 0700, true) && !is_dir($tmpPath)) {
+            throw new FilesystemErrorException("Unable to create the cache directory ($tmpPath)");
+        }
+
+        return $tmpPath;
+    }
+
+    /**
      * Create a unique long filename with a folder
-     *
-     * @return string the path for storing the file
+     * Create the folder if it doesn't exist
      */
     protected function getLongName(): string
     {
@@ -71,10 +84,7 @@ trait UploadTrait
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $uploads = $req->fetchAll();
-        if ($uploads === false) {
-            return 0;
-        }
+        $uploads = $this->Db->fetchAll($req);
         $diskUsage = 0;
         foreach ($uploads as $upload) {
             $diskUsage += filesize($this->getUploadsPath() . $upload['long_name']);

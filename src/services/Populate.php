@@ -52,7 +52,7 @@ class Populate
             $Category = new Status($Entity->Users->team);
             $tpl = 0;
         } else {
-            $Category = new ItemsTypes($Entity->Users->team);
+            $Category = new ItemsTypes($Entity->Users);
             $tpl = (int) $Category->readAll()[0]['category_id'];
         }
         $categories = $Category->readAll();
@@ -114,7 +114,7 @@ class Populate
         $password = $user['password'] ?? self::DEFAULT_PASSWORD;
         $email = $user['email'] ?? $this->faker->safeEmail();
 
-        $userid = $Teams->Users->create($email, array($user['team']), $firstname, $lastname, $password, null, true, true, false);
+        $userid = $Teams->Users->create($email, array($user['team']), $firstname, $lastname, $password, null, true, false);
         $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));
         $Users = new Users($userid, (int) $team[0]['id']);
 

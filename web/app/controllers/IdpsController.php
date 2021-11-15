@@ -1,7 +1,5 @@
 <?php
 /**
- * app/controllers/IdpsController.php
- *
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -12,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -22,9 +21,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Controller for IDPs
- *
  */
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new RedirectResponse('../../sysconfig.php?tab=7');
 
@@ -45,7 +43,11 @@ try {
             $Request->request->get('sloUrl'),
             $Request->request->get('sloBinding'),
             $Request->request->get('x509'),
-            $Request->request->get('active')
+            $Request->request->get('active'),
+            $Request->request->get('email_attr'),
+            $Request->request->get('team_attr'),
+            $Request->request->get('fname_attr'),
+            $Request->request->get('lname_attr')
         );
     }
 
@@ -60,7 +62,11 @@ try {
             $Request->request->get('sloUrl'),
             $Request->request->get('sloBinding'),
             $Request->request->get('x509'),
-            $Request->request->get('active')
+            $Request->request->get('active'),
+            $Request->request->get('email_attr'),
+            $Request->request->get('team_attr'),
+            $Request->request->get('fname_attr'),
+            $Request->request->get('lname_attr')
         );
     }
 

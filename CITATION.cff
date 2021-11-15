@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: CARPi
+    given-names: Nicolas
+    orcid: https://orcid.org/0000-0002-7494-5555
+  - family-names: Minges
+    given-names: Alexander
+    orcid: https://orcid.org/0000-0001-7760-2753
+  - family-names: Piel
+    given-names: Matthieu
+    orcid: https://orcid.org/0000-0002-2848-177X
+title: "eLabFTW: An open source laboratory notebook for research labs"
+version: 1.4.0
+doi: 10.21105/joss.00146
+date-released: 2017-04-14

@@ -19,7 +19,7 @@ const t = {
     "tag-delete-warning": "Supprimer ce tag ?",
     "upload-file-comment": "Commentaire du fichier",
     "template-title": "Template title",
-  }
+  },
 };
 
 export default t;

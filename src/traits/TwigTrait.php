@@ -56,7 +56,14 @@ trait TwigTrait
         $filesizeFilter = new \Twig\TwigFilter('filesize', '\filesize', $filterOptions);
         $qFilter = new \Twig\TwigFilter('qFilter', '\Elabftw\Elabftw\Tools::qFilter', $filterOptions);
         $langFilter = new \Twig\TwigFilter('jslang', '\Elabftw\Elabftw\Tools::getCalendarLang', $filterOptions);
-        $limitOptions = new \Twig\TwigFunction('limitOptions', '\Elabftw\Elabftw\Tools::getLimitOptions');
+        $metadataFilter = new \Twig\TwigFilter('formatMetadata', '\Elabftw\Elabftw\Tools::formatMetadata', $filterOptions);
+        $csrfFilter = new \Twig\TwigFilter('csrf', '\Elabftw\Services\Transform::csrf', $filterOptions);
+        // custom twig functions
+        $limitOptions = new \Twig\TwigFunction('limitOptions', '\Elabftw\Elabftw\TwigFunctions::getLimitOptions');
+        $generationTime = new \Twig\TwigFunction('generationTime', '\Elabftw\Elabftw\TwigFunctions::getGenerationTime');
+        $memoryUsage = new \Twig\TwigFunction('memoryUsage', '\Elabftw\Elabftw\TwigFunctions::getMemoryUsage');
+        $numberOfQueries = new \Twig\TwigFunction('numberOfQueries', '\Elabftw\Elabftw\TwigFunctions::getNumberOfQueries');
+        $minPasswordLength = new \Twig\TwigFunction('minPasswordLength', '\Elabftw\Elabftw\TwigFunctions::getMinPasswordLength');
 
         // custom test to check for a file
         $test = new \Twig\TwigTest('readable', function (string $path) {
@@ -73,7 +80,14 @@ trait TwigTrait
         $TwigEnvironment->addFilter($filesizeFilter);
         $TwigEnvironment->addFilter($qFilter);
         $TwigEnvironment->addFilter($langFilter);
+        $TwigEnvironment->addFilter($metadataFilter);
+        $TwigEnvironment->addFilter($csrfFilter);
+        // functions
         $TwigEnvironment->addFunction($limitOptions);
+        $TwigEnvironment->addFunction($generationTime);
+        $TwigEnvironment->addFunction($memoryUsage);
+        $TwigEnvironment->addFunction($numberOfQueries);
+        $TwigEnvironment->addFunction($minPasswordLength);
 
         // i18n for twig
         $TwigEnvironment->addExtension(new \Twig\Extensions\I18nExtension());

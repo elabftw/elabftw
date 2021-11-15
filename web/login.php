@@ -14,14 +14,11 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\BannedUsers;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Elabftw\Services\MfaHelper;
 use Exception;
 use function implode;
-use function in_array;
-use function md5;
 use function str_split;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,22 +41,6 @@ try {
         $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='" .
             $url . "'>$url</a>";
         throw new ImproperActionException($message);
-    }
-
-    // disable login if too much failed_attempts
-    $BannedUsers = new BannedUsers($App->Config);
-    // get user info
-    $fingerprint = md5($App->Request->server->get('REMOTE_ADDR') . $App->Request->server->get('HTTP_USER_AGENT') ?? '');
-    if ($App->Session->has('failed_attempt') && $App->Session->get('failed_attempt') >= $App->Config->configArr['login_tries']) {
-        // add the user to the banned list
-        $BannedUsers->create($fingerprint);
-
-        $App->Session->remove('failed_attempt');
-    }
-
-    // Check if we are banned after too much failed login attempts
-    if (in_array($fingerprint, $BannedUsers->readAll(), true)) {
-        throw new ImproperActionException(_('You cannot login now because of too many failed login attempts.'));
     }
 
     // Show MFA if necessary
@@ -100,9 +81,13 @@ try {
     $Teams = new Teams($App->Users);
     $teamsArr = $Teams->readAll();
 
+    if ($Request->cookies->has('kickreason')) {
+        // at the moment there is only one reason
+        $App->ko[] = _('Your session expired.');
+    }
+
     $template = 'login.html';
     $renderArr = array(
-        'BannedUsers' => $BannedUsers,
         'idpsArr' => $idpsArr,
         'teamsArr' => $teamsArr,
         'showLocal' => $showLocal,

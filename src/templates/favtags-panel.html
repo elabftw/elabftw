@@ -1,0 +1,30 @@
+<div class='side-panel' id='favtagsPanel' hidden>
+  <div class='m-2'>
+    <a class='clickable float-right' data-action='toggle-favtags' title='{{ 'Close'|trans }}'>
+        <i class='fas fa-chevron-left fa-2x'></i>
+    </a>
+    <h3>{{ 'Favorite tags'|trans }}</h3>
+    <div class='input-group'>
+      <input data-action='favtags-search' class='form-control form-inline' type='text' placeholder='{{ 'Filter'|trans }}' />
+      <div class='input-group-append'>
+        <button data-action='clear-favtags-search' class='btn btn-outline-secondary'><i class='fas fa-times fa-fw'></i></button>
+      </div>
+    </div>
+  </div>
+  <ul>
+    {% for favtag in favTagsArr %}
+    <li data-action='add-tag-filter' data-tag='{{ favtag.tag }}' class='clickable {{ App.Request.query.get('tags')[0] == favtag.tag ? 'selected' : ''}}'>
+      {{ favtag.tag }}<a href='#' class='float-right mr-2' data-id='{{ favtag.tags_id }}' data-action='destroy-favtags' hidden><i class='fas fa-trash-alt'></i></a>
+    </li>
+    {% endfor %}
+  </ul>
+  <div class='m-2'>
+    <input type='text' id='createFavTagInput' data-autocomplete='tags' class='form-control createFavTagInput' placeholder='{{ 'Add a tag as favorite'|trans }}' hidden />
+  </div>
+  <a data-action='toggle-addfav' href='#'>
+    <i class='m-2 fas fa-plus-circle fa-2x'></i>
+  </a>
+  <a data-action='toggle-favtags-edit' href='#'>
+    <i class='m-2 fas fa-pencil-alt fa-2x'></i>
+  </a>
+</div>

@@ -19,7 +19,7 @@ const t = {
     "tag-delete-warning": "このタグを削除しますか？",
     "upload-file-comment": "ファイルコメント",
     "template-title": "Template title",
-  }
+  },
 };
 
 export default t;

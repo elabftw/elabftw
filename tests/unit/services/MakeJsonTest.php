@@ -18,7 +18,8 @@ class MakeJsonTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Make = new MakeJson(new Experiments(new Users(1, 1)), '1 2 3');
+        $idArr = array('1', '2', '3');
+        $this->Make = new MakeJson(new Experiments(new Users(1, 1)), $idArr);
     }
 
     public function testGetFileName(): void
@@ -28,6 +29,6 @@ class MakeJsonTest extends \PHPUnit\Framework\TestCase
 
     public function testGetJson(): void
     {
-        $this->assertTrue(is_array($this->Make->getJson()));
+        $this->assertIsString($this->Make->getFileContent());
     }
 }

@@ -10,7 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function array_combine;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
@@ -39,6 +41,7 @@ class TeamGroups implements CrudInterface
      */
     public function create(ContentParamsInterface $params): int
     {
+        $this->canWriteOrExplode();
         $sql = 'INSERT INTO team_groups(name, team) VALUES(:content, :team)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
@@ -131,6 +134,7 @@ class TeamGroups implements CrudInterface
 
     public function update(TeamGroupParamsInterface $params): bool
     {
+        $this->canWriteOrExplode();
         if ($params->getTarget() === 'member') {
             return $this->updateMember($params);
         }
@@ -145,6 +149,7 @@ class TeamGroups implements CrudInterface
 
     public function destroy(): bool
     {
+        $this->canWriteOrExplode();
         // TODO add fk to do that
         $sql = "UPDATE experiments SET canread = 'team', canwrite = 'user' WHERE canread = :id OR canwrite = :id";
         $req = $this->Db->prepare($sql);
@@ -207,24 +212,6 @@ class TeamGroups implements CrudInterface
         return $req->rowCount() > 0;
     }
 
-    public function getGroupsFromUser(): array
-    {
-        $groups = array();
-
-        $sql = 'SELECT DISTINCT groupid FROM users2team_groups WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return $groups;
-        }
-        foreach ($res as $group) {
-            $groups[] = $group['groupid'];
-        }
-        return $groups;
-    }
-
     public function readGroupsFromUser(): array
     {
         $sql = 'SELECT DISTINCT team_groups.id, team_groups.name
@@ -236,11 +223,7 @@ class TeamGroups implements CrudInterface
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $groups = $req->fetchAll();
-        if ($groups === false) {
-            return array();
-        }
-        return $groups;
+        return $this->Db->fetchAll($req);
     }
 
     /**
@@ -260,5 +243,16 @@ class TeamGroups implements CrudInterface
         $req->bindValue(':userid', $params->getUserid(), PDO::PARAM_INT);
         $req->bindValue(':groupid', $params->getGroup(), PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    /**
+     * Check if we can write to this teamgroup
+     * We only need to check if we are admin
+     */
+    private function canWriteOrExplode(): void
+    {
+        if (!$this->Users->userData['is_admin']) {
+            throw new IllegalActionException(Tools::error(true));
+        }
     }
 }

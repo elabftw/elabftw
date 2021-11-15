@@ -6,43 +6,39 @@
  * @package elabftw
  */
 
-#todoList {
-    background: $darkgray;
-    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.8);
-    display: none;
-    height: 100%;
-    left: 0;
-    min-width: 300px;
-    overflow: hidden;
-    overflow-y: auto;
-    padding: 20px;
-    position: fixed;
-    text-align: center;
-    top: 0;
-    width: 30%;
-    z-index: 9001;
-
-    li {
-        background-color: #efefef;
-        font-size: 18px;
-        list-style-type: none;
-        margin-bottom: 5px;
-        padding: 10px;
-        text-align: left;
+#todolistPanel {
+    #todoItems,
+    #todoStepsExperiment,
+    #todoStepsItem,
+    .clear {
+        clear: both;
     }
 
-    #todo {
-        margin-bottom: 10px;
+    .switch-label {
+        color: $lightwhite;
+        font-size: 120%;
     }
-}
 
+    .custom-control-input ~
+    .custom-control-label::before {
+        border-color: $elabblue !important;
+    }
 
-/* fix the padding for sortable list */
-#todoItems-list.ui-sortable {
-    padding-left: 0;
-}
+    .custom-control-input ~
+    .custom-control-label::after {
+        background-color: $elabblue !important;
+    }
 
-/* fix add button too close to first item on small screen */
-#todoItems-list li:first-child {
-    margin-top: 5px;
+    .custom-control-input:checked ~ 
+    .custom-control-label::before {
+        background-color: #fff !important;
+    }
+
+    .custom-control-input:active ~ 
+    .custom-control-label::before,
+    .custom-control-input:focus ~
+    .custom-control-label::before {
+        background-color: #fff !important;
+        box-shadow: 0 0 0 0.1rem rgba(73, 186, 196, 0.5) !important;
+    }
 }

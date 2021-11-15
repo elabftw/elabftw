@@ -4,37 +4,33 @@
 
 <section>
   <form method='post' class='form-group' action='app/controllers/ResetPasswordController.php'>
+    {{ App.Session.get('csrf')|csrf }}
 
-    <span class='smallgray'>{{ App.getMinPasswordLength }} {{ 'characters minimum'|trans }}</span>
+    <span class='smallgray'>{{ minPasswordLength() }} {{ 'characters minimum'|trans }}</span>
     <!-- output the key and userid as hidden fields -->
     <input type="hidden" name="key" value="{{ key|e }}" />
-    <input type="hidden" name="deadline" value="{{ deadline|e }}" />
     <input type="hidden" name="userid" value="{{ userid|e }}" />
 
     {# min pass length minimum, no maximum #}
-    {% set pattern = '.{' ~ App.getMinPasswordLength ~ ',}' %}
+    {% set pattern = '.{' ~ minPasswordLength() ~ ',}' %}
 
     <div class='row'>
       <div class='col-md-4'></div>
       <div class='form-group col-md-4'>
         <label for='password'>{{ 'New password'|trans }}</label>
-        <input class='form-control' id='password' type='password' autocomplete='new-password' pattern='{{ pattern }}' value='' name='password' required />
+        <div class='input-group'>
+          <input class='form-control' id='password' type='password' autocomplete='new-password' pattern='{{ pattern }}' value='' name='password' required />
+          <div class='input-group-append'>
+            <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='password'><i class='fas fa-eye' aria-hidden='true'></i></span>
+          </div>
+        </div>
       </div>
       <div class='col-md-4'></div>
     </div>
 
     <div class='row'>
       <div class='col-md-4'></div>
-      <div class='form-group col-md-4'>
-        <label for='cpassword'>{{ 'Type it again'|trans }}</label>
-        <input class='form-control' id='cpassword' type='password' autocomplete='new-password' pattern='{{ pattern }}' value='' name='cpassword' required />
-      </div>
-      <div class='col-md-4'></div>
-    </div>
-
-    <div class='row'>
-      <div class='col-md-4'></div>
-      <div class='col-md-4'>
+      <div class='col-md-4 text-center'>
         <button class='button btn btn-primary' type='submit' name='Submit'>{{ 'Save new password'|trans }}</button>
       </div>
       <div class='col-md-4'></div>

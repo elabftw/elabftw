@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -16,6 +15,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
+use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 
 /**
@@ -23,6 +23,8 @@ use PDO;
  */
 class Items extends AbstractEntity
 {
+    use InsertTagsTrait;
+
     public function __construct(Users $users, ?int $id = null)
     {
         parent::__construct($users, $id);
@@ -33,10 +35,9 @@ class Items extends AbstractEntity
     public function create(EntityParamsInterface $params): int
     {
         $category = (int) $params->getContent();
-        $ItemsTypes = new ItemsTypes($this->Users->team, $category);
-        $itemsTypesArr = $ItemsTypes->read(new ContentParams());
+        $ItemsTypes = new ItemsTypes($this->Users, $category);
+        $itemTemplate = $ItemsTypes->read(new ContentParams());
 
-        // SQL for create DB item
         $sql = 'INSERT INTO items(team, title, date, body, userid, category, elabid, canread, canwrite, metadata)
             VALUES(:team, :title, :date, :body, :userid, :category, :elabid, :canread, :canwrite, :metadata)';
         $req = $this->Db->prepare($sql);
@@ -45,22 +46,23 @@ class Items extends AbstractEntity
             'title' => _('Untitled'),
             'date' => Filter::kdate(),
             'elabid' => $this->generateElabid(),
-            'body' => $itemsTypesArr['template'],
+            'body' => $itemTemplate['body'],
             'userid' => $this->Users->userData['userid'],
             'category' => $category,
-            'canread' => $itemsTypesArr['canread'],
-            'canwrite' => $itemsTypesArr['canwrite'],
-            'metadata' => $itemsTypesArr['metadata'],
+            'canread' => $itemTemplate['canread'],
+            'canwrite' => $itemTemplate['canwrite'],
+            'metadata' => $itemTemplate['metadata'],
         ));
 
-        return $this->Db->lastInsertId();
+        $newId = $this->Db->lastInsertId();
+
+        $this->insertTags($params->getTags(), $newId);
+        $this->Links->duplicate((int) $itemTemplate['id'], $newId, true);
+        $this->Steps->duplicate((int) $itemTemplate['id'], $newId, true);
+
+        return $newId;
     }
 
-    /**
-     * Duplicate an item
-     *
-     * @return int The id of the newly created item
-     */
     public function duplicate(): int
     {
         $this->canOrExplode('read');

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -6,13 +6,17 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
-use Elabftw\Exceptions\FilesystemErrorException;
-use function file;
+use function array_filter;
+use function explode;
+use League\Flysystem\FilesystemInterface;
+use RuntimeException;
+use function str_ends_with;
+use function str_starts_with;
+use Symfony\Component\Console\Output\OutputInterface;
+use function trim;
 
 /**
  * For SQL operations from files
@@ -21,41 +25,50 @@ class Sql
 {
     private Db $Db;
 
-    public function __construct()
+    public function __construct(private FilesystemInterface $filesystem, private ?OutputInterface $output = null)
     {
         $this->Db = Db::getConnection();
     }
 
     /**
-     * Read a SQL file from src/sql folder and execute the contents
+     * Read a SQL file from a folder and execute the contents
      */
-    public function execFile(string $filename): bool
+    public function execFile(string $filename): void
     {
-        $path = dirname(__DIR__) . '/sql/' . $filename;
+        $lines = $this->getLines($filename);
         // temporary variable, used to store current query
         $queryline = '';
-        // read in entire file as array
-        $lines = file($path);
-        if ($lines === false) {
-            throw new FilesystemErrorException('Error reading file: ' . $path);
-        }
         // loop through each line
         foreach ($lines as $line) {
-            // Skip it if it's a comment or blank line
-            if ($line === "\n" || $line === '' || str_starts_with($line, '--')) {
-                continue;
-            }
-
             // Add this line to the current segment
-            $queryline .= $line;
+            $queryline .= trim($line);
             // If it has a semicolon at the end, it's the end of the query
-            if (trim($line)[\mb_strlen(trim($line)) - 1] === ';') {
+            if (str_ends_with($line, ';')) {
+                // display which query we are running
+                if ($this->output !== null) {
+                    $this->output->writeln('Executing: ' . $queryline);
+                }
                 // Perform the query
                 $this->Db->q($queryline);
                 // Reset temp variable to empty
                 $queryline = '';
             }
         }
-        return true;
+    }
+
+    /**
+     * Read a file and return the significant lines as array
+     */
+    private function getLines(string $filename): array
+    {
+        $content = $this->filesystem->read($filename);
+        if ($content === false) {
+            throw new RuntimeException();
+        }
+        $linesArr = explode(PHP_EOL, $content);
+        // now filter out the uninteresting lines
+        return array_filter($linesArr, function ($v) {
+            return !empty($v) && !str_starts_with($v, '--') && !str_starts_with($v, '/*');
+        });
     }
 }

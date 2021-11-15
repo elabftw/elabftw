@@ -15,11 +15,9 @@ use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
@@ -32,11 +30,11 @@ use function exif_read_data;
 use function extension_loaded;
 use function file_exists;
 use function function_exists;
-use Gmagick;
 use function in_array;
 use function is_uploaded_file;
 use PDO;
 use function rename;
+use function strtolower;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use function unlink;
@@ -47,7 +45,6 @@ use function unlink;
 class Uploads implements CrudInterface
 {
     use UploadTrait;
-
     use SetIdTrait;
 
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
@@ -81,25 +78,18 @@ class Uploads implements CrudInterface
         // Try to move the file to its final place
         $this->moveUploadedFile($params->getPathname(), $fullPath);
 
-        // rotate the image if we can find the orientation in the exif data
-        // maybe php-exif extension isn't loaded
-        if (function_exists('exif_read_data') && in_array($ext, Extensions::HAS_EXIF, true)) {
+        // if the image has exif with rotation data, read it so the thumbnail can have a correct orientation
+        // only the thumbnail is rotated, the original image stays untouched
+        $rotationAngle = 0;
+        if (function_exists('exif_read_data') && in_array(strtolower($ext), Extensions::HAS_EXIF, true)) {
             $exifData = exif_read_data($fullPath);
-            if ($exifData !== false && extension_loaded('gmagick')) {
-                $image = new Gmagick($fullPath);
-                // default is 75
-                $image->setCompressionQuality(100);
+            if ($exifData !== false && extension_loaded('imagick')) {
                 $rotationAngle = $this->getRotationAngle($exifData);
-                // only do it if needed
-                if ($rotationAngle !== 0) {
-                    $image->rotateimage('#000', $rotationAngle);
-                    $image->write($fullPath);
-                }
             }
         }
         // final sql
         $id = $this->dbInsert($realName, $longName, $this->getHash($fullPath));
-        $MakeThumbnail = new MakeThumbnail($fullPath);
+        $MakeThumbnail = new MakeThumbnail($fullPath, $rotationAngle);
         $MakeThumbnail->makeThumb();
 
         return $id;
@@ -179,11 +169,7 @@ class Uploads implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $res = $req->fetch();
-        if ($res === false) {
-            throw new ResourceNotFoundException();
-        }
-        return $res;
+        return $this->Db->fetch($req);
     }
 
     /**
@@ -197,11 +183,7 @@ class Uploads implements CrudInterface
         $req->bindParam(':type', $this->Entity->type);
         $this->Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
+        return $this->Db->fetchAll($req);
     }
 
     public function update(UploadParamsInterface $params): bool
@@ -255,18 +237,35 @@ class Uploads implements CrudInterface
     }
 
     /**
-     * Destroy an upload
+     * Make a body check and then remove upload
      */
     public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');
         $uploadArr = $this->read(new ContentParams());
-
         // check that the filename is not in the body. see #432
         if (strpos($this->Entity->entityData['body'], $uploadArr['long_name'])) {
             throw new ImproperActionException(_('Please make sure to remove any reference to this file in the body!'));
         }
+        return $this->nuke();
+    }
 
+    /**
+     * Delete all uploaded files for an entity
+     */
+    public function destroyAll(): void
+    {
+        $uploadArr = $this->readAll();
+
+        foreach ($uploadArr as $upload) {
+            (new self($this->Entity, (int) $upload['id']))->nuke();
+        }
+    }
+
+    private function nuke(): bool
+    {
+        $this->Entity->canOrExplode('write');
+        $uploadArr = $this->read(new ContentParams());
 
         // remove thumbnail
         $thumbPath = $this->getUploadsPath() . $uploadArr['long_name'] . '_th.jpg';
@@ -286,18 +285,6 @@ class Uploads implements CrudInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Delete all uploaded files for an entity
-     */
-    public function destroyAll(): void
-    {
-        $uploadArr = $this->readAll();
-
-        foreach ($uploadArr as $upload) {
-            (new self($this->Entity, (int) $upload['id']))->destroy();
-        }
     }
 
     /**
@@ -398,18 +385,10 @@ class Uploads implements CrudInterface
 
     /**
      * Make the final SQL request to store the file
-     *
-     * @param string $realName The clean name of the file
-     * @param string $longName The sha512 name
-     * @param string $hash The hash string of our file
-     * @param string|null $comment The file comment
-     * @throws DatabaseErrorException
      */
     private function dbInsert(string $realName, string $longName, string $hash, ?string $comment = null): int
     {
-        if ($comment === null) {
-            $comment = 'Click to add a comment';
-        }
+        $comment ??= 'Click to add a comment';
 
         $sql = 'INSERT INTO uploads(
             real_name,

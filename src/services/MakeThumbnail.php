@@ -44,6 +44,7 @@ final class MakeThumbnail
      * @var array ALLOWED_MIMES
      */
     private const ALLOWED_MIMES = array(
+        'image/heic',
         'image/png',
         'image/jpeg',
         'image/gif',
@@ -58,7 +59,7 @@ final class MakeThumbnail
 
     private string $mime;
 
-    public function __construct(private string $filePath)
+    public function __construct(private string $filePath, private int $rotationAngle = 0)
     {
         // make sure we can read the file
         if (is_readable($this->filePath) === false) {
@@ -137,8 +138,13 @@ final class MakeThumbnail
         }
         // create thumbnail of width 100px; height is calculated automatically to keep the aspect ratio
         $image->thumbnailImage(self::WIDTH, 0);
-        // create the physical thumbnail image to its destination (85% quality)
+        // set the thumbnail quality to 85% (default is 75%)
         $image->setCompressionQuality(85);
+        // check if we need to rotate the image based on the orientation in exif of original file
+        if ($this->rotationAngle !== 0) {
+            $image->rotateImage('#000', $this->rotationAngle);
+        }
+        // create the physical thumbnail image to its destination
         $image->writeImage($this->thumbPath);
         $image->clear();
     }

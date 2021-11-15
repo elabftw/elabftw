@@ -15,8 +15,11 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
+use Elabftw\Models\ValidatedUser;
+use function is_array;
 use LdapRecord\Connection;
 use LdapRecord\Query\ObjectNotFoundException;
 
@@ -41,16 +44,19 @@ class LdapAuth implements AuthInterface
         try {
             $record = $query->findbyOrFail('mail', $this->email);
         } catch (ObjectNotFoundException $e) {
-            throw new InvalidCredentialsException();
+            throw new InvalidCredentialsException(0);
         }
         $dn = $record['distinguishedname'] ?? $record['dn'];
-        if (!$this->connection->auth()->attempt($dn, $this->password)) {
-            throw new InvalidCredentialsException();
+        // sometimes it might be an array, make sure we give a string to auth
+        if (is_array($dn)) {
+            $dn = $dn[0];
         }
-        $Users = new Users();
-        $Teams = new Teams($Users);
+        if (!$this->connection->auth()->attempt($dn, $this->password)) {
+            throw new InvalidCredentialsException(0);
+        }
+        $Teams = new Teams(new Users());
         try {
-            $Users->populateFromEmail($this->email);
+            $Users = ExistingUser::fromEmail($this->email);
         } catch (ResourceNotFoundException) {
             // the user doesn't exist yet in the db
             // what do we do? Lookup the config setting for that case
@@ -76,7 +82,7 @@ class LdapAuth implements AuthInterface
             // normalize the team(s)
             $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teamFromLdap)[0];
             // CREATE USER (and force validation of user)
-            $Users = new Users($Users->create($this->email, $teams, $firstname, $lastname, '', null, true));
+            $Users = ValidatedUser::fromExternal($this->email, $teams, $firstname, $lastname);
         }
 
         $this->AuthResponse->userid = (int) $Users->userData['userid'];

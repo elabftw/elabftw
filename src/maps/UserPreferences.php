@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Maps;
 
@@ -31,7 +30,7 @@ class UserPreferences implements MapInterface
 
     private string $displaySize = 'lg';
 
-    // Can have two values: 'it' for item list (the default mode),
+    // Can have two values: 'it' for item list (the default mode)
     // and 'tb' for tabular view
     private string $displayMode = 'it';
 

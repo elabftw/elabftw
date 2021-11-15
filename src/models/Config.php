@@ -14,10 +14,11 @@ use function array_map;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Update;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Interfaces\ContentParamsInterface;
 use PDO;
+use const SECRET_KEY;
 
 /**
  * The general config table
@@ -43,7 +44,7 @@ final class Config
         $this->configArr = $this->read();
         // this should only run once: just after a fresh install
         if (empty($this->configArr)) {
-            $this->populate();
+            $this->create();
             $this->configArr = $this->read();
         }
     }
@@ -66,9 +67,6 @@ final class Config
 
     /**
      * Return the instance of the class
-     *
-     * @throws DatabaseErrorException If config can not be loaded
-     * @return Config The instance of the class
      */
     public static function getConfig(): self
     {
@@ -79,9 +77,6 @@ final class Config
         return self::$instance;
     }
 
-    /**
-     * Read the configuration values
-     */
     public function read(): array
     {
         $sql = 'SELECT * FROM config';
@@ -89,11 +84,23 @@ final class Config
         $this->Db->execute($req);
         $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
         if ($config === false) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
+            throw new DatabaseErrorException();
         }
         return array_map(function ($v) {
             return $v[0];
         }, $config);
+    }
+
+    public function update(ContentParamsInterface $params): bool
+    {
+        $column = $params->getTarget();
+        $content = $params->getContent();
+
+        $sql = 'UPDATE config SET conf_value = :value WHERE conf_name = :name';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':value', $content);
+        $req->bindParam(':name', $column);
+        return $this->Db->execute($req);
     }
 
     /**
@@ -101,16 +108,17 @@ final class Config
      * NOTE: it is unlikely that someone with sysadmin level tries and edit requests to input incorrect values
      * so there is no real need for ensuring the values make sense, client side validation is enough this time
      *
+     * @deprecated
      * @param array<string, mixed> $post (conf_name => conf_value)
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    public function update(array $post): void
+    public function updateAll(array $post): void
     {
-        $passwords = array('stamppass', 'smtp_password', 'ldap_password');
+        $passwords = array('smtp_password', 'ldap_password');
 
         foreach ($passwords as $password) {
             if (isset($post[$password]) && !empty($post[$password])) {
-                $post[$password] = Crypto::encrypt($post[$password], Key::loadFromAsciiSafeString(\SECRET_KEY));
+                $post[$password] = Crypto::encrypt($post[$password], Key::loadFromAsciiSafeString(SECRET_KEY));
             // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one
             } elseif (isset($post[$password])) {
                 unset($post[$password]);
@@ -133,7 +141,7 @@ final class Config
      */
     public function destroyStamppass(): bool
     {
-        $sql = "UPDATE config SET conf_value = NULL WHERE conf_name = 'stamppass'";
+        $sql = "UPDATE config SET conf_value = NULL WHERE conf_name = 'ts_password'";
         $req = $this->Db->prepare($sql);
         return $this->Db->execute($req);
     }
@@ -141,27 +149,25 @@ final class Config
     /**
      * Restore default values
      */
-    public function restoreDefaults(): bool
+    public function destroy(): bool
     {
         $sql = 'DELETE FROM config';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
-        return $this->populate();
+        return $this->create();
     }
 
     /**
      * Insert the default values in the sql config table
      * Only run once of first ever page load
      */
-    private function populate(): bool
+    public function create(): bool
     {
-        $Update = new Update($this, new Sql());
-        $schema = $Update->getRequiredSchema();
+        $schema = Update::getRequiredSchema();
 
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
             ('admin_validate', '1'),
             ('autologout_time', '0'),
-            ('ban_time', '60'),
             ('debug', '0'),
             ('lang', 'en_GB'),
             ('login_tries', '3'),
@@ -174,12 +180,13 @@ final class Config
             ('smtp_password', ''),
             ('smtp_port', '587'),
             ('smtp_username', ''),
-            ('stamplogin', ''),
-            ('stamppass', ''),
-            ('stampshare', '1'),
-            ('stampprovider', 'http://zeitstempel.dfn.de/'),
-            ('stampcert', 'src/dfn-cert/pki.dfn.pem'),
-            ('stamphash', 'sha256'),
+            ('ts_authority', 'dfn'),
+            ('ts_login', NULL),
+            ('ts_password', NULL),
+            ('ts_share', '1'),
+            ('ts_url', 'NULL'),
+            ('ts_cert', NULL),
+            ('ts_hash', 'sha256'),
             ('saml_toggle', '0'),
             ('saml_debug', '0'),
             ('saml_strict', '1'),
@@ -187,16 +194,12 @@ final class Config
             ('saml_entityid', NULL),
             ('saml_acs_binding', NULL),
             ('saml_slo_binding', NULL),
-            ('saml_nameidformat', NULL),
+            ('saml_nameidformat', 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'),
             ('saml_x509', NULL),
             ('saml_privatekey', NULL),
-            ('saml_team', NULL),
             ('saml_team_create', '1'),
             ('saml_team_default', NULL),
             ('saml_user_default', '1'),
-            ('saml_email', NULL),
-            ('saml_firstname', NULL),
-            ('saml_lastname', NULL),
             ('local_login', '1'),
             ('local_register', '1'),
             ('admins_create_users', '1'),
@@ -239,7 +242,6 @@ final class Config
             ('ldap_base_dn', ''),
             ('ldap_username', NULL),
             ('ldap_password', NULL),
-            ('ldap_uid_cn', 'cn'),
             ('ldap_email', 'mail'),
             ('ldap_lastname', 'cn'),
             ('ldap_firstname', 'givenname'),

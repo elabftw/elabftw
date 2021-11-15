@@ -11,6 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Sql;
+use Exception;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem as Fs;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -42,17 +45,17 @@ class UpdateTo34 extends Command
             'Preparing database for 3.4 update',
             '=================================',
         ));
-        $Sql = new Sql();
+        $Sql = new Sql(new Fs(new Local(dirname(__DIR__) . '/sql')));
         try {
             $Sql->execFile('prepare34-a.sql');
-        } catch (\Exception) {
+        } catch (Exception) {
             $output->writeln(array(
                 'OK',
             ));
         }
         try {
             $Sql->execFile('prepare34-b.sql');
-        } catch (\Exception) {
+        } catch (Exception) {
             $output->writeln(array(
                 'OK',
             ));

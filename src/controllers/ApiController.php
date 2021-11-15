@@ -35,6 +35,8 @@ use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use Elabftw\Services\MakeBackupZip;
+use function implode;
+use function in_array;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,7 +51,7 @@ class ApiController implements ControllerInterface
     private Request $Request;
 
     /** @psalm-suppress PropertyNotSetInConstructor */
-    private AbstractCategory $Category;
+    private AbstractCategory | ItemsTypes $Category;
 
     /** @psalm-suppress PropertyNotSetInConstructor */
     //@phpstan-ignore-next-line
@@ -103,10 +105,10 @@ class ApiController implements ControllerInterface
                 if ($this->endpoint === 'experiments' || $this->endpoint === 'items') {
                     return $this->getEntity();
                 }
-                if ($this->endpoint === 'templates' || $this->endpoint === 'items_types') {
+                if ($this->endpoint === 'templates') {
                     return $this->getTemplate();
                 }
-                if ($this->endpoint === 'status') {
+                if ($this->endpoint === 'status' || $this->endpoint === 'items_types') {
                     return $this->getCategory();
                 }
                 if ($this->endpoint === 'bookable') {
@@ -135,6 +137,7 @@ class ApiController implements ControllerInterface
                 // TITLE DATE BODY UPDATE
                 if ($this->Request->request->has('date') ||
                     $this->Request->request->has('title') ||
+                    $this->Request->request->has('bodyappend') ||
                     $this->Request->request->has('body')) {
                     return $this->updateEntity();
                 }
@@ -177,7 +180,7 @@ class ApiController implements ControllerInterface
 
         // send error 405 for Method Not Allowed, with Allow header as per spec:
         // https://tools.ietf.org/html/rfc7231#section-7.4.1
-        return new Response('Invalid HTTP request method!', 405, array('Allow' => \implode(', ', $this->allowedMethods)));
+        return new Response('Invalid HTTP request method!', 405, array('Allow' => implode(', ', $this->allowedMethods)));
     }
 
     /**
@@ -249,7 +252,7 @@ class ApiController implements ControllerInterface
         } elseif ($this->endpoint === 'templates') {
             $this->Entity = new Templates($this->Users, $this->id);
         } elseif ($this->endpoint === 'items_types') {
-            $this->Entity = new ItemsTypes($this->Users->team);
+            $this->Category = new ItemsTypes($this->Users);
         } elseif ($this->endpoint === 'status') {
             $this->Category = new Status($this->Users->team);
         } elseif ($this->endpoint === 'events') {
@@ -627,7 +630,7 @@ class ApiController implements ControllerInterface
      * @apiExample {shell} Curl example
      * export TOKEN="3148"
      * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items_types
-     * @apiSuccess {String[]} None list of items_types for the team
+     * @apiSuccess {Json[]} None list of items_types for the team
      * @apiSuccessExample {Json} Success-Response:
      *     HTTP/2 200 OK
      *     {
@@ -664,7 +667,7 @@ class ApiController implements ControllerInterface
      * @apiExample {shell} Curl example
      * export TOKEN="3148"
      * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/status
-     * @apiSuccess {String[]} None list of status for the team
+     * @apiSuccess {Json[]} None list of status for the team
      * @apiSuccessExample {Json} Success-Response:
      *     HTTP/2 200 OK
      *     {
@@ -777,13 +780,13 @@ class ApiController implements ControllerInterface
     private function createItem(): Response
     {
         // check that the id we have is a valid item type from our team
-        $ItemsTypes = new ItemsTypes($this->Users->team);
+        $ItemsTypes = new ItemsTypes($this->Users);
         $itemsTypesArr = $ItemsTypes->readAll();
         $validIds = array();
         foreach ($itemsTypesArr as $itemsTypes) {
             $validIds[] = $itemsTypes['category_id'];
         }
-        if (!\in_array((string) $this->id, $validIds, true)) {
+        if (!in_array((string) $this->id, $validIds, true)) {
             return new Response('Cannot create an item with an item type id not in your team!', 403);
         }
 
@@ -946,14 +949,20 @@ class ApiController implements ControllerInterface
      * # update experiment 42
      * params = { "title": "New title", "date": "20200504", "body": "New body content" }
      * print(manager.post_experiment(42, params))
+     * # append to the body
+     * params = { "bodyappend": "appended text<br>" }
+     * print(manager.post_experiment(42, params))
      * # update database item 42
      * print(manager.post_item(42, params))
      * @apiExample {shell} Curl example
      * export TOKEN="3148"
      * # update experiment 42
+     * # you can independently update the title, date or body, or all at the same time
      * curl -X POST -F "title=a new title" -F "body=a new body" -F "date=20200504" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments/42
-     * # update database item 42
-     * curl -X POST -F "title=a new title" -F "body=a new body" -F "date=20200504" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
+     * # update database item 42 title only
+     * curl -X POST -F "title=a new title" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
+     * # you can also append to the body
+     * curl -X POST -F "bodyappend=appended text" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
      * @apiSuccess {String} result Success
      * @apiError {String} error Error message
      * @apiParamExample {Json} Request-Example:
@@ -973,6 +982,9 @@ class ApiController implements ControllerInterface
         }
         if ($this->Request->request->has('body')) {
             $this->Entity->update(new EntityParams((string) $this->Request->request->get('body'), 'body'));
+        }
+        if ($this->Request->request->has('bodyappend')) {
+            $this->Entity->update(new EntityParams((string) $this->Request->request->get('bodyappend'), 'bodyappend'));
         }
         return new JsonResponse(array('result' => 'success'));
     }

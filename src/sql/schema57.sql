@@ -31,12 +31,11 @@ START TRANSACTION;
     ALTER TABLE `experiments_templates`
         ADD `locked` tinyint(3) UNSIGNED DEFAULT NULL,
         ADD `lockedby` int(10) UNSIGNED DEFAULT NULL,
-        ADD `lockedwhen` timestamp NULL DEFAULT NULL
-    AFTER `userid`;
+        ADD `lockedwhen` timestamp NULL DEFAULT NULL;
 
     ALTER TABLE `teams` ADD `common_template` text AFTER `name`;
 
-    UPDATE `teams` SET `common_template` = (SELECT `body` FROM `experiments_templates` WHERE `teams`.`id` = `experiments_templates`.`team` AND `experiments_templates`.`title` = 'default' AND `experiments_templates`.`userid` = 0);
+    UPDATE `teams` SET `common_template` = (SELECT `body` FROM `experiments_templates` WHERE `teams`.`id` = `experiments_templates`.`team` AND `experiments_templates`.`title` = 'default' AND `experiments_templates`.`userid` = 0 LIMIT 1);
 
     DELETE FROM `experiments_templates` WHERE `title` = 'default' AND `userid` = 0;
 

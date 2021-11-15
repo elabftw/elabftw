@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -14,9 +13,9 @@ use Elabftw\Interfaces\TeamGroupParamsInterface;
 
 final class TeamGroupParams extends ContentParams implements TeamGroupParamsInterface
 {
-    public function __construct(string $content, string $target = '', private ?array $extra = null)
+    public function __construct(string $content, string $target = '', ?array $extra = null)
     {
-        parent::__construct($content, $target);
+        parent::__construct($content, $target, $extra);
     }
 
     public function getUserid(): int

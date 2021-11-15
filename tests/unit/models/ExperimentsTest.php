@@ -93,4 +93,9 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->canOrExplode('read');
         $this->assertIsInt($this->Experiments->duplicate());
     }
+
+    public function testInsertTags(): void
+    {
+        $this->Experiments->create(new EntityParams('0', '', array('tags' => array('tag-bbbtbtbt', 'tag-auristearuiset'))));
+    }
 }

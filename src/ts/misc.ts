@@ -11,20 +11,43 @@ import * as $3Dmol from '3dmol/build/3Dmol-nojquery.js';
 import { CheckableItem, ResponseMsg } from './interfaces';
 import { DateTime } from 'luxon';
 import { EntityType, Entity } from './interfaces';
+import { MathJaxObject } from 'mathjax-full/js/components/startup';
+declare const MathJax: MathJaxObject;
+
+// get html of current page reloaded via get
+function fetchCurrentPage(tag = ''): Promise<Document>{
+  const url = new URL(window.location.href);
+  if (tag) {
+    url.searchParams.delete('tags[]');
+    url.searchParams.set('tags[]', tag);
+  }
+  return fetch(url.toString()).then(response => {
+    return response.text();
+  }).then(data => {
+    const parser = new DOMParser();
+    return parser.parseFromString(data, 'text/html');
+  });
+}
 
 // DISPLAY TIME RELATIVE TO NOW
 // the datetime is taken from the title of the element so mouse hover will show raw datetime
 export function relativeMoment(): void {
   const locale = document.getElementById('user-prefs').dataset.jslang;
-  document.querySelectorAll('.relative-moment')
-    .forEach((el) => {
-      const span = el as HTMLElement;
-      span.innerText = DateTime.fromFormat(span.title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale}).toRelative();
-    });
+  document.querySelectorAll('.relative-moment').forEach(el => {
+    const span = el as HTMLElement;
+    // do nothing if it's already loaded, prevent infinite loop with mutation observer
+    if (span.innerText) {
+      return;
+    }
+    span.innerText = DateTime.fromFormat(span.title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale}).toRelative();
+  });
 }
 
 // for view or edit mode, get type and id from the page to construct the entity object
 export function getEntity(): Entity {
+  if (!document.getElementById('info')) {
+    return;
+  }
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
   let entityType: EntityType;
@@ -40,9 +63,13 @@ export function getEntity(): Entity {
   if (about.type === 'items_types') {
     entityType = EntityType.ItemType;
   }
+  let entityId = null;
+  if (about.id) {
+    entityId = parseInt(about.id);
+  }
   return {
     type: entityType,
-    id: parseInt(about.id),
+    id: entityId,
   };
 }
 
@@ -108,7 +135,7 @@ export function display3DMolecules(autoload = false): void {
 }
 
 // insert a get param in the url and reload the page
-export function insertParamAndReload(key: string, value: any): void {
+export function insertParamAndReload(key: string, value: string): void {
   const params = new URLSearchParams(document.location.search.slice(1));
   params.set(key, value);
   // reload the page
@@ -131,11 +158,11 @@ export function makeSortableGreatAgain(): void {
       const ordering = $(this).sortable('toArray');
       $.post('app/controllers/SortableAjaxController.php', {
         table: $(this).data('table'),
-        ordering: ordering
+        ordering: ordering,
       }).done(function(json) {
         notif(json);
       });
-    }
+    },
   });
 }
 
@@ -151,17 +178,39 @@ export function getCheckedBoxes(): Array<CheckableItem> {
   return checkedBoxes;
 }
 
-export function reloadTagsAndLocks(elementId): Promise<void | Response> {
-  if (document.getElementById(elementId)) {
-    return fetch(window.location.href).then(response => {
-      return response.text();
-    }).then(data => {
-      const parser = new DOMParser();
-      const html = parser.parseFromString(data, 'text/html');
-      document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
-      if (document.getElementById('pinned-entities')) {
-        document.getElementById('pinned-entities').innerHTML = html.getElementById('pinned-entities').innerHTML;
-      }
-    });
+// reload the entities in show mode
+export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
+  // get the html
+  const html = await fetchCurrentPage(tag);
+  // reload items
+  document.getElementById('showModeContent').innerHTML = html.getElementById('showModeContent').innerHTML;
+  // also reload any pinned entities present
+  if (document.getElementById('pinned-entities')) {
+    document.getElementById('pinned-entities').innerHTML = html.getElementById('pinned-entities').innerHTML;
   }
+  // ask mathjax to reparse the page
+  MathJax.typeset();
+}
+
+export async function reloadElement(elementId): Promise<void> {
+  if (!document.getElementById(elementId)) {
+    console.error('Could not find element to reload!');
+    return;
+  }
+  const html = await fetchCurrentPage();
+  document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
+}
+
+export function clearLocalStorage(): void {
+  const storageItems = [
+    'isfavtagOpen',
+    'istodolistOpen',
+    'todoItems-isClosed',
+    'todolistStepsShowTeam',
+    'todoStepsExperiment-isClosed',
+    'todoStepsItem-isClosed',
+  ];
+  storageItems.forEach(item => {
+    localStorage.removeItem(item);
+  });
 }

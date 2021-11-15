@@ -10,7 +10,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use const DB_CERT_PATH;
+use const DB_HOST;
+use const DB_NAME;
+use const DB_PASSWORD;
+use const DB_PORT;
+use const DB_USER;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -42,8 +49,8 @@ final class Db
         $pdo_options[PDO::ATTR_PERSISTENT] = true;
         // only return a named array
         $pdo_options[PDO::ATTR_DEFAULT_FETCH_MODE] = PDO::FETCH_ASSOC;
-        if (defined('DB_CERT_PATH') && !empty(\DB_CERT_PATH)) {
-            $pdo_options[PDO::MYSQL_ATTR_SSL_CA] = \DB_CERT_PATH;
+        if (defined('DB_CERT_PATH') && !empty(DB_CERT_PATH)) {
+            $pdo_options[PDO::MYSQL_ATTR_SSL_CA] = DB_CERT_PATH;
         }
 
         // be backward compatible
@@ -52,10 +59,10 @@ final class Db
         }
 
         $this->connection = new PDO(
-            'mysql:host=' . \DB_HOST . ';port=' . \DB_PORT . ';dbname=' .
-            \DB_NAME,
-            \DB_USER,
-            \DB_PASSWORD,
+            'mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' .
+            DB_NAME,
+            DB_USER,
+            DB_PASSWORD,
             $pdo_options
         );
     }
@@ -112,10 +119,39 @@ final class Db
         try {
             $res = $req->execute($arr);
         } catch (PDOException $e) {
-            throw new DatabaseErrorException('Error with SQL query', 515, $e);
+            throw new DatabaseErrorException($e);
         }
         if (!$res) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
+            throw new DatabaseErrorException();
+        }
+        return $res;
+    }
+
+    /**
+     * Force fetch() to return an array or throw exception if result is false
+     * because this is hard to test
+     */
+    public function fetch(PDOStatement $req): array
+    {
+        if ($req->rowCount() === 0) {
+            throw new ResourceNotFoundException();
+        }
+        $res = $req->fetch();
+        if ($res === false || $res === null) {
+            return array();
+        }
+        return $res;
+    }
+
+    /**
+     * Force fetchAll() to return an array or throw exception if result is false
+     * because this is hard to test
+     */
+    public function fetchAll(PDOStatement $req): array
+    {
+        $res = $req->fetchAll();
+        if ($res === false) {
+            throw new DatabaseErrorException();
         }
         return $res;
     }
@@ -129,7 +165,7 @@ final class Db
     {
         $res = $this->connection->query($sql);
         if ($res === false) {
-            throw new DatabaseErrorException('Error executing query!');
+            throw new DatabaseErrorException();
         }
 
         return $res;

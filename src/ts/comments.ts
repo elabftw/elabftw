@@ -7,8 +7,7 @@
  */
 import Comment from './Comment.class';
 import i18next from 'i18next';
-import { Entity, EntityType } from './interfaces';
-import { relativeMoment } from './misc';
+import { relativeMoment, reloadElement, getEntity } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -16,32 +15,38 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
-  let entityType: EntityType;
-  if (about.type === 'experiments') {
-    entityType = EntityType.Experiment;
+
+  // only run in edit mode
+  if (about.page !== 'view') {
+    return;
   }
-  if (about.type === 'items') {
-    entityType = EntityType.Item;
-  }
+  const CommentC = new Comment(getEntity());
 
-  const entity: Entity = {
-    type: entityType,
-    id: parseInt(about.id),
-  };
+  // observe the comment container for changes
+  // this observer will make the relative dates displayed again
+  new MutationObserver(() => relativeMoment())
+    .observe(document.getElementById('commentsDiv'), {childList: true, subtree: true});
 
-  const CommentC = new Comment(entity);
+  document.getElementById('commentsDiv').addEventListener('click', event => {
+    const el = (event.target as HTMLElement);
+    // CREATE COMMENT
+    if (el.matches('[data-action="create-comment"]')) {
+      const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
+      CommentC.create(content).then(() => $('#commentsDiv').load(window.location.href + ' #comment'));
 
-  // CREATE COMMENTS
-  $('#comment_container').on('click', '#commentsCreateButton', function() {
-    const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
-    CommentC.create(content).then(() => $('#comment_container').load(window.location.href + ' #comment'));
+    // DESTROY COMMENT
+    } else if (el.matches('[data-action="destroy-comment"]')) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        CommentC.destroy(parseInt(el.dataset.target, 10)).then(() => $('#commentsDiv').load(window.location.href + ' #comment'));
+      }
+    }
   });
 
-  // MAKE comments editable on mousehover
+  // MAKE comments editable on mousehover
   $(document).on('mouseenter', '.comment-editable', function() {
     ($(this) as any).editable(function(input: string) {
       CommentC.update(input, $(this).data('commentid'));
-      return(input);
+      return (input);
     }, {
       type : 'textarea',
       width: '80%',
@@ -55,24 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
       cancelcssclass : 'button btn btn-danger mt-2',
       callback : () => {
         // use setTimeout to give the time for sql to change the data before we fetch it
-        setTimeout(() => {
-          return fetch(window.location.href).then(response => {
-            return response.text();
-          }).then(data => {
-            const parser = new DOMParser();
-            const html = parser.parseFromString(data, 'text/html');
-            document.getElementById('comment').innerHTML = html.getElementById('comment').innerHTML;
-            relativeMoment();
-          });
-        }, 20);
+        setTimeout(() => reloadElement('comment'), 20);
       },
     });
-  });
-
-  // DESTROY COMMENTS
-  $('#comment_container').on('click', '.commentsDestroy', function() {
-    if (confirm(i18next.t('generic-delete-warning'))) {
-      CommentC.destroy($(this).data('commentid')).then(() => $('#comment_container').load(window.location.href + ' #comment'));
-    }
   });
 });

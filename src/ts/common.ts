@@ -9,11 +9,10 @@ import $ from 'jquery';
 import { Ajax } from './Ajax.class';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { relativeMoment, displayMolFiles, makeSortableGreatAgain } from './misc';
+import { clearLocalStorage, notif, makeSortableGreatAgain, reloadElement } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
-import { EntityType, Payload, Method, Model, Action } from './interfaces';
-import 'marked';
+import { EntityType, Payload, Target, Method, Model, Action } from './interfaces';
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.de.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.es.js';
@@ -29,58 +28,164 @@ import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sl.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sv.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.zh.js';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
+
+  // HEARTBEAT
+  // this function is to check periodically that we are still authenticated
+  // and show a message if we the session is not valid anymore but we are still on a page requiring auth
+  // only run if we are an auth user by checking the presence of this element in the footer
+  if (document.getElementById('is-auth')) {
+    // check every 5 minutes
+    const heartRate = 300000;
+    setInterval(() => {
+      fetch('app/controllers/HeartBeat.php').then(response => {
+        if (!response.ok) {
+          clearLocalStorage();
+          alert('Your session expired!');
+          window.location.replace('login.php');
+        }
+      });
+    }, heartRate);
+  }
+
+  // DEPRECATED, this can go away once all $.post disappeared and everyone uses custom Ajax class
+  // TODO
   $.ajaxSetup({
     headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
+      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+    },
   });
 
   // set the language for js translated strings
-  i18next.changeLanguage($('#user-prefs').data('lang'));
-
-  // TOGGLABLE
-  $(document).on('click', '.togglableNext', function() {
-    $(this).next().toggle();
-  });
-
-  // Toggle modal
-  $('.modalToggle').on('click', function() {
-    ($('#' + $(this).data('modal')) as any).modal('toggle');
-  });
-
+  i18next.changeLanguage(document.getElementById('user-prefs').dataset.lang);
 
   makeSortableGreatAgain();
-  relativeMoment();
-  displayMolFiles();
 
   // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR/JSON EDITOR
-  $(document).on('click', '.plusMinusButton',  function() {
-    if ($(this).html() === '+') {
-      $(this).html('-').addClass('btn-neutral').removeClass('btn-primary');
-    } else {
-      $(this).html('+').removeClass('btn-neutral').addClass('btn-primary');
-    }
-  });
+  const plusMinusButton = document.getElementsByClassName('plusMinusButton');
+  if (plusMinusButton) {
+    Array.from(plusMinusButton).forEach(element => {
+      element.addEventListener('click', (event) => {
+        const el = (event.target as HTMLElement);
+        if (el.innerText === '+') {
+          el.classList.add('btn-neutral');
+          el.classList.remove('btn-primary');
+          el.innerText = '-';
+        } else {
+          el.classList.add('btn-primary');
+          el.classList.remove('btn-neutral');
+          el.innerText = '+';
+        }
+      });
+    });
+  }
 
-  // SHOW/HIDE PASSWORDS
-  $('.togglePassword').on('click', function(event) {
-    event.preventDefault();
-    $(this).find('[data-fa-i2svg]').toggleClass('fa-eye fa-eye-slash');
-    const input = $($(this).data('toggle'));
-    if (input.attr('type') === 'password') {
-      input.attr('type', 'text');
-    } else {
-      input.attr('type', 'password');
-    }
-  });
+  // BACK TO TOP BUTTON
+  const btn = document.createElement('div');
+  btn.dataset.action = 'scroll-top';
+  // make it look like a button, and on the right side of the screen, not too close from the bottom
+  btn.classList.add('btn', 'btn-neutral', 'floating-middle-right');
+  // element is invisible at first so we can make it visible so it triggers a css transition and appears progressively
+  btn.style.opacity = '0';
+  // will not be shown for small screens, only large ones
+  btn.classList.add('d-none', 'd-xl-inline', 'd-lg-inline');
+  // the button is an up arrow
+  btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+  // give it an id so we can remove it easily
+  btn.setAttribute('id', 'backToTopButton');
 
-  document.querySelector('#container').addEventListener('click', (event) => {
+  // called when viewport approaches the footer
+  const intersectionCallback = (entries): void => {
+    // if we haven't scrolled much (not a long content or screen is big), do nothing
+    if (window.scrollY < 100) {
+      return;
+    }
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !document.getElementById('backToTopButton')) {
+        const addedBtn = document.getElementById('container').appendChild(btn);
+        // here we use requestAnimationFrame or the browser won't see the change and the css transition won't be triggered
+        requestAnimationFrame(() => {
+          addedBtn.style.opacity = '100';
+        });
+      } else {
+        // if we're not intersecting, remove the button if it's here
+        if (document.getElementById('backToTopButton')) {
+          document.getElementById('backToTopButton').remove();
+        }
+      }
+    });
+  };
+
+  // rootMargin: allow bigger margin for footer
+  const observer = new IntersectionObserver(intersectionCallback, { rootMargin: '600px' });
+  // the footer is our trigger element
+  observer.observe(document.querySelector('footer'));
+  // END BACK TO TOP BUTTON
+
+  // Add a listener for all elements triggered by an event
+  // and POST an update request
+  // select will be on change, text inputs on blur
+  function listenTrigger(): void {
+    document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
+      el.addEventListener(el.dataset.trigger, event => {
+        event.preventDefault();
+        const payload: Payload = {
+          method: Method.POST,
+          action: el.dataset.action as Action ?? Action.Update,
+          model: el.dataset.model as Model,
+          target: el.dataset.target as Target,
+          content: el.value,
+        };
+        (new Ajax()).send(payload)
+          .then(json => notif(json))
+          .then(() => {
+            if (el.dataset.reload) {
+              reloadElement(el.dataset.reload).then(() => {
+                // make sure we listen to the new element too
+                listenTrigger();
+              });
+            }
+          });
+      });
+    });
+  }
+  listenTrigger();
+
+  /**
+   * Timestamp provider select
+   */
+  if (document.getElementById('ts_authority')) {
+    const select = (document.getElementById('ts_authority') as HTMLSelectElement);
+    const noAccountTsa = ['dfn', 'digicert', 'sectigo', 'globalsign'];
+    select.addEventListener('change', () => {
+      if (noAccountTsa.includes(select.value)) {
+        // mask all
+        document.getElementById('ts_loginpass').toggleAttribute('hidden', true);
+        document.getElementById('ts_urldiv').toggleAttribute('hidden', true);
+      } else if (select.value === 'universign') {
+        // only make loginpass visible
+        document.getElementById('ts_loginpass').removeAttribute('hidden');
+        document.getElementById('ts_urldiv').toggleAttribute('hidden', true);
+      } else if (select.value === 'custom') {
+        // show all
+        document.getElementById('ts_loginpass').removeAttribute('hidden');
+        document.getElementById('ts_urldiv').removeAttribute('hidden');
+      }
+    });
+  }
+
+
+  /**
+   * MAIN click event listener bound to container
+   * this will listen for click events on the container and if the element
+   * matches a known action then that action is triggered
+   */
+  document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     // SHOW PRIVACY POLICY
     if (el.matches('[data-action="show-privacy-policy"]')) {
       const payload: Payload = {
-        method: Method.GET,
+        method: Method.UNAUTHGET,
         action: Action.Read,
         model: Model.PrivacyPolicy,
       };
@@ -92,12 +197,48 @@ $(document).ready(function() {
         }
         (document.getElementById('privacyModalBody') as HTMLDivElement).innerHTML = policy;
         // modal plugin requires jquery
-        ($('#privacyModal') as any).modal('toggle');
+        ($('#privacyModal') as JQuery).modal('toggle');
       });
+
+    // SCROLL TO TOP
+    } else if (el.matches('[data-action="scroll-top"]')) {
+      document.documentElement.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+
+    // TOGGLE NEXT ACTION
+    } else if (el.matches('[data-action="toggle-next"]')) {
+      el.nextElementSibling.toggleAttribute('hidden');
+
+    // TOGGLE MODAL
+    } else if (el.matches('[data-action="toggle-modal"]')) {
+      // TODO this requires jquery for now. Not in BS5.
+      ($('#' + el.dataset.target) as JQuery<HTMLDivElement>).modal('toggle');
+      // special code to select the existing permissions for templates on ucp/templates-edit page
+      if (window.location.pathname === '/ucp.php') {
+        (document.querySelector(`#canread_select option[value="${el.dataset.read}"]`) as HTMLOptionElement).selected = true;
+        (document.querySelector(`#canwrite_select option[value="${el.dataset.write}"]`) as HTMLOptionElement).selected = true;
+      }
+
+    // PASSWORD VISIBILITY TOGGLE
+    } else if (el.matches('[data-action="toggle-password"]')) {
+      // toggle eye icon
+      const icon = el.firstChild as HTMLElement;
+      icon.classList.toggle('fa-eye');
+      icon.classList.toggle('fa-eye-slash');
+
+      // toggle input type
+      const input = document.getElementById(el.dataset.target);
+      let attribute = 'password';
+      if (input.getAttribute('type') === 'password') {
+        attribute = 'text';
+      }
+      input.setAttribute('type', attribute);
 
     // LOGOUT
     } else if (el.matches('[data-action="logout"]')) {
-      localStorage.removeItem('isTodolistOpen');
+      clearLocalStorage();
       window.location.href = 'app/logout.php';
 
     // CREATE EXPERIMENT or DATABASE item: main create button in top right
@@ -105,15 +246,25 @@ $(document).ready(function() {
       const path = window.location.pathname;
       if (path.split('/').pop() === 'experiments.php') {
         const tplid = el.dataset.tplid;
-        (new EntityClass(EntityType.Experiment)).create(tplid).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
+        const urlParams = new URLSearchParams(document.location.search);
+        const tags = urlParams.getAll('tags[]');
+        (new EntityClass(EntityType.Experiment)).create(tplid, tags).then(json => {
+          if (json.res) {
+            window.location.replace(`?mode=edit&id=${json.value}`);
+          } else {
+            notif(json);
+          }
+        });
       } else {
         // for database items, show a selection modal
         // modal plugin requires jquery
-        ($('#createModal') as any).modal('toggle');
+        ($('#createModal') as JQuery).modal('toggle');
       }
     } else if (el.matches('[data-action="create-item"]')) {
       const tplid = el.dataset.tplid;
-      (new EntityClass(EntityType.Item)).create(tplid).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
+      const urlParams = new URLSearchParams(document.location.search);
+      const tags = urlParams.getAll('tags[]');
+      (new EntityClass(EntityType.Item)).create(tplid, tags).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
     }
   });
 });

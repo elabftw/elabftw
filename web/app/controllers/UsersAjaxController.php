@@ -15,9 +15,10 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Models\Config;
 use Elabftw\Models\Users;
+use Elabftw\Services\Email;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,9 +35,6 @@ $Response->setData(array(
 ));
 
 try {
-    // CSRF
-    $App->Csrf->validate();
-
     // you need to be at least admin to validate/archive/delete a user
     if (!$App->Session->get('is_admin')) {
         throw new IllegalActionException('Non admin user tried to edit another user.');
@@ -52,7 +50,11 @@ try {
     // VALIDATE USER
     if ($Request->request->has('usersValidate')) {
         // all good, validate user
-        $targetUser->validate();
+        if ($targetUser->validate()) {
+            // send an email to the user
+            $Email = new Email(Config::getConfig(), $targetUser);
+            $Email->alertUserIsValidated($targetUser->userData['email']);
+        }
     }
 
     // ARCHIVE USER TOGGLE
@@ -77,7 +79,7 @@ try {
 
         $targetUser->destroy();
     }
-} catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
+} catch (ImproperActionException | UnauthorizedException $e) {
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),

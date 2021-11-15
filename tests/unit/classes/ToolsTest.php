@@ -24,8 +24,6 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals('1969.07.21', Tools::formatDate('19690721'));
         $this->assertEquals('1969-07-21', Tools::formatDate('19690721', '-'));
-        $this->expectException(\InvalidArgumentException::class);
-        $this->assertFalse(Tools::formatDate('196907211'));
     }
 
     public function testGetExt(): void
@@ -71,13 +69,6 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
     {
         $out = "<i style='color:#54aa08' class='fas fa-star' title='☻'></i><i style='color:#54aa08' class='fas fa-star' title='☻'></i><i style='color:gray' class='fas fa-star' title='☺'></i><i style='color:gray' class='fas fa-star' title='☺'></i><i style='color:gray' class='fas fa-star' title='☺'></i>";
         $this->assertEquals($out, Tools::showStars(2));
-    }
-
-    public function testGetLimitOptions(): void
-    {
-        $this->assertEquals(2, Tools::getLimitOptions(2)[0]);
-        $this->assertEquals(12, Tools::getLimitOptions(12)[1]);
-        $this->assertEquals(52, Tools::getLimitOptions(52)[3]);
     }
 
     public function testQFilter(): void

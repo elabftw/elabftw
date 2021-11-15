@@ -17,19 +17,19 @@
           {% endfor %}
         {% endif %}
       </span>
-      <input type='text' style='width:auto' class='createTagInput ml-1' id='createTagInput_{{ templateData.id }}' data-id='{{ templateData.id }}' placeholder='{{ 'Add a tag'|trans }}' />
+      <input type='text' style='width:auto' data-autocomplete='tags' class='ml-1 createTagInput' id='createTagInput_{{ templateData.id }}' data-id='{{ templateData.id }}' placeholder='{{ 'Add a tag'|trans }}' />
     </div>
   </div>
 
   <!-- MORE OPTIONS DROPDOWN MENU (···) -->
   <div class='col'>
     <div class='dropdown'>
-      <a class='align-right clickable' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
+      <a class='float-right clickable' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
         <i class='fas fa-ellipsis-v fa-2x'></i>
       </a>
       <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
         <!-- MANAGE PERMISSIONS -->
-        <a href='#' class='dropdown-item modalToggle' data-modal='permModal' data-read='{{ templateData.canread }}' data-write='{{ templateData.canwrite }}'>
+        <a href='#' class='dropdown-item' data-action='toggle-modal' data-target='permModal' data-read='{{ templateData.canread }}' data-write='{{ templateData.canwrite }}'>
           <i class='fas fa-share-alt fa-fw mr-1'></i>{{ 'Manage Permissions'|trans }}
         </a>
         <!-- DOWNLOAD -->
@@ -55,6 +55,6 @@
 <div class='text-center'>
   <button data-action='update-template' data-id='{{ templateData.id }}' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
 </div>
-{% include('steps-links-edit.html') %}
-{{ include('json-editor.html') }}
-<div id='info' data-type='experiments_templates' data-id='{{ templateData.id }}'></div>
+{% set mode = 'edit-template' %}
+{% include 'steps-links-edit.html' %}
+{% include 'json-editor.html' %}

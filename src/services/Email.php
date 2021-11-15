@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use function array_column;
 use function count;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
@@ -19,6 +20,8 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use PDO;
+use function rtrim;
+use const SECRET_KEY;
 use Swift_Mailer;
 use Swift_Message;
 use Swift_SendmailTransport;
@@ -96,18 +99,14 @@ class Email
         }
 
         // get all email addresses
-        $usersArr = $this->Users->getAllEmails($teamFilter);
-        $bcc = array();
-        foreach ($usersArr as $user) {
-            $bcc[] = $user['email'];
-        }
+        $emails = $this->getAllEmails($teamFilter);
 
         $message = (new Swift_Message())
         ->setSubject($subject)
         ->setFrom($from)
         ->setTo($from)
         // Set recipients in BCC to protect email addresses
-        ->setBcc($bcc)
+        ->setBcc($emails)
         ->setBody($body . $this->footer);
 
         return $this->send($message);
@@ -125,7 +124,7 @@ class Email
         }
         // now let's get the URL so we can have a nice link in the email
         $Request = Request::createFromGlobals();
-        $url = \rtrim(Tools::getUrl($Request), '/') . '/admin.php';
+        $url = rtrim(Tools::getUrl($Request), '/') . '/admin.php';
 
         // Create the message
         $main = sprintf(
@@ -192,7 +191,7 @@ class Email
 
         // now let's get the URL so we can have a nice link in the email
         $Request = Request::createFromGlobals();
-        $url = \rtrim(Tools::getUrl($Request), '/') . '/login.php';
+        $url = rtrim(Tools::getUrl($Request), '/') . '/login.php';
 
         // Create the message
         $message = (new Swift_Message())
@@ -207,6 +206,25 @@ class Email
         ->setBody(_('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ') . $url . $this->footer);
         // now we try to send the email
         $this->send($message);
+    }
+
+    /**
+     * Get email for all active users
+     */
+    private function getAllEmails(bool $fromTeam = false): array
+    {
+        $Db = Db::getConnection();
+        $sql = 'SELECT email, teams_id FROM users CROSS JOIN users2teams ON (users2teams.users_id = users.userid) WHERE validated = 1 AND archived = 0';
+        if ($fromTeam) {
+            $sql .= ' AND users2teams.teams_id = :team';
+        }
+        $req = $Db->prepare($sql);
+        if ($fromTeam) {
+            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        }
+        $Db->execute($req);
+
+        return array_column($Db->fetchAll($req), 'email');
     }
 
     private function makeFooter(): string
@@ -272,7 +290,7 @@ class Email
                 $transport->setUsername($this->Config->configArr['smtp_username'])
                 ->setPassword(Crypto::decrypt(
                     $this->Config->configArr['smtp_password'],
-                    Key::loadFromAsciiSafeString(\SECRET_KEY)
+                    Key::loadFromAsciiSafeString(SECRET_KEY)
                 ));
             }
         } else {

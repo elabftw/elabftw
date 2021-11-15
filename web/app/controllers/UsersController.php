@@ -10,11 +10,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Models\Users;
 use Elabftw\Services\UsersHelper;
 use Exception;
@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 /**
  * Users info from admin or sysadmin page
  */
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 if ($Request->request->has('fromSysconfig')) {
     $location = '../../sysconfig.php?tab=3';
@@ -34,10 +34,6 @@ if ($Request->request->has('fromSysconfig')) {
 $Response = new RedirectResponse($location);
 
 try {
-
-    // CSRF
-    $App->Csrf->validate();
-
     // UPDATE USERS
     if ($Request->request->has('usersUpdate')) {
         // you need to be at least admin to edit a user
@@ -65,7 +61,7 @@ try {
     }
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));
-} catch (ImproperActionException | InvalidCsrfTokenException $e) {
+} catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {

@@ -68,13 +68,9 @@ class TagCloud
             GROUP BY tag ORDER BY total DESC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
+        return $this->Db->fetchAll($req);
     }
 
     /**

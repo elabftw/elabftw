@@ -10,7 +10,7 @@ interface ResponseMsg {
   res: boolean;
   msg: string;
   color?: string;
-  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedExperiments> | Array<Upload> | object | MetadataJson;
+  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedEntities> | Array<Upload> | object | MetadataJson;
 }
 
 interface MetadataJson {
@@ -28,7 +28,7 @@ interface Todoitem {
   creation_time: string;
 }
 
-interface UnfinishedExperiments {
+interface UnfinishedEntities {
   id: number;
   title: string;
   steps: Array<string>;
@@ -47,6 +47,7 @@ interface CheckableItem {
 enum Method {
   POST = 'POST',
   GET = 'GET',
+  UNAUTHGET = 'UNAUTHGET',
 }
 
 enum Action {
@@ -55,6 +56,7 @@ enum Action {
   Update = 'update',
   Destroy = 'destroy',
 
+  DestroyStamppass = 'destroystamppass',
   Deduplicate = 'deduplicate',
   Duplicate = 'duplicate',
   Lock = 'lock',
@@ -63,11 +65,15 @@ enum Action {
 enum Model {
   Apikey = 'apikey',
   Comment = 'comment',
+  Config = 'config',
   Link = 'link',
+  FavTag = 'favtag',
   PrivacyPolicy = 'privacypolicy',
   Status = 'status',
   Step = 'step',
+  UnfinishedSteps = 'unfinishedsteps',
   Tag = 'tag',
+  Team = 'team',
   TeamGroup = 'teamgroup',
   Todolist = 'todolist',
   Upload = 'upload',
@@ -91,6 +97,8 @@ enum Target {
   List = 'list',
   Member = 'member',
   Metadata = 'metadata',
+  TsOverride = 'ts_override',
+  TsAuthority = 'ts_authority',
   PrivacyPolicy = 'privacypolicy',
   Rating = 'rating',
   RealName = 'real_name',
@@ -116,7 +124,7 @@ interface Payload {
   content?: string;
   target?: Target;
   id?: number;
-  extraParams?: {};
+  extraParams?: Record<string, unknown>;
 }
 
 export {
@@ -132,6 +140,6 @@ export {
   Todoitem,
   EntityType,
   Entity,
-  UnfinishedExperiments,
+  UnfinishedEntities,
   Upload,
 };

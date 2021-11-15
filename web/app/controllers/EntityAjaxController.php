@@ -13,7 +13,6 @@ namespace Elabftw\Elabftw;
 use function dirname;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -23,7 +22,14 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Services\ListBuilder;
 use Elabftw\Services\MakeBloxberg;
+use Elabftw\Services\MakeDfnTimestamp;
+use Elabftw\Services\MakeDigicertTimestamp;
+use Elabftw\Services\MakeGlobalSignTimestamp;
+use Elabftw\Services\MakeSectigoTimestamp;
 use Elabftw\Services\MakeTimestamp;
+use Elabftw\Services\MakeUniversignTimestamp;
+use Elabftw\Services\MakeUniversignTimestampDev;
+use Elabftw\Services\TimestampUtils;
 use Exception;
 use GuzzleHttp\Client;
 use function mb_convert_encoding;
@@ -43,9 +49,6 @@ $Response->setData(array(
 ));
 
 try {
-    // CSRF
-    $App->Csrf->validate();
-
     // id of the item (experiment or database item)
     $id = null;
 
@@ -110,7 +113,8 @@ try {
         } else {
             $Entity = new Items($App->Users);
         }
-        $ListBuilder = new ListBuilder($Entity);
+        $catFilter = (int) $Request->query->get('filter');
+        $ListBuilder = new ListBuilder($Entity, $catFilter);
         // fix issue with Malformed UTF-8 characters, possibly incorrectly encoded
         // see #2404
         $responseArr = $ListBuilder->getAutocomplete($Request->query->get('term'));
@@ -137,8 +141,44 @@ try {
 
     // TIMESTAMP
     if ($Request->request->has('timestamp') && $Entity instanceof Experiments) {
-        $MakeTimestamp = new MakeTimestamp($App->Config, new Teams($App->Users), $Entity);
-        $MakeTimestamp->timestamp();
+        // by default, use the instance config
+        $config = $App->Config->configArr;
+
+        // if the current team chose to override the default, use that
+        $Teams = new Teams($App->Users);
+        $teamConfigArr = $Teams->read(new ContentParams());
+        if ($teamConfigArr['ts_override'] === '1') {
+            $config = $teamConfigArr;
+        }
+
+        if ($config['ts_authority'] === 'dfn') {
+            $Maker = new MakeDfnTimestamp($config, $Entity);
+        } elseif ($config['ts_authority'] === 'universign') {
+            if ($App->Config->configArr['debug']) {
+                // this will use the sandbox endpoint
+                $Maker = new MakeUniversignTimestampDev($config, $Entity);
+            } else {
+                $Maker = new MakeUniversignTimestamp($config, $Entity);
+            }
+        } elseif ($config['ts_authority'] === 'digicert') {
+            $Maker = new MakeDigicertTimestamp($config, $Entity);
+        } elseif ($config['ts_authority'] === 'sectigo') {
+            $Maker = new MakeSectigoTimestamp($config, $Entity);
+        } elseif ($config['ts_authority'] === 'globalsign') {
+            $Maker = new MakeGlobalSignTimestamp($config, $Entity);
+        } else {
+            $Maker = new MakeTimestamp($config, $Entity);
+        }
+
+        $dataPath = $Maker->generatePdf();
+        $TimestampUtils = new TimestampUtils(
+            new Client(),
+            $dataPath,
+            $Maker->getTimestampParameters(),
+            new TimestampResponse(),
+        );
+        $tsResponse = $TimestampUtils->timestamp();
+        $Maker->saveTimestamp($tsResponse);
     }
 
     // BLOXBERG
@@ -186,20 +226,22 @@ try {
 
     // UPDATE CATEGORY (item type or status)
     if ($Request->request->has('updateCategory')) {
-        $Entity->updateCategory((int) $Request->request->get('categoryId'));
+        $id = (int) $Request->request->get('categoryId');
+        $Entity->updateCategory($id);
         // get the color of the status/item type for updating the css
         if ($Entity instanceof Experiments) {
-            $Category = new Status($App->Users->team);
+            $Category = new Status($App->Users->team, $id);
         } else {
-            $Category = new ItemsTypes($App->Users->team);
+            $Category = new ItemsTypes($App->Users, $id);
         }
+        $categoryArr = $Category->read(new ContentParams());
         $Response->setData(array(
             'res' => true,
             'msg' => _('Saved'),
-            'color' => $Category->readColor((int) $Request->request->get('categoryId')),
+            'color' => $categoryArr['color'],
         ));
     }
-} catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException | PDOException $e) {
+} catch (ImproperActionException | UnauthorizedException | PDOException $e) {
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),

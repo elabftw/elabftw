@@ -10,9 +10,11 @@
       </div>
       <form method='post' action='app/controllers/SysconfigController.php'>
         <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
-            {{ App.Csrf.getHiddenInput|raw }}
+            {{ App.Session.get('csrf')|csrf }}
             <input type='hidden' id='editUserToTeamUserid' name='userid' value='' />
             <input type='hidden' id='editUserToTeamAction' name='action' value='' />
+            <!-- so we can redirect back to the correct page -->
+            <input type='hidden' id='editUserToTeamQuery' name='query' value='' />
             <input type='hidden' name='editUserToTeam' value='1' />
             <label for='teamSelect'>{{ 'Select a team'|trans }}</label>
             <select id='teamSelect' class='form-control' name='team'>
@@ -30,15 +32,22 @@
   </div>
 </div>
 
-<form class='box' method='get'>
-  <div class='form-group'>
-    <label for='search-users'>{{ 'Search users'|trans }}</label>
-    <input type='text' autocomplete='off' class='form-control col-md-4 custom-control-inline' id='search-users' value='{{ App.Request.query.get('q') }}' name='q' />
-    <!-- stay on correct tab -->
-    <input type='hidden' value='3' name='tab' />
-    <input type='submit' class='button btn btn-primary' value='{{ 'Search'|trans }}' />
+  <div class='box form-group'>
+    <form class='d-inline' method='get'>
+      <label for='search-users'>{{ 'Search users'|trans }}</label>
+      <input type='text' autocomplete='off' class='form-control col-md-4 custom-control-inline' id='search-users' value='{{ App.Request.query.get('q') }}' name='q' />
+      <!-- stay on correct tab -->
+      <input type='hidden' value='3' name='tab' />
+      <input type='submit' class='button btn btn-primary' value='{{ 'Search'|trans }}' />
+    </form>
+
+    <!-- add a second form with empty q param to show all users; added because it is not evident that searching for nothing shows all results -->
+    <form class='d-inline' method='get'>
+      <input type='hidden' value='3' name='tab' />
+      <input type='hidden' value='' name='q' />
+      <input type='submit' class='button btn btn-secondary' value='{{ 'Show all'|trans }}' />
+    </form>
   </div>
-</form>
 
 {% if isSearching %}
     <div class='box'>
@@ -55,11 +64,11 @@
                 <li class='list-inline-item mb-2'>
                   <label for='usersUpdateTeam_{{ user.userid }}'>{{ 'Team(s)'|trans }}</label>
                     {% for team in user.teams %}
-                      <span class='btn btn-secondary clickable' data-team='{{ team.id }}'>{{ team.name }}</span>
+                      <span class='btn btn-secondary disabled'>{{ team.name }}</span>
                     {% endfor %}
                     {% if App.Session.get('is_sysadmin') %}
-                    <span class='btn btn-primary clickable editUserToTeam modalToggle' data-modal='editUserToTeamModal' data-action='add' data-userid='{{ user.userid }}'><i class='color-white fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
-                    <span class='btn btn-danger clickable editUserToTeam modalToggle' data-modal='editUserToTeamModal' data-action='rm' data-userid='{{ user.userid }}'><i class='color-white fas fa-minus-circle'></i> {{ 'Remove team'|trans }}</span>
+                    <span class='btn btn-primary clickable editUserToTeam' data-action='toggle-modal' data-target='editUserToTeamModal' data-useraction='add' data-userid='{{ user.userid }}'><i class='color-white fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
+                    <span class='btn btn-danger clickable editUserToTeam' data-action='toggle-modal' data-target='editUserToTeamModal' data-useraction='rm' data-userid='{{ user.userid }}'><i class='color-white fas fa-minus-circle'></i> {{ 'Remove team'|trans }}</span>
                     {% endif %}
                 </li>
 
@@ -67,7 +76,7 @@
                 <form method='post' action='app/controllers/UsersController.php'>
                   <div class='form-group'>
                     <input type='hidden' value='true' name='usersUpdate' />
-                    {{ App.Csrf.getHiddenInput()|raw }}
+                    {{ App.Session.get('csrf')|csrf }}
                     {% if fromSysconfig %}
                       <input type='hidden' value='1' name='fromSysconfig' />
                     {% endif %}
@@ -111,14 +120,19 @@
                     <!-- RESET PASSWORD -->
                     <li class='list-inline-item'>
                       <label for='usersUpdatePassword_{{ user.userid }}'>{{ 'Reset user password'|trans }}
-                        <span class='smallgray'>({{ App.getMinPasswordLength }} {{ 'characters minimum'|trans }})</span>
+                        <span class='smallgray'>({{ minPasswordLength() }} {{ 'characters minimum'|trans }})</span>
                       </label>
                       <!-- add empty input to prevent FF from putting password in field because autocomplete doesn't work. from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox -->
                       <!-- chrome will continue to behave badly. See crbug.com/468153 and crbug.com/587466 -->
-                      <input type='text' style='display:none'>
-                      <input type='password' style='display:none'>
-                      {% set pattern = '.{' ~ App.getMinPasswordLength ~ ',}' %}
-                      <input autocomplete='new-password' class='form-control custom-control-inline' id='usersUpdatePassword_{{ user.userid }}' type='password' pattern='{{ pattern }}' value='' name='password' />
+                      <input type='text' hidden>
+                      <input type='password' hidden>
+                      {% set pattern = '.{' ~ minPasswordLength() ~ ',}' %}
+                      <div class='input-group'>
+                        <input autocomplete='new-password' class='form-control' id='usersUpdatePassword_{{ user.userid }}' type='password' pattern='{{ pattern }}' value='' name='password' />
+                        <div class='input-group-append'>
+                          <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='usersUpdatePassword_{{ user.userid }}'><i class='fas fa-eye' aria-hidden='true'></i></span>
+                        </div>
+                      </div>
                     </li>
 
                     <!-- 2FA -->
@@ -176,7 +190,7 @@
   <h3>{{ 'Add account'|trans }}</h3>
   <p>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
   <div class='form-group'>
-    {{ App.Csrf.getHiddenInput|raw }}
+    {{ App.Session.get('csrf')|csrf }}
     {# because the select will be disabled, the team won't be sent, so add it as hidden for admin page #}
     {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
       <input type='hidden' name='team' value='{{ App.Users.userData.team }}' />

@@ -9,11 +9,9 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\InvalidCredentialsException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
-use Monolog\Logger;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class AuthTest extends \PHPUnit\Framework\TestCase
 {
@@ -21,26 +19,12 @@ class AuthTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $Request = Request::createFromGlobals();
-        $Session = new Session();
-        $App = new App($Request, $Session, Config::getConfig(), new Logger('elabftw'), new Csrf($Request, $Session));
-        $this->Auth = new Auth($App);
+        $this->Auth = new Auth(Config::getConfig(), Request::createFromGlobals());
     }
 
-    /*
-    public function testCheckCredentials()
+    public function testTryAuth(): void
     {
-        $this->assertEquals($this->Auth->checkCredentials('phpunit@example.com', 'phpunitftw'), 1);
-        $this->expectException(InvalidCredentialsException::class);
-        $this->Auth->checkCredentials('phpunit@example.com', 'wrong password');
+        $this->expectException(UnauthorizedException::class);
+        $this->Auth->tryAuth();
     }
-     */
-
-    /*
-    public function testLogin()
-    {
-        $this->assertTrue($this->Auth->login($this->Auth->checkCredentials('phpunit@example.com', 'phpunitftw')));
-        //$this->assertFalse($this->Auth->login('toto@yopmail.com', '0'));
-    }
-     */
 }

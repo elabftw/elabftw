@@ -3,24 +3,30 @@
 {% block body %}
 
   {% if not searchPage %}
-    {% include('show-view-edit.html') %}
+    {% include 'show-view-edit.html' %}
   {% endif %}
-  {% include('filter-order-sort.html') %}
+  {% include 'filter-order-sort.html' %}
 
   <hr>
 
   {% set count = itemsArr|length %}
 
+  <div id='showModeContent'>
+
   {% if count == 0 and searchType != '' %}
+    <div class='row display-flex' id='itemList'>
       {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
+    </div>
   {% elseif count == 0 and searchType == '' and not App.Session.get('is_anon') and not App.Request.query.get('offset') %}
+    <div class='row display-flex' id='itemList'>
       {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
+    </div>
   {% else %}
       {% if pinnedArr and not searchPage %}
         <div id='pinned-entities' class='row display-flex'>
           {% set isPinned = true %}
           {% for item in pinnedArr|slice(0, DisplayParams.limit) %}
-            {% include('show-item.html') %}
+            {% include 'show-item.html' %}
           {% endfor %}
           {% set isPinned = false %}
         </div>
@@ -62,11 +68,12 @@
           <option value='zip'>{{ 'Make Zip'|trans }}</option>
           <option value='csv'>{{ 'Make Csv'|trans }}</option>
           <option value='multiPdf'>{{ 'Make PDF'|trans }}</option>
+          <option value='qrPdf'>{{ 'Make QR codes PDF'|trans }}</option>
           <option value='json'>{{ 'Make JSON'|trans }}</option>
         </select>
 
         <!-- Add a tag -->
-        <input type='text' id='createTagInputMultiple' class='createTagInputMultiple' placeholder='{{ 'Add a tag'|trans }}' />
+        <input type='text' id='createTagInputMultiple' class='createTagInputMultiple' data-autocomplete='tags' placeholder='{{ 'Add a tag'|trans }}' />
 
         <!-- Add a link -->
         <input type='text' id='linkInputMultiple' class='linkinput' placeholder='{{ 'Add a link'|trans }}' />
@@ -80,11 +87,12 @@
       {% if App.Users.userData.display_mode == 'it' %}
         <div class='row display-flex' id='itemList'>
         {% for item in itemsArr|slice(0, DisplayParams.limit) %}
-          {% include('show-item.html') %}
+          {% include 'show-item.html' %}
         {% endfor %}
         </div>
-      {% else  %}
-        <table id='item-table'>
+      {% elseif App.Users.userData.display_mode == 'tb' %}
+      <div id='itemList'>
+        <table class='item-table'>
           <tr>
             <th>
               {{ 'Date'|trans }} <a class='orderBy clickable' data-orderby='date'><i class='fas fa-sort'></i></a>
@@ -112,10 +120,13 @@
             </th>
           </tr>
         {% for item in itemsArr|slice(0, DisplayParams.limit) %}
-          {% include('show-item-table.html') %}
+          {% include 'show-item-table.html' %}
         {% endfor %}
         </table>
+      </div> <!-- end itemList -->
       {% endif %}
+
+      <!-- PREVIOUS/NEXT PAGE buttons -->
       <div class='text-center page-buttons mt-2'>
         {% if DisplayParams.offset != 0 %}
           <button class='button btn btn-neutral previousPage' data-action='previous-page'>{{ 'Previous page'|trans }}</button>
@@ -132,9 +143,8 @@
       data-page='show'
       data-type='{{ Entity.type }}'
       data-locale='{{ App.Users.userData.lang }}'
-      data-limit='{{ DisplayParams.limit }}'
-      data-offset='{{ DisplayParams.offset }}'>
+      data-limit='{{ DisplayParams.limit }}'>
   </div>
-  <div id='type' data-type='{{ Entity.type }}'></div>
+</div>
 
 {% endblock body %}

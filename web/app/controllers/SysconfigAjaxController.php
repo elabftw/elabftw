@@ -10,14 +10,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Maps\Team;
-use Elabftw\Models\BannedUsers;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Elabftw\Services\Email;
@@ -27,7 +26,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 /**
  * Deal with ajax requests sent from the sysconfig page or full form from sysconfig.php
  */
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new JsonResponse();
 $Response->setData(array(
@@ -44,7 +43,7 @@ try {
 
     // CREATE TEAM
     if ($Request->request->has('teamsCreate')) {
-        $Teams->create($Request->request->get('teamsName'));
+        $Teams->create(new ContentParams($Request->request->get('teamsName')));
     }
 
     // UPDATE TEAM
@@ -78,12 +77,20 @@ try {
         $Idps->destroy();
     }
 
-    // CLEAR BANNED
-    if ($Request->request->has('clear-banned')) {
-        $BannedUsers = new BannedUsers($App->Config);
-        $BannedUsers->clearAll();
+    // CLEAR NOLOGIN
+    if ($Request->request->has('clear-nologinusers')) {
+        // this is so simple and only used here it doesn't have its own function
+        $Db = Db::getConnection();
+        $Db->q('UPDATE users SET allow_untrusted = 1');
     }
-} catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
+
+    // CLEAR LOCKOUT DEVICES
+    if ($Request->request->has('clear-lockoutdevices')) {
+        // this is so simple and only used here it doesn't have its own function
+        $Db = Db::getConnection();
+        $Db->q('DELETE FROM lockout_devices');
+    }
+} catch (ImproperActionException | UnauthorizedException $e) {
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),

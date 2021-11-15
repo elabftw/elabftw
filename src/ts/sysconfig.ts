@@ -8,18 +8,21 @@
 import { notif } from './misc';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
-import { Ajax } from './Ajax.class';
 import { getTinymceBaseConfig } from './tinymce';
+import Tab from './Tab.class';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/sysconfig.php') {
     return;
   }
 
+  const TabMenu = new Tab();
+  TabMenu.init(document.querySelector('.tabbed-menu'));
+
   // GET the latest version information
   const updateUrl = 'https://get.elabftw.net/updates.json';
-  const currentVersionDiv = document.querySelector('#currentVersion') as HTMLElement;
-  const latestVersionDiv = document.querySelector('#latestVersion');
+  const currentVersionDiv = document.getElementById('currentVersion') as HTMLElement;
+  const latestVersionDiv = document.getElementById('latestVersion');
   const currentVersion = currentVersionDiv.innerText;
   // Note: this doesn't work on Chrome
   // see: https://bugs.chromium.org/p/chromium/issues/detail?id=571722
@@ -77,12 +80,14 @@ $(document).ready(function() {
     editUserToTeam(userid, action): void {
       $('#editUserToTeamUserid').attr('value', userid);
       $('#editUserToTeamAction').attr('value', action);
+      const params = new URLSearchParams(document.location.search);
+      $('#editUserToTeamQuery').attr('value', params.get('q'));
     },
     create: function(): void {
       const name = $('#teamsName').val();
       $.post(this.controller, {
         teamsCreate: true,
-        teamsName: name
+        teamsName: name,
       }).done(function(data) {
         Teams.destructor(data);
       });
@@ -105,7 +110,7 @@ $(document).ready(function() {
       (document.getElementById('teamsDestroyButton_' + id) as HTMLButtonElement).disabled = true;
       $.post(this.controller, {
         teamsDestroy: true,
-        teamsDestroyId: id
+        teamsDestroyId: id,
       }).done(function(data) {
         Teams.destructor(data);
       });
@@ -115,7 +120,7 @@ $(document).ready(function() {
       if (json.res) {
         $('#teamsDiv').load('sysconfig.php #teamsDiv > *');
       }
-    }
+    },
   };
 
   $(document).on('click', '#teamsCreateButton', function() {
@@ -131,7 +136,7 @@ $(document).ready(function() {
     notif({'msg': 'Feature not yet implemented :)', 'res': true});
   });
   $(document).on('click', '.editUserToTeam', function() {
-    Teams.editUserToTeam($(this).data('userid'), $(this).data('action'));
+    Teams.editUserToTeam($(this).data('userid'), $(this).data('useraction'));
   });
 
   // MAIL METHOD in a function because is also called in document ready
@@ -158,18 +163,23 @@ $(document).ready(function() {
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
-    // CLEAR-BANNED
-    if (el.matches('[data-action="clear-banned"]')) {
-      const AjaxC = new Ajax('bannedusers', '0', 'app/controllers/SysconfigAjaxController.php');
-      AjaxC.post('clear-banned').then(json => {
-        if (json.res) {
-          document.getElementById('bannedUsersCount').innerText = '';
-        }
-        notif(json);
-      });
+    // CLEAR-LOCKEDUSERS and CLEAR-LOCKOUTDEVICES
+    if (el.matches('[data-action="clear-nologinusers"]') || el.matches('[data-action="clear-lockoutdevices"]')) {
+      const formData  = new FormData();
+      formData.append(el.dataset.action, 'yep');
+      formData.append('csrf', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+      fetch('app/controllers/SysconfigAjaxController.php', {
+        method: 'POST',
+        body: formData,
+      }).then(response => response.json())
+        .then(json => {
+          if (json.res) {
+            $('#bruteforceDiv').load('sysconfig.php #bruteforceDiv > *');
+          }
+          notif(json);
+        });
     }
   });
-
 
   // MASS MAIL
   $(document).on('click', '#massSend', function() {
@@ -178,7 +188,7 @@ $(document).ready(function() {
     $.post('app/controllers/SysconfigAjaxController.php', {
       massEmail: true,
       subject: $('#massSubject').val(),
-      body: $('#massBody').val()
+      body: $('#massBody').val(),
     }).done(function(json) {
       notif(json);
       if (json.res) {
@@ -198,7 +208,7 @@ $(document).ready(function() {
     $('#testemailButton').text('Sending…');
     $.post('app/controllers/SysconfigAjaxController.php', {
       testemailSend: true,
-      testemailEmail: email
+      testemailEmail: email,
     }).done(function(json) {
       notif(json);
       if (json.res) {
@@ -225,7 +235,7 @@ $(document).ready(function() {
     if (confirm(i18next.t('generic-delete-warning'))) {
       $.post('app/controllers/SysconfigAjaxController.php', {
         idpsDestroy: true,
-        id: $(this).data('id')
+        id: $(this).data('id'),
       }).done(function(json) {
         notif(json);
         if (json.res) {

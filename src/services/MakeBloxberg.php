@@ -92,8 +92,14 @@ class MakeBloxberg extends AbstractMake
 
     private function getPdf(): string
     {
-        $MakePdf = new MakePdf($this->Entity);
-        return $MakePdf->getPdf();
+        $userData = $this->Entity->Users->userData;
+        $MpdfProvider = new MpdfProvider(
+            $userData['fullname'],
+            $userData['pdf_format'],
+            (bool) $userData['pdfa'],
+        );
+        $MakePdf = new MakePdf($MpdfProvider, $this->Entity);
+        return $MakePdf->getFileContent();
     }
 
     private function certify(string $hash): string

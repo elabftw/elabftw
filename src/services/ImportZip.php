@@ -18,6 +18,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 use Elabftw\Traits\EntityTrait;
+use Elabftw\Traits\UploadTrait;
 use FilesystemIterator;
 use function mb_strlen;
 use PDO;
@@ -32,6 +33,7 @@ use ZipArchive;
 class ImportZip extends AbstractImport
 {
     use EntityTrait;
+    use UploadTrait;
 
     // number of items we got into the database
     public int $inserted = 0;
@@ -83,7 +85,7 @@ class ImportZip extends AbstractImport
     public function import(): void
     {
         // this is where we will extract the zip
-        $this->tmpPath = \dirname(__DIR__, 2) . '/cache/elab/' . \bin2hex(\random_bytes(16));
+        $this->tmpPath = $this->getTmpPath() . $this->getUniqueString();
         if (!is_dir($this->tmpPath) && !mkdir($this->tmpPath, 0700, true) && !is_dir($this->tmpPath)) {
             throw new ImproperActionException('Unable to create temporary folder! (' . $this->tmpPath . ')');
         }
@@ -141,12 +143,12 @@ class ImportZip extends AbstractImport
      */
     private function dbInsert($item): void
     {
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, elabid)
-            VALUES(:team, :title, :date, :body, :userid, :category, :canread, :elabid)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, elabid, metadata)
+            VALUES(:team, :title, :date, :body, :userid, :category, :canread, :elabid, :metadata)';
 
         if ($this->type === 'experiments') {
-            $sql = 'INSERT into experiments(title, date, body, userid, canread, category, elabid)
-                VALUES(:title, :date, :body, :userid, :canread, :category, :elabid)';
+            $sql = 'INSERT into experiments(title, date, body, userid, canread, category, elabid, metadata)
+                VALUES(:title, :date, :body, :userid, :canread, :category, :elabid, :metadata)';
         }
 
         // make sure there is an elabid (might not exist for items before v4.0)
@@ -161,6 +163,7 @@ class ImportZip extends AbstractImport
         $req->bindParam(':body', $item['body']);
         $req->bindValue(':canread', $this->canread);
         $req->bindParam(':elabid', $elabid);
+        $req->bindParam(':metadata', $item['metadata']);
         if ($this->type === 'items') {
             $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':category', $this->target, PDO::PARAM_INT);
@@ -196,11 +199,11 @@ class ImportZip extends AbstractImport
             foreach ($item['links'] as $link) {
                 $linkText .= sprintf('<li>[%s] %s</li>', $link['name'], $link['title']);
             }
-            $params = new EntityParams('title', $item['title']);
+            $params = new EntityParams($item['title'], 'title');
             $this->Entity->update($params);
-            $params = new EntityParams('date', $item['date']);
+            $params = new EntityParams($item['date'], 'date');
             $this->Entity->update($params);
-            $params = new EntityParams('body', $item['body'] . $header . $linkText . $end);
+            $params = new EntityParams($item['body'] . $header . $linkText . $end, 'body');
             $this->Entity->update($params);
         }
         // add steps

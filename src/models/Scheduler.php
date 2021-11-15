@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -15,7 +14,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\EntityTrait;
 use PDO;
 use function preg_replace;
@@ -89,11 +88,7 @@ class Scheduler
         $req->bindParam(':end', $end);
         $this->Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
+        return $this->Db->fetchAll($req);
     }
 
     /**
@@ -122,11 +117,7 @@ class Scheduler
         $req->bindParam(':end', $end);
         $this->Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
+        return $this->Db->fetchAll($req);
     }
 
     /**
@@ -138,13 +129,7 @@ class Scheduler
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-
-        $res = $req->fetch();
-        if ($res === false) {
-            throw new ResourceNotFoundException();
-        }
-
-        return $res;
+        return $this->Db->fetch($req);
     }
 
     /**
@@ -154,6 +139,7 @@ class Scheduler
      */
     public function updateStart(array $delta): void
     {
+        $this->canWriteOrExplode();
         $event = $this->readFromId();
         $oldStart = DateTime::createFromFormat(DateTime::ISO8601, $event['start']);
         $oldEnd = DateTime::createFromFormat(DateTime::ISO8601, $event['end']);
@@ -180,6 +166,7 @@ class Scheduler
      */
     public function updateEnd(array $delta): void
     {
+        $this->canWriteOrExplode();
         $event = $this->readFromId();
         $oldEnd = DateTime::createFromFormat(DateTime::ISO8601, $event['end']);
         $seconds = '0';
@@ -201,6 +188,7 @@ class Scheduler
      */
     public function bind(int $entityid, string $type): bool
     {
+        $this->canWriteOrExplode();
         $this->validateBindType($type);
 
         $sql = 'UPDATE team_events SET ' . $type . ' = :entity WHERE team = :team AND id = :id';
@@ -216,6 +204,7 @@ class Scheduler
      */
     public function unbind(string $type): bool
     {
+        $this->canWriteOrExplode();
         $this->validateBindType($type);
 
         $sql = 'UPDATE team_events SET ' . $type . ' = NULL WHERE team = :team AND id = :id';
@@ -230,21 +219,40 @@ class Scheduler
      */
     public function destroy(): void
     {
-        // check permission before deleting
-        $event = $this->readFromId();
-        // if the user is not the same, check if we are admin
-        // admin and sysadmin will have usergroup of 1 or 2
-        if ($event['userid'] !== $this->Items->Users->userData['userid'] && (int) $this->Items->Users->userData['usergroup'] <= 2) {
-            // check user is in our team
-            $Booker = new Users((int) $event['userid']);
-            if ($Booker->userData['team'] !== $this->Items->Users->userData['team']) {
-                throw new ImproperActionException(Tools::error(true));
-            }
-        }
+        $this->canWriteOrExplode();
         $sql = 'DELETE FROM team_events WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
+    }
+
+    /**
+     * Check if current logged in user can edit an event
+     * Only admins can edit events from someone else
+     */
+    private function canWrite(): bool
+    {
+        $event = $this->readFromId();
+        // if it's our event we can write to it for sure
+        if ($event['userid'] === $this->Items->Users->userData['userid']) {
+            return true;
+        }
+
+        // if it's not, we need to be admin in the same team as the event/user
+        $TeamsHelper = new TeamsHelper((int) $event['team']);
+        if ($TeamsHelper->isUserInTeam((int) $this->Items->Users->userData['userid']) &&
+           (int) $this->Items->Users->userData['usergroup'] <= 2) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function canWriteOrExplode(): void
+    {
+        if ($this->canWrite() === false) {
+            throw new ImproperActionException(Tools::error(true));
+        }
     }
 
     private function validateBindType(string $type): void

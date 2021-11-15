@@ -11,33 +11,18 @@ import Link from './Link.class';
 import Step from './Step.class';
 import i18next from 'i18next';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
-import { getCheckedBoxes, notif } from './misc';
-import { EntityType, Entity } from './interfaces';
+import { getCheckedBoxes, notif, getEntity } from './misc';
+import { Entity } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
     return;
   }
-  // holds info about the page through data attributes
-  const about = document.getElementById('info').dataset;
-  let entityType: EntityType;
-  if (about.type === 'experiments') {
-    entityType = EntityType.Experiment;
-  }
-  if (about.type === 'items') {
-    entityType = EntityType.Item;
-  }
-  if (about.type === 'experiments_templates') {
-    entityType = EntityType.Template;
-  }
-
-  const entity: Entity = {
-    type: entityType,
-    id: parseInt(about.id),
-  };
+  const entity = getEntity();
 
   // STEPS
   const StepC = new Step(entity);
+  relativeMoment();
 
   // CREATE
   $(document).on('keypress blur', '.stepinput', function(e) {
@@ -75,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tooltip : i18next.t('click-to-edit'),
       indicator : 'Saving...',
       onblur: 'submit',
-      style : 'display:inline'
+      style : 'display:inline',
     });
   });
 
@@ -157,18 +142,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (checked.length === 0) {
         const json = {
           'msg': 'Nothing selected!',
-          'res': false
+          'res': false,
         };
         notif(json);
         return;
       }
       $.each(checked, function(index) {
-        let entityType = EntityType.Experiment;
-        if ($('#type').data('type') === 'items') {
-          entityType = EntityType.Item;
-        }
         const tmpEntity: Entity = {
-          type: entityType,
+          type: entity.type,
           id: checked[index]['id'],
         };
         const TmpLinkC = new Link(tmpEntity);
@@ -179,20 +160,28 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // AUTOCOMPLETE
-  const cache: any = {};
-  $('.linkinput').autocomplete({
-    source: function(request: any, response: any) {
-      const term = request.term;
-      if (term in cache) {
-        response(cache[term]);
-        return;
-      }
-      $.getJSON('app/controllers/EntityAjaxController.php?source=items', request, function(data) {
-        cache[term] = data;
-        response(data);
-      });
-    }
-  });
+  let cache = {};
+  // this is the select category filter on add link input
+  const catFilterEl = (document.getElementById('addLinkCatFilter') as HTMLInputElement);
+  if (catFilterEl) {
+    // when we change the category filter, reset the cache
+    catFilterEl.addEventListener('change', () => {
+      cache = {};
+    });
+    $('.linkinput').autocomplete({
+      source: function(request: Record<string, string>, response: (data) => void): void {
+        const term = request.term;
+        if (term in cache) {
+          response(cache[term]);
+          return;
+        }
+        $.getJSON(`app/controllers/EntityAjaxController.php?source=items&filter=${catFilterEl.value}`, request, function(data) {
+          cache[term] = data;
+          response(data);
+        });
+      },
+    });
+  }
 
   // DESTROY
   $(document).on('click', '.linkDestroy', function() {

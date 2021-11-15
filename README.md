@@ -3,10 +3,10 @@
 </p>
 
 <p align='center'>
-  <strong>A free, modern, flexible electronic lab notebook for researchers</strong>
+  <strong>A free, modern, versatile, secure electronic lab notebook for researchers</strong>
 </p>
 
-[Official website](https://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://doc.elabftw.net) | [Dedicated hosting](https://www.deltablot.com/elabftw)
+### [Official website](https://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://doc.elabftw.net) | [Dedicated hosting](https://www.deltablot.com/elabftw)
 
 [![CircleCI](https://circleci.com/gh/elabftw/elabftw/tree/master.svg?style=svg)](https://circleci.com/gh/elabftw/elabftw/tree/master)
 
@@ -29,7 +29,7 @@ It lets you store and organize your research experiments easily. It also feature
 It is accessed _via_ the browser. Several research teams can be hosted on the same installation. This means **eLabFTW** can be installed at the institute level and host all team members at the same place. This is what is done at [Institut Curie](http://www.curie.fr) and in several other research centers around the globe.
 
 Click the image below to see it in bigger size:
-[![Demo gif](https://i.imgur.com/pH6Qvwf.gif)](https://gfycat.com/WillingIncompleteAstarte)
+[![Demo gif](https://www.elabftw.net/img/view-edit.gif)](https://gfycat.com/tangibleequatorialbrant)
 
 **eLabFTW** is designed to be installed on a server, and people from the team can log in from their browser.
 

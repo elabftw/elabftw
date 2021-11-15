@@ -57,7 +57,7 @@ Cypress.Commands.add('login', () => {
  */
 const inExperiments = () => {
   cy.url().should('include', '/experiments.php');
-  cy.contains('h2', 'Experiments')
+  cy.contains('h1', 'Experiments')
   // our auth cookie should be present
   cy.getCookie('token').should('exist');
   cy.getCookie('token_team').should('exist');

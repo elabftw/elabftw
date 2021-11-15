@@ -9,6 +9,8 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Exceptions\ImproperActionException;
+
 class UsersHelperTest extends \PHPUnit\Framework\TestCase
 {
     private UsersHelper $UsersHelper;
@@ -25,12 +27,12 @@ class UsersHelperTest extends \PHPUnit\Framework\TestCase
 
     public function testCountExperiments(): void
     {
-        $this->assertEquals(58, $this->UsersHelper->countExperiments());
+        $this->assertIsInt($this->UsersHelper->countExperiments());
     }
 
     public function testCountTimestampedExperiments(): void
     {
-        $this->assertEquals(0, $this->UsersHelper->countTimestampedExperiments());
+        $this->assertIsInt($this->UsersHelper->countTimestampedExperiments());
     }
 
     public function testGetTeamsFromUserid(): void
@@ -39,10 +41,11 @@ class UsersHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->UsersHelper->getTeamsFromUserid());
     }
 
-    public function testGetPermissions(): void
+    public function testGetTeamsFromNotFoundUserid(): void
     {
-        $expected = array('is_admin' => '1', 'is_sysadmin' => '1', 'can_lock' => '0');
-        $this->assertEquals($expected, $this->UsersHelper->getPermissions());
+        $UsersHelper = new UsersHelper(1337);
+        $this->expectException(ImproperActionException::class);
+        $UsersHelper->getTeamsFromUserid();
     }
 
     public function testgetTeamsNameFromUserid(): void

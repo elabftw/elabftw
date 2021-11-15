@@ -10,15 +10,15 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Services\Check;
 use Exception;
 use Swift_TransportException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 // default location to redirect to
 $location = '../../login.php';
@@ -33,9 +33,6 @@ try {
     if (!empty($Request->request->get('bot'))) {
         throw new IllegalActionException('The bot field was filled on register page. Possible automated registration attempt.');
     }
-
-    // CSRF
-    $App->Csrf->validate();
 
     if ((Check::id((int) $Request->request->get('team')) === false) ||
         !$Request->request->get('firstname') ||
@@ -69,7 +66,7 @@ try {
     // but log it and display general error. See #841
     $App->Log->error('', array('exception' => $e));
     $App->Session->getFlashBag()->add('ko', Tools::error());
-} catch (ImproperActionException | InvalidCsrfTokenException $e) {
+} catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
     $location = '../../register.php';

@@ -17,12 +17,16 @@ import { Ajax } from './Ajax.class';
 import { Payload, Method, Model, Action, Target } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
+import Tab from './Tab.class';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/admin.php') {
     return;
   }
   const AjaxC = new Ajax();
+
+  const TabMenu = new Tab();
+  TabMenu.init(document.querySelector('.tabbed-menu'));
 
   // activate editor for common template
   tinymce.init(getTinymceBaseConfig('admin'));
@@ -32,7 +36,7 @@ $(document).ready(function() {
     $(this).attr('disabled', 'disabled').text('Please wait…');
     $.post('app/controllers/UsersAjaxController.php', {
       usersValidate: true,
-      userid: $(this).data('userid')
+      userid: $(this).data('userid'),
     }).done(function(json) {
       notif(json);
       if (json.res) {
@@ -64,7 +68,7 @@ $(document).ready(function() {
             cache[term] = json.value;
             response(json.value);
           });
-        }
+        },
       });
     }
   });
@@ -111,17 +115,6 @@ $(document).ready(function() {
     });
   });
 
-  // validate on enter
-  $('#teamGroupCreate').keypress(function (e) {
-    let keynum;
-    if (e.which) {
-      keynum = e.which;
-    }
-    if (keynum === 13) { // if the key that was pressed was Enter (ascii code 13)
-      const content = $('#teamGroupCreate').val() as string;
-      TeamGroupC.create(content);
-    }
-  });
   // edit the team group name
   $(document).on('mouseenter', 'h3.teamgroup_name', function() {
     ($(this) as any).editable(function(value) {
@@ -134,21 +127,21 @@ $(document).ready(function() {
       };
 
       AjaxC.send(payload);
-      return(value);
+      return (value);
     }, {
       indicator : 'Saving...',
       submit : 'Save',
       cancel : 'Cancel',
       cancelcssclass : 'button btn btn-danger',
       submitcssclass : 'button btn btn-primary',
-      style : 'display:inline'
+      style : 'display:inline',
     });
   });
 
   // STATUS
   const StatusC = new Status();
 
-  document.getElementById('statusCreate').addEventListener('click', () => {
+  document.querySelector('[data-action="create-status"]').addEventListener('click', () => {
     const content = (document.getElementById('statusName') as HTMLInputElement).value;
     const color = (document.getElementById('statusColor') as HTMLInputElement).value;
     const isTimestampable = (document.getElementById('statusTimestamp') as HTMLInputElement).checked;
@@ -157,7 +150,7 @@ $(document).ready(function() {
     }
   });
 
-  document.querySelectorAll('.statusSave').forEach(el => {
+  document.querySelectorAll('[data-action="update-status"]').forEach(el => {
     el.addEventListener('click', ev => {
       const statusId = parseInt((ev.target as HTMLElement).dataset.statusid);
       const content = (document.getElementById('statusName_' + statusId) as HTMLInputElement).value;
@@ -185,9 +178,8 @@ $(document).ready(function() {
   // ITEMS TYPES
   const ItemTypeC = new ItemType();
 
-  // CREATE
-  $('.itemsTypesEditor').hide();
-  $(document).on('click', '#itemsTypesCreate', function() {
+  // UPDATE
+  function itemsTypesUpdate(id: number): void {
     const nameInput = (document.getElementById('itemsTypesName') as HTMLInputElement);
     const name = nameInput.value;
     if (name === '') {
@@ -202,50 +194,12 @@ $(document).ready(function() {
     if (checkbox) {
       bookable = 1;
     }
-    const template = tinymce.get('itemsTypesTemplate').getContent();
 
-    const canread= (document.getElementById('canread_select') as HTMLSelectElement).value;
-    const canwrite= (document.getElementById('canwrite_select') as HTMLSelectElement).value;
-    // set the editor as non dirty so we can navigate out without a warning to clear
-    tinymce.activeEditor.setDirty(false);
-    // TODO don't reload the whole page, just what we need
-    ItemTypeC.create(name, color, bookable, template, canread, canwrite).then(() => window.location.replace('admin.php?tab=5'));
-  });
-
-  // TOGGLE BODY
-  $(document).on('click', '.itemsTypesShowEditor', function() {
-    ItemTypeC.showEditor($(this).data('id'));
-  });
-
-  // UPDATE
-  $(document).on('click', '.itemsTypesUpdate', function() {
-    const id = $(this).data('id');
-    const nameInput = (document.getElementById('itemsTypesName_' + id) as HTMLInputElement);
-    const name = nameInput.value;
-    if (name === '') {
-      notif({'res': false, 'msg': 'Name cannot be empty'});
-      nameInput.style.borderColor = 'red';
-      nameInput.focus();
-      return;
-    }
-    const color = (document.getElementById('itemsTypesColor_' + id) as HTMLInputElement).value;
-    const checkbox = $('#itemsTypesBookable_' + id).is(':checked');
-    let bookable = 0;
-    if (checkbox) {
-      bookable = 1;
-    }
-
-    const canread = (document.querySelector(`.itemsTypesSelectCanread[data-id="${id}"`) as HTMLSelectElement).value;
-    const canwrite = (document.querySelector(`.itemsTypesSelectCanwrite[data-id="${id}"`) as HTMLSelectElement).value;
-    // if tinymce is hidden, it'll fail to trigger
-    // so we toggle it quickly to grab the content
-    if ($('#itemsTypesTemplate_' + id).is(':hidden')) {
-      ItemTypeC.showEditor(id);
-    }
-    const template = tinymce.get('itemsTypesTemplate_' + id).getContent();
-    $('#itemsTypesEditor_' + id).toggle();
+    const canread = (document.getElementById('itemsTypesCanread') as HTMLSelectElement).value;
+    const canwrite = (document.getElementById('itemsTypesCanwrite') as HTMLSelectElement).value;
+    const template = tinymce.get('itemsTypesBody').getContent();
     ItemTypeC.update(id, name, color, bookable, template, canread, canwrite);
-  });
+  }
 
   // DESTROY
   $(document).on('click', '.itemsTypesDestroy', function() {
@@ -265,4 +219,44 @@ $(document).ready(function() {
   // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
   const colorInput = '#' + Math.floor(Math.random()*16777215).toString(16);
   $('.randomColor').val(colorInput);
+
+  document.getElementById('container').addEventListener('click', event => {
+    const el = (event.target as HTMLElement);
+    if (el.matches('[data-action="override-timestamp"]')) {
+      document.getElementById('overrideTimestampContent').toggleAttribute('hidden');
+      const value = (document.getElementById('overrideTimestamp') as HTMLInputElement).checked;
+      const payload: Payload = {
+        method: Method.POST,
+        action: Action.Update,
+        model: Model.Team,
+        target: Target.TsOverride,
+        content: value ? '1' : '0',
+      };
+      AjaxC.send(payload).then(json => {
+        notif(json);
+      });
+    // CREATE ITEMS TYPES
+    } else if (el.matches('[data-action="itemstypes-create"]')) {
+      const title = prompt(i18next.t('template-title'));
+      if (title) {
+        // no body on template creation
+        ItemTypeC.create(title).then(json => {
+          window.location.replace(`admin.php?tab=5&templateid=${json.value}`);
+        });
+      }
+    // UPDATE ITEMS TYPES
+    } else if (el.matches('[data-action="itemstypes-update"]')) {
+      itemsTypesUpdate(parseInt(el.dataset.id, 10));
+    // DESTROY ITEMS TYPES
+    } else if (el.matches('[data-action="itemstypes-destroy"]')) {
+      ItemTypeC.destroy(parseInt(el.dataset.id, 10)).then(json => {
+        notif(json);
+        window.location.href = '?tab=5';
+      });
+    } else if (el.matches('[data-action="export"]')) {
+      const source = (document.getElementById('categoryExport') as HTMLSelectElement).value;
+      const format = (document.getElementById('categoryExportFormat') as HTMLSelectElement).value;
+      window.location.href = `make.php?what=${format}&category=${source}`;
+    }
+  });
 });

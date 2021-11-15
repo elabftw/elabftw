@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Models\AnonymousUser;
+use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
@@ -61,11 +63,11 @@ class Permissions
         }
 
         // starting from here, if we are anon we can't possibly have read access
-        if (isset($this->Users->userData['anon'])) {
+        if ($this->Users instanceof AnonymousUser) {
             return array('read' => false, 'write' => false);
         }
 
-        if ($this->item['canread'] === 'organization') {
+        if ($this->item['canread'] === 'organization' && $this->Users instanceof AuthenticatedUser) {
             return array('read' => true, 'write' => $write);
         }
 
@@ -97,6 +99,17 @@ class Permissions
     }
 
     /**
+     * For ItemType write permission check for metadata
+     */
+    public function forItemType(): array
+    {
+        if ($this->Users->userData['is_admin'] && ((int) $this->item['team'] === $this->Users->userData['team'])) {
+            return array('read' => true, 'write' => true);
+        }
+        return array('read' => false, 'write' => false);
+    }
+
+    /**
      * Get the write permission for an exp/item
      */
     private function getWrite(): bool
@@ -113,12 +126,12 @@ class Permissions
         }
 
         // starting from here, if we are anon we can't possibly have write access
-        if (isset($this->Users->userData['anon'])) {
+        if ($this->Users instanceof AnonymousUser) {
             return false;
         }
 
         // if any logged in user can write, we can as we are not anon
-        if ($this->item['canwrite'] === 'organization') {
+        if ($this->item['canwrite'] === 'organization' && $this->Users instanceof AuthenticatedUser) {
             return true;
         }
 
@@ -134,8 +147,8 @@ class Permissions
         }
 
         // if the vis. setting is a team group, check we are in the group
-        if (Check::id((int) $this->item['canwrite']) !== false && $this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canwrite'])) {
-            return true;
+        if (Check::id((int) $this->item['canwrite']) !== false) {
+            return $this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canwrite']);
         }
 
         // if we own the entity, we have write access on it for sure
@@ -144,7 +157,8 @@ class Permissions
         }
 
         // it's not our entity, our last chance is to be admin in the same team as owner
-        if ($this->Users->userData['is_admin']) {
+        // also make sure that it's not in "useronly" mode
+        if ($this->Users->userData['is_admin'] && $this->item['canwrite'] !== 'useronly') {
             // if it's an item (has team attribute), we need to be logged in in same team
             if (isset($this->item['team'])) {
                 if ((int) $this->item['team'] === $this->Users->userData['team']) {

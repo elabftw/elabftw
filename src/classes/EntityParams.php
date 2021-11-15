@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -15,14 +14,19 @@ use Elabftw\Services\Filter;
 
 class EntityParams extends ContentParams implements EntityParamsInterface
 {
-    public function __construct(string $content, string $target = '', protected ?array $extra = null)
+    public function __construct(string $content, string $target = '', ?array $extra = null)
     {
-        parent::__construct($content, $target);
+        parent::__construct($content, $target, $extra);
     }
 
     public function getTitle(): string
     {
         return Filter::title($this->content);
+    }
+
+    public function getTags(): array
+    {
+        return $this->extra['tags'] ?? array();
     }
 
     public function getDate(): string

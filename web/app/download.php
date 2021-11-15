@@ -15,12 +15,9 @@ use function error_reporting;
 use Exception;
 use function set_time_limit;
 use function strpos;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-// we don't load init.inc.php to avoid issues with auth and elabid/anon file access
-require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
-$Request = Request::createFromGlobals();
+require_once 'init.inc.php';
 
 try {
     // we disable errors to avoid having notice and warning polluting our file

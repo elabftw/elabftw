@@ -16,7 +16,6 @@ class DatabaseInstallerTest extends \PHPUnit\Framework\TestCase
     public function testInstall(): void
     {
         $Sql = $this->createMock(Sql::class);
-        $Sql->method('execFile')->willReturn(true);
         $DatabaseInstaller = new DatabaseInstaller($Sql);
         $DatabaseInstaller->install();
     }

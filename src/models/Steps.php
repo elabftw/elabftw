@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -76,9 +75,6 @@ class Steps implements CrudInterface
 
     public function read(ContentParamsInterface $params): array
     {
-        if ($params->getTarget() === 'all') {
-            return $this->readAll();
-        }
         $this->Entity->canOrExplode('read');
 
         $sql = 'SELECT * FROM ' . $this->Entity->type . '_steps WHERE item_id = :id ORDER BY ordering';
@@ -86,52 +82,7 @@ class Steps implements CrudInterface
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
-    }
-
-    /**
-     * Get the current unfinished steps from experiments owned by current user
-     */
-    public function readAll(): array
-    {
-        $sql = "SELECT experiments.id, experiments.title, stepst.finished, stepst.steps_body, stepst.steps_id
-            FROM experiments
-            CROSS JOIN (
-                SELECT item_id, finished,
-                GROUP_CONCAT(experiments_steps.body ORDER BY experiments_steps.ordering SEPARATOR '|') AS steps_body,
-                GROUP_CONCAT(experiments_steps.id ORDER BY experiments_steps.ordering SEPARATOR '|') AS steps_id
-                FROM experiments_steps
-                WHERE finished = 0 GROUP BY item_id) AS stepst ON (stepst.item_id = experiments.id)
-            WHERE userid = :userid GROUP BY experiments.id ORDER BY experiments.id DESC";
-
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-
-        // clean up the results so we get a nice array with experiment id/title and steps with their id/body
-        // use reference to edit in place
-        foreach ($res as &$exp) {
-            $stepIDs = explode('|', $exp['steps_id']);
-            $stepsBodies = explode('|', $exp['steps_body']);
-
-            $expSteps = array();
-            foreach ($stepIDs as $key => $stepID) {
-                $expSteps[] = array($stepID, $stepsBodies[$key]);
-            }
-            $exp['steps'] = $expSteps;
-            unset($exp['steps_body'], $exp['steps_id'], $exp['finished']);
-        }
-
-        return $res;
+        return $this->Db->fetchAll($req);
     }
 
     /**
@@ -145,7 +96,7 @@ class Steps implements CrudInterface
     {
         $table = $this->Entity->type;
         if ($fromTpl) {
-            $table = 'experiments_templates';
+            $table = $this->Entity instanceof Experiments ? 'experiments_templates' : 'items_types';
         }
         $stepsql = 'SELECT body, ordering FROM ' . $table . '_steps WHERE item_id = :id';
         $stepreq = $this->Db->prepare($stepsql);

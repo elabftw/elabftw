@@ -32,7 +32,7 @@ export class Metadata {
   /**
    * Get the json from the metadata column
    */
-  read(): Promise<Record<string, any>> {
+  read(): Promise<Record<string, unknown>> {
     const payload: Payload = {
       method: Method.GET,
       action: Action.Read,
@@ -137,7 +137,15 @@ export class Metadata {
    */
   generateElement(name: string, description: Record<string, any>): Element {
     const element = document.createElement('div');
-    element.innerText = name + ': ' + description.value;
+    const valueEl = document.createElement('span');
+    valueEl.innerText = description.value;
+    // the link is generated with javascript so we can still use innerText and
+    // not innerHTML with manual "<a href...>" which implicates security considerations
+    if (description.type === 'url') {
+      valueEl.dataset.genLink = 'true';
+    }
+    element.innerText = name + ': ';
+    element.append(valueEl);
     return element;
   }
 
@@ -176,6 +184,10 @@ export class Metadata {
     case 'radio':
       return this.buildRadio(name, description);
       break;
+    case 'url':
+      element = document.createElement('input');
+      element.type = 'url';
+      break;
     default:
       element = document.createElement('input');
       element.type = 'text';
@@ -184,14 +196,14 @@ export class Metadata {
     // add the unique id to the element
     element.id = uniqid;
 
-    if (description.hasOwnProperty('value')) {
+    if (Object.prototype.hasOwnProperty.call(description, 'value')) {
       if (element.type === 'checkbox') {
         element.checked = description.value === 'on' ? true : false;
       }
       element.value = description.value;
     }
 
-    if (description.hasOwnProperty('required')) {
+    if (Object.prototype.hasOwnProperty.call(description, 'required')) {
       element.required = true;
     }
 
@@ -229,13 +241,13 @@ export class Metadata {
   /**
    * Main public function to call to display the metadata in view or edit mode
    */
-  display(mode: string): void {
+  display(mode: string): Promise<void> {
     let displayFunction = this.view;
     if (mode === 'edit') {
       displayFunction = this.edit;
     }
 
-    displayFunction.call(this).catch(e => {
+    return displayFunction.call(this).catch(e => {
       if (e instanceof ResourceNotFoundException) {
         // no metadata is associated but it's okay, it's not an error
         return;
@@ -252,7 +264,7 @@ export class Metadata {
   view(): Promise<void> {
     return this.read().then(json => {
       // do nothing more if there is no extra_fields in our json
-      if (!json.hasOwnProperty('extra_fields')) {
+      if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
         return;
       }
       this.metadataDiv.append(this.getHeaderDiv());
@@ -277,7 +289,7 @@ export class Metadata {
   edit(): Promise<void> {
     return this.read().then(json => {
       // do nothing more if there is no extra_fields in our json
-      if (!json.hasOwnProperty('extra_fields')) {
+      if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
         return;
       }
       this.metadataDiv.append(this.getHeaderDiv());

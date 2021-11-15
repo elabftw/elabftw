@@ -1,0 +1,31 @@
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+/* Transform text in pink and in Comic Sans */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+h1 a,
+h2 a,
+h3 a,
+h4 a,
+h5 a,
+h6 a,
+p,
+div,
+span,
+nav,
+section,
+a,
+a:link {
+    color: #ffc0cb; //pink
+    font-family: 'Comic Sans MS', 'Marker Felt', Arial, sans-serif;
+}

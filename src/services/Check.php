@@ -70,7 +70,7 @@ class Check
     public static function color(string $color): string
     {
         $color = filter_var(substr($color, 1, 7), FILTER_SANITIZE_STRING);
-        if ($color === false || \mb_strlen($color) !== 6) {
+        if ($color === false || mb_strlen($color) !== 6) {
             throw new ImproperActionException('Bad color');
         }
         return $color;
@@ -168,6 +168,7 @@ class Check
         $allowed = array(
             'all',
             'body',
+            'bodyappend',
             'boundevent',
             'comment',
             'date',
@@ -179,6 +180,13 @@ class Check
             'privacypolicy',
             'rating',
             'real_name',
+            'ts_authority',
+            'ts_cert',
+            'ts_login',
+            'ts_override',
+            'ts_password',
+            'ts_share',
+            'ts_url',
             'title',
             'unreference',
             'userid',

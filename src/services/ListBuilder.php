@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -23,7 +22,7 @@ class ListBuilder
     /** @var AbstractEntity $Entity */
     private $Entity;
 
-    public function __construct(AbstractEntity $entity)
+    public function __construct(AbstractEntity $entity, private int $catFilter = 0)
     {
         $this->Entity = $entity;
     }
@@ -59,8 +58,11 @@ class ListBuilder
 
         if ($this->Entity instanceof Items) {
             foreach ($itemsArr as $item) {
-                $mentionArr[] = array('name' => "<a href='database.php?mode=view&id=" .
-                    $item['id'] . "'>[" . $item['category'] . '] ' . $item['title'] . '</a>',
+                $mentionArr[] = array(
+                    'name' => sprintf('[%s] %s', $item['category'], $item['title']),
+                    'id' => $item['id'],
+                    'type' => $this->Entity->type,
+                    'page' => $this->Entity->page,
                 );
             }
         }
@@ -68,8 +70,11 @@ class ListBuilder
         // experiments have a different category name (Experiment)
         if ($this->Entity instanceof Experiments) {
             foreach ($itemsArr as $item) {
-                $mentionArr[] = array('name' => "<a href='experiments.php?mode=view&id=" .
-                    $item['id'] . "'>[" . ngettext('Experiment', 'Experiments', 1) . '] ' . $item['title'] . '</a>',
+                $mentionArr[] = array(
+                    'name' => sprintf('[%s] %s', ngettext('Experiment', 'Experiments', 1), $item['title']),
+                    'id' => $item['id'],
+                    'type' => $this->Entity->type,
+                    'page' => $this->Entity->page,
                 );
             }
         }
@@ -86,6 +91,9 @@ class ListBuilder
     {
         $term = filter_var($term, FILTER_SANITIZE_STRING);
         $this->Entity->titleFilter = " AND entity.title LIKE '%$term%'";
+        if ($this->catFilter !== 0) {
+            $this->Entity->addFilter('categoryt.id', (string) $this->catFilter);
+        }
 
         return $this->Entity->readShow(new DisplayParams());
     }

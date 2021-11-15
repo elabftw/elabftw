@@ -39,28 +39,23 @@ CREATE TABLE `api_keys` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
+-- Table structure for table `authfail`
+--
+
+CREATE TABLE `authfail` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `users_id` int(10) UNSIGNED NOT NULL,
+  `attempt_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `device_token` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
 -- RELATIONSHIPS FOR TABLE `api_keys`:
 --   `userid`
 --       `users` -> `userid`
 --   `team`
 --       `teams` -> `id`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `banned_users`
---
-
-CREATE TABLE `banned_users` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `fingerprint` char(32) NOT NULL,
-  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- RELATIONSHIPS FOR TABLE `banned_users`:
 --
 
 -- --------------------------------------------------------
@@ -107,6 +102,7 @@ CREATE TABLE `experiments` (
   `canwrite` varchar(255) NOT NULL DEFAULT 'user',
   `datetime` timestamp NULL DEFAULT NULL,
   `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -226,6 +222,8 @@ CREATE TABLE `experiments_templates` (
   `canread` varchar(255) NOT NULL,
   `canwrite` varchar(255) NOT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
+  `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -262,6 +260,17 @@ CREATE TABLE `experiments_templates_revisions` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `favtags2users`
+--
+
+CREATE TABLE `favtags2users` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `users_id` int UNSIGNED NOT NULL,
+  `tags_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
 -- Table structure for table `groups`
 --
 
@@ -269,8 +278,8 @@ CREATE TABLE `groups` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `is_sysadmin` tinyint(1) UNSIGNED NOT NULL,
-  `is_admin` text NOT NULL,
-  `can_lock` text NOT NULL,
+  `is_admin` tinyint(1) UNSIGNED NOT NULL,
+  `can_lock` tinyint(1) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -304,6 +313,10 @@ CREATE TABLE `idps` (
   `slo_binding` varchar(255) NOT NULL,
   `x509` text NOT NULL,
   `active` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `email_attr` varchar(255) NOT NULL,
+  `team_attr` varchar(255) NULL DEFAULT NULL,
+  `fname_attr` varchar(255) NULL DEFAULT NULL,
+  `lname_attr` varchar(255) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -334,6 +347,7 @@ CREATE TABLE `items` (
   `canwrite` varchar(255) NOT NULL DEFAULT 'team',
   `available` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -395,13 +409,15 @@ CREATE TABLE `items_revisions` (
 CREATE TABLE `items_types` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
-  `name` text NOT NULL,
-  `color` varchar(6) DEFAULT '000000',
-  `template` text,
+  `name` varchar(255) NOT NULL,
+  `color` varchar(6) DEFAULT '29aeb9',
+  `body` text NULL DEFAULT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `bookable` tinyint(1) UNSIGNED DEFAULT '0',
   `canread` varchar(255) NOT NULL DEFAULT 'team',
   `canwrite` varchar(255) NOT NULL DEFAULT 'team',
+  `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -412,7 +428,45 @@ CREATE TABLE `items_types` (
 --       `teams` -> `id`
 --
 
+--
+-- Table structure for table `items_types_links`
+--
+
+CREATE TABLE `items_types_links` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `item_id` int UNSIGNED NOT NULL,
+  `link_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- --------------------------------------------------------
+
+--
+-- Table structure for table `items_types_steps`
+--
+
+CREATE TABLE `items_types_steps` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `item_id` int UNSIGNED NOT NULL,
+  `body` text NOT NULL,
+  `ordering` int UNSIGNED DEFAULT NULL,
+  `finished` tinyint(1) NOT NULL DEFAULT '0',
+  `finished_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `lockout_devices`
+--
+
+CREATE TABLE `lockout_devices` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `locked_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `device_token` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 --
 -- Table structure for table `pin2users`
@@ -499,14 +553,17 @@ CREATE TABLE `teams` (
   `deletable_xp` tinyint(1) UNSIGNED NOT NULL DEFAULT 1,
   `deletable_item` tinyint(1) UNSIGNED NOT NULL DEFAULT 1,
   `user_create_tag` tinyint(1) UNSIGNED NOT NULL DEFAULT 1,
+  `force_exp_tpl` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `link_name` text NOT NULL,
   `link_href` text NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `stamplogin` text,
-  `stamppass` text,
-  `stampprovider` text,
-  `stampcert` text,
-  `stamphash` varchar(10) DEFAULT 'sha256',
+  `ts_authority` varchar(255) NOT NULL DEFAULT 'dfn',
+  `ts_login` varchar(255) NULL DEFAULT NULL,
+  `ts_password` varchar(255) NULL DEFAULT NULL,
+  `ts_url` varchar(255) NULL DEFAULT NULL,
+  `ts_cert` varchar(255) NULL DEFAULT NULL,
+  `ts_hash` varchar(10) NOT NULL DEFAULT 'sha256',
+  `ts_override` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `orgid` varchar(255) DEFAULT NULL,
   `public_db` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `force_canread` varchar(255) NOT NULL DEFAULT 'team',
@@ -648,7 +705,6 @@ CREATE TABLE `users` (
   `json_editor` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `validated` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `lang` varchar(5) NOT NULL DEFAULT 'en_GB',
-  `api_key` varchar(255) DEFAULT NULL,
   `default_read` varchar(255) NULL DEFAULT 'team',
   `default_write` varchar(255) NULL DEFAULT 'user',
   `single_column_layout` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
@@ -665,6 +721,8 @@ CREATE TABLE `users` (
   `display_size` varchar(2) NOT NULL DEFAULT 'lg',
   `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it',
   `last_login` DATETIME NULL DEFAULT NULL,
+  `allow_untrusted` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `auth_lock_time` datetime DEFAULT NULL,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -744,6 +802,13 @@ ALTER TABLE `experiments_templates`
   ADD KEY `fk_experiments_templates_teams_id` (`team`);
 
 --
+-- Indexes for table `favtags2users`
+--
+ALTER TABLE `favtags2users`
+  ADD KEY `fk_favtags2users_tags_id` (`tags_id`),
+  ADD KEY `fk_favtags2users_users_id` (`users_id`);
+
+--
 -- Indexes for table `items`
 --
 ALTER TABLE `items`
@@ -762,6 +827,18 @@ ALTER TABLE `items_comments`
 ALTER TABLE `items_types`
   ADD KEY `fk_items_types_teams_id` (`team`);
 
+--
+-- Indexes for table `items_types_links`
+--
+ALTER TABLE `items_types_links`
+  ADD KEY `fk_items_types_links_items_id` (`item_id`),
+  ADD KEY `fk_items_types_links_items_id2` (`link_id`);
+
+--
+-- Indexes for table `items_types_steps`
+--
+ALTER TABLE `items_types_steps`
+  ADD KEY `fk_items_types_steps_items_id` (`item_id`);
 --
 -- Indexes for table `status`
 --
@@ -851,6 +928,13 @@ ALTER TABLE `experiments_templates_revisions`
   ADD CONSTRAINT `fk_experiments_templates_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `favtags2users`
+--
+ALTER TABLE `favtags2users`
+  ADD CONSTRAINT `fk_favtags2users_tags_id` FOREIGN KEY (`tags_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_favtags2users_users_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `items`
 --
 ALTER TABLE `items`
@@ -875,6 +959,19 @@ ALTER TABLE `items_revisions`
 --
 ALTER TABLE `items_types`
   ADD CONSTRAINT `fk_items_types_teams_id` FOREIGN KEY (`team`) REFERENCES `teams`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `items_types_links`
+--
+ALTER TABLE `items_types_links`
+  ADD CONSTRAINT `fk_items_types_links_items_id` FOREIGN KEY (`link_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_items_types_links_items_types_id` FOREIGN KEY (`item_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `items_types_steps`
+--
+ALTER TABLE `items_types_steps`
+  ADD CONSTRAINT `fk_items_types_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `status`

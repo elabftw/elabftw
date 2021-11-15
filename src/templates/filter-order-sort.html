@@ -18,7 +18,7 @@
         <option value=''>{{ Entity.type == 'experiments' ? 'Filter status'|trans : 'Filter by type'|trans }}</option>
         {% for category in categoryArr %}
           <option value='{{ category.category_id }}'{{ App.Request.query.get('cat') == category.category_id ? ' selected'}}>
-          {{ category.category }}</option>
+          {{ category.category|raw }}</option>
         {% endfor %}
 
       </select>
@@ -34,7 +34,7 @@
         {% if Entity.type == 'items' %}
             <option value='rating'{{ App.Request.query.get('order') == 'rating' ? ' selected' }}>{{ 'Rating'|trans }}</option>
         {% else %}
-            <option value='comment'{{ App.Request.query.get('order') == 'comment' ? ' selected' }}>{{ 'Comment'|trans }}</option>
+            <option value='comment'{{ App.Request.query.get('order') == 'comment' ? ' selected' }}>{% trans %}Comment{% plural 1 %}Comments{% endtrans %}</option>
         {% endif %}
         <option value='title'{{ App.Request.query.get('order') == 'title' ? ' selected' }}>{{ 'Title'|trans }}</option>
         <option value='user'{{ App.Request.query.get('order') == 'user' ? ' selected' }}>{{ 'User'|trans }}</option>
@@ -75,6 +75,6 @@
     </form>
   </div>
   {% if not searchPage %}
-    {% include('create-new.html') %}
+    {% include 'create-new.html' %}
   {% endif %}
 </div>

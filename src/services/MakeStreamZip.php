@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,10 +6,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use function count;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
@@ -25,9 +25,6 @@ class MakeStreamZip extends AbstractMake
 {
     private ZipStream $Zip;
 
-    // the input ids but in an array
-    private array $idArr = array();
-
     // files to be deleted by destructor
     private array $trash = array();
 
@@ -36,12 +33,7 @@ class MakeStreamZip extends AbstractMake
     // array that will be converted to json
     private array $jsonArr = array();
 
-    /**
-     * Give me an id list and a type, I make good zip for you
-     *
-     * @param string $idList 4 8 15 16 23 42
-     */
-    public function __construct(AbstractEntity $entity, string $idList)
+    public function __construct(AbstractEntity $entity, private array $idArr)
     {
         parent::__construct($entity);
 
@@ -51,8 +43,6 @@ class MakeStreamZip extends AbstractMake
         }
 
         $this->Zip = new ZipStream();
-
-        $this->idArr = explode(' ', $idList);
     }
 
     /**
@@ -70,7 +60,7 @@ class MakeStreamZip extends AbstractMake
      */
     public function getFileName(): string
     {
-        if (\count($this->idArr) === 1) {
+        if (count($this->idArr) === 1) {
             $this->Entity->setId((int) $this->idArr[0]);
             $this->Entity->canOrExplode('read');
             return $this->getBaseFileName() . '.zip';
@@ -109,10 +99,7 @@ class MakeStreamZip extends AbstractMake
             $req = $this->Db->prepare($sql);
             $req->bindParam(':id', $id, PDO::PARAM_INT);
             $req->execute();
-            $uploads = $req->fetchAll();
-            if ($uploads === false) {
-                $uploads = array();
-            }
+            $uploads = $this->Db->fetchAll($req);
             foreach ($uploads as $upload) {
                 // add it to the .zip
                 $this->Zip->addFileFromPath(
@@ -165,7 +152,13 @@ class MakeStreamZip extends AbstractMake
      */
     private function addPdf(): void
     {
-        $MakePdf = new MakePdf($this->Entity, true);
+        $userData = $this->Entity->Users->userData;
+        $MpdfProvider = new MpdfProvider(
+            $userData['fullname'],
+            $userData['pdf_format'],
+            (bool) $userData['pdfa'],
+        );
+        $MakePdf = new MakePdf($MpdfProvider, $this->Entity, true);
         $MakePdf->outputToFile();
         $this->Zip->addFileFromPath($this->folder . '/' . $MakePdf->getFileName(), $MakePdf->filePath);
         $this->trash[] = $MakePdf->filePath;
@@ -178,8 +171,8 @@ class MakeStreamZip extends AbstractMake
      */
     private function addCsv(int $id): void
     {
-        $MakeCsv = new MakeCsv($this->Entity, (string) $id);
-        $this->Zip->addFile($this->folder . '/' . $this->folder . '.csv', $MakeCsv->getCsv());
+        $MakeCsv = new MakeCsv($this->Entity, array($id));
+        $this->Zip->addFile($this->folder . '/' . $this->folder . '.csv', $MakeCsv->getFileContent());
     }
 
     /**

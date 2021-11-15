@@ -28,10 +28,10 @@
 
 {% embed 'view-edit.html' %}
   {% block createnew %}
-    {% include('create-new.html') %}
+    {% include 'create-new.html' %}
   {% endblock %}
   {% block createmodal %}
-    {% include('show-view-edit.html') %}
+    {% include 'show-view-edit.html' %}
   {% endblock %}
 {% endembed %}
 
@@ -48,7 +48,7 @@
 {% endif %}
 
 <section class='item' style='padding:15px;border-left: 6px solid #{{ Entity.entityData.color }}'>
-  <p class='align-right d-inline'>
+  <p class='float-right d-inline'>
     <a class='elab-tooltip ml-2' data-action='pin' href='#'>
       <span>{{ 'Toggle pin'|trans }}</span>
       <i title='{{ 'Toggle pin'|trans }}' class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }} fa-2x'></i>
@@ -105,17 +105,17 @@
         <i title='{{ alt }}' class='fas {{lockIcon}} fa-2x'></i>
     </a>
 
-    {% if not App.Session.has('is_anon') %}
+    {% if not App.Session.has('is_anon') and App.Config.configArr.anon_users %}
       <a class='elab-tooltip mr-1' href='#' data-action='share'>
         <span>{{ 'Share'|trans }}</span>
         <i title='{{ 'Share'|trans }}' class='fas fa-share-alt fa-2x'></i>
       </a>
-      <input type='text' aria-label='{{ 'Share'|trans }}' id='shareLinkInput' value='' style='display:none' />
+      <input type='text' class='form-control' aria-label='{{ 'Share'|trans }}' id='shareLinkInput' value='' hidden />
     {% endif %}
 
     <!-- show timestamp button if not timestamped already -->
     {% if not Entity.entityData.timestamped and Entity.isTimestampable and Entity.type == 'experiments' and not App.Session.has('is_anon') %}
-      <a href='#' class='elab-tooltip mr-1 modalToggle' data-modal='timestampModal'>
+      <a href='#' class='elab-tooltip mr-1' data-action='toggle-modal' data-target='timestampModal'>
         <span>{{ 'Timestamp Experiment'|trans }}</span>
         <i title='{{ 'Timestamp Experiment'|trans }}' class='far fa-calendar-check fa-2x'></i>
       </a>
@@ -204,7 +204,7 @@
 
   <div id='metadataDiv' class='col-md-6'></div>
 
-  {% include('steps-links-view.html') %}
+  {% include 'steps-links-view.html' %}
 
   <div class='row'>
     <div class='col-6'>
@@ -220,15 +220,15 @@
 </section>
 
 
-{{ include('uploads.html') }}
+{% include 'uploads.html' %}
 
 <!-- only show the json editor if there is at least one file with a .json extension -->
 {% if uploadsArr|filter(u => u.real_name|getExt == 'json') %}
-  {{ include('json-editor.html') }}
+  {% include 'json-editor.html' %}
 {% endif %}
 
 {% if App.Session.get('is_auth') and not App.Session.has('is_anon') %}
-    <section id='comment_container'>
+    <section id='commentsDiv'>
         <div id='comment' class='box'>
             <i class='fas fa-comments mr-1 align-baseline'></i><h2 class='d-inline'>{{ 'Comments'|trans }}</h2>
 
@@ -239,7 +239,7 @@
                         <span class='text-muted'>{{ comment.fullname|raw }} {{ 'commented'|trans }}</span>
                         <span title='{{ comment.datetime }}' class='text-muted relative-moment'></span>
                         {% if comment.userid == Entity.Users.userData.userid %}
-                            <a class='clickable commentsDestroy align-right' data-commentid='{{ comment.id }}' title='{{ 'Delete'|trans }}'>
+                            <a class='float-right' data-action='destroy-comment' data-target='{{ comment.id }}' title='{{ 'Delete'|trans }}'>
                                 <i class='fas fa-trash-alt fa-lg'></i>
                             </a>
                         {% endif %}
@@ -252,7 +252,7 @@
 
             <textarea id='commentsCreateArea' autocomplete='off' placeholder='{{ 'Add a comment'|trans }}' aria-label='Comment area'></textarea>
             <div id='commentsCreateButtonDiv' class='mt-4 text-center'>
-                <button class='button btn btn-primary' id='commentsCreateButton' data-expid='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
+                <button class='button btn btn-primary' data-action='create-comment'>{{ 'Save'|trans }}</button>
             </div>
         </div>
     </section>
@@ -261,7 +261,7 @@
 
 <!-- REVISIONS -->
 {% if revNum > 0 %}
-    <span class='align-right'><i class='fas fa-history mr-1'></i>
+    <span class='float-right'><i class='fas fa-history mr-1'></i>
         <a href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'>{{ revNum }}
             {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
     </span>
@@ -274,7 +274,7 @@
     data-scedit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
 <div id='shortcuts'
-    data-create='{{ Entity.Users.userData.sc_create }}'
+    data-create='{{ Entity.Users.userData.sc_create }}'>
 </div>
 
 {% endblock body %}

@@ -35,11 +35,16 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { config } from '@fortawesome/fontawesome-svg-core';
+import Tab from './Tab.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/team.php') {
     return;
   }
+
+  const TabMenu = new Tab();
+  TabMenu.init(document.querySelector('.tabbed-menu'));
+
   // use this setting to prevent bug in fullcalendar
   // see https://github.com/fullcalendar/fullcalendar/issues/5544
   config.autoReplaceSvg = 'nest';
@@ -119,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         start: info.startStr,
         end: info.endStr,
         title: title,
-        item: $('#info').data('item')
+        item: $('#info').data('item'),
       }).done(function(json) {
         notif(json);
         if (json.res) {
@@ -131,17 +136,17 @@ document.addEventListener('DOMContentLoaded', () => {
     eventClick: function(info): void {
       if (!editable) { return; }
       $('[data-action="scheduler-rm-bind"]').hide();
-      ($('#eventModal') as any).modal('toggle');
+      ($('#eventModal') as JQuery).modal('toggle');
       // delete button in modal
       $('#deleteEvent').on('click', function(): void {
         $.post('app/controllers/SchedulerController.php', {
           destroy: true,
-          id: info.event.id
+          id: info.event.id,
         }).done(function(json) {
           notif(json);
           if (json.res) {
             info.event.remove();
-            ($('#eventModal') as any).modal('toggle');
+            ($('#eventModal') as JQuery).modal('toggle');
           }
         });
       });
@@ -168,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
             notif(json);
             if (json.res) {
               $('#bindinput').val('');
-              ($('#eventModal') as any).modal('toggle');
+              ($('#eventModal') as JQuery).modal('toggle');
               window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
             }
           });
@@ -181,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
           id: info.event.id,
           type: $(this).data('type'),
         }).done(function(json) {
-          ($('#eventModal') as any).modal('toggle');
+          ($('#eventModal') as JQuery).modal('toggle');
           notif(json);
           window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
         });
@@ -193,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const cache = {};
       $('#bindexpinput').autocomplete({
         appendTo: '#binddivexp',
-        source: function(request: any, response: any): void {
+        source: function(request: Record<string, string>, response: (data) => void): void {
           const term = request.term;
           if (term in cache) {
             response(cache[term]);
@@ -203,11 +208,11 @@ document.addEventListener('DOMContentLoaded', () => {
             cache[term] = data;
             response(data);
           });
-        }
+        },
       });
       $('#binddbinput').autocomplete({
         appendTo: '#binddivdb',
-        source: function(request: any, response: any): void {
+        source: function(request: Record<string, string>, response: (data) => void): void {
           const term = request.term;
           if (term in cache) {
             response(cache[term]);
@@ -217,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cache[term] = data;
             response(data);
           });
-        }
+        },
       });
 
     },
@@ -240,6 +245,9 @@ document.addEventListener('DOMContentLoaded', () => {
         delta: info.delta,
         id: info.event.id,
       }).done(function(json) {
+        if (!json.res) {
+          info.revert();
+        }
         notif(json);
       });
     },
@@ -251,6 +259,9 @@ document.addEventListener('DOMContentLoaded', () => {
         end: info.endDelta,
         id: info.event.id,
       }).done(function(json) {
+        if (!json.res) {
+          info.revert();
+        }
         notif(json);
       });
     },

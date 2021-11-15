@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -22,9 +23,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 /**
  * Deal with requests sent from the sysconfig page
  */
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 $tab = '1';
+$query = '';
 try {
     if (!$App->Session->get('is_sysadmin')) {
         throw new IllegalActionException('Non sysadmin user tried to access sysadmin controller.');
@@ -75,10 +77,6 @@ try {
             $tab = '1';
         }
 
-        if ($Request->request->has('stampshare')) {
-            $tab = '4';
-        }
-
         if ($Request->request->has('admin_validate')) {
             $tab = '5';
         }
@@ -99,12 +97,13 @@ try {
             $tab = '10';
         }
 
-        $App->Config->update($Request->request->all());
+        $App->Config->updateAll($Request->request->all());
     }
 
     // ADD USER TO TEAM
     if ($Request->request->has('editUserToTeam')) {
         $tab = '3';
+        $query = '&q=' . $Request->request->getAlpha('query');
         $Teams = new Teams($App->Users);
         if ($Request->request->get('action') === 'add') {
             $Teams->addUserToTeams(
@@ -117,12 +116,6 @@ try {
                 array($Request->request->get('team')),
             );
         }
-    }
-
-    // CLEAR STAMP PASS
-    if ($Request->query->get('clearStamppass')) {
-        $tab = '4';
-        $App->Config->destroyStamppass();
     }
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));
@@ -138,6 +131,6 @@ try {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error());
 } finally {
-    $Response = new RedirectResponse('../../sysconfig.php?tab=' . $tab);
+    $Response = new RedirectResponse('../../sysconfig.php?tab=' . $tab . $query);
     $Response->send();
 }

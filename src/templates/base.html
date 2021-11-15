@@ -1,5 +1,5 @@
 {% if not searchPage %}
-{% include('head.html') %}
+{% include 'head.html' %}
 <!-- HEAD (but when we load show.html from searchpage we don't want it -->
 <!-- no indentation here to remove whitespace -->
 {% endif %}
@@ -7,10 +7,11 @@
 <!-- BODY -->
 {% block body %}{% endblock %}
 
-<!-- TODOLIST (only for logged in users) -->
+<!-- TODOLIST / FAVTAGS side panels (only for logged in users) -->
 {% if App.Session.get('is_auth') and not App.Session.get('is_anon') %}
-  {% include('todolist.html') %}
+  {% include 'todolist-panel.html' %}
+  {% include 'favtags-panel.html' %}
 {% endif %}
 
 <!-- FOOTER -->
-{% include('footer.html') %}
+{% include 'footer.html' %}

@@ -1,28 +1,23 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * change-pass.php
- *
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Services\Check;
+use Elabftw\Services\ResetPasswordKey;
 use Exception;
+use const SECRET_KEY;
 use Symfony\Component\HttpFoundation\Response;
+use function time;
 
 /**
  * Form to reset the password
- *
  */
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Reset password');
@@ -34,25 +29,18 @@ $template = 'error.html';
 $renderArr = array();
 
 try {
-    // check URL parameters
-    if (!$Request->query->has('key') ||
-        !$Request->query->has('deadline') ||
-        Check::id((int) $Request->query->get('userid')) === false) {
+    // make sure this page is accessed with a key
+    if (!$Request->query->has('key')) {
         throw new IllegalActionException('Bad parameters in url.');
     }
 
-    // check deadline (fix #297)
-    $deadline = Crypto::decrypt($Request->query->get('deadline'), Key::loadFromAsciiSafeString(\SECRET_KEY));
-
-    if ($deadline < time()) {
-        throw new ImproperActionException(_('Invalid link. Reset links are only valid for one hour.'));
-    }
+    // validate the key to show error if the key is expired
+    $ResetPasswordKey = new ResetPasswordKey(time(), SECRET_KEY);
+    $ResetPasswordKey->validate($Request->query->get('key'));
 
     $template = 'change-pass.html';
     $renderArr = array(
         'key' => $Request->query->filter('key', null, FILTER_SANITIZE_STRING),
-        'deadline' => $Request->query->filter('deadline', null, FILTER_SANITIZE_STRING),
-        'userid' => $Request->query->filter('userid', null, FILTER_SANITIZE_STRING),
     );
 } catch (Exception $e) {
     $renderArr['error'] = $e->getMessage();

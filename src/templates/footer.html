@@ -48,11 +48,11 @@
     {% if App.Config.configArr.privacy_policy %}
       <a href='#' data-action='show-privacy-policy'>{{ 'Privacy policy'|trans }}</a><br>
     {% endif %}
-        {{ 'Page generated in'|trans }} {{ App.getGenerationTime }} {{ 'seconds'|trans }}
+        {{ 'Page generated in'|trans }} {{ generationTime() }} {{ 'seconds'|trans }}
     {% if App.Config.configArr.debug %}
-        ({{ App.getNumberOfQueries }} SQL)
+        ({{ numberOfQueries() }} SQL)
         <br>{{ 'Memory usage:'|trans }}
-        {{ App.getMemoryUsage|formatBytes }} ({{ App.getMemoryUsage }} {{ 'bytes'|trans }})
+        {{ memoryUsage()|formatBytes }} ({{ memoryUsage() }} {{ 'bytes'|trans }})
     {% endif %}
   </p>
 </footer>
@@ -65,6 +65,11 @@
   data-jslang='{{ (App.Session.has('is_auth') ? App.Users.userData.lang : App.Config.configArr.lang)|jslang }}'
   data-isodate='{{ App.Session.has('is_auth') ? App.Users.userData.use_isodate : '0' }}'
   ></div>
+
+{% if App.Session.has('is_auth') %}
+  <!-- this is here for the heartbeat -->
+  <div id='is-auth'></div>
+{% endif %}
 
 <!-- Modal for privacy policy -->
 <div class='modal fade' id='privacyModal' tabindex='-1' role='dialog' aria-labelledby='privacyModalLabel' aria-hidden='true'>

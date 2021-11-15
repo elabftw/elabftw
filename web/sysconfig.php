@@ -12,10 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function count;
 use function dirname;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Models\BannedUsers;
+use Elabftw\Models\AuthFail;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Elabftw\Services\UsersHelper;
@@ -40,7 +39,7 @@ try {
         throw new IllegalActionException('Non sysadmin user tried to access sysconfig panel.');
     }
 
-    $BannedUsers = new BannedUsers($App->Config);
+    $AuthFail = new AuthFail();
     $Idps = new Idps();
     $idpsArr = $Idps->readAll();
     $Teams = new Teams($App->Users);
@@ -76,7 +75,8 @@ try {
 
     $template = 'sysconfig.html';
     $renderArr = array(
-        'bannedCount' => count($BannedUsers->readAll()),
+        'nologinUsersCount' => $App->Users->getLockedUsersCount(),
+        'lockoutDevicesCount' => $AuthFail->getLockoutDevicesCount(),
         'elabimgVersion' => $elabimgVersion,
         'fromSysconfig' => true,
         'idpsArr' => $idpsArr,

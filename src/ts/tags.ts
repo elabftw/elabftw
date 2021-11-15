@@ -7,46 +7,21 @@
  */
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
+import FavTag from './FavTag.class';
 import Tag from './Tag.class';
 import i18next from 'i18next';
-import { getCheckedBoxes, notif, reloadTagsAndLocks } from './misc';
+import { getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement } from './misc';
 import { Ajax } from './Ajax.class';
-import { Payload, Method, Model, Action, Target, EntityType, Entity } from './interfaces';
+import { Payload, Method, Model, Action, Target } from './interfaces';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   let type = $('#info').data('type');
   if (type === undefined) {
     type = 'experiments_templates';
   }
 
-  if (!document.getElementById('info')) {
-    return;
-  }
   const AjaxC = new Ajax();
-
-  // holds info about the page through data attributes
-  const about = document.getElementById('info').dataset;
-  let entityType: EntityType = EntityType.Experiment;
-  if (about.type === 'experiments') {
-    entityType = EntityType.Experiment;
-  }
-  if (about.type === 'items') {
-    entityType = EntityType.Item;
-  }
-  if (about.type === 'experiments_templates') {
-    entityType = EntityType.Template;
-  }
-
-  let entityId = null;
-  if (about.id) {
-    entityId = parseInt(about.id);
-  }
-
-  const entity: Entity = {
-    type: entityType,
-    id: entityId,
-  };
-
+  const entity = getEntity();
   const TagC = new Tag(entity);
 
   // CREATE TAG
@@ -56,7 +31,10 @@ $(document).ready(function() {
     }
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
-      TagC.create($(this).val() as string).then(() => {
+      TagC.create($(this).val() as string).then(json => {
+        if (json.res === false) {
+          notif(json);
+        }
         $('#tags_div_' + entity.id).load(window.location.href + ' #tags_div_' + entity.id + ' > *');
         $(this).val('');
       });
@@ -75,7 +53,7 @@ $(document).ready(function() {
       if (checked.length === 0) {
         const json = {
           'msg': 'Nothing selected!',
-          'res': false
+          'res': false,
         };
         notif(json);
         return;
@@ -88,37 +66,63 @@ $(document).ready(function() {
       });
 
       Promise.all(results).then(() => {
-        reloadTagsAndLocks('itemList');
-        reloadTagsAndLocks('item-table');
+        reloadEntitiesShow();
       });
 
       $(this).val('');
     }
   });
 
-  // AUTOCOMPLETE
-  const cache = {};
-  ($('.createTagInput') as any).autocomplete({
-    source: function(request: any, response: any) {
-      const term  = request.term;
-      if (term in cache) {
-        response(cache[term]);
-        return;
-      }
-      const payload: Payload = {
-        method: Method.GET,
-        action: Action.Read,
-        model: Model.Tag,
-        entity: entity,
-        target: Target.List,
-        content: term,
-      };
-      AjaxC.send(payload).then(json => {
-        cache[term] = json.value;
-        response(json.value);
+  // CREATE FAVORITE TAG
+  $(document).on('keypress blur', '.createFavTagInput', function(e) {
+    const FavTagC = new FavTag();
+    if ($(this).val() === '') {
+      return;
+    }
+    // Enter is ascii code 13
+    if (e.which === 13 || e.type === 'focusout') {
+      FavTagC.create($(this).val() as string).then(json => {
+        if (json.res === false) {
+          notif(json);
+        }
+        reloadElement('favtagsPanel');
+        $(this).val('');
       });
     }
   });
+
+  // AUTOCOMPLETE
+  const cache = {};
+
+  function addAutocompleteToTagInputs(): void {
+    ($('[data-autocomplete="tags"]') as JQuery<HTMLInputElement>).autocomplete({
+      source: function(request: Record<string, string>, response: (data) => void): void {
+        const term  = request.term;
+        if (term in cache) {
+          response(cache[term]);
+          return;
+        }
+        const payload: Payload = {
+          method: Method.GET,
+          action: Action.Read,
+          model: Model.Tag,
+          entity: entity,
+          target: Target.List,
+          content: term,
+        };
+        AjaxC.send(payload).then(json => {
+          cache[term] = json.value;
+          response(json.value);
+        });
+      },
+    });
+  }
+
+  addAutocompleteToTagInputs();
+  if (document.getElementById('favtagsPanel')) {
+    new MutationObserver(() => addAutocompleteToTagInputs())
+      .observe(document.getElementById('favtagsPanel'), {childList: true, subtree: true});
+  }
 
   // make the tag editable (on admin.ts)
   $(document).on('mouseenter', '.tag-editable', function() {
@@ -126,7 +130,7 @@ $(document).ready(function() {
       // we need to have an entity so the Tags model is built correctly
       // also it's a mandatory constructor param for Tag.class.ts
       TagC.update(value, $(this).data('tagid'));
-      return(value);
+      return (value);
     }, {
       tooltip : i18next.t('click-to-edit'),
       indicator : 'Saving...',

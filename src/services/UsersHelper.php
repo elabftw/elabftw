@@ -71,31 +71,9 @@ class UsersHelper
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($res === false) {
+        $res = $this->Db->fetchAll($req);
+        if (empty($res)) {
             throw new ImproperActionException('Could not find a team for this user!');
-        }
-        return $res;
-    }
-
-    /**
-     * Get the permissions for a user (admin/sysadmin/can lock)
-     *
-     * @return array<string, string>
-     */
-    public function getPermissions(): array
-    {
-        $default = array('is_admin' => '0', 'is_sysadmin' => '0', 'can_lock' => '0');
-
-        $sql = 'SELECT groups.is_sysadmin, groups.is_admin, groups.can_lock
-            FROM `groups`
-            CROSS JOIN users on (users.usergroup = groups.id) where users.userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->fetch();
-        if (!is_array($res)) {
-            return $default;
         }
         return $res;
     }

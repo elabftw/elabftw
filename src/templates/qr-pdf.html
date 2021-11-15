@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <style>{{ css }}</style>
+    {{ useCjk ? '<style>td { font-family:sun-extA; }</style>' }}
+  </head>
+  <body {{ useCjk ? " style='font-family:sun-extA;'" }}>
+    <htmlpageheader name='header'>
+      <div id='header'>
+        <p style='float:right; width:10%;'><br><br>
+          {PAGENO} / {nbpg}
+        </p>
+      </div>
+    </htmlpageheader>
+
+  <htmlpagefooter name='footer'>
+    {% if pdfSig %}
+      <div class='footer-block signatures'>
+        User's signature:<br><br>
+        Witness' name:<br><br>
+        Witness' signature:<br><br>
+      </div>
+    {% endif %}
+    <div class='footer-block footer'>
+      PDF generated with <a href="https://www.elabftw.net">elabftw</a>, a free and open source lab notebook
+      <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:i}</p>
+    </div>
+  </htmlpagefooter>
+<sethtmlpageheader name='header' value='on' show-this-page='1' />
+<sethtmlpagefooter name='footer' value='on' />
+
+{% for entity in entityArr %}
+  <div class='row'>
+    <div class='col col-md-3'>
+      <barcode code='{{ entity.url }}' type='QR' class='barcode' size='1' error='M' />
+      {{ entity.date }} | {{ entity.title }} <span class='tags'>{{ entity.tags|replace({'|': ' '}) }}</span>
+    </div>
+  </div>
+{% endfor %}

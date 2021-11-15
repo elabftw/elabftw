@@ -10,15 +10,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
+use Elabftw\Models\ValidatedUser;
 use Elabftw\Services\Check;
 use Exception;
 use Swift_TransportException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 // default location to redirect to
 $location = '../../admin.php?tab=3';
@@ -35,9 +36,6 @@ try {
         throw new IllegalActionException('Admin tried to create user directly');
     }
 
-    // CSRF
-    $App->Csrf->validate();
-
     if ((Check::id((int) $Request->request->get('team')) === false) ||
         !$Request->request->get('firstname') ||
         !$Request->request->get('lastname') ||
@@ -47,12 +45,11 @@ try {
     }
 
     // Create user
-    $userid = $App->Users->create(
+    $Users = ValidatedUser::fromAdmin(
         $Request->request->get('email'),
         array($Request->request->get('team')),
         $Request->request->get('firstname'),
         $Request->request->get('lastname'),
-        '',
         (int) $Request->request->get('usergroup'),
     );
 
@@ -65,7 +62,7 @@ try {
     // but log it and display general error. See #841
     $App->Log->error('', array('exception' => $e));
     $App->Session->getFlashBag()->add('ko', Tools::error());
-} catch (ImproperActionException | InvalidCsrfTokenException $e) {
+} catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {

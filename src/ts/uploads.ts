@@ -8,43 +8,35 @@
 import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
-import { Entity, Target, EntityType } from './interfaces';
-import { notif, displayMolFiles, display3DMolecules } from './misc';
+import { Target } from './interfaces';
+import { notif, displayMolFiles, display3DMolecules, getEntity } from './misc';
 import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
 import Upload from './Upload.class';
 
-$(document).ready(function() {
-  const pages = ['edit', 'view'];
-  if (!pages.includes($('#info').data('page'))) {
+document.addEventListener('DOMContentLoaded', () => {
+  // holds info about the page through data attributes
+  const about = document.getElementById('info')?.dataset;
+  if (typeof about === 'undefined') {
     return;
   }
+
+  const pages = ['edit', 'view'];
+  if (!pages.includes(about.page)) {
+    return;
+  }
+
   displayMolFiles();
   display3DMolecules();
-  displayPlasmidViewer();
-
-  // holds info about the page through data attributes
-  const about = document.getElementById('info').dataset;
-  let entityType: EntityType;
-  if (about.type === 'experiments') {
-    entityType = EntityType.Experiment;
-  }
-  if (about.type === 'items') {
-    entityType = EntityType.Item;
-  }
-
-  const entity: Entity = {
-    type: entityType,
-    id: parseInt(about.id),
-  };
-
+  displayPlasmidViewer(about);
+  const entity = getEntity();
   const UploadC = new Upload(entity);
 
   // make file comments editable
   $(document).on('mouseenter', '.file-comment', function() {
     ($('.editable') as any).editable(function(input: string) {
       UploadC.update(input, $(this).data('id'), Target.Comment);
-      return(input);
+      return (input);
     }, {
       tooltip : i18next.t('upload-file-comment'),
       placeholder: i18next.t('upload-file-comment'),
@@ -62,13 +54,13 @@ $(document).ready(function() {
   // Export mol in png
   $(document).on('click', '.saveAsImage', function() {
     const molCanvasId = $(this).data('canvasid');
-    const png = (document.getElementById(molCanvasId) as any).toDataURL();
+    const png = (document.getElementById(molCanvasId) as HTMLCanvasElement).toDataURL();
     $.post('app/controllers/EntityAjaxController.php', {
       saveAsImage: true,
       realName: $(this).data('name'),
       content: png,
-      id: $('#info').data('id'),
-      type: $('#info').data('type')
+      id: about.id,
+      type: about.type,
     }).done(function(json) {
       notif(json);
       if (json.res) {
@@ -112,7 +104,7 @@ $(document).ready(function() {
 
     // REPLACE UPLOAD
     } else if (el.matches('[data-action="replace-upload"]')) {
-      document.getElementById('replaceUploadForm_' + el.dataset.uploadid).style.display = '';
+      document.getElementById('replaceUploadForm_' + el.dataset.uploadid).hidden = false;
 
     // DESTROY UPLOAD
     } else if (el.matches('[data-action="destroy-upload"]')) {
@@ -120,11 +112,7 @@ $(document).ready(function() {
       if (confirm(i18next.t('generic-delete-warning'))) {
         UploadC.destroy(uploadId).then(json => {
           if (json.res) {
-            $('#filesdiv').load('?mode=edit&id=' + entity.id + ' #filesdiv > *', function() {
-              displayMolFiles();
-              display3DMolecules(true);
-              displayPlasmidViewer();
-            });
+            $('#filesdiv').load('?mode=edit&id=' + entity.id + ' #filesdiv > *');
           }
         });
       }
@@ -133,4 +121,14 @@ $(document).ready(function() {
 
   // ACTIVATE FANCYBOX
   $('[data-fancybox]').fancybox();
+
+  // Create an observer instance linked to the callback function(mutationList, observer)
+  const filesDivObserver = new MutationObserver(() => {
+    displayMolFiles();
+    display3DMolecules(true);
+    displayPlasmidViewer(about);
+  });
+
+  // Start observing the target node for configured mutations
+  filesDivObserver.observe(document.getElementById('filesdiv'), {childList: true});
 });

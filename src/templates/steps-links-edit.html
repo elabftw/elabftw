@@ -1,4 +1,4 @@
-{% if Entity.type == 'experiments_templates' %}
+{% if mode == 'edit-template' %}
   {% set Entity_id = templateData.id %}
 {% else %}
   {% set Entity_id = Entity.id %}
@@ -9,13 +9,13 @@
     <section class='col-md-6'>
         <i class='fas fa-check-square mr-1 align-baseline'></i><h5 class='d-inline'>{{ 'Steps'|trans }}</h5>
         <br>
-        <div class='mt-2 sortable' id='steps_div_{{ Entity_id }}' data-axis='y' data-table='{{ Entity.type }}_steps'>
+        <div class='mt-2 sortable' id='steps_div_{{ Entity_id }}' data-axis='y' data-table='{{ Entity.type ? Entity.type : 'items_types'}}_steps'>
           {% for step in stepsArr %}
 
             <div class='input-group mb-2' id='step_{{ step.id }}'>
               <div class='input-group-prepend'>
                 <div class='input-group-text'>
-                  <a class='stepOrder draggable sortableHandle align-right'>
+                  <a class='stepOrder draggable sortableHandle float-right'>
                     <i class='fas fa-sort'></i>
                   </a>
                 </div>
@@ -29,7 +29,7 @@
               </div>
               <div class='input-group-prepend'>
                 <div class='input-group-text'>
-                  <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ Entity.type == 'experiments_templates' ? 'disabled' }} {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity_id }}' class='stepbox'>
+                  <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ mode == 'edit-template' ? 'disabled' }} {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity_id }}' class='stepbox'>
                 </div>
               </div>
               <div class='pl-2 step-static form-control-plaintext {{ step.finished ? 'finished' }}'>
@@ -67,9 +67,9 @@
                     <i class='fas fa-link mr-1'></i>
                     <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
                   {{ link.title|raw }}</a>
-                  <div class='align-right'>
-                    {% if Entity.type != 'experiments_templates' %}
-                      <a class='linkImport clickable' data-linkid='{{ link.itemid }}' title='{{ 'Import'|trans }}'>
+                  <div class='float-right'>
+                    {% if mode != 'edit-template' %}
+                      <a data-action='import-link' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}'>
                         <i class='fas fa-lg fa-file-import'></i>
                       </a>
                     {% endif %}
@@ -89,6 +89,14 @@
                     <span class='input-group-text'>{{ 'Add a link'|trans }}</span>
                 </div>
                 <input aria-label='{{ 'Add a link'|trans }}' type='text' id='linkinput' class='form-control linkinput' data-id='{{ Entity_id }}' placeholder='{{ 'from the database'|trans }}' />
+                <div class='input-group-append'>
+                  <select id='addLinkCatFilter' class='brl-none custom-select'>
+                    <option selected value=''>{{ 'Any category'|trans }}</option>
+                    {% for cat in itemsCategoryArr %}
+                      <option value='{{ cat.category_id }}'>{{ cat.category }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
             </div>
         </div>
     </section>

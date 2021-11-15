@@ -12,9 +12,11 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
+use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 
 /**
@@ -22,6 +24,8 @@ use PDO;
  */
 class Experiments extends AbstractEntity
 {
+    use InsertTagsTrait;
+
     public function __construct(Users $users, ?int $id = null)
     {
         parent::__construct($users, $id);
@@ -50,6 +54,10 @@ class Experiments extends AbstractEntity
             $canread = $templateArr['canread'];
             $canwrite = $templateArr['canwrite'];
         } else {
+            // no template, make sure admin didn't disallow it
+            if ($Team->getForceExpTpl() === 1) {
+                throw new ImproperActionException(_('Experiments must use a template!'));
+            }
             $title = _('Untitled');
             $body = $Team->getCommonTemplate();
             $canread = 'team';
@@ -91,6 +99,8 @@ class Experiments extends AbstractEntity
             $Tags->copyTags($newId, true);
         }
 
+        $this->insertTags($params->getTags(), $newId);
+
         return $newId;
     }
 
@@ -99,10 +109,9 @@ class Experiments extends AbstractEntity
      */
     public function isTimestampable(): bool
     {
-        $currentCategory = (int) $this->entityData['category_id'];
-        $sql = 'SELECT is_timestampable FROM status WHERE id = :category;';
+        $sql = 'SELECT is_timestampable FROM status WHERE id = (SELECT category FROM experiments WHERE id = :id)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':category', $currentCategory, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return (bool) $req->fetchColumn();
     }
@@ -201,11 +210,7 @@ class Experiments extends AbstractEntity
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
+        return $this->Db->fetchAll($req);
     }
 
     /**

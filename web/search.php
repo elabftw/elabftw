@@ -22,7 +22,6 @@ use Elabftw\Models\TeamGroups;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use function filter_var;
-use function rtrim;
 use function trim;
 
 /**
@@ -38,8 +37,8 @@ $Database = new Items($App->Users);
 $Tags = new Tags($Experiments);
 $tagsArr = $Tags->readAll();
 
-$itemsTypesArr = (new ItemsTypes($App->Users->team))->read(new ContentParams('', 'all'));
-$categoryArr = $statusArr = (new Status($App->Users->team))->read(new ContentParams());
+$itemsTypesArr = (new ItemsTypes($App->Users))->read(new ContentParams('', 'all'));
+$categoryArr = $statusArr = (new Status($App->Users->team))->readAll();
 if ($Request->query->get('type') !== 'experiments') {
     $categoryArr = $itemsTypesArr;
 }
@@ -153,13 +152,7 @@ if ($Request->query->count() > 0) {
             // get all the ids with that tag
             $ids = $Entity->Tags->getIdFromTags($Request->query->get('tags'), (int) $App->Users->userData['team']);
             if (count($ids) > 0) {
-                $idFilter = ' AND (';
-                foreach ($ids as $id) {
-                    $idFilter .= 'entity.id = ' . $id . ' OR ';
-                }
-                $idFilter = rtrim($idFilter, ' OR ');
-                $idFilter .= ')';
-                $Entity->idFilter = $idFilter;
+                $Entity->idFilter = Tools::getIdFilterSql($ids);
             }
         }
 
@@ -183,6 +176,10 @@ if ($Request->query->count() > 0) {
             $Entity->addFilter('entity.rating', $rating);
         }
 
+        // Metadata search
+        if ($Request->query->get('metakey')) {
+            $Entity->addMetadataFilter($Request->query->get('metakey'), $Request->query->get('metavalue'));
+        }
 
         if ($Request->query->get('type') === 'experiments') {
 
@@ -219,6 +216,6 @@ if ($Request->query->count() > 0) {
     }
 } else {
     // no search
-    echo $App->render('todolist.html', array());
+    echo $App->render('todolist-panel.html', array());
     echo $App->render('footer.html', array());
 }

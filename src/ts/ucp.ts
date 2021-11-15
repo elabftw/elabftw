@@ -12,8 +12,9 @@ import Apikey from './Apikey.class';
 import i18next from 'i18next';
 import { EntityType, Target } from './interfaces';
 import EntityClass from './Entity.class';
+import Tab from './Tab.class';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/ucp.php') {
     return;
   }
@@ -26,6 +27,9 @@ $(document).ready(function() {
   const ApikeyC = new Apikey();
   const EntityC = new EntityClass(EntityType.Template);
 
+  const TabMenu = new Tab();
+  TabMenu.init(document.querySelector('.tabbed-menu'));
+
   // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
@@ -34,7 +38,7 @@ $(document).ready(function() {
       const title = prompt(i18next.t('template-title'));
       if (title) {
         // no body on template creation
-        EntityC.create(title).then(json => {
+        EntityC.create(title, []).then(json => {
           window.location.replace(`ucp.php?tab=3&templateid=${json.value}`);
         });
       }
@@ -104,7 +108,7 @@ $(document).ready(function() {
   });
 
   $('#import-from-file').on('click', function() {
-    $('#import_tpl').toggle();
+    document.getElementById('import_tpl').hidden = false;
   });
 
   // CAN READ/WRITE SELECT PERMISSION
@@ -123,17 +127,10 @@ $(document).ready(function() {
     });
   });
 
-  // select the already selected permission for templates
-  $(document).on('click', '.modalToggle', function() {
-    const read = $(this).data('read');
-    const write = $(this).data('write');
-    $('#canread_select option[value="' + read + '"]').prop('selected', true);
-    $('#canwrite_select option[value="' + write + '"]').prop('selected', true);
-  });
-
   // input to upload an elabftw.tpl file
   document.getElementById('import_tpl').addEventListener('change', (event) => {
-    const title = (document.getElementById('import_tpl') as HTMLInputElement).value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
+    const el = (event.target as HTMLInputElement);
+    const title = el.value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
     if (!window.FileReader) {
       alert('Please use a modern web browser. Import aborted.');
       return false;
@@ -142,14 +139,12 @@ $(document).ready(function() {
     const reader = new FileReader();
     reader.onload = function(event): void {
       const body = event.target.result as string;
-      EntityC.create(title).then(json => {
+      EntityC.create(title, []).then(json => {
         const newid = parseInt(json.value as string);
         EntityC.update(newid, Target.Body, body).then(() => {
           window.location.replace(`ucp.php?tab=3&templateid=${json.value}`);
         });
       });
-
-      $('#import_tpl').hide();
     };
     reader.readAsText(file);
   });

@@ -16,30 +16,48 @@ import anyToJson from 'bio-parsers/es/parsers/anyToJson';
 import { notif } from './misc';
 
 // DISPLAY Plasmids FILES
-export function displayPlasmidViewer(): void {
+export function displayPlasmidViewer(about: DOMStringMap): void {
   const editor: any = {};
-  $('.viewer-ove').each(function() {
-    const viewerID = $(this).attr('id');
-    const filename = $(this).data('href');
-    const realName = $(this).data('realName');
+  Array.from(document.getElementsByClassName('viewer-ove')).forEach(el => {
+    const oveDivDataset = (el as HTMLDivElement).dataset;
+    const viewerID = el.id;
+    const filename = oveDivDataset.href;
+    const realName = oveDivDataset.realName;
 
-    // helper function to convert Blob to File
+    // A Blob() is almost a File(): it's just missing two properties (lastModified and a name)
+    // we also add the optional (mime) type attribute
     function blobToFile(theBlob: Blob, fileName: string): File {
-      //A Blob() is almost a File() - it's just missing the two properties below which we will add
       return new File([theBlob], fileName, { lastModified: new Date().getTime(), type: theBlob.type });
+    }
+
+    // Save a PNG image of the current plasmid map as a new attachment
+    function savePlasmidMapAsImage(opts): void {
+      const reader = new FileReader();
+      reader.readAsDataURL(opts.pngFile);
+      reader.onloadend = function(): void {
+        $.post('app/controllers/EntityAjaxController.php', {
+          saveAsImage: true,
+          realName: realName,
+          content: reader.result, // the png as data url
+          id: about.id,
+          type: about.type,
+        }).done(function(json) {
+          notif(json);
+        });
+      };
     }
 
     async function parseFile(fileContent): Promise<void> {
       const parsedData = await anyToJson(fileContent, {
         fileName: realName,
-        guessIfProtein: true
+        guessIfProtein: true,
       });
       // we always return an array of results because some files my contain multiple sequences
       // parsedData[0].success //either true or false
       // parsedData[0].messages //either an array of strings giving any warnings or errors generated during the parsing process
       // Test if fileContent was parsed successfully. if false: show notification
       if (parsedData.length === 0) {
-        console.log('Problem with file: ' + realName);
+        console.error('Problem with file: ' + realName);
         return;
       }
 
@@ -49,7 +67,7 @@ export function displayPlasmidViewer(): void {
       }
 
       if (parsedData[0].messages.length !== 0) {
-        console.log('File: ' + realName + '; ' + parsedData[0].messages[0]);
+        console.error('File: ' + realName + '; ' + parsedData[0].messages[0]);
         return;
       }
 
@@ -59,15 +77,15 @@ export function displayPlasmidViewer(): void {
       const convertToFeaturedDNASequence = function(openVESequence): void {
         data.sequenceData = {
           features: [],
-          sequence: openVESequence.sequence
+          sequence: openVESequence.sequence,
         };
         data.registryData = {
-          name: openVESequence.name
+          name: openVESequence.name,
         };
         const featureMap = {};
 
         for (const prop in openVESequence.features) {
-          if (!openVESequence.features.hasOwnProperty(prop))
+          if (!Object.prototype.hasOwnProperty.call(openVESequence.features, prop))
             continue;
 
           const feature = openVESequence.features[prop];
@@ -75,7 +93,7 @@ export function displayPlasmidViewer(): void {
           if (existingFeature) {
             existingFeature.locations.push({
               genbankStart: feature.start + 1,
-              end: feature.end + 1
+              end: feature.end + 1,
             });
           } else {
             featureMap[feature.id] = {
@@ -85,15 +103,15 @@ export function displayPlasmidViewer(): void {
               forward: feature.forward,
               notes: [{
                 name: 'note',
-                value: feature.notes
+                value: feature.notes,
               }],
               start: feature.start,
-              end: feature.end
+              end: feature.end,
             };
           }
         }
         for (const property in featureMap) {
-          if (!featureMap.hasOwnProperty(property))
+          if (!Object.prototype.hasOwnProperty.call(featureMap, property))
             continue;
           data.sequenceData.features.push(featureMap[property]);
         }
@@ -105,7 +123,14 @@ export function displayPlasmidViewer(): void {
         isFullscreen: false,
         showMenuBar: false,
         withRotateCircularView: false,
+        showReadOnly: false,
         showGCContentByDefault: true,
+        alwaysAllowSave: true,
+        generatePng: true,
+        handleFullscreenClose: function(): void { // event could be used as parameter
+          editor[viewerID].close();
+          $('#filesdiv').load('?mode=' + about.page + '&id=' + about.id + ' #filesdiv > *');
+        },
         onCopy: function(event, copiedSequenceData, editorState): void {
           // the copiedSequenceData is the subset of the sequence that has been copied in the teselagen sequence format
           const clipboardData = event.clipboardData;
@@ -121,35 +146,43 @@ export function displayPlasmidViewer(): void {
           // in onPaste in your app you can do:
           // e.clipboardData.getData('application/json')
         },
+        // repurposed to save an image as new attachment of the current plasmid map
+        onSave: function(opts = {} as any): void { // , sequenceDataToSave, editorState, onSuccessCallback could be used as parameter
+          savePlasmidMapAsImage(opts);
+        },
         PropertiesProps: {
           // the list of tabs shown in the Properties panel
           propertiesList: [
             'general',
             'features',
             'parts',
+            'primers',
             'translations',
             'cutsites',
             'orfs',
-            'genbank'
-          ]
+            'genbank',
+          ],
         },
         ToolBarProps: {
           toolList: [
-            'saveTool',
+            {
+              name: 'saveTool',
+              tooltip: 'Save image of plasmid map',
+            },
             'downloadTool',
             //'importTool',
             //'undoTool',
             //'redoTool',
             'cutsiteTool',
             'featureTool',
+            'partTool',
             //'alignmentTool',
-            //'oligoTool',
+            'oligoTool', // Primers
             'orfTool',
-            //'viewTool',
             //'editTool',
-            //'findTool',
+            'findTool',
             //'visibilityTool'
-          ]
+          ],
         },
         StatusBarProps: {
           showCircularity: false,
@@ -158,7 +191,7 @@ export function displayPlasmidViewer(): void {
         },
       };
 
-      editor.viewerID = window.createVectorEditor(document.getElementById(viewerID), editorProps);
+      editor[viewerID] = window.createVectorEditor(document.getElementById(viewerID), editorProps);
 
       const editorState = {
         // note, sequence data passed here will be coerced to fit the Teselagen data model
@@ -169,28 +202,28 @@ export function displayPlasmidViewer(): void {
         // clear the sequenceDataHistory if there is any left over from a previous sequence
         sequenceDataHistory: {},
         annotationVisibility: {
-          features: true
+          features: true,
         },
         panelsShown: [
           [{
             id: 'circular',
             name: 'Plasmid Map',
-            active: true
+            active: true,
           }, {
             id: 'rail',
             name: 'Linear Map',
-            active: false
+            active: false,
           }],
           [{
             id: 'sequence',
             name: 'Linear Sequence Map',
-            active: true
+            active: true,
           }, {
             id: 'properties',
             name: 'Properties',
-            active: false
-          }]
-        ]
+            active: false,
+          }],
+        ],
       };
 
       // Change layout for linear sequences
@@ -199,11 +232,11 @@ export function displayPlasmidViewer(): void {
         editorState.panelsShown[0].shift();
       }
 
-      editor.viewerID.updateEditor(editorState);
+      editor[viewerID].updateEditor(editorState);
 
-      // exchange 'Open Editor' Button text to 'Open Viewer'
+      // change button text from 'Open Editor' to 'Open Viewer'
       const oveButton = document.getElementById(viewerID).firstChild.firstChild.firstChild.firstChild.firstChild.firstChild as HTMLElement;
-      oveButton.innerHTML = 'Open Viewer';
+      oveButton.innerText = 'Open Viewer';
     }
 
     // load DNA data either as File (.dna files Snapgene) or as String

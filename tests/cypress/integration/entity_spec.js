@@ -17,7 +17,7 @@ describe('Experiments', () => {
     cy.get('.stepinput').type('some step').blur()
     cy.get('.step-static').contains('some step')
     cy.get('.stepbox').click()
-    cy.get('.text-muted').contains('completed in')
+    cy.get('.text-muted').contains('completed')
     cy.get('.stepDestroy').click()
     cy.contains('some step').should('not.exist')
   }
@@ -26,9 +26,9 @@ describe('Experiments', () => {
     // go in view mode
     cy.contains('View mode').click()
     cy.get('#commentsCreateArea').type('This is a very nice experiment')
-    cy.get('#commentsCreateButton').click()
+    cy.get('[data-action="create-comment"]').click()
     cy.contains('Toto Le sysadmin commented').should('be.visible')
-    cy.get('.commentsDestroy').click()
+    cy.get('[data-action="destroy-comment"]').click()
     cy.contains('Toto Le sysadmin commented').should('not.exist')
     // go back in edit mode for destroy action
     cy.get('.action-topmenu > [data-action="edit"]').click()

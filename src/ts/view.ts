@@ -38,7 +38,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // add extra fields elements from metadata json
   const MetadataC = new Metadata(entity);
-  MetadataC.display('view');
+  MetadataC.display('view').then(() => {
+    // go over all the type: url elements and create a link dynamically
+    document.querySelectorAll('[data-gen-link="true"]').forEach(el => {
+      const link = document.createElement('a');
+      const url = (el as HTMLSpanElement).innerText;
+      link.href = url;
+      link.text = url;
+      el.replaceWith(link);
+    });
+  });
 
   // EDIT SHORTCUT
   key(about.scedit, () => window.location.href = `?mode=edit&id=${entity.id}`);
@@ -74,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         action: Action.Read,
         entity: entity,
         model: entity.type,
-        target: Target.BoundEvent
+        target: Target.BoundEvent,
       };
       AjaxC.send(payload).then(json => {
         const bookingsDiv = document.getElementById('boundBookings');
@@ -96,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // TODO action read, target sharelink
         const link = (document.getElementById('shareLinkInput') as HTMLInputElement);
         link.value = (json.msg as string);
-        link.style.display = 'inline';
+        link.hidden = false;
         link.focus();
         link.select();
       });
@@ -116,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const overlay = document.createElement('div');
       const loading = document.createElement('p');
       const ring = document.createElement('div');
-      ring.classList.add('lds-ring');
+      ring.classList.add('lds-dual-ring');
       // see https://loading.io/css/
       const emptyDiv = document.createElement('div');
       ring.appendChild(emptyDiv);

@@ -35,13 +35,13 @@ class PrivacyPolicy implements CrudInterface
 
     public function update(ContentParamsInterface $params): bool
     {
-        $this->Config->update(array('privacy_policy' => $params->getBody()));
+        $this->Config->updateAll(array('privacy_policy' => $params->getBody()));
         return true;
     }
 
     public function destroy(): bool
     {
-        $this->Config->update(array('privacy_policy' => null));
+        $this->Config->updateAll(array('privacy_policy' => null));
         return true;
     }
 }

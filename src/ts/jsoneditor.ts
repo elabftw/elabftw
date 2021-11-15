@@ -29,6 +29,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const JsonEditorHelperC = new JsonEditorHelper(entity);
     JsonEditorHelperC.init((about.page === 'edit' || about.page === 'template-edit'));
 
+    if (about.type == 'experiments_templates') {
+      const entityWithId = {
+        type: entity.type,
+        id: parseInt(about.id, 10),
+      };
+      JsonEditorHelperC.loadMetadataFromId(entityWithId);
+      document.getElementById('templateJsonSave').dataset.id = about.id;
+    }
+
     // LISTENERS
     document.querySelector('.real-container').addEventListener('click', (event) => {
       const el = (event.target as HTMLElement);
@@ -37,11 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (el.matches('[data-action="json-load-metadata-from-id"]')) {
         const entityWithId = {
           type: entity.type,
-          id: parseInt(el.dataset.id),
+          id: parseInt(el.dataset.id, 10),
         };
         JsonEditorHelperC.loadMetadataFromId(entityWithId);
         // add the id of the currently edited item on the save button
-        document.getElementById('itemsTypesJsonSave').dataset.id = el.dataset.id;
+        document.getElementById('templateJsonSave').dataset.id = el.dataset.id;
       } else if (el.matches('[data-action="json-load-file"]')) {
         JsonEditorHelperC.loadFile(el.dataset.link, el.dataset.name, el.dataset.uploadid);
       } else if (el.matches('[data-action="json-save-metadata"]')) {
@@ -49,12 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (el.matches('[data-action="json-save-metadata-from-id"]')) {
         const entityWithId = {
           type: entity.type,
-          id: parseInt(document.getElementById('itemsTypesJsonSave').dataset.id),
+          id: parseInt(document.getElementById('templateJsonSave').dataset.id, 10),
         };
         JsonEditorHelperC.saveMetadataFromId(entityWithId);
       } else if (el.matches('[data-action="json-save-file"]')) {
-        JsonEditorHelperC.saveFile();
+        JsonEditorHelperC.saveNewFile();
       } else if (el.matches('[data-action="json-save"]')) {
+        // need the stopPropagation here to toggle #json-save-dropdown when save button is pressed
+        event.stopPropagation();
         JsonEditorHelperC.save();
       } else if (el.matches('[data-action="json-clear"]')) {
         JsonEditorHelperC.clear();

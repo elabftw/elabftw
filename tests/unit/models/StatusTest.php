@@ -41,19 +41,11 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $id = $this->Status->create(new StatusParams('Yep', '#29AEB9', false, true));
         $Status = new Status(1, $id);
         $Status->update(new StatusParams('Updated', '#121212', true, false));
-        $ourStatus = array_filter($Status->read(new ContentParams()), function ($s) use ($id) {
-            return ((int) $s['category_id']) === $id;
-        });
-        $status = array_pop($ourStatus);
+        $status = $Status->read(new ContentParams());
         $this->assertEquals('Updated', $status['category']);
         $this->assertEquals('121212', $status['color']);
         $this->assertTrue((bool) $status['is_timestampable']);
         $this->assertFalse((bool) $status['is_default']);
-    }
-
-    public function testReadColor(): void
-    {
-        $this->assertEquals('29aeb9', strtolower($this->Status->readColor(1)));
     }
 
     public function testDestroy(): void

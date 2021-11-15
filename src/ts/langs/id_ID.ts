@@ -19,7 +19,7 @@ const t = {
     "tag-delete-warning": "Hapus label ini?",
     "upload-file-comment": "File komentar",
     "template-title": "Template title",
-  }
+  },
 };
 
 export default t;

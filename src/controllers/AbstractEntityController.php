@@ -18,9 +18,12 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\FavTags;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
+use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -62,17 +65,23 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     public function show(bool $isSearchPage = false): Response
     {
+        // create the DisplayParams object from the query
+        $DisplayParams = new DisplayParams();
+        $DisplayParams->adjust($this->App);
+
         // VISIBILITY LIST
         $TeamGroups = new TeamGroups($this->Entity->Users);
 
         // CATEGORY FILTER
         if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {
             $this->Entity->addFilter('categoryt.id', $this->App->Request->query->getDigits('cat'));
+            $DisplayParams->searchType = 'category';
         }
         // OWNER (USERID) FILTER
         if ($this->App->Request->query->has('owner') && !$isSearchPage) {
             $owner = (int) $this->App->Request->query->get('owner');
             $this->Entity->addFilter('entity.userid', (string) $owner);
+            $DisplayParams->searchType = 'user';
         }
 
         // TAG FILTER
@@ -90,14 +99,12 @@ abstract class AbstractEntityController implements ControllerInterface
             $trimmedFilter = rtrim($idFilter, ' OR ') . ')';
             // don't add it if it's empty (for instance we search in items for a tag that only exists on experiments)
             if ($trimmedFilter === ' AND ()') {
-                throw new ImproperActionException(_("Sorry. I couldn't find anything :("));
+                $this->Entity->idFilter = ' AND entity.id = 0';
+            } else {
+                $this->Entity->idFilter = $trimmedFilter;
             }
-            $this->Entity->idFilter = $trimmedFilter;
+            $DisplayParams->searchType = 'tags';
         }
-
-        // create the DisplayParams object from the query
-        $DisplayParams = new DisplayParams();
-        $DisplayParams->adjust($this->App);
 
         // only show public to anon
         if ($this->App->Session->get('is_anon')) {
@@ -116,12 +123,17 @@ abstract class AbstractEntityController implements ControllerInterface
         // store the query parameters in the Session
         $this->App->Session->set('lastquery', $this->App->Request->query->all());
 
+        // FAVTAGS
+        $FavTags = new FavTags($this->App->Users);
+        $favTagsArr = $FavTags->read(new ContentParams());
+
         $template = 'show.html';
 
         $renderArr = array(
             'DisplayParams' => $DisplayParams,
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
+            'favTagsArr' => $favTagsArr,
             'pinnedArr' => $this->Entity->Pins->getPinned(),
             'itemsArr' => $itemsArr,
             // generate light show page
@@ -203,6 +215,19 @@ abstract class AbstractEntityController implements ControllerInterface
             throw new ImproperActionException(_('This item is locked. You cannot edit it!'));
         }
 
+        // last modifier name
+        $lastModifierFullname = '';
+        if ($this->Entity->entityData['lastchangeby'] !== null) {
+            $lastModifier = new Users((int) $this->Entity->entityData['lastchangeby']);
+            $lastModifierFullname = $lastModifier->userData['fullname'];
+        }
+
+
+        // the items categoryArr for add link input
+        $ItemsTypes = new ItemsTypes($this->App->Users);
+        $itemsCategoryArr = $ItemsTypes->readAll();
+
+
         // REVISIONS
         $Revisions = new Revisions(
             $this->Entity,
@@ -219,7 +244,9 @@ abstract class AbstractEntityController implements ControllerInterface
         $renderArr = array(
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
+            'itemsCategoryArr' => $itemsCategoryArr,
             'lang' => Tools::getCalendarLang($this->App->Users->userData['lang'] ?? 'en_GB'),
+            'lastModifierFullname' => $lastModifierFullname,
             'linksArr' => $this->Entity->Links->read(new ContentParams()),
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',

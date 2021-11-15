@@ -14,6 +14,8 @@ interface EntityParamsInterface extends ContentParamsInterface
 {
     public function getTitle(): string;
 
+    public function getTags(): array;
+
     public function getDate(): string;
 
     public function getBody(): string;

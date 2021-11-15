@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -23,7 +24,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  * Controller for the scheduler
  *
  */
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new JsonResponse();
 $Response->setData(array(
@@ -58,18 +59,12 @@ try {
     // UPDATE START
     if ($Request->request->has('updateStart')) {
         $Scheduler->setId((int) $Request->request->get('id'));
-        $eventArr = $Scheduler->readFromId();
-        if ((int) $eventArr['userid'] === $App->Session->get('userid')) {
-            $Scheduler->updateStart($Request->request->get('delta'));
-        }
+        $Scheduler->updateStart($Request->request->get('delta'));
     }
     // UPDATE END
     if ($Request->request->has('updateEnd')) {
         $Scheduler->setId((int) $Request->request->get('id'));
-        $eventArr = $Scheduler->readFromId();
-        if ((int) $eventArr['userid'] === $App->Session->get('userid')) {
-            $Scheduler->updateEnd($Request->request->get('end'));
-        }
+        $Scheduler->updateEnd($Request->request->get('end'));
     }
 
     // BIND

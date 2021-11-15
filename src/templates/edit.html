@@ -18,10 +18,10 @@
     </a>
   {% endblock %}
   {% block createnew %}
-    {% include('create-new.html') %}
+    {% include 'create-new.html' %}
   {% endblock %}
   {% block createmodal %}
-    {% include('show-view-edit.html') %}
+    {% include 'show-view-edit.html' %}
   {% endblock %}
 {% endembed %}
 
@@ -94,20 +94,26 @@
   </div>
 </div>
 
+<!-- show message if it was recently modified -->
+{% set lastchangeDiff = 'now'|date('U') - Entity.entityData.lastchange|date('U') %}
+{% if (lastchangeDiff < 600) and not Entity.entityData.lastchangeby is null and Entity.entityData.lastchangeby != Entity.Users.userData.userid %}
+  {{ 'Warning: this entry was modified %s seconds ago by %s.'|trans|format(lastchangeDiff, lastModifierFullname)|msg('warning', false) }}
+{% endif %}
+
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
   <div class='dropdown'>
-    <a class='clickable align-right' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
+    <a class='clickable float-right' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
       <i class='fas fa-ellipsis-v fa-2x'></i>
     </a>
     <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
       <!-- MANAGE PERMISSIONS -->
-      <a class='clickable dropdown-item modalToggle' data-modal='permModal'><i class='fas fa-share-alt fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
+      <a class='dropdown-item' data-action='toggle-modal' data-target='permModal'><i class='fas fa-share-alt fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
       <!-- TRANSFER OWNERSHIP -->
       {% if Entity.type == 'items' and (Entity.entityData.userid == App.Users.userData.userid or App.Session.get('is_admin')) %}
-        <a class='clickable dropdown-item modalToggle' data-modal='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer ownership'|trans }}</a>
+        <a class='dropdown-item' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer ownership'|trans }}</a>
       {% endif %}
-      <!-- SWITCH EDITOR -->
-      <a class='dropdown-item switchEditor' id='iHazEditor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</a>
+      <!-- SWITCH EDITOR the data-editor is here to indicate which is the current editor -->
+      <a class='dropdown-item' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</a>
       <!-- REVISIONS -->
       {% if revNum > 0 %}
         <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ revNum }} {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
@@ -133,7 +139,7 @@
       <i class='fas fa-clipboard-check'></i>
       <label for='category_select'>
       {% if Entity.type == 'experiments' %}
-        {{ 'Status'|trans }}
+        {% trans %}Status{% plural 1 %}Status{% endtrans %}
       {% else %}
         {{ 'Category'|trans }}
       {% endif %}
@@ -179,14 +185,14 @@
         {% endfor %}
       {% endif %}
     </span>
-    <input type='text' id='createTagInput' class='createTagInput mb-2' placeholder='{{ 'Add a tag'|trans }}' />
+    <input type='text' id='createTagInput' data-autocomplete='tags' class='mb-2 createTagInput' placeholder='{{ 'Add a tag'|trans }}' />
   </div>
 
   <!-- BODY -->
   {% if editor == 'md' %}
-  <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ lang }}' name='body'>{{ Entity.entityData.body|raw }}</textarea>
+  <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ lang }}' name='body'>{{ Entity.entityData.body }}</textarea>
   {% else %}
-    <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
+    <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body' rows='15' cols='80'>{{ Entity.entityData.body }}</textarea>
   {% endif %}
 
   <div class='mt-4 text-center'>
@@ -196,7 +202,7 @@
 
   <div id='metadataDiv' class='col-md-6'></div>
 
-  {% include('steps-links-edit.html') %}
+  {% include 'steps-links-edit.html' %}
 </section>
 
 <!-- UPLOAD FORM -->
@@ -205,10 +211,10 @@
   <form action='app/controllers/EntityAjaxController.php' class='dropzone' id='elabftw-dropzone'></form>
 </section>
 
-{{ include('uploads.html') }}
+{% include 'uploads.html' %}
 
 {% if Entity.Users.userData.json_editor %}
-  {{ include('json-editor.html') }}
+  {% include 'json-editor.html' %}
 {% endif %}
 
 <!-- DOODLE -->
@@ -222,10 +228,10 @@
       </div>
 
       <div class='col-xs-12 col-sm-6 col-md-4 col-lg-4' id='doodle_controls'>
-        <p>
+        <div id='doodleStrokeWidthContainer'>
           <label for='doodleStrokeWidth'>{{ 'Stroke width'|trans }}</label>
           <input type='range' min='1' max='20' name='strokeWidth' value='5' id='doodleStrokeWidth' />
-        </p>
+        </div>
 
         <p>
           <label for='doodleStrokeStyle'>{{ 'Color'|trans }}</label>
@@ -237,8 +243,8 @@
         </p>
 
         <p>
-          <button class='button btn btn-danger clearCanvas'>{{ 'Clear'|trans }}</button>
-          <button class='button btn btn-primary saveCanvas' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
+          <button id='clearCanvas' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
+          <button id='saveCanvas' class='button btn btn-primary' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
         <p>
       </div>
     </div>
@@ -251,7 +257,7 @@
     <i class='fas fa-dna mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Molecule drawer'|trans }}</h3>
     <button class='button btn btn-primary plusMinusButton' data-toggle='collapse' data-target='#chemDiv' aria-expanded='false' aria-controls='chemDiv'>+</button>
     <div id='chemDiv' class='collapse mt-2 text-center'>
-      <script src='app/js/chemdoodle-canvas.js?v={{ v }}'></script>
+      <script src='assets/chemdoodle-canvas.bundle.js?v={{ v }}'></script>
     </div>
   </div>
 {% endif %}

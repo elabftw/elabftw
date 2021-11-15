@@ -15,10 +15,14 @@ use Defuse\Crypto\Key;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Saml;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidDeviceTokenException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Interfaces\ControllerInterface;
+use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Idps;
 use Elabftw\Services\AnonAuth;
+use Elabftw\Services\DeviceToken;
+use Elabftw\Services\DeviceTokenValidator;
 use Elabftw\Services\ExternalAuth;
 use Elabftw\Services\LdapAuth;
 use Elabftw\Services\LocalAuth;
@@ -29,6 +33,7 @@ use Elabftw\Services\SamlAuth;
 use Elabftw\Services\TeamAuth;
 use LdapRecord\Connection;
 use OneLogin\Saml2\Auth as SamlAuthLib;
+use const SECRET_KEY;
 use function setcookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -137,13 +142,40 @@ class LoginController implements ControllerInterface
         $LoginHelper->login((bool) $icanhazcookies);
 
         // cleanup
-        $this->App->Session->remove('failed_attempt');
         $this->App->Session->remove('rememberme');
         $this->App->Session->remove('auth_userid');
 
         return new RedirectResponse(
             (string) ($this->App->Request->cookies->get('redirect') ?? '../../experiments.php')
         );
+    }
+
+    /**
+     * See https://owasp.org/www-community/Slow_Down_Online_Guessing_Attacks_with_Device_Cookies
+     */
+    private function validateDeviceToken(): void
+    {
+        // skip for multi team auth
+        if ($this->App->Session->has('auth_userid')) {
+            return;
+        }
+        $isTokenValid = false;
+        // a devicetoken cookie might or might not exist, so this can be null
+        $token = $this->App->Request->cookies->get('devicetoken');
+        // if a token is sent, we need to validate it
+        if (is_string($token)) {
+            $DeviceTokenValidator = new DeviceTokenValidator(DeviceToken::getConfig(), $token);
+            $isTokenValid = $DeviceTokenValidator->validate();
+        }
+        // if the token is not valid, verify we can login from untrusted devices for that user
+        if ($isTokenValid === false) {
+            $Users = ExistingUser::fromEmail((string) $this->App->Request->request->get('email'));
+            // check if authentication is locked for untrusted clients for that user
+            if ($Users->allowUntrustedLogin() === false) {
+                // reject any attempt whatsoever if this account is locked for untrusted devices
+                throw new InvalidDeviceTokenException();
+            }
+        }
     }
 
     private function getAuthService(string $authType): AuthInterface
@@ -155,7 +187,7 @@ class LoginController implements ControllerInterface
                 $ldapPassword = null;
                 // assume there is a password to decrypt if username is not null
                 if ($c['ldap_username']) {
-                    $ldapPassword = Crypto::decrypt($c['ldap_password'], Key::loadFromAsciiSafeString(\SECRET_KEY));
+                    $ldapPassword = Crypto::decrypt($c['ldap_password'], Key::loadFromAsciiSafeString(SECRET_KEY));
                 }
                 $ldapConfig = array(
                     'hosts' => array($c['ldap_host']),
@@ -170,6 +202,8 @@ class LoginController implements ControllerInterface
 
             // AUTH WITH LOCAL DATABASE
             case 'local':
+                // only local auth validates device token
+                $this->validateDeviceToken();
                 return new LocalAuth((string) $this->App->Request->request->get('email'), (string) $this->App->Request->request->get('password'));
 
             // AUTH WITH SAML

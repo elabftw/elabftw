@@ -13,6 +13,7 @@ namespace Elabftw\Services;
 use function bin2hex;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
+use Elabftw\Models\Users;
 use function hash;
 use PDO;
 use function random_bytes;
@@ -36,15 +37,12 @@ class LoginHelper
      */
     public function login(bool $setCookie): void
     {
-        // no need to login again if the session is valid
-        if ($this->AuthResponse->isAuthBy === 'session') {
-            return;
-        }
         $this->populateSession();
         if ($setCookie) {
             $this->setToken();
         }
         $this->updateLastLogin();
+        $this->setDeviceToken();
     }
 
     /**
@@ -56,6 +54,21 @@ class LoginHelper
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->AuthResponse->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
+    }
+
+    private function setDeviceToken(): void
+    {
+        // set device token as a cookie
+        $cookieOptions = array(
+            'expires' => time() + 2592000,
+            'path' => '/',
+            'domain' => '',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Strict',
+        );
+
+        setcookie('devicetoken', DeviceToken::getToken($this->AuthResponse->userid), $cookieOptions);
     }
 
     /**
@@ -86,10 +99,9 @@ class LoginHelper
 
         // NORMAL LOGIN
         // load the permissions
-        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
-        $permissions = $UsersHelper->getPermissions();
-        $this->Session->set('is_admin', $permissions['is_admin']);
-        $this->Session->set('is_sysadmin', $permissions['is_sysadmin']);
+        $Users = new Users($this->AuthResponse->userid);
+        $this->Session->set('is_admin', $Users->userData['is_admin']);
+        $this->Session->set('is_sysadmin', $Users->userData['is_sysadmin']);
     }
 
     /**

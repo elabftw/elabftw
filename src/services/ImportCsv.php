@@ -14,7 +14,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use Elabftw\Traits\EntityTrait;
-use function League\Csv\delimiter_detect;
+use League\Csv\Info as CsvInfo;
 use League\Csv\Reader;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -84,14 +84,14 @@ class ImportCsv extends AbstractImport
             $req->bindParam(':canread', $this->canread);
             $req->bindParam(':elabid', $elabid);
             if ($req->execute() === false) {
-                throw new DatabaseErrorException('Error inserting data in database!');
+                throw new DatabaseErrorException();
             }
             $this->inserted++;
         }
     }
 
     /**
-     * Generate a body from a row. Add column name in bold and content after that.
+     * Generate a body from a row. Add column name and content after that.
      *
      * @param array<string, string> $row row from the csv
      */
@@ -106,7 +106,7 @@ class ImportCsv extends AbstractImport
             if (filter_var($content, FILTER_VALIDATE_URL)) {
                 $content = '<a href="' . $content . '">' . $content . '</a>';
             }
-            $body .= '<p><strong>' . (string) $subheader . ':</strong> ' . $content . '</p>';
+            $body .= '<p>' . (string) $subheader . ': ' . $content . '</p>';
         }
 
         return $body;
@@ -117,7 +117,7 @@ class ImportCsv extends AbstractImport
      */
     private function checkDelimiter(Reader $csv): void
     {
-        $delimitersCount = delimiter_detect($csv, array(',', '|', "\t", ';'), -1);
+        $delimitersCount = CsvInfo::getDelimiterStats($csv, array(',', '|', "\t", ';'), -1);
         // reverse sort the array by value to get the delimiter with highest probability
         arsort($delimitersCount, SORT_NUMERIC);
         // get the first element

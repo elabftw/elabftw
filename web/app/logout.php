@@ -12,34 +12,29 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
-use Elabftw\Models\Config;
+use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\Idps;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
 
-require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
-require_once dirname(__DIR__, 2) . '/config.php';
-
-$Config = Config::getConfig();
-$Session = new Session();
-$Session->start();
-$Request = Request::createFromGlobals();
+require_once 'init.inc.php';
 
 $redirectUrl = '../login.php';
 
+if ($App->Users instanceof AuthenticatedUser) {
+    $App->Users->invalidateToken();
+}
+
 // now if we are logged in through external auth, hit the external auth url
-if ($Session->get('is_auth_by') === 'external') {
-    $redirectUrl = $Config->configArr['logout_url'];
+if ($App->Session->get('is_auth_by') === 'external') {
+    $redirectUrl = $App->Config->configArr['logout_url'];
     if (empty($redirectUrl)) {
         $redirectUrl = '../login.php';
     }
 }
 
 // kill session
-$Session->invalidate();
+$App->Session->invalidate();
 // options to disable a cookie
 $cookieOptions = array(
     'expires' => time() - 3600,
@@ -58,12 +53,12 @@ if (!$Request->query->get('keep_redirect')) {
     setcookie('redirect', '', $cookieOptions);
 }
 setcookie('pdf_sig', '', $cookieOptions);
+setcookie('kickreason', '', $cookieOptions);
 
 // this will be present if we logged in through SAML
-if ($Session->get('is_auth_by') === 'saml') {
-    //if ($Session->get('is_auth_by_saml')) {
+if ($App->Session->get('is_auth_by') === 'saml') {
     // initiate SAML SLO
-    $Saml = new Saml(Config::getConfig(), new Idps());
+    $Saml = new Saml($App->Config, new Idps());
     $settings = $Saml->getSettings();
     $samlAuthLib = new SamlAuthLib($settings);
     $samlAuthLib->logout();

@@ -36,8 +36,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead(): void
     {
-        $steps = $this->Steps->read(new ContentParams());
-        $this->assertTrue(is_array($steps));
+        $this->assertIsArray($this->Steps->read(new ContentParams()));
     }
 
     public function testUpdate(): void

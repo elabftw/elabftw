@@ -16,7 +16,7 @@ use function filter_var;
 use function in_array;
 
 /**
- * Validate an email address for several paramaters
+ * Validate an email address for several parameters
  */
 class EmailValidator
 {

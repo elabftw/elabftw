@@ -68,7 +68,7 @@ class Notifications
             $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
             $body = Transform::emailNotif($notif);
             if ($emailService->sendEmail($to, $this->getSubject((int) $notif['category']), $body)) {
-                $this->setEmailSent($notif['id']);
+                $this->setEmailSent((int) $notif['id']);
             }
         }
         return count($toSend);

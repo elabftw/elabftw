@@ -9,7 +9,7 @@ START TRANSACTION;
         `email_sent_at` datetime DEFAULT NULL,
         `is_ack` tinyint(1) NOT NULL DEFAULT '0',
         `is_ack_at` datetime DEFAULT NULL,
-        `body` text NULL,
+        `body` json NULL DEFAULT NULL,
         PRIMARY KEY (`id`),
         KEY `fk_notifications_users_userid` (`userid`),
         CONSTRAINT `fk_notifications_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE

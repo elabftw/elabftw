@@ -10,14 +10,11 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Services\Email;
 use Elabftw\Traits\SetIdTrait;
 use function nl2br;
 use PDO;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * All about the comments
@@ -25,6 +22,8 @@ use Symfony\Component\HttpFoundation\Request;
 class Comments implements CrudInterface
 {
     use SetIdTrait;
+
+    private const NOTIF_CAT = 1;
 
     protected Db $Db;
 
@@ -45,8 +44,9 @@ class Comments implements CrudInterface
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
         $this->Db->execute($req);
-
-        $this->alertOwner();
+        if ($this->Entity instanceof Experiments) {
+            $this->createNotification();
+        }
         return $this->Db->lastInsertId();
     }
 
@@ -90,45 +90,20 @@ class Comments implements CrudInterface
 
     /**
      * Create a notification to the experiment owner to alert a comment was posted
-     * (issue #160). Only send for an experiment.
+     * (issue #160). Only for an experiment we don't own.
      */
-    private function alertOwner(): bool
+    private function createNotification(): void
     {
-        // only for experiments
-        if (!$this->Entity instanceof Experiments) {
-            return false;
+        if ($this->Entity->entityData['userid'] === $this->Entity->Users->userData['userid']) {
+            return;
         }
 
-        // get the first and lastname of the commenter
-        $sql = "SELECT CONCAT(firstname, ' ', lastname) AS fullname FROM users WHERE userid = :userid";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $commenter = $req->fetch();
-
-        // get email, name and lang of the XP owner
-        $sql = "SELECT email, userid, lang, CONCAT(firstname, ' ', lastname) AS fullname FROM users
-            WHERE userid = (SELECT userid FROM experiments WHERE id = :id)";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $users = $req->fetch();
-
-        // don't send an email if we are commenting on our own XP
-        if ($users['userid'] === $this->Entity->Users->userData['userid']) {
-            return false;
-        }
-
-        // Create the message
-        $Request = Request::createFromGlobals();
-        $url = Tools::getUrl($Request);
-        $bodyUrl = $url . '/' . $this->Entity->page . '.php';
-        // not pretty but gets the job done
-        $bodyUrl = str_replace('app/controllers/', '', $bodyUrl);
-        $bodyUrl .= '?mode=view&id=' . $this->Entity->id;
+        $body = array(
+            'experiment_id' => $this->Entity->id,
+            'commenter_userid' => (int) $this->Entity->Users->userData['userid'],
+        );
 
         $Notifications = new Notifications();
-        $Notifications->createNewComment((int) $users['userid'], $commenter['fullname'], $bodyUrl);
-        return true;
+        $Notifications->create((int) $this->Entity->entityData['userid'], self::NOTIF_CAT, $body);
     }
 }

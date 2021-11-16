@@ -45,4 +45,34 @@ class Transform
     {
         return sprintf("<input type='hidden' name='csrf' value='%s' />", $token);
     }
+
+    // generate html for a notification to show on web interface
+    public static function notif(array $notif): string
+    {
+        // new comment
+        if ($notif['category'] === '1') {
+            return sprintf(
+                '<a href="experiments.php?mode=view&id=%d">%s</a>',
+                (int) $notif['body']['experiment_id'],
+                _('New comment on your experiment.'),
+            );
+        }
+        return '';
+    }
+
+    public static function emailNotif(array $notif): string
+    {
+        // new comment
+        if ($notif['category'] === '1') {
+            $commenter = 'TODO';
+            $url = 'TODO';
+
+            return sprintf(
+                _('Hi. %s left a comment on your experiment. Have a look: %s'),
+                $commenter,
+                $url,
+            );
+        }
+        return '';
+    }
 }

@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 use function count;
 use Elabftw\Elabftw\Db;
 use Elabftw\Services\Email;
+use Elabftw\Services\Transform;
 use PDO;
 use Symfony\Component\Mime\Address;
 
@@ -27,29 +28,34 @@ class Notifications
         $this->Db = Db::getConnection();
     }
 
-    public function create(int $userid, int $category, string $body): int
+    public function create(int $userid, int $category, array $body): int
     {
         // TODO send_email will be in function of user preference depending on category of notif
-        $sql = 'INSERT INTO notifications(userid, category, send_email, body) VALUES(:userid, 1, :category, :body)';
+        $sendEmail = 1;
+
+        $sql = 'INSERT INTO notifications(userid, category, send_email, body) VALUES(:userid, :category, :send_email, :body)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindParam(':category', $category, PDO::PARAM_INT);
-        $req->bindParam(':body', $body, PDO::PARAM_STR);
+        $req->bindParam(':send_email', $sendEmail, PDO::PARAM_INT);
+        $req->bindValue(':body', json_encode($body), PDO::PARAM_STR);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
     }
 
-    public function createNewComment(int $userid, string $commenter, string $url): void
+    public function read(int $userid): array
     {
-        $this->setLang($userid);
+        $sql = 'SELECT id, category, body FROM notifications WHERE userid = :userid AND is_ack = 0';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_STR);
+        $this->Db->execute($req);
 
-        $body = sprintf(
-            _('Hi. %s left a comment on your experiment. Have a look: %s'),
-            $commenter,
-            $url,
-        );
-        $this->create($userid, 1, $body);
+        $notifs = $this->Db->fetchAll($req);
+        foreach ($notifs as &$notif) {
+            $notif['body'] = json_decode($notif['body'], true, 512, JSON_THROW_ON_ERROR);
+        }
+        return $notifs;
     }
 
     public function sendEmails(Email $emailService): int
@@ -60,7 +66,8 @@ class Notifications
             $targetUser = new Users((int) $notif['userid']);
             $this->setLang((int) $notif['userid']);
             $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
-            if ($emailService->sendEmail($to, $this->getSubject((int) $notif['category']), $notif['body'])) {
+            $body = Transform::emailNotif($notif);
+            if ($emailService->sendEmail($to, $this->getSubject((int) $notif['category']), $body)) {
                 $this->setEmailSent($notif['id']);
             }
         }

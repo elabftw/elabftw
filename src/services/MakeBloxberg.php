@@ -18,6 +18,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use function json_encode;
 use ZipArchive;
 
 /**
@@ -117,7 +118,7 @@ class MakeBloxberg extends AbstractMake
                     'author' => $this->Entity->entityData['fullname'],
                     'elabid' => $this->Entity->entityData['elabid'],
                     'instanceid' => 'not implemented',
-                )),
+                ), JSON_THROW_ON_ERROR, 512),
             ),
         );
 

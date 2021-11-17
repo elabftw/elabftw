@@ -10,8 +10,6 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Notifications;
 use function sprintf;
 use function ucfirst;
 
@@ -60,46 +58,5 @@ class Transform
             );
         }
         return '';
-    }
-
-    public static function notif2Email(array $notif): array
-    {
-        $subject = '[eLabFTW] ';
-        switch ((int) $notif['category']) {
-            case Notifications::COMMENT_CREATED:
-                $subject .= _('New comment posted');
-                $commenter = 'TODO';
-                $url = 'TODO';
-
-                $body = sprintf(
-                    _('Hi. %s left a comment on your experiment. Have a look: %s'),
-                    $commenter,
-                    $url,
-                );
-                break;
-            case Notifications::USER_CREATED:
-                $subject .= _('New user added to your team');
-                $body = sprintf(
-                    _('Hi. A new user registered an account on eLabFTW: %s (%s).'),
-                    // TODO FIXME
-                    'TODO new user name',
-                    'TODO new user email',
-                );
-                break;
-            case Notifications::USER_NEED_VALIDATION:
-                $subject .= _('[ACTION REQUIRED]') . ' ' . _('New user added to your team');
-                $base = sprintf(
-                    // TODO copy paste from above
-                    _('Hi. A new user registered an account on eLabFTW: %s (%s).'),
-                    // TODO FIXME
-                    'TODO new user name',
-                    'TODO new user email',
-                );
-                $body =  $base . sprintf(_('Head to the admin panel to validate the account: %s'), 'TODO URL to click to admin panel');
-                break;
-            default:
-                throw new ImproperActionException('Invalid notification category');
-        }
-        return array('subject' => $subject, 'body' => $body);
     }
 }

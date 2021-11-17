@@ -11,6 +11,9 @@ namespace Elabftw\Services;
 
 use function count;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Notifications;
 use Elabftw\Models\Users;
 use PDO;
 use Symfony\Component\Mime\Address;
@@ -35,7 +38,7 @@ class EmailNotifications
             $targetUser = new Users((int) $notif['userid']);
             $this->setLang((int) $notif['userid']);
             $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
-            $email = Transform::notif2Email($notif);
+            $email = $this->notif2Email($notif);
             if ($this->emailService->sendEmail($to, $email['subject'], $email['body'])) {
                 $this->setEmailSent((int) $notif['id']);
             }
@@ -70,5 +73,50 @@ class EmailNotifications
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return $this->Db->fetchAll($req);
+    }
+
+    /**
+     * Transform a notification in an array with subject and body for sending an email
+     */
+    private function notif2Email(array $notif): array
+    {
+        $subject = '[eLabFTW] ';
+        $notifBody = json_decode($notif['body'], true, 512, JSON_THROW_ON_ERROR);
+        switch ((int) $notif['category']) {
+            case Notifications::COMMENT_CREATED:
+                $subject .= _('New comment posted');
+                $commenter = new Users((int) $notifBody['commenter_userid']);
+                $url = Tools::getUrl() . '/experiments.php?mode=view&id=' . $notifBody['experiment_id'];
+
+                $body = sprintf(
+                    _('Hi. %s left a comment on your experiment. Have a look: %s'),
+                    $commenter->userData['fullname'],
+                    $url,
+                );
+                break;
+            case Notifications::USER_CREATED:
+                $subject .= _('New user added to your team');
+                $user = new Users((int) $notifBody['userid']);
+                $body = sprintf(
+                    _('Hi. A new user registered an account on eLabFTW: %s (%s).'),
+                    $user->userData['fullname'],
+                    $user->userData['email'],
+                );
+                break;
+            case Notifications::USER_NEED_VALIDATION:
+                $subject .= _('[ACTION REQUIRED]') . ' ' . _('New user added to your team');
+                $user = new Users((int) $notifBody['userid']);
+                $base = sprintf(
+                    _('Hi. A new user registered an account on eLabFTW: %s (%s).'),
+                    $user->userData['fullname'],
+                    $user->userData['email'],
+                );
+                $url = Tools::getUrl() . '/admin.php';
+                $body =  $base . sprintf(_('Head to the admin panel to validate the account: %s'), $url);
+                break;
+            default:
+                throw new ImproperActionException('Invalid notification category');
+        }
+        return array('subject' => $subject, 'body' => $body);
     }
 }

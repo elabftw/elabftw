@@ -82,8 +82,8 @@ export class Ajax {
       }
       return response.json();
     }).then(json => {
-      // we don't want notifs on get requests or create requests
-      if (payload.method === Method.POST && payload.action !== Action.Create) {
+      // display a notif only if specifically requested
+      if (payload.notif) {
         notif(json);
       }
       return json;

@@ -10,8 +10,8 @@
 namespace Elabftw\Commands;
 
 use Elabftw\Models\Config;
-use Elabftw\Models\Notifications;
 use Elabftw\Services\Email;
+use Elabftw\Services\EmailNotifications;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use Symfony\Component\Console\Command\Command;
@@ -39,11 +39,11 @@ class SendNotifications extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $Notifications = new Notifications();
         $Logger = new Logger('elabftw');
         $Logger->pushHandler(new ErrorLogHandler());
         $Email = new Email(Config::getConfig(), $Logger);
-        $Notifications->sendEmails($Email);
+        $Notifications = new EmailNotifications($Email);
+        $Notifications->sendEmails();
         return 0;
     }
 }

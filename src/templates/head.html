@@ -92,7 +92,7 @@
           <a class='nav-link dropdown-toggle' href='#' id='navbarNotifDropdown' role='button' aria-label='{{ 'Notifications'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='far fa-bell fa-2x'></i></a>
           <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarNotifDropdown'><h6 class='dropdown-header'>{{ 'Notifications'|trans }}</h6>
             {% for notif in App.notifsArr %}
-              <div class='notification-entry p-3' data-id='{{ notif.id }}'>{{ notif|notifWeb|raw }}</div>
+              <div class='notification p-3' data-ack='{{ notif.is_ack }}'>{{ notif|notifWeb|raw }}</div>
             {% endfor %}
           </div>
         </div>

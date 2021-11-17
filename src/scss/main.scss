@@ -85,11 +85,6 @@ body::before {
     padding: 0 5%;
 }
 
-/* paragraphs */
-p {
-    color: $maingray;
-}
-
 /* LINKS */
 a,
 .link-like {
@@ -1268,5 +1263,14 @@ input[type='color'] {
 
     100% {
         transform: rotate(360deg);
+    }
+}
+
+/* notifications */
+.notification[data-ack='0'] {
+    background-color: $elabblue;
+
+    span {
+        color: $lightwhite;
     }
 }

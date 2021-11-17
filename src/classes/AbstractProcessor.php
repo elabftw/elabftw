@@ -21,6 +21,7 @@ use Elabftw\Models\FavTags;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
+use Elabftw\Models\Notifications;
 use Elabftw\Models\PrivacyPolicy;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
@@ -139,6 +140,8 @@ abstract class AbstractProcessor implements ProcessorInterface
                 return new Links($this->Entity, $this->id);
             case 'favtag':
                 return new FavTags($this->Users, $this->id);
+            case 'notification':
+                return new Notifications((int) $this->Users->userData['userid'], $this->id);
             case 'step':
                 return new Steps($this->Entity, $this->id);
             case 'unfinishedsteps':

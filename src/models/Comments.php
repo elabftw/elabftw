@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
@@ -103,7 +104,7 @@ class Comments implements CrudInterface
             'commenter_userid' => (int) $this->Entity->Users->userData['userid'],
         );
 
-        $Notifications = new Notifications();
-        $Notifications->create((int) $this->Entity->entityData['userid'], self::NOTIF_CAT, $body);
+        $Notifications = new Notifications((int) $this->Entity->entityData['userid']);
+        $Notifications->create(new CreateNotificationParams($body, self::NOTIF_CAT));
     }
 }

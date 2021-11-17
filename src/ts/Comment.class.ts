@@ -38,6 +38,7 @@ export default class Comment {
       entity: this.entity,
       content: content,
       id : id,
+      notif: true,
     };
     return this.sender.send(payload);
   }

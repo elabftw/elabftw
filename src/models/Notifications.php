@@ -9,46 +9,45 @@
 
 namespace Elabftw\Models;
 
-use function count;
 use Elabftw\Elabftw\Db;
-use Elabftw\Services\Email;
-use Elabftw\Services\Transform;
+use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Interfaces\CreateNotificationParamsInterface;
+use Elabftw\Interfaces\CrudInterface;
 use PDO;
-use Symfony\Component\Mime\Address;
 
 /**
  * Notification system
  */
-class Notifications
+class Notifications implements CrudInterface
 {
     protected Db $Db;
 
-    public function __construct()
+    public function __construct(private int $userid, private ?int $id = null)
     {
         $this->Db = Db::getConnection();
     }
 
-    public function create(int $userid, int $category, array $body): int
+    public function create(CreateNotificationParamsInterface $params): int
     {
         // TODO send_email will be in function of user preference depending on category of notif
         $sendEmail = 1;
 
         $sql = 'INSERT INTO notifications(userid, category, send_email, body) VALUES(:userid, :category, :send_email, :body)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->bindParam(':category', $category, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindValue(':category', $params->getCategory(), PDO::PARAM_INT);
         $req->bindParam(':send_email', $sendEmail, PDO::PARAM_INT);
-        $req->bindValue(':body', json_encode($body), PDO::PARAM_STR);
+        $req->bindValue(':body', $params->getBody(), PDO::PARAM_STR);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
     }
 
-    public function read(int $userid): array
+    public function read(ContentParamsInterface $params): array
     {
-        $sql = 'SELECT id, category, body FROM notifications WHERE userid = :userid AND is_ack = 0';
+        $sql = 'SELECT id, category, body, is_ack FROM notifications WHERE userid = :userid ORDER BY created_at DESC LIMIT 10';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_STR);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $notifs = $this->Db->fetchAll($req);
@@ -58,57 +57,17 @@ class Notifications
         return $notifs;
     }
 
-    public function sendEmails(Email $emailService): int
+    public function update(ContentParamsInterface $params): bool
     {
-        $toSend = $this->getNotificationsToSend();
-
-        foreach ($toSend as $notif) {
-            $targetUser = new Users((int) $notif['userid']);
-            $this->setLang((int) $notif['userid']);
-            $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
-            $body = Transform::emailNotif($notif);
-            if ($emailService->sendEmail($to, $this->getSubject((int) $notif['category']), $body)) {
-                $this->setEmailSent((int) $notif['id']);
-            }
-        }
-        return count($toSend);
+        return true;
     }
 
-    private function setEmailSent(int $id): bool
+    public function destroy(): bool
     {
-        $sql = 'UPDATE notifications SET email_sent = 1, email_sent_at = NOW() WHERE id = :id';
+        $sql = 'DELETE FROM notifications WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    // set the lang to the one of the target user (see issue #2700)
-    private function setLang(int $userid): void
-    {
-        $targetUser = new Users((int) $userid);
-        $locale = $targetUser->userData['lang'] . '.utf8';
-        // configure gettext
-        $domain = 'messages';
-        putenv("LC_ALL=$locale");
-        setlocale(LC_ALL, $locale);
-        bindtextdomain($domain, dirname(__DIR__) . '/langs');
-        textdomain($domain);
-    }
-
-    private function getSubject(int $category): string
-    {
-        $subject = '[eLabFTW] ';
-        if ($category === 1) {
-            $subject .= _('New comment posted');
-        }
-        return $subject;
-    }
-
-    private function getNotificationsToSend(): array
-    {
-        $sql = 'SELECT id, userid, category, body FROM notifications WHERE email_sent = 0';
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-        return $this->Db->fetchAll($req);
     }
 }

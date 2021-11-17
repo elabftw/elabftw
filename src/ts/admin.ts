@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         model: Model.TeamGroup,
         content: value,
         id: $(this).data('id'),
+        notif: true,
       };
 
       AjaxC.send(payload);
@@ -231,6 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         model: Model.Team,
         target: Target.TsOverride,
         content: value ? '1' : '0',
+        notif: true,
       };
       AjaxC.send(payload).then(json => {
         notif(json);

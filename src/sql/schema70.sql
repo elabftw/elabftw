@@ -4,6 +4,7 @@ START TRANSACTION;
         `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
         `userid` int(10) unsigned NOT NULL,
         `category` int(10) unsigned NOT NULL,
+        `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
         `send_email` tinyint(1) NOT NULL DEFAULT '0',
         `email_sent` tinyint(1) NOT NULL DEFAULT '0',
         `email_sent_at` datetime DEFAULT NULL,

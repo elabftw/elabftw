@@ -52,7 +52,8 @@ class Transform
         // new comment
         if ($notif['category'] === '1') {
             return sprintf(
-                '<a href="experiments.php?mode=view&id=%d">%s</a>',
+                '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="experiments.php?mode=view&id=%d">%s</span>',
+                (int) $notif['id'],
                 (int) $notif['body']['experiment_id'],
                 _('New comment on your experiment.'),
             );

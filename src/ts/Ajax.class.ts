@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import { notif } from './misc';
-import { Payload, Action, Method, ResponseMsg } from './interfaces';
+import { Payload, Method, ResponseMsg } from './interfaces';
 
 export class Ajax {
   type: string;

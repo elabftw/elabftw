@@ -111,7 +111,7 @@ class EmailNotifications
                     $user->userData['email'],
                 );
                 $url = Tools::getUrl() . '/admin.php';
-                $body =  $base . sprintf(_('Head to the admin panel to validate the account: %s'), $url);
+                $body = $base . sprintf(_('Head to the admin panel to validate the account: %s'), $url);
                 break;
             case Notifications::SELF_NEED_VALIDATION:
                 $subject .= _('Your account has been created');

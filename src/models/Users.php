@@ -142,18 +142,7 @@ class Users
         // now add the user to the team
         $Teams->addUserToTeams($userid, array_column($teams, 'id'));
         if ($alertAdmin) {
-            $admins = $TeamsHelper->getAllAdminsUserid();
-            $body = array(
-                'userid' => $userid,
-            );
-            $notifCat = Notifications::USER_CREATED;
-            if ($validated === 0) {
-                $notifCat = Notifications::USER_NEED_VALIDATION;
-            }
-            foreach ($admins as $admin) {
-                $Notifications = new Notifications((int) $admin);
-                $Notifications->create(new CreateNotificationParams($notifCat, $body));
-            }
+            $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $validated);
         }
         if ($validated === 0) {
             $Notifications = new Notifications($userid);
@@ -418,6 +407,21 @@ class Users
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    private function notifyAdmins(array $admins, int $userid, int $validated): void
+    {
+        $body = array(
+            'userid' => $userid,
+        );
+        $notifCat = Notifications::USER_CREATED;
+        if ($validated === 0) {
+            $notifCat = Notifications::USER_NEED_VALIDATION;
+        }
+        foreach ($admins as $admin) {
+            $Notifications = new Notifications((int) $admin);
+            $Notifications->create(new CreateNotificationParams($notifCat, $body));
+        }
     }
 
     // if the user is already archived, make sure there is no other account with the same email

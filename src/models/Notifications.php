@@ -47,13 +47,19 @@ class Notifications implements CrudInterface
     {
         // TODO send_email will be in function of user preference depending on category of notif
         $sendEmail = 1;
+        $isAck = 0;
+        // some notifications are just here to be as emails, not show on the web page
+        if ($params->getCategory() === self::SELF_NEED_VALIDATION || $params->getCategory() === self::SELF_IS_VALIDATED) {
+            $isAck = 1;
+        }
 
-        $sql = 'INSERT INTO notifications(userid, category, send_email, body) VALUES(:userid, :category, :send_email, :body)';
+        $sql = 'INSERT INTO notifications(userid, category, send_email, body, is_ack) VALUES(:userid, :category, :send_email, :body, :is_ack)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $req->bindValue(':category', $params->getCategory(), PDO::PARAM_INT);
         $req->bindParam(':send_email', $sendEmail, PDO::PARAM_INT);
         $req->bindValue(':body', $params->getContent(), PDO::PARAM_STR);
+        $req->bindParam(':is_ack', $isAck, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();

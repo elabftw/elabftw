@@ -33,7 +33,6 @@ class EmailNotifications
     public function sendEmails(): int
     {
         $toSend = $this->getNotificationsToSend();
-
         foreach ($toSend as $notif) {
             $targetUser = new Users((int) $notif['userid']);
             $this->setLang((int) $notif['userid']);

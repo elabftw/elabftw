@@ -122,38 +122,6 @@ class Email
     }
 
     /**
-     * Send an email to the admin of a team
-     *
-     * @param array<string, mixed> $userInfo to get the email and name of new user
-     */
-    public function alertAdmin(int $team, array $userInfo, bool $needValidation = true): bool
-    {
-        // now let's get the URL so we can have a nice link in the email
-        $Request = Request::createFromGlobals();
-        $url = rtrim(Tools::getUrl($Request), '/') . '/admin.php';
-
-        // Create the message
-        $main = sprintf(
-            _('Hi. A new user registered an account on eLabFTW: %s (%s).'),
-            $userInfo['name'],
-            $userInfo['email'],
-        );
-        if ($needValidation) {
-            $main .= ' ' . sprintf(
-                _('Head to the admin panel to validate the account: %s'),
-                $url,
-            );
-        }
-
-        $message = (new Memail())
-        ->subject(_('[eLabFTW] New user registered'))
-        ->from($this->from)
-        ->to(...$this->getAdminEmail($team))
-        ->text($main . $this->footer);
-        return $this->send($message);
-    }
-
-    /**
      * Send an email to a new user to notify that admin validation is required.
      * This exists because experience shows that users don't read the notification and expect
      * their account to work right away.
@@ -215,26 +183,6 @@ class Email
     {
         $url = Tools::getUrl(Request::createFromGlobals());
         return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), $url);
-    }
-
-    /**
-     * Fetch the email(s) of the admin(s) for a team
-     */
-    private function getAdminEmail(int $team): array
-    {
-        $Db = Db::getConnection();
-        $sql = 'SELECT email FROM users
-             CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
-             WHERE (`usergroup` = 1 OR `usergroup` = 2 OR `usergroup` = 3)';
-        $req = $Db->prepare($sql);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
-        $req->execute();
-
-        $arr = array();
-        while ($email = $req->fetchColumn()) {
-            $arr[] = new Address((string) $email);
-        }
-        return $arr;
     }
 
     /**

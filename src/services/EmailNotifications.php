@@ -35,8 +35,8 @@ class EmailNotifications
             $targetUser = new Users((int) $notif['userid']);
             $this->setLang((int) $notif['userid']);
             $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
-            $body = Transform::emailNotif($notif);
-            if ($this->emailService->sendEmail($to, $this->getSubject((int) $notif['category']), $body)) {
+            $email = Transform::notif2Email($notif);
+            if ($this->emailService->sendEmail($to, $email['subject'], $email['body'])) {
                 $this->setEmailSent((int) $notif['id']);
             }
         }
@@ -62,15 +62,6 @@ class EmailNotifications
         setlocale(LC_ALL, $locale);
         bindtextdomain($domain, dirname(__DIR__) . '/langs');
         textdomain($domain);
-    }
-
-    private function getSubject(int $category): string
-    {
-        $subject = '[eLabFTW] ';
-        if ($category === 1) {
-            $subject .= _('New comment posted');
-        }
-        return $subject;
     }
 
     private function getNotificationsToSend(): array

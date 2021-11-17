@@ -20,6 +20,12 @@ use PDO;
  */
 class Notifications implements CrudInterface
 {
+    public const COMMENT_CREATED = 1;
+
+    public const USER_CREATED = 2;
+
+    public const USER_NEED_VALIDATION = 3;
+
     protected Db $Db;
 
     public function __construct(private int $userid)

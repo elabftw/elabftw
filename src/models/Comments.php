@@ -24,8 +24,6 @@ class Comments implements CrudInterface
 {
     use SetIdTrait;
 
-    private const NOTIF_CAT = 1;
-
     protected Db $Db;
 
     public function __construct(public AbstractEntity $Entity, ?int $id = null)
@@ -106,6 +104,6 @@ class Comments implements CrudInterface
         );
 
         $Notifications = new Notifications((int) $this->Entity->entityData['userid']);
-        $Notifications->create(new CreateNotificationParams($body, self::NOTIF_CAT));
+        $Notifications->create(new CreateNotificationParams($body, Notifications::COMMENT_CREATED));
     }
 }

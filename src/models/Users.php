@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,10 +6,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
@@ -81,6 +81,7 @@ class Users
         // make sure that all the teams in which the user will be are created/exist
         // this might throw an exception if the team doesn't exist and we can't create it on the fly
         $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
+        $TeamsHelper = new TeamsHelper((int) $teams[0]['id']);
 
         $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);
         $EmailValidator->validate();
@@ -100,8 +101,6 @@ class Users
 
         // get the group for the new user
         if ($group === null) {
-            $teamId = (int) $teams[0]['id'];
-            $TeamsHelper = new TeamsHelper($teamId);
             $group = $TeamsHelper->getGroup();
         }
 
@@ -145,15 +144,24 @@ class Users
 
         // now add the user to the team
         $Teams->addUserToTeams($userid, array_column($teams, 'id'));
-        $userInfo = array('email' => $email, 'name' => $firstname . ' ' . $lastname);
-        $logger = new Logger('elabftw');
-        $logger->pushHandler(new ErrorLogHandler());
-        $Email = new Email($Config, $logger);
-        // just skip this if we don't have proper normalized teams
-        if ($alertAdmin && isset($teams[0]['id'])) {
-            $Email->alertAdmin((int) $teams[0]['id'], $userInfo, !(bool) $validated);
+        if ($alertAdmin) {
+            $admins = $TeamsHelper->getAllAdminsUserid();
+            $body = array(
+                'userid' => $userid,
+            );
+            $notifCat = Notifications::USER_CREATED;
+            if ($validated === 0) {
+                $notifCat = Notifications::USER_NEED_VALIDATION;
+            }
+            foreach ($admins as $admin) {
+                $Notifications = new Notifications((int) $admin);
+                $Notifications->create(new CreateNotificationParams($body, $notifCat));
+            }
         }
         if ($validated === 0) {
+            $logger = new Logger('elabftw');
+            $logger->pushHandler(new ErrorLogHandler());
+            $Email = new Email($Config, $logger);
             $Email->alertUserNeedValidation($email);
             // set a flag to show correct message to user
             $this->needValidation = true;

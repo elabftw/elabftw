@@ -13,7 +13,7 @@ use Elabftw\Interfaces\CreateNotificationParamsInterface;
 
 final class CreateNotificationParams extends ContentParams implements CreateNotificationParamsInterface
 {
-    public function __construct(private array $body, private int $category)
+    public function __construct(private int $category, private array $body)
     {
         parent::__construct();
     }

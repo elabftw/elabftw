@@ -18,7 +18,7 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
     {
         // create a notification to fake send so there is something to process
         $Notifications = new Notifications(1);
-        $Notifications->create(new CreateNotificationParams(array('fake' => 'notif'), 1));
+        $Notifications->create(new CreateNotificationParams(1, array('fake' => 'notif')));
         $stub = $this->createStub(Email::class);
         $stub->method('sendEmail')->willReturn(true);
         $EmailNotifications = new EmailNotifications($stub);

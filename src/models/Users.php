@@ -155,7 +155,7 @@ class Users
             }
             foreach ($admins as $admin) {
                 $Notifications = new Notifications((int) $admin);
-                $Notifications->create(new CreateNotificationParams($body, $notifCat));
+                $Notifications->create(new CreateNotificationParams($notifCat, $body));
             }
         }
         if ($validated === 0) {

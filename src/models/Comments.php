@@ -104,6 +104,6 @@ class Comments implements CrudInterface
         );
 
         $Notifications = new Notifications((int) $this->Entity->entityData['userid']);
-        $Notifications->create(new CreateNotificationParams($body, Notifications::COMMENT_CREATED));
+        $Notifications->create(new CreateNotificationParams(Notifications::COMMENT_CREATED, $body));
     }
 }

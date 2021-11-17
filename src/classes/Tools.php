@@ -18,7 +18,7 @@ use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 use function mb_strlen;
 use function pathinfo;
-use function str_replace;
+use function rtrim;
 use Symfony\Component\HttpFoundation\Request;
 use function trim;
 
@@ -279,29 +279,20 @@ class Tools
     /**
      * Return a full URL of the elabftw install.
      * Will first check for config value of 'url' or try to guess from Request
-     *
      */
-    public static function getUrl(Request $Request, bool $canonical = false): string
+    public static function getUrl(): string
     {
         $Config = Config::getConfig();
 
+        // this might not be set yet
         if ($Config->configArr['url']) {
-            return $Config->configArr['url'];
+            $url = $Config->configArr['url'];
+        } else {
+            $Request = Request::createFromGlobals();
+            // this is only used as fallback because with proxies it can get stuff wrong
+            $url = $Request->getScheme() . '://' . $Request->getHost() . ':' . (string) $Request->getPort();
         }
-        return self::getUrlFromRequest($Request, $canonical);
-    }
-
-    /**
-     * Get the URL from the Request
-     *
-     */
-    public static function getUrlFromRequest(Request $Request, bool $canonical = false): string
-    {
-        $url = $Request->getScheme() . '://' . $Request->getHost() . ':' . (string) $Request->getPort();
-        if (!$canonical) {
-            $url .= $Request->getBasePath();
-        }
-        return str_replace('app/controllers', '', $url);
+        return rtrim($url, '/');
     }
 
     /**

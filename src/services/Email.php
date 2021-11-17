@@ -19,9 +19,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use Monolog\Logger;
 use PDO;
-use function rtrim;
 use const SECRET_KEY;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\MailerInterface;
@@ -143,8 +141,7 @@ class Email
     public function alertUserIsValidated(string $email): void
     {
         // now let's get the URL so we can have a nice link in the email
-        $Request = Request::createFromGlobals();
-        $url = rtrim(Tools::getUrl($Request), '/') . '/login.php';
+        $url = Tools::getUrl() . '/login.php';
 
         $message = (new Memail())
         // no i18n here
@@ -181,8 +178,7 @@ class Email
 
     private function makeFooter(): string
     {
-        $url = Tools::getUrl(Request::createFromGlobals());
-        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), $url);
+        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Tools::getUrl());
     }
 
     /**

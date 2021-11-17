@@ -67,7 +67,7 @@ try {
         $key = $ResetPasswordKey->generate($Users->userData['email']);
 
         // build the reset link
-        $resetLink = Tools::getUrl($Request) . '/change-pass.php';
+        $resetLink = Tools::getUrl() . '/change-pass.php';
         // not pretty but gets the job done
         $resetLink = str_replace('app/controllers/', '', $resetLink);
         $resetLink .= '?key=' . $key;

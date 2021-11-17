@@ -95,6 +95,7 @@ class Comments implements CrudInterface
      */
     private function createNotification(): void
     {
+        $this->Entity->populate();
         if ($this->Entity->entityData['userid'] === $this->Entity->Users->userData['userid']) {
             return;
         }

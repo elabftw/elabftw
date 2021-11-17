@@ -141,7 +141,7 @@ abstract class AbstractProcessor implements ProcessorInterface
             case 'favtag':
                 return new FavTags($this->Users, $this->id);
             case 'notification':
-                return new Notifications((int) $this->Users->userData['userid'], $this->id);
+                return new Notifications((int) $this->Users->userData['userid']);
             case 'step':
                 return new Steps($this->Entity, $this->id);
             case 'unfinishedsteps':

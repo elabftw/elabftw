@@ -75,7 +75,7 @@ class EmailNotifications
 
     private function getNotificationsToSend(): array
     {
-        $sql = 'SELECT id, userid, category, body FROM notifications WHERE email_sent = 0';
+        $sql = 'SELECT id, userid, category, body FROM notifications WHERE send_email = 1 AND email_sent = 0';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return $this->Db->fetchAll($req);

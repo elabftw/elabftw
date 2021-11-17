@@ -15,6 +15,4 @@ namespace Elabftw\Interfaces;
 interface CreateNotificationParamsInterface extends ContentParamsInterface
 {
     public function getCategory(): int;
-
-    public function getBody(): string;
 }

@@ -15,6 +15,7 @@ final class CreateNotificationParams extends ContentParams implements CreateNoti
 {
     public function __construct(private array $body, private int $category)
     {
+        parent::__construct();
     }
 
     public function getCategory(): int

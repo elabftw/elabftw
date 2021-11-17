@@ -22,7 +22,7 @@ class Notifications implements CrudInterface
 {
     protected Db $Db;
 
-    public function __construct(private int $userid, private ?int $id = null)
+    public function __construct(private int $userid)
     {
         $this->Db = Db::getConnection();
     }
@@ -37,7 +37,7 @@ class Notifications implements CrudInterface
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $req->bindValue(':category', $params->getCategory(), PDO::PARAM_INT);
         $req->bindParam(':send_email', $sendEmail, PDO::PARAM_INT);
-        $req->bindValue(':body', $params->getBody(), PDO::PARAM_STR);
+        $req->bindValue(':body', $params->getContent(), PDO::PARAM_STR);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
@@ -62,11 +62,13 @@ class Notifications implements CrudInterface
         return true;
     }
 
+    /**
+     * Delete all notifications for that user
+     */
     public function destroy(): bool
     {
-        $sql = 'DELETE FROM notifications WHERE id = :id AND userid = :userid';
+        $sql = 'DELETE FROM notifications WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

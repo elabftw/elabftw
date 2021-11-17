@@ -114,6 +114,15 @@ class EmailNotifications
                 $url = Tools::getUrl() . '/admin.php';
                 $body =  $base . sprintf(_('Head to the admin panel to validate the account: %s'), $url);
                 break;
+            case Notifications::SELF_NEED_VALIDATION:
+                $subject .= _('Your account has been created');
+                $body = _('Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done.');
+                break;
+            case Notifications::SELF_IS_VALIDATED:
+                $subject .= _('Account validated');
+                $url = Tools::getUrl() . '/login.php';
+                $body = _('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ') . $url;
+                break;
             default:
                 throw new ImproperActionException('Invalid notification category');
         }

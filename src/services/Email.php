@@ -120,39 +120,6 @@ class Email
     }
 
     /**
-     * Send an email to a new user to notify that admin validation is required.
-     * This exists because experience shows that users don't read the notification and expect
-     * their account to work right away.
-     */
-    public function alertUserNeedValidation(string $email): void
-    {
-        // Create the message
-        $message = (new Memail())
-        ->subject(_('[eLabFTW] Your account has been created'))
-        ->from($this->from)
-        ->to(new Address($email))
-        ->text(_('Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done.') . $this->footer);
-        $this->send($message);
-    }
-
-    /**
-     * Alert a user that they are validated
-     */
-    public function alertUserIsValidated(string $email): void
-    {
-        // now let's get the URL so we can have a nice link in the email
-        $url = Tools::getUrl() . '/login.php';
-
-        $message = (new Memail())
-        // no i18n here
-        ->subject('[eLabFTW] Account validated')
-        ->from($this->from)
-        ->to(new Address($email, 'eLabFTW'))
-        ->text(_('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ') . $url . $this->footer);
-        $this->send($message);
-    }
-
-    /**
      * Get email for all active users
      */
     private function getAllEmails(?int $team): array

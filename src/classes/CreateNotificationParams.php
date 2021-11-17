@@ -14,7 +14,7 @@ use function json_encode;
 
 final class CreateNotificationParams extends ContentParams implements CreateNotificationParamsInterface
 {
-    public function __construct(private int $category, private array $body)
+    public function __construct(private int $category, private ?array $body = null)
     {
         parent::__construct();
     }
@@ -26,6 +26,9 @@ final class CreateNotificationParams extends ContentParams implements CreateNoti
 
     public function getContent(): string
     {
+        if ($this->body === null) {
+            return '{}';
+        }
         return json_encode($this->body, JSON_THROW_ON_ERROR, 512);
     }
 }

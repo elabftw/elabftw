@@ -26,6 +26,16 @@ class Notifications implements CrudInterface
 
     public const USER_NEED_VALIDATION = 3;
 
+    /**
+     * Send an email to a new user to notify that admin validation is required.
+     * This exists because experience shows that users don't read the notification and expect
+     * their account to work right away.
+     */
+    public const SELF_NEED_VALIDATION = 4;
+
+    // when our account has been validated
+    public const SELF_IS_VALIDATED = 5;
+
     protected Db $Db;
 
     public function __construct(private int $userid)

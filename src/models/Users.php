@@ -14,7 +14,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
-use Elabftw\Services\Email;
 use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
@@ -22,8 +21,6 @@ use Elabftw\Services\UsersHelper;
 use function filter_var;
 use function hash;
 use function mb_strlen;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use function password_hash;
 use PDO;
 use function time;
@@ -159,10 +156,8 @@ class Users
             }
         }
         if ($validated === 0) {
-            $logger = new Logger('elabftw');
-            $logger->pushHandler(new ErrorLogHandler());
-            $Email = new Email($Config, $logger);
-            $Email->alertUserNeedValidation($email);
+            $Notifications = new Notifications($userid);
+            $Notifications->create(new CreateNotificationParams(Notifications::SELF_NEED_VALIDATION));
             // set a flag to show correct message to user
             $this->needValidation = true;
         }
@@ -359,7 +354,10 @@ class Users
         $sql = 'UPDATE users SET validated = 1 WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $res = $this->Db->execute($req);
+        $Notifications = new Notifications((int) $this->userData['userid']);
+        $Notifications->create(new CreateNotificationParams(Notifications::SELF_IS_VALIDATED));
+        return $res;
     }
 
     /**

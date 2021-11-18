@@ -62,7 +62,7 @@ class MakeQrPdf extends AbstractMake implements FileMakerInterface
         $this->Entity->idFilter = Tools::getIdFilterSql($this->idArr);
         $entityArr = $this->Entity->readShow($DisplayParams, true);
         foreach ($entityArr as &$entity) {
-            $entity['url'] = $this->getUrl($entity['id']);
+            $entity['url'] = $this->getUrl((int) $entity['id']);
         }
         return $entityArr;
     }

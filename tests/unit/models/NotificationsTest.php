@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2021 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
@@ -35,6 +35,12 @@ class NotificationsTest extends \PHPUnit\Framework\TestCase
     public function testRead(): void
     {
         $this->assertIsArray($this->Notifications->read(new ContentParams()));
+    }
+
+    public function testUpdate(): void
+    {
+        $Notifications = new Notifications(1, 1);
+        $this->assertTrue($Notifications->update(new ContentParams()));
     }
 
     public function testDestroy(): void

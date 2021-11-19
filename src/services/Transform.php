@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Tools;
+use Elabftw\Models\Notifications;
 use function sprintf;
 use function ucfirst;
 
@@ -48,15 +49,29 @@ class Transform
     // generate html for a notification to show on web interface
     public static function notif(array $notif): string
     {
-        // new comment
-        if ($notif['category'] === '1') {
-            return sprintf(
-                '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="experiments.php?mode=view&id=%d">%s</span>',
-                (int) $notif['id'],
-                (int) $notif['body']['experiment_id'],
-                _('New comment on your experiment.'),
-            );
+        $category = (int) $notif['category'];
+        switch ($category) {
+            case Notifications::COMMENT_CREATED:
+                return sprintf(
+                    '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="experiments.php?mode=view&id=%d">%s</span>',
+                    (int) $notif['id'],
+                    (int) $notif['body']['experiment_id'],
+                    _('New comment on your experiment.'),
+                );
+            case Notifications::USER_CREATED:
+                return sprintf(
+                    '<span class="clickable" data-action="ack-notif" data-id="%d">%s</span>',
+                    (int) $notif['id'],
+                    _('New user added to your team.'),
+                );
+            case Notifications::USER_NEED_VALIDATION:
+                return sprintf(
+                    '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="admin.php">%s</span>',
+                    (int) $notif['id'],
+                    _('A user needs account validation.'),
+                );
+            default:
+                return '';
         }
-        return '';
     }
 }

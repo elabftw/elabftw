@@ -254,7 +254,23 @@ document.addEventListener('DOMContentLoaded', () => {
         id: parseInt(el.dataset.id, 10),
       };
       const AjaxC = new Ajax();
-      AjaxC.send(payload).then(() => window.location.href = el.dataset.href);
+      AjaxC.send(payload).then(() => {
+        if (el.dataset.href) {
+          window.location.href = el.dataset.href;
+        }
+      });
+
+    // DESTROY (clear all) NOTIF
+    } else if (el.matches('[data-action="destroy-notif"]')) {
+      const payload: Payload = {
+        method: Method.POST,
+        action: Action.Destroy,
+        model: Model.Notification,
+      };
+      const AjaxC = new Ajax();
+      AjaxC.send(payload).then(() => {
+        document.querySelectorAll('.notification').forEach(el => el.remove());
+      });
 
     // CREATE EXPERIMENT or DATABASE item: main create button in top right
     } else if (el.matches('[data-action="create-entity"]')) {

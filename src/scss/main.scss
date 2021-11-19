@@ -1267,6 +1267,10 @@ input[type='color'] {
 }
 
 /* notifications */
+.notification {
+    border-top: 1px solid $verylightgray;
+}
+
 .notification[data-ack='0'] {
     background-color: $elabblue;
 

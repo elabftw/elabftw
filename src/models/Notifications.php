@@ -38,25 +38,27 @@ class Notifications implements CrudInterface
 
     protected Db $Db;
 
-    public function __construct(private int $userid)
+    public function __construct(private int $userid, private ?int $id = null)
     {
         $this->Db = Db::getConnection();
     }
 
     public function create(CreateNotificationParamsInterface $params): int
     {
+        $category = $params->getCategory();
+
         // TODO send_email will be in function of user preference depending on category of notif
         $sendEmail = 1;
         $isAck = 0;
-        // some notifications are just here to be as emails, not show on the web page
-        if ($params->getCategory() === self::SELF_NEED_VALIDATION || $params->getCategory() === self::SELF_IS_VALIDATED) {
+        // some notifications are just here to be sent as emails, not show on the web page
+        if ($category === self::SELF_NEED_VALIDATION || $category === self::SELF_IS_VALIDATED) {
             $isAck = 1;
         }
 
         $sql = 'INSERT INTO notifications(userid, category, send_email, body, is_ack) VALUES(:userid, :category, :send_email, :body, :is_ack)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $req->bindValue(':category', $params->getCategory(), PDO::PARAM_INT);
+        $req->bindParam(':category', $category, PDO::PARAM_INT);
         $req->bindParam(':send_email', $sendEmail, PDO::PARAM_INT);
         $req->bindValue(':body', $params->getContent(), PDO::PARAM_STR);
         $req->bindParam(':is_ack', $isAck, PDO::PARAM_INT);
@@ -81,7 +83,13 @@ class Notifications implements CrudInterface
 
     public function update(ContentParamsInterface $params): bool
     {
-        return true;
+        // currently the only update action is to ack it, so no need to check for anything else
+        // permission is checked with the userid AND
+        $sql = 'UPDATE notifications SET is_ack = 1 WHERE id = :id AND userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     /**

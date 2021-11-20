@@ -1103,6 +1103,16 @@ the form-control fails to do that so we do the border ourselves */
     color: $maingray;
 }
 
+/* custom font awesome icon size */
+.navbar-icon {
+    color: $lightgray;
+    font-size: 170%;
+
+    &.active {
+        color: $elabblue;
+    }
+}
+
 /* for icons such as pin */
 .grayed-out {
     color: $lightgraybutnottoolight;
@@ -1170,6 +1180,7 @@ input[type='color'] {
  */
 #main-nav {
     background-color: inherit;
+    height: 43px;
     margin-right: 120px !important;
 }
 

@@ -1280,6 +1280,11 @@ input[type='color'] {
 /* notifications */
 .notification {
     border-top: 1px solid $verylightgray;
+
+    .relative-moment {
+        color: $lightgray;
+        font-size: 80%;
+    }
 }
 
 .notification[data-ack='0'] {

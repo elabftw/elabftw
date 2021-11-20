@@ -50,25 +50,30 @@ class Transform
     public static function notif(array $notif): string
     {
         $category = (int) $notif['category'];
+        $relativeMoment = '<br><span class="relative-moment" title="%s"></span>';
+
         switch ($category) {
             case Notifications::COMMENT_CREATED:
                 return sprintf(
-                    '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="experiments.php?mode=view&id=%d">%s</span>',
+                    '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="experiments.php?mode=view&id=%d">%s</span>' . $relativeMoment,
                     (int) $notif['id'],
                     (int) $notif['body']['experiment_id'],
                     _('New comment on your experiment.'),
+                    $notif['created_at'],
                 );
             case Notifications::USER_CREATED:
                 return sprintf(
-                    '<span class="clickable" data-action="ack-notif" data-id="%d">%s</span>',
+                    '<span class="clickable" data-action="ack-notif" data-id="%d">%s</span>' . $relativeMoment,
                     (int) $notif['id'],
                     _('New user added to your team.'),
+                    $notif['created_at'],
                 );
             case Notifications::USER_NEED_VALIDATION:
                 return sprintf(
-                    '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="admin.php">%s</span>',
+                    '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="admin.php">%s</span>' . $relativeMoment,
                     (int) $notif['id'],
                     _('A user needs account validation.'),
+                    $notif['created_at'],
                 );
             default:
                 return '';

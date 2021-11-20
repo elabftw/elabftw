@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Action, Entity, EntityType, Target, ResponseMsg, MetadataJson } from './interfaces';
+import { Payload, Method, Action, Entity, EntityType, Target, ResponseMsg, MetadataJson, ExtraFieldsV2 } from './interfaces';
 import { Ajax } from './Ajax.class';
 import i18next from 'i18next';
 
@@ -96,6 +96,7 @@ export class Metadata {
     // a div to hold the different elements so we can return a single Element
     const element = document.createElement('div');
     element.dataset.purpose = 'radio-holder';
+    element.classList.add('ml-2');
 
     const radioInputs = [];
     const radiosName = this.getRandomId();
@@ -109,7 +110,7 @@ export class Metadata {
       radioInput.name = radiosName;
       radioInput.id = this.getRandomId();
       // add a data-field attribute so we know what to update on change
-      radioInput.dataset.field = name;
+      radioInput.dataset.field = typeof description.key !== 'undefined' ? '[' + description.key + ']' : name;
       radioInputs.push(radioInput);
     }
 
@@ -217,7 +218,7 @@ export class Metadata {
 
 
     // add a data-field attribute so we know what to update on change
-    element.dataset.field = name;
+    element.dataset.field = typeof description.key !== 'undefined' ? '[' + description.key + ']' : name;
     // add an onChange listener to the element
     // so the json can be updated without having to click save
     // set the callback to the whole class so handleEvent is called and 'this' refers to the class
@@ -270,8 +271,15 @@ export class Metadata {
       this.metadataDiv.append(this.getHeaderDiv());
       // the input elements that will be created from the extra fields
       const elements = [];
-      for (const [name, description] of Object.entries(json.extra_fields)) {
-        elements.push({ name: name, element: this.generateElement(name, description)});
+      if (!isNaN((json.extra_fields as ExtraFieldsV2).version)) {
+        const extraFields = json.extra_fields as ExtraFieldsV2;
+        extraFields.data.forEach(({name, type, value, options, required}, key) => {
+          elements.push({ name: name, element: this.generateElement(name, {type, value, options, required})});
+        });
+      } else {
+        for (const [name, description] of Object.entries(json.extra_fields)) {
+          elements.push({ name: name, element: this.generateElement(name, description)});
+        }
       }
       // now display the names/values from extra_fields
       for (const element of elements) {
@@ -295,8 +303,15 @@ export class Metadata {
       this.metadataDiv.append(this.getHeaderDiv());
       // the input elements that will be created from the extra fields
       const elements = [];
-      for (const [name, description] of Object.entries(json.extra_fields)) {
-        elements.push({ name: name, element: this.generateInput(name, description)});
+      if (!isNaN((json.extra_fields as ExtraFieldsV2).version)) {
+        const extraFields = json.extra_fields as ExtraFieldsV2;
+        extraFields.data.forEach(({name, type, value, options, required}, key) => {
+          elements.push({ name, element: this.generateInput(name, {type, value, options, required, key})});
+        });
+      } else {
+        for (const [name, description] of Object.entries(json.extra_fields)) {
+          elements.push({ name, element: this.generateInput(name, description)});
+        }
       }
       // now display the inputs from extra_fields
       for (const element of elements) {

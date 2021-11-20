@@ -17,6 +17,19 @@ interface MetadataJson {
   metadata: string;
 }
 
+interface ExtraFieldsV2 {
+  version : number;
+  data: Array<ExtraFieldsDataV2>;
+}
+
+interface ExtraFieldsDataV2 {
+  name: string;
+  value: string;
+  type: string;
+  required?: boolean;
+  options?: string[];
+}
+
 interface Upload {
   real_name: string;
   long_name: string;
@@ -135,6 +148,7 @@ export {
   Method,
   Action,
   MetadataJson,
+  ExtraFieldsV2,
   Model,
   Target,
   Todoitem,

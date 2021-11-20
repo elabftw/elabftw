@@ -31,6 +31,7 @@ use Elabftw\Traits\EntityTrait;
 use function explode;
 use function is_bool;
 use PDO;
+use function str_starts_with;
 
 /**
  * The mother class of Experiments, Items, Templates and ItemsTypes
@@ -650,7 +651,7 @@ abstract class AbstractEntity implements CrudInterface
     protected function updateJsonField(EntityParamsInterface $params): bool
     {
         // build field (input is double quoted to allow for whitespace in key)
-        $field = '$.extra_fields."' . $params->getField() . '".value';
+        $field = '$.extra_fields.' . (str_starts_with($params->getField(), '[') ? 'data' . $params->getField() : '"' . $params->getField() . '"') . '.value';
         $sql = 'UPDATE ' . $this->getTable() . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':field', $field);

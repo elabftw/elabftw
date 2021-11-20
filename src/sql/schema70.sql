@@ -9,7 +9,6 @@ START TRANSACTION;
         `email_sent` tinyint(1) NOT NULL DEFAULT '0',
         `email_sent_at` datetime DEFAULT NULL,
         `is_ack` tinyint(1) NOT NULL DEFAULT '0',
-        `is_ack_at` datetime DEFAULT NULL,
         `body` json NULL DEFAULT NULL,
         PRIMARY KEY (`id`),
         KEY `fk_notifications_users_userid` (`userid`),

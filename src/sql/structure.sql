@@ -480,7 +480,6 @@ CREATE TABLE `notifications` (
   `email_sent` tinyint(1) NOT NULL DEFAULT '0',
   `email_sent_at` datetime DEFAULT NULL,
   `is_ack` tinyint(1) NOT NULL DEFAULT '0',
-  `is_ack_at` datetime DEFAULT NULL,
   `body` json DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

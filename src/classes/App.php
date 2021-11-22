@@ -173,6 +173,7 @@ class App
         putenv("LC_ALL=$locale");
         setlocale(LC_ALL, $locale);
         bindtextdomain($domain, dirname(__DIR__, 2) . '/src/langs');
+        bind_textdomain_codeset($domain, 'UTF-8');
         textdomain($domain);
     }
 }

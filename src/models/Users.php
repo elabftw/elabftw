@@ -216,12 +216,21 @@ class Users
         return (int) $req->fetchColumn();
     }
 
+    public function update(ContentParamsInterface $params): bool
+    {
+        $sql = 'UPDATE users SET ' . $params->getTarget() . ' = :content WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $params->getContent());
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
     /**
      * Update user from the editusers template
      *
      * @param array<string, mixed> $params POST
      */
-    public function update(array $params): bool
+    public function updateUser(array $params): bool
     {
         $this->checkEmail($params['email']);
 

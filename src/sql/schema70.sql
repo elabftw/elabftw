@@ -14,5 +14,7 @@ START TRANSACTION;
         KEY `fk_notifications_users_userid` (`userid`),
         CONSTRAINT `fk_notifications_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE
     );
+    ALTER TABLE `users` ADD `notif_new_comment` tinyint(1) NOT NULL DEFAULT '1';
+    ALTER TABLE `users` ADD `notif_new_comment_email` tinyint(1) NOT NULL DEFAULT '1';
     UPDATE config SET conf_value = 70 WHERE conf_name = 'schema';
 COMMIT;

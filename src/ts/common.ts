@@ -129,12 +129,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
       el.addEventListener(el.dataset.trigger, event => {
         event.preventDefault();
+        // for a checkbox element, look at the checked attribute, not the value
+        const value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
         const payload: Payload = {
           method: Method.POST,
           action: el.dataset.action as Action ?? Action.Update,
           model: el.dataset.model as Model,
           target: el.dataset.target as Target,
-          content: el.value,
+          content: value,
           notif: true,
         };
         (new Ajax()).send(payload)

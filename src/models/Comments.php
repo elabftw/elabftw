@@ -103,7 +103,8 @@ class Comments implements CrudInterface
             'commenter_userid' => (int) $this->Entity->Users->userData['userid'],
         );
 
-        $Notifications = new Notifications((int) $this->Entity->entityData['userid']);
+        // create notifications object with the userid of the owner
+        $Notifications = new Notifications(new Users((int) $this->Entity->entityData['userid']));
         $Notifications->create(new CreateNotificationParams(Notifications::COMMENT_CREATED, $body));
     }
 }

@@ -145,7 +145,7 @@ class Users
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $validated);
         }
         if ($validated === 0) {
-            $Notifications = new Notifications($userid);
+            $Notifications = new Notifications(new self($userid));
             $Notifications->create(new CreateNotificationParams(Notifications::SELF_NEED_VALIDATION));
             // set a flag to show correct message to user
             $this->needValidation = true;
@@ -353,7 +353,7 @@ class Users
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $res = $this->Db->execute($req);
-        $Notifications = new Notifications((int) $this->userData['userid']);
+        $Notifications = new Notifications($this);
         $Notifications->create(new CreateNotificationParams(Notifications::SELF_IS_VALIDATED));
         return $res;
     }
@@ -428,7 +428,7 @@ class Users
             $notifCat = Notifications::USER_NEED_VALIDATION;
         }
         foreach ($admins as $admin) {
-            $Notifications = new Notifications((int) $admin);
+            $Notifications = new Notifications(new self((int) $admin));
             $Notifications->create(new CreateNotificationParams($notifCat, $body));
         }
     }

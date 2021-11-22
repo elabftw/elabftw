@@ -38,20 +38,26 @@ class Notifications implements CrudInterface
 
     protected Db $Db;
 
-    public function __construct(private int $userid, private ?int $id = null)
+    private int $userid;
+
+    public function __construct(private Users $users, private ?int $id = null)
     {
         $this->Db = Db::getConnection();
+        $this->userid = (int) $this->users->userData['userid'];
     }
 
     public function create(CreateNotificationParamsInterface $params): int
     {
         $category = $params->getCategory();
 
-        // TODO send_email will be in function of user preference depending on category of notif
         $sendEmail = 1;
+        if ($category === self::COMMENT_CREATED && $this->users->userData['notif_new_comment_email'] === '0') {
+            $sendEmail = 0;
+        }
+
         $isAck = 0;
         // some notifications are just here to be sent as emails, not show on the web page
-        if ($category === self::SELF_NEED_VALIDATION || $category === self::SELF_IS_VALIDATED) {
+        if ($category === self::SELF_NEED_VALIDATION || $category === self::SELF_IS_VALIDATED || ($category === self::COMMENT_CREATED && $this->users->userData['notif_new_comment'] === '0')) {
             $isAck = 1;
         }
 

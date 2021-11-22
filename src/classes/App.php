@@ -165,7 +165,7 @@ class App
         $this->linkName = $teamConfigArr['link_name'];
         $this->linkHref = $teamConfigArr['link_href'];
         // Notifs
-        $Notifications = new Notifications((int) $this->Users->userData['userid']);
+        $Notifications = new Notifications($this->Users);
         $this->notifsArr = $Notifications->read(new ContentParams());
     }
 

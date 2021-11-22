@@ -18,7 +18,7 @@ class NotificationsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Notifications = new Notifications(1);
+        $this->Notifications = new Notifications(new Users(1, 1));
     }
 
     public function testCreate(): void
@@ -39,7 +39,7 @@ class NotificationsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate(): void
     {
-        $Notifications = new Notifications(1, 1);
+        $Notifications = new Notifications(new Users(1, 1), 1);
         $this->assertTrue($Notifications->update(new ContentParams()));
     }
 

@@ -11,13 +11,14 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Models\Notifications;
+use Elabftw\Models\Users;
 
 class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
 {
     public function testSendEmails(): void
     {
         // create a notification to fake send so there is something to process
-        $Notifications = new Notifications(1);
+        $Notifications = new Notifications(new Users(1));
         $body = array(
             'experiment_id' => 1,
             'commenter_userid' => 2,

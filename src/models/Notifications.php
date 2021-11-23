@@ -13,6 +13,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CreateNotificationParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
+use function json_decode;
 use PDO;
 
 /**

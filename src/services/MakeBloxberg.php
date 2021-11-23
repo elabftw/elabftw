@@ -18,6 +18,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use function json_decode;
 use function json_encode;
 use ZipArchive;
 

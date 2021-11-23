@@ -15,6 +15,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Notifications;
 use Elabftw\Models\Users;
+use function json_decode;
 use PDO;
 use Symfony\Component\Mime\Address;
 

@@ -34,6 +34,7 @@ use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
+use function json_decode;
 use function property_exists;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -87,7 +88,7 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     protected function processJson(string $json): void
     {
-        $decoded = json_decode($json);
+        $decoded = json_decode($json, false, 512, JSON_THROW_ON_ERROR);
         $this->action = $decoded->action ?? '';
         $this->setTarget($decoded->target ?? '');
 

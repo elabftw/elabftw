@@ -45,7 +45,6 @@ class Email
 
     /**
      * Send an email
-     * TODO make private?
      */
     public function send(RawMessage $email): bool
     {

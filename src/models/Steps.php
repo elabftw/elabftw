@@ -106,11 +106,10 @@ class Steps implements CrudInterface
         while ($steps = $stepreq->fetch()) {
             $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :body, :ordering)';
             $req = $this->Db->prepare($sql);
-            $this->Db->execute($req, array(
-                'item_id' => $newId,
-                'body' => $steps['body'],
-                'ordering' => $steps['ordering'],
-            ));
+            $req->bindParam(':item_id', $newId, PDO::PARAM_INT);
+            $req->bindParam(':body', $steps['body'], PDO::PARAM_STR);
+            $req->bindParam(':ordering', $steps['ordering'], PDO::PARAM_INT);
+            $this->Db->execute($req);
         }
     }
 

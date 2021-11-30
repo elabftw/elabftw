@@ -27,7 +27,6 @@ use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
-use Elabftw\Services\Email;
 
 class ParamsBuilderTest extends \PHPUnit\Framework\TestCase
 {
@@ -42,7 +41,7 @@ class ParamsBuilderTest extends \PHPUnit\Framework\TestCase
     {
         // ContentParams
         $Experiments = new Experiments($this->Users, 1);
-        $builder = new ParamsBuilder(new Comments($Experiments, new Email(Config::getConfig(), $this->Users)));
+        $builder = new ParamsBuilder(new Comments($Experiments));
         $this->assertInstanceOf(ContentParams::class, $builder->getParams());
         $builder = new ParamsBuilder(Config::getConfig());
         $this->assertInstanceOf(ContentParams::class, $builder->getParams());

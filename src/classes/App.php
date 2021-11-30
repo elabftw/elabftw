@@ -16,6 +16,7 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AnonymousUser;
 use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\Config;
+use Elabftw\Models\Notifications;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
@@ -55,6 +56,8 @@ class App
     public array $ok = array();
 
     public array $ko = array();
+
+    public array $notifsArr = array();
 
     public array $warning = array();
 
@@ -161,6 +164,9 @@ class App
         $teamConfigArr = $Teams->read(new ContentParams());
         $this->linkName = $teamConfigArr['link_name'];
         $this->linkHref = $teamConfigArr['link_href'];
+        // Notifs
+        $Notifications = new Notifications($this->Users);
+        $this->notifsArr = $Notifications->read(new ContentParams());
     }
 
     /**

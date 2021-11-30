@@ -127,7 +127,7 @@ try {
             throw new IllegalActionException('Can only share experiments or items.');
         }
         $Entity->canOrExplode('read');
-        $link = Tools::getUrl($Request) . '/' . $Entity->page . '.php?mode=view&id=' . $Entity->id . '&elabid=' . $Entity->entityData['elabid'];
+        $link = Tools::getUrl() . '/' . $Entity->page . '.php?mode=view&id=' . $Entity->id . '&elabid=' . $Entity->entityData['elabid'];
         $Response->setData(array(
             'res' => true,
             'msg' => $link,

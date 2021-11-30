@@ -33,8 +33,14 @@ try {
 
     // EMAIL TEAM
     if ($Request->request->has('emailTeam')) {
-        $Email = new Email($App->Config, $App->Users);
-        $sent = $Email->massEmail($Request->request->get('subject'), $Request->request->get('body'), true);
+        $Email = new Email($App->Config, $App->Log);
+        $sent = $Email->massEmail(
+            $Request->request->get('subject'),
+            $Request->request->get('body'),
+            $App->Users->userData['team'],
+            $App->Users->userData['email'],
+            $App->Users->userData['fullname'],
+        );
         $App->Session->getFlashBag()->add('ok', sprintf(_('Email sent to %d users'), $sent));
     }
 } catch (ImproperActionException $e) {

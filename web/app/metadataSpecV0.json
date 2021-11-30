@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://elabftw.net/schemas/metadataSpecV0.json",
+  "type": "object",
+  "title": "eLabFTW metadata specification v0",
+  "description": "The eLabFTW metadata is used to store user defined experimental metadata. Can also be used for database items.",
+  "properties": {
+    "patternProperties": {
+      "^.*$": {
+        "type" : "object",
+        "description": "Each extra field is identified by its name and holds an object itself.",
+        "properties": {
+          "type": {
+            "description": "The type of the input element.",
+            "type": "string",
+            "default": "text",
+            "enum": ["text", "number", "checkbox", "url", "date", "select", "radio"]
+          },
+          "value": {
+            "description": "The field that will hold the selected/input value. You can set a default value or leave it empty.",
+            "default": "",
+            "type": "string"
+          },
+          "required": {
+            "description": "Whether the field needs to be filled out.",
+            "type": "boolean"
+          },
+          "options": {
+            "description": "Options for the dropdown and radio element.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "anyOf": [
+          {
+            "if": {
+              "properties": { "type": { "enum": ["select", "radio"] } }
+            },
+            "then": {
+              "required": ["options"]
+            }
+          },
+          {
+            "if": {
+              "properties": { "type": { "const": "date" } }
+            },
+            "then": {
+              "properties": { "value": { "format": "date", "type": "string" } }
+            }
+          },
+          {
+            "if": {
+              "properties": { "type": { "const": "url" } }
+            },
+            "then": {
+              "properties": { "value": { "format": "uri", "type": "string" } }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

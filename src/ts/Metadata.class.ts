@@ -5,10 +5,9 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Action, Entity, EntityType, Target, ResponseMsg, MetadataJson, ExtraFieldsV2 } from './interfaces';
+import { Payload, Method, Action, Entity, EntityType, Target, ResponseMsg, MetadataJson, ExtraFields } from './interfaces';
 import { Ajax } from './Ajax.class';
 import i18next from 'i18next';
-
 
 export function ResourceNotFoundException(message: string): void {
   this.message = message;
@@ -271,14 +270,19 @@ export class Metadata {
       this.metadataDiv.append(this.getHeaderDiv());
       // the input elements that will be created from the extra fields
       const elements = [];
-      if (!isNaN((json.extra_fields as ExtraFieldsV2).version)) {
-        const extraFields = json.extra_fields as ExtraFieldsV2;
-        extraFields.data.forEach(({name, type, value, options, required}, key) => {
-          elements.push({ name: name, element: this.generateElement(name, {type, value, options, required})});
+      const extraFields = json.extra_fields as ExtraFields;
+      if (
+        'version' in extraFields
+        && typeof extraFields.version === 'string'
+        && 'fields' in extraFields
+        && Array.isArray(extraFields.fields)
+      ) {
+        extraFields.fields.forEach(({name, type, value, options, required}, key) => {
+          elements.push({ name, element: this.generateElement(name, {type, value, options, required, key})});
         });
       } else {
-        for (const [name, description] of Object.entries(json.extra_fields)) {
-          elements.push({ name: name, element: this.generateElement(name, description)});
+        for (const [name, description] of Object.entries(extraFields)) {
+          elements.push({ name, element: this.generateElement(name, description)});
         }
       }
       // now display the names/values from extra_fields
@@ -303,13 +307,18 @@ export class Metadata {
       this.metadataDiv.append(this.getHeaderDiv());
       // the input elements that will be created from the extra fields
       const elements = [];
-      if (!isNaN((json.extra_fields as ExtraFieldsV2).version)) {
-        const extraFields = json.extra_fields as ExtraFieldsV2;
-        extraFields.data.forEach(({name, type, value, options, required}, key) => {
+      const extraFields = json.extra_fields as ExtraFields;
+      if (
+        'version' in extraFields
+        && typeof extraFields.version === 'string'
+        && 'fields' in extraFields
+        && Array.isArray(extraFields.fields)
+      ) {
+        extraFields.fields.forEach(({name, type, value, options, required}, key) => {
           elements.push({ name, element: this.generateInput(name, {type, value, options, required, key})});
         });
       } else {
-        for (const [name, description] of Object.entries(json.extra_fields)) {
+        for (const [name, description] of Object.entries(extraFields)) {
           elements.push({ name, element: this.generateInput(name, description)});
         }
       }

@@ -11,6 +11,15 @@ import i18next from 'i18next';
 import { notif, reloadElement } from './misc';
 import { Entity } from './interfaces';
 
+import Ajv, {JSONSchemaType} from 'ajv/dist/2020';
+import addFormats from 'ajv-formats';
+import elabSchema from '../../web/app/metadataSpec.json';
+
+
+const ajv = new Ajv({strictSchema: "log"});
+addFormats(ajv);
+const validate = ajv.compile(elabSchema);
+
 // This class is named helper because the jsoneditor lib already exports JSONEditor
 export default class JsonEditorHelper {
   entity: Entity;
@@ -114,7 +123,15 @@ export default class JsonEditorHelper {
 
   saveMetadata(): void {
     try {
-      this.MetadataC.update(JSON.stringify(this.editor.get()));
+      const data = this.editor.get();
+      console.info("validate", validate(data));
+      console.info("error", validate.errors);
+
+      if (validate(data)) {
+        this.MetadataC.update(JSON.stringify(data));
+      } else {
+        throw validate.errors;
+      }
     } catch (error) {
       notif({res: false, msg: 'Error parsing the JSON! Error logged in console.'});
       console.error(error);

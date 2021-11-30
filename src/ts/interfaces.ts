@@ -17,17 +17,29 @@ interface MetadataJson {
   metadata: string;
 }
 
-interface ExtraFieldsV2 {
-  version : number;
-  data: Array<ExtraFieldsDataV2>;
+type ExtraFields = ExtraFieldsV1 | ExtraFieldsV0;
+
+interface ExtraFieldsV0 {
+  [key: string] : FieldsV0;
+  // this is potentially problematic if users defined a version or fields object
+  version: never;
+  fields: never;
 }
 
-interface ExtraFieldsDataV2 {
-  name: string;
+interface ExtraFieldsV1 {
+  version: string;
+  fields: Array<FieldsV1>;
+}
+
+interface FieldsV0 {
   value: string;
   type: string;
   required?: boolean;
   options?: string[];
+}
+
+interface FieldsV1 extends FieldsV0 {
+    name: string;
 }
 
 interface Upload {
@@ -148,7 +160,7 @@ export {
   Method,
   Action,
   MetadataJson,
-  ExtraFieldsV2,
+  ExtraFields,
   Model,
   Target,
   Todoitem,

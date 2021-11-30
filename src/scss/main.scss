@@ -1180,7 +1180,10 @@ input[type='color'] {
  */
 #main-nav {
     background-color: inherit;
-    height: 43px;
+
+    @media (min-width: 992px) {
+        height: 43px;
+    }
     margin-right: 120px !important;
 }
 

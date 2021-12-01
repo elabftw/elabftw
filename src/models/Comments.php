@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,20 +6,16 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Services\Email;
 use Elabftw\Traits\SetIdTrait;
 use function nl2br;
 use PDO;
-use Swift_Message;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * All about the comments
@@ -30,7 +26,7 @@ class Comments implements CrudInterface
 
     protected Db $Db;
 
-    public function __construct(public AbstractEntity $Entity, private Email $Email, ?int $id = null)
+    public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->id = $id;
@@ -47,9 +43,9 @@ class Comments implements CrudInterface
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
         $this->Db->execute($req);
-
-        $this->alertOwner();
-
+        if ($this->Entity instanceof Experiments) {
+            $this->createNotification();
+        }
         return $this->Db->lastInsertId();
     }
 
@@ -92,72 +88,23 @@ class Comments implements CrudInterface
     }
 
     /**
-     * Send an email to the experiment owner to alert a comment was posted
-     * (issue #160). Only send for an experiment.
-     *
-     * @return int number of email sent
+     * Create a notification to the experiment owner to alert a comment was posted
+     * (issue #160). Only for an experiment we don't own.
      */
-    private function alertOwner(): int
+    private function createNotification(): void
     {
-        $Config = Config::getConfig();
-
-        // don't do it for Db items or if email is not configured
-        if ($this->Entity instanceof Items || $Config->configArr['mail_from'] === 'notconfigured@example.com') {
-            return 0;
+        $this->Entity->populate();
+        if ($this->Entity->entityData['userid'] === $this->Entity->Users->userData['userid']) {
+            return;
         }
 
-        // get the first and lastname of the commenter
-        $sql = "SELECT CONCAT(firstname, ' ', lastname) AS fullname FROM users WHERE userid = :userid";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $commenter = $req->fetch();
+        $body = array(
+            'experiment_id' => $this->Entity->id,
+            'commenter_userid' => (int) $this->Entity->Users->userData['userid'],
+        );
 
-        // get email, name and lang of the XP owner
-        $sql = "SELECT email, userid, lang, CONCAT(firstname, ' ', lastname) AS fullname FROM users
-            WHERE userid = (SELECT userid FROM experiments WHERE id = :id)";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $users = $req->fetch();
-
-        // don't send an email if we are commenting on our own XP
-        if ($users['userid'] === $this->Entity->Users->userData['userid']) {
-            return 1;
-        }
-
-        // Create the message
-        $Request = Request::createFromGlobals();
-        $url = Tools::getUrl($Request);
-        $bodyUrl = $url . '/' . $this->Entity->page . '.php';
-        // not pretty but gets the job done
-        $bodyUrl = str_replace('app/controllers/', '', $bodyUrl);
-        $bodyUrl .= '?mode=view&id=' . $this->Entity->id;
-
-        // set the lang to the target user, not the one commenting (see issue #2700)
-        $locale = $users['lang'] . '.utf8';
-        // configure gettext
-        $domain = 'messages';
-        putenv("LC_ALL=$locale");
-        setlocale(LC_ALL, $locale);
-        bindtextdomain($domain, dirname(__DIR__, 2) . '/src/langs');
-        textdomain($domain);
-        // END i18n
-
-        $message = (new Swift_Message())
-        // Give the message a subject
-        ->setSubject(_('[eLabFTW] New comment posted'))
-        // Set the From address with an associative array
-        ->setFrom(array($Config->configArr['mail_from'] => 'eLabFTW'))
-        // Set the To addresses with an associative array
-        ->setTo(array($users['email'] => $users['fullname']))
-        // Give it a body
-        ->setBody(sprintf(
-            _('Hi. %s left a comment on your experiment. Have a look: %s'),
-            $commenter['fullname'],
-            $bodyUrl
-        ) . $this->Email->footer);
-
-        return $this->Email->send($message);
+        // create notifications object with the userid of the owner
+        $Notifications = new Notifications(new Users((int) $this->Entity->entityData['userid']));
+        $Notifications->create(new CreateNotificationParams(Notifications::COMMENT_CREATED, $body));
     }
 }

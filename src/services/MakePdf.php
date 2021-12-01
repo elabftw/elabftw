@@ -202,7 +202,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
             'uploadsArr' => $this->Entity->Uploads->readAll(),
             'uploadsFolder' => dirname(__DIR__, 2) . '/uploads/',
             'url' => $this->getUrl(),
-            'linkBaseUrl' => Tools::getUrl($Request) . '/database.php',
+            'linkBaseUrl' => Tools::getUrl() . '/database.php',
             'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
         );
 

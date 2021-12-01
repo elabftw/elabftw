@@ -58,6 +58,7 @@ trait TwigTrait
         $langFilter = new \Twig\TwigFilter('jslang', '\Elabftw\Elabftw\Tools::getCalendarLang', $filterOptions);
         $metadataFilter = new \Twig\TwigFilter('formatMetadata', '\Elabftw\Elabftw\Tools::formatMetadata', $filterOptions);
         $csrfFilter = new \Twig\TwigFilter('csrf', '\Elabftw\Services\Transform::csrf', $filterOptions);
+        $notifWebFilter = new \Twig\TwigFilter('notifWeb', '\Elabftw\Services\Transform::notif', $filterOptions);
         // custom twig functions
         $limitOptions = new \Twig\TwigFunction('limitOptions', '\Elabftw\Elabftw\TwigFunctions::getLimitOptions');
         $generationTime = new \Twig\TwigFunction('generationTime', '\Elabftw\Elabftw\TwigFunctions::getGenerationTime');
@@ -82,6 +83,7 @@ trait TwigTrait
         $TwigEnvironment->addFilter($langFilter);
         $TwigEnvironment->addFilter($metadataFilter);
         $TwigEnvironment->addFilter($csrfFilter);
+        $TwigEnvironment->addFilter($notifWebFilter);
         // functions
         $TwigEnvironment->addFunction($limitOptions);
         $TwigEnvironment->addFunction($generationTime);

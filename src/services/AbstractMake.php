@@ -17,7 +17,6 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Traits\UploadTrait;
 use function file_get_contents;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Mother class of the Make* services
@@ -62,11 +61,13 @@ abstract class AbstractMake
      *
      * @return string url to the item/experiment
      */
-    protected function getUrl(): string
+    protected function getUrl(?int $entityId = null): string
     {
-        $Request = Request::createFromGlobals();
-        $url = Tools::getUrl($Request) . '/' . $this->Entity->page . '.php';
-
-        return $url . '?mode=view&id=' . (string) $this->Entity->id;
+        return sprintf(
+            '%s/%s.php?mode=view&id=%d',
+            Tools::getUrl(),
+            $this->Entity->page,
+            $entityId ?? $this->Entity->id,
+        );
     }
 }

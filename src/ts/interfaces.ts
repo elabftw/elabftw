@@ -68,6 +68,7 @@ enum Model {
   Config = 'config',
   Link = 'link',
   FavTag = 'favtag',
+  Notification = 'notification',
   PrivacyPolicy = 'privacypolicy',
   Status = 'status',
   Step = 'step',
@@ -124,6 +125,8 @@ interface Payload {
   content?: string;
   target?: Target;
   id?: number;
+  // no notif key means no notif wanted
+  notif?: boolean;
   extraParams?: Record<string, unknown>;
 }
 

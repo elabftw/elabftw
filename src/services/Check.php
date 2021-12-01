@@ -177,6 +177,8 @@ class Check
             'list',
             'member',
             'metadata',
+            'notif_new_comment',
+            'notif_new_comment_email',
             'privacypolicy',
             'rating',
             'real_name',

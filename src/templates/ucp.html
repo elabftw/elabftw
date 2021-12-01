@@ -6,6 +6,7 @@
   <li data-action='switch-tab' data-tabtarget='2'>{{ 'Account'|trans }}</li>
   <li data-action='switch-tab' data-tabtarget='3'>{{ 'Templates'|trans }}</li>
   <li data-action='switch-tab' data-tabtarget='4'>{{ 'API keys'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='5'>{{ 'Notifications'|trans }}</li>
 </ul>
 
 <!-- loading spinner -->
@@ -384,6 +385,27 @@
         </tr>
       {% endfor %}
     </tbody>
+  </table>
+</div>
+
+<!-- TAB 5 - NOTIFICATIONS SETTINGS -->
+<div class='box' data-tabcontent='5' hidden>
+  <h3>{{ 'Notifications settings'|trans }}</h3>
+  <table class='mt-4'>
+    <tr>
+      <th>{{ 'Notification category'|trans }}</th>
+      <th>{{ 'Web'|trans }}</th>
+      <th>{{' Email'|trans }}</th>
+    </tr>
+    <tr>
+      <td>{{ 'New comment notification'|trans }}</td>
+      <td>
+        <input type='checkbox' data-trigger='change' data-model='user' data-target='notif_new_comment' {{ App.Users.userData.notif_new_comment == '1' ? " checked='checked'" }} />
+      </td>
+      <td>
+        <input type='checkbox' data-trigger='change' data-model='user' data-target='notif_new_comment_email' {{ App.Users.userData.notif_new_comment_email == '1' ? " checked='checked'" }}/>
+      </td>
+    </tr>
   </table>
 </div>
 <!-- END PAGE -->

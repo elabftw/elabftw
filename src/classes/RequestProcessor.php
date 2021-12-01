@@ -13,7 +13,7 @@ namespace Elabftw\Elabftw;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Process a JSON payload send by GET
+ * Process a JSON payload send by GET in the "p" parameter
  */
 class RequestProcessor extends AbstractProcessor
 {

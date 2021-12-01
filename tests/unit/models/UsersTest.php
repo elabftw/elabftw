@@ -58,7 +58,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'validated' => '1',
             'use_mfa' => 'off',
         );
-        $this->assertTrue((new Users(4))->update($post));
+        $this->assertTrue((new Users(4))->updateUser($post));
     }
 
     public function testUpdateWithEmailAndPasswordChange(): void
@@ -72,7 +72,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'validated' => '1',
             'use_mfa' => 'off',
         );
-        $this->assertTrue((new Users(4))->update($post));
+        $this->assertTrue((new Users(4))->updateUser($post));
     }
 
     public function testUpdateAccount(): void

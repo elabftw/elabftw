@@ -57,7 +57,7 @@ try {
             throw new ImproperActionException(_('Only a sysadmin can demote another sysadmin.'));
         }
 
-        $targetUser->update($Request->request->all());
+        $targetUser->updateUser($Request->request->all());
     }
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));

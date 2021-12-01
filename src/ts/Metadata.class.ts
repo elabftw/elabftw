@@ -68,6 +68,7 @@ export class Metadata {
       extraParams: {
         jsonField: event.target.dataset.field,
       },
+      notif: true,
     };
     return this.sender.send(payload);
   }
@@ -83,6 +84,7 @@ export class Metadata {
       entity: this.entity,
       target: Target.Metadata,
       content: metadata,
+      notif: true,
     };
     return this.sender.send(payload);
   }

@@ -15,6 +15,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use function json_encode;
 use PDO;
 use ZipStream\ZipStream;
 
@@ -79,7 +80,7 @@ class MakeStreamZip extends AbstractMake
         }
 
         // add the (hidden) .elabftw.json file useful for reimport
-        $this->Zip->addFile('.elabftw.json', (string) json_encode($this->jsonArr, JSON_THROW_ON_ERROR));
+        $this->Zip->addFile('.elabftw.json', json_encode($this->jsonArr, JSON_THROW_ON_ERROR, 512));
 
         $this->Zip->finish();
     }

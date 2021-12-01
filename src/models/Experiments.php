@@ -78,17 +78,16 @@ class Experiments extends AbstractEntity
         $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, metadata, userid)
             VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, NOW(), :metadata, :userid)';
         $req = $this->Db->prepare($sql);
-        $this->Db->execute($req, array(
-            'title' => $title,
-            'date' => Filter::kdate(),
-            'body' => $body,
-            'category' => $this->getStatus(),
-            'elabid' => $this->generateElabid(),
-            'canread' => $canread,
-            'canwrite' => $canwrite,
-            'metadata' => $metadata,
-            'userid' => $this->Users->userData['userid'],
-        ));
+        $req->bindParam(':title', $title, PDO::PARAM_STR);
+        $req->bindValue(':date', Filter::kdate(), PDO::PARAM_STR);
+        $req->bindParam(':body', $body, PDO::PARAM_STR);
+        $req->bindValue(':category', $this->getStatus(), PDO::PARAM_INT);
+        $req->bindValue(':elabid', $this->generateElabid(), PDO::PARAM_STR);
+        $req->bindParam(':canread', $canread, PDO::PARAM_STR);
+        $req->bindParam(':canwrite', $canwrite, PDO::PARAM_STR);
+        $req->bindParam(':metadata', $metadata, PDO::PARAM_STR);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
         // insert the tags from the template
@@ -161,17 +160,16 @@ class Experiments extends AbstractEntity
         $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid, metadata)
             VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, NOW(), :userid, :metadata)';
         $req = $this->Db->prepare($sql);
-        $this->Db->execute($req, array(
-            'title' => $title,
-            'date' => Filter::kdate(),
-            'body' => $this->entityData['body'],
-            'category' => $this->getStatus(),
-            'elabid' => $this->generateElabid(),
-            'canread' => $this->entityData['canread'],
-            'canwrite' => $this->entityData['canwrite'],
-            'userid' => $this->Users->userData['userid'],
-            'metadata' => $this->entityData['metadata'],
-        ));
+        $req->bindParam(':title', $title, PDO::PARAM_STR);
+        $req->bindValue(':date', Filter::kdate(), PDO::PARAM_STR);
+        $req->bindParam(':body', $this->entityData['body'], PDO::PARAM_STR);
+        $req->bindValue(':category', $this->getStatus(), PDO::PARAM_INT);
+        $req->bindValue(':elabid', $this->generateElabid(), PDO::PARAM_STR);
+        $req->bindParam(':canread', $this->entityData['canread'], PDO::PARAM_STR);
+        $req->bindParam(':canwrite', $this->entityData['canwrite'], PDO::PARAM_STR);
+        $req->bindParam(':metadata', $this->entityData['metadata'], PDO::PARAM_STR);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
         if ($this->id === null) {

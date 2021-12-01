@@ -25,8 +25,9 @@ use function nl2br;
 use function random_int;
 use const SECRET_KEY;
 use function sleep;
-use Swift_Message;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email as Memail;
 use function time;
 
 require_once dirname(__DIR__) . '/init.inc.php';
@@ -35,7 +36,7 @@ $Response = new RedirectResponse('../../login.php');
 $ResetPasswordKey = new ResetPasswordKey(time(), SECRET_KEY);
 
 try {
-    $Email = new Email($App->Config, new Users());
+    $Email = new Email($App->Config, $App->Log);
 
     // PART 1: we receive the email from the login page/forgot password form
     if ($Request->request->has('email')) {
@@ -66,7 +67,7 @@ try {
         $key = $ResetPasswordKey->generate($Users->userData['email']);
 
         // build the reset link
-        $resetLink = Tools::getUrl($Request) . '/change-pass.php';
+        $resetLink = Tools::getUrl() . '/change-pass.php';
         // not pretty but gets the job done
         $resetLink = str_replace('app/controllers/', '', $resetLink);
         $resetLink .= '?key=' . $key;
@@ -78,18 +79,12 @@ try {
 
         // Send an email with the reset link
         // Create the message
-        $message = (new Swift_Message())
-        // Give the message a subject
-        ->setSubject('[eLabFTW] Password reset')
-        // Set the From address with an associative array
-        ->setFrom(array($App->Config->configArr['mail_from'] => 'eLabFTW'))
-        // Set the To addresses with an associative array
-        ->setTo(array($email => $Users->userData['fullname']))
-        // Give it a body
-        ->setBody($htmlBody . nl2br($Email->footer), 'text/html')
-        // also add a text body
-        ->addPart($textBody . $Email->footer, 'text/plain');
-        // now we try to send the email
+        $message = (new Memail())
+        ->subject('[eLabFTW] Password reset')
+        ->from(new Address($App->Config->configArr['mail_from'], 'eLabFTW'))
+        ->to(new Address($email, $Users->userData['fullname']))
+        ->html($htmlBody . nl2br($Email->footer))
+        ->text($textBody . $Email->footer);
         $Email->send($message);
 
         // log the IP for the sysadmin to know who requested it

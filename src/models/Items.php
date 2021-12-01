@@ -41,19 +41,17 @@ class Items extends AbstractEntity
         $sql = 'INSERT INTO items(team, title, date, body, userid, category, elabid, canread, canwrite, metadata)
             VALUES(:team, :title, :date, :body, :userid, :category, :elabid, :canread, :canwrite, :metadata)';
         $req = $this->Db->prepare($sql);
-        $this->Db->execute($req, array(
-            'team' => $this->Users->userData['team'],
-            'title' => _('Untitled'),
-            'date' => Filter::kdate(),
-            'elabid' => $this->generateElabid(),
-            'body' => $itemTemplate['body'],
-            'userid' => $this->Users->userData['userid'],
-            'category' => $category,
-            'canread' => $itemTemplate['canread'],
-            'canwrite' => $itemTemplate['canwrite'],
-            'metadata' => $itemTemplate['metadata'],
-        ));
-
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindValue(':title', _('Untitled'), PDO::PARAM_STR);
+        $req->bindValue(':date', Filter::kdate(), PDO::PARAM_STR);
+        $req->bindParam(':body', $itemTemplate['body'], PDO::PARAM_STR);
+        $req->bindParam(':category', $category, PDO::PARAM_INT);
+        $req->bindValue(':elabid', $this->generateElabid(), PDO::PARAM_STR);
+        $req->bindParam(':canread', $itemTemplate['canread'], PDO::PARAM_STR);
+        $req->bindParam(':canwrite', $itemTemplate['canwrite'], PDO::PARAM_STR);
+        $req->bindParam(':metadata', $itemTemplate['metadata'], PDO::PARAM_STR);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
         $this->insertTags($params->getTags(), $newId);

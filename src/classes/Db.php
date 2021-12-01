@@ -111,13 +111,11 @@ final class Db
 
     /**
      * Execute a prepared statement and throw exception if it doesn't return true
-     *
-     * @param array<mixed>|null $arr optional array to execute
      */
-    public function execute(PDOStatement $req, ?array $arr = null): bool
+    public function execute(PDOStatement $req): bool
     {
         try {
-            $res = $req->execute($arr);
+            $res = $req->execute();
         } catch (PDOException $e) {
             throw new DatabaseErrorException($e);
         }

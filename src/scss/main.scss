@@ -85,11 +85,6 @@ body::before {
     padding: 0 5%;
 }
 
-/* paragraphs */
-p {
-    color: $maingray;
-}
-
 /* LINKS */
 a,
 .link-like {
@@ -1108,6 +1103,16 @@ the form-control fails to do that so we do the border ourselves */
     color: $maingray;
 }
 
+/* custom font awesome icon size */
+.navbar-icon {
+    color: $lightgray;
+    font-size: 170%;
+
+    &.active {
+        color: $elabblue;
+    }
+}
+
 /* for icons such as pin */
 .grayed-out {
     color: $lightgraybutnottoolight;
@@ -1175,6 +1180,10 @@ input[type='color'] {
  */
 #main-nav {
     background-color: inherit;
+
+    @media (min-width: 992px) {
+        height: 43px;
+    }
     margin-right: 120px !important;
 }
 
@@ -1268,5 +1277,23 @@ input[type='color'] {
 
     100% {
         transform: rotate(360deg);
+    }
+}
+
+/* notifications */
+.notification {
+    border-top: 1px solid $verylightgray;
+
+    .relative-moment {
+        color: $lightgray;
+        font-size: 80%;
+    }
+}
+
+.notification[data-ack='0'] {
+    background-color: $elabblue;
+
+    span {
+        color: $lightwhite;
     }
 }

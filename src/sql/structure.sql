@@ -467,6 +467,23 @@ CREATE TABLE `lockout_devices` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `userid` int(10) UNSIGNED NOT NULL,
+  `category` int(10) UNSIGNED NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `send_email` tinyint(1) NOT NULL DEFAULT '0',
+  `email_sent` tinyint(1) NOT NULL DEFAULT '0',
+  `email_sent_at` datetime DEFAULT NULL,
+  `is_ack` tinyint(1) NOT NULL DEFAULT '0',
+  `body` json DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 --
 -- Table structure for table `pin2users`
@@ -722,6 +739,8 @@ CREATE TABLE `users` (
   `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it',
   `last_login` DATETIME NULL DEFAULT NULL,
   `allow_untrusted` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_new_comment` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_new_comment_email` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `auth_lock_time` datetime DEFAULT NULL,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -839,6 +858,13 @@ ALTER TABLE `items_types_links`
 --
 ALTER TABLE `items_types_steps`
   ADD KEY `fk_items_types_steps_items_id` (`item_id`);
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD KEY `fk_notifications_users_userid` (`userid`);
+
 --
 -- Indexes for table `status`
 --
@@ -972,6 +998,12 @@ ALTER TABLE `items_types_links`
 --
 ALTER TABLE `items_types_steps`
   ADD CONSTRAINT `fk_items_types_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `fk_notifications_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `status`

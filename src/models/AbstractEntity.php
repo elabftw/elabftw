@@ -24,7 +24,6 @@ use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Interfaces\ItemTypeParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
-use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Services\Transform;
 use Elabftw\Traits\EntityTrait;
@@ -111,7 +110,7 @@ abstract class AbstractEntity implements CrudInterface
         $this->Steps = new Steps($this);
         $this->Tags = new Tags($this);
         $this->Uploads = new Uploads($this);
-        $this->Comments = new Comments($this, new Email(Config::getConfig(), $this->Users));
+        $this->Comments = new Comments($this);
         $this->TeamGroups = new TeamGroups($this->Users);
         $this->Pins = new Pins($this);
 

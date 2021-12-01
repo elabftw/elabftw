@@ -37,6 +37,10 @@ class ContentParams implements ContentParamsInterface
             return Crypto::encrypt($this->content, Key::loadFromAsciiSafeString(SECRET_KEY));
         }
 
+        if (str_contains($this->target, 'notif_')) {
+            return (string) Filter::toBinary($this->content);
+        }
+
         // check for length
         $c = Filter::sanitize($this->content);
         if (mb_strlen($c) < self::MIN_CONTENT_SIZE) {

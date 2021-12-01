@@ -42,6 +42,7 @@ export default class ItemType {
         type: EntityType.ItemType,
         id: id,
       },
+      notif: true,
       content: content,
       extraParams: {
         color: color,

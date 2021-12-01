@@ -20,6 +20,7 @@ use Elabftw\Models\Users;
 use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\UploadTrait;
 use FilesystemIterator;
+use function json_decode;
 use function mb_strlen;
 use PDO;
 use RecursiveDirectoryIterator;

@@ -20,7 +20,6 @@
     "ext-zip": "*",
     "defuse/php-encryption": "2.3.*",
     "mpdf/mpdf": "8.0.*",
-    "swiftmailer/swiftmailer": "^6.3.0",
     "onelogin/php-saml": "^4.0.0",
     "guzzlehttp/guzzle": "^7.0.1",
     "symfony/http-foundation": "^5.1.0",
@@ -40,7 +39,8 @@
     "league/flysystem": "^1.1",
     "league/flysystem-memory": "^1.0",
     "lcobucci/jwt": "^4.1",
-    "ezyang/htmlpurifier": "^4.13"
+    "ezyang/htmlpurifier": "^4.13",
+    "symfony/mailer": "^5.3"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",

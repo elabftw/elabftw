@@ -17,7 +17,6 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Traits\PdfTrait;
 use Elabftw\Traits\TwigTrait;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Make a PDF from several experiments or db items showing only minimal info with QR codes
@@ -54,17 +53,6 @@ class MakeQrPdf extends AbstractMake implements FileMakerInterface
     }
 
     /**
-     * Return the url of the item or experiment
-     */
-    private function getIdUrl(string $id): string
-    {
-        $Request = Request::createFromGlobals();
-        $url = Tools::getUrl($Request) . '/' . $this->Entity->page . '.php';
-
-        return $url . '?mode=view&id=' . $id;
-    }
-
-    /**
      * Get all the entity data from the id array
      */
     private function readAll(): array
@@ -74,7 +62,7 @@ class MakeQrPdf extends AbstractMake implements FileMakerInterface
         $this->Entity->idFilter = Tools::getIdFilterSql($this->idArr);
         $entityArr = $this->Entity->readShow($DisplayParams, true);
         foreach ($entityArr as &$entity) {
-            $entity['url'] = $this->getIdUrl($entity['id']);
+            $entity['url'] = $this->getUrl((int) $entity['id']);
         }
         return $entityArr;
     }

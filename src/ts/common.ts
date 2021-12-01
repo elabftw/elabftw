@@ -129,12 +129,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
       el.addEventListener(el.dataset.trigger, event => {
         event.preventDefault();
+        // for a checkbox element, look at the checked attribute, not the value
+        const value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
         const payload: Payload = {
           method: Method.POST,
           action: el.dataset.action as Action ?? Action.Update,
           model: el.dataset.model as Model,
           target: el.dataset.target as Target,
-          content: el.value,
+          content: value,
+          notif: true,
         };
         (new Ajax()).send(payload)
           .then(json => notif(json))
@@ -240,6 +243,36 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="logout"]')) {
       clearLocalStorage();
       window.location.href = 'app/logout.php';
+
+    // ACK NOTIF
+    } else if (el.matches('[data-action="ack-notif"]')) {
+      const payload: Payload = {
+        method: Method.POST,
+        action: Action.Update,
+        model: Model.Notification,
+        // use the finished target of steps for changing is_ack
+        // so we don't need to add another target
+        target: Target.Finished,
+        id: parseInt(el.dataset.id, 10),
+      };
+      const AjaxC = new Ajax();
+      AjaxC.send(payload).then(() => {
+        if (el.dataset.href) {
+          window.location.href = el.dataset.href;
+        }
+      });
+
+    // DESTROY (clear all) NOTIF
+    } else if (el.matches('[data-action="destroy-notif"]')) {
+      const payload: Payload = {
+        method: Method.POST,
+        action: Action.Destroy,
+        model: Model.Notification,
+      };
+      const AjaxC = new Ajax();
+      AjaxC.send(payload).then(() => {
+        document.querySelectorAll('.notification').forEach(el => el.remove());
+      });
 
     // CREATE EXPERIMENT or DATABASE item: main create button in top right
     } else if (el.matches('[data-action="create-entity"]')) {

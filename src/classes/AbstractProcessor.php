@@ -21,6 +21,7 @@ use Elabftw\Models\FavTags;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
+use Elabftw\Models\Notifications;
 use Elabftw\Models\PrivacyPolicy;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
@@ -33,7 +34,7 @@ use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
-use Elabftw\Services\Email;
+use function json_decode;
 use function property_exists;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -87,7 +88,7 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     protected function processJson(string $json): void
     {
-        $decoded = json_decode($json);
+        $decoded = json_decode($json, false, 512, JSON_THROW_ON_ERROR);
         $this->action = $decoded->action ?? '';
         $this->setTarget($decoded->target ?? '');
 
@@ -135,11 +136,13 @@ abstract class AbstractProcessor implements ProcessorInterface
             case 'status':
                 return new Status($this->Users->team, $this->id);
             case 'comment':
-                return new Comments($this->Entity, new Email(Config::getConfig(), $this->Users), $this->id);
+                return new Comments($this->Entity, $this->id);
             case 'link':
                 return new Links($this->Entity, $this->id);
             case 'favtag':
                 return new FavTags($this->Users, $this->id);
+            case 'notification':
+                return new Notifications($this->Users, $this->id);
             case 'step':
                 return new Steps($this->Entity, $this->id);
             case 'unfinishedsteps':

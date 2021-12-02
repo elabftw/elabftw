@@ -124,13 +124,14 @@ export default class JsonEditorHelper {
   saveMetadata(): void {
     try {
       const data = this.editor.get();
-      console.info("validate", validate(data));
-      console.info("error", validate.errors);
-
-      if (validate(data)) {
-        this.MetadataC.update(JSON.stringify(data));
+      if (typeof data.extra_fields !== "undefined") {
+        if (validate(data.extra_fields)) {
+          this.MetadataC.update(JSON.stringify(data));
+        } else {
+          throw validate.errors;
+        }
       } else {
-        throw validate.errors;
+        this.MetadataC.update(JSON.stringify(data));
       }
     } catch (error) {
       notif({res: false, msg: 'Error parsing the JSON! Error logged in console.'});

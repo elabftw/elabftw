@@ -1,22 +1,16 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "http://elabftw.net/schemas/metadataSpec.json",
-  "type": "object",
   "title": "eLabFTW metadata specification",
   "description": "The eLabFTW metadata is used to store user defined experimental metadata. Can also be used for database items.",
-  "properties": {
-    "extra_fields": {
-      "description": "The extra_fields object holds the extra fields entries.",
-      "oneOf": [
-        {
-          "$ref": "#/$defs/v0"
-        },
-        {
-          "$ref": "#/$defs/v1"
-        }
-      ]
+  "oneOf": [
+    {
+      "$ref": "#/$defs/v0"
+    },
+    {
+      "$ref": "#/$defs/v1"
     }
-  },
+  ],
   "$defs": {
     "v0": {
       "deprecated": true,
@@ -49,7 +43,8 @@
                   }
                 },
                 "required": [
-                  "name"
+                  "name",
+                  "type"
                 ]
               },
               {
@@ -101,7 +96,6 @@
         }
       },
       "required": [
-        "type",
         "value"
       ],
       "$comment": "The following 'allOf' block narrows down the specifications for the different types.",

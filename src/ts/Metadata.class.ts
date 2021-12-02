@@ -269,10 +269,11 @@ export class Metadata {
       if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
         return;
       }
+      const extraFields = json.extra_fields as ExtraFields;
+
       this.metadataDiv.append(this.getHeaderDiv());
       // the input elements that will be created from the extra fields
       const elements = [];
-      const extraFields = json.extra_fields as ExtraFields;
       if (
         'version' in extraFields
         && typeof extraFields.version === 'string'

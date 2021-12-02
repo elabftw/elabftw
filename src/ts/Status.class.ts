@@ -27,6 +27,7 @@ export default class Status {
         color: color,
         isTimestampable: isTimestampable,
       },
+      notif: true,
     };
     return this.sender.send(payload);
   }
@@ -43,6 +44,7 @@ export default class Status {
         isTimestampable: isTimestampable,
         isDefault: isDefault,
       },
+      notif: true,
     };
     return this.sender.send(payload);
   }
@@ -53,6 +55,7 @@ export default class Status {
       action: Action.Destroy,
       model: this.model,
       id : id,
+      notif: true,
     };
     return this.sender.send(payload);
   }

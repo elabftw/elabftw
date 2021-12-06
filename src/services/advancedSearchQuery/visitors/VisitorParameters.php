@@ -12,12 +12,22 @@ namespace Elabftw\Services\AdvancedSearchQuery\Visitors;
 
 class VisitorParameters
 {
-    public function __construct(private string $column)
+    public function __construct(private array $parameters)
     {
     }
 
     public function getColumn(): string
     {
-        return $this->column;
+        return $this->parameters['column'];
+    }
+
+    public function getEntityType(): string
+    {
+        return $this->parameters['entityType'];
+    }
+
+    public function getVisArr(): array
+    {
+        return $this->parameters['visArr'];
     }
 }

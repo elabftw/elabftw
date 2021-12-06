@@ -10,9 +10,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function array_map;
 use Elabftw\Models\Config;
 use function explode;
 use function filter_var;
+use function implode;
 use function json_decode;
 use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
@@ -302,24 +304,24 @@ class Tools
      */
     public static function getSearchSql(string $query): string
     {
-        $sql = ' AND (';
-        $sql .= implode(' AND ', array_map(
+        $sql = array_map(
             function (string $value): string {
                 return "(entity.title LIKE '%$value%' OR entity.date LIKE '%$value%' OR entity.body LIKE '%$value%' OR entity.elabid LIKE '%$value%')";
             },
             explode(' ', $query)
-        ));
-        return $sql . ')';
+        );
+        return ' AND (' . implode(' AND ', $sql) . ')';
     }
 
     public static function getIdFilterSql(array $idArr): string
     {
-        $idFilter = ' AND (';
-        foreach ($idArr as $id) {
-            $idFilter .= 'entity.id = ' . $id . ' OR ';
-        }
-        $idFilter = rtrim($idFilter, ' OR ');
-        return $idFilter .= ')';
+        $sql = array_map(
+            function (string $id): string {
+                return 'entity.id = ' . $id;
+            },
+            $idArr
+        );
+        return ' AND (' . implode(' OR ', $sql) . ')';
     }
 
     /**

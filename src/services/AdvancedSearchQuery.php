@@ -21,7 +21,7 @@ class AdvancedSearchQuery
     protected string $exception = '';
 
     // $depthLimit can be used to limit the depth of the abstract syntax tree. In other words the complexity of the query.
-    public function __construct(private string $expertQuery, private string $column, private ?int $depthLimit = null)
+    public function __construct(private string $expertQuery, private array $parameters, private ?int $depthLimit = null)
     {
     }
 
@@ -36,13 +36,13 @@ class AdvancedSearchQuery
         }
 
         try {
-            (new DepthValidatorVisitor($this->depthLimit))->checkDepthOfTree($parsedQuery, $this->column);
+            (new DepthValidatorVisitor($this->depthLimit))->checkDepthOfTree($parsedQuery, $this->parameters);
         } catch (LimitDepthIsExceededException $e) {
             $this->exception = 'Query is too complex.';
             return $whereClause;
         }
 
-        $whereClause = (new QueryBuilderVisitor())->buildWhere($parsedQuery, $this->column);
+        $whereClause = (new QueryBuilderVisitor())->buildWhere($parsedQuery, $this->parameters);
         return array(
             'where' => ' AND (' . $whereClause->getWhere() . ')',
             'bindValues' => $whereClause->getBindValues(),

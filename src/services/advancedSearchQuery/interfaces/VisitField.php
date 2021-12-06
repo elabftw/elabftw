@@ -10,6 +10,11 @@
 
 namespace Elabftw\Services\AdvancedSearchQuery\Interfaces;
 
-interface Visitor extends VisitOrExpression, VisitOrOperand, VisitAndExpression, VisitAndOperand, VisitNotExpression, VisitSimpleValueWrapper, VisitField, VisitMetadata, VisitDateValueWrapper
+use Elabftw\Services\AdvancedSearchQuery\Collectors\WhereCollector;
+use Elabftw\Services\AdvancedSearchQuery\Grammar\Field;
+use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+
+interface VisitField
 {
+    public function visitField(Field $field, VisitorParameters $parameters): WhereCollector|int;
 }

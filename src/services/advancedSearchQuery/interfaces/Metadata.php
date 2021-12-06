@@ -10,6 +10,7 @@
 
 namespace Elabftw\Services\AdvancedSearchQuery\Interfaces;
 
-interface Visitor extends VisitOrExpression, VisitOrOperand, VisitAndExpression, VisitAndOperand, VisitNotExpression, VisitSimpleValueWrapper, VisitField, VisitMetadata, VisitDateValueWrapper
+interface Metadata
 {
+    public function getKey(): string;
 }

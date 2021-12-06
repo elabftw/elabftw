@@ -92,11 +92,7 @@ abstract class AbstractEntityController implements ControllerInterface
                 return (string) $t;
             }, $tagsFromGet);
             $ids = $this->Entity->Tags->getIdFromTags($tagsFromGet, (int) $this->App->Users->userData['team']);
-            $idFilter = ' AND (';
-            foreach ($ids as $id) {
-                $idFilter .= 'entity.id = ' . $id . ' OR ';
-            }
-            $trimmedFilter = rtrim($idFilter, ' OR ') . ')';
+            $trimmedFilter = Tools::getIdFilterSql($ids);
             // don't add it if it's empty (for instance we search in items for a tag that only exists on experiments)
             if ($trimmedFilter === ' AND ()') {
                 $this->Entity->idFilter = ' AND entity.id = 0';

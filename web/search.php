@@ -60,9 +60,9 @@ if ($Request->query->get('type') === 'experiments') {
 $title = '';
 $titleError = false;
 if ($Request->query->has('title') && !empty($Request->query->get('title'))) {
-    $title = $Request->query->get('title');
+    $title = trim($Request->query->get('title'));
 
-    $advancedQuery = new AdvancedSearchQuery($title, 'title');
+    $advancedQuery = new AdvancedSearchQuery($title, array('column' => 'title', 'visArr' => $visibilityArr, 'entityType' => $Entity->type));
     $whereClause = $advancedQuery->getWhereClause();
     if ($whereClause) {
         $Entity->titleFilter = $whereClause['where'];
@@ -80,9 +80,9 @@ $body = '';
 $bodyError = false;
 $whereClause = '';
 if ($Request->query->has('body') && !empty($Request->query->get('body'))) {
-    $body = $Request->query->get('body');
+    $body = trim($Request->query->get('body'));
 
-    $advancedQuery = new AdvancedSearchQuery($body, 'body');
+    $advancedQuery = new AdvancedSearchQuery($body, array('column' => 'body', 'visArr' => $visibilityArr, 'entityType' => $Entity->type));
     $whereClause = $advancedQuery->getWhereClause();
     if ($whereClause) {
         $Entity->bodyFilter = $whereClause['where'];

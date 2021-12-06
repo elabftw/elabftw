@@ -16,7 +16,7 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 class AndExpression implements Visitable
 {
-    public function __construct(private SimpleValueWrapper|NotExpression|OrExpression $expression, private ?AndOperand $tail = null)
+    public function __construct(private SimpleValueWrapper|DateValueWrapper|Field|Metadata|NotExpression|OrExpression $expression, private ?AndOperand $tail = null)
     {
     }
 
@@ -25,7 +25,7 @@ class AndExpression implements Visitable
         return $visitor->visitAndExpression($this, $parameters);
     }
 
-    public function getExpression(): SimpleValueWrapper|NotExpression|OrExpression
+    public function getExpression(): SimpleValueWrapper|DateValueWrapper|Field|Metadata|NotExpression|OrExpression
     {
         return $this->expression;
     }

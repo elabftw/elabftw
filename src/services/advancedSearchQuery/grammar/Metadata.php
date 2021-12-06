@@ -10,28 +10,31 @@
 
 namespace Elabftw\Services\AdvancedSearchQuery\Grammar;
 
+use Elabftw\Services\AdvancedSearchQuery\Interfaces\Metadata as IMetadata;
+use Elabftw\Services\AdvancedSearchQuery\Interfaces\Term;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use function filter_var;
 
-class AndOperand implements Visitable
+class Metadata implements Term, Visitable, IMetadata
 {
-    public function __construct(private SimpleValueWrapper|DateValueWrapper|Field|Metadata|NotExpression|OrExpression $operand, private ?self $tail = null)
+    public function __construct(private string $key, private SimpleValueWrapper $value)
     {
     }
 
     public function accept(Visitor $visitor, VisitorParameters $parameters): mixed
     {
-        return $visitor->visitAndOperand($this, $parameters);
+        return $visitor->visitMetadata($this, $parameters);
     }
 
-    public function getOperand(): SimpleValueWrapper|DateValueWrapper|Field|Metadata|NotExpression|OrExpression
+    public function getValue(): string
     {
-        return $this->operand;
+        return $this->value->getValue();
     }
 
-    public function getTail(): ?self
+    public function getKey(): string
     {
-        return $this->tail;
+        return filter_var($this->key, FILTER_SANITIZE_STRING) ?: '';
     }
 }

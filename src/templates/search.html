@@ -1,5 +1,87 @@
 {% include 'head.html' %}
 
+<!-- Modal for advanced search -->
+<div class='modal fade' id='advancedSearchModal' tabindex='-1' role='dialog' aria-labelledby='advancedSearchModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='advancedSearchModalLabel'>{{ 'Search Query Language'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
+        <h3>Search terms</h3>
+        <p>The search is performed against the title and the body.</p>
+        <dl>
+          <dt>Simple term</dt>
+          <dd>A sequence of characters without {whitespace}.<br>
+              <em>termA</em> or <em>termB</em> or <em>456</em>
+          </dd>
+          
+          <dt>Quoted term</dt>
+          <dd>A sequence of characters including {whitespace} enclosed in single (') or double (") quotation marks.<br>
+              <em>'Hello world'</em> or <em>"I love eLabFTW!"</em>
+          </dd>
+        </dl>
+        <h3>Term concatenation and grouping</h3>
+        <p>Terms can be connected in different ways:</p>
+        <ul>
+          <li>"OR" or "|", <em>termA OR termB</em> or <em>termA |termB</em></li>
+          <li>"AND", "&" or {whitespace}, <em>termA termB</em> or <em>termA AND termB</em> or <em>termA &termB</em></li>
+          <li>"NOT" or "!", <em>!termA</em> or <em>NOT termA</em></li>
+          <li>Parenthesis (), <em>(termA OR termB) AND !termC</em></li>
+        </ul>
+        <p>The operators are listed in increasing priority. <em>termA termB OR termC</em> is equivalent to <em>(termA AND termB) OR termC</em></p>
+        <h3>Field/value pair searches</h3>
+        <p>Base syntax <code>[field]:[value]</code></p>
+        <dl>
+          <dt>attachment</dt>
+          <dd>yes or no, true or false, 1 or 0, on or off</dd>
+          <dt>author</dt>
+          <dd>Simple term or Quoted term</dd>
+          <dt>body</dt>
+          <dd>Simple term or Quoted term</dd>
+          <dt>category</dt>
+          <dd>Simple term or Quoted term; Only if Database is selected.</dd>
+          <dt>date</dt>
+          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
+          <dt>elabid</dt>
+          <dd>Simple term or Quoted term</dd>
+          <dt>locked</dt>
+          <dd>yes or no, true or false, 1 or 0, on or off</dd>
+          <dt>rating</dt>
+          <dd>0, 1, 2, 3, 4, 5 or unrated</dd>
+          <dt>status</dt>
+          <dd>Simple term or Quoted term; Only if Experiment is selected.</dd>
+          <dt>timestamped</dt>
+          <dd>yes or no, true or false, 1 or 0, on or off</dd>
+          <dt>title</dt>
+          <dd>Simple term or Quoted term</dd>
+          <dt>visibility</dt>
+          <dd>Simple term or Quoted term<br>A group name (e.g. 'My Group'), public, organization, team, 'me and admins', or 'only me'.</dd>
+        </dl>
+        <h3 id='dateFormats'>Date formats</h3>
+        <p>A date has to be provided in the following format: YYYYMMDD i.e, four digit year, two digit month and two digit day. Year, month and day can, but don't have to, be separated by a hyphen (-), slash (/), period (.), or comma (,).<br>
+          Either a single date or a date range can be used.</p>
+        <p>Single date: {operator}date<br>
+          operators: &lt;, &lt;=, =, &gt;=, &gt;, !=<br>
+          An operator are optional. default is =<br>
+          e.g., date:20210504 or date:>2012-04-17 or date:>=2020.09.01
+        </p>
+        <p>Date range: date..date<br>
+          Two dates separated by two periods (..)<br>
+          e.g., date:20200101..20201231
+        </p>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <!-- SEARCH PAGE BEGIN -->
 <form name="search" method="get" action="search.php">
   <section class='searchform box'>
@@ -97,7 +179,7 @@
             <div id='bodyFeedback' class='invalid-feedback'>{{ bodyError|raw }}</div>
           {% endif %}
           <small class='form-text text-muted'>
-            {{ "Tip: you can use '%' as wildcard"|trans }}
+            <a class='' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Advanced search is supported'|trans }}</a>
           </small>
         </div>
         <!-- END BODY -->

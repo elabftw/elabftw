@@ -10,28 +10,32 @@
 
 namespace Elabftw\Services\AdvancedSearchQuery\Grammar;
 
+use Elabftw\Services\AdvancedSearchQuery\Interfaces\Field as IField;
+use Elabftw\Services\AdvancedSearchQuery\Interfaces\Term;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use function filter_var;
+use function strtolower;
 
-class AndOperand implements Visitable
+class Field implements Term, Visitable, IField
 {
-    public function __construct(private SimpleValueWrapper|DateValueWrapper|Field|Metadata|NotExpression|OrExpression $operand, private ?self $tail = null)
+    public function __construct(private string $field, private SimpleValueWrapper $valueWrapper)
     {
     }
 
     public function accept(Visitor $visitor, VisitorParameters $parameters): mixed
     {
-        return $visitor->visitAndOperand($this, $parameters);
+        return $visitor->visitField($this, $parameters);
     }
 
-    public function getOperand(): SimpleValueWrapper|DateValueWrapper|Field|Metadata|NotExpression|OrExpression
+    public function getValue(): string
     {
-        return $this->operand;
+        return $this->valueWrapper->getValue();
     }
 
-    public function getTail(): ?self
+    public function getField(): string
     {
-        return $this->tail;
+        return filter_var(strtolower($this->field), FILTER_SANITIZE_STRING) ?: '';
     }
 }

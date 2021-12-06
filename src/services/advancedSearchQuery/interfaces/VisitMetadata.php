@@ -10,6 +10,11 @@
 
 namespace Elabftw\Services\AdvancedSearchQuery\Interfaces;
 
-interface Visitor extends VisitOrExpression, VisitOrOperand, VisitAndExpression, VisitAndOperand, VisitNotExpression, VisitSimpleValueWrapper, VisitField, VisitMetadata, VisitDateValueWrapper
+use Elabftw\Services\AdvancedSearchQuery\Collectors\WhereCollector;
+use Elabftw\Services\AdvancedSearchQuery\Grammar\Metadata;
+use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+
+interface VisitMetadata
 {
+    public function visitMetadata(Metadata $metadata, VisitorParameters $parameters): WhereCollector|int;
 }

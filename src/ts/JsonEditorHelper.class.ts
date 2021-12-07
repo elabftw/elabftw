@@ -16,7 +16,7 @@ import addFormats from 'ajv-formats';
 import elabSchema from '../../web/app/metadataSpec.json';
 
 
-const ajv = new Ajv({strictSchema: "log"});
+const ajv = new Ajv({strictSchema: 'log'});
 addFormats(ajv);
 const validate = ajv.compile(elabSchema);
 
@@ -124,7 +124,7 @@ export default class JsonEditorHelper {
   saveMetadata(): void {
     try {
       const data = this.editor.get();
-      if (typeof data.extra_fields !== "undefined") {
+      if (typeof data.extra_fields !== 'undefined') {
         if (validate(data.extra_fields)) {
           this.MetadataC.update(JSON.stringify(data));
         } else {

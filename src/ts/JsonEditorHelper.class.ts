@@ -11,7 +11,7 @@ import i18next from 'i18next';
 import { notif, reloadElement } from './misc';
 import { Entity } from './interfaces';
 
-import Ajv, {JSONSchemaType} from 'ajv/dist/2020';
+import Ajv from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 import elabSchema from '../../web/app/metadataSpec.json';
 

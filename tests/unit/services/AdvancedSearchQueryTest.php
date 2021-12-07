@@ -25,6 +25,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $query .= ' elabid:7bebdd3512dc6cbee0b1 locked:yes rating:0 rating:5 rating:unrated';
         $query .= ' status:"only meaningful with experiments but no error"';
         $query .= ' timestamped:true title:"very cool experiment" visibility:me';
+        $query .= ' date:>2020.06,21 date:2020/06-21..20201231';
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, array(
             'column' => 'body',

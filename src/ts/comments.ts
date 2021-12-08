@@ -5,9 +5,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import Comment from './Comment.class';
 import i18next from 'i18next';
-import { relativeMoment, reloadElement, getEntity } from './misc';
+import { InputType, Malle } from 'malle';
+import { relativeMoment, getEntity } from './misc';
+import Comment from './Comment.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -21,11 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
   const CommentC = new Comment(getEntity());
-
-  // observe the comment container for changes
-  // this observer will make the relative dates displayed again
-  new MutationObserver(() => relativeMoment())
-    .observe(document.getElementById('commentsDiv'), {childList: true, subtree: true});
 
   document.getElementById('commentsDiv').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
@@ -42,26 +38,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // MAKE comments editable on mousehover
-  $(document).on('mouseenter', '.comment-editable', function() {
-    ($(this) as any).editable(function(input: string) {
-      CommentC.update(input, $(this).data('commentid'));
-      return (input);
-    }, {
-      type : 'textarea',
-      width: '80%',
-      height: '200',
-      tooltip : i18next.t('click-to-edit'),
-      indicator : i18next.t('saving'),
-      submit : i18next.t('save'),
-      cancel : i18next.t('cancel'),
-      style : 'display:inline',
-      submitcssclass : 'button btn btn-primary mt-2',
-      cancelcssclass : 'button btn btn-danger mt-2',
-      callback : () => {
-        // use setTimeout to give the time for sql to change the data before we fetch it
-        setTimeout(() => reloadElement('comment'), 20);
-      },
-    });
+  // UPDATE MALLEABLE COMMENT
+  const malleableComments = new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
+    inputClasses: ['form-control'],
+    fun: (value, original) => {
+      CommentC.update(value, parseInt(original.dataset.id, 10));
+      return value;
+    },
+    inputType: InputType.Textarea,
+    listenOn: '.comment.editable',
+    submit : i18next.t('save'),
+    submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
   });
+
+  // listen on existing comments
+  malleableComments.listen();
+
+  // add an observer so new comments will get an event handler too
+  new MutationObserver(() => {
+    malleableComments.listen();
+    relativeMoment();
+  }).observe(document.getElementById('commentsDiv'), {childList: true});
 });

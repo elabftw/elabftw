@@ -799,28 +799,12 @@ the form-control fails to do that so we do the border ourselves */
     cursor: pointer;
 }
 
-.editable button {
-    border-radius: 25px;
-    color: #fff;
-    font-size: 11px;
-    letter-spacing: 1px;
-    margin: 0 5px;
-    padding: 10px 20px;
-    text-align: center;
-    text-transform: uppercase;
-}
-
-.editable input {
-    margin: 0 0 15px;
-}
-
 .comment-header {
-    background-color: #f7f7f7;
-    padding: 5px;
+    background-color: $verylightgray;
 }
 
 #commentsCreateArea {
-    border: 1px solid #ccc;
+    border: 1px solid $bordersgray;
     border-radius: 5px;
     margin: 10px 0;
     padding: 20px;

@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import i18next from 'i18next';
-import { InputType, Malle } from 'malle';
+import { InputType, Malle } from '@deltablot/malle';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
 import { getEntity, relativeMoment } from './misc';

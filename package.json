@@ -10,6 +10,7 @@
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@deltablot/chemdoodle-web-mini": "^9.2.1",
+    "@deltablot/malle": "^0.1.1",
     "@deltablot/open-vector-editor-umd": "^16.0.1",
     "@fancyapps/fancybox": "3.5.*",
     "@fortawesome/fontawesome-svg-core": "1.2.*",

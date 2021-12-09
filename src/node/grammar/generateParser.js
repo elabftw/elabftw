@@ -45,7 +45,7 @@ fs.readFile('./src/node/grammar/queryGrammar.pegjs', 'utf8', (err, data) => {
       );
       
       // php parser without fields
-      data1 = data.replace('  / Fields', '');
+      const data1 = data.replace('  / Fields', '');
       fs.writeFile(
         './cache/advancedSearchQuery/ParserWithoutFields.php',
         peggy.generate(data1.toString(), {

@@ -7,81 +7,83 @@
  * @package elabftw
  */
 
-or_expression
-  = _* expression:and_expression tail:(_+ tail:or {return $tail;})?
-    {
-      return new OrExpression($expression, $tail);
-    }
+OrExpression
+  = _* expression:AndExpression tail:(_+ tail:Or {return $tail;})?
+  {
+    return new OrExpression($expression, $tail);
+  }
 
-or
-  = orOp operand:and_expression tail:(_+ tail:or {return $tail;})?
-    {
-      return new OrOperand($operand, $tail);
-    }
+Or
+  = OrOp operand:AndExpression tail:(_+ tail:Or {return $tail;})?
+  {
+    return new OrOperand($operand, $tail);
+  }
 
-and_expression
-  = expression:not tail:(_+ tail:and {return $tail;})?
-    {
-      return new AndExpression($expression, $tail);
-    }
-
-and
-  = andOp? operand:not tail:(_+ tail:and {return $tail;})?
-    {
-      return new AndOperand($operand, $tail);
-    }
-
-not
-  = notOp expression:wrapper
-    {
-      return new NotExpression($expression);
-    }
-  / e:wrapper
-    {
-      return $e;
-    }
-
-wrapper
-  = Parenthesis
-  / Field_Metadata
-  / Field_Date
-  / Field_Rating
-  / Field_Boolean
-  / Field
-  / List
-  / Literal
-
-andOp '"AND", "&"'
-  = $('AND'i_+)
-  / $('&'_*)
-
-orOp '"OR", "|"'
+OrOp '"OR", "|"'
   = $('OR'i_+)
   / $('|'_*)
 
-notOp '"NOT", "!"'
+AndExpression
+  = expression:Not tail:(_+ tail:And {return $tail;})?
+  {
+    return new AndExpression($expression, $tail);
+  }
+
+And
+  = AndOp? operand:Not tail:(_+ tail:And {return $tail;})?
+  {
+    return new AndOperand($operand, $tail);
+  }
+
+AndOp '"AND", "&"'
+  = $('AND'i_+)
+  / $('&'_*)
+
+Not
+  = NotOp expression:Wrapper
+  {
+    return new NotExpression($expression);
+  }
+  / e:Wrapper
+  {
+    return $e;
+  }
+
+NotOp '"NOT", "!"'
   = $('NOT'i_+)
   / $('!'_*)
 
+Wrapper
+  = Parenthesis
+  / Fields
+  / List
+  / Literal
+
 Parenthesis 'expression in parenthesis'
-  = '(' e:or_expression _* ')'
+  = '(' e:OrExpression _* ')'
     {
       return $e;
     }
 
+Fields
+  = Field
+  / FieldDate
+  / FieldBoolean
+  / FieldRating
+
 Field
-  = field:('author'i/'body'i/'category'i/'elabid'i/'status'i/'title'i/'visibility'i) ':' term:(List/Literal) // /'tag'i
+  = field:('author'i / 'body'i / 'category'i / 'elabid'i / 'status'i / 'title'i / 'visibility'i) ':' term:(List / Literal)
   {
     return new Field($field, $term);
   }
 
-Field_Date
-  = 'date'i ':' date:(Date_Between / Date_Simple)
+FieldDate
+  = 'date'i ':' date:(DateBetween / DateSimple)
   {
-    return new DateValueWrapper($date);
+    return new DateField($date);
   }
 
-Date_Between
+DateBetween
   = dateFrom:Date '..' dateTo:Date
   {
     return array(
@@ -91,7 +93,7 @@ Date_Between
     );
   }
 
-Date_Simple
+DateSimple
   = operator:$('<=' / '<' / '>=' / '>' / '=' / '!=')? date:Date
   {
     return array(
@@ -102,37 +104,37 @@ Date_Simple
   }
 
 Date
-  = year:YYYY Date_Separator? month:MM Date_Separator? day:DD
+  = year:YYYY DateSeparator? month:MM DateSeparator? day:DD
   {
     return $year . $month . $day;
   }
 
-Date_Separator
+DateSeparator
   = '-'
   / '/'
   / '.'
   / ','
 
 YYYY
-  = year:$(digit digit digit digit)
+  = year:$(Digit Digit Digit Digit)
   {
     return $year;
   }
 
 MM
-  = month:$('0' digit19 / '1' [0-2] )
+  = month:$('0' Digit19 / '1' [0-2] )
   {
     return $month;
   }
 
 DD
-  = day:$('0' digit19 / [1-2] digit / '3' [01])
+  = day:$('0' Digit19 / [1-2] Digit / '3' [01])
   {
     return $day;
   }
 
-Field_Boolean
-  = field:('locked'i/'timestamped'i/'attachment'i) ':' term:Boolean
+FieldBoolean
+  = field:('locked'i / 'timestamped'i / 'attachment'i) ':' term:Boolean
   {
     return new Field($field, new SimpleValueWrapper($term));
   }
@@ -147,129 +149,94 @@ Boolean
     return 1;
   }
 
-Field_Rating
+FieldRating
   = 'rating'i ':' term:([0-5] / 'unrated'i { return 0;})
   {
     return new Field('rating', new SimpleValueWrapper($term));
   }
 
-Field_Metadata
-  = 'metadata'i ':' key:chars ':' value:(List/Literal)
+List 'quoted term'
+  = wordList:(List1 / List2)
   {
-    return new Metadata($key, $value);
+    return new SimpleValueWrapper($wordList);
   }
-  
-chars
-  = chars:char+
+
+List1
+  = "'" wordList:ListString1 "'"
+  {
+    return $wordList;
+  }
+
+ListString1
+  = chars:(
+    [^\n\r\f\\']
+    / nlEscaped
+    / Escape
+  )+
   {
     return join("", $chars);
   }
 
-char
-  // In the original JSON grammar: "any-Unicode-character-except-"-or-\-or-control-character"
-  = [^"\\\0-\x1F\x7F\x3A]
-  / '\\"' { return '"'; }
-  / "\\\\" { return "\\"; }
-  / "\\/" { return "/"; }
-  / "\\b" { return "\b"; }
-  / "\\f" { return "\f"; }
-  / "\\n" { return "\n"; }
-  / "\\r" { return "\r"; }
-  / "\\t" { return "\t"; }
-  / "\\u" digits:$(hex hex? hex? hex? hex? hex?) {
-    return chr_unicode(intval($digits, 16));
+List2
+  = '"' wordList:ListString2 '"'
+  {
+    return $wordList;
   }
 
-List 'quoted term'
-  = word_list:(List1 / List2)
-    {
-      return new SimpleValueWrapper($word_list);
-    }
-
-List1
-  = "'" word_list:List_String1 "'"
-    {
-      return $word_list;
-    }
-
-List_String1
-  = chars:(
-    [^\n\r\f\\']
-    / '\\' nl
-      {
-        return "";
-      }
-    / escape
-  )+
-    {
-      return join("", $chars);
-    }
-
-List2
-  = '"' word_list:List_String2 '"'
-    {
-      return $word_list;
-    }
-
-List_String2
+ListString2
   = chars:(
     [^\n\r\f\\"]
-    / '\\' nl
-      {
-        return "";
-      }
-    / escape
+    / nlEscaped
+    / Escape
   )+
-    {
-      return join("", $chars);
-    }
+  {
+    return join("", $chars);
+  }
 
 Literal 'term'
-  = !orOp !andOp !notOp literal:$(String)
-    {
-      return new SimpleValueWrapper($literal);
-    }
+  // Need to negate operators here to prevent them being a term themselves
+  = !OrOp !AndOp !NotOp literal:$(String)
+  {
+    return new SimpleValueWrapper($literal);
+  }
 
 String
   = chars:(
     [^\n\r\f\\"\\'() ]
-    / '\\' nl
-      {
-        return "";
-      }
-    / escape
+    / nlEscaped
+    / Escape
   )+
-    {
-      return join("", $chars);
-    }
+  {
+    return join("", $chars);
+  }
 
-escape
-  = unicode
+Escape
+  = Unicode
   / '\\' ch:[^\r\n\f0-9a-f]i
-    {
-      return $ch;
-    }
+  {
+    return $ch;
+  }
 
-unicode
-  = '\\u' digits:$(hex hex? hex? hex? hex? hex?)
-    {
-      return chr_unicode(intval($digits, 16));
-    }
+Unicode
+  = '\\u' digits:$(Hex Hex? Hex? Hex? Hex? Hex?)
+  {
+    return chr_unicode(intval($digits, 16));
+  }
 
-hex
+Hex
   = [0-9a-f]i
 
-digit
+Digit
   = [0-9]
 
-digit19
+Digit19
   = [1-9]
 
-nl
-  = '\n'
-  / '\r\n'
-  / '\r'
-  / '\f'
+nlEscaped
+  =  '\\' $('\r\n' / '\r' / '\n' / '\f')
+  {
+    return "";
+  }
 
 _ 'whitespace'
-  = [\t ] //\n\r
+  = [\t\n\r ]

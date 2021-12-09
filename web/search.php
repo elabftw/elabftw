@@ -20,6 +20,7 @@ use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Services\AdvancedSearchQuery;
+use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 
@@ -56,43 +57,53 @@ if ($Request->query->get('type') === 'experiments') {
     $Entity = $Database;
 }
 
+// EXTENDED
+$extended = '';
+$extendedError = false;
+$whereClause = '';
+if ($Request->query->has('extended') && !empty($Request->query->get('extended'))) {
+    $extended = trim($Request->query->get('extended'));
+
+    $advancedQuery = new AdvancedSearchQuery($extended, new VisitorParameters($Entity->type, $visibilityArr));
+    $whereClause = $advancedQuery->getWhereClause();
+    if ($whereClause) {
+        $Entity->extendedFilter = $whereClause['where'];
+        $Entity->extendedFilterBindValues = $whereClause['bindValues'];
+    }
+
+    $extendedError = $advancedQuery->getException() ?: false;
+}
+
 // TITLE
 $title = '';
 $titleError = false;
 if ($Request->query->has('title') && !empty($Request->query->get('title'))) {
     $title = trim($Request->query->get('title'));
 
-    $advancedQuery = new AdvancedSearchQuery($title, array('column' => 'title', 'visArr' => $visibilityArr, 'entityType' => $Entity->type));
+    $advancedQuery = new AdvancedSearchQuery($title, new VisitorParameters($Entity->type, $visibilityArr, 'title'));
     $whereClause = $advancedQuery->getWhereClause();
     if ($whereClause) {
         $Entity->titleFilter = $whereClause['where'];
         $Entity->titleFilterBindValues = $whereClause['bindValues'];
     }
 
-    $exception = $advancedQuery->getException();
-    if ($exception) {
-        $titleError = $exception;
-    }
+    $titleError = $advancedQuery->getException() ?: false;
 }
 
 // BODY
 $body = '';
 $bodyError = false;
-$whereClause = '';
 if ($Request->query->has('body') && !empty($Request->query->get('body'))) {
     $body = trim($Request->query->get('body'));
 
-    $advancedQuery = new AdvancedSearchQuery($body, array('column' => 'body', 'visArr' => $visibilityArr, 'entityType' => $Entity->type));
+    $advancedQuery = new AdvancedSearchQuery($body, new VisitorParameters($Entity->type, $visibilityArr, 'body'));
     $whereClause = $advancedQuery->getWhereClause();
     if ($whereClause) {
         $Entity->bodyFilter = $whereClause['where'];
         $Entity->bodyFilterBindValues = $whereClause['bindValues'];
     }
 
-    $exception = $advancedQuery->getException();
-    if ($exception) {
-        $bodyError = $exception;
-    }
+    $bodyError = $advancedQuery->getException() ?: false;
 }
 
 // VISIBILITY
@@ -130,6 +141,8 @@ $renderArr = array(
     'usersArr' => $usersArr,
     'visibilityArr' => $visibilityArr,
     'whereClause' => print_r($whereClause, true),
+    'extended' => $extended,
+    'extendedError' => $extendedError,
 );
 echo $App->render('search.html', $renderArr);
 
@@ -137,7 +150,7 @@ echo $App->render('search.html', $renderArr);
  * Here the search begins
  * If there is a search, there will be get parameters, so this is our main switch
  */
-if ($Request->query->count() > 0 && !$bodyError && !$titleError) {
+if ($Request->query->count() > 0 && !$bodyError && !$titleError && !$extendedError) {
 
     // STATUS
     $status = '';

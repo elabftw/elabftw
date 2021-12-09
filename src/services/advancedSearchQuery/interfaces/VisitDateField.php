@@ -12,10 +12,10 @@ namespace Elabftw\Services\AdvancedSearchQuery\Interfaces;
 
 use Elabftw\Services\AdvancedSearchQuery\Collectors\InvalidFieldCollector;
 use Elabftw\Services\AdvancedSearchQuery\Collectors\WhereCollector;
-use Elabftw\Services\AdvancedSearchQuery\Grammar\OrOperand;
+use Elabftw\Services\AdvancedSearchQuery\Grammar\DateField;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
-interface VisitOrOperand
+interface VisitDateField
 {
-    public function visitOrOperand(OrOperand $orOperand, VisitorParameters $parameters): InvalidFieldCollector|WhereCollector|int;
+    public function VisitDateField(DateField $dateField, VisitorParameters $parameters): InvalidFieldCollector|WhereCollector|int;
 }

@@ -12,16 +12,19 @@ namespace Elabftw\Services;
 
 use Elabftw\Services\AdvancedSearchQuery\Exceptions\LimitDepthIsExceededException;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\Parser;
+use Elabftw\Services\AdvancedSearchQuery\Grammar\ParserWithoutFields;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\SyntaxError;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\DepthValidatorVisitor;
+use Elabftw\Services\AdvancedSearchQuery\Visitors\FieldValidatorVisitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\QueryBuilderVisitor;
+use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 class AdvancedSearchQuery
 {
     protected string $exception = '';
 
     // $depthLimit can be used to limit the depth of the abstract syntax tree. In other words the complexity of the query.
-    public function __construct(private string $expertQuery, private array $parameters, private ?int $depthLimit = null)
+    public function __construct(private string $expertQuery, private VisitorParameters $parameters, private ?int $depthLimit = null)
     {
     }
 
@@ -29,9 +32,11 @@ class AdvancedSearchQuery
     {
         $whereClause = array();
         try {
-            $parsedQuery = (new Parser())->parse($this->expertQuery);
+            $parser = $this->parameters->getColumn() ? new ParserWithoutFields() : new Parser();
+            $parsedQuery = $parser->parse($this->expertQuery);
         } catch (SyntaxError $e) {
-            $this->exception = 'Column ' . $e->grammarColumn . ': ' . $e->getMessage();
+            $line = $this->parameters->getColumn() ? '' : 'Line ' . $e->grammarLine . ', ';
+            $this->exception = $line . 'Column ' . $e->grammarColumn . ': ' . $e->getMessage();
             return $whereClause;
         }
 
@@ -39,6 +44,13 @@ class AdvancedSearchQuery
             (new DepthValidatorVisitor($this->depthLimit))->checkDepthOfTree($parsedQuery, $this->parameters);
         } catch (LimitDepthIsExceededException $e) {
             $this->exception = 'Query is too complex.';
+            return $whereClause;
+        }
+
+        $errorArr = (new FieldValidatorVisitor())->check($parsedQuery, $this->parameters);
+        
+        if ($errorArr) {
+            $this->exception = implode('<br>', $errorArr);
             return $whereClause;
         }
 

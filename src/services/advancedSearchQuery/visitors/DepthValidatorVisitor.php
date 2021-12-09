@@ -13,9 +13,8 @@ namespace Elabftw\Services\AdvancedSearchQuery\Visitors;
 use Elabftw\Services\AdvancedSearchQuery\Exceptions\LimitDepthIsExceededException;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\AndExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\AndOperand;
-use Elabftw\Services\AdvancedSearchQuery\Grammar\DateValueWrapper;
+use Elabftw\Services\AdvancedSearchQuery\Grammar\DateField;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\Field;
-use Elabftw\Services\AdvancedSearchQuery\Grammar\Metadata;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\NotExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\OrExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\OrOperand;
@@ -29,9 +28,9 @@ class DepthValidatorVisitor implements Visitor
     {
     }
 
-    public function checkDepthOfTree(Visitable $parsedQuery, array $parameters): void
+    public function checkDepthOfTree(Visitable $parsedQuery, VisitorParameters $parameters): void
     {
-        $parsedQuery->accept($this, new VisitorParameters($parameters));
+        $parsedQuery->accept($this, $parameters);
     }
 
     public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): int
@@ -39,17 +38,12 @@ class DepthValidatorVisitor implements Visitor
         return 1;
     }
 
-    public function visitDateValueWrapper(DateValueWrapper $dateValueWrapper, VisitorParameters $parameters): int
+    public function visitDateField(DateField $dateField, VisitorParameters $parameters): int
     {
         return 1;
     }
 
     public function visitField(Field $field, VisitorParameters $parameters): int
-    {
-        return 1;
-    }
-
-    public function visitMetadata(Metadata $metadata, VisitorParameters $parameters): int
     {
         return 1;
     }

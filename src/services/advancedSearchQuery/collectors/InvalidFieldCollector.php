@@ -8,8 +8,16 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services\AdvancedSearchQuery\Interfaces;
+namespace Elabftw\Services\AdvancedSearchQuery\Collectors;
 
-interface Visitor extends VisitOrExpression, VisitOrOperand, VisitAndExpression, VisitAndOperand, VisitNotExpression, VisitSimpleValueWrapper, VisitField, VisitDateField
+class InvalidFieldCollector
 {
+    public function __construct(private ?array $fieldErrors = null)
+    {
+    }
+
+    public function getfieldErrors(): array
+    {
+        return $this->fieldErrors ?? array();
+    }
 }

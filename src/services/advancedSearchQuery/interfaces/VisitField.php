@@ -10,11 +10,12 @@
 
 namespace Elabftw\Services\AdvancedSearchQuery\Interfaces;
 
+use Elabftw\Services\AdvancedSearchQuery\Collectors\InvalidFieldCollector;
 use Elabftw\Services\AdvancedSearchQuery\Collectors\WhereCollector;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\Field;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 interface VisitField
 {
-    public function visitField(Field $field, VisitorParameters $parameters): WhereCollector|int;
+    public function visitField(Field $field, VisitorParameters $parameters): InvalidFieldCollector|WhereCollector|int;
 }

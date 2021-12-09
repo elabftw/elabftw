@@ -67,6 +67,12 @@ abstract class AbstractEntity implements CrudInterface
     public string $idFilter = '';
 
     // inserted in sql
+    public string $extendedFilter = '';
+
+    // inserted in sql
+    public array $extendedFilterBindValues = array();
+
+    // inserted in sql
     public string $titleFilter = '';
 
     // inserted in sql
@@ -232,6 +238,7 @@ abstract class AbstractEntity implements CrudInterface
         $sql .= ')';
 
         $sqlArr = array(
+            $this->extendedFilter,
             $this->titleFilter,
             $this->dateFilter,
             $this->bodyFilter,
@@ -259,6 +266,7 @@ abstract class AbstractEntity implements CrudInterface
             $req->bindParam(':metadata_value', $this->metadataValue);
         }
 
+        $this->bindFilterValues($this->extendedFilterBindValues, $req);
         $this->bindFilterValues($this->titleFilterBindValues, $req);
         $this->bindFilterValues($this->bodyFilterBindValues, $req);
 

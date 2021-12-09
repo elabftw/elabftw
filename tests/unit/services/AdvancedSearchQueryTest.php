@@ -12,6 +12,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users;
+use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 {
@@ -27,10 +28,9 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $query .= ' timestamped:true title:"very cool experiment" visibility:me';
         $query .= ' date:>2020.06,21 date:2020/06-21..20201231';
 
-        $advancedSearchQuery = new AdvancedSearchQuery($query, array(
-            'column' => 'body',
-            'visArr' => (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
-            'entityType' => 'experiments',
+        $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
+            'experiments',
+            (new TeamGroups(new Users(1, 1)))->getVisibilityList()
         ));
         $whereClause = $advancedSearchQuery->getWhereClause();
         $this->assertIsArray($whereClause);
@@ -42,10 +42,9 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
     {
         $query = 'AND AND AND';
 
-        $advancedSearchQuery = new AdvancedSearchQuery($query, array(
-            'column' => 'body',
-            'visArr' => (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
-            'entityType' => 'experiments',
+        $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
+            'experiments',
+            (new TeamGroups(new Users(1, 1)))->getVisibilityList()
         ));
         $advancedSearchQuery->getWhereClause();
         $this->assertStringStartsWith('Column ', $advancedSearchQuery->getException());
@@ -56,10 +55,9 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $query = 'TEST TEST1';
 
         // Depth of abstract syntax tree is set to 1 with the last parameter
-        $advancedSearchQuery = new AdvancedSearchQuery($query, array(
-            'column' => 'body',
-            'visArr' => (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
-            'entityType' => 'experiments',
+        $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
+            'experiments',
+            (new TeamGroups(new Users(1, 1)))->getVisibilityList()
         ), 1);
         $advancedSearchQuery->getWhereClause();
         $this->assertEquals('Query is too complex.', $advancedSearchQuery->getException());

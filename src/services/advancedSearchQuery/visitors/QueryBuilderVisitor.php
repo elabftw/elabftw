@@ -15,87 +15,84 @@ use function bin2hex;
 use Elabftw\Services\AdvancedSearchQuery\Collectors\WhereCollector;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\AndExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\AndOperand;
-use Elabftw\Services\AdvancedSearchQuery\Grammar\DateValueWrapper;
+use Elabftw\Services\AdvancedSearchQuery\Grammar\DateField;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\Field;
-use Elabftw\Services\AdvancedSearchQuery\Grammar\Metadata;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\NotExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\OrExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\OrOperand;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\SimpleValueWrapper;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
-use Exception;
 use PDO;
 use function random_bytes;
 
 class QueryBuilderVisitor implements Visitor
 {
-    public function buildWhere(Visitable $parsedQuery, array $parameters): WhereCollector
+    public function buildWhere(Visitable $parsedQuery, VisitorParameters $parameters): WhereCollector
     {
-        return $parsedQuery->accept($this, new VisitorParameters($parameters));
+        return $parsedQuery->accept($this, $parameters);
     }
 
     public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): WhereCollector
     {
-        $value = $simpleValueWrapper->getValue();
         $param = $this->getUniqueID();
-
-            
-
+        $query = '(entity.body' . ' LIKE ' . $param . ' OR ' . 'entity.title' . ' LIKE ' . $param . ')';
+        if ($parameters->getColumn() !== '') {
+            $query = 'entity.' . $parameters->getColumn() . ' LIKE ' . $param;
+        }
 
         return new WhereCollector(
-            '(entity.body' . ' LIKE ' . $param . ' OR ' . 'entity.title' . ' LIKE ' . $param . ')',
-            //'entity.' . $parameters->getColumn() . ' LIKE ' . $param,
-            array(array('param' => $param, 'value' => '%' . $value . '%', 'type' => PDO::PARAM_STR)),
+            $query,
+            array(array('param' => $param, 'value' => '%' . $simpleValueWrapper->getValue() . '%', 'type' => PDO::PARAM_STR)),
         );
     }
 
-    public function visitDateValueWrapper(DateValueWrapper $dateValueWrapper, VisitorParameters $parameters): WhereCollector
+    public function visitDateField(DateField $dateField, VisitorParameters $parameters): WhereCollector
     {
         $query = '';
         $bindValues = array();
 
         $column = 'entity.date';
-        $dateType = $dateValueWrapper->getDateType();
+        $dateType = $dateField->getDateType();
 
         if ($dateType === 'simple') {
             $param = $this->getUniqueID();
-            $query = $column . $dateValueWrapper->getOperator() . $param;
-            $bindValues[] = array('param' => $param, 'value' => $dateValueWrapper->getValue(), 'type' => PDO::PARAM_INT);
+            $query = $column . $dateField->getOperator() . $param;
+            $bindValues[] = array('param' => $param, 'value' => $dateField->getValue(), 'type' => PDO::PARAM_INT);
         } elseif ($dateType === 'range') {
             $paramMin = $this->getUniqueID();
             $paramMax = $this->getUniqueID();
             $query = $column . ' BETWEEN ' . $paramMin . ' AND ' . $paramMax;
-            $bindValues[] = array('param' => $paramMin, 'value' => $dateValueWrapper->getValue(), 'type' => PDO::PARAM_INT);
-            $bindValues[] = array('param' => $paramMax, 'value' => $dateValueWrapper->getDateTo(), 'type' => PDO::PARAM_INT);
+            $bindValues[] = array('param' => $paramMin, 'value' => $dateField->getValue(), 'type' => PDO::PARAM_INT);
+            $bindValues[] = array('param' => $paramMax, 'value' => $dateField->getDateTo(), 'type' => PDO::PARAM_INT);
         }
         return new WhereCollector($query, $bindValues);
     }
 
     public function visitField(Field $field, VisitorParameters $parameters): WhereCollector
     {
-        // SearchIn:     sets entity, not implemented!
-        // Category:     categoryt.id, if entity == items, should set entity!
-        // Status:       categoryt.id, if entity == experiment, should set entity!
-        // Title:        entity.title
-        // Body:         entity.body
+        // Attachment:   uploads.has_attachment
         // Author:       CONCAT(users.firstname, ' ', users.lastname)
-        // Visibility:   entity.canread
-        // Rating:       entity.rating
+        // Body:         entity.body
+        // Category:     categoryt.id, if entity == items, should set entity!
         // ELabID:       entity.elabid
         // Locked:       entity.locked
-        // Attachment:   uploads.has_attachment
+        // Rating:       entity.rating
+        // Status:       categoryt.id, if entity == experiment, should set entity!
         // Timestamped:  entity.timestamped, if entity == experiment
+        // Title:        entity.title
+        // Visibility:   entity.canread
 
-        //!Tag:          complicated
+        // SearchIn:     sets entity, not implemented!
+        // Tag and Metadata not implemented!
 
-        $fieldName = $field->getField();
         $value = '%' . $field->getValue() . '%';
         $operator = ' LIKE ';
         $param = $this->getUniqueID();
         $bindValuesType = PDO::PARAM_STR;
         $entityType = $parameters->getEntityType();
-        switch ($fieldName) {
+        $column = 'entity.body';
+        switch ($field->getField()) {
             case 'attachment':
                 $column = 'IFNULL(uploads.has_attachment, 0)';
                 $operator = ' = ';
@@ -106,14 +103,9 @@ class QueryBuilderVisitor implements Visitor
                 $column = "CONCAT(users.firstname, ' ', users.lastname)";
                 break;
             case 'body':
-                $column = 'entity.body';
+                // Nothing to do here
                 break;
             case 'category':
-                if ($entityType !== 'items') {
-                    // This should return a notice to the user
-                    // Need a validator visitor
-                    return new WhereCollector('1', array());
-                }
                 $column = 'categoryt.name';
                 break;
             case 'elabid':
@@ -132,19 +124,9 @@ class QueryBuilderVisitor implements Visitor
                 $bindValuesType = PDO::PARAM_INT;
                 break;
             case 'status':
-                if ($entityType !== 'experiments') {
-                    // This should return a notice to the user
-                    // Need a validator visitor
-                    return new WhereCollector('1', array());
-                }
                 $column = 'categoryt.name';
                 break;
             case 'timestamped':
-                if ($entityType !== 'experiments') {
-                    // This should return a notice to the user
-                    // Need a validator visitor
-                    return new WhereCollector('1', array());
-                }
                 $column = 'entity.timestamped';
                 $operator = ' = ';
                 $value = $field->getValue();
@@ -181,13 +163,8 @@ class QueryBuilderVisitor implements Visitor
                     }
                     return new WhereCollector(implode(' OR ', $queryParts), $bindValues);
                 }
-
                 $value = current($final);
-
                 break;
-            default:
-                // We can never get here because of the parser but to satisfy phpstan
-                throw new Exception('We will never get here.');
         }
 
         return new WhereCollector(
@@ -198,11 +175,6 @@ class QueryBuilderVisitor implements Visitor
                 'type' => $bindValuesType,
             )),
         );
-    }
-
-    public function visitMetadata(Metadata $metadata, VisitorParameters $parameters): WhereCollector
-    {
-        throw new Exception('Not implemented yet!');
     }
 
     public function visitNotExpression(NotExpression $notExpression, VisitorParameters $parameters): WhereCollector

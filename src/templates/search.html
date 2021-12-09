@@ -14,64 +14,65 @@
         <h3>Search terms</h3>
         <p>The search is performed against the title and the body.</p>
         <dl>
-          <dt>Simple term</dt>
-          <dd>A sequence of characters without {whitespace}.<br>
+          <dt>Term</dt>
+          <dd>A sequence of characters without space (&blank;).<br>
               <em>termA</em> or <em>termB</em> or <em>456</em>
           </dd>
           
           <dt>Quoted term</dt>
-          <dd>A sequence of characters including {whitespace} enclosed in single (') or double (") quotation marks.<br>
+          <dd>A sequence of characters including space (<code>&blank;</code>) enclosed in single (<code>'</code>) or double (<code>"</code>) quotation marks.<br>
               <em>'Hello world'</em> or <em>"I love eLabFTW!"</em>
           </dd>
         </dl>
+        <p>Two wildcards are available. The percent sign (<code>%</code>) matches zero or more characters while the underscore (<code>_</code>) matches exactly one character.</p>
         <h3>Term concatenation and grouping</h3>
         <p>Terms can be connected in different ways:</p>
         <ul>
-          <li>"OR" or "|", <em>termA OR termB</em> or <em>termA |termB</em></li>
-          <li>"AND", "&" or {whitespace}, <em>termA termB</em> or <em>termA AND termB</em> or <em>termA &termB</em></li>
-          <li>"NOT" or "!", <em>!termA</em> or <em>NOT termA</em></li>
-          <li>Parenthesis (), <em>(termA OR termB) AND !termC</em></li>
+          <li><code>OR</code> or <code>|</code>, <em>termA OR termB</em> or <em>termA | termB</em></li>
+          <li><code>AND</code>, <code>&amp;</code> or space (<code>&blank;</code>), <em>termA termB</em> or <em>termA AND termB</em> or <em>termA &termB</em></li>
+          <li><code>NOT</code> or <code>!</code>, <em>! termA</em> or <em>NOT termA</em></li>
+          <li>Parenthesis <code>()</code>, <em>(termA OR termB) AND ! termC</em></li>
         </ul>
-        <p>The operators are listed in increasing priority. <em>termA termB OR termC</em> is equivalent to <em>(termA AND termB) OR termC</em></p>
+        <p>The operators are listed in increasing priority. Note the space before and after the operators. <em>termA termB OR termC</em> is equivalent to <em>(termA AND termB) OR termC</em>. To give priority to <code>OR</code> use parenthesis: <em>termA AND (termB OR termC)</em>.</p>
         <h3>Field/value pair searches</h3>
-        <p>Base syntax <code>[field]:[value]</code></p>
+        <p>Basic syntax <code>[<strong>field</strong>]:[value]</code></p>
         <dl>
           <dt>attachment</dt>
           <dd>yes or no, true or false, 1 or 0, on or off</dd>
           <dt>author</dt>
-          <dd>Simple term or Quoted term</dd>
+          <dd>Term or Quoted term</dd>
           <dt>body</dt>
-          <dd>Simple term or Quoted term</dd>
+          <dd>Term or Quoted term</dd>
           <dt>category</dt>
-          <dd>Simple term or Quoted term; Only if Database is selected.</dd>
+          <dd>Term or Quoted term; Only if Database is selected.</dd>
           <dt>date</dt>
           <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
           <dt>elabid</dt>
-          <dd>Simple term or Quoted term</dd>
+          <dd>Term or Quoted term</dd>
           <dt>locked</dt>
           <dd>yes or no, true or false, 1 or 0, on or off</dd>
           <dt>rating</dt>
-          <dd>0, 1, 2, 3, 4, 5 or unrated</dd>
+          <dd>1, 2, 3, 4, 5, unrated or 0</dd>
           <dt>status</dt>
-          <dd>Simple term or Quoted term; Only if Experiment is selected.</dd>
+          <dd>Term or Quoted term; Only if Experiment is selected.</dd>
           <dt>timestamped</dt>
           <dd>yes or no, true or false, 1 or 0, on or off</dd>
           <dt>title</dt>
-          <dd>Simple term or Quoted term</dd>
+          <dd>Term or Quoted term</dd>
           <dt>visibility</dt>
-          <dd>Simple term or Quoted term<br>A group name (e.g. 'My Group'), public, organization, team, 'me and admins', or 'only me'.</dd>
+          <dd>Term or Quoted term<br>A group name (e.g., 'My Group'), public, organization, team, 'me and admins', or 'only me'.</dd>
         </dl>
         <h3 id='dateFormats'>Date formats</h3>
-        <p>A date has to be provided in the following format: YYYYMMDD i.e, four digit year, two digit month and two digit day. Year, month and day can, but don't have to, be separated by a hyphen (-), slash (/), period (.), or comma (,).<br>
+        <p>A date has to be provided in the following format: <code>YYYYMMDD</code> i.e., four digit year, two digit month, and two digit day. Year, month and day can&mdash;but don't have to&mdash;be separated by a hyphen (<code>-</code>), slash (<code>/</code>), period (<code>.</code>), or comma (<code>,</code>).<br>
           Either a single date or a date range can be used.</p>
         <p>Single date: {operator}date<br>
-          operators: &lt;, &lt;=, =, &gt;=, &gt;, !=<br>
-          An operator are optional. default is =<br>
-          e.g., date:20210504 or date:>2012-04-17 or date:>=2020.09.01
+          operator: <code>&lt;</code>, <code>&lt;=</code>, <code>=</code>, <code>&gt;=</code>, <code>&gt;</code>, or <code>!=</code><br>
+          An operator is optional. default is =<br>
+          e.g., <em>date:17890714</em> or <em>date:>1909-12-12</em> or <em>date:>=1867.11.07</em>
         </p>
         <p>Date range: date..date<br>
-          Two dates separated by two periods (..)<br>
-          e.g., date:20200101..20201231
+          Two dates separated by two periods (<code>..</code>)<br>
+          e.g., <em>date:20200101..20201231</em>
         </p>
       </div>
       <div class='modal-footer'>
@@ -83,11 +84,11 @@
 
 
 <!-- SEARCH PAGE BEGIN -->
-<form name="search" method="get" action="search.php">
+<form name='search' method='get' action='search.php'>
   <section class='searchform box'>
-    <div class='row'>
+    <div class='row' style="align-items:flex-end;">
       <!-- SEARCH IN-->
-      <div class='col-md-3'>
+      <div class='col-md-3 mb-2'>
         <label for='searchin'>{{ 'Search in'|trans }}</label>
         <select name='type' id='searchin' class='form-control'>
           <option value='experiments'>{% trans %}Experiment {% plural 2 %}Experiments{% endtrans %}</option>
@@ -103,7 +104,7 @@
       <!-- END SEARCH IN -->
 
       <!-- SEARCH WITH TAG -->
-      <div class='col-md-6'>
+      <div class='col-md-6 mb-2'>
         <label for='tags-select'>{{ 'With the tag'|trans }}</label>
         <select multiple name='tags[]' id='tags-select' class='form-control selectpicker' data-show-subtext='true' data-live-search='true' data-showtick='true' data-actions-box='true'>
           {% for tag in tagsArr %}
@@ -113,19 +114,49 @@
       </div>
       <!-- END SEARCH WITH TAG -->
 
-      <!-- VISIBILITY SEARCH -->
-      <div class='col-md-3'>
-        <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
-        <select id='visibility' name='vis' class='form-control'>
-          <option value=''>{{ 'Select visibility'|trans }}</option>
-          {% for key, value in visibilityArr %}
-            <option value='{{ key }}' {{ Request.query.get('vis') == key ? " selected='selected'" }}>{{ value|trans }}</option>
-          {% endfor %}
-        </select>
+      <!-- EXTENDED BUTTON -->
+      <div class='col-md-3 text-center mb-2'>
+        <button type='button' class='button btn btn-primary' data-toggle='collapse' data-target='.collapseExtendedSearch'>Switch to Extended Search</button>
       </div>
-      <br>
-      <!-- END VISIBILITY SEARCH -->
-
+      <!-- END EXTENDED BUTTON -->
+    </div>
+    <!-- NEW ROW -->
+    <div class='row collapse collapseExtendedSearch {{- extended ? ' show' : '' -}}'>
+      <div class='col-md-8'>
+        <label for='extended'><i class='fas fa-search'></i></label>
+        <textarea
+          id='extended'
+          name='extended'
+          rows='10'
+          class='form-control {{- extendedError ? ' is-invalid' }}'
+          style='font-family:monospace;'
+          placeholder='author:"Sheldon Cooper" status:fail'
+          {{- extendedError ? " aria-describedby='extendedFeedback'" }}
+        >{{ extended }}</textarea>
+        {% if extendedError %}
+          <div id='extendedFeedback' class='invalid-feedback'>{{ extendedError|raw }}</div>
+        {% endif %}
+      </div>
+      <div class='col-md-4'>
+      <p>Allowed Fields (<code>field:value</code>):</p>
+      <ul>
+        <li><strong>attachment</strong>: yes or no</li>
+        <li><strong>author</strong>: Simple or Quoted term</li>
+        <li><strong>body</strong>: Simple or Quoted term</li>
+        <li><strong>category</strong>: Simple or Quoted term</li>
+        <li><strong>date</strong>: see date format</li>
+        <li><strong>elabid</strong>: Simple or Quoted term</li>
+        <li><strong>locked</strong>: yes or no</li>
+        <li><strong>rating</strong>: 1, 2, 3, 4, 5, or unrated or 0</li>
+        <li><strong>status</strong>: Simple or Quoted term</li>
+        <li><strong>timestamped</strong>: yes or no</li>
+        <li><strong>title</strong>: Simple or Quoted term</li>
+        <li><strong>visibility</strong>: Simple or Quoted term</li>
+      </ul>
+      <a class='' style='cursor:pointer;' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Full syntax'|trans }}</a>
+      </div>
+    </div>
+    <div class='row collapse collapseExtendedSearch {{- extended ? '' : ' show' -}}''>
       <!-- SEARCH ONLY -->
       <div class='col-md-6'>
         <label for='searchonly'>{{ 'Search only in experiments owned by:'|trans }} </label><br>
@@ -141,13 +172,22 @@
           {% endfor %}
         </select>
       </div>
-      <br>
       <!-- END SEARCH ONLY -->
 
+      <!-- VISIBILITY SEARCH -->
+      <div class='col-md-4'>
+        <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
+        <select id='visibility' name='vis' class='form-control'>
+          <option value=''>{{ 'Select visibility'|trans }}</option>
+          {% for key, value in visibilityArr %}
+            <option value='{{ key }}' {{ Request.query.get('vis') == key ? " selected='selected'" }}>{{ value|trans }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <!-- END VISIBILITY SEARCH -->
     </div>
     <!-- NEW ROW -->
-    <div class='row'>
-
+    <div class='row collapse collapseExtendedSearch {{- extended ? '' : ' show' -}}'>
       <!-- SEARCH DATE -->
       <div class='col-md-8'>
         <label for='from'>{{ 'Where date is between'|trans }}</label>
@@ -159,7 +199,7 @@
 
     </div>
     <!-- NEW ROW -->
-    <div class='row'>
+    <div class='row collapse collapseExtendedSearch {{- extended ? '' : ' show' -}}'>
 
       <div class='col-md-6'>
         <!-- TITLE -->
@@ -179,7 +219,7 @@
             <div id='bodyFeedback' class='invalid-feedback'>{{ bodyError|raw }}</div>
           {% endif %}
           <small class='form-text text-muted'>
-            <a class='' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Advanced search is supported'|trans }}</a>
+            <a class='' style='cursor:pointer;' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Extended search without fields is supported'|trans }}</a>
           </small>
         </div>
         <!-- END BODY -->
@@ -220,11 +260,11 @@
       </div>
     </div>
     <!-- NEW ROW -->
-    <div class='row'>
+    <div class='row collapse collapseExtendedSearch {{- extended ? '' : ' show' -}}'>
       <h4 class='ml-3'>{{ 'Extra fields search'|trans }}</h4>
     </div>
 
-    <div class='row'>
+    <div class='row collapse collapseExtendedSearch {{- extended ? '' : ' show' -}}'>
       <div class='col-md-4'>
         <label for='metakey'>{{ 'Name of field'|trans }}</label>
         <input type='text' class='form-control' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' />

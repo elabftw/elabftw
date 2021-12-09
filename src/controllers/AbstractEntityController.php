@@ -24,8 +24,11 @@ use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
+use Elabftw\Services\AdvancedSearchQuery;
+use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\Response;
+use function trim;
 
 /**
  * For experiments.php
@@ -71,6 +74,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // VISIBILITY LIST
         $TeamGroups = new TeamGroups($this->Entity->Users);
+        $visibilityArr = $TeamGroups->getVisibilityList();
 
         // CATEGORY FILTER
         if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {
@@ -107,6 +111,21 @@ abstract class AbstractEntityController implements ControllerInterface
             $this->Entity->addFilter('entity.canread', 'public');
         }
 
+        $extendedError = false;
+        if ($this->App->Request->query->has('q') && !empty($this->App->Request->query->get('q'))) {
+            $query = trim((string) $this->App->Request->query->get('q'));
+
+            $advancedQuery = new AdvancedSearchQuery($query, new VisitorParameters($this->Entity->type, $visibilityArr));
+            $whereClause = $advancedQuery->getWhereClause();
+            if ($whereClause) {
+                $this->Entity->extendedFilter = $whereClause['where'];
+                $this->Entity->extendedFilterBindValues = $whereClause['bindValues'];
+            }
+
+            $searchException = $advancedQuery->getException();
+            $extendedError = $searchException ? 'Search error at ' . $searchException : false;
+        }
+
         $itemsArr = $this->getItemsArr();
         // get tags separately
         $tagsArr = array();
@@ -138,7 +157,8 @@ abstract class AbstractEntityController implements ControllerInterface
             'tagsArr' => $tagsArr,
             'tagsArrForSelect' => $tagsArrForSelect,
             'templatesArr' => $this->Templates->readForUser(),
-            'visibilityArr' => $TeamGroups->getVisibilityList(),
+            'visibilityArr' => $visibilityArr,
+            'extendedError' => $extendedError,
         );
         $Response = new Response();
         $Response->prepare($this->App->Request);

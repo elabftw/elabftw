@@ -242,7 +242,6 @@ abstract class AbstractEntity implements CrudInterface
             $this->titleFilter,
             $this->dateFilter,
             $this->bodyFilter,
-            Tools::getSearchSql($displayParams->query),
             $this->idFilter,
             'GROUP BY id',
             $this->metadataHaving,

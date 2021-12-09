@@ -297,22 +297,6 @@ class Tools
         return rtrim($url, '/');
     }
 
-    /**
-     * Build an SQL string for quicksearching something
-     *
-     * @param string $query the searched string
-     */
-    public static function getSearchSql(string $query): string
-    {
-        $sql = array_map(
-            function (string $value): string {
-                return "(entity.title LIKE '%$value%' OR entity.date LIKE '%$value%' OR entity.body LIKE '%$value%' OR entity.elabid LIKE '%$value%')";
-            },
-            explode(' ', $query)
-        );
-        return ' AND (' . implode(' AND ', $sql) . ')';
-    }
-
     public static function getIdFilterSql(array $idArr): string
     {
         $sql = array_map(

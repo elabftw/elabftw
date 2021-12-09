@@ -82,7 +82,7 @@
         <!-- SEARCH BAR -->
         <form class='nav-item form-inline ml-auto' id='big_search' method='get' action='{{ App.Request.getScriptName }}'>
             {% if App.Request.getScriptName|split('/')|last == 'experiments.php' or App.Request.getScriptName|split('/')|last == 'database.php' %}
-            <input class='form-control' type='search' name='q' aria-label='Search' size='20' value='{{ App.Request.query.get('q') }}' />
+            <input class='form-control big-search {{- extendedError ? ' is-invalid' }}' type='search' name='q' aria-label='Search' size='20' value='{{ App.Request.query.get('q') }}' />
             {% endif %}
         </form>
 
@@ -192,6 +192,12 @@
     </div>
   </div>
 </div>
+<!-- Search error feedback -->
+{% if (App.Request.getScriptName|split('/')|last == 'experiments.php'
+       or App.Request.getScriptName|split('/')|last == 'database.php'
+      ) and extendedError %}
+  {{ extendedError|msg('ko') }}
+{% endif %}
 <!-- TITLE -->
 <!-- login and register pages will have this title hidden -->
 <h1 {% if hideTitle %}hidden{%endif%}>{% block title %}{{ App.pageTitle }}{% endblock %}</h1>

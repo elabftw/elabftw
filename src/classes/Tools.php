@@ -12,7 +12,6 @@ namespace Elabftw\Elabftw;
 
 use function array_map;
 use Elabftw\Models\Config;
-use function explode;
 use function filter_var;
 use function implode;
 use function json_decode;

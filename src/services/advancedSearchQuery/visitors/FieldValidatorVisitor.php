@@ -1,7 +1,5 @@
 <?php declare(strict_types=1);
-                  
 /**
-                    throw new FieldNotAllowedException('');
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Marcel Bolten <github@marcelbolten.de>
  * @copyright 2021 Nicolas CARPi

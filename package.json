@@ -35,7 +35,6 @@
     "file-saver": "2.0.*",
     "i18next": "^21.0.2",
     "jquery": "^3.5.1",
-    "jquery-jeditable": "2.0.*",
     "jquery-ui": "^1.13.0",
     "jsoneditor": "^9.0.3",
     "luxon": "^2.0.1",

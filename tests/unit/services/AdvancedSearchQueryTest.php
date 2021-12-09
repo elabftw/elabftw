@@ -30,7 +30,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
-            (new TeamGroups(new Users(1, 1)))->getVisibilityList()
+            (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
         ));
         $whereClause = $advancedSearchQuery->getWhereClause();
         $this->assertIsArray($whereClause);
@@ -44,7 +44,8 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
-            (new TeamGroups(new Users(1, 1)))->getVisibilityList()
+            (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
+            'body',
         ));
         $advancedSearchQuery->getWhereClause();
         $this->assertStringStartsWith('Column ', $advancedSearchQuery->getException());
@@ -57,7 +58,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         // Depth of abstract syntax tree is set to 1 with the last parameter
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
-            (new TeamGroups(new Users(1, 1)))->getVisibilityList()
+            (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
         ), 1);
         $advancedSearchQuery->getWhereClause();
         $this->assertEquals('Query is too complex.', $advancedSearchQuery->getException());

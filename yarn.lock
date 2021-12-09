@@ -924,10 +924,10 @@
   resolved "https://registry.yarnpkg.com/@deltablot/chemdoodle-web-mini/-/chemdoodle-web-mini-9.2.4.tgz#95550ff0608b6bac8cea402b12fe9b7ed0460b63"
   integrity sha512-D/eXMLxztb0dxtKMoyeNxIz/xn1weZYSCkKNO6iPGN9GSWWJCspUrBEakKZtk0bRGk4cBDjLLZeAwJ5+MLEczA==
 
-"@deltablot/malle@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@deltablot/malle/-/malle-0.1.1.tgz#e4291d2892c0b86f5b8cf67e75120d1a676bc230"
-  integrity sha512-RyAPQPGLEogCUodMMcibu85VOp9A4DrsePMLG3s7HkXy/ZFR6RH+OiCSO7KHbdFW417p9cAgM5wCotK9OLqjuQ==
+"@deltablot/malle@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@deltablot/malle/-/malle-0.2.0.tgz#4bd90efd1890db018548d84c91ee8792cdc79fb5"
+  integrity sha512-olwtPvxK8sWlZ+XDMbqQzOI43a/FKRNPAjLO8ghGRPRYMG/P2IMEi2d12u9JVvX9slLrzK/D4FMFn1zxyat6IQ==
 
 "@deltablot/open-vector-editor-umd@^16.0.1":
   version "16.3.5"

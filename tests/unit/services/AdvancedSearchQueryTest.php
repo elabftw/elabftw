@@ -22,7 +22,8 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $query .= ' | TEST6 AND ! TEST7 (TEST8 or TEST9) "T E S T 1 0"';
         $query .= ' \'T E S T 1 1\' "chinese 汉语 漢語 中文" "japanese 日本語 ひらがな 平仮名 カタカナ 片仮名"';
         $query .= ' attachment:0 author:"Phpunit TestUser" body:"some text goes here"';
-        $query .= ' category:"only meaningful with items but no error"';
+        // works only if type is database
+        // $query .= ' category:"only meaningful with items but no error"';
         $query .= ' elabid:7bebdd3512dc6cbee0b1 locked:yes rating:0 rating:5 rating:unrated';
         $query .= ' status:"only meaningful with experiments but no error"';
         $query .= ' timestamped:true title:"very cool experiment" visibility:me';

@@ -50,17 +50,17 @@ class FieldValidatorVisitor implements Visitor
             return new InvalidFieldCollector(array('Field/value pairs are only allowed in advanced tab.'));
         }
 
-        if ($field->getField() === 'category'
+        if ($field->getFieldType() === 'category'
             && $parameters->getEntityType() !== 'items'
         ) {
             $message[] = 'category: is only allowed when searching in database.';
         } elseif (
-            $field->getField() === 'status'
+            $field->getFieldType() === 'status'
             && $parameters->getEntityType() !== 'experiments'
         ) {
             $message[] = 'status: is only allowed when searching in experiments.';
         } elseif (
-            $field->getField() === 'timestamped'
+            $field->getFieldType() === 'timestamped'
             && $parameters->getEntityType() !== 'experiments'
         ) {
             $message[] = 'timestamped: is only allowed when searching in experiments.';

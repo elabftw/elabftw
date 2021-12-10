@@ -269,6 +269,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
     private function prepareAdvancedSearchQuery(array $visibilityArr): string
     {
+        $searchException = '';
         if ($this->App->Request->query->has('q') && !empty($this->App->Request->query->get('q'))) {
             $query = trim((string) $this->App->Request->query->get('q'));
 
@@ -282,6 +283,6 @@ abstract class AbstractEntityController implements ControllerInterface
             $searchException = $advancedQuery->getException();
         }
 
-        return isset($searchException) ? 'Search error at ' . $searchException : '';
+        return $searchException === '' ? '' : 'Search error at ' . $searchException;
     }
 }

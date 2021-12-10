@@ -10,7 +10,7 @@
 
 namespace Elabftw\Services\AdvancedSearchQuery\Grammar;
 
-use Elabftw\Services\AdvancedSearchQuery\Interfaces\Field as IField;
+use Elabftw\Services\AdvancedSearchQuery\Interfaces\FieldType;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Term;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
@@ -18,7 +18,7 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use function filter_var;
 use function strtolower;
 
-class Field implements Term, Visitable, IField
+class Field implements Term, Visitable, FieldType
 {
     public function __construct(private string $field, private SimpleValueWrapper $valueWrapper)
     {
@@ -34,7 +34,7 @@ class Field implements Term, Visitable, IField
         return $this->valueWrapper->getValue();
     }
 
-    public function getField(): string
+    public function getFieldType(): string
     {
         return filter_var(strtolower($this->field), FILTER_SANITIZE_STRING) ?: '';
     }

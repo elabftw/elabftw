@@ -10,13 +10,13 @@
 
 namespace Elabftw\Services\AdvancedSearchQuery\Grammar;
 
-use Elabftw\Services\AdvancedSearchQuery\Interfaces\DateField as IDateField;
+use Elabftw\Services\AdvancedSearchQuery\Interfaces\Term;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use function filter_var;
 
-class DateField implements IDateField, Visitable
+class DateField implements Term, Visitable
 {
     public function __construct(private array $dateArr)
     {

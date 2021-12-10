@@ -10,7 +10,7 @@
 
 namespace Elabftw\Services\AdvancedSearchQuery\Interfaces;
 
-interface Field
+interface FieldType
 {
-    public function getField(): string;
+    public function getFieldType(): string;
 }

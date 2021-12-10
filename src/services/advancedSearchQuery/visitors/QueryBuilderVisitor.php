@@ -91,7 +91,7 @@ class QueryBuilderVisitor implements Visitor
         $param = $this->getUniqueID();
         $bindValuesType = PDO::PARAM_STR;
         $column = 'entity.body';
-        switch ($field->getField()) {
+        switch ($field->getFieldType()) {
             case 'attachment':
                 $column = 'IFNULL(uploads.has_attachment, 0)';
                 $operator = ' = ';

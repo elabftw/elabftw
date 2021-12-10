@@ -135,19 +135,7 @@ class QueryBuilderVisitor implements Visitor
                 $column = 'entity.title';
                 break;
             case 'visibility':
-                // Need to convert team groups names to the corresponding ID's.
-                // TeamGroups::getVisibilityList() result gets injected; available via getVisArr()
-                $visArr = array_flip(array_map('strtolower', $parameters->getVisArr()));
-                $onlyStringsArr = array_filter($visArr, 'is_string');
-                $searchArr = $visArr + array_combine($onlyStringsArr, $onlyStringsArr);
-                // Emulate SQL LIKE search functionality so the user can use the same placeholders
-                $pattern = '/' . str_replace(array('%', '_'), array('.*', '.'), $field->getValue()) . '/i';
-                // Filter visibility entries based on user input
-                $filteredArr = preg_grep($pattern, array_keys($searchArr)) ?: array();
-                // Get a unique list of visibility entries that can be used in the SQL where clause
-                $filteredSearchArr = array_unique(array_intersect_key(array_values($searchArr), $filteredArr));
-
-                return $this->getVisibilityWhereCollector($filteredSearchArr);
+                return $this->getVisibilityWhereCollector($field->getValue(), $parameters->getVisArr());
         }
 
         return new WhereCollector(
@@ -243,13 +231,13 @@ class QueryBuilderVisitor implements Visitor
         return ':' . bin2hex(random_bytes(5));
     }
 
-    private function getVisibilityWhereCollector(array $final): WhereCollector
+    private function getVisibilityWhereCollector(string $userInput, array $visArr): WhereCollector
     {
-        // Todo: what to return if final is empty
-        // => need Field Validator to catch this case!
-        $bindValues = array();
+        $filteredSearchArr = (new VisibilityFieldHelper($userInput, $visArr))->getArr();
+
         $queryParts = array();
-        foreach ($final as $value) {
+        $bindValues = array();
+        foreach ($filteredSearchArr as $value) {
             $param = $this->getUniqueID();
             $queryParts[] = 'entity.canread LIKE ' . $param;
             $bindValues[] = array(

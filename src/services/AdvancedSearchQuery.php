@@ -11,6 +11,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Services\AdvancedSearchQuery\Exceptions\LimitDepthIsExceededException;
+use Elabftw\Services\AdvancedSearchQuery\Grammar\OrExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\Parser;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\ParserWithoutFields;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\SyntaxError;
@@ -23,6 +24,8 @@ class AdvancedSearchQuery
 {
     protected string $exception = '';
 
+    protected OrExpression $parsedQuery;
+
     // $depthLimit can be used to limit the depth of the abstract syntax tree. In other words the complexity of the query.
     public function __construct(private string $expertQuery, private VisitorParameters $parameters, private ?int $depthLimit = null)
     {
@@ -30,31 +33,19 @@ class AdvancedSearchQuery
 
     public function getWhereClause(): array
     {
-        $whereClause = array();
-        try {
-            $parser = $this->parameters->getColumn() ? new ParserWithoutFields() : new Parser();
-            $parsedQuery = $parser->parse($this->expertQuery);
-        } catch (SyntaxError $e) {
-            $line = $this->parameters->getColumn() ? '' : 'Line ' . $e->grammarLine . ', ';
-            $this->exception = $line . 'Column ' . $e->grammarColumn . ': ' . $e->getMessage();
-            return $whereClause;
+        if (!$this->parse()) {
+            return array();
         }
 
-        try {
-            (new DepthValidatorVisitor($this->depthLimit))->checkDepthOfTree($parsedQuery, $this->parameters);
-        } catch (LimitDepthIsExceededException $e) {
-            $this->exception = 'Query is too complex.';
-            return $whereClause;
+        if (!$this->validateDepth()) {
+            return array();
         }
 
-        $errorArr = (new FieldValidatorVisitor())->check($parsedQuery, $this->parameters);
-        
-        if (!empty($errorArr)) {
-            $this->exception = implode('<br>', $errorArr);
-            return $whereClause;
+        if (!$this->validateFields()) {
+            return array();
         }
 
-        $whereClause = (new QueryBuilderVisitor())->buildWhere($parsedQuery, $this->parameters);
+        $whereClause = (new QueryBuilderVisitor())->buildWhere($this->parsedQuery, $this->parameters);
         return array(
             'where' => ' AND (' . $whereClause->getWhere() . ')',
             'bindValues' => $whereClause->getBindValues(),
@@ -64,5 +55,42 @@ class AdvancedSearchQuery
     public function getException(): string
     {
         return $this->exception;
+    }
+
+    private function parse(): bool
+    {
+        try {
+            $parser = $this->parameters->getColumn() ? new ParserWithoutFields() : new Parser();
+            $this->parsedQuery = $parser->parse($this->expertQuery);
+        } catch (SyntaxError $e) {
+            $line = $this->parameters->getColumn() ? '' : 'Line ' . $e->grammarLine . ', ';
+            $this->exception = $line . 'Column ' . $e->grammarColumn . ': ' . $e->getMessage();
+            return false;
+        }
+        return true;
+    }
+
+    private function validateDepth(): bool
+    {
+        try {
+            (new DepthValidatorVisitor($this->depthLimit))->checkDepthOfTree($this->parsedQuery, $this->parameters);
+        } catch (LimitDepthIsExceededException $e) {
+            $this->exception = 'Query is too complex.';
+            return false;
+        }
+
+        return true;
+    }
+
+    private function validateFields(): bool
+    {
+        $errorArr = (new FieldValidatorVisitor())->check($this->parsedQuery, $this->parameters);
+
+        if (!empty($errorArr)) {
+            $this->exception = implode('<br>', $errorArr);
+            return false;
+        }
+
+        return true;
     }
 }

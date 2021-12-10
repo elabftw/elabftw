@@ -283,6 +283,6 @@ abstract class AbstractEntityController implements ControllerInterface
             $searchException = $advancedQuery->getException();
         }
 
-        return $searchException === '' ? '' : 'Search error at ' . $searchException;
+        return $searchException === '' ? '' : 'Search error: ' . $searchException;
     }
 }

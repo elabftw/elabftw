@@ -64,6 +64,11 @@ class FieldValidatorVisitor implements Visitor
             && $parameters->getEntityType() !== 'experiments'
         ) {
             $message[] = 'timestamped: is only allowed when searching in experiments.';
+        } elseif ($field->getFieldType() === 'visibility') {
+            $visibilityFieldHelper = new VisibilityFieldHelper($field->getValue(), $parameters->getVisArr());
+            if (!$visibilityFieldHelper->getArr()) {
+                $message[] = 'visibility:<em>' . $field->getValue() . '</em>. Expected values are ' . $visibilityFieldHelper->possibleInput . '.';
+            }
         }
 
         return new InvalidFieldCollector($message);

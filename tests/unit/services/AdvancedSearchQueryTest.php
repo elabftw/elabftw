@@ -64,4 +64,17 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $advancedSearchQuery->getWhereClause();
         $this->assertEquals('Query is too complex.', $advancedSearchQuery->getException());
     }
+
+    public function testVisibilityError(): void
+    {
+        $input = 'no-valid-input';
+        $query = 'visibility:' . $input;
+
+        $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
+            'experiments',
+            (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
+        ));
+        $advancedSearchQuery->getWhereClause();
+        $this->assertStringStartsWith('visibility:<em>' . $input . '</em>. Valid values are ', $advancedSearchQuery->getException());
+    }
 }

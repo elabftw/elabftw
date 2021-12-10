@@ -67,7 +67,7 @@ class FieldValidatorVisitor implements Visitor
         } elseif ($field->getFieldType() === 'visibility') {
             $visibilityFieldHelper = new VisibilityFieldHelper($field->getValue(), $parameters->getVisArr());
             if (!$visibilityFieldHelper->getArr()) {
-                $message[] = 'visibility:<em>' . $field->getValue() . '</em>. Expected values are ' . $visibilityFieldHelper->possibleInput . '.';
+                $message[] = 'visibility:<em>' . $field->getValue() . '</em>. Valid values are ' . $visibilityFieldHelper->possibleInput . '.';
             }
         }
 

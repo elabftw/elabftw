@@ -111,20 +111,8 @@ abstract class AbstractEntityController implements ControllerInterface
             $this->Entity->addFilter('entity.canread', 'public');
         }
 
-        $extendedError = false;
-        if ($this->App->Request->query->has('q') && !empty($this->App->Request->query->get('q'))) {
-            $query = trim((string) $this->App->Request->query->get('q'));
-
-            $advancedQuery = new AdvancedSearchQuery($query, new VisitorParameters($this->Entity->type, $visibilityArr));
-            $whereClause = $advancedQuery->getWhereClause();
-            if ($whereClause) {
-                $this->Entity->extendedFilter = $whereClause['where'];
-                $this->Entity->extendedFilterBindValues = $whereClause['bindValues'];
-            }
-
-            $searchException = $advancedQuery->getException();
-            $extendedError = $searchException ? 'Search error at ' . $searchException : false;
-        }
+        // Quicksearch
+        $extendedError = $this->prepareAdvancedSearchQuery($visibilityArr);
 
         $itemsArr = $this->getItemsArr();
         // get tags separately
@@ -277,5 +265,23 @@ abstract class AbstractEntityController implements ControllerInterface
         $Response->prepare($this->App->Request);
         $Response->setContent($this->App->render($template, $renderArr));
         return $Response;
+    }
+
+    private function prepareAdvancedSearchQuery(array $visibilityArr): string
+    {
+        if ($this->App->Request->query->has('q') && !empty($this->App->Request->query->get('q'))) {
+            $query = trim((string) $this->App->Request->query->get('q'));
+
+            $advancedQuery = new AdvancedSearchQuery($query, new VisitorParameters($this->Entity->type, $visibilityArr));
+            $whereClause = $advancedQuery->getWhereClause();
+            if ($whereClause) {
+                $this->Entity->extendedFilter = $whereClause['where'];
+                $this->Entity->extendedFilterBindValues = $whereClause['bindValues'];
+            }
+
+            $searchException = $advancedQuery->getException();
+        }
+
+        return isset($searchException) ? 'Search error at ' . $searchException : '';
     }
 }

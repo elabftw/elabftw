@@ -17,5 +17,5 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 interface VisitSimpleValueWrapper
 {
-    public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): InvalidFieldCollector|WhereCollector|int;
+    public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): InvalidFieldCollector | WhereCollector | int;
 }

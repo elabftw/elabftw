@@ -49,23 +49,21 @@ class FieldValidatorVisitor implements Visitor
         if ($parameters->getColumn() !== '') {
             return new InvalidFieldCollector(array('Field/value pairs are only allowed in advanced tab.'));
         }
-        $entityType = $parameters->getEntityType();
-        switch ($field->getField()) {
-            case 'category':
-                if ($entityType !== 'items') {
-                    $message[] = 'category: is only allowed when searching in database.';
-                }
-                break;
-            case 'status':
-                if ($entityType !== 'experiments') {
-                    $message[] = 'status: is only allowed when searching in experiments.';
-                }
-                break;
-            case 'timestamped':
-                if ($entityType !== 'experiments') {
-                    $message[] = 'timestamped: is only allowed when searching in experiments.';
-                }
-                break;
+
+        if ($field->getField() === 'category'
+            && $parameters->getEntityType() !== 'items'
+        ) {
+            $message[] = 'category: is only allowed when searching in database.';
+        } elseif (
+            $field->getField() === 'status'
+            && $parameters->getEntityType() !== 'experiments'
+        ) {
+            $message[] = 'status: is only allowed when searching in experiments.';
+        } elseif (
+            $field->getField() === 'timestamped'
+            && $parameters->getEntityType() !== 'experiments'
+        ) {
+            $message[] = 'timestamped: is only allowed when searching in experiments.';
         }
 
         return new InvalidFieldCollector($message);
@@ -98,7 +96,7 @@ class FieldValidatorVisitor implements Visitor
         return $this->visitOperand($andOperand, $parameters);
     }
 
-    private function visitTail(null|OrExpression|AndExpression|OrOperand|AndOperand $tail, VisitorParameters $parameters): InvalidFieldCollector
+    private function visitTail(null | OrExpression | AndExpression | OrOperand | AndOperand $tail, VisitorParameters $parameters): InvalidFieldCollector
     {
         if ($tail) {
             return $tail->accept($this, $parameters);
@@ -106,7 +104,7 @@ class FieldValidatorVisitor implements Visitor
         return new InvalidFieldCollector();
     }
 
-    private function visitOperand(OrOperand|AndOperand $operand, VisitorParameters $parameters): InvalidFieldCollector
+    private function visitOperand(OrOperand | AndOperand $operand, VisitorParameters $parameters): InvalidFieldCollector
     {
         $head = $operand->getOperand()->accept($this, $parameters);
         $tail = $this->visitTail($operand->getTail(), $parameters);
@@ -114,7 +112,7 @@ class FieldValidatorVisitor implements Visitor
         return $this->mergeHeadTail($head, $tail);
     }
 
-    private function visitExpression(OrExpression|AndExpression $expression, VisitorParameters $parameters): InvalidFieldCollector
+    private function visitExpression(OrExpression | AndExpression $expression, VisitorParameters $parameters): InvalidFieldCollector
     {
         $head = $expression->getExpression()->accept($this, $parameters);
         $tail = $this->visitTail($expression->getTail(), $parameters);

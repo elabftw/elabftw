@@ -17,5 +17,5 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 interface VisitAndExpression
 {
-    public function visitAndExpression(AndExpression $andExpression, VisitorParameters $parameters): InvalidFieldCollector|WhereCollector|int;
+    public function visitAndExpression(AndExpression $andExpression, VisitorParameters $parameters): InvalidFieldCollector | WhereCollector | int;
 }

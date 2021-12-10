@@ -49,7 +49,7 @@ class AdvancedSearchQuery
 
         $errorArr = (new FieldValidatorVisitor())->check($parsedQuery, $this->parameters);
         
-        if ($errorArr) {
+        if (!empty($errorArr)) {
             $this->exception = implode('<br>', $errorArr);
             return $whereClause;
         }

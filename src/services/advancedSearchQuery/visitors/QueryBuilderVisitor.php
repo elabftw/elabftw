@@ -90,7 +90,6 @@ class QueryBuilderVisitor implements Visitor
         $operator = ' LIKE ';
         $param = $this->getUniqueID();
         $bindValuesType = PDO::PARAM_STR;
-        $entityType = $parameters->getEntityType();
         $column = 'entity.body';
         switch ($field->getField()) {
             case 'attachment':
@@ -136,7 +135,6 @@ class QueryBuilderVisitor implements Visitor
                 $column = 'entity.title';
                 break;
             case 'visibility':
-                $column = 'entity.canread';
                 // Need to convert team groups names to the corresponding ID's.
                 // TeamGroups::getVisibilityList() result gets injected; available via getVisArr()
                 $visArr = array_flip(array_map('strtolower', $parameters->getVisArr()));
@@ -147,24 +145,9 @@ class QueryBuilderVisitor implements Visitor
                 // Filter visibility entries based on user input
                 $filteredArr = preg_grep($pattern, array_keys($searchArr)) ?: array();
                 // Get a unique list of visibility entries that can be used in the SQL where clause
-                $final = array_unique(array_intersect_key(array_values($searchArr), $filteredArr));
+                $filteredSearchArr = array_unique(array_intersect_key(array_values($searchArr), $filteredArr));
 
-                if (count($final) > 1) {
-                    $queryParts = array();
-                    $bindValues = array();
-                    foreach ($final as $value) {
-                        $param = $this->getUniqueID();
-                        $queryParts[] = $column . $operator . $param;
-                        $bindValues[] = array(
-                            'param' => $param,
-                            'value' => $value,
-                            'type' => PDO::PARAM_STR,
-                        );
-                    }
-                    return new WhereCollector(implode(' OR ', $queryParts), $bindValues);
-                }
-                $value = current($final);
-                break;
+                return $this->getVisibilityWhereCollector($filteredSearchArr);
         }
 
         return new WhereCollector(
@@ -258,5 +241,24 @@ class QueryBuilderVisitor implements Visitor
     private function getUniqueID(): string
     {
         return ':' . bin2hex(random_bytes(5));
+    }
+
+    private function getVisibilityWhereCollector(array $final): WhereCollector
+    {
+        // Todo: what to return if final is empty
+        // => need Field Validator to catch this case!
+        $bindValues = array();
+        $queryParts = array();
+        foreach ($final as $value) {
+            $param = $this->getUniqueID();
+            $queryParts[] = 'entity.canread LIKE ' . $param;
+            $bindValues[] = array(
+                'param' => $param,
+                'value' => $value,
+                'type' => PDO::PARAM_STR,
+            );
+        }
+
+        return new WhereCollector(implode(' OR ', $queryParts), $bindValues);
     }
 }

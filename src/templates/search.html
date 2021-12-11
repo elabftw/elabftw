@@ -18,7 +18,6 @@
           <dd>A sequence of characters without space (&blank;).<br>
               <em>termA</em> or <em>termB</em> or <em>456</em>
           </dd>
-          
           <dt>Quoted term</dt>
           <dd>A sequence of characters including space (<code>&blank;</code>) enclosed in single (<code>'</code>) or double (<code>"</code>) quotation marks.<br>
               <em>'Hello world'</em> or <em>"I love eLabFTW!"</em>
@@ -92,7 +91,7 @@
 
 
 <!-- SEARCH PAGE BEGIN -->
-<form name='search' method='get' action='search.php'>
+<form id='search' name='search' method='get' action='search.php'>
   <section class='searchform box'>
     <div class='row' style="align-items:flex-end;">
       <!-- SEARCH IN-->
@@ -124,12 +123,12 @@
 
       <!-- EXTENDED BUTTON -->
       <div class='col-md-3 text-center mb-2'>
-        <button type='button' class='button btn btn-primary' data-toggle='collapse' data-target='.collapseExtendedSearch'>Switch to Extended Search</button>
+        <button type='button' id='toggleSearchMode' class='button btn btn-primary' data-action='toggle-search-mode'>Switch to Extended Search</button>
       </div>
       <!-- END EXTENDED BUTTON -->
     </div>
     <!-- NEW ROW -->
-    <div class='row collapse collapseExtendedSearch {{- extended ? ' show' : '' -}}'>
+    <div class='row collapse collapseExtendedSearch'>
       <div class='col-md-8'>
         <label for='extended'><i class='fas fa-search'></i></label>
         <textarea
@@ -144,6 +143,9 @@
         {% if extendedError %}
           <div id='extendedFeedback' class='invalid-feedback'>{{ extendedError|raw }}</div>
         {% endif %}
+        <small class='form-text text-muted'>
+          Press <kbd><kbd>ctrl</kbd> + <kbd>enter</kbd></kbd> or <kbd><kbd>⌘</kbd> + <kbd>enter</kbd></kbd> to submit search.
+        </small>
       </div>
       <div class='col-md-4'>
       <p>Allowed Fields (<code>field:value</code>):</p>
@@ -164,7 +166,7 @@
       <a class='' style='cursor:pointer;' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Full syntax'|trans }}</a>
       </div>
     </div>
-    <div class='row collapse collapseExtendedSearch {{- extended ? '' : ' show' -}}'>
+    <div class='row collapse collapseExtendedSearch show'>
       <!-- SEARCH ONLY -->
       <div class='col-md-6'>
         <label for='searchonly'>{{ 'Search only in experiments owned by:'|trans }} </label><br>
@@ -195,7 +197,7 @@
       <!-- END VISIBILITY SEARCH -->
     </div>
     <!-- NEW ROW -->
-    <div class='row collapse collapseExtendedSearch {{- extended ? '' : ' show' -}}'>
+    <div class='row collapse collapseExtendedSearch show'>
       <!-- SEARCH DATE -->
       <div class='col-md-8'>
         <label for='from'>{{ 'Where date is between'|trans }}</label>
@@ -207,7 +209,7 @@
 
     </div>
     <!-- NEW ROW -->
-    <div class='row collapse collapseExtendedSearch {{- extended ? '' : ' show' -}}'>
+    <div class='row collapse collapseExtendedSearch show'>
 
       <div class='col-md-6'>
         <!-- TITLE -->
@@ -263,24 +265,24 @@
     </div>
     <!-- NEW ROW -->
     <div class='row'>
-      <div class='col-md-6'>
+      <div class='col-md-12'>
         <pre>{{ whereClause|raw }}</pre>
       </div>
     </div>
     <!-- NEW ROW -->
-    <div class='row collapse collapseExtendedSearch {{- extended ? '' : ' show' -}}'>
+    <div class='row collapse collapseExtendedSearch show'>
       <h4 class='ml-3'>{{ 'Extra fields search'|trans }}</h4>
     </div>
 
-    <div class='row collapse collapseExtendedSearch {{- extended ? '' : ' show' -}}'>
+    <div class='row collapse collapseExtendedSearch show'>
       <div class='col-md-4'>
         <label for='metakey'>{{ 'Name of field'|trans }}</label>
-        <input type='text' class='form-control' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' />
+        <input type='text' id='metakey' class='form-control' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' />
       </div>
 
       <div class='col-md-4'>
         <label for='metavalue'>{{ 'Value'|trans }}</label>
-        <input type='text' class='form-control' name='metavalue' value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}' />
+        <input type='text' id='metavalue' class='form-control' name='metavalue' value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}' />
         <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
       </div>
     </div>

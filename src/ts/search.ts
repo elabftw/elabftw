@@ -24,14 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchMode === '1') {
       localStorage.setItem('isExtendedSearchMode', '0');
     }
-    // clear search input
+    // Clear search input to avoid interference between modes
     window.location.href = 'search.php';
   }
 
   // Add click listener and do action based on which element is clicked
   document.getElementById('toggleSearchMode').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
-    // toggle search mode
+    // Toggle search mode
     if (el.matches('[data-action="toggle-search-mode"]')) {
       toogleSearchMode();
       // Block button during transition
@@ -54,7 +54,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem('isExtendedSearchMode') === '1') {
     $('.collapseExtendedSearch').collapse('toggle');
     document.getElementById('toggleSearchMode').innerHTML = 'Switch to Default Search';
+
     // Owner has to be set to team in extended search
     (document.getElementById('searchonly') as HTMLSelectElement).value = '0';
+
+    // Only keep Experiments and Database entries in 'searchin' select
+    const searchin = document.getElementById('searchin') as HTMLSelectElement;
+    const keep = Array.from(searchin.children).slice(0,3);
+    searchin.replaceChildren(...keep);
+    searchin.selectedIndex = 0;
   }
 });

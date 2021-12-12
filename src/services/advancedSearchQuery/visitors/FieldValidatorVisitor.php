@@ -36,42 +36,15 @@ class FieldValidatorVisitor implements Visitor
 
     public function visitDateField(DateField $dateField, VisitorParameters $parameters): InvalidFieldCollector
     {
-        $message = array();
-        if ($parameters->getColumn() !== '') {
-            $message[] = 'Field/value pairs are only allowed in advanced tab.';
-        }
-        return new InvalidFieldCollector($message);
+        return new InvalidFieldCollector();
     }
 
     public function visitField(Field $field, VisitorParameters $parameters): InvalidFieldCollector
     {
-        $message = array();
-        if ($parameters->getColumn() !== '') {
-            return new InvalidFieldCollector(array('Field/value pairs are only allowed in advanced tab.'));
-        }
-
-        if ($field->getFieldType() === 'category'
-            && $parameters->getEntityType() !== 'items'
-        ) {
-            $message[] = 'category: is only allowed when searching in database.';
-        } elseif (
-            $field->getFieldType() === 'status'
-            && $parameters->getEntityType() !== 'experiments'
-        ) {
-            $message[] = 'status: is only allowed when searching in experiments.';
-        } elseif (
-            $field->getFieldType() === 'timestamped'
-            && $parameters->getEntityType() !== 'experiments'
-        ) {
-            $message[] = 'timestamped: is only allowed when searching in experiments.';
-        } elseif ($field->getFieldType() === 'visibility') {
-            $visibilityFieldHelper = new VisibilityFieldHelper($field->getValue(), $parameters->getVisArr());
-            if (!$visibilityFieldHelper->getArr()) {
-                $message[] = 'visibility:<em>' . $field->getValue() . '</em>. Valid values are ' . $visibilityFieldHelper->possibleInput . '.';
-            }
-        }
-
-        return new InvalidFieldCollector($message);
+        // Call class methods dynamically to avoid many if statements.
+        // This works here because the parser defines the list of fields.
+        $method = 'visitField' . ucfirst($field->getFieldType());
+        return $this->$method($field->getValue(), $parameters);
     }
 
     public function visitNotExpression(NotExpression $notExpression, VisitorParameters $parameters): InvalidFieldCollector
@@ -131,5 +104,73 @@ class FieldValidatorVisitor implements Visitor
             $head->getfieldErrors(),
             $tail->getfieldErrors()
         ));
+    }
+
+    private function visitFieldAttachment(string $searchTerm, VisitorParameters $parameters): InvalidFieldCollector
+    {
+        return new InvalidFieldCollector();
+    }
+
+    private function visitFieldAuthor(string $searchTerm, VisitorParameters $parameters): InvalidFieldCollector
+    {
+        return new InvalidFieldCollector();
+    }
+
+    private function visitFieldBody(string $searchTerm, VisitorParameters $parameters): InvalidFieldCollector
+    {
+        return new InvalidFieldCollector();
+    }
+
+    private function visitFieldCategory(string $searchTerm, VisitorParameters $parameters): InvalidFieldCollector
+    {
+        if ($parameters->getEntityType() !== 'items') {
+            return new InvalidFieldCollector(array('category: is only allowed when searching in database.'));
+        }
+        return new InvalidFieldCollector();
+    }
+
+    private function visitFieldElabid(string $searchTerm, VisitorParameters $parameters): InvalidFieldCollector
+    {
+        return new InvalidFieldCollector();
+    }
+
+    private function visitFieldLocked(string $searchTerm, VisitorParameters $parameters): InvalidFieldCollector
+    {
+        return new InvalidFieldCollector();
+    }
+
+    private function visitFieldRating(string $searchTerm, VisitorParameters $parameters): InvalidFieldCollector
+    {
+        return new InvalidFieldCollector();
+    }
+
+    private function visitFieldStatus(string $searchTerm, VisitorParameters $parameters): InvalidFieldCollector
+    {
+        if ($parameters->getEntityType() !== 'experiments') {
+            return new InvalidFieldCollector(array('status: is only allowed when searching in experiments.'));
+        }
+        return new InvalidFieldCollector();
+    }
+
+    private function visitFieldTimestamped(string $searchTerm, VisitorParameters $parameters): InvalidFieldCollector
+    {
+        if ($parameters->getEntityType() !== 'experiments') {
+            return new InvalidFieldCollector(array('timestamped: is only allowed when searching in experiments.'));
+        }
+        return new InvalidFieldCollector();
+    }
+
+    private function visitFieldTitle(string $searchTerm, VisitorParameters $parameters): InvalidFieldCollector
+    {
+        return new InvalidFieldCollector();
+    }
+
+    private function visitFieldVisibility(string $searchTerm, VisitorParameters $parameters): InvalidFieldCollector
+    {
+        $visibilityFieldHelper = new VisibilityFieldHelper($searchTerm, $parameters->getVisArr());
+        if (!$visibilityFieldHelper->getArr()) {
+            return new InvalidFieldCollector(array('visibility:<em>' . $searchTerm . '</em>. Valid values are ' . $visibilityFieldHelper->possibleInput . '.'));
+        }
+        return new InvalidFieldCollector();
     }
 }

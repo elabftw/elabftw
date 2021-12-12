@@ -22,11 +22,9 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $query .= ' | TEST6 AND ! TEST7 (TEST8 or TEST9) "T E S T 1 0"';
         $query .= ' \'T E S T 1 1\' "chinese 汉语 漢語 中文" "japanese 日本語 ひらがな 平仮名 カタカナ 片仮名"';
         $query .= ' attachment:0 author:"Phpunit TestUser" body:"some text goes here"';
-        // works only if type is database
-        // $query .= ' category:"only meaningful with items but no error"';
-        $query .= ' elabid:7bebdd3512dc6cbee0b1 locked:yes rating:0 rating:5 rating:unrated';
+        $query .= ' elabid:7bebdd3512dc6cbee0b1 locked:yes rating:5 rating:unrated';
         $query .= ' status:"only meaningful with experiments but no error"';
-        $query .= ' timestamped:true title:"very cool experiment" visibility:me';
+        $query .= ' timestamped: timestamped:true title:"very cool experiment" visibility:me';
         $query .= ' date:>2020.06,21 date:2020/06-21..20201231';
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
@@ -37,6 +35,15 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($whereClause);
         $this->assertStringStartsWith(' AND (((entity.body LIKE :', $whereClause['where']);
         $this->assertStringEndsWith(')))', $whereClause['where']);
+
+        $query = 'category:"only meaningful with items but no error"';
+        $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
+            'items',
+            (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
+        ));
+        $whereClause = $advancedSearchQuery->getWhereClause();
+        $this->assertStringStartsWith(' AND (categoryt.name LIKE :', $whereClause['where']);
+        $this->assertStringEndsWith(')', $whereClause['where']);
     }
 
     public function testSyntaxError(): void
@@ -65,16 +72,29 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Query is too complex.', $advancedSearchQuery->getException());
     }
 
-    public function testVisibilityError(): void
+    public function testFieldValidatorInvalidFields(): void
     {
-        $input = 'no-valid-input';
-        $query = 'visibility:' . $input;
+        $visInput = 'no-valid-input';
+        $query = 'visibility:' . $visInput;
+        $query .= ' category:"only works for items"';
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
             (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
         ));
         $advancedSearchQuery->getWhereClause();
-        $this->assertStringStartsWith('visibility:<em>' . $input . '</em>. Valid values are ', $advancedSearchQuery->getException());
+        $this->assertStringStartsWith('visibility:<em>' . $visInput . '</em>. Valid values are ', $advancedSearchQuery->getException());
+        $this->assertStringEndsWith('category: is only allowed when searching in database.', $advancedSearchQuery->getException());
+
+        $query = 'timestamped:true';
+        $query .= ' status:"only works for experiments"';
+
+        $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
+            'itmes',
+            (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
+        ));
+        $advancedSearchQuery->getWhereClause();
+        $this->assertStringStartsWith('timestamped: is only allowed when searching in experiments.', $advancedSearchQuery->getException());
+        $this->assertStringEndsWith('status: is only allowed when searching in experiments.', $advancedSearchQuery->getException());
     }
 }

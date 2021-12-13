@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Submit form with ctrl+enter from within textarea
   document.getElementById('extended').addEventListener('keydown', event => {
     if ((event.keyCode == 10 || event.keyCode == 13) && (event.ctrlKey || event.metaKey)) {
-      (document.getElementById('search') as HTMLFormElement).submit();
+      (document.getElementById('searchButton') as HTMLButtonElement).click();
     }
   });
 

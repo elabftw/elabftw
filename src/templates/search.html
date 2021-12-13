@@ -5,7 +5,7 @@
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='advancedSearchModalLabel'>{{ 'Search Query Language'|trans }}</h5>
+        <h5 class='modal-title' id='advancedSearchModalLabel'>{{ 'Extended Search Syntax'|trans }}</h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
           <span aria-hidden='true'>&times;</span>
         </button>
@@ -23,17 +23,18 @@
               <em>'Hello world'</em> or <em>"I love eLabFTW!"</em>
           </dd>
         </dl>
-        <p>Two wildcards are available. The percent sign (<code>%</code>) matches zero or more characters while the underscore (<code>_</code>) matches exactly one character.</p>
+        <p>Two wildcards are available. The percent sign (<code>%</code>) matches zero or more characters while the underscore (<code>_</code>) matches exactly one character. To search for literal <code>%</code> or <code>_</code> the characters need to be escaped with a backslash  <code>\%</code> or <code>\_</code>.</p>
         <h3>Term concatenation and grouping</h3>
         <p>Terms can be connected in different ways:</p>
         <ul>
           <li><code>OR</code> or <code>|</code>, <em>termA OR termB</em> or <em>termA | termB</em></li>
-          <li><code>AND</code>, <code>&amp;</code> or space (<code>&blank;</code>), <em>termA termB</em> or <em>termA AND termB</em> or <em>termA &termB</em></li>
-          <li><code>NOT</code> or <code>!</code>, <em>! termA</em> or <em>NOT termA</em></li>
+          <li><code>AND</code>, <code>&amp;</code> or space (<code>&blank;</code>), <em>termA termB</em> or <em>termA AND termB</em> or <em>termA & termB</em></li>
+          <li><code>NOT</code>, <code>-</code> or <code>!</code>, <em>! termA</em> or <em>NOT termA</em></li>
           <li>Parenthesis <code>()</code>, <em>(termA OR termB) AND ! termC</em></li>
         </ul>
-        <p>The operators are listed in increasing priority. Note the space before and after the operators. <em>termA termB OR termC</em> is equivalent to <em>(termA AND termB) OR termC</em>. To give priority to <code>OR</code> use parenthesis: <em>termA AND (termB OR termC)</em>.</p>
+        <p>The operators are listed in increasing order of precedence. Note the space around the operators. <em>termA termB OR termC</em> is equivalent to <em>(termA AND termB) OR termC</em>. To give priority to <code>OR</code> use parenthesis: <em>termA AND (termB OR termC)</em>.</p>
         <h3>Field/value pair searches</h3>
+        <p>Field/value pairs are only allowed in extended search mode and the quick search fields.</p>
         <p>Basic syntax <code>[<strong>field</strong>]:[value]</code></p>
         <dl>
           <dt>attachment</dt>
@@ -148,8 +149,8 @@
         </small>
       </div>
       <div class='col-md-4'>
-      <p>Allowed Fields (<code>field:value</code>):</p>
-      <ul>
+      <p>Allowed Fields (<code><strong>field</strong>:value</code>):</p>
+      <ul class='list-unstyled'>
         <li><strong>attachment</strong>: yes or no</li>
         <li><strong>author</strong>: Simple or Quoted term</li>
         <li><strong>body</strong>: Simple or Quoted term</li>
@@ -215,7 +216,7 @@
         <!-- TITLE -->
         <div>
           <label for='title'>{{ 'And title contains'|trans }}</label>
-          <input id='title' class='form-control {{- titleError ? ' is-invalid' }}' name='title' type='text' placeholder='term1 termA AND termB !(termC OR "exact term")' value='{{ title }}' {{- titleError ? " aria-describedby='titleFeedback'" }} />
+          <input id='title' class='form-control {{- titleError ? ' is-invalid' }}' name='title' type='text' placeholder='term1 termA AND termB NOT (termC OR "term with spaces")' value='{{ title }}' {{- titleError ? " aria-describedby='titleFeedback'" }} />
           {% if titleError %}
             <div id='titleFeedback' class='invalid-feedback'>{{ titleError|raw }}</div>
           {% endif %}
@@ -224,7 +225,7 @@
         <!-- BODY -->
         <div>
           <label for='body'>{{ 'And body contains'|trans }}</label>
-          <input id='body' class='form-control {{- bodyError ? ' is-invalid' }}' name='body' type='text' placeholder='term1 termA AND termB !(termC OR "exact term")' value='{{ body }}' {{- bodyError ? " aria-describedby='bodyFeedback'" }} />
+          <input id='body' class='form-control {{- bodyError ? ' is-invalid' }}' name='body' type='text' placeholder='term1 termA AND termB NOT (termC OR "term with spaces")' value='{{ body }}' {{- bodyError ? " aria-describedby='bodyFeedback'" }} />
           {% if bodyError %}
             <div id='bodyFeedback' class='invalid-feedback'>{{ bodyError|raw }}</div>
           {% endif %}
@@ -263,12 +264,14 @@
         <!-- END RATING -->
       </div>
     </div>
+    {% if whereClause %}
     <!-- NEW ROW -->
     <div class='row'>
       <div class='col-md-12'>
         <pre>{{ whereClause|raw }}</pre>
       </div>
     </div>
+    {% endif %}
     <!-- NEW ROW -->
     <div class='row collapse collapseExtendedSearch show'>
       <h4 class='ml-3'>{{ 'Extra fields search'|trans }}</h4>

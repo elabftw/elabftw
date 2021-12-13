@@ -67,29 +67,17 @@ abstract class AbstractEntity implements CrudInterface
     public string $idFilter = '';
 
     // inserted in sql
-    public string $extendedFilter = '';
-
-    // inserted in sql
-    public array $extendedFilterBindValues = array();
-
-    // inserted in sql
-    public string $titleFilter = '';
-
-    // inserted in sql
-    public array $titleFilterBindValues = array();
-
-    // inserted in sql
     public string $dateFilter = '';
-
-    // inserted in sql
-    public string $bodyFilter = '';
-
-    // inserted in sql
-    public array $bodyFilterBindValues = array();
 
     public bool $isReadOnly = false;
 
     protected TeamGroups $TeamGroups;
+
+    // inserted in sql
+    private string $extendedFilter = '';
+
+    // inserted in sql
+    private array $bindExtendedValues = array();
 
     private string $metadataFilter = '';
 
@@ -239,9 +227,7 @@ abstract class AbstractEntity implements CrudInterface
 
         $sqlArr = array(
             $this->extendedFilter,
-            $this->titleFilter,
             $this->dateFilter,
-            $this->bodyFilter,
             $this->idFilter,
             'GROUP BY id',
             $this->metadataHaving,
@@ -265,9 +251,7 @@ abstract class AbstractEntity implements CrudInterface
             $req->bindParam(':metadata_value', $this->metadataValue);
         }
 
-        $this->bindFilterValues($this->extendedFilterBindValues, $req);
-        $this->bindFilterValues($this->titleFilterBindValues, $req);
-        $this->bindFilterValues($this->bodyFilterBindValues, $req);
+        $this->bindExtendedValues($req);
 
         $this->Db->execute($req);
 
@@ -659,6 +643,12 @@ abstract class AbstractEntity implements CrudInterface
         $res = $this->Db->fetchAll($req);
         return array_column($res, 'id');
     }
+    
+    public function addToExtendedFilter(string $extendedFilter, array $bindExtendedValues = array()): void
+    {
+        $this->extendedFilter .= $extendedFilter . ' ';
+        $this->bindExtendedValues = array_merge($this->bindExtendedValues, $bindExtendedValues);
+    }
 
     /**
      * Update only one field in the metadata json
@@ -796,9 +786,9 @@ abstract class AbstractEntity implements CrudInterface
         return sprintf(implode(' ', $sqlArr), $this->type);
     }
 
-    private function bindFilterValues(array $bindValues, PDOStatement $req): void
+    private function bindExtendedValues(PDOStatement $req): void
     {
-        foreach ($bindValues as $bindValue) {
+        foreach ($this->bindExtendedValues as $bindValue) {
             $req->bindValue($bindValue['param'], $bindValue['value'], $bindValue['type']);
         }
     }

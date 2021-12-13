@@ -23,6 +23,7 @@ use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * The search page
@@ -57,54 +58,67 @@ if ($Request->query->get('type') === 'experiments') {
     $Entity = $Database;
 }
 
-// EXTENDED
-$extended = '';
-$extendedError = false;
-$whereClause = '';
-if ($Request->query->has('extended') && !empty($Request->query->get('extended'))) {
-    $extended = trim($Request->query->get('extended'));
+// line below is for testing
+$whereClauseDevLog = '';
 
-    $advancedQuery = new AdvancedSearchQuery($extended, new VisitorParameters($Entity->type, $visibilityArr));
-    $whereClause = $advancedQuery->getWhereClause();
-    if ($whereClause) {
-        $Entity->extendedFilter = $whereClause['where'];
-        $Entity->extendedFilterBindValues = $whereClause['bindValues'];
+// With variable variables
+
+// $extendedSearches = array(
+    // array('extended', false),
+    // array('title', true),
+    // array('body', true),
+// );
+// foreach ($extendedSearches as $extendedSearche) {
+    // ${$extendedSearche[0]} = '';
+    // ${$extendedSearche[0] . 'Error'} = false;
+    // if ($Request->query->has($extendedSearche[0]) && !empty($Request->query->get($extendedSearche[0]))) {
+        // ${$extendedSearche[0]} = trim($Request->query->get($extendedSearche[0]));
+        // $column = $extendedSearche[1] ? $extendedSearche[0] : '';
+        // $advancedQuery = new AdvancedSearchQuery(${$extendedSearche[0]}, new VisitorParameters($Entity->type, $visibilityArr, $column));
+        // $whereClause = $advancedQuery->getWhereClause();
+        // // line below is for testing
+        // $whereClauseDevLog .= print_r($whereClause, true);
+        // if ($whereClause) {
+            // $Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
+        // }
+
+        // $${$extendedSearche[0] . 'Error'} = $advancedQuery->getException() ?: false;
+    // }
+// }
+
+// With function
+function prepareExtendedSearch(
+    Request $Request,
+    Experiments | Items $Entity,
+    string $type,
+    array $visibilityArr,
+    string $column = ''
+): array {
+    if ($Request->query->has($type) && !empty($Request->query->get($type))) {
+        $userInput = trim((string) $Request->query->get($type));
+
+        $advancedQuery = new AdvancedSearchQuery($userInput, new VisitorParameters($Entity->type, $visibilityArr, $column));
+        $whereClause = $advancedQuery->getWhereClause();
+        if ($whereClause) {
+            $Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
+        }
+
+        $searchFeedback = $advancedQuery->getException();
     }
-
-    $extendedError = $advancedQuery->getException() ?: false;
+    return array(
+        $userInput ?? '',
+        $searchFeedback ?? '',
+        // line below is for testing
+        print_r($whereClause ?? '', true),
+    );
 }
 
-// TITLE
-$title = '';
-$titleError = false;
-if ($Request->query->has('title') && !empty($Request->query->get('title'))) {
-    $title = trim($Request->query->get('title'));
-
-    $advancedQuery = new AdvancedSearchQuery($title, new VisitorParameters($Entity->type, $visibilityArr, 'title'));
-    $whereClause = $advancedQuery->getWhereClause();
-    if ($whereClause) {
-        $Entity->titleFilter = $whereClause['where'];
-        $Entity->titleFilterBindValues = $whereClause['bindValues'];
-    }
-
-    $titleError = $advancedQuery->getException() ?: false;
-}
-
-// BODY
-$body = '';
-$bodyError = false;
-if ($Request->query->has('body') && !empty($Request->query->get('body'))) {
-    $body = trim($Request->query->get('body'));
-
-    $advancedQuery = new AdvancedSearchQuery($body, new VisitorParameters($Entity->type, $visibilityArr, 'body'));
-    $whereClause = $advancedQuery->getWhereClause();
-    if ($whereClause) {
-        $Entity->bodyFilter = $whereClause['where'];
-        $Entity->bodyFilterBindValues = $whereClause['bindValues'];
-    }
-
-    $bodyError = $advancedQuery->getException() ?: false;
-}
+[$extended, $extendedError, $tmp] = prepareExtendedSearch($Request, $Entity, 'extended', $visibilityArr);
+$whereClauseDevLog .= $tmp;
+[$title, $titleError, $tmp] = prepareExtendedSearch($Request, $Entity, 'title', $visibilityArr, 'title');
+$whereClauseDevLog .= $tmp;
+[$body, $bodyError, $tmp] = prepareExtendedSearch($Request, $Entity, 'body', $visibilityArr, 'body');
+$whereClauseDevLog .= $tmp;
 
 // VISIBILITY
 $vis = '';
@@ -140,9 +154,10 @@ $renderArr = array(
     'statusArr' => $statusArr,
     'usersArr' => $usersArr,
     'visibilityArr' => $visibilityArr,
-    'whereClause' => print_r($whereClause, true),
     'extended' => $extended,
     'extendedError' => $extendedError,
+    // line below is for testing
+    'whereClause' => $whereClauseDevLog,
 );
 echo $App->render('search.html', $renderArr);
 
@@ -150,7 +165,7 @@ echo $App->render('search.html', $renderArr);
  * Here the search begins
  * If there is a search, there will be get parameters, so this is our main switch
  */
-if ($Request->query->count() > 0 && !$bodyError && !$titleError && !$extendedError) {
+if ($Request->query->count() > 0 && $bodyError === '' && $titleError === '' && $extendedError === '') {
 
     // STATUS
     $status = '';

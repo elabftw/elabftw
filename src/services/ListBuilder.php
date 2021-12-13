@@ -90,7 +90,7 @@ class ListBuilder
     private function getList(string $term): array
     {
         $term = filter_var($term, FILTER_SANITIZE_STRING);
-        $this->Entity->titleFilter = " AND entity.title LIKE '%$term%'";
+        $this->Entity->addToExtendedFilter(" AND entity.title LIKE '%$term%'");
         if ($this->catFilter !== 0) {
             $this->Entity->addFilter('categoryt.id', (string) $this->catFilter);
         }

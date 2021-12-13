@@ -73,8 +73,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $DisplayParams->adjust($this->App);
 
         // VISIBILITY LIST
-        $TeamGroups = new TeamGroups($this->Entity->Users);
-        $visibilityArr = $TeamGroups->getVisibilityList();
+        $visibilityArr = (new TeamGroups($this->Entity->Users))->getVisibilityList();
 
         // CATEGORY FILTER
         if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {
@@ -276,8 +275,7 @@ abstract class AbstractEntityController implements ControllerInterface
             $advancedQuery = new AdvancedSearchQuery($query, new VisitorParameters($this->Entity->type, $visibilityArr));
             $whereClause = $advancedQuery->getWhereClause();
             if ($whereClause) {
-                $this->Entity->extendedFilter = $whereClause['where'];
-                $this->Entity->extendedFilterBindValues = $whereClause['bindValues'];
+                $this->Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
             }
 
             $searchException = $advancedQuery->getException();

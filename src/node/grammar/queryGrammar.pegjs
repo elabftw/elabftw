@@ -49,8 +49,9 @@ Not
     return $e;
   }
 
-NotOp '"NOT", "!"'
+NotOp '"NOT", "-", "!"'
   = $('NOT'i_+)
+  / $('-'_*)
   / $('!'_*)
 
 Wrapper

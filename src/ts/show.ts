@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // CREATE EXPERIMENT or DATABASE item with shortcut
   key(document.getElementById('shortcuts').dataset.create, function() {
-    if (about.type === 'experiments') {
+    if (about.type === 'experiments' && window.location.pathname !== '/search.php') {
       const el = document.querySelector('[data-action="create-entity"]') as HTMLButtonElement;
       const tplid = el.dataset.tplid;
       const urlParams = new URLSearchParams(document.location.search);

@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       // don't reload body if it is already loaded
-      if (div.dataset.loaded === '1' && plusMinusIcon.hasClass('fa-minus-circle')) {
+      if (div.dataset.bodyLoaded && plusMinusIcon.hasClass('fa-minus-circle')) {
         div.toggleAttribute('hidden');
         return;
       }
@@ -405,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
         div.innerHTML = data.msg;
         div.style.width = String(width);
         div.toggleAttribute('hidden');
-        div.setAttribute('data-loaded', '1');
+        div.setAttribute('data-bodyLoaded', '1');
         // ask mathjax to reparse the page
         MathJax.typeset();
       });

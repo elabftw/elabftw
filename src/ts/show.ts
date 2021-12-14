@@ -375,8 +375,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;
+      const plusMinusIcon = $(el).find('[data-fa-i2svg]');
       // transform the + in - and vice versa
-      $(el).find('[data-fa-i2svg]').toggleClass('fa-minus-circle fa-plus-circle');
+      plusMinusIcon.toggleClass('fa-minus-circle fa-plus-circle');
+      // prevent get request if body gets closed
+      if (plusMinusIcon.hasClass('fa-plus-circle')) {
+        const div = document.getElementById(randId);
+        div.toggleAttribute('hidden');
+        return;
+      }
       // get the id to show the toggleBody
       const id = $(el).data('id');
       // get html of body

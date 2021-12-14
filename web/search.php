@@ -62,7 +62,7 @@ if ($Request->query->get('type') === 'experiments') {
 $whereClauseDevLog = '';
 
 // With variable variables
-
+// $extended = $extendedError = $title = $titleError = $body = $bodyError = '';
 // $extendedSearches = array(
     // array('extended', false),
     // array('title', true),
@@ -70,19 +70,19 @@ $whereClauseDevLog = '';
 // );
 // foreach ($extendedSearches as $extendedSearche) {
     // ${$extendedSearche[0]} = '';
-    // ${$extendedSearche[0] . 'Error'} = false;
+    // ${$extendedSearche[0] . 'Error'} = '';
     // if ($Request->query->has($extendedSearche[0]) && !empty($Request->query->get($extendedSearche[0]))) {
         // ${$extendedSearche[0]} = trim($Request->query->get($extendedSearche[0]));
         // $column = $extendedSearche[1] ? $extendedSearche[0] : '';
         // $advancedQuery = new AdvancedSearchQuery(${$extendedSearche[0]}, new VisitorParameters($Entity->type, $visibilityArr, $column));
         // $whereClause = $advancedQuery->getWhereClause();
-        // // line below is for testing
+        // line below is for testing
         // $whereClauseDevLog .= print_r($whereClause, true);
         // if ($whereClause) {
             // $Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
         // }
 
-        // $${$extendedSearche[0] . 'Error'} = $advancedQuery->getException() ?: false;
+        // $${$extendedSearche[0] . 'Error'} = $advancedQuery->getException() ?: '';
     // }
 // }
 

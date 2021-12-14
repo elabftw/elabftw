@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
       $(this).data('status', 'closed');
       $(this).text($(this).data('expand'));
     }
-    $('.toggleBody').each(function() {
+    $('[data-action="toggle-body"]').each(function() {
       $(this).trigger('click');
     });
   });

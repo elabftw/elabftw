@@ -379,8 +379,13 @@ document.addEventListener('DOMContentLoaded', () => {
       // transform the + in - and vice versa
       plusMinusIcon.toggleClass('fa-minus-circle fa-plus-circle');
       // prevent get request if body gets closed
+      const div = document.getElementById(randId);
       if (plusMinusIcon.hasClass('fa-plus-circle')) {
-        const div = document.getElementById(randId);
+        div.toggleAttribute('hidden');
+        return;
+      }
+      // don't reload body if it is already loaded
+      if (div.dataset.loaded === '1' && plusMinusIcon.hasClass('fa-minus-circle')) {
         div.toggleAttribute('hidden');
         return;
       }
@@ -397,10 +402,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // get the width of the parent. The -30 is to make it smaller than parent even with the margins
         const width = $('#parent_' + randId).width() - 30;
         // add html content and adjust the width of the children
-        const div = document.getElementById(randId);
         div.innerHTML = data.msg;
         div.style.width = String(width);
         div.toggleAttribute('hidden');
+        div.setAttribute('data-loaded', '1');
         // ask mathjax to reparse the page
         MathJax.typeset();
       });

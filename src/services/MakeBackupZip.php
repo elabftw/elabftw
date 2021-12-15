@@ -170,7 +170,7 @@ class MakeBackupZip extends AbstractMake
     private function addToZip(int $id, string $fullname): void
     {
         // we're making a backup so ignore permissions access
-        $this->Entity->bypassPermissions = true;
+        $this->Entity->setBypassReadPermission(true);
         $this->Entity->setId($id);
         $this->Entity->populate();
         $uploadedFilesArr = $this->Entity->Uploads->readAll();

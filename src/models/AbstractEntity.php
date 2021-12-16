@@ -53,6 +53,12 @@ abstract class AbstractEntity implements CrudInterface
     // experiments or items
     public string $type = '';
 
+    // use that to ignore the canOrExplode calls
+    public bool $bypassReadPermission = false;
+
+    // use that to ignore the canOrExplode calls
+    public bool $bypassWritePermission = false;
+
     // will be defined in children classes
     public string $page = '';
 
@@ -74,12 +80,6 @@ abstract class AbstractEntity implements CrudInterface
     public bool $isReadOnly = false;
 
     protected TeamGroups $TeamGroups;
-
-    // use that to ignore the canOrExplode calls
-    private bool $bypassReadPermission = false;
-
-    // use that to ignore the canOrExplode calls
-    private bool $bypassWritePermission = false;
 
     private string $metadataFilter = '';
 
@@ -647,17 +647,6 @@ abstract class AbstractEntity implements CrudInterface
         $req->execute();
         $res = $this->Db->fetchAll($req);
         return array_column($res, 'id');
-    }
-
-    public function setBypassReadPermission(bool $value): void
-    {
-        $this->bypassReadPermission = $value;
-    }
-
-    public function setBypassWritePermission(bool $value): void
-    {
-        $this->bypassReadPermission = $value;
-        $this->bypassWritePermission = $value;
     }
 
     /**

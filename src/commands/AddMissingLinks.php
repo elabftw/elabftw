@@ -76,7 +76,7 @@ class AddMissingLinks extends Command
                         default:
                             continue 2;
                     }
-                    $entity->setBypassWritePermission(true);
+                    $entity->bypassWritePermission = true;
 
                     preg_match_all('/database\.php\?mode=view&amp;id=([0-9]+)/', $data['body'], $matches);
                     foreach ($matches[1] as $match) {

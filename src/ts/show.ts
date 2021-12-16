@@ -405,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
         div.innerHTML = data.msg;
         div.style.width = String(width);
         div.toggleAttribute('hidden');
-        div.setAttribute('data-bodyLoaded', '1');
+        div.dataset.bodyLoaded = 1;
         // ask mathjax to reparse the page
         MathJax.typeset();
       });

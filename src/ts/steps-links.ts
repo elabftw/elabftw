@@ -58,10 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
       );
       return value;
     },
-    listenOn: '.step.malleable',
+    listenOn: '.step.editable',
     tooltip: i18next.t('click-to-edit'),
-  });
-  malleableStep.listen();
+  }).listen();
 
   // add an observer so new steps will get an event handler too
   if (document.getElementById('stepsDiv')) {

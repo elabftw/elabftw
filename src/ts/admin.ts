@@ -137,8 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip: i18next.t('click-to-edit'),
     submit : i18next.t('save'),
     submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
-  });
-  malleableGroupname.listen();
+  }).listen();
 
   // add an observer so new comments will get an event handler too
   new MutationObserver(() => {

@@ -796,6 +796,7 @@ the form-control fails to do that so we do the border ourselves */
 
 /* EDITABLE */
 .editable:hover {
+    background-color: $verylightgray;
     cursor: pointer;
 }
 

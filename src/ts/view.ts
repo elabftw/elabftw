@@ -14,7 +14,7 @@ import { BoundEvent, Payload, Method, Action, Target } from './interfaces';
 import { DateTime } from 'luxon';
 import EntityClass from './Entity.class';
 import Comment from './Comment.class';
-declare let key: any;
+declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 document.addEventListener('DOMContentLoaded', () => {
 

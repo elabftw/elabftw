@@ -51,7 +51,9 @@
 <input id='title_input' class='form-control' data-id='{{ templateData.id }}' value='{{ templateData.title|raw }}' />
 {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
 <label for='e{{ templateData.id }}'>{{ 'Template content'|trans }}</label>
-<textarea id='e{{ templateData.id }}' class='mceditable' style='height:500px;'>{{ templateData.body }}</textarea><br />
+<div>
+  <textarea id='e{{ templateData.id }}' class='mceditable' style='height:500px;'>{{ templateData.body }}</textarea>
+</div>
 <div class='text-center'>
   <button data-action='update-template' data-id='{{ templateData.id }}' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
 </div>

@@ -796,12 +796,18 @@ the form-control fails to do that so we do the border ourselves */
 
 /* EDITABLE */
 .editable:hover {
-    background-color: $verylightgray;
     cursor: pointer;
 }
 
 .comment-header {
     background-color: $verylightgray;
+}
+
+/* highlight on hover: for editable/malleable elements
+ * it's $elabblue but less opaque
+ */
+.hl-hover:hover {
+    background-color: rgba(41, 174, 185, 0.5);
 }
 
 #commentsCreateArea {

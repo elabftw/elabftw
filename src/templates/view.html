@@ -244,7 +244,7 @@
               {% endif %}
             </div>
             <!-- the comment itself is only editable by the owner -->
-            <p class='comment m-2 p-2 {{ comment.userid == Entity.Users.userData.userid ? "editable" }}' data-id='{{ comment.id }}'>{{ comment.comment|raw }}</p>
+            <p class='comment m-2 p-2 {{ comment.userid == Entity.Users.userData.userid ? "editable hl-hover" }}' data-id='{{ comment.id }}'>{{ comment.comment|raw }}</p>
           </div>
         {% endfor %}
       {% endif %}

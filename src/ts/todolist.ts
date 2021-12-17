@@ -80,8 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     listenOn: '.todoItem',
     tooltip: i18next.t('click-to-edit'),
-  });
-  malleableTodoitem.listen();
+  }).listen();
 
   // add an observer so new comments will get an event handler too
   new MutationObserver(() => {

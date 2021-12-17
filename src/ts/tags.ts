@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // make the tag editable (on admin page)
   const malleableTags = new Malle({
     cancel : i18next.t('cancel'),
-    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
+    cancelClasses: ['button', 'btn', 'btn-danger', 'ml-1'],
     inputClasses: ['form-control'],
     formClasses: ['d-inline-flex'],
     fun: (value, original) => {
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     listenOn: '.tag.editable',
     tooltip: i18next.t('click-to-edit'),
     submit : i18next.t('save'),
-    submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
+    submitClasses: ['button', 'btn', 'btn-primary', 'ml-1'],
   }).listen();
 
   if (document.getElementById('tagMgrDiv')) {

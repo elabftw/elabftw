@@ -310,7 +310,9 @@
         </li>
       </ul>
 
-      <textarea class='mceditable' id='itemsTypesBody'>{{ templateData.body }}</textarea>
+      <div>
+        <textarea class='mceditable' id='itemsTypesBody'>{{ templateData.body }}</textarea>
+      </div>
 
       {% set mode = 'edit-template' %}
       {% include 'steps-links-edit.html' %}

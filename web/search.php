@@ -82,7 +82,7 @@ $whereClauseDevLog = '';
             // $Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
         // }
 
-        // $${$extendedSearche[0] . 'Error'} = $advancedQuery->getException() ?: '';
+        // ${$extendedSearche[0] . 'Error'} = $advancedQuery->getException() ?: '';
     // }
 // }
 

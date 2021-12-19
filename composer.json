@@ -32,7 +32,7 @@
     "symfony/console": "^5.0",
     "symfony/process": "^5.0",
     "league/commonmark": "^2.0",
-    "symfony/filesystem": "^5.0",
+    "symfony/filesystem": "^6.0",
     "symfony/mime": "^5.1",
     "robthree/twofactorauth": "^1.7.0",
     "directorytree/ldaprecord": "^2.0.3",

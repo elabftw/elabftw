@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "556bb933105fc4ad97b7a3e3236a8f90",
+    "content-hash": "f6640701333d21c0c94937e098b7db0f",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -3233,35 +3233,33 @@
         },
         {
             "name": "symfony/mailer",
-            "version": "v5.4.0",
+            "version": "v6.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/mailer.git",
-                "reference": "2823212575ed3a6adfc5bc34ebb47b5395285048"
+                "reference": "d0547edd8de59bb30c3fe9db14473ed1fee5ef8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/mailer/zipball/2823212575ed3a6adfc5bc34ebb47b5395285048",
-                "reference": "2823212575ed3a6adfc5bc34ebb47b5395285048",
+                "url": "https://api.github.com/repos/symfony/mailer/zipball/d0547edd8de59bb30c3fe9db14473ed1fee5ef8a",
+                "reference": "d0547edd8de59bb30c3fe9db14473ed1fee5ef8a",
                 "shasum": ""
             },
             "require": {
                 "egulias/email-validator": "^2.1.10|^3",
-                "php": ">=7.2.5",
+                "php": ">=8.0.2",
                 "psr/event-dispatcher": "^1",
                 "psr/log": "^1|^2|^3",
-                "symfony/deprecation-contracts": "^2.1|^3",
-                "symfony/event-dispatcher": "^4.4|^5.0|^6.0",
-                "symfony/mime": "^5.2.6|^6.0",
-                "symfony/polyfill-php80": "^1.16",
+                "symfony/event-dispatcher": "^5.4|^6.0",
+                "symfony/mime": "^5.4|^6.0",
                 "symfony/service-contracts": "^1.1|^2|^3"
             },
             "conflict": {
-                "symfony/http-kernel": "<4.4"
+                "symfony/http-kernel": "<5.4"
             },
             "require-dev": {
                 "symfony/http-client-contracts": "^1.1|^2|^3",
-                "symfony/messenger": "^4.4|^5.0|^6.0"
+                "symfony/messenger": "^5.4|^6.0"
             },
             "type": "library",
             "autoload": {
@@ -3289,7 +3287,7 @@
             "description": "Helps sending emails",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/mailer/tree/v5.4.0"
+                "source": "https://github.com/symfony/mailer/tree/v6.0.1"
             },
             "funding": [
                 {
@@ -3305,7 +3303,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-11-23T10:19:22+00:00"
+            "time": "2021-12-08T15:13:44+00:00"
         },
         {
             "name": "symfony/mime",

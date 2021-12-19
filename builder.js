@@ -32,7 +32,6 @@ module.exports = {
       './src/ts/todolist.ts',
       './src/ts/ucp.ts',
       './src/ts/view.ts',
-      './src/ts/comments.ts',
       './src/ts/editusers.ts',
       './src/ts/search.ts',
       './src/ts/show.ts',

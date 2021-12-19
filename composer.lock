@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "20b876302f45caef5217c5c66941c996",
+    "content-hash": "e9579d61fd408b8520fa5c12ce08172f",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -4934,26 +4934,26 @@
         },
         {
             "name": "codeception/lib-innerbrowser",
-            "version": "1.5.1",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/lib-innerbrowser.git",
-                "reference": "31b4b56ad53c3464fcb2c0a14d55a51a201bd3c2"
+                "reference": "2a583993e806799576a1fac1a7f59197eb441678"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/lib-innerbrowser/zipball/31b4b56ad53c3464fcb2c0a14d55a51a201bd3c2",
-                "reference": "31b4b56ad53c3464fcb2c0a14d55a51a201bd3c2",
+                "url": "https://api.github.com/repos/Codeception/lib-innerbrowser/zipball/2a583993e806799576a1fac1a7f59197eb441678",
+                "reference": "2a583993e806799576a1fac1a7f59197eb441678",
                 "shasum": ""
             },
             "require": {
-                "codeception/codeception": "4.*@dev",
+                "codeception/codeception": "^4.0 | 4.*@dev",
                 "ext-dom": "*",
                 "ext-json": "*",
                 "ext-mbstring": "*",
-                "php": ">=5.6.0 <9.0",
-                "symfony/browser-kit": ">=2.7 <6.0",
-                "symfony/dom-crawler": ">=2.7 <6.0"
+                "php": "^7.4 | ^8.0",
+                "symfony/browser-kit": ">=4.4 <6.0",
+                "symfony/dom-crawler": ">=4.4 <6.0"
             },
             "conflict": {
                 "codeception/codeception": "<4.0"
@@ -4975,7 +4975,7 @@
                 {
                     "name": "Michael Bodnarchuk",
                     "email": "davert@mail.ua",
-                    "homepage": "http://codegyre.com"
+                    "homepage": "https://codegyre.com"
                 },
                 {
                     "name": "Gintautas Miselis"
@@ -4988,9 +4988,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeception/lib-innerbrowser/issues",
-                "source": "https://github.com/Codeception/lib-innerbrowser/tree/1.5.1"
+                "source": "https://github.com/Codeception/lib-innerbrowser/tree/2.0.0"
             },
-            "time": "2021-08-30T15:21:42+00:00"
+            "time": "2021-12-05T05:22:00+00:00"
         },
         {
             "name": "codeception/module-asserts",
@@ -5103,29 +5103,32 @@
         },
         {
             "name": "codeception/module-phpbrowser",
-            "version": "1.0.2",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/module-phpbrowser.git",
-                "reference": "770a6be4160a5c0c08d100dd51bff35f6056bbf1"
+                "reference": "d66924f343032a480fde1264b606c3357d2ed0d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/module-phpbrowser/zipball/770a6be4160a5c0c08d100dd51bff35f6056bbf1",
-                "reference": "770a6be4160a5c0c08d100dd51bff35f6056bbf1",
+                "url": "https://api.github.com/repos/Codeception/module-phpbrowser/zipball/d66924f343032a480fde1264b606c3357d2ed0d2",
+                "reference": "d66924f343032a480fde1264b606c3357d2ed0d2",
                 "shasum": ""
             },
             "require": {
-                "codeception/codeception": "^4.0",
-                "codeception/lib-innerbrowser": "^1.3",
-                "guzzlehttp/guzzle": "^6.3|^7.0",
-                "php": ">=5.6.0 <9.0"
+                "codeception/codeception": "^4.1 | *@dev",
+                "codeception/lib-innerbrowser": "^2.0 | *@dev",
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "^7.4",
+                "php": "^7.4 | ^8.0"
             },
             "conflict": {
-                "codeception/codeception": "<4.0"
+                "codeception/codeception": "<4.1"
             },
             "require-dev": {
-                "codeception/module-rest": "^1.0"
+                "aws/aws-sdk-php": "^3.199",
+                "codeception/module-rest": "^2.0 | *@dev",
+                "ext-curl": "*"
             },
             "suggest": {
                 "codeception/phpbuiltinserver": "Start and stop PHP built-in web server for your tests"
@@ -5149,7 +5152,7 @@
                 }
             ],
             "description": "Codeception module for testing web application over HTTP",
-            "homepage": "http://codeception.com/",
+            "homepage": "https://codeception.com/",
             "keywords": [
                 "codeception",
                 "functional-testing",
@@ -5157,9 +5160,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeception/module-phpbrowser/issues",
-                "source": "https://github.com/Codeception/module-phpbrowser/tree/1.0.2"
+                "source": "https://github.com/Codeception/module-phpbrowser/tree/2.0.1"
             },
-            "time": "2020-10-24T15:29:28+00:00"
+            "time": "2021-12-18T14:13:57+00:00"
         },
         {
             "name": "codeception/module-rest",

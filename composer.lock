@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "20b876302f45caef5217c5c66941c996",
+    "content-hash": "24524d7d2bcc0dbe3a3172af2335d26b",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -5163,26 +5163,29 @@
         },
         {
             "name": "codeception/module-rest",
-            "version": "1.4.2",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/module-rest.git",
-                "reference": "9cd7a87fd9343494e7782f7bdb51687c25046917"
+                "reference": "da2666b9097f2a3951e56cb478bc6625a7f71fbb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/module-rest/zipball/9cd7a87fd9343494e7782f7bdb51687c25046917",
-                "reference": "9cd7a87fd9343494e7782f7bdb51687c25046917",
+                "url": "https://api.github.com/repos/Codeception/module-rest/zipball/da2666b9097f2a3951e56cb478bc6625a7f71fbb",
+                "reference": "da2666b9097f2a3951e56cb478bc6625a7f71fbb",
                 "shasum": ""
             },
             "require": {
                 "codeception/codeception": "^4.0",
+                "ext-dom": "*",
+                "ext-json": "*",
                 "justinrainbow/json-schema": "~5.2.9",
-                "php": ">=5.6.6 <9.0",
-                "softcreatr/jsonpath": "^0.5 || ^0.7"
+                "php": "^7.4 | ^8.0",
+                "softcreatr/jsonpath": "^0.5 | ^0.7"
             },
             "require-dev": {
                 "codeception/lib-innerbrowser": "^1.0",
+                "codeception/stub": "^3.7",
                 "codeception/util-universalframework": "^1.0"
             },
             "suggest": {
@@ -5204,16 +5207,16 @@
                 }
             ],
             "description": "REST module for Codeception",
-            "homepage": "http://codeception.com/",
+            "homepage": "https://codeception.com/",
             "keywords": [
                 "codeception",
                 "rest"
             ],
             "support": {
                 "issues": "https://github.com/Codeception/module-rest/issues",
-                "source": "https://github.com/Codeception/module-rest/tree/1.4.2"
+                "source": "https://github.com/Codeception/module-rest/tree/2.0.0"
             },
-            "time": "2021-11-18T18:58:15+00:00"
+            "time": "2021-12-04T13:32:41+00:00"
         },
         {
             "name": "codeception/module-webdriver",

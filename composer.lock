@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "20b876302f45caef5217c5c66941c996",
+    "content-hash": "56a1e24ab62b2b01b51f926dc5a94bea",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -5217,21 +5217,23 @@
         },
         {
             "name": "codeception/module-webdriver",
-            "version": "1.4.0",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/module-webdriver.git",
-                "reference": "baa18b7bf70aa024012f967b5ce5021e1faa9151"
+                "reference": "085c55430c5e17c1b710ecdc9bd22e175dffed4b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/module-webdriver/zipball/baa18b7bf70aa024012f967b5ce5021e1faa9151",
-                "reference": "baa18b7bf70aa024012f967b5ce5021e1faa9151",
+                "url": "https://api.github.com/repos/Codeception/module-webdriver/zipball/085c55430c5e17c1b710ecdc9bd22e175dffed4b",
+                "reference": "085c55430c5e17c1b710ecdc9bd22e175dffed4b",
                 "shasum": ""
             },
             "require": {
                 "codeception/codeception": "^4.0",
-                "php": ">=5.6.0 <9.0",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": "^7.4 | ^8.0",
                 "php-webdriver/webdriver": "^1.8.0"
             },
             "suggest": {
@@ -5259,7 +5261,7 @@
                 }
             ],
             "description": "WebDriver module for Codeception",
-            "homepage": "http://codeception.com/",
+            "homepage": "https://codeception.com/",
             "keywords": [
                 "acceptance-testing",
                 "browser-testing",
@@ -5267,9 +5269,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeception/module-webdriver/issues",
-                "source": "https://github.com/Codeception/module-webdriver/tree/1.4.0"
+                "source": "https://github.com/Codeception/module-webdriver/tree/2.0.0"
             },
-            "time": "2021-09-02T12:01:02+00:00"
+            "time": "2021-11-30T02:48:27+00:00"
         },
         {
             "name": "codeception/phpunit-wrapper",

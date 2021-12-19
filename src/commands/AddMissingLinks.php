@@ -53,17 +53,17 @@ class AddMissingLinks extends Command
         $query = "SELECT `id`, `body`, `userid`, `lockedby` FROM `table` WHERE `body` LIKE '%database.php?mode=view&amp;id=%';";
 
         foreach ($tables as $table) {
-            echo 'Searching in ' . $table . PHP_EOL;
+            printf('Searching in %s%s', $table, PHP_EOL);
             $sql = str_replace('table', $table, $query);
             $req = $Db->prepare($sql);
             $req->execute();
             $res = $req->fetchAll();
 
             if (!empty($res)) {
-                echo 'Found ' . count($res) . ' entries with ids:' . PHP_EOL;
+                printf('Found %d entries with ids:%s', count($res), PHP_EOL);
                 $count = 0;
                 foreach ($res as $data) {
-                    echo '  ' . $data['id'] . PHP_EOL;
+                    printf('- %d%s', $data['id'], PHP_EOL);
                     switch ($table) {
                         case 'experiments':
                             $entity = new Experiments(new Users((int) $data['userid']), (int) $data['id']);
@@ -78,6 +78,10 @@ class AddMissingLinks extends Command
                             continue 2;
                     }
 
+                    // make sure we can access all entries with write access
+                    $entity->bypassWritePermission = true;
+
+                    // look for links to items in the body and create links
                     preg_match_all('/database\.php\?mode=view&amp;id=([0-9]+)/', $data['body'], $matches);
                     foreach ($matches[1] as $match) {
                         try {
@@ -115,7 +119,7 @@ class AddMissingLinks extends Command
                         }
                     }
                 }
-                echo 'Added ' . $count . ' links.' . PHP_EOL . PHP_EOL;
+                printf('Added %d links.%2$s%2$s', $count, PHP_EOL);
             }
         }
         return 0;

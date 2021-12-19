@@ -54,7 +54,10 @@ abstract class AbstractEntity implements CrudInterface
     public string $type = '';
 
     // use that to ignore the canOrExplode calls
-    public bool $bypassPermissions = false;
+    public bool $bypassReadPermission = false;
+
+    // use that to ignore the canOrExplode calls
+    public bool $bypassWritePermission = false;
 
     // will be defined in children classes
     public string $page = '';
@@ -471,7 +474,10 @@ abstract class AbstractEntity implements CrudInterface
      */
     public function getPermissions(?array $item = null): array
     {
-        if ($this->bypassPermissions) {
+        if ($this->bypassWritePermission) {
+            return array('read' => true, 'write' => true);
+        }
+        if ($this->bypassReadPermission) {
             return array('read' => true, 'write' => false);
         }
         if (empty($this->entityData) && !isset($item)) {

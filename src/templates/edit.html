@@ -177,10 +177,8 @@
         {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
         {% set tagsValueArr = Entity.entityData.tags|split('|') %}
         {% for tag in tagsValueArr %}
-          <span class='tag m-1 clickable'>
-            <a class='tag-delete tagUnreference' data-tagid='{{ tagsIdArr[loop.index0] }}' data-id='{{ Entity.id }}'>
-              {{ tag|raw }}
-            </a>
+          <span class='tag m-1 clickable' data-action='unreference-tag' data-tagid='{{ tagsIdArr[loop.index0] }}'>
+            <a class='tag-delete'>{{ tag|raw }}</a>
           </span>
         {% endfor %}
       {% endif %}
@@ -192,7 +190,9 @@
   {% if editor == 'md' %}
   <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ lang }}' name='body'>{{ Entity.entityData.body }}</textarea>
   {% else %}
+  <div><!-- << this div is added around the textarea to fix an issue on mobile editor. See #3107 -->
     <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body' rows='15' cols='80'>{{ Entity.entityData.body }}</textarea>
+  </div>
   {% endif %}
 
   <div class='mt-4 text-center'>

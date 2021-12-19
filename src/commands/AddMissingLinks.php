@@ -17,6 +17,7 @@ use Elabftw\Models\Items;
 use Elabftw\Models\Links;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
+use PDO;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -49,7 +50,7 @@ class AddMissingLinks extends Command
         $Db = Db::getConnection();
 
         $tables = array('experiments', 'experiments_templates', 'items');
-        $query = "SELECT `id`, `body`, `userid` FROM `table` WHERE `body` LIKE '%database.php?mode=view&amp;id=%';";
+        $query = "SELECT `id`, `body`, `userid`, `lockedby` FROM `table` WHERE `body` LIKE '%database.php?mode=view&amp;id=%';";
 
         foreach ($tables as $table) {
             printf('Searching in %s%s', $table, PHP_EOL);
@@ -84,7 +85,30 @@ class AddMissingLinks extends Command
                     preg_match_all('/database\.php\?mode=view&amp;id=([0-9]+)/', $data['body'], $matches);
                     foreach ($matches[1] as $match) {
                         try {
-                            $out = (new Links($entity))->create(new ContentParams($match));
+                            // locked/timestamped entities are a problem because of canOrExplode
+                            if ($data['lockedby']) {
+                                // manually create new link
+                                $sql = 'INSERT INTO ' . $table . '_links (item_id, link_id)';
+                                $sql .= ' SELECT ' . $data['id'] . ' item_id, ' . $match . ' link_id FROM DUAL';
+                                // if it does not exist
+                                $sql .= ' WHERE NOT EXISTS (';
+                                $sql .= 'SELECT 1 FROM ' . $table . '_links WHERE item_id = :item_id AND link_id = :link_id LIMIT 1';
+                                $sql .= ')';
+
+                                // https://stackoverflow.com/a/8534693
+                                // it would be better to add a UNIQUE KEY to (item_id, link_id) for all the link tables:
+                                // ALTER TABLE `x` ADD UNIQUE KEY `link_uniq_key` (item_id, link_id);
+                                // and than use "INSERT IGNORE INTO ' . $table . '_links (item_id, link_id) VALUES(:item_id, :link_id)";
+
+                                $req = $Db->prepare($sql);
+                                $req->bindParam(':item_id', $data['id'], PDO::PARAM_INT);
+                                $req->bindParam(':link_id', $match, PDO::PARAM_INT);
+                                $Db->execute($req);
+
+                                $out = $Db->lastInsertId();
+                            } else {
+                                $out = (new Links($entity))->create(new ContentParams($match));
+                            }
                             if ((int) $out !== 0) {
                                 $count++;
                             }

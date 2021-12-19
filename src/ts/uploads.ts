@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import $ from 'jquery';
-import 'jquery-jeditable/src/jquery.jeditable.js';
+import { Action, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Target } from './interfaces';
 import { notif, displayMolFiles, display3DMolecules, getEntity } from './misc';
@@ -33,23 +33,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const UploadC = new Upload(entity);
 
   // make file comments editable
-  $(document).on('mouseenter', '.file-comment', function() {
-    ($('.editable') as any).editable(function(input: string) {
-      UploadC.update(input, $(this).data('id'), Target.Comment);
-      return (input);
-    }, {
-      tooltip : i18next.t('upload-file-comment'),
-      placeholder: i18next.t('upload-file-comment'),
-      name : 'fileComment',
-      onedit: function() {
-        if ($(this).text() === 'Click to add a comment') {
-          $(this).text('');
-        }
-      },
-      onblur : 'submit',
-      style : 'display:inline',
-    });
+  const malleableFilecomment = new Malle({
+    formClasses: ['d-inline-flex'],
+    fun: (value, original) => {
+      UploadC.update(value, parseInt(original.dataset.id, 10), Target.Comment);
+      return value;
+    },
+    inputClasses: ['form-control'],
+    listenOn: '.file-comment.editable',
+    onBlur: Action.Ignore,
+    onEdit: (original, event, input) => {
+      // remove the default text
+      if (input.value === 'Click to add a comment') {
+        input.value = '';
+        return true;
+      }
+    },
+    tooltip: i18next.t('upload-file-comment'),
   });
+  malleableFilecomment.listen();
+
+  // add an observer so new comments will get an event handler too
+  new MutationObserver(() => {
+    malleableFilecomment.listen();
+  }).observe(document.getElementById('filesdiv'), {childList: true});
 
   // Export mol in png
   $(document).on('click', '.saveAsImage', function() {

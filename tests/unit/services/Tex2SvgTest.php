@@ -45,8 +45,8 @@ class Tex2SvgTest extends \PHPUnit\Framework\TestCase
     {
         $mathJaxHtml = $this->getFixture('mathjaxFail.html');
         $Tex2Svg = new Tex2Svg($this->mpdf, $mathJaxHtml);
-        $this->expectException(ProcessFailedException::class);
-        $Tex2Svg->getContent();
+        $mathJaxOut = $Tex2Svg->getContent();
+        $this->assertEquals($mathJaxHtml, $mathJaxOut);
     }
 
     private function getFixture(string $filename): string

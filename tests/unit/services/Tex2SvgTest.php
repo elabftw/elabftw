@@ -10,7 +10,6 @@
 namespace Elabftw\Services;
 
 use Elabftw\Exceptions\FilesystemErrorException;
-use Elabftw\Exceptions\ProcessFailedException;
 use function file_get_contents;
 use function is_string;
 use Mpdf\Mpdf;

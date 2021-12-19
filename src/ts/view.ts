@@ -5,14 +5,16 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import 'jquery-jeditable/src/jquery.jeditable.js';
+import i18next from 'i18next';
+import { InputType, Malle } from '@deltablot/malle';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
-import { getEntity } from './misc';
+import { getEntity, relativeMoment } from './misc';
 import { BoundEvent, Payload, Method, Action, Target } from './interfaces';
 import { DateTime } from 'luxon';
 import EntityClass from './Entity.class';
-declare let key: any;
+import Comment from './Comment.class';
+declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -32,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
+  const CommentC = new Comment(entity);
 
   // DEPRECATED, use EntityC
   const AjaxC = new Ajax(entity.type, String(entity.id));
@@ -139,4 +142,46 @@ document.addEventListener('DOMContentLoaded', () => {
       AjaxC.post('bloxberg').then(() => window.location.replace(`?mode=view&id=${entity.id}`));
     }
   });
+
+  // COMMENTS
+  document.getElementById('commentsDiv').addEventListener('click', event => {
+    const el = (event.target as HTMLElement);
+    // CREATE COMMENT
+    if (el.matches('[data-action="create-comment"]')) {
+      const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
+      CommentC.create(content).then(() => $('#commentsDiv').load(window.location.href + ' #comment'));
+
+    // DESTROY COMMENT
+    } else if (el.matches('[data-action="destroy-comment"]')) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        CommentC.destroy(parseInt(el.dataset.target, 10)).then(() => $('#commentsDiv').load(window.location.href + ' #comment'));
+      }
+    }
+  });
+
+  // UPDATE MALLEABLE COMMENT
+  const malleableComments = new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
+    inputClasses: ['form-control'],
+    fun: (value, original) => {
+      CommentC.update(parseInt(original.dataset.id, 10), value);
+      return value;
+    },
+    inputType: InputType.Textarea,
+    listenOn: '.comment.editable',
+    submit : i18next.t('save'),
+    submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  });
+
+  // listen on existing comments
+  malleableComments.listen();
+
+  // add an observer so new comments will get an event handler too
+  new MutationObserver(() => {
+    malleableComments.listen();
+    relativeMoment();
+  }).observe(document.getElementById('commentsDiv'), {childList: true});
+  // END COMMENTS
 });

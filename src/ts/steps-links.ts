@@ -7,6 +7,7 @@
  */
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
+import { Malle } from '@deltablot/malle';
 import Link from './Link.class';
 import Step from './Step.class';
 import i18next from 'i18next';
@@ -46,23 +47,27 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // UPDATE
-  $(document).on('mouseenter', '.stepInput', (e) => {
-    ($(e.currentTarget) as any).editable((input: string) => {
+  const malleableStep = new Malle({
+    inputClasses: ['form-control'],
+    formClasses: ['d-inline-flex'],
+    debug: true,
+    fun: (value, original) => {
       StepC.update(
-        input,
-        e.currentTarget.dataset.stepid,
+        parseInt(original.dataset.stepid, 10),
+        value,
       );
-      // here the input is returned instead of the value returned by controller
-      // in json response. That's because the call is asynchronous and jeditable expects
-      // an asynchronous response
-      return input;
-    }, {
-      tooltip : i18next.t('click-to-edit'),
-      indicator : 'Saving...',
-      onblur: 'submit',
-      style : 'display:inline',
-    });
-  });
+      return value;
+    },
+    listenOn: '.step.editable',
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
+
+  // add an observer so new steps will get an event handler too
+  if (document.getElementById('stepsDiv')) {
+    new MutationObserver(() => {
+      malleableStep.listen();
+    }).observe(document.getElementById('stepsDiv'), {childList: true});
+  }
 
   // FINISH
   $(document).on('click', 'input[type=checkbox].stepbox', function(e) {

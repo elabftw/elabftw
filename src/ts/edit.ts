@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare let key: any;
+declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { notif } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Payload, Method, Action } from './interfaces';

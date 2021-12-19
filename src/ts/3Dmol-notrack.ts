@@ -11,7 +11,7 @@ export {};
 
 declare global {
   interface Window {
-    $3Dmol: any;
+    $3Dmol: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 }
 

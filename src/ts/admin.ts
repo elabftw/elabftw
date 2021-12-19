@@ -8,7 +8,7 @@
 import { notif } from './misc';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
-import 'jquery-jeditable/src/jquery.jeditable.js';
+import { Malle } from '@deltablot/malle';
 import TeamGroup from './TeamGroup.class';
 import Status from './Status.class';
 import i18next from 'i18next';
@@ -116,28 +116,33 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // edit the team group name
-  $(document).on('mouseenter', 'h3.teamgroup_name', function() {
-    ($(this) as any).editable(function(value) {
+  const malleableGroupname = new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
+    inputClasses: ['form-control'],
+    formClasses: ['mb-3'],
+    fun: (value, original) => {
       const payload: Payload = {
         method: Method.POST,
         action: Action.Update,
         model: Model.TeamGroup,
         content: value,
-        id: $(this).data('id'),
+        id: parseInt(original.dataset.id, 10),
         notif: true,
       };
-
       AjaxC.send(payload);
-      return (value);
-    }, {
-      indicator : 'Saving...',
-      submit : 'Save',
-      cancel : 'Cancel',
-      cancelcssclass : 'button btn btn-danger',
-      submitcssclass : 'button btn btn-primary',
-      style : 'display:inline',
-    });
-  });
+      return value;
+    },
+    listenOn: '.teamgroup_name.editable',
+    tooltip: i18next.t('click-to-edit'),
+    submit : i18next.t('save'),
+    submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
+  }).listen();
+
+  // add an observer so new comments will get an event handler too
+  new MutationObserver(() => {
+    malleableGroupname.listen();
+  }).observe(document.getElementById('team_groups_div'), {childList: true});
 
   // STATUS
   const StatusC = new Status();

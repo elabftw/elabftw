@@ -120,7 +120,7 @@ class Tex2Svg
         unlink($tmpFile);
 
         if (!$process->isSuccessful()) {
-            $log = (new Logger('tex2svg'))->pushHandler(new ErrorLogHandler());
+            $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
             // don't spam the log file with all the webpacked bundle gibberish
             $process->clearErrorOutput();
             // Log a generic error

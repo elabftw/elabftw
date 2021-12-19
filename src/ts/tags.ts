@@ -7,6 +7,7 @@
  */
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
+import { Malle } from '@deltablot/malle';
 import FavTag from './FavTag.class';
 import Tag from './Tag.class';
 import i18next from 'i18next';
@@ -124,45 +125,51 @@ document.addEventListener('DOMContentLoaded', () => {
       .observe(document.getElementById('favtagsPanel'), {childList: true, subtree: true});
   }
 
-  // make the tag editable (on admin.ts)
-  $(document).on('mouseenter', '.tag-editable', function() {
-    ($(this) as any).editable(function(value) {
-      // we need to have an entity so the Tags model is built correctly
-      // also it's a mandatory constructor param for Tag.class.ts
-      TagC.update(value, $(this).data('tagid'));
-      return (value);
-    }, {
-      tooltip : i18next.t('click-to-edit'),
-      indicator : 'Saving...',
-      onblur: 'submit',
-      style : 'display:inline',
-    });
-  });
+  // make the tag editable (on admin page)
+  const malleableTags = new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['button', 'btn', 'btn-danger', 'ml-1'],
+    inputClasses: ['form-control'],
+    formClasses: ['d-inline-flex'],
+    fun: (value, original) => {
+      TagC.update(value, parseInt(original.dataset.tagid, 10));
+      return value;
+    },
+    listenOn: '.tag.editable',
+    tooltip: i18next.t('click-to-edit'),
+    submit : i18next.t('save'),
+    submitClasses: ['button', 'btn', 'btn-primary', 'ml-1'],
+  }).listen();
 
-  // UNREFERENCE (remove link between tag and entity)
-  $(document).on('click', '.tagUnreference', function() {
-    if (confirm(i18next.t('tag-delete-warning'))) {
-      TagC.unreference($(this).data('tagid')).then(() => {
-        $('#tags_div_' + entity.id).load(window.location.href + ' #tags_div_' + entity.id + ' > *');
+  if (document.getElementById('tagMgrDiv')) {
+    new MutationObserver(() => {
+      malleableTags.listen();
+    }).observe(document.getElementById('tagMgrDiv'), {childList: true});
+  }
+
+  // MAIN ACTION LISTENER
+  document.querySelector('.real-container').addEventListener('click', event => {
+    const el = (event.target as HTMLElement);
+    // DEDUPLICATE (from admin panel/tag manager)
+    if (el.matches('[data-action="deduplicate-tag"]')) {
+      TagC.deduplicate().then(json => {
+        notif({
+          'res': true,
+          'msg': `Deduplicated ${json.value} tags`,
+        });
+        reloadElement('tagMgrDiv');
       });
+    // UNREFERENCE (remove link between tag and entity)
+    } else if (el.matches('[data-action="unreference-tag"]')) {
+      if (confirm(i18next.t('tag-delete-warning'))) {
+        TagC.unreference(parseInt(el.dataset.tagid, 10)).then(() => reloadElement(`tags_div_${entity.id}`));
+      }
+    // DESTROY (from admin panel/tag manager)
+    } else if (el.matches('[data-action="destroy-tag"]')) {
+      if (confirm(i18next.t('tag-delete-warning'))) {
+        TagC.destroy(parseInt(el.dataset.tagid, 10)).then(() => reloadElement('tagMgrDiv'));
+      }
     }
   });
 
-  // DEDUPLICATE (from admin panel/tag manager)
-  $(document).on('click', '.tagDeduplicate', function() {
-    TagC.deduplicate().then(json => {
-      $('#tag_manager').load(window.location.href + ' #tag_manager > *');
-      // TODO notif this in js from json.value
-      //   $Response->setData(array('res' => true, 'msg' => sprintf(_('Deduplicated %d tags'), $deduplicated)));
-    });
-  });
-
-  // DESTROY (from admin panel/tag manager)
-  $('#tag_manager').on('click', '.tagDestroy', function() {
-    if (confirm(i18next.t('tag-delete-warning'))) {
-      TagC.destroy($(this).data('tagid')).then(() => {
-        $('#tag_manager').load(window.location.href + ' #tag_manager > *');
-      });
-    }
-  });
 });

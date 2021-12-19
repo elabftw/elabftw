@@ -30,7 +30,7 @@ export default class Step {
     return this.sender.send(payload);
   }
 
-  update(content: string, id: number): Promise<ResponseMsg> {
+  update(id: number, content: string): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,
       action: Action.Update,

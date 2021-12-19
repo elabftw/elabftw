@@ -11,11 +11,12 @@ namespace Elabftw\Services;
 
 use function dirname;
 use Elabftw\Exceptions\FilesystemErrorException;
-use Elabftw\Exceptions\ProcessFailedException;
 use function file_put_contents;
 use function html_entity_decode;
 use function is_dir;
 use function mkdir;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 use Mpdf\Mpdf;
 use Mpdf\SizeConverter;
 use function preg_match;
@@ -119,7 +120,15 @@ class Tex2Svg
         unlink($tmpFile);
 
         if (!$process->isSuccessful()) {
-            throw new ProcessFailedException('PDF generation failed during Tex rendering.', 0, new SymfonyProcessFailedException($process));
+            $log = (new Logger('tex2svg'))->pushHandler(new ErrorLogHandler());
+            // don't spam the log file with all the webpacked bundle gibberish
+            $process->clearErrorOutput();
+            // Log a generic error
+            $log->warning('PDF generation failed during Tex rendering.', array('Error', new SymfonyProcessFailedException($process)));
+            // Throwing an error here will block PDF generation. This should be avoided. https://github.com/elabftw/elabftw/issues/3076#issuecomment-997197700
+            // Returning an empty string will generate a pdf without type setting tex math expressions
+            // The raw tex will be retained so no information is lost
+            return '';
         }
         return $process->getOutput();
     }

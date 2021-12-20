@@ -32,10 +32,13 @@
         </div>
         <hr>
       {% endif %}
-      <p class='smallgray' style='display:inline'>
-        <a href='#' id='expandAll' data-status='closed' data-expand='{{ 'Expand all'|trans }}' data-collapse='{{ 'Collapse all'|trans }}'>{{ 'Expand all'|trans }}</a> - <a href='#' id='selectAllBoxes'>{{ 'Select all'|trans }}</a>
-        <span id='advancedSelectOptions' style='display:none'> - <a href='#' id='unselectAllBoxes'>{{ 'Clear selection'|trans }}</a> -
-          <a href='#' id='invertSelection'>{{ 'Invert selection'|trans }}</a></span>
+      <p class='smallgray d-inline'>
+        <a href='#' id='expandAll' data-status='closed' data-expand='{{ 'Expand all'|trans }}' data-collapse='{{ 'Collapse all'|trans }}'>{{ 'Expand all'|trans }}</a>
+        - <a href='#' id='selectAllBoxes'>{{ 'Select all'|trans }}</a>
+        <span id='advancedSelectOptions' style='display:none'>
+          - <a href='#' id='unselectAllBoxes'>{{ 'Clear selection'|trans }}</a>
+          - <a href='#' id='invertSelection'>{{ 'Invert selection'|trans }}</a>
+        </span>
       </p>
 
       <p id='withSelected' style='display:none'>{{ 'With selected:'|trans }}

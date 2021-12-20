@@ -76,7 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // EXPAND ALL
-  $('#expandAll').on('click', function() {
+  $('#expandAll').on('click', function(e) {
+    e.preventDefault();
     if ($(this).data('status') === 'closed') {
       $(this).data('status', 'opened');
       $(this).text($(this).data('collapse'));
@@ -84,13 +85,14 @@ document.addEventListener('DOMContentLoaded', () => {
       $(this).data('status', 'closed');
       $(this).text($(this).data('expand'));
     }
-    $('.toggleBody').each(function() {
+    $('[data-action="toggle-body"]').each(function() {
       $(this).trigger('click');
     });
   });
 
   // SELECT ALL
-  $('#selectAllBoxes').on('click', function() {
+  $('#selectAllBoxes').on('click', function(e) {
+    e.preventDefault();
     $('.item input[type=checkbox]').prop('checked', true);
     $('.item input[type=checkbox]').parent().parent().css('background-color', bgColor);
     $('#advancedSelectOptions').show();
@@ -102,7 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // UNSELECT ALL
-  $('#unselectAllBoxes').on('click', function() {
+  $('#unselectAllBoxes').on('click', function(e) {
+    e.preventDefault();
     $('.item input:checkbox').prop('checked', false);
     $('.item input[type=checkbox]').parent().parent().css('background-color', '');
     // hide menu
@@ -111,7 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // INVERT SELECTION
-  $('#invertSelection').on('click', function() {
+  $('#invertSelection').on('click', function(e) {
+    e.preventDefault();
     ($('.item input[type=checkbox]') as JQuery<HTMLInputElement>).each(function() {
       this.checked = !this.checked;
       if ($(this).prop('checked')) {
@@ -371,8 +375,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;
+      const plusMinusIcon = $(el).find('[data-fa-i2svg]');
       // transform the + in - and vice versa
-      $(el).find('[data-fa-i2svg]').toggleClass('fa-minus-circle fa-plus-circle');
+      plusMinusIcon.toggleClass('fa-minus-circle fa-plus-circle');
+      // prevent get request if body gets closed
+      const div = document.getElementById(randId);
+      if (plusMinusIcon.hasClass('fa-plus-circle')) {
+        div.toggleAttribute('hidden');
+        return;
+      }
+      // don't reload body if it is already loaded
+      if (div.dataset.bodyLoaded && plusMinusIcon.hasClass('fa-minus-circle')) {
+        div.toggleAttribute('hidden');
+        return;
+      }
       // get the id to show the toggleBody
       const id = $(el).data('id');
       // get html of body
@@ -386,10 +402,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // get the width of the parent. The -30 is to make it smaller than parent even with the margins
         const width = $('#parent_' + randId).width() - 30;
         // add html content and adjust the width of the children
-        const div = document.getElementById(randId);
         div.innerHTML = data.msg;
         div.style.width = String(width);
         div.toggleAttribute('hidden');
+        div.dataset.bodyLoaded = '1';
         // ask mathjax to reparse the page
         MathJax.typeset();
       });

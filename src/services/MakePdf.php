@@ -255,6 +255,10 @@ class MakePdf extends AbstractMake implements FileMakerInterface
     private function getBody(): string
     {
         $body = Tools::md2html($this->Entity->entityData['body'] ?? '');
+        // md2html can result in invalid html, see https://github.com/elabftw/elabftw/issues/3076
+        // the next line (HTMLPurifier) rescues the invalid parts and thus avoids some MathJax errors
+        // the consequence is a slightly different layout
+        $body = Filter::body($body);
         // we need to fix the file path in the body so it shows properly into the pdf for timestamping (issue #131)
         return str_replace('src="app/download.php?f=', 'src="' . dirname(__DIR__, 2) . '/uploads/', $body);
     }

@@ -640,16 +640,20 @@ class ApiController implements ControllerInterface
      *             "category": "Project",
      *             "color": "32a100",
      *             "bookable": "0",
-     *             "template": "Some text",
-     *             "ordering": "1"
+     *             "body": "Some text",
+     *             "ordering": "1",
+     *             "canread": "team",
+     *             "canwrite": "team"
      *           },
      *           {
      *             "category_id": "2",
      *             "category": "Microscope",
      *             "color": "2000eb",
      *             "bookable": "1",
-     *             "template": "Template text",
-     *             "ordering": "2"
+     *             "body": "Template text",
+     *             "ordering": "2",
+     *             "canread": "team",
+     *             "canwrite": "team"
      *           }
      *         ]
      *     }

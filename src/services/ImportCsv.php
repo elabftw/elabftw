@@ -62,10 +62,8 @@ class ImportCsv extends AbstractImport
 
         // SQL for importing
         $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, elabid)
-            VALUES(:team, :title, :date, :body, :userid, :category, :canread, :elabid)';
+            VALUES(:team, :title, CURDATE(), :body, :userid, :category, :canread, :elabid)';
         $req = $this->Db->prepare($sql);
-
-        $date = Filter::kdate();
 
         // now loop the rows and do the import
         foreach ($rows as $row) {
@@ -77,7 +75,6 @@ class ImportCsv extends AbstractImport
 
             $req->bindParam(':team', $this->Users->userData['team']);
             $req->bindParam(':title', $row['title']);
-            $req->bindParam(':date', $date);
             $req->bindParam(':body', $body);
             $req->bindParam(':userid', $this->Users->userData['userid']);
             $req->bindParam(':category', $this->target);

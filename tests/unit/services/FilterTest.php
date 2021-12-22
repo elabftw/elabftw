@@ -16,9 +16,10 @@ class FilterTest extends \PHPUnit\Framework\TestCase
 {
     public function testKdate(): void
     {
-        $this->assertEquals('19690721', Filter::kdate('19690721'));
-        $this->assertEquals(date('Ymd'), Filter::kdate('3902348923'));
-        $this->assertEquals(date('Ymd'), Filter::kdate('Sun is shining'));
+        $this->assertEquals('1969-07-21', Filter::kdate('1969-07-21'));
+        $this->assertEquals(date('Y-m-d'), Filter::kdate('3902348923'));
+        $this->assertEquals(date('Y-m-d'), Filter::kdate('Sun is shining'));
+        $this->assertEquals(date('Y-m-d'), Filter::kdate("\n"));
     }
 
     public function testSanitize(): void

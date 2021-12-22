@@ -159,7 +159,7 @@
 
   <!-- DATE -->
   <div>
-    <i aria-hidden='true' class='far fa-calendar-alt mr-1'></i>{{ 'Started on'|trans }} {{ Entity.entityData.date|kdate }}
+    <i aria-hidden='true' class='far fa-calendar-alt mr-1'></i>{{ 'Started on'|trans }} {{ Entity.entityData.date|date('Y-m-d') }}
   </div>
 
   <!-- TITLE : click on it to go to edit mode only if we are not in read only mode -->

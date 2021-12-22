@@ -50,13 +50,11 @@ class Templates extends AbstractEntity
             $canwrite = $this->Users->userData['default_write'];
         }
 
-        $date = Filter::kdate();
         $sql = 'INSERT INTO experiments_templates(team, title, date, body, userid, canread, canwrite)
-            VALUES(:team, :title, :date, :body, :userid, :canread, :canwrite)';
+            VALUES(:team, :title, CURDATE(), :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':title', $params->getContent());
-        $req->bindParam(':date', $date);
         $req->bindValue(':body', $params->getExtraBody());
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':canread', $canread);
@@ -72,13 +70,11 @@ class Templates extends AbstractEntity
     {
         $template = $this->read(new ContentParams());
 
-        $date = Filter::kdate();
         $sql = 'INSERT INTO experiments_templates(team, title, date, body, userid, canread, canwrite)
-            VALUES(:team, :title, :date, :body, :userid, :canread, :canwrite)';
+            VALUES(:team, :title, CURDATE(), :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':title', $template['title']);
-        $req->bindParam(':date', $date);
         $req->bindParam(':body', $template['body']);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':canread', $template['canread']);

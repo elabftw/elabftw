@@ -9,10 +9,10 @@
 
 namespace Elabftw\Models;
 
+use function date;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Services\Check;
-use Elabftw\Services\Filter;
 
 class ItemsTest extends \PHPUnit\Framework\TestCase
 {
@@ -38,7 +38,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->Items->canOrExplode('read');
         $this->assertTrue(is_array($this->Items->entityData));
         $this->assertEquals('Untitled', $this->Items->entityData['title']);
-        $this->assertEquals(Filter::kdate(), $this->Items->entityData['date']);
+        $this->assertEquals(date('Y-m-d'), $this->Items->entityData['date']);
     }
 
     public function testUpdate(): void

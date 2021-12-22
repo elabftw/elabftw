@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use function date;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\FileMakerInterface;
@@ -37,7 +38,7 @@ class MakeReport implements FileMakerInterface
      */
     public function getFileName(): string
     {
-        return Filter::kdate() . '-report.elabftw.csv';
+        return date('Y-m-d') . '-report.elabftw.csv';
     }
 
     /**

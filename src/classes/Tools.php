@@ -142,19 +142,6 @@ class Tools
     }
 
     /**
-     * Take a 8 digits input and output 2014.08.16
-     *
-     * @param string $date Input date '20140302'
-     * @param string $s an optional param to specify the separator
-     * @return string The formatted string
-     */
-    public static function formatDate(string $date, string $s = '.'): string
-    {
-        // TODO date should not be stored as an int in mysql, it creates issues like #2910
-        return $date[0] . $date[1] . $date[2] . $date[3] . $s . $date[4] . $date[5] . $s . $date[6] . $date[7];
-    }
-
-    /**
      * Get the extension of a file.
      *
      * @param string $filename path of the file

@@ -23,7 +23,7 @@ class MakeReportTest extends \PHPUnit\Framework\TestCase
 
     public function testGetFileName(): void
     {
-        $this->assertEquals(Filter::kdate() . '-report.elabftw.csv', $this->Make->getFileName());
+        $this->assertMatchesRegularExpression('/\d{4}-\d{2}-\d{2}-report.elabftw.csv/', $this->Make->getFileName());
     }
 
     public function testGetCsv(): void

@@ -50,8 +50,8 @@ class Templates extends AbstractEntity
             $canwrite = $this->Users->userData['default_write'];
         }
 
-        $sql = 'INSERT INTO experiments_templates(team, title, date, body, userid, canread, canwrite)
-            VALUES(:team, :title, CURDATE(), :body, :userid, :canread, :canwrite)';
+        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, canread, canwrite)
+            VALUES(:team, :title, :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':title', $params->getContent());
@@ -70,8 +70,8 @@ class Templates extends AbstractEntity
     {
         $template = $this->read(new ContentParams());
 
-        $sql = 'INSERT INTO experiments_templates(team, title, date, body, userid, canread, canwrite)
-            VALUES(:team, :title, CURDATE(), :body, :userid, :canread, :canwrite)';
+        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, canread, canwrite)
+            VALUES(:team, :title, :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':title', $template['title']);

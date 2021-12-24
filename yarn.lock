@@ -3374,10 +3374,10 @@ jsondiffpatch@^0.3.11:
     chalk "^2.3.0"
     diff-match-patch "^1.0.0"
 
-jsoneditor@^9.0.3:
-  version "9.5.7"
-  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-9.5.7.tgz#b74d0c2cf64febe102b1b0a91d693f48d1f90917"
-  integrity sha512-RWI1YqIhb2XzLcnSHMta7LROItQg49FhSd7KNPWr81HyCj2pc0m25no4BpzygmxW9320r9PnYKJwZsqL2PpdrQ==
+jsoneditor@^9.5.9:
+  version "9.5.9"
+  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-9.5.9.tgz#cf494b648d52651ecfe59c46ba1a3bfa9cf4e1e6"
+  integrity sha512-E2nyzV6PLJr10YZAlEoKQVn8aMRdD5fh8eo1xDY2POZQVZl9axwlEwx86Lo1gphFBEif2CrvHndv0akdc1/I9w==
   dependencies:
     ace-builds "^1.4.13"
     ajv "^6.12.6"

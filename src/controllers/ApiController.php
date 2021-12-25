@@ -881,7 +881,7 @@ class ApiController implements ControllerInterface
      *     "end": "2019-11-30T14:00:00",
      *     "title": "Booked from API",
      * }
-     * print(manager.create_event(42))
+     * print(manager.create_event(42, params))
      * @apiExample {shell} Curl example
      * export TOKEN="3148"
      * # book database item 42 on the 30th of November 2019 from noon to 2pm

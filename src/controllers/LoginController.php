@@ -16,6 +16,7 @@ use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Saml;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\ExistingUser;
@@ -169,7 +170,12 @@ class LoginController implements ControllerInterface
         }
         // if the token is not valid, verify we can login from untrusted devices for that user
         if ($isTokenValid === false) {
-            $Users = ExistingUser::fromEmail((string) $this->App->Request->request->get('email'));
+            // email might be for non existing user, which will throw exception
+            try {
+                $Users = ExistingUser::fromEmail((string) $this->App->Request->request->get('email'));
+            } catch (ResourceNotFoundException $e) {
+                throw new InvalidDeviceTokenException();
+            }
             // check if authentication is locked for untrusted clients for that user
             if ($Users->allowUntrustedLogin() === false) {
                 // reject any attempt whatsoever if this account is locked for untrusted devices

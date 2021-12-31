@@ -13,6 +13,7 @@ use function dirname;
 use Elabftw\Exceptions\FilesystemErrorException;
 use function file_put_contents;
 use function html_entity_decode;
+use Imagick;
 use function is_dir;
 use function mkdir;
 use Monolog\Handler\ErrorLogHandler;
@@ -56,26 +57,59 @@ class Tex2Svg
         // based on https://github.com/mpdf/mpdf-examples/blob/master/MathJaxProcess.php
         $sizeConverter = new SizeConverter($this->mpdf->dpi, $this->mpdf->default_font_size, $this->mpdf, new NullLogger());
 
-        // scale SVG size according to pdf + font settings
-        // only select mathjax svg
-        preg_match_all('/<mjx-container[^>]*><svg([^>]*)/', $html, $mathJaxSvg);
-        foreach ($mathJaxSvg[1] as $svgAttributes) {
-            preg_match('/width="(.*?)"/', $svgAttributes, $wr);
-            preg_match('/height="(.*?)"/', $svgAttributes, $hr);
+        // scale SVG size according to pdf + font settings,
+        // convert nested SVGs to PNGs here as mPDF cannot do it, v8.0.13
+        // get all MathJax SVGs, use named subpatterns ('svg', 'attributes'), delimiter is '#'
+        preg_match_all(
+            '#<mjx-container[^>]*>(?P<svg><svg(?P<attributes>[^>]*)>[\s\S]*?)</mjx-container>#',
+            $html,
+            $mathJaxSvgs,
+            PREG_SET_ORDER
+        );
+        foreach ($mathJaxSvgs as $mathJaxSvg) {
+            // get the SVG dimensions
+            preg_match('/width="(?P<value>.*?)"/', $mathJaxSvg['attributes'], $width);
+            preg_match('/height="(?P<value>.*?)"/', $mathJaxSvg['attributes'], $height);
+            $w = $width['value'];
+            $h = $height['value'];
 
-            if ($wr && $hr) {
-                $w = $sizeConverter->convert($wr[1], 0, $this->mpdf->FontSize) * $this->mpdf->dpi / 25.4;
-                $h = $sizeConverter->convert($hr[1], 0, $this->mpdf->FontSize) * $this->mpdf->dpi / 25.4;
+            if ($width && $height) {
+                // MathJax dimensions are in 'ex', convert() returns 'mm' -> final is pixel
+                // scale SVG size according to pdf + font settings
+                $scaleFactor = $this->mpdf->dpi / 25.4;
+                $w = $sizeConverter->convert($w, 0, $this->mpdf->FontSize) * $scaleFactor;
+                $h = $sizeConverter->convert($h, 0, $this->mpdf->FontSize) * $scaleFactor;
+            }
 
-                $html = str_replace('width="' . $wr[1] . '"', 'width="' . $w . '"', $html);
-                $html = str_replace('height="' . $hr[1] . '"', 'height="' . $h . '"', $html);
+            // Is this a nested SVG?
+            // fix https://github.com/elabftw/elabftw/pull/2509#issuecomment-788645472
+            // mpdf cannot handle nested SVGs, so we convert them upfront to PNG images
+            if (substr_count($mathJaxSvg['svg'], '</svg>') > 1) {
+                $image = new Imagick();
+                $image->setResolution(300, 300);
+                $image->setBackgroundColor('#0000'); // #rgba, a=0: fully transparent
+                $image->readImageBlob('<?xml version="1.0" encoding="UTF-8" standalone="no"?>' . $mathJaxSvg['svg']);
+                $image->setImageFormat('png');
+                $img = sprintf(
+                    '<img src="data:image/png;base64,%s" width="%d" height="%d" class="mathjax-svg">',
+                    base64_encode($image->getImageBlob()),
+                    $w,
+                    $h
+                );
+                $image->clear();
+                // replace <mjx-container>...</mjx-container> with plain <img>
+                $html = str_replace($mathJaxSvg[0], $img, $html);
+            } else {
+                // resize remaining MathJax SVGs
+                $html = str_replace('width="' . $width['value'] . '"', 'width="' . $w . '"', $html);
+                $html = str_replace('height="' . $height['value'] . '"', 'height="' . $h . '"', $html);
             }
         }
 
         // add 'mathjax-svg' class to all mathjax SVGs
         $html = preg_replace('/(<mjx-container[^>]*><svg)/', '\1 class="mathjax-svg"', $html);
 
-        // fill to white for all SVGs
+        // fill to black for all SVGs
         return str_replace('fill="currentColor"', 'fill="#000"', $html);
     }
 
@@ -125,7 +159,8 @@ class Tex2Svg
             $process->clearErrorOutput();
             // Log a generic error
             $log->warning('PDF generation failed during Tex rendering.', array('Error', new SymfonyProcessFailedException($process)));
-            // Throwing an error here will block PDF generation. This should be avoided. https://github.com/elabftw/elabftw/issues/3076#issuecomment-997197700
+            // Throwing an error here will block PDF generation. This should be avoided.
+            // https://github.com/elabftw/elabftw/issues/3076#issuecomment-997197700
             // Returning an empty string will generate a pdf without type setting tex math expressions
             // The raw tex will be retained so no information is lost
             return '';

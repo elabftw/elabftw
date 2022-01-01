@@ -90,6 +90,8 @@ class Tex2Svg
                 $image->setBackgroundColor('#0000'); // #rgba, a=0: fully transparent
                 $image->readImageBlob('<?xml version="1.0" encoding="UTF-8" standalone="no"?>' . $mathJaxSvg['svg']);
                 $image->setImageFormat('png');
+                // remove all profiles and comments including date:create, date:modify which conflicts with unit testing
+                $image->stripImage();
                 $img = sprintf(
                     '<img src="data:image/png;base64,%s" width="%d" height="%d" class="mathjax-svg">',
                     base64_encode($image->getImageBlob()),

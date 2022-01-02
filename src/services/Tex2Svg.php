@@ -35,7 +35,6 @@ use function unlink;
  */
 class Tex2Svg
 {
-
     // mm per inch
     private const MM_PER_INCH = 25.4;
 

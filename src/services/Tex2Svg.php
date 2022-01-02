@@ -35,6 +35,10 @@ use function unlink;
  */
 class Tex2Svg
 {
+
+    // mm per inch
+    private const MM_PER_INCH = 25.4;
+
     public function __construct(private Mpdf $mpdf, private string $source)
     {
     }
@@ -76,7 +80,7 @@ class Tex2Svg
             if ($width && $height) {
                 // MathJax dimensions are in 'ex', convert() returns 'mm' -> final is pixel
                 // scale SVG size according to pdf + font settings
-                $scaleFactor = $this->mpdf->dpi / 25.4;
+                $scaleFactor = $this->mpdf->dpi / MM_PER_INCH;
                 $w = $sizeConverter->convert($w, 0, $this->mpdf->FontSize) * $scaleFactor;
                 $h = $sizeConverter->convert($h, 0, $this->mpdf->FontSize) * $scaleFactor;
             }

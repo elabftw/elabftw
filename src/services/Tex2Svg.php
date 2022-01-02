@@ -79,7 +79,7 @@ class Tex2Svg
             if ($width && $height) {
                 // MathJax dimensions are in 'ex', convert() returns 'mm' -> final is pixel
                 // scale SVG size according to pdf + font settings
-                $scaleFactor = $this->mpdf->dpi / MM_PER_INCH;
+                $scaleFactor = $this->mpdf->dpi / self::MM_PER_INCH;
                 $w = $sizeConverter->convert($w, 0, $this->mpdf->FontSize) * $scaleFactor;
                 $h = $sizeConverter->convert($h, 0, $this->mpdf->FontSize) * $scaleFactor;
             }

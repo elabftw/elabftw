@@ -36,7 +36,9 @@ use function unlink;
 class Tex2Svg
 {
     // mm per inch
-    private const MM_PER_INCH = 25.4;
+    private const INCH_TO_MM_CONVERSION_FACTOR = 25.4;
+
+    private string $contentWithMathJaxSVG;
 
     public function __construct(private Mpdf $mpdf, private string $source)
     {
@@ -47,75 +49,23 @@ class Tex2Svg
         // decode html entities, otherwise it crashes
         // compare to https://github.com/mathjax/MathJax-demos-node/issues/16
         $contentDecode = html_entity_decode($this->source, ENT_HTML5, 'UTF-8');
-        $html = $this->runNodeApp($contentDecode);
+        $this->contentWithMathJaxSVG = $this->runNodeApp($contentDecode);
 
         // was there actually tex in the content?
         // if not we can skip the svg modifications and return the content
         // return the decoded content to avoid html entities issues in final pdf
         // see #2760
-        if ($html === '') {
+        if ($this->contentWithMathJaxSVG === '') {
             return $contentDecode;
         }
 
-        // based on https://github.com/mpdf/mpdf-examples/blob/master/MathJaxProcess.php
-        $sizeConverter = new SizeConverter($this->mpdf->dpi, $this->mpdf->default_font_size, $this->mpdf, new NullLogger());
-
-        // scale SVG size according to pdf + font settings,
-        // convert nested SVGs to PNGs here as mPDF cannot do it, v8.0.13
-        // get all MathJax SVGs, use named subpatterns ('svg', 'attributes'), delimiter is '#'
-        preg_match_all(
-            '#<mjx-container[^>]*>(?P<svg><svg(?P<attributes>[^>]*)>[\s\S]*?)</mjx-container>#',
-            $html,
-            $mathJaxSvgs,
-            PREG_SET_ORDER
-        );
-        foreach ($mathJaxSvgs as $mathJaxSvg) {
-            // get the SVG dimensions
-            preg_match('/width="(?P<value>.*?)"/', $mathJaxSvg['attributes'], $width);
-            preg_match('/height="(?P<value>.*?)"/', $mathJaxSvg['attributes'], $height);
-            $w = $width['value'];
-            $h = $height['value'];
-
-            if ($width && $height) {
-                // MathJax dimensions are in 'ex', convert() returns 'mm' -> final is pixel
-                // scale SVG size according to pdf + font settings
-                $scaleFactor = $this->mpdf->dpi / self::MM_PER_INCH;
-                $w = $sizeConverter->convert($w, 0, $this->mpdf->FontSize) * $scaleFactor;
-                $h = $sizeConverter->convert($h, 0, $this->mpdf->FontSize) * $scaleFactor;
-            }
-
-            // Is this a nested SVG?
-            // fix https://github.com/elabftw/elabftw/pull/2509#issuecomment-788645472
-            // mpdf cannot handle nested SVGs, so we convert them upfront to PNG images
-            if (substr_count($mathJaxSvg['svg'], '</svg>') > 1) {
-                $image = new Imagick();
-                $image->setResolution(300, 300);
-                $image->setBackgroundColor('#0000'); // #rgba, a=0: fully transparent
-                $image->readImageBlob('<?xml version="1.0" encoding="UTF-8" standalone="no"?>' . $mathJaxSvg['svg']);
-                $image->setImageFormat('png');
-                // remove all profiles and comments including date:create, date:modify which conflicts with unit testing
-                $image->stripImage();
-                $img = sprintf(
-                    '<img src="data:image/png;base64,%s" width="%d" height="%d" class="mathjax-svg">',
-                    base64_encode($image->getImageBlob()),
-                    $w,
-                    $h
-                );
-                $image->clear();
-                // replace <mjx-container>...</mjx-container> with plain <img>
-                $html = str_replace($mathJaxSvg[0], $img, $html);
-            } else {
-                // resize remaining MathJax SVGs
-                $html = str_replace('width="' . $width['value'] . '"', 'width="' . $w . '"', $html);
-                $html = str_replace('height="' . $height['value'] . '"', 'height="' . $h . '"', $html);
-            }
-        }
+        $this->scaleSVGs();
 
         // add 'mathjax-svg' class to all mathjax SVGs
-        $html = preg_replace('/(<mjx-container[^>]*><svg)/', '\1 class="mathjax-svg"', $html);
+        $this->contentWithMathJaxSVG = preg_replace('/(<mjx-container[^>]*><svg)/', '\1 class="mathjax-svg"', $this->contentWithMathJaxSVG);
 
         // fill to black for all SVGs
-        return str_replace('fill="currentColor"', 'fill="#000"', $html);
+        return str_replace('fill="currentColor"', 'fill="#000"', $this->contentWithMathJaxSVG);
     }
 
     private function getTemporaryFilename(): string
@@ -137,7 +87,6 @@ class Tex2Svg
     private function runNodeApp(string $content): string
     {
         $tmpFile = $this->getTemporaryFilename();
-
         file_put_contents($tmpFile, $content);
 
         // absolute path to tex2svg app
@@ -171,5 +120,74 @@ class Tex2Svg
             return '';
         }
         return $process->getOutput();
+    }
+
+    // scale SVG size according to pdf + font settings,
+    // convert nested SVGs to PNGs here as mPDF cannot do it, v8.0.13
+    private function scaleSVGs(): void
+    {
+        // based on https://github.com/mpdf/mpdf-examples/blob/master/MathJaxProcess.php
+        $sizeConverter = new SizeConverter($this->mpdf->dpi, $this->mpdf->default_font_size, $this->mpdf, new NullLogger());
+
+        // get all MathJax SVGs, use named subpatterns ('svg', 'attributes'), delimiter is '#'
+        preg_match_all(
+            '#<mjx-container[^>]*>(?P<svg><svg(?P<attributes>[^>]*)>[\s\S]*?)</mjx-container>#',
+            $this->contentWithMathJaxSVG,
+            $mathJaxSvgs,
+            PREG_SET_ORDER
+        );
+        foreach ($mathJaxSvgs as $mathJaxSvg) {
+            // get the SVG dimensions
+            preg_match('/width="(?P<mathJax>.*?)"/', $mathJaxSvg['attributes'], $width);
+            preg_match('/height="(?P<mathJax>.*?)"/', $mathJaxSvg['attributes'], $height);
+
+            if ($width && $height) {
+                // MathJax dimensions are in 'ex', convert() returns 'mm' -> final is pixel
+                // scale SVG size according to pdf + font settings
+                $scaleFactor = $this->mpdf->dpi / self::INCH_TO_MM_CONVERSION_FACTOR;
+                $width['mpdf'] = $sizeConverter->convert($width['mathJax'], 0, $this->mpdf->FontSize) * $scaleFactor;
+                $height['mpdf'] = $sizeConverter->convert($height['mathJax'], 0, $this->mpdf->FontSize) * $scaleFactor;
+
+                // Is this a nested SVG?
+                // fix https://github.com/elabftw/elabftw/pull/2509#issuecomment-788645472
+                // mpdf cannot handle nested SVGs, so we convert them upfront to PNG images
+                if (substr_count($mathJaxSvg['svg'], '</svg>') > 1) {
+                    $this->nestedSvgToPng($mathJaxSvg[0], $mathJaxSvg['svg'], $width['mpdf'], $height['mpdf']);
+                } else {
+                    // resize remaining MathJax SVGs
+                    $this->contentWithMathJaxSVG = str_replace(
+                        'width="' . $width['mathJax'] . '"',
+                        'width="' . $width['mpdf'] . '"',
+                        $this->contentWithMathJaxSVG
+                    );
+                    $this->contentWithMathJaxSVG = str_replace(
+                        'height="' . $height['mathJax'] . '"',
+                        'height="' . $height['mpdf'] . '"',
+                        $this->contentWithMathJaxSVG
+                    );
+                }
+            }
+        }
+    }
+
+    private function nestedSvgToPng(string $mjxContainer, string $svg, float $width, float $height): void
+    {
+        $image = new Imagick();
+        // resolution could be lower to reduce file size
+        $image->setResolution(300, 300);
+        $image->setBackgroundColor('#0000'); // #rgba, a=0: fully transparent
+        $image->readImageBlob('<?xml version="1.0" encoding="UTF-8" standalone="no"?>' . $svg);
+        $image->setImageFormat('png');
+        // remove all profiles and comments including date:create, date:modify which conflicts with unit testing
+        $image->stripImage();
+        $img = sprintf(
+            '<img src="data:image/png;base64,%s" width="%d" height="%d" class="mathjax-svg">',
+            base64_encode($image->getImageBlob()),
+            $width,
+            $height
+        );
+        $image->clear();
+        // replace <mjx-container>...</mjx-container> with plain <img>
+        $this->contentWithMathJaxSVG = str_replace($mjxContainer, $img, $this->contentWithMathJaxSVG);
     }
 }

@@ -1,5 +1,4 @@
 build:
-    image: default-focal
     environment:
         apt_packages:
             - libmagickwand-dev

@@ -44,7 +44,7 @@
     "mini-css-extract-plugin": "^2.1.0",
     "popper.js": "1.16.*",
     "prismjs": "^1.25.0",
-    "sass": "^1.23.7",
+    "sass": "^1.46.0",
     "stream-browserify": "^3.0.0",
     "timers-browserify": "^2.0.12",
     "tinymce": "^5.10.0",

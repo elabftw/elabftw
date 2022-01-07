@@ -51,7 +51,7 @@ class EntityCest
     public function updateExpTest(ApiTester $I)
     {
         $I->wantTo('Update an experiment');
-        $I->sendPOST('/experiments/1', array('title' => 'new title', 'date' => '20191231', 'body' => 'new body'));
+        $I->sendPOST('/experiments/1', array('title' => 'new title', 'date' => '20191231', 'body' => 'new body', 'metadata' => '{"foo":1}'));
         $I->seeResponseCodeIs(HttpCode::OK); // 200
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson(array('result' => 'success'));

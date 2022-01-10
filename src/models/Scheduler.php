@@ -45,6 +45,9 @@ class Scheduler
     {
         $title = filter_var($title, FILTER_SANITIZE_STRING);
 
+        $start = $this->normalizeDate($start);
+        $end = $this->normalizeDate($end, true);
+
         // fix booking at midnight on monday not working. See #2765
         // we add a second so it works
         $start = preg_replace('/00:00:00/', '00:00:01', $start);
@@ -224,6 +227,27 @@ class Scheduler
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
+    }
+
+    /**
+     * Date can be Y-m-d or ISO::8601
+     * Make sure we have the time, too
+     */
+    private function normalizeDate(string $date, bool $rmDay = false): string
+    {
+        if (DateTime::createFromFormat(DateTime::ISO8601, $date) === false) {
+            $dateOnly = DateTime::createFromFormat('Y-m-d', $date);
+            if ($dateOnly === false) {
+                throw new ImproperActionException('Could not understand date format!');
+            }
+            $dateOnly->setTime(0, 1);
+            // we don't want the end date to go over one day
+            if ($rmDay) {
+                $dateOnly->modify('-3min');
+            }
+            return $dateOnly->format(DateTime::ISO8601);
+        }
+        return $date;
     }
 
     /**

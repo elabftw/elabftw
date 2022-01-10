@@ -147,7 +147,7 @@ class LoginController implements ControllerInterface
         $this->App->Session->remove('auth_userid');
 
         return new RedirectResponse(
-            (string) ($this->App->Request->cookies->get('redirect') ?? '../../experiments.php')
+            (string) ($this->App->Request->cookies->get('elab_redirect') ?? '../../experiments.php')
         );
     }
 

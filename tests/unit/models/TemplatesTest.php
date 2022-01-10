@@ -52,7 +52,6 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
     {
         $this->Templates->setId(1);
         $this->Templates->update(new EntityParams('Database item 1', 'title'));
-        $this->Templates->update(new EntityParams('20160729', 'date'));
         $this->Templates->update(new EntityParams('pwet', 'body'));
     }
 

@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use function date;
 use DateTime;
 use function dirname;
 use Elabftw\Elabftw\ContentParams;
@@ -166,7 +167,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
                 str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />';
         }
 
-        $date = new DateTime($this->Entity->entityData['date'] ?? Filter::kdate());
+        $date = new DateTime($this->Entity->entityData['date'] ?? date('Ymd'));
 
         $locked = $this->Entity->entityData['locked'];
         $lockDate = '';

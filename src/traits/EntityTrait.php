@@ -11,10 +11,10 @@ declare(strict_types=1);
 namespace Elabftw\Traits;
 
 use function bin2hex;
+use function date;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Check;
-use Elabftw\Services\Filter;
 use function random_bytes;
 use function sha1;
 
@@ -53,6 +53,6 @@ trait EntityTrait
      */
     protected function generateElabid(): string
     {
-        return Filter::kdate() . '-' . sha1(bin2hex(random_bytes(16)));
+        return date('Ymd') . '-' . sha1(bin2hex(random_bytes(16)));
     }
 }

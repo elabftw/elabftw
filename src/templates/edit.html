@@ -129,7 +129,7 @@
     <div class=''>
       <i class='far fa-calendar-alt mr-1'></i><label for='date_input'>{{ 'Started on'|trans }}</label>
       <!-- the input expects date in YYYY-MM-DD format, and it will be displayed according to the browser's locale -->
-      <input name='date' id='date_input' type='date' value='{{ Entity.entityData.date|kdate('-') }}' />
+      <input name='date' id='date_input' type='date' value='{{ Entity.entityData.date|date('Y-m-d') }}' />
     </div>
   </div>
 

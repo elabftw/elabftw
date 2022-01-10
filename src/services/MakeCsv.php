@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use function date;
 use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Traits\CsvTrait;
@@ -30,7 +31,7 @@ class MakeCsv extends AbstractMake implements FileMakerInterface
      */
     public function getFileName(): string
     {
-        return Filter::kdate() . '-export.elabftw.csv';
+        return date('Y-m-d') . '-export.elabftw.csv';
     }
 
     /**

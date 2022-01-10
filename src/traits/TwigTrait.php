@@ -48,7 +48,6 @@ trait TwigTrait
         // custom twig filters
         $filterOptions = array('is_safe' => array('html'));
         $msgFilter = new \Twig\TwigFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
-        $dateFilter = new \Twig\TwigFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
         $mdFilter = new \Twig\TwigFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
         $starsFilter = new \Twig\TwigFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
         $bytesFilter = new \Twig\TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
@@ -73,7 +72,6 @@ trait TwigTrait
         $TwigEnvironment->addTest($test);
 
         $TwigEnvironment->addFilter($msgFilter);
-        $TwigEnvironment->addFilter($dateFilter);
         $TwigEnvironment->addFilter($mdFilter);
         $TwigEnvironment->addFilter($starsFilter);
         $TwigEnvironment->addFilter($bytesFilter);

@@ -28,7 +28,7 @@ class MakeCsvTest extends \PHPUnit\Framework\TestCase
 
     public function testGetFileName(): void
     {
-        $this->assertMatchesRegularExpression('/\d{8}-export.elabftw.csv/', $this->MakeExp->getFileName());
+        $this->assertMatchesRegularExpression('/\d{4}-\d{2}-\d{2}-export.elabftw.csv/', $this->MakeExp->getFileName());
     }
 
     public function testGetCsvExp(): void

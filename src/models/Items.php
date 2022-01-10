@@ -14,7 +14,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Maps\Team;
-use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 
@@ -39,11 +38,10 @@ class Items extends AbstractEntity
         $itemTemplate = $ItemsTypes->read(new ContentParams());
 
         $sql = 'INSERT INTO items(team, title, date, body, userid, category, elabid, canread, canwrite, metadata)
-            VALUES(:team, :title, :date, :body, :userid, :category, :elabid, :canread, :canwrite, :metadata)';
+            VALUES(:team, :title, CURDATE(), :body, :userid, :category, :elabid, :canread, :canwrite, :metadata)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':title', _('Untitled'), PDO::PARAM_STR);
-        $req->bindValue(':date', Filter::kdate(), PDO::PARAM_STR);
         $req->bindParam(':body', $itemTemplate['body'], PDO::PARAM_STR);
         $req->bindParam(':category', $category, PDO::PARAM_INT);
         $req->bindValue(':elabid', $this->generateElabid(), PDO::PARAM_STR);
@@ -66,12 +64,11 @@ class Items extends AbstractEntity
         $this->canOrExplode('read');
 
         $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, category, elabid)
-            VALUES(:team, :title, :date, :body, :userid, :canread, :canwrite, :category, :elabid)';
+            VALUES(:team, :title, CURDATE(), :body, :userid, :canread, :canwrite, :category, :elabid)';
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
             'title' => $this->entityData['title'],
-            'date' => Filter::kdate(),
             'body' => $this->entityData['body'],
             'userid' => $this->Users->userData['userid'],
             'elabid' => $this->generateElabid(),

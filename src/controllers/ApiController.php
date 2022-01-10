@@ -134,11 +134,12 @@ class ApiController implements ControllerInterface
                     return $this->uploadFile();
                 }
 
-                // TITLE DATE BODY UPDATE
+                // TITLE DATE BODY METADATA UPDATE
                 if ($this->Request->request->has('date') ||
                     $this->Request->request->has('title') ||
                     $this->Request->request->has('bodyappend') ||
-                    $this->Request->request->has('body')) {
+                    $this->Request->request->has('body') ||
+                    $this->Request->request->has('metadata')) {
                     return $this->updateEntity();
                 }
 
@@ -943,11 +944,12 @@ class ApiController implements ControllerInterface
      * @apiParam {String} body Main content
      * @apiParam {String} date Date
      * @apiParam {String} title Title
+     * @apiParam {String} metadata JSON metadata
      * @apiExample {python} Python example
      * import elabapy
      * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
      * # update experiment 42
-     * params = { "title": "New title", "date": "20200504", "body": "New body content" }
+     * params = { "title": "New title", "date": "20200504", "body": "New body content", "metadata": '{"foo":1, "bar":"elab!"}' }
      * print(manager.post_experiment(42, params))
      * # append to the body
      * params = { "bodyappend": "appended text<br>" }
@@ -963,6 +965,8 @@ class ApiController implements ControllerInterface
      * curl -X POST -F "title=a new title" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
      * # you can also append to the body
      * curl -X POST -F "bodyappend=appended text" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
+     * # you can also update the metadata
+     * curl -X POST -F "metadata={\"foo\":1}" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
      * @apiSuccess {String} result Success
      * @apiError {String} error Error message
      * @apiParamExample {Json} Request-Example:
@@ -985,6 +989,9 @@ class ApiController implements ControllerInterface
         }
         if ($this->Request->request->has('bodyappend')) {
             $this->Entity->update(new EntityParams((string) $this->Request->request->get('bodyappend'), 'bodyappend'));
+        }
+        if ($this->Request->request->has('metadata')) {
+            $this->Entity->update(new EntityParams((string) $this->Request->request->get('metadata'), 'metadata'));
         }
         return new JsonResponse(array('result' => 'success'));
     }

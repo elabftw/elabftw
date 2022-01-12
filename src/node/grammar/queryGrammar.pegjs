@@ -140,18 +140,20 @@ FieldBoolean
     return new Field($field, new SimpleValueWrapper($term));
   }
 
+// we return strings because SimpleValueWrapper() takes only strings
 Boolean
   = ('0' / 'false' / 'no' / 'off')
   {
-    return 0;
+    return '0';
   }
   / ('1' / 'true' / 'yes' / 'on' / '')
   {
-    return 1;
+    return '1';
   }
 
+// we return strings because SimpleValueWrapper() takes only strings
 FieldRating
-  = 'rating'i ':' term:([0-5] / 'unrated'i { return 0;})
+  = 'rating'i ':' term:($([0-5]) / 'unrated'i { return '0';})
   {
     return new Field('rating', new SimpleValueWrapper($term));
   }

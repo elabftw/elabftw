@@ -15,7 +15,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Maps\Team;
-use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 
@@ -76,10 +75,9 @@ class Experiments extends AbstractEntity
 
         // SQL for create experiments
         $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, metadata, userid)
-            VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, NOW(), :metadata, :userid)';
+            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, NOW(), :metadata, :userid)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
-        $req->bindValue(':date', Filter::kdate(), PDO::PARAM_STR);
         $req->bindParam(':body', $body, PDO::PARAM_STR);
         $req->bindValue(':category', $this->getStatus(), PDO::PARAM_INT);
         $req->bindValue(':elabid', $this->generateElabid(), PDO::PARAM_STR);
@@ -158,10 +156,9 @@ class Experiments extends AbstractEntity
         $title = $this->entityData['title'] . ' I';
 
         $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid, metadata)
-            VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, NOW(), :userid, :metadata)';
+            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, NOW(), :userid, :metadata)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
-        $req->bindValue(':date', Filter::kdate(), PDO::PARAM_STR);
         $req->bindParam(':body', $this->entityData['body'], PDO::PARAM_STR);
         $req->bindValue(':category', $this->getStatus(), PDO::PARAM_INT);
         $req->bindValue(':elabid', $this->generateElabid(), PDO::PARAM_STR);

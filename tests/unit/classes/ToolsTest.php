@@ -20,12 +20,6 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('21.40 TiB', Tools::formatBytes(23534909234464));
     }
 
-    public function testFormatDate(): void
-    {
-        $this->assertEquals('1969.07.21', Tools::formatDate('19690721'));
-        $this->assertEquals('1969-07-21', Tools::formatDate('19690721', '-'));
-    }
-
     public function testGetExt(): void
     {
         $this->assertEquals('gif', Tools::getExt('myfile.gif'));

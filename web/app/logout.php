@@ -50,7 +50,7 @@ setcookie('icanhazcookies', '', $cookieOptions);
 // if we get redirected by init.inc.php we want to keep this cookie
 // if the user requested logout, remove it
 if (!$Request->query->get('keep_redirect')) {
-    setcookie('redirect', '', $cookieOptions);
+    setcookie('elab_redirect', '', $cookieOptions);
 }
 setcookie('pdf_sig', '', $cookieOptions);
 setcookie('kickreason', '', $cookieOptions);

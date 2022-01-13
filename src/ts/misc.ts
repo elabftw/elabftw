@@ -209,7 +209,6 @@ export function clearLocalStorage(): void {
     'todolistStepsShowTeam',
     'todoStepsExperiment-isClosed',
     'todoStepsItem-isClosed',
-    'isExtendedSearchMode',
   ];
   storageItems.forEach(item => {
     localStorage.removeItem(item);

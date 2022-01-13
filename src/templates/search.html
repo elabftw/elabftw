@@ -121,15 +121,10 @@
         </select>
       </div>
       <!-- END SEARCH WITH TAG -->
-
-      <!-- EXTENDED BUTTON -->
-      <div class='col-md-3 text-center mb-2'>
-        <button type='button' id='toggleSearchMode' class='button btn btn-primary' data-action='toggle-search-mode'>Switch to Extended Search</button>
-      </div>
-      <!-- END EXTENDED BUTTON -->
     </div>
+
     <!-- NEW ROW -->
-    <div class='row collapse collapseExtendedSearch'>
+    <div class='row'>
       <div class='col-md-8'>
         <label for='extended'><i class='fas fa-search'></i></label>
         <textarea
@@ -164,14 +159,14 @@
         <li><strong>title</strong>: Simple or Quoted term</li>
         <li><strong>visibility</strong>: Simple or Quoted term</li>
       </ul>
-      <a class='' style='cursor:pointer;' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Full syntax'|trans }}</a>
+      <a class='' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Full syntax'|trans }}</a>
       </div>
     </div>
-    <div class='row collapse collapseExtendedSearch show'>
+    <div class='row'>
       <!-- SEARCH ONLY -->
       <div class='col-md-6'>
         <label for='searchonly'>{{ 'Search only in experiments owned by:'|trans }} </label><br>
-        <select id='searchonly' name='owner' class='form-control mb-3'>
+        <select id='searchonly' name='owner' data-filter='author' class='form-control filterHelper mb-3'>
           <option value=''>{{ 'Yourself'|trans }}</option>
           <!-- add an option to search in the whole team (owner = 0) -->
           <option value='0'{{ Request.query.get('owner') == '0' ? ' selected' }}>{{ 'All the team'|trans }}</option>
@@ -188,7 +183,7 @@
       <!-- VISIBILITY SEARCH -->
       <div class='col-md-4'>
         <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
-        <select id='visibility' name='vis' class='form-control'>
+        <select id='visibility' name='vis' data-filter='visibility' class='form-control filterHelper'>
           <option value=''>{{ 'Select visibility'|trans }}</option>
           {% for key, value in visibilityArr %}
             <option value='{{ key }}' {{ Request.query.get('vis') == key ? " selected='selected'" }}>{{ value|trans }}</option>
@@ -198,19 +193,19 @@
       <!-- END VISIBILITY SEARCH -->
     </div>
     <!-- NEW ROW -->
-    <div class='row collapse collapseExtendedSearch show'>
+    <div class='row form-inline'>
       <!-- SEARCH DATE -->
       <div class='col-md-8'>
-        <label for='from'>{{ 'Where date is between'|trans }}</label>
-        <input id='from' name='from' type='date' class='formcontrol' value='{{ Request.query.get('from') != '' ? Request.query.get('from') }}'/>
-        <label class='ml-2' for='to'>{{ 'and'|trans }}</label>
-        <input id='to' name='to' type='date' class='formcontrol' value='{{ Request.query.get('to') != '' ? Request.query.get('to') }}'/>
+        <label class='d-inline' for='from'>{{ 'Where date is between'|trans }}</label>
+        <input id='from' name='from' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('from') != '' ? Request.query.get('from') }}'/>
+        <label class='ml-2 d-inline' for='to'>{{ 'and'|trans }}</label>
+        <input id='to' name='to' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('to') != '' ? Request.query.get('to') }}'/>
       </div>
       <!-- END SEARCH DATE -->
 
     </div>
     <!-- NEW ROW -->
-    <div class='row collapse collapseExtendedSearch show'>
+    <div class='row'>
 
       <div class='col-md-6'>
         <!-- TITLE -->
@@ -240,7 +235,7 @@
         <!-- STATUS -->
         <div>
           <label for='status'>{{ 'And status is'|trans }}</label>
-          <select id='status' name='status' class='form-control'>
+          <select id='status' name='status' data-filter='status' class='form-control filterHelper'>
             <option value=''>{{ 'Select status'|trans }}</option>
             {% for status in statusArr %}
               <option value='{{ status.category_id }}'{{ Request.query.get('status') == status.category_id ? ' selected' }}>
@@ -253,7 +248,7 @@
         <!-- RATING -->
         <div>
           <label for='rating'>{{ 'And rating is'|trans }}</label>
-          <select id='rating' name='rating' class='form-control'>
+          <select id='rating' name='rating' data-filter='rating' class='form-control filterHelper'>
             <option value=''>{{ 'Select number of stars'|trans }}</option>
             <option value='null'{{ Request.query.get('rating') == 'null' ? ' selected' }}>{{ 'Unrated'|trans }}</option>
             {% for i in range(1, 5) %}
@@ -273,11 +268,11 @@
     </div>
     {% endif %}
     <!-- NEW ROW -->
-    <div class='row collapse collapseExtendedSearch show'>
+    <div class='row'>
       <h4 class='ml-3'>{{ 'Extra fields search'|trans }}</h4>
     </div>
 
-    <div class='row collapse collapseExtendedSearch show'>
+    <div class='row'>
       <div class='col-md-4'>
         <label for='metakey'>{{ 'Name of field'|trans }}</label>
         <input type='text' id='metakey' class='form-control' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' />

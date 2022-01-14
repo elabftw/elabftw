@@ -1643,16 +1643,16 @@
         },
         {
             "name": "mpdf/qrcode",
-            "version": "v1.1.1",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpdf/qrcode.git",
-                "reference": "f3c0a99e37e8489f0b91b7d2c394dcba0b38d71c"
+                "reference": "0c09fce8b28707611c3febdd1ca424d40f172184"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpdf/qrcode/zipball/f3c0a99e37e8489f0b91b7d2c394dcba0b38d71c",
-                "reference": "f3c0a99e37e8489f0b91b7d2c394dcba0b38d71c",
+                "url": "https://api.github.com/repos/mpdf/qrcode/zipball/0c09fce8b28707611c3febdd1ca424d40f172184",
+                "reference": "0c09fce8b28707611c3febdd1ca424d40f172184",
                 "shasum": ""
             },
             "require": {
@@ -1661,12 +1661,13 @@
             },
             "require-dev": {
                 "mockery/mockery": "^0.9.5",
-                "phpunit/phpunit": "^5.0",
                 "squizlabs/php_codesniffer": "^3.4",
-                "tracy/tracy": "^2.5"
+                "tracy/tracy": "^2.5",
+                "yoast/phpunit-polyfills": "^1.0"
             },
             "suggest": {
-                "ext-gd": "To output QR codes to PNG files"
+                "ext-gd": "To output QR codes to PNG files",
+                "ext-simplexml": "To output QR codes to SVG files"
             },
             "type": "library",
             "autoload": {
@@ -1698,9 +1699,15 @@
             ],
             "support": {
                 "issues": "https://github.com/mpdf/qrcode/issues",
-                "source": "https://github.com/mpdf/qrcode/tree/v1.1.1"
+                "source": "https://github.com/mpdf/qrcode/tree/v1.2.0"
             },
-            "time": "2021-01-12T18:16:41+00:00"
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/mpdf",
+                    "type": "custom"
+                }
+            ],
+            "time": "2022-01-11T09:42:41+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -9145,5 +9152,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.2.0"
 }

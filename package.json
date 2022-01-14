@@ -58,7 +58,7 @@
   "devDependencies": {
     "@types/bootstrap": "^5.0.17",
     "@types/fancybox": "^3.5.2",
-    "@types/file-saver": "^2.0.1",
+    "@types/file-saver": "^2.0.5",
     "@types/jquery": "^3.5.1",
     "@types/jqueryui": "^1.12.14",
     "@types/luxon": "^2.0.0",

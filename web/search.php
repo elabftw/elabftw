@@ -61,32 +61,7 @@ if ($Request->query->get('type') === 'experiments') {
 // line below is for testing
 $whereClauseDevLog = '';
 
-// With variable variables
-// $extended = $extendedError = $title = $titleError = $body = $bodyError = '';
-// $extendedSearches = array(
-    // array('extended', false),
-    // array('title', true),
-    // array('body', true),
-// );
-// foreach ($extendedSearches as $extendedSearche) {
-    // ${$extendedSearche[0]} = '';
-    // ${$extendedSearche[0] . 'Error'} = '';
-    // if ($Request->query->has($extendedSearche[0]) && !empty($Request->query->get($extendedSearche[0]))) {
-        // ${$extendedSearche[0]} = trim($Request->query->get($extendedSearche[0]));
-        // $column = $extendedSearche[1] ? $extendedSearche[0] : '';
-        // $advancedQuery = new AdvancedSearchQuery(${$extendedSearche[0]}, new VisitorParameters($Entity->type, $visibilityArr, $column));
-        // $whereClause = $advancedQuery->getWhereClause();
-        // line below is for testing
-        // $whereClauseDevLog .= print_r($whereClause, true);
-        // if ($whereClause) {
-            // $Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
-        // }
-
-        // ${$extendedSearche[0] . 'Error'} = $advancedQuery->getException() ?: '';
-    // }
-// }
-
-// With function
+// EXTENDED SEARCH : TODO will need to go into a class
 function prepareExtendedSearch(
     Request $Request,
     Experiments | Items $Entity,
@@ -94,6 +69,7 @@ function prepareExtendedSearch(
     array $visibilityArr,
     string $column = ''
 ): array {
+    $userInput = null;
     if ($Request->query->has($type) && !empty($Request->query->get($type))) {
         $userInput = trim((string) $Request->query->get($type));
 
@@ -106,7 +82,7 @@ function prepareExtendedSearch(
         $searchFeedback = $advancedQuery->getException();
     }
     return array(
-        $userInput ?? '',
+        $userInput ?? 'author:"' . $Entity->Users->userData['fullname'] . '" ',
         $searchFeedback ?? '',
         // line below is for testing
         print_r($whereClause ?? '', true),
@@ -114,10 +90,6 @@ function prepareExtendedSearch(
 }
 
 [$extended, $extendedError, $tmp] = prepareExtendedSearch($Request, $Entity, 'extended', $visibilityArr);
-$whereClauseDevLog .= $tmp;
-[$title, $titleError, $tmp] = prepareExtendedSearch($Request, $Entity, 'title', $visibilityArr, 'title');
-$whereClauseDevLog .= $tmp;
-[$body, $bodyError, $tmp] = prepareExtendedSearch($Request, $Entity, 'body', $visibilityArr, 'body');
 $whereClauseDevLog .= $tmp;
 
 // VISIBILITY
@@ -143,14 +115,10 @@ $renderArr = array(
     'Request' => $Request,
     'Experiments' => $Experiments,
     'Database' => $Database,
-    'body' => $body,
-    'bodyError' => $bodyError,
     'categoryArr' => $categoryArr,
     'itemsTypesArr' => $itemsTypesArr,
     'tagsArr' => $tagsArr,
     'teamGroupsArr' => $teamGroupsArr,
-    'title' => $title,
-    'titleError' => $titleError,
     'statusArr' => $statusArr,
     'usersArr' => $usersArr,
     'visibilityArr' => $visibilityArr,
@@ -165,7 +133,7 @@ echo $App->render('search.html', $renderArr);
  * Here the search begins
  * If there is a search, there will be get parameters, so this is our main switch
  */
-if ($Request->query->count() > 0 && $bodyError === '' && $titleError === '' && $extendedError === '') {
+if ($Request->query->count() > 0 && $extendedError === '') {
 
     // STATUS
     $status = '';

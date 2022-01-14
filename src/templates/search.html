@@ -126,19 +126,20 @@
     <!-- NEW ROW -->
     <div class='row'>
       <div class='col-md-8'>
-        <label for='extended'><i class='fas fa-search'></i></label>
+        <label for='extendedArea'><i class='fas fa-search'></i> {{ 'Advanced search'|trans }}</label>
         <textarea
-          id='extended'
+          id='extendedArea'
           name='extended'
           rows='10'
           class='form-control {{- extendedError ? ' is-invalid' }}'
           style='font-family:monospace;'
-          placeholder='author:"Sheldon Cooper" status:fail'
-          {{- extendedError ? " aria-describedby='extendedFeedback'" }}
+          placeholder='author:"{{ App.Users.userData.fullname|raw }} status:"Running"'
+          aria-describedby='extendedFeedback'
         >{{ extended }}</textarea>
-        {% if extendedError %}
-          <div id='extendedFeedback' class='invalid-feedback'>{{ extendedError|raw }}</div>
-        {% endif %}
+
+        <!-- this is where the errors will be displayed -->
+        <div id='extendedFeedback' class='invalid-feedback'>{{ extendedError|raw }}</div>
+
         <small class='form-text text-muted'>
           Press <kbd><kbd>ctrl</kbd> + <kbd>enter</kbd></kbd> or <kbd><kbd>⌘</kbd> + <kbd>enter</kbd></kbd> to submit search.
         </small>
@@ -167,7 +168,6 @@
       <div class='col-md-6'>
         <label for='searchonly'>{{ 'Search only in experiments owned by:'|trans }} </label><br>
         <select id='searchonly' name='owner' data-filter='author' class='form-control filterHelper mb-3'>
-          <option value=''>{{ 'Yourself'|trans }}</option>
           <!-- add an option to search in the whole team (owner = 0) -->
           <option value='0'{{ Request.query.get('owner') == '0' ? ' selected' }}>{{ 'All the team'|trans }}</option>
           <option disabled>----------------</option>
@@ -180,17 +180,6 @@
       </div>
       <!-- END SEARCH ONLY -->
 
-      <!-- VISIBILITY SEARCH -->
-      <div class='col-md-4'>
-        <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
-        <select id='visibility' name='vis' data-filter='visibility' class='form-control filterHelper'>
-          <option value=''>{{ 'Select visibility'|trans }}</option>
-          {% for key, value in visibilityArr %}
-            <option value='{{ key }}' {{ Request.query.get('vis') == key ? " selected='selected'" }}>{{ value|trans }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <!-- END VISIBILITY SEARCH -->
     </div>
     <!-- NEW ROW -->
     <div class='row form-inline'>
@@ -206,34 +195,8 @@
     </div>
     <!-- NEW ROW -->
     <div class='row'>
-
-      <div class='col-md-6'>
-        <!-- TITLE -->
-        <div>
-          <label for='title'>{{ 'And title contains'|trans }}</label>
-          <input id='title' class='form-control {{- titleError ? ' is-invalid' }}' name='title' type='text' placeholder='term1 termA AND termB NOT (termC OR "term with spaces")' value='{{ title }}' {{- titleError ? " aria-describedby='titleFeedback'" }} />
-          {% if titleError %}
-            <div id='titleFeedback' class='invalid-feedback'>{{ titleError|raw }}</div>
-          {% endif %}
-        </div>
-        <!-- END TITLE -->
-        <!-- BODY -->
-        <div>
-          <label for='body'>{{ 'And body contains'|trans }}</label>
-          <input id='body' class='form-control {{- bodyError ? ' is-invalid' }}' name='body' type='text' placeholder='term1 termA AND termB NOT (termC OR "term with spaces")' value='{{ body }}' {{- bodyError ? " aria-describedby='bodyFeedback'" }} />
-          {% if bodyError %}
-            <div id='bodyFeedback' class='invalid-feedback'>{{ bodyError|raw }}</div>
-          {% endif %}
-          <small class='form-text text-muted'>
-            <a class='' style='cursor:pointer;' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Extended search without fields is supported'|trans }}</a>
-          </small>
-        </div>
-        <!-- END BODY -->
-      </div>
-
       <div class='col-md-4'>
         <!-- STATUS -->
-        <div>
           <label for='status'>{{ 'And status is'|trans }}</label>
           <select id='status' name='status' data-filter='status' class='form-control filterHelper'>
             <option value=''>{{ 'Select status'|trans }}</option>
@@ -243,21 +206,31 @@
               </option>
             {% endfor %}
           </select>
-        </div>
         <!-- END STATUS -->
-        <!-- RATING -->
-        <div>
-          <label for='rating'>{{ 'And rating is'|trans }}</label>
-          <select id='rating' name='rating' data-filter='rating' class='form-control filterHelper'>
-            <option value=''>{{ 'Select number of stars'|trans }}</option>
-            <option value='null'{{ Request.query.get('rating') == 'null' ? ' selected' }}>{{ 'Unrated'|trans }}</option>
-            {% for i in range(1, 5) %}
-              <option value='{{ i }}'{{ Request.query.get('rating') == i ? ' selected' }}>{{ i }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <!-- END RATING -->
       </div>
+      <!-- RATING -->
+      <div class='col-md-4'>
+        <label for='rating'>{{ 'And rating is'|trans }}</label>
+        <select id='rating' name='rating' data-filter='rating' class='form-control filterHelper'>
+          <option value=''>{{ 'Select number of stars'|trans }}</option>
+          <option value='null'{{ Request.query.get('rating') == 'null' ? ' selected' }}>{{ 'Unrated'|trans }}</option>
+          {% for i in range(1, 5) %}
+            <option value='{{ i }}'{{ Request.query.get('rating') == i ? ' selected' }}>{{ i }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <!-- END RATING -->
+      <!-- VISIBILITY SEARCH -->
+      <div class='col-md-4'>
+        <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
+        <select id='visibility' name='vis' data-filter='visibility' class='form-control filterHelper'>
+          <option value=''>{{ 'Select visibility'|trans }}</option>
+          {% for key, value in visibilityArr %}
+            <option value='{{ key }}' {{ Request.query.get('vis') == key ? " selected='selected'" }}>{{ value|trans }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <!-- END VISIBILITY SEARCH -->
     </div>
     {% if whereClause %}
     <!-- NEW ROW -->

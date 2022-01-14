@@ -166,9 +166,10 @@
     <div class='row'>
       <!-- SEARCH ONLY -->
       <div class='col-md-6'>
-        <label for='searchonly'>{{ 'Search only in experiments owned by:'|trans }} </label><br>
+        <label for='searchonly'>{{ 'And author is:'|trans }} </label><br>
         <select id='searchonly' name='owner' data-filter='author' class='form-control filterHelper mb-3'>
           <!-- add an option to search in the whole team (owner = 0) -->
+          <option>{{ 'Select author'|trans }}</option>
           <option value='0'{{ Request.query.get('owner') == '0' ? ' selected' }}>{{ 'All the team'|trans }}</option>
           <option disabled>----------------</option>
           {% for user in usersArr %}

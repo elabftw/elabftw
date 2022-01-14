@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.hash = '#anchor';
   }
 
-  const extendedArea = (document.getElementById('extended') as HTMLTextAreaElement);
+  const extendedArea = (document.getElementById('extendedArea') as HTMLTextAreaElement);
 
   // Submit form with ctrl+enter from within textarea
   extendedArea.addEventListener('keydown', event => {

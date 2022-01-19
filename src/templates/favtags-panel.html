@@ -13,7 +13,7 @@
   </div>
   <ul>
     {% for favtag in favTagsArr %}
-    <li data-action='add-tag-filter' data-tag='{{ favtag.tag }}' class='clickable {{ App.Request.query.get('tags')[0] == favtag.tag ? 'selected' : ''}}'>
+    <li data-action='add-tag-filter' data-tag='{{ favtag.tag }}' class='clickable {{ App.Request.query.all('tags')[0] == favtag.tag ? 'selected' : ''}}'>
       {{ favtag.tag }}<a href='#' class='float-right mr-2' data-id='{{ favtag.tags_id }}' data-action='destroy-favtags' hidden><i class='fas fa-trash-alt'></i></a>
     </li>
     {% endfor %}

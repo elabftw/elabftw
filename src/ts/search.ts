@@ -34,7 +34,17 @@ document.addEventListener('DOMContentLoaded', () => {
       return `${element.options[element.selectedIndex].innerText}`;
     }
     if (element instanceof HTMLInputElement) {
-      return element.value;
+      // a cleared date input will be empty
+      if (element.value === '') {
+        return '';
+      }
+      // for the date, get the operator
+      let operator = '';
+      if (element.dataset.filter === 'date') {
+        const operatorSelect = document.getElementById('dateOperator') as HTMLSelectElement;
+        operator = operatorSelect.options[operatorSelect.selectedIndex].value;
+      }
+      return operator + element.value;
     }
     return '😶';
   }
@@ -46,7 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const curVal = extendedArea.value;
 
       // look if the filter key already exists in the extendedArea
-      const regex = new RegExp(elem.dataset.filter + ':"?[\\w+\\s+?-]+"?|[\\d+\\-]"');
+      // paste the regex on regex101.com to understand it, note that here \ need to be escaped
+      const regex = new RegExp(elem.dataset.filter + ':(\\w+|\\d|"[\\w\\s+]+"|([=><!,]?=?)?(\\d{4}[\\-\\.\\/,]\\d{2}[\\-\\.\\/,]\\d{2}))');
       const found = curVal.match(regex);
       // by default the value will be quoted
       let quotes = '"';

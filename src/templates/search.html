@@ -133,7 +133,7 @@
           rows='10'
           class='form-control {{- extendedError ? ' is-invalid' }}'
           style='font-family:monospace;'
-          placeholder='author:"{{ App.Users.userData.fullname|raw }} status:"Running"'
+          placeholder='author:"{{ App.Users.userData.fullname|raw }}" status:"Running"'
           aria-describedby='extendedFeedback'
         >{{ extended }}</textarea>
 
@@ -184,7 +184,7 @@
     <!-- NEW ROW -->
     <div class='row form-inline'>
       <!-- SEARCH DATE -->
-      <div class='col-md-8'>
+      <div class='col-md-4'>
         <label class='d-inline' for='date'>{{ 'Where date is'|trans }}</label>
         <select id='dateOperator' class='form-control'>
           <option value='<'><</option>
@@ -197,6 +197,28 @@
         <input id='date' name='date' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('date') != '' ? Request.query.get('date') }}'/>
       </div>
       <!-- END SEARCH DATE -->
+
+      <!-- LOCK -->
+      <div class='col-md-4'>
+        <label class='d-inline' for='locked'>{{ 'Locked'|trans }}</label>
+        <select id='locked' class='form-control filterHelper' data-filter='locked'>
+          <option value='' data-action='clear'>{{ 'Select lock status'|trans}}</option>
+          <option value='yes'>{{ 'Yes'|trans|lower }}</option>
+          <option value='no'>{{ 'No'|trans|lower }}</option>
+        </select>
+      </div>
+      <!-- END LOCK -->
+
+      <!-- LOCK -->
+      <div class='col-md-4'>
+        <label class='d-inline' for='timestamped'>{{ 'Timestamped'|trans }}</label>
+        <select id='timestamped' class='form-control filterHelper' data-filter='timestamped'>
+          <option value='' data-action='clear'>{{ 'Select timestamp status'|trans}}</option>
+          <option value='yes'>{{ 'Yes'|trans|lower }}</option>
+          <option value='no'>{{ 'No'|trans|lower }}</option>
+        </select>
+      </div>
+      <!-- END LOCK -->
 
     </div>
     <!-- NEW ROW -->

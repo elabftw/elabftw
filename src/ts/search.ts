@@ -59,13 +59,12 @@ document.addEventListener('DOMContentLoaded', () => {
       // paste the regex on regex101.com to understand it, note that here \ need to be escaped
       const regex = new RegExp(elem.dataset.filter + ':(\\w+|\\d|"[\\w\\s+]+"|([=><!,]?=?)?(\\d{4}[\\-\\.\\/,]\\d{2}[\\-\\.\\/,]\\d{2}))');
       const found = curVal.match(regex);
-      // by default the value will be quoted
-      let quotes = '"';
-      // don't add quotes if we're handling date or rating
-      if (elem.dataset.filter === 'date' || elem.dataset.filter === 'rating') {
-        quotes = '';
-      }
+      // don't add quotes unless we need them (space exists)
+      let quotes = '';
       const filterValue = getFilterValueFromElement(elem);
+      if (filterValue.includes(' ')) {
+        quotes = '"';
+      }
       // default value is clearing everything
       let filter = '';
       // but if we have a correct value, we add the filter

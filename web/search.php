@@ -57,9 +57,6 @@ if ($Request->query->get('type') === 'experiments') {
     $Entity = $Database;
 }
 
-// line below is for testing
-$whereClauseDevLog = '';
-
 // EXTENDED SEARCH : TODO will need to go into a class
 function prepareExtendedSearch(
     Request $Request,
@@ -83,13 +80,10 @@ function prepareExtendedSearch(
     return array(
         $userInput ?? 'author:"' . $Entity->Users->userData['fullname'] . '" ',
         $searchFeedback ?? '',
-        // line below is for testing
-        print_r($whereClause ?? '', true),
     );
 }
 
-[$extended, $extendedError, $tmp] = prepareExtendedSearch($Request, $Entity, 'extended', $visibilityArr);
-$whereClauseDevLog .= $tmp;
+[$extended, $extendedError] = prepareExtendedSearch($Request, $Entity, 'extended', $visibilityArr);
 
 // RENDER THE FIRST PART OF THE PAGE (search form)
 $renderArr = array(
@@ -105,8 +99,6 @@ $renderArr = array(
     'visibilityArr' => $visibilityArr,
     'extended' => $extended,
     'extendedError' => $extendedError,
-    // line below is for testing
-    'whereClause' => $whereClauseDevLog,
 );
 echo $App->render('search.html', $renderArr);
 

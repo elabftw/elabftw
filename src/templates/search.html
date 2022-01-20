@@ -169,8 +169,7 @@
         <label for='searchonly'>{{ 'And author is:'|trans }} </label><br>
         <select id='searchonly' name='owner' data-filter='author' class='form-control filterHelper mb-3'>
           <!-- add an option to search in the whole team (owner = 0) -->
-          <option>{{ 'Select author'|trans }}</option>
-          <option value='0'{{ Request.query.get('owner') == '0' ? ' selected' }}>{{ 'All the team'|trans }}</option>
+          <option data-action='clear'>{{ 'Select author'|trans }}</option>
           <option disabled>----------------</option>
           {% for user in usersArr %}
             <option value='{{ user.userid }}'{{ Request.query.get('owner') == user.userid ? ' selected' }}>
@@ -198,7 +197,7 @@
         <!-- STATUS -->
           <label for='status'>{{ 'And status is'|trans }}</label>
           <select id='status' name='status' data-filter='status' class='form-control filterHelper'>
-            <option value=''>{{ 'Select status'|trans }}</option>
+            <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
             {% for status in statusArr %}
               <option value='{{ status.category_id }}'{{ Request.query.get('status') == status.category_id ? ' selected' }}>
                 {{ status.category }}
@@ -211,7 +210,7 @@
       <div class='col-md-4'>
         <label for='rating'>{{ 'And rating is'|trans }}</label>
         <select id='rating' name='rating' data-filter='rating' class='form-control filterHelper'>
-          <option value=''>{{ 'Select number of stars'|trans }}</option>
+          <option value='' data-action='clear'>{{ 'Select number of stars'|trans }}</option>
           <option value='null'{{ Request.query.get('rating') == 'null' ? ' selected' }}>{{ 'Unrated'|trans }}</option>
           {% for i in range(1, 5) %}
             <option value='{{ i }}'{{ Request.query.get('rating') == i ? ' selected' }}>{{ i }}</option>
@@ -223,7 +222,7 @@
       <div class='col-md-4'>
         <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
         <select id='visibility' name='vis' data-filter='visibility' class='form-control filterHelper'>
-          <option value=''>{{ 'Select visibility'|trans }}</option>
+          <option value='' data-action='clear'>{{ 'Select visibility'|trans }}</option>
           {% for key, value in visibilityArr %}
             <option value='{{ key }}' {{ Request.query.get('vis') == key ? " selected='selected'" }}>{{ value|trans }}</option>
           {% endfor %}

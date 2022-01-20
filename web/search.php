@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function count;
 use Elabftw\Controllers\SearchController;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
@@ -116,63 +115,20 @@ echo $App->render('search.html', $renderArr);
  * If there is a search, there will be get parameters, so this is our main switch
  */
 if ($Request->query->count() > 0 && $extendedError === '') {
-
-    // STATUS
-    $status = '';
-    if (Check::id((int) $Request->query->get('status')) !== false) {
-        $status = $Request->query->get('status');
-    }
-
-    // RATING
-    $rating = null;
-    $allowedRatings = array('null', '1', '2', '3', '4', '5');
-    if (in_array($Request->query->get('rating'), $allowedRatings, true)) {
-        $rating = $Request->query->get('rating');
-    }
-
     // PREPARE SQL query
-
     /////////////////////////////////////////////////////////////////
     if ($Request->query->has('type')) {
-        // Tag search
-        if (!empty($Request->query->all('tags'))) {
-            // get all the ids with that tag
-            $ids = $Entity->Tags->getIdFromTags($Request->query->all('tags'), (int) $App->Users->userData['team']);
-            if (count($ids) > 0) {
-                $Entity->idFilter = Tools::getIdFilterSql($ids);
-            }
-        }
-
         // Metadata search
         if ($Request->query->get('metakey')) {
             $Entity->addMetadataFilter($Request->query->get('metakey'), $Request->query->get('metavalue'));
         }
 
-        if ($Request->query->get('type') === 'experiments') {
-
-            // USERID FILTER
-            if ($Request->query->has('owner')) {
-                $owner = $App->Users->userData['userid'];
-                if (Check::id((int) $Request->query->get('owner')) !== false) {
-                    $owner = $Request->query->get('owner');
-                }
-                // all the team is 0 as userid
-                if ($Request->query->get('owner') !== '0') {
-                    $Entity->addFilter('entity.userid', $owner);
-                }
-            }
-
-            // Status search
-            if (!empty($status)) {
-                $Entity->addFilter('entity.category', $status);
-            }
-        } else {
+        if ($Request->query->get('type') !== 'experiments') {
             // FILTER ON DATABASE ITEMS TYPES
             if (Check::id((int) $Request->query->get('type')) !== false) {
                 $Entity->addFilter('categoryt.id', $Request->query->get('type'));
             }
         }
-
 
         try {
             $Controller = new SearchController($App, $Entity);

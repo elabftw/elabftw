@@ -28,6 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // a filter helper can be a select or an input (for date), so we need a function to get its value
   function getFilterValueFromElement(element: HTMLElement): string {
     if (element instanceof HTMLSelectElement) {
+      if (element.options[element.selectedIndex].dataset.action === 'clear') {
+        return '';
+      }
       return `${element.options[element.selectedIndex].innerText}`;
     }
     if (element instanceof HTMLInputElement) {
@@ -43,16 +46,21 @@ document.addEventListener('DOMContentLoaded', () => {
       const curVal = extendedArea.value;
 
       // look if the filter key already exists in the extendedArea
-      const regex = new RegExp(elem.dataset.filter + ':"[\\w+\\s+?-]+"|[\\d+\\-]"');
+      const regex = new RegExp(elem.dataset.filter + ':"?[\\w+\\s+?-]+"?|[\\d+\\-]"');
       const found = curVal.match(regex);
       // by default the value will be quoted
       let quotes = '"';
-      // don't add quotes if we're handling date
-      if (elem.dataset.filter === 'date') {
+      // don't add quotes if we're handling date or rating
+      if (elem.dataset.filter === 'date' || elem.dataset.filter === 'rating') {
         quotes = '';
       }
-      const filter = `${elem.dataset.filter}:${quotes}${getFilterValueFromElement(elem)}${quotes}`;
-      // TODO have a way to have special options, for all team or yourself we want a different behavior
+      const filterValue = getFilterValueFromElement(elem);
+      // default value is clearing everything
+      let filter = '';
+      // but if we have a correct value, we add the filter
+      if (filterValue !== '') {
+        filter = `${elem.dataset.filter}:${quotes}${filterValue}${quotes}`;
+      }
 
       if (found) {
         extendedArea.value = curVal.replace(regex, filter);

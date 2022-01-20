@@ -92,24 +92,6 @@ function prepareExtendedSearch(
 [$extended, $extendedError, $tmp] = prepareExtendedSearch($Request, $Entity, 'extended', $visibilityArr);
 $whereClauseDevLog .= $tmp;
 
-// VISIBILITY
-$vis = '';
-if ($Request->query->has('vis') && !empty($Request->query->get('vis'))) {
-    $vis = Check::visibility($Request->query->get('vis'));
-}
-
-// FROM
-$from = '';
-if ($Request->query->has('from') && !empty($Request->query->get('from'))) {
-    $from = Filter::kdate($Request->query->get('from'));
-}
-
-// TO
-$to = '';
-if ($Request->query->has('to') && !empty($Request->query->get('to'))) {
-    $to = Filter::kdate($Request->query->get('to'));
-}
-
 // RENDER THE FIRST PART OF THE PAGE (search form)
 $renderArr = array(
     'Request' => $Request,
@@ -159,26 +141,6 @@ if ($Request->query->count() > 0 && $extendedError === '') {
             if (count($ids) > 0) {
                 $Entity->idFilter = Tools::getIdFilterSql($ids);
             }
-        }
-
-        // Visibility search
-        if (!empty($vis)) {
-            $Entity->addFilter('entity.canread', $vis);
-        }
-
-        // Date search
-        if (!empty($from) && !empty($to)) {
-            $Entity->dateFilter = " AND entity.date BETWEEN '$from' AND '$to'";
-        } elseif (!empty($from) && empty($to)) {
-            $Entity->dateFilter = " AND entity.date BETWEEN '$from' AND '99991212'";
-        } elseif (empty($from) && !empty($to)) {
-            $Entity->dateFilter = " AND entity.date BETWEEN '00000101' AND '$to'";
-        }
-
-        // Rating search
-        if (!empty($rating)) {
-            // rating is whitelisted here
-            $Entity->addFilter('entity.rating', $rating);
         }
 
         // Metadata search

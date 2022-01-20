@@ -42,10 +42,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const elem = event.currentTarget as HTMLElement;
       const curVal = extendedArea.value;
 
-      // look if the filter key already exists
+      // look if the filter key already exists in the extendedArea
       const regex = new RegExp(elem.dataset.filter + ':"[\\w+\\s+?-]+"|[\\d+\\-]"');
       const found = curVal.match(regex);
-      const filter = `${elem.dataset.filter}:"${getFilterValueFromElement(elem)}"`;
+      // by default the value will be quoted
+      let quotes = '"';
+      // don't add quotes if we're handling date
+      if (elem.dataset.filter === 'date') {
+        quotes = '';
+      }
+      const filter = `${elem.dataset.filter}:${quotes}${getFilterValueFromElement(elem)}${quotes}`;
       // TODO have a way to have special options, for all team or yourself we want a different behavior
 
       if (found) {

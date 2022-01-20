@@ -186,10 +186,8 @@
     <div class='row form-inline'>
       <!-- SEARCH DATE -->
       <div class='col-md-8'>
-        <label class='d-inline' for='from'>{{ 'Where date is between'|trans }}</label>
-        <input id='from' name='from' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('from') != '' ? Request.query.get('from') }}'/>
-        <label class='ml-2 d-inline' for='to'>{{ 'and'|trans }}</label>
-        <input id='to' name='to' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('to') != '' ? Request.query.get('to') }}'/>
+        <label class='d-inline' for='date'>{{ 'Where date is'|trans }}</label>
+        <input id='date' name='date' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('date') != '' ? Request.query.get('date') }}'/>
       </div>
       <!-- END SEARCH DATE -->
 

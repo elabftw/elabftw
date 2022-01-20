@@ -135,9 +135,9 @@ if ($Request->query->count() > 0 && $extendedError === '') {
     /////////////////////////////////////////////////////////////////
     if ($Request->query->has('type')) {
         // Tag search
-        if (!empty($Request->query->get('tags'))) {
+        if (!empty($Request->query->all('tags'))) {
             // get all the ids with that tag
-            $ids = $Entity->Tags->getIdFromTags($Request->query->get('tags'), (int) $App->Users->userData['team']);
+            $ids = $Entity->Tags->getIdFromTags($Request->query->all('tags'), (int) $App->Users->userData['team']);
             if (count($ids) > 0) {
                 $Entity->idFilter = Tools::getIdFilterSql($ids);
             }

@@ -64,7 +64,7 @@
         <!-- SEARCH WITH TAG -->
         <select multiple name='tags[]' class='form-control mr-1 selectpicker' data-show-subtext='true' data-none-selected-text='{{ 'Tags'|trans }}' data-live-search='true' data-style='' data-style-base='form-control' data-showtick='true' data-actions-box='true'>
           {% for tag in tagsArrForSelect %}
-            <option value='{{ tag.tag }}'{{ tag.tag in App.Request.query.get('tags') ? ' selected' }}>{{ tag.tag|raw }}</option>
+            <option value='{{ tag.tag }}'{{ tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag|raw }}</option>
           {% endfor %}
         </select>
         <!-- onBlur cannot work on bootstrap multiselect see https://stackoverflow.com/questions/42673800/bootstrap-multiselect-blur-event-not-triggering so add a button -->

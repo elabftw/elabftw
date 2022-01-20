@@ -51,7 +51,7 @@ class DisplayParams
             $this->setRelated($app);
         }
         // CATEGORY FILTER
-        if ((Check::id((int) $app->Request->query->get('cat')) !== false) || !empty(((array) $app->Request->query->get('tags'))[0])) {
+        if ((Check::id((int) $app->Request->query->get('cat')) !== false) || !empty(((array) $app->Request->query->all('tags'))[0])) {
             $this->searchType = 'something';
         }
     }

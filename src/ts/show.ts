@@ -412,7 +412,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  document.getElementById('favtags-opener').removeAttribute('hidden');
+  // we don't want the favtags opener on search page
+  if (about.page === 'show') {
+    document.getElementById('favtags-opener').removeAttribute('hidden');
+  }
 
   // FAVTAGS PANEL
   if (localStorage.getItem('isfavtagOpen') === '1') {

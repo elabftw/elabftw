@@ -165,7 +165,7 @@
     </div>
 
     <h4 data-action='toggle-next' data-icon='extendedSearchIcon'><i id='extendedSearchIcon' class='fas fa-chevron-circle-right'></i> {{ 'Extended search helpers'|trans }}</h4>
-    <div hidden data-save-hidden='searchHelpersDiv'>
+    <div hidden class='box mb-1' data-save-hidden='searchHelpersDiv'>
       <div class='row'>
         <!-- AUTHOR HELPER -->
         <div class='col-md-6'>
@@ -264,16 +264,19 @@
     <!-- METADATA SEARCH -->
     <h4 data-action='toggle-next' data-icon='metadataSearchIcon'><i id='metadataSearchIcon' class='fas fa-chevron-circle-right'></i> {{ 'Extra fields search'|trans }}</h4>
 
-    <div hidden data-save-hidden='metadataSearchDiv' class='row'>
-      <div class='col-md-4'>
-        <label for='metakey'>{{ 'Name of field'|trans }}</label>
-        <input type='text' id='metakey' class='form-control' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' />
-      </div>
 
-      <div class='col-md-4'>
-        <label for='metavalue'>{{ 'Value'|trans }}</label>
-        <input type='text' id='metavalue' class='form-control' name='metavalue' value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}' />
-        <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
+    <div hidden data-save-hidden='metadataSearchDiv' class='box'>
+      <div class='row'>
+        <div class='col-md-4'>
+          <label for='metakey'>{{ 'Name of field'|trans }}</label>
+          <input type='text' id='metakey' class='form-control' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' />
+        </div>
+
+        <div class='col-md-4'>
+          <label for='metavalue'>{{ 'Value'|trans }}</label>
+          <input type='text' id='metavalue' class='form-control' name='metavalue' value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}' />
+          <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
+        </div>
       </div>
     </div>
 

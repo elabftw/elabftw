@@ -1226,6 +1226,12 @@ input[type='color'] {
     border-top-left-radius: 0;
 }
 
+/* fix border radius for custom-select. brr = border radius right */
+.brr-none {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+
 /* scroll to top of page button */
 .floating-middle-right {
     position: fixed;

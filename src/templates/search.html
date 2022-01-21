@@ -182,19 +182,23 @@
 
     </div>
     <!-- NEW ROW -->
-    <div class='row form-inline'>
+    <div class='row'>
       <!-- SEARCH DATE -->
       <div class='col-md-4'>
         <label class='d-inline' for='date'>{{ 'Where date is'|trans }}</label>
-        <select id='dateOperator' class='form-control'>
-          <option value='<'><</option>
-          <option value='<='><=</option>
-          <option value='=' selected>=</option>
-          <option value='>='>>=</option>
-          <option value='>'>></option>
-          <option value='!='>!=</option>
-        </select>
-        <input id='date' name='date' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('date') != '' ? Request.query.get('date') }}'/>
+        <div class='input-group mb-3'>
+          <div class='input-group-prepend'>
+            <select id='dateOperator' class='brr-none form-control'>
+              <option value='<'><</option>
+              <option value='<='><=</option>
+              <option value='=' selected>=</option>
+              <option value='>='>>=</option>
+              <option value='>'>></option>
+              <option value='!='>!=</option>
+            </select>
+          </div>
+          <input id='date' name='date' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('date') != '' ? Request.query.get('date') }}'/>
+        </div>
       </div>
       <!-- END SEARCH DATE -->
 

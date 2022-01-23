@@ -1079,7 +1079,8 @@ the form-control fails to do that so we do the border ourselves */
     pointer-events: none;
 }
 
-.clickable:hover {
+.clickable:hover,
+[data-action='toggle-next'] {
     cursor: pointer;
 }
 

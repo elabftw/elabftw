@@ -55,9 +55,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const elem = event.currentTarget as HTMLElement;
       const curVal = extendedArea.value;
 
+      const hasInput = curVal.length != 0;
+      const hasSpace = curVal.endsWith(' ');
+      const addSpace = hasInput ? (hasSpace ? '' : ' ') : '';
+
       // look if the filter key already exists in the extendedArea
       // paste the regex on regex101.com to understand it, note that here \ need to be escaped
-      const regex = new RegExp(elem.dataset.filter + ':(\\w+|\\d|"[\\w\\s+]+"|([=><!,]?=?)?(\\d{4}[\\-\\.\\/,]\\d{2}[\\-\\.\\/,]\\d{2}))');
+      const regex = new RegExp(elem.dataset.filter + ':(\\w+|\\d|"[\\w\\s+]+"|([=><!,]?=?)?(\\d{4}[\\-\\.\\/,]\\d{2}[\\-\\.\\/,]\\d{2}))\\s?');
       const found = curVal.match(regex);
       // don't add quotes unless we need them (space exists)
       let quotes = '';
@@ -73,9 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (found) {
-        extendedArea.value = curVal.replace(regex, filter);
+        extendedArea.value = curVal.replace(regex, filter + (filter === '' ? '' : ' '));
       } else {
-        extendedArea.value = extendedArea.value + ' ' + filter;
+        extendedArea.value = extendedArea.value + addSpace + filter;
       }
     });
   });

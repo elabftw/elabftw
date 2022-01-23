@@ -5,6 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/search.php') {
@@ -76,6 +77,17 @@ document.addEventListener('DOMContentLoaded', () => {
         filter = `${elem.dataset.filter}:${quotes}${filterValue}${quotes}`;
       }
 
+      if(key.ctrl || key.command) {
+        const pos = extendedArea.selectionStart;
+        const val = extendedArea.value;
+        const start = val.substring(0, pos);
+        const end = val.substring(pos, val.length);
+        const hasSpaceBefore = val.substring(pos - 1, pos) === ' ';
+        const hasSpaceAfter = val.substring(pos, pos + 1) === ' ';
+        const insert = (hasSpaceBefore ? '' : pos === 0 ? '' : ' ') + filter + (hasSpaceAfter ? '' : ' ');
+        extendedArea.value = start + insert + end;
+        return;
+      }
       if (found) {
         extendedArea.value = curVal.replace(regex, filter + (filter === '' ? '' : ' '));
       } else {

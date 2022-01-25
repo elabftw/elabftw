@@ -40,14 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
     unfinishedStepsScope = 'team';
   }
 
-  // actual lists i.e. to-do list and unfinished item/experiment steps
-  const lists = ['todoItems', 'todoStepsExperiment', 'todoStepsItem'];
-  lists.forEach(list => {
-    if (localStorage.getItem(list + '-isClosed') === '1') {
-      document.getElementById(list).toggleAttribute('hidden');
-    }
-  });
-
   const TodolistC = new Todolist();
   TodolistC.unfinishedStepsScope = unfinishedStepsScope;
 
@@ -132,15 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE TODOITEM
     } else if (el.matches('[data-action="toggle-todolist"]')) {
       TodolistC.toggle();
-
-    // TOGGLE SUBLISTS i.e. actual todo-list and unfinished item/experiment steps
-    } else if (el.matches('[data-action="toggle-next"]')) {
-      const sublist = el.nextElementSibling.id + '-isClosed';
-      if (!localStorage.getItem(sublist)) {
-        localStorage.setItem(sublist, '1');
-      } else if (localStorage.getItem(sublist) === '1') {
-        localStorage.removeItem(sublist);
-      }
     }
   });
 });

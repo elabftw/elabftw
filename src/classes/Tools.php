@@ -10,9 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function array_map;
 use Elabftw\Models\Config;
-use function explode;
 use function filter_var;
+use function implode;
 use function json_decode;
 use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
@@ -282,48 +283,15 @@ class Tools
         return rtrim($url, '/');
     }
 
-    /**
-     * Build an SQL string for searching something
-     *
-     * @param string $query the searched string
-     * @param string $andor behavior of the space character
-     * @param string $column the column to search into
-     * @param bool $isStrict do we add wildcard characters on each side of the query?
-     */
-    public static function getSearchSql(string $query, string $andor = 'and', string $column = '', bool $isStrict = false): string
-    {
-        $sql = ' AND ';
-        $wildcard = '%';
-        if ($isStrict) {
-            $wildcard = '';
-        }
-        // search character is the separator for and/or
-        $qArr = explode(' ', $query);
-        $sql .= '(';
-        foreach ($qArr as $key => $value) {
-            // add the andor after the first
-            if ($key !== 0) {
-                $sql .= $andor;
-            }
-            if ($column === '') {
-                // do quicksearch
-                $sql .= "(entity.title LIKE '%$value%' OR entity.date LIKE '%$value%' OR entity.body LIKE '%$value%' OR entity.elabid LIKE '%$value%')";
-            } else {
-                // from search page
-                $sql .= 'entity.' . $column . " LIKE '" . $wildcard . $value . $wildcard . "'";
-            }
-        }
-        return $sql . ')';
-    }
-
     public static function getIdFilterSql(array $idArr): string
     {
-        $idFilter = ' AND (';
-        foreach ($idArr as $id) {
-            $idFilter .= 'entity.id = ' . $id . ' OR ';
-        }
-        $idFilter = rtrim($idFilter, ' OR ');
-        return $idFilter .= ')';
+        $sql = array_map(
+            function (string $id): string {
+                return 'entity.id = ' . $id;
+            },
+            $idArr
+        );
+        return ' AND (' . implode(' OR ', $sql) . ')';
     }
 
     /**

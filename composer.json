@@ -81,6 +81,22 @@
       "Elabftw\\Services\\": [
         "src/services"
       ],
+      "Elabftw\\Services\\AdvancedSearchQuery\\Collectors\\": [
+        "src/services/advancedSearchQuery/collectors"
+      ],
+      "Elabftw\\Services\\AdvancedSearchQuery\\Exceptions\\": [
+        "src/services/advancedSearchQuery/exceptions"
+      ],
+      "Elabftw\\Services\\AdvancedSearchQuery\\Grammar\\": [
+        "src/services/advancedSearchQuery/grammar",
+        "cache/advancedSearchQuery"
+      ],
+      "Elabftw\\Services\\AdvancedSearchQuery\\Interfaces\\": [
+        "src/services/advancedSearchQuery/interfaces"
+      ],
+      "Elabftw\\Services\\AdvancedSearchQuery\\Visitors\\": [
+        "src/services/advancedSearchQuery/visitors"
+      ],
       "Elabftw\\Traits\\": [
         "src/traits"
       ]

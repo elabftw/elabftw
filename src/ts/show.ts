@@ -412,7 +412,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  document.getElementById('favtags-opener').removeAttribute('hidden');
+  // we don't want the favtags opener on search page
+  // when a search is done, about.page will be show
+  // so check for the type param in url that will be present on search page
+  const params = new URLSearchParams(document.location.search.slice(1));
+  if (!params.get('type')) {
+    document.getElementById('favtags-opener').removeAttribute('hidden');
+  }
 
   // FAVTAGS PANEL
   if (localStorage.getItem('isfavtagOpen') === '1') {

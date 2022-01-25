@@ -69,9 +69,6 @@ abstract class AbstractEntity implements CrudInterface
     // sql of ids to include
     public string $idFilter = '';
 
-    // inserted in sql
-    public string $dateFilter = '';
-
     public bool $isReadOnly = false;
 
     protected TeamGroups $TeamGroups;
@@ -230,7 +227,6 @@ abstract class AbstractEntity implements CrudInterface
 
         $sqlArr = array(
             $this->extendedFilter,
-            $this->dateFilter,
             $this->idFilter,
             'GROUP BY id',
             $this->metadataHaving,
@@ -649,7 +645,7 @@ abstract class AbstractEntity implements CrudInterface
         $res = $this->Db->fetchAll($req);
         return array_column($res, 'id');
     }
-    
+
     public function addToExtendedFilter(string $extendedFilter, array $bindExtendedValues = array()): void
     {
         $this->extendedFilter .= $extendedFilter . ' ';

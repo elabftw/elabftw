@@ -75,7 +75,7 @@ class AdvancedSearchQuery
         try {
             (new DepthValidatorVisitor($this->depthLimit))->checkDepthOfTree($this->parsedQuery, $this->parameters);
         } catch (LimitDepthIsExceededException $e) {
-            $this->exception = 'Query is too complex.';
+            $this->exception = $e->getMessage();
             return false;
         }
 

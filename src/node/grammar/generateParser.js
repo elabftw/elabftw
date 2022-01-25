@@ -43,7 +43,7 @@ fs.readFile('./src/node/grammar/queryGrammar.pegjs', 'utf8', (err, data) => {
           }
         },
       );
-      
+
       // php parser without fields
       const data1 = data.replace('  / Fields', '');
       fs.writeFile(
@@ -65,18 +65,4 @@ fs.readFile('./src/node/grammar/queryGrammar.pegjs', 'utf8', (err, data) => {
 
     },
   );
-
-  // js parser
-  // fs.writeFile(
-    // './src/js/queryParser.js',
-    // peggy.generate(data.toString(), {
-      // cache: true,
-      // output: 'source',
-    // }),
-    // err => {
-      // if (err) {
-        // throw err;
-      // }
-    // },
-  // );
 });

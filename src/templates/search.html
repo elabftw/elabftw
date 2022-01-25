@@ -116,34 +116,30 @@
         <label for='tags-select'>{{ 'With the tag'|trans }}</label>
         <select multiple name='tags[]' id='tags-select' class='form-control selectpicker' data-show-subtext='true' data-live-search='true' data-showtick='true' data-actions-box='true'>
           {% for tag in tagsArr %}
-            <option value='{{ tag.tag }}'{{ tag.tag in App.Request.query.get('tags') ? ' selected' }}>{{ tag.tag|raw }}</option>
+            <option value='{{ tag.tag }}'{{ tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag|raw }}</option>
           {% endfor %}
         </select>
       </div>
       <!-- END SEARCH WITH TAG -->
-
-      <!-- EXTENDED BUTTON -->
-      <div class='col-md-3 text-center mb-2'>
-        <button type='button' id='toggleSearchMode' class='button btn btn-primary' data-action='toggle-search-mode'>Switch to Extended Search</button>
-      </div>
-      <!-- END EXTENDED BUTTON -->
     </div>
+
     <!-- NEW ROW -->
-    <div class='row collapse collapseExtendedSearch'>
+    <div class='row'>
       <div class='col-md-8'>
-        <label for='extended'><i class='fas fa-search'></i></label>
+        <label for='extendedArea'><i class='fas fa-search'></i> {{ 'Advanced search'|trans }}</label>
         <textarea
-          id='extended'
+          id='extendedArea'
           name='extended'
           rows='10'
           class='form-control {{- extendedError ? ' is-invalid' }}'
           style='font-family:monospace;'
-          placeholder='author:"Sheldon Cooper" status:fail'
-          {{- extendedError ? " aria-describedby='extendedFeedback'" }}
+          placeholder='author:"{{ App.Users.userData.fullname|raw }}" status:"Running"'
+          aria-describedby='extendedFeedback'
         >{{ extended }}</textarea>
-        {% if extendedError %}
-          <div id='extendedFeedback' class='invalid-feedback'>{{ extendedError|raw }}</div>
-        {% endif %}
+
+        <!-- this is where the errors will be displayed -->
+        <div id='extendedFeedback' class='invalid-feedback'>{{ extendedError|raw }}</div>
+
         <small class='form-text text-muted'>
           Press <kbd><kbd>ctrl</kbd> + <kbd>enter</kbd></kbd> or <kbd><kbd>⌘</kbd> + <kbd>enter</kbd></kbd> to submit search.
         </small>
@@ -164,97 +160,86 @@
         <li><strong>title</strong>: Simple or Quoted term</li>
         <li><strong>visibility</strong>: Simple or Quoted term</li>
       </ul>
-      <a class='' style='cursor:pointer;' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Full syntax'|trans }}</a>
+      <a class='' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Full syntax'|trans }}</a>
       </div>
     </div>
-    <div class='row collapse collapseExtendedSearch show'>
-      <!-- SEARCH ONLY -->
-      <div class='col-md-6'>
-        <label for='searchonly'>{{ 'Search only in experiments owned by:'|trans }} </label><br>
-        <select id='searchonly' name='owner' class='form-control mb-3'>
-          <option value=''>{{ 'Yourself'|trans }}</option>
-          <!-- add an option to search in the whole team (owner = 0) -->
-          <option value='0'{{ Request.query.get('owner') == '0' ? ' selected' }}>{{ 'All the team'|trans }}</option>
-          <option disabled>----------------</option>
-          {% for user in usersArr %}
-            <option value='{{ user.userid }}'{{ Request.query.get('owner') == user.userid ? ' selected' }}>
-              {{ user.fullname|raw }}
-            </option>
-          {% endfor %}
-        </select>
-      </div>
-      <!-- END SEARCH ONLY -->
 
-      <!-- VISIBILITY SEARCH -->
-      <div class='col-md-4'>
-        <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
-        <select id='visibility' name='vis' class='form-control'>
-          <option value=''>{{ 'Select visibility'|trans }}</option>
-          {% for key, value in visibilityArr %}
-            <option value='{{ key }}' {{ Request.query.get('vis') == key ? " selected='selected'" }}>{{ value|trans }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <!-- END VISIBILITY SEARCH -->
-    </div>
-    <!-- NEW ROW -->
-    <div class='row collapse collapseExtendedSearch show'>
-      <!-- SEARCH DATE -->
-      <div class='col-md-8'>
-        <label for='from'>{{ 'Where date is between'|trans }}</label>
-        <input id='from' name='from' type='date' class='formcontrol' value='{{ Request.query.get('from') != '' ? Request.query.get('from') }}'/>
-        <label class='ml-2' for='to'>{{ 'and'|trans }}</label>
-        <input id='to' name='to' type='date' class='formcontrol' value='{{ Request.query.get('to') != '' ? Request.query.get('to') }}'/>
-      </div>
-      <!-- END SEARCH DATE -->
-
-    </div>
-    <!-- NEW ROW -->
-    <div class='row collapse collapseExtendedSearch show'>
-
-      <div class='col-md-6'>
-        <!-- TITLE -->
-        <div>
-          <label for='title'>{{ 'And title contains'|trans }}</label>
-          <input id='title' class='form-control {{- titleError ? ' is-invalid' }}' name='title' type='text' placeholder='term1 termA AND termB NOT (termC OR "term with spaces")' value='{{ title }}' {{- titleError ? " aria-describedby='titleFeedback'" }} />
-          {% if titleError %}
-            <div id='titleFeedback' class='invalid-feedback'>{{ titleError|raw }}</div>
-          {% endif %}
-        </div>
-        <!-- END TITLE -->
-        <!-- BODY -->
-        <div>
-          <label for='body'>{{ 'And body contains'|trans }}</label>
-          <input id='body' class='form-control {{- bodyError ? ' is-invalid' }}' name='body' type='text' placeholder='term1 termA AND termB NOT (termC OR "term with spaces")' value='{{ body }}' {{- bodyError ? " aria-describedby='bodyFeedback'" }} />
-          {% if bodyError %}
-            <div id='bodyFeedback' class='invalid-feedback'>{{ bodyError|raw }}</div>
-          {% endif %}
-          <small class='form-text text-muted'>
-            <a class='' style='cursor:pointer;' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Extended search without fields is supported'|trans }}</a>
-          </small>
-        </div>
-        <!-- END BODY -->
-      </div>
-
-      <div class='col-md-4'>
-        <!-- STATUS -->
-        <div>
-          <label for='status'>{{ 'And status is'|trans }}</label>
-          <select id='status' name='status' class='form-control'>
-            <option value=''>{{ 'Select status'|trans }}</option>
-            {% for status in statusArr %}
-              <option value='{{ status.category_id }}'{{ Request.query.get('status') == status.category_id ? ' selected' }}>
-                {{ status.category }}
-              </option>
+    <h4 data-action='toggle-next' data-icon='extendedSearchIcon'><i id='extendedSearchIcon' class='fas fa-chevron-circle-right'></i> {{ 'Extended search helpers'|trans }}</h4>
+    <div hidden class='box mb-1' data-save-hidden='searchHelpersDiv'>
+      <div class='row'>
+        <!-- AUTHOR HELPER -->
+        <div class='col-md-6'>
+          <label for='searchonly'>{{ 'And author is:'|trans }} </label><br>
+          <select id='searchonly' name='owner' data-filter='author' class='form-control selectpicker filterHelper mb-3' data-show-subtext='true' data-live-search='true'>
+            <option data-action='clear'>{{ 'Select author'|trans }}</option>
+            {% for user in usersArr %}
+              <option value='{{ user.userid }}'>{{ user.fullname|raw }}</option>
             {% endfor %}
           </select>
         </div>
-        <!-- END STATUS -->
+        <!-- END SEARCH ONLY -->
+
+      </div>
+      <!-- NEW ROW -->
+      <div class='row form-inline'>
+        <!-- SEARCH DATE -->
+        <div class='col-md-4'>
+          <label class='d-inline' for='date'>{{ 'Where date is'|trans }}</label>
+          <select id='dateOperator' class='form-control'>
+            <option value='<'><</option>
+            <option value='<='><=</option>
+            <option value='=' selected>=</option>
+            <option value='>='>>=</option>
+            <option value='>'>></option>
+            <option value='!='>!=</option>
+          </select>
+          <input id='date' name='date' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('date') != '' ? Request.query.get('date') }}'/>
+        </div>
+        <!-- END SEARCH DATE -->
+
+        <!-- LOCK -->
+        <div class='col-md-4'>
+          <label class='d-inline' for='locked'>{{ 'Locked'|trans }}</label>
+          <select id='locked' class='form-control filterHelper' data-filter='locked'>
+            <option value='' data-action='clear'>{{ 'Select lock status'|trans}}</option>
+            <option value='yes'>{{ 'Yes'|trans|lower }}</option>
+            <option value='no'>{{ 'No'|trans|lower }}</option>
+          </select>
+        </div>
+        <!-- END LOCK -->
+
+        <!-- LOCK -->
+        <div class='col-md-4'>
+          <label class='d-inline' for='timestamped'>{{ 'Timestamped'|trans }}</label>
+          <select id='timestamped' class='form-control filterHelper' data-filter='timestamped'>
+            <option value='' data-action='clear'>{{ 'Select timestamp status'|trans}}</option>
+            <option value='yes'>{{ 'Yes'|trans|lower }}</option>
+            <option value='no'>{{ 'No'|trans|lower }}</option>
+          </select>
+        </div>
+        <!-- END LOCK -->
+
+      </div>
+      <!-- NEW ROW -->
+      <div class='row'>
+        <div class='col-md-4'>
+          <!-- STATUS -->
+            <label for='status'>{{ 'And status is'|trans }}</label>
+            <select id='status' name='status' data-filter='status' class='form-control filterHelper'>
+              <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
+              {% for status in statusArr %}
+                <option value='{{ status.category_id }}'{{ Request.query.get('status') == status.category_id ? ' selected' }}>
+                  {{ status.category }}
+                </option>
+              {% endfor %}
+            </select>
+          <!-- END STATUS -->
+        </div>
         <!-- RATING -->
-        <div>
+        <div class='col-md-4'>
           <label for='rating'>{{ 'And rating is'|trans }}</label>
-          <select id='rating' name='rating' class='form-control'>
-            <option value=''>{{ 'Select number of stars'|trans }}</option>
+          <select id='rating' name='rating' data-filter='rating' class='form-control filterHelper'>
+            <option value='' data-action='clear'>{{ 'Select number of stars'|trans }}</option>
             <option value='null'{{ Request.query.get('rating') == 'null' ? ' selected' }}>{{ 'Unrated'|trans }}</option>
             {% for i in range(1, 5) %}
               <option value='{{ i }}'{{ Request.query.get('rating') == i ? ' selected' }}>{{ i }}</option>
@@ -262,31 +247,36 @@
           </select>
         </div>
         <!-- END RATING -->
+        <!-- VISIBILITY SEARCH -->
+        <div class='col-md-4'>
+          <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
+          <select id='visibility' name='vis' data-filter='visibility' class='form-control filterHelper'>
+            <option value='' data-action='clear'>{{ 'Select visibility'|trans }}</option>
+            {% for key, value in visibilityArr %}
+              <option value='{{ key }}' {{ Request.query.get('vis') == key ? " selected='selected'" }}>{{ value|trans }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <!-- END VISIBILITY SEARCH -->
       </div>
-    </div>
-    {% if whereClause %}
-    <!-- NEW ROW -->
-    <div class='row'>
-      <div class='col-md-12'>
-        <pre>{{ whereClause|raw }}</pre>
-      </div>
-    </div>
-    {% endif %}
-    <!-- NEW ROW -->
-    <div class='row collapse collapseExtendedSearch show'>
-      <h4 class='ml-3'>{{ 'Extra fields search'|trans }}</h4>
     </div>
 
-    <div class='row collapse collapseExtendedSearch show'>
-      <div class='col-md-4'>
-        <label for='metakey'>{{ 'Name of field'|trans }}</label>
-        <input type='text' id='metakey' class='form-control' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' />
-      </div>
+    <!-- METADATA SEARCH -->
+    <h4 data-action='toggle-next' data-icon='metadataSearchIcon'><i id='metadataSearchIcon' class='fas fa-chevron-circle-right'></i> {{ 'Extra fields search'|trans }}</h4>
 
-      <div class='col-md-4'>
-        <label for='metavalue'>{{ 'Value'|trans }}</label>
-        <input type='text' id='metavalue' class='form-control' name='metavalue' value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}' />
-        <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
+
+    <div hidden data-save-hidden='metadataSearchDiv' class='box'>
+      <div class='row'>
+        <div class='col-md-4'>
+          <label for='metakey'>{{ 'Name of field'|trans }}</label>
+          <input type='text' id='metakey' class='form-control' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' />
+        </div>
+
+        <div class='col-md-4'>
+          <label for='metavalue'>{{ 'Value'|trans }}</label>
+          <input type='text' id='metavalue' class='form-control' name='metavalue' value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}' />
+          <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
+        </div>
       </div>
     </div>
 

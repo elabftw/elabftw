@@ -2,13 +2,10 @@
   <a class='clickable float-right mr-2 mt-2' data-action='toggle-todolist' title='{{ 'Close'|trans }}'>
     <i class='fas fa-chevron-left fa-2x'></i>
   </a>
-  <h3 class='d-inline-block mx-2 mt-2'>{{ 'Todolist'|trans }}</h3>
-  <a data-action='toggle-next' class='clickable ml-2' title='{{ 'Toggle visibility'|trans }}'>
-    <i class='fas fa-eye fa-2x'></i>
-  </a>
+  <div class='mx-2 mt-2'>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='todolistToggleIcon'><i id='todolistToggleIcon' class='fas fa-chevron-circle-down'></i> {{ 'Todolist'|trans }}</h3>
 
-
-  <div class='mx-2'>
+    <div data-save-hidden='todolistMainDiv'>
       <div class='input-group mb-2'>
         <input id='todo' type='text' class='form-control form-inline' aria-label='{{ 'Add'|trans }}' placeholder='{{ 'New item'|trans }}'>
         <div class='input-group-append'>
@@ -18,8 +15,9 @@
         </div>
       </div>
 
-    <!-- this list will be filled with the to-do items by js -->
-    <ul id='todoItems' class='sortable' data-axis='y' data-table='todolist'></ul>
+      <!-- this list will be filled with the to-do items by js -->
+      <ul id='todoItems' class='sortable' data-axis='y' data-table='todolist'></ul>
+    </div>
   </div>
 
   <div class='clear'><hr></div>
@@ -39,20 +37,19 @@
     </div>
   </div>
 
-  <h3 class='d-inline-block mx-2 mt-2'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</h3>
   <!-- toggle visibility of experiment steps -->
-  <a data-action='toggle-next' class='clickable ml-2' title='{{ 'Toggle visibility'|trans }}'>
-    <i class='fas fa-eye fa-2x'></i>
-  </a>
-  <ul id='todoStepsExperiment'></ul>
+  <div class='d-inline-block mx-2 mt-2'>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='todoStepsExperimentIcon'><i id='todoStepsExperimentIcon' class='fas fa-chevron-circle-down'></i> {% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</h3>
+    <!-- id is needed to fill it -->
+    <ul id='todoStepsExperiment' data-save-hidden='todoStepsExperiment'></ul>
+  </div>
 
   <div class='clear'></div>
-  <h3 class='d-inline-block mx-2 mt-2'>{{ 'Items'|trans }}</h3>
-  <!-- toggle visibility of items steps -->
-  <a data-action='toggle-next' class='clickable ml-2' title='{{ 'Toggle visibility'|trans }}'>
-    <i class='fas fa-eye fa-2x'></i>
-  </a>
-  <ul id='todoStepsItem'></ul>
+  <div class='d-inline-block mx-2 mt-2'>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='todoStepsItemIcon'><i id='todoStepsItemIcon' class='fas fa-chevron-circle-down'></i> {{ 'Items'|trans }}</h3>
+    <!-- id is needed to fill it -->
+    <ul id='todoStepsItem' data-save-hidden='todoStepsItem'></ul>
+  </div>
 </div>
 
 <div id='todoSc' data-toggle='{{ App.Users.userData.sc_todo }}'></div>

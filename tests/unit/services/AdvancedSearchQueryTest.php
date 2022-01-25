@@ -69,7 +69,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
             (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
         ), 1);
         $advancedSearchQuery->getWhereClause();
-        $this->assertEquals('Query is too complex.', $advancedSearchQuery->getException());
+        $this->assertEquals('Query is too complex!', $advancedSearchQuery->getException());
     }
 
     public function testFieldValidatorInvalidFields(): void

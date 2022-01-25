@@ -22,7 +22,6 @@ use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * The search page
@@ -57,33 +56,22 @@ if ($Request->query->get('type') === 'experiments') {
     $Entity = $Database;
 }
 
-// EXTENDED SEARCH : TODO will need to go into a class
-function prepareExtendedSearch(
-    Request $Request,
-    Experiments | Items $Entity,
-    string $type,
-    array $visibilityArr,
-    string $column = ''
-): array {
-    $userInput = null;
-    if ($Request->query->has($type) && !empty($Request->query->get($type))) {
-        $userInput = trim((string) $Request->query->get($type));
+// EXTENDED SEARCH
+// default input for extendedArea
+$extended = 'author:"' . $Entity->Users->userData['fullname'] . '" ';
+$extendedError = '';
 
-        $advancedQuery = new AdvancedSearchQuery($userInput, new VisitorParameters($Entity->type, $visibilityArr, $column));
-        $whereClause = $advancedQuery->getWhereClause();
-        if ($whereClause) {
-            $Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
-        }
+if ($Request->query->has('extended') && !empty($Request->query->get('extended'))) {
+    $extended = trim((string) $Request->query->get('extended'));
 
-        $searchFeedback = $advancedQuery->getException();
+    $advancedQuery = new AdvancedSearchQuery($extended, new VisitorParameters($Entity->type, $visibilityArr));
+    $whereClause = $advancedQuery->getWhereClause();
+    if ($whereClause) {
+        $Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
     }
-    return array(
-        $userInput ?? 'author:"' . $Entity->Users->userData['fullname'] . '" ',
-        $searchFeedback ?? '',
-    );
-}
 
-[$extended, $extendedError] = prepareExtendedSearch($Request, $Entity, 'extended', $visibilityArr);
+    $extendedError = $advancedQuery->getException();
+}
 
 // RENDER THE FIRST PART OF THE PAGE (search form)
 $renderArr = array(

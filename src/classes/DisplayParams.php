@@ -118,7 +118,7 @@ class DisplayParams
 
     private function setRelated(App $app): void
     {
-        $this->related = (int) $app->Request->query->get('related') ?? $this->related;
+        $this->related = (int) ($app->Request->query->get('related') ?? $this->related);
     }
 
     private function setSort(App $app): void

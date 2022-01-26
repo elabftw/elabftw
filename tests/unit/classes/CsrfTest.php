@@ -14,8 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class CsrfTest extends \PHPUnit\Framework\TestCase
 {
-    private Csrf $Csrf;
-
     public function testGetToken(): void
     {
         $RequestMock = $this->createMock(Request::class);

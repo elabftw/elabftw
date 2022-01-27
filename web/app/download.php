@@ -39,6 +39,7 @@ try {
         $Request->query->has('forceDownload'),
     );
     $Response = $DownloadController->getResponse();
+    $Response->prepare($App->Request);
     $Response->send();
 } catch (Exception $e) {
     $Session = new Session();

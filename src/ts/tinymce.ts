@@ -122,7 +122,7 @@ export function getTinymceBaseConfig(page: string): object {
     browser_spellcheck: true,
     skin_url: 'app/css/tinymce',
     plugins: plugins,
-    pagebreak_separator: '<pagebreak>',
+    pagebreak_separator: '<div class="page-break"></div>',
     toolbar1: 'undo redo | styleselect fontsizeselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | save',
     removed_menuitems: 'newdocument, image',
     image_caption: true,

@@ -149,16 +149,16 @@
         },
         {
             "name": "directorytree/ldaprecord",
-            "version": "v2.9.2",
+            "version": "v2.9.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DirectoryTree/LdapRecord.git",
-                "reference": "cece84322d1c5199a48a910ad9974692f648ea57"
+                "reference": "0b5109f9966d107e4413e7abe60d61a37aa3059b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/cece84322d1c5199a48a910ad9974692f648ea57",
-                "reference": "cece84322d1c5199a48a910ad9974692f648ea57",
+                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/0b5109f9966d107e4413e7abe60d61a37aa3059b",
+                "reference": "0b5109f9966d107e4413e7abe60d61a37aa3059b",
                 "shasum": ""
             },
             "require": {
@@ -218,7 +218,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-12-14T01:07:51+00:00"
+            "time": "2022-01-27T22:18:05+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -9152,5 +9152,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.2.0"
 }

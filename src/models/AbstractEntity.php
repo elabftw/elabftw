@@ -645,7 +645,7 @@ abstract class AbstractEntity implements CrudInterface
         $res = $this->Db->fetchAll($req);
         return array_column($res, 'id');
     }
-    
+
     public function addToExtendedFilter(string $extendedFilter, array $bindExtendedValues = array()): void
     {
         $this->extendedFilter .= $extendedFilter . ' ';

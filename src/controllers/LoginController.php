@@ -107,6 +107,23 @@ class LoginController implements ControllerInterface
         );
         setcookie('icanhazcookies', $icanhazcookies, $cookieOptions);
 
+        // INITIAL TEAM SELECTION
+        if ($authType === 'teaminit' && $this->App->Session->get('initial_team_selection_required')) {
+            // create an unvalidated user in the requested team
+            ExistingUser::fromScratch(
+                $this->App->Session->get('teaminit_email'),
+                array((int) $this->App->Request->request->get('team_id')),
+                (string) $this->App->Request->request->get('teaminit_firstname'),
+                (string) $this->App->Request->request->get('teaminit_lastname'),
+            );
+            $this->App->Session->set('teaminit_done', true);
+            $this->App->Session->remove('initial_team_selection_required');
+            $location = '../../login.php';
+            echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
+            exit;
+        }
+
+
         // try to authenticate
         $AuthResponse = $this->getAuthService($authType)->tryAuth();
 

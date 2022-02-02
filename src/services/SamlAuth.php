@@ -23,6 +23,7 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Models\ValidatedUser;
 use function is_array;
+use function is_int;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 
 /**
@@ -155,7 +156,7 @@ class SamlAuth implements AuthInterface
         throw new ImproperActionException('Could not find team ID to assign user!');
     }
 
-    private function getTeams(): array | bool
+    private function getTeams(): array | int
     {
         $teams = $this->samlUserdata[$this->settings['idp']['teamAttr'] ?? 'Nope'] ?? array();
 
@@ -168,7 +169,7 @@ class SamlAuth implements AuthInterface
             }
             // this setting is when we want to allow the user to make team selection
             if ($teamId === '-1') {
-                return false;
+                return self::TEAM_SELECTION_REQUIRED;
             }
             return array((int) $teamId);
         }
@@ -199,8 +200,8 @@ class SamlAuth implements AuthInterface
             $teams = $this->getTeams();
 
             // when we want to allow user to select a team before account is created
-            if (is_bool($teams)) {
-                return self::TEAM_SELECTION_REQUIRED;
+            if (is_int($teams)) {
+                return $teams;
             }
 
             // CREATE USER (and force validation of user, with user permissions)

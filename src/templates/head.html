@@ -80,7 +80,7 @@
         </div>
 
         <!-- SEARCH BAR -->
-        <form class='nav-item form-inline ml-auto' id='big_search' method='get' action='{{ App.Request.getScriptName }}'>
+        <form class='nav-item form-inline ml-auto' method='get' action='{{ App.Request.getScriptName }}'>
             {% if App.Request.getScriptName|split('/')|last == 'experiments.php' or App.Request.getScriptName|split('/')|last == 'database.php' %}
             <input class='form-control big-search {{- extendedError ? ' is-invalid' }}' type='search' name='q' aria-label='Search' size='20' value='{{ App.Request.query.get('q') }}' />
             {% endif %}

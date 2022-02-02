@@ -14,4 +14,9 @@ use Exception;
 
 class LimitDepthIsExceededException extends Exception
 {
+    public function __construct()
+    {
+        $message = _('Query is too complex!');
+        parent::__construct($message, 403);
+    }
 }

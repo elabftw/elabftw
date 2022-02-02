@@ -95,20 +95,4 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
-
-  /*
-  if (localStorage.getItem('isExtendedSearchMode') === '1') {
-    $('.collapseExtendedSearch').collapse('toggle');
-    document.getElementById('toggleSearchMode').innerHTML = 'Switch to Default Search';
-
-    // Owner has to be set to team in extended search
-    (document.getElementById('searchonly') as HTMLSelectElement).value = '0';
-
-    // Only keep Experiments and Database entries in 'searchin' select
-    const searchin = document.getElementById('searchin') as HTMLSelectElement;
-    const keep = Array.from(searchin.children).slice(0,3);
-    searchin.replaceChildren(...keep);
-    searchin.selectedIndex = 0;
-  }
- */
 });

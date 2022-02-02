@@ -43,8 +43,8 @@ class FormProcessor extends AbstractProcessor
         }
         $this->Entity = $this->getEntity($type, (int) $request->request->get('entity_id'));
         $this->id = $this->setId((int) $request->request->get('id'));
-        $this->Model = $this->buildModel($request->request->getAlpha('model') ?? '');
+        $this->Model = $this->buildModel($request->request->getAlpha('model'));
         $this->uploadedFile = $request->files->get('content');
-        $this->extra = (array) $request->request->get('extraParams') ?? array();
+        $this->extra = (array) $request->request->get('extraParams');
     }
 }

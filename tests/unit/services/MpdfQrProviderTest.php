@@ -26,7 +26,7 @@ class MpdfQrProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetQRCodeImage(): void
     {
-        $png = $this->Provider->getQRCodeIMage('blah', 100);
-        $this->assertEquals('ff65e6a4d8308e73ec2f12c2aa9bbb632e9799a0', sha1($png));
+        $png = $this->Provider->getQRCodeImage('blah', 100);
+        $this->assertEquals('c5c3f604e7747d4e861ad6bbe64c23cb75b8e6da', sha1($png));
     }
 }

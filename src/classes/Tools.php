@@ -78,7 +78,7 @@ class Tools
 
         try {
             $converter = new GithubFlavoredMarkdownConverter($config);
-            return trim($converter->convertToHtml($md)->getContent(), "\n");
+            return trim($converter->convert($md)->getContent(), "\n");
         } catch (UnexpectedEncodingException) {
             // fix for incorrect utf8 encoding, just return md and hope it's html
             // so at least the thing is displayed instead of triggering a fatal error

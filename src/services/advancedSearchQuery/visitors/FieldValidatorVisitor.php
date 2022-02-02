@@ -36,6 +36,11 @@ class FieldValidatorVisitor implements Visitor
 
     public function visitDateField(DateField $dateField, VisitorParameters $parameters): InvalidFieldCollector
     {
+        if ($dateField->getDateType() === 'range' && $dateField->getValue() > $dateField->getDateTo()) {
+            return new InvalidFieldCollector(array('date:<em>' . $dateField->getValue() . '..' . $dateField->getDateTo()
+                . '</em>. Second date needs to be equal or gather than first date.'));
+        }
+
         return new InvalidFieldCollector();
     }
 

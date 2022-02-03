@@ -1,12 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2012, 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -46,9 +45,6 @@ class ImportZip extends AbstractImport
     // the folder where we extract the zip
     private string $tmpDir;
 
-    // an array with the data we want to import
-    private array $json = array();
-
     // experiments or items
     private string $type = 'experiments';
 
@@ -73,35 +69,21 @@ class ImportZip extends AbstractImport
 
     /**
      * Do the import
+     * We get all the info we need from the embedded .json file
      */
     public function import(): void
-    {
-        $this->openFile();
-        $this->readJson();
-        $this->importAll();
-    }
-
-    /**
-     * Extract the zip to the temporary folder
-     */
-    private function openFile(): void
     {
         $Zip = new ZipArchive();
         $Zip->open($this->UploadedFile->getPathname());
         $Zip->extractTo($this->tmpPath);
-    }
 
-    /**
-     * We get all the info we need from the embedded .json file
-     */
-    private function readJson(): void
-    {
         $file = '/.elabftw.json';
         $content = $this->fs->read($this->tmpDir . $file);
-        $this->json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
-        if (isset($this->json[0]['team'])) {
+        $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        if (isset($json[0]['team'])) {
             $this->type = 'items';
         }
+        $this->importAll($json);
     }
 
     /**
@@ -211,9 +193,9 @@ class ImportZip extends AbstractImport
     /**
      * Loop the json and import the items.
      */
-    private function importAll(): void
+    private function importAll(array $json): void
     {
-        foreach ($this->json as $item) {
+        foreach ($json as $item) {
             $this->dbInsert($item);
 
             // upload the attached files

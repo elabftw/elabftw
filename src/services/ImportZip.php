@@ -25,7 +25,7 @@ use function mb_strlen;
 use PDO;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use ZipArchive;
 
 /**
@@ -51,17 +51,9 @@ class ImportZip extends AbstractImport
     // experiments or items
     private string $type = 'experiments';
 
-    /**
-     * Constructor
-     *
-     * @param Users $users instance of Users
-     * @param Request $request instance of Request
-     * @throws ImproperActionException
-     * @return void
-     */
-    public function __construct(Users $users, Request $request)
+    public function __construct(Users $users, int $target, string $canread, UploadedFile $uploadedFile)
     {
-        parent::__construct($users, $request);
+        parent::__construct($users, $target, $canread, $uploadedFile);
         $this->Entity = new Items($users);
     }
 

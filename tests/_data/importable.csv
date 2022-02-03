@@ -1,0 +1,4 @@
+id,date,title,content,category,elabid,rating,url,tags
+157,2022-02-03,from csv row 1,csv body row 1,Molecule,20220203-ce0b5cd8286bad29ab32407a3e6b70c147da9cc8,0,https://elab.local:3148/database.php?mode=view&id=157,some tag
+155,2022-02-03,from csv row 2,csv body row 2,Plasmid,20220203-dc09cc0930539adec6c55ee66fa11cdd772a5339,0,https://elab.local:3148/database.php?mode=view&id=155,multiple tags|yep
+154,2022-02-03,from csv row 3,csv body row 3,Plasmid,20220203-b84165d7d87903f3bbc350aa5074581881560ba2,0,https://elab.local:3148/database.php?mode=view&id=154,

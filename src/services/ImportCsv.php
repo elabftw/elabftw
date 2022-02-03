@@ -11,14 +11,13 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\TagParams;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 use Elabftw\Traits\EntityTrait;
 use League\Csv\Info as CsvInfo;
 use League\Csv\Reader;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Import items from a csv file.
@@ -35,17 +34,10 @@ class ImportCsv extends AbstractImport
     // the separation character of the csv provided by user
     private string $delimiter;
 
-    /**
-     * Constructor
-     *
-     * @param Users $users instance of Users
-     * @param Request $request instance of Request
-     * @return void
-     */
-    public function __construct(Users $users, Request $request)
+    public function __construct(Users $users, int $target, string $delimiter, string $canread, UploadedFile $uploadedFile)
     {
-        parent::__construct($users, $request);
-        $this->delimiter = $request->request->filter('delimiter', null, FILTER_SANITIZE_STRING);
+        parent::__construct($users, $target, $canread, $uploadedFile);
+        $this->delimiter = Filter::sanitize($delimiter);
         if ($this->delimiter === 'tab') {
             $this->delimiter = "\t";
         }
@@ -84,13 +76,11 @@ class ImportCsv extends AbstractImport
             $req->bindParam(':category', $this->target);
             $req->bindParam(':canread', $this->canread);
             $req->bindParam(':elabid', $elabid);
-            if ($req->execute() === false) {
-                throw new DatabaseErrorException();
-            }
+            $this->Db->execute($req);
             $itemId = $this->Db->lastInsertId();
 
             // insert tags from the tags column
-            if ($row['tags']) {
+            if (isset($row['tags'])) {
                 $this->insertTags($row['tags'], $itemId);
             }
 
@@ -127,7 +117,10 @@ class ImportCsv extends AbstractImport
         $tagsArr = explode(self::TAGS_SEPARATOR, $tags);
         $Entity = new Items($this->Users, $itemId);
         foreach ($tagsArr as $tag) {
-            $Entity->Tags->create(new TagParams($tag));
+            // maybe it's empty for this row
+            if ($tag) {
+                $Entity->Tags->create(new TagParams($tag));
+            }
         }
     }
 

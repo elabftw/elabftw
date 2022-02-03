@@ -15,7 +15,7 @@
         <p>The search is performed against the title and the body.</p>
         <dl>
           <dt>Term</dt>
-          <dd>A sequence of characters without space (&blank;).<br>
+          <dd>A sequence of characters without space (<code>&blank;</code>).<br>
               <em>termA</em> or <em>termB</em> or <em>456</em>
           </dd>
           <dt>Quoted term</dt>
@@ -34,7 +34,7 @@
         </ul>
         <p>The operators are listed in increasing order of precedence. Note the space around the operators. <em>termA termB OR termC</em> is equivalent to <em>(termA AND termB) OR termC</em>. To give priority to <code>OR</code> use parenthesis: <em>termA AND (termB OR termC)</em>.</p>
         <h3>Field/value pair searches</h3>
-        <p>Field/value pairs are only allowed in extended search mode and the quick search fields.</p>
+        <p>Field/value pairs are also applicable in the quick search fields.</p>
         <p>Basic syntax <code>[<strong>field</strong>]:[value]</code></p>
         <dl>
           <dt>attachment</dt>
@@ -160,7 +160,7 @@
         <li><strong>title</strong>: Simple or Quoted term</li>
         <li><strong>visibility</strong>: Simple or Quoted term</li>
       </ul>
-      <a class='' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Full syntax'|trans }}</a>
+      <a class='clickable' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Full syntax'|trans }}</a>
       </div>
     </div>
 
@@ -168,9 +168,9 @@
     <div hidden class='box mb-1' data-save-hidden='searchHelpersDiv'>
       <div class='row'>
         <!-- AUTHOR HELPER -->
-        <div class='col-md-6'>
+        <div class='col-md-6 mb-md-3'>
           <label for='searchonly'>{{ 'And author is:'|trans }} </label><br>
-          <select id='searchonly' name='owner' data-filter='author' class='form-control selectpicker filterHelper mb-3' data-show-subtext='true' data-live-search='true'>
+          <select id='searchonly' name='owner' data-filter='author' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
             <option data-action='clear'>{{ 'Select author'|trans }}</option>
             {% for user in usersArr %}
               <option value='{{ user.userid }}'>{{ user.fullname|raw }}</option>
@@ -181,11 +181,11 @@
 
       </div>
       <!-- NEW ROW -->
-      <div class='row'>
+      <div class='row mb-md-3'>
         <!-- SEARCH DATE -->
         <div class='col-md-4'>
           <label class='d-inline' for='date'>{{ 'Where date is'|trans }}</label>
-          <div class='input-group mb-3'>
+          <div class='input-group'>
             <div class='input-group-prepend'>
               <select id='dateOperator' class='brr-none form-control'>
                 <option value='<' title='{{ 'less than'|trans }}'>&lt;</option>

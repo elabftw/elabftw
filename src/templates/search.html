@@ -188,12 +188,12 @@
           <div class='input-group mb-3'>
             <div class='input-group-prepend'>
               <select id='dateOperator' class='brr-none form-control'>
-                <option value='<'><</option>
-                <option value='<='><=</option>
+                <option value='<'>&lt;</option>
+                <option value='<='>&le;</option>
                 <option value='=' selected>=</option>
-                <option value='>='>>=</option>
-                <option value='>'>></option>
-                <option value='!='>!=</option>
+                <option value='>='>&ge;</option>
+                <option value='>'>&gt;</option>
+                <option value='!='>&ne;</option>
               </select>
             </div>
             <input id='date' name='date' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('date') != '' ? Request.query.get('date') }}'/>

@@ -10,18 +10,22 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
+use function exif_read_data;
 use function extension_loaded;
 use function file_exists;
 use function filesize;
 use finfo;
+use function function_exists;
 use Gmagick;
 use Imagick;
 use function in_array;
 use function is_readable;
+use function strtolower;
 use function substr;
 
 /**
@@ -59,7 +63,7 @@ final class MakeThumbnail
 
     private string $mime;
 
-    public function __construct(private string $filePath, private int $rotationAngle = 0)
+    public function __construct(private string $filePath)
     {
         // make sure we can read the file
         if (is_readable($this->filePath) === false) {
@@ -141,12 +145,51 @@ final class MakeThumbnail
         // set the thumbnail quality to 85% (default is 75%)
         $image->setCompressionQuality(85);
         // check if we need to rotate the image based on the orientation in exif of original file
-        if ($this->rotationAngle !== 0) {
-            $image->rotateImage('#000', $this->rotationAngle);
+        $angle = $this->getRotationAngle();
+        if ($angle !== 0) {
+            $image->rotateImage('#000', $angle);
         }
         // create the physical thumbnail image to its destination
         $image->writeImage($this->thumbPath);
         $image->clear();
+    }
+
+    private function getRotationAngle(): int
+    {
+        // if the image has exif with rotation data, read it so the thumbnail can have a correct orientation
+        // only the thumbnail is rotated, the original image stays untouched
+        $ext = Tools::getExt($this->filePath);
+        if (function_exists('exif_read_data') && in_array(strtolower($ext), Extensions::HAS_EXIF, true)) {
+            $exifData = exif_read_data($this->filePath);
+            if ($exifData !== false) {
+                return $this->readOrientationFromExif($exifData);
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Get the rotation angle from exif data
+     *
+     * @param array<string, mixed> $exifData
+     */
+    private function readOrientationFromExif(array $exifData): int
+    {
+        if (empty($exifData['Orientation'])) {
+            return 0;
+        }
+        switch ($exifData['Orientation']) {
+            case 1:
+                return 0;
+            case 3:
+                return 180;
+            case 6:
+                return 90;
+            case 8:
+                return -90;
+            default:
+                return 0;
+        }
     }
 
     private function useGmagick(): void

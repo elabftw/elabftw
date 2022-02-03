@@ -21,11 +21,13 @@ use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\UploadTrait;
 use FilesystemIterator;
 use function json_decode;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem;
 use function mb_strlen;
 use PDO;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use ZipArchive;
 
 /**
@@ -51,17 +53,9 @@ class ImportZip extends AbstractImport
     // experiments or items
     private string $type = 'experiments';
 
-    /**
-     * Constructor
-     *
-     * @param Users $users instance of Users
-     * @param Request $request instance of Request
-     * @throws ImproperActionException
-     * @return void
-     */
-    public function __construct(Users $users, Request $request)
+    public function __construct(Users $users, int $target, string $canread, UploadedFile $uploadedFile)
     {
-        parent::__construct($users, $request);
+        parent::__construct($users, $target, $canread, $uploadedFile);
         $this->Entity = new Items($users);
     }
 
@@ -111,10 +105,11 @@ class ImportZip extends AbstractImport
      */
     private function readJson(): void
     {
-        $file = $this->tmpPath . '/.elabftw.json';
-        $content = file_get_contents($file);
+        $fs = new Filesystem(new Local($this->tmpPath));
+        $file = '.elabftw.json';
+        $content = $fs->read($file);
         if ($content === false) {
-            throw new ImproperActionException('Unable to read the json file!');
+            throw new ImproperActionException('Could not read the embedded json file!');
         }
         $this->json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         if (isset($this->json[0]['team'])) {
@@ -173,9 +168,7 @@ class ImportZip extends AbstractImport
             $req->bindParam(':userid', $this->target, PDO::PARAM_INT);
         }
 
-        if (!$req->execute()) {
-            throw new ImproperActionException('Cannot import in database!');
-        }
+        $this->Db->execute($req);
 
         $newItemId = $this->Db->lastInsertId();
 

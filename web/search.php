@@ -56,7 +56,6 @@ if ($Request->query->get('type') === 'experiments') {
     $Entity = $Database;
 }
 
-
 // EXTENDED SEARCH
 // default input for extendedArea
 $extended = 'author:"' . $Entity->Users->userData['fullname'] . '" ';

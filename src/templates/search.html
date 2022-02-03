@@ -126,7 +126,7 @@
     <!-- NEW ROW -->
     <div class='row'>
       <div class='col-md-8'>
-        <label for='extendedArea'><i class='fas fa-search'></i> {{ 'Advanced search'|trans }}</label>
+        <label for='extendedArea'><i class='fas fa-search'></i> {{ 'Search query'|trans }}</label>
         <textarea
           id='extendedArea'
           name='extended'
@@ -164,7 +164,7 @@
       </div>
     </div>
 
-    <h4 data-action='toggle-next' data-icon='extendedSearchIcon'><i id='extendedSearchIcon' class='fas fa-chevron-circle-right'></i> {{ 'Extended search helpers'|trans }}</h4>
+    <h4 data-action='toggle-next' data-icon='extendedSearchIcon'><i id='extendedSearchIcon' class='fas fa-chevron-circle-right'></i> {{ 'Search helpers'|trans }}</h4>
     <div hidden class='box mb-1' data-save-hidden='searchHelpersDiv'>
       <div class='row'>
         <!-- AUTHOR HELPER -->
@@ -200,7 +200,7 @@
           </div>
         </div>
         <div class='col-md-3'>
-          <label class='d-inline' for='dateTo'>{{ 'Date to'|trans }}</label>
+          <label class='d-inline' for='dateTo'>{{ 'Date to (optional)'|trans }}</label>
           <input id='dateTo' name='dateTo' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('dateTo') != '' ? Request.query.get('dateTo') }}'/>
         </div>
         <!-- END SEARCH DATE -->

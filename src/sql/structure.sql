@@ -568,7 +568,7 @@ CREATE TABLE `teams` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `common_template` text,
-  `deletable_xp` tinyint(1) UNSIGNED NOT NULL DEFAULT 1,
+  `deletable_xp` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `deletable_item` tinyint(1) UNSIGNED NOT NULL DEFAULT 1,
   `user_create_tag` tinyint(1) UNSIGNED NOT NULL DEFAULT 1,
   `force_exp_tpl` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,

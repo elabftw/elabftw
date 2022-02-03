@@ -7,11 +7,13 @@
 {% else %}
 <a href='{{ Entity.page }}.php?mode=view&id={{ Entity.id }}'>
 {% endif %}
-    <i style='color:#29AEB9' class='fas fa-chevron-circle-left mr-1'></i>{{ 'Go back'|trans }}
+    <i class='fas fa-chevron-left mr-1'></i>{{ 'Go back'|trans }}
 </a>
 {% for revision in revisionsArr %}
-<div class='item'><span class='relative-moment' title='{{ revision.savedate }}'></span> {{ 'by'|trans }} {{ revision.fullname|raw }} {% if not Entity.entityData.locked %}<a href='app/controllers/RevisionsController.php?item_id={{ Entity.id }}&type={{ Entity.type }}&action=restore&rev_id={{ revision.id }}'>{{ 'Restore'|trans }}</a>{% endif %}<br>
-    {{ revision.body|md2html|raw }}</div>
+  <div class='box'>
+    <span class='relative-moment' title='{{ revision.savedate }}'></span> {{ 'by'|trans }} {{ revision.fullname|raw }} {% if not Entity.entityData.locked %}<a href='app/controllers/RevisionsController.php?item_id={{ Entity.id }}&type={{ Entity.type }}&action=restore&rev_id={{ revision.id }}'>{{ 'Restore'|trans }}</a>{% endif %}<br>
+    {{ revision.body|md2html|raw }}
+  </div>
 {% endfor %}
 
 <div id='info' data-page='revisions'></div>

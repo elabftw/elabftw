@@ -56,7 +56,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
             'body',
         ));
         $advancedSearchQuery->getWhereClause();
-        $this->assertStringStartsWith('Column ', $advancedSearchQuery->getException());
+        $this->assertStringStartsWith('Line 1, Column ', $advancedSearchQuery->getException());
     }
 
     public function testComplexityLimit(): void

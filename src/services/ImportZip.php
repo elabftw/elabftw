@@ -19,14 +19,11 @@ use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\UploadTrait;
-use FilesystemIterator;
 use function json_decode;
-use League\Flysystem\Adapter\Local;
-use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\Visibility;
 use function mb_strlen;
 use PDO;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use ZipArchive;
 
@@ -44,8 +41,10 @@ class ImportZip extends AbstractImport
     /** @var AbstractEntity $Entity instance of Entity */
     private $Entity;
 
+    private string $tmpPath;
+
     // the folder where we extract the zip
-    private string $tmpPath = '';
+    private string $tmpDir;
 
     // an array with the data we want to import
     private array $json = array();
@@ -53,25 +52,23 @@ class ImportZip extends AbstractImport
     // experiments or items
     private string $type = 'experiments';
 
-    public function __construct(Users $users, int $target, string $canread, UploadedFile $uploadedFile)
+    public function __construct(Users $users, int $target, string $canread, UploadedFile $uploadedFile, private FilesystemOperator $fs)
     {
         parent::__construct($users, $target, $canread, $uploadedFile);
         $this->Entity = new Items($users);
+        // set up a temporary directory in the cache to extract the zip to
+        $this->tmpDir = $this->getUniqueString();
+        $this->tmpPath = $this->getTmpPath() . $this->tmpDir;
+        $this->fs->createDirectory($this->tmpDir);
+        $this->fs->setVisibility($this->tmpDir, Visibility::PRIVATE);
     }
 
     /**
-     * Cleanup : remove the temporary folder created
+     * Cleanup: remove the temporary folder created
      */
     public function __destruct()
     {
-        // first remove content
-        $di = new RecursiveDirectoryIterator($this->tmpPath, FilesystemIterator::SKIP_DOTS);
-        $ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
-        foreach ($ri as $file) {
-            $file->isDir() ? rmdir($file->getPathname()) : unlink($file->getPathname());
-        }
-        // and remove folder itself
-        rmdir($this->tmpPath);
+        $this->fs->deleteDirectory($this->tmpDir);
     }
 
     /**
@@ -79,12 +76,6 @@ class ImportZip extends AbstractImport
      */
     public function import(): void
     {
-        // this is where we will extract the zip
-        $this->tmpPath = $this->getTmpPath() . $this->getUniqueString();
-        if (!is_dir($this->tmpPath) && !mkdir($this->tmpPath, 0700, true) && !is_dir($this->tmpPath)) {
-            throw new ImproperActionException('Unable to create temporary folder! (' . $this->tmpPath . ')');
-        }
-
         $this->openFile();
         $this->readJson();
         $this->importAll();
@@ -105,12 +96,8 @@ class ImportZip extends AbstractImport
      */
     private function readJson(): void
     {
-        $fs = new Filesystem(new Local($this->tmpPath));
-        $file = '.elabftw.json';
-        $content = $fs->read($file);
-        if ($content === false) {
-            throw new ImproperActionException('Could not read the embedded json file!');
-        }
+        $file = '/.elabftw.json';
+        $content = $this->fs->read($this->tmpDir . $file);
         $this->json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         if (isset($this->json[0]['team'])) {
             $this->type = 'items';

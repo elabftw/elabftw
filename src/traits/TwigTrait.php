@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,15 +6,16 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
 use function dirname;
 use Elabftw\Elabftw\App;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\Config;
 use function is_readable;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
+use League\Flysystem\Visibility;
 
 /**
  * To get Twig
@@ -23,17 +24,18 @@ trait TwigTrait
 {
     /**
      * Prepare the Twig object
-     *
-     *
      */
     protected function getTwig(Config $config): \Twig\Environment
     {
         $elabRoot = dirname(__DIR__, 2);
+        // load templates
         $loader = new \Twig\Loader\FilesystemLoader("$elabRoot/src/templates");
-        $cache = "$elabRoot/cache/twig";
-        if (!is_dir($cache) && !mkdir($cache, 0700) && !is_dir($cache)) {
-            throw new FilesystemErrorException("Unable to create the cache directory ($cache)");
-        }
+        // make sure the cache directory exists
+        $tmpPath = $elabRoot . '/cache/';
+        $fs = new Filesystem(new LocalFilesystemAdapter($tmpPath));
+        $fs->createDirectory('twig');
+        $fs->setVisibility('twig', Visibility::PRIVATE);
+        $cache = $tmpPath . 'twig';
 
         $options = array('cache' => $cache);
 

@@ -91,7 +91,7 @@
                 </div>
                 <input aria-label='{{ 'Add a link'|trans }}' type='text' id='linkinput' class='form-control linkinput' data-id='{{ Entity_id }}' placeholder='{{ 'from the database'|trans }}' />
                 <div class='input-group-append'>
-                  <select id='addLinkCatFilter' class='brl-none custom-select'>
+                  <select id='addLinkCatFilter' class='brl-none form-control'>
                     <option selected value=''>{{ 'Any category'|trans }}</option>
                     {% for cat in itemsCategoryArr %}
                       <option value='{{ cat.category_id }}'>{{ cat.category }}</option>

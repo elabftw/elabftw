@@ -10,8 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\TagParams;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 use Elabftw\Traits\EntityTrait;
 use League\Csv\Info as CsvInfo;
@@ -24,6 +26,8 @@ use Symfony\Component\HttpFoundation\Request;
 class ImportCsv extends AbstractImport
 {
     use EntityTrait;
+
+    private const TAGS_SEPARATOR = '|';
 
     // number of items we got into the database
     public int $inserted = 0;
@@ -83,6 +87,13 @@ class ImportCsv extends AbstractImport
             if ($req->execute() === false) {
                 throw new DatabaseErrorException();
             }
+            $itemId = $this->Db->lastInsertId();
+
+            // insert tags from the tags column
+            if ($row['tags']) {
+                $this->insertTags($row['tags'], $itemId);
+            }
+
             $this->inserted++;
         }
     }
@@ -96,6 +107,8 @@ class ImportCsv extends AbstractImport
     {
         // get rid of the title
         unset($row['title']);
+        // and the tags
+        unset($row['tags']);
         // deal with the rest of the columns
         $body = '';
         foreach ($row as $subheader => $content) {
@@ -107,6 +120,15 @@ class ImportCsv extends AbstractImport
         }
 
         return $body;
+    }
+
+    private function insertTags(string $tags, int $itemId): void
+    {
+        $tagsArr = explode(self::TAGS_SEPARATOR, $tags);
+        $Entity = new Items($this->Users, $itemId);
+        foreach ($tagsArr as $tag) {
+            $Entity->Tags->create(new TagParams($tag));
+        }
     }
 
     /**

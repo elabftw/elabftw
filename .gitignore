@@ -7,8 +7,6 @@
 apidoc/html
 _srcdoc/
 _coverage/
-metrics/
-mysql/
 build
 cache
 config.php*

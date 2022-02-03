@@ -1,11 +1,102 @@
 {% include 'head.html' %}
 
+<!-- Modal for advanced search -->
+<div class='modal fade' id='advancedSearchModal' tabindex='-1' role='dialog' aria-labelledby='advancedSearchModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='advancedSearchModalLabel'>{{ 'Extended Search Syntax'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
+        <h3>Search terms</h3>
+        <p>The search is performed against the title and the body.</p>
+        <dl>
+          <dt>Term</dt>
+          <dd>A sequence of characters without space (&blank;).<br>
+              <em>termA</em> or <em>termB</em> or <em>456</em>
+          </dd>
+          <dt>Quoted term</dt>
+          <dd>A sequence of characters including space (<code>&blank;</code>) enclosed in single (<code>'</code>) or double (<code>"</code>) quotation marks.<br>
+              <em>'Hello world'</em> or <em>"I love eLabFTW!"</em>
+          </dd>
+        </dl>
+        <p>Two wildcards are available. The percent sign (<code>%</code>) matches zero or more characters while the underscore (<code>_</code>) matches exactly one character. To search for literal <code>%</code> or <code>_</code> the characters need to be escaped with a backslash  <code>\%</code> or <code>\_</code>.</p>
+        <h3>Term concatenation and grouping</h3>
+        <p>Terms can be connected in different ways:</p>
+        <ul>
+          <li><code>OR</code> or <code>|</code>, <em>termA OR termB</em> or <em>termA | termB</em></li>
+          <li><code>AND</code>, <code>&amp;</code> or space (<code>&blank;</code>), <em>termA termB</em> or <em>termA AND termB</em> or <em>termA & termB</em></li>
+          <li><code>NOT</code>, <code>-</code> or <code>!</code>, <em>! termA</em> or <em>NOT termA</em></li>
+          <li>Parenthesis <code>()</code>, <em>(termA OR termB) AND ! termC</em></li>
+        </ul>
+        <p>The operators are listed in increasing order of precedence. Note the space around the operators. <em>termA termB OR termC</em> is equivalent to <em>(termA AND termB) OR termC</em>. To give priority to <code>OR</code> use parenthesis: <em>termA AND (termB OR termC)</em>.</p>
+        <h3>Field/value pair searches</h3>
+        <p>Field/value pairs are only allowed in extended search mode and the quick search fields.</p>
+        <p>Basic syntax <code>[<strong>field</strong>]:[value]</code></p>
+        <dl>
+          <dt>attachment</dt>
+          <dd>yes or no, true or false, 1 or 0, on or off</dd>
+          <dt>author</dt>
+          <dd>Term or Quoted term</dd>
+          <dt>body</dt>
+          <dd>Term or Quoted term</dd>
+          <dt>category</dt>
+          <dd>Term or Quoted term; Only if Database is selected.</dd>
+          <dt>date</dt>
+          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
+          <dt>elabid</dt>
+          <dd>Term or Quoted term</dd>
+          <dt>locked</dt>
+          <dd>yes or no, true or false, 1 or 0, on or off</dd>
+          <dt>rating</dt>
+          <dd>1, 2, 3, 4, 5, unrated or 0</dd>
+          <dt>status</dt>
+          <dd>Term or Quoted term; Only if Experiment is selected.</dd>
+          <dt>timestamped</dt>
+          <dd>yes or no, true or false, 1 or 0, on or off</dd>
+          <dt>title</dt>
+          <dd>Term or Quoted term</dd>
+          <dt>visibility</dt>
+          <dd>Term or Quoted term<br>A group name (e.g., 'Lab Heroes') or 'public', 'organization', 'team', 'user', or 'useronly'.</dd>
+        </dl>
+        <h3 id='dateFormats'>Date formats</h3>
+        <p>A date has to be provided in the following format: <code>YYYYMMDD</code>,
+          i.e., four digit year, two digit month, and two digit day.
+          Year, month and day can&mdash;but don't have to&mdash;be separated by
+          hyphen (<code>-</code>),
+          slash (<code>/</code>),
+          period (<code>.</code>),
+          or comma (<code>,</code>).<br>
+          Either a <strong>single date</strong> or a <strong>date range</strong> can be used.</p>
+        <dl>
+          <dt>Single date: {operator}date</dt>
+          <dd>operator: <code>&lt;</code>, <code>&lt;=</code>, <code>=</code>, <code>&gt;=</code>, <code>&gt;</code>, or <code>!=</code><br>
+            An operator is optional. default is =<br>
+            e.g., <em>date:17890714</em> or <em>date:>1909-12-12</em> or <em>date:>=1867.11.07</em>
+          </dd>
+          <dt>Date range: date..date</dt>
+          <dd>Two dates separated by two periods (<code>..</code>)<br>
+            e.g., <em>date:20200101..20201231</em>
+          </dd>
+        </dl>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <!-- SEARCH PAGE BEGIN -->
-<form name="search" method="get" action="search.php">
+<form name='search' method='get' action='search.php'>
   <section class='searchform box'>
-    <div class='row'>
+    <div class='row' style="align-items:flex-end;">
       <!-- SEARCH IN-->
-      <div class='col-md-3'>
+      <div class='col-md-3 mb-2'>
         <label for='searchin'>{{ 'Search in'|trans }}</label>
         <select name='type' id='searchin' class='form-control'>
           <option value='experiments'>{% trans %}Experiment {% plural 2 %}Experiments{% endtrans %}</option>
@@ -21,7 +112,7 @@
       <!-- END SEARCH IN -->
 
       <!-- SEARCH WITH TAG -->
-      <div class='col-md-6'>
+      <div class='col-md-6 mb-2'>
         <label for='tags-select'>{{ 'With the tag'|trans }}</label>
         <select multiple name='tags[]' id='tags-select' class='form-control selectpicker' data-show-subtext='true' data-live-search='true' data-showtick='true' data-actions-box='true'>
           {% for tag in tagsArr %}
@@ -30,129 +121,162 @@
         </select>
       </div>
       <!-- END SEARCH WITH TAG -->
-
-      <!-- VISIBILITY SEARCH -->
-      <div class='col-md-3'>
-        <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
-        <select id='visibility' name='vis' class='form-control'>
-          <option value=''>{{ 'Select visibility'|trans }}</option>
-          {% for key, value in visibilityArr %}
-            <option value='{{ key }}' {{ Request.query.get('vis') == key ? " selected='selected'" }}>{{ value|trans }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <br>
-      <!-- END VISIBILITY SEARCH -->
-
-      <!-- SEARCH ONLY -->
-      <div class='col-md-6'>
-        <label for='searchonly'>{{ 'Search only in experiments owned by:'|trans }} </label><br>
-        <select id='searchonly' name='owner' class='form-control mb-3'>
-          <option value=''>{{ 'Yourself'|trans }}</option>
-          <!-- add an option to search in the whole team (owner = 0) -->
-          <option value='0'{{ Request.query.get('owner') == '0' ? ' selected' }}>{{ 'All the team'|trans }}</option>
-          <option disabled>----------------</option>
-          {% for user in usersArr %}
-            <option value='{{ user.userid }}'{{ Request.query.get('owner') == user.userid ? ' selected' }}>
-              {{ user.fullname|raw }}
-            </option>
-          {% endfor %}
-        </select>
-      </div>
-      <br>
-      <!-- END SEARCH ONLY -->
-
     </div>
+
     <!-- NEW ROW -->
     <div class='row'>
-
-      <!-- SEARCH DATE -->
       <div class='col-md-8'>
-        <label for='from'>{{ 'Where date is between'|trans }}</label>
-        <input id='from' name='from' type='date' class='formcontrol' value='{{ Request.query.get('from') != '' ? Request.query.get('from') }}'/>
-        <label class='ml-2' for='to'>{{ 'and'|trans }}</label>
-        <input id='to' name='to' type='date' class='formcontrol' value='{{ Request.query.get('to') != '' ? Request.query.get('to') }}'/>
+        <label for='extendedArea'><i class='fas fa-search'></i> {{ 'Advanced search'|trans }}</label>
+        <textarea
+          id='extendedArea'
+          name='extended'
+          rows='10'
+          class='form-control {{- extendedError ? ' is-invalid' }}'
+          style='font-family:monospace;'
+          placeholder='author:"{{ App.Users.userData.fullname|raw }}" status:"Running"'
+          aria-describedby='extendedFeedback'
+        >{{ extended }}</textarea>
+
+        <!-- this is where the errors will be displayed -->
+        <div id='extendedFeedback' class='invalid-feedback'>{{ extendedError|raw }}</div>
+
+        <small class='form-text text-muted'>
+          Press <kbd><kbd>ctrl</kbd> + <kbd>enter</kbd></kbd> or <kbd><kbd>⌘</kbd> + <kbd>enter</kbd></kbd> to submit search.
+        </small>
       </div>
-      <!-- END SEARCH DATE -->
-
-    </div>
-    <!-- NEW ROW -->
-    <div class='row'>
-
-      <!-- TITLE -->
-      <div class='col-md-6'>
-        <label for='title'>{{ 'And title contains'|trans }}</label>
-        <input id='title' class='form-control' name='title' type='text' value='{{ title }}'/>
-      </div>
-      <!-- END TITLE -->
-
-      <!-- STATUS -->
       <div class='col-md-4'>
-        <label for='status'>{{ 'And status is'|trans }}</label>
-        <select id='status' name='status' class='form-control'>
-          <option value=''>{{ 'Select status'|trans }}</option>
-          {% for status in statusArr %}
-            <option value='{{ status.category_id }}'{{ Request.query.get('status') == status.category_id ? ' selected' }}>
-              {{ status.category }}
-            </option>
-          {% endfor %}
-        </select>
+      <p>Allowed Fields (<code><strong>field</strong>:value</code>):</p>
+      <ul class='list-unstyled'>
+        <li><strong>attachment</strong>: yes or no</li>
+        <li><strong>author</strong>: Simple or Quoted term</li>
+        <li><strong>body</strong>: Simple or Quoted term</li>
+        <li><strong>category</strong>: Simple or Quoted term</li>
+        <li><strong>date</strong>: see date format</li>
+        <li><strong>elabid</strong>: Simple or Quoted term</li>
+        <li><strong>locked</strong>: yes or no</li>
+        <li><strong>rating</strong>: 1, 2, 3, 4, 5, or unrated or 0</li>
+        <li><strong>status</strong>: Simple or Quoted term</li>
+        <li><strong>timestamped</strong>: yes or no</li>
+        <li><strong>title</strong>: Simple or Quoted term</li>
+        <li><strong>visibility</strong>: Simple or Quoted term</li>
+      </ul>
+      <a class='' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Full syntax'|trans }}</a>
       </div>
-      <!-- END STATUS -->
-
-    </div>
-    <!-- NEW ROW -->
-    <div class='row'>
-
-      <!-- BODY -->
-      <div class='col-md-6'>
-        <label for='body'>{{ 'And body contains'|trans }}</label>
-        <input id='body' class='form-control' name='body' type='text' value='{{ body }}'/>
-
-        <label for='strict'>{{ 'Strict mode'|trans }}</label>
-        <input id='strict' class='mt-2 mr-3 custom-control-sm' type='checkbox' name='strict'
-          {{ Request.query.get('strict') == 'on' ? " checked='checked'" }}
-        />
-        <!-- AND / OR -->
-        <label for='andor'>{{ 'Space means'|trans }}</label>
-        <select class='mt-2 custom-control-sm' id='andor' name='andor'>
-          <option value='and'{{ Request.query.get('andor') == 'and' ? ' selected' }}>{{ 'and'|trans }}</option>
-          <option value='or'{{ Request.query.get('andor') == 'or' ? ' selected' }}>{{ 'or'|trans }}</option>
-        </select>
-
-      </div>
-      <!-- END TITLE/BODY block -->
-
-      <!-- RATING -->
-      <div class='col-md-4'>
-        <label for='rating'>{{ 'And rating is'|trans }}</label>
-        <select id='rating' name='rating' class='form-control'>
-          <option value=''>{{ 'Select number of stars'|trans }}</option>
-          <option value='null'{{ Request.query.get('rating') == 'null' ? ' selected' }}>{{ 'Unrated'|trans }}</option>
-          {% for i in range(1, 5) %}
-            <option value='{{ i }}'{{ Request.query.get('rating') == i ? ' selected' }}>{{ i }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <!-- END RATING -->
-    </div>
-    <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
-
-    <!-- NEW ROW -->
-    <div class='row'>
-      <h4 class='ml-3'>{{ 'Extra fields search'|trans }}</h4>
     </div>
 
-    <div class='row'>
-      <div class='col-md-4'>
-        <label for='metakey'>{{ 'Name of field'|trans }}</label>
-        <input type='text' class='form-control' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' />
-      </div>
+    <h4 data-action='toggle-next' data-icon='extendedSearchIcon'><i id='extendedSearchIcon' class='fas fa-chevron-circle-right'></i> {{ 'Extended search helpers'|trans }}</h4>
+    <div hidden class='box mb-1' data-save-hidden='searchHelpersDiv'>
+      <div class='row'>
+        <!-- AUTHOR HELPER -->
+        <div class='col-md-6'>
+          <label for='searchonly'>{{ 'And author is:'|trans }} </label><br>
+          <select id='searchonly' name='owner' data-filter='author' class='form-control selectpicker filterHelper mb-3' data-show-subtext='true' data-live-search='true'>
+            <option data-action='clear'>{{ 'Select author'|trans }}</option>
+            {% for user in usersArr %}
+              <option value='{{ user.userid }}'>{{ user.fullname|raw }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <!-- END SEARCH ONLY -->
 
-      <div class='col-md-4'>
-        <label for='metavalue'>{{ 'Value'|trans }}</label>
-        <input type='text' class='form-control' name='metavalue' value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}' />
-        <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
+      </div>
+      <!-- NEW ROW -->
+      <div class='row form-inline'>
+        <!-- SEARCH DATE -->
+        <div class='col-md-4'>
+          <label class='d-inline' for='date'>{{ 'Where date is'|trans }}</label>
+          <select id='dateOperator' class='form-control'>
+            <option value='<'><</option>
+            <option value='<='><=</option>
+            <option value='=' selected>=</option>
+            <option value='>='>>=</option>
+            <option value='>'>></option>
+            <option value='!='>!=</option>
+          </select>
+          <input id='date' name='date' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('date') != '' ? Request.query.get('date') }}'/>
+        </div>
+        <!-- END SEARCH DATE -->
+
+        <!-- LOCK -->
+        <div class='col-md-4'>
+          <label class='d-inline' for='locked'>{{ 'Locked'|trans }}</label>
+          <select id='locked' class='form-control filterHelper' data-filter='locked'>
+            <option value='' data-action='clear'>{{ 'Select lock status'|trans}}</option>
+            <option value='yes'>{{ 'Yes'|trans|lower }}</option>
+            <option value='no'>{{ 'No'|trans|lower }}</option>
+          </select>
+        </div>
+        <!-- END LOCK -->
+
+        <!-- LOCK -->
+        <div class='col-md-4'>
+          <label class='d-inline' for='timestamped'>{{ 'Timestamped'|trans }}</label>
+          <select id='timestamped' class='form-control filterHelper' data-filter='timestamped'>
+            <option value='' data-action='clear'>{{ 'Select timestamp status'|trans}}</option>
+            <option value='yes'>{{ 'Yes'|trans|lower }}</option>
+            <option value='no'>{{ 'No'|trans|lower }}</option>
+          </select>
+        </div>
+        <!-- END LOCK -->
+
+      </div>
+      <!-- NEW ROW -->
+      <div class='row'>
+        <div class='col-md-4'>
+          <!-- STATUS -->
+            <label for='status'>{{ 'And status is'|trans }}</label>
+            <select id='status' name='status' data-filter='status' class='form-control filterHelper'>
+              <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
+              {% for status in statusArr %}
+                <option value='{{ status.category_id }}'{{ Request.query.get('status') == status.category_id ? ' selected' }}>
+                  {{ status.category }}
+                </option>
+              {% endfor %}
+            </select>
+          <!-- END STATUS -->
+        </div>
+        <!-- RATING -->
+        <div class='col-md-4'>
+          <label for='rating'>{{ 'And rating is'|trans }}</label>
+          <select id='rating' name='rating' data-filter='rating' class='form-control filterHelper'>
+            <option value='' data-action='clear'>{{ 'Select number of stars'|trans }}</option>
+            <option value='null'{{ Request.query.get('rating') == 'null' ? ' selected' }}>{{ 'Unrated'|trans }}</option>
+            {% for i in range(1, 5) %}
+              <option value='{{ i }}'{{ Request.query.get('rating') == i ? ' selected' }}>{{ i }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <!-- END RATING -->
+        <!-- VISIBILITY SEARCH -->
+        <div class='col-md-4'>
+          <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
+          <select id='visibility' name='vis' data-filter='visibility' class='form-control filterHelper'>
+            <option value='' data-action='clear'>{{ 'Select visibility'|trans }}</option>
+            {% for key, value in visibilityArr %}
+              <option value='{{ key }}' {{ Request.query.get('vis') == key ? " selected='selected'" }}>{{ value|trans }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <!-- END VISIBILITY SEARCH -->
+      </div>
+    </div>
+
+    <!-- METADATA SEARCH -->
+    <h4 data-action='toggle-next' data-icon='metadataSearchIcon'><i id='metadataSearchIcon' class='fas fa-chevron-circle-right'></i> {{ 'Extra fields search'|trans }}</h4>
+
+
+    <div hidden data-save-hidden='metadataSearchDiv' class='box'>
+      <div class='row'>
+        <div class='col-md-4'>
+          <label for='metakey'>{{ 'Name of field'|trans }}</label>
+          <input type='text' id='metakey' class='form-control' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' />
+        </div>
+
+        <div class='col-md-4'>
+          <label for='metavalue'>{{ 'Value'|trans }}</label>
+          <input type='text' id='metavalue' class='form-control' name='metavalue' value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}' />
+          <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
+        </div>
       </div>
     </div>
 

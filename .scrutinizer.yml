@@ -29,3 +29,4 @@ build:
                     - yarn install
                     - yarn buildcss
                     - yarn buildnode
+                    - yarn buildparser

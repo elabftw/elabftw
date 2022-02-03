@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function count;
 use Elabftw\Controllers\SearchController;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
@@ -19,10 +18,10 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
+use Elabftw\Services\AdvancedSearchQuery;
+use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
-use function filter_var;
-use function trim;
 
 /**
  * The search page
@@ -50,12 +49,6 @@ $visibilityArr = $TeamGroups->getVisibilityList();
 
 $usersArr = $App->Users->readAllFromTeam();
 
-// ANDOR
-$andor = ' AND ';
-if ($Request->query->has('andor') && $Request->query->get('andor') === 'or') {
-    $andor = ' OR ';
-}
-
 // WHERE do we search?
 if ($Request->query->get('type') === 'experiments') {
     $Entity = $Experiments;
@@ -63,47 +56,21 @@ if ($Request->query->get('type') === 'experiments') {
     $Entity = $Database;
 }
 
-// ARE WE STRICT?
-// strict mode means we don't add wildcard characters around the query
-$isStrict = false;
-if ($Request->query->get('strict') === 'on') {
-    $isStrict = true;
-}
+// EXTENDED SEARCH
+// default input for extendedArea
+$extended = 'author:"' . $Entity->Users->userData['fullname'] . '" ';
+$extendedError = '';
 
-// TITLE
-$title = '';
-if ($Request->query->has('title') && !empty($Request->query->get('title'))) {
-    $title = filter_var(trim($Request->query->get('title')), FILTER_SANITIZE_STRING);
-    if ($title !== false) {
-        $Entity->titleFilter = Tools::getSearchSql($title, $andor, 'title', $isStrict);
+if ($Request->query->has('extended') && !empty($Request->query->get('extended'))) {
+    $extended = trim((string) $Request->query->get('extended'));
+
+    $advancedQuery = new AdvancedSearchQuery($extended, new VisitorParameters($Entity->type, $visibilityArr));
+    $whereClause = $advancedQuery->getWhereClause();
+    if ($whereClause) {
+        $Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
     }
-}
 
-// BODY
-$body = '';
-if ($Request->query->has('body') && !empty($Request->query->get('body'))) {
-    $body = filter_var(trim($Request->query->get('body')), FILTER_SANITIZE_STRING);
-    if ($body !== false) {
-        $Entity->bodyFilter = Tools::getSearchSql($body, $andor, 'body', $isStrict);
-    }
-}
-
-// VISIBILITY
-$vis = '';
-if ($Request->query->has('vis') && !empty($Request->query->get('vis'))) {
-    $vis = Check::visibility($Request->query->get('vis'));
-}
-
-// FROM
-$from = '';
-if ($Request->query->has('from') && !empty($Request->query->get('from'))) {
-    $from = Filter::kdate($Request->query->get('from'));
-}
-
-// TO
-$to = '';
-if ($Request->query->has('to') && !empty($Request->query->get('to'))) {
-    $to = Filter::kdate($Request->query->get('to'));
+    $extendedError = $advancedQuery->getException();
 }
 
 // RENDER THE FIRST PART OF THE PAGE (search form)
@@ -111,16 +78,15 @@ $renderArr = array(
     'Request' => $Request,
     'Experiments' => $Experiments,
     'Database' => $Database,
-    'andor' => $andor,
-    'body' => $body,
     'categoryArr' => $categoryArr,
     'itemsTypesArr' => $itemsTypesArr,
     'tagsArr' => $tagsArr,
     'teamGroupsArr' => $teamGroupsArr,
-    'title' => $title,
     'statusArr' => $statusArr,
     'usersArr' => $usersArr,
     'visibilityArr' => $visibilityArr,
+    'extended' => $extended,
+    'extendedError' => $extendedError,
 );
 echo $App->render('search.html', $renderArr);
 
@@ -128,84 +94,21 @@ echo $App->render('search.html', $renderArr);
  * Here the search begins
  * If there is a search, there will be get parameters, so this is our main switch
  */
-if ($Request->query->count() > 0) {
-
-    // STATUS
-    $status = '';
-    if (Check::id((int) $Request->query->get('status')) !== false) {
-        $status = $Request->query->get('status');
-    }
-
-    // RATING
-    $rating = null;
-    $allowedRatings = array('null', '1', '2', '3', '4', '5');
-    if (in_array($Request->query->get('rating'), $allowedRatings, true)) {
-        $rating = $Request->query->get('rating');
-    }
-
+if ($Request->query->count() > 0 && $extendedError === '') {
     // PREPARE SQL query
-
     /////////////////////////////////////////////////////////////////
     if ($Request->query->has('type')) {
-        // Tag search
-        if (!empty($Request->query->all('tags'))) {
-            // get all the ids with that tag
-            $ids = $Entity->Tags->getIdFromTags($Request->query->all('tags'), (int) $App->Users->userData['team']);
-            if (count($ids) > 0) {
-                $Entity->idFilter = Tools::getIdFilterSql($ids);
-            }
-        }
-
-        // Visibility search
-        if (!empty($vis)) {
-            $Entity->addFilter('entity.canread', $vis);
-        }
-
-        // Date search
-        if (!empty($from) && !empty($to)) {
-            $Entity->dateFilter = " AND entity.date BETWEEN '$from' AND '$to'";
-        } elseif (!empty($from) && empty($to)) {
-            $Entity->dateFilter = " AND entity.date BETWEEN '$from' AND '99991212'";
-        } elseif (empty($from) && !empty($to)) {
-            $Entity->dateFilter = " AND entity.date BETWEEN '00000101' AND '$to'";
-        }
-
-        // Rating search
-        if (!empty($rating)) {
-            // rating is whitelisted here
-            $Entity->addFilter('entity.rating', $rating);
-        }
-
         // Metadata search
         if ($Request->query->get('metakey')) {
             $Entity->addMetadataFilter($Request->query->get('metakey'), $Request->query->get('metavalue'));
         }
 
-        if ($Request->query->get('type') === 'experiments') {
-
-            // USERID FILTER
-            if ($Request->query->has('owner')) {
-                $owner = $App->Users->userData['userid'];
-                if (Check::id((int) $Request->query->get('owner')) !== false) {
-                    $owner = $Request->query->get('owner');
-                }
-                // all the team is 0 as userid
-                if ($Request->query->get('owner') !== '0') {
-                    $Entity->addFilter('entity.userid', $owner);
-                }
-            }
-
-            // Status search
-            if (!empty($status)) {
-                $Entity->addFilter('entity.category', $status);
-            }
-        } else {
+        if ($Request->query->get('type') !== 'experiments') {
             // FILTER ON DATABASE ITEMS TYPES
             if (Check::id((int) $Request->query->get('type')) !== false) {
                 $Entity->addFilter('categoryt.id', $Request->query->get('type'));
             }
         }
-
 
         try {
             $Controller = new SearchController($App, $Entity);

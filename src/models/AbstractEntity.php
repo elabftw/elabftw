@@ -30,6 +30,7 @@ use Elabftw\Traits\EntityTrait;
 use function explode;
 use function is_bool;
 use PDO;
+use PDOStatement;
 
 /**
  * The mother class of Experiments, Items, Templates and ItemsTypes
@@ -68,18 +69,15 @@ abstract class AbstractEntity implements CrudInterface
     // sql of ids to include
     public string $idFilter = '';
 
-    // inserted in sql
-    public string $titleFilter = '';
-
-    // inserted in sql
-    public string $dateFilter = '';
-
-    // inserted in sql
-    public string $bodyFilter = '';
-
     public bool $isReadOnly = false;
 
     protected TeamGroups $TeamGroups;
+
+    // inserted in sql
+    private string $extendedFilter = '';
+
+    // inserted in sql
+    private array $bindExtendedValues = array();
 
     private string $metadataFilter = '';
 
@@ -228,10 +226,7 @@ abstract class AbstractEntity implements CrudInterface
         $sql .= ')';
 
         $sqlArr = array(
-            $this->titleFilter,
-            $this->dateFilter,
-            $this->bodyFilter,
-            Tools::getSearchSql($displayParams->query),
+            $this->extendedFilter,
             $this->idFilter,
             'GROUP BY id',
             $this->metadataHaving,
@@ -254,6 +249,8 @@ abstract class AbstractEntity implements CrudInterface
             $req->bindParam(':metadata_value_path', $this->metadataValuePath);
             $req->bindParam(':metadata_value', $this->metadataValue);
         }
+
+        $this->bindExtendedValues($req);
 
         $this->Db->execute($req);
 
@@ -649,6 +646,12 @@ abstract class AbstractEntity implements CrudInterface
         return array_column($res, 'id');
     }
 
+    public function addToExtendedFilter(string $extendedFilter, array $bindExtendedValues = array()): void
+    {
+        $this->extendedFilter .= $extendedFilter . ' ';
+        $this->bindExtendedValues = array_merge($this->bindExtendedValues, $bindExtendedValues);
+    }
+
     /**
      * Update only one field in the metadata json
      */
@@ -783,5 +786,12 @@ abstract class AbstractEntity implements CrudInterface
 
         // replace all %1$s by 'experiments' or 'items'
         return sprintf(implode(' ', $sqlArr), $this->type);
+    }
+
+    private function bindExtendedValues(PDOStatement $req): void
+    {
+        foreach ($this->bindExtendedValues as $bindValue) {
+            $req->bindValue($bindValue['param'], $bindValue['value'], $bindValue['type']);
+        }
     }
 }

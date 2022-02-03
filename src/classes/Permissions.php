@@ -137,7 +137,7 @@ class Permissions
 
         if ($this->item['canwrite'] === 'team') {
             // items will have a team, make sure it's the same as the one we are logged in
-            if (isset($this->item['team']) && ((int) $this->item['team'] === $this->Users->userData['team'])) {
+            if (isset($this->item['team']) && ((int) $this->item['team'] === (int) $this->Users->userData['team'])) {
                 return true;
             }
             // check if we have a team in common

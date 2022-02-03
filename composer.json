@@ -40,7 +40,8 @@
     "league/flysystem-memory": "^1.0",
     "lcobucci/jwt": "^4.1",
     "ezyang/htmlpurifier": "^4.13",
-    "symfony/mailer": "^6.0"
+    "symfony/mailer": "^6.0",
+    "xemlock/htmlpurifier-html5": "^0.1.11"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
@@ -80,6 +81,22 @@
       ],
       "Elabftw\\Services\\": [
         "src/services"
+      ],
+      "Elabftw\\Services\\AdvancedSearchQuery\\Collectors\\": [
+        "src/services/advancedSearchQuery/collectors"
+      ],
+      "Elabftw\\Services\\AdvancedSearchQuery\\Exceptions\\": [
+        "src/services/advancedSearchQuery/exceptions"
+      ],
+      "Elabftw\\Services\\AdvancedSearchQuery\\Grammar\\": [
+        "src/services/advancedSearchQuery/grammar",
+        "cache/advancedSearchQuery"
+      ],
+      "Elabftw\\Services\\AdvancedSearchQuery\\Interfaces\\": [
+        "src/services/advancedSearchQuery/interfaces"
+      ],
+      "Elabftw\\Services\\AdvancedSearchQuery\\Visitors\\": [
+        "src/services/advancedSearchQuery/visitors"
       ],
       "Elabftw\\Traits\\": [
         "src/traits"

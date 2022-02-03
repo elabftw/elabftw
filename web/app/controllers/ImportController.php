@@ -38,9 +38,20 @@ try {
     set_time_limit(0);
 
     if ($Request->request->get('type') === 'csv') {
-        $Import = new ImportCsv($App->Users, $App->Request);
+        $Import = new ImportCsv(
+            $App->Users,
+            (int) $Request->request->get('target'),
+            $Request->request->get('delimiter'),
+            $Request->request->getAlnum('visibility'),
+            $Request->files->all()['file'],
+        );
     } elseif ($Request->request->get('type') === 'zip') {
-        $Import = new ImportZip($App->Users, $App->Request);
+        $Import = new ImportZip(
+            $App->Users,
+            (int) $Request->request->get('target'),
+            $Request->request->getAlnum('visibility'),
+            $Request->files->all()['file'],
+        );
     } else {
         throw new IllegalActionException('Invalid argument');
     }

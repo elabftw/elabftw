@@ -14,7 +14,7 @@
 {% embed 'view-edit.html' %}
   {% block backtoview %}
     <a href='?mode=view&id={{ Entity.id }}'>
-      <i class='fas fa-chevron-circle-left mr-1 link-like'></i>{{ 'View mode'|trans }}
+      <i class='fas fa-chevron-left mr-1'></i>{{ 'View mode'|trans }}
     </a>
   {% endblock %}
   {% block createnew %}
@@ -120,7 +120,7 @@
       {% endif %}
 
       <div class='dropdown-divider'></div>
-      <a class='dropdown-item hover-danger' href='#' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</a>
+      <a class='dropdown-item hover-danger {{ not deletableXp and (Entity.type == 'experiments') ? 'disabled' }}' href='#' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</a>
     </div>
   </div>
 

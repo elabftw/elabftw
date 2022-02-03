@@ -188,12 +188,12 @@
           <div class='input-group mb-3'>
             <div class='input-group-prepend'>
               <select id='dateOperator' class='brr-none form-control'>
-                <option value='<'>&lt;</option>
-                <option value='<='>&le;</option>
-                <option value='=' selected>=</option>
-                <option value='>='>&ge;</option>
-                <option value='>'>&gt;</option>
-                <option value='!='>&ne;</option>
+                <option value='<' title='{{ 'less than'|trans }}'>&lt;</option>
+                <option value='<=' title='{{ 'less than or equal to'|trans }}'>&le;</option>
+                <option value='=' title='{{ 'equal to'|trans }}' selected>=</option>
+                <option value='>=' title='{{ 'greater than or equal to'|trans }}'>&ge;</option>
+                <option value='>' title='{{ 'greater than'|trans }}'>&gt;</option>
+                <option value='!=' title='{{ 'not equal to'|trans }}'>&ne;</option>
               </select>
             </div>
             <input id='date' name='date' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('date') != '' ? Request.query.get('date') }}'/>

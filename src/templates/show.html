@@ -85,7 +85,9 @@
         {% if Entity.type == 'experiments' %}
           <button id='timestampChecked' class='button btn btn-primary'>{{ 'Timestamp'|trans }}</button>
         {% endif %}
-        <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
+        {% if (deletableXp and (Entity.type == 'experiments')) or Entity.type == 'items' %}
+          <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
+        {% endif %}
       </p>
       {% if App.Users.userData.display_mode == 'it' %}
         <div class='row display-flex' id='itemList'>

@@ -16,6 +16,7 @@ use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
+use Elabftw\Maps\Team;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\FavTags;
@@ -135,6 +136,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'DisplayParams' => $DisplayParams,
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
+            'deletableXp' => $this->getDeletableXp(),
             'favTagsArr' => $favTagsArr,
             'pinnedArr' => $this->Entity->Pins->getPinned(),
             'itemsArr' => $itemsArr,
@@ -247,6 +249,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $renderArr = array(
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
+            'deletableXp' => $this->getDeletableXp(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'lang' => Tools::getCalendarLang($this->App->Users->userData['lang'] ?? 'en_GB'),
             'lastModifierFullname' => $lastModifierFullname,
@@ -264,6 +267,25 @@ abstract class AbstractEntityController implements ControllerInterface
         $Response->prepare($this->App->Request);
         $Response->setContent($this->App->render($template, $renderArr));
         return $Response;
+    }
+
+    /**
+     * Can we delete experiments? This is used to disable the Delete button in menu.
+     */
+    private function getDeletableXp(): bool
+    {
+        // get the config option from team setting
+        $Team = new Team($this->App->Users->team);
+        $deletableXp = (bool) $Team->getDeletableXp();
+        // general config will override the team config only if it's more restrictive
+        if ($this->App->Config->configArr['deletable_xp'] === '0') {
+            $deletableXp = false;
+        }
+        // an admin is able to delete
+        if ($this->App->Users->userData['is_admin']) {
+            $deletableXp = true;
+        }
+        return $deletableXp;
     }
 
     private function prepareAdvancedSearchQuery(array $visibilityArr): string

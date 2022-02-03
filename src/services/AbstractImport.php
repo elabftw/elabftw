@@ -14,7 +14,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Mother class of ImportCsv and ImportZip
@@ -23,20 +22,13 @@ abstract class AbstractImport
 {
     protected Db $Db;
 
-    protected UploadedFile $UploadedFile;
-
-    // the item type category or userid where we do the import
-    protected int $target;
-
     // read permission for the imported items
     protected string $canread;
 
-    public function __construct(protected Users $Users, Request $request)
+    public function __construct(protected Users $Users, protected int $target, string $canread, protected UploadedFile $UploadedFile)
     {
         $this->Db = Db::getConnection();
-        $this->target = (int) $request->request->get('target');
-        $this->canread = Check::visibility($request->request->getAlnum('visibility'));
-        $this->UploadedFile = $request->files->all()['file'];
+        $this->canread = Check::visibility($canread);
         if ($this->UploadedFile->getError()) {
             throw new ImproperActionException($this->UploadedFile->getErrorMessage());
         }

@@ -183,11 +183,11 @@
       <!-- NEW ROW -->
       <div class='row mb-md-3'>
         <!-- SEARCH DATE -->
-        <div class='col-md-4'>
-          <label class='d-inline' for='date'>{{ 'Where date is'|trans }}</label>
+        <div class='col-md-3'>
+          <label class='d-inline' for='date'>{{ 'Date from'|trans }}</label>
           <div class='input-group'>
             <div class='input-group-prepend'>
-              <select id='dateOperator' class='brr-none form-control'>
+              <select id='dateOperator' class='brr-none form-control filterHelper' data-filter='date'>
                 <option value='<' title='{{ 'less than'|trans }}'>&lt;</option>
                 <option value='<=' title='{{ 'less than or equal to'|trans }}'>&le;</option>
                 <option value='=' title='{{ 'equal to'|trans }}' selected>=</option>
@@ -199,10 +199,14 @@
             <input id='date' name='date' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('date') != '' ? Request.query.get('date') }}'/>
           </div>
         </div>
+        <div class='col-md-3'>
+          <label class='d-inline' for='dateTo'>{{ 'Date to'|trans }}</label>
+          <input id='dateTo' name='dateTo' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('dateTo') != '' ? Request.query.get('dateTo') }}'/>
+        </div>
         <!-- END SEARCH DATE -->
 
         <!-- LOCK -->
-        <div class='col-md-4'>
+        <div class='col-md-3'>
           <label class='d-inline' for='locked'>{{ 'Locked'|trans }}</label>
           <select id='locked' class='form-control filterHelper' data-filter='locked'>
             <option value='' data-action='clear'>{{ 'Select lock status'|trans}}</option>
@@ -213,7 +217,7 @@
         <!-- END LOCK -->
 
         <!-- LOCK -->
-        <div class='col-md-4'>
+        <div class='col-md-3'>
           <label class='d-inline' for='timestamped'>{{ 'Timestamped'|trans }}</label>
           <select id='timestamped' class='form-control filterHelper' data-filter='timestamped'>
             <option value='' data-action='clear'>{{ 'Select timestamp status'|trans}}</option>
@@ -227,7 +231,8 @@
       <!-- NEW ROW -->
       <div class='row'>
         <div class='col-md-4'>
-          <!-- STATUS -->
+          <!-- STATUS ONLY FOR EXPERIMENTS -->
+          <div id='searchStatus'>
             <label for='status'>{{ 'And status is'|trans }}</label>
             <select id='status' name='status' data-filter='status' class='form-control filterHelper'>
               <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
@@ -237,7 +242,21 @@
                 </option>
               {% endfor %}
             </select>
+          </div>
           <!-- END STATUS -->
+          <!-- CATEGORY ONLY FOR DATABASE -->
+          <div id='searchCategory' hidden>
+            <label for='category'>{{ 'And category is'|trans }}</label>
+            <select id='category' name='status' data-filter='category' class='form-control filterHelper'>
+              <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
+              {% for category in itemsTypesArr %}
+                <option value='{{ category.category_id }}'{{ Request.query.get('category') == category.category_id ? ' selected' }}>
+                  {{ category.category }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          <!-- END CATEGORY -->
         </div>
         <!-- RATING -->
         <div class='col-md-4'>

@@ -26,6 +26,12 @@ class AuthResponse
 
     public bool $isInSeveralTeams = false;
 
+    // when user needs to request access to a team
+    public bool $initTeamRequired = false;
+
+    // info (email/name) about user that needs to request a team
+    public array $initTeamUserInfo = array();
+
     public bool $isAnonymous = false;
 
     public ?string $mfaSecret = null;

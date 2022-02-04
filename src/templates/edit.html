@@ -177,9 +177,7 @@
         {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
         {% set tagsValueArr = Entity.entityData.tags|split('|') %}
         {% for tag in tagsValueArr %}
-          <span class='tag m-1 clickable' data-action='unreference-tag' data-tagid='{{ tagsIdArr[loop.index0] }}'>
-            <a class='tag-delete'>{{ tag|raw }}</a>
-          </span>
+          <a class='tag m-1 clickable tag-delete' data-action='unreference-tag' data-tagid='{{ tagsIdArr[loop.index0] }}'>{{ tag|raw }}</a>
         {% endfor %}
       {% endif %}
     </span>

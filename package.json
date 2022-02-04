@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "3dmol": "^1.4.0",
-    "@babel/core": "^7.5.5",
+    "@babel/core": "^7.17.0",
     "@babel/preset-env": "^7.5.5",
     "@deltablot/chemdoodle-web-mini": "^9.2.1",
     "@deltablot/malle": "^0.3.0",

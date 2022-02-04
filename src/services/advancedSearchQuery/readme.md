@@ -16,4 +16,4 @@ The `FieldValidatorVisitor` and `QueryBuilderVisitor` use Collectors (`src/servi
 
 `src/services/AdvancedSearchQuery.php` brings together the three steps, parsing/AST building, validation, and SQL where clause generation.
 
-![Query and AST example!](Query-AST-example.png "Query and AST example")
+![Query and AST example!](Query-AST-example.svg "Query and AST example")

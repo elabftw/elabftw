@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\EntityParams;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TagParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
@@ -20,7 +21,6 @@ use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\UploadTrait;
 use function json_decode;
 use League\Flysystem\FilesystemOperator;
-use League\Flysystem\Visibility;
 use function mb_strlen;
 use PDO;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -53,10 +53,8 @@ class ImportZip extends AbstractImport
         parent::__construct($users, $target, $canread, $uploadedFile);
         $this->Entity = new Items($users);
         // set up a temporary directory in the cache to extract the zip to
-        $this->tmpDir = $this->getUniqueString();
-        $this->tmpPath = $this->getTmpPath() . $this->tmpDir;
-        $this->fs->createDirectory($this->tmpDir);
-        $this->fs->setVisibility($this->tmpDir, Visibility::PRIVATE);
+        $this->tmpDir = FsTools::getUniqueString();
+        $this->tmpPath = FsTools::getCacheFolder('elab') . '/' . $this->tmpDir;
     }
 
     /**

@@ -13,6 +13,7 @@ use function date;
 use DateTime;
 use function dirname;
 use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Interfaces\FileMakerInterface;
@@ -61,7 +62,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
         $this->mpdf->SetKeywords(str_replace('|', ' ', $this->Entity->entityData['tags'] ?? ''));
 
         if ($temporary) {
-            $this->filePath = $this->getTmpPath() . $this->getUniqueString();
+            $this->filePath = FsTools::getCacheFile();
         } else {
             $this->filePath = $this->getUploadsPath() . $this->longName;
             $dir = dirname($this->filePath);

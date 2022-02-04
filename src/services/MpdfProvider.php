@@ -9,11 +9,8 @@
 
 namespace Elabftw\Services;
 
-use function dirname;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Interfaces\MpdfProviderInterface;
-use League\Flysystem\Filesystem;
-use League\Flysystem\Local\LocalFilesystemAdapter;
-use League\Flysystem\Visibility;
 use Mpdf\Mpdf;
 
 /**
@@ -27,16 +24,10 @@ class MpdfProvider implements MpdfProviderInterface
 
     public function getInstance(): Mpdf
     {
-        // we use a custom tmp dir
-        $tmpPath = dirname(__DIR__, 2) . '/cache/';
-        $fs = new Filesystem(new LocalFilesystemAdapter($tmpPath));
-        $fs->createDirectory('mpdf');
-        $fs->setVisibility('mpdf', Visibility::PRIVATE);
-
         // create the pdf
         $mpdf = new Mpdf(array(
             'format' => $this->format,
-            'tempDir' => $tmpPath,
+            'tempDir' => FsTools::getCacheFolder('mpdf'),
             'mode' => 'utf-8',
         ));
 

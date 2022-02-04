@@ -11,11 +11,9 @@ namespace Elabftw\Traits;
 
 use function dirname;
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Models\Config;
 use function is_readable;
-use League\Flysystem\Filesystem;
-use League\Flysystem\Local\LocalFilesystemAdapter;
-use League\Flysystem\Visibility;
 
 /**
  * To get Twig
@@ -27,17 +25,11 @@ trait TwigTrait
      */
     protected function getTwig(Config $config): \Twig\Environment
     {
-        $elabRoot = dirname(__DIR__, 2);
         // load templates
-        $loader = new \Twig\Loader\FilesystemLoader("$elabRoot/src/templates");
-        // make sure the cache directory exists
-        $tmpPath = $elabRoot . '/cache/';
-        $fs = new Filesystem(new LocalFilesystemAdapter($tmpPath));
-        $fs->createDirectory('twig');
-        $fs->setVisibility('twig', Visibility::PRIVATE);
-        $cache = $tmpPath . 'twig';
+        $loader = new \Twig\Loader\FilesystemLoader(dirname(__DIR__, 2) . '/src/templates');
 
-        $options = array('cache' => $cache);
+        // use local cache
+        $options = array('cache' => FsTools::getCacheFolder('twig'));
 
         // Twig debug mode will allow to use dump() and force autoreload
         // so it will not use the cache

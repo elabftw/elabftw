@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,20 +6,17 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
-use function bin2hex;
 use function dirname;
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Elabftw\FsTools;
 use function filesize;
-use function hash;
-use function is_dir;
-use function mkdir;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
+use League\Flysystem\Visibility;
 use PDO;
-use function random_bytes;
 
 /**
  * For things related to file storage
@@ -37,40 +34,18 @@ trait UploadTrait
     }
 
     /**
-     * Generate a long and unique string
-     */
-    protected function getUniqueString(): string
-    {
-        return hash('sha512', bin2hex(random_bytes(16)));
-    }
-
-    /**
-     * Get the temporary files folder absolute path
-     * Create the folder if it doesn't exist
-     */
-    protected function getTmpPath(): string
-    {
-        $tmpPath = dirname(__DIR__, 2) . '/cache/elab/';
-        if (!is_dir($tmpPath) && !mkdir($tmpPath, 0700, true) && !is_dir($tmpPath)) {
-            throw new FilesystemErrorException("Unable to create the cache directory ($tmpPath)");
-        }
-
-        return $tmpPath;
-    }
-
-    /**
      * Create a unique long filename with a folder
      * Create the folder if it doesn't exist
      */
     protected function getLongName(): string
     {
-        $hash = $this->getUniqueString();
+        $hash = FsTools::getUniqueString();
         $folder = substr($hash, 0, 2);
         // create a subfolder if it doesn't exist
         $folderPath = $this->getUploadsPath() . $folder;
-        if (!is_dir($folderPath) && !mkdir($folderPath, 0700, true) && !is_dir($folderPath)) {
-            throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
-        }
+        $fs = new Filesystem(new LocalFilesystemAdapter($this->getUploadsPath()));
+        $fs->createDirectory($folder);
+        $fs->setVisibility($folder, Visibility::PRIVATE);
         return $folder . '/' . $hash;
     }
 

@@ -15,7 +15,6 @@ use function dirname;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
@@ -25,8 +24,6 @@ use Elabftw\Models\Users;
 use Elabftw\Traits\PdfTrait;
 use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
-use function is_dir;
-use function mkdir;
 use Mpdf\Mpdf;
 use function preg_replace;
 use setasign\Fpdi\FpdiException;
@@ -65,10 +62,6 @@ class MakePdf extends AbstractMake implements FileMakerInterface
             $this->filePath = FsTools::getCacheFile();
         } else {
             $this->filePath = $this->getUploadsPath() . $this->longName;
-            $dir = dirname($this->filePath);
-            if (!is_dir($dir) && !mkdir($dir, 0700, true) && !is_dir($dir)) {
-                throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
-            }
         }
 
         // suppress the "A non-numeric value encountered" error from mpdf

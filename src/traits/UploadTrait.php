@@ -42,7 +42,6 @@ trait UploadTrait
         $hash = FsTools::getUniqueString();
         $folder = substr($hash, 0, 2);
         // create a subfolder if it doesn't exist
-        $folderPath = $this->getUploadsPath() . $folder;
         $fs = new Filesystem(new LocalFilesystemAdapter($this->getUploadsPath()));
         $fs->createDirectory($folder);
         $fs->setVisibility($folder, Visibility::PRIVATE);

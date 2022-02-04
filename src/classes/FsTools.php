@@ -13,6 +13,7 @@ use function bin2hex;
 use function dirname;
 use function hash;
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemOperator;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\Visibility;
 use function random_bytes;
@@ -27,11 +28,10 @@ class FsTools
      */
     public static function getCacheFolder(string $folder): string
     {
-        $tmpPath = dirname(__DIR__, 2) . '/cache/';
-        $fs = new Filesystem(new LocalFilesystemAdapter($tmpPath));
+        $fs = self::getFs(self::getCachePath());
         $fs->createDirectory($folder);
         $fs->setVisibility($folder, Visibility::PRIVATE);
-        return $tmpPath . $folder;
+        return self::getCachePath() . $folder;
     }
 
     /**
@@ -45,5 +45,25 @@ class FsTools
     public static function getUniqueString(): string
     {
         return hash('sha512', bin2hex(random_bytes(16)));
+    }
+
+    public static function deleteCache(): void
+    {
+        $fs = self::getFs(self::getCachePath());
+        $fs->deleteDirectory('elab');
+        $fs->deleteDirectory('twig');
+        $fs->deleteDirectory('mpdf');
+        $fs->deleteDirectory('mathjax');
+        $fs->deleteDirectory('purifier');
+    }
+
+    private static function getCachePath(): string
+    {
+        return dirname(__DIR__, 2) . '/cache/';
+    }
+
+    private static function getFs(string $path): FilesystemOperator
+    {
+        return new Filesystem(new LocalFilesystemAdapter($path));
     }
 }

@@ -11,15 +11,11 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use function bin2hex;
-use function dirname;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Models\Config;
-use FilesystemIterator;
 use PDO;
 use function random_bytes;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use function sha1;
 
 /**
@@ -94,23 +90,7 @@ class Update
 
 
         // remove cached twig templates (for non docker users)
-        $this->cleanTmp();
-    }
-
-    /**
-     * Delete things in the tmp folder (cache/elab)
-     */
-    private function cleanTmp(): void
-    {
-        $dir = dirname(__DIR__, 2) . '/cache/elab';
-        if (!is_dir($dir)) {
-            return;
-        }
-        $di = new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
-        $ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
-        foreach ($ri as $file) {
-            $file->isDir() ? rmdir($file->getPathName()) : unlink($file->getPathName());
-        }
+        FsTools::deleteCache();
     }
 
     private function addElabidToItems(): void

@@ -53,7 +53,6 @@ class FsTools
         $fs->deleteDirectory('elab');
         $fs->deleteDirectory('twig');
         $fs->deleteDirectory('mpdf');
-        $fs->deleteDirectory('mathjax');
         $fs->deleteDirectory('purifier');
     }
 

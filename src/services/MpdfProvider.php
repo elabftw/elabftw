@@ -9,11 +9,8 @@
 
 namespace Elabftw\Services;
 
-use function dirname;
-use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Interfaces\MpdfProviderInterface;
-use function is_dir;
-use function mkdir;
 use Mpdf\Mpdf;
 
 /**
@@ -27,16 +24,10 @@ class MpdfProvider implements MpdfProviderInterface
 
     public function getInstance(): Mpdf
     {
-        // we use a custom tmp dir, not the same as Twig because its content gets deleted after pdf is generated
-        $tmpDir = dirname(__DIR__, 2) . '/cache/mpdf/';
-        if (!is_dir($tmpDir) && !mkdir($tmpDir, 0700, true) && !is_dir($tmpDir)) {
-            throw new FilesystemErrorException("Could not create the $tmpDir directory! Please check permissions on this folder.");
-        }
-
         // create the pdf
         $mpdf = new Mpdf(array(
             'format' => $this->format,
-            'tempDir' => $tmpDir,
+            'tempDir' => FsTools::getCacheFolder('mpdf'),
             'mode' => 'utf-8',
         ));
 

@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use function checkdate;
-use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
 use function filter_var;
 use HTMLPurifier;
@@ -129,10 +129,7 @@ class Filter
         // allow only certain elements
         $config->set('HTML.Allowed', 'div[class],br,p[class|style],sub,img[src|class],sup,strong,b,em,u,a[href],s,font,span[class|style],ul,li,ol,dl,dt,dd,blockquote,h1,h2,h3,h4,h5,h6,hr,table,tr,th,code,video,audio,pre,details,summary,figure,figcaption');
         // configure the cache for htmlpurifier
-        $tmpDir = dirname(__DIR__, 2) . '/cache/purifier';
-        if (!is_dir($tmpDir) && !mkdir($tmpDir, 0700, true) && !is_dir($tmpDir)) {
-            throw new FilesystemErrorException("Could not create the $tmpDir directory! Please check permissions on this folder.");
-        }
+        $tmpDir = FsTools::getCacheFolder('purifier');
         $config->set('Cache.SerializerPath', $tmpDir);
 
         $purifier = new HTMLPurifier($config);

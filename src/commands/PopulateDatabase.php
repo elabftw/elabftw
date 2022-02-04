@@ -23,8 +23,8 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Services\Populate;
 use function is_string;
-use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem as Fs;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use function mb_strlen;
 use function str_repeat;
 use Symfony\Component\Console\Command\Command;
@@ -151,7 +151,7 @@ class PopulateDatabase extends Command
     private function dropAndInitDb(): void
     {
         $Db = Db::getConnection();
-        $Sql = new Sql(new Fs(new Local(dirname(__DIR__) . '/sql')));
+        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));
         $Db->q('DROP database ' . DB_NAME);
         $Db->q('CREATE database ' . DB_NAME);
         $Db->q('USE ' . DB_NAME);

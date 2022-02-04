@@ -10,7 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\App;
-use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\TimestampResponseInterface;
 use Elabftw\Traits\ProcessTrait;
@@ -18,6 +18,8 @@ use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use function is_readable;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -64,13 +66,9 @@ class TimestampUtils
     {
         $longName = $this->getLongName() . '.asn1';
         $filePath = $this->getUploadsPath() . $longName;
-        $dir = dirname($filePath);
-        if (!is_dir($dir) && !mkdir($dir, 0700, true) && !is_dir($dir)) {
-            throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
-        }
-        if (!file_put_contents($filePath, $binaryToken)) {
-            throw new FilesystemErrorException('Cannot save token to disk!');
-        }
+        $fs = new Filesystem(new LocalFilesystemAdapter($this->getUploadsPath()));
+        $fs->write($longName, $binaryToken->getContents());
+
         $this->tsResponse->setTokenPath($filePath);
         $this->tsResponse->setTokenName($longName);
     }
@@ -80,7 +78,7 @@ class TimestampUtils
      */
     private function createRequestfile(): string
     {
-        $requestFilePath = $this->getTmpPath() . $this->getUniqueString();
+        $requestFilePath = FsTools::getCacheFile();
 
         $this->runProcess(array(
             'openssl',

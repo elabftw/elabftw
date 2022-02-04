@@ -39,9 +39,9 @@ class FieldValidatorVisitor implements Visitor
     {
         if ($dateField->getDateType() === 'range' && $dateField->getValue() > $dateField->getDateTo()) {
             $message = sprintf(
-                'date:<em>%s..%s</em>. Second date needs to be equal or gather than first date.',
+                'date:<em>%s..%s</em>. Second date needs to be equal or greater than first date.',
                 $dateField->getValue(),
-                $dateField->getDateTo()
+                $dateField->getDateTo(),
             );
             return new InvalidFieldCollector(array($message));
         }
@@ -112,7 +112,7 @@ class FieldValidatorVisitor implements Visitor
     {
         return new InvalidFieldCollector(array_merge(
             $head->getfieldErrors(),
-            $tail->getfieldErrors()
+            $tail->getfieldErrors(),
         ));
     }
 
@@ -182,7 +182,7 @@ class FieldValidatorVisitor implements Visitor
             $message = sprintf(
                 'visibility:<em>%s</em>. Valid values are %s.',
                 $searchTerm,
-                $visibilityFieldHelper->possibleInput
+                $visibilityFieldHelper->possibleInput,
             );
             return new InvalidFieldCollector(array($message));
         }

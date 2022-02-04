@@ -15,3 +15,5 @@ The `FieldValidatorVisitor` and `QueryBuilderVisitor` use Collectors (`src/servi
 `VisitorParameters` can be used to inject additional data into the AST, e.g., the entity type to check if a field (`timestamped`) is allowed for experiments/database.
 
 `src/services/AdvancedSearchQuery.php` brings together the three steps, parsing/AST building, validation, and SQL where clause generation.
+
+![Query and AST example!](Query-AST-example.png "Query and AST example")

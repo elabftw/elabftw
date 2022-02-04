@@ -10,12 +10,23 @@
 namespace Elabftw\Services;
 
 use Elabftw\Models\Users;
-use League\Flysystem\FileNotFoundException;
+use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use const UPLOAD_ERR_OK;
 
 class ImportZipTest extends \PHPUnit\Framework\TestCase
 {
+    private FilesystemOperator $fs;
+
+    protected function setUp(): void
+    {
+        // can't use InMemory adapter here because of ziparchive
+        $this->fs = new Filesystem(new LocalFilesystemAdapter(dirname(__DIR__, 3) . '/cache/elab/'));
+    }
+
     public function testImportExperiments(): void
     {
         $uploadedFile = new UploadedFile(
@@ -31,6 +42,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
             1,
             'team',
             $uploadedFile,
+            $this->fs,
         );
         $Import->import();
         $this->assertEquals(2, $Import->inserted);
@@ -51,6 +63,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
             1,
             'team',
             $uploadedFile,
+            $this->fs,
         );
         $Import->import();
         $this->assertEquals(2, $Import->inserted);
@@ -71,8 +84,9 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
             1,
             'team',
             $uploadedFile,
+            $this->fs,
         );
-        $this->expectException(FileNotFoundException::class);
+        $this->expectException(FilesystemException::class);
         $Import->import();
     }
 }

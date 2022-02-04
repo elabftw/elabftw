@@ -17,8 +17,8 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Services\DatabaseInstaller;
 use function is_writable;
-use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem as Fs;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -155,7 +155,7 @@ class Install extends Command
             $Db->q('CREATE DATABASE ' . DB_NAME);
             $Db->q('USE ' . DB_NAME);
         }
-        $Installer = new DatabaseInstaller(new Sql(new Fs(new Local(dirname(__DIR__) . '/sql'))));
+        $Installer = new DatabaseInstaller(new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql'))));
         $Installer->install();
         $output->writeln('<info>✓ Installation successful! You can now start using your eLabFTW instance.</info>');
         return 0;

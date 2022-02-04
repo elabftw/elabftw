@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,13 +6,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
 use function dirname;
 use Elabftw\Elabftw\App;
-use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Models\Config;
 use function is_readable;
 
@@ -23,19 +22,14 @@ trait TwigTrait
 {
     /**
      * Prepare the Twig object
-     *
-     *
      */
     protected function getTwig(Config $config): \Twig\Environment
     {
-        $elabRoot = dirname(__DIR__, 2);
-        $loader = new \Twig\Loader\FilesystemLoader("$elabRoot/src/templates");
-        $cache = "$elabRoot/cache/twig";
-        if (!is_dir($cache) && !mkdir($cache, 0700) && !is_dir($cache)) {
-            throw new FilesystemErrorException("Unable to create the cache directory ($cache)");
-        }
+        // load templates
+        $loader = new \Twig\Loader\FilesystemLoader(dirname(__DIR__, 2) . '/src/templates');
 
-        $options = array('cache' => $cache);
+        // use local cache
+        $options = array('cache' => FsTools::getCacheFolder('twig'));
 
         // Twig debug mode will allow to use dump() and force autoreload
         // so it will not use the cache

@@ -1,16 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2012, 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\EntityParams;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TagParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
@@ -19,14 +19,10 @@ use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\UploadTrait;
-use FilesystemIterator;
 use function json_decode;
-use League\Flysystem\Adapter\Local;
-use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemOperator;
 use function mb_strlen;
 use PDO;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use ZipArchive;
 
@@ -44,77 +40,48 @@ class ImportZip extends AbstractImport
     /** @var AbstractEntity $Entity instance of Entity */
     private $Entity;
 
-    // the folder where we extract the zip
-    private string $tmpPath = '';
+    private string $tmpPath;
 
-    // an array with the data we want to import
-    private array $json = array();
+    // the folder where we extract the zip
+    private string $tmpDir;
 
     // experiments or items
     private string $type = 'experiments';
 
-    public function __construct(Users $users, int $target, string $canread, UploadedFile $uploadedFile)
+    public function __construct(Users $users, int $target, string $canread, UploadedFile $uploadedFile, private FilesystemOperator $fs)
     {
         parent::__construct($users, $target, $canread, $uploadedFile);
         $this->Entity = new Items($users);
+        // set up a temporary directory in the cache to extract the zip to
+        $this->tmpDir = FsTools::getUniqueString();
+        $this->tmpPath = FsTools::getCacheFolder('elab') . '/' . $this->tmpDir;
     }
 
     /**
-     * Cleanup : remove the temporary folder created
+     * Cleanup: remove the temporary folder created
      */
     public function __destruct()
     {
-        // first remove content
-        $di = new RecursiveDirectoryIterator($this->tmpPath, FilesystemIterator::SKIP_DOTS);
-        $ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
-        foreach ($ri as $file) {
-            $file->isDir() ? rmdir($file->getPathname()) : unlink($file->getPathname());
-        }
-        // and remove folder itself
-        rmdir($this->tmpPath);
+        $this->fs->deleteDirectory($this->tmpDir);
     }
 
     /**
      * Do the import
+     * We get all the info we need from the embedded .json file
      */
     public function import(): void
-    {
-        // this is where we will extract the zip
-        $this->tmpPath = $this->getTmpPath() . $this->getUniqueString();
-        if (!is_dir($this->tmpPath) && !mkdir($this->tmpPath, 0700, true) && !is_dir($this->tmpPath)) {
-            throw new ImproperActionException('Unable to create temporary folder! (' . $this->tmpPath . ')');
-        }
-
-        $this->openFile();
-        $this->readJson();
-        $this->importAll();
-    }
-
-    /**
-     * Extract the zip to the temporary folder
-     */
-    private function openFile(): void
     {
         $Zip = new ZipArchive();
         $Zip->open($this->UploadedFile->getPathname());
         $Zip->extractTo($this->tmpPath);
-    }
 
-    /**
-     * We get all the info we need from the embedded .json file
-     */
-    private function readJson(): void
-    {
-        $fs = new Filesystem(new Local($this->tmpPath));
-        $file = '.elabftw.json';
-        $content = $fs->read($file);
-        if ($content === false) {
-            throw new ImproperActionException('Could not read the embedded json file!');
-        }
-        $this->json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
-        if (isset($this->json[0]['team'])) {
+        $file = '/.elabftw.json';
+        $content = $this->fs->read($this->tmpDir . $file);
+        $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        if (isset($json[0]['team'])) {
             $this->type = 'items';
         }
+        $this->importAll($json);
     }
 
     /**
@@ -224,9 +191,9 @@ class ImportZip extends AbstractImport
     /**
      * Loop the json and import the items.
      */
-    private function importAll(): void
+    private function importAll(array $json): void
     {
-        foreach ($this->json as $item) {
+        foreach ($json as $item) {
             $this->dbInsert($item);
 
             // upload the attached files

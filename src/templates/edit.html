@@ -125,18 +125,16 @@
   </div>
 
   <!-- DATE -->
-  <div class='row mb-2'>
-    <div class=''>
-      <i class='far fa-calendar-alt mr-1'></i><label for='date_input'>{{ 'Started on'|trans }}</label>
-      <!-- the input expects date in YYYY-MM-DD format, and it will be displayed according to the browser's locale -->
-      <input name='date' id='date_input' type='date' value='{{ Entity.entityData.date|date('Y-m-d') }}' />
-    </div>
+  <div class='row mb-2 form-inline'>
+    <i class='far fa-calendar-alt mr-1 fa-fw'></i><label for='date_input'>{{ 'Started on'|trans }}</label>
+    <!-- the input expects date in YYYY-MM-DD format, and it will be displayed according to the browser's locale -->
+    <input name='date' id='date_input' type='date' value='{{ Entity.entityData.date|date('Y-m-d') }}' class='form-control px-2' />
   </div>
 
-  <div class='row'>
+  <div class='row align-items-center'>
     <!-- CATEGORIES (status for exp and itemstypes for items) -->
-    <div class='col-md-3'>
-      <i class='fas fa-clipboard-check'></i>
+    <div class='col-md-4 mb-2 form-inline'>
+      <i class='fas fa-clipboard-check fa-fw mr-1'></i>
       <label for='category_select'>
       {% if Entity.type == 'experiments' %}
         {% trans %}Status{% plural 1 %}Status{% endtrans %}
@@ -144,7 +142,7 @@
         {{ 'Category'|trans }}
       {% endif %}
       </label>
-      <select id='category_select'>
+      <select id='category_select' class='form-control'>
         {% for category in categoryArr %}
           <option value='{{ category.category_id }}'
           {{ Entity.entityData.category_id == category.category_id ? ' selected' }}>{{ category.category }}</option>
@@ -152,7 +150,7 @@
       </select>
     </div>
     <!-- STAR RATING -->
-    <div class='col-md-3' style='margin-top:15px'>
+    <div class='col-md-3 mb-2'>
       <fieldset>
         <legend class='sr-only'>{{ 'Rating'|trans }}</legend>
         {% for i in range(1, 5) %}
@@ -160,28 +158,30 @@
         {% endfor %}
       </fieldset>
     </div>
-
   </div>
 
   <!-- TITLE -->
   <label for='title_input'>{{ 'Title'|trans }}</label>
-  <input id='title_input' type='text' name='title' value='{{ Entity.entityData.title|raw }}' required />
-
+  <input id='title_input' class='form-control' type='text' name='title' value='{{ Entity.entityData.title|raw }}' required />
 
   <!-- TAGS -->
-  <i class='fas fa-tags mr-1'></i><label for='createTagInput'>{{ 'Tags'|trans }}</label>
-  <div class='tags'>
-    <span id='tags_div_{{ Entity.id }}'>
-      <!--  build the tag array -->
-      {% if Entity.entityData.tags|length > 0 %}
-        {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
-        {% set tagsValueArr = Entity.entityData.tags|split('|') %}
-        {% for tag in tagsValueArr %}
-          <a class='tag m-1 clickable hover-danger' data-action='unreference-tag' data-tagid='{{ tagsIdArr[loop.index0] }}'>{{ tag|raw }}</a>
-        {% endfor %}
-      {% endif %}
-    </span>
-    <input type='text' id='createTagInput' data-autocomplete='tags' class='mb-2 createTagInput' placeholder='{{ 'Add a tag'|trans }}' />
+  <div class='row mb-2'>
+    <div class='col'>
+      <i class='fas fa-tags fa-fw mr-1'></i><label for='createTagInput'>{{ 'Tags'|trans }}</label>
+      <div class='tags form-inline'>
+        <div id='tags_div_{{ Entity.id }}' class='mb-2 mb-sm-0'>
+          <!--  build the tag array -->
+          {% if Entity.entityData.tags|length > 0 %}
+            {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
+            {% set tagsValueArr = Entity.entityData.tags|split('|') %}
+            {% for tag in tagsValueArr -%}
+              <a class='tag mr-1 clickable hover-danger' data-action='unreference-tag' data-tagid='{{ tagsIdArr[loop.index0] }}'>{{ tag|raw }}</a>
+            {%- endfor -%}
+          {% endif %}
+        </div>
+        <input type='text' id='createTagInput' data-autocomplete='tags' class=' createTagInput form-control' placeholder='{{ 'Add a tag'|trans }}' />
+      </div>
+    </div>
   </div>
 
   <!-- BODY -->

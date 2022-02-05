@@ -155,6 +155,7 @@ class Tex2Svg
     private function nestedSvgToPng(string $mjxContainer, string $svg, float $width, float $height): void
     {
         $image = new Imagick();
+        $image->setRegistry('temporary-path', FsTools::getCacheFolder('elab'));
         // resolution could be lower to reduce file size
         $image->setResolution(300, 300);
         $image->setBackgroundColor('#0000'); // #rgba, a=0: fully transparent

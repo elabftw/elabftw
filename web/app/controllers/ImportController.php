@@ -19,6 +19,8 @@ use Elabftw\Services\ImportCsv;
 use Elabftw\Services\ImportZip;
 use Exception;
 use League\Csv\SyntaxError;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use function set_time_limit;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -51,6 +53,7 @@ try {
             (int) $Request->request->get('target'),
             $Request->request->getAlnum('visibility'),
             $Request->files->all()['file'],
+            new Filesystem(new LocalFilesystemAdapter(dirname(__DIR__, 3) . '/cache/elab/')),
         );
     } else {
         throw new IllegalActionException('Invalid argument');

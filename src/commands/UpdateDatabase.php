@@ -13,8 +13,8 @@ namespace Elabftw\Commands;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Update;
 use Elabftw\Models\Config;
-use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem as Fs;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -58,7 +58,7 @@ class UpdateDatabase extends Command
             ));
 
             $Config = Config::getConfig();
-            $Update = new Update((int) $Config->configArr['schema'], new Sql(new Fs(new Local(dirname(__DIR__) . '/sql')), $output));
+            $Update = new Update((int) $Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')), $output));
             $Update->runUpdateScript();
             $output->writeln('All done.');
         }

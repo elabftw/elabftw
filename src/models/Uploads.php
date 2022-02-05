@@ -26,15 +26,11 @@ use Elabftw\Services\Filter;
 use Elabftw\Services\MakeThumbnail;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\UploadTrait;
-use function exif_read_data;
-use function extension_loaded;
 use function file_exists;
-use function function_exists;
 use function in_array;
 use function is_uploaded_file;
 use PDO;
 use function rename;
-use function strtolower;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use function unlink;
@@ -78,18 +74,10 @@ class Uploads implements CrudInterface
         // Try to move the file to its final place
         $this->moveUploadedFile($params->getPathname(), $fullPath);
 
-        // if the image has exif with rotation data, read it so the thumbnail can have a correct orientation
-        // only the thumbnail is rotated, the original image stays untouched
-        $rotationAngle = 0;
-        if (function_exists('exif_read_data') && in_array(strtolower($ext), Extensions::HAS_EXIF, true)) {
-            $exifData = exif_read_data($fullPath);
-            if ($exifData !== false && extension_loaded('imagick')) {
-                $rotationAngle = $this->getRotationAngle($exifData);
-            }
-        }
         // final sql
         $id = $this->dbInsert($realName, $longName, $this->getHash($fullPath));
-        $MakeThumbnail = new MakeThumbnail($fullPath, $rotationAngle);
+
+        $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb();
 
         return $id;
@@ -302,30 +290,6 @@ class Uploads implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindValue(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Get the rotation angle from exif data
-     *
-     * @param array<string, mixed> $exifData
-     */
-    private function getRotationAngle(array $exifData): int
-    {
-        if (empty($exifData['Orientation'])) {
-            return 0;
-        }
-        switch ($exifData['Orientation']) {
-            case 1:
-                return 0;
-            case 3:
-                return 180;
-            case 6:
-                return 90;
-            case 8:
-                return -90;
-            default:
-                return 0;
-        }
     }
 
     /**

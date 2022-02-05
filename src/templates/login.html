@@ -33,8 +33,41 @@
 {% endif %}
 
 <section class='text-center'>
-    <img src='app/img/logo.png' alt='logo elabftw' class='col-md-3' />
-  {% if App.Session.has('team_selection_required') %}
+  <img src='app/img/logo.png' alt='logo elabftw' class='col-md-3' />
+
+  <!-- Allow user to request access to a team -->
+  {% if App.Session.has('initial_team_selection_required') %}
+    <div class='separator col-md-4 mx-auto'></div>
+    <h2>{{ 'Request access to a team'|trans }}</h2>
+    <br>
+    <form method='post' class='form-group' id='init-team-select' action='app/controllers/LoginController.php' autocomplete='off'>
+      <input type='hidden' name='auth_type' value='teaminit'>
+      {{ App.Session.get('csrf')|csrf }}
+      <div class='form-group mx-auto col-md-4'>
+        <label for='init_team_select' class='sr-only'>{{ 'Select a team'|trans }}</label>
+        <div class='input-group mb-2'>
+          <div class='input-group-prepend'>
+            <div class='input-group-text'>{{ 'Select a team'|trans }}</div>
+          </div>
+          <select name='team_id' class='form-control' id='init_team_select'>
+            {% for team in teamsArr|filter(v => v.visible == 1) %}
+              <option value='{{ team.id }}'>{{ team.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <label for='teaminit_firstname_input'>{{ 'Firstname'|trans }}</label>
+        <input class='form-control' name='teaminit_firstname' value='{{ App.Session.get('teaminit_firstname') }}' />
+
+        <label for='teaminit_lastname_input'>{{ 'Lastname'|trans }}</label>
+        <input class='form-control' name='teaminit_lastname' value='{{ App.Session.get('teaminit_lastname') }}' />
+        <button class='button btn btn-primary mt-2' type='submit' name='submit'>{{ 'Request access'|trans }}</button>
+      </div>
+    </form>
+  <!-- Show message when initial team selection is done -->
+  {% elseif App.Session.has('teaminit_done') %}
+    {{ 'Your account has been created and will need to be validated by an admin.'|trans|msg('ok') }}
+
+  {% elseif App.Session.has('team_selection_required') %}
     <form method='post' action='app/controllers/LoginController.php'>
       <input type='hidden' name='auth_type' value='team'>
       {{ App.Session.get('csrf')|csrf }}

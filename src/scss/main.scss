@@ -901,11 +901,6 @@ the form-control fails to do that so we do the border ourselves */
 
 }
 
-.tag-delete:hover {
-    color: $darkred !important;
-    transition: color 0.8s ease;
-}
-
 /* print only the main div */
 @media print {
     /* overwrite bootstrap defaults

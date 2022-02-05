@@ -14,7 +14,7 @@ use function basename;
 use function count;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CleanerInterface;
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\FilesystemOperator;
 use function substr;
 
 /**
@@ -23,7 +23,7 @@ use function substr;
  */
 class UploadsCleaner implements CleanerInterface
 {
-    public function __construct(private FilesystemInterface $filesystem)
+    public function __construct(private FilesystemOperator $filesystem)
     {
     }
 

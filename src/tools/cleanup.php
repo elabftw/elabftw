@@ -12,8 +12,8 @@ namespace Elabftw\Services;
 use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
-use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 
 /**
  * This is used to find out if there are untracked files that should have been deleted
@@ -24,7 +24,7 @@ require_once dirname(__DIR__, 2) . '/config.php';
 
 try {
     $uploadsDir = dirname(__DIR__, 2) . '/uploads';
-    $UploadsCleaner = new UploadsCleaner(new Filesystem(new Local($uploadsDir)));
+    $UploadsCleaner = new UploadsCleaner(new Filesystem(new LocalFilesystemAdapter($uploadsDir)));
     $deleted = $UploadsCleaner->cleanup();
     printf("Deleted %d files\n", $deleted);
 } catch (FilesystemErrorException | DatabaseErrorException $e) {

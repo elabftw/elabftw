@@ -10,12 +10,10 @@
 namespace Elabftw\Services;
 
 use function dirname;
-use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Elabftw\FsTools;
 use function file_put_contents;
 use function html_entity_decode;
 use Imagick;
-use function is_dir;
-use function mkdir;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use Mpdf\Mpdf;
@@ -27,7 +25,6 @@ use Psr\Log\NullLogger;
 use function str_replace;
 use Symfony\Component\Process\Exception\ProcessFailedException as SymfonyProcessFailedException;
 use Symfony\Component\Process\Process;
-use function tempnam;
 use function unlink;
 
 /**
@@ -68,25 +65,10 @@ class Tex2Svg
         return str_replace('fill="currentColor"', 'fill="#000"', $this->contentWithMathJaxSVG);
     }
 
-    private function getTemporaryFilename(): string
-    {
-        // we use a custom tmp dir
-        $tmpDir = dirname(__DIR__, 2) . '/cache/mathjax/';
-        if (!is_dir($tmpDir) && !mkdir($tmpDir, 0700, true) && !is_dir($tmpDir)) {
-            throw new FilesystemErrorException("Could not create the $tmpDir directory! Please check permissions on this folder.");
-        }
-
-        // temporary file to hold the content
-        $filename = tempnam($tmpDir, '');
-        if (!$filename) {
-            throw new FilesystemErrorException("Could not create a temporary file in $tmpDir! Please check permissions on this folder.");
-        }
-        return $filename;
-    }
-
     private function runNodeApp(string $content): string
     {
-        $tmpFile = $this->getTemporaryFilename();
+        $tmpFile = FsTools::getCacheFile();
+
         file_put_contents($tmpFile, $content);
 
         // absolute path to tex2svg app

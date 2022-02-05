@@ -10,7 +10,7 @@ After the AST is build successfully (syntax errors are reported to the user) it 
 2. `FieldValidatorVisitor` checks if fields/values are allowed, e.g., the `timestamped` field is only meaningful for experiments. Feedback is given for illegal fields/values.
 3. `QueryBuilderVisitor` is the workhorse and builds the SQL where clause.
 
-The `FieldValidatorVisitor` and `QueryBuilderVisitor` use Collectors (`src/services/advancedSearchQuery/collectors`) to collect all the invalid fields and the where clause, respectively.
+The `FieldValidatorVisitor` and `QueryBuilderVisitor` use collectors (`src/services/advancedSearchQuery/collectors`) to collect all the invalid fields and the where clause, respectively.
 
 `VisitorParameters` can be used to inject additional data into the AST, e.g., the entity type to check if a field (`timestamped`) is allowed for experiments/database.
 

@@ -1,6 +1,6 @@
 <html>
   <head>
-    <style>{{ css }}</style>
+    <style>{{ css|raw }}</style>
     {{ useCjk ? '<style>td { font-family:sun-extA; }</style>' }}
   </head>
   <body {{ useCjk ? " style='font-family:sun-extA;'" }}>
@@ -97,7 +97,7 @@
         {% set filePath = filePath ~ '_th.jpg' %}
       {% endif %}
       {% if ext in ['tiff', 'jpg', 'jpeg', 'png', 'gif'] %}
-        <br><img class='attached-image' src='{{ filePath }}' alt='{{ upload.comment }}' />
+        <br><img class='attached-image' src='{{ filePath|raw }}' alt='{{ upload.comment }}' />
       {% endif %}
       </p>
     {% endfor %}
@@ -121,14 +121,14 @@
 <table id='infoblock'>
   <tr>
     <td class='noborder'>
-      <barcode code='{{ url }}' type='QR' class='barcode' size='0.8' error='M' />
+      <barcode code='{{ url|raw }}' type='QR' class='barcode' size='0.8' error='M' />
     </td>
     <td class='noborder'>
       <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ elabid }}</p>
       {% if locked %}
         <p class='elabid'>Locked by {{ lockerName }} on {{ lockDate }}</p>
       {% endif %}
-      <p class='elabid'>Link: <a href='{{ url }}'>{{ url }}</a></p>
+      <p class='elabid'>Link: <a href='{{ url|raw }}'>{{ url }}</a></p>
     </td>
   </tr>
 </table>

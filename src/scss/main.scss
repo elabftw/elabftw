@@ -889,6 +889,7 @@ the form-control fails to do that so we do the border ourselves */
 /* elabid */
 .elabid {
     color: $maingray;
+    overflow-wrap: break-word;
     text-align: right;
 }
 

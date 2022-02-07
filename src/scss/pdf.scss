@@ -150,20 +150,11 @@ img, /* <-- can be removed after PR https://github.com/mpdf/mpdf/pull/1405 is ac
 }
 
 /* BLOCKQUOTE */
-// FIXME quote not appearing in pdf
+// quote marks in pdf is not implemented by mpdf
+// https://github.com/mpdf/mpdf/blob/d3ef7689800c6356ab7df7604289f97c17f37c76/src/Tag/BlockQuote.php
 blockquote {
     background: #f9f9f9;
     border-left: 10px solid #ccc;
     margin: 1.5em 10px;
     padding: 0.5em 10px;
-    quotes: '\201C''\201D''\2018''\2019';
-}
-
-blockquote::before {
-    color: #ccc;
-    content: open-quote;
-    font-size: 4em;
-    line-height: 0.1em;
-    margin-right: 0.25em;
-    vertical-align: -0.4em;
 }

@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const malleableStep = new Malle({
     inputClasses: ['form-control'],
     formClasses: ['d-inline-flex'],
-    debug: true,
     fun: (value, original) => {
       StepC.update(
         parseInt(original.dataset.stepid, 10),

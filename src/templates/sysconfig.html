@@ -32,6 +32,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
   <li data-action='switch-tab' data-tabtarget='8'>{{ 'Privacy policy'|trans }}</li>
   <li data-action='switch-tab' data-tabtarget='9'>{{ 'External auth'|trans }}</li>
   <li data-action='switch-tab' data-tabtarget='10'>LDAP</li><span class='beta'>beta</span>
+  <li data-action='switch-tab' data-tabtarget='11'>{{ 'Uploads'|trans }}</li>
 </ul>
 
 <!-- loading spinner -->
@@ -884,5 +885,39 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       </div>
     </form>
 </div>
+
+<!-- TAB 11 Uploads -->
+<div data-tabcontent='11' hidden>
+  <div class='box'>
+    <form method='post' action='app/controllers/SysconfigController.php'>
+      <input type='hidden' name='updateConfig' value='true' />
+      {{ App.Session.get('csrf')|csrf }}
+      <label for='uploads_storage'>{{ 'Where user uploaded files are stored:'|trans }}</label>
+      <select id='uploads_storage' name='uploads_storage' class='form-control col-md-4'>
+          <option {{ App.Config.configArr.uploads_storage == '1' ? ' selected' }} value='1'>{{ 'Local filesystem'|trans }}</option>
+          <option {{ App.Config.configArr.uploads_storage == '2' ? ' selected' }} value='2'>{{ 'S3 bucket'|trans }}</option>
+      </select>
+      <p class='smallgray'>{{ 'You can select where uploaded files will be stored. The default is local storage but you can configure any S3 compatible object storage.'|trans }}</p>
+
+      <label for='s3_bucket_name'>S3 bucket name</label>
+      <input class='form-control col-md-4' type='text' id='s3_bucket_name' placeholder='some-bucket-name' name='s3_bucket_name' value='{{ App.Config.configArr.s3_bucket_name }}' />
+
+      <label for='s3_region'>S3 region</label>
+      <input class='form-control col-md-4' type='text' id='s3_region' placeholder='uploads' name='s3_region' value='{{ App.Config.configArr.s3_region }}' />
+
+      <label for='s3_region'>S3 endpoint</label>
+      <input class='form-control col-md-4' type='url' id='s3_endpoint' placeholder='uploads' name='s3_endpoint' value='{{ App.Config.configArr.s3_endpoint }}' />
+
+      <label for='s3_path_prefix'>S3 path prefix (optional)</label>
+      <input class='form-control col-md-4' type='text' id='s3_path_prefix' placeholder='uploads' name='s3_path_prefix' value='{{ App.Config.configArr.s3_path_prefix }}' />
+
+
+      <div class='mt-4 text-center'>
+        <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div id='info' data-page='sysconfig'></div>
 {% endblock body %}

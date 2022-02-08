@@ -138,9 +138,14 @@
         <div class='caption'>
           <i class='fas fa-download mr-1'></i>
           <span>
-              <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&forceDownload' rel='noopener'>{{ upload.real_name }}</a>
+            <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&storage={{ upload.storage }}' rel='noopener'>{{ upload.real_name }}</a>
             <span class='smallgray' style='display:inline'>
-              {{ (Entity.Uploads.getUploadsPath ~ upload.long_name)|filesize|formatBytes }} - {{ upload.datetime }}
+              {% if upload.filesize %}
+                {{ upload.filesize|formatBytes }}
+              {% else %}
+                {{ (Entity.Uploads.getUploadsPath ~ upload.long_name)|filesize|formatBytes }}
+              {% endif %}
+              - {{ upload.datetime }}
             </span>
           </span>
         <br>

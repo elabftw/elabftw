@@ -11,11 +11,11 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use DateTimeImmutable;
-use Elabftw\Controllers\DownloadController;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use function json_decode;
@@ -28,6 +28,8 @@ use ZipArchive;
  */
 class MakeBloxberg extends AbstractMake
 {
+    use UploadTrait;
+
     /**
      * This pubkey is currently the same for everyone
      * Information about the user/institution is stored in the metadataJson field
@@ -136,9 +138,7 @@ class MakeBloxberg extends AbstractMake
         $zipFile = $this->Entity->Uploads->read(new ContentParams());
         // add the timestamped pdf to the zip archive
         $ZipArchive = new ZipArchive();
-        // we need this to get the path to the file
-        $DownloadController = new DownloadController($zipFile['long_name']);
-        $res = $ZipArchive->open($DownloadController->getFilePath());
+        $res = $ZipArchive->open($this->getUploadsPath() . $zipFile['long_name']);
         if ($res !== true) {
             throw new FilesystemErrorException('Error opening the zip archive!');
         }

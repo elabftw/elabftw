@@ -28,6 +28,6 @@ final class CreateUpload implements CreateUploadParamsInterface
 
     public function getPathname(): string
     {
-        return $this->Request->files->get('file')->getPathname();
+        return basename($this->Request->files->get('file')->getPathname());
     }
 }

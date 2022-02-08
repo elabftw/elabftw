@@ -10,7 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Aws\Credentials\Credentials;
 use function copy;
+use const ELAB_AWS_ACCESS_KEY;
+use const ELAB_AWS_SECRET_KEY;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Extensions;
@@ -22,13 +25,16 @@ use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\UploadParamsInterface;
-use Elabftw\Services\Filter;
+use Elabftw\Services\LocalAdapter;
 use Elabftw\Services\MakeThumbnail;
+use Elabftw\Services\S3Adapter;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\UploadTrait;
 use function file_exists;
 use function in_array;
 use function is_uploaded_file;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use PDO;
 use function rename;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -45,6 +51,10 @@ class Uploads implements CrudInterface
 
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
     private const BIG_FILE_THRESHOLD = 50000000;
+
+    private const STORAGE_LOCAL = 1;
+
+    private const STORAGE_S3 = 2;
 
     protected Db $Db;
 
@@ -63,22 +73,44 @@ class Uploads implements CrudInterface
     {
         $this->Entity->canOrExplode('write');
 
-        //$realName = Filter::forFilesystem($request->files->get('file')->getClientOriginalName());
         $realName = $params->getFilename();
         $this->checkExtension($realName);
         $ext = Tools::getExt($realName);
 
         $longName = $this->getLongName() . '.' . $ext;
-        $fullPath = $this->getUploadsPath() . $longName;
 
-        // Try to move the file to its final place
-        $this->moveUploadedFile($params->getPathname(), $fullPath);
+        $Config = Config::getConfig();
+        $storage = (int) $Config->configArr['uploads_storage'];
+
+        if ($storage === self::STORAGE_S3) {
+            $adapter = new S3Adapter($Config, new Credentials(ELAB_AWS_ACCESS_KEY, ELAB_AWS_SECRET_KEY));
+        } else {
+            $adapter = new LocalAdapter();
+        }
+        $folder = substr($longName, 0, 2);
+        $fullPath = substr($longName, 0, 2) . '/' . $longName;
+
+        // where our uploaded file lives
+        $tmpFs = new Filesystem(new LocalFilesystemAdapter('/tmp'));
+        $tmpFilename = $params->getPathname();
+        $hash = $this->getHash('/tmp/' . $tmpFilename);
+        // read the file as a stream so we can copy it
+        $inputStream = $tmpFs->readStream($params->getPathname());
+
+        $storageFs = new Filesystem($adapter->getAdapter());
+        $storageFs->createDirectory($folder);
+        $storageFs->writeStream($longName, $inputStream);
 
         // final sql
-        $id = $this->dbInsert($realName, $longName, $this->getHash($fullPath));
+        $id = $this->dbInsert($realName, $longName, $hash, $storage, $tmpFs->filesize($tmpFilename));
 
-        $MakeThumbnail = new MakeThumbnail($fullPath);
-        $MakeThumbnail->makeThumb();
+        // TODO for s3 too
+        if ($storage === self::STORAGE_LOCAL) {
+            $MakeThumbnail = new MakeThumbnail('/tmp/' . $tmpFilename);
+            $MakeThumbnail->makeThumb();
+        }
+
+        $tmpFs->delete($params->getPathname());
 
         return $id;
     }
@@ -98,7 +130,11 @@ class Uploads implements CrudInterface
 
         $this->moveFile($filePath, $fullPath);
 
-        $this->dbInsert($realName, $longName, $this->getHash($fullPath), $comment);
+        $filesize = filesize($fullPath);
+        if (!is_int($filesize)) {
+            $filesize = null;
+        }
+        $this->dbInsert($realName, $longName, $this->getHash($fullPath), self::STORAGE_LOCAL, $filesize, $comment);
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb();
     }
@@ -137,8 +173,12 @@ class Uploads implements CrudInterface
         if (!empty($content) && !file_put_contents($fullPath, $content)) {
             throw new FilesystemErrorException('Could not write to file!');
         }
+        $filesize = filesize($fullPath);
+        if (!is_int($filesize)) {
+            $filesize = null;
+        }
 
-        $uploadId = $this->dbInsert($realName, $longName, $this->getHash($fullPath));
+        $uploadId = $this->dbInsert($realName, $longName, $this->getHash($fullPath), self::STORAGE_LOCAL, $filesize);
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb();
 
@@ -318,18 +358,14 @@ class Uploads implements CrudInterface
 
     /**
      * Generate the hash based on selected algorithm
-     *
-     * @param string $file The full path to the file
-     * @return string the hash or an empty string if file is too big
      */
-    private function getHash(string $file): string
+    private function getHash(string $filePath): string
     {
-        if (filesize($file) < self::BIG_FILE_THRESHOLD) {
-            $hash = hash_file($this->hashAlgorithm, $file);
-            if ($hash === false) {
-                throw new ImproperActionException('Error creating hash from file!');
+        if (filesize($filePath) < self::BIG_FILE_THRESHOLD) {
+            $hash = hash_file($this->hashAlgorithm, $filePath);
+            if ($hash !== false) {
+                return $hash;
             }
-            return $hash;
         }
 
         return '';
@@ -350,7 +386,7 @@ class Uploads implements CrudInterface
     /**
      * Make the final SQL request to store the file
      */
-    private function dbInsert(string $realName, string $longName, string $hash, ?string $comment = null): int
+    private function dbInsert(string $realName, string $longName, string $hash, int $storage, int $filesize, ?string $comment = null): int
     {
         $comment ??= 'Click to add a comment';
 
@@ -362,7 +398,9 @@ class Uploads implements CrudInterface
             userid,
             type,
             hash,
-            hash_algorithm
+            hash_algorithm,
+            storage,
+            filesize
         ) VALUES(
             :real_name,
             :long_name,
@@ -371,7 +409,9 @@ class Uploads implements CrudInterface
             :userid,
             :type,
             :hash,
-            :hash_algorithm
+            :hash_algorithm,
+            :storage,
+            :filesize
         )';
 
         $req = $this->Db->prepare($sql);
@@ -385,6 +425,8 @@ class Uploads implements CrudInterface
         $req->bindParam(':type', $this->Entity->type);
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
+        $req->bindParam(':storage', $storage);
+        $req->bindParam(':filesize', $filesize);
         $this->Db->execute($req);
         return $this->Db->lastInsertId();
     }

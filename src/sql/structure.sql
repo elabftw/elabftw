@@ -680,6 +680,8 @@ CREATE TABLE `uploads` (
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `hash` varchar(128) DEFAULT NULL,
   `hash_algorithm` varchar(10) DEFAULT NULL,
+  `storage` int(10) NOT NULL DEFAULT 1,
+  `filesize` int(10) UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

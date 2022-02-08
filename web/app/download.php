@@ -9,13 +9,18 @@
 
 namespace Elabftw\Elabftw;
 
+use Aws\Credentials\Credentials;
+use const ELAB_AWS_ACCESS_KEY;
+use const ELAB_AWS_SECRET_KEY;
 use Elabftw\Controllers\DownloadController;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Services\LocalAdapter;
+use Elabftw\Services\S3Adapter;
 use function error_reporting;
 use Exception;
+use League\Flysystem\Filesystem;
 use function set_time_limit;
 use function strpos;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 require_once 'init.inc.php';
 
@@ -33,7 +38,15 @@ try {
         throw new IllegalActionException('Missing parameter for download');
     }
 
+    if ($Request->query->get('storage') === '2') {
+        $adapter = new S3Adapter($App->Config, new Credentials(ELAB_AWS_ACCESS_KEY, ELAB_AWS_SECRET_KEY));
+    } else {
+        $adapter = new LocalAdapter();
+    }
+    $fs = new Filesystem($adapter->getAdapter());
+
     $DownloadController = new DownloadController(
+        $fs,
         $longName,
         (string) $Request->query->get('name'),
         $Request->query->has('forceDownload'),
@@ -42,8 +55,6 @@ try {
     $Response->prepare($App->Request);
     $Response->send();
 } catch (Exception $e) {
-    $Session = new Session();
-    $Session->start();
-    $Session->getFlashBag()->add('ko', $e->getMessage());
-    header('Location: ../experiments.php');
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Download error', $e)));
+    $App->Session->getFlashBag()->add('ko', Tools::error());
 }

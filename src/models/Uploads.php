@@ -73,7 +73,6 @@ class Uploads implements CrudInterface
         $longName = $this->getLongName() . '.' . $ext;
 
         $folder = substr($longName, 0, 2);
-        $fullPath = $folder . '/' . $longName;
 
         // where our uploaded file lives
         $sourceFs = $params->getSourceFs();

@@ -10,6 +10,8 @@
 namespace Elabftw\Elabftw;
 
 use Aws\Credentials\Credentials;
+use const ELAB_AWS_ACCESS_KEY;
+use const ELAB_AWS_SECRET_KEY;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Models\Config;
 use Elabftw\Services\Filter;

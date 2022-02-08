@@ -14,6 +14,7 @@ use function dirname;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
@@ -207,7 +208,12 @@ try {
 
     // CREATE UPLOAD
     if ($Request->request->has('upload')) {
-        $Entity->Uploads->create(new CreateUpload($Request));
+        $Config = Config::getConfig();
+        $storage = (int) $Config->configArr['uploads_storage'];
+
+        $realName = $Request->files->get('file')->getClientOriginalName();
+        $filePath = $Request->files->get('file')->getPathname();
+        $Entity->Uploads->create(new CreateUpload($realName, $filePath, $storage));
     }
 
     // ADD MOL FILE OR PNG

@@ -9,11 +9,13 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TagParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
@@ -193,6 +195,9 @@ class ImportZip extends AbstractImport
      */
     private function importAll(array $json): void
     {
+        $Config = Config::getConfig();
+        $storage = (int) $Config->configArr['uploads_storage'];
+
         foreach ($json as $item) {
             $this->dbInsert($item);
 
@@ -214,7 +219,7 @@ class ImportZip extends AbstractImport
                      * import but this should be handled. One day. Maybe.
                      */
                     if (is_readable($filePath)) {
-                        $this->Entity->Uploads->createFromLocalFile($filePath, $file['comment']);
+                        $this->Entity->Uploads->create(new CreateUpload(basename($filePath), $filePath, $storage, $file['comment']));
                     }
                 }
             }

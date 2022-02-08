@@ -76,7 +76,7 @@
                     {% if thumb_name is readable and App.Users.userData.uploads_layout %}
                        <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ upload.long_name }}_th.jpg' alt='thumbnail' />
                    {% elseif App.Users.userData.uploads_layout %}
-                      <i class='fas {{ Entity.Uploads.getIconFromExtension(ext) }} thumb rounded mx-auto d-block'></i>
+                      <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block'></i>
                    {% endif %}
                      {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
                         </a>
@@ -132,7 +132,7 @@
                 id='OVE_{{ upload.id }}'>
               </div>
             {% elseif App.Users.userData.uploads_layout %}
-            <i class='fas {{ Entity.Uploads.getIconFromExtension(ext) }} thumb rounded mx-auto d-block'></i>
+            <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block'></i>
             {% endif %}
 
         <div class='caption'>

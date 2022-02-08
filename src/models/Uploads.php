@@ -10,13 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Aws\Credentials\Credentials;
 use function copy;
-use const ELAB_AWS_ACCESS_KEY;
-use const ELAB_AWS_SECRET_KEY;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -25,16 +21,13 @@ use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\UploadParamsInterface;
-use Elabftw\Services\LocalAdapter;
 use Elabftw\Services\MakeThumbnail;
-use Elabftw\Services\S3Adapter;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\UploadTrait;
 use function file_exists;
 use function in_array;
 use function is_uploaded_file;
 use League\Flysystem\Filesystem;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 use PDO;
 use function rename;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -49,12 +42,12 @@ class Uploads implements CrudInterface
     use UploadTrait;
     use SetIdTrait;
 
+    public const STORAGE_LOCAL = 1;
+
+    public const STORAGE_S3 = 2;
+
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
     private const BIG_FILE_THRESHOLD = 50000000;
-
-    private const STORAGE_LOCAL = 1;
-
-    private const STORAGE_S3 = 2;
 
     protected Db $Db;
 
@@ -79,64 +72,42 @@ class Uploads implements CrudInterface
 
         $longName = $this->getLongName() . '.' . $ext;
 
-        $Config = Config::getConfig();
-        $storage = (int) $Config->configArr['uploads_storage'];
-
-        if ($storage === self::STORAGE_S3) {
-            $adapter = new S3Adapter($Config, new Credentials(ELAB_AWS_ACCESS_KEY, ELAB_AWS_SECRET_KEY));
-        } else {
-            $adapter = new LocalAdapter();
-        }
         $folder = substr($longName, 0, 2);
-        $fullPath = substr($longName, 0, 2) . '/' . $longName;
+        $fullPath = $folder . '/' . $longName;
 
         // where our uploaded file lives
-        $tmpFs = new Filesystem(new LocalFilesystemAdapter('/tmp'));
-        $tmpFilename = $params->getPathname();
-        $hash = $this->getHash('/tmp/' . $tmpFilename);
-        // read the file as a stream so we can copy it
-        $inputStream = $tmpFs->readStream($params->getPathname());
+        $sourceFs = $params->getSourceFs();
+        // where we want to store it
+        $storageFs = $params->getStorageFs();
 
-        $storageFs = new Filesystem($adapter->getAdapter());
+        $tmpFilename = basename($params->getFilePath());
+        $filesize = $sourceFs->filesize($tmpFilename);
+        $hash = '';
+        // we don't hash big files as this could take too much time/resources
+        if ($filesize < self::BIG_FILE_THRESHOLD) {
+            $hash = $this->getHash($sourceFs->read(basename($params->getFilePath())));
+        }
+        // read the file as a stream so we can copy it
+        $inputStream = $sourceFs->readStream(basename($params->getFilePath()));
+
         $storageFs->createDirectory($folder);
         $storageFs->writeStream($longName, $inputStream);
 
         // final sql
-        $id = $this->dbInsert($realName, $longName, $hash, $storage, $tmpFs->filesize($tmpFilename));
+        $id = $this->dbInsert($realName, $longName, $hash, $filesize, $params->getStorage(), $params->getComment());
 
         // TODO for s3 too
+        // TODO send content instead of path? send ext and returns content too?
+        /*
         if ($storage === self::STORAGE_LOCAL) {
             $MakeThumbnail = new MakeThumbnail('/tmp/' . $tmpFilename);
             $MakeThumbnail->makeThumb();
         }
+         */
 
-        $tmpFs->delete($params->getPathname());
+        $sourceFs->delete($params->getFilePath());
 
         return $id;
-    }
-
-    /**
-     * Called from ImportZip class
-     *
-     * @param string $filePath absolute path to the file
-     */
-    public function createFromLocalFile(string $filePath, string $comment): void
-    {
-        $realName = basename($filePath);
-        $this->checkExtension($realName);
-
-        $longName = $this->getLongName() . '.' . Tools::getExt($realName);
-        $fullPath = $this->getUploadsPath() . $longName;
-
-        $this->moveFile($filePath, $fullPath);
-
-        $filesize = filesize($fullPath);
-        if (!is_int($filesize)) {
-            $filesize = null;
-        }
-        $this->dbInsert($realName, $longName, $this->getHash($fullPath), self::STORAGE_LOCAL, $filesize, $comment);
-        $MakeThumbnail = new MakeThumbnail($fullPath);
-        $MakeThumbnail->makeThumb();
     }
 
     /**
@@ -178,7 +149,7 @@ class Uploads implements CrudInterface
             $filesize = null;
         }
 
-        $uploadId = $this->dbInsert($realName, $longName, $this->getHash($fullPath), self::STORAGE_LOCAL, $filesize);
+        $uploadId = $this->dbInsert($realName, $longName, $this->getHash($fullPath), 1, $filesize);
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb();
 
@@ -226,42 +197,6 @@ class Uploads implements CrudInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Get the correct class for icon from the extension
-     *
-     * @param string $ext Extension of the file
-     * @return string Class of the fa icon
-     */
-    public function getIconFromExtension(string $ext): string
-    {
-        if (in_array($ext, Extensions::ARCHIVE, true)) {
-            return 'fa-file-archive';
-        }
-        if (in_array($ext, Extensions::CODE, true)) {
-            return 'fa-file-code';
-        }
-        if (in_array($ext, Extensions::SPREADSHEET, true)) {
-            return 'fa-file-excel';
-        }
-        if (in_array($ext, Extensions::IMAGE, true)) {
-            return 'fa-file-image';
-        }
-        if ($ext === 'pdf') {
-            return 'fa-file-pdf';
-        }
-        if (in_array($ext, Extensions::PRESENTATION, true)) {
-            return 'fa-file-powerpoint';
-        }
-        if (in_array($ext, Extensions::VIDEO, true)) {
-            return 'fa-file-video';
-        }
-        if (in_array($ext, Extensions::DOCUMENT, true)) {
-            return 'fa-file-word';
-        }
-
-        return 'fa-file';
     }
 
     /**
@@ -359,16 +294,9 @@ class Uploads implements CrudInterface
     /**
      * Generate the hash based on selected algorithm
      */
-    private function getHash(string $filePath): string
+    private function getHash(string $content): string
     {
-        if (filesize($filePath) < self::BIG_FILE_THRESHOLD) {
-            $hash = hash_file($this->hashAlgorithm, $filePath);
-            if ($hash !== false) {
-                return $hash;
-            }
-        }
-
-        return '';
+        return hash($this->hashAlgorithm, $content);
     }
 
     /**
@@ -386,7 +314,7 @@ class Uploads implements CrudInterface
     /**
      * Make the final SQL request to store the file
      */
-    private function dbInsert(string $realName, string $longName, string $hash, int $storage, int $filesize, ?string $comment = null): int
+    private function dbInsert(string $realName, string $longName, string $hash, int $filesize, int $storage, ?string $comment = null): int
     {
         $comment ??= 'Click to add a comment';
 
@@ -425,8 +353,8 @@ class Uploads implements CrudInterface
         $req->bindParam(':type', $this->Entity->type);
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
-        $req->bindParam(':storage', $storage);
-        $req->bindParam(':filesize', $filesize);
+        $req->bindParam(':storage', $storage, PDO::PARAM_INT);
+        $req->bindParam(':filesize', $filesize, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->Db->lastInsertId();
     }

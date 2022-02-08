@@ -58,6 +58,7 @@ trait TwigTrait
         $memoryUsage = new \Twig\TwigFunction('memoryUsage', '\Elabftw\Elabftw\TwigFunctions::getMemoryUsage');
         $numberOfQueries = new \Twig\TwigFunction('numberOfQueries', '\Elabftw\Elabftw\TwigFunctions::getNumberOfQueries');
         $minPasswordLength = new \Twig\TwigFunction('minPasswordLength', '\Elabftw\Elabftw\TwigFunctions::getMinPasswordLength');
+        $ext2icon = new \Twig\TwigFunction('ext2icon', '\Elabftw\Elabftw\Extensions::getIconFromExtension');
 
         // custom test to check for a file
         $test = new \Twig\TwigTest('readable', function (string $path) {
@@ -82,6 +83,7 @@ trait TwigTrait
         $TwigEnvironment->addFunction($memoryUsage);
         $TwigEnvironment->addFunction($numberOfQueries);
         $TwigEnvironment->addFunction($minPasswordLength);
+        $TwigEnvironment->addFunction($ext2icon);
 
         // i18n for twig
         $TwigEnvironment->addExtension(new \Twig\Extensions\I18nExtension());

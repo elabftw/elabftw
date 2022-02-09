@@ -1,32 +1,24 @@
 build:
     environment:
-        apt_packages:
-            - libmagickwand-dev
-            - libmagickcore-dev
-        php:
-            version: 8.0.11
-            compile_options: '--with-config-file-scan-dir=/home/scrutinizer/.phpenv/versions/8.0.11/etc/conf.d --prefix=/home/scrutinizer/.phpenv/versions/8.0.11 --libexecdir=/home/scrutinizer/.phpenv/versions/8.0.11/libexec --enable-sockets --enable-exif --with-zlib --with-zlib-dir=/usr --with-bz2 --enable-intl --with-openssl --enable-soap --with-tidy --enable-xmlreader --with-xsl --enable-ftp --enable-cgi --with-curl=/usr --with-tidy --enable-sysvsem --enable-sysvshm --enable-sysvmsg --enable-shmop --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --with-pdo-sqlite --with-pgsql --with-pdo-pgsql --enable-pcntl --with-readline --enable-mbstring --disable-debug --enable-fpm --enable-bcmath --enable-phpdbg --enable-gd --with-zip --with-mhash --with-apxs2=/usr/bin/apxs --enable-zts --with-sodium --with-gettext --enable-calendar --with-gmp --with-kerberos --with-pear=/home/scrutinizer/.phpenv/versions/8.0.11/pear --with-libdir=lib64 --with-ldap --with-libdir=lib/x86_64-linux-gnu'
-            pecl_extensions:
-                - imagick
+        docker:
+            cache:
+                images:
+                    - 'elabftw/elabimg:hypernext'
+                    - 'mysql:8.0'
+
     nodes:
         tests:
             dependencies:
-                before:
-                    - sudo DEBIAN_FRONTEND=noninteractive apt-get install -y tar libxml2 libxml2-dev librsvg2-dev librsvg2-bin libpng-dev libjpeg-dev libfreetype6-dev libfontconfig1-dev libtool libtiff-dev liblcms2-dev libwebp-dev libxext-dev chrpath ghostscript libldap2-dev libssl-dev mysql-server libmagickwand-dev libmagickcore-dev
-                    - wget https://download.imagemagick.org/ImageMagick/download/releases/ImageMagick-7.1.0-19.tar.xz
-                    - tar -xf ImageMagick-7.1.0-19.tar.xz
-                    - cd ImageMagick-7.1.0-19 && ./configure --enable-static --disable-openmp --with-threads --with-tiff=yes --with-png=yes --with-webp --with-gslib=yes --with-heic=no --with-modules=yes --with-xml=yes --without-perl --without-magick-plus-plus --with-rsvg=yes --enable-delegate-build=yes --enable-shared --with-bzlib=yes --with-jpeg=yes && make && sudo make install
-                    - sudo ldconfig /usr/local/lib
-                    - cd .. && rm -rf ImageMagick-7.1.0-19
-                    - convert -version && convert -list format | grep svg && convert -list configure
-                    - composer install
+                override:
                     - cp tests/config-ci.php config.php
-                    - sudo mysql -e "CREATE DATABASE phpunit;grant usage on *.* to phpunit@localhost identified by 'phpunit';grant all privileges on phpunit.* to phpunit@localhost;"
-                    - php bin/install start
-                    - php bin/console dev:populate tests/populate-config.yml
-                    - nvm use stable
-                    - npm install -g yarn
-                    - yarn install
-                    - yarn buildcss
-                    - yarn buildnode
-                    - yarn buildparser
+                before:
+                    - echo do nothing here
+
+    tests:
+        override:
+            - command: docker version
+            - command: tests/run.sh unit
+              coverage:
+                  file: tests/_output/coverage.xml
+                  format: clover
+

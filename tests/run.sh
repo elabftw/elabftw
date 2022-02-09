@@ -22,13 +22,18 @@ trap cleanup EXIT
 sudo cp -v config.php config.php.dev
 sudo cp -v tests/config-home.php config.php
 sudo chmod +r config.php
+cd .. && ls -la && sudo chmod -R 777 build && ls -la && cd build
 # launch a fresh environment if needed
 if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
-    docker compose -f tests/docker-compose.yml up -d
-    # give some time for the mysql process to start
-    echo "Waiting for MySQL to start..."
-    sleep 25
+    docker-compose -f tests/docker-compose.yml up -d --quiet-pull --force-recreate
+    # give some time for the process to start
+    echo -n "Waiting for elabtmp to start..."
+    while [ "`docker inspect -f {{.State.Health.Status}} elabtmp`" != "healthy" ]; do echo -n .; sleep 2; done; echo
 fi
+docker exec -it elabtmp sh -c "ls -la && cd .. && ls -la && cd elabftw/tests && ls -la"
+docker ps -a
+docker volume ls
+docker container inspect elabtmp
 # install the database
 docker exec -it elabtmp bin/install start -r
 # populate the database
@@ -43,7 +48,7 @@ fi
 # now install xdebug in the container so we can do code coverage
 docker exec -it elabtmp bash -c "apk add --update php8-pecl-xdebug && echo 'zend_extension=xdebug.so' >> /etc/php8/php.ini && echo 'xdebug.mode=coverage' >> /etc/php8/php.ini"
 # generate the coverage, results will be available in _coverage directory
-docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --skip api --coverage --coverage-html
+docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --skip api --coverage --coverage-html --coverage-xml
 # all tests succeeded, display a koala
 cat << WALAEND
 

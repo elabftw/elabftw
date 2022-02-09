@@ -10,7 +10,6 @@
 namespace Elabftw\Services;
 
 use League\Flysystem\Filesystem;
-use Elabftw\Models\Config;
 
 class StorageManagerTest extends \PHPUnit\Framework\TestCase
 {

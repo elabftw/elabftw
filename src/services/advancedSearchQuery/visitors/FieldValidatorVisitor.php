@@ -21,6 +21,7 @@ use Elabftw\Services\AdvancedSearchQuery\Grammar\OrOperand;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\SimpleValueWrapper;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
+use function sprintf;
 
 class FieldValidatorVisitor implements Visitor
 {
@@ -36,6 +37,15 @@ class FieldValidatorVisitor implements Visitor
 
     public function visitDateField(DateField $dateField, VisitorParameters $parameters): InvalidFieldCollector
     {
+        if ($dateField->getDateType() === 'range' && $dateField->getValue() > $dateField->getDateTo()) {
+            $message = sprintf(
+                'date:<em>%s..%s</em>. Second date needs to be equal or greater than first date.',
+                $dateField->getValue(),
+                $dateField->getDateTo(),
+            );
+            return new InvalidFieldCollector(array($message));
+        }
+
         return new InvalidFieldCollector();
     }
 
@@ -102,7 +112,7 @@ class FieldValidatorVisitor implements Visitor
     {
         return new InvalidFieldCollector(array_merge(
             $head->getfieldErrors(),
-            $tail->getfieldErrors()
+            $tail->getfieldErrors(),
         ));
     }
 
@@ -169,7 +179,12 @@ class FieldValidatorVisitor implements Visitor
     {
         $visibilityFieldHelper = new VisibilityFieldHelper($searchTerm, $parameters->getVisArr());
         if (!$visibilityFieldHelper->getArr()) {
-            return new InvalidFieldCollector(array('visibility:<em>' . $searchTerm . '</em>. Valid values are ' . $visibilityFieldHelper->possibleInput . '.'));
+            $message = sprintf(
+                'visibility:<em>%s</em>. Valid values are %s.',
+                $searchTerm,
+                $visibilityFieldHelper->possibleInput,
+            );
+            return new InvalidFieldCollector(array($message));
         }
         return new InvalidFieldCollector();
     }

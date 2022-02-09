@@ -26,19 +26,40 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     {
         $params = $this->createMock(CreateUpload::class);
         // this would be the real name of the file uploaded by user
-        $params->method('getFilename')->willReturn('test-file.zip');
+        $params->method('getFilename')->willReturn('example.png');
         // and this corresponds to the temporary file created after upload
         $tmpFilePath = '/tmp/phpELABFTW';
         $params->method('getFilePath')->willReturn($tmpFilePath);
         $fs = new Filesystem(new InMemoryFilesystemAdapter());
         // write our temporary file as if it was uploaded by a user
         $fs->createDirectory('tmp');
-        // a txt file was failing the mime type, so use a zip
-        $fileContents = file_get_contents(dirname(__DIR__, 2) . '/_data/example.zip');
+        // a txt file was failing the mime type, so use a png
+        $fileContents = file_get_contents(dirname(__DIR__, 2) . '/_data/example.png');
         if ($fileContents === false) {
             $fileContents = 'BLAH';
         }
         $fs->write(basename($tmpFilePath), $fileContents);
+        // we use the same fs for source and storage because it's all in memory anyway
+        $params->method('getSourceFs')->willReturn($fs);
+        $params->method('getStorageFs')->willReturn($fs);
+
+        $Uploads = new Uploads($this->Entity);
+        $Uploads->create($params);
+    }
+
+    // same as above, but this file will fail mime type detection
+    public function testCreateMimeFail(): void
+    {
+        $params = $this->createMock(CreateUpload::class);
+        // this would be the real name of the file uploaded by user
+        $params->method('getFilename')->willReturn('example.txt');
+        // and this corresponds to the temporary file created after upload
+        $tmpFilePath = '/tmp/phpELABFTW';
+        $params->method('getFilePath')->willReturn($tmpFilePath);
+        $fs = new Filesystem(new InMemoryFilesystemAdapter());
+        // write our temporary file as if it was uploaded by a user
+        $fs->createDirectory('tmp');
+        $fs->write(basename($tmpFilePath), 'blah');
         // we use the same fs for source and storage because it's all in memory anyway
         $params->method('getSourceFs')->willReturn($fs);
         $params->method('getStorageFs')->willReturn($fs);

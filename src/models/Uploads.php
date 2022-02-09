@@ -103,6 +103,7 @@ class Uploads implements CrudInterface
                     }
                 }
             } catch (UnableToRetrieveMetadata $e) {
+                // just ignore it and continue if mime type could not be read
             }
         }
         // read the file as a stream so we can copy it

@@ -26,7 +26,6 @@ use Elabftw\Services\MakeThumbnail;
 use Elabftw\Services\StorageManager;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\UploadTrait;
-use function file_exists;
 use function in_array;
 use function is_uploaded_file;
 use League\Flysystem\Filesystem;
@@ -235,16 +234,15 @@ class Uploads implements CrudInterface
         $this->Entity->canOrExplode('write');
         $uploadArr = $this->read(new ContentParams());
 
+        $Config = Config::getConfig();
+        $storage = (int) $Config->configArr['uploads_storage'];
+        $StorageManager = new StorageManager($storage);
+        $storageFs = $StorageManager->getStorageFs();
+
         // remove thumbnail
-        $thumbPath = $this->getUploadsPath() . $uploadArr['long_name'] . '_th.jpg';
-        if (file_exists($thumbPath) && unlink($thumbPath) !== true) {
-            throw new FilesystemErrorException('Could not delete file!');
-        }
+        $storageFs->delete($uploadArr['long_name'] . '_th.jpg');
         // now delete file from filesystem
-        $filePath = $this->getUploadsPath() . $uploadArr['long_name'];
-        if (file_exists($filePath) && unlink($filePath) !== true) {
-            throw new FilesystemErrorException('Could not delete file!');
-        }
+        $storageFs->delete($uploadArr['long_name']);
 
         // Delete SQL entry (and verify the type)
         // to avoid someone deleting files saying it's DB whereas it's exp

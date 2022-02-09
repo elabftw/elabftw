@@ -26,7 +26,6 @@ fs.readFile('./src/node/grammar/queryGrammar.pegjs', 'utf8', (err, data) => {
         throw err;
       }
 
-      // php full parser
       fs.writeFile(
         './cache/advancedSearchQuery/Parser.php',
         peggy.generate(data.toString(), {
@@ -43,26 +42,6 @@ fs.readFile('./src/node/grammar/queryGrammar.pegjs', 'utf8', (err, data) => {
           }
         },
       );
-
-      // php parser without fields
-      const data1 = data.replace('  / Fields', '');
-      fs.writeFile(
-        './cache/advancedSearchQuery/ParserWithoutFields.php',
-        peggy.generate(data1.toString(), {
-          cache: true,
-          plugins: [phpeggy],
-          phpeggy: {
-            parserNamespace: 'Elabftw\\Services\\AdvancedSearchQuery\\Grammar',
-            parserClassName: 'ParserWithoutFields',
-          },
-        }),
-        err => {
-          if (err) {
-            throw err;
-          }
-        },
-      );
-
     },
   );
 });

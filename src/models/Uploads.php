@@ -28,6 +28,7 @@ use function file_exists;
 use function in_array;
 use function is_uploaded_file;
 use League\Flysystem\Filesystem;
+use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
 use function rename;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -66,12 +67,12 @@ class Uploads implements CrudInterface
     {
         $this->Entity->canOrExplode('write');
 
+        // original file name
         $realName = $params->getFilename();
-        $this->checkExtension($realName);
-        $ext = Tools::getExt($realName);
+        $ext = $this->getExtensionOrExplode($realName);
 
+        // name for the stored file, includes folder and extension (ab/ab34[...].ext)
         $longName = $this->getLongName() . '.' . $ext;
-
         $folder = substr($longName, 0, 2);
 
         // where our uploaded file lives
@@ -83,11 +84,29 @@ class Uploads implements CrudInterface
         $filesize = $sourceFs->filesize($tmpFilename);
         $hash = '';
         // we don't hash big files as this could take too much time/resources
+        // same with thumbnails
         if ($filesize < self::BIG_FILE_THRESHOLD) {
-            $hash = $this->getHash($sourceFs->read(basename($params->getFilePath())));
+            // read the file
+            $fileContent = $sourceFs->read($tmpFilename);
+            // get a hash sum
+            $hash = $this->getHash($fileContent);
+            // get a thumbnail
+            // if the mimetype fails, do nothing
+            try {
+                $mime = $sourceFs->mimeType($tmpFilename);
+                $MakeThumbnail = new MakeThumbnail($mime, $fileContent, $longName);
+                if (!$storageFs->fileExists($MakeThumbnail->thumbFilename)) {
+                    $thumbnailContent = $MakeThumbnail->makeThumb();
+                    if ($thumbnailContent !== null) {
+                        // save thumbnail
+                        $storageFs->write($MakeThumbnail->thumbFilename, $thumbnailContent);
+                    }
+                }
+            } catch (UnableToRetrieveMetadata $e) {
+            }
         }
         // read the file as a stream so we can copy it
-        $inputStream = $sourceFs->readStream(basename($params->getFilePath()));
+        $inputStream = $sourceFs->readStream($tmpFilename);
 
         $storageFs->createDirectory($folder);
         $storageFs->writeStream($longName, $inputStream);
@@ -95,15 +114,7 @@ class Uploads implements CrudInterface
         // final sql
         $id = $this->dbInsert($realName, $longName, $hash, $filesize, $params->getStorage(), $params->getComment());
 
-        // TODO for s3 too
-        // TODO send content instead of path? send ext and returns content too?
-        /*
-        if ($storage === self::STORAGE_LOCAL) {
-            $MakeThumbnail = new MakeThumbnail('/tmp/' . $tmpFilename);
-            $MakeThumbnail->makeThumb();
-        }
-         */
-
+        // TODO useful?
         $sourceFs->delete($params->getFilePath());
 
         return $id;
@@ -148,11 +159,11 @@ class Uploads implements CrudInterface
             $filesize = null;
         }
 
-        $uploadId = $this->dbInsert($realName, $longName, $this->getHash($fullPath), 1, $filesize);
+        return $this->dbInsert($realName, $longName, $this->getHash($fullPath), 1, $filesize);
+        /*
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb();
-
-        return $uploadId;
+         */
     }
 
     /**
@@ -257,8 +268,10 @@ class Uploads implements CrudInterface
         $upload = $this->read(new ContentParams());
         $fullPath = $this->getUploadsPath() . $upload['long_name'];
         $this->moveUploadedFile($file->getPathname(), $fullPath);
+        /*
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb(true);
+         */
 
         $sql = 'UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE id = :id';
         $req = $this->Db->prepare($sql);
@@ -303,11 +316,13 @@ class Uploads implements CrudInterface
      *
      * @param string $realName The name of the file
      */
-    private function checkExtension(string $realName): void
+    private function getExtensionOrExplode(string $realName): string
     {
-        if (Tools::getExt($realName) === 'php') {
+        $ext = Tools::getExt($realName);
+        if ($ext === 'php') {
             throw new ImproperActionException('PHP files are forbidden!');
         }
+        return $ext;
     }
 
     /**

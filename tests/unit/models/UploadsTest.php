@@ -26,14 +26,19 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     {
         $params = $this->createMock(CreateUpload::class);
         // this would be the real name of the file uploaded by user
-        $params->method('getFilename')->willReturn('test-file.txt');
+        $params->method('getFilename')->willReturn('test-file.zip');
         // and this corresponds to the temporary file created after upload
         $tmpFilePath = '/tmp/phpELABFTW';
         $params->method('getFilePath')->willReturn($tmpFilePath);
         $fs = new Filesystem(new InMemoryFilesystemAdapter());
         // write our temporary file as if it was uploaded by a user
         $fs->createDirectory('tmp');
-        $fs->write(basename($tmpFilePath), 'file content :)');
+        // a txt file was failing the mime type, so use a zip
+        $fileContents = file_get_contents(dirname(__DIR__, 2) . '/_data/example.zip');
+        if ($fileContents === false) {
+            $fileContents = 'BLAH';
+        }
+        $fs->write(basename($tmpFilePath), $fileContents);
         // we use the same fs for source and storage because it's all in memory anyway
         $params->method('getSourceFs')->willReturn($fs);
         $params->method('getStorageFs')->willReturn($fs);

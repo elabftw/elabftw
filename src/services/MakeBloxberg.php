@@ -12,9 +12,11 @@ namespace Elabftw\Services;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Config;
 use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -138,11 +140,25 @@ class MakeBloxberg extends AbstractMake
         $zipFile = $this->Entity->Uploads->read(new ContentParams());
         // add the timestamped pdf to the zip archive
         $ZipArchive = new ZipArchive();
-        $res = $ZipArchive->open($this->getUploadsPath() . $zipFile['long_name']);
+        // TODO read file from storagefs, save it in memory, do the zip stuff, and reupload it
+        $Config = Config::getConfig();
+        $storage = (int) $Config->configArr['uploads_storage'];
+        $StorageManager = new StorageManager($storage);
+        $storageFs = $StorageManager->getStorageFs();
+        $zipStream = $storageFs->readStream($zipFile['long_name']);
+
+        $tmpFilePath = FsTools::getCacheFile();
+        $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
+        $tmpFilePathFs->writeStream(basename($tmpFilePath), $zipStream);
+
+        $res = $ZipArchive->open($tmpFilePath);
         if ($res !== true) {
             throw new FilesystemErrorException('Error opening the zip archive!');
         }
         $ZipArchive->addFromString('timestamped-data.pdf', $pdf);
-        return $ZipArchive->close();
+        $ZipArchive->close();
+
+        $storageFs->write($zipFile['long_name'], $tmpFilePathFs->read(basename($tmpFilePath)));
+        return true;
     }
 }

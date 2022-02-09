@@ -208,12 +208,9 @@ try {
 
     // CREATE UPLOAD
     if ($Request->request->has('upload')) {
-        $Config = Config::getConfig();
-        $storage = (int) $Config->configArr['uploads_storage'];
-
         $realName = $Request->files->get('file')->getClientOriginalName();
         $filePath = $Request->files->get('file')->getPathname();
-        $Entity->Uploads->create(new CreateUpload($realName, $filePath, $storage));
+        $Entity->Uploads->create(new CreateUpload($realName, $filePath));
     }
 
     // ADD MOL FILE OR PNG

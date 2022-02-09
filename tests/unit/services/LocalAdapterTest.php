@@ -11,7 +11,7 @@ namespace Elabftw\Services;
 
 use League\Flysystem\FilesystemAdapter;
 
-class LocalAdaterTest extends \PHPUnit\Framework\TestCase
+class LocalAdapterTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetAdapter(): void
     {

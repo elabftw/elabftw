@@ -1,18 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2012, 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
 use function copy;
 use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -22,6 +23,7 @@ use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\UploadParamsInterface;
 use Elabftw\Services\MakeThumbnail;
+use Elabftw\Services\StorageManager;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\UploadTrait;
 use function file_exists;
@@ -31,6 +33,7 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
 use function rename;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use function unlink;
@@ -78,7 +81,10 @@ class Uploads implements CrudInterface
         // where our uploaded file lives
         $sourceFs = $params->getSourceFs();
         // where we want to store it
-        $storageFs = $params->getStorageFs();
+        $Config = Config::getConfig();
+        $storage = (int) $Config->configArr['uploads_storage'];
+        $StorageManager = new StorageManager($storage);
+        $storageFs = $StorageManager->getStorageFs();
 
         $tmpFilename = basename($params->getFilePath());
         $filesize = $sourceFs->filesize($tmpFilename);
@@ -113,7 +119,7 @@ class Uploads implements CrudInterface
         $storageFs->writeStream($longName, $inputStream);
 
         // final sql
-        $id = $this->dbInsert($realName, $longName, $hash, $filesize, $params->getStorage(), $params->getComment());
+        $id = $this->dbInsert($realName, $longName, $hash, $filesize, $StorageManager->storage, $params->getComment());
 
         // TODO useful?
         $sourceFs->delete($params->getFilePath());
@@ -123,10 +129,6 @@ class Uploads implements CrudInterface
 
     /**
      * Create an upload from a string, from Chemdoodle or Doodle
-     *
-     * @param string $fileType 'mol' or 'png'
-     * @param string $realName name of the file
-     * @param string $content content of the file
      */
     public function createFromString(string $fileType, string $realName, string $content): int
     {
@@ -141,30 +143,22 @@ class Uploads implements CrudInterface
             // get the image in binary
             $content = str_replace(array('data:image/png;base64,', ' '), array('', '+'), $content);
             $content = base64_decode($content, true);
+            if ($content === false) {
+                throw new RuntimeException('Could not decode content!');
+            }
         }
 
-        // make sure the file has a name
-        if (empty($realName)) {
-            $realName = 'untitled';
+        // add file extension if it wasn't provided
+        if (Tools::getExt($realName) === 'unknown') {
+            $realName .= '.' . $fileType;
         }
+        // create a temporary file so we can upload it using create()
+        $tmpFilePath = FsTools::getCacheFile();
+        $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
+        $tmpFilePathFs->write(basename($tmpFilePath), $content);
 
-        $realName = filter_var($realName, FILTER_SANITIZE_STRING) . '.' . $fileType;
-        $longName = $this->getLongName() . '.' . $fileType;
-        $fullPath = $this->getUploadsPath() . $longName;
-
-        if (!empty($content) && !file_put_contents($fullPath, $content)) {
-            throw new FilesystemErrorException('Could not write to file!');
-        }
-        $filesize = filesize($fullPath);
-        if (!is_int($filesize)) {
-            $filesize = null;
-        }
-
-        return $this->dbInsert($realName, $longName, $this->getHash($fullPath), 1, $filesize);
-        /*
-        $MakeThumbnail = new MakeThumbnail($fullPath);
-        $MakeThumbnail->makeThumb();
-         */
+        $params = new CreateUpload($realName, $tmpFilePath);
+        return $this->create($params);
     }
 
     /**

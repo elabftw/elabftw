@@ -25,7 +25,6 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractCategory;
 use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
@@ -1062,10 +1061,8 @@ class ApiController implements ControllerInterface
     {
         $realName = $this->Request->files->get('file')->getClientOriginalName();
         $filePath = $this->Request->files->get('file')->getPathname();
-        $Config = Config::getConfig();
-        $storage = (int) $Config->configArr['uploads_storage'];
 
-        $id = $this->Entity->Uploads->create(new CreateUpload($realName, $filePath, $storage));
+        $id = $this->Entity->Uploads->create(new CreateUpload($realName, $filePath));
 
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }

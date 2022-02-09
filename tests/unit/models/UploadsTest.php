@@ -41,7 +41,6 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $fs->write(basename($tmpFilePath), $fileContents);
         // we use the same fs for source and storage because it's all in memory anyway
         $params->method('getSourceFs')->willReturn($fs);
-        $params->method('getStorageFs')->willReturn($fs);
 
         $Uploads = new Uploads($this->Entity);
         $Uploads->create($params);
@@ -62,7 +61,6 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $fs->write(basename($tmpFilePath), 'blah');
         // we use the same fs for source and storage because it's all in memory anyway
         $params->method('getSourceFs')->willReturn($fs);
-        $params->method('getStorageFs')->willReturn($fs);
 
         $Uploads = new Uploads($this->Entity);
         $Uploads->create($params);

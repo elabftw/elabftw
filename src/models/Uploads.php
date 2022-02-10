@@ -115,7 +115,7 @@ class Uploads implements CrudInterface
         $storageFs->writeStream($longName, $inputStream);
 
         // final sql
-        $id = $this->dbInsert($realName, $longName, $hash, $filesize, $StorageManager->storage, $params->getComment());
+        $id = $this->dbInsert($realName, $longName, $hash, $filesize, $storage, $params->getComment());
 
         // TODO useful?
         $sourceFs->delete($params->getFilePath());

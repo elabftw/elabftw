@@ -13,6 +13,7 @@ use function count;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use function json_encode;
@@ -86,32 +87,6 @@ class MakeStreamZip extends AbstractMake
     }
 
     /**
-     * Add the .asn1 token and the timestamped pdf to the zip archive
-     *
-     * @param int $id The id of current item we are zipping
-     */
-    private function addTimestampFiles(int $id): void
-    {
-        if ($this->Entity instanceof Experiments && $this->Entity->entityData['timestamped']) {
-            // SQL to get the path of the token
-            $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND (
-                type = 'timestamp-token'
-                OR type = 'exp-pdf-timestamp') LIMIT 2";
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':id', $id, PDO::PARAM_INT);
-            $req->execute();
-            $uploads = $this->Db->fetchAll($req);
-            foreach ($uploads as $upload) {
-                // add it to the .zip
-                $this->Zip->addFileFromPath(
-                    $this->folder . '/' . $upload['real_name'],
-                    $this->getUploadsPath() . $upload['long_name']
-                );
-            }
-        }
-    }
-
-    /**
      * Folder and zip file name begins with date for experiments
      */
     private function getBaseFileName(): string
@@ -134,6 +109,10 @@ class MakeStreamZip extends AbstractMake
     {
         $real_names_so_far = array();
         $i = 0;
+        $Config = Config::getConfig();
+        $storage = (int) $Config->configArr['uploads_storage'];
+        $StorageManager = new StorageManager($storage);
+        $storageFs = $StorageManager->getStorageFs();
         foreach ($filesArr as $file) {
             $i++;
             $realName = $file['real_name'];
@@ -144,7 +123,40 @@ class MakeStreamZip extends AbstractMake
             $real_names_so_far[] = $realName;
 
             // add files to archive
-            $this->Zip->addFileFromPath($this->folder . '/' . $realName, $this->getUploadsPath() . $file['long_name']);
+            $this->Zip->addFileFromStream($this->folder . '/' . $realName, $storageFs->readStream($file['long_name']));
+        }
+    }
+
+    /**
+     * Add the .asn1 token and the timestamped pdf to the zip archive
+     *
+     * TODO this is duplicated in MakeBackupZip, and this could simply be merged in addAttachedFiles
+     * maybe when timestamped uploads are not treated specially this could be easier, with the readAll including these files already
+     * @param int $id The id of current item we are zipping
+     */
+    private function addTimestampFiles(int $id): void
+    {
+        if ($this->Entity instanceof Experiments && $this->Entity->entityData['timestamped']) {
+            $Config = Config::getConfig();
+            $storage = (int) $Config->configArr['uploads_storage'];
+            $StorageManager = new StorageManager($storage);
+            $storageFs = $StorageManager->getStorageFs();
+
+            // SQL to get the path of the token
+            $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND (
+                type = 'timestamp-token'
+                OR type = 'exp-pdf-timestamp') LIMIT 2";
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':id', $id, PDO::PARAM_INT);
+            $req->execute();
+            $uploads = $this->Db->fetchAll($req);
+            foreach ($uploads as $upload) {
+                // add it to the .zip
+                $this->Zip->addFileFromStream(
+                    $this->folder . '/' . $upload['real_name'],
+                    $storageFs->readStream($upload['long_name']),
+                );
+            }
         }
     }
 
@@ -186,7 +198,7 @@ class MakeStreamZip extends AbstractMake
         $this->Entity->setId($id);
         $permissions = $this->Entity->getPermissions();
         if ($permissions['read']) {
-            $uploadedFilesArr = $this->Entity->Uploads->readAll();
+            $uploadedFilesArr = $this->Entity->Uploads->readAllNormal();
             $entityArr = $this->Entity->entityData;
             // save the uploads in entityArr for the json file
             $entityArr['uploads'] = $uploadedFilesArr;

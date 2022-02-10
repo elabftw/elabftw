@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,12 +6,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use PDO;
@@ -83,32 +83,6 @@ class MakeBackupZip extends AbstractMake
     }
 
     /**
-     * Add the .asn1 token and the timestamped pdf to the zip archive
-     *
-     * @param int $id The id of current item we are zipping
-     */
-    private function addTimestampFiles(int $id): void
-    {
-        if ($this->Entity instanceof Experiments && $this->Entity->entityData['timestamped']) {
-            // SQL to get the path of the token
-            $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND (
-                type = 'timestamp-token'
-                OR type = 'exp-pdf-timestamp') LIMIT 2";
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':id', $id, PDO::PARAM_INT);
-            $req->execute();
-            $uploads = $this->Db->fetchAll($req);
-            foreach ($uploads as $upload) {
-                // add it to the .zip
-                $this->Zip->addFileFromPath(
-                    $this->folder . '/' . $upload['real_name'],
-                    $this->getUploadsPath() . $upload['long_name']
-                );
-            }
-        }
-    }
-
-    /**
      * Folder and zip file name begins with date for experiments
      */
     private function getBaseFileName(): string
@@ -123,6 +97,37 @@ class MakeBackupZip extends AbstractMake
     }
 
     /**
+     * Add the .asn1 token and the timestamped pdf to the zip archive
+     *
+     * @param int $id The id of current item we are zipping
+     */
+    private function addTimestampFiles(int $id): void
+    {
+        if ($this->Entity instanceof Experiments && $this->Entity->entityData['timestamped']) {
+            $Config = Config::getConfig();
+            $storage = (int) $Config->configArr['uploads_storage'];
+            $StorageManager = new StorageManager($storage);
+            $storageFs = $StorageManager->getStorageFs();
+
+            // SQL to get the path of the token
+            $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND (
+                type = 'timestamp-token'
+                OR type = 'exp-pdf-timestamp') LIMIT 2";
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':id', $id, PDO::PARAM_INT);
+            $req->execute();
+            $uploads = $this->Db->fetchAll($req);
+            foreach ($uploads as $upload) {
+                // add it to the .zip
+                $this->Zip->addFileFromStream(
+                    $this->folder . '/' . $upload['real_name'],
+                    $storageFs->readStream($upload['long_name']),
+                );
+            }
+        }
+    }
+
+    /**
      * Add attached files
      *
      * @param array<array-key, array<string, string>> $filesArr the files array
@@ -131,6 +136,10 @@ class MakeBackupZip extends AbstractMake
     {
         $real_names_so_far = array();
         $i = 0;
+        $Config = Config::getConfig();
+        $storage = (int) $Config->configArr['uploads_storage'];
+        $StorageManager = new StorageManager($storage);
+        $storageFs = $StorageManager->getStorageFs();
         foreach ($filesArr as $file) {
             $i++;
             $realName = $file['real_name'];
@@ -141,7 +150,7 @@ class MakeBackupZip extends AbstractMake
             $real_names_so_far[] = $realName;
 
             // add files to archive
-            $this->Zip->addFileFromPath($this->folder . '/' . $realName, $this->getUploadsPath() . $file['long_name']);
+            $this->Zip->addFileFromStream($this->folder . '/' . $realName, $storageFs->readStream($file['long_name']));
         }
     }
 
@@ -173,7 +182,7 @@ class MakeBackupZip extends AbstractMake
         $this->Entity->bypassReadPermission = true;
         $this->Entity->setId($id);
         $this->Entity->populate();
-        $uploadedFilesArr = $this->Entity->Uploads->readAll();
+        $uploadedFilesArr = $this->Entity->Uploads->readAllNormal();
         $this->folder = Filter::forFilesystem($fullname) . '/' . $this->getBaseFileName();
 
         $this->addTimestampFiles($id);

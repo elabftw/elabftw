@@ -22,13 +22,13 @@ use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
  */
 class StorageManager
 {
-    private const STORAGE_LOCAL = 1;
+    public const STORAGE_LOCAL = 1;
 
-    private const STORAGE_S3 = 2;
+    public const STORAGE_S3 = 2;
 
-    private const STORAGE_MEMORY = 3;
+    public const STORAGE_MEMORY = 3;
 
-    public function __construct(public int $storage)
+    public function __construct(private int $storage)
     {
     }
 

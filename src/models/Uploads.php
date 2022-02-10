@@ -15,6 +15,7 @@ use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Elabftw\UploadParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
@@ -246,7 +247,7 @@ class Uploads implements CrudInterface
         $StorageManager = new StorageManager($storage);
         $storageFs = $StorageManager->getStorageFs();
 
-        // remove thumbnail
+        // remove possibly existing thumbnail
         $storageFs->delete($uploadArr['long_name'] . '_th.jpg');
         // now delete file from filesystem
         $storageFs->delete($uploadArr['long_name']);
@@ -271,12 +272,7 @@ class Uploads implements CrudInterface
         $params = new CreateUpload($upload['real_name'], $file->getPathname(), $upload['comment']);
         $this->create($params);
 
-        // now make the old one disappear
-        $sql = 'UPDATE uploads SET state = :state WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindValue(':state', self::STATE_ARCHIVED, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        return $this->update(new UploadParams((string) self::STATE_ARCHIVED, 'state'));
     }
 
     /**

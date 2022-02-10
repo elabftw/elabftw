@@ -46,9 +46,8 @@ class MakePdf extends AbstractMake implements FileMakerInterface
      * Constructor
      *
      * @param AbstractEntity $entity Experiments or Database
-     * @param bool $temporary do we need to save it in cache folder or uploads folder
      */
-    public function __construct(MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, $temporary = false)
+    public function __construct(MpdfProviderInterface $mpdfProvider, AbstractEntity $entity)
     {
         parent::__construct($entity);
 
@@ -58,24 +57,10 @@ class MakePdf extends AbstractMake implements FileMakerInterface
         $this->mpdf->SetTitle($this->Entity->entityData['title']);
         $this->mpdf->SetKeywords(str_replace('|', ' ', $this->Entity->entityData['tags'] ?? ''));
 
-        if ($temporary) {
-            $this->filePath = FsTools::getCacheFile();
-        } else {
-            $this->filePath = $this->getUploadsPath() . $this->longName;
-        }
-
         // suppress the "A non-numeric value encountered" error from mpdf
         // see https://github.com/baselbers/mpdf/commit
         // 5cbaff4303604247f698afc6b13a51987a58f5bc#commitcomment-23217652
         error_reporting(E_ERROR);
-    }
-
-    /**
-     * Generate pdf and output it to a file
-     */
-    public function outputToFile(): void
-    {
-        $this->generate()->Output($this->filePath, 'F');
     }
 
     /**
@@ -215,7 +200,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
      */
     private function getAttachedPdfs(): array
     {
-        $uploadsArr = $this->Entity->Uploads->readAll();
+        $uploadsArr = $this->Entity->Uploads->readAllNormal();
         $listOfPdfs = array();
 
         if (empty($uploadsArr)) {

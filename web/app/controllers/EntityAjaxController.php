@@ -171,15 +171,19 @@ try {
             $Maker = new MakeTimestamp($config, $Entity);
         }
 
-        $dataPath = $Maker->generatePdf();
+        $pdfBlob = $Maker->generatePdf();
+        $pdfPath = FsTools::getCacheFile();
+        $cacheFs = FsTools::getCacheFs();
+        $cacheFs->write(basename($pdfPath), $pdfBlob);
         $TimestampUtils = new TimestampUtils(
             new Client(),
-            $dataPath,
+            $pdfPath,
             $Maker->getTimestampParameters(),
-            new TimestampResponse(),
+            new TimestampResponse($pdfPath),
         );
         $tsResponse = $TimestampUtils->timestamp();
         $Maker->saveTimestamp($tsResponse);
+        $cacheFs->delete($pdfPath);
     }
 
     // BLOXBERG

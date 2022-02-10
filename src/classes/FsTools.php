@@ -61,6 +61,11 @@ class FsTools
         return new Filesystem(new LocalFilesystemAdapter($path));
     }
 
+    public static function getCacheFs(): FilesystemOperator
+    {
+        return self::getFs(self::getCacheFolder('elab'));
+    }
+
     private static function getCachePath(): string
     {
         return dirname(__DIR__, 2) . '/cache/';

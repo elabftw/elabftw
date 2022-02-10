@@ -25,9 +25,6 @@ class MakeBackupZip extends AbstractMake
 {
     private ZipStream $Zip;
 
-    // files to be deleted by destructor
-    private array $trash = array();
-
     private string $folder = '';
 
     /**
@@ -45,16 +42,6 @@ class MakeBackupZip extends AbstractMake
         $opt = new ArchiveOptions();
         $opt->setFlushOutput(true);
         $this->Zip = new ZipStream(null, $opt);
-    }
-
-    /**
-     * Clean up the temporary files (csv and pdf)
-     */
-    public function __destruct()
-    {
-        foreach ($this->trash as $file) {
-            unlink($file);
-        }
     }
 
     /**
@@ -165,10 +152,8 @@ class MakeBackupZip extends AbstractMake
             $userData['pdf_format'],
             (bool) $userData['pdfa'],
         );
-        $MakePdf = new MakePdf($MpdfProvider, $this->Entity, true);
-        $MakePdf->outputToFile();
-        $this->Zip->addFileFromPath($this->folder . '/' . $MakePdf->getFileName(), $MakePdf->filePath);
-        $this->trash[] = $MakePdf->filePath;
+        $MakePdf = new MakePdf($MpdfProvider, $this->Entity);
+        $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $MakePdf->getFileContent());
     }
 
     /**

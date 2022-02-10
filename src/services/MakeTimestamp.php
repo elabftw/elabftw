@@ -10,8 +10,11 @@
 
 namespace Elabftw\Services;
 
+use ZipArchive;
+use Elabftw\Elabftw\FsTools;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\TimestampResponseInterface;
 use Elabftw\Models\Config;
@@ -35,12 +38,6 @@ class MakeTimestamp extends AbstractMake
     /** @var Experiments $Entity */
     protected $Entity;
 
-    // name of the pdf (elabid-timestamped.pdf)
-    private string $pdfRealName = '';
-
-    // a random long string
-    private string $pdfLongName = '';
-
     // config (url, login, password, cert)
     private array $stampParams = array();
 
@@ -51,28 +48,33 @@ class MakeTimestamp extends AbstractMake
 
         // stampParams contains login/pass/cert/url/hash information
         $this->stampParams = $this->getTimestampParameters();
-
-        // set the name of the pdf (elabid + -timestamped.pdf)
-        $this->pdfRealName = $this->getFileName();
     }
 
-    /**
-     * The realname is $elabid-timestamped.pdf
-     */
     public function getFileName(): string
     {
-        return $this->Entity->entityData['elabid'] . '-timestamped.pdf';
+        return 'TODO:remove';
     }
 
     public function saveTimestamp(TimestampResponseInterface $tsResponse): bool
     {
-        // keep track of the asn1 toke ni the db
-        $this->sqlInsertToken($tsResponse);
+        // 20220210171842-timestamp.pdf
+        $pdfName = date('YmdHis') . '-timestamp.pdf';
+        $tokenName = str_replace('pdf', 'asn1', $pdfName);
+        $zipName = str_replace('pdf', 'zip', $pdfName);
 
         // SQL
         $responseTime = $this->formatResponseTime($tsResponse->getTimestampFromResponseFile());
-        $this->Entity->updateTimestamp($responseTime, $tsResponse->getTokenName());
-        return $this->sqlInsertPdf();
+        $this->Entity->updateTimestamp($responseTime);
+
+        // create a zip archive with the timestamped pdf and the asn1 token
+        $zipPath = FsTools::getCacheFile() . '.zip';
+        $ZipArchive = new ZipArchive();
+        $ZipArchive->open($zipPath, ZipArchive::CREATE);
+        $ZipArchive->addFile($tsResponse->getPdfPath(), $pdfName);
+        $ZipArchive->addFile($tsResponse->getTokenPath(), $tokenName);
+        $ZipArchive->close();
+        $this->Entity->Uploads->create(new CreateUpload($zipName, $zipPath, _('Timestamp archive')));
+        return true;
     }
 
     /**
@@ -120,10 +122,7 @@ class MakeTimestamp extends AbstractMake
             (bool) $userData['pdfa'],
         );
         $MakePdf = new MakePdf($MpdfProvider, $this->Entity);
-        $MakePdf->outputToFile();
-        $this->pdfPath = $MakePdf->filePath;
-        $this->pdfLongName = $MakePdf->longName;
-        return $this->pdfPath;
+        return $MakePdf->getFileContent();
     }
 
     /**
@@ -136,67 +135,5 @@ class MakeTimestamp extends AbstractMake
             throw new ImproperActionException('Could not get response time!');
         }
         return date('Y-m-d H:i:s', $time);
-    }
-
-    /**
-     * Get the hash of a file
-     *
-     * @param string $file Path to the file
-     * @throws ImproperActionException if file is not readable
-     * @return string Hash of the file
-     */
-    private function getHash($file): string
-    {
-        $hash = hash_file($this->stampParams['ts_hash'], $file);
-        if ($hash === false) {
-            throw new ImproperActionException('The file is not readable.');
-        }
-        return $hash;
-    }
-
-    /**
-     * Save the binaryToken to a .asn1 file
-     */
-    private function sqlInsertToken(TimestampResponseInterface $tsResponse): bool
-    {
-        $realName = $this->pdfRealName . '.asn1';
-        $hash = $this->getHash($tsResponse->getTokenPath());
-
-        // keep a trace of where we put the token
-        $sql = 'INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, hash, hash_algorithm)
-            VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :hash, :hash_algorithm)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':real_name', $realName);
-        $req->bindValue(':long_name', $tsResponse->getTokenName());
-        $req->bindValue(':comment', 'Timestamp token');
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindValue(':type', 'timestamp-token');
-        $req->bindParam(':hash', $hash);
-        $req->bindParam(':hash_algorithm', $this->stampParams['ts_hash']);
-        return $this->Db->execute($req);
-    }
-
-    /**
-     * Add also our pdf to the attached files of the experiment, this way it is kept safely :)
-     * I had this idea when realizing that if you comment an experiment, the hash won't be good anymore. Because the pdf will contain the new comments.
-     * Keeping the pdf here is the best way to go, as this leaves room to leave comments.
-     */
-    private function sqlInsertPdf(): bool
-    {
-        $hash = $this->getHash($this->pdfPath);
-
-        $sql = 'INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, hash, hash_algorithm) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :hash, :hash_algorithm)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':real_name', $this->pdfRealName);
-        $req->bindParam(':long_name', $this->pdfLongName);
-        $req->bindValue(':comment', 'Timestamped PDF');
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindValue(':type', 'exp-pdf-timestamp');
-        $req->bindParam(':hash', $hash);
-        $req->bindParam(':hash_algorithm', $this->stampParams['hash']);
-
-        return $this->Db->execute($req);
     }
 }

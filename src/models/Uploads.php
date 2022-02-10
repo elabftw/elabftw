@@ -126,11 +126,11 @@ class Uploads implements CrudInterface
     /**
      * Create an upload from a string, from Chemdoodle or Doodle
      */
-    public function createFromString(string $fileType, string $realName, string $content): int
+    public function createFromString(string $fileType, string $realName, string $content, ?string $comment = null): int
     {
         $this->Entity->canOrExplode('write');
 
-        $allowedFileTypes = array('png', 'mol', 'json', 'zip');
+        $allowedFileTypes = array('pdf', 'png', 'mol', 'json', 'zip');
         if (!in_array($fileType, $allowedFileTypes, true)) {
             throw new IllegalActionException('Bad filetype!');
         }
@@ -153,7 +153,7 @@ class Uploads implements CrudInterface
         $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
         $tmpFilePathFs->write(basename($tmpFilePath), $content);
 
-        $params = new CreateUpload($realName, $tmpFilePath);
+        $params = new CreateUpload($realName, $tmpFilePath, $comment);
         return $this->create($params);
     }
 

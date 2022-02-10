@@ -64,13 +64,11 @@ class TimestampUtils
 
     private function saveToken(StreamInterface $binaryToken): void
     {
-        $longName = $this->getLongName() . '.asn1';
-        $filePath = $this->getUploadsPath() . $longName;
-        $fs = new Filesystem(new LocalFilesystemAdapter($this->getUploadsPath()));
-        $fs->write($longName, $binaryToken->getContents());
+        $filePath = FsTools::getCacheFile() . '.asn1';
+        $cacheFs = FsTools::getCacheFs();
+        $cacheFs->write(basename($filePath), $binaryToken->getContents());
 
         $this->tsResponse->setTokenPath($filePath);
-        $this->tsResponse->setTokenName($longName);
     }
 
     /**

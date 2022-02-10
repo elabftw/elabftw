@@ -13,11 +13,9 @@ interface TimestampResponseInterface
 {
     public function getTimestampFromResponseFile(): string;
 
-    public function getTokenName(): string;
-
     public function getTokenPath(): string;
 
-    public function setTokenName(string $tokenName): void;
+    public function getPdfPath(): string;
 
     public function setTokenPath(string $tokenPath): void;
 }

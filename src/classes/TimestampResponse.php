@@ -22,7 +22,9 @@ class TimestampResponse implements TimestampResponseInterface
 
     private string $tokenPath = '';
 
-    private string $tokenName = '';
+    public function __construct(private string $pdfPath)
+    {
+    }
 
     public function getTimestampFromResponseFile(): string
     {
@@ -73,14 +75,9 @@ class TimestampResponse implements TimestampResponseInterface
         throw new ImproperActionException('Could not get response time!');
     }
 
-    public function getTokenName(): string
+    public function getPdfPath(): string
     {
-        return $this->tokenName;
-    }
-
-    public function setTokenName(string $tokenName): void
-    {
-        $this->tokenName = $tokenName;
+        return $this->pdfPath;
     }
 
     public function getTokenPath(): string

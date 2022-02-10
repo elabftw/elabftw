@@ -27,9 +27,6 @@ class MakeStreamZip extends AbstractMake
 {
     private ZipStream $Zip;
 
-    // files to be deleted by destructor
-    private array $trash = array();
-
     private string $folder = '';
 
     // array that will be converted to json
@@ -45,16 +42,6 @@ class MakeStreamZip extends AbstractMake
         }
 
         $this->Zip = new ZipStream();
-    }
-
-    /**
-     * Clean up the temporary files (csv and pdf)
-     */
-    public function __destruct()
-    {
-        foreach ($this->trash as $file) {
-            unlink($file);
-        }
     }
 
     /**
@@ -171,10 +158,8 @@ class MakeStreamZip extends AbstractMake
             $userData['pdf_format'],
             (bool) $userData['pdfa'],
         );
-        $MakePdf = new MakePdf($MpdfProvider, $this->Entity, true);
-        $MakePdf->outputToFile();
-        $this->Zip->addFileFromPath($this->folder . '/' . $MakePdf->getFileName(), $MakePdf->filePath);
-        $this->trash[] = $MakePdf->filePath;
+        $MakePdf = new MakePdf($MpdfProvider, $this->Entity);
+        $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $MakePdf->getFileContent());
     }
 
     /**

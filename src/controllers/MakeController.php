@@ -105,7 +105,7 @@ class MakeController implements ControllerInterface
     {
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
         $this->Entity->canOrExplode('read');
-        return $this->getFileResponse(new MakePdf($this->getMpdfProvider(), $this->Entity, true));
+        return $this->getFileResponse(new MakePdf($this->getMpdfProvider(), $this->Entity));
     }
 
     private function makeMultiPdf(): Response

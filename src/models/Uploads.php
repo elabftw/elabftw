@@ -27,7 +27,6 @@ use Elabftw\Services\StorageManager;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\UploadTrait;
 use function in_array;
-use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
 use RuntimeException;
@@ -48,6 +47,8 @@ class Uploads implements CrudInterface
     private const STATE_NORMAL = 1;
 
     private const STATE_ARCHIVED = 2;
+
+    private const STATE_DELETED = 3;
 
     protected Db $Db;
 
@@ -233,32 +234,19 @@ class Uploads implements CrudInterface
         $uploadArr = $this->readAll();
 
         foreach ($uploadArr as $upload) {
-            (new self($this->Entity, (int) $upload['id']))->nuke();
+            $this->setId((int) $upload['id']);
+            $this->nuke();
         }
     }
 
+    /**
+     * This function will not remove the files but set them to "deleted" state
+     * A manual purge must be made by sysadmin if they wish to really remove them.
+     */
     private function nuke(): bool
     {
         $this->Entity->canOrExplode('write');
-        $uploadArr = $this->read(new ContentParams());
-
-        $Config = Config::getConfig();
-        $storage = (int) $Config->configArr['uploads_storage'];
-        $StorageManager = new StorageManager($storage);
-        $storageFs = $StorageManager->getStorageFs();
-
-        // remove possibly existing thumbnail
-        $storageFs->delete($uploadArr['long_name'] . '_th.jpg');
-        // now delete file from filesystem
-        $storageFs->delete($uploadArr['long_name']);
-
-        // Delete SQL entry (and verify the type)
-        // to avoid someone deleting files saying it's DB whereas it's exp
-        $sql = 'DELETE FROM uploads WHERE id = :id AND type = :type';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
-        return $this->Db->execute($req);
+        return $this->update(new UploadParams((string) self::STATE_DELETED, 'state'));
     }
 
     /**

@@ -22,10 +22,6 @@ class TimestampResponse implements TimestampResponseInterface
 
     private string $tokenPath = '';
 
-    public function __construct()
-    {
-    }
-
     public function getTimestampFromResponseFile(): string
     {
         if (!is_readable($this->tokenPath)) {

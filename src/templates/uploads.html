@@ -145,7 +145,7 @@
               {% else %}
                 {{ (Entity.Uploads.getUploadsPath ~ upload.long_name)|filesize|formatBytes }}
               {% endif %}
-              - {{ upload.datetime }}
+              - {{ upload.created_at }}
             </span>
           </span>
         <br>

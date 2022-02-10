@@ -15,7 +15,6 @@ use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
@@ -27,15 +26,12 @@ use Elabftw\Services\StorageManager;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\UploadTrait;
 use function in_array;
-use function is_uploaded_file;
 use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
-use function rename;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
-use function unlink;
 
 /**
  * All about the file uploads
@@ -45,12 +41,12 @@ class Uploads implements CrudInterface
     use UploadTrait;
     use SetIdTrait;
 
-    public const STORAGE_LOCAL = 1;
-
-    public const STORAGE_S3 = 2;
-
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
     private const BIG_FILE_THRESHOLD = 50000000;
+
+    private const STATE_NORMAL = 1;
+
+    private const STATE_ARCHIVED = 2;
 
     protected Db $Db;
 
@@ -166,11 +162,13 @@ class Uploads implements CrudInterface
     public function read(ContentParamsInterface $params): array
     {
         if ($params->getTarget() === 'all') {
-            return $this->readAll();
+            return $this->readAllNormal();
         }
-        $sql = 'SELECT * FROM uploads WHERE id = :id';
+
+        $sql = 'SELECT * FROM uploads WHERE id = :id AND state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindValue(':state', self::STATE_NORMAL, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->Db->fetch($req);
     }
@@ -187,6 +185,14 @@ class Uploads implements CrudInterface
         $this->Db->execute($req);
 
         return $this->Db->fetchAll($req);
+    }
+
+    public function readAllNormal(): array
+    {
+        // we read all but only return the ones with normal state
+        return array_filter($this->readAll(), function ($u) {
+            return ((int) $u['state']) === self::STATE_NORMAL;
+        });
     }
 
     public function update(UploadParamsInterface $params): bool
@@ -222,6 +228,7 @@ class Uploads implements CrudInterface
      */
     public function destroyAll(): void
     {
+        // this will include the archived/deleted ones
         $uploadArr = $this->readAll();
 
         foreach ($uploadArr as $upload) {
@@ -254,46 +261,22 @@ class Uploads implements CrudInterface
     }
 
     /**
-     * Replace an uploaded file by another
+     * Attached files are immutable (change history is kept), so the current
+     * file gets its state changed to "archived" and a new one is added
      */
     private function replace(UploadedFile $file): bool
     {
+        // read the current one to get the real_name
         $upload = $this->read(new ContentParams());
-        $fullPath = $this->getUploadsPath() . $upload['long_name'];
-        $this->moveUploadedFile($file->getPathname(), $fullPath);
-        /*
-        $MakeThumbnail = new MakeThumbnail($fullPath);
-        $MakeThumbnail->makeThumb(true);
-         */
+        $params = new CreateUpload($upload['real_name'], $file->getPathname(), $upload['comment']);
+        $this->create($params);
 
-        $sql = 'UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE id = :id';
+        // now make the old one disappear
+        $sql = 'UPDATE uploads SET state = :state WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindValue(':state', self::STATE_ARCHIVED, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Move an uploaded file somewhere
-     */
-    private function moveUploadedFile(string $orig, string $dest): void
-    {
-        if (!is_uploaded_file($orig)) {
-            throw new IllegalActionException('Trying to move a file that has not been uploaded');
-        }
-        $this->moveFile($orig, $dest);
-    }
-
-    /**
-     * Place a file somewhere. We don't use rename() but rather copy/unlink to avoid issues with rename() across filesystems
-     */
-    private function moveFile(string $orig, string $dest): void
-    {
-        if (copy($orig, $dest) !== true) {
-            throw new FilesystemErrorException('Error while moving the file. Check folder permissions!');
-        }
-        if (unlink($orig) !== true) {
-            throw new FilesystemErrorException('Error deleting file!');
-        }
     }
 
     /**

@@ -677,11 +677,12 @@ CREATE TABLE `uploads` (
   `item_id` int(10) UNSIGNED DEFAULT NULL,
   `userid` text NOT NULL,
   `type` varchar(255) NOT NULL,
-  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `hash` varchar(128) DEFAULT NULL,
   `hash_algorithm` varchar(10) DEFAULT NULL,
-  `storage` int(10) NOT NULL DEFAULT 1,
+  `storage` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `filesize` int(10) UNSIGNED NULL DEFAULT NULL,
+  `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

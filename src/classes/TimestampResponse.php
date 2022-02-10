@@ -22,7 +22,7 @@ class TimestampResponse implements TimestampResponseInterface
 
     private string $tokenPath = '';
 
-    public function __construct(private string $pdfPath)
+    public function __construct()
     {
     }
 
@@ -73,11 +73,6 @@ class TimestampResponse implements TimestampResponseInterface
             }
         }
         throw new ImproperActionException('Could not get response time!');
-    }
-
-    public function getPdfPath(): string
-    {
-        return $this->pdfPath;
     }
 
     public function getTokenPath(): string

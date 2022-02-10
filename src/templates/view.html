@@ -14,7 +14,7 @@
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
         <p><i class='fas fa-exclamation-triangle'></i>
-          {{ 'Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?'|trans }}
+          {{ 'Depending on your configuration, timestamping can incur costs. Are you sure you want to do this?'|trans }}
         </p>
       </div>
       <div class='timestamp-error'></div>
@@ -37,13 +37,7 @@
 
 {% if Entity.entityData.timestamped %}
 <div class='alert alert-success'><i class='fas fa-info-circle'></i>
-  {{ 'Experiment was timestamped by %s on %s at %s'|trans|format(timestampInfo.timestamper.fullname, Entity.entityData.timestampedwhen|date('Y-m-d'), Entity.entityData.timestampedwhen|date('H:i:s'))|raw }}
-  <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.pdf.0.long_name }}'>
-    <span>{{ 'Download timestamped pdf'|trans }}</span><i class='fas fa-file-pdf'></i>
-  </a>
-  <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.token.0.long_name }}&name=token.asn1&forceDownload=true'>
-    <span>{{ 'Download token'|trans }}</span><i class='fas fa-download'></i>
-  </a>
+  {{ 'Experiment was timestamped by %s on %s at %s'|trans|format(timestamperFullname, Entity.entityData.timestampedwhen|date('Y-m-d'), Entity.entityData.timestampedwhen|date('H:i:s'))|raw }}
 </div>
 {% endif %}
 
@@ -113,8 +107,8 @@
       <input type='text' class='form-control' aria-label='{{ 'Share'|trans }}' id='shareLinkInput' value='' hidden />
     {% endif %}
 
-    <!-- show timestamp button if not timestamped already -->
-    {% if not Entity.entityData.timestamped and Entity.isTimestampable and Entity.type == 'experiments' and not App.Session.has('is_anon') %}
+    <!-- show timestamp button -->
+    {% if Entity.isTimestampable and Entity.type == 'experiments' and not App.Session.has('is_anon') %}
       <a href='#' class='elab-tooltip mr-1' data-action='toggle-modal' data-target='timestampModal'>
         <span>{{ 'Timestamp Experiment'|trans }}</span>
         <i title='{{ 'Timestamp Experiment'|trans }}' class='far fa-calendar-check fa-2x'></i>

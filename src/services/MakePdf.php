@@ -13,7 +13,6 @@ use function date;
 use DateTime;
 use function dirname;
 use Elabftw\Elabftw\ContentParams;
-use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;

@@ -123,16 +123,13 @@ class Experiments extends AbstractEntity
         $this->canOrExplode('write');
 
         $sql = 'UPDATE experiments SET
-            locked = 1,
-            lockedby = :userid,
-            lockedwhen = :when,
             timestamped = 1,
             timestampedby = :userid,
             timestampedwhen = :when
             WHERE id = :id;';
         $req = $this->Db->prepare($sql);
+        // the date recorded in the db will match the creation time of the timestamp token
         $req->bindParam(':when', $responseTime);
-        // the date recorded in the db has to match the creation time of the timestamp token
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 

@@ -10,50 +10,37 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\EntityParams;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
-use function file_get_contents;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use RunTimeException;
+use League\Flysystem\FilesystemOperator;
 
 class TimestampUtilsTest extends \PHPUnit\Framework\TestCase
 {
+    private FilesystemOperator $fixtureFs;
+
     protected function setUp(): void
     {
+        $dataPath = dirname(__DIR__, 2) . '/_data/';
+        $this->fixtureFs = FsTools::getFs($dataPath);
     }
 
     public function testTimestamp(): void
     {
-        $fixturePaths = $this->getFixturePaths('dfn');
-        $mockResponse = $this->readFile($fixturePaths['asn1']);
+        $mockResponse = $this->fixtureFs->read('dfn.asn1');
         $client = $this->getClient($mockResponse);
 
         $Maker = new MakeDfnTimestamp(array(), $this->getFreshTimestampableEntity());
-        $tsUtils = new TimestampUtils($client, $fixturePaths['pdf'], $Maker->getTimestampParameters(), new TimestampResponse());
+        $pdfBlob = $this->fixtureFs->read('dfn.pdf');
+        $tsUtils = new TimestampUtils($client, $pdfBlob, $Maker->getTimestampParameters(), new TimestampResponse());
         $this->assertInstanceOf(TimestampResponse::class, $tsUtils->timestamp());
-    }
-
-    public function getFixturePaths(string $tsa): array
-    {
-        return array(
-            'pdf' => dirname(__DIR__, 2) . '/_data/' . $tsa . '.pdf',
-            'asn1' => dirname(__DIR__, 2) . '/_data/' . $tsa . '.asn1',
-        );
-    }
-
-    private function readFile(string $filePath): string
-    {
-        $content = file_get_contents($filePath);
-        if ($content === false) {
-            throw new RunTimeException('Could not read fixture file!');
-        }
-        return $content;
     }
 
     private function getClient(string $mockResponse): Client

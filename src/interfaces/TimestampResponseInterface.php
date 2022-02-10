@@ -15,7 +15,5 @@ interface TimestampResponseInterface
 
     public function getTokenPath(): string;
 
-    public function getPdfPath(): string;
-
     public function setTokenPath(string $tokenPath): void;
 }

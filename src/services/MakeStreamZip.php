@@ -17,7 +17,6 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use function json_encode;
-use PDO;
 use ZipStream\ZipStream;
 
 /**
@@ -89,6 +88,7 @@ class MakeStreamZip extends AbstractMake
 
     /**
      * Add attached files
+     * TODO code is duplicated in makebackupzip
      *
      * @param array<array-key, array<string, string>> $filesArr the files array
      */
@@ -111,39 +111,6 @@ class MakeStreamZip extends AbstractMake
 
             // add files to archive
             $this->Zip->addFileFromStream($this->folder . '/' . $realName, $storageFs->readStream($file['long_name']));
-        }
-    }
-
-    /**
-     * Add the .asn1 token and the timestamped pdf to the zip archive
-     *
-     * TODO this is duplicated in MakeBackupZip, and this could simply be merged in addAttachedFiles
-     * maybe when timestamped uploads are not treated specially this could be easier, with the readAll including these files already
-     * @param int $id The id of current item we are zipping
-     */
-    private function addTimestampFiles(int $id): void
-    {
-        if ($this->Entity instanceof Experiments && $this->Entity->entityData['timestamped']) {
-            $Config = Config::getConfig();
-            $storage = (int) $Config->configArr['uploads_storage'];
-            $StorageManager = new StorageManager($storage);
-            $storageFs = $StorageManager->getStorageFs();
-
-            // SQL to get the path of the token
-            $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND (
-                type = 'timestamp-token'
-                OR type = 'exp-pdf-timestamp') LIMIT 2";
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':id', $id, PDO::PARAM_INT);
-            $req->execute();
-            $uploads = $this->Db->fetchAll($req);
-            foreach ($uploads as $upload) {
-                // add it to the .zip
-                $this->Zip->addFileFromStream(
-                    $this->folder . '/' . $upload['real_name'],
-                    $storageFs->readStream($upload['long_name']),
-                );
-            }
         }
     }
 
@@ -193,7 +160,6 @@ class MakeStreamZip extends AbstractMake
             $entityArr['steps'] = $this->Entity->Steps->read(new ContentParams());
             $this->folder = $this->getBaseFileName();
 
-            $this->addTimestampFiles($id);
             if (!empty($uploadedFilesArr)) {
                 $this->addAttachedFiles($uploadedFilesArr);
             }

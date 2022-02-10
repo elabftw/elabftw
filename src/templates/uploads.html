@@ -73,8 +73,9 @@
                            >
                         {% endif %}
                     {% set thumb_name = upload.long_name ~ '_th.jpg' %}
-                    {% if App.Users.userData.uploads_layout %}
-                    <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ thumb_name }}&storage={{ upload.storage }}&forceMimeJpg' alt='thumbnail' />
+                    <!-- old timestamp pdf don't have a thumbnail, so don't try to display one for them -->
+                    {% if App.Users.userData.uploads_layout and not upload.real_name ends with '-timestamped.pdf' %}
+                    <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ thumb_name }}&storage={{ upload.storage }}' alt='thumbnail' />
                    {% elseif App.Users.userData.uploads_layout %}
                       <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block'></i>
                    {% endif %}

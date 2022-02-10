@@ -24,7 +24,7 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
         $Entity = new Experiments(new Users(1, 1), 1);
         $Entity->canOrExplode('read');
         $MpdfProvider = new MpdfProvider('Toto');
-        $this->MakePdf = new MakePdf($MpdfProvider, $Entity, true);
+        $this->MakePdf = new MakePdf($MpdfProvider, $Entity);
     }
 
     public function testGetFileContent(): void

@@ -10,18 +10,15 @@
 
 namespace Elabftw\Services;
 
-use ZipArchive;
-use Elabftw\Elabftw\FsTools;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\TimestampResponseInterface;
-use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
-use function hash_file;
-use PDO;
 use const SECRET_KEY;
+use ZipArchive;
 
 /**
  * Timestamp an experiment with RFC 3161
@@ -38,29 +35,23 @@ class MakeTimestamp extends AbstractMake
     /** @var Experiments $Entity */
     protected $Entity;
 
-    // config (url, login, password, cert)
-    private array $stampParams = array();
-
     public function __construct(protected array $configArr, Experiments $entity)
     {
         parent::__construct($entity);
         $this->Entity->canOrExplode('write');
-
-        // stampParams contains login/pass/cert/url/hash information
-        $this->stampParams = $this->getTimestampParameters();
     }
 
     public function getFileName(): string
     {
-        return 'TODO:remove';
+        return date('YmdHis') . '-timestamped.zip';
     }
 
-    public function saveTimestamp(TimestampResponseInterface $tsResponse): bool
+    public function saveTimestamp(string $pdfPath, TimestampResponseInterface $tsResponse): int
     {
         // 20220210171842-timestamp.pdf
-        $pdfName = date('YmdHis') . '-timestamp.pdf';
-        $tokenName = str_replace('pdf', 'asn1', $pdfName);
-        $zipName = str_replace('pdf', 'zip', $pdfName);
+        $zipName = $this->getFileName();
+        $pdfName = str_replace('zip', 'pdf', $zipName);
+        $tokenName = str_replace('zip', 'asn1', $zipName);
 
         // SQL
         $responseTime = $this->formatResponseTime($tsResponse->getTimestampFromResponseFile());
@@ -70,11 +61,10 @@ class MakeTimestamp extends AbstractMake
         $zipPath = FsTools::getCacheFile() . '.zip';
         $ZipArchive = new ZipArchive();
         $ZipArchive->open($zipPath, ZipArchive::CREATE);
-        $ZipArchive->addFile($tsResponse->getPdfPath(), $pdfName);
+        $ZipArchive->addFile($pdfPath, $pdfName);
         $ZipArchive->addFile($tsResponse->getTokenPath(), $tokenName);
         $ZipArchive->close();
-        $this->Entity->Uploads->create(new CreateUpload($zipName, $zipPath, _('Timestamp archive')));
-        return true;
+        return $this->Entity->Uploads->create(new CreateUpload($zipName, $zipPath, _('Timestamp archive')));
     }
 
     /**

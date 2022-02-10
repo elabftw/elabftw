@@ -18,8 +18,7 @@ use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use function is_readable;
-use League\Flysystem\Filesystem;
-use League\Flysystem\Local\LocalFilesystemAdapter;
+use League\Flysystem\FilesystemOperator;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -32,12 +31,23 @@ class TimestampUtils
 
     private array $trash = array();
 
+    private FilesystemOperator $cacheFs;
+
+    // the path to a file with data to be timestamped
+    private string $dataPath;
+
     public function __construct(
         private ClientInterface $client,
-        private string $dataPath,
+        string $data,
         private array $tsConfig,
         private TimestampResponseInterface $tsResponse
     ) {
+        // save the data inside a temporary file so openssl can act on it
+        $pdfPath = FsTools::getCacheFile() . '.pdf';
+        $this->cacheFs = FsTools::getCacheFs();
+        $this->cacheFs->write(basename($pdfPath), $data);
+        $this->dataPath = $pdfPath;
+        $this->trash[] = basename($this->dataPath);
     }
 
     /**
@@ -46,8 +56,13 @@ class TimestampUtils
     public function __destruct()
     {
         foreach ($this->trash as $file) {
-            unlink($file);
+            $this->cacheFs->delete($file);
         }
+    }
+
+    public function getDataPath(): string
+    {
+        return $this->dataPath;
     }
 
     /**
@@ -91,7 +106,7 @@ class TimestampUtils
             $requestFilePath,
         ));
         // remove this file once we are done
-        $this->trash[] = $requestFilePath;
+        $this->trash[] = basename($requestFilePath);
         return $requestFilePath;
     }
 

@@ -10,32 +10,56 @@
 
 # stop on failure
 set -eu
+scrutinizer=${SCRUTINIZER:-false}
 
 # make sure we tear down everything when script ends
 cleanup() {
+if (!$scrutinizer); then
     sudo cp -v config.php.dev config.php
     sudo chown 101:101 config.php
+fi
 }
 trap cleanup EXIT
 
 # sudo is needed because config file for docker is owned by 100:101
-sudo cp -v config.php config.php.dev
+if (!$scrutinizer); then
+    sudo cp -v config.php config.php.dev
+fi
 sudo cp -v tests/config-home.php config.php
 sudo chmod +r config.php
-cd .. && ls -la && sudo chmod -R 777 build && ls -la && cd build
 # launch a fresh environment if needed
 if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
-    docker-compose -f tests/docker-compose.yml up -d --quiet-pull --force-recreate
+    if ($scrutinizer); then
+        sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
+        sed -i '/volumes:/D' tests/docker-compose.yml
+        sed -i '/- \.\/\.\.:\/elabftw/D' tests/docker-compose.yml
+        sed -i '/\/elabftw\/tests\/_output\/coverage/D' tests/docker-compose.yml
+        docker build -t elabtmp -f tests/scrutinizer.dockerfile --progress plain .
+    fi
+    docker-compose -f tests/docker-compose.yml up -d --quiet-pull
     # give some time for the process to start
     echo -n "Waiting for elabtmp to start..."
     while [ "`docker inspect -f {{.State.Health.Status}} elabtmp`" != "healthy" ]; do echo -n .; sleep 2; done; echo
 fi
-docker exec -it elabtmp sh -c "ls -la && cd .. && ls -la && cd elabftw/tests && ls -la"
-docker ps -a
-docker volume ls
-docker container inspect elabtmp
+if ($scrutinizer); then
+    # install and initial tests
+    docker exec -it elabtmp yarn install --silent --non-interactive
+    docker exec -it elabtmp yarn csslint
+    docker exec -it elabtmp yarn jslint-ci
+    docker exec -it elabtmp yarn buildall
+    docker exec -it elabtmp composer install --no-progress
+    docker exec -it elabtmp yarn phpcs-dry
+    # extend open_basedir
+    # /usr/bin/psalm, //autoload.php, /root/.cache/ are for psalm
+    # /usr/bin/phpstan, /proc/cpuinfo is for phpstan, https://github.com/phpstan/phpstan/issues/4427 https://github.com/phpstan/phpstan/issues/2965
+    docker exec -it elabtmp sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/usr/bin/phpstan:/proc/cpuinfo|' /etc/php8/php.ini
+fi
 # install the database
 docker exec -it elabtmp bin/install start -r
+if ($scrutinizer); then
+    docker exec -it elabtmp yarn psalm
+    docker exec -it elabtmp yarn phpstan
+fi
 # populate the database
 docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
 # run tests
@@ -49,6 +73,9 @@ fi
 docker exec -it elabtmp bash -c "apk add --update php8-pecl-xdebug && echo 'zend_extension=xdebug.so' >> /etc/php8/php.ini && echo 'xdebug.mode=coverage' >> /etc/php8/php.ini"
 # generate the coverage, results will be available in _coverage directory
 docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --skip api --coverage --coverage-html --coverage-xml
+if ($scrutinizer); then
+    docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
+fi
 # all tests succeeded, display a koala
 cat << WALAEND
 

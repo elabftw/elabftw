@@ -1,24 +1,20 @@
 build:
     environment:
         docker:
-            cache:
-                images:
-                    - 'elabftw/elabimg:hypernext'
-                    - 'mysql:8.0'
+            remote_engine: true
 
     nodes:
         tests:
             dependencies:
                 override:
-                    - cp tests/config-ci.php config.php
+                    - echo do nothing here
                 before:
                     - echo do nothing here
 
     tests:
         override:
-            - command: docker version
             - command: tests/run.sh unit
               coverage:
-                  file: tests/_output/coverage.xml
+                  file: coverage.xml
                   format: clover
 

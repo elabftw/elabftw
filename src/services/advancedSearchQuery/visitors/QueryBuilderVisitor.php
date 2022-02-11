@@ -38,9 +38,6 @@ class QueryBuilderVisitor implements Visitor
     {
         $param = $this->getUniqueID();
         $query = '(entity.body' . ' LIKE ' . $param . ' OR ' . 'entity.title' . ' LIKE ' . $param . ')';
-        if ($parameters->getColumn() !== '') {
-            $query = 'entity.' . $parameters->getColumn() . ' LIKE ' . $param;
-        }
 
         return new WhereCollector(
             $query,

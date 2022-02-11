@@ -5,6 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/search.php') {
@@ -16,6 +17,27 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.hash = '#anchor';
   }
 
+  if ((document.getElementById('searchin') as HTMLSelectElement).value === 'database') {
+    document.getElementById('searchStatus').toggleAttribute('hidden', true);
+    document.getElementById('searchCategory').toggleAttribute('hidden', false);
+  }
+
+  document.getElementById('searchin').addEventListener('change', event => {
+    const value = (event.target as HTMLSelectElement).value;
+    if (value === 'experiments') {
+      document.getElementById('searchStatus').toggleAttribute('hidden', false);
+      document.getElementById('searchCategory').toggleAttribute('hidden', true);
+    }
+    if (value === 'database') {
+      document.getElementById('searchStatus').toggleAttribute('hidden', true);
+      document.getElementById('searchCategory').toggleAttribute('hidden', false);
+    }
+    if (value !== 'database' && value !== 'experiments') {
+      document.getElementById('searchStatus').toggleAttribute('hidden', true);
+      document.getElementById('searchCategory').toggleAttribute('hidden', true);
+    }
+  });
+
   const extendedArea = (document.getElementById('extendedArea') as HTMLTextAreaElement);
 
   // Submit form with ctrl+enter from within textarea
@@ -25,26 +47,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  function getOperator(): string {
+    const operatorSelect = document.getElementById('dateOperator') as HTMLSelectElement;
+    return operatorSelect.value;
+  }
+
   // a filter helper can be a select or an input (for date), so we need a function to get its value
   function getFilterValueFromElement(element: HTMLElement): string {
     if (element instanceof HTMLSelectElement) {
       if (element.options[element.selectedIndex].dataset.action === 'clear') {
         return '';
       }
+      if (element.id === 'dateOperator') {
+        const date = (document.getElementById('date') as HTMLInputElement).value;
+        const dateTo = (document.getElementById('dateTo') as HTMLInputElement).value;
+        if (date === '') {
+          return '';
+        }
+        if (dateTo === '') {
+          return getOperator() + date;
+        }
+        return date + '..' + dateTo;
+      }
       return `${element.options[element.selectedIndex].innerText}`;
     }
     if (element instanceof HTMLInputElement) {
-      // a cleared date input will be empty
-      if (element.value === '') {
-        return '';
+      if (element.id === 'date') {
+        if (element.value === '') {
+          return '';
+        }
+        const dateTo = (document.getElementById('dateTo') as HTMLInputElement).value;
+        if (dateTo === '') {
+          return getOperator() + element.value;
+        }
+        return element.value + '..' + dateTo;
       }
-      // for the date, get the operator
-      let operator = '';
-      if (element.dataset.filter === 'date') {
-        const operatorSelect = document.getElementById('dateOperator') as HTMLSelectElement;
-        operator = operatorSelect.options[operatorSelect.selectedIndex].value;
+      if (element.id === 'dateTo') {
+        const date = (document.getElementById('date') as HTMLInputElement).value;
+        if (date === '') {
+          return '';
+        }
+        if (element.value === '') {
+          return getOperator() + date;
+        }
+        return date + '..' + element.value;
       }
-      return operator + element.value;
     }
     return '😶';
   }
@@ -55,9 +102,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const elem = event.currentTarget as HTMLElement;
       const curVal = extendedArea.value;
 
+      const hasInput = curVal.length != 0;
+      const hasSpace = curVal.endsWith(' ');
+      const addSpace = hasInput ? (hasSpace ? '' : ' ') : '';
+
       // look if the filter key already exists in the extendedArea
       // paste the regex on regex101.com to understand it, note that here \ need to be escaped
-      const regex = new RegExp(elem.dataset.filter + ':(\\w+|\\d|"[\\w\\s+]+"|([=><!,]?=?)?(\\d{4}[\\-\\.\\/,]\\d{2}[\\-\\.\\/,]\\d{2}))');
+      const regex = new RegExp(elem.dataset.filter + ':(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|[\\S]+)\\s?');
       const found = curVal.match(regex);
       // don't add quotes unless we need them (space exists)
       let quotes = '';
@@ -72,10 +123,23 @@ document.addEventListener('DOMContentLoaded', () => {
         filter = `${elem.dataset.filter}:${quotes}${filterValue}${quotes}`;
       }
 
+      // add additional filter at cursor position
+      if (key.ctrl || key.command) {
+        const pos = extendedArea.selectionStart;
+        const val = extendedArea.value;
+        const start = val.substring(0, pos);
+        const end = val.substring(pos, val.length);
+        const hasSpaceBefore = val.substring(pos - 1, pos) === ' ';
+        const hasSpaceAfter = val.substring(pos, pos + 1) === ' ';
+        const insert = (hasSpaceBefore ? '' : pos === 0 ? '' : ' ') + filter + (hasSpaceAfter ? '' : ' ');
+        extendedArea.value = start + insert + end;
+        return;
+      }
+
       if (found) {
-        extendedArea.value = curVal.replace(regex, filter);
+        extendedArea.value = curVal.replace(regex, filter + (filter === '' ? '' : ' '));
       } else {
-        extendedArea.value = extendedArea.value + ' ' + filter;
+        extendedArea.value = extendedArea.value + addSpace + filter;
       }
     });
   });

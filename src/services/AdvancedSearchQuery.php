@@ -13,7 +13,6 @@ namespace Elabftw\Services;
 use Elabftw\Services\AdvancedSearchQuery\Exceptions\LimitDepthIsExceededException;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\OrExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\Parser;
-use Elabftw\Services\AdvancedSearchQuery\Grammar\ParserWithoutFields;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\SyntaxError;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\DepthValidatorVisitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\FieldValidatorVisitor;
@@ -60,11 +59,10 @@ class AdvancedSearchQuery
     private function parse(): bool
     {
         try {
-            $parser = $this->parameters->getColumn() ? new ParserWithoutFields() : new Parser();
+            $parser = new Parser();
             $this->parsedQuery = $parser->parse($this->expertQuery);
         } catch (SyntaxError $e) {
-            $line = $this->parameters->getColumn() ? '' : 'Line ' . $e->grammarLine . ', ';
-            $this->exception = $line . 'Column ' . $e->grammarColumn . ': ' . $e->getMessage();
+            $this->exception = 'Line ' . $e->grammarLine . ', Column ' . $e->grammarColumn . ': ' . $e->getMessage();
             return false;
         }
         return true;

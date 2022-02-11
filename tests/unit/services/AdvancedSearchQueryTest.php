@@ -53,10 +53,9 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
             (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
-            'body',
         ));
         $advancedSearchQuery->getWhereClause();
-        $this->assertStringStartsWith('Column ', $advancedSearchQuery->getException());
+        $this->assertStringStartsWith('Line 1, Column ', $advancedSearchQuery->getException());
     }
 
     public function testComplexityLimit(): void

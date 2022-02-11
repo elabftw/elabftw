@@ -12,40 +12,41 @@
 set -eu
 scrutinizer=${SCRUTINIZER:-false}
 
-hasSudo='sudo';
-if ! command -v sudo &> /dev/null; 
-then
-    hasSudo=''
+# only use sudo if available e.g., alpine vs ubuntu
+sudoCmd='sudo'
+if ! command -v sudo &> /dev/null; then
+    sudoCmd=''
 fi
-
 
 # make sure we tear down everything when script ends
 cleanup() {
 if (! $scrutinizer); then
-    $hasSudo cp -v config.php.dev config.php
-    $hasSudo chown 101:101 config.php
+    $sudoCmd cp -v config.php.dev config.php
+    $sudoCmd chown 101:101 config.php
 fi
 }
 trap cleanup EXIT
 
 # sudo is needed because config file for docker is owned by 100:101
 if (! $scrutinizer); then
-    $hasSudo cp -v config.php config.php.dev
+    $sudoCmd cp -v config.php config.php.dev
 fi
-$hasSudo cp -v tests/config-home.php config.php
-$hasSudo chmod +r config.php
+$sudoCmd cp -v tests/config-home.php config.php
+$sudoCmd chmod +r config.php
 # launch a fresh environment if needed
 if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
     if ($scrutinizer); then
+        # Don't bind mount here, files are copied. See scrutinizer.dockerfile
         sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
-        sed -i '/volumes:/D' tests/docker-compose.yml
-        sed -i '/- \.\/\.\.:\/elabftw/D' tests/docker-compose.yml
-        sed -i '/\/elabftw\/tests\/_output\/coverage/D' tests/docker-compose.yml
+        # first backslash enables different delimiter than slash
+        sed -i '\#volumes:#D' tests/docker-compose.yml
+        sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
+        sed -i '\#/elabftw/tests/_output/coverage#D' tests/docker-compose.yml
         docker build -t elabtmp -f tests/scrutinizer.dockerfile --progress plain .
     fi
     docker-compose -f tests/docker-compose.yml up -d --quiet-pull
-    # give some time for the process to start
-    echo -n "Waiting for elabtmp to start..."
+    # give some time for containers to start
+    echo -n "Waiting for containers to start..."
     while [ "`docker inspect -f {{.State.Health.Status}} elabtmp`" != "healthy" ]; do echo -n .; sleep 2; done; echo
 fi
 if ($scrutinizer); then
@@ -54,7 +55,7 @@ if ($scrutinizer); then
     docker exec -it elabtmp yarn csslint
     docker exec -it elabtmp yarn jslint-ci
     docker exec -it elabtmp yarn buildall
-    docker exec -it elabtmp composer install --no-progress
+    docker exec -it elabtmp composer install --no-progress -q
     docker exec -it elabtmp yarn phpcs-dry
     # extend open_basedir
     # /usr/bin/psalm, //autoload.php, /root/.cache/ are for psalm

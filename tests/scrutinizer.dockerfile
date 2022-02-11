@@ -1,17 +1,23 @@
 FROM elabftw/elabimg:hypernext
 
+# Set versions of used tools
+ARG PHPSTAN_VERSION=1.4.2
+ARG PSALM_VERSION=4.18.1
+ARG PHAN_VERSION=5.3.1
+
+# Psalm needs php8-simplexml
 RUN apk upgrade -U -a && apk add --no-cache php8-simplexml
 
 # phpStan
-ADD https://github.com/phpstan/phpstan/releases/download/1.4.2/phpstan.phar /usr/bin/phpstan
+ADD https://github.com/phpstan/phpstan/releases/download/$PHPSTAN_VERSION/phpstan.phar /usr/bin/phpstan
 RUN chmod +x /usr/bin/phpstan
 
 # Psalm
-ADD https://github.com/vimeo/psalm/releases/download/4.18.1/psalm.phar /usr/bin/psalm
+ADD https://github.com/vimeo/psalm/releases/download/$PSALM_VERSION/psalm.phar /usr/bin/psalm
 RUN chmod +x /usr/bin/psalm
 
 #Phan
-ADD https://github.com/phan/phan/releases/download/5.3.1/phan.phar /usr/bin/phan
+ADD https://github.com/phan/phan/releases/download/$PHAN_VERSION/phan.phar /usr/bin/phan
 RUN chmod +x /usr/bin/phan
 
 COPY ./bin /elabftw/bin

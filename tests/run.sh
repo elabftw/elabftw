@@ -14,7 +14,7 @@ scrutinizer=${SCRUTINIZER:-false}
 
 # make sure we tear down everything when script ends
 cleanup() {
-if (!$scrutinizer); then
+if (! $scrutinizer); then
     sudo cp -v config.php.dev config.php
     sudo chown 101:101 config.php
 fi
@@ -22,7 +22,7 @@ fi
 trap cleanup EXIT
 
 # sudo is needed because config file for docker is owned by 100:101
-if (!$scrutinizer); then
+if (! $scrutinizer); then
     sudo cp -v config.php config.php.dev
 fi
 sudo cp -v tests/config-home.php config.php

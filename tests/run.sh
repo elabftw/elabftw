@@ -13,9 +13,9 @@ set -eu
 scrutinizer=${SCRUTINIZER:-false}
 
 # only use sudo if available e.g., alpine vs ubuntu
-sudoCmd='sudo'
-if ! command -v sudo &> /dev/null; then
-    sudoCmd=''
+sudoCmd=''
+if command -v sudo &> /dev/null; then
+    sudoCmd='sudo'
 fi
 
 # make sure we tear down everything when script ends

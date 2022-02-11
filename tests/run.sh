@@ -12,21 +12,28 @@
 set -eu
 scrutinizer=${SCRUTINIZER:-false}
 
+hasSudo='sudo';
+if ! command -v sudo &> /dev/null; 
+then
+    hasSudo=''
+fi
+
+
 # make sure we tear down everything when script ends
 cleanup() {
 if (! $scrutinizer); then
-    sudo cp -v config.php.dev config.php
-    sudo chown 101:101 config.php
+    $hasSudo cp -v config.php.dev config.php
+    $hasSudo chown 101:101 config.php
 fi
 }
 trap cleanup EXIT
 
 # sudo is needed because config file for docker is owned by 100:101
 if (! $scrutinizer); then
-    sudo cp -v config.php config.php.dev
+    $hasSudo cp -v config.php config.php.dev
 fi
-sudo cp -v tests/config-home.php config.php
-sudo chmod +r config.php
+$hasSudo cp -v tests/config-home.php config.php
+$hasSudo chmod +r config.php
 # launch a fresh environment if needed
 if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
     if ($scrutinizer); then

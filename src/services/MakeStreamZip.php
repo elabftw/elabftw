@@ -98,8 +98,7 @@ class MakeStreamZip extends AbstractMake
         $i = 0;
         $Config = Config::getConfig();
         $storage = (int) $Config->configArr['uploads_storage'];
-        $StorageManager = new StorageManager($storage);
-        $storageFs = $StorageManager->getStorageFs();
+        $storageFs = (new StorageFactory($storage))->getStorage()->getFs();
         foreach ($filesArr as $file) {
             $i++;
             $realName = $file['real_name'];

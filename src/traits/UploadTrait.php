@@ -12,7 +12,7 @@ namespace Elabftw\Traits;
 use function dirname;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Services\StorageManager;
+use Elabftw\Services\StorageFactory;
 use League\Flysystem\Visibility;
 
 /**
@@ -39,10 +39,9 @@ trait UploadTrait
         $hash = FsTools::getUniqueString();
         $folder = substr($hash, 0, 2);
         // create a subfolder if it doesn't exist
-        $StorageManager = new StorageManager(StorageManager::STORAGE_LOCAL);
-        $fs = $StorageManager->getStorageFs();
-        $fs->createDirectory($folder);
-        $fs->setVisibility($folder, Visibility::PRIVATE);
+        $storageFs = (new StorageFactory(StorageFactory::STORAGE_LOCAL))->getStorage()->getFs();
+        $storageFs->createDirectory($folder);
+        $storageFs->setVisibility($folder, Visibility::PRIVATE);
         return $folder . '/' . $hash;
     }
 }

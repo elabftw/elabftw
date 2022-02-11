@@ -11,14 +11,14 @@ namespace Elabftw\Services;
 
 use Aws\Credentials\Credentials;
 use Elabftw\Models\Config;
-use League\Flysystem\FilesystemAdapter;
+use League\Flysystem\Filesystem;
 
-class S3AdapterTest extends \PHPUnit\Framework\TestCase
+class S3StorageTest extends \PHPUnit\Framework\TestCase
 {
-    public function testGetAdapter(): void
+    public function testGetFs(): void
     {
         $credentials = new Credentials('access-key', 'secret-key');
-        $Adapter = new S3Adapter(Config::getConfig(), $credentials);
-        $this->assertInstanceOf(FilesystemAdapter::class, $Adapter->getAdapter());
+        $Storage = new S3Storage(Config::getConfig(), $credentials);
+        $this->assertInstanceOf(Filesystem::class, $Storage->getFs());
     }
 }

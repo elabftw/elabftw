@@ -23,7 +23,7 @@ use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\UploadParamsInterface;
 use Elabftw\Services\MakeThumbnail;
-use Elabftw\Services\StorageManager;
+use Elabftw\Services\StorageFactory;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\UploadTrait;
 use function in_array;
@@ -80,8 +80,7 @@ class Uploads implements CrudInterface
         // where we want to store it
         $Config = Config::getConfig();
         $storage = (int) $Config->configArr['uploads_storage'];
-        $StorageManager = new StorageManager($storage);
-        $storageFs = $StorageManager->getStorageFs();
+        $storageFs = (new StorageFactory($storage))->getStorage()->getFs();
 
         $tmpFilename = basename($params->getFilePath());
         $filesize = $sourceFs->filesize($tmpFilename);

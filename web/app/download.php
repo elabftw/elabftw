@@ -9,16 +9,11 @@
 
 namespace Elabftw\Elabftw;
 
-use Aws\Credentials\Credentials;
-use const ELAB_AWS_ACCESS_KEY;
-use const ELAB_AWS_SECRET_KEY;
 use Elabftw\Controllers\DownloadController;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Services\LocalAdapter;
-use Elabftw\Services\S3Adapter;
+use Elabftw\Services\StorageFactory;
 use function error_reporting;
 use Exception;
-use League\Flysystem\Filesystem;
 use function set_time_limit;
 use function strpos;
 
@@ -38,15 +33,11 @@ try {
         throw new IllegalActionException('Missing parameter for download');
     }
 
-    if ($Request->query->get('storage') === '2') {
-        $adapter = new S3Adapter($App->Config, new Credentials(ELAB_AWS_ACCESS_KEY, ELAB_AWS_SECRET_KEY));
-    } else {
-        $adapter = new LocalAdapter();
-    }
-    $fs = new Filesystem($adapter->getAdapter());
+    $storage = (int) $Request->query->get('storage');
+    $storageFs = (new StorageFactory($storage))->getStorage()->getFs();
 
     $DownloadController = new DownloadController(
-        $fs,
+        $storageFs,
         $longName,
         (string) $Request->query->get('name'),
         $Request->query->has('forceDownload'),

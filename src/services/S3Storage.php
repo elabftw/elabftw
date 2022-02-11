@@ -22,7 +22,7 @@ use League\Flysystem\AwsS3V3\PortableVisibilityConverter;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Visibility;
 
-class S3Adapter
+class S3Storage extends AbstractStorage
 {
     private const S3_VERSION = '2006-03-01';
 
@@ -30,7 +30,7 @@ class S3Adapter
     {
     }
 
-    public function getAdapter(): FilesystemAdapter
+    protected function getAdapter(): FilesystemAdapter
     {
         return new AwsS3V3Adapter(
             // S3Client

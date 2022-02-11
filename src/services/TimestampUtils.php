@@ -44,7 +44,7 @@ class TimestampUtils
     ) {
         // save the data inside a temporary file so openssl can act on it
         $pdfPath = FsTools::getCacheFile() . '.pdf';
-        $this->cacheFs = FsTools::getCacheFs();
+        $this->cacheFs = (new StorageFactory(StorageFactory::STORAGE_CACHE))->getStorage()->getFs();
         $this->cacheFs->write(basename($pdfPath), $data);
         $this->dataPath = $pdfPath;
         $this->trash[] = basename($this->dataPath);
@@ -80,8 +80,7 @@ class TimestampUtils
     private function saveToken(StreamInterface $binaryToken): void
     {
         $filePath = FsTools::getCacheFile() . '.asn1';
-        $cacheFs = FsTools::getCacheFs();
-        $cacheFs->write(basename($filePath), $binaryToken->getContents());
+        $this->cacheFs->write(basename($filePath), $binaryToken->getContents());
 
         $this->tsResponse->setTokenPath($filePath);
     }

@@ -16,12 +16,12 @@ namespace Elabftw\Services;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 
-class LocalAdapter
+class LocalStorage extends AbstractStorage
 {
-    private const UPLOADS_FOLDER = 'uploads';
+    protected const FOLDER = 'uploads';
 
-    public function getAdapter(): FilesystemAdapter
+    protected function getAdapter(): FilesystemAdapter
     {
-        return new LocalFilesystemAdapter(dirname(__DIR__, 2) . '/' . self::UPLOADS_FOLDER);
+        return new LocalFilesystemAdapter(dirname(__DIR__, 2) . '/' . static::FOLDER);
     }
 }

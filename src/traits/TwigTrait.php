@@ -13,6 +13,12 @@ use function dirname;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Models\Config;
+use jblond\TwigTrans\Translation;
+use Twig\Environment;
+use Twig\Extension\DebugExtension;
+use Twig\Loader\FilesystemLoader;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 /**
  * To get Twig
@@ -22,10 +28,10 @@ trait TwigTrait
     /**
      * Prepare the Twig object
      */
-    protected function getTwig(Config $config): \Twig\Environment
+    protected function getTwig(Config $config): Environment
     {
         // load templates
-        $loader = new \Twig\Loader\FilesystemLoader(dirname(__DIR__, 2) . '/src/templates');
+        $loader = new FilesystemLoader(dirname(__DIR__, 2) . '/src/templates');
 
         // use local cache
         $options = array('cache' => FsTools::getCacheFolder('twig'));
@@ -36,27 +42,41 @@ trait TwigTrait
             $options['debug'] = true;
         }
 
-        $TwigEnvironment = new \Twig\Environment($loader, $options);
+        $TwigEnvironment = new Environment($loader, $options);
 
         // custom twig filters
         $filterOptions = array('is_safe' => array('html'));
-        $msgFilter = new \Twig\TwigFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
-        $mdFilter = new \Twig\TwigFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
-        $starsFilter = new \Twig\TwigFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
-        $bytesFilter = new \Twig\TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
-        $extFilter = new \Twig\TwigFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
-        $qFilter = new \Twig\TwigFilter('qFilter', '\Elabftw\Elabftw\Tools::qFilter', $filterOptions);
-        $langFilter = new \Twig\TwigFilter('jslang', '\Elabftw\Elabftw\Tools::getCalendarLang', $filterOptions);
-        $metadataFilter = new \Twig\TwigFilter('formatMetadata', '\Elabftw\Elabftw\Tools::formatMetadata', $filterOptions);
-        $csrfFilter = new \Twig\TwigFilter('csrf', '\Elabftw\Services\Transform::csrf', $filterOptions);
-        $notifWebFilter = new \Twig\TwigFilter('notifWeb', '\Elabftw\Services\Transform::notif', $filterOptions);
+        $msgFilter = new TwigFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
+        $mdFilter = new TwigFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
+        $starsFilter = new TwigFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
+        $bytesFilter = new TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
+        $extFilter = new TwigFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
+        $qFilter = new TwigFilter('qFilter', '\Elabftw\Elabftw\Tools::qFilter', $filterOptions);
+        $langFilter = new TwigFilter('jslang', '\Elabftw\Elabftw\Tools::getCalendarLang', $filterOptions);
+        $metadataFilter = new TwigFilter('formatMetadata', '\Elabftw\Elabftw\Tools::formatMetadata', $filterOptions);
+        $csrfFilter = new TwigFilter('csrf', '\Elabftw\Services\Transform::csrf', $filterOptions);
+        $notifWebFilter = new TwigFilter('notifWeb', '\Elabftw\Services\Transform::notif', $filterOptions);
+        // |trans filter
+        $transFilter = new TwigFilter(
+            'trans',
+            function ($context, $string) {
+                return Translation::transGetText($string, $context);
+            },
+            array('needs_context' => true)
+        );
+
         // custom twig functions
-        $limitOptions = new \Twig\TwigFunction('limitOptions', '\Elabftw\Elabftw\TwigFunctions::getLimitOptions');
-        $generationTime = new \Twig\TwigFunction('generationTime', '\Elabftw\Elabftw\TwigFunctions::getGenerationTime');
-        $memoryUsage = new \Twig\TwigFunction('memoryUsage', '\Elabftw\Elabftw\TwigFunctions::getMemoryUsage');
-        $numberOfQueries = new \Twig\TwigFunction('numberOfQueries', '\Elabftw\Elabftw\TwigFunctions::getNumberOfQueries');
-        $minPasswordLength = new \Twig\TwigFunction('minPasswordLength', '\Elabftw\Elabftw\TwigFunctions::getMinPasswordLength');
-        $ext2icon = new \Twig\TwigFunction('ext2icon', '\Elabftw\Elabftw\Extensions::getIconFromExtension');
+        $limitOptions = new TwigFunction('limitOptions', '\Elabftw\Elabftw\TwigFunctions::getLimitOptions');
+        $generationTime = new TwigFunction('generationTime', '\Elabftw\Elabftw\TwigFunctions::getGenerationTime');
+        $memoryUsage = new TwigFunction('memoryUsage', '\Elabftw\Elabftw\TwigFunctions::getMemoryUsage');
+        $numberOfQueries = new TwigFunction('numberOfQueries', '\Elabftw\Elabftw\TwigFunctions::getNumberOfQueries');
+        $minPasswordLength = new TwigFunction('minPasswordLength', '\Elabftw\Elabftw\TwigFunctions::getMinPasswordLength');
+        $ext2icon = new TwigFunction('ext2icon', '\Elabftw\Elabftw\Extensions::getIconFromExtension');
+
+
+        // load the i18n extension for using the translation tag for twig
+        // {% trans %}my string{% endtrans %}
+        $TwigEnvironment->addExtension(new Translation());
 
         $TwigEnvironment->addFilter($msgFilter);
         $TwigEnvironment->addFilter($mdFilter);
@@ -68,6 +88,7 @@ trait TwigTrait
         $TwigEnvironment->addFilter($metadataFilter);
         $TwigEnvironment->addFilter($csrfFilter);
         $TwigEnvironment->addFilter($notifWebFilter);
+        $TwigEnvironment->addFilter($transFilter);
         // functions
         $TwigEnvironment->addFunction($limitOptions);
         $TwigEnvironment->addFunction($generationTime);
@@ -76,14 +97,11 @@ trait TwigTrait
         $TwigEnvironment->addFunction($minPasswordLength);
         $TwigEnvironment->addFunction($ext2icon);
 
-        // i18n for twig
-        $TwigEnvironment->addExtension(new \Twig\Extensions\I18nExtension());
-
         // add the version as a global var so we can have it for the ?v=x.x.x for js files
         $TwigEnvironment->addGlobal('v', App::INSTALLED_VERSION);
 
         if ($config->configArr['debug']) {
-            $TwigEnvironment->addExtension(new \Twig\Extension\DebugExtension());
+            $TwigEnvironment->addExtension(new DebugExtension());
         }
 
         return $TwigEnvironment;

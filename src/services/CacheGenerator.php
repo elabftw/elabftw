@@ -11,10 +11,10 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use function dirname;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Models\Config;
 use Elabftw\Traits\TwigTrait;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
+use League\Flysystem\StorageAttributes;
 
 /**
  * Generate Twig cache
@@ -30,14 +30,16 @@ class CacheGenerator
     public function generate(): void
     {
         $TwigEnvironment = $this->getTwig(Config::getConfig());
+        $tplFs = FsTools::getFs(dirname(__DIR__, 2) . '/src/templates');
         $tplDir = dirname(__DIR__, 2) . '/src/templates';
         // iterate over all the templates
-        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($tplDir), RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
-            // force compilation
-            if ($file->isFile()) {
-                /** @psalm-suppress InternalMethod */
-                $TwigEnvironment->loadTemplate(str_replace($tplDir . '/', '', $file->getFilename()));
-            }
+        $templates = $tplFs->listContents('.')->filter(function (StorageAttributes $attributes) {
+            return $attributes->isFile();
+        });
+
+        foreach ($templates as $template) {
+            // force compilation of the template into cache php file
+            $TwigEnvironment->load($template->path());
         }
     }
 }

@@ -18,7 +18,7 @@ use ZipStream\ZipStream;
  */
 class MakeBackupZip extends AbstractMakeZip
 {
-    public function __construct(protected ZipStream $Zip, Experiments|Items $entity, private string $period)
+    public function __construct(protected ZipStream $Zip, Experiments | Items $entity, private string $period)
     {
         parent::__construct($entity);
     }

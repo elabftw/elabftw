@@ -21,6 +21,8 @@ class StorageFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(MemoryStorage::class, $factory->getStorage());
         $factory = new StorageFactory(4);
         $this->assertInstanceOf(CacheStorage::class, $factory->getStorage());
+        $factory = new StorageFactory(5);
+        $this->assertInstanceOf(FixturesStorage::class, $factory->getStorage());
         $factory = new StorageFactory(42);
         $this->assertInstanceOf(MemoryStorage::class, $factory->getStorage());
     }

@@ -9,8 +9,8 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Services\StorageFactory;
 use League\Flysystem\Filesystem as Fs;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\UnableToReadFile;
 
 class SqlTest extends \PHPUnit\Framework\TestCase
@@ -19,7 +19,7 @@ class SqlTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__, 2) . '/_data')));
+        $this->Sql = new Sql((new StorageFactory(StorageFactory::STORAGE_FIXTURES))->getStorage()->getFs());
     }
 
     public function testExecFile(): void

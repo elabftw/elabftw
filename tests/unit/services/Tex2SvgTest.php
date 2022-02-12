@@ -9,19 +9,20 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Exceptions\FilesystemErrorException;
-use function file_get_contents;
-use function is_string;
+use League\Flysystem\Filesystem;
 use Mpdf\Mpdf;
 
 class Tex2SvgTest extends \PHPUnit\Framework\TestCase
 {
     private Mpdf $mpdf;
 
+    private Filesystem $fixturesFs;
+
     protected function setUp(): void
     {
         $MpdfProvider = new MpdfProvider('Toto');
         $this->mpdf = $MpdfProvider->getInstance();
+        $this->fixturesFs = (new StorageFactory(StorageFactory::STORAGE_FIXTURES))->getStorage()->getFs();
     }
 
     public function testNoMathJax(): void
@@ -33,27 +34,18 @@ class Tex2SvgTest extends \PHPUnit\Framework\TestCase
 
     public function testMathJax(): void
     {
-        $mathJaxHtml = $this->getFixture('mathjax.html');
+        $mathJaxHtml = $this->fixturesFs->read('mathjax.html');
         $Tex2Svg = new Tex2Svg($this->mpdf, $mathJaxHtml);
         $mathJaxOut = $Tex2Svg->getContent();
-        $mathJaxOutExpect = $this->getFixture('mathjax.out.html');
+        $mathJaxOutExpect = $this->fixturesFs->read('mathjax.out.html');
         $this->assertEquals($mathJaxOutExpect, $mathJaxOut);
     }
 
     public function testMathJaxFail(): void
     {
-        $mathJaxHtml = $this->getFixture('mathjaxFail.html');
+        $mathJaxHtml = $this->fixturesFs->read('mathjaxFail.html');
         $Tex2Svg = new Tex2Svg($this->mpdf, $mathJaxHtml);
         $mathJaxOut = $Tex2Svg->getContent();
         $this->assertEquals($mathJaxHtml, $mathJaxOut);
-    }
-
-    private function getFixture(string $filename): string
-    {
-        $content = file_get_contents(dirname(__DIR__, 2) . '/_data/' . $filename);
-        if (!is_string($content)) {
-            throw new FilesystemErrorException('Error loading test file!');
-        }
-        return $content;
     }
 }

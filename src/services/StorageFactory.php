@@ -28,6 +28,8 @@ class StorageFactory
 
     public const STORAGE_CACHE = 4;
 
+    public const STORAGE_FIXTURES = 5;
+
     public function __construct(private int $storage)
     {
     }
@@ -43,6 +45,8 @@ class StorageFactory
                 return new MemoryStorage();
             case self::STORAGE_CACHE:
                 return new CacheStorage();
+            case self::STORAGE_FIXTURES:
+                return new FixturesStorage();
             default:
                 return new MemoryStorage();
         }

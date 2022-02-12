@@ -10,7 +10,6 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\EntityParams;
-use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
@@ -20,25 +19,24 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use League\Flysystem\FilesystemOperator;
+use League\Flysystem\Filesystem;
 
 class TimestampUtilsTest extends \PHPUnit\Framework\TestCase
 {
-    private FilesystemOperator $fixtureFs;
+    private Filesystem $fixturesFs;
 
     protected function setUp(): void
     {
-        $dataPath = dirname(__DIR__, 2) . '/_data/';
-        $this->fixtureFs = FsTools::getFs($dataPath);
+        $this->fixturesFs = (new StorageFactory(StorageFactory::STORAGE_FIXTURES))->getStorage()->getFs();
     }
 
     public function testTimestamp(): void
     {
-        $mockResponse = $this->fixtureFs->read('dfn.asn1');
+        $mockResponse = $this->fixturesFs->read('dfn.asn1');
         $client = $this->getClient($mockResponse);
 
         $Maker = new MakeDfnTimestamp(array(), $this->getFreshTimestampableEntity());
-        $pdfBlob = $this->fixtureFs->read('dfn.pdf');
+        $pdfBlob = $this->fixturesFs->read('dfn.pdf');
         $tsUtils = new TimestampUtils($client, $pdfBlob, $Maker->getTimestampParameters(), new TimestampResponse());
         $this->assertInstanceOf(TimestampResponse::class, $tsUtils->timestamp());
     }

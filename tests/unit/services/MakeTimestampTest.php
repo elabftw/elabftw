@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\EntityParams;
-use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
@@ -23,16 +22,16 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use League\Flysystem\FilesystemOperator;
+use League\Flysystem\Filesystem;
 use const SECRET_KEY;
 
 class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 {
     private array $configArr;
 
-    private FilesystemOperator $fixtureFs;
-
     private string $dataPath;
+
+    private Filesystem $fixturesFs;
 
     protected function setUp(): void
     {
@@ -40,7 +39,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
             'proxy' => '',
         );
         $this->dataPath = dirname(__DIR__, 2) . '/_data/';
-        $this->fixtureFs = FsTools::getFs($this->dataPath);
+        $this->fixturesFs = (new StorageFactory(StorageFactory::STORAGE_FIXTURES))->getStorage()->getFs();
     }
 
     public function testNonTimestampableExperiment(): void
@@ -62,7 +61,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 
     public function testDfnTimestamp(): void
     {
-        $mockResponse = $this->fixtureFs->read('dfn.asn1');
+        $mockResponse = $this->fixturesFs->read('dfn.asn1');
         $client = $this->getClient($mockResponse);
         $Maker = new MakeDfnTimestamp($this->configArr, $this->getFreshTimestampableEntity());
         $Maker->generatePdf();
@@ -75,7 +74,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 
     public function testDigicertTimestamp(): void
     {
-        $mockResponse = $this->fixtureFs->read('digicert.asn1');
+        $mockResponse = $this->fixturesFs->read('digicert.asn1');
         $client = $this->getClient($mockResponse);
         $Maker = new MakeDigicertTimestamp($this->configArr, $this->getFreshTimestampableEntity());
         $Maker->generatePdf();
@@ -88,7 +87,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 
     public function testUniversignTimestamp(): void
     {
-        $mockResponse = $this->fixtureFs->read('universign.asn1');
+        $mockResponse = $this->fixturesFs->read('universign.asn1');
         $client = $this->getClient($mockResponse);
         $config = array(
             'ts_login' => 'fakelogin@example.com',

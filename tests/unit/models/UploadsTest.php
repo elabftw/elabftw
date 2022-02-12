@@ -33,11 +33,8 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         // write our temporary file as if it was uploaded by a user
         $fs->createDirectory('tmp');
         // a txt file was failing the mime type, so use a png
-        $fileContents = file_get_contents(dirname(__DIR__, 2) . '/_data/example.png');
-        if ($fileContents === false) {
-            $fileContents = 'BLAH';
-        }
-        $fs->write(basename($tmpFilePath), $fileContents);
+        $fixturesFs = (new StorageFactory(StorageFactory::STORAGE_FIXTURES))->getStorage()->getFs();
+        $fs->write(basename($tmpFilePath), $fixturesFs->read('example.png'));
         // we use the same fs for source and storage because it's all in memory anyway
         $params->method('getSourceFs')->willReturn($fs);
 

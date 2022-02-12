@@ -117,25 +117,19 @@ class Experiments extends AbstractEntity
      * Set the experiment as timestamped with a path to the token
      *
      * @param string $responseTime the date of the timestamp
-     * @param string $responsefilePath the file path to the timestamp token
      */
-    public function updateTimestamp(string $responseTime, string $responsefilePath): void
+    public function updateTimestamp(string $responseTime): void
     {
         $this->canOrExplode('write');
 
         $sql = 'UPDATE experiments SET
-            locked = 1,
-            lockedby = :userid,
-            lockedwhen = :when,
             timestamped = 1,
             timestampedby = :userid,
-            timestampedwhen = :when,
-            timestamptoken = :longname
+            timestampedwhen = :when
             WHERE id = :id;';
         $req = $this->Db->prepare($sql);
+        // the date recorded in the db will match the creation time of the timestamp token
         $req->bindParam(':when', $responseTime);
-        // the date recorded in the db has to match the creation time of the timestamp token
-        $req->bindParam(':longname', $responsefilePath);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 

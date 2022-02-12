@@ -182,6 +182,7 @@ class Check
             'privacypolicy',
             'rating',
             'real_name',
+            'state',
             'ts_authority',
             'ts_cert',
             'ts_login',

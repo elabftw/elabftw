@@ -12,9 +12,6 @@ namespace Elabftw\Services;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 
-//use League\Flysystem\Memory\MemoryAdapter;
-//use League\Flysystem\Filesystem;
-
 class MakePdfTest extends \PHPUnit\Framework\TestCase
 {
     private MakePdf $MakePdf;
@@ -24,7 +21,7 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
         $Entity = new Experiments(new Users(1, 1), 1);
         $Entity->canOrExplode('read');
         $MpdfProvider = new MpdfProvider('Toto');
-        $this->MakePdf = new MakePdf($MpdfProvider, $Entity, true);
+        $this->MakePdf = new MakePdf($MpdfProvider, $Entity);
     }
 
     public function testGetFileContent(): void

@@ -13,32 +13,33 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
-use function file_get_contents;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use League\Flysystem\Filesystem;
 
 class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
 {
     private MakeBloxberg $Make;
 
+    private Filesystem $fixturesFs;
+
     protected function setUp(): void
     {
         // taken from the example response on the api doc
         // https://app.swaggerhub.com/apis/bloxberg/fast-api/0.1.0#/certificate/createBloxbergCertificate_createBloxbergCertificate_post
-        $successResponseCertify = file_get_contents(dirname(__DIR__, 2) . '/_data/bloxberg-cert-response.json');
+        $this->fixturesFs = (new StorageFactory(StorageFactory::FIXTURES))->getStorage()->getFs();
+        $successResponseCertify = $this->fixturesFs->read('bloxberg-cert-response.json');
         // a small zip that will act as what we receive from the server
-        $zip = file_get_contents(dirname(__DIR__, 2) . '/_data/example.zip');
+        $zip = $this->fixturesFs->read('example.zip');
         // don't use the real guzzle client, but use a mock
         // https://docs.guzzlephp.org/en/stable/testing.html
         $mock = new MockHandler(array(
             new Response(200, array(), 'a-fake-api-key'),
-            // @phpstan-ignore-next-line
             new Response(200, array(), $successResponseCertify),
-            // @phpstan-ignore-next-line
             new Response(200, array(), $zip),
             new RequestException('Server is down?', new Request('GET', 'test')),
         ));
@@ -72,10 +73,9 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
 
     public function testTimestampZipFail(): void
     {
-        $successResponseCertify = file_get_contents(dirname(__DIR__, 2) . '/_data/bloxberg-cert-response.json');
+        $successResponseCertify = $this->fixturesFs->read('bloxberg-cert-response.json');
         $mock = new MockHandler(array(
             new Response(200, array(), 'a-fake-api-key'),
-            // @phpstan-ignore-next-line
             new Response(200, array(), $successResponseCertify),
             new Response(200, array(), 'not a zip'),
         ));

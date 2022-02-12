@@ -1,6 +1,16 @@
 <?php declare(strict_types=1);
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2022 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 
 namespace Elabftw\Models;
+
+use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Services\StorageFactory;
 
 class UploadsTest extends \PHPUnit\Framework\TestCase
 {
@@ -8,17 +18,47 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Entity = new Items(new Users(1, 1));
+        $this->Entity = new Items(new Users(1, 1), 10);
     }
 
-    public function testGetIconFromExtension(): void
+    public function testCreate(): void
     {
-        $this->assertEquals('fa-file-archive', $this->Entity->Uploads->getIconFromExtension('zip'));
-        $this->assertEquals('fa-file-code', $this->Entity->Uploads->getIconFromExtension('py'));
-        $this->assertEquals('fa-file-excel', $this->Entity->Uploads->getIconFromExtension('xls'));
-        $this->assertEquals('fa-file-video', $this->Entity->Uploads->getIconFromExtension('avi'));
-        $this->assertEquals('fa-file-powerpoint', $this->Entity->Uploads->getIconFromExtension('ppt'));
-        $this->assertEquals('fa-file-word', $this->Entity->Uploads->getIconFromExtension('docx'));
-        $this->assertEquals('fa-file', $this->Entity->Uploads->getIconFromExtension('elab'));
+        $params = $this->createMock(CreateUpload::class);
+        // this would be the real name of the file uploaded by user
+        $params->method('getFilename')->willReturn('example.png');
+        // and this corresponds to the temporary file created after upload
+        $tmpFilePath = '/tmp/phpELABFTW';
+        $params->method('getFilePath')->willReturn($tmpFilePath);
+        $fs = (new StorageFactory(StorageFactory::MEMORY))->getStorage()->getFs();
+        // write our temporary file as if it was uploaded by a user
+        $fs->createDirectory('tmp');
+        // a txt file was failing the mime type, so use a png
+        $fixturesFs = (new StorageFactory(StorageFactory::FIXTURES))->getStorage()->getFs();
+        $fs->write(basename($tmpFilePath), $fixturesFs->read('example.png'));
+        // we use the same fs for source and storage because it's all in memory anyway
+        $params->method('getSourceFs')->willReturn($fs);
+
+        $Uploads = new Uploads($this->Entity);
+        $Uploads->create($params);
+    }
+
+    // same as above, but this file will fail mime type detection
+    public function testCreateMimeFail(): void
+    {
+        $params = $this->createMock(CreateUpload::class);
+        // this would be the real name of the file uploaded by user
+        $params->method('getFilename')->willReturn('example.txt');
+        // and this corresponds to the temporary file created after upload
+        $tmpFilePath = '/tmp/phpELABFTW';
+        $params->method('getFilePath')->willReturn($tmpFilePath);
+        $fs = (new StorageFactory(StorageFactory::MEMORY))->getStorage()->getFs();
+        // write our temporary file as if it was uploaded by a user
+        $fs->createDirectory('tmp');
+        $fs->write(basename($tmpFilePath), 'blah');
+        // we use the same fs for source and storage because it's all in memory anyway
+        $params->method('getSourceFs')->willReturn($fs);
+
+        $Uploads = new Uploads($this->Entity);
+        $Uploads->create($params);
     }
 }

@@ -1,39 +1,37 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2012, 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
 use function copy;
 use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Extensions;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Elabftw\UploadParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\UploadParamsInterface;
-use Elabftw\Services\Filter;
 use Elabftw\Services\MakeThumbnail;
+use Elabftw\Services\StorageFactory;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\UploadTrait;
-use function file_exists;
 use function in_array;
-use function is_uploaded_file;
+use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
-use function rename;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
-use function unlink;
 
 /**
  * All about the file uploads
@@ -45,6 +43,12 @@ class Uploads implements CrudInterface
 
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
     private const BIG_FILE_THRESHOLD = 50000000;
+
+    private const STATE_NORMAL = 1;
+
+    private const STATE_ARCHIVED = 2;
+
+    private const STATE_DELETED = 3;
 
     protected Db $Db;
 
@@ -63,58 +67,70 @@ class Uploads implements CrudInterface
     {
         $this->Entity->canOrExplode('write');
 
-        //$realName = Filter::forFilesystem($request->files->get('file')->getClientOriginalName());
+        // original file name
         $realName = $params->getFilename();
-        $this->checkExtension($realName);
-        $ext = Tools::getExt($realName);
+        $ext = $this->getExtensionOrExplode($realName);
 
+        // name for the stored file, includes folder and extension (ab/ab34[...].ext)
         $longName = $this->getLongName() . '.' . $ext;
-        $fullPath = $this->getUploadsPath() . $longName;
+        $folder = substr($longName, 0, 2);
 
-        // Try to move the file to its final place
-        $this->moveUploadedFile($params->getPathname(), $fullPath);
+        // where our uploaded file lives
+        $sourceFs = $params->getSourceFs();
+        // where we want to store it
+        $Config = Config::getConfig();
+        $storage = (int) $Config->configArr['uploads_storage'];
+        $storageFs = (new StorageFactory($storage))->getStorage()->getFs();
+
+        $tmpFilename = basename($params->getFilePath());
+        $filesize = $sourceFs->filesize($tmpFilename);
+        $hash = '';
+        // we don't hash big files as this could take too much time/resources
+        // same with thumbnails
+        if ($filesize < self::BIG_FILE_THRESHOLD) {
+            // read the file
+            $fileContent = $sourceFs->read($tmpFilename);
+            // get a hash sum
+            $hash = $this->getHash($fileContent);
+            // get a thumbnail
+            // if the mimetype fails, do nothing
+            try {
+                $mime = $sourceFs->mimeType($tmpFilename);
+                $MakeThumbnail = new MakeThumbnail($mime, $fileContent, $longName);
+                if (!$storageFs->fileExists($MakeThumbnail->thumbFilename)) {
+                    $thumbnailContent = $MakeThumbnail->makeThumb();
+                    if ($thumbnailContent !== null) {
+                        // save thumbnail
+                        $storageFs->write($MakeThumbnail->thumbFilename, $thumbnailContent);
+                    }
+                }
+            } catch (UnableToRetrieveMetadata $e) {
+                // just ignore it and continue if mime type could not be read
+            }
+        }
+        // read the file as a stream so we can copy it
+        $inputStream = $sourceFs->readStream($tmpFilename);
+
+        $storageFs->createDirectory($folder);
+        $storageFs->writeStream($longName, $inputStream);
 
         // final sql
-        $id = $this->dbInsert($realName, $longName, $this->getHash($fullPath));
+        $id = $this->dbInsert($realName, $longName, $hash, $filesize, $storage, $params->getComment());
 
-        $MakeThumbnail = new MakeThumbnail($fullPath);
-        $MakeThumbnail->makeThumb();
+        // TODO useful?
+        $sourceFs->delete($params->getFilePath());
 
         return $id;
     }
 
     /**
-     * Called from ImportZip class
-     *
-     * @param string $filePath absolute path to the file
-     */
-    public function createFromLocalFile(string $filePath, string $comment): void
-    {
-        $realName = basename($filePath);
-        $this->checkExtension($realName);
-
-        $longName = $this->getLongName() . '.' . Tools::getExt($realName);
-        $fullPath = $this->getUploadsPath() . $longName;
-
-        $this->moveFile($filePath, $fullPath);
-
-        $this->dbInsert($realName, $longName, $this->getHash($fullPath), $comment);
-        $MakeThumbnail = new MakeThumbnail($fullPath);
-        $MakeThumbnail->makeThumb();
-    }
-
-    /**
      * Create an upload from a string, from Chemdoodle or Doodle
-     *
-     * @param string $fileType 'mol' or 'png'
-     * @param string $realName name of the file
-     * @param string $content content of the file
      */
-    public function createFromString(string $fileType, string $realName, string $content): int
+    public function createFromString(string $fileType, string $realName, string $content, ?string $comment = null): int
     {
         $this->Entity->canOrExplode('write');
 
-        $allowedFileTypes = array('png', 'mol', 'json', 'zip');
+        $allowedFileTypes = array('pdf', 'png', 'mol', 'json', 'zip');
         if (!in_array($fileType, $allowedFileTypes, true)) {
             throw new IllegalActionException('Bad filetype!');
         }
@@ -123,26 +139,22 @@ class Uploads implements CrudInterface
             // get the image in binary
             $content = str_replace(array('data:image/png;base64,', ' '), array('', '+'), $content);
             $content = base64_decode($content, true);
+            if ($content === false) {
+                throw new RuntimeException('Could not decode content!');
+            }
         }
 
-        // make sure the file has a name
-        if (empty($realName)) {
-            $realName = 'untitled';
+        // add file extension if it wasn't provided
+        if (Tools::getExt($realName) === 'unknown') {
+            $realName .= '.' . $fileType;
         }
+        // create a temporary file so we can upload it using create()
+        $tmpFilePath = FsTools::getCacheFile();
+        $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
+        $tmpFilePathFs->write(basename($tmpFilePath), $content);
 
-        $realName = filter_var($realName, FILTER_SANITIZE_STRING) . '.' . $fileType;
-        $longName = $this->getLongName() . '.' . $fileType;
-        $fullPath = $this->getUploadsPath() . $longName;
-
-        if (!empty($content) && !file_put_contents($fullPath, $content)) {
-            throw new FilesystemErrorException('Could not write to file!');
-        }
-
-        $uploadId = $this->dbInsert($realName, $longName, $this->getHash($fullPath));
-        $MakeThumbnail = new MakeThumbnail($fullPath);
-        $MakeThumbnail->makeThumb();
-
-        return $uploadId;
+        $params = new CreateUpload($realName, $tmpFilePath, $comment);
+        return $this->create($params);
     }
 
     /**
@@ -151,11 +163,13 @@ class Uploads implements CrudInterface
     public function read(ContentParamsInterface $params): array
     {
         if ($params->getTarget() === 'all') {
-            return $this->readAll();
+            return $this->readAllNormal();
         }
-        $sql = 'SELECT * FROM uploads WHERE id = :id';
+
+        $sql = 'SELECT * FROM uploads WHERE id = :id AND state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindValue(':state', self::STATE_NORMAL, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->Db->fetch($req);
     }
@@ -174,6 +188,14 @@ class Uploads implements CrudInterface
         return $this->Db->fetchAll($req);
     }
 
+    public function readAllNormal(): array
+    {
+        // we read all but only return the ones with normal state
+        return array_filter($this->readAll(), function ($u) {
+            return ((int) $u['state']) === self::STATE_NORMAL;
+        });
+    }
+
     public function update(UploadParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
@@ -189,47 +211,10 @@ class Uploads implements CrudInterface
     }
 
     /**
-     * Get the correct class for icon from the extension
-     *
-     * @param string $ext Extension of the file
-     * @return string Class of the fa icon
-     */
-    public function getIconFromExtension(string $ext): string
-    {
-        if (in_array($ext, Extensions::ARCHIVE, true)) {
-            return 'fa-file-archive';
-        }
-        if (in_array($ext, Extensions::CODE, true)) {
-            return 'fa-file-code';
-        }
-        if (in_array($ext, Extensions::SPREADSHEET, true)) {
-            return 'fa-file-excel';
-        }
-        if (in_array($ext, Extensions::IMAGE, true)) {
-            return 'fa-file-image';
-        }
-        if ($ext === 'pdf') {
-            return 'fa-file-pdf';
-        }
-        if (in_array($ext, Extensions::PRESENTATION, true)) {
-            return 'fa-file-powerpoint';
-        }
-        if (in_array($ext, Extensions::VIDEO, true)) {
-            return 'fa-file-video';
-        }
-        if (in_array($ext, Extensions::DOCUMENT, true)) {
-            return 'fa-file-word';
-        }
-
-        return 'fa-file';
-    }
-
-    /**
      * Make a body check and then remove upload
      */
     public function destroy(): bool
     {
-        $this->Entity->canOrExplode('write');
         $uploadArr = $this->read(new ContentParams());
         // check that the filename is not in the body. see #432
         if (strpos($this->Entity->entityData['body'], $uploadArr['long_name'])) {
@@ -243,96 +228,45 @@ class Uploads implements CrudInterface
      */
     public function destroyAll(): void
     {
+        // this will include the archived/deleted ones
         $uploadArr = $this->readAll();
 
         foreach ($uploadArr as $upload) {
-            (new self($this->Entity, (int) $upload['id']))->nuke();
+            $this->setId((int) $upload['id']);
+            $this->nuke();
         }
     }
 
+    /**
+     * This function will not remove the files but set them to "deleted" state
+     * A manual purge must be made by sysadmin if they wish to really remove them.
+     */
     private function nuke(): bool
     {
         $this->Entity->canOrExplode('write');
-        $uploadArr = $this->read(new ContentParams());
-
-        // remove thumbnail
-        $thumbPath = $this->getUploadsPath() . $uploadArr['long_name'] . '_th.jpg';
-        if (file_exists($thumbPath) && unlink($thumbPath) !== true) {
-            throw new FilesystemErrorException('Could not delete file!');
-        }
-        // now delete file from filesystem
-        $filePath = $this->getUploadsPath() . $uploadArr['long_name'];
-        if (file_exists($filePath) && unlink($filePath) !== true) {
-            throw new FilesystemErrorException('Could not delete file!');
-        }
-
-        // Delete SQL entry (and verify the type)
-        // to avoid someone deleting files saying it's DB whereas it's exp
-        $sql = 'DELETE FROM uploads WHERE id = :id AND type = :type';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
-        return $this->Db->execute($req);
+        return $this->update(new UploadParams((string) self::STATE_DELETED, 'state'));
     }
 
     /**
-     * Replace an uploaded file by another
+     * Attached files are immutable (change history is kept), so the current
+     * file gets its state changed to "archived" and a new one is added
      */
     private function replace(UploadedFile $file): bool
     {
+        // read the current one to get the real_name
         $upload = $this->read(new ContentParams());
-        $fullPath = $this->getUploadsPath() . $upload['long_name'];
-        $this->moveUploadedFile($file->getPathname(), $fullPath);
-        $MakeThumbnail = new MakeThumbnail($fullPath);
-        $MakeThumbnail->makeThumb(true);
+        $params = new CreateUpload($upload['real_name'], $file->getPathname(), $upload['comment']);
+        $this->create($params);
 
-        $sql = 'UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
-    /**
-     * Move an uploaded file somewhere
-     */
-    private function moveUploadedFile(string $orig, string $dest): void
-    {
-        if (!is_uploaded_file($orig)) {
-            throw new IllegalActionException('Trying to move a file that has not been uploaded');
-        }
-        $this->moveFile($orig, $dest);
-    }
-
-    /**
-     * Place a file somewhere. We don't use rename() but rather copy/unlink to avoid issues with rename() across filesystems
-     */
-    private function moveFile(string $orig, string $dest): void
-    {
-        if (copy($orig, $dest) !== true) {
-            throw new FilesystemErrorException('Error while moving the file. Check folder permissions!');
-        }
-        if (unlink($orig) !== true) {
-            throw new FilesystemErrorException('Error deleting file!');
-        }
+        return $this->update(new UploadParams((string) self::STATE_ARCHIVED, 'state'));
     }
 
     /**
      * Generate the hash based on selected algorithm
-     *
-     * @param string $file The full path to the file
-     * @return string the hash or an empty string if file is too big
      */
-    private function getHash(string $file): string
+    private function getHash(string $content): string
     {
-        if (filesize($file) < self::BIG_FILE_THRESHOLD) {
-            $hash = hash_file($this->hashAlgorithm, $file);
-            if ($hash === false) {
-                throw new ImproperActionException('Error creating hash from file!');
-            }
-            return $hash;
-        }
-
-        return '';
+        return hash($this->hashAlgorithm, $content);
     }
 
     /**
@@ -340,17 +274,19 @@ class Uploads implements CrudInterface
      *
      * @param string $realName The name of the file
      */
-    private function checkExtension(string $realName): void
+    private function getExtensionOrExplode(string $realName): string
     {
-        if (Tools::getExt($realName) === 'php') {
+        $ext = Tools::getExt($realName);
+        if ($ext === 'php') {
             throw new ImproperActionException('PHP files are forbidden!');
         }
+        return $ext;
     }
 
     /**
      * Make the final SQL request to store the file
      */
-    private function dbInsert(string $realName, string $longName, string $hash, ?string $comment = null): int
+    private function dbInsert(string $realName, string $longName, string $hash, int $filesize, int $storage, ?string $comment = null): int
     {
         $comment ??= 'Click to add a comment';
 
@@ -362,7 +298,9 @@ class Uploads implements CrudInterface
             userid,
             type,
             hash,
-            hash_algorithm
+            hash_algorithm,
+            storage,
+            filesize
         ) VALUES(
             :real_name,
             :long_name,
@@ -371,7 +309,9 @@ class Uploads implements CrudInterface
             :userid,
             :type,
             :hash,
-            :hash_algorithm
+            :hash_algorithm,
+            :storage,
+            :filesize
         )';
 
         $req = $this->Db->prepare($sql);
@@ -385,6 +325,8 @@ class Uploads implements CrudInterface
         $req->bindParam(':type', $this->Entity->type);
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
+        $req->bindParam(':storage', $storage, PDO::PARAM_INT);
+        $req->bindParam(':filesize', $filesize, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->Db->lastInsertId();
     }

@@ -37,11 +37,13 @@
     "robthree/twofactorauth": "^1.7.0",
     "directorytree/ldaprecord": "^2.0.3",
     "league/flysystem": "^2.0",
-    "league/flysystem-memory": "^2.0",
+    "league/flysystem-memory": "^3.0",
     "lcobucci/jwt": "^4.1",
     "ezyang/htmlpurifier": "^4.13",
     "symfony/mailer": "^6.0",
-    "xemlock/htmlpurifier-html5": "^0.1.11"
+    "xemlock/htmlpurifier-html5": "^0.1.11",
+    "aws/aws-sdk-php": "^3.209",
+    "league/flysystem-aws-s3-v3": "^3.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",

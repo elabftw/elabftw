@@ -12,11 +12,10 @@ namespace Elabftw\Services;
 
 use function dirname;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Traits\UploadTrait;
-use function file_get_contents;
 
 /**
  * Mother class of the Make* services
@@ -49,11 +48,8 @@ abstract class AbstractMake
      */
     protected function getCss(): string
     {
-        $css = file_get_contents(dirname(__DIR__, 2) . '/web/assets/pdf.min.css');
-        if ($css === false) {
-            throw new FilesystemErrorException('Cannot read the minified css file!');
-        }
-        return $css;
+        $assetsFs = FsTools::getFs(dirname(__DIR__, 2) . '/web/assets');
+        return $assetsFs->read('pdf.min.css');
     }
 
     /**

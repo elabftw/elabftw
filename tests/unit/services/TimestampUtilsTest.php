@@ -13,47 +13,32 @@ use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
-use function file_get_contents;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use RunTimeException;
+use League\Flysystem\Filesystem;
 
 class TimestampUtilsTest extends \PHPUnit\Framework\TestCase
 {
+    private Filesystem $fixturesFs;
+
     protected function setUp(): void
     {
+        $this->fixturesFs = (new StorageFactory(StorageFactory::FIXTURES))->getStorage()->getFs();
     }
 
     public function testTimestamp(): void
     {
-        $fixturePaths = $this->getFixturePaths('dfn');
-        $mockResponse = $this->readFile($fixturePaths['asn1']);
+        $mockResponse = $this->fixturesFs->read('dfn.asn1');
         $client = $this->getClient($mockResponse);
 
         $Maker = new MakeDfnTimestamp(array(), $this->getFreshTimestampableEntity());
-        $tsUtils = new TimestampUtils($client, $fixturePaths['pdf'], $Maker->getTimestampParameters(), new TimestampResponse());
+        $pdfBlob = $this->fixturesFs->read('dfn.pdf');
+        $tsUtils = new TimestampUtils($client, $pdfBlob, $Maker->getTimestampParameters(), new TimestampResponse());
         $this->assertInstanceOf(TimestampResponse::class, $tsUtils->timestamp());
-    }
-
-    public function getFixturePaths(string $tsa): array
-    {
-        return array(
-            'pdf' => dirname(__DIR__, 2) . '/_data/' . $tsa . '.pdf',
-            'asn1' => dirname(__DIR__, 2) . '/_data/' . $tsa . '.asn1',
-        );
-    }
-
-    private function readFile(string $filePath): string
-    {
-        $content = file_get_contents($filePath);
-        if ($content === false) {
-            throw new RunTimeException('Could not read fixture file!');
-        }
-        return $content;
     }
 
     private function getClient(string $mockResponse): Client

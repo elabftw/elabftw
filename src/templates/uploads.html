@@ -63,7 +63,7 @@
                     {# don't make the thumbnail clickable if it's a tif #}
                       {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
                       <div class='text-center'>
-                        <a class='text-break' href='app/download.php?f={{ upload.long_name }}'
+                        <a class='text-break' href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'
                            {% if upload.real_name matches '/(jpg|jpeg|png|gif)$/i' %}
                                data-fancybox='group'
                            {% endif %}
@@ -73,10 +73,11 @@
                            >
                         {% endif %}
                     {% set thumb_name = upload.long_name ~ '_th.jpg' %}
-                    {% if thumb_name is readable and App.Users.userData.uploads_layout %}
-                       <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ upload.long_name }}_th.jpg' alt='thumbnail' />
+                    <!-- old timestamp pdf don't have a thumbnail, so don't try to display one for them -->
+                    {% if App.Users.userData.uploads_layout and not upload.real_name ends with '-timestamped.pdf' %}
+                    <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ thumb_name }}&storage={{ upload.storage }}' alt='thumbnail' />
                    {% elseif App.Users.userData.uploads_layout %}
-                      <i class='fas {{ Entity.Uploads.getIconFromExtension(ext) }} thumb rounded mx-auto d-block'></i>
+                      <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block'></i>
                    {% endif %}
                      {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
                         </a>
@@ -84,7 +85,7 @@
                      {% endif %}
                             {% elseif ext == 'mol' and App.Users.userData.chem_editor %}
                             <div class='text-center'>
-                                <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name }}'></canvas>
+                              <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'></canvas>
                             </div>
                             {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::MOLECULE') %}
                                 <!--  build control dropdown to change the representation style -->
@@ -119,7 +120,7 @@
                                 </div>
 
                                 <div class='viewer_3Dmoljs file-uploaded'
-                                  data-href='app/download.php?f={{ upload.long_name }}'
+                                  data-href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'
                                   data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick'}}"
                                   data-backgroundcolor='0xffffff'
                                   id='3Dmol_{{ upload.id }}'>
@@ -127,20 +128,23 @@
 
             {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::DNA') and App.Users.userData.use_ove %}
               <div class='viewer-ove'
-                data-href='app/download.php?f={{ upload.long_name }}'
+                   data-href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'
                 data-real-name='{{ upload.real_name }}'
                 id='OVE_{{ upload.id }}'>
               </div>
             {% elseif App.Users.userData.uploads_layout %}
-            <i class='fas {{ Entity.Uploads.getIconFromExtension(ext) }} thumb rounded mx-auto d-block'></i>
+            <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block'></i>
             {% endif %}
 
         <div class='caption'>
           <i class='fas fa-download mr-1'></i>
           <span>
-              <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&forceDownload' rel='noopener'>{{ upload.real_name }}</a>
+            <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&storage={{ upload.storage }}' rel='noopener'>{{ upload.real_name }}</a>
             <span class='smallgray' style='display:inline'>
-              {{ (Entity.Uploads.getUploadsPath ~ upload.long_name)|filesize|formatBytes }} - {{ upload.datetime }}
+              {% if upload.filesize %}
+                {{ upload.filesize|formatBytes }} -
+              {% endif %}
+              {{ upload.created_at }}
             </span>
           </span>
         <br>

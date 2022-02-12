@@ -22,8 +22,6 @@ class TimestampResponse implements TimestampResponseInterface
 
     private string $tokenPath = '';
 
-    private string $tokenName = '';
-
     public function getTimestampFromResponseFile(): string
     {
         if (!is_readable($this->tokenPath)) {
@@ -71,16 +69,6 @@ class TimestampResponse implements TimestampResponseInterface
             }
         }
         throw new ImproperActionException('Could not get response time!');
-    }
-
-    public function getTokenName(): string
-    {
-        return $this->tokenName;
-    }
-
-    public function setTokenName(string $tokenName): void
-    {
-        $this->tokenName = $tokenName;
     }
 
     public function getTokenPath(): string

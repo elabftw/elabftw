@@ -40,6 +40,8 @@ services:
             - USE_REDIS=false
             - ENABLE_IPV6=true
             - DEV_MODE=true
+            - ELAB_AWS_ACCESS_KEY=yep
+            - ELAB_AWS_SECRET_KEY=yop
         volumes:
             - ..:/elabftw
             - ../_coverage:/elabftw/tests/_output/coverage

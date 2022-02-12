@@ -63,7 +63,7 @@ class MakeMultiPdf extends AbstractMake implements FileMakerInterface
     {
         $this->Entity->setId($id);
         $permissions = $this->Entity->getPermissions();
-        $CurrentEntity = new MakePdf($this->mpdfProvider, $this->Entity, true);
+        $CurrentEntity = new MakePdf($this->mpdfProvider, $this->Entity);
         if ($permissions['read']) {
             // write content
             // FIXME: in multi mode, the attached files are currently not appended

@@ -11,11 +11,11 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use DateTimeImmutable;
-use Elabftw\Controllers\DownloadController;
-use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use function json_decode;
@@ -28,6 +28,8 @@ use ZipArchive;
  */
 class MakeBloxberg extends AbstractMake
 {
+    use UploadTrait;
+
     /**
      * This pubkey is currently the same for everyone
      * Information about the user/institution is stored in the metadataJson field
@@ -73,8 +75,8 @@ class MakeBloxberg extends AbstractMake
         // the binary response is a zip archive that contains the certificate in pdf format
         $zip = $proofResponse->getBody()->getContents();
         // save the zip file as an upload
-        $uploadId = $this->Entity->Uploads->createFromString('zip', $this->getFileName(), $zip);
-        return $this->addToZip($pdf, $uploadId);
+        $zip = $this->addToZip($zip, $pdf);
+        return (bool) $this->Entity->Uploads->createFromString('zip', $this->getFileName(), $zip);
     }
 
     public function getFileName(): string
@@ -129,20 +131,20 @@ class MakeBloxberg extends AbstractMake
     /**
      * Add the timestamped pdf to existing zip archive
      */
-    private function addToZip(string $pdf, int $uploadId): bool
+    private function addToZip(string $zip, string $pdf): string
     {
-        // get info about the file to get the long_name
-        $this->Entity->Uploads->setId($uploadId);
-        $zipFile = $this->Entity->Uploads->read(new ContentParams());
-        // add the timestamped pdf to the zip archive
+        // write the zip to a temporary file
+        $tmpFilePath = FsTools::getCacheFile();
+        $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
+        $tmpFilePathFs->write(basename($tmpFilePath), $zip);
+
         $ZipArchive = new ZipArchive();
-        // we need this to get the path to the file
-        $DownloadController = new DownloadController($zipFile['long_name']);
-        $res = $ZipArchive->open($DownloadController->getFilePath());
+        $res = $ZipArchive->open($tmpFilePath);
         if ($res !== true) {
             throw new FilesystemErrorException('Error opening the zip archive!');
         }
         $ZipArchive->addFromString('timestamped-data.pdf', $pdf);
-        return $ZipArchive->close();
+        $ZipArchive->close();
+        return $tmpFilePathFs->read(basename($tmpFilePath));
     }
 }

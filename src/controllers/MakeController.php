@@ -12,6 +12,7 @@ namespace Elabftw\Controllers;
 use function count;
 use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
@@ -30,6 +31,8 @@ use Elabftw\Services\MpdfProvider;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use ZipStream\Option\Archive as ArchiveOptions;
+use ZipStream\ZipStream;
 
 /**
  * Create zip, csv, pdf or report
@@ -105,7 +108,7 @@ class MakeController implements ControllerInterface
     {
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
         $this->Entity->canOrExplode('read');
-        return $this->getFileResponse(new MakePdf($this->getMpdfProvider(), $this->Entity, true));
+        return $this->getFileResponse(new MakePdf($this->getMpdfProvider(), $this->Entity));
     }
 
     private function makeMultiPdf(): Response
@@ -125,7 +128,14 @@ class MakeController implements ControllerInterface
 
     private function makeZip(): Response
     {
-        $Make = new MakeStreamZip($this->Entity, $this->idArr);
+        if (!($this->Entity instanceof Experiments || $this->Entity instanceof Items)) {
+            throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', $this->Entity::class));
+        }
+        $opt = new ArchiveOptions();
+        // crucial option for a stream input
+        $opt->setZeroHeader(true);
+        $Zip = new ZipStream(null, $opt);
+        $Make = new MakeStreamZip($Zip, $this->Entity, $this->idArr);
         $Response = new StreamedResponse();
         $Response->headers->set('X-Accel-Buffering', 'no');
         $Response->headers->set('Content-Type', 'application/zip');

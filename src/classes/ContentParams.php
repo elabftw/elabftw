@@ -13,6 +13,7 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use const SECRET_KEY;
 use function str_contains;
@@ -27,7 +28,7 @@ class ContentParams implements ContentParamsInterface
 
     public function getTarget(): string
     {
-        return $this->target;
+        return Check::target($this->target);
     }
 
     public function getContent(): string

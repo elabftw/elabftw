@@ -135,4 +135,40 @@ final class Extensions
         'gff',
         'gff3',
     );
+
+    /**
+     * Get the correct class for icon from the extension
+     *
+     * @param string $ext Extension of the file
+     * @return string Class of the fa icon
+     */
+    public static function getIconFromExtension(string $ext): string
+    {
+        if (in_array($ext, self::ARCHIVE, true)) {
+            return 'fa-file-archive';
+        }
+        if (in_array($ext, self::CODE, true)) {
+            return 'fa-file-code';
+        }
+        if (in_array($ext, self::SPREADSHEET, true)) {
+            return 'fa-file-excel';
+        }
+        if (in_array($ext, self::IMAGE, true)) {
+            return 'fa-file-image';
+        }
+        if ($ext === 'pdf') {
+            return 'fa-file-pdf';
+        }
+        if (in_array($ext, self::PRESENTATION, true)) {
+            return 'fa-file-powerpoint';
+        }
+        if (in_array($ext, self::VIDEO, true)) {
+            return 'fa-file-video';
+        }
+        if (in_array($ext, self::DOCUMENT, true)) {
+            return 'fa-file-word';
+        }
+
+        return 'fa-file';
+    }
 }

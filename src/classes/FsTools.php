@@ -56,13 +56,13 @@ class FsTools
         $fs->deleteDirectory('purifier');
     }
 
+    public static function getFs(string $path): FilesystemOperator
+    {
+        return new Filesystem(new LocalFilesystemAdapter($path));
+    }
+
     private static function getCachePath(): string
     {
         return dirname(__DIR__, 2) . '/cache/';
-    }
-
-    private static function getFs(string $path): FilesystemOperator
-    {
-        return new Filesystem(new LocalFilesystemAdapter($path));
     }
 }

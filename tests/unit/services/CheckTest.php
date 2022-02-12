@@ -100,4 +100,10 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $this->expectException(IllegalActionException::class);
         Check::token('blah');
     }
+
+    public function testInvalidTarget(): void
+    {
+        $this->expectException(IllegalActionException::class);
+        Check::target('Grogu');
+    }
 }

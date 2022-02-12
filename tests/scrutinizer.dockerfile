@@ -10,17 +10,17 @@ ARG PHAN_VERSION=5.3.1
 # TODO: remove once s3 branch of elabimg is merged (required by aws php sdk)
 RUN apk add --update --no-cache php8-simplexml
 
-# PHPStan
+# phpStan
 ADD https://github.com/phpstan/phpstan/releases/download/$PHPSTAN_VERSION/phpstan.phar /usr/bin/phpstan
+RUN chmod +x /usr/bin/phpstan
 
 # Psalm
 ADD https://github.com/vimeo/psalm/releases/download/$PSALM_VERSION/psalm.phar /usr/bin/psalm
+RUN chmod +x /usr/bin/psalm
 
-# Phan
+#Phan
 ADD https://github.com/phan/phan/releases/download/$PHAN_VERSION/phan.phar /usr/bin/phan
-
-# make the phar executable
-RUN chmod +x /usr/bin/{phpstan,psalm,phan}
+RUN chmod +x /usr/bin/phan
 
 COPY ./bin /elabftw/bin
 COPY ./src /elabftw/src

@@ -17,6 +17,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use function json_encode;
+use ZipStream\Option\Archive as ArchiveOptions;
 use ZipStream\ZipStream;
 
 /**
@@ -34,13 +35,10 @@ class MakeStreamZip extends AbstractMake
     public function __construct(AbstractEntity $entity, private array $idArr)
     {
         parent::__construct($entity);
-
-        // we check first if the zip extension is here
-        if (!class_exists('ZipArchive')) {
-            throw new ImproperActionException('Fatal error! Missing extension: php-zip. Make sure it is installed and activated.');
-        }
-
-        $this->Zip = new ZipStream();
+        $opt = new ArchiveOptions();
+        // crucial option for a stream input
+        $opt->setZeroHeader(true);
+        $this->Zip = new ZipStream('a.zip', $opt);
     }
 
     /**

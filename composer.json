@@ -23,8 +23,7 @@
     "onelogin/php-saml": "^4.0.0",
     "guzzlehttp/guzzle": "^7.0.1",
     "symfony/http-foundation": "^6.0",
-    "twig/twig": "^2.13.0",
-    "twig/extensions": "1.5.*",
+    "twig/twig": "^3.3.8",
     "monolog/monolog": "^2.1.0",
     "maennchen/zipstream-php": "^2.0.0",
     "league/csv": "^9.4",
@@ -43,7 +42,8 @@
     "symfony/mailer": "^6.0",
     "xemlock/htmlpurifier-html5": "^0.1.11",
     "aws/aws-sdk-php": "^3.209",
-    "league/flysystem-aws-s3-v3": "^3.0"
+    "league/flysystem-aws-s3-v3": "^3.0",
+    "jblond/twig-trans": "^1.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",

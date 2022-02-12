@@ -42,6 +42,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use ZipStream\Option\Archive as ArchiveOptions;
+use ZipStream\ZipStream;
 
 /**
  * For API requests
@@ -484,10 +486,14 @@ class ApiController implements ControllerInterface
         if (!$this->Users->userData['is_sysadmin']) {
             throw new IllegalActionException('Only a sysadmin can use this endpoint!');
         }
-        $Zip = new MakeBackupZip($this->Entity, $this->param);
+        $opt = new ArchiveOptions();
+        // crucial option for a stream input
+        $opt->setZeroHeader(true);
+        $Zip = new ZipStream(null, $opt);
+        $Make = new MakeBackupZip($Zip, $this->Entity, $this->param);
         $Response = new StreamedResponse();
-        $Response->setCallback(function () use ($Zip) {
-            $Zip->getZip();
+        $Response->setCallback(function () use ($Make) {
+            $Make->getZip();
         });
         return $Response;
     }

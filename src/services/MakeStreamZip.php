@@ -11,32 +11,22 @@ namespace Elabftw\Services;
 
 use function count;
 use Elabftw\Elabftw\ContentParams;
-use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use function json_encode;
-use ZipStream\Option\Archive as ArchiveOptions;
 use ZipStream\ZipStream;
 
 /**
  * Make a zip archive from experiment or db item
  */
-class MakeStreamZip extends AbstractMake
+class MakeStreamZip extends AbstractMakeZip
 {
-    private ZipStream $Zip;
-
-    private string $folder = '';
-
     // array that will be converted to json
     private array $jsonArr = array();
 
-    public function __construct(Experiments|Items $entity, private array $idArr)
+    public function __construct(protected ZipStream $Zip, Experiments|Items $entity, private array $idArr)
     {
         parent::__construct($entity);
-        $opt = new ArchiveOptions();
-        // crucial option for a stream input
-        $opt->setZeroHeader(true);
-        $this->Zip = new ZipStream('a.zip', $opt);
     }
 
     /**
@@ -66,61 +56,6 @@ class MakeStreamZip extends AbstractMake
         $this->Zip->addFile('.elabftw.json', json_encode($this->jsonArr, JSON_THROW_ON_ERROR, 512));
 
         $this->Zip->finish();
-    }
-
-    /**
-     * Folder and zip file name begins with date for experiments
-     */
-    private function getBaseFileName(): string
-    {
-        $prefix = 'date';
-        // items will show category instead of date as file name prefix
-        if ($this->Entity instanceof Items) {
-            $prefix = 'category';
-        }
-        return sprintf('%s - %s', $this->Entity->entityData[$prefix], Filter::forFilesystem($this->Entity->entityData['title']));
-    }
-
-    /**
-     * Add attached files
-     * TODO code is duplicated in makebackupzip
-     *
-     * @param array<array-key, array<string, string>> $filesArr the files array
-     */
-    private function addAttachedFiles($filesArr): void
-    {
-        $real_names_so_far = array();
-        $i = 0;
-        $Config = Config::getConfig();
-        $storage = (int) $Config->configArr['uploads_storage'];
-        $storageFs = (new StorageFactory($storage))->getStorage()->getFs();
-        foreach ($filesArr as $file) {
-            $i++;
-            $realName = $file['real_name'];
-            // if we have a file with the same name, it shouldn't overwrite the previous one
-            if (in_array($realName, $real_names_so_far, true)) {
-                $realName = (string) $i . '_' . $realName;
-            }
-            $real_names_so_far[] = $realName;
-
-            // add files to archive
-            $this->Zip->addFileFromStream($this->folder . '/' . $realName, $storageFs->readStream($file['long_name']));
-        }
-    }
-
-    /**
-     * Add a PDF file to the ZIP archive
-     */
-    private function addPdf(): void
-    {
-        $userData = $this->Entity->Users->userData;
-        $MpdfProvider = new MpdfProvider(
-            $userData['fullname'],
-            $userData['pdf_format'],
-            (bool) $userData['pdfa'],
-        );
-        $MakePdf = new MakePdf($MpdfProvider, $this->Entity);
-        $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $MakePdf->getFileContent());
     }
 
     /**

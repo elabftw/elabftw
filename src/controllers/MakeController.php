@@ -31,6 +31,8 @@ use Elabftw\Services\MpdfProvider;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use ZipStream\Option\Archive as ArchiveOptions;
+use ZipStream\ZipStream;
 
 /**
  * Create zip, csv, pdf or report
@@ -129,7 +131,11 @@ class MakeController implements ControllerInterface
         if (!($this->Entity instanceof Experiments || $this->Entity instanceof Items)) {
             throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', $this->Entity::class));
         }
-        $Make = new MakeStreamZip($this->Entity, $this->idArr);
+        $opt = new ArchiveOptions();
+        // crucial option for a stream input
+        $opt->setZeroHeader(true);
+        $Zip = new ZipStream(null, $opt);
+        $Make = new MakeStreamZip($Zip, $this->Entity, $this->idArr);
         $Response = new StreamedResponse();
         $Response->headers->set('X-Accel-Buffering', 'no');
         $Response->headers->set('Content-Type', 'application/zip');

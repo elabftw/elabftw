@@ -13,6 +13,7 @@ use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
+use ZipStream\ZipStream;
 
 class MakeStreamZipTest extends \PHPUnit\Framework\TestCase
 {
@@ -24,8 +25,9 @@ class MakeStreamZipTest extends \PHPUnit\Framework\TestCase
     {
         $idArr = array('1', '2', '3');
         $Users = new Users(1, 1);
-        $this->MakeExp = new MakeStreamZip(new Experiments($Users), $idArr);
-        $this->MakeDb = new MakeStreamZip(new Items($Users), $idArr);
+        $Zip = $this->createMock(ZipStream::class);
+        $this->MakeExp = new MakeStreamZip($Zip, new Experiments($Users), $idArr);
+        $this->MakeDb = new MakeStreamZip($Zip, new Items($Users), $idArr);
     }
 
     public function testGetFileName(): void
@@ -46,7 +48,8 @@ class MakeStreamZipTest extends \PHPUnit\Framework\TestCase
         $filename = 'similar';
         $Experiments->Uploads->create(new CreateUpload($filename, $filepath));
         $Experiments->Uploads->create(new CreateUpload($filename, $filepath));
-        $MakeExp = new MakeStreamZip($Experiments, array('1'));
+        $Zip = $this->createMock(ZipStream::class);
+        $MakeExp = new MakeStreamZip($Zip, $Experiments, array('1'));
         $MakeExp->getZip();
         $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}\s-\s.*.zip$/', $MakeExp->getFileName());
     }

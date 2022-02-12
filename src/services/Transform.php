@@ -75,6 +75,15 @@ class Transform
                     _('A user needs account validation.'),
                     $notif['created_at'],
                 );
+            case Notifications::MATH_JAX_FAILED:
+                return sprintf(
+                    '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="%s.php?mode=view&id=%d">%s</span>' . $relativeMoment,
+                    (int) $notif['id'],
+                    $notif['body']['entity_page'],
+                    (int) $notif['body']['entity_id'],
+                    _('Tex rendering failed during PDF generation. Carefully check the generated PDF.'),
+                    $notif['created_at'],
+                );
             default:
                 return '';
         }

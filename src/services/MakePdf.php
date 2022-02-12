@@ -13,6 +13,7 @@ use function date;
 use DateTime;
 use function dirname;
 use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\FileMakerInterface;
@@ -20,6 +21,7 @@ use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Notifications;
 use Elabftw\Models\Users;
 use Elabftw\Traits\PdfTrait;
 use Elabftw\Traits\TwigTrait;
@@ -101,7 +103,16 @@ class MakePdf extends AbstractMake implements FileMakerInterface
     public function getContent(): string
     {
         $Tex2Svg = new Tex2Svg($this->mpdf, $this->getHtml());
-        return $Tex2Svg->getContent();
+        $content = $Tex2Svg->getContent();
+        if ($Tex2Svg->mathJaxFailed) {
+            $body = array(
+                'entity_id' => $this->Entity->id,
+                'entity_page' => $this->Entity->page,
+            );
+            $Notifications = new Notifications($this->Entity->Users);
+            $Notifications->create(new CreateNotificationParams(Notifications::MATH_JAX_FAILED, $body));
+        }
+        return $content;
     }
 
     /**

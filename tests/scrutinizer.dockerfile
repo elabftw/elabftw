@@ -6,10 +6,6 @@ ARG PHPSTAN_VERSION=1.4.2
 ARG PSALM_VERSION=4.18.1
 ARG PHAN_VERSION=5.3.1
 
-# Psalm needs php8-simplexml
-# TODO: remove once s3 branch of elabimg is merged (required by aws php sdk)
-RUN apk add --update --no-cache php8-simplexml
-
 # phpStan
 ADD https://github.com/phpstan/phpstan/releases/download/$PHPSTAN_VERSION/phpstan.phar /usr/bin/phpstan
 RUN chmod +x /usr/bin/phpstan

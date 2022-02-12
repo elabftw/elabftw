@@ -13,7 +13,6 @@ use function dirname;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Models\Config;
-use function is_readable;
 
 /**
  * To get Twig
@@ -46,7 +45,6 @@ trait TwigTrait
         $starsFilter = new \Twig\TwigFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
         $bytesFilter = new \Twig\TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
         $extFilter = new \Twig\TwigFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
-        $filesizeFilter = new \Twig\TwigFilter('filesize', '\filesize', $filterOptions);
         $qFilter = new \Twig\TwigFilter('qFilter', '\Elabftw\Elabftw\Tools::qFilter', $filterOptions);
         $langFilter = new \Twig\TwigFilter('jslang', '\Elabftw\Elabftw\Tools::getCalendarLang', $filterOptions);
         $metadataFilter = new \Twig\TwigFilter('formatMetadata', '\Elabftw\Elabftw\Tools::formatMetadata', $filterOptions);
@@ -60,18 +58,11 @@ trait TwigTrait
         $minPasswordLength = new \Twig\TwigFunction('minPasswordLength', '\Elabftw\Elabftw\TwigFunctions::getMinPasswordLength');
         $ext2icon = new \Twig\TwigFunction('ext2icon', '\Elabftw\Elabftw\Extensions::getIconFromExtension');
 
-        // custom test to check for a file
-        $test = new \Twig\TwigTest('readable', function (string $path) {
-            return is_readable(dirname(__DIR__, 2) . '/uploads/' . $path);
-        });
-        $TwigEnvironment->addTest($test);
-
         $TwigEnvironment->addFilter($msgFilter);
         $TwigEnvironment->addFilter($mdFilter);
         $TwigEnvironment->addFilter($starsFilter);
         $TwigEnvironment->addFilter($bytesFilter);
         $TwigEnvironment->addFilter($extFilter);
-        $TwigEnvironment->addFilter($filesizeFilter);
         $TwigEnvironment->addFilter($qFilter);
         $TwigEnvironment->addFilter($langFilter);
         $TwigEnvironment->addFilter($metadataFilter);

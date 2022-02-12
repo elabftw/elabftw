@@ -142,11 +142,9 @@
             <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&storage={{ upload.storage }}' rel='noopener'>{{ upload.real_name }}</a>
             <span class='smallgray' style='display:inline'>
               {% if upload.filesize %}
-                {{ upload.filesize|formatBytes }}
-              {% else %}
-                {{ (Entity.Uploads.getUploadsPath ~ upload.long_name)|filesize|formatBytes }}
+                {{ upload.filesize|formatBytes }} -
               {% endif %}
-              - {{ upload.created_at }}
+              {{ upload.created_at }}
             </span>
           </span>
         <br>

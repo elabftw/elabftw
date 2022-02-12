@@ -9,8 +9,6 @@
 
 namespace Elabftw\Traits;
 
-use function dirname;
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Services\StorageFactory;
 use League\Flysystem\Visibility;
@@ -20,16 +18,6 @@ use League\Flysystem\Visibility;
  */
 trait UploadTrait
 {
-    protected Db $Db;
-
-    /**
-     * Get the uploads folder absolute path
-     */
-    public function getUploadsPath(): string
-    {
-        return dirname(__DIR__, 2) . '/uploads/';
-    }
-
     /**
      * Create a unique long filename with a folder
      * Create the folder if it doesn't exist

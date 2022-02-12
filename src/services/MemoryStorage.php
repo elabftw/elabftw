@@ -9,13 +9,12 @@
 
 namespace Elabftw\Services;
 
-/**
- * For in memory filesystem operations
- */
-
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 
+/**
+ * For in memory filesystem operations
+ */
 class MemoryStorage extends AbstractStorage
 {
     protected function getAdapter(): FilesystemAdapter

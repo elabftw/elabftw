@@ -44,7 +44,7 @@ class TimestampUtils
     ) {
         // save the data inside a temporary file so openssl can act on it
         $pdfPath = FsTools::getCacheFile() . '.pdf';
-        $this->cacheFs = (new StorageFactory(StorageFactory::STORAGE_CACHE))->getStorage()->getFs();
+        $this->cacheFs = (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs();
         $this->cacheFs->write(basename($pdfPath), $data);
         $this->dataPath = $pdfPath;
         $this->trash[] = basename($this->dataPath);

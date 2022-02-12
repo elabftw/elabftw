@@ -19,7 +19,7 @@ class SqlTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Sql = new Sql((new StorageFactory(StorageFactory::STORAGE_FIXTURES))->getStorage()->getFs());
+        $this->Sql = new Sql((new StorageFactory(StorageFactory::FIXTURES))->getStorage()->getFs());
     }
 
     public function testExecFile(): void

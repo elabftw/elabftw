@@ -31,7 +31,7 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
     {
         // taken from the example response on the api doc
         // https://app.swaggerhub.com/apis/bloxberg/fast-api/0.1.0#/certificate/createBloxbergCertificate_createBloxbergCertificate_post
-        $this->fixturesFs = (new StorageFactory(StorageFactory::STORAGE_FIXTURES))->getStorage()->getFs();
+        $this->fixturesFs = (new StorageFactory(StorageFactory::FIXTURES))->getStorage()->getFs();
         $successResponseCertify = $this->fixturesFs->read('bloxberg-cert-response.json');
         // a small zip that will act as what we receive from the server
         $zip = $this->fixturesFs->read('example.zip');

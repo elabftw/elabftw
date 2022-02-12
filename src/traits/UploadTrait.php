@@ -27,7 +27,7 @@ trait UploadTrait
         $hash = FsTools::getUniqueString();
         $folder = substr($hash, 0, 2);
         // create a subfolder if it doesn't exist
-        $storageFs = (new StorageFactory(StorageFactory::STORAGE_LOCAL))->getStorage()->getFs();
+        $storageFs = (new StorageFactory(StorageFactory::LOCAL))->getStorage()->getFs();
         $storageFs->createDirectory($folder);
         $storageFs->setVisibility($folder, Visibility::PRIVATE);
         return $folder . '/' . $hash;

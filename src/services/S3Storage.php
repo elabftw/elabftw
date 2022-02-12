@@ -9,10 +9,6 @@
 
 namespace Elabftw\Services;
 
-/**
- * Provide a League\Filesystem adapter for S3 buckets file uploads
- */
-
 use Aws\Credentials\CredentialsInterface;
 use Aws\S3\S3Client;
 use Aws\S3\S3ClientInterface;
@@ -22,6 +18,9 @@ use League\Flysystem\AwsS3V3\PortableVisibilityConverter;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Visibility;
 
+/**
+ * Provide a League\Filesystem adapter for S3 buckets file uploads
+ */
 class S3Storage extends AbstractStorage
 {
     private const S3_VERSION = '2006-03-01';

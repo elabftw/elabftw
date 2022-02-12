@@ -52,7 +52,7 @@ try {
             (int) $Request->request->get('target'),
             $Request->request->getAlnum('visibility'),
             $Request->files->all()['file'],
-            (new StorageFactory(StorageFactory::STORAGE_CACHE))->getStorage()->getFs(),
+            (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs(),
         );
     } else {
         throw new IllegalActionException('Invalid argument');

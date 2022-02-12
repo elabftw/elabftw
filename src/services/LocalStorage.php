@@ -9,13 +9,12 @@
 
 namespace Elabftw\Services;
 
-/**
- * For locally stored uploads
- */
-
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 
+/**
+ * For locally stored uploads
+ */
 class LocalStorage extends AbstractStorage
 {
     protected const FOLDER = 'uploads';

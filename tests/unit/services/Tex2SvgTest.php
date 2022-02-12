@@ -22,7 +22,7 @@ class Tex2SvgTest extends \PHPUnit\Framework\TestCase
     {
         $MpdfProvider = new MpdfProvider('Toto');
         $this->mpdf = $MpdfProvider->getInstance();
-        $this->fixturesFs = (new StorageFactory(StorageFactory::STORAGE_FIXTURES))->getStorage()->getFs();
+        $this->fixturesFs = (new StorageFactory(StorageFactory::FIXTURES))->getStorage()->getFs();
     }
 
     public function testNoMathJax(): void

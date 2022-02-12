@@ -39,7 +39,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
             'proxy' => '',
         );
         $this->dataPath = dirname(__DIR__, 2) . '/_data/';
-        $this->fixturesFs = (new StorageFactory(StorageFactory::STORAGE_FIXTURES))->getStorage()->getFs();
+        $this->fixturesFs = (new StorageFactory(StorageFactory::FIXTURES))->getStorage()->getFs();
     }
 
     public function testNonTimestampableExperiment(): void

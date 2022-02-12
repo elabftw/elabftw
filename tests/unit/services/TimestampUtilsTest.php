@@ -27,7 +27,7 @@ class TimestampUtilsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->fixturesFs = (new StorageFactory(StorageFactory::STORAGE_FIXTURES))->getStorage()->getFs();
+        $this->fixturesFs = (new StorageFactory(StorageFactory::FIXTURES))->getStorage()->getFs();
     }
 
     public function testTimestamp(): void

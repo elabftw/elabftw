@@ -29,11 +29,11 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         // and this corresponds to the temporary file created after upload
         $tmpFilePath = '/tmp/phpELABFTW';
         $params->method('getFilePath')->willReturn($tmpFilePath);
-        $fs = (new StorageFactory(StorageFactory::STORAGE_MEMORY))->getStorage()->getFs();
+        $fs = (new StorageFactory(StorageFactory::MEMORY))->getStorage()->getFs();
         // write our temporary file as if it was uploaded by a user
         $fs->createDirectory('tmp');
         // a txt file was failing the mime type, so use a png
-        $fixturesFs = (new StorageFactory(StorageFactory::STORAGE_FIXTURES))->getStorage()->getFs();
+        $fixturesFs = (new StorageFactory(StorageFactory::FIXTURES))->getStorage()->getFs();
         $fs->write(basename($tmpFilePath), $fixturesFs->read('example.png'));
         // we use the same fs for source and storage because it's all in memory anyway
         $params->method('getSourceFs')->willReturn($fs);
@@ -51,7 +51,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         // and this corresponds to the temporary file created after upload
         $tmpFilePath = '/tmp/phpELABFTW';
         $params->method('getFilePath')->willReturn($tmpFilePath);
-        $fs = (new StorageFactory(StorageFactory::STORAGE_MEMORY))->getStorage()->getFs();
+        $fs = (new StorageFactory(StorageFactory::MEMORY))->getStorage()->getFs();
         // write our temporary file as if it was uploaded by a user
         $fs->createDirectory('tmp');
         $fs->write(basename($tmpFilePath), 'blah');

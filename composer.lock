@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7de07fe89500718ae553a30a560677f7",
+    "content-hash": "0365d8e636508309e8367551da3f9853",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1473,22 +1473,22 @@
         },
         {
             "name": "league/flysystem-memory",
-            "version": "2.0.6",
+            "version": "3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem-memory.git",
-                "reference": "f644026c705b8a501543f38cb8b745a603aa4952"
+                "reference": "d8b5e7e4862537642bd47a1d30497a362fd813a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem-memory/zipball/f644026c705b8a501543f38cb8b745a603aa4952",
-                "reference": "f644026c705b8a501543f38cb8b745a603aa4952",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-memory/zipball/d8b5e7e4862537642bd47a1d30497a362fd813a3",
+                "reference": "d8b5e7e4862537642bd47a1d30497a362fd813a3",
                 "shasum": ""
             },
             "require": {
                 "ext-fileinfo": "*",
-                "league/flysystem": "^2.0.0",
-                "php": "^7.2 || ^8.0"
+                "league/flysystem": "^2.0.0 || ^3.0.0",
+                "php": "^8.0.2"
             },
             "type": "library",
             "autoload": {
@@ -1516,9 +1516,9 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem-memory/issues",
-                "source": "https://github.com/thephpleague/flysystem-memory/tree/2.0.6"
+                "source": "https://github.com/thephpleague/flysystem-memory/tree/3.0.2"
             },
-            "time": "2021-02-12T19:24:17+00:00"
+            "time": "2022-01-15T22:42:13+00:00"
         },
         {
             "name": "league/mime-type-detection",
@@ -9455,5 +9455,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.2.0"
 }

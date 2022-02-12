@@ -1,3 +1,4 @@
+# Dockerfile for CI image
 FROM elabftw/elabimg:hypernext
 
 # Set versions of used tools
@@ -6,22 +7,23 @@ ARG PSALM_VERSION=4.18.1
 ARG PHAN_VERSION=5.3.1
 
 # Psalm needs php8-simplexml
-RUN apk upgrade -U -a && apk add --no-cache php8-simplexml
+# TODO: remove once s3 branch of elabimg is merged (required by aws php sdk)
+RUN apk add --update --no-cache php8-simplexml
 
-# phpStan
+# PHPStan
 ADD https://github.com/phpstan/phpstan/releases/download/$PHPSTAN_VERSION/phpstan.phar /usr/bin/phpstan
-RUN chmod +x /usr/bin/phpstan
 
 # Psalm
 ADD https://github.com/vimeo/psalm/releases/download/$PSALM_VERSION/psalm.phar /usr/bin/psalm
-RUN chmod +x /usr/bin/psalm
 
-#Phan
+# Phan
 ADD https://github.com/phan/phan/releases/download/$PHAN_VERSION/phan.phar /usr/bin/phan
-RUN chmod +x /usr/bin/phan
+
+# make the phar executable
+RUN chmod +x /usr/bin/{phpstan,psalm,phan}
 
 COPY ./bin /elabftw/bin
-COPY ./src /elabftw/src 
+COPY ./src /elabftw/src
 COPY ./tests /elabftw/tests
 COPY ./web /elabftw/web
 COPY ./.eslintrc.js /elabftw

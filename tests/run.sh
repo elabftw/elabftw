@@ -37,11 +37,12 @@ $sudoCmd chmod +r config.php
 if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
     if ($scrutinizer); then
         # Don't bind mount here, files are copied. See scrutinizer.dockerfile
-        sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
         # first backslash enables different delimiter than slash
         sed -i '\#volumes:#D' tests/docker-compose.yml
         sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
         sed -i '\#/elabftw/tests/_output/coverage#D' tests/docker-compose.yml
+        # Use the freshly built elabtmp image
+        sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
         docker build -t elabtmp -f tests/scrutinizer.dockerfile --progress plain .
     fi
     docker-compose -f tests/docker-compose.yml up -d --quiet-pull

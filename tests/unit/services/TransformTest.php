@@ -27,4 +27,21 @@ class TransformTest extends \PHPUnit\Framework\TestCase
         $input = Transform::csrf($token);
         $this->assertEquals("<input type='hidden' name='csrf' value='$token' />", $input);
     }
+
+    public function testNotif(): void
+    {
+        $expected = '<span class="clickable" data-action="ack-notif" data-id="1" data-href="experiment.php?mode=view&id=2">';
+        $expected .= 'Tex rendering failed during PDF generation. Carefully check the generated PDF.';
+        $expected .= '</span><br><span class="relative-moment" title="test"></span>';
+        $actual = Transform::notif(array(
+            'category' => 6,
+            'id' => '1',
+            'created_at' => 'test',
+            'body' => array(
+                'entity_page' => 'experiment',
+                'entity_id' => '2',
+            ),
+        ));
+        $this->assertEquals($expected, $actual);
+    }
 }

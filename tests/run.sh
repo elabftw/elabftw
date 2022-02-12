@@ -10,27 +10,65 @@
 
 # stop on failure
 set -eu
+scrutinizer=${SCRUTINIZER:-false}
+
+# only use sudo if available e.g., alpine vs ubuntu
+sudoCmd=''
+if command -v sudo &> /dev/null; then
+    sudoCmd='sudo'
+fi
 
 # make sure we tear down everything when script ends
 cleanup() {
-    sudo cp -v config.php.dev config.php
-    sudo chown 101:101 config.php
+if (! $scrutinizer); then
+    $sudoCmd cp -v config.php.dev config.php
+    $sudoCmd chown 101:101 config.php
+fi
 }
 trap cleanup EXIT
 
 # sudo is needed because config file for docker is owned by 100:101
-sudo cp -v config.php config.php.dev
-sudo cp -v tests/config-home.php config.php
-sudo chmod +r config.php
+if (! $scrutinizer); then
+    $sudoCmd cp -v config.php config.php.dev
+fi
+$sudoCmd cp -v tests/config-home.php config.php
+$sudoCmd chmod +r config.php
 # launch a fresh environment if needed
 if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
-    docker compose -f tests/docker-compose.yml up -d
-    # give some time for the mysql process to start
-    echo "Waiting for MySQL to start..."
-    sleep 25
+    if ($scrutinizer); then
+        # Don't bind mount here, files are copied. See scrutinizer.dockerfile
+        # first backslash enables different delimiter than slash
+        sed -i '\#volumes:#D' tests/docker-compose.yml
+        sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
+        sed -i '\#/elabftw/tests/_output/coverage#D' tests/docker-compose.yml
+        # Use the freshly built elabtmp image
+        sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
+        docker build -t elabtmp -f tests/scrutinizer.dockerfile --progress plain .
+    fi
+    docker-compose -f tests/docker-compose.yml up -d --quiet-pull
+    # give some time for containers to start
+    echo -n "Waiting for containers to start..."
+    while [ "`docker inspect -f {{.State.Health.Status}} elabtmp`" != "healthy" ]; do echo -n .; sleep 2; done; echo
+fi
+if ($scrutinizer); then
+    # install and initial tests
+    docker exec -it elabtmp yarn install --silent --non-interactive
+    docker exec -it elabtmp yarn csslint
+    docker exec -it elabtmp yarn jslint-ci
+    docker exec -it elabtmp yarn buildall
+    docker exec -it elabtmp composer install --no-progress -q
+    docker exec -it elabtmp yarn phpcs-dry
+    # extend open_basedir
+    # /usr/bin/psalm, //autoload.php, /root/.cache/ are for psalm
+    # /usr/bin/phpstan, /proc/cpuinfo is for phpstan, https://github.com/phpstan/phpstan/issues/4427 https://github.com/phpstan/phpstan/issues/2965
+    docker exec -it elabtmp sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/usr/bin/phpstan:/proc/cpuinfo|' /etc/php8/php.ini
 fi
 # install the database
 docker exec -it elabtmp bin/install start -r
+if ($scrutinizer); then
+    docker exec -it elabtmp yarn psalm
+    docker exec -it elabtmp yarn phpstan
+fi
 # populate the database
 docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
 # run tests
@@ -43,7 +81,10 @@ fi
 # now install xdebug in the container so we can do code coverage
 docker exec -it elabtmp bash -c "apk add --update php8-pecl-xdebug && echo 'zend_extension=xdebug.so' >> /etc/php8/php.ini && echo 'xdebug.mode=coverage' >> /etc/php8/php.ini"
 # generate the coverage, results will be available in _coverage directory
-docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --skip api --coverage --coverage-html
+docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --skip api --coverage --coverage-html --coverage-xml
+if ($scrutinizer); then
+    docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
+fi
 # all tests succeeded, display a koala
 cat << WALAEND
 

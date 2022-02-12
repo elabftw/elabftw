@@ -66,6 +66,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $client = $this->getClient($mockResponse);
         $Maker = new MakeDfnTimestamp($this->configArr, $this->getFreshTimestampableEntity());
         $Maker->generatePdf();
+        $this->assertIsArray($Maker->getTimestampParameters());
         // create a custom response object with fixture token
         $tsResponse = new TimestampResponse();
         $tsResponse->setTokenPath($this->dataPath . 'dfn.asn1');
@@ -78,6 +79,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $client = $this->getClient($mockResponse);
         $Maker = new MakeDigicertTimestamp($this->configArr, $this->getFreshTimestampableEntity());
         $Maker->generatePdf();
+        $this->assertIsArray($Maker->getTimestampParameters());
         // create a custom response object with fixture token
         $tsResponse = new TimestampResponse();
         $tsResponse->setTokenPath($this->dataPath . 'digicert.asn1');
@@ -95,6 +97,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         );
         $Maker = new MakeUniversignTimestamp($config, $this->getFreshTimestampableEntity());
         $Maker->generatePdf();
+        $this->assertIsArray($Maker->getTimestampParameters());
         // create a custom response object with fixture token
         $tsResponse = new TimestampResponse();
         $tsResponse->setTokenPath($this->dataPath . 'universign.asn1');
@@ -104,11 +107,13 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
     public function testGlobalSign(): void
     {
         $Maker = new MakeGlobalSignTimestamp(array(), $this->getFreshTimestampableEntity());
+        $this->assertIsArray($Maker->getTimestampParameters());
     }
 
     public function testSectigo(): void
     {
         $Maker = new MakeSectigoTimestamp(array(), $this->getFreshTimestampableEntity());
+        $this->assertIsArray($Maker->getTimestampParameters());
     }
 
     public function testUniversignTimestampNoLogin(): void

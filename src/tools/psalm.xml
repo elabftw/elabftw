@@ -18,7 +18,7 @@
         <directory name="../../src" />
         <ignoreFiles>
             <directory name="../../cache" />
-            <directory name="../../uploads/*" />
+            <directory name="../../uploads" />
             <directory name="../../vendor" />
         </ignoreFiles>
     </projectFiles>

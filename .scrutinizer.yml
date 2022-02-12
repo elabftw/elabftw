@@ -1,7 +1,20 @@
 build:
+    environment:
+        docker:
+            remote_engine: true
+
     nodes:
         tests:
             dependencies:
-                after:
-                    - yarn buildnode
-                    - yarn buildparser
+                override:
+                    - echo do nothing here
+                before:
+                    - echo do nothing here
+
+    tests:
+        override:
+            - command: tests/run.sh unit
+              coverage:
+                  file: coverage.xml
+                  format: clover
+

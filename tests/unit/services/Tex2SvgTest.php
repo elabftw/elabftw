@@ -10,7 +10,6 @@
 namespace Elabftw\Services;
 
 use Elabftw\Exceptions\FilesystemErrorException;
-use Elabftw\Exceptions\ProcessFailedException;
 use function file_get_contents;
 use function is_string;
 use Mpdf\Mpdf;
@@ -45,8 +44,8 @@ class Tex2SvgTest extends \PHPUnit\Framework\TestCase
     {
         $mathJaxHtml = $this->getFixture('mathjaxFail.html');
         $Tex2Svg = new Tex2Svg($this->mpdf, $mathJaxHtml);
-        $this->expectException(ProcessFailedException::class);
-        $Tex2Svg->getContent();
+        $mathJaxOut = $Tex2Svg->getContent();
+        $this->assertEquals($mathJaxHtml, $mathJaxOut);
     }
 
     private function getFixture(string $filename): string

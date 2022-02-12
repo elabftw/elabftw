@@ -47,6 +47,9 @@ services:
             - ../_coverage:/elabftw/tests/_output/coverage
         networks:
             - elabftw-net
+        depends_on:
+          - mysql
+
     mysql:
         image: mysql:8.0
         container_name: mysqltmp

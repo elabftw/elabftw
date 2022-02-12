@@ -67,7 +67,19 @@ jobs:
       # copy the circleci config
       - run: sudo cp tests/config-ci.php config.php
       - run: sudo apt-get update
-      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y graphicsmagick libgraphicsmagick1-dev libldap2-dev brotli zopfli
+      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y libldap2-dev brotli zopfli
+      # build imagemagick from source
+      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y tar libxml2 libxml2-dev librsvg2-dev librsvg2-bin libpng-dev libjpeg-dev libfreetype-dev libfontconfig-dev libtool libtiff-dev liblcms2-dev libwebp-dev libxext-dev chrpath libheif-dev ghostscript
+      - run:
+          name: Build ImageMagick from source
+          command: |
+            wget https://download.imagemagick.org/ImageMagick/download/releases/ImageMagick-7.1.0-19.tar.xz && \
+            tar -xf ImageMagick-7.1.0-19.tar.xz && \
+            cd ImageMagick-7.1.0-19 && \
+            ./configure --enable-static --disable-openmp --with-threads --with-tiff=yes --with-png=yes --with-webp --with-gslib=yes --with-heic --with-modules=yes --with-xml=yes --without-perl --without-magick-plus-plus --with-rsvg=yes --enable-delegate-build=yes --enable-shared --with-bzlib=yes --with-jpeg=yes && \
+            make && sudo make install && sudo ldconfig /usr/local/lib && \
+            cd .. && rm -rf ImageMagick-7.1.0-19
+      - run: sudo pecl install imagick && sudo docker-php-ext-enable imagick
       - run: sudo docker-php-ext-install gd gettext zip pdo_mysql exif ldap
       # The following line was run implicitly in your 1.0 builds based on what CircleCI inferred about the structure of your project. In 2.0 you need to be explicit about which commands should be run. In some cases you can discard inferred commands if they are not relevant to your project.
       - run:

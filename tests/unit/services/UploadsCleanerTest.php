@@ -9,21 +9,18 @@
 
 namespace Elabftw\Services;
 
-use League\Flysystem\Filesystem;
-use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
-
 class UploadsCleanerTest extends \PHPUnit\Framework\TestCase
 {
     public function testCleanup(): void
     {
         // create a non-persistant filesystem stored in memory
-        $filesystem = new Filesystem(new InMemoryFilesystemAdapter());
+        $fs = (new StorageFactory(StorageFactory::STORAGE_MEMORY))->getStorage()->getFs();
         // add a file to our filesystem so we can test removing it
-        $filesystem->write('blah.txt', 'blih');
+        $fs->write('blah.txt', 'blih');
         // also add a thumbnail file that should not be removed
-        $filesystem->write('blah_th.jpg', 'blih');
+        $fs->write('blah_th.jpg', 'blih');
 
-        $UploadsCleaner= new UploadsCleaner($filesystem);
+        $UploadsCleaner= new UploadsCleaner($fs);
         $this->assertEquals(1, $UploadsCleaner->cleanup());
     }
 }

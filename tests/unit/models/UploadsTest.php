@@ -10,8 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateUpload;
-use League\Flysystem\Filesystem;
-use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
+use Elabftw\Services\StorageFactory;
 
 class UploadsTest extends \PHPUnit\Framework\TestCase
 {
@@ -30,7 +29,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         // and this corresponds to the temporary file created after upload
         $tmpFilePath = '/tmp/phpELABFTW';
         $params->method('getFilePath')->willReturn($tmpFilePath);
-        $fs = new Filesystem(new InMemoryFilesystemAdapter());
+        $fs = (new StorageFactory(StorageFactory::STORAGE_MEMORY))->getStorage()->getFs();
         // write our temporary file as if it was uploaded by a user
         $fs->createDirectory('tmp');
         // a txt file was failing the mime type, so use a png
@@ -55,7 +54,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         // and this corresponds to the temporary file created after upload
         $tmpFilePath = '/tmp/phpELABFTW';
         $params->method('getFilePath')->willReturn($tmpFilePath);
-        $fs = new Filesystem(new InMemoryFilesystemAdapter());
+        $fs = (new StorageFactory(StorageFactory::STORAGE_MEMORY))->getStorage()->getFs();
         // write our temporary file as if it was uploaded by a user
         $fs->createDirectory('tmp');
         $fs->write(basename($tmpFilePath), 'blah');

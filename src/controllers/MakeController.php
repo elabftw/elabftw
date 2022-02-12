@@ -12,6 +12,7 @@ namespace Elabftw\Controllers;
 use function count;
 use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
@@ -125,6 +126,9 @@ class MakeController implements ControllerInterface
 
     private function makeZip(): Response
     {
+        if (!($this->Entity instanceof Experiments || $this->Entity instanceof Items)) {
+            throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', $this->Entity::class));
+        }
         $Make = new MakeStreamZip($this->Entity, $this->idArr);
         $Response = new StreamedResponse();
         $Response->headers->set('X-Accel-Buffering', 'no');

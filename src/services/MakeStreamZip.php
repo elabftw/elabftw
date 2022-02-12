@@ -11,8 +11,6 @@ namespace Elabftw\Services;
 
 use function count;
 use Elabftw\Elabftw\ContentParams;
-use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -32,7 +30,7 @@ class MakeStreamZip extends AbstractMake
     // array that will be converted to json
     private array $jsonArr = array();
 
-    public function __construct(AbstractEntity $entity, private array $idArr)
+    public function __construct(Experiments|Items $entity, private array $idArr)
     {
         parent::__construct($entity);
         $opt = new ArchiveOptions();
@@ -75,13 +73,12 @@ class MakeStreamZip extends AbstractMake
      */
     private function getBaseFileName(): string
     {
-        if ($this->Entity instanceof Experiments) {
-            return $this->Entity->entityData['date'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
-        } elseif ($this->Entity instanceof Items) {
-            return $this->Entity->entityData['category'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
+        $prefix = 'date';
+        // items will show category instead of date as file name prefix
+        if ($this->Entity instanceof Items) {
+            $prefix = 'category';
         }
-
-        throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', $this->Entity::class));
+        return sprintf('%s - %s', $this->Entity->entityData[$prefix], Filter::forFilesystem($this->Entity->entityData['title']));
     }
 
     /**

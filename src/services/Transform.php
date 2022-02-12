@@ -81,7 +81,7 @@ class Transform
                     (int) $notif['id'],
                     $notif['body']['entity_page'],
                     (int) $notif['body']['entity_id'],
-                    _('Tex rendering failed during PDF generation. Carefully check the generated PDF.'),
+                    _('Tex rendering failed during PDF generation. The raw tex commands are retained but you might want to carefully check the generated PDF.'),
                     $notif['created_at'],
                 );
             default:

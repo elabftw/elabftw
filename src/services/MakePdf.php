@@ -96,7 +96,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
                 'entity_page' => $this->Entity->page,
             );
             $Notifications = new Notifications($this->Entity->Users);
-            $Notifications->create(new CreateNotificationParams(Notifications::MATH_JAX_FAILED, $body));
+            $Notifications->create(new CreateNotificationParams(Notifications::MATHJAX_FAILED, $body));
         }
         return $content;
     }

@@ -75,7 +75,7 @@ class Transform
                     _('A user needs account validation.'),
                     $notif['created_at'],
                 );
-            case Notifications::MATH_JAX_FAILED:
+            case Notifications::MATHJAX_FAILED:
                 return sprintf(
                     '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="%s.php?mode=view&id=%d">%s</span>' . $relativeMoment,
                     (int) $notif['id'],

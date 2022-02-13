@@ -15,7 +15,6 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Models\Config;
 use jblond\TwigTrans\Translation;
 use Twig\Environment;
-use Twig\Extension\DebugExtension;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -33,14 +32,12 @@ trait TwigTrait
         // load templates
         $loader = new FilesystemLoader(dirname(__DIR__, 2) . '/src/templates');
 
-        // use local cache
-        $options = array('cache' => FsTools::getCacheFolder('twig'));
-
-        // Twig debug mode will allow to use dump() and force autoreload
-        // so it will not use the cache
-        if ($config->configArr['debug']) {
-            $options['debug'] = true;
-        }
+        $options = array(
+            // use local cache
+            'cache' => FsTools::getCacheFolder('twig'),
+            // debug mode means the cache is not used (useful in dev of course)
+            'debug' => (bool) $config->configArr['debug'],
+        );
 
         $TwigEnvironment = new Environment($loader, $options);
 
@@ -99,10 +96,6 @@ trait TwigTrait
 
         // add the version as a global var so we can have it for the ?v=x.x.x for js files
         $TwigEnvironment->addGlobal('v', App::INSTALLED_VERSION);
-
-        if ($config->configArr['debug']) {
-            $TwigEnvironment->addExtension(new DebugExtension());
-        }
 
         return $TwigEnvironment;
     }

@@ -46,4 +46,22 @@ class TransformTest extends \PHPUnit\Framework\TestCase
         ));
         $this->assertEquals($expected, $actual);
     }
+
+    public function testNotifPdfAppendmentFailed(): void
+    {
+        $expected = '<span class="clickable" data-action="ack-notif" data-id="1" data-href="experiment.php?mode=view&id=2">';
+        $expected .= 'Some attached PDFs could not be appended. (file1.pdf, file2.pdf)';
+        $expected .= '</span><br><span class="relative-moment" title="TIMESTAMP"></span>';
+        $actual = Transform::notif(array(
+            'category' => Notifications::PDF_APPENDMENT_FAILED,
+            'id' => '1',
+            'created_at' => 'TIMESTAMP',
+            'body' => array(
+                'entity_page' => 'experiment',
+                'entity_id' => '2',
+                'file_names' => 'file1.pdf, file2.pdf',
+            ),
+        ));
+        $this->assertEquals($expected, $actual);
+    }
 }

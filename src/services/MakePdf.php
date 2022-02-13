@@ -25,6 +25,7 @@ use Elabftw\Models\Users;
 use Elabftw\Traits\PdfTrait;
 use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
+use function implode;
 use Mpdf\Mpdf;
 use function preg_replace;
 use setasign\Fpdi\FpdiException;
@@ -42,6 +43,8 @@ class MakePdf extends AbstractMake implements FileMakerInterface
     use UploadTrait;
 
     public string $longName;
+
+    private array $failedAppendPdfs = array();
 
     /**
      * Constructor
@@ -139,8 +142,10 @@ class MakePdf extends AbstractMake implements FileMakerInterface
                     $this->mpdf->useTemplate($page);
                 }
                 // not all pdf will be able to be integrated, so for the one that will trigger an exception
-            // we simply ignore it
+            // we simply ignore it and collect information for notification
             } catch (FpdiException) {
+                // collect real name of attached pdf
+                $this->failedAppendPdfs[] = $pdf[1];
                 continue;
             }
         }
@@ -239,6 +244,15 @@ class MakePdf extends AbstractMake implements FileMakerInterface
 
         if ($this->Entity->Users->userData['append_pdfs']) {
             $this->appendPdfs($this->getAttachedPdfs());
+            if (!empty($this->failedAppendPdfs)) {
+                $body = array(
+                    'entity_id' => $this->Entity->id,
+                    'entity_page' => $this->Entity->page,
+                    'file_names' => implode(', ', $this->failedAppendPdfs),
+                );
+                $Notifications = new Notifications($this->Entity->Users);
+                $Notifications->create(new CreateNotificationParams(Notifications::PDF_APPENDMENT_FAILED, $body));
+            }
         }
 
         return $this->mpdf;

@@ -84,6 +84,16 @@ class Transform
                     _('Tex rendering failed during PDF generation. The raw tex commands are retained but you might want to carefully check the generated PDF.'),
                     $notif['created_at'],
                 );
+            case Notifications::PDF_APPENDMENT_FAILED:
+                return sprintf(
+                    '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="%s.php?mode=view&id=%d">%s (%s)</span>' . $relativeMoment,
+                    (int) $notif['id'],
+                    $notif['body']['entity_page'],
+                    (int) $notif['body']['entity_id'],
+                    _('Some attached PDFs could not be appended.'),
+                    $notif['body']['file_names'],
+                    $notif['created_at'],
+                );
             default:
                 return '';
         }

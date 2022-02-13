@@ -40,6 +40,9 @@ class Notifications implements CrudInterface
     // when there was an error during pdf generation because of MathJax
     public const MATHJAX_FAILED = 6;
 
+    // when an attached PDF file cannot be appended during PDF export
+    public const PDF_APPENDMENT_FAILED = 7;
+
     protected Db $Db;
 
     private int $userid;

@@ -59,8 +59,12 @@ class UpdateDatabase extends Command
 
             $Config = Config::getConfig();
             $Update = new Update((int) $Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')), $output));
-            $Update->runUpdateScript();
-            $output->writeln('All done.');
+            $warn = $Update->runUpdateScript();
+            $output->writeln('<info>All done.</info>');
+            // display warning messages if any
+            foreach ($warn as $msg) {
+                $output->writeln('<bg=yellow;fg=black>NOTICE: ' . $msg . '</>');
+            }
         }
         return 0;
     }

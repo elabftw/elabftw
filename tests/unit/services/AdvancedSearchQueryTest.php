@@ -74,7 +74,10 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
     public function testFieldValidatorInvalidFields(): void
     {
         $visInput = 'no-valid-input';
+        $from = '20210101';
+        $to = '20200101';
         $query = 'visibility:' . $visInput;
+        $query .= ' date:' . $from . '..' . $to;
         $query .= ' category:"only works for items"';
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
@@ -83,6 +86,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         ));
         $advancedSearchQuery->getWhereClause();
         $this->assertStringStartsWith('visibility:<em>' . $visInput . '</em>. Valid values are ', $advancedSearchQuery->getException());
+        $this->assertStringContainsString('date:<em>' . $from . '..' . $to . '</em>. Second date needs to be equal or greater than first date.', $advancedSearchQuery->getException());
         $this->assertStringEndsWith('category: is only allowed when searching in database.', $advancedSearchQuery->getException());
 
         $query = 'timestamped:true';

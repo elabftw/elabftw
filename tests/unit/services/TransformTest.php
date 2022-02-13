@@ -9,6 +9,8 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Models\Notifications;
+
 class TransformTest extends \PHPUnit\Framework\TestCase
 {
     public function testPermission(): void
@@ -28,13 +30,13 @@ class TransformTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals("<input type='hidden' name='csrf' value='$token' />", $input);
     }
 
-    public function testNotif(): void
+    public function testNotifMathJaxFailed(): void
     {
         $expected = '<span class="clickable" data-action="ack-notif" data-id="1" data-href="experiment.php?mode=view&id=2">';
-        $expected .= 'Tex rendering failed during PDF generation. Carefully check the generated PDF.';
+        $expected .= 'Tex rendering failed during PDF generation. The raw tex commands are retained but you might want to carefully check the generated PDF.';
         $expected .= '</span><br><span class="relative-moment" title="test"></span>';
         $actual = Transform::notif(array(
-            'category' => 6,
+            'category' => Notifications::MATHJAX_FAILED,
             'id' => '1',
             'created_at' => 'test',
             'body' => array(

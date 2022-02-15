@@ -95,6 +95,7 @@ class Uploads implements CrudInterface
             $hash = $this->getHash($fileContent);
             // get a thumbnail
             // if the mimetype fails, do nothing
+            // Imagick cannot open password protected PDFs, thumbnail generation will throw ImagickException
             try {
                 $mime = $sourceFs->mimeType($tmpFilename);
                 $MakeThumbnail = new MakeThumbnail($mime, $fileContent, $longName);
@@ -106,7 +107,8 @@ class Uploads implements CrudInterface
                     }
                 }
             } catch (UnableToRetrieveMetadata | ImagickException $e) {
-                // just ignore it and continue if mime type could not be read
+                // if mime type could not be read just ignore it and continue
+                // if imagick/imagemagick causes problems ignore it and upload file without thumbnail
             }
         }
         // read the file as a stream so we can copy it

@@ -258,7 +258,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="itemstypes-destroy"]')) {
       ItemTypeC.destroy(parseInt(el.dataset.id, 10)).then(json => {
         notif(json);
-        window.location.href = '?tab=5';
+        if (json.res) {
+          window.location.href = '?tab=5';
+        }
       });
     } else if (el.matches('[data-action="export"]')) {
       const source = (document.getElementById('categoryExport') as HTMLSelectElement).value;

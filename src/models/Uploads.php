@@ -218,6 +218,8 @@ class Uploads implements CrudInterface
      */
     public function destroy(): bool
     {
+        // set the check here so entityData gets loaded
+        $this->Entity->canOrExplode('write');
         $uploadArr = $this->read(new ContentParams());
         // check that the filename is not in the body. see #432
         if (strpos($this->Entity->entityData['body'], $uploadArr['long_name'])) {
@@ -246,7 +248,6 @@ class Uploads implements CrudInterface
      */
     private function nuke(): bool
     {
-        $this->Entity->canOrExplode('write');
         return $this->update(new UploadParams((string) self::STATE_DELETED, 'state'));
     }
 

@@ -97,6 +97,10 @@ try {
             $tab = '10';
         }
 
+        if ($Request->request->has('uploads_storage')) {
+            $tab = '11';
+        }
+
         $App->Config->updateAll($Request->request->all());
     }
 

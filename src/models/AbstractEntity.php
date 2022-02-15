@@ -18,6 +18,7 @@ use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\EntityParamsInterface;
@@ -589,31 +590,20 @@ abstract class AbstractEntity implements CrudInterface
     }
 
     /**
-     * Get token and pdf info for displaying in view mode
+     * Get timestamper full name for display in view mode
      */
-    public function getTimestampInfo(): array
+    public function getTimestamperFullname(): string
     {
         if ($this instanceof Items || $this->entityData['timestamped'] === '0') {
-            return array();
+            return 'Unknown';
         }
-        $timestamper = new Users((int) $this->entityData['timestampedby']);
-
-        $Uploads = new Uploads(new Experiments($this->Users, (int) $this->entityData['id']));
-        $Uploads->Entity->type = 'exp-pdf-timestamp';
-        $pdf = $Uploads->readAll();
-
-        $Uploads->Entity->type = 'timestamp-token';
-        $token = $Uploads->readAll();
-
-        $Uploads->Entity->type = 'bloxberg-proof';
-        $bloxbergProof = $Uploads->readAll();
-
-        return array(
-            'timestamper' => $timestamper->userData,
-            'pdf' => $pdf,
-            'token' => $token,
-            'bloxbergProof' => $bloxbergProof,
-        );
+        // maybe user was deleted!
+        try {
+            $timestamper = new Users((int) $this->entityData['timestampedby']);
+        } catch (ResourceNotFoundException $e) {
+            return 'User not found!';
+        }
+        return $timestamper->userData['fullname'];
     }
 
     /**

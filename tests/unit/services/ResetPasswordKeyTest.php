@@ -11,6 +11,7 @@ namespace Elabftw\Services;
 
 use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Defuse\Crypto\Key;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use function time;
@@ -39,6 +40,13 @@ class ResetPasswordKeyTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(WrongKeyOrModifiedCiphertextException::class);
         $this->ResetPasswordKey->validate('invalid-key');
+    }
+
+    public function testValidateIllegalKey(): void
+    {
+        $key = $this->ResetPasswordKey->generate('a@a.com@BiB6y21q>,6;,*C;A.b$$BpD"Mal<%1*');
+        $this->expectException(IllegalActionException::class);
+        $this->ResetPasswordKey->validate($key);
     }
 
     public function testValidateExpiredKey(): void

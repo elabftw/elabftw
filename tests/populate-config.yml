@@ -16,6 +16,7 @@ skip_confirm: true
 url: "https://elab.local:3148"
 # set the mail_from config
 mailfrom: elabftw@example.com
+iterations: 12
 
 teams:
   - Alpha

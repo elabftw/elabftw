@@ -67,9 +67,6 @@ class DatabaseCleaner implements CleanerInterface
     private function findOrphans(string $table, string $foreignTable, string $foreignKey, string $foreignId = 'id'): void
     {
         $tableId = 'id';
-        if ($table === 'users') {
-            $tableId = 'userid';
-        }
 
         $sql = 'SELECT ' . $table . '.' . $tableId . '
             FROM ' . $table . '

@@ -1,24 +1,25 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2012, 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
-use function dirname;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Services\Filter;
-use function is_readable;
+use function fopen;
+use function in_array;
+use League\Flysystem\Filesystem;
+use League\Flysystem\UnableToRetrieveMetadata;
+use function stream_copy_to_stream;
 use function substr;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\Mime\MimeTypes;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * To download uploaded files
@@ -30,18 +31,14 @@ class DownloadController implements ControllerInterface
 
     private string $filePath;
 
-    public function __construct(string $longName, string $realName = null, private bool $forceDownload = false)
+    private string $longName;
+
+    public function __construct(private Filesystem $fs, string $longName, string $realName = null, private bool $forceDownload = false)
     {
         // Remove any path info to avoid hacking by adding relative path, etc.
-        $longName = Filter::forFilesystem(basename($longName));
+        $this->longName = Filter::forFilesystem(basename($longName));
         // get the first two letters to get the folder
-        $fullFilePath = substr($longName, 0, 2) . '/' . $longName;
-        $basePath = dirname(__DIR__, 2) . '/uploads/';
-        // maybe it's an old file that has no subfolder
-        if (!is_readable($basePath . $fullFilePath)) {
-            $fullFilePath = $longName;
-        }
-        $this->filePath = $basePath . $fullFilePath;
+        $this->filePath = substr($this->longName, 0, 2) . '/' . $this->longName;
         $this->realName = Filter::forFilesystem($realName ?? '');
         if (empty($this->realName)) {
             $this->realName = 'unnamed_file';
@@ -50,12 +47,26 @@ class DownloadController implements ControllerInterface
 
     public function getFilePath(): string
     {
+        // maybe it's an old file that has no subfolder
+        if (!$this->fs->fileExists($this->filePath)) {
+            return $this->longName;
+        }
         return $this->filePath;
     }
 
     public function getResponse(): Response
     {
-        $Response = new BinaryFileResponse($this->filePath);
+        // we stream the response to the client
+        $Response = new StreamedResponse(function () {
+            $outputStream = fopen('php://output', 'wb');
+            if ($outputStream === false) {
+                return;
+            }
+            $fileStream = $this->fs->readStream($this->getFilePath());
+            stream_copy_to_stream($fileStream, $outputStream);
+        });
+
+        // set the correct Content-Type header based on mime type
         $mime = $this->getMimeType();
         $Response->headers->set('Content-Type', $mime);
 
@@ -67,16 +78,18 @@ class DownloadController implements ControllerInterface
             'image/jpeg',
             'image/png',
             'video/mp4',
+            'text/plain',
         );
         if (!in_array($mime, $safeMimeTypes, true)) {
             $this->forceDownload = true;
         }
 
         if ($this->forceDownload) {
-            $Response->setContentDisposition(
-                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $disposition = HeaderUtils::makeDisposition(
+                HeaderUtils::DISPOSITION_ATTACHMENT,
                 $this->realName,
             );
+            $Response->headers->set('Content-Disposition', $disposition);
         }
 
         return $Response;
@@ -87,11 +100,10 @@ class DownloadController implements ControllerInterface
      */
     private function getMimeType(): string
     {
-        $mimeTypes = new MimeTypes();
-        $mime = $mimeTypes->guessMimeType($this->filePath);
-        if ($mime === null) {
+        try {
+            return $this->fs->mimeType($this->getFilePath());
+        } catch (UnableToRetrieveMetadata $e) {
             return 'application/force-download';
         }
-        return $mime;
     }
 }

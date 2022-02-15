@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TagParams;
@@ -214,7 +215,7 @@ class ImportZip extends AbstractImport
                      * import but this should be handled. One day. Maybe.
                      */
                     if (is_readable($filePath)) {
-                        $this->Entity->Uploads->createFromLocalFile($filePath, $file['comment']);
+                        $this->Entity->Uploads->create(new CreateUpload(basename($filePath), $filePath, $file['comment']));
                     }
                 }
             }

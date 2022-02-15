@@ -27,6 +27,7 @@ use Elabftw\Services\StorageFactory;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\UploadTrait;
 use function in_array;
+use ImagickException;
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
 use RuntimeException;
@@ -104,7 +105,7 @@ class Uploads implements CrudInterface
                         $storageFs->write($MakeThumbnail->thumbFilename, $thumbnailContent);
                     }
                 }
-            } catch (UnableToRetrieveMetadata $e) {
+            } catch (UnableToRetrieveMetadata | ImagickException $e) {
                 // just ignore it and continue if mime type could not be read
             }
         }

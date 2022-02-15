@@ -240,7 +240,7 @@ class Users
         // (Sys)admins can only disable 2FA
         // input is disabled if there is no mfa active so no need for an else case
         $mfaSql = '';
-        if ($params['use_mfa'] === 'off') {
+        if (isset($params['use_mfa']) && $params['use_mfa'] === 'off') {
             $mfaSql = ', mfa_secret = null';
         }
 

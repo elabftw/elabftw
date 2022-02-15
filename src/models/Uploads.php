@@ -26,6 +26,7 @@ use Elabftw\Services\MakeThumbnail;
 use Elabftw\Services\StorageFactory;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\UploadTrait;
+use ImagickException;
 use function in_array;
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
@@ -94,6 +95,7 @@ class Uploads implements CrudInterface
             $hash = $this->getHash($fileContent);
             // get a thumbnail
             // if the mimetype fails, do nothing
+            // Imagick cannot open password protected PDFs, thumbnail generation will throw ImagickException
             try {
                 $mime = $sourceFs->mimeType($tmpFilename);
                 $MakeThumbnail = new MakeThumbnail($mime, $fileContent, $longName);
@@ -104,8 +106,9 @@ class Uploads implements CrudInterface
                         $storageFs->write($MakeThumbnail->thumbFilename, $thumbnailContent);
                     }
                 }
-            } catch (UnableToRetrieveMetadata $e) {
-                // just ignore it and continue if mime type could not be read
+            } catch (UnableToRetrieveMetadata | ImagickException $e) {
+                // if mime type could not be read just ignore it and continue
+                // if imagick/imagemagick causes problems ignore it and upload file without thumbnail
             }
         }
         // read the file as a stream so we can copy it

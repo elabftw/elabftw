@@ -90,7 +90,6 @@ class Items extends AbstractEntity
 
     public function destroy(): bool
     {
-        $this->canOrExplode('write');
 
         // check if we can actually delete items (for non-admins)
         $Team = new Team($this->Users->team);
@@ -98,29 +97,13 @@ class Items extends AbstractEntity
             throw new ImproperActionException(_('Users cannot delete items.'));
         }
 
-        // delete the database item
-        $sql = 'DELETE FROM items WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $this->Tags->destroyAll();
-
-        $this->Uploads->destroyAll();
+        parent::destroy();
 
         // delete links of this item in experiments with this item linked
-        // get all experiments with that item linked
-        $sql = 'SELECT id FROM experiments_links WHERE link_id = :link_id';
+        $sql = 'DELETE FROM experiments_links WHERE link_id = :link_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-
-        while ($links = $req->fetch()) {
-            $delete_sql = 'DELETE FROM experiments_links WHERE id = :links_id';
-            $delete_req = $this->Db->prepare($delete_sql);
-            $delete_req->bindParam(':links_id', $links['id'], PDO::PARAM_INT);
-            $this->Db->execute($delete_req);
-        }
 
         // delete from pinned
         return $this->Pins->cleanup();

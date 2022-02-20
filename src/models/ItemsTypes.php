@@ -54,7 +54,7 @@ class ItemsTypes extends AbstractEntity
             return $this->readAll();
         }
 
-        $sql = 'SELECT id, team, color, bookable, name, body, canread, canwrite, metadata
+        $sql = 'SELECT id, team, color, bookable, name, body, canread, canwrite, metadata, state
             FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -94,7 +94,6 @@ class ItemsTypes extends AbstractEntity
 
     /**
      * Destroy an item type
-     *
      */
     public function destroy(): bool
     {
@@ -102,12 +101,8 @@ class ItemsTypes extends AbstractEntity
         if ($this->countItems() > 0) {
             throw new ImproperActionException(_('Remove all database items with this type before deleting this type.'));
         }
-        $sql = 'DELETE FROM items_types WHERE id = :id AND team = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
 
-        return $this->Db->execute($req);
+        return parent::destroy();
     }
 
     /**
@@ -123,9 +118,10 @@ class ItemsTypes extends AbstractEntity
             items_types.ordering,
             items_types.canread,
             items_types.canwrite
-            FROM items_types WHERE team = :team ORDER BY ordering ASC';
+            FROM items_types WHERE team = :team AND state = :state ORDER BY ordering ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+        $req->bindValue(':state', self::STATE_NORMAL, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->fetchAll($req);

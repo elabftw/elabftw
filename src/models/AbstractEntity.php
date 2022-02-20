@@ -14,6 +14,7 @@ use function array_column;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
+use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
@@ -39,6 +40,12 @@ use PDOStatement;
 abstract class AbstractEntity implements CrudInterface
 {
     use EntityTrait;
+
+    protected const STATE_NORMAL = 1;
+
+    protected const STATE_ARCHIVED = 2;
+
+    protected const STATE_DELETED = 3;
 
     public Comments $Comments;
 
@@ -187,8 +194,8 @@ abstract class AbstractEntity implements CrudInterface
         $sql = $this->getReadSqlBeforeWhere($extended, $extended);
         $teamgroupsOfUser = array_column($this->TeamGroups->readGroupsFromUser(), 'id');
 
-        // there might or might not be a condition for the WHERE, so make sure there is at least one
-        $sql .= ' WHERE 1=1';
+        // first where is the state
+        $sql .= ' WHERE entity.state = :state';
 
         foreach ($this->filters as $filter) {
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
@@ -245,6 +252,7 @@ abstract class AbstractEntity implements CrudInterface
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindValue(':state', self::STATE_NORMAL, PDO::PARAM_INT);
         if ($this->isMetadataSearch) {
             $req->bindParam(':metadata_key', $this->metadataKey);
             $req->bindParam(':metadata_value_path', $this->metadataValuePath);
@@ -367,8 +375,11 @@ abstract class AbstractEntity implements CrudInterface
             case 'userid':
                 $content = $params->getUserId();
                 break;
+            case 'state':
+                $content = $params->getState();
+                break;
             default:
-                throw new ImproperActionException('Invalid update target' . $params->getTarget());
+                throw new ImproperActionException('Invalid update target: ' . $params->getTarget());
         }
 
         // save a revision for body target
@@ -484,6 +495,11 @@ abstract class AbstractEntity implements CrudInterface
         // don't try to read() again if we have the item (for show where there are several items to check)
         if (!isset($item)) {
             $item = $this->entityData;
+        }
+
+        // if it has the deleted state, don't show it.
+        if ((int) $item['state'] === self::STATE_DELETED) {
+            return array('read' => false, 'write' => false);
         }
 
         $Permissions = new Permissions($this->Users, $item);
@@ -640,6 +656,14 @@ abstract class AbstractEntity implements CrudInterface
     {
         $this->extendedFilter .= $extendedFilter . ' ';
         $this->bindExtendedValues = array_merge($this->bindExtendedValues, $bindExtendedValues);
+    }
+
+    public function destroy(): bool
+    {
+        $this->canOrExplode('write');
+
+        // set state to deleted
+        return $this->update(new EntityParams((string) self::STATE_DELETED, 'state'));
     }
 
     /**

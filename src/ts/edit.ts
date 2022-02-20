@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // DESTROY ENTITY
     } else if (el.matches('[data-action="destroy"]')) {
-      if (confirm(i18next.t('entity-delete-warning'))) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
         const path = window.location.pathname;
         EntityC.destroy(entity.id).then(json => {
           if (json.res) {

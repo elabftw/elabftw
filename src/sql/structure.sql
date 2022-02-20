@@ -800,7 +800,8 @@ ALTER TABLE `api_keys`
 -- Indexes for table `experiments`
 --
 ALTER TABLE `experiments`
-  ADD KEY `fk_experiments_users_userid` (`userid`);
+  ADD KEY `fk_experiments_users_userid` (`userid`),
+  ADD KEY `idx_experiments_state` (`state`);
 
 --
 -- Indexes for table `experiments_comments`
@@ -826,7 +827,8 @@ ALTER TABLE `experiments_steps`
 -- Indexes for table `experiments_templates`
 --
 ALTER TABLE `experiments_templates`
-  ADD KEY `fk_experiments_templates_teams_id` (`team`);
+  ADD KEY `fk_experiments_templates_teams_id` (`team`),
+  ADD KEY `idx_experiments_templates_state` (`state`);
 
 --
 -- Indexes for table `favtags2users`
@@ -839,7 +841,8 @@ ALTER TABLE `favtags2users`
 -- Indexes for table `items`
 --
 ALTER TABLE `items`
-  ADD KEY `fk_items_teams_id` (`team`);
+  ADD KEY `fk_items_teams_id` (`team`),
+  ADD KEY `idx_items_state` (`state`);
 
 --
 -- Indexes for table `items_comments`
@@ -852,7 +855,8 @@ ALTER TABLE `items_comments`
 -- Indexes for table `items_types`
 --
 ALTER TABLE `items_types`
-  ADD KEY `fk_items_types_teams_id` (`team`);
+  ADD KEY `fk_items_types_teams_id` (`team`),
+  ADD KEY `idx_items_types_state` (`state`);
 
 --
 -- Indexes for table `items_types_links`

@@ -10,6 +10,8 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\EntityParams;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\ItemTypeParamsInterface;
@@ -54,7 +56,7 @@ class ItemsTypes extends AbstractEntity
             return $this->readAll();
         }
 
-        $sql = 'SELECT id, team, color, bookable, name, body, canread, canwrite, metadata
+        $sql = 'SELECT id, team, color, bookable, name, body, canread, canwrite, metadata, state
             FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -102,12 +104,13 @@ class ItemsTypes extends AbstractEntity
         if ($this->countItems() > 0) {
             throw new ImproperActionException(_('Remove all database items with this type before deleting this type.'));
         }
-        $sql = 'DELETE FROM items_types WHERE id = :id AND team = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
 
-        return $this->Db->execute($req);
+        // make sure it's in our team
+        if (!$this->canWrite()) {
+            throw new IllegalActionException('Trying to delete an item type from another team.');
+        }
+        // set state to deleted
+        return $this->update(new EntityParams((string) parent::STATE_DELETED, 'state'));
     }
 
     /**
@@ -123,9 +126,10 @@ class ItemsTypes extends AbstractEntity
             items_types.ordering,
             items_types.canread,
             items_types.canwrite
-            FROM items_types WHERE team = :team ORDER BY ordering ASC';
+            FROM items_types WHERE team = :team AND state = :state ORDER BY ordering ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+        $req->bindValue(':state', self::STATE_NORMAL, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->fetchAll($req);
@@ -143,5 +147,11 @@ class ItemsTypes extends AbstractEntity
         $this->Db->execute($req);
 
         return (int) $req->fetchColumn();
+    }
+
+    private function canWrite(): bool
+    {
+        $item = $this->read(new EntityParams(''));
+        return (int) $item['team'] === $this->team;
     }
 }

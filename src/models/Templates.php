@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
-use Elabftw\Elabftw\EntityParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\EntityParamsInterface;
@@ -189,17 +188,6 @@ class Templates extends AbstractEntity
         $this->Db->execute($req);
 
         return $this->Db->fetchAll($req);
-    }
-
-    /**
-     * Delete template
-     */
-    public function destroy(): bool
-    {
-        $this->canOrExplode('write');
-
-        // set state to deleted
-        return $this->update(new EntityParams((string) parent::STATE_DELETED, 'state'));
     }
 
     /**

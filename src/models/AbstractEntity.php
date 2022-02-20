@@ -14,6 +14,7 @@ use function array_column;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
+use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
@@ -655,6 +656,14 @@ abstract class AbstractEntity implements CrudInterface
     {
         $this->extendedFilter .= $extendedFilter . ' ';
         $this->bindExtendedValues = array_merge($this->bindExtendedValues, $bindExtendedValues);
+    }
+
+    public function destroy(): bool
+    {
+        $this->canOrExplode('write');
+
+        // set state to deleted
+        return $this->update(new EntityParams((string) self::STATE_DELETED, 'state'));
     }
 
     /**

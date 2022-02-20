@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
-use Elabftw\Elabftw\EntityParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\EntityParamsInterface;
@@ -91,7 +90,6 @@ class Items extends AbstractEntity
 
     public function destroy(): bool
     {
-        $this->canOrExplode('write');
 
         // check if we can actually delete items (for non-admins)
         $Team = new Team($this->Users->team);
@@ -99,8 +97,7 @@ class Items extends AbstractEntity
             throw new ImproperActionException(_('Users cannot delete items.'));
         }
 
-        // set state to deleted
-        $this->update(new EntityParams((string) parent::STATE_DELETED, 'state'));
+        parent::destroy();
 
         // delete links of this item in experiments with this item linked
         $sql = 'DELETE FROM experiments_links WHERE link_id = :link_id';

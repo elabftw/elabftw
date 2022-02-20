@@ -10,8 +10,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\EntityParams;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\ItemTypeParamsInterface;
@@ -96,7 +94,6 @@ class ItemsTypes extends AbstractEntity
 
     /**
      * Destroy an item type
-     *
      */
     public function destroy(): bool
     {
@@ -105,12 +102,7 @@ class ItemsTypes extends AbstractEntity
             throw new ImproperActionException(_('Remove all database items with this type before deleting this type.'));
         }
 
-        // make sure it's in our team
-        if (!$this->canWrite()) {
-            throw new IllegalActionException('Trying to delete an item type from another team.');
-        }
-        // set state to deleted
-        return $this->update(new EntityParams((string) parent::STATE_DELETED, 'state'));
+        return parent::destroy();
     }
 
     /**
@@ -147,11 +139,5 @@ class ItemsTypes extends AbstractEntity
         $this->Db->execute($req);
 
         return (int) $req->fetchColumn();
-    }
-
-    private function canWrite(): bool
-    {
-        $item = $this->read(new EntityParams(''));
-        return (int) $item['team'] === $this->team;
     }
 }

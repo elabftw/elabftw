@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
-use Elabftw\Elabftw\EntityParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\EntityParamsInterface;
@@ -178,13 +177,8 @@ class Experiments extends AbstractEntity
      */
     public function destroy(): bool
     {
-        $this->canOrExplode('write');
-
-        // set state to deleted
-        $this->update(new EntityParams((string) parent::STATE_DELETED, 'state'));
-
-        // delete from pinned
-        return $this->Pins->cleanup();
+        // delete from pinned too
+        return parent::destroy() && $this->Pins->cleanup();
     }
 
     protected function getBoundEvents(): array

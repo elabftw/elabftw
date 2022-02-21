@@ -41,9 +41,10 @@
         </span>
       </p>
 
-      <p id='withSelected' style='display:none'>{{ 'With selected:'|trans }}
+      <div id='withSelected' class='row mx-0 form-inline d-none'>
+        <p class='mr-1 mb-2'>{{ 'With selected:'|trans }}</p>
         <!-- Change category -->
-        <select autocomplete='off' id='catChecked'>
+        <select autocomplete='off' id='catChecked' class='mr-1 mb-2 form-control'>
             <option selected disabled>
             {% if Entity.type == 'experiments' %}
                 {{ 'Change status'|trans }}
@@ -58,7 +59,7 @@
         </select>
 
         <!-- Change visibility -->
-        <select autocomplete='off' id='visChecked'>
+        <select autocomplete='off' id='visChecked' class='mr-1 mb-2 form-control'>
           <option selected disabled>{{ 'Change visibility'|trans }}</option>
           {% for key, value in visibilityArr %}
             <option value='{{ key }}'>{{ value }}</option>
@@ -66,7 +67,7 @@
         </select>
 
         <!-- Export -->
-        <select autocomplete='off' id='exportChecked'>
+        <select autocomplete='off' id='exportChecked' class='mr-1 mb-2 form-control'>
           <option selected disabled>{{ 'Export'|trans }}</option>
           <option value='zip'>{{ 'Make Zip'|trans }}</option>
           <option value='csv'>{{ 'Make Csv'|trans }}</option>
@@ -76,19 +77,19 @@
         </select>
 
         <!-- Add a tag -->
-        <input type='text' id='createTagInputMultiple' class='createTagInputMultiple' data-autocomplete='tags' placeholder='{{ 'Add a tag'|trans }}' />
+        <input type='text' id='createTagInputMultiple' class='createTagInputMultiple mr-1 mb-2 form-control' data-autocomplete='tags' placeholder='{{ 'Add a tag'|trans }}' />
 
         <!-- Add a link -->
-        <input type='text' id='linkInputMultiple' class='linkinput' placeholder='{{ 'Add a link'|trans }}' />
+        <input type='text' id='linkInputMultiple' class='linkinput mr-1 mb-2 form-control' placeholder='{{ 'Add a link'|trans }}' />
 
-        <button id='lockChecked' class='button btn btn-primary'>{{ 'Lock'|trans }}</button>
+        <button id='lockChecked' class='button btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
         {% if Entity.type == 'experiments' %}
-          <button id='timestampChecked' class='button btn btn-primary'>{{ 'Timestamp'|trans }}</button>
+          <button id='timestampChecked' class='button btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
         {% endif %}
         {% if (deletableXp and (Entity.type == 'experiments')) or Entity.type == 'items' %}
-          <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
+          <button id='deleteChecked' class='button btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
         {% endif %}
-      </p>
+      </div>
       {% if App.Users.userData.display_mode == 'it' %}
         <div class='row display-flex' id='itemList'>
         {% for item in itemsArr|slice(0, DisplayParams.limit) %}

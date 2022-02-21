@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('.item input[type=checkbox]').prop('checked', true);
     $('.item input[type=checkbox]').parent().parent().css('background-color', bgColor);
     $('#advancedSelectOptions').show();
-    $('#withSelected').show();
+    $('#withSelected').removeClass('d-none');
     // also disable pagination because this will select all even the hidden ones
     $('section.item:hidden').show();
     $('#loadAllButton').hide(); // hide load button when there is nothing more to show
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('.item input:checkbox').prop('checked', false);
     $('.item input[type=checkbox]').parent().parent().css('background-color', '');
     // hide menu
-    $('#withSelected').hide();
+    $('#withSelected').addClass('d-none');
     $('#advancedSelectOptions').hide();
   });
 
@@ -127,12 +127,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // hide the "with selected" block if no checkboxes are checked
-  $('#withSelected').hide();
+  $('#withSelected').addClass('d-none');
   // no need to show the unselect/invert links if no one is selected
   $('#advancedSelectOptions').hide();
   $('.item input[type=checkbox]').on('click', function() {
     $('#advancedSelectOptions').show();
-    $('#withSelected').show();
+    $('#withSelected').removeClass('d-none');
   });
 
   // UPDATE THE STATUS/ITEM TYPE OF SELECTED BOXES ON SELECT CHANGE

@@ -9,9 +9,11 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Notifications;
 use Elabftw\Traits\PdfTrait;
 
 /**
@@ -71,6 +73,15 @@ class MakeMultiPdf extends AbstractMake implements FileMakerInterface
             // attached files are appended based on user setting
             if ($this->Entity->Users->userData['append_pdfs']) {
                 $currentEntity->appendPdfs($currentEntity->getAttachedPdfs());
+                if (!empty($currentEntity->failedAppendPdfs)) {
+                    $body = array(
+                        'entity_id' => $currentEntity->Entity->id,
+                        'entity_page' => $currentEntity->Entity->page,
+                        'file_names' => implode(', ', $currentEntity->failedAppendPdfs),
+                    );
+                    $Notifications = new Notifications($this->Entity->Users);
+                    $Notifications->create(new CreateNotificationParams(Notifications::PDF_APPENDMENT_FAILED, $body));
+                }
             }
         }
     }

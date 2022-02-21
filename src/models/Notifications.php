@@ -37,6 +37,12 @@ class Notifications implements CrudInterface
     // when our account has been validated
     public const SELF_IS_VALIDATED = 5;
 
+    // when there was an error during pdf generation because of MathJax
+    public const MATHJAX_FAILED = 6;
+
+    // when an attached PDF file cannot be appended during PDF export
+    public const PDF_APPENDMENT_FAILED = 7;
+
     protected Db $Db;
 
     private int $userid;

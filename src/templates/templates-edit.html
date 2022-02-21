@@ -3,21 +3,21 @@
     <!-- TAGS -->
     <i class='fas fa-tags'></i>
     <label>{{ 'Tags'|trans }}</label>
-    <div class='tags'>
-      <span id='tags_div_{{ templateData.id }}'>
+    <div class='tags form-inline'>
+      <div id='tags_div_{{ templateData.id }}' class='mb-2 mb-sm-0'>
         <!--  build the tag array -->
         {% if templateData.tags|length > 0 %}
           {% set tagsIdArr = templateData.tags_id|split(',') %}
           {% set tagsValueArr = templateData.tags|split('|') %}
-          {% for key, tag in tagsValueArr %}
-            {# the key allows to get the id stored in tagsIdArr #}
-            <a class='tag m-1 tag-delete clickable' data-action='unreference-tag' data-id='{{ templateData.id }}' data-tagid='{{ tagsIdArr[key] }}'>
-              {{ tag|raw }}
+          {% for key, tag in tagsValueArr -%}
+            {#- the key allows to get the id stored in tagsIdArr -#}
+            <a class='tag mr-1 clickable hover-danger' data-action='unreference-tag' data-id='{{ templateData.id }}' data-tagid='{{ tagsIdArr[key] }}'>
+              {{- tag|raw -}}
             </a>
-          {% endfor %}
+          {%- endfor -%}
         {% endif %}
-      </span>
-      <input type='text' style='width:auto' data-autocomplete='tags' class='ml-1 createTagInput' id='createTagInput_{{ templateData.id }}' data-id='{{ templateData.id }}' placeholder='{{ 'Add a tag'|trans }}' />
+      </div>
+      <input type='text' data-autocomplete='tags' class='createTagInput form-control' id='createTagInput_{{ templateData.id }}' data-id='{{ templateData.id }}' placeholder='{{ 'Add a tag'|trans }}' />
     </div>
   </div>
 
@@ -54,7 +54,7 @@
 <div>
   <textarea id='e{{ templateData.id }}' class='mceditable' style='height:500px;'>{{ templateData.body }}</textarea>
 </div>
-<div class='text-center'>
+<div class='text-center mt-4'>
   <button data-action='update-template' data-id='{{ templateData.id }}' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
 </div>
 {% set mode = 'edit-template' %}

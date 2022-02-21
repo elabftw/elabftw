@@ -20,6 +20,8 @@ class MakeMultiPdfTest extends \PHPUnit\Framework\TestCase
     {
         $idArr = array('1', '2', '3');
         $Entity = new Experiments(new Users(1, 1));
+        // test >Append attached PDFs<
+        $Entity->Users->userData['append_pdfs'] = true;
         $MpdfProvider = new MpdfProvider('Toto');
         $this->MakePdf = new MakeMultiPdf($MpdfProvider, $Entity, $idArr);
     }

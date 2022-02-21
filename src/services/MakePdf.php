@@ -89,9 +89,33 @@ class MakePdf extends AbstractMake implements FileMakerInterface
     }
 
     /**
+     * Get a list of all PDFs that are attached to an entity
+     *
+     * @return array Empty or array of arrays with information for PDFs array('path/to/file', 'real.name')
+     */
+    public function getAttachedPdfs(): array
+    {
+        $uploadsArr = $this->Entity->Uploads->readAllNormal();
+        $listOfPdfs = array();
+
+        if (empty($uploadsArr)) {
+            return $listOfPdfs;
+        }
+
+        foreach ($uploadsArr as $upload) {
+            $filePath = dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
+            if (file_exists($filePath) && strtolower(Tools::getExt($upload['real_name'])) === 'pdf') {
+                $listOfPdfs[] = array($filePath, $upload['real_name']);
+            }
+        }
+
+        return $listOfPdfs;
+    }
+
+    /**
      * Append PDFs attached to an entity
      */
-    private function appendPdfs(array $pdfs): void
+    public function appendPdfs(array $pdfs): void
     {
         foreach ($pdfs as $pdf) {
             // There will be cases where the merging will fail
@@ -190,30 +214,6 @@ class MakePdf extends AbstractMake implements FileMakerInterface
         // now remove any img src pointing to outside world
         // prevent blind ssrf (thwarted by CSP on webpage, but not in pdf)
         return preg_replace('/img src=("|\')(ht|f|)tp/i', 'nope', $html);
-    }
-
-    /**
-     * Get a list of all PDFs that are attached to an entity
-     *
-     * @return array Empty or array of arrays with information for PDFs array('path/to/file', 'real.name')
-     */
-    private function getAttachedPdfs(): array
-    {
-        $uploadsArr = $this->Entity->Uploads->readAllNormal();
-        $listOfPdfs = array();
-
-        if (empty($uploadsArr)) {
-            return $listOfPdfs;
-        }
-
-        foreach ($uploadsArr as $upload) {
-            $filePath = dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
-            if (file_exists($filePath) && strtolower(Tools::getExt($upload['real_name'])) === 'pdf') {
-                $listOfPdfs[] = array($filePath, $upload['real_name']);
-            }
-        }
-
-        return $listOfPdfs;
     }
 
     /**

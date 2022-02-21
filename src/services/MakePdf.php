@@ -44,7 +44,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
 
     public string $longName;
 
-    private array $failedAppendPdfs = array();
+    public array $failedAppendPdfs = array();
 
     /**
      * Constructor

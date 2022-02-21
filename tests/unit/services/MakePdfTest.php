@@ -20,6 +20,10 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
     {
         $Entity = new Experiments(new Users(1, 1), 1);
         $Entity->canOrExplode('read');
+        // add invalid tex macro to body to cover notification being created upon failing mathjax
+        $Entity->entityData['body'] .= '\n<p>$ \someInvalidTexMacro $</p>';
+        // test >Append attached PDFs<
+        $Entity->Users->userData['append_pdfs'] = true;
         $MpdfProvider = new MpdfProvider('Toto');
         $this->MakePdf = new MakePdf($MpdfProvider, $Entity);
     }

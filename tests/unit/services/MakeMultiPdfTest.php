@@ -11,7 +11,6 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 
 class MakeMultiPdfTest extends \PHPUnit\Framework\TestCase
@@ -24,11 +23,10 @@ class MakeMultiPdfTest extends \PHPUnit\Framework\TestCase
         $Entity = new Experiments(new Users(1, 1), 1);
         // test >Append attached PDFs<
         $Entity->Users->userData['append_pdfs'] = true;
-        $Uploads = new Uploads($Entity);
         // add a pdf
-        $Uploads->create($this->createUpload('digicert.pdf'));
+        $Entity->Uploads->create($this->createUpload('digicert.pdf'));
         // add a pdf with password -> cannot be appended
-        $Uploads->create($this->createUpload('with_password_123456.pdf'));
+        $Entity->Uploads->create($this->createUpload('with_password_123456.pdf'));
         $MpdfProvider = new MpdfProvider('Toto');
         $this->MakePdf = new MakeMultiPdf($MpdfProvider, $Entity, $idArr);
     }

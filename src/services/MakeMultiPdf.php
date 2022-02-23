@@ -22,6 +22,8 @@ use Elabftw\Traits\PdfTrait;
 class MakeMultiPdf extends AbstractMake implements FileMakerInterface
 {
     use PdfTrait;
+    
+    public array $pdfErrors = array();
 
     public function __construct(private MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, private array $idArr)
     {
@@ -54,6 +56,11 @@ class MakeMultiPdf extends AbstractMake implements FileMakerInterface
                 ));
             }
         }
+        if (!empty($this->pdfErrors)) {
+            $Notifications = new Notifications($this->Entity->Users);
+            $Notifications->create(new CreateNotificationParams(Notifications::PDF_GENERIC_ERROR));
+        }
+
 
         return $this->mpdf->Output('', 'S');
     }
@@ -67,22 +74,25 @@ class MakeMultiPdf extends AbstractMake implements FileMakerInterface
         $permissions = $this->Entity->getPermissions();
         if ($permissions['read']) {
             $currentEntity = new MakePdf($this->mpdfProvider, $this->Entity);
+            $currentEntity->createNotifications = false;
             // write content
             $this->mpdf->WriteHTML($currentEntity->getContent());
 
             // attached files are appended based on user setting
             if ($this->Entity->Users->userData['append_pdfs']) {
-                $currentEntity->appendPdfs($currentEntity->getAttachedPdfs());
+                $currentEntity->appendPdfs($currentEntity->getAttachedPdfs(), $this->mpdf);
                 if (!empty($currentEntity->failedAppendPdfs)) {
-                    $body = array(
-                        'entity_id' => $currentEntity->Entity->id,
-                        'entity_page' => $currentEntity->Entity->page,
-                        'file_names' => implode(', ', $currentEntity->failedAppendPdfs),
+                    $currentEntity->pdfErrors[] = array(
+                        'type' => Notifications::PDF_APPENDMENT_FAILED,
+                        'body' => array(
+                            'entity_id' => $currentEntity->Entity->id,
+                            'entity_page' => $currentEntity->Entity->page,
+                            'file_names' => implode(', ', $currentEntity->failedAppendPdfs),
+                        ),
                     );
-                    $Notifications = new Notifications($this->Entity->Users);
-                    $Notifications->create(new CreateNotificationParams(Notifications::PDF_APPENDMENT_FAILED, $body));
                 }
             }
+            array_push($this->pdfErrors, ...$currentEntity->pdfErrors);
         }
     }
 }

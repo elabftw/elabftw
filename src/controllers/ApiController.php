@@ -397,6 +397,10 @@ class ApiController implements ControllerInterface
                 if ($whereClause) {
                     $this->Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
                 }
+                $error = $advancedQuery->getException();
+                if ($error) {
+                    return new JsonResponse(array('result' => 'error', 'message' => $error));
+                }
             }
 
             return new JsonResponse($this->Entity->readShow($DisplayParams, false));

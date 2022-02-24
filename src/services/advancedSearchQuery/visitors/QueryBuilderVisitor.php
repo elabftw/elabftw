@@ -231,6 +231,30 @@ class QueryBuilderVisitor implements Visitor
         );
     }
 
+    private function visitFieldGroup(string $searchTerm, VisitorParameters $parameters): WhereCollector
+    {
+        $teamGroups = $parameters->getTeamGroups();
+        $users = array();
+        foreach ($teamGroups as $teamGroup) {
+            if ($searchTerm === $teamGroup['name']) {
+                array_push($users, ...array_column($teamGroup['users'], 'fullname'));
+            }
+        }
+        $queryParts = array();
+        $bindValues = array();
+        foreach (array_unique($users) as $user) {
+            $param = $this->getUniqueID();
+            $queryParts[] = "CONCAT(users.firstname, ' ', users.lastname) LIKE " . $param;
+            $bindValues[] = array(
+                'param' => $param,
+                'value' => $user,
+                'type' => PDO::PARAM_STR,
+            );
+        }
+
+        return new WhereCollector('(' . implode(' OR ', $queryParts) . ')', $bindValues);
+    }
+
     private function visitFieldLocked(string $searchTerm, VisitorParameters $parameters): WhereCollector
     {
         return $this->getWhereCollector(

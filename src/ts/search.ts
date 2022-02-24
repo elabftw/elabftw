@@ -106,13 +106,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const hasSpace = curVal.endsWith(' ');
       const addSpace = hasInput ? (hasSpace ? '' : ' ') : '';
 
+      if (elem.dataset.filter === 'author' || elem.dataset.filter === 'group') {
+        elem.dataset.filter = '(?:author|group)';
+      }
       // look if the filter key already exists in the extendedArea
       // paste the regex on regex101.com to understand it, note that here \ need to be escaped
       const regex = new RegExp(elem.dataset.filter + ':(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|[\\S]+)\\s?');
       const found = curVal.match(regex);
       // don't add quotes unless we need them (space exists)
       let quotes = '';
-      const filterValue = getFilterValueFromElement(elem);
+      let filterValue = getFilterValueFromElement(elem);
       if (filterValue.includes(' ')) {
         quotes = '"';
       }
@@ -120,6 +123,13 @@ document.addEventListener('DOMContentLoaded', () => {
       let filter = '';
       // but if we have a correct value, we add the filter
       if (filterValue !== '') {
+        if (elem.dataset.filter === '(?:author|group)') {
+          elem.dataset.filter = 'author';
+        }
+        if (filterValue.startsWith('group')) {
+          filterValue = filterValue.substring(6);
+          elem.dataset.filter = 'group';
+        }
         filter = `${elem.dataset.filter}:${quotes}${filterValue}${quotes}`;
       }
 

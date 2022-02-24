@@ -10,12 +10,24 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 {
+    private array $visibilityList;
+
+    private array $teamGroups;
+
+    protected function setUp(): void
+    {
+        $TeamGroups = new TeamGroups(new Users(1, 1));
+        $this->visibilityList = $TeamGroups->getVisibilityList();
+        $this->teamGroups = $TeamGroups->read(new ContentParams());
+    }
+
     public function testGetWhereClause(): void
     {
         $query = ' TEST TEST1 AND TEST2 OR TEST3 NOT TEST4 & TEST5';
@@ -29,7 +41,8 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
-            (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
+            $this->visibilityList,
+            $this->teamGroups,
         ));
         $whereClause = $advancedSearchQuery->getWhereClause();
         $this->assertIsArray($whereClause);
@@ -39,7 +52,8 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $query = 'category:"only meaningful with items but no error"';
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'items',
-            (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
+            $this->visibilityList,
+            $this->teamGroups,
         ));
         $whereClause = $advancedSearchQuery->getWhereClause();
         $this->assertStringStartsWith(' AND (categoryt.name LIKE :', $whereClause['where']);
@@ -52,7 +66,8 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
-            (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
+            $this->visibilityList,
+            $this->teamGroups,
         ));
         $advancedSearchQuery->getWhereClause();
         $this->assertStringStartsWith('Line 1, Column ', $advancedSearchQuery->getException());
@@ -65,7 +80,8 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         // Depth of abstract syntax tree is set to 1 with the last parameter
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
-            (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
+            $this->visibilityList,
+            $this->teamGroups,
         ), 1);
         $advancedSearchQuery->getWhereClause();
         $this->assertEquals('Query is too complex!', $advancedSearchQuery->getException());
@@ -82,7 +98,8 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
-            (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
+            $this->visibilityList,
+            $this->teamGroups,
         ));
         $advancedSearchQuery->getWhereClause();
         $this->assertStringStartsWith('visibility:' . $visInput . '. Valid values are ', $advancedSearchQuery->getException());
@@ -94,7 +111,8 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'itmes',
-            (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
+            $this->visibilityList,
+            $this->teamGroups,
         ));
         $advancedSearchQuery->getWhereClause();
         $this->assertStringStartsWith('timestamped: is only allowed when searching in experiments.', $advancedSearchQuery->getException());

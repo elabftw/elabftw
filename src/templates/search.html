@@ -52,6 +52,8 @@
           <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
           <dt>elabid</dt>
           <dd>Term or Quoted term</dd>
+          <dt>group</dt>
+          <dd>Term or Quoted term</dd>
           <dt>locked</dt>
           <dd>yes or no, true or false, 1 or 0, on or off</dd>
           <dt>rating</dt>
@@ -156,6 +158,7 @@
         <li><strong>category</strong>: Simple or Quoted term</li>
         <li><strong>date</strong>: see date format</li>
         <li><strong>elabid</strong>: Simple or Quoted term</li>
+        <li><strong>group</strong>: Simple or Quoted term</li>
         <li><strong>locked</strong>: yes or no</li>
         <li><strong>rating</strong>: 1, 2, 3, 4, 5, or unrated or 0</li>
         <li><strong>status</strong>: Simple or Quoted term</li>
@@ -170,17 +173,20 @@
     <h4 data-action='toggle-next' data-icon='extendedSearchIcon'><i id='extendedSearchIcon' class='fas fa-chevron-circle-right'></i> {{ 'Search helpers'|trans }}</h4>
     <div hidden class='box mb-1' data-save-hidden='searchHelpersDiv'>
       <div class='row'>
-        <!-- AUTHOR HELPER -->
+        <!-- AUTHOR/OWNER HELPER -->
         <div class='col-md-6 mb-md-3'>
-          <label for='searchonly'>{{ 'And author is:'|trans }} </label><br>
+          <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label><br>
           <select id='searchonly' name='owner' data-filter='author' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
-            <option data-action='clear'>{{ 'Select author'|trans }}</option>
+            <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
             {% for user in usersArr %}
               <option {{- Request.query.get('owner') == user.fullname|raw ? ' selected' }}>{{ user.fullname|raw }}</option>
             {% endfor %}
+            {% for group in teamGroups %}
+              <option {{- Request.query.get('owner') == 'group:'~group|raw ? ' selected' }}>group:{{ group|raw }}</option>
+            {% endfor %}
           </select>
         </div>
-        <!-- END AUTHOR HELPER -->
+        <!-- END AUTHOR/OWNER HELPER -->
 
       </div>
       <!-- NEW ROW -->

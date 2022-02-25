@@ -1389,16 +1389,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "2.4.2",
+            "version": "2.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "ca8e4c10535be5c59c03f491310b60b9d6a60e24"
+                "reference": "4c56e451e10e3d9478f42f44c3d744bc17cdcede"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/ca8e4c10535be5c59c03f491310b60b9d6a60e24",
-                "reference": "ca8e4c10535be5c59c03f491310b60b9d6a60e24",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/4c56e451e10e3d9478f42f44c3d744bc17cdcede",
+                "reference": "4c56e451e10e3d9478f42f44c3d744bc17cdcede",
                 "shasum": ""
             },
             "require": {
@@ -1455,7 +1455,7 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/2.4.2"
+                "source": "https://github.com/thephpleague/flysystem/tree/2.4.3"
             },
             "funding": [
                 {
@@ -1471,7 +1471,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-01-31T19:40:25+00:00"
+            "time": "2022-02-16T18:44:00+00:00"
         },
         {
             "name": "league/flysystem-aws-s3-v3",
@@ -1531,16 +1531,16 @@
         },
         {
             "name": "league/flysystem-memory",
-            "version": "3.0.2",
+            "version": "3.0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem-memory.git",
-                "reference": "d8b5e7e4862537642bd47a1d30497a362fd813a3"
+                "reference": "71164f1b0193dc4b0d1688f581af276c3ba0bbc8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem-memory/zipball/d8b5e7e4862537642bd47a1d30497a362fd813a3",
-                "reference": "d8b5e7e4862537642bd47a1d30497a362fd813a3",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-memory/zipball/71164f1b0193dc4b0d1688f581af276c3ba0bbc8",
+                "reference": "71164f1b0193dc4b0d1688f581af276c3ba0bbc8",
                 "shasum": ""
             },
             "require": {
@@ -1574,9 +1574,9 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem-memory/issues",
-                "source": "https://github.com/thephpleague/flysystem-memory/tree/3.0.2"
+                "source": "https://github.com/thephpleague/flysystem-memory/tree/3.0.9"
             },
-            "time": "2022-01-15T22:42:13+00:00"
+            "time": "2022-02-22T07:15:18+00:00"
         },
         {
             "name": "league/mime-type-detection",
@@ -9453,5 +9453,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.2.0"
 }

@@ -9,9 +9,11 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Notifications;
 use Elabftw\Traits\PdfTrait;
 
 /**
@@ -52,6 +54,10 @@ class MakeMultiPdf extends AbstractMake implements FileMakerInterface
                 ));
             }
         }
+        if ($this->errors) {
+            $Notifications = new Notifications($this->Entity->Users);
+            $Notifications->create(new CreateNotificationParams(Notifications::PDF_GENERIC_ERROR));
+        }
 
         return $this->mpdf->Output('', 'S');
     }
@@ -63,11 +69,27 @@ class MakeMultiPdf extends AbstractMake implements FileMakerInterface
     {
         $this->Entity->setId($id);
         $permissions = $this->Entity->getPermissions();
-        $CurrentEntity = new MakePdf($this->mpdfProvider, $this->Entity);
         if ($permissions['read']) {
+            $currentEntity = new MakePdf($this->mpdfProvider, $this->Entity);
+            $currentEntity->createNotifications = false;
             // write content
-            // FIXME: in multi mode, the attached files are currently not appended
-            $this->mpdf->WriteHTML($CurrentEntity->getContent());
+            $this->mpdf->WriteHTML($currentEntity->getContent());
+
+            // attached files are appended based on user setting
+            if ($this->Entity->Users->userData['append_pdfs']) {
+                $currentEntity->appendPdfs($currentEntity->getAttachedPdfs(), $this->mpdf);
+                if ($currentEntity->failedAppendPdfs) {
+                    $currentEntity->errors[] = array(
+                        'type' => Notifications::PDF_APPENDMENT_FAILED,
+                        'body' => array(
+                            'entity_id' => $currentEntity->Entity->id,
+                            'entity_page' => $currentEntity->Entity->page,
+                            'file_names' => implode(', ', $currentEntity->failedAppendPdfs),
+                        ),
+                    );
+                }
+            }
+            array_push($this->errors, ...$currentEntity->errors);
         }
     }
 }

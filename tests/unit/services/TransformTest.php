@@ -30,6 +30,19 @@ class TransformTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals("<input type='hidden' name='csrf' value='$token' />", $input);
     }
 
+    public function testNotifPdfGenericError(): void
+    {
+        $expected = '<span class="clickable" data-action="ack-notif" data-id="1">';
+        $expected .= 'There was a problem during PDF creation.';
+        $expected .= '</span><br><span class="relative-moment" title="test"></span>';
+        $actual = Transform::notif(array(
+            'category' => Notifications::PDF_GENERIC_ERROR,
+            'id' => '1',
+            'created_at' => 'test',
+        ));
+        $this->assertEquals($expected, $actual);
+    }
+
     public function testNotifMathJaxFailed(): void
     {
         $expected = '<span class="clickable" data-action="ack-notif" data-id="1" data-href="experiment.php?mode=view&id=2">';

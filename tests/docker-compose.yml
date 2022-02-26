@@ -40,6 +40,7 @@ services:
             - USE_REDIS=false
             - ENABLE_IPV6=true
             - DEV_MODE=true
+            - SITE_URL=https://elab.local:3148
             - ELAB_AWS_ACCESS_KEY=yep
             - ELAB_AWS_SECRET_KEY=yop
         volumes:

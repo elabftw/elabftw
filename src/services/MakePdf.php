@@ -29,6 +29,7 @@ use function implode;
 use Mpdf\Mpdf;
 use function preg_replace;
 use setasign\Fpdi\FpdiException;
+use const SITE_URL;
 use function str_replace;
 use function strtolower;
 use Symfony\Component\HttpFoundation\Request;
@@ -234,8 +235,8 @@ class MakePdf extends AbstractMake implements FileMakerInterface
             'title' => $this->Entity->entityData['title'],
             'uploadsArr' => $this->Entity->Uploads->readAll(),
             'uploadsFolder' => dirname(__DIR__, 2) . '/uploads/',
-            'url' => $this->getUrl(),
-            'linkBaseUrl' => Tools::getUrl() . '/database.php',
+            'url' => SITE_URL,
+            'linkBaseUrl' => SITE_URL . '/database.php',
             'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
         );
 

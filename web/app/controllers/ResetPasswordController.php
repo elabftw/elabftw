@@ -24,6 +24,7 @@ use Exception;
 use function nl2br;
 use function random_int;
 use const SECRET_KEY;
+use const SITE_URL;
 use function sleep;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Mime\Address;
@@ -67,7 +68,7 @@ try {
         $key = $ResetPasswordKey->generate($Users->userData['email']);
 
         // build the reset link
-        $resetLink = Tools::getUrl() . '/change-pass.php';
+        $resetLink = SITE_URL . '/change-pass.php';
         // not pretty but gets the job done
         $resetLink = str_replace('app/controllers/', '', $resetLink);
         $resetLink .= '?key=' . $key;

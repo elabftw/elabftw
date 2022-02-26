@@ -9,8 +9,11 @@
 
 namespace Elabftw\Services;
 
+use function dirname;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Interfaces\MpdfProviderInterface;
+use Mpdf\Config\ConfigVariables;
+use Mpdf\Config\FontVariables;
 use Mpdf\Mpdf;
 
 /**
@@ -24,11 +27,24 @@ class MpdfProvider implements MpdfProviderInterface
 
     public function getInstance(): Mpdf
     {
+        $defaultConfig = (new ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
+
+        $defaultFontConfig = (new FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
+
         // create the pdf
         $mpdf = new Mpdf(array(
             'format' => $this->format,
             'tempDir' => FsTools::getCacheFolder('mpdf'),
             'mode' => 'utf-8',
+            'fontDir' => array_merge($fontDirs, array(dirname(__DIR__, 2) . '/web/assets/fonts')),
+            'fontdata' => $fontData + array(
+                'lato' => array(
+                    'R' => 'lato-medium-webfont.ttf',
+                ),
+            ),
+            'default_font' => 'lato',
         ));
 
         // make sure we can read the pdf in a long time

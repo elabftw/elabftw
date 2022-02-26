@@ -85,8 +85,8 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
             (new TeamGroups(new Users(1, 1)))->getVisibilityList(),
         ));
         $advancedSearchQuery->getWhereClause();
-        $this->assertStringStartsWith('visibility:<em>' . $visInput . '</em>. Valid values are ', $advancedSearchQuery->getException());
-        $this->assertStringContainsString('date:<em>' . $from . '..' . $to . '</em>. Second date needs to be equal or greater than first date.', $advancedSearchQuery->getException());
+        $this->assertStringStartsWith('visibility:' . $visInput . '. Valid values are ', $advancedSearchQuery->getException());
+        $this->assertStringContainsString('date:' . $from . '..' . $to . '. Second date needs to be equal or greater than first date.', $advancedSearchQuery->getException());
         $this->assertStringEndsWith('category: is only allowed when searching in database.', $advancedSearchQuery->getException());
 
         $query = 'timestamped:true';

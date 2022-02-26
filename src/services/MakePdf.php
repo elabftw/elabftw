@@ -117,7 +117,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
     /**
      * Get a list of all PDFs that are attached to an entity
      *
-     * @return array Empty or array of arrays with information for PDFs array('path/to/file', 'real.name')
+     * @return array Empty or array of arrays with information for PDFs array('path/to/file', 'real_name')
      */
     public function getAttachedPdfs(): array
     {
@@ -256,7 +256,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
 
         if ($this->Entity->Users->userData['append_pdfs']) {
             $this->appendPdfs($this->getAttachedPdfs());
-            if (!empty($this->failedAppendPdfs)) {
+            if ($this->failedAppendPdfs) {
                 $this->errors[] = array(
                     'type' => Notifications::PDF_APPENDMENT_FAILED,
                     'body' => array(

@@ -43,7 +43,7 @@ class Notifications implements CrudInterface
     // when an attached PDF file cannot be appended during PDF export
     public const PDF_APPENDMENT_FAILED = 7;
 
-    // when an there is a problem with the PDF creation
+    // when there is a problem with the PDF creation
     public const PDF_GENERIC_ERROR = 8;
 
     protected Db $Db;

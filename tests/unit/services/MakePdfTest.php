@@ -26,9 +26,9 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
         // test >Append attached PDFs<
         $Entity->Users->userData['append_pdfs'] = true;
         // add a pdf
-        $Entity->Uploads->create(new createUpload('digicert.pdf', dirname(__DIR__, 2) . '/_data/digicert.pdf'));
+        $Entity->Uploads->create(new CreateUpload('digicert.pdf', dirname(__DIR__, 2) . '/_data/digicert.pdf'));
         // add a pdf with password -> cannot be appended
-        $Entity->Uploads->create(new createUpload('with_password_123456.pdf', dirname(__DIR__, 2) . '/_data/with_password_123456.pdf'));
+        $Entity->Uploads->create(new CreateUpload('with_password_123456.pdf', dirname(__DIR__, 2) . '/_data/with_password_123456.pdf'));
         $MpdfProvider = new MpdfProvider('Toto');
         $this->MakePdf = new MakePdf($MpdfProvider, $Entity);
     }

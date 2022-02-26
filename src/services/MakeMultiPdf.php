@@ -22,8 +22,6 @@ use Elabftw\Traits\PdfTrait;
 class MakeMultiPdf extends AbstractMake implements FileMakerInterface
 {
     use PdfTrait;
-    
-    public array $pdfErrors = array();
 
     public function __construct(private MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, private array $idArr)
     {
@@ -56,11 +54,10 @@ class MakeMultiPdf extends AbstractMake implements FileMakerInterface
                 ));
             }
         }
-        if (!empty($this->pdfErrors)) {
+        if ($this->errors) {
             $Notifications = new Notifications($this->Entity->Users);
             $Notifications->create(new CreateNotificationParams(Notifications::PDF_GENERIC_ERROR));
         }
-
 
         return $this->mpdf->Output('', 'S');
     }
@@ -81,8 +78,8 @@ class MakeMultiPdf extends AbstractMake implements FileMakerInterface
             // attached files are appended based on user setting
             if ($this->Entity->Users->userData['append_pdfs']) {
                 $currentEntity->appendPdfs($currentEntity->getAttachedPdfs(), $this->mpdf);
-                if (!empty($currentEntity->failedAppendPdfs)) {
-                    $currentEntity->pdfErrors[] = array(
+                if ($currentEntity->failedAppendPdfs) {
+                    $currentEntity->errors[] = array(
                         'type' => Notifications::PDF_APPENDMENT_FAILED,
                         'body' => array(
                             'entity_id' => $currentEntity->Entity->id,
@@ -92,7 +89,7 @@ class MakeMultiPdf extends AbstractMake implements FileMakerInterface
                     );
                 }
             }
-            array_push($this->pdfErrors, ...$currentEntity->pdfErrors);
+            array_push($this->errors, ...$currentEntity->errors);
         }
     }
 }

@@ -44,8 +44,6 @@ class MakePdf extends AbstractMake implements FileMakerInterface
 
     public string $longName;
 
-    public array $pdfErrors = array();
-
     public array $failedAppendPdfs = array();
 
     // switch to disable notifications from within class
@@ -79,7 +77,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
     public function getFileContent(): string
     {
         $output = $this->generate()->Output('', 'S');
-        if (!empty($this->pdfErrors) && $this->createNotifications) {
+        if ($this->errors && $this->createNotifications) {
             $Notifications = new Notifications($this->Entity->Users);
             $Notifications->create(new CreateNotificationParams(Notifications::PDF_GENERIC_ERROR));
         }
@@ -105,7 +103,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
 
         // Inform user that there was a problem with Tex rendering
         if ($Tex2Svg->mathJaxFailed) {
-            $this->pdfErrors[] = array(
+            $this->errors[] = array(
                 'type' => Notifications::MATHJAX_FAILED,
                 'body' => array(
                     'entity_id' => $this->Entity->id,
@@ -131,6 +129,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
         }
 
         foreach ($uploadsArr as $upload) {
+            // TODO make it work with S3 storage
             $filePath = dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
             if (file_exists($filePath) && strtolower(Tools::getExt($upload['real_name'])) === 'pdf') {
                 $listOfPdfs[] = array($filePath, $upload['real_name']);
@@ -258,7 +257,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
         if ($this->Entity->Users->userData['append_pdfs']) {
             $this->appendPdfs($this->getAttachedPdfs());
             if (!empty($this->failedAppendPdfs)) {
-                $this->pdfErrors[] = array(
+                $this->errors[] = array(
                     'type' => Notifications::PDF_APPENDMENT_FAILED,
                     'body' => array(
                         'entity_id' => $this->Entity->id,

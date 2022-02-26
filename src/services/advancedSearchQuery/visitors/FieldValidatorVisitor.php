@@ -39,7 +39,7 @@ class FieldValidatorVisitor implements Visitor
     {
         if ($dateField->getDateType() === 'range' && $dateField->getValue() > $dateField->getDateTo()) {
             $message = sprintf(
-                'date:<em>%s..%s</em>. Second date needs to be equal or greater than first date.',
+                'date:%s..%s. Second date needs to be equal or greater than first date.',
                 $dateField->getValue(),
                 $dateField->getDateTo(),
             );
@@ -180,7 +180,7 @@ class FieldValidatorVisitor implements Visitor
         $visibilityFieldHelper = new VisibilityFieldHelper($searchTerm, $parameters->getVisArr());
         if (!$visibilityFieldHelper->getArr()) {
             $message = sprintf(
-                'visibility:<em>%s</em>. Valid values are %s.',
+                'visibility:%s. Valid values are %s.',
                 $searchTerm,
                 $visibilityFieldHelper->possibleInput,
             );

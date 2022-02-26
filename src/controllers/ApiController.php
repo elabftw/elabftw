@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
@@ -30,9 +29,12 @@ use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Status;
+use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Elabftw\Services\AdvancedSearchQuery;
+use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Check;
 use Elabftw\Services\MakeBackupZip;
 use function implode;
@@ -71,6 +73,8 @@ class ApiController implements ControllerInterface
     private int $limit = 15;
 
     private int $offset = 0;
+
+    private string $search = '';
 
     private ?int $id;
 
@@ -215,7 +219,11 @@ class ApiController implements ControllerInterface
         $args = (string) ($this->Request->query->get('args') ?? '');
         if (!empty($args)) {
             // this is where we store the parsed query string parameters
-            $result = array('limit' => $this->limit, 'offset' => $this->offset);
+            $result = array(
+                'limit' => $this->limit,
+                'offset' => $this->offset,
+                'search' => $this->search,
+            );
             // this function doesn't return anything
             parse_str($args, $result);
             // now assign our result to class properties
@@ -224,6 +232,9 @@ class ApiController implements ControllerInterface
             }
             if (isset($result['offset'])) {
                 $this->offset = (int) $result['offset'];
+            }
+            if (isset($result['search'])) {
+                $this->search = trim($result['search']);
             }
         }
 
@@ -291,6 +302,9 @@ class ApiController implements ControllerInterface
      * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items
      * # get item with id 42
      * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
+     * @apiQuery {String} limit Limit the number of results returned
+     * @apiQuery {String} offset Offset for results returned
+     * @apiQuery {String} search Search string to look for something
      * @apiSuccess {String} body Main content
      * @apiSuccess {String} category Item type
      * @apiSuccess {Number} category_id Id of the item type
@@ -332,6 +346,9 @@ class ApiController implements ControllerInterface
      * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments
      * # get experiment with id 42
      * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments/42
+     * @apiQuery {String} limit Limit the number of results returned
+     * @apiQuery {String} offset Offset for results returned
+     * @apiQuery {String} search Search string to look for something
      * @apiSuccess {String} body Main content
      * @apiSuccess {String} category Status
      * @apiSuccess {Number} category_id Id of the status
@@ -372,6 +389,20 @@ class ApiController implements ControllerInterface
             // remove 1 to limit as there is 1 added in the sql query
             $DisplayParams->limit = $this->limit - 1;
             $DisplayParams->offset = $this->offset;
+            if ($this->search) {
+                $TeamGroups = new TeamGroups($this->App->Users);
+                $visibilityArr = $TeamGroups->getVisibilityList();
+                $advancedQuery = new AdvancedSearchQuery($this->search, new VisitorParameters($this->Entity->type, $visibilityArr));
+                $whereClause = $advancedQuery->getWhereClause();
+                if ($whereClause) {
+                    $this->Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
+                }
+                $error = $advancedQuery->getException();
+                if ($error) {
+                    return new JsonResponse(array('result' => 'error', 'message' => $error));
+                }
+            }
+
             return new JsonResponse($this->Entity->readShow($DisplayParams, false));
         }
         $this->Entity->canOrExplode('read');

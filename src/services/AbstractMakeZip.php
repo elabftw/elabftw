@@ -75,6 +75,8 @@ abstract class AbstractMakeZip extends AbstractMake
             (bool) $userData['pdfa'],
         );
         $MakePdf = new MakePdf($MpdfProvider, $this->Entity);
+        // disable makepdf notifications because they are handled by calling class
+        $MakePdf->createNotifications = false;
         $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $MakePdf->getFileContent());
     }
 }

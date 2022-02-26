@@ -63,6 +63,7 @@ class Update
      */
     public function runUpdateScript(): array
     {
+        // at the end of the update, warnings can be displayed for important informations
         $warn = array();
 
         // do nothing if we're up to date
@@ -93,9 +94,6 @@ class Update
                 $warn[] = 'Change in the notification/email system: a cronjob is now REQUIRED for email notifications to be sent. Make sure to read the release notes!';
             }
         }
-
-        // remove cached twig templates (for non docker users)
-        FsTools::deleteCache();
 
         return $warn;
     }

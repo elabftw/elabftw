@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,12 +6,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
 use function array_map;
-use Elabftw\Models\Config;
 use function filter_var;
 use function implode;
 use function json_decode;
@@ -19,7 +17,6 @@ use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 use function mb_strlen;
 use function pathinfo;
-use function rtrim;
 use Symfony\Component\HttpFoundation\Request;
 use function trim;
 
@@ -262,25 +259,6 @@ class Tools
         $gray = "<i style='color:gray' class='fas fa-star' title='☺'></i>";
 
         return str_repeat($green, $rating) . str_repeat($gray, 5 - $rating);
-    }
-
-    /**
-     * Return a full URL of the elabftw install.
-     * Will first check for config value of 'url' or try to guess from Request
-     */
-    public static function getUrl(): string
-    {
-        $Config = Config::getConfig();
-
-        // this might not be set yet
-        if ($Config->configArr['url']) {
-            $url = $Config->configArr['url'];
-        } else {
-            $Request = Request::createFromGlobals();
-            // this is only used as fallback because with proxies it can get stuff wrong
-            $url = $Request->getScheme() . '://' . $Request->getHost() . ':' . (string) $Request->getPort();
-        }
-        return rtrim($url, '/');
     }
 
     public static function getIdFilterSql(array $idArr): string

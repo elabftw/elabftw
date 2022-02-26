@@ -11,12 +11,12 @@ namespace Elabftw\Services;
 
 use function count;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Notifications;
 use Elabftw\Models\Users;
 use function json_decode;
 use PDO;
+use const SITE_URL;
 use Symfony\Component\Mime\Address;
 
 /**
@@ -86,7 +86,7 @@ class EmailNotifications
             case Notifications::COMMENT_CREATED:
                 $subject .= _('New comment posted');
                 $commenter = new Users((int) $notifBody['commenter_userid']);
-                $url = Tools::getUrl() . '/experiments.php?mode=view&id=' . $notifBody['experiment_id'];
+                $url = SITE_URL . '/experiments.php?mode=view&id=' . $notifBody['experiment_id'];
 
                 $body = sprintf(
                     _('Hi. %s left a comment on your experiment. Have a look: %s'),
@@ -111,7 +111,7 @@ class EmailNotifications
                     $user->userData['fullname'],
                     $user->userData['email'],
                 );
-                $url = Tools::getUrl() . '/admin.php';
+                $url = SITE_URL . '/admin.php';
                 $body = $base . sprintf(_('Head to the admin panel to validate the account: %s'), $url);
                 break;
             case Notifications::SELF_NEED_VALIDATION:
@@ -120,7 +120,7 @@ class EmailNotifications
                 break;
             case Notifications::SELF_IS_VALIDATED:
                 $subject .= _('Account validated');
-                $url = Tools::getUrl() . '/login.php';
+                $url = SITE_URL . '/login.php';
                 $body = _('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ') . $url;
                 break;
             default:

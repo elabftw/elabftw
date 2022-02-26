@@ -24,6 +24,7 @@ use function is_readable;
 use Monolog\Logger;
 use PDOException;
 use function setcookie;
+use const SITE_URL;
 use function stripos;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -145,15 +146,7 @@ try {
     header('X-Elab-Need-Auth: 1');
     // don't send a GET app/logout.php if it's an ajax call because it messes up the jquery ajax
     if ($Request->headers->get('X-Requested-With') !== 'XMLHttpRequest') {
-        // Note: we assume https here, this will cause an issue if you try to access it in http, but anyway this should never be done so I guess it's okay.
-        // don't use the Config from App here as it might not exist yet
-        $Config = Config::getConfig();
-        if ($Config->configArr['url']) {
-            $url = $Config->configArr['url'];
-        } else {
-            $url = 'https://' . $Request->getHost() . ':' . $Request->getPort();
-        }
-        $url .= '/app/logout.php?keep_redirect=1';
+        $url = SITE_URL . '/app/logout.php?keep_redirect=1';
         header('Location: ' . $url);
     }
     exit;

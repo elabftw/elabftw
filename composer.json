@@ -52,7 +52,7 @@
     "friendsofphp/php-cs-fixer": "^3.0.0",
     "codeception/module-webdriver": "^1.0.0",
     "codeception/module-db": "^1.0.0",
-    "codeception/module-asserts": "^1.0.0",
+    "codeception/module-asserts": "^2.0.1",
     "codeception/module-rest": "^1.0",
     "codeception/module-phpbrowser": "^1.0",
     "symfony/yaml": "^5.0",

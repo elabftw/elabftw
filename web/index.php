@@ -43,7 +43,7 @@ try {
             $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
             $LoginHelper->login((bool) $App->Request->cookies->get('icanhazcookies'));
         }
-        $location = $App->Request->cookies->get('redirect') ?? $location;
+        // the redirect cookie is ignored for saml auth. See #2438.
         // we don't use a RedirectResponse but show a temporary redirection page or it will not work properly
         echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
         exit;

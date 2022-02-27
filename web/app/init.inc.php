@@ -138,7 +138,7 @@ try {
             'httponly' => true,
             'samesite' => 'Strict',
         );
-        setcookie('redirect', $Request->getRequestUri(), $cookieOptions);
+        setcookie('elab_redirect', $Request->getRequestUri(), $cookieOptions);
     }
 
     // used by ajax requests to detect a timed out session

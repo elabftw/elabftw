@@ -23,7 +23,8 @@
     <p>A password is already set.
     <a href='#' data-trigger='click' data-model='{{ model }}' data-target='ts_password' data-action='destroystamppass' data-reload='ts_loginpass'>Clear it</a> or change it below:</p>
   {% endif %}
-  <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='ts_password' data-reload='ts_loginpass' autocomplete='off' maxlength='200' type='new-password' id='ts_password' />
+  <!-- note: if autocomplete is set to 'off' here it will trigger infinite save bug in chrome -->
+  <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='ts_password' data-reload='ts_loginpass' autocomplete='new-password' maxlength='200' type='password' id='ts_password' />
 </div>
 
 <div id='ts_urldiv' {{ tsConfigArr.ts_authority != 'custom' ? 'hidden' : '' }}>

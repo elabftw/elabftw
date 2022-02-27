@@ -17,6 +17,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
+use Elabftw\Exceptions\QuantumException;
 use Elabftw\Models\AuthFail;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -31,7 +32,7 @@ $Response = new RedirectResponse($location);
 try {
     $Controller = new LoginController($App);
     $Response = $Controller->getResponse();
-} catch (InvalidCredentialsException $e) {
+} catch (QuantumException | InvalidCredentialsException $e) {
     $loginTries = (int) $App->Config->configArr['login_tries'];
     $AuthFail = new AuthFail($loginTries, $e->getCode(), $App->Request->cookies->get('devicetoken'));
     $AuthFail->register();

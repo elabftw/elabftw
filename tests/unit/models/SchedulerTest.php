@@ -37,13 +37,14 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testCreate(): void
+    public function testCreate(): int
     {
         $d = new DateTime('now');
         $start = $d->format('c');
         $d->add(new DateInterval('PT2H'));
         $end = $d->format('c');
         $this->id = $this->Scheduler->create($start, $end, 'Yep');
+        return $this->id;
     }
 
     public function testReadAllFromTeam(): void
@@ -74,21 +75,21 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testBind(): void
     {
-        $this->Scheduler->setId(1);
-        $this->assertTrue($this->Scheduler->bind(1, 'experiment'));
-        $this->assertTrue($this->Scheduler->bind(1, 'item_link'));
+        $this->Scheduler->setId($this->testCreate());
+        $this->assertTrue($this->Scheduler->bind(3, 'experiment'));
+        $this->assertTrue($this->Scheduler->bind(3, 'item_link'));
     }
 
     public function testBindIncorrect(): void
     {
-        $this->Scheduler->setId(1);
+        $this->Scheduler->setId($this->testCreate());
         $this->expectException(IllegalActionException::class);
-        $this->Scheduler->bind(1, 'blah');
+        $this->Scheduler->bind(3, 'blah');
     }
 
     public function testUnbind(): void
     {
-        $this->Scheduler->setId(1);
+        $this->Scheduler->setId($this->testCreate());
         $this->assertTrue($this->Scheduler->unbind('experiment'));
         $this->assertTrue($this->Scheduler->unbind('item_link'));
     }
@@ -114,15 +115,15 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Users = new Users(2, 1);
         $Items = new Items($Users, 1);
         $Scheduler = new Scheduler($Items);
-        $Scheduler->setId(1);
+        $Scheduler->setId($this->testCreate());
         // try write event created by admin as user
         $this->expectException(ImproperActionException::class);
-        $Scheduler->bind(1, 'experiment');
+        $Scheduler->bind(3, 'experiment');
     }
 
     public function testUpdateStart(): void
     {
-        $this->Scheduler->setId($this->id);
+        $this->Scheduler->setId($this->testCreate());
         $this->Scheduler->updateStart($this->delta);
         $delta = array(
             'years' => '0',
@@ -135,7 +136,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateEnd(): void
     {
-        $this->Scheduler->setId($this->id);
+        $this->Scheduler->setId($this->testCreate());
         $this->Scheduler->updateEnd($this->delta);
         $delta = array(
             'years' => '0',

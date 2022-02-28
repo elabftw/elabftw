@@ -678,16 +678,20 @@ class ApiController implements ControllerInterface
      *             "category": "Project",
      *             "color": "32a100",
      *             "bookable": "0",
-     *             "template": "Some text",
-     *             "ordering": "1"
+     *             "body": "Some text",
+     *             "ordering": "1",
+     *             "canread": "team",
+     *             "canwrite": "team"
      *           },
      *           {
      *             "category_id": "2",
      *             "category": "Microscope",
      *             "color": "2000eb",
      *             "bookable": "1",
-     *             "template": "Template text",
-     *             "ordering": "2"
+     *             "body": "Template text",
+     *             "ordering": "2",
+     *             "canread": "team",
+     *             "canwrite": "team"
      *           }
      *         ]
      *     }
@@ -915,7 +919,7 @@ class ApiController implements ControllerInterface
      *     "end": "2019-11-30T14:00:00",
      *     "title": "Booked from API",
      * }
-     * print(manager.create_event(42))
+     * print(manager.create_event(42, params))
      * @apiExample {shell} Curl example
      * export TOKEN="3148"
      * # book database item 42 on the 30th of November 2019 from noon to 2pm

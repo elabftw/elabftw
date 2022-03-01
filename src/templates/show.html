@@ -33,18 +33,18 @@
         <hr>
       {% endif %}
       <p class='smallgray d-inline'>
-        <a href='#' id='expandAll' data-status='closed' data-expand='{{ 'Expand all'|trans }}' data-collapse='{{ 'Collapse all'|trans }}'>{{ 'Expand all'|trans }}</a>
-        - <a href='#' id='selectAllBoxes'>{{ 'Select all'|trans }}</a>
-        <span id='advancedSelectOptions' style='display:none'>
-          - <a href='#' id='unselectAllBoxes'>{{ 'Clear selection'|trans }}</a>
-          - <a href='#' id='invertSelection'>{{ 'Invert selection'|trans }}</a>
+        <a href='#' data-action='expand-all-entities' data-status='closed' data-expand='{{ 'Expand all'|trans }}' data-collapse='{{ 'Collapse all'|trans }}'>{{ 'Expand all'|trans }}</a>
+        - <a href='#' data-action='select-all-entities'>{{ 'Select all'|trans }}</a>
+        <span id='advancedSelectOptions' class='d-none'>
+          - <a href='#' data-action='unselect-all-entities'>{{ 'Clear selection'|trans }}</a>
+          - <a href='#' data-action='invert-entities-selection'>{{ 'Invert selection'|trans }}</a>
         </span>
       </p>
 
       <div id='withSelected' class='row mx-0 form-inline d-none'>
         <p class='mr-1 mb-2'>{{ 'With selected:'|trans }}</p>
         <!-- Change category -->
-        <select autocomplete='off' id='catChecked' class='mr-1 mb-2 form-control'>
+        <select autocomplete='off' class='mr-1 mb-2 form-control'>
             <option selected disabled>
             {% if Entity.type == 'experiments' %}
                 {{ 'Change status'|trans }}
@@ -54,26 +54,26 @@
             </option>
 
             {% for category in categoryArr %}
-                <option value='{{ category.category_id }}'>{{ category.category }}</option>
+                <option data-action='update-category-selected-entities' value='{{ category.category_id }}'>{{ category.category }}</option>
             {% endfor %}
         </select>
 
         <!-- Change visibility -->
-        <select autocomplete='off' id='visChecked' class='mr-1 mb-2 form-control'>
+        <select autocomplete='off' class='mr-1 mb-2 form-control'>
           <option selected disabled>{{ 'Change visibility'|trans }}</option>
           {% for key, value in visibilityArr %}
-            <option value='{{ key }}'>{{ value }}</option>
+            <option data-action='update-visibility-selected-entities' value='{{ key }}'>{{ value }}</option>
           {% endfor %}
         </select>
 
         <!-- Export -->
-        <select autocomplete='off' id='exportChecked' class='mr-1 mb-2 form-control'>
+        <select autocomplete='off' class='mr-1 mb-2 form-control'>
           <option selected disabled>{{ 'Export'|trans }}</option>
-          <option value='zip'>{{ 'Make Zip'|trans }}</option>
-          <option value='csv'>{{ 'Make Csv'|trans }}</option>
-          <option value='multiPdf'>{{ 'Make PDF'|trans }}</option>
-          <option value='qrPdf'>{{ 'Make QR codes PDF'|trans }}</option>
-          <option value='json'>{{ 'Make JSON'|trans }}</option>
+          <option data-action='export-selected-entities' value='zip'>{{ 'Make Zip'|trans }}</option>
+          <option data-action='export-selected-entities' value='csv'>{{ 'Make Csv'|trans }}</option>
+          <option data-action='export-selected-entities' value='multiPdf'>{{ 'Make PDF'|trans }}</option>
+          <option data-action='export-selected-entities' value='qrPdf'>{{ 'Make QR codes PDF'|trans }}</option>
+          <option data-action='export-selected-entities' value='json'>{{ 'Make JSON'|trans }}</option>
         </select>
 
         <!-- Add a tag -->
@@ -82,12 +82,12 @@
         <!-- Add a link -->
         <input type='text' id='linkInputMultiple' class='linkinput mr-1 mb-2 form-control' placeholder='{{ 'Add a link'|trans }}' />
 
-        <button id='lockChecked' class='button btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
+        <button data-action='lock-selected-entities' class='button btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
         {% if Entity.type == 'experiments' %}
-          <button id='timestampChecked' class='button btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
+          <button data-action='timestamp-selected-entities' class='button btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
         {% endif %}
         {% if (deletableXp and (Entity.type == 'experiments')) or Entity.type == 'items' %}
-          <button id='deleteChecked' class='button btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
+          <button data-action='destroy-selected-entities' class='button btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
         {% endif %}
       </div>
       {% if App.Users.userData.display_mode == 'it' %}
@@ -101,16 +101,16 @@
         <table class='item-table'>
           <tr>
             <th>
-              {{ 'Date'|trans }} <a class='orderBy clickable' data-orderby='date'><i class='fas fa-sort'></i></a>
+              {{ 'Date'|trans }} <a href='#' data-action='reorder-entities' data-orderby='date'><i class='fas fa-sort'></i></a>
             </th>
             <th class='title-item-table'>
-              {{ 'Title'|trans }} <a class='orderBy clickable' data-orderby='title'><i class='fas fa-sort'></i></a>
+              {{ 'Title'|trans }} <a href='#' data-action='reorder-entities' data-orderby='title'><i class='fas fa-sort'></i></a>
             </th>
             <th class='step-item-table'>
               {{ 'Next step'|trans }}
             </th>
             <th class='category-item-table'>
-              {{ 'Category'|trans }} <a class='orderBy clickable' data-orderby='cat'><i class='fas fa-sort'></i></a>
+              {{ 'Category'|trans }} <a href='#' data-action='reorder-entities' data-orderby='cat'><i class='fas fa-sort'></i></a>
             </th>
             <th class='tags-item-table'>
               {{ 'Tags'|trans }}
@@ -119,10 +119,10 @@
               {{ 'Actions'|trans }}
             </th>
             <th class='actions-item-rating'>
-              {{ 'Rating'|trans }} <a class='orderBy clickable' data-orderby='rating'><i class='fas fa-sort'></i></a>
+              {{ 'Rating'|trans }} <a href='#' data-action='reorder-entities' data-orderby='rating'><i class='fas fa-sort'></i></a>
             </th>
             <th class='actions-item-owner'>
-              {{ 'Owner'|trans }} <a class='orderBy clickable' data-orderby='user'><i class='fas fa-sort'></i></a>
+              {{ 'Owner'|trans }} <a href='#' data-action='reorder-entities' data-orderby='user'><i class='fas fa-sort'></i></a>
             </th>
           </tr>
         {% for item in itemsArr|slice(0, DisplayParams.limit) %}

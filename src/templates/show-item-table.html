@@ -16,7 +16,7 @@
             <!-- TITLE -->
             <td class='title'>
               <!-- checkbox -->
-              <input autocomplete='off' type='checkbox' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;' />
+              <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;' />
               <!-- lock icon -->
               {% if item.locked %}
                 <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>

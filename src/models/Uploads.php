@@ -42,14 +42,14 @@ class Uploads implements CrudInterface
     use UploadTrait;
     use SetIdTrait;
 
+    public const STATE_DELETED = 3;
+
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
     private const BIG_FILE_THRESHOLD = 50000000;
 
     private const STATE_NORMAL = 1;
 
     private const STATE_ARCHIVED = 2;
-
-    private const STATE_DELETED = 3;
 
     protected Db $Db;
 

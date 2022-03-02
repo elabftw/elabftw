@@ -44,9 +44,9 @@ class Pins
     /**
      * Add/remove current entity as pinned for current user
      */
-    public function togglePin(): void
+    public function togglePin(): bool
     {
-        $this->isPinned() ? $this->rmFromPinned() : $this->addToPinned();
+        return $this->isPinned() ? $this->rmFromPinned() : $this->addToPinned();
     }
 
     /**
@@ -88,7 +88,7 @@ class Pins
     /**
      * Remove current entity from pinned of current user
      */
-    private function rmFromPinned(): void
+    private function rmFromPinned(): bool
     {
         $this->Entity->canOrExplode('read');
 
@@ -98,13 +98,13 @@ class Pins
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
 
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**
      * Add current entity to pinned of current user
      */
-    private function addToPinned(): void
+    private function addToPinned(): bool
     {
         $this->Entity->canOrExplode('read');
 
@@ -114,6 +114,6 @@ class Pins
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
 
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 }

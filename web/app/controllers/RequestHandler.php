@@ -44,15 +44,7 @@ $Response->setData(array(
 $res = '';
 
 try {
-    // first determine which processor we need depending on the request type
-    if ($Request->headers->get('Content-Type') === 'application/json') {
-        $Processor = new JsonProcessor($App->Users, $Request);
-    } elseif ($Request->getMethod() === 'GET') {
-        $Processor = new RequestProcessor($App->Users, $Request);
-    } else {
-        $Processor = new FormProcessor($App->Users, $Request);
-    }
-
+    $Processor = (new ProcessorFactory)->getProcessor($App->Users, $Request);
     $action = $Processor->getAction();
     $Model = $Processor->getModel();
     $Params = $Processor->getParams();
@@ -104,6 +96,8 @@ try {
         $res = $Model->deduplicate();
     } elseif ($action === 'lock' && $Model instanceof AbstractEntity) {
         $res = $Model->toggleLock();
+    } elseif ($action === 'pin' && $Model instanceof AbstractEntity) {
+        $res = $Model->Pins->togglePin();
     }
 
     // special case for uploading an edited json file back: it's a POSTed async form

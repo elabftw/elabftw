@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
@@ -30,9 +29,12 @@ use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Status;
+use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Elabftw\Services\AdvancedSearchQuery;
+use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Check;
 use Elabftw\Services\MakeBackupZip;
 use function implode;
@@ -71,6 +73,8 @@ class ApiController implements ControllerInterface
     private int $limit = 15;
 
     private int $offset = 0;
+
+    private string $search = '';
 
     private ?int $id;
 
@@ -137,11 +141,12 @@ class ApiController implements ControllerInterface
                 }
 
                 // TITLE DATE BODY METADATA UPDATE
-                if ($this->Request->request->has('date') ||
+                if (($this->Request->request->has('date') ||
                     $this->Request->request->has('title') ||
                     $this->Request->request->has('bodyappend') ||
                     $this->Request->request->has('body') ||
-                    $this->Request->request->has('metadata')) {
+                    $this->Request->request->has('metadata')) &&
+                    ($this->endpoint === 'experiments' || $this->endpoint === 'items')) {
                     return $this->updateEntity();
                 }
 
@@ -160,6 +165,7 @@ class ApiController implements ControllerInterface
                     return $this->updateCategory();
                 }
 
+                // CREATE EVENT
                 if ($this->endpoint === 'events') {
                     return $this->createEvent();
                 }
@@ -215,7 +221,11 @@ class ApiController implements ControllerInterface
         $args = (string) ($this->Request->query->get('args') ?? '');
         if (!empty($args)) {
             // this is where we store the parsed query string parameters
-            $result = array('limit' => $this->limit, 'offset' => $this->offset);
+            $result = array(
+                'limit' => $this->limit,
+                'offset' => $this->offset,
+                'search' => $this->search,
+            );
             // this function doesn't return anything
             parse_str($args, $result);
             // now assign our result to class properties
@@ -224,6 +234,9 @@ class ApiController implements ControllerInterface
             }
             if (isset($result['offset'])) {
                 $this->offset = (int) $result['offset'];
+            }
+            if (isset($result['search'])) {
+                $this->search = trim($result['search']);
             }
         }
 
@@ -291,6 +304,9 @@ class ApiController implements ControllerInterface
      * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items
      * # get item with id 42
      * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
+     * @apiQuery {String} limit Limit the number of results returned
+     * @apiQuery {String} offset Offset for results returned
+     * @apiQuery {String} search Search string to look for something
      * @apiSuccess {String} body Main content
      * @apiSuccess {String} category Item type
      * @apiSuccess {Number} category_id Id of the item type
@@ -332,6 +348,9 @@ class ApiController implements ControllerInterface
      * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments
      * # get experiment with id 42
      * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments/42
+     * @apiQuery {String} limit Limit the number of results returned
+     * @apiQuery {String} offset Offset for results returned
+     * @apiQuery {String} search Search string to look for something
      * @apiSuccess {String} body Main content
      * @apiSuccess {String} category Status
      * @apiSuccess {Number} category_id Id of the status
@@ -372,6 +391,20 @@ class ApiController implements ControllerInterface
             // remove 1 to limit as there is 1 added in the sql query
             $DisplayParams->limit = $this->limit - 1;
             $DisplayParams->offset = $this->offset;
+            if ($this->search) {
+                $TeamGroups = new TeamGroups($this->App->Users);
+                $visibilityArr = $TeamGroups->getVisibilityList();
+                $advancedQuery = new AdvancedSearchQuery($this->search, new VisitorParameters($this->Entity->type, $visibilityArr));
+                $whereClause = $advancedQuery->getWhereClause();
+                if ($whereClause) {
+                    $this->Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
+                }
+                $error = $advancedQuery->getException();
+                if ($error) {
+                    return new JsonResponse(array('result' => 'error', 'message' => $error));
+                }
+            }
+
             return new JsonResponse($this->Entity->readShow($DisplayParams, false));
         }
         $this->Entity->canOrExplode('read');
@@ -647,16 +680,20 @@ class ApiController implements ControllerInterface
      *             "category": "Project",
      *             "color": "32a100",
      *             "bookable": "0",
-     *             "template": "Some text",
-     *             "ordering": "1"
+     *             "body": "Some text",
+     *             "ordering": "1",
+     *             "canread": "team",
+     *             "canwrite": "team"
      *           },
      *           {
      *             "category_id": "2",
      *             "category": "Microscope",
      *             "color": "2000eb",
      *             "bookable": "1",
-     *             "template": "Template text",
-     *             "ordering": "2"
+     *             "body": "Template text",
+     *             "ordering": "2",
+     *             "canread": "team",
+     *             "canwrite": "team"
      *           }
      *         ]
      *     }
@@ -872,30 +909,30 @@ class ApiController implements ControllerInterface
      * @apiName AddEvent
      * @apiGroup Events
      * @apiDescription Create an event in the scheduler for an item
-     * @apiParam {String} start Start time
-     * @apiParam {Number} end End time
+     * @apiParam {String} start Start time in ISO8601 format
+     * @apiParam {Number} end End time in ISO8601 format
      * @apiParam {String} title Comment for the booking
      * @apiExample {python} Python example
      * import elabapy
      * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
      * # book database item 42 on the 30th of November 2019 from noon to 2pm
      * params = {
-     *     "start": "2019-11-30T12:00:00",
-     *     "end": "2019-11-30T14:00:00",
+     *     "start": "2019-11-30T12:00:00+01:00",
+     *     "end": "2019-11-30T14:00:00+01:00",
      *     "title": "Booked from API",
      * }
-     * print(manager.create_event(42))
+     * print(manager.create_event(42, params))
      * @apiExample {shell} Curl example
      * export TOKEN="3148"
      * # book database item 42 on the 30th of November 2019 from noon to 2pm
-     * curl -X POST -F "start=2019-11-30T12:00:00" -F "end=2019-11-30T14:00:00" -F "title=Booked from API" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/events/42
+     * curl -X POST -F "start=2019-11-30T12:00:00+01:00" -F "end=2019-11-30T14:00:00+01:00" -F "title=Booked from API" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/events/42
      * @apiSuccess {String} result Success
      * @apiSuccess {String} id Id of new event
      * @apiError {Number} error Error message
      * @apiParamExample {Json} Request-Example:
      *     {
-     *       "start": "2019-11-30T12:00:00",
-     *       "end": "2019-11-30T14:00:00",
+     *       "start": "2019-11-30T12:00:00+01:00",
+     *       "end": "2019-11-30T14:00:00+01:00",
      *       "title": "Booked from API"
      *     }
      */

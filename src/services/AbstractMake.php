@@ -13,19 +13,21 @@ namespace Elabftw\Services;
 use function dirname;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Traits\UploadTrait;
+use const SITE_URL;
 
 /**
  * Mother class of the Make* services
- *
  */
 abstract class AbstractMake
 {
     use UploadTrait;
 
     public string $filePath = '';
+
+    // a place to gather errors or warnings generated during the making
+    public array $errors = array();
 
     protected Db $Db;
 
@@ -61,7 +63,7 @@ abstract class AbstractMake
     {
         return sprintf(
             '%s/%s.php?mode=view&id=%d',
-            Tools::getUrl(),
+            SITE_URL,
             $this->Entity->page,
             $entityId ?? $this->Entity->id,
         );

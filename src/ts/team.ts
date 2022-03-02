@@ -195,31 +195,32 @@ document.addEventListener('DOMContentLoaded', () => {
       // TODO refactor this
       // NOTE: previously the input div had ui-front jquery ui class to make the autocomplete list show properly, but with the new item input below
       // it didn't work well, so now the automplete uses appendTo option
-      const cache = {};
+      const cacheExp = {};
       $('#bindexpinput').autocomplete({
         appendTo: '#binddivexp',
         source: function(request: Record<string, string>, response: (data) => void): void {
           const term = request.term;
-          if (term in cache) {
-            response(cache[term]);
+          if (term in cacheExp) {
+            response(cacheExp[term]);
             return;
           }
           $.getJSON('app/controllers/EntityAjaxController.php?source=experiments', request, function(data) {
-            cache[term] = data;
+            cacheExp[term] = data;
             response(data);
           });
         },
       });
+      const cacheDb = {};
       $('#binddbinput').autocomplete({
         appendTo: '#binddivdb',
         source: function(request: Record<string, string>, response: (data) => void): void {
           const term = request.term;
-          if (term in cache) {
-            response(cache[term]);
+          if (term in cacheDb) {
+            response(cacheDb[term]);
             return;
           }
           $.getJSON('app/controllers/EntityAjaxController.php?source=items', request, function(data) {
-            cache[term] = data;
+            cacheDb[term] = data;
             response(data);
           });
         },

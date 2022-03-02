@@ -11,6 +11,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Services\Filter;
+use function in_array;
 
 class EntityParams extends ContentParams implements EntityParamsInterface
 {
@@ -62,5 +63,15 @@ class EntityParams extends ContentParams implements EntityParamsInterface
     public function getUserId(): int
     {
         return (int) $this->content;
+    }
+
+    public function getState(): int
+    {
+        $state = (int) $this->content;
+        // TODO in php 8.1, we will use an enum for this
+        if (!in_array($state, array(1, 2, 3), true)) {
+            return 1;
+        }
+        return $state;
     }
 }

@@ -64,230 +64,15 @@ document.addEventListener('DOMContentLoaded', () => {
     'res': false,
   };
 
+  // background color for selected entities
   const bgColor = '#c4f9ff';
 
-  // CHECK A BOX
-  $('.item input[type=checkbox]').on('click', function() {
-    if ($(this).prop('checked')) {
-      $(this).parent().parent().css('background-color', bgColor);
-    } else {
-      $(this).parent().parent().css('background-color', '');
-    }
-  });
-
-  // EXPAND ALL
-  $('#expandAll').on('click', function(e) {
-    e.preventDefault();
-    if ($(this).data('status') === 'closed') {
-      $(this).data('status', 'opened');
-      $(this).text($(this).data('collapse'));
-    } else {
-      $(this).data('status', 'closed');
-      $(this).text($(this).data('expand'));
-    }
-    $('[data-action="toggle-body"]').each(function() {
-      $(this).trigger('click');
-    });
-  });
-
-  // SELECT ALL
-  $('#selectAllBoxes').on('click', function(e) {
-    e.preventDefault();
-    $('.item input[type=checkbox]').prop('checked', true);
-    $('.item input[type=checkbox]').parent().parent().css('background-color', bgColor);
-    $('#advancedSelectOptions').show();
-    $('#withSelected').show();
-    // also disable pagination because this will select all even the hidden ones
-    $('section.item:hidden').show();
-    $('#loadAllButton').hide(); // hide load button when there is nothing more to show
-    $('#loadButton').hide(); // hide load button when there is nothing more to show
-  });
-
-  // UNSELECT ALL
-  $('#unselectAllBoxes').on('click', function(e) {
-    e.preventDefault();
-    $('.item input:checkbox').prop('checked', false);
-    $('.item input[type=checkbox]').parent().parent().css('background-color', '');
-    // hide menu
-    $('#withSelected').hide();
-    $('#advancedSelectOptions').hide();
-  });
-
-  // INVERT SELECTION
-  $('#invertSelection').on('click', function(e) {
-    e.preventDefault();
-    ($('.item input[type=checkbox]') as JQuery<HTMLInputElement>).each(function() {
-      this.checked = !this.checked;
-      if ($(this).prop('checked')) {
-        $(this).parent().parent().css('background-color', bgColor);
-      } else {
-        $(this).parent().parent().css('background-color', '');
-      }
-    });
-  });
-
-  // hide the "with selected" block if no checkboxes are checked
-  $('#withSelected').hide();
-  // no need to show the unselect/invert links if no one is selected
-  $('#advancedSelectOptions').hide();
-  $('.item input[type=checkbox]').on('click', function() {
-    $('#advancedSelectOptions').show();
-    $('#withSelected').show();
-  });
-
-  // UPDATE THE STATUS/ITEM TYPE OF SELECTED BOXES ON SELECT CHANGE
-  $('#catChecked').on('change', function() {
-    const ajaxs = [];
-    // get the item id of all checked boxes
-    const checked = getCheckedBoxes();
-    if (checked.length === 0) {
-      notif(nothingSelectedError);
-      return;
-    }
-    // loop on it and update the status/item type
-    $.each(checked, function(index) {
-      ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
-        updateCategory : true,
-        id: checked[index]['id'],
-        categoryId : $('#catChecked').val(),
-        type : about.type,
-      }));
-    });
-    // reload the page once it's done
-    // a simple reload would not work here
-    // we need to use when/then
-    $.when.apply(null, ajaxs).then(function(){
-      window.location.reload();
-    });
-  });
-
-  // UPDATE THE VISIBILITY OF AN EXPERIMENT ON SELECT CHANGE
-  $('#visChecked').on('change', function() {
-    const ajaxs = [];
-    // get the item id of all checked boxes
-    const checked = getCheckedBoxes();
-    if (checked.length === 0) {
-      notif(nothingSelectedError);
-      return;
-    }
-    // loop on it and update the status/item type
-    $.each(checked, function(index) {
-      ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
-        updatePermissions : true,
-        rw: 'read',
-        id: checked[index]['id'],
-        value: $('#visChecked').val(),
-        type : about.type,
-      }));
-    });
-    // reload the page once it's done
-    // a simple reload would not work here
-    // we need to use when/then
-    $.when.apply(null, ajaxs).then(function(){
-      window.location.reload();
-    });
-    notif({'msg': 'Saved', 'res': true});
-  });
-
-  // Export selected menu
-  $('#exportChecked').on('change', function() {
-    const what = $('#exportChecked').val();
-    const checked = getCheckedBoxes();
-    if (checked.length === 0) {
-      notif(nothingSelectedError);
-      return;
-    }
-    window.location.href = `make.php?what=${what}&type=${about.type}&id=${checked.map(value => value.id).join('+')}`;
-  });
-
-  // THE LOCK BUTTON FOR CHECKED BOXES
-  $('#lockChecked').on('click', function() {
-    // get the item id of all checked boxes
-    const checked = getCheckedBoxes();
-    if (checked.length === 0) {
-      notif(nothingSelectedError);
-      return;
-    }
-
-    // loop over it and lock entities
-    const results = [];
-    checked.forEach(checkBox => {
-      results.push(EntityC.lock(checkBox['id']));
-    });
-
-    Promise.all(results).then(() => {
-      reloadEntitiesShow();
-    });
-  });
-
-  // THE TIMESTAMP BUTTON FOR CHECKED BOXES
-  $('#timestampChecked').on('click', function() {
-    // get the item id of all checked boxes
-    const checked = getCheckedBoxes();
-    if (checked.length === 0) {
-      notif(nothingSelectedError);
-      return;
-    }
-    // loop on it and delete stuff
-    $.each(checked, function(index) {
-      $.post('app/controllers/EntityAjaxController.php', {
-        timestamp: true,
-        type: 'experiments',
-        id: checked[index]['id'],
-      }).done(function(json) {
-        notif(json);
-      });
-    });
-  });
-
-  // THE DELETE BUTTON FOR CHECKED BOXES
-  $('#deleteChecked').on('click', function() {
-    // get the item id of all checked boxes
-    const checked = getCheckedBoxes();
-    if (checked.length === 0) {
-      notif(nothingSelectedError);
-      return;
-    }
-    if (!confirm(i18next.t('entity-delete-warning'))) {
-      return;
-    }
-    // loop on it and delete stuff
-    $.each(checked, function(index) {
-      EntityC.destroy(checked[index]['id']).then(json => {
-        if (json.res) {
-          $('#parent_' + checked[index]['randomid']).hide(200);
-        }
-      });
-    });
-  });
-
   // change sort-icon based on sort value: asc or desc
-  $('.orderBy').each(function() {
-    if ($('select[name="order"]').val() === $(this).data('orderby')) {
-      $(this).find('[data-fa-i2svg]').removeClass('fa-sort').addClass($('select[name="sort"]').val() === 'asc' ? 'fa-sort-up': 'fa-sort-down');
+  document.querySelectorAll('[data-action="reorder-entities"]').forEach(el => {
+    if ($('select[name="order"]').val() === (el as HTMLElement).dataset.orderby) {
+      el.children[0].classList.remove('fa-sort');
+      el.children[0].classList.add($('select[name="sort"]').val() === 'asc' ? 'fa-sort-up': 'fa-sort-down');
     }
-  });
-
-  // Sort column in tabular mode
-  $(document).on('click', '.orderBy', function() {
-    // The attribute data-orderby of the anchor element next to the title contains the value of the corresponding
-    // option of the select field <select name='order'> that will be selected in the form.
-    // For example: <a class='clickable orderBy' data-orderby='title'>...</a>, will select the option 'title'
-    // in the <select name='order'>
-    const targetSort = $(this).data('orderby');
-    const selectOrder = $('select[name="order"]');
-    const selectSort = $('select[name="sort"]');
-
-    // I guess the default expectation is sort ascending, but if the user clicks twice, the
-    // order should invert. For this, we check whether the select value is already set
-    // to targetSort
-    if (selectOrder.val() == targetSort) {
-      selectSort.val(selectSort.val() == 'desc' ? 'asc': 'desc' );
-    } else {
-      $('select[name="sort"]').val('asc');
-    }
-    selectOrder.val(targetSort);
-    selectOrder.closest('form').trigger('submit');
   });
 
   document.getElementById('favtagsPanel').addEventListener('keyup', event => {
@@ -316,7 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
     return parseInt(currentOffset, 10);
   }
 
-  // Add click listener and do action based on which element is clicked
+  /////////////////////////
+  // MAIN CLICK LISTENER //
+  /////////////////////////
   document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     const params = new URLSearchParams(document.location.search);
@@ -372,6 +159,211 @@ document.addEventListener('DOMContentLoaded', () => {
     // remove a favtag
     } else if (el.matches('[data-action="destroy-favtags"]')) {
       FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElement('favtagsPanel'));
+
+    // SORT COLUMN IN TABULAR MODE
+    } else if (el.matches('[data-action="reorder-entities"]')) {
+      // The attribute data-orderby of the anchor element next to the title contains the value of the corresponding
+      // option of the select field <select name='order'> that will be selected in the form.
+      // For example: <a data-action='reorder-entities' data-orderby='title'>...</a>, will select the option 'title'
+      // in the <select name='order'>
+      const targetSort = el.dataset.orderby;
+      const selectOrder = $('select[name="order"]');
+      const selectSort = $('select[name="sort"]');
+
+      // I guess the default expectation is sort ascending, but if the user clicks twice, the
+      // order should invert. For this, we check whether the select value is already set
+      // to targetSort
+      if (selectOrder.val() == targetSort) {
+        selectSort.val(selectSort.val() == 'desc' ? 'asc': 'desc' );
+      } else {
+        $('select[name="sort"]').val('asc');
+      }
+      selectOrder.val(targetSort);
+      selectOrder.closest('form').trigger('submit');
+
+    // CHECK AN ENTITY BOX
+    } else if (el.matches('[data-action="checkbox-entity"]')) {
+      ['advancedSelectOptions', 'withSelected'].forEach(id => {
+        document.getElementById(id).classList.remove('d-none');
+      });
+      if ((el as HTMLInputElement).checked) {
+        (el.closest('.item') as HTMLElement).style.backgroundColor = bgColor;
+      } else {
+        (el.closest('.item') as HTMLElement).style.backgroundColor = '';
+      }
+
+    // EXPAND ALL
+    } else if (el.matches('[data-action="expand-all-entities"]')) {
+      event.preventDefault();
+      if (el.dataset.status === 'closed') {
+        el.dataset.status = 'opened';
+        el.innerText = el.dataset.collapse;
+      } else {
+        el.dataset.status = 'closed';
+        el.innerText = el.dataset.expand;
+      }
+      document.querySelectorAll('[data-action="toggle-body"]').forEach(toggler => (toggler as HTMLElement).click());
+
+    // SELECT ALL CHECKBOXES
+    } else if (el.matches('[data-action="select-all-entities"]')) {
+      event.preventDefault();
+      // check all boxes and set background color
+      document.querySelectorAll('.item input[type=checkbox]').forEach(box => {
+        (box as HTMLInputElement).checked = true;
+        (box.closest('.item') as HTMLElement).style.backgroundColor = bgColor;
+      });
+      // show advanced options and withSelected menu
+      ['advancedSelectOptions', 'withSelected'].forEach(id => {
+        document.getElementById(id).classList.remove('d-none');
+      });
+
+    // UNSELECT ALL CHECKBOXES
+    } else if (el.matches('[data-action="unselect-all-entities"]')) {
+      event.preventDefault();
+      document.querySelectorAll('.item input[type=checkbox]').forEach(box => {
+        (box as HTMLInputElement).checked = false;
+        (box.closest('.item') as HTMLElement).style.backgroundColor = '';
+      });
+      // hide menu
+      ['advancedSelectOptions', 'withSelected'].forEach(id => {
+        document.getElementById(id).classList.add('d-none');
+      });
+
+    // INVERT SELECTION
+    } else if (el.matches('[data-action="invert-entities-selection"]')) {
+      event.preventDefault();
+      document.querySelectorAll('.item input[type=checkbox]').forEach(box => {
+        (box as HTMLInputElement).checked = !(box as HTMLInputElement).checked;
+        let newBgColor = '';
+        if ((box as HTMLInputElement).checked) {
+          newBgColor = bgColor;
+        }
+        (box.closest('.item') as HTMLElement).style.backgroundColor = newBgColor;
+      });
+
+    // UPDATE CATEGORY
+    } else if (el.matches('[data-action="update-category-selected-entities"]')) {
+      const ajaxs = [];
+      // get the item id of all checked boxes
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        notif(nothingSelectedError);
+        return;
+      }
+      // loop on it and update the status/item type
+      checked.forEach(chk => {
+        ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
+          updateCategory : true,
+          id: chk.id,
+          categoryId : (el as HTMLInputElement).value,
+          type : about.type,
+        }));
+      });
+      // reload the page once it's done
+      // a simple reload would not work here
+      // we need to use when/then
+      $.when.apply(null, ajaxs).then(function() {
+        reloadEntitiesShow();
+      });
+      notif({'msg': 'Saved', 'res': true});
+
+
+    // UPDATE VISIBILITY
+    } else if (el.matches('[data-action="update-visibility-selected-entities"]')) {
+      const ajaxs = [];
+      // get the item id of all checked boxes
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        notif(nothingSelectedError);
+        return;
+      }
+      // loop on it and update the status/item type
+      checked.forEach(chk => {
+        ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
+          updatePermissions : true,
+          rw: 'read',
+          id: chk.id,
+          value: (el as HTMLInputElement).value,
+          type : about.type,
+        }));
+      });
+      // reload the page once it's done
+      // a simple reload would not work here
+      // we need to use when/then
+      $.when.apply(null, ajaxs).then(function() {
+        reloadEntitiesShow();
+      });
+      notif({'msg': 'Saved', 'res': true});
+
+    // EXPORT SELECTED
+    } else if (el.matches('[data-action="export-selected-entities"]')) {
+      const what = (el as HTMLInputElement).value;
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        notif(nothingSelectedError);
+        return;
+      }
+      window.location.href = `make.php?what=${what}&type=${about.type}&id=${checked.map(value => value.id).join('+')}`;
+
+    // THE LOCK BUTTON FOR CHECKED BOXES
+    } else if (el.matches('[data-action="lock-selected-entities"]')) {
+      // get the item id of all checked boxes
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        notif(nothingSelectedError);
+        return;
+      }
+
+      // loop over it and lock entities
+      const results = [];
+      checked.forEach(chk => {
+        results.push(EntityC.lock(chk.id));
+      });
+
+      Promise.all(results).then(() => {
+        reloadEntitiesShow();
+      });
+
+
+    // THE TIMESTAMP BUTTON FOR CHECKED BOXES
+    } else if (el.matches('[data-action="timestamp-selected-entities"]')) {
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        notif(nothingSelectedError);
+        return;
+      }
+      // loop on it and timestamp it
+      checked.forEach(chk => {
+        $.post('app/controllers/EntityAjaxController.php', {
+          timestamp: true,
+          type: 'experiments',
+          id: chk.id,
+        }).done(function(json) {
+          notif(json);
+          reloadEntitiesShow();
+        });
+      });
+
+    // THE DELETE BUTTON FOR CHECKED BOXES
+    } else if (el.matches('[data-action="destroy-selected-entities"]')) {
+      // get the item id of all checked boxes
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        notif(nothingSelectedError);
+        return;
+      }
+      // ask for confirmation
+      if (!confirm(i18next.t('generic-delete-warning'))) {
+        return;
+      }
+      // loop on it and delete stuff
+      checked.forEach(chk => {
+        EntityC.destroy(chk.id).then(json => {
+          if (json.res) {
+            $('#parent_' + chk.randomid).hide(200);
+          }
+        });
+      });
 
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;

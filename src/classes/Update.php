@@ -31,7 +31,7 @@ use function sha1;
 class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    private const REQUIRED_SCHEMA = 72;
+    private const REQUIRED_SCHEMA = 75;
 
     private Db $Db;
 
@@ -63,6 +63,7 @@ class Update
      */
     public function runUpdateScript(): array
     {
+        // at the end of the update, warnings can be displayed for important informations
         $warn = array();
 
         // do nothing if we're up to date
@@ -93,9 +94,6 @@ class Update
                 $warn[] = 'Change in the notification/email system: a cronjob is now REQUIRED for email notifications to be sent. Make sure to read the release notes!';
             }
         }
-
-        // remove cached twig templates (for non docker users)
-        FsTools::deleteCache();
 
         return $warn;
     }

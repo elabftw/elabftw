@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -204,7 +203,6 @@ final class Config
             ('local_register', '1'),
             ('admins_create_users', '1'),
             ('anon_users', '0'),
-            ('url', NULL),
             ('schema', :schema),
             ('open_science', '0'),
             ('open_team', NULL),

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -174,23 +173,12 @@ class Experiments extends AbstractEntity
     }
 
     /**
-     * Destroy an experiment and all associated data
-     * The foreign key constraints will take care of associated tables
+     * Experiment is not actually deleted but the state is changed from normal to deleted
      */
     public function destroy(): bool
     {
-        $this->canOrExplode('write');
-
-        $this->Tags->destroyAll();
-        $this->Uploads->destroyAll();
-
-        $sql = 'DELETE FROM experiments WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        // delete from pinned
-        return $this->Pins->cleanup();
+        // delete from pinned too
+        return parent::destroy() && $this->Pins->cleanup();
     }
 
     protected function getBoundEvents(): array

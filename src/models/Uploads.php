@@ -42,14 +42,14 @@ class Uploads implements CrudInterface
     use UploadTrait;
     use SetIdTrait;
 
+    public const STATE_DELETED = 3;
+
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
     private const BIG_FILE_THRESHOLD = 50000000;
 
     private const STATE_NORMAL = 1;
 
     private const STATE_ARCHIVED = 2;
-
-    private const STATE_DELETED = 3;
 
     protected Db $Db;
 
@@ -218,6 +218,8 @@ class Uploads implements CrudInterface
      */
     public function destroy(): bool
     {
+        // set the check here so entityData gets loaded
+        $this->Entity->canOrExplode('write');
         $uploadArr = $this->read(new ContentParams());
         // check that the filename is not in the body. see #432
         if (strpos($this->Entity->entityData['body'], $uploadArr['long_name'])) {
@@ -246,7 +248,6 @@ class Uploads implements CrudInterface
      */
     private function nuke(): bool
     {
-        $this->Entity->canOrExplode('write');
         return $this->update(new UploadParams((string) self::STATE_DELETED, 'state'));
     }
 

@@ -34,6 +34,10 @@ try {
     }
 
     $storage = (int) $Request->query->get('storage');
+    // backward compatiblity: the download links in body won't have the storage param
+    if ($storage === 0) {
+        $storage = 1;
+    }
     $storageFs = (new StorageFactory($storage))->getStorage()->getFs();
 
     $DownloadController = new DownloadController(

@@ -11,11 +11,6 @@
     {{ 'Please finalize install: %slink to documentation%s.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#setting-up-email'>", "</a>")|msg('ko') }}
 {% endif %}
 
-<!-- show error if the instance url is not configured -->
-{% if not App.Config.configArr.url %}
-    {{ 'Make sure to set the Installation URL in the Server Settings.'|msg('ko') }}
-{% endif %}
-
 <p>Docker image version: {{ elabimgVersion }}<br />
 MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
@@ -92,10 +87,6 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
               {% endfor %}
           </select>
           <p class='smallgray'>{{ 'The default language of this instance. It can be overridden by each users.' }}</p>
-
-          <label for='proxy'>{{ 'Installation URL:'|trans }}</label>
-          <input class='form-control col-md-4' type='url' value='{{ App.Config.configArr.url }}' name='url' id='url' />
-          <p class='smallgray'>{{ 'The canonical address of the eLabFTW installation. If this value is empty, eLabFTW will try to guess it, but in some instances, it might not be correct so you should fill this setting. Example: https://elabftw.example.org'|trans }}</p>
 
           <label for='proxy'>{{ 'Address of the Proxy:'|trans }}</label>
           <input class='form-control col-md-4' type='text' value='{{ App.Config.configArr.proxy }}' name='proxy' id='proxy' />

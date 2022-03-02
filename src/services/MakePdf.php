@@ -13,19 +13,23 @@ use function date;
 use DateTime;
 use function dirname;
 use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Notifications;
 use Elabftw\Models\Users;
 use Elabftw\Traits\PdfTrait;
 use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
+use function implode;
 use Mpdf\Mpdf;
 use function preg_replace;
 use setasign\Fpdi\FpdiException;
+use const SITE_URL;
 use function str_replace;
 use function strtolower;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,6 +44,12 @@ class MakePdf extends AbstractMake implements FileMakerInterface
     use UploadTrait;
 
     public string $longName;
+
+    public array $failedAppendPdfs = array();
+
+    // switch to disable notifications from within class
+    // if notifications are handled by calling class
+    public bool $createNotifications = true;
 
     /**
      * Constructor
@@ -67,7 +77,12 @@ class MakePdf extends AbstractMake implements FileMakerInterface
      */
     public function getFileContent(): string
     {
-        return $this->generate()->Output('', 'S');
+        $output = $this->generate()->Output('', 'S');
+        if ($this->errors && $this->createNotifications) {
+            $Notifications = new Notifications($this->Entity->Users);
+            $Notifications->create(new CreateNotificationParams(Notifications::PDF_GENERIC_ERROR));
+        }
+        return $output;
     }
 
     /**
@@ -85,33 +100,71 @@ class MakePdf extends AbstractMake implements FileMakerInterface
     public function getContent(): string
     {
         $Tex2Svg = new Tex2Svg($this->mpdf, $this->getHtml());
-        return $Tex2Svg->getContent();
+        $content = $Tex2Svg->getContent();
+
+        // Inform user that there was a problem with Tex rendering
+        if ($Tex2Svg->mathJaxFailed) {
+            $this->errors[] = array(
+                'type' => Notifications::MATHJAX_FAILED,
+                'body' => array(
+                    'entity_id' => $this->Entity->id,
+                    'entity_page' => $this->Entity->page,
+                ),
+            );
+        }
+        return $content;
+    }
+
+    /**
+     * Get a list of all PDFs that are attached to an entity
+     *
+     * @return array Empty or array of arrays with information for PDFs array('path/to/file', 'real_name')
+     */
+    public function getAttachedPdfs(): array
+    {
+        $uploadsArr = $this->Entity->Uploads->readAllNormal();
+        $listOfPdfs = array();
+
+        if (empty($uploadsArr)) {
+            return $listOfPdfs;
+        }
+
+        foreach ($uploadsArr as $upload) {
+            // TODO make it work with S3 storage
+            $filePath = dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
+            if (file_exists($filePath) && strtolower(Tools::getExt($upload['real_name'])) === 'pdf') {
+                $listOfPdfs[] = array($filePath, $upload['real_name']);
+            }
+        }
+
+        return $listOfPdfs;
     }
 
     /**
      * Append PDFs attached to an entity
      */
-    private function appendPdfs(array $pdfs): void
+    public function appendPdfs(array $pdfs, ?Mpdf $mpdf = null): void
     {
+        $mpdf = $mpdf ?? $this->mpdf;
         foreach ($pdfs as $pdf) {
             // There will be cases where the merging will fail
             // due to incompatibilities of Mpdf (actually fpdi) with the pdfs
             // See https://manuals.setasign.com/fpdi-manual/v2/limitations/
             // These cases will be caught and ignored
             try {
-                $numberOfPages = $this->mpdf->setSourceFile($pdf[0]);
+                $numberOfPages = $mpdf->setSourceFile($pdf[0]);
 
                 for ($i = 1; $i <= $numberOfPages; $i++) {
                     // Import the ith page of the source PDF file
-                    $page = $this->mpdf->importPage($i);
+                    $page = $mpdf->importPage($i);
 
                     // getTemplateSize() is not documented in the MPDF manual
                     // @return array|bool An array with following keys: width, height, 0 (=width), 1 (=height), orientation (L or P)
-                    $pageDim = $this->mpdf->getTemplateSize($page);
+                    $pageDim = $mpdf->getTemplateSize($page);
 
                     if (is_array($pageDim)) { // satisfy phpstan
                         // add a new (blank) page with the dimensions of the imported page
-                        $this->mpdf->AddPageByArray(array(
+                        $mpdf->AddPageByArray(array(
                             'orientation' => $pageDim['orientation'],
                             'sheet-size' => array($pageDim['width'], $pageDim['height']),
                         ));
@@ -119,15 +172,17 @@ class MakePdf extends AbstractMake implements FileMakerInterface
 
                     // empty the header and footer
                     // cannot be an empty string
-                    $this->mpdf->SetHTMLHeader(' ', '', true);
-                    $this->mpdf->SetHTMLFooter(' ', '');
+                    $mpdf->SetHTMLHeader(' ', '', true);
+                    $mpdf->SetHTMLFooter(' ', '');
 
                     // add the content of the imported page
-                    $this->mpdf->useTemplate($page);
+                    $mpdf->useTemplate($page);
                 }
                 // not all pdf will be able to be integrated, so for the one that will trigger an exception
-            // we simply ignore it
+            // we simply ignore it and collect information for notification
             } catch (FpdiException) {
+                // collect real name of attached pdf
+                $this->failedAppendPdfs[] = $pdf[1];
                 continue;
             }
         }
@@ -180,8 +235,8 @@ class MakePdf extends AbstractMake implements FileMakerInterface
             'title' => $this->Entity->entityData['title'],
             'uploadsArr' => $this->Entity->Uploads->readAll(),
             'uploadsFolder' => dirname(__DIR__, 2) . '/uploads/',
-            'url' => $this->getUrl(),
-            'linkBaseUrl' => Tools::getUrl() . '/database.php',
+            'url' => SITE_URL,
+            'linkBaseUrl' => SITE_URL . '/database.php',
             'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
         );
 
@@ -190,30 +245,6 @@ class MakePdf extends AbstractMake implements FileMakerInterface
         // now remove any img src pointing to outside world
         // prevent blind ssrf (thwarted by CSP on webpage, but not in pdf)
         return preg_replace('/img src=("|\')(ht|f|)tp/i', 'nope', $html);
-    }
-
-    /**
-     * Get a list of all PDFs that are attached to an entity
-     *
-     * @return array Empty or array of arrays with information for PDFs array('path/to/file', 'real.name')
-     */
-    private function getAttachedPdfs(): array
-    {
-        $uploadsArr = $this->Entity->Uploads->readAllNormal();
-        $listOfPdfs = array();
-
-        if (empty($uploadsArr)) {
-            return $listOfPdfs;
-        }
-
-        foreach ($uploadsArr as $upload) {
-            $filePath = dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
-            if (file_exists($filePath) && strtolower(Tools::getExt($upload['real_name'])) === 'pdf') {
-                $listOfPdfs[] = array($filePath, $upload['real_name']);
-            }
-        }
-
-        return $listOfPdfs;
     }
 
     /**
@@ -226,8 +257,17 @@ class MakePdf extends AbstractMake implements FileMakerInterface
 
         if ($this->Entity->Users->userData['append_pdfs']) {
             $this->appendPdfs($this->getAttachedPdfs());
+            if ($this->failedAppendPdfs) {
+                $this->errors[] = array(
+                    'type' => Notifications::PDF_APPENDMENT_FAILED,
+                    'body' => array(
+                        'entity_id' => $this->Entity->id,
+                        'entity_page' => $this->Entity->page,
+                        'file_names' => implode(', ', $this->failedAppendPdfs),
+                    ),
+                );
+            }
         }
-
         return $this->mpdf;
     }
 

@@ -35,6 +35,7 @@ use Exception;
 use GuzzleHttp\Client;
 use function mb_convert_encoding;
 use PDOException;
+use const SITE_URL;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -128,7 +129,7 @@ try {
             throw new IllegalActionException('Can only share experiments or items.');
         }
         $Entity->canOrExplode('read');
-        $link = Tools::getUrl() . '/' . $Entity->page . '.php?mode=view&id=' . $Entity->id . '&elabid=' . $Entity->entityData['elabid'];
+        $link = SITE_URL . '/' . $Entity->page . '.php?mode=view&id=' . $Entity->id . '&elabid=' . $Entity->entityData['elabid'];
         $Response->setData(array(
             'res' => true,
             'msg' => $link,

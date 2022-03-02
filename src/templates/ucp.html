@@ -354,14 +354,16 @@
   <h3>{{ 'API keys'|trans }}</h3>
   <div id='newKeyPlaceholder'></div>
   <h5>{{ 'Create new key'|trans }}</h5>
-    <label for='apikeyName'>{{ 'Name'|trans }}</label>
-    <input id='apikeyName' type='text' />
-    <label for='apikeyCanwrite'>{{ 'Permissions'|trans }}</label>
-    <select id='apikeyCanwrite' autocomplete='off'>
+  <div class='row form-inline mx-0'>
+    <label for='apikeyName' class='mb-2'>{{ 'Name'|trans }}</label>
+    <input id='apikeyName' type='text' class='form-control mb-2 mr-sm-2' />
+    <label for='apikeyCanwrite' class='mb-2'>{{ 'Permissions'|trans }}</label>
+    <select id='apikeyCanwrite' autocomplete='off' class='form-control mb-2 mr-sm-2'>
       <option value='0'>{{ 'Read Only'|trans }}</option>
       <option value='1'>{{ 'Read/Write'|trans }}</option>
     </select>
-    <button class='button btn btn-primary' type='submit' data-action='create-apikey'>{{ 'Generate an API Key'|trans }}</button>
+    <button class='button btn btn-primary mb-2' type='submit' data-action='create-apikey'>{{ 'Generate an API Key'|trans }}</button>
+  </div>
 
   <h5>{{ 'Existing keys'|trans }}</h5>
   <table id='apiTable' class='table'>

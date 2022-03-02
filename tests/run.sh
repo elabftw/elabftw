@@ -20,10 +20,10 @@ fi
 
 # make sure we tear down everything when script ends
 cleanup() {
-if (! $scrutinizer); then
-    $sudoCmd cp -v config.php.dev config.php
-    $sudoCmd chown 101:101 config.php
-fi
+    if (! $scrutinizer); then
+        $sudoCmd cp -v config.php.dev config.php
+        $sudoCmd chown 101:101 config.php
+    fi
 }
 trap cleanup EXIT
 
@@ -66,8 +66,7 @@ fi
 # install the database
 docker exec -it elabtmp bin/install start -r
 if ($scrutinizer); then
-    docker exec -it elabtmp yarn psalm
-    docker exec -it elabtmp yarn phpstan
+    docker exec -it elabtmp yarn static
 fi
 # populate the database
 docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml

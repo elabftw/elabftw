@@ -35,6 +35,8 @@ class Tex2Svg
     // mm per inch
     private const INCH_TO_MM_CONVERSION_FACTOR = 25.4;
 
+    public bool $mathJaxFailed = false;
+
     private string $contentWithMathJaxSVG;
 
     public function __construct(private Mpdf $mpdf, private string $source)
@@ -95,6 +97,8 @@ class Tex2Svg
             $process->clearErrorOutput();
             // Log a generic error
             $log->warning('PDF generation failed during Tex rendering.', array('Error', new SymfonyProcessFailedException($process)));
+
+            $this->mathJaxFailed = true;
             // Throwing an error here will block PDF generation. This should be avoided.
             // https://github.com/elabftw/elabftw/issues/3076#issuecomment-997197700
             // Returning an empty string will generate a pdf without type setting tex math expressions

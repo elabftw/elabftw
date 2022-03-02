@@ -13,13 +13,13 @@ use function count;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use Monolog\Logger;
 use PDO;
 use const SECRET_KEY;
+use const SITE_URL;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\MailerInterface;
@@ -144,7 +144,7 @@ class Email
 
     private function makeFooter(): string
     {
-        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Tools::getUrl());
+        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), SITE_URL);
     }
 
     /**

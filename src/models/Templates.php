@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -107,7 +106,7 @@ class Templates extends AbstractEntity
         $sql = "SELECT experiments_templates.id, experiments_templates.title, experiments_templates.body,
             experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
             experiments_templates.locked, experiments_templates.lockedby, experiments_templates.lockedwhen,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata,
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata, experiments_templates.state,
             GROUP_CONCAT(tags.tag SEPARATOR '|') AS tags, GROUP_CONCAT(tags.id) AS tags_id
             FROM experiments_templates
             LEFT JOIN users ON (experiments_templates.userid = users.userid)
@@ -165,7 +164,7 @@ class Templates extends AbstractEntity
                 LEFT JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
                 LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
                 LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
-                WHERE experiments_templates.userid != 0 AND (
+                WHERE experiments_templates.userid != 0 AND experiments_templates.state = :state AND (
                     experiments_templates.canread = 'public' OR
                     experiments_templates.canread = 'organization' OR
                     (experiments_templates.canread = 'team' AND users2teams.users_id = experiments_templates.userid) OR
@@ -185,23 +184,10 @@ class Templates extends AbstractEntity
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindValue(':state', self::STATE_NORMAL, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->fetchAll($req);
-    }
-
-    /**
-     * Delete template
-     */
-    public function destroy(): bool
-    {
-        $this->canOrExplode('write');
-        $sql = 'DELETE FROM experiments_templates WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $this->Tags->destroyAll();
     }
 
     /**

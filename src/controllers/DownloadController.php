@@ -14,6 +14,7 @@ use Elabftw\Services\Filter;
 use function fopen;
 use function in_array;
 use League\Flysystem\Filesystem;
+use League\Flysystem\UnableToReadFile;
 use League\Flysystem\UnableToRetrieveMetadata;
 use function stream_copy_to_stream;
 use function substr;
@@ -62,7 +63,15 @@ class DownloadController implements ControllerInterface
             if ($outputStream === false) {
                 return;
             }
-            $fileStream = $this->fs->readStream($this->getFilePath());
+            try {
+                $fileStream = $this->fs->readStream($this->getFilePath());
+            } catch (UnableToReadFile $e) {
+                // display a thumbnail if the real thumbnail cannot be found
+                $fileStream = fopen(dirname(__DIR__, 2) . '/web/app/img/fallback-thumb.png', 'rb');
+                if ($fileStream === false) {
+                    return;
+                }
+            }
             stream_copy_to_stream($fileStream, $outputStream);
         });
 

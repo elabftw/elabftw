@@ -39,6 +39,9 @@ class UploadsPruner implements CleanerInterface
         foreach ($this->Db->fetchAll($req) as $upload) {
             $storageFs = (new StorageFactory((int) $upload['storage']))->getStorage()->getFs();
             $storageFs->delete($upload['long_name']);
+            // also delete an hypothetical thumbnail
+            // this won't throw any error if the file doesn't exist
+            $storageFs->delete($upload['long_name'] . '_th.jpg');
         }
         $this->deleteFromDb();
         return $req->rowCount();

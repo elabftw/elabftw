@@ -44,15 +44,7 @@ $Response->setData(array(
 $res = '';
 
 try {
-    // first determine which processor we need depending on the request type
-    if ($Request->headers->get('Content-Type') === 'application/json') {
-        $Processor = new JsonProcessor($App->Users, $Request);
-    } elseif ($Request->getMethod() === 'GET') {
-        $Processor = new RequestProcessor($App->Users, $Request);
-    } else {
-        $Processor = new FormProcessor($App->Users, $Request);
-    }
-
+    $Processor = (new ProcessorFactory)->getProcessor($App->Users, $Request);
     $action = $Processor->getAction();
     $Model = $Processor->getModel();
     $Params = $Processor->getParams();

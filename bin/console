@@ -30,5 +30,6 @@ $Application->add(new PruneRevisions());
 $Application->add(new MfaCode());
 $Application->add(new AddMissingLinks());
 $Application->add(new SendNotifications());
+$Application->add(new PruneUploads());
 
 $Application->run();

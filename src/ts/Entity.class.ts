@@ -78,6 +78,20 @@ export default class Entity {
     return this.sender.send(payload);
   }
 
+  pin(id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.Pin,
+      model: this.model,
+      entity: {
+        type: this.model,
+        id: id,
+      },
+      notif: true,
+    };
+    return this.sender.send(payload);
+  }
+
   duplicate(id: number): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,

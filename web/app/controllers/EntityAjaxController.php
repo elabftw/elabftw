@@ -192,11 +192,6 @@ try {
         $Entity->Uploads->createFromString('png', $Request->request->get('realName'), $Request->request->get('content'));
     }
 
-    // TOGGLE PIN
-    if ($Request->request->has('togglePin')) {
-        $Entity->Pins->togglePin();
-    }
-
     // UPDATE VISIBILITY
     if ($Request->request->has('updatePermissions')) {
         $Entity->updatePermissions($Request->request->get('rw'), $Request->request->get('value'));

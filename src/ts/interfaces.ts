@@ -60,6 +60,7 @@ enum Action {
   Deduplicate = 'deduplicate',
   Duplicate = 'duplicate',
   Lock = 'lock',
+  Pin = 'pin',
 }
 
 enum Model {

@@ -96,6 +96,8 @@ try {
         $res = $Model->deduplicate();
     } elseif ($action === 'lock' && $Model instanceof AbstractEntity) {
         $res = $Model->toggleLock();
+    } elseif ($action === 'pin' && $Model instanceof AbstractEntity) {
+        $res = $Model->Pins->togglePin();
     }
 
     // special case for uploading an edited json file back: it's a POSTed async form

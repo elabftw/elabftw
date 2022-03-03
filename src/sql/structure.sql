@@ -750,6 +750,10 @@ CREATE TABLE `users` (
   `allow_untrusted` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `notif_new_comment` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `notif_new_comment_email` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_create_user` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_create_user_email` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_user_need_validation` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_user_need_validation_email` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `auth_lock_time` datetime DEFAULT NULL,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;

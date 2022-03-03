@@ -185,4 +185,9 @@ final class Db
     {
         return $this->nq;
     }
+
+    public function getAttribute(int $attr): ?string
+    {
+        return $this->connection->getAttribute($attr);
+    }
 }

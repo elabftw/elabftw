@@ -66,9 +66,10 @@ class Update
         // at the end of the update, warnings can be displayed for important informations
         $warn = array();
 
-        // do nothing if we're up to date
-        if ($this->currentSchema === self::REQUIRED_SCHEMA) {
-            return $warn;
+        // make sure we run MySQL version 8 at least
+        $mysqlVersion = (int) substr($this->Db->getAttribute(PDO::ATTR_SERVER_VERSION), 0, 1);
+        if ($mysqlVersion < 8) {
+            throw new ImproperActionException('It looks like MySQL server version is less than 8. Update your MySQL server!');
         }
 
         // old style update functions have been removed, so add a block to prevent upgrade from very very old to newest directly

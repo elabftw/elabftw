@@ -50,6 +50,7 @@ class S3Storage extends AbstractStorage
             'region' => $this->config->configArr['s3_region'],
             'endpoint' => $this->config->configArr['s3_endpoint'],
             'credentials' => $this->credentials,
+            'use_aws_shared_config_files' => false,
         ));
     }
 }

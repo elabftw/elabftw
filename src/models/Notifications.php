@@ -60,14 +60,11 @@ class Notifications implements CrudInterface
     {
         $category = $params->getCategory();
 
-        $sendEmail = 1;
-        if ($category === self::COMMENT_CREATED && $this->users->userData['notif_new_comment_email'] === '0') {
-            $sendEmail = 0;
-        }
+        $sendEmail = $this->getSendEmail($category);
 
         $isAck = 0;
         // some notifications are just here to be sent as emails, not show on the web page
-        if ($category === self::SELF_NEED_VALIDATION || $category === self::SELF_IS_VALIDATED || ($category === self::COMMENT_CREATED && $this->users->userData['notif_new_comment'] === '0')) {
+        if ($category === self::SELF_NEED_VALIDATION || $category === self::SELF_IS_VALIDATED || ($category === self::COMMENT_CREATED && $this->users->userData['notif_comment_created'] === '0')) {
             $isAck = 1;
         }
 
@@ -117,5 +114,21 @@ class Notifications implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    private function getSendEmail(int $category): int
+    {
+        // only the first 3 categories have a user setting for email
+        if ($category > 3) {
+            return 1;
+        }
+
+        $map = array(
+            self::COMMENT_CREATED => 'notif_comment_created_email',
+            self::USER_CREATED => 'notif_user_created_email',
+            self::USER_NEED_VALIDATION => 'notif_user_need_validation_email',
+        );
+
+        return (int) $this->users->userData[$map[$category]];
     }
 }

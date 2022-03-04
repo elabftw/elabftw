@@ -399,37 +399,17 @@
       <th>{{ 'Web'|trans }}</th>
       <th>{{' Email'|trans }}</th>
     </tr>
-    <tr><!-- COMMENT CREATED -->
-      <td>{{ 'New comment notification'|trans }}</td>
-      <td>
-        <input type='checkbox' data-trigger='change' data-model='user' data-target='notif_new_comment' {{ App.Users.userData.notif_new_comment == '1' ? " checked='checked'" }} />
-      </td>
-      <td>
-        <input type='checkbox' data-trigger='change' data-model='user' data-target='notif_new_comment_email' {{ App.Users.userData.notif_new_comment_email == '1' ? " checked='checked'" }}/>
-      </td>
-    </tr>
-
-    <tr><!-- USER CREATED -->
-      <td>{{ 'New user created'|trans }}</td>
-      <td>
-        <input type='checkbox' data-trigger='change' data-model='user' data-target='notif_user_created' {{ App.Users.userData.notif_user_created == '1' ? " checked='checked'" }} />
-      </td>
-      <td>
-        <input type='checkbox' data-trigger='change' data-model='user' data-target='notif_user_created_email' {{ App.Users.userData.notif_user_created_email == '1' ? " checked='checked'" }}/>
-      </td>
-    </tr>
-
-    <tr><!-- USER NEED VALIDATION -->
-      <td>{{ 'New user need validation'|trans }}</td>
-      <td>
-        <input type='checkbox' data-trigger='change' data-model='user' data-target='notif_user_need_validation' {{ App.Users.userData.notif_user_need_validation == '1' ? " checked='checked'" }} />
-      </td>
-      <td>
-        <input type='checkbox' data-trigger='change' data-model='user' data-target='notif_user_need_validation_email' {{ App.Users.userData.notif_user_need_validation_email == '1' ? " checked='checked'" }}/>
-      </td>
-    </tr>
-
-
+    {% for notif in notificationsSettings %}
+      <tr>
+        <td>{{ notif.designation }}</td>
+        <td>
+          <input type='checkbox' data-trigger='change' data-model='user' data-target='{{ notif.setting }}' {{ App.Users.userData[notif.setting] == '1' ? " checked='checked'" }} />
+        </td>
+        <td>
+          <input type='checkbox' data-trigger='change' data-model='user' data-target='{{ notif.setting }}_email' {{ App.Users.userData[notif.setting ~ '_email'] == '1' ? " checked='checked'" }}/>
+        </td>
+      </tr>
+    {% endfor %}
   </table>
 </div>
 <!-- END PAGE -->

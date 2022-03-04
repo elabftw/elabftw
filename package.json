@@ -41,7 +41,7 @@
     "luxon": "^2.0.1",
     "marked": "^4.0.10",
     "mathjax-full": "^3.2.0",
-    "mini-css-extract-plugin": "^2.1.0",
+    "mini-css-extract-plugin": "^2.6.0",
     "peggy": "1.0.0",
     "phpeggy": "1.0.0",
     "popper.js": "1.16.*",

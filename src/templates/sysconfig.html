@@ -330,23 +330,11 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       <input type='hidden' name='updateConfig' value='true' />
       <p>{{ "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific %ssmtp2go.com%s account and add the information here."|trans|format("<a href='https://www.smtp2go.com/?s=eLabFTW'>", "</a>")|raw }}</p>
 
-      <div id='general_mail_config'>
         <label for='mail_from'>{{ 'Sender address:'|trans }}</label>
         <input class='form-control col-md-4' type='text' value='{{ App.Config.configArr.mail_from }}' name='mail_from' id='mail_from' />
-      </div>
 
-      <div id='smtp_config'>
         <label for='smtp_address'>{{ 'Address of the SMTP server:'|trans }}</label>
         <input class='form-control col-md-4' type='text' value='{{ App.Config.configArr.smtp_address }}' placeholder='mail.smtp2go.com' name='smtp_address' id='smtp_address' />
-
-        <!-- hidden now that symfony's mailer doesn't care about this setting; need to be removed if proven to be useless
-        <label for='smtp_encryption'>{{ 'SMTP encryption:'|trans }}</label>
-        <select class='form-control col-md-4' id='smtp_encryption' name='smtp_encryption'>
-          <option value='ssl' {{ App.Config.configArr.smtp_encryption == 'ssl' ? ' selected' }}>TLS</option>
-          <option value='tls' {{ App.Config.configArr.smtp_encryption == 'tls' ? ' selected' }}>STARTSSL</option>
-          <option value='none' {{ App.Config.configArr.smtp_encryption == 'none' ? ' selected' }}>{{ 'None'|trans }}</option>
-        </select>
-        <span class='smallgray'>{{ 'Probably TLS'|trans }}</span-->
 
         <label for='smtp_port'>{{ 'SMTP Port:'|trans }}</label>
         <input class='form-control col-md-4' type='text' placeholder='587' value='{{ App.Config.configArr.smtp_port }}' name='smtp_port' id='smtp_port' />
@@ -368,7 +356,6 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <input class='form-control col-md-4' type='password' name='smtp_password' hidden autocomplete='off' id='hidden_smtp_password' />
           </p>
         {% endif %}
-      </div>
 
       <div class='mt-4 text-center'>
         <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>

@@ -43,7 +43,11 @@ class SendNotifications extends Command
         $Logger->pushHandler(new ErrorLogHandler());
         $Email = new Email(Config::getConfig(), $Logger);
         $Notifications = new EmailNotifications($Email);
-        $Notifications->sendEmails();
+        $count = $Notifications->sendEmails();
+        if ($output->isVerbose()) {
+            $output->writeln(sprintf('Sent %d emails', $count));
+        }
+
         return 0;
     }
 }

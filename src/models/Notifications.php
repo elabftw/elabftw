@@ -64,7 +64,12 @@ class Notifications implements CrudInterface
 
         $isAck = 0;
         // some notifications are just here to be sent as emails, not show on the web page
-        if ($category === self::SELF_NEED_VALIDATION || $category === self::SELF_IS_VALIDATED || ($category === self::COMMENT_CREATED && $this->users->userData['notif_comment_created'] === '0')) {
+        if ($category === self::SELF_NEED_VALIDATION ||
+            $category === self::SELF_IS_VALIDATED ||
+            ($category === self::COMMENT_CREATED && $this->users->userData['notif_comment_created'] === '0') ||
+            ($category === self::USER_CREATED && $this->users->userData['notif_user_created'] === '0') ||
+            ($category === self::USER_NEED_VALIDATION && $this->users->userData['notif_user_need_validation'] === '0')
+        ) {
             $isAck = 1;
         }
 

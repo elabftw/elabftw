@@ -20,5 +20,5 @@ $Notifications = new Notifications(new Users(1));
             'commenter_userid' => 2,
         );
 $Notifications->create(new CreateNotificationParams(1, $body));
-$Notifications->create(new CreateNotificationParams(2));
-$Notifications->create(new CreateNotificationParams(3));
+$Notifications->create(new CreateNotificationParams(2, array('userid' => 3)));
+$Notifications->create(new CreateNotificationParams(3, array('userid' => 3)));

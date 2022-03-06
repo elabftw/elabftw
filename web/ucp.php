@@ -65,6 +65,27 @@ try {
     $TeamGroups = new TeamGroups($App->Users);
     $visibilityArr = $TeamGroups->getVisibilityList();
 
+    // Notifications
+    $notificationsSettings = array(
+        array(
+            'designation' => _('New comment notification'),
+            'setting' => 'notif_comment_created',
+        ),
+    );
+
+    if ($App->Users->userData['is_admin']) {
+        $notificationsSettings[] =
+            array(
+                'designation' => _('New user created'),
+                'setting' => 'notif_user_created',
+            );
+        $notificationsSettings[] =
+            array(
+                'designation' => _('New user need validation'),
+                'setting' => 'notif_user_need_validation',
+            );
+    }
+
     $template = 'ucp.html';
     $renderArr = array(
         'Entity' => $Templates,
@@ -72,6 +93,7 @@ try {
         'langsArr' => Tools::getLangsArr(),
         'stepsArr' => $stepsArr,
         'linksArr' => $linksArr,
+        'notificationsSettings' => $notificationsSettings,
         'teamGroupsArr' => $teamGroupsArr,
         'templateData' => $templateData,
         'templatesArr' => $templatesArr,

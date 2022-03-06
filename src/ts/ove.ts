@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-import anyToJson from 'bio-parsers/es/parsers/anyToJson';
+import { anyToJson } from 'bio-parsers';
 import { notif } from './misc';
 
 // DISPLAY Plasmids FILES

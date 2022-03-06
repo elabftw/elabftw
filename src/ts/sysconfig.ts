@@ -139,27 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
     Teams.editUserToTeam($(this).data('userid'), $(this).data('useraction'));
   });
 
-  // MAIL METHOD in a function because is also called in document ready
-  function toggleMailMethod(method): void {
-    switch (method) {
-    case 'sendmail':
-      $('#smtp_config').hide();
-      $('#sendmail_config').show();
-      break;
-    case 'smtp':
-      $('#smtp_config').show();
-      $('#sendmail_config').hide();
-      break;
-    default:
-      $('#smtp_config').hide();
-      $('#sendmail_config').hide();
-      $('#general_mail_config').hide();
-    }
-  }
-  $(document).on('change', '#selectMailMethod', function() {
-    toggleMailMethod($(this).val());
-  });
-
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
@@ -227,8 +206,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const input = inputList[i];
     input.disabled = false;
   }
-  // honor already saved mail_method setting and hide unused options accordingly
-  toggleMailMethod($('#selectMailMethod').val());
 
   $(document).on('click', '.idpsDestroy', function() {
     const elem = $(this);

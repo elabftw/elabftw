@@ -148,35 +148,28 @@ class Email
     }
 
     /**
-     * Return Swift_Mailer instance and choose between sendmail and smtp
+     * Return Mailer instance
      */
     private function getMailer(): MailerInterface
     {
-        // Use locally installed MTA (aka sendmail)
-        $dsn = 'sendmail://default';
-
-        // Override default dsn if we use SMTP
-        if ($this->Config->configArr['mail_method'] === 'smtp') {
-            $username = '';
-            $password = '';
-            if ($this->Config->configArr['smtp_password']) {
-                $username = $this->Config->configArr['smtp_username'];
-                $password = Crypto::decrypt(
-                    $this->Config->configArr['smtp_password'],
-                    Key::loadFromAsciiSafeString(SECRET_KEY)
-                );
-            }
-
-            $dsn = sprintf(
-                'smtp://%s:%s@%s:%d',
-                $username,
-                $password,
-                $this->Config->configArr['smtp_address'],
-                $this->Config->configArr['smtp_port'],
+        $username = '';
+        $password = '';
+        if ($this->Config->configArr['smtp_password']) {
+            $username = $this->Config->configArr['smtp_username'];
+            $password = Crypto::decrypt(
+                $this->Config->configArr['smtp_password'],
+                Key::loadFromAsciiSafeString(SECRET_KEY)
             );
         }
 
-        $transport = Transport::fromDsn($dsn);
-        return new Mailer($transport);
+        $dsn = sprintf(
+            'smtp://%s:%s@%s:%d',
+            $username,
+            $password,
+            $this->Config->configArr['smtp_address'],
+            $this->Config->configArr['smtp_port'],
+        );
+
+        return new Mailer(Transport::fromDsn($dsn));
     }
 }

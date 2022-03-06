@@ -60,17 +60,12 @@ class Notifications implements CrudInterface
     {
         $category = $params->getCategory();
 
-        $sendEmail = $this->getSendEmail($category);
+        $sendEmail = $this->getPref($category, true);
+        $webNotif = $this->getPref($category);
 
-        $isAck = 0;
-        // some notifications are just here to be sent as emails, not show on the web page
-        if ($category === self::SELF_NEED_VALIDATION ||
-            $category === self::SELF_IS_VALIDATED ||
-            ($category === self::COMMENT_CREATED && $this->users->userData['notif_comment_created'] === '0') ||
-            ($category === self::USER_CREATED && $this->users->userData['notif_user_created'] === '0') ||
-            ($category === self::USER_NEED_VALIDATION && $this->users->userData['notif_user_need_validation'] === '0')
-        ) {
-            $isAck = 1;
+        $isAck = 1;
+        if ($webNotif === 1) {
+            $isAck = 0;
         }
 
         $sql = 'INSERT INTO notifications(userid, category, send_email, body, is_ack) VALUES(:userid, :category, :send_email, :body, :is_ack)';
@@ -121,19 +116,24 @@ class Notifications implements CrudInterface
         return $this->Db->execute($req);
     }
 
-    private function getSendEmail(int $category): int
+    private function getPref(int $category, bool $email = false): int
     {
-        // only the first 3 categories have a user setting for email
+        // only the first 3 categories have a user setting for email/web notif
         if ($category > 3) {
             return 1;
         }
 
         $map = array(
-            self::COMMENT_CREATED => 'notif_comment_created_email',
-            self::USER_CREATED => 'notif_user_created_email',
-            self::USER_NEED_VALIDATION => 'notif_user_need_validation_email',
+            self::COMMENT_CREATED => 'notif_comment_created',
+            self::USER_CREATED => 'notif_user_created',
+            self::USER_NEED_VALIDATION => 'notif_user_need_validation',
         );
 
-        return (int) $this->users->userData[$map[$category]];
+        $suffix = '';
+        if ($email) {
+            $suffix = '_email';
+        }
+
+        return (int) $this->users->userData[$map[$category] . $suffix];
     }
 }

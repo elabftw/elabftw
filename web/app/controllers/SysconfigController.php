@@ -81,7 +81,7 @@ try {
             $tab = '5';
         }
 
-        if ($Request->request->has('mail_method')) {
+        if ($Request->request->has('mail_from')) {
             $tab = '6';
         }
 

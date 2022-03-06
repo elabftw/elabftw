@@ -9,7 +9,7 @@
     "3dmol": "^1.4.0",
     "@deltablot/chemdoodle-web-mini": "^9.2.1",
     "@deltablot/malle": "^0.3.0",
-    "@deltablot/open-vector-editor-umd": "^17.3.6",
+    "@deltablot/open-vector-editor-umd": "17.3.6-2",
     "@fancyapps/fancybox": "3.5.*",
     "@fortawesome/fontawesome-svg-core": "1.2.*",
     "@fortawesome/free-brands-svg-icons": "^5.12.0",

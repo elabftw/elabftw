@@ -892,6 +892,10 @@ the form-control fails to do that so we do the border ourselves */
     text-align: right;
 }
 
+.thumbnail {
+    overflow-wrap: break-word;
+}
+
 /* TAGS */
 .tag {
     border: 1px solid $maingray;

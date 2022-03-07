@@ -113,6 +113,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="replace-upload"]')) {
       document.getElementById('replaceUploadForm_' + el.dataset.uploadid).hidden = false;
 
+    // MORE INFORMATION
+    } else if (el.matches('[data-action="more-info-upload"]')) {
+      document.getElementById('moreInfo_' + el.dataset.uploadid).classList.remove('d-none');
+
     // DESTROY UPLOAD
     } else if (el.matches('[data-action="destroy-upload"]')) {
       const uploadId = parseInt(el.dataset.uploadid);

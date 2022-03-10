@@ -10,7 +10,7 @@
       <i class='fas fa-check-square mr-1 align-baseline'></i><h5 class='d-inline'>{{ 'Steps'|trans }}</h5>
       <br>
       <!-- the stepsDiv id is in its own div because otherwise if it's on the section above it doesn't work well, not sure why -->
-      <div class='stepsDiv'>
+      <div class='stepsDiv' id='stepsContainer'>
         <div class='mt-2 sortable' id='steps_div_{{ Entity_id }}' data-axis='y' data-table='{{ Entity.type ? Entity.type : 'items_types'}}_steps'>
           {% for step in stepsArr %}
             <div class='input-group mb-2' id='step_{{ step.id }}'>
@@ -37,7 +37,11 @@
                 <span class='step editable hl-hover' data-stepid='{{ step.id }}'>{{ step.body|raw }}</span>
                 {% if step.finished %}
                 <span class='mr-2 text-muted'>
-                    {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
+                  {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span><span class='float-right mr-2' data-action='toggle-next'><i class='fas fa-ellipsis-v'></i></span>
+                  <p hidden>
+                  {{ 'Completion time:'|trans }} <span data-stepid='{{ step.id }}' data-target='finished_time' class='malleable-datetime'>{{ step.finished_time }}</span><br>
+                    {{ 'Deadline:'|trans }} <span data-stepid='{{ step.id }}' data-target='deadline' class='malleable-datetime'>{{ step.deadline }}</span><br>
+                  </p>
                 </span>
                 {% endif %}
               </div>

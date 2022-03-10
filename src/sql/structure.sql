@@ -196,6 +196,7 @@ CREATE TABLE `experiments_steps` (
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `finished` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `finished_time` datetime DEFAULT NULL,
+  `deadline` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -458,6 +459,7 @@ CREATE TABLE `items_types_steps` (
   `ordering` int UNSIGNED DEFAULT NULL,
   `finished` tinyint(1) NOT NULL DEFAULT '0',
   `finished_time` datetime DEFAULT NULL,
+  `deadline` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -1061,6 +1063,7 @@ CREATE TABLE `items_steps` (
     `ordering` int(10) unsigned DEFAULT NULL,
     `finished` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
     `finished_time` datetime DEFAULT NULL,
+    `deadline` datetime DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `fk_items_steps_items_id` (`item_id`),
     CONSTRAINT `fk_items_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1073,6 +1076,7 @@ CREATE TABLE `experiments_templates_steps` (
     `ordering` int(10) unsigned DEFAULT NULL,
     `finished` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
     `finished_time` datetime DEFAULT NULL,
+    `deadline` datetime DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `fk_experiments_templates_steps_items_id` (`item_id`),
     CONSTRAINT `fk_experiments_templates_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE

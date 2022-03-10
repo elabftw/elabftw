@@ -7,11 +7,11 @@
  */
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
-import { Malle } from '@deltablot/malle';
+import { InputType, Malle } from '@deltablot/malle';
 import Link from './Link.class';
 import Step from './Step.class';
 import i18next from 'i18next';
-import { relativeMoment, makeSortableGreatAgain } from './misc';
+import { relativeMoment, makeSortableGreatAgain, reloadElement } from './misc';
 import { getCheckedBoxes, notif, getEntity } from './misc';
 import { Entity } from './interfaces';
 
@@ -54,10 +54,29 @@ document.addEventListener('DOMContentLoaded', () => {
       StepC.update(
         parseInt(original.dataset.stepid, 10),
         value,
-      );
+      ).then(() => {
+        reloadElement('stepsDiv');
+      });
       return value;
     },
     listenOn: '.step.editable',
+    debug: true,
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
+
+  // UPDATE MALLEABLE STEP FINISH TIME
+  const malleableStepFinish = new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
+    inputClasses: ['form-control'],
+    fun: (value, original) => {
+      //StepC.update(parseInt(original.dataset.id, 10), value);
+      return value;
+    },
+    inputType: InputType.Datetime,
+    listenOn: '.malleable-datetime',
+    submit : i18next.t('save'),
+    submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
@@ -65,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('stepsDiv')) {
     new MutationObserver(() => {
       malleableStep.listen();
+      malleableStepFinish.listen();
     }).observe(document.getElementById('stepsDiv'), {childList: true});
   }
 
@@ -86,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // reload the step list
       $('#steps_div_' + entity.id).load(loadUrl, function() {
         relativeMoment();
+        reloadElement('stepsDiv');
         makeSortableGreatAgain();
         $('#todo_step_' + stepId).prop('checked', $('.stepbox[data-stepid="' + stepId + '"]').prop('checked'));
       });

@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use DateTime;
 use Elabftw\Services\Check;
 use function memory_get_usage;
 use function microtime;
@@ -65,5 +66,15 @@ class TwigFunctions
     public static function getMinPasswordLength(): int
     {
         return Check::MIN_PASSWORD_LENGTH;
+    }
+
+    /**
+     * Get a formatted date relative to now
+     * Input is fed directly to the modify function of DateTime
+     * Output format works for SQL Datetime column (like step deadline)
+     */
+    public static function toDatetime(string $input): string
+    {
+        return (new DateTime())->modify($input)->format('Y-m-d H:i:s');
     }
 }

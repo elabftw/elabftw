@@ -10,7 +10,7 @@
       <i class='fas fa-check-square mr-1 align-baseline'></i><h5 class='d-inline'>{{ 'Steps'|trans }}</h5>
       <br>
       <!-- the stepsDiv id is in its own div because otherwise if it's on the section above it doesn't work well, not sure why -->
-      <div class='stepsDiv' id='stepsContainer'>
+      <div id='stepsDiv'>
         <div class='mt-2 sortable' id='steps_div_{{ Entity_id }}' data-axis='y' data-table='{{ Entity.type ? Entity.type : 'items_types'}}_steps'>
           {% for step in stepsArr %}
             <div class='input-group mb-2' id='step_{{ step.id }}'>
@@ -33,17 +33,41 @@
                   <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ mode == 'edit-template' ? 'disabled' }} {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity_id }}' class='stepbox'>
                 </div>
               </div>
-              <div class='pl-2 step-static form-control-plaintext {{ step.finished ? 'finished' }}'>
-                <span class='step editable hl-hover' data-stepid='{{ step.id }}'>{{ step.body|raw }}</span>
+              <div class='pl-2 step-static form-control-plaintext'>
+                <span class='step editable hl-hover {{ step.finished ? 'finished' }}' data-stepid='{{ step.id }}'>{{ step.body|raw }}</span>
                 {% if step.finished %}
                 <span class='mr-2 text-muted'>
-                  {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span><span class='float-right mr-2' data-action='toggle-next'><i class='fas fa-ellipsis-v'></i></span>
-                  <p hidden>
-                  {{ 'Completion time:'|trans }} <span data-stepid='{{ step.id }}' data-target='finished_time' class='malleable-datetime'>{{ step.finished_time }}</span><br>
-                    {{ 'Deadline:'|trans }} <span data-stepid='{{ step.id }}' data-target='deadline' class='malleable-datetime'>{{ step.deadline }}</span><br>
-                  </p>
+                  {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
                 </span>
                 {% endif %}
+                <span class='float-right mr-2' data-action='toggle-next'><i class='fas fa-chevron-circle-down'></i></span>
+                <div hidden>
+                {{ 'Completion time:'|trans }}
+                {% if step.finished %}
+                  <span data-stepid='{{ step.id }}' data-target='finished_time' class='hl-hover malleable-datetime'>{{ step.finished_time }}</span>
+                {% else %}
+                  {{ 'Not finished'|trans }}
+                {% endif %}
+                <br>
+
+                <div id='stepDeadlineDiv_{{ step.id }}'>
+                  {{ 'Deadline:'|trans }}
+                  {% if step.deadline %}
+                    <span data-stepid='{{ step.id }}' data-target='deadline' class='hl-hover malleable-datetime'>{{ step.deadline|format_datetime() }}</span>
+                  {% else %}
+                  <span data-action='replace-with-next'><i class='fas fa-plus-circle' data-stepid='{{ step.id }}'></i></span>
+                  <div hidden>
+                    <select class='form-control-inline' id='stepSelectDeadline_{{ step.id }}'>
+                      <option disabled>{{ 'Set deadline in'|trans }}</option>
+                      <option value='{{ '+1 hour'|toDatetime }}'>1 hour</option>
+                      <option value='{{ '+1 day'|toDatetime }}'>1 day</option>
+                      <option value='{{ '+1 week'|toDatetime }}'>1 week</option>
+                    </select>
+                    <button class='button btn btn-primary' data-action='step-update-deadline' data-stepid='{{ step.id }}'>{{ 'Save'|trans }}</button>
+                  </div>
+                  {% endif %}
+                  </div>
+                </div>
               </div>
             </div>
           {% endfor %}

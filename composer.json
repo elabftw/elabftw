@@ -43,7 +43,8 @@
     "xemlock/htmlpurifier-html5": "^0.1.11",
     "aws/aws-sdk-php": "^3.209",
     "league/flysystem-aws-s3-v3": "^3.0",
-    "jblond/twig-trans": "^1.0"
+    "jblond/twig-trans": "^1.0",
+    "twig/intl-extra": "^3.3"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
@@ -105,5 +106,10 @@
       ]
     }
   },
-  "license": "AGPL-3.0-or-later"
+  "license": "AGPL-3.0-or-later",
+  "config": {
+    "allow-plugins": {
+      "pyrech/composer-changelogs": true
+    }
+  }
 }

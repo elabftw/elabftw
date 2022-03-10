@@ -8,12 +8,11 @@
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { notif } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
-import { InputType, Malle } from '@deltablot/malle';
 import { EntityType, Target, Upload, Payload, Method, Action } from './interfaces';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
-import { getEntity, relativeMoment } from './misc';
+import { getEntity, reloadElement } from './misc';
 import Dropzone from 'dropzone';
 import { File } from 'dropzone';
 import i18next from 'i18next';
@@ -21,6 +20,7 @@ import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
 import UploadClass from './Upload.class';
 import EntityClass from './Entity.class';
+import Step from './Step.class';
 
 // the dropzone is created programmatically, disable autodiscover
 Dropzone.autoDiscover = false;
@@ -199,6 +199,14 @@ document.addEventListener('DOMContentLoaded', () => {
         editor: editor.type,
       }).done(json => editor.setContent(json.msg));
 
+    // ADD DEADLINE ON STEP
+    } else if (el.matches('[data-action="step-update-deadline"]')) {
+      const StepC = new Step(entity);
+      const value = (document.getElementById('stepSelectDeadline_' + el.dataset.stepid) as HTMLSelectElement).value;
+      StepC.update(parseInt(el.dataset.stepid, 10), value, Target.Deadline).then(() => {
+        reloadElement('stepDeadlineDiv_' + el.dataset.stepid);
+      });
+
     // DESTROY ENTITY
     } else if (el.matches('[data-action="destroy"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
@@ -304,30 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
   $(document).on('click', '.star', function() {
     EntityC.update(entity.id, Target.Rating, $(this).data('rating').current[0].innerText);
   });
-
-  // UPDATE MALLEABLE STEP FINISH TIME
-  const malleableStepFinish = new Malle({
-    cancel : i18next.t('cancel'),
-    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
-    inputClasses: ['form-control'],
-    fun: (value, original) => {
-      //StepC.update(parseInt(original.dataset.id, 10), value);
-      return value;
-    },
-    inputType: InputType.Datetime,
-    listenOn: '.malleable-datetime',
-    submit : i18next.t('save'),
-    submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
-    tooltip: i18next.t('click-to-edit'),
-  });
-
-  // listen on existing steps
-  malleableStepFinish.listen();
-  // add an observer so new comments will get an event handler too
-  new MutationObserver(() => {
-    malleableStepFinish.listen();
-    relativeMoment();
-  }).observe(document.getElementById('stepsContainer'), {childList: true});
 
   // no tinymce stuff when md editor is selected
   if (editor.type === 'tiny') {

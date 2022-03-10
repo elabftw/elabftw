@@ -257,6 +257,14 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(targetKey, value);
       }
 
+    // REPLACE WITH NEXT ACTION
+    } else if (el.matches('[data-action="replace-with-next"]')) {
+      const targetEl = el.nextElementSibling as HTMLElement;
+      // show the target
+      targetEl.toggleAttribute('hidden');
+      // hide clicked element
+      el.toggleAttribute('hidden');
+
     // TOGGLE MODAL
     } else if (el.matches('[data-action="toggle-modal"]')) {
       // TODO this requires jquery for now. Not in BS5.

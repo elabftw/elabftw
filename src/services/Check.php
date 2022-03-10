@@ -172,6 +172,7 @@ class Check
             'boundevent',
             'comment',
             'date',
+            'deadline',
             'file',
             'finished',
             'list',

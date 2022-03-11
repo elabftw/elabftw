@@ -58,16 +58,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.212.2",
+            "version": "3.212.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "dd2ff1ca2d7c37bfb7c3fed24cb8ad8bad604ec5"
+                "reference": "fcb57b1f840938813e83f521e169914a076b3be9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/dd2ff1ca2d7c37bfb7c3fed24cb8ad8bad604ec5",
-                "reference": "dd2ff1ca2d7c37bfb7c3fed24cb8ad8bad604ec5",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/fcb57b1f840938813e83f521e169914a076b3be9",
+                "reference": "fcb57b1f840938813e83f521e169914a076b3be9",
                 "shasum": ""
             },
             "require": {
@@ -143,9 +143,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.212.2"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.212.6"
             },
-            "time": "2022-03-04T19:27:01+00:00"
+            "time": "2022-03-10T19:14:38+00:00"
         },
         {
             "name": "defuse/php-encryption",
@@ -9465,5 +9465,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.2.0"
 }

@@ -30,7 +30,7 @@
     "dropzone": "^5.8.0",
     "expose-loader": "^3.0.0",
     "file-saver": "2.0.*",
-    "i18next": "^21.0.2",
+    "i18next": "^21.6.14",
     "jquery": "^3.5.1",
     "jquery-ui": "^1.13.0",
     "jsoneditor": "^9.0.3",

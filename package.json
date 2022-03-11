@@ -46,7 +46,7 @@
     "stream-browserify": "^3.0.0",
     "timers-browserify": "^2.0.12",
     "tinymce": "^5.10.0",
-    "ts-loader": "^9.1.1",
+    "ts-loader": "^9.2.8",
     "typescript": "^4.0.3",
     "ve-range-utils": "^2.6.3",
     "ve-sequence-utils": "^5.1.6",

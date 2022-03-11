@@ -83,7 +83,7 @@ class Steps implements CrudInterface
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        return $this->Db->fetchAll($req);
+        return $req->fetchAll();
     }
 
     /**

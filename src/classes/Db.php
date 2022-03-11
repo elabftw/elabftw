@@ -143,19 +143,6 @@ final class Db
     }
 
     /**
-     * Force fetchAll() to return an array or throw exception if result is false
-     * because this is hard to test
-     */
-    public function fetchAll(PDOStatement $req): array
-    {
-        $res = $req->fetchAll();
-        if ($res === false) {
-            throw new DatabaseErrorException();
-        }
-        return $res;
-    }
-
-    /**
      * Make a simple query
      *
      * @param string $sql The SQL query

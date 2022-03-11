@@ -54,7 +54,7 @@ class Todolist implements CrudInterface
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        return $this->Db->fetchAll($req);
+        return $req->fetchAll();
     }
 
     public function update(ContentParamsInterface $params): bool

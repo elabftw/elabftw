@@ -14,7 +14,6 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Update;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use PDO;
 use const SECRET_KEY;
@@ -82,9 +81,7 @@ final class Config
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
-        if ($config === false) {
-            throw new DatabaseErrorException();
-        }
+
         return array_map(function ($v) {
             return $v[0];
         }, $config);

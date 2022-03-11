@@ -72,7 +72,8 @@ class Idps implements DestroyableInterface
         $sql = 'SELECT * FROM idps';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
-        return $this->Db->fetchAll($req);
+
+        return $req->fetchAll();
     }
 
     /**

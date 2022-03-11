@@ -61,11 +61,10 @@ class Pins
 
         $this->Db->execute($req);
 
-        $ids = $this->Db->fetchAll($req);
         $entity = clone $this->Entity;
 
         $pinArr = array();
-        foreach ($ids as $id) {
+        foreach ($req->fetchAll() as $id) {
             $entity->setId((int) $id['entity_id']);
             $pinArr[] = $entity->read(new ContentParams());
         }

@@ -50,6 +50,7 @@ class UploadsMigrator
         $req = $this->Db->prepare($sql);
         $req->bindValue(':storage', StorageFactory::LOCAL);
         $this->Db->execute($req);
-        return $this->Db->fetchAll($req);
+
+        return $req->fetchAll();
     }
 }

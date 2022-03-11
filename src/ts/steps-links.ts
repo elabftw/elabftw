@@ -7,13 +7,13 @@
  */
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
-import { InputType, Malle } from '@deltablot/malle';
+import { Malle } from '@deltablot/malle';
 import Link from './Link.class';
 import Step from './Step.class';
 import i18next from 'i18next';
 import { relativeMoment, makeSortableGreatAgain, reloadElement } from './misc';
-import { getCheckedBoxes, notif, getEntity } from './misc';
-import { Entity } from './interfaces';
+import { getCheckedBoxes, notif, getEntity, adjustHiddenState } from './misc';
+import { Entity, Target } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -25,6 +25,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const StepC = new Step(entity);
   relativeMoment();
 
+  // MAIN LISTENER for actions
+  document.querySelector('.real-container').addEventListener('click', event => {
+    const el = (event.target as HTMLElement);
+    // ADD DEADLINE ON STEP
+    if (el.matches('[data-action="step-update-deadline"]')) {
+      const value = (document.getElementById('stepSelectDeadline_' + el.dataset.stepid) as HTMLSelectElement).value;
+      StepC.update(parseInt(el.dataset.stepid, 10), value, Target.Deadline).then(() => {
+        reloadElement('stepsDiv');
+      });
+    // DESTROY DEADLINE ON STEP
+    } else if (el.matches('[data-action="step-destroy-deadline"]')) {
+      StepC.update(parseInt(el.dataset.stepid, 10), null, Target.Deadline).then(() => {
+        reloadElement('stepsDiv');
+      });
+    }
+  });
+
+
   // CREATE
   $(document).on('keypress blur', '.stepinput', function(e) {
     // Enter is ascii code 13
@@ -32,13 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const content = e.currentTarget.value;
       if (content.length > 0) {
         StepC.create(content).then(() => {
-          // only reload children
-          const loadUrl = window.location.href + ' #steps_div_' + entity.id + ' > *';
-          // reload the step list
-          $('#steps_div_' + entity.id).load(loadUrl, function() {
-            relativeMoment();
-            makeSortableGreatAgain();
-          });
+          reloadElement('stepsDiv');
           // clear input field
           e.currentTarget.value = '';
         });
@@ -46,35 +58,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // UPDATE
+  // UPDATE MALLEABLE STEP BODY, FINISH TIME OR DEADLINE (data-target attribute)
   const malleableStep = new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
     inputClasses: ['form-control'],
-    formClasses: ['d-inline-flex'],
     fun: (value, original) => {
       StepC.update(
         parseInt(original.dataset.stepid, 10),
         value,
+        original.dataset.target as Target,
       ).then(() => {
         reloadElement('stepsDiv');
       });
       return value;
     },
     listenOn: '.step.editable',
-    debug: true,
-    tooltip: i18next.t('click-to-edit'),
-  }).listen();
-
-  // UPDATE MALLEABLE STEP FINISH TIME
-  const malleableStepFinish = new Malle({
-    cancel : i18next.t('cancel'),
-    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
-    inputClasses: ['form-control'],
-    fun: (value, original) => {
-      //StepC.update(parseInt(original.dataset.id, 10), value);
-      return value;
-    },
-    inputType: InputType.Datetime,
-    listenOn: '.malleable-datetime',
     submit : i18next.t('save'),
     submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
@@ -84,7 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('stepsDiv')) {
     new MutationObserver(() => {
       malleableStep.listen();
-      malleableStepFinish.listen();
+      adjustHiddenState();
+      makeSortableGreatAgain();
     }).observe(document.getElementById('stepsDiv'), {childList: true});
   }
 

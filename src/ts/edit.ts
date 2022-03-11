@@ -12,7 +12,7 @@ import { EntityType, Target, Upload, Payload, Method, Action } from './interface
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
-import { getEntity, reloadElement } from './misc';
+import { getEntity } from './misc';
 import Dropzone from 'dropzone';
 import { File } from 'dropzone';
 import i18next from 'i18next';
@@ -20,7 +20,6 @@ import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
 import UploadClass from './Upload.class';
 import EntityClass from './Entity.class';
-import Step from './Step.class';
 
 // the dropzone is created programmatically, disable autodiscover
 Dropzone.autoDiscover = false;
@@ -198,14 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
         type : 'items',
         editor: editor.type,
       }).done(json => editor.setContent(json.msg));
-
-    // ADD DEADLINE ON STEP
-    } else if (el.matches('[data-action="step-update-deadline"]')) {
-      const StepC = new Step(entity);
-      const value = (document.getElementById('stepSelectDeadline_' + el.dataset.stepid) as HTMLSelectElement).value;
-      StepC.update(parseInt(el.dataset.stepid, 10), value, Target.Deadline).then(() => {
-        reloadElement('stepDeadlineDiv_' + el.dataset.stepid);
-      });
 
     // DESTROY ENTITY
     } else if (el.matches('[data-action="destroy"]')) {

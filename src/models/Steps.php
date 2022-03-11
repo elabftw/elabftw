@@ -13,6 +13,7 @@ use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\StepParamsInterface;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
@@ -113,15 +114,21 @@ class Steps implements CrudInterface
         }
     }
 
-    public function update(ContentParamsInterface $params): bool
+    public function update(StepParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
-        if ($params->getTarget() === 'finished') {
+        $target = $params->getTarget();
+        if ($target === 'finished') {
             return $this->toggleFinished();
+        }
+        if ($target === 'body') {
+            $content = $params->getContent();
+        } else {
+            $content = $params->getDatetime();
         }
         $sql = 'UPDATE ' . $this->Entity->type . '_steps SET ' . $params->getTarget() . ' = :content WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent(), PDO::PARAM_STR);
+        $req->bindParam(':content', $content, PDO::PARAM_STR);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);

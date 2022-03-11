@@ -52,9 +52,7 @@ class UnfinishedSteps extends Steps
         }
         $this->Db->execute($req);
 
-        $res = $this->Db->fetchAll($req);
-
-        return $this->cleanUpResult($res);
+        return $this->cleanUpResult($req->fetchAll());
     }
 
     /*

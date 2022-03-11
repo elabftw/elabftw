@@ -60,7 +60,7 @@ class TeamsHelper
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        return array_column($this->Db->fetchAll($req), 'userid');
+        return array_column($req->fetchAll(), 'userid');
     }
 
     /**

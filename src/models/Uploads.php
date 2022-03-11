@@ -188,7 +188,7 @@ class Uploads implements CrudInterface
         $req->bindParam(':type', $this->Entity->type);
         $this->Db->execute($req);
 
-        return $this->Db->fetchAll($req);
+        return $req->fetchAll();
     }
 
     public function readAllNormal(): array

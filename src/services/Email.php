@@ -134,9 +134,8 @@ class Email
         }
         $Db->execute($req);
 
-        $users = $Db->fetchAll($req);
         $emails = array();
-        foreach ($users as $user) {
+        foreach ($req->fetchAll() as $user) {
             $emails[] = new Address($user['email'], $user['fullname']);
         }
         return $emails;

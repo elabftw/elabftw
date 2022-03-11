@@ -110,11 +110,7 @@ class Tags implements CrudInterface
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
+        return $req->fetchAll();
     }
 
     /**
@@ -187,7 +183,7 @@ class Tags implements CrudInterface
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $idsToDelete = $this->Db->fetchAll($req);
+        $idsToDelete = $req->fetchAll();
         // loop on each tag that needs to be deduplicated and do the work
         foreach ($idsToDelete as $idsList) {
             $this->deduplicateFromIdsList($idsList['id_list']);
@@ -262,11 +258,7 @@ class Tags implements CrudInterface
         $req->bindParam(':type', $this->Entity->type, PDO::PARAM_STR);
         $req->bindValue(':count', count($tagIds), PDO::PARAM_INT);
         $req->execute();
-        $results = $req->fetchAll();
-        if ($results === false) {
-            return array();
-        }
-        foreach ($results as $res) {
+        foreach ($req->fetchAll() as $res) {
             $itemIds[] = (int) $res['item_id'];
         }
         return $itemIds;

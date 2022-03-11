@@ -46,6 +46,7 @@ class Comments implements CrudInterface
         if ($this->Entity instanceof Experiments) {
             $this->createNotification();
         }
+
         return $this->Db->lastInsertId();
     }
 
@@ -59,7 +60,8 @@ class Comments implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        return $this->Db->fetchAll($req);
+
+        return $req->fetchAll();
     }
 
     public function update(ContentParamsInterface $params): bool
@@ -73,6 +75,7 @@ class Comments implements CrudInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+
         return $this->Db->execute($req);
     }
 

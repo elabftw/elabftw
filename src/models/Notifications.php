@@ -87,7 +87,7 @@ class Notifications implements CrudInterface
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $notifs = $this->Db->fetchAll($req);
+        $notifs = $req->fetchAll();
         foreach ($notifs as &$notif) {
             $notif['body'] = json_decode($notif['body'], true, 512, JSON_THROW_ON_ERROR);
         }

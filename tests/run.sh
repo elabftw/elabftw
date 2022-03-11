@@ -58,6 +58,8 @@ if ($scrutinizer); then
     docker exec -it elabtmp yarn buildall
     docker exec -it elabtmp composer install --no-progress -q
     docker exec -it elabtmp yarn phpcs-dry
+    # allow tmpfile, used by phpstan
+    docker exec -it elabtmp sed -i 's/tmpfile, //' /etc/php8/php.ini
     # extend open_basedir
     # /usr/bin/psalm, //autoload.php, /root/.cache/ are for psalm
     # /usr/bin/phpstan, /proc/cpuinfo is for phpstan, https://github.com/phpstan/phpstan/issues/4427 https://github.com/phpstan/phpstan/issues/2965

@@ -91,6 +91,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // FINISH
   $(document).on('click', 'input[type=checkbox].stepbox', function(e) {
+    // ask for confirmation before un-finishing a step
+    // this check happens after the browser changed the state, so it is inverted
+    // what we are really checking here is if it was checked before the user clicks on it
+    if (!$(this).is(':checked') && !confirm(i18next.t('step-unfinish-warning'))) {
+      // re-check the box on cancel
+      $(this).prop('checked', true);
+      return;
+    }
+
     // on the todolist we don't want to grab the type from the page
     // because it's only steps from experiments
     // so if the element has a data-type, take that instead

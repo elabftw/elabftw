@@ -47,6 +47,9 @@ _('Enter name of the file');
 // step-delete-warning
 _('Delete this step?');
 /** @psalm-suppress UnusedFunctionCall */
+// step-unfinish-warning
+_('Are you sure you want to undo this step?');
+/** @psalm-suppress UnusedFunctionCall */
 // tag-delete-warning
 _('Delete this tag?');
 /** @psalm-suppress UnusedFunctionCall */

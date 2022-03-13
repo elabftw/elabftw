@@ -3,8 +3,8 @@ FROM elabftw/elabimg:hypernext
 
 # Set versions of used tools
 ARG PHPSTAN_VERSION=1.4.9
-ARG PSALM_VERSION=4.18.1
-ARG PHAN_VERSION=5.3.1
+ARG PSALM_VERSION=4.22.0
+ARG PHAN_VERSION=5.3.2
 
 # phpStan
 ADD https://github.com/phpstan/phpstan/releases/download/$PHPSTAN_VERSION/phpstan.phar /usr/bin/phpstan

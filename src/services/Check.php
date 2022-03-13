@@ -175,6 +175,7 @@ class Check
             'deadline',
             'file',
             'finished',
+            'finished_time',
             'list',
             'member',
             'metadata',

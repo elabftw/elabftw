@@ -44,7 +44,7 @@
                 <div hidden data-save-hidden='extendedStep_{{ step.id }}'>
                 {{ 'Completion time:'|trans }}
                 {% if step.finished %}
-                  <span data-stepid='{{ step.id }}' data-target='finished_time' data-ma-type='datetime-local' data-ma-input-value='{{ step.finished_time }}' class='step editable hl-hover'>{{ step.finished_time|format_datetime() }}</span>
+                  <span data-stepid='{{ step.id }}' data-target='finished_time' data-ma-type='datetime-local' data-ma-input-value='{{ step.finished_time|date('Y-m-d\\TH:i') }}' class='step editable hl-hover'>{{ step.finished_time|format_datetime() }}</span>
                 {% else %}
                   {{ 'Not finished'|trans }}
                 {% endif %}
@@ -54,7 +54,7 @@
                   {{ 'Deadline:'|trans }}
                   {% if step.deadline %}
                   <!-- here the data-ma-input-value is not formatted so it works with the datetime-local input type, but the displayed one is formatted -->
-                  <span data-stepid='{{ step.id }}' data-target='deadline' data-ma-type='datetime-local' data-ma-input-value='{{ step.deadline }}' class='step editable hl-hover'>{{ step.deadline|format_datetime() }}</span><span class='ml-2' data-action='step-destroy-deadline' data-stepid='{{ step.id }}'><i class='fas fa-trash-alt' ></i></span>
+                  <span data-stepid='{{ step.id }}' data-target='deadline' data-ma-type='datetime-local' data-ma-input-value='{{ step.deadline|date('Y-m-d\\TH:i') }}' class='step editable hl-hover'>{{ step.deadline|format_datetime() }}</span><span class='ml-2' data-action='step-destroy-deadline' data-stepid='{{ step.id }}'><i class='fas fa-trash-alt' ></i></span>
                   {% else %}
                   <span data-action='replace-with-next'><i class='fas fa-plus-circle'></i></span>
                   <div hidden>

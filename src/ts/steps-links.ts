@@ -85,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
       malleableStep.listen();
       adjustHiddenState();
       makeSortableGreatAgain();
+      relativeMoment();
     }).observe(document.getElementById('stepsDiv'), {childList: true});
   }
 

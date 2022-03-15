@@ -75,10 +75,6 @@
     </a>
 
     {% if Entity.type == 'items' %}
-      <a class='elab-tooltip mr-1' href='experiments.php?mode=show&related={{ Entity.id }}'>
-        <span>{{ 'Show related'|trans }}</span>
-        <i title='{{ 'Show related'|trans }}' class='fas fa-link fa-2x'></i>
-      </a>
       {% if Entity.entityData.bookable %}
         <a class='elab-tooltip mr-1' href='team.php?item={{ Entity.id }}'>
           <span>{{ 'Book item'|trans }}</span>

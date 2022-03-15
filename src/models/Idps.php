@@ -41,14 +41,15 @@ class Idps implements DestroyableInterface
         string $sloUrl,
         string $sloBinding,
         string $x509,
+        string $x509_new,
         string $active,
         string $emailAttr,
         string $teamAttr,
         string $fnameAttr,
         string $lnameAttr,
     ): int {
-        $sql = 'INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509, active, email_attr, team_attr, fname_attr, lname_attr)
-            VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509, :active, :email_attr, :team_attr, :fname_attr, :lname_attr)';
+        $sql = 'INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509, x509_new, active, email_attr, team_attr, fname_attr, lname_attr)
+            VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509, :x509_new, :active, :email_attr, :team_attr, :fname_attr, :lname_attr)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':entityid', $entityid);
@@ -57,6 +58,7 @@ class Idps implements DestroyableInterface
         $req->bindParam(':slo_url', $sloUrl);
         $req->bindParam(':slo_binding', $sloBinding);
         $req->bindParam(':x509', $x509);
+        $req->bindParam(':x509_new', $x509_new);
         $req->bindParam(':active', $active);
         $req->bindParam(':email_attr', $emailAttr);
         $req->bindParam(':team_attr', $teamAttr);
@@ -88,6 +90,7 @@ class Idps implements DestroyableInterface
         string $sloUrl,
         string $sloBinding,
         string $x509,
+        string $x509_new,
         string $active,
         string $emailAttr,
         string $teamAttr,
@@ -102,6 +105,7 @@ class Idps implements DestroyableInterface
             slo_url = :slo_url,
             slo_binding = :slo_binding,
             x509 = :x509,
+            x509_new = :x509_new,
             active = :active,
             email_attr = :email_attr,
             team_attr = :team_attr,
@@ -117,6 +121,7 @@ class Idps implements DestroyableInterface
         $req->bindParam(':slo_url', $sloUrl);
         $req->bindParam(':slo_binding', $sloBinding);
         $req->bindParam(':x509', $x509);
+        $req->bindParam(':x509_new', $x509_new);
         $req->bindParam(':active', $active);
         $req->bindParam(':email_attr', $emailAttr);
         $req->bindParam(':team_attr', $teamAttr);

@@ -31,7 +31,7 @@ use function sha1;
 class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    private const REQUIRED_SCHEMA = 77;
+    private const REQUIRED_SCHEMA = 78;
 
     private Db $Db;
 

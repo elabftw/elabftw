@@ -315,6 +315,7 @@ CREATE TABLE `idps` (
   `slo_url` varchar(255) NOT NULL,
   `slo_binding` varchar(255) NOT NULL,
   `x509` text NOT NULL,
+  `x509_new` text NOT NULL,
   `active` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `email_attr` varchar(255) NOT NULL,
   `team_attr` varchar(255) NULL DEFAULT NULL,

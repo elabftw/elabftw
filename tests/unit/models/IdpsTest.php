@@ -28,6 +28,7 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
             'https://test.example.org/slo',
             'slo:binding',
             'x509',
+            'x509_new',
             '1',
             'emailattr',
             'teamattr',
@@ -43,6 +44,7 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
             'https://test.example.org/slo',
             'slo:binding',
             'x509',
+            'x509_new',
             '1',
             'emailattr',
             'teamattr',
@@ -52,6 +54,7 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
         $idp = $this->Idps->getActive($id);
         $this->assertEquals('Updated', $idp['name']);
         $this->assertEquals('x509', $idp['x509']);
+        $this->assertEquals('x509_new', $idp['x509_new']);
         $this->Idps->setId($id);
         $this->Idps->destroy();
     }

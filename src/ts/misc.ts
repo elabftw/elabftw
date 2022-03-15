@@ -13,6 +13,8 @@ import { DateTime } from 'luxon';
 import { EntityType, Entity } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
+import { Payload, Method, Model, Action, Target } from './interfaces';
+import { Ajax } from './Ajax.class';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -190,6 +192,10 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
   }
   // ask mathjax to reparse the page
   MathJax.typeset();
+  // rebind autocomplete for links input
+  addAutocompleteToLinkInputs();
+  // tags too
+  addAutocompleteToTagInputs();
 }
 
 export async function reloadElement(elementId): Promise<void> {
@@ -199,4 +205,58 @@ export async function reloadElement(elementId): Promise<void> {
   }
   const html = await fetchCurrentPage();
   document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
+}
+
+// AUTOCOMPLETE
+export function addAutocompleteToLinkInputs(): void {
+  let cache = {};
+  // this is the select category filter on add link input
+  const catFilterEl = (document.getElementById('addLinkCatFilter') as HTMLInputElement);
+  if (catFilterEl) {
+    // when we change the category filter, reset the cache
+    catFilterEl.addEventListener('change', () => {
+      cache = {};
+    });
+    ($('[data-autocomplete="links"]') as JQuery<HTMLInputElement>).autocomplete({
+      source: function(request: Record<string, string>, response: (data) => void): void {
+        const term = request.term;
+        if (term in cache) {
+          response(cache[term]);
+          return;
+        }
+        // TODO use AjaxC as for tags below
+        $.getJSON(`app/controllers/EntityAjaxController.php?source=items&filter=${catFilterEl.value}`, request, function(data) {
+          cache[term] = data;
+          response(data);
+        });
+      },
+    });
+  }
+}
+
+export function addAutocompleteToTagInputs(): void {
+  const cache = {};
+  const AjaxC = new Ajax();
+  const entity = getEntity();
+  ($('[data-autocomplete="tags"]') as JQuery<HTMLInputElement>).autocomplete({
+    source: function(request: Record<string, string>, response: (data) => void): void {
+      const term  = request.term;
+      if (term in cache) {
+        response(cache[term]);
+        return;
+      }
+      const payload: Payload = {
+        method: Method.GET,
+        action: Action.Read,
+        model: Model.Tag,
+        entity: entity,
+        target: Target.List,
+        content: term,
+      };
+      AjaxC.send(payload).then(json => {
+        cache[term] = json.value;
+        response(json.value);
+      });
+    },
+  });
 }

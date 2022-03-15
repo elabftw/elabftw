@@ -152,6 +152,24 @@ class Idps implements DestroyableInterface
         return $res;
     }
 
+    /**
+     * Get active IDP by entity id
+     */
+    public function getActiveByEntityId(string $entId): array
+    {
+        $sql = 'SELECT * FROM idps WHERE active = 1 AND entityid = :entId';
+        $req = $this->Db->prepare($sql);
+
+        $req->bindParam(':entId', $entId);
+        $this->Db->execute($req);
+
+        $res = $req->fetch();
+        if ($res === false) {
+            throw new ImproperActionException('Could not find active IDP!');
+        }
+        return $res;
+    }
+
     public function destroy(): bool
     {
         $sql = 'DELETE FROM idps WHERE id = :id';

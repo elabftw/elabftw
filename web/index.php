@@ -16,6 +16,8 @@ use Elabftw\Services\LoginHelper;
 use Elabftw\Services\SamlAuth;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuthLib;
+use OneLogin\Saml2\Response as SamlResponse;
+use OneLogin\Saml2\Settings as SamlSettings;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,12 +28,37 @@ $Response = new RedirectResponse($location);
 
 try {
     // SAML: IDP will redirect to this page after user login on IDP website
-    if ($App->Request->query->has('acs')) {
+    if ($App->Request->query->has('acs') && $App->Request->request->has('SAMLResponse')) {
+        $rememberMe = (bool) $App->Request->cookies->get('icanhazcookies');
+
         $Saml = new Saml($App->Config, new Idps());
-        $settings = $Saml->getSettings((int) $App->Request->cookies->get('idp_id'));
+        $tmpSettings = $Saml->getSettings(); // get temporary settings to decode message
+        $resp = new SamlResponse(new SamlSettings($tmpSettings), $App->Request->request->get('SAMLResponse'));
+        $entId = $resp->getIssuers()[0]; // getIssuers returns always one or two entity ids
+
+        $settings = $Saml->getSettingsByEntityId($entId);
+        $idpId = $settings['idp_id'];
         $AuthService = new SamlAuth(new SamlAuthLib($settings), $App->Config->configArr, $settings);
 
         $AuthResponse = $AuthService->assertIdpResponse();
+
+        // save IdP id and session idx for proper logout
+        $cookieOptions = array(
+            'path' => '/',
+            'domain' => '',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'None',
+        );
+        $sessOptions = session_get_cookie_params();
+
+        if ($rememberMe) {
+            $cookieOptions['expires'] = time() + 2592000;
+        } elseif ($sessOptions['lifetime'] > 0) {
+            $cookieOptions['expires'] = time() + $sessOptions['lifetime'];
+        }
+
+        setcookie('saml_token', (string) $AuthService->encodeToken($idpId), $cookieOptions);
 
         // no team was found so user must select one
         if ($AuthResponse->initTeamRequired) {
@@ -49,7 +76,7 @@ try {
             $location = '../../login.php';
         } else {
             $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
-            $LoginHelper->login((bool) $App->Request->cookies->get('icanhazcookies'));
+            $LoginHelper->login($rememberMe);
         }
         // the redirect cookie is ignored for saml auth. See #2438.
         // we don't use a RedirectResponse but show a temporary redirection page or it will not work properly

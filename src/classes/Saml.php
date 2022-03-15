@@ -34,6 +34,23 @@ class Saml
     {
         $idp = $this->Idps->getActive($id);
 
+        return $this->getSettingsByIdp($idp);
+    }
+
+    /**
+     * Get the settings array by entity id.
+     *
+     * @param string $entId Entity id of the selected idp
+     */
+    public function getSettingsByEntityId(string $entId): array
+    {
+        $idp = $this->Idps->getActiveByEntityId($entId);
+
+        return $this->getSettingsByIdp($idp);
+    }
+
+    private function getSettingsByIdp(array $idp): array
+    {
         $idpSigningCerts = array($idp['x509']);
 
         if (!empty($idp['x509_new'])) {
@@ -55,6 +72,9 @@ class Saml
             // Ex. http://sp.example.com/
             //     http://example.com/sp/
             'baseurl' => $this->Config->configArr['saml_baseurl'],
+
+            // Save IdP id
+            'idp_id' => (int) $idp['id'],
 
             // Service Provider Data that we are deploying
             'sp' => array(

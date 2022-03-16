@@ -112,7 +112,7 @@
     {% endif %}
 
     <!-- BLOXBERG BUTTON -->
-    {% if not Entity.isReadOnly %}
+    {% if not Entity.isReadOnly and App.Config.configArr.blox_enabled %}
       <a href='#' class='elab-tooltip mr-1' data-action='bloxberg'>
         <span>{{ 'Add to blockchain'|trans }}</span>
         <i title='{{ 'Add to blockchain'|trans }}' class='fas fa-cubes fa-2x'></i>

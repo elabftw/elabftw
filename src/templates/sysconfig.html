@@ -267,6 +267,20 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
   </select>
   <p class='smallgray'>{{ 'You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login information in the admin panel.'|trans|raw }}</p>
   {% include 'ts-config.html' %}
+
+  <h3 class='mt-3'>{{ 'Blockchain timestamp configuration'|trans }}</h3>
+  <hr>
+  <label for='blox_enabled'>{{ 'Enable blockchain timestamping with Bloxberg:'|trans }}</label>
+  <select class='form-control col-md-4' data-trigger='change' data-model='config' data-target='blox_enabled' id='blox_enabled' autocomplete='off'>
+    <option value='1' {{ App.Config.configArr.blox_enabled ? ' selected' }}>{{ 'Yes'|trans }}</option>
+    <option value='0' {{ not App.Config.configArr.blox_enabled ? 'selected' }}>{{ 'No'|trans }}</option>
+  </select>
+
+  <label for='blox_anon'>{{ 'Anonymize author for GDPR compliance:'|trans }}</label>
+  <select class='form-control col-md-4' data-trigger='change' data-model='config' data-target='blox_anon' id='blox_anon' autocomplete='off'>
+    <option value='1' {{ App.Config.configArr.blox_anon ? ' selected' }}>{{ 'Yes'|trans }}</option>
+    <option value='0' {{ not App.Config.configArr.blox_anon ? 'selected' }}>{{ 'No'|trans }}</option>
+  </select>
 </div>
 
 <!-- TAB 5 SECURITY -->

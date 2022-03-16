@@ -167,6 +167,8 @@ class Check
     {
         $allowed = array(
             'all',
+            'blox_anon',
+            'blox_enabled',
             'body',
             'bodyappend',
             'boundevent',

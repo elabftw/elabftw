@@ -244,7 +244,9 @@ final class Config
             ('s3_bucket_name', ''),
             ('s3_path_prefix', ''),
             ('s3_region', ''),
-            ('s3_endpoint', '')";
+            ('s3_endpoint', ''),
+            ('blox_anon', '0'),
+            ('blox_enabled', '1')";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);

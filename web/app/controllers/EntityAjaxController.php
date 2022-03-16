@@ -179,7 +179,7 @@ try {
     }
 
     // BLOXBERG
-    if ($Request->request->has('bloxberg')) {
+    if ($Request->request->has('bloxberg') && $App->Config->configArr['blox_enabled']) {
         $Make = new MakeBloxberg(new Client(), $Entity);
         $Response->setData(array(
             'res' => $Make->timestamp(),

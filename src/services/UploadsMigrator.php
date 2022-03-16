@@ -32,6 +32,10 @@ class UploadsMigrator
         $localFiles = $this->findLocal();
         foreach ($localFiles as $upload) {
             $this->targetFs->writeStream($upload['long_name'], $this->sourceFs->readStream($upload['long_name']));
+            // also upload the thumbnail if it exists
+            if ($this->sourceFs->fileExists($upload['long_name'] . '_th.jpg')) {
+                $this->targetFs->writeStream($upload['long_name'] . '_th.jpg', $this->sourceFs->readStream($upload['long_name'] . '_th.jpg'));
+            }
             $sql = 'UPDATE uploads SET storage = :storage WHERE id = :id';
             $req = $this->Db->prepare($sql);
             $req->bindValue(':storage', StorageFactory::S3);

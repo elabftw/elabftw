@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use function date;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Traits\CsvTrait;
@@ -50,7 +51,11 @@ class MakeCsv extends AbstractMake implements FileMakerInterface
         $rows = array();
         foreach ($this->idArr as $id) {
             $this->Entity->setId((int) $id);
-            $permissions = $this->Entity->getPermissions();
+            try {
+                $permissions = $this->Entity->getPermissions();
+            } catch (IllegalActionException $e) {
+                continue;
+            }
             if ($permissions['read']) {
                 $row = array(
                     $this->Entity->entityData['id'],

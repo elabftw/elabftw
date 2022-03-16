@@ -650,6 +650,16 @@ abstract class AbstractEntity implements CrudInterface
         return array_column($req->fetchAll(), 'id');
     }
 
+    public function getIdFromUser(int $userid): array
+    {
+        $sql = 'SELECT id FROM ' . $this->getTable() . ' WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid);
+        $req->execute();
+
+        return array_column($req->fetchAll(), 'id');
+    }
+
     public function addToExtendedFilter(string $extendedFilter, array $bindExtendedValues = array()): void
     {
         $this->extendedFilter .= $extendedFilter . ' ';

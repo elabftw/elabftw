@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\CreateNotificationParams;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
@@ -68,7 +69,11 @@ class MakeMultiPdf extends AbstractMake implements FileMakerInterface
     private function addToPdf(int $id): void
     {
         $this->Entity->setId($id);
-        $permissions = $this->Entity->getPermissions();
+        try {
+            $permissions = $this->Entity->getPermissions();
+        } catch (IllegalActionException $e) {
+            return;
+        }
         if ($permissions['read']) {
             $currentEntity = new MakePdf($this->mpdfProvider, $this->Entity);
             $currentEntity->createNotifications = false;

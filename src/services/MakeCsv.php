@@ -40,7 +40,7 @@ class MakeCsv extends AbstractMake implements FileMakerInterface
      */
     protected function getHeader(): array
     {
-        return  array('id', 'date', 'title', 'content', 'category', 'elabid', 'rating', 'url');
+        return  array('id', 'date', 'title', 'content', 'category', 'elabid', 'rating', 'url', 'metadata');
     }
 
     /**
@@ -66,6 +66,7 @@ class MakeCsv extends AbstractMake implements FileMakerInterface
                     $this->Entity->entityData['elabid'],
                     $row[] = $this->Entity->entityData['rating'],
                     $this->getUrl(),
+                    $this->Entity->entityData['metadata'] ?? '',
                 );
                 $rows[] = $row;
             }

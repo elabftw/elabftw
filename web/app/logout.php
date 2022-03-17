@@ -147,9 +147,7 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
         $samlAuthLib = new SamlAuthLib($settings);
 
         // do not attempt SLO if no SLO is configured/supported
-        $idpSupportSLO = !empty($settings['idp']['singleLogoutService']['url']);
-
-        if ($idpSupportSLO) {
+        if (!empty($settings['idp']['singleLogoutService']['url'])) {
             // initiate SAML SLO, skip destroying session
             $samlAuthLib->logout($redirectUrl, array(), null, $sessionIndex);
             exit;

@@ -290,16 +290,16 @@
         },
         {
             "name": "directorytree/ldaprecord",
-            "version": "v2.10.1",
+            "version": "v2.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DirectoryTree/LdapRecord.git",
-                "reference": "bf512d9af7a7b0e2ed7a666ab29cefdd027bee88"
+                "reference": "56cf46e9b7714d66d2d4018afcb100684016f783"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/bf512d9af7a7b0e2ed7a666ab29cefdd027bee88",
-                "reference": "bf512d9af7a7b0e2ed7a666ab29cefdd027bee88",
+                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/56cf46e9b7714d66d2d4018afcb100684016f783",
+                "reference": "56cf46e9b7714d66d2d4018afcb100684016f783",
                 "shasum": ""
             },
             "require": {
@@ -359,7 +359,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-02-25T16:00:51+00:00"
+            "time": "2022-03-15T11:34:58+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -881,16 +881,16 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v9.3.1",
+            "version": "v9.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "7cf6c0c9fc14a1ea4a9860d6e69b52e513cb505f"
+                "reference": "7ef269f27f8ac0e1d0217a28ff5544ea8bbd0fee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/7cf6c0c9fc14a1ea4a9860d6e69b52e513cb505f",
-                "reference": "7cf6c0c9fc14a1ea4a9860d6e69b52e513cb505f",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/7ef269f27f8ac0e1d0217a28ff5544ea8bbd0fee",
+                "reference": "7ef269f27f8ac0e1d0217a28ff5544ea8bbd0fee",
                 "shasum": ""
             },
             "require": {
@@ -925,7 +925,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2022-03-03T14:08:19+00:00"
+            "time": "2022-03-12T17:02:05+00:00"
         },
         {
             "name": "jblond/twig-trans",
@@ -9465,5 +9465,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.2.0"
 }

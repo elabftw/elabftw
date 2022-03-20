@@ -233,19 +233,7 @@ class LoginController implements ControllerInterface
             case 'saml':
                 $Saml = new Saml($this->App->Config, new Idps());
                 $idpId = (int) $this->App->Request->request->get('idpId');
-                // set a cookie to remember the idpid, used later on the assertion step
-                $cookieOptions = array(
-                    'expires' => time() + 300,
-                    'path' => '/',
-                    'domain' => '',
-                    'secure' => true,
-                    'httponly' => true,
-                    // IMPORTANT: because we get redirected from IDP, SameSite attribute has to be None here!
-                    // otherwise cookies won't be sent and we won't be able to know for which IDP we assert the response
-                    // during the second part of the auth
-                    'samesite' => 'None',
-                );
-                setcookie('idp_id', (string) $idpId, $cookieOptions);
+                // No cookie is required anymore, as entity Id is extracted from response
                 $settings = $Saml->getSettings($idpId);
                 return new SamlAuth(new SamlAuthLib($settings), $this->App->Config->configArr, $settings);
 

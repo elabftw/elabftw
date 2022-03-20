@@ -139,7 +139,7 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
     // originally logged in using saml, we should try initiating SLO
     try {
         $Saml = new Saml($App->Config, new Idps());
-        $settings = $Saml->getSettings($idpId);
+        $settings = $Saml->getSettings($idpId ?? 0);
 
         // manually overwrite basepath with basepath + /app, to workaround php-saml#249
         $settings['baseurl'] .= '/app';
@@ -149,7 +149,7 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
         // do not attempt SLO if no SLO is configured/supported
         if (!empty($settings['idp']['singleLogoutService']['url'])) {
             // initiate SAML SLO, skip destroying session
-            $samlAuthLib->logout($redirectUrl, array(), null, $sessionIndex);
+            $samlAuthLib->logout($redirectUrl, array(), null, $sessionIndex ?? null);
             exit;
         }
 

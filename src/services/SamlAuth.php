@@ -31,6 +31,7 @@ use Lcobucci\JWT\Encoding\CannotDecodeContent;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Token\InvalidTokenStructure;
+use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
@@ -93,6 +94,9 @@ class SamlAuth implements AuthInterface
 
         try {
             $parsedToken = $conf->parser()->parse($token);
+            if (!$parsedToken instanceof UnencryptedToken) {
+                throw new UnauthorizedException('Decoding JWT Token failed');
+            }
             $conf->validator()->assert($parsedToken, ...$conf->validationConstraints());
 
             return array($parsedToken->claims()->get('sid'), $parsedToken->claims()->get('idp_id'));

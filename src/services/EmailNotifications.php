@@ -69,8 +69,13 @@ class EmailNotifications
 
     private function getNotificationsToSend(): array
     {
-        $sql = 'SELECT id, userid, category, body FROM notifications WHERE send_email = 1 AND email_sent = 0';
+        $sql = 'SELECT id, userid, category, body FROM notifications WHERE send_email = 1 AND email_sent = 0 AND (
+            CASE WHEN category = :deadline THEN CAST(NOW() AS DATETIME) > CAST(
+                DATE_ADD(
+                    CAST(JSON_EXTRACT(body, "$.deadline") AS DATETIME), INTERVAL - 30 MINUTE) AS DATETIME)
+            END)';
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':deadline', Notifications::STEP_DEADLINE, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -123,6 +128,11 @@ class EmailNotifications
                 $subject .= _('Account validated');
                 $url = SITE_URL . '/login.php';
                 $body = _('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ') . $url;
+                break;
+            case Notifications::STEP_DEADLINE:
+                $subject .= _('A step deadline is approaching');
+                $url = SITE_URL . '/' . $notifBody['entity_page'] . '.php?mode=view&id=' . $notifBody['entity_id'];
+                $body = _('Hello. A step deadline is approaching: ') . $url;
                 break;
             default:
                 throw new ImproperActionException('Invalid notification category');

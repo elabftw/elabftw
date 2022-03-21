@@ -188,6 +188,8 @@ class Check
             'notif_user_created_email',
             'notif_user_need_validation',
             'notif_user_need_validation_email',
+            'notif_step_deadline',
+            'notif_step_deadline_email',
             'privacypolicy',
             'rating',
             'real_name',

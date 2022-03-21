@@ -71,6 +71,10 @@ try {
             'designation' => _('New comment notification'),
             'setting' => 'notif_comment_created',
         ),
+        array(
+            'designation' => _('Step deadline'),
+            'setting' => 'notif_step_deadline',
+        ),
     );
 
     if ($App->Users->userData['is_admin']) {

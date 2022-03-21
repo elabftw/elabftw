@@ -171,11 +171,11 @@ class Steps implements CrudInterface
         // now create a notification if none exist for this step id already
         $Notifications = new Notifications($this->Entity->Users);
         $Notifications->createIfNotExists(new CreateNotificationParams(
-            Notifications::DEADLINE,
+            Notifications::STEP_DEADLINE,
             array(
                 'step_id' => $this->id,
                 'entity_id' => $this->Entity->entityData['id'],
-                'entity_type' => $this->Entity->type,
+                'entity_page' => $this->Entity->page,
                 'deadline' => $step['deadline'],
             ),
         ));

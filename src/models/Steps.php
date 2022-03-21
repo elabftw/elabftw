@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
@@ -121,6 +122,9 @@ class Steps implements CrudInterface
         if ($target === 'finished') {
             return $this->toggleFinished();
         }
+        if ($target === 'deadline_notif') {
+            return $this->toggleNotif();
+        }
         if ($target === 'body') {
             $content = $params->getContent();
         } else {
@@ -149,6 +153,35 @@ class Steps implements CrudInterface
     {
         $sql = 'UPDATE ' . $this->Entity->type . '_steps SET finished = !finished,
             finished_time = NOW() WHERE id = :id AND item_id = :item_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    private function toggleNotif(): bool
+    {
+        // get the current deadline value so we can insert it in the notification
+        $sql = 'SELECT deadline FROM ' . $this->Entity->type . '_steps WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->execute();
+        $step = $req->fetch();
+
+        // now create a notification if none exist for this step id already
+        $Notifications = new Notifications($this->Entity->Users);
+        $Notifications->createIfNotExists(new CreateNotificationParams(
+            Notifications::DEADLINE,
+            array(
+                'step_id' => $this->id,
+                'entity_id' => $this->Entity->entityData['id'],
+                'entity_type' => $this->Entity->type,
+                'deadline' => $step['deadline'],
+            ),
+        ));
+
+        // update the deadline_notif column so we now if this step has a notif set for deadline or not
+        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET deadline_notif = !deadline_notif WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);

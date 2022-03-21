@@ -34,6 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
       StepC.update(parseInt(el.dataset.stepid, 10), value, Target.Deadline).then(() => {
         reloadElement('stepsDiv');
       });
+    // TOGGLE DEADLINE NOTIFICATIONS ON STEP
+    } else if (el.matches('[data-action="step-toggle-deadline-notif"]')) {
+      StepC.update(parseInt(el.dataset.stepid, 10), null, Target.DeadlineNotif).then(() => {
+        reloadElement('stepsDiv');
+      });
+
     // DESTROY DEADLINE ON STEP
     } else if (el.matches('[data-action="step-destroy-deadline"]')) {
       StepC.update(parseInt(el.dataset.stepid, 10), null, Target.Deadline).then(() => {

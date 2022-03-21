@@ -46,6 +46,9 @@ class Notifications implements CrudInterface
     // when there is a problem with the PDF creation
     public const PDF_GENERIC_ERROR = 8;
 
+    // when a step has a deadline with notifications activated
+    public const DEADLINE = 9;
+
     protected Db $Db;
 
     private int $userid;
@@ -78,6 +81,28 @@ class Notifications implements CrudInterface
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
+    }
+
+    public function createIfNotExists(CreateNotificationParamsInterface $params): int
+    {
+        $body = json_decode($params->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        // check if a similar notification is not already there
+        $sql = 'SELECT id FROM notifications WHERE category = :category AND JSON_EXTRACT(body, "$.step_id") = :step_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':category', $params->getCategory(), PDO::PARAM_INT);
+        $req->bindValue(':step_id', $body['step_id'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        // if there is a notification for this step id, delete it
+        if ($req->rowCount() > 0) {
+            $sql = 'DELETE FROM notifications WHERE id = :id';
+            $reqDel = $this->Db->prepare($sql);
+            $reqDel->bindValue(':id', $req->fetch()['id'], PDO::PARAM_INT);
+            $reqDel->execute();
+            return 0;
+        }
+        // otherwise, create a notification for it
+        return $this->create($params);
     }
 
     public function read(ContentParamsInterface $params): array

@@ -1105,6 +1105,10 @@ the form-control fails to do that so we do the border ourselves */
     }
 }
 
+[data-icon='bell'].active {
+    color: $elabblue;
+}
+
 /* for icons such as pin */
 .grayed-out {
     color: $lightgraybutnottoolight;

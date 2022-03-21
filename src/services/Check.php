@@ -175,6 +175,7 @@ class Check
             'comment',
             'date',
             'deadline',
+            'deadline_notif',
             'file',
             'finished',
             'finished_time',

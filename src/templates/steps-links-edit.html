@@ -53,10 +53,12 @@
                 <div id='stepDeadlineDiv_{{ step.id }}'>
                   {{ 'Deadline:'|trans }}
                   {% if step.deadline %}
-                  <!-- here the data-ma-input-value is not formatted so it works with the datetime-local input type, but the displayed one is formatted -->
-                  <span data-stepid='{{ step.id }}' data-target='deadline' data-ma-type='datetime-local' data-ma-input-value='{{ step.deadline|date('Y-m-d\\TH:i') }}' class='step editable hl-hover'>{{ step.deadline|format_datetime() }}</span><span class='ml-2' data-action='step-destroy-deadline' data-stepid='{{ step.id }}'><i class='fas fa-trash-alt' ></i></span>
+                  <!-- here the data-ma-input-value is formatted so it works with the datetime-local input type, and the displayed one is formatted differently to be more readable -->
+                  <span data-stepid='{{ step.id }}' data-target='deadline' data-ma-type='datetime-local' data-ma-input-value='{{ step.deadline|date('Y-m-d\\TH:i') }}' class='step editable hl-hover'>{{ step.deadline|format_datetime() }}</span>
+                  <span class='ml-2' data-action='step-toggle-deadline-notif' data-stepid='{{ step.id }}' title='{{ 'Toggle notifications'|trans }}'><i class='far fa-bell {{ step.deadline_notif ? 'active' }}' ></i></span>
+                  <span class='ml-2' data-action='step-destroy-deadline' data-stepid='{{ step.id }}' title='{{ 'Clear deadline'|trans }}'><i class='fas fa-trash-alt' ></i></span>
                   {% else %}
-                  <span data-action='replace-with-next'><i class='fas fa-plus-circle'></i></span>
+                  <span data-action='replace-with-next' title='{{ 'Add deadline'|trans }}'><i class='fas fa-plus-circle'></i></span>
                   <div hidden>
                     <select class='form-control-inline' id='stepSelectDeadline_{{ step.id }}'>
                       <option disabled>{{ 'Set deadline in'|trans }}</option>

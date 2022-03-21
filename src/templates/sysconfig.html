@@ -267,6 +267,20 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
   </select>
   <p class='smallgray'>{{ 'You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login information in the admin panel.'|trans|raw }}</p>
   {% include 'ts-config.html' %}
+
+  <h3 class='mt-3'>{{ 'Blockchain timestamp configuration'|trans }}</h3>
+  <hr>
+  <label for='blox_enabled'>{{ 'Enable blockchain timestamping with Bloxberg:'|trans }}</label>
+  <select class='form-control col-md-4' data-trigger='change' data-model='config' data-target='blox_enabled' id='blox_enabled' autocomplete='off'>
+    <option value='1' {{ App.Config.configArr.blox_enabled ? ' selected' }}>{{ 'Yes'|trans }}</option>
+    <option value='0' {{ not App.Config.configArr.blox_enabled ? 'selected' }}>{{ 'No'|trans }}</option>
+  </select>
+
+  <label for='blox_anon'>{{ 'Anonymize author for GDPR compliance:'|trans }}</label>
+  <select class='form-control col-md-4' data-trigger='change' data-model='config' data-target='blox_anon' id='blox_anon' autocomplete='off'>
+    <option value='1' {{ App.Config.configArr.blox_anon ? ' selected' }}>{{ 'Yes'|trans }}</option>
+    <option value='0' {{ not App.Config.configArr.blox_anon ? 'selected' }}>{{ 'No'|trans }}</option>
+  </select>
 </div>
 
 <!-- TAB 5 SECURITY -->
@@ -428,13 +442,13 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
               <label for='saml-entityid'>EntityId:</label>
               <input class='form-control col-md-6' type='url' id='saml-entityid' name='saml_entityid' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_entityid }}' />
 
-              <label for='saml-acs-binding'>SAML protocol binding to be used when returning the Response message.</label>
+              <label for='saml-acs-binding'>Assertion Consumer Service binding (only POST supported)</label>
               <select class='form-control col-md-6' id='saml-acs-binding' name='saml_acs_binding'>
                 <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ App.Config.configArr.saml_acs_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
                 <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ App.Config.configArr.saml_acs_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
               </select>
 
-              <label for='saml-slo-binding'>Single Logout Service binding.</label>
+              <label for='saml-slo-binding'>Single Logout Service binding (only Redirect supported).</label>
               <select class='form-control col-md-6' id='saml-slo-binding' name='saml_slo_binding'>
                 <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ App.Config.configArr.saml_slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
                 <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ App.Config.configArr.saml_slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
@@ -448,6 +462,9 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
               <label for='saml_privatekey'>x509 Certificate private key</label>
               <textarea class='form-control col-md-6' id='saml_privatekey' name='saml_privatekey'>{{ App.Config.configArr.saml_privatekey }}</textarea>
+
+              <label for='x509_new'>Rollover x509 Certificate in PEM format (only published in metadata, not used)</label>
+              <textarea class='form-control col-md-6' id='x509_new' name='saml_x509_new'>{{ App.Config.configArr.saml_x509_new }}</textarea>
 
               <label for='saml-team-create'>Create team sent by IDP if it doesn't exist already:</label>
               <select class='form-control col-md-6' id='saml-team-create' name='saml_team_create'>
@@ -577,24 +594,29 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
                       <label for='editIdpName_{{ idp.id }}'>Friendly name:</label>
                       <input class='form-control col-md-6' type='text' id='editIdpName_{{ idp.id }}' name='name' value='{{ idp.name }}' />
-                      <label for='entityId_{{ idp.id }}'>entityId:</label>
+                      <label for='entityId_{{ idp.id }}'>EntityId:</label>
                       <input class='form-control col-md-6' type='url' id='entityId_{{ idp.id }}' name='entityid' value='{{ idp.entityid }}' />
                       <label for='ssoUrl_{{ idp.id }}'>Single Sign-On URL:</label>
                       <input class='form-control col-md-6' type='url' id='ssoUrl_{{ idp.id }}' name='ssoUrl' value='{{ idp.sso_url }}' />
-                      <label for='ssoBinding_{{ idp.id }}'>Single Sign-On binding:</label>
+                      <label for='ssoBinding_{{ idp.id }}'>Single Sign-On binding (only Redirect is supported):</label>
                       <select class='form-control col-md-6' id='ssoBinding_{{ idp.id }}' name='ssoBinding'>
                         <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ idp.sso_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
                         <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ idp.sso_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
                       </select>
                       <label for='sloUrl_{{ idp.id }}'>Single Log Out URL:</label>
                       <input class='form-control col-md-6' type='url' id='sloUrl_{{ idp.id }}' name='sloUrl' value='{{ idp.slo_url }}' />
-                      <label for='sloBinding_{{ idp.id }}'>Single Log Out binding:</label>
+                      <label for='sloBinding_{{ idp.id }}'>Single Log Out binding (only Redirect is supported):</label>
                       <select class='form-control col-md-6' id='sloBinding_{{ idp.id }}' name='sloBinding'>
                         <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ idp.slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
                         <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ idp.slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
                       </select>
+
                       <label for='x509_{{ idp.id }}'>x509cert:</label>
                       <textarea class='form-control col-md-6' name='x509' id='x509_{{ idp.id }}'>{{ idp.x509 }}</textarea>
+
+                      <label for='x509_new_{{ idp.id }}'>x509cert (additional for rollover):</label>
+                      <textarea class='form-control col-md-6' name='x509_new' id='x509_new_{{ idp.id }}'>{{ idp.x509_new }}</textarea>
+
                       <label for='saml-email_{{ idp.id }}'>What attribute to look for the email:</label>
                       <input class='form-control col-md-6' type='text' id='saml-email_{{ idp.id }}' name='email_attr' value='{{ idp.email_attr }}' />
 
@@ -628,32 +650,35 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
               <div class='form-group'>
                 <input type='hidden' name='idpsCreate' />
 
-                <label for='name'>{{ 'Name'|trans }}</label>
+                <label for='name'>Friendly Name:</label>
                 <input class='form-control col-md-6' type='text' id='name' name='name' required />
 
-                <label for='entityid'>EntityId</label>
+                <label for='entityid'>EntityId:</label>
                 <input class='form-control col-md-6' type='url' id='entityid' name='entityid' required />
 
-                <label for='ssoUrl'>SSO URL</label>
+                <label for='ssoUrl'>Single Sign-On URL:</label>
                 <input class='form-control col-md-6' type='url' id='ssoUrl' name='ssoUrl' required />
 
-                <label for='ssoBinding'>SSO Binding</label>
+                <label for='ssoBinding'>Single Sign-On Binding (only Redirect is supported):</label>
                 <select class='form-control col-md-6' id='ssoBinding' name='ssoBinding'>
                   <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'>Redirect</option>
                   <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'>POST</option>
                 </select>
 
-                <label for='sloUrl'>SLO URL</label>
+                <label for='sloUrl'>Single Log Out URL:</label>
                 <input class='form-control col-md-6' type='url' id='sloUrl' name='sloUrl' />
 
-                <label for='sloBinding'>SLO Binding</label>
+                <label for='sloBinding'>Single Log Out Binding (only Redirect is supported):</label>
                 <select class='form-control col-md-6' id='sloBinding' name='sloBinding'>
                   <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'>Redirect</option>
                   <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'>POST</option>
                 </select>
 
-                <label for='x509_idp'>x509 Certificate</label>
+                <label for='x509_idp'>x509 Certificate:</label>
                 <textarea class='form-control col-md-6' id='x509_idp' name='x509' required></textarea>
+
+                <label for='x509_new_idp'>x509 Certificate (additional for rollover):</label>
+                <textarea class='form-control col-md-6' id='x509_new_idp' name='x509_new' required></textarea>
 
                 <label for='newidp-email_attr'>What attribute to look for the email:</label>
                 <input class='form-control col-md-6' type='text' id='newidp-email_attr' name='email_attr' />

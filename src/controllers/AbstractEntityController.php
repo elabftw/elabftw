@@ -130,6 +130,10 @@ abstract class AbstractEntityController implements ControllerInterface
         $FavTags = new FavTags($this->App->Users);
         $favTagsArr = $FavTags->read(new ContentParams());
 
+        // the items categoryArr for add link input
+        $ItemsTypes = new ItemsTypes($this->App->Users);
+        $itemsCategoryArr = $ItemsTypes->readAll();
+
         $template = 'show.html';
 
         $renderArr = array(
@@ -137,6 +141,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
             'deletableXp' => $this->getDeletableXp(),
+            'itemsCategoryArr' => $itemsCategoryArr,
             'favTagsArr' => $favTagsArr,
             'pinnedArr' => $this->Entity->Pins->getPinned(),
             'itemsArr' => $itemsArr,

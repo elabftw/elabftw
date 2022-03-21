@@ -12,7 +12,7 @@ import Link from './Link.class';
 import Step from './Step.class';
 import i18next from 'i18next';
 import { relativeMoment, makeSortableGreatAgain, reloadElement } from './misc';
-import { getCheckedBoxes, notif, getEntity, adjustHiddenState } from './misc';
+import { addAutocompleteToLinkInputs, getCheckedBoxes, notif, getEntity, adjustHiddenState } from './misc';
 import { Entity, Target } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -162,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // clear input field
         (document.querySelector('.linkinput') as HTMLInputElement).value = '';
       });
+      $(this).val('');
     }
   });
 
@@ -195,28 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // AUTOCOMPLETE
-  let cache = {};
-  // this is the select category filter on add link input
-  const catFilterEl = (document.getElementById('addLinkCatFilter') as HTMLInputElement);
-  if (catFilterEl) {
-    // when we change the category filter, reset the cache
-    catFilterEl.addEventListener('change', () => {
-      cache = {};
-    });
-    $('.linkinput').autocomplete({
-      source: function(request: Record<string, string>, response: (data) => void): void {
-        const term = request.term;
-        if (term in cache) {
-          response(cache[term]);
-          return;
-        }
-        $.getJSON(`app/controllers/EntityAjaxController.php?source=items&filter=${catFilterEl.value}`, request, function(data) {
-          cache[term] = data;
-          response(data);
-        });
-      },
-    });
-  }
+  addAutocompleteToLinkInputs();
 
   // DESTROY
   $(document).on('click', '.linkDestroy', function() {

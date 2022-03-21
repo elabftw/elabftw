@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use DateTimeImmutable;
+use Defuse\Crypto\Key;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Saml;
 use Elabftw\Elabftw\Tools;
@@ -24,7 +26,17 @@ use Elabftw\Models\Users;
 use Elabftw\Models\ValidatedUser;
 use function is_array;
 use function is_int;
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Encoding\CannotDecodeContent;
+use Lcobucci\JWT\Signer\Hmac\Sha256;
+use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Token\InvalidTokenStructure;
+use Lcobucci\JWT\UnencryptedToken;
+use Lcobucci\JWT\Validation\Constraint\PermittedFor;
+use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use OneLogin\Saml2\Auth as SamlAuthLib;
+use const SECRET_KEY;
 
 /**
  * SAML auth service
@@ -37,9 +49,60 @@ class SamlAuth implements AuthInterface
 
     private array $samlUserdata = array();
 
+    private ?string $samlSessionIdx;
+
     public function __construct(private SamlAuthLib $SamlAuthLib, private array $configArr, private array $settings)
     {
         $this->AuthResponse = new AuthResponse('saml');
+    }
+
+    public static function getJWTConfig(): Configuration
+    {
+        $secretKey = Key::loadFromAsciiSafeString(SECRET_KEY);
+        $config = Configuration::forSymmetricSigner(
+            new Sha256(),
+            InMemory::plainText($secretKey->getRawBytes()),
+        );
+        // TODO validate the userid claim and other stuff
+        $config->setValidationConstraints(new PermittedFor('saml-session'));
+        $config->setValidationConstraints(new SignedWith($config->signer(), $config->signingKey()));
+        return $config;
+    }
+
+    public function encodeToken(int $idpId): string
+    {
+        $now = new DateTimeImmutable();
+        $config = self::getJWTConfig();
+        $token = $config->builder()
+                // Configures the audience (aud claim)
+                ->permittedFor('saml-session')
+                // Configures the time that the token was issue (iat claim)
+                ->issuedAt($now)
+                // Configures the expiration time of the token (exp claim)
+                ->expiresAt($now->modify('+1 months'))
+                // Configures a new claim, called "uid"
+                ->withClaim('sid', $this->getSessionIndex())
+                ->withClaim('idp_id', $idpId)
+                // Builds a new token
+                ->getToken($config->signer(), $config->signingKey());
+        return $token->toString();
+    }
+
+    public static function decodeToken(string $token): array
+    {
+        $conf = self::getJWTConfig();
+
+        try {
+            $parsedToken = $conf->parser()->parse($token);
+            if (!$parsedToken instanceof UnencryptedToken) {
+                throw new UnauthorizedException('Decoding JWT Token failed');
+            }
+            $conf->validator()->assert($parsedToken, ...$conf->validationConstraints());
+
+            return array($parsedToken->claims()->get('sid'), $parsedToken->claims()->get('idp_id'));
+        } catch (CannotDecodeContent | InvalidTokenStructure | RequiredConstraintsViolated $e) {
+            throw new UnauthorizedException('Decoding JWT Token failed');
+        }
     }
 
     public function tryAuth(): AuthResponse
@@ -70,6 +133,9 @@ class SamlAuth implements AuthInterface
 
         // get the user information sent by IDP
         $this->samlUserdata = $this->SamlAuthLib->getAttributes();
+
+        // get session index
+        $this->samlSessionIdx = $this->SamlAuthLib->getSessionIndex();
 
         // GET EMAIL
         $email = $this->getEmail();
@@ -103,6 +169,11 @@ class SamlAuth implements AuthInterface
         $this->AuthResponse->setTeams();
 
         return $this->AuthResponse;
+    }
+
+    public function getSessionIndex(): ?string
+    {
+        return $this->samlSessionIdx;
     }
 
     private function getEmail(): string

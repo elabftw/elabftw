@@ -80,7 +80,17 @@
         <input type='text' id='createTagInputMultiple' class='createTagInputMultiple mr-1 mb-2 form-control' data-autocomplete='tags' placeholder='{{ 'Add a tag'|trans }}' />
 
         <!-- Add a link -->
-        <input type='text' id='linkInputMultiple' class='linkinput mr-1 mb-2 form-control' placeholder='{{ 'Add a link'|trans }}' />
+        <div class='input-group mb-2 mr-2'>
+          <input type='text' id='linkInputMultiple' data-autocomplete='links' class='form-control' placeholder='{{ 'Add a link'|trans }}' />
+          <div class='input-group-append'>
+            <select id='addLinkCatFilter' class='brl-none form-control'>
+              <option selected value=''>{{ 'Any category'|trans }}</option>
+              {% for cat in itemsCategoryArr %}
+                <option value='{{ cat.category_id }}'>{{ cat.category }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
 
         <button data-action='lock-selected-entities' class='button btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
         {% if Entity.type == 'experiments' %}

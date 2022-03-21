@@ -15,6 +15,7 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Config;
 use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -108,6 +109,13 @@ class MakeBloxberg extends AbstractMake
 
     private function certify(string $hash): string
     {
+        // in order to be GDPR compliant, it is possible to anonymize the author
+        $author = $this->Entity->entityData['fullname'];
+        $Config = Config::getConfig();
+        if ($Config->configArr['blox_anon']) {
+            $author = 'eLabFTW user';
+        }
+
         $options = array(
             'headers' => array(
                 'api_key' => $this->apiKey,
@@ -118,7 +126,7 @@ class MakeBloxberg extends AbstractMake
                 'cridType' => 'sha2-256',
                 'enableIPFS' => false,
                 'metadataJson' => json_encode(array(
-                    'author' => $this->Entity->entityData['fullname'],
+                    'author' => $author,
                     'elabid' => $this->Entity->entityData['elabid'],
                     'instanceid' => 'not implemented',
                 ), JSON_THROW_ON_ERROR, 512),

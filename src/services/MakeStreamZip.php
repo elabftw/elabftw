@@ -11,9 +11,11 @@ namespace Elabftw\Services;
 
 use function count;
 use Elabftw\Elabftw\ContentParams;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use function json_encode;
+use League\Flysystem\UnableToReadFile;
 use ZipStream\ZipStream;
 
 /**
@@ -71,13 +73,18 @@ class MakeStreamZip extends AbstractMakeZip
 
     /**
      * This is where the magic happens
+     * Note the different try catch blocks to skip issues that would stop the zip generation
      *
      * @param int $id The id of the item we are zipping
      */
     private function addToZip(int $id): void
     {
         $this->Entity->setId($id);
-        $permissions = $this->Entity->getPermissions();
+        try {
+            $permissions = $this->Entity->getPermissions();
+        } catch (IllegalActionException $e) {
+            return;
+        }
         if ($permissions['read']) {
             $uploadedFilesArr = $this->Entity->Uploads->readAllNormal();
             $entityArr = $this->Entity->entityData;
@@ -90,7 +97,11 @@ class MakeStreamZip extends AbstractMakeZip
             $this->folder = $this->getBaseFileName();
 
             if (!empty($uploadedFilesArr)) {
-                $this->addAttachedFiles($uploadedFilesArr);
+                try {
+                    $this->addAttachedFiles($uploadedFilesArr);
+                } catch (UnableToReadFile $e) {
+                    return;
+                }
             }
             $this->addCsv($id);
             $this->addPdf();

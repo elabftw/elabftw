@@ -34,6 +34,10 @@ try {
     if (!$App->Session->get('is_sysadmin') && $App->Config->configArr['admins_create_users'] === '0') {
         throw new IllegalActionException('Admin tried to create user directly');
     }
+    // check if we are admin of the correct team
+    if (!$App->Session->get('is_sysadmin') && (int) $Request->request->get('team') !== $App->Users->userData['team']) {
+        throw new IllegalActionException('Admin tried to create user in another team');
+    }
 
     if ((Check::id((int) $Request->request->get('team')) === false) ||
         !$Request->request->get('firstname') ||

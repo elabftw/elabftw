@@ -73,7 +73,7 @@ class EmailNotifications
             CASE WHEN category = :deadline THEN CAST(NOW() AS DATETIME) > CAST(
                 DATE_ADD(
                     CAST(JSON_EXTRACT(body, "$.deadline") AS DATETIME), INTERVAL - 30 MINUTE) AS DATETIME)
-            END)';
+            ELSE 1=1 END)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':deadline', Notifications::STEP_DEADLINE, PDO::PARAM_INT);
         $this->Db->execute($req);

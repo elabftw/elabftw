@@ -197,6 +197,7 @@ CREATE TABLE `experiments_steps` (
   `finished` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `finished_time` datetime DEFAULT NULL,
   `deadline` datetime DEFAULT NULL,
+  `deadline_notif` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -461,6 +462,7 @@ CREATE TABLE `items_types_steps` (
   `finished` tinyint(1) NOT NULL DEFAULT '0',
   `finished_time` datetime DEFAULT NULL,
   `deadline` datetime DEFAULT NULL,
+  `deadline_notif` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -757,6 +759,8 @@ CREATE TABLE `users` (
   `notif_user_created_email` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `notif_user_need_validation` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `notif_user_need_validation_email` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_step_deadline` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_step_deadline_email` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `auth_lock_time` datetime DEFAULT NULL,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
@@ -1065,6 +1069,7 @@ CREATE TABLE `items_steps` (
     `finished` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
     `finished_time` datetime DEFAULT NULL,
     `deadline` datetime DEFAULT NULL,
+    `deadline_notif` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
     KEY `fk_items_steps_items_id` (`item_id`),
     CONSTRAINT `fk_items_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1078,6 +1083,7 @@ CREATE TABLE `experiments_templates_steps` (
     `finished` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
     `finished_time` datetime DEFAULT NULL,
     `deadline` datetime DEFAULT NULL,
+    `deadline_notif` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
     KEY `fk_experiments_templates_steps_items_id` (`item_id`),
     CONSTRAINT `fk_experiments_templates_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE

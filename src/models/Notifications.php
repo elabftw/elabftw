@@ -107,9 +107,10 @@ class Notifications implements CrudInterface
 
     public function read(ContentParamsInterface $params): array
     {
-        $sql = 'SELECT id, category, body, is_ack, created_at FROM notifications WHERE userid = :userid ORDER BY created_at DESC LIMIT 10';
+        $sql = 'SELECT id, category, body, is_ack, created_at FROM notifications WHERE userid = :userid AND category != :deadline ORDER BY created_at DESC LIMIT 10';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindValue(':deadline', self::STEP_DEADLINE, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $notifs = $req->fetchAll();

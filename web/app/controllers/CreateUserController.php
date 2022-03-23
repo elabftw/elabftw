@@ -34,6 +34,14 @@ try {
     if (!$App->Session->get('is_sysadmin') && $App->Config->configArr['admins_create_users'] === '0') {
         throw new IllegalActionException('Admin tried to create user directly');
     }
+    // check if we are admin of the correct team
+    if (!$App->Session->get('is_sysadmin') && (int) $Request->request->get('team') !== $App->Users->userData['team']) {
+        throw new IllegalActionException('Admin tried to create user in another team');
+    }
+    // a non sysadmin cannot promote someone to sysadmin
+    if ($Request->request->get('usergroup') === '1' && $App->Session->get('is_sysadmin') != 1) {
+        throw new IllegalActionException('Only a sysadmin can put someone sysadmin.');
+    }
 
     if ((Check::id((int) $Request->request->get('team')) === false) ||
         !$Request->request->get('firstname') ||

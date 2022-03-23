@@ -54,7 +54,7 @@ try {
         }
         // a non sysadmin cannot demote a sysadmin
         if ($targetUser->userData['is_sysadmin'] && $Request->request->get('usergroup') !== '1' && $App->Session->get('is_sysadmin') != 1) {
-            throw new ImproperActionException(_('Only a sysadmin can demote another sysadmin.'));
+            throw new IllegalActionException('Only a sysadmin can demote another sysadmin.');
         }
 
         $targetUser->updateUser($Request->request->all());

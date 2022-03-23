@@ -75,7 +75,7 @@ try {
         default:
             throw new IllegalActionException('Bad table for updateOrdering.');
     }
-    $OrderingParams = new OrderingParams($Request->request->get('table'), $Request->request->get('ordering'));
+    $OrderingParams = new OrderingParams($Request->request->get('table'), $Request->request->all()['ordering']);
     $Entity->updateOrdering($OrderingParams);
 } catch (ImproperActionException | UnauthorizedException $e) {
     $Response->setData(array(

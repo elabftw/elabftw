@@ -21,30 +21,33 @@ use PDO;
  */
 class Notifications implements CrudInterface
 {
-    public const COMMENT_CREATED = 1;
+    public const COMMENT_CREATED = 10;
 
-    public const USER_CREATED = 2;
+    public const USER_CREATED = 11;
 
-    public const USER_NEED_VALIDATION = 3;
+    public const USER_NEED_VALIDATION = 12;
+
+    // when a step has a deadline with notifications activated
+    public const STEP_DEADLINE = 13;
 
     /**
      * Send an email to a new user to notify that admin validation is required.
      * This exists because experience shows that users don't read the notification and expect
      * their account to work right away.
      */
-    public const SELF_NEED_VALIDATION = 4;
+    public const SELF_NEED_VALIDATION = 20;
 
     // when our account has been validated
-    public const SELF_IS_VALIDATED = 5;
+    public const SELF_IS_VALIDATED = 30;
 
     // when there was an error during pdf generation because of MathJax
-    public const MATHJAX_FAILED = 6;
+    public const MATHJAX_FAILED = 40;
 
     // when an attached PDF file cannot be appended during PDF export
-    public const PDF_APPENDMENT_FAILED = 7;
+    public const PDF_APPENDMENT_FAILED = 50;
 
     // when there is a problem with the PDF creation
-    public const PDF_GENERIC_ERROR = 8;
+    public const PDF_GENERIC_ERROR = 60;
 
     protected Db $Db;
 
@@ -80,11 +83,34 @@ class Notifications implements CrudInterface
         return $this->Db->lastInsertId();
     }
 
+    public function createIfNotExists(CreateNotificationParamsInterface $params): int
+    {
+        $body = json_decode($params->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        // check if a similar notification is not already there
+        $sql = 'SELECT id FROM notifications WHERE category = :category AND JSON_EXTRACT(body, "$.step_id") = :step_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':category', $params->getCategory(), PDO::PARAM_INT);
+        $req->bindValue(':step_id', $body['step_id'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        // if there is a notification for this step id, delete it
+        if ($req->rowCount() > 0) {
+            $sql = 'DELETE FROM notifications WHERE id = :id';
+            $reqDel = $this->Db->prepare($sql);
+            $reqDel->bindValue(':id', $req->fetch()['id'], PDO::PARAM_INT);
+            $reqDel->execute();
+            return 0;
+        }
+        // otherwise, create a notification for it
+        return $this->create($params);
+    }
+
     public function read(ContentParamsInterface $params): array
     {
-        $sql = 'SELECT id, category, body, is_ack, created_at FROM notifications WHERE userid = :userid ORDER BY created_at DESC LIMIT 10';
+        $sql = 'SELECT id, category, body, is_ack, created_at FROM notifications WHERE userid = :userid AND category != :deadline ORDER BY created_at DESC LIMIT 10';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindValue(':deadline', self::STEP_DEADLINE, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $notifs = $req->fetchAll();
@@ -118,8 +144,8 @@ class Notifications implements CrudInterface
 
     private function getPref(int $category, bool $email = false): int
     {
-        // only the first 3 categories have a user setting for email/web notif
-        if ($category > 3) {
+        // only categories inferior to 20 have a user setting for email/web notif
+        if ($category >= 20) {
             return 1;
         }
 
@@ -127,6 +153,7 @@ class Notifications implements CrudInterface
             self::COMMENT_CREATED => 'notif_comment_created',
             self::USER_CREATED => 'notif_user_created',
             self::USER_NEED_VALIDATION => 'notif_user_need_validation',
+            self::STEP_DEADLINE => 'notif_step_deadline',
         );
 
         $suffix = '';

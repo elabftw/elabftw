@@ -30,15 +30,16 @@ export default class Step {
     return this.sender.send(payload);
   }
 
-  update(id: number, content: string): Promise<ResponseMsg> {
+  update(id: number, content: string|null, target = Target.Body): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,
       action: Action.Update,
       model: this.model,
-      target: Target.Body,
+      target: target,
       entity: this.entity,
       content: content,
       id : id,
+      notif: true,
     };
     return this.sender.send(payload);
   }

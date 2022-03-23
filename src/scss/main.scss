@@ -1080,7 +1080,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .clickable:hover,
-[data-action='toggle-next'] {
+[data-action] {
     cursor: pointer;
 }
 
@@ -1103,6 +1103,10 @@ the form-control fails to do that so we do the border ourselves */
     &.active {
         color: $elabblue;
     }
+}
+
+[data-icon='bell'].active {
+    color: $elabblue;
 }
 
 /* for icons such as pin */

@@ -9,7 +9,7 @@ import $ from 'jquery';
 import { Ajax } from './Ajax.class';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { notif, makeSortableGreatAgain, reloadElement } from './misc';
+import { notif, makeSortableGreatAgain, reloadElement, adjustHiddenState } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { EntityType, Payload, Target, Method, Model, Action } from './interfaces';
@@ -177,19 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /**
-   * All elements that have a save-hidden data attribute have their visibility depend on the saved state
-   * in localStorage. The localStorage key is the value of the save-hidden data attribute.
-   */
-  document.querySelectorAll('[data-save-hidden]').forEach(el => {
-    const localStorageKey = (el as HTMLElement).dataset.saveHidden + '-isHidden';
-    if (localStorage.getItem(localStorageKey) === '1') {
-      el.setAttribute('hidden', 'hidden');
-    // make sure to explicitely check for the value, because the key might not exist!
-    } else if (localStorage.getItem(localStorageKey) === '0') {
-      el.removeAttribute('hidden');
-    }
-  });
+  adjustHiddenState();
+
   /**
    * Make sure the icon for toggle-next is correct depending on the stored state in localStorage
    */
@@ -256,6 +245,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const value = targetEl.hasAttribute('hidden') ? '1' : '0';
         localStorage.setItem(targetKey, value);
       }
+
+    // REPLACE WITH NEXT ACTION
+    } else if (el.matches('[data-action="replace-with-next"]')) {
+      const targetEl = el.nextElementSibling as HTMLElement;
+      // show the target
+      targetEl.toggleAttribute('hidden');
+      // hide clicked element
+      el.toggleAttribute('hidden');
 
     // TOGGLE MODAL
     } else if (el.matches('[data-action="toggle-modal"]')) {

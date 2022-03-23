@@ -15,6 +15,7 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Models\Config;
 use jblond\TwigTrans\Translation;
 use Twig\Environment;
+use Twig\Extra\Intl\IntlExtension;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -61,6 +62,7 @@ trait TwigTrait
             },
             array('needs_context' => true)
         );
+        $toDatetimeFilter = new TwigFilter('toDatetime', '\Elabftw\Elabftw\TwigFunctions::toDatetime', $filterOptions);
 
         // custom twig functions
         $limitOptions = new TwigFunction('limitOptions', '\Elabftw\Elabftw\TwigFunctions::getLimitOptions');
@@ -74,6 +76,8 @@ trait TwigTrait
         // load the i18n extension for using the translation tag for twig
         // {% trans %}my string{% endtrans %}
         $TwigEnvironment->addExtension(new Translation());
+        // intl extension
+        $TwigEnvironment->addExtension(new IntlExtension());
 
         $TwigEnvironment->addFilter($msgFilter);
         $TwigEnvironment->addFilter($mdFilter);
@@ -86,6 +90,7 @@ trait TwigTrait
         $TwigEnvironment->addFilter($csrfFilter);
         $TwigEnvironment->addFilter($notifWebFilter);
         $TwigEnvironment->addFilter($transFilter);
+        $TwigEnvironment->addFilter($toDatetimeFilter);
         // functions
         $TwigEnvironment->addFunction($limitOptions);
         $TwigEnvironment->addFunction($generationTime);

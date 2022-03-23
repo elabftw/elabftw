@@ -16,6 +16,11 @@
         {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
     </span>
     {% endif %}
+    {% if step.deadline %}
+    <span class='mr-2 text-muted'>
+        {{ 'Deadline:'|trans }} {{ step.deadline|format_datetime() }}
+    </span>
+    {% endif %}
         </li>
         {% endfor %}
     </ul>

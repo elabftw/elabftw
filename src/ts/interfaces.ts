@@ -95,6 +95,8 @@ enum Target {
   BoundEvent = 'boundevent',
   Comment = 'comment',
   Date = 'date',
+  Deadline = 'deadline',
+  DeadlineNotif = 'deadline_notif',
   Finished = 'finished',
   List = 'list',
   Member = 'member',

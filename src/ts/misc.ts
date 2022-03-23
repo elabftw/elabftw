@@ -207,6 +207,22 @@ export async function reloadElement(elementId): Promise<void> {
   document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
 }
 
+/**
+ * All elements that have a save-hidden data attribute have their visibility depend on the saved state
+ * in localStorage. The localStorage key is the value of the save-hidden data attribute.
+ */
+export function adjustHiddenState(): void {
+  document.querySelectorAll('[data-save-hidden]').forEach(el => {
+    const localStorageKey = (el as HTMLElement).dataset.saveHidden + '-isHidden';
+    if (localStorage.getItem(localStorageKey) === '1') {
+      el.setAttribute('hidden', 'hidden');
+    // make sure to explicitely check for the value, because the key might not exist!
+    } else if (localStorage.getItem(localStorageKey) === '0') {
+      el.removeAttribute('hidden');
+    }
+  });
+}
+
 // AUTOCOMPLETE
 export function addAutocompleteToLinkInputs(): void {
   let cache = {};

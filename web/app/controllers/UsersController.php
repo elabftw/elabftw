@@ -49,11 +49,11 @@ try {
             throw new IllegalActionException('User tried to edit user from other team.');
         }
         // a non sysadmin cannot promote someone to sysadmin
-        if ($Request->request->get('usergroup') === '1' && $App->Session->get('is_sysadmin') != 1) {
+        if ($Request->request->get('usergroup') === '1' && $App->Session->get('is_sysadmin') !== '1') {
             throw new ImproperActionException(_('Only a sysadmin can put someone sysadmin.'));
         }
         // a non sysadmin cannot demote a sysadmin
-        if ($targetUser->userData['is_sysadmin'] && $Request->request->get('usergroup') !== '1' && $App->Session->get('is_sysadmin') != 1) {
+        if ($targetUser->userData['is_sysadmin'] && $Request->request->get('usergroup') !== '1' && $App->Session->get('is_sysadmin') !== '1') {
             throw new IllegalActionException('Only a sysadmin can demote another sysadmin.');
         }
 

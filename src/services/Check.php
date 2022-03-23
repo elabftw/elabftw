@@ -63,6 +63,28 @@ class Check
     }
 
     /**
+     * Currently a usergroup is 1, 2, 3 or 4
+     */
+    public static function usergroup(int $gid): int|false
+    {
+        $filter_options = array(
+            'options' => array(
+                'min_range' => 1,
+                'max_range' => 4,
+            ),
+        );
+        return filter_var($gid, FILTER_VALIDATE_INT, $filter_options);
+    }
+
+    public static function usergroupOrExplode(int $gid): int
+    {
+        if (self::usergroup($gid) === false) {
+            throw new IllegalActionException('Invalid usergroup');
+        }
+        return $gid;
+    }
+
+    /**
      * Get only the relevant part of the color: remove the #
      *
      * @param string $color #121212

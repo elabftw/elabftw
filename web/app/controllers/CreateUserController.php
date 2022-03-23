@@ -39,7 +39,7 @@ try {
         throw new IllegalActionException('Admin tried to create user in another team');
     }
     // a non sysadmin cannot promote someone to sysadmin
-    if ($Request->request->get('usergroup') === '1' && $App->Session->get('is_sysadmin') != 1) {
+    if ($Request->request->get('usergroup') === '1' && $App->Session->get('is_sysadmin') !== '1') {
         throw new IllegalActionException('Only a sysadmin can put someone sysadmin.');
     }
 
@@ -57,7 +57,7 @@ try {
         array($Request->request->get('team')),
         $Request->request->get('firstname'),
         $Request->request->get('lastname'),
-        (int) $Request->request->get('usergroup'),
+        Check::usergroupOrExplode((int) $Request->request->get('usergroup')),
     );
 
     $App->Session->getFlashBag()->add('ok', _('Account successfully created'));

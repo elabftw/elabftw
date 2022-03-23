@@ -91,6 +91,9 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Experiments->setId(1);
         $this->Experiments->canOrExplode('read');
+        // add some steps and links in there, too
+        $this->Experiments->Steps->create(new ContentParams('some step'));
+        $this->Experiments->Links->create(new ContentParams('3'));
         $this->assertIsInt($this->Experiments->duplicate());
     }
 

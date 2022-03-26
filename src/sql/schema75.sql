@@ -2,6 +2,7 @@
 -- Make sure all tables have the correct charset and collation
 START TRANSACTION;
     ALTER TABLE `api_keys` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE TABLE IF NOT EXISTS `authfail` ( `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT, `users_id` INT(10) UNSIGNED NOT NULL , `attempt_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `device_token` VARCHAR(255) NULL DEFAULT NULL, PRIMARY KEY (`id`));
     ALTER TABLE `authfail` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     ALTER TABLE `config` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     ALTER TABLE `experiments` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;

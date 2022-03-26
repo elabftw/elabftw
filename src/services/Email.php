@@ -69,7 +69,7 @@ class Email
     public function testemailSend(string $email): bool
     {
         $message = (new Memail())
-        ->subject(_('[eLabFTW] Test email'))
+        ->subject('[eLabFTW] ' . _('Test email'))
         ->from($this->from)
         ->to(new Address($email, 'Admin eLabFTW'))
         ->text('Congratulations, you correctly configured eLabFTW to send emails! :)' . $this->footer);

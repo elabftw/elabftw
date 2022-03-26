@@ -5,9 +5,6 @@
  *
  */
 /** @psalm-suppress UnusedFunctionCall */
-// comment-add
-_('Add a comment');
-/** @psalm-suppress UnusedFunctionCall */
 // dropzone-upload-area
 _('Drop files here to upload');
 /** @psalm-suppress UnusedFunctionCall */

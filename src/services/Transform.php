@@ -65,7 +65,7 @@ class Transform
                 return sprintf(
                     '<span class="clickable" data-action="ack-notif" data-id="%d">%s</span>' . $relativeMoment,
                     (int) $notif['id'],
-                    _('New user added to your team.'),
+                    _('New user added to your team'),
                     $notif['created_at'],
                 );
             case Notifications::USER_NEED_VALIDATION:

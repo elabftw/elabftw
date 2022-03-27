@@ -292,6 +292,6 @@ class QueryBuilderVisitor implements Visitor
             );
         }
 
-        return new WhereCollector(implode(' OR ', $queryParts), $bindValues);
+        return new WhereCollector('(' . implode(' OR ', $queryParts) . ')', $bindValues);
     }
 }

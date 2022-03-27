@@ -213,7 +213,7 @@ msgstr "Skype"
 
 #: src/templates/admin.html:7
 msgid "There are users waiting for validation of their account:"
-msgstr "Użytkownicy czekają na zatwierdzenie konta."
+msgstr "Użytkownicy czekają na zatwierdzenie konta:"
 
 #: src/templates/admin.html:22 src/templates/sysconfig.html:22
 msgid "Users"
@@ -423,7 +423,7 @@ msgstr "Nazwa użytkownika konta SMTP:"
 
 #: src/templates/sysconfig.html:359
 msgid "SMTP password"
-msgstr "Hasło do konta SMTP:"
+msgstr "Hasło do konta SMTP"
 
 #: src/templates/head.html:170
 msgid "The admin of a team can edit the status and the types of items available (%sAdmin Panel%s)."
@@ -637,9 +637,9 @@ msgstr "Powinien to być adres URL kompatybilny z zapytaniem sygnatur czasowych 
 #: web/app/controllers/ImportController.php:63
 msgid "item imported successfully."
 msgid_plural "items imported successfully."
-msgstr[0] "pozycja zaimportowana pomyślnie"
-msgstr[1] "pozycje zaimportowane pomyślnie"
-msgstr[2] "pozycje zaimportowane pomyślnie"
+msgstr[0] "pozycja zaimportowana pomyślnie."
+msgstr[1] "pozycje zaimportowane pomyślnie."
+msgstr[2] "pozycje zaimportowane pomyślnie."
 
 #: src/templates/sysconfig.html:5
 msgid "Installed version:"
@@ -659,7 +659,7 @@ msgstr "sekundy"
 
 #: src/templates/admin.html:49
 msgid "An admin account will always be able to delete experiments."
-msgstr "Administrator zespołu będzie zawsze mógł usunąć eksperyment"
+msgstr "Administrator zespołu będzie zawsze mógł usunąć eksperyment."
 
 #: src/templates/filter-order-sort.html:29
 msgid "Order by"
@@ -944,7 +944,7 @@ msgstr "I widoczność jest:"
 
 #: src/templates/search.html:277
 msgid "Select visibility"
-msgstr "Wybierz widoczność:"
+msgstr "Wybierz widoczność"
 
 #: src/services/Transform.php:32 src/templates/admin.html:93
 #: src/templates/admin.html:109
@@ -1048,7 +1048,7 @@ msgstr "Tylko małe litery są dozwolone."
 
 #: src/templates/ucp.html:222
 msgid "Disable the rich text editor and write Markdown directly"
-msgstr "Zablokuj wizualny edytor tekstowy i używaj jedynie tagów HTML."
+msgstr "Zablokuj wizualny edytor tekstowy i używaj jedynie tagów HTML"
 
 #: src/templates/ucp.html:236
 msgid "Default visibility for new experiments"
@@ -1097,7 +1097,7 @@ msgstr "Zarządzaj szablonami"
 
 #: src/templates/show.html:22
 msgid "Welcome to eLabFTW. Use the 'Create new' button to get started!"
-msgstr "Witaj w eLabFTW. Kliknij guzik 'Utwórz nowy' aby rozpocząć."
+msgstr "Witaj w eLabFTW. Kliknij guzik 'Utwórz nowy' aby rozpocząć!"
 
 #: src/templates/show.html:37
 msgid "Select all"
@@ -1143,7 +1143,7 @@ msgstr "Wstaw w tekście w aktualnym miejscu"
 
 #: src/services/EmailNotifications.php:98
 msgid "Hi. %s left a comment on your experiment. Have a look: %s"
-msgstr "hej. %s skomentował Twój eksperyment. Zobacz: %s"
+msgstr "Hej. %s skomentował Twój eksperyment. Zobacz: %s"
 
 #: src/templates/editusers.html:166
 msgid "Archive user"
@@ -1159,7 +1159,7 @@ msgstr "Zaimportuj do profilu"
 
 #: src/templates/admin.html:71
 msgid "Anonymous visitors can see database items:"
-msgstr "Użytkownicy anonimowi mogą przeglądać pozycje bazy danych"
+msgstr "Użytkownicy anonimowi mogą przeglądać pozycje bazy danych:"
 
 #: src/templates/ucp.html:150
 msgid "PDF configuration"
@@ -1183,7 +1183,7 @@ msgstr "Pokaż eksperymenty zespołu na stronie Eksperymenty"
 
 #: src/templates/sysconfig.html:116
 msgid "Allow anonymous visitors to login and see Public experiments:"
-msgstr "Pozwól anonimowym odwiedzającym na zalogowanie i przeglądanie publicznych eksperymentów"
+msgstr "Pozwól anonimowym odwiedzającym na zalogowanie i przeglądanie publicznych eksperymentów:"
 
 #: src/templates/show.html:63
 msgid "Change visibility"
@@ -1391,11 +1391,11 @@ msgstr "Rezerwacja"
 
 #: src/templates/ucp.html:112
 msgid "Use single column layout"
-msgstr "Użyj układu pojedynczej kolumny "
+msgstr "Użyj układu pojedynczej kolumny"
 
 #: src/templates/ucp.html:269
 msgid "Enter your password to edit your profile."
-msgstr "Podaj swoje hasło by edytować swój profil"
+msgstr "Podaj swoje hasło by edytować swój profil."
 
 #: src/templates/profile.html:6
 msgid "Info"
@@ -1431,7 +1431,7 @@ msgstr "Utwórz nowy klucz"
 
 #: src/templates/admin.html:361 src/templates/admin.html:408
 msgid "2. Select a visibility:"
-msgstr "2. Wybierz zakres widoczności"
+msgstr "2. Wybierz zakres widoczności:"
 
 #: src/templates/admin.html:418
 msgid "3. Select a ZIP file to import:"
@@ -1439,7 +1439,7 @@ msgstr "3. Wbierz plik ZIP do importu:"
 
 #: src/templates/team.html:108
 msgid "You belong to the %s team."
-msgstr "Należysz do zespołu %s"
+msgstr "Należysz do zespołu %s."
 
 #: src/templates/team.html:153
 msgid "No templates from other members of the team to display!"
@@ -1546,7 +1546,7 @@ msgstr "Administratorzy zawsze mogą usuwać eksperymenty:"
 
 #: src/templates/sysconfig.html:100
 msgid "Setting this to «no» will completely remove the ability to delete experiments for everyone."
-msgstr "Ustawienie tej opcji na «nie» całkowicie usunie możliwość usuwania eksperymentów przez kogokolwiek"
+msgstr "Ustawienie tej opcji na «nie» całkowicie usunie możliwość usuwania eksperymentów przez kogokolwiek."
 
 #: src/templates/pdf.html:67 src/templates/steps-links-edit.html:10
 #: src/templates/steps-links-view.html:9
@@ -2167,7 +2167,7 @@ msgstr "Zamek"
 
 #: src/templates/show.html:129
 msgid "Actions"
-msgstr "działania"
+msgstr "Działania"
 
 #: src/services/EmailNotifications.php:107
 #: src/services/EmailNotifications.php:116
@@ -2384,7 +2384,7 @@ msgstr "Pokaż wszystko"
 
 #: src/templates/uploads.html:191
 msgid "OK"
-msgstr "ok"
+msgstr "OK"
 
 #: src/templates/admin.html:65
 msgid "Force experiment template use:"
@@ -2550,292 +2550,292 @@ msgstr "Otwórz ulubione tagi"
 
 #: src/langs/js-strings.php:51
 msgid "Are you sure you want to undo this step?"
-msgstr ""
+msgstr "Czy na pewno chcesz cofnąć ten krok?"
 
 #: src/services/Email.php:72
 msgid "Test email"
-msgstr ""
+msgstr "Wyślij testowy email"
 
 #: src/services/EmailNotifications.php:93
 msgid "New comment posted"
-msgstr ""
+msgstr "Opublikowano nowy komentarz"
 
 #: src/services/EmailNotifications.php:104
 #: src/services/EmailNotifications.php:113 src/services/Transform.php:68
 msgid "New user added to your team"
-msgstr ""
+msgstr "Nowy użytkownik dodany do zespołu"
 
 #: src/services/EmailNotifications.php:113
 msgid "[ACTION REQUIRED]"
-msgstr ""
+msgstr "[WYMAGANE DZIAŁANIE]"
 
 #: src/services/EmailNotifications.php:124
 msgid "Your account has been created"
-msgstr ""
+msgstr "Pomyślnie utworzono konto"
 
 #: src/services/EmailNotifications.php:128
 msgid "Account validated"
-msgstr ""
+msgstr "Konto zweryfikowane"
 
 #: src/services/EmailNotifications.php:133
 msgid "A step deadline is approaching"
-msgstr ""
+msgstr "Zbliża się termin kroku"
 
 #: src/services/EmailNotifications.php:135
 msgid "Hello. A step deadline is approaching: "
-msgstr ""
+msgstr "Witam. Zbliża się termin kroku: "
 
 #: src/services/MakeTimestamp.php:67
 msgid "Timestamp archive"
-msgstr ""
+msgstr "Archiwum znaczników czasowych"
 
 #: src/services/Transform.php:61
 msgid "New comment on your experiment."
-msgstr ""
+msgstr "Nowy komentarz do eksperymentu."
 
 #: src/services/Transform.php:75
 msgid "A user needs account validation."
-msgstr ""
+msgstr "Użytkownik wymaga weryfikacji konta."
 
 #: src/services/Transform.php:82
 msgid "There was a problem during PDF creation."
-msgstr ""
+msgstr "Wystąpił problem podczas tworzenia pliku PDF."
 
 #: src/services/Transform.php:91
 msgid "Tex rendering failed during PDF generation. The raw tex commands are retained but you might want to carefully check the generated PDF."
-msgstr ""
+msgstr "Renderowanie Tex nie powiodło się podczas generowania pliku PDF. Surowe polecenia tex są zachowywane, ale warto dokładnie sprawdzić wygenerowany plik PDF."
 
 #: src/services/Transform.php:100
 msgid "Some attached PDFs could not be appended."
-msgstr ""
+msgstr "Nie można dołączyć niektórych załączonych plików PDF."
 
 #: src/services/advancedSearchQuery/exceptions/LimitDepthIsExceededException.php:19
 msgid "Query is too complex!"
-msgstr ""
+msgstr "Zapytanie jest zbyt złożone!"
 
 #: web/ucp.php:71
 msgid "New comment notification"
-msgstr ""
+msgstr "Powiadomienie o nowym komentarzu"
 
 #: web/ucp.php:75
 msgid "Step deadline"
-msgstr ""
+msgstr "Termin realizacji kroków"
 
 #: web/ucp.php:83
 msgid "New user created"
-msgstr ""
+msgstr "Utworzono nowego użytkownika"
 
 #: web/ucp.php:88
 msgid "New user need validation"
-msgstr ""
+msgstr "Nowy użytkownik wymaga weryfikacji"
 
 #: src/templates/admin.html:455
 msgid "Export experiments of user"
-msgstr ""
+msgstr "Eksportowanie eksperymentów użytkownika"
 
 #: src/templates/admin.html:457
 msgid "Select user:"
-msgstr ""
+msgstr "Wybierz użytkownika:"
 
 #: src/templates/head.html:92 src/templates/head.html:93
 #: src/templates/ucp.html:9
 msgid "Notifications"
-msgstr ""
+msgstr "Powiadomienia"
 
 #: src/templates/head.html:101
 msgid "No new notifications to show."
-msgstr ""
+msgstr "Brak nowych powiadomień do wyświetlenia."
 
 #: src/templates/head.html:104 src/templates/ucp.html:395
 msgid "Notifications settings"
-msgstr ""
+msgstr "Ustawienia powiadomień"
 
 #: src/templates/login.html:41
 msgid "Request access to a team"
-msgstr ""
+msgstr "Poproś o dostęp do zespołu"
 
 #: src/templates/login.html:63
 msgid "Request access"
-msgstr ""
+msgstr "Poproś o dostęp"
 
 #: src/templates/login.html:68
 msgid "Your account has been created and will need to be validated by an admin."
-msgstr ""
+msgstr "Twoje konto zostało utworzone i będzie musiało zostać zweryfikowane przez administratora."
 
 #: src/templates/search.html:8
 msgid "Search Syntax"
-msgstr ""
+msgstr "Składnia wyszukiwania"
 
 #: src/templates/search.html:129
 msgid "Search query"
-msgstr ""
+msgstr "Szukaj zapytania"
 
 #: src/templates/search.html:163
 msgid "Full syntax"
-msgstr ""
+msgstr "Pełna składnia"
 
 #: src/templates/search.html:167
 msgid "Search helpers"
-msgstr ""
+msgstr "Pomocnicy wyszukiwania"
 
 #: src/templates/search.html:172
 msgid "And author is:"
-msgstr ""
+msgstr "A autorem jest:"
 
 #: src/templates/search.html:174
 msgid "Select author"
-msgstr ""
+msgstr "Wybierz autora"
 
 #: src/templates/search.html:187
 msgid "Date from"
-msgstr ""
+msgstr "Data od"
 
 #: src/templates/search.html:191
 msgid "less than"
-msgstr ""
+msgstr "mniej niż"
 
 #: src/templates/search.html:192
 msgid "less than or equal to"
-msgstr ""
+msgstr "mniejsze lub równe"
 
 #: src/templates/search.html:193
 msgid "equal to"
-msgstr ""
+msgstr "równa się"
 
 #: src/templates/search.html:194
 msgid "greater than or equal to"
-msgstr ""
+msgstr "większe lub równe"
 
 #: src/templates/search.html:195
 msgid "greater than"
-msgstr ""
+msgstr "większy niż"
 
 #: src/templates/search.html:196
 msgid "not equal to"
-msgstr ""
+msgstr "nie równa się"
 
 #: src/templates/search.html:203
 msgid "Date to (optional)"
-msgstr ""
+msgstr "Data do (opcjonalnie)"
 
 #: src/templates/search.html:210
 msgid "Locked"
-msgstr ""
+msgstr "Zablokowany"
 
 #: src/templates/search.html:212
 msgid "Select lock status"
-msgstr ""
+msgstr "Wybierz stan blokady"
 
 #: src/templates/search.html:221
 msgid "Timestamped"
-msgstr ""
+msgstr "Sygnatura czasowa"
 
 #: src/templates/search.html:223
 msgid "Select timestamp status"
-msgstr ""
+msgstr "Wybieranie stanu znacznika czasowego"
 
 #: src/templates/search.html:249
 msgid "And category is"
-msgstr ""
+msgstr "A kategoria to"
 
 #: src/templates/search.html:251
 msgid "Select category"
-msgstr ""
+msgstr "Wybierz kategorię"
 
 #: src/templates/steps-links-edit.html:45
 msgid "Completion time:"
-msgstr ""
+msgstr "Czas realizacji:"
 
 #: src/templates/steps-links-edit.html:49
 msgid "Not finished"
-msgstr ""
+msgstr "Nie ukończono"
 
 #: src/templates/steps-links-edit.html:54
 #: src/templates/steps-links-view.html:21
 msgid "Deadline:"
-msgstr ""
+msgstr "Ostateczny termin:"
 
 #: src/templates/steps-links-edit.html:60
 msgid "Toggle notifications"
-msgstr ""
+msgstr "Przełączanie powiadomień"
 
 #: src/templates/steps-links-edit.html:62
 msgid "Clear deadline"
-msgstr ""
+msgstr "Jasny termin"
 
 #: src/templates/steps-links-edit.html:64
 msgid "Add deadline"
-msgstr ""
+msgstr "Dodaj termin"
 
 #: src/templates/steps-links-edit.html:67
 msgid "Set deadline in"
-msgstr ""
+msgstr "Ustaw termin w"
 
 #: src/templates/steps-links-edit.html:68
 msgid "+1 hour"
-msgstr ""
+msgstr "+1 godzina"
 
 #: src/templates/steps-links-edit.html:69
 msgid "+1 day"
-msgstr ""
+msgstr "+1 dzień"
 
 #: src/templates/steps-links-edit.html:70
 msgid "+1 week"
-msgstr ""
+msgstr "+1 tydzień"
 
 #: src/templates/steps-links-view.html:53
 #: src/templates/steps-links-view.html:54
 msgid "Show linked items"
-msgstr ""
+msgstr "Pokaż połączone elementy"
 
 #: src/templates/sysconfig.html:30
 msgid "Uploads"
-msgstr ""
+msgstr "Prześlij"
 
 #: src/templates/sysconfig.html:271
 msgid "Blockchain timestamp configuration"
-msgstr ""
+msgstr "Konfiguracja znacznika czasowego łańcucha bloków"
 
 #: src/templates/sysconfig.html:273
 msgid "Enable blockchain timestamping with Bloxberg:"
-msgstr ""
+msgstr "Włącz znaczniki czasu blockchain za pomocą Bloxberga:"
 
 #: src/templates/sysconfig.html:279
 msgid "Anonymize author for GDPR compliance:"
-msgstr ""
+msgstr "Anonimizuj autora pod kątem zgodności z RODO:"
 
 #: src/templates/sysconfig.html:886
 msgid "Where user uploaded files are stored:"
-msgstr ""
+msgstr "Gdzie przechowywane są pliki przesłane przez użytkownika:"
 
 #: src/templates/sysconfig.html:888 src/templates/uploads.html:173
 msgid "Local filesystem"
-msgstr ""
+msgstr "Lokalny system plików"
 
 #: src/templates/sysconfig.html:889
 msgid "S3 bucket"
-msgstr ""
+msgstr "Zasób S3"
 
 #: src/templates/sysconfig.html:891
 msgid "You can select where uploaded files will be stored. The default is local storage but you can configure any S3 compatible object storage."
-msgstr ""
+msgstr "Możesz wybrać, gdzie będą przechowywane przesłane pliki. Wartością domyślną jest magazyn lokalny, ale można skonfigurować dowolną obiektową pamięć masową zgodną z S3."
 
 #: src/templates/ucp.html:398
 msgid "Notification category"
-msgstr ""
+msgstr "Kategoria powiadomień"
 
 #: src/templates/ucp.html:399
 msgid "Web"
-msgstr ""
+msgstr "Strona Internetowa"
 
 #: src/templates/uploads.html:54
 msgid "More information"
-msgstr ""
+msgstr "Więcej informacji"
 
 #: src/templates/uploads.html:173
 msgid "Storage:"
-msgstr ""
+msgstr "Pamięć masowa:"
 
 #: src/templates/view.html:17
 msgid "Depending on your configuration, timestamping can incur costs. Are you sure you want to do this?"
-msgstr ""
+msgstr "W zależności od konfiguracji oznaczanie sygnaturą czasową może wiązać się z kosztami. Czy na pewno chcesz to zrobić?"

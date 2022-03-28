@@ -244,7 +244,7 @@ class QueryBuilderVisitor implements Visitor
         $bindValues = array();
         foreach (array_unique($users) as $user) {
             $param = $this->getUniqueID();
-            $queryParts[] = "users.userid = " . $param;
+            $queryParts[] = 'users.userid = ' . $param;
             $bindValues[] = array(
                 'param' => $param,
                 'value' => $user,

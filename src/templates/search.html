@@ -176,7 +176,7 @@
         <!-- AUTHOR/OWNER HELPER -->
         <div class='col-md-6 mb-md-3'>
           <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label><br>
-          <select id='searchonly' name='owner' data-filter='author' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
+          <select id='searchonly' name='owner' data-filter='(?:author|group)' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
             <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
             {% for user in usersArr %}
               <option {{- Request.query.get('owner') == user.fullname|raw ? ' selected' }}>{{ user.fullname|raw }}</option>

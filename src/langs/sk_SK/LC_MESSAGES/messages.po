@@ -1,807 +1,614 @@
 msgid ""
 msgstr ""
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3.1\n"
 "Project-Id-Version: elabftw\n"
-"Language: sk\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: sk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: Poedit 3.0.1\n"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:150
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:173
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:210
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:268
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:354
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:317
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:358
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:381
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:434
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:453
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:649
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:741
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:832
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1479
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1609
+#: src/templates/admin.html:46 src/templates/admin.html:53
+#: src/templates/admin.html:60 src/templates/admin.html:67
+#: src/templates/admin.html:73 src/templates/admin.html:85
+#: src/templates/admin.html:101 src/templates/editusers.html:142
+#: src/templates/editusers.html:151 src/templates/search.html:213
+#: src/templates/search.html:224 src/templates/sysconfig.html:97
+#: src/templates/sysconfig.html:118 src/templates/sysconfig.html:125
+#: src/templates/sysconfig.html:140 src/templates/sysconfig.html:146
+#: src/templates/sysconfig.html:152 src/templates/sysconfig.html:226
+#: src/templates/sysconfig.html:265 src/templates/sysconfig.html:275
+#: src/templates/sysconfig.html:281 src/templates/sysconfig.html:296
+#: src/templates/sysconfig.html:634 src/templates/sysconfig.html:697
+#: src/templates/sysconfig.html:837 src/templates/ucp.html:297
 msgid "Yes"
 msgstr "Áno"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:156
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:179
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:216
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:274
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:360
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:323
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:364
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:387
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:440
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:459
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:655
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:747
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:838
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1483
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1615
+#: src/templates/admin.html:47 src/templates/admin.html:54
+#: src/templates/admin.html:61 src/templates/admin.html:68
+#: src/templates/admin.html:74 src/templates/admin.html:86
+#: src/templates/admin.html:102 src/templates/editusers.html:143
+#: src/templates/editusers.html:152 src/templates/search.html:214
+#: src/templates/search.html:225 src/templates/sysconfig.html:98
+#: src/templates/sysconfig.html:119 src/templates/sysconfig.html:126
+#: src/templates/sysconfig.html:141 src/templates/sysconfig.html:147
+#: src/templates/sysconfig.html:153 src/templates/sysconfig.html:227
+#: src/templates/sysconfig.html:266 src/templates/sysconfig.html:276
+#: src/templates/sysconfig.html:282 src/templates/sysconfig.html:297
+#: src/templates/sysconfig.html:635 src/templates/sysconfig.html:698
+#: src/templates/sysconfig.html:838 src/templates/ucp.html:298
 msgid "No"
 msgstr "Nie"
 
-#: cache/twig/67/67ed4dc915a2a958b53f7776ba416ce1223b3b10f0c5cf8998fa67c864d6c2be.php:115
-#: cache/twig/67/67ed4dc915a2a958b53f7776ba416ce1223b3b10f0c5cf8998fa67c864d6c2be.php:127
-#: web/app/controllers/UcpController.php:65
-msgid "The passwords do not match!"
-msgstr "Heslá sa nezhodujú!"
-
-#: web/app/controllers/CreateUserController.php:43
-#: web/app/controllers/RegisterController.php:54
+#: web/app/controllers/CreateUserController.php:51
+#: web/app/controllers/RegisterController.php:41
 msgid "A mandatory field is missing!"
 msgstr "Chýbajú povinné polia!"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:184
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:164
+#: src/templates/login.html:105 src/templates/register.html:64
+#: src/templates/sysconfig.html:820
 msgid "Password"
 msgstr "Heslo"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:706
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:230
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:512
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:181
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1711
+#: src/templates/editusers.html:93 src/templates/editusers.html:219
+#: src/templates/login.html:58 src/templates/register.html:75
+#: src/templates/sysconfig.html:745 src/templates/ucp.html:308
 msgid "Firstname"
 msgstr "Krstné meno"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:717
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:246
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:521
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:190
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1720
+#: src/templates/editusers.html:99 src/templates/editusers.html:225
+#: src/templates/login.html:61 src/templates/register.html:81
+#: src/templates/sysconfig.html:748 src/templates/ucp.html:313
 msgid "Lastname"
 msgstr "Priezvisko"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:670
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:65
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:176
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:262
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:503
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:142
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:164
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1729
+#: src/templates/editusers.html:105 src/templates/editusers.html:213
+#: src/templates/login.html:103 src/templates/register.html:53
+#: src/templates/sysconfig.html:25 src/templates/sysconfig.html:751
+#: src/templates/team.html:8 src/templates/team.html:117
+#: src/templates/ucp.html:276 src/templates/ucp.html:400
 msgid "Email"
 msgstr "Email"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:232
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:132
-#: cache/twig/ba/ba6006cc5c8e58c9a9e6cc97accf6b073e46f9efb10f7715a280d2f6deee6d8a.php:62
-#: cache/twig/f9/f974eb64d32747794d0b955920037440c7278b5937ca310f8d2389ddf14c9b1f.php:121
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:418
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:199
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:683
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:53
-#: web/experiments.php:27 src/services/ListBuilder.php:74
+#: src/services/ListBuilder.php:74 web/experiments.php:27
+#: src/templates/create-new.html:13 src/templates/head.html:67
+#: src/templates/profile.html:35 src/templates/search.html:102
+#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:240
+#: src/templates/team.html:109 src/templates/todolist-panel.html:42
 msgid "Experiment"
 msgid_plural "Experiments"
 msgstr[0] "Experiment"
-msgstr[1] "Experimentov"
+msgstr[1] "Experimenty"
 msgstr[2] "Experimentov"
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:140
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:60
-#: web/database.php:27
+#: web/database.php:28 src/templates/head.html:69 src/templates/search.html:104
 msgid "Database"
 msgstr "Databáza"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:534
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:595
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:95
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:245
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:303
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:152
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:471
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:111
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:139
-#: web/team.php:31
+#: src/services/Transform.php:33 web/team.php:32 src/templates/admin.html:20
+#: src/templates/admin.html:94 src/templates/admin.html:110
+#: src/templates/editusers.html:203 src/templates/head.html:73
+#: src/templates/register.html:42 src/templates/todolist-panel.html:36
 msgid "Team"
 msgstr "Tím"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:253
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:112
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:316
+#: src/templates/filter-order-sort.html:32 src/templates/pdf.html:12
+#: src/templates/show.html:114 src/templates/ucp.html:95
 msgid "Date"
 msgstr "Dátum"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:259
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:143
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:405
+#: src/templates/edit.html:164 src/templates/filter-order-sort.html:39
+#: src/templates/show.html:117 src/templates/templates-edit.html:50
+#: src/templates/ucp.html:96
 msgid "Title"
 msgstr "Nadpis"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:88
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:171
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:90
+#: src/templates/admin.html:291 src/templates/edit.html:42
+#: src/templates/ucp.html:31 src/templates/view.html:144
 msgid "Visibility"
 msgstr "Viditeľnosť"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:107
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:149
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:335
+#: src/templates/admin.html:23 src/templates/edit.html:140
 msgid "Status"
 msgid_plural "Status"
 msgstr[0] "Stav"
-msgstr[1] "Stavov"
+msgstr[1] "Stavy"
 msgstr[2] "Stavov"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:343
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:177
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:207
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:93
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1043
+#: src/templates/editusers.html:28 src/templates/show-item.html:40
+#: src/templates/sysconfig.html:369 src/templates/sysconfig.html:830
+#: src/templates/ucp.html:134 src/templates/view.html:55
+#: src/templates/view.html:56 src/templates/view.html:145
 msgid "Edit"
 msgstr "Editovať"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:640
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:525
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:593
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:657
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:736
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:791
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:207
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:620
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:646
-#: cache/twig/65/6553abe060446074a2f9d9a63a5a190dda7b5858037eada87685fb88ad81f74d.php:55
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:369
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:537
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:234
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:470
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:542
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:669
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:806
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:893
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1055
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1434
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1490
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1621
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1673
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1796
+#: src/templates/admin.html:191 src/templates/admin.html:224
+#: src/templates/admin.html:323 src/templates/edit.html:197
+#: src/templates/edit.html:245 src/templates/editusers.html:158
+#: src/templates/json-editor.html:15 src/templates/steps-links-edit.html:72
+#: src/templates/sysconfig.html:57 src/templates/sysconfig.html:71
+#: src/templates/sysconfig.html:158 src/templates/sysconfig.html:187
+#: src/templates/sysconfig.html:233 src/templates/sysconfig.html:316
+#: src/templates/sysconfig.html:375 src/templates/sysconfig.html:571
+#: src/templates/sysconfig.html:638 src/templates/sysconfig.html:702
+#: src/templates/sysconfig.html:725 src/templates/sysconfig.html:783
+#: src/templates/sysconfig.html:874 src/templates/sysconfig.html:907
+#: src/templates/templates-edit.html:58 src/templates/ucp.html:255
+#: src/templates/view.html:245
 msgid "Save"
 msgstr "Uložiť"
 
-#: web/app/controllers/EntityAjaxController.php:38
-#: web/app/controllers/EntityAjaxController.php:275
-#: web/app/controllers/SortableAjaxController.php:37
-#: web/app/controllers/UsersAjaxController.php:32
-#: web/app/controllers/IdpsController.php:67
-#: web/app/controllers/ExperimentsAjaxController.php:34
-#: web/app/controllers/AdminAjaxController.php:29
-#: web/app/controllers/TeamGroupsController.php:31
-#: web/app/controllers/StatusController.php:31
-#: web/app/controllers/SysconfigController.php:109
-#: web/app/controllers/AjaxController.php:36
-#: web/app/controllers/TagsController.php:34
-#: web/app/controllers/CommentsAjaxController.php:36
-#: web/app/controllers/CommentsAjaxController.php:59
-#: web/app/controllers/CommentsAjaxController.php:72
-#: web/app/controllers/UsersController.php:63
-#: web/app/controllers/RevisionsController.php:51
-#: web/app/controllers/ItemsTypesAjaxController.php:32
-#: web/app/controllers/UcpController.php:98
-#: web/app/controllers/TodolistController.php:30
-#: web/app/controllers/TodolistController.php:42
+#: web/app/controllers/AdminController.php:41
+#: web/app/controllers/EntityAjaxController.php:50
+#: web/app/controllers/EntityAjaxController.php:186
+#: web/app/controllers/EntityAjaxController.php:234
+#: web/app/controllers/IdpsController.php:75
+#: web/app/controllers/RequestHandler.php:114
+#: web/app/controllers/RevisionsController.php:60
+#: web/app/controllers/SchedulerController.php:32
+#: web/app/controllers/SortableAjaxController.php:36
 #: web/app/controllers/SysconfigAjaxController.php:34
-#: web/app/controllers/SchedulerController.php:31
-#: web/app/controllers/AdminController.php:54
+#: web/app/controllers/SysconfigController.php:125
+#: web/app/controllers/UcpController.php:104
+#: web/app/controllers/UnauthRequestHandler.php:27
+#: web/app/controllers/UsersAjaxController.php:32
+#: web/app/controllers/UsersController.php:63
 msgid "Saved"
 msgstr "Uložené"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:126
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:79
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:622
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:89
+#: src/templates/editusers.html:27 src/templates/mfa.html:32
+#: src/templates/team.html:64 src/templates/view.html:22
 msgid "Cancel"
 msgstr "Zrušiť"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:618
-msgid "Saving"
-msgstr "Ukladám"
-
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:453
-msgid "Save and go back"
-msgstr "Uložiť a vrátiť sa späť"
-
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:324
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:823
+#: src/templates/ucp.html:127 src/templates/ucp.html:376
 msgid "Action"
 msgstr "Akcia"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:328
+#: src/templates/ucp.html:128
 msgid "Shortcut"
 msgstr "Skratka"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:333
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:413
-#: cache/twig/7c/7cfde0eb5e5ffee8eb4b8b994723083967cdcf71551fe88873bfc9c50a37709d.php:97
-#: cache/twig/ba/ba6006cc5c8e58c9a9e6cc97accf6b073e46f9efb10f7715a280d2f6deee6d8a.php:136
+#: src/templates/admin.html:138 src/templates/admin.html:251
+#: src/templates/create-new.html:41 src/templates/show-templates-edit.html:21
+#: src/templates/ucp.html:130
 msgid "Create"
 msgstr "Vytvoriť"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:353
+#: src/templates/ucp.html:138
 msgid "Submit"
 msgstr "Odoslať"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:363
+#: src/templates/ucp.html:142
 msgid "TODO list"
 msgstr "Zoznam úloh"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:811
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:898
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:253
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:499
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:552
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:627
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:685
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:183
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1453
+#: src/templates/admin.html:174 src/templates/admin.html:205
+#: src/templates/admin.html:276 src/templates/team.html:116
+#: src/templates/ucp.html:358 src/templates/ucp.html:373
 msgid "Name"
 msgstr "Meno"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:735
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:257
+#: src/templates/team.html:118 src/templates/ucp.html:322
 msgid "Phone"
 msgstr "Telefón"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:745
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:261
+#: src/templates/team.html:119 src/templates/ucp.html:326
 msgid "Mobile"
 msgstr "Mobil"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:767
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:265
+#: src/templates/team.html:120 src/templates/ucp.html:336
 msgid "Website"
 msgstr "Webové stránky"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:757
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:269
+#: src/templates/team.html:121 src/templates/ucp.html:332
 msgid "Skype"
 msgstr "Skype"
 
-#: src/services/Email.php:156
-msgid "[eLabFTW] New user registered"
-msgstr "[eLabFTW] Registrovaný nový používateľ"
-
-#: web/app/controllers/ResetPasswordController.php:87
-msgid "Email sent. Check your INBOX."
-msgstr "Email odoslaný. Skontroluj si poštu."
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:58
+#: src/templates/admin.html:7
 msgid "There are users waiting for validation of their account:"
 msgstr "Používatelia čakajú na potvrdenie svojho účtu:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:103
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:152
+#: src/templates/admin.html:22 src/templates/sysconfig.html:22
 msgid "Users"
 msgstr "Užívatelia"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:111
-#, fuzzy
+#: src/templates/admin.html:24
 msgid "Types of items"
 msgstr "Typy položiek"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:115
-msgid "Experiments template"
-msgstr "Šablóna experimentov"
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:143
+#: src/templates/admin.html:44
 msgid "Users can delete experiments:"
 msgstr "Používatelia môžu odstrániť experimenty:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:185
+#: src/templates/admin.html:77
 msgid "Name of the link in the top menu:"
 msgstr "Názov odkazu v hornej ponuke:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:194
+#: src/templates/admin.html:80
 msgid "Address where this link should point:"
 msgstr "Adresa na ktorú má odkaz odkazovať:"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:344
+#: src/templates/editusers.html:149
 msgid "Has an active account?"
 msgstr "Má aktívny účet?"
 
-#: src/models/Status.php:192
+#: src/models/Status.php:123
 msgid "Remove all experiments with this status before deleting this status."
 msgstr "Pred odstránením tohto stavu odstráňte všetky experimenty s týmto stavom."
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:587
+#: src/templates/admin.html:220
 msgid "Default status"
 msgstr "Predvolený stav"
 
-#: src/models/ItemsTypes.php:187
+#: src/models/ItemsTypes.php:102
 msgid "Remove all database items with this type before deleting this type."
 msgstr "Vymažte všetky položky databázy tohto typu, pred odstránením tohto typu."
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:780
+#: src/templates/admin.html:120
 msgid "This is the default text when someone creates an experiment."
 msgstr "Toto je predvolený text novo vytvoreného experimentu."
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:917
+#: src/templates/admin.html:391
 msgid "You should make a backup of your database before importing thousands of items!"
 msgstr "Pred importovaním tisícok položiek by ste mali zálohovať databázu!"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:815
+#: src/templates/admin.html:353
 msgid "1. Select a type of item to import to:"
 msgstr "1. Vyberte typ položky, ktorú chcete importovať:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:900
+#: src/templates/admin.html:382
 msgid "Import CSV"
 msgstr "Import CSV"
 
-#: web/app/controllers/UsersController.php:57
+#: web/app/controllers/UsersController.php:53
 msgid "Only a sysadmin can put someone sysadmin."
 msgstr "Len sysadmin môže niekoho spraviť sysadminom."
 
-#: cache/twig/67/67ed4dc915a2a958b53f7776ba416ce1223b3b10f0c5cf8998fa67c864d6c2be.php:100
-#, fuzzy
-msgid "Type it again"
-msgstr "Napíš to znova"
-
-#: cache/twig/67/67ed4dc915a2a958b53f7776ba416ce1223b3b10f0c5cf8998fa67c864d6c2be.php:131
+#: src/templates/change-pass.html:34
 msgid "Save new password"
 msgstr "Uložiť nové heslo"
 
-#: src/services/Filter.php:107 src/models/Database.php:52
-#: src/models/Experiments.php:57 src/langs/js-strings.php:15
+#: src/langs/js-strings.php:18 src/models/Experiments.php:59
+#: src/models/Items.php:44 src/services/Filter.php:88
 msgid "Untitled"
 msgstr "Bez mena"
 
-#: web/app/controllers/ExperimentsAjaxController.php:62
-msgid "You don't have the rights to delete this experiment."
-msgstr "Nemáte právo odstrániť tento experiment."
-
-#: src/models/AbstractEntity.php:149
+#: src/models/AbstractEntity.php:138
 msgid "You don't have the rights to lock/unlock this."
 msgstr "Nemáte práva na uzamknutie/odomknutie."
 
-#: web/app/controllers/LoginController.php:89 src/classes/Auth.php:204
-msgid "Login failed. Either you mistyped your password or your account isn't activated yet."
-msgstr "Prihlásenie zlyhalo. Buď ste nesprávne zadali svoje heslo alebo Váš účet ešte nie je aktivovaný."
-
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:150
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:210
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:270
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:324
-#: web/login.php:32
+#: web/login.php:31 src/templates/login.html:82 src/templates/login.html:141
+#: src/templates/login.html:172 src/templates/login.html:196
 msgid "Login"
 msgstr "Prihlásiť sa"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:87
+#: src/templates/login.html:17
 msgid "Enter your email address"
 msgstr "Vložte svoju e-mailovú adresu"
 
-#: cache/twig/f9/f974eb64d32747794d0b955920037440c7278b5937ca310f8d2389ddf14c9b1f.php:112
+#: src/templates/profile.html:40
 msgid "experiments done since"
 msgstr "experimenty dokončených od"
 
-#: src/models/Users.php:92 src/models/Users.php:409
+#: src/services/EmailValidator.php:41
 msgid "Someone is already using that email address!"
 msgstr "Niekto už túto e-mailovú adresu používa!"
 
-#: web/app/controllers/RegisterController.php:69
+#: web/app/controllers/RegisterController.php:56
 msgid "Registration successful :)<br>Welcome to eLabFTW o/"
-msgstr "Registrácia úspešná :) <br> Vitajte na eLabFTW o /"
+msgstr "Registrácia úspešná :) <br>Vitajte na eLabFTW o/"
 
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:53
+#: src/templates/register.html:5
 msgid "go back to login page"
 msgstr "vráťte sa na prihlasovaciu stránku"
 
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:90
+#: src/templates/register.html:30
 msgid "Create your account"
-msgstr "Vytvor si účet"
+msgstr "Vytvorte si účet"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:551
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:219
+#: src/templates/editusers.html:244 src/templates/register.html:99
 msgid "create"
 msgstr "vytvoriť"
 
-#: web/app/controllers/ResetPasswordController.php:83
-msgid "Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s"
-msgstr "Ahoj. Niekto (pravdepodobne vy) s adresou IP: %s a používateľský agent %s požiadali o nové heslo na eLabFTW. Ak chcete obnoviť heslo, postupujte podľa tohto odkazu: %s"
-
-#: src/models/Users.php:245
-msgid "Email not found in database!"
-msgstr "E-mail sa nenašiel v databáze!"
-
-#: cache/twig/ef/eff883bfa5e9b3945df5583d8cc0665cddd18790a95735a4606bbb9d16e91aaf.php:83
+#: src/templates/revisions.html:14
 msgid "Restore"
 msgstr "Obnoviť"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:102
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:164
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:115
-#: web/search.php:34
+#: web/search.php:32 src/templates/editusers.html:41 src/templates/head.html:77
+#: src/templates/team.html:35 src/templates/team.html:50
 msgid "Search"
 msgstr "Vyhľadávanie"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:180
-msgid "Search only in experiments owned by:"
-msgstr "Hľadať iba v experimentoch vo vlastníctve:"
-
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:185
-msgid "Yourself"
-msgstr "Sám"
-
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:48
+#: src/templates/search.html:100
 msgid "Search in"
 msgstr "Vyhľadávanie v"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:230
-msgid "Where date is between"
-msgstr "Kde je dátum medzi"
-
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:238
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:326
-msgid "and"
-msgstr "a"
-
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:255
-msgid "And title contains"
-msgstr "A názov obsahuje"
-
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:309
-msgid "And body contains"
-msgstr "A telo obsahuje"
-
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:268
+#: src/templates/search.html:236
 msgid "And status is"
 msgstr "A stav je"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:342
+#: src/templates/search.html:263
 msgid "And rating is"
 msgstr "A hodnotenie je"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:351
-#, fuzzy
+#: src/templates/search.html:266
 msgid "Unrated"
-msgstr "Nehodnotené"
+msgstr "Bez hodnotenia"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:385
+#: src/templates/search.html:315
 msgid "Launch search"
 msgstr "Spustenie vyhľadávania"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:77
-#: src/controllers/AbstractEntityController.php:112
+#: src/templates/show.html:18
 msgid "Sorry. I couldn't find anything :("
-msgstr "Prepáč. Nenašiel som nič :("
+msgstr "Prepáčte. Nič sme nenašli :("
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:144
+#: src/templates/sysconfig.html:20
 msgid "Server"
 msgstr "Server"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:83
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:156
+#: src/templates/admin.html:28 src/templates/show.html:97
+#: src/templates/sysconfig.html:23 src/templates/view.html:23
 msgid "Timestamp"
 msgstr "Časová značka"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:160
+#: src/templates/sysconfig.html:24
 msgid "Security"
 msgstr "Zabezpečenie"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:228
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:247
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:195
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:677
+#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:238
+#: src/templates/team.html:109 src/templates/team.html:113
 msgid "Members"
 msgstr "Členovia"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:238
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:205
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:691
-#, fuzzy
+#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:244
+#: src/templates/team.html:109 src/templates/todolist-panel.html:49
 msgid "Items"
-msgstr "Predmety"
+msgstr "Položky"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:695
+#: src/templates/sysconfig.html:244
 msgid "Created"
 msgstr "Vytvorené"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:734
+#: src/templates/sysconfig.html:263
 msgid "The teams can use the credentials below to timestamp:"
 msgstr "Tímy môžu použiť nižšie uvedené poverenia na časovú pečiatku:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:350
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:783
+#: src/templates/ts-config.html:17
 msgid "Login for external timestamping service:"
 msgstr "Prihlásenie pre službu externého časového označenia:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:363
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:791
+#: src/templates/ts-config.html:21
 msgid "Password for external timestamping service:"
 msgstr "Heslo pre službu externého časovania:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:825
+#: src/templates/sysconfig.html:294
 msgid "Users need validation by admin after registration:"
 msgstr "Používatelia potrebujú validáciu adminom po registrácii:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:843
+#: src/templates/sysconfig.html:299
 msgid "Set to yes for added security."
 msgstr "Ak chcete zvýšiť bezpečnosť, nastavte áno."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:865
+#: src/templates/sysconfig.html:306
 msgid "Number of allowed login attempts:"
 msgstr "Počet povolených pokusov o prihlásenie:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:873
+#: src/templates/sysconfig.html:308
 msgid "3 might be too few. See for yourself :)"
 msgstr "3 môže byť príliš málo. Pozrite sa sami :)"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:887
-msgid "To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems."
-msgstr "Na identifikáciu používateľa používame md5 užívateľského agenta + IP. Pretože robiť to len na základe IP adresy by určite spôsobilo problémy."
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:965
+#: src/templates/sysconfig.html:350
 msgid "Address of the SMTP server:"
 msgstr "Adresa SMTP servera:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:994
-msgid "Probably TLS"
-msgstr "Pravdepodobne TLS"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:999
+#: src/templates/sysconfig.html:353
 msgid "SMTP Port:"
 msgstr "SMTP Port:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1007
+#: src/templates/sysconfig.html:355
 msgid "Default is 587."
 msgstr "Predvolená hodnota je 587."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1012
+#: src/templates/sysconfig.html:357
 msgid "SMTP username:"
 msgstr "SMTP používateľské meno:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1020
+#: src/templates/sysconfig.html:359
 msgid "SMTP password"
 msgstr "Heslo SMTP"
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:306
+#: src/templates/head.html:170
 msgid "The admin of a team can edit the status and the types of items available (%sAdmin Panel%s)."
 msgstr "Správca tímu môže upraviť stav a typy dostupných položiek ( %s Admin Panel %s )."
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:318
+#: src/templates/head.html:176
 msgid "Custom shortcuts are available (%sControl Panel%s)."
 msgstr "K dispozícii sú vlastné skratky ( %s Ovládací panel %s )."
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:324
+#: src/templates/head.html:179
 msgid "You can duplicate experiments in one click."
 msgstr "Experimenty môžete duplikovať jedným kliknutím."
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:330
+#: src/templates/head.html:182
 msgid "Click a tag to list all items with this tag."
 msgstr "Kliknutím na značku zobrazíte všetky položky s touto značkou."
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:336
+#: src/templates/head.html:185
 msgid "Once timestamped an experiment cannot be unlocked or modified. Only comments can be added."
 msgstr "Po ukončení časového označenia nie je možné experiment odblokovať alebo upraviť. Je možné pridať iba poznámky."
 
-#: web/app/controllers/EntityAjaxController.php:304
-msgid "The template name must be 3 characters long."
-msgstr "Názov šablóny musí mať 3 znaky."
-
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:57
+#: src/templates/ucp.html:6
 msgid "Account"
-msgstr "účet"
+msgstr "Účet"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:53
+#: src/templates/ucp.html:5
 msgid "Preferences"
 msgstr "Preferencie"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:61
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:61
+#: src/templates/team.html:7 src/templates/ucp.html:7
 msgid "Templates"
 msgstr "Šablóny"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:661
+#: src/templates/ucp.html:268
 msgid "Modify your personal informations"
 msgstr "Zmeňte svoje osobné informácie"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:699
+#: src/templates/ucp.html:304
 msgid "Modify your identity"
 msgstr "Upravte svoju identitu"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:680
+#: src/templates/ucp.html:280
 msgid "Modify your password"
 msgstr "Upravte svoje heslo"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:684
-#: cache/twig/67/67ed4dc915a2a958b53f7776ba416ce1223b3b10f0c5cf8998fa67c864d6c2be.php:85
+#: src/templates/change-pass.html:20 src/templates/ucp.html:281
 msgid "New password"
 msgstr "Nové heslo"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:689
-msgid "Confirm new password"
-msgstr "Potvrďte nové heslo"
-
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:729
+#: src/templates/ucp.html:319
 msgid "Modify your contact information"
 msgstr "Upravte svoje kontaktné informácie"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:779
+#: src/templates/ucp.html:342
 msgid "Update profile"
 msgstr "Aktualizovať profil"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:200
+#: src/templates/ucp.html:76
 msgid "Items per page:"
 msgstr "Položky na stránku:"
 
-#: cache/twig/ba/ba6006cc5c8e58c9a9e6cc97accf6b073e46f9efb10f7715a280d2f6deee6d8a.php:53
+#: src/templates/create-new.html:9
 msgid "Create new"
 msgstr "Vytvor nový"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:157
+#: src/templates/ucp.html:60
 msgid "Language"
 msgstr "Jazyk"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:532
+#: src/templates/pdf.html:127 src/templates/view.html:206
 msgid "Unique eLabID:"
 msgstr "Jedinečný eLabID:"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:570
+#: src/templates/view.html:223
 msgid "Comments"
 msgstr "Komentáre"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:639
-#: src/langs/js-strings.php:9
+#: src/langs/js-strings.php:9 src/templates/view.html:243
 msgid "Add a comment"
 msgstr "Pridať komentár"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:92
-#: src/langs/js-strings.php:24
+#: src/langs/js-strings.php:30
 msgid "Delete this?"
 msgstr "Odstrániť toto?"
 
-#: cache/twig/0e/0e5573d973749d5139ce07236914a6a9517320275fda0d5a3d52f337d2d8544c.php:337
-#: cache/twig/a3/a3c30216424db37fa2d72e6c858b60a917f3dfbf1cdbc90ba7b0fdcb2110194e.php:337
-msgid "Tag cloud"
-msgstr "Značka cloud"
-
-#: cache/twig/f9/f974eb64d32747794d0b955920037440c7278b5937ca310f8d2389ddf14c9b1f.php:105
+#: src/templates/profile.html:32
 msgid "Statistics"
 msgstr "Štatistiky"
 
-#: cache/twig/f9/f974eb64d32747794d0b955920037440c7278b5937ca310f8d2389ddf14c9b1f.php:99
+#: src/templates/profile.html:30
 msgid "No statistics available yet."
 msgstr "Zatiaľ nie sú k dispozícii žiadne štatistiky."
 
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:63
+#: src/templates/filter-order-sort.html:18
 msgid "Filter status"
 msgstr "Stav filtra"
 
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:207
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:64
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:220
+#: src/templates/edit.html:170 src/templates/filter-order-sort.html:65
+#: src/templates/pdf.html:14 src/templates/show.html:126
+#: src/templates/templates-edit.html:5
 msgid "Tags"
 msgstr "Štítky"
 
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:115
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:291
+#: src/templates/edit.html:182 src/templates/show.html:80
+#: src/templates/templates-edit.html:20
 msgid "Add a tag"
 msgstr "Pridajte štítok"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:145
-#: src/models/TeamGroups.php:114
+#: src/models/TeamGroups.php:105
 msgid "Only me"
 msgstr "Iba ja"
 
-#: cache/twig/91/91137d0b25ddc6ffe70e66ce9fe3f0c4993aa87875d9b434662baec5bad20fcc.php:172
-#: cache/twig/c8/c8eeff2d918a6b2d9cc1367d6c8e76805f098b1a1a20523ccb14e92e26480498.php:124
+#: src/templates/steps-links-edit.html:95
+#: src/templates/steps-links-view.html:33
 msgid "Linked items"
 msgstr "Prepojené položky"
 
-#: cache/twig/91/91137d0b25ddc6ffe70e66ce9fe3f0c4993aa87875d9b434662baec5bad20fcc.php:248
+#: src/templates/show.html:84 src/templates/steps-links-edit.html:124
+#: src/templates/steps-links-edit.html:126
 msgid "Add a link"
 msgstr "Pridať odkaz"
 
-#: cache/twig/91/91137d0b25ddc6ffe70e66ce9fe3f0c4993aa87875d9b434662baec5bad20fcc.php:255
+#: src/templates/steps-links-edit.html:126
 msgid "from the database"
 msgstr "z databázy"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:247
+#: src/templates/sysconfig.html:79
 msgid "Settings"
 msgstr "Nastavenie"
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:243
+#: src/templates/head.html:126
 msgid "Logout"
 msgstr "Odhlásiť sa"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:77
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:228
+#: src/templates/footer.html:25 src/templates/head.html:120
 msgid "Sysadmin panel"
 msgstr "Panel Sysadmin"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:91
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:219
-#: web/admin.php:33
+#: web/admin.php:32 src/templates/footer.html:30 src/templates/head.html:117
 msgid "Admin panel"
 msgstr "Panel správcov"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:129
+#: src/templates/footer.html:46
 msgid "Powered by"
 msgstr "Založené na technológii"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:134
+#: src/templates/footer.html:51
 msgid "Page generated in"
 msgstr "Stránka generovaná v"
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:294
+#: src/templates/head.html:164
 msgid "You can have experiments templates (%sControl Panel%s)."
 msgstr "Môžete mať šablóny experimentov ( %s Ovládací panel %s )."
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:312
+#: src/templates/head.html:173
 msgid "If you press Ctrl Shift D in the editor, the date will appear under the cursor."
 msgstr "Ak v editore stlačíte kláves Ctrl Shift D, pod kurzor sa objaví dátum."
 
-#: cache/twig/f9/f974eb64d32747794d0b955920037440c7278b5937ca310f8d2389ddf14c9b1f.php:87
+#: src/templates/profile.html:23
 msgid "Go to user control panel"
 msgstr "Prejdite na ovládací panel používateľa"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:148
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:191
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1738
+#: src/templates/sysconfig.html:21 src/templates/sysconfig.html:44
+#: src/templates/sysconfig.html:754
 msgid "Teams"
 msgstr "Timy"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:324
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:757
+#: src/templates/ts-config.html:31
 msgid "URL for external timestamping service:"
 msgstr "Adresa URL pre externú službu časovania:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:338
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:770
-msgid "Chain of certificates of the external timestamping service:"
-msgstr "Reťaz certifikátov služby externého časovania:"
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:358
-msgid "This should be the login associated with your timestamping service provider"
-msgstr "Toto by malo byť prihlasovacie meno spojené s poskytovateľom služieb časovej značky"
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:385
-msgid "Your timestamping service provider password"
-msgstr "Heslo poskytovateľa služby časového označenia"
-
-#: src/models/AbstractEntity.php:171
+#: src/models/AbstractEntity.php:160
 msgid "You cannot unlock or edit in any way a timestamped experiment."
 msgstr "Nemôžete akýmkoľvek spôsobom odomknúť ani upraviť experiment s časovým označením."
 
-#: web/app/controllers/RegisterController.php:67
+#: web/app/controllers/RegisterController.php:54
 msgid "Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done."
 msgstr "Úspešná registrácia :) <br> Váš účet musí teraz overiť administrátor. <br> Po prijatí e-mailu dostanete e-mail."
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:46
+#: src/templates/pdf.html:79 src/templates/uploads.html:5
 msgid "Attached file"
 msgid_plural "Attached files"
 msgstr[0] "Priložených súborov"
 msgstr[1] "Priložený súbor"
 msgstr[2] "Priložené súbory"
 
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:468
+#: src/templates/edit.html:208
 msgid "Attach a file"
 msgstr "Priložiť súbor"
 
@@ -809,1655 +616,2224 @@ msgstr "Priložiť súbor"
 msgid "Drop files here to upload"
 msgstr "Tu vložte súbory, ktoré chcete priložiť"
 
-#: src/models/Revisions.php:123
+#: src/models/Revisions.php:101
 msgid "You cannot restore a revision of a locked item!"
 msgstr "Nemôžete obnoviť revíziu uzamknutej položky!"
 
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:553
+#: src/templates/edit.html:255
 msgid "Molecule drawer"
 msgstr "Zásuvka na molekulu"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:92
+#: src/templates/search.html:116
 msgid "With the tag"
 msgstr "S tagom"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:332
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:765
+#: src/templates/ts-config.html:33
 msgid "This should be the URL used for %sRFC 3161%s-compliant timestamping requests."
 msgstr "Mala by to byť adresa URL použitá pre žiadosti o časové označenie %s RFC 3161 %s ."
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:110
-msgid "Download timestamped pdf"
-msgstr "Stiahnite si časovo opečiatkované pdf"
-
-#: web/app/controllers/ImportController.php:52
+#: web/app/controllers/ImportController.php:63
 msgid "item imported successfully."
 msgid_plural "items imported successfully."
 msgstr[0] "položiek úspešne importovaných."
 msgstr[1] "položka úspešne importovaná."
 msgstr[2] "položky úspešne importované."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:72
+#: src/templates/sysconfig.html:5
 msgid "Installed version:"
 msgstr "Inštalovaná verzia:"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:453
+#: src/templates/ucp.html:192
 msgid "Miscellaneous"
 msgstr "Rôzne"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:1015
+#: src/templates/admin.html:423
 msgid "Import ZIP"
 msgstr "Import ZIP"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:138
+#: src/templates/footer.html:51
 msgid "seconds"
 msgstr "sekúnd"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:161
+#: src/templates/admin.html:49
 msgid "An admin account will always be able to delete experiments."
 msgstr "Účet administrátora bude vždy schopný odstrániť experimenty."
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:282
-msgid "There is a manual available %shere%s."
-msgstr "K dispozícii je manuálne dostupné %s tu %s ."
-
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:94
+#: src/templates/filter-order-sort.html:29
 msgid "Order by"
 msgstr "Zoradiť podľa"
 
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:157
+#: src/templates/filter-order-sort.html:46
 msgid "Sort"
 msgstr "Triediť"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:119
-msgid "Download token"
-msgstr "Stiahnutie tokenu"
-
-#: src/services/MakeTimestamp.php:252
-msgid "Please configure Timestamping in the admin panel."
-msgstr "Prosím, nakonfigurujte Časové označenie v správcovskom paneli."
-
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:203
+#: src/templates/login.html:120 src/templates/login.html:170
 msgid "Remember me"
 msgstr "Zapamätať si ma"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:192
-msgid "All the team"
-msgstr "Celý tím"
-
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:319
-msgid "Space means"
-msgstr "Priestor znamená"
-
-#: web/app/controllers/TodolistController.php:63
-#: web/app/controllers/TodolistController.php:72
-msgid "Item deleted successfully"
-msgstr "Položka bola úspešne odstránená"
-
-#: web/app/controllers/EntityAjaxController.php:296
-msgid "File deleted successfully"
-msgstr "Súbor bol úspešne odstránený"
-
-#: web/change-pass.php:48 web/app/controllers/ResetPasswordController.php:104
-msgid "Invalid link. Reset links are only valid for one hour."
-msgstr "Neplatný odkaz. Odkazy na obnovenie sú platné iba jednu hodinu."
-
-#: web/app/controllers/ResetPasswordController.php:110
+#: web/app/controllers/ResetPasswordController.php:107
 msgid "New password inserted. You can now login."
 msgstr "Nové heslo bolo vložené. Teraz sa môžete prihlásiť."
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:301
+#: src/templates/show-templates-edit.html:39 src/templates/view.html:88
 msgid "Lock/Unlock item"
 msgstr "Zámok / Odomknúť položku"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:71
-msgid "Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?"
-msgstr "Akonáhle je časový záznam experimentu už nemožno upraviť! Naozaj chcete to urobiť?"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1065
+#: src/templates/sysconfig.html:382
 msgid "Send a test email"
 msgstr "Odošli testovací email"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:370
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1074
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1100
+#: src/templates/sysconfig.html:385 src/templates/sysconfig.html:399
+#: src/templates/team.html:169
 msgid "Send"
 msgstr "Odoslať"
 
-#: cache/twig/ba/ba6006cc5c8e58c9a9e6cc97accf6b073e46f9efb10f7715a280d2f6deee6d8a.php:93
+#: src/templates/create-new.html:26
 msgid "No templates found"
 msgstr "Žiadne šablóny neboli nájdené"
 
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:63
+#: src/templates/filter-order-sort.html:18
 msgid "Filter by type"
 msgstr "Filtrovať podľa typu"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:247
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:100
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:341
+#: src/templates/edit.html:142 src/templates/filter-order-sort.html:30
+#: src/templates/show.html:123 src/templates/ucp.html:94
 msgid "Category"
 msgstr "Kategórie"
 
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:127
+#: src/templates/edit.html:155 src/templates/edit.html:157
+#: src/templates/filter-order-sort.html:35
+#: src/templates/filter-order-sort.html:41 src/templates/show.html:132
 msgid "Rating"
 msgstr "Hodnotenie"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:296
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:163
+#: src/templates/filter-order-sort.html:47 src/templates/ucp.html:105
 msgid "DESC"
 msgstr "Nadol"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:290
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:169
+#: src/templates/filter-order-sort.html:48 src/templates/ucp.html:104
 msgid "ASC"
 msgstr "Nahor"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:492
+#: src/templates/admin.html:170
 msgid "Add a New Status"
 msgstr "Pridať nový stav"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:507
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:562
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:635
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:700
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:514
+#: src/templates/admin.html:179 src/templates/admin.html:210
+#: src/templates/admin.html:281 src/templates/edit.html:235
 msgid "Color"
 msgstr "Farba"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:534
+#: src/templates/admin.html:197
 msgid "Edit an Existing Status"
 msgstr "Upraviť existujúci stav"
 
-#: cache/twig/91/91137d0b25ddc6ffe70e66ce9fe3f0c4993aa87875d9b434662baec5bad20fcc.php:212
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:252
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:120
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:600
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:744
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:210
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:212
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:612
+#: src/templates/admin.html:147 src/templates/admin.html:152
+#: src/templates/admin.html:228 src/templates/admin.html:324
+#: src/templates/admin.html:489 src/templates/edit.html:123
+#: src/templates/show.html:100 src/templates/steps-links-edit.html:111
+#: src/templates/sysconfig.html:213 src/templates/sysconfig.html:585
+#: src/templates/team.html:61 src/templates/ucp.html:386
+#: src/templates/uploads.html:59 src/templates/view.html:231
 msgid "Delete"
 msgstr "Vymazať"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:620
-msgid "Add a new type of item"
-msgstr "Pridajte nový typ položky"
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:645
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:720
+#: src/templates/admin.html:287
 msgid "Bookable"
 msgstr "Rezervovať"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:647
-msgid "in the %sscheduler%s"
-msgstr "v %s plánovači %s"
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:666
+#: src/templates/admin.html:247
 msgid "Database Items Types"
 msgstr "Typy položiek databázy"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:728
-msgid "Edit the template"
-msgstr "Upravte šablónu"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:536
+#: src/templates/sysconfig.html:184
 msgid "Add a New Team"
 msgstr "Pridať nový tím"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:550
+#: src/templates/sysconfig.html:192
 msgid "Edit Existing Teams"
 msgstr "Upraviť existujúce tímy"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1083
+#: src/templates/sysconfig.html:391
 msgid "Send a Mass Email"
 msgstr "Odoslať masový e-mail"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1088
+#: src/templates/sysconfig.html:393
 msgid "Email Subject"
 msgstr "Predmet emailu"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1094
+#: src/templates/sysconfig.html:396
 msgid "Email Body"
 msgstr "Telo e-mailu"
 
-#: web/app/controllers/UcpController.php:56
-msgid "Please input your current password!"
-msgstr "Zadajte svoje aktuálne heslo!"
-
-#: src/classes/Tools.php:182
+#: src/classes/Tools.php:167
 msgid "This section is out of your reach!"
 msgstr "Táto sekcia je mimo dosahu!"
 
-#: src/classes/Tools.php:184
+#: src/classes/Tools.php:169
 msgid "An error occurred!"
 msgstr "Vyskytla sa chyba!"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:218
+#: src/templates/uploads.html:121
 msgid "Stick"
 msgstr "Pero"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:171
+#: src/templates/uploads.html:102
 msgid "Style"
 msgstr "Štýl"
 
-#: src/models/Comments.php:195
-msgid "[eLabFTW] New comment posted"
-msgstr "[eLabFTW] Zverejnil sa nový komentár"
-
-#: src/services/Email.php:84
-msgid "[eLabFTW] Test email"
-msgstr "[eLabFTW] Testovací e-mail"
-
-#: web/team.php:70 src/exceptions/ResourceNotFoundException.php:29
-#: src/models/ItemsTypes.php:90
+#: src/exceptions/ResourceNotFoundException.php:22
 msgid "Nothing to show with this id"
 msgstr "Nič sa nezobrazí s týmto identifikátorom"
 
-#: cache/twig/ef/eff883bfa5e9b3945df5583d8cc0665cddd18790a95735a4606bbb9d16e91aaf.php:59
+#: src/templates/revisions.html:10
 msgid "Go back"
 msgstr "Návrat"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:53
+#: src/templates/team.html:5
 msgid "Scheduler"
 msgstr "Plánovač"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:141
+#: src/templates/team.html:74
 msgid "No bookable items."
 msgstr "Žiadne rezervovateľné položky."
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:155
+#: src/templates/team.html:81
 msgid "Select an equipment"
 msgstr "Vyberte zariadenie"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:195
+#: src/templates/ucp.html:74
 msgid "Display"
 msgstr "Zobraziť"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:315
+#: src/templates/ucp.html:124
 msgid "Keyboard Shortcuts"
 msgstr "Klávesové skratky"
 
-#: cache/twig/7c/7cfde0eb5e5ffee8eb4b8b994723083967cdcf71551fe88873bfc9c50a37709d.php:40
+#: src/templates/show-templates-edit.html:4
+#: src/templates/show-templates-view.html:2
 msgid "Experiments Templates"
 msgstr "Šablóny experimentov"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:332
-msgid "or"
-msgstr "alebo"
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:76
+#: src/templates/admin.html:11
 msgid "Validate"
 msgstr "Validuj"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:99
+#: src/templates/admin.html:21 src/templates/profile.html:17
 msgid "Groups"
 msgstr "Skupiny"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:132
+#: src/templates/admin.html:39
 msgid "Configure your Team"
 msgstr "Nakonfigurujte tím"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:319
+#: src/templates/admin.html:510
 msgid "Override general timestamping config"
 msgstr "Prepísať všeobecnú konfiguráciu časového označenia"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:127
+#: src/templates/editusers.html:54
 msgid "Edit Users"
 msgstr "Upraviť používateľov"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:560
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:621
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:278
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:530
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:160
+#: src/templates/editusers.html:111 src/templates/editusers.html:231
 msgid "Group"
 msgstr "Skupina"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:314
+#: src/templates/editusers.html:122
 msgid "Reset user password"
 msgstr "Obnovenie hesla používateľa"
 
-#: cache/twig/67/67ed4dc915a2a958b53f7776ba416ce1223b3b10f0c5cf8998fa67c864d6c2be.php:58
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:320
+#: src/templates/change-pass.html:9 src/templates/editusers.html:123
 msgid "characters minimum"
 msgstr "znakov minimálne"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:776
+#: src/templates/admin.html:116
 msgid "Common Experiment Template"
 msgstr "Spoločná šablóna experimentu"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:802
+#: src/templates/admin.html:346
 msgid "Import a CSV File"
 msgstr "Importovať súbor CSV"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:909
+#: src/templates/admin.html:388
 msgid "Import a ZIP File"
 msgstr "Import súboru ZIP"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:924
+#: src/templates/admin.html:395
 msgid "1. Select where to import:"
 msgstr "1. Vyberte miesto importovania:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:401
+#: src/templates/admin.html:132
 msgid "Manage Groups of Users"
 msgstr "Správa skupín používateľov"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:408
+#: src/templates/admin.html:136
 msgid "Create a group"
 msgstr "Vytvorte skupinu"
 
-#: cache/twig/4a/4ae03ad2ce3f111707799888eaf5c709abe80ae1ea2caa7eb8db2c252e036d14.php:50
+#: src/templates/todolist-panel.html:10 src/templates/todolist-panel.html:12
+#: src/templates/todolist-panel.html:13
 msgid "Add"
 msgstr "Pridať"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:422
+#: src/templates/admin.html:144
 msgid "Existing groups"
 msgstr "Existujúce skupiny"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:100
+#: src/templates/sysconfig.html:7
 msgid "Latest version:"
 msgstr "Najnovšia verzia:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:186
+#: src/templates/sysconfig.html:42
 msgid "Usage Statistics"
 msgstr "Štatistiky využitia"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:297
+#: src/templates/sysconfig.html:91
 msgid "Address of the Proxy:"
 msgstr "Adresa Proxy:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:485
+#: src/templates/sysconfig.html:167
 msgid "Operating System"
 msgstr "Operačný systém"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:491
+#: src/templates/sysconfig.html:168
 msgid "PHP Version"
 msgstr "PHP verzia"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:497
+#: src/templates/sysconfig.html:169
 msgid "Largest integer supported"
 msgstr "Najväčšie celé číslo je podporované"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:503
+#: src/templates/sysconfig.html:170
 msgid "PHP configuration directory"
 msgstr "Konfiguračný adresár PHP"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:727
+#: src/templates/sysconfig.html:261
 msgid "Timestamping Configuration"
 msgstr "Časová konfigurácia"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:817
+#: src/templates/sysconfig.html:288
 msgid "Security Settings"
 msgstr "Bezpečnostné nastavenia"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:878
-msgid "Time of the ban after failed login attempts (in minutes):"
-msgstr "Čas zákazu po neúspešných pokusoch o prihlásenie (v minútach):"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:904
+#: src/templates/sysconfig.html:340
 msgid "E-mail Settings"
 msgstr "Nastavenie e-mailu"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:916
-msgid "Send e-mails via:"
-msgstr "Poslať e-maily cez:"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:924
-#, fuzzy
-msgid "Select mailing method..."
-msgstr "Vyberte spôsob odosielania emailov ..."
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:943
+#: src/templates/sysconfig.html:347
 msgid "Sender address:"
 msgstr "Adresa odosielateľa:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:954
-msgid "Path to sendmail:"
-msgstr "Cesta k odosielaniu:"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:974
-msgid "SMTP encryption:"
-msgstr "Šifrovanie SMTP:"
-
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:208
+#: src/templates/head.html:114
 msgid "My Profile"
 msgstr "Môj profil"
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:238
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:268
+#: src/templates/head.html:124 src/templates/head.html:150
 msgid "Help"
 msgstr "Pomocník"
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:300
+#: src/templates/head.html:167
 msgid "You can make links inside the text by typing # and an autocomplete menu will spawn with a list of Experiments/Items."
 msgstr "Odkazy v texte môžete vytvoriť zadaním # a automaticky sa rozbalí ponuka experimentov / položiek."
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:122
+#: src/templates/search.html:275
 msgid "And visibility is:"
 msgstr "A viditeľnosť je:"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:127
+#: src/templates/search.html:277
 msgid "Select visibility"
 msgstr "Vyber viditeľnosť"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:525
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:586
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:239
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:297
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:133
+#: src/services/Transform.php:32 src/templates/admin.html:93
+#: src/templates/admin.html:109
 msgid "Organization"
 msgstr "Organizácia"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:149
+#: src/templates/footer.html:54
 msgid "Memory usage:"
 msgstr "Využitie pamäte:"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:157
+#: src/templates/footer.html:55
 msgid "bytes"
 msgstr "bajtov"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:59
-msgid "Number of login attempt left before being banned for %s minutes: %s"
-msgstr "Počet pokusov o prihlásenie pred tým, než bol zakázaný na %s minút: %s"
-
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:230
+#: src/templates/login.html:153
 msgid "Login through your institution"
 msgstr "Prihlásanie sa cez váš inštitút"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:917
+#: src/templates/ucp.html:365
 msgid "Generate an API Key"
 msgstr "Generuj API kľúč"
 
-#: cache/twig/0e/0e5573d973749d5139ce07236914a6a9517320275fda0d5a3d52f337d2d8544c.php:350
-#: cache/twig/a3/a3c30216424db37fa2d72e6c858b60a917f3dfbf1cdbc90ba7b0fdcb2110194e.php:350
-msgid "Not enough tags to make a tagcloud"
-msgstr "Nedostatok tagov pre vytvorenie tagcloudu"
-
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:222
+#: src/templates/view.html:62 src/templates/view.html:63
 msgid "Duplicate"
 msgstr "Duplikát"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:241
+#: src/templates/view.html:68 src/templates/view.html:69
 msgid "Make a PDF"
 msgstr "Vytvor PDF"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:254
+#: src/templates/view.html:73 src/templates/view.html:74
 msgid "Make a ZIP"
 msgstr "Vytvor ZIP"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:268
+#: src/templates/steps-links-view.html:73
+#: src/templates/steps-links-view.html:74
 msgid "Show related"
 msgstr "Zobraziť súvisiace"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:58
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:362
+#: src/templates/view.html:10 src/templates/view.html:109
+#: src/templates/view.html:110
 msgid "Timestamp Experiment"
 msgstr "Pridaj časovú pečiatku k experimentu"
 
-#: cache/twig/b9/b94e9cafb5985b2e27f241849029052e0fbf50a9337c196ed956cde58fc30649.php:126
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:471
+#: src/templates/show-item.html:31 src/templates/show.html:120
+#: src/templates/view.html:179
 msgid "Next step"
 msgstr "Ďalší krok"
 
-#: cache/twig/91/91137d0b25ddc6ffe70e66ce9fe3f0c4993aa87875d9b434662baec5bad20fcc.php:157
+#: src/templates/steps-links-edit.html:86
+#: src/templates/steps-links-edit.html:89
 msgid "Add a step"
 msgstr "Pridaj krok"
 
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:493
+#: src/templates/edit.html:220
 msgid "Draw something"
 msgstr "Nakresli niečo"
 
-#: cache/twig/65/6553abe060446074a2f9d9a63a5a190dda7b5858037eada87685fb88ad81f74d.php:71
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:529
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:238
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1677
+#: src/templates/edit.html:244 src/templates/json-editor.html:26
+#: src/templates/json-editor.html:32 src/templates/sysconfig.html:58
+#: src/templates/sysconfig.html:72 src/templates/sysconfig.html:325
+#: src/templates/sysconfig.html:331 src/templates/sysconfig.html:726
 msgid "Clear"
 msgstr "Vymaž"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:346
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:778
-msgid "This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. You should add it in the 'uploads' folder. The file needs to be in %sPEM-encoded (ASCII)%s format!"
-msgstr "Toto by malo poukázať na reťazec certifikátov používaných vaším externým poskytovateľom časových pečiatok na podpísanie časových značiek.%s Lokálna cesta vzhľadom na inštalačný adresár eLabFTW. Mali by ste ho pridať do priečinka \"Nahrávky\". Súbor musí mať formát %s PEM (ASCII) %s!"
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:370
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1033
+#: src/templates/sysconfig.html:364 src/templates/sysconfig.html:825
 msgid "A password is already set."
 msgstr "Heslo už je nastavené."
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:374
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1037
+#: src/templates/sysconfig.html:365 src/templates/sysconfig.html:826
 msgid "%sClear it%s or change it below:"
 msgstr "%s Vymazať %s alebo ho zmeniť nižšie:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:517
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:577
+#: src/templates/admin.html:186 src/templates/admin.html:215
 msgid "Allow timestamp"
 msgstr "Povoľ časovú značku"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:234
+#: src/templates/ucp.html:92
 msgid "Order by:"
 msgstr "Zoradiť podľa:"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:241
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:284
+#: src/templates/ucp.html:103
 msgid "Use default"
 msgstr "Použi prednastavené"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:265
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:135
+#: src/templates/filter-order-sort.html:37 src/templates/pdf.html:110
+#: src/templates/ucp.html:97
 msgid "Comment"
-msgstr "Poznámka"
+msgid_plural "Comments"
+msgstr[0] "Poznámka"
+msgstr[1] "Poznámky"
+msgstr[2] "Poznámok"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:277
+#: src/templates/ucp.html:101
 msgid "Sort:"
 msgstr "Zoradenie:"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:319
+#: src/templates/ucp.html:125
 msgid "Only lowercase letters are allowed."
 msgstr "Sú povolené iba malé písmená."
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:508
+#: src/templates/ucp.html:222
 msgid "Disable the rich text editor and write Markdown directly"
 msgstr "Zruš RTF editor a píš Markdown priamo"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:515
+#: src/templates/ucp.html:236
 msgid "Default visibility for new experiments"
 msgstr "Predvolená viditeľnosť nových experimentov"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:543
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:604
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:149
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:251
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:309
+#: src/templates/admin.html:95 src/templates/admin.html:111
+#: src/templates/filter-order-sort.html:40 src/templates/todolist-panel.html:29
 msgid "User"
 msgstr "Používateľ"
 
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:196
+#: src/templates/templates-edit.html:53
 msgid "Template content"
 msgstr "Obsah šablóny"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:111
-msgid "%s - A new version is available! %sUpdate elabftw%sRead changelog%s"
-msgstr "% s - k dispozícii je nová verzia! %s Inovujte elabftw %s Informácie o zmenách %s"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:125
+#: src/templates/sysconfig.html:11
 msgid "Please finalize install: %slink to documentation%s."
 msgstr "Prosím dokončite inštaláciu: %s informácia v dokumentácii %s."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:168
-msgid "SAML"
-msgstr "SAML"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:625
+#: src/templates/sysconfig.html:217
 msgid "Archive"
 msgstr "Archivácia"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:305
+#: src/templates/sysconfig.html:93
 msgid "If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128"
 msgstr "Ak ste za bránou firewall / proxy, zadajte tu adresu. Príklad: http://proxy.example.com:3128"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:427
+#: src/templates/sysconfig.html:138
 msgid "Enable local account creation:"
 msgstr "Povoliť vytvorenie lokálneho účtu:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:446
+#: src/templates/sysconfig.html:150
 msgid "Show local login form:"
 msgstr "Zobraziť lokálny prihlasovací formulár:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:464
+#: src/templates/sysconfig.html:155
 msgid "You can still show the local login form by appending ?letmein to the login page URL."
 msgstr "Stále môžete zobraziť prihlasovací formulár pridaním ?letmein na adresu URL prihlasovacej stránky."
 
-#: cache/twig/ca/cac1739bc89d90c642a794cc4c079b2f588a6d4e73eedfc7f3b4b6231942b161.php:88
+#: src/templates/view-edit.html:15
 msgid "Back to listing"
 msgstr "Späť na zoznam"
 
-#: cache/twig/ca/cac1739bc89d90c642a794cc4c079b2f588a6d4e73eedfc7f3b4b6231942b161.php:108
-msgid "Experiment of %s"
-msgstr "Experiment %s"
-
-#: cache/twig/ba/ba6006cc5c8e58c9a9e6cc97accf6b073e46f9efb10f7715a280d2f6deee6d8a.php:102
+#: src/templates/create-new.html:30
 msgid "Manage templates"
 msgstr "Správa šablón"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:84
+#: src/templates/show.html:22
 msgid "Welcome to eLabFTW. Use the 'Create new' button to get started!"
 msgstr "Vitajte v eLabFTW. Pomocou tlačidla \"Vytvoriť nové\" môžete začať!"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:149
+#: src/templates/show.html:37
 msgid "Select all"
 msgstr "Vyber všetko"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:153
+#: src/templates/show.html:39
 msgid "Clear selection"
 msgstr "Zruš výber"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:157
+#: src/templates/show.html:40
 msgid "Invert selection"
 msgstr "Invertuj výber"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:163
+#: src/templates/show.html:45
 msgid "With selected:"
 msgstr "S vybranými:"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:172
+#: src/templates/show.html:50
 msgid "Change status"
 msgstr "Zmeň stav"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:178
+#: src/templates/show.html:52
 msgid "Change item type"
 msgstr "Zmeň typ položky"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:235
+#: src/templates/admin.html:443 src/templates/admin.html:465
+#: src/templates/show.html:72
 msgid "Make Zip"
 msgstr "Vytvor Zip"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:239
+#: src/templates/admin.html:444 src/templates/admin.html:466
+#: src/templates/show.html:73
 msgid "Make Csv"
 msgstr "Vytvor Csv"
 
-#: web/app/controllers/EntityAjaxController.php:292
+#: src/models/Uploads.php:226
 msgid "Please make sure to remove any reference to this file in the body!"
 msgstr "Uistite sa, že ste odstránili akýkoľvek odkaz na tento súbor v tele!"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:125
-msgid "Decode token"
-msgstr "Dekóduj token"
-
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:329
+#: src/templates/uploads.html:27
 msgid "Insert in text at cursor position"
 msgstr "Vlož do textu na pozíciu kurzora"
 
-#: src/models/Comments.php:202
+#: src/services/EmailNotifications.php:98
 msgid "Hi. %s left a comment on your experiment. Have a look: %s"
 msgstr "Ahoj. %s zanechal komentár k vášmu experimentu. Pozrite sa: %s"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:390
+#: src/templates/editusers.html:166
 msgid "Archive user"
 msgstr "Zálohuj užívateľa"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:285
+#: src/templates/login.html:179
 msgid "Login as anonymous visitor"
 msgstr "Prihlás sa ako anonymný užívateľ"
 
-#: cache/twig/22/226bf70ee7737fb4f7e0c58a52ee749e8b7a8846394cd81f9897092e0bf159a0.php:86
+#: src/templates/show-templates-view.html:21
 msgid "Import to your profile"
 msgstr "Importuj do svojho profilu"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:166
+#: src/templates/admin.html:71
 msgid "Anonymous visitors can see database items:"
 msgstr "Anonymný užívateľ môže vidieť položky databázy:"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:377
+#: src/templates/ucp.html:150
 msgid "PDF configuration"
 msgstr "Konfigurácia PDF"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:383
+#: src/templates/ucp.html:153
 msgid "Select paper format for PDF"
 msgstr "Vyber formát papiera pre PDF"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:420
+#: src/templates/ucp.html:169
 msgid "Generate PDF/A compliant pdfs (will embed the fonts and make the file bigger)"
 msgstr "Vytvorte PDF / A kompatibilné súbory PDF (vloží fonty a zväčší súbor)"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:431
+#: src/templates/ucp.html:174
 msgid "Add attached files summary to the pdf"
 msgstr "Pridajte súhrn pripojených súborov do súboru PDF"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:464
+#: src/templates/ucp.html:197
 msgid "Show experiments from the team on the Experiments page"
 msgstr "Zobraziť experimenty od tímu na stránke Experimenty"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:351
+#: src/templates/sysconfig.html:116
 msgid "Allow anonymous visitors to login and see Public experiments:"
 msgstr "Povoliť anonymným návštevníkom prihlásenie a zobrazenie verejných experimentov:"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:207
+#: src/templates/show.html:63
 msgid "Change visibility"
 msgstr "Zmeť viditeľnosť"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:300
+#: src/templates/show.html:148
 msgid "Previous page"
 msgstr "Predchádzajúca strana"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:309
+#: src/templates/show.html:151
 msgid "Next page"
 msgstr "Ďalšia strana"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:390
+#: src/templates/uploads.html:50
 msgid "Upload a new version of this file"
 msgstr "Nahrajte novú verziu tohto súboru"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:186
+#: src/templates/uploads.html:109
 msgid "Cartoon (proteins only)"
 msgstr "Obrázok (iba proteiny)"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:194
+#: src/templates/uploads.html:112
 msgid "Cross"
 msgstr "Kríž"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:202
+#: src/templates/uploads.html:115
 msgid "Line"
-msgstr "čiara"
+msgstr "Čiara"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:210
+#: src/templates/uploads.html:118
 msgid "Sphere"
 msgstr "Kruh"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:284
-msgid "Installation URL:"
-msgstr ""
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:509
+#: src/templates/sysconfig.html:171
 msgid "Maximum file size for uploaded files"
-msgstr ""
+msgstr "Maximálna veľkosť nahraných súborov"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:518
+#: src/templates/sysconfig.html:173
 msgid "Timezone"
-msgstr ""
+msgstr "Časové pásmo"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:752
+#: src/templates/sysconfig.html:268
 msgid "You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login information in the admin panel."
-msgstr ""
+msgstr "Môžete nastaviť či tím môže použiť globálny účet pre časové označenie. Ak je nastavené na <em>no</em> tak tímový administrátor musí zadať prihlasovacie údaje v admin panely."
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:57
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:424
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:479
+#: src/templates/sysconfig.html:164 src/templates/team.html:6
 msgid "Information"
-msgstr ""
+msgstr "Informácie"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:672
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:201
+#: src/templates/edit.html:119 src/templates/show-templates-edit.html:61
+#: src/templates/view.html:255
 msgid "revision available"
 msgid_plural "revisions available"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "revízia dostupná"
+msgstr[1] "revízie dostupné"
+msgstr[2] "revízii dostupných"
 
-#: cache/twig/91/91137d0b25ddc6ffe70e66ce9fe3f0c4993aa87875d9b434662baec5bad20fcc.php:133
-#: cache/twig/c8/c8eeff2d918a6b2d9cc1367d6c8e76805f098b1a1a20523ccb14e92e26480498.php:95
+#: src/templates/steps-links-edit.html:40
+#: src/templates/steps-links-view.html:16
 msgid "completed"
-msgstr ""
+msgstr "dokončené"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:588
+#: src/templates/view.html:228
 msgid "commented"
-msgstr ""
+msgstr "okomentoval"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:139
-#: cache/twig/4a/4ae03ad2ce3f111707799888eaf5c709abe80ae1ea2caa7eb8db2c252e036d14.php:40
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:344
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:100
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:79
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:153
+#: src/templates/edit.html:63 src/templates/edit.html:91
+#: src/templates/favtags-panel.html:3 src/templates/footer.html:87
+#: src/templates/head.html:190 src/templates/login.html:24
+#: src/templates/register.html:22 src/templates/search.html:87
+#: src/templates/todolist-panel.html:2 src/templates/ucp.html:48
 msgid "Close"
-msgstr ""
+msgstr "Zavrieť"
 
-#: cache/twig/4a/4ae03ad2ce3f111707799888eaf5c709abe80ae1ea2caa7eb8db2c252e036d14.php:44
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:212
+#: src/templates/head.html:115 src/templates/todolist-panel.html:6
 msgid "Todolist"
-msgstr ""
+msgstr "Zoznam úloh"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:409
+#: src/templates/ucp.html:164
 msgid "Enable Chinese, Japanese and Korean fonts in PDF generation (WARNING: this will dramatically increase the file size unless you disable PDF/A)"
-msgstr ""
+msgstr "Zapnúť čínske, japonské a kórejské fonty v PDF generovaní (VAROVANIE: táto možnosť dramaticky zvýši veľkosť súborov ak nevypnete PDF/A)"
 
-#: cache/twig/91/91137d0b25ddc6ffe70e66ce9fe3f0c4993aa87875d9b434662baec5bad20fcc.php:224
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:119
+#: src/templates/admin.html:25 src/templates/steps-links-edit.html:107
 msgid "Import"
-msgstr ""
+msgstr "Importovať"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:123
+#: src/templates/admin.html:27
 msgid "Tag manager"
-msgstr ""
+msgstr "Správca tagov"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:915
+#: src/templates/admin.html:391
 msgid "Import a .elabftw.zip archive."
-msgstr ""
+msgstr "Importovať .elabftw.zip archív."
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:1028
+#: src/templates/admin.html:482
 msgid "Manage tags of the team"
-msgstr ""
+msgstr "Spravovať tagy tímu"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:273
+#: src/templates/search.html:238
 msgid "Select status"
-msgstr ""
+msgstr "Vybrať stav"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:347
+#: src/templates/search.html:265
 msgid "Select number of stars"
-msgstr ""
+msgstr "Vybrať počet hviezd"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:378
+#: src/templates/search.html:308
 msgid "Tip: you can use '%' as wildcard"
-msgstr ""
+msgstr "Tip: môžete použiť '%' ako divokú kartu (wildcard)"
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:288
+#: src/templates/head.html:161
 msgid "You can use a TODOlist by pressing '%s'."
-msgstr ""
+msgstr "Môžete použiť zoznam úloh stlačením '%s'."
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:299
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:64
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:116
+#: src/templates/editusers.html:19 src/templates/login.html:47
+#: src/templates/login.html:50 src/templates/login.html:185
+#: src/templates/login.html:188 src/templates/register.html:44
 msgid "Select a team"
 msgstr "Zvoľte tím"
 
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:64
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:172
+#: src/templates/footer.html:49 src/templates/footer.html:79
+#: src/templates/register.html:13 src/templates/sysconfig.html:27
 msgid "Privacy policy"
-msgstr ""
+msgstr "Zásady ochrany osobných údajov"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:212
+#: src/templates/sysconfig.html:46
 msgid "Generate report"
-msgstr ""
+msgstr "Vygenerovať záznam"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:254
+#: src/templates/sysconfig.html:83
 msgid "Language:"
-msgstr ""
+msgstr "Jazyk:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:292
-msgid "The canonical address of the eLabFTW installation. If this value is empty, eLabFTW will try to guess it, but in some instances, it might not be correct so you should fill this setting. Example: https://elabftw.example.org"
-msgstr ""
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:369
+#: src/templates/sysconfig.html:121
 msgid "This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible."
-msgstr ""
+msgstr "Toto umožňuje používateľom bez účtu vidieť experimenty s verejnou viditeľnosťou. Administrátori jednotlivých tímov si môžu vybrať či databázové položky budú viditeľné."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:374
+#: src/templates/sysconfig.html:123
 msgid "Switch this instance in open science mode:"
-msgstr ""
+msgstr "Prepnúť túto inštanciu na open sience mód:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:392
+#: src/templates/sysconfig.html:128
 msgid "This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team."
-msgstr ""
+msgstr "Toto dovolí vyhľadávačom prezerať stránku. Návštevníci budú automaticky prihlásený do špecifikovaného tímu."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:397
+#: src/templates/sysconfig.html:130
 msgid "Select which team will be open to the world in open science mode:"
-msgstr ""
+msgstr "Vybrať ktorý tím bude otvorený v open science móde:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:422
+#: src/templates/sysconfig.html:136
 msgid "This has no effect if open science mode is disabled."
-msgstr ""
+msgstr "Toto nastavenie nemá efekt ak je zapnutý open science mód."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:911
+#: src/templates/sysconfig.html:345
 msgid "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific %ssmtp2go.com%s account and add the information here."
-msgstr ""
+msgstr "Bez spôsobu ako odoslať emaily si užívatelia nebudú môcť obnoviť heslo. Odporúčame vytvoriť špecifický %ssmtp2go.com%s účet a zapísať sem údaje."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:930
-msgid "SMTP (recommended)"
-msgstr ""
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:936
-msgid "Local MTA"
-msgstr ""
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1645
+#: src/templates/sysconfig.html:713
 msgid "Adjust your privacy policy notice"
-msgstr ""
+msgstr "Upraviť zásady ochrany osobných údajov"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1653
+#: src/templates/sysconfig.html:716
 msgid "Note: the text below is a template and must be edited and saved."
-msgstr ""
+msgstr "Poznámka: text nižšie je šablóna a musí byť upravený a uložený."
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:105
+#: src/templates/editusers.html:37
 msgid "Search users"
-msgstr ""
+msgstr "Vyhľadať používateľov"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:215
+#: src/templates/editusers.html:86
 msgid "User ID"
-msgstr ""
+msgstr "Užívateľské ID"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:407
+#: src/templates/editusers.html:173
 msgid "Delete user"
-msgstr ""
+msgstr "Vymazať používateľa"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:427
+#: src/templates/editusers.html:183
 msgid "No user found!"
-msgstr ""
+msgstr "Používateľ nenájdený!"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:241
+#: src/templates/login.html:159
 msgid "Select an identity provider"
-msgstr ""
+msgstr "Zvoľte poskytovateľa identity"
 
-#: src/langs/js-strings.php:18
+#: src/langs/js-strings.php:21
 msgid "The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?"
 msgstr "Vybraté položky a všetky súvisiace údaje sa natrvalo odstránia. To nie je možné vrátiť späť. Si si istý?"
 
-#: src/langs/js-strings.php:39
+#: src/langs/js-strings.php:54
 msgid "Delete this tag?"
 msgstr "Odstrániť túto značku?"
 
-#: cache/twig/ef/eff883bfa5e9b3945df5583d8cc0665cddd18790a95735a4606bbb9d16e91aaf.php:71
+#: src/templates/revisions.html:14
 msgid "by"
-msgstr ""
+msgstr "od"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:102
+#: src/templates/view.html:40
 msgid "Experiment was timestamped by %s on %s at %s"
-msgstr ""
+msgstr "Experimentu pridelil %s dátum %s v %s"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:281
+#: src/templates/view.html:80 src/templates/view.html:81
 msgid "Book item"
-msgstr ""
+msgstr "Uložiť položku do záložiek"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:308
+#: src/templates/ucp.html:112
 msgid "Use single column layout"
-msgstr ""
+msgstr "Používať zobrazenie v jednom stĺpci"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:665
+#: src/templates/ucp.html:269
 msgid "Enter your password to edit your profile."
-msgstr ""
+msgstr "Pre editovanie profilu zadajte vaše heslo."
 
-#: cache/twig/f9/f974eb64d32747794d0b955920037440c7278b5937ca310f8d2389ddf14c9b1f.php:54
+#: src/templates/profile.html:6
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:65
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:799
+#: src/templates/ucp.html:8 src/templates/ucp.html:354
 msgid "API keys"
-msgstr ""
+msgstr "API kľúče"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:803
+#: src/templates/ucp.html:368
 msgid "Existing keys"
-msgstr ""
+msgstr "Existujúce kľúče"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:815
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:903
+#: src/templates/ucp.html:360 src/templates/ucp.html:374
 msgid "Permissions"
-msgstr ""
+msgstr "Práva"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:819
+#: src/templates/ucp.html:375
 msgid "Creation date"
-msgstr ""
+msgstr "Dátum vytvorenia"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:858
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:912
+#: src/templates/ucp.html:363 src/templates/ucp.html:384
 msgid "Read/Write"
-msgstr ""
+msgstr "Čítanie/Zápis"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:858
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:908
+#: src/templates/ucp.html:362 src/templates/ucp.html:384
 msgid "Read Only"
-msgstr ""
+msgstr "Iba na čítanie"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:888
+#: src/templates/ucp.html:356
 msgid "Create new key"
-msgstr ""
+msgstr "Vytvoriť nový kľúč"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:840
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:973
+#: src/templates/admin.html:361 src/templates/admin.html:408
 msgid "2. Select a visibility:"
-msgstr ""
+msgstr "2. Vyberte viditelnosť:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:1007
+#: src/templates/admin.html:418
 msgid "3. Select a ZIP file to import:"
-msgstr ""
+msgstr "3. Vyberte ZIP súbor na import:"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:224
+#: src/templates/team.html:108
 msgid "You belong to the %s team."
-msgstr ""
+msgstr "Patríte do %s tímu."
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:339
+#: src/templates/team.html:153
 msgid "No templates from other members of the team to display!"
-msgstr ""
+msgstr "Nenašla sa žiadna šablóna od členov tímu!"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:347
+#: src/templates/team.html:158
 msgid "Send an email to all team members"
-msgstr ""
+msgstr "Odoslať email všetkým ľuďom v tíme"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:358
+#: src/templates/team.html:163
 msgid "Subject"
-msgstr ""
+msgstr "Predmet"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:363
+#: src/templates/team.html:165
 msgid "Content"
-msgstr ""
+msgstr "Obsah"
 
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:106
+#: src/templates/filter-order-sort.html:31
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
-#: web/app/controllers/TeamController.php:40
+#: web/app/controllers/TeamController.php:44
 msgid "Email sent to %d users"
-msgstr ""
+msgstr "Email odoslaný %d používateľom"
 
-#: web/app/controllers/RegisterController.php:29
+#: web/app/controllers/RegisterController.php:28
 msgid "Registration is disabled."
-msgstr ""
+msgstr "Registrácia je vypnutá."
 
-#: web/app/controllers/UcpController.php:95
-msgid "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again: %s"
-msgstr ""
-
-#: web/app/controllers/ResetPasswordController.php:37
+#: web/app/controllers/ResetPasswordController.php:48
 msgid "Email provided is invalid."
-msgstr ""
+msgstr "Zadaný email je nesprávny."
 
-#: web/app/controllers/ResetPasswordController.php:97
-msgid "Wrong key for resetting password"
-msgstr ""
-
-#: src/services/Email.php:222
+#: src/services/EmailNotifications.php:130
 msgid "Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: "
-msgstr ""
+msgstr "Ahoj. Váš účet na eLabFTW bol overený adminom. Link na prihlásenie: "
 
-#: src/controllers/AbstractEntityController.php:224
+#: src/controllers/AbstractEntityController.php:225
 msgid "This item is locked. You cannot edit it!"
-msgstr ""
+msgstr "Táto položka je uzamknutá. Nemôžte ju upraviť!"
 
-#: src/services/Filter.php:161 src/services/Filter.php:166
-#: src/models/Uploads.php:222 src/models/Comments.php:144
-#: src/models/TeamGroups.php:53 src/models/Todolist.php:90
+#: src/classes/ContentParams.php:48 src/classes/StepParams.php:27
+#: src/services/Filter.php:150 src/services/Filter.php:155
 msgid "Input is too short! (minimum: %d)"
-msgstr ""
+msgstr "Príliš krátke! (minimum: %d)"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:233
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:291
-#: src/models/TeamGroups.php:111
+#: src/models/TeamGroups.php:101 src/services/Transform.php:31
+#: src/templates/admin.html:92 src/templates/admin.html:108
 msgid "Public"
-msgstr ""
+msgstr "Verejné"
 
-#: src/models/TeamGroups.php:112
+#: src/models/TeamGroups.php:102
 msgid "Everyone with an account"
-msgstr ""
+msgstr "Všetci s účtom"
 
-#: src/models/TeamGroups.php:113
+#: src/models/TeamGroups.php:103
 msgid "Only the team"
-msgstr ""
+msgstr "Iba tím"
 
-#: src/models/AbstractEntity.php:340
-msgid "Cannot update a locked entity!"
-msgstr ""
-
-#: src/models/AbstractEntity.php:165
+#: src/models/AbstractEntity.php:154
 msgid "This experiment was locked by %s. You don't have the rights to unlock this."
-msgstr ""
+msgstr "Tento experiment bol uzamknutý užívateľom %s. Nemáte práve ho otvoriť."
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:808
+#: src/templates/admin.html:349
 msgid "Import a .csv (Excel spreadsheet) file into the database. First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv. IMPORTANT: one of the column MUST be named 'title'. You should make a tiny import of 3 lines to see if everything works before importing a big file."
-msgstr ""
+msgstr "Importovať .csv (Excel tabuľka) do databázi. Najprv musíte otvoriť .xls/.xlsx súbor v programe Excel alebo Libreoffice a uložiť súbor ako .csv. DÔLEŽITÉ: prvý stĺpec sa musí voľať \"title\". Mali by ste najprv skúsiť malý import 3 riadkov aby ste zistili či to funguje predtým ako importujete veľký súbor."
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:870
+#: src/templates/admin.html:370
 msgid "3. Select a delimiter:"
-msgstr ""
+msgstr "3. Vybrať oddeľovací znak:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:893
+#: src/templates/admin.html:378
 msgid "4. Select a CSV file to import:"
-msgstr ""
+msgstr "4. Vybrať CSV súbor na import:"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:382
+#: src/templates/editusers.html:164
 msgid "Unarchive user"
-msgstr ""
+msgstr "Odarchivovať užívateľa"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:351
+#: src/templates/uploads.html:39
 msgid "Annotate this image"
-msgstr ""
+msgstr "Okomentovať obrázok"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:368
+#: src/templates/uploads.html:45
 msgid "Save as image"
-msgstr ""
+msgstr "Uložiť ako obrázok"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:339
+#: src/templates/view.html:100 src/templates/view.html:101
+#: src/templates/view.html:103
 msgid "Share"
-msgstr ""
+msgstr "Zdieľať"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:219
+#: src/templates/sysconfig.html:50
 msgid "Announcement"
-msgstr ""
+msgstr "Oznámenie"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:224
+#: src/templates/sysconfig.html:52
 msgid "The following text will be displayed to all users on all pages while it's active."
-msgstr ""
+msgstr "Nasledujúci text bude zobrazený všetkým užívateľom tejto stránky pokiaľ je aktívna."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:310
+#: src/templates/sysconfig.html:95
 msgid "Admins can always delete experiments:"
-msgstr ""
+msgstr "Admini môžu vždy mazať experimenty:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:328
+#: src/templates/sysconfig.html:100
 msgid "Setting this to «no» will completely remove the ability to delete experiments for everyone."
-msgstr ""
+msgstr "Nastavením položky na «no» znemožní odstránenie experimentov pre každého."
 
-#: cache/twig/91/91137d0b25ddc6ffe70e66ce9fe3f0c4993aa87875d9b434662baec5bad20fcc.php:59
-#: cache/twig/c8/c8eeff2d918a6b2d9cc1367d6c8e76805f098b1a1a20523ccb14e92e26480498.php:61
+#: src/templates/pdf.html:67 src/templates/steps-links-edit.html:10
+#: src/templates/steps-links-view.html:9
 msgid "Steps"
-msgstr ""
+msgstr "Postup"
 
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:177
+#: src/templates/filter-order-sort.html:57
 msgid "Results per page"
-msgstr ""
+msgstr "Výsledkov na stránku"
 
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:506
+#: src/templates/edit.html:230
 msgid "Stroke width"
-msgstr ""
+msgstr "Hrúbka čiary"
 
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:522
+#: src/templates/edit.html:240
 msgid "Eraser"
-msgstr ""
+msgstr "Guma"
 
-#: src/langs/js-strings.php:36
+#: src/langs/js-strings.php:48
 msgid "Delete this step?"
 msgstr "Odstrániť tento krok?"
 
-#: src/langs/js-strings.php:27
+#: src/langs/js-strings.php:33
 msgid "Delete this link?"
 msgstr "Odstrániť tento odkaz?"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:436
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:446
+#: src/templates/view.html:165 src/templates/view.html:168
 msgid "%s%d%sSee bookings%s"
-msgstr ""
+msgstr "%s%d%sZobraziť záložky%s"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:113
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:121
+#: src/templates/admin.html:302 src/templates/edit.html:52
+#: src/templates/ucp.html:39
 msgid "Can write"
-msgstr ""
+msgstr "Môže zapisovať"
 
-#: cache/twig/65/6553abe060446074a2f9d9a63a5a190dda7b5858037eada87685fb88ad81f74d.php:41
+#: src/templates/json-editor.html:4
 msgid "JSON Editor"
-msgstr ""
+msgstr "JSON Editor"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:175
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:179
+#: src/templates/team.html:88 src/templates/team.html:89
 msgid "All bookable items"
-msgstr ""
+msgstr "Založiteľné položky"
 
-#: cache/twig/22/226bf70ee7737fb4f7e0c58a52ee749e8b7a8846394cd81f9897092e0bf159a0.php:93
+#: src/templates/show-templates-view.html:23
 msgid "Create experiment from template"
-msgstr ""
+msgstr "Vytvoriť experiment zo šablóny"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:465
+#: src/templates/admin.html:154
 msgid "Add user"
-msgstr ""
+msgstr "Pridať užívateľa"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:875
+#: src/templates/admin.html:372
 msgid "semicolon"
-msgstr ""
+msgstr "bodkočiarka"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:879
+#: src/templates/admin.html:373
 msgid "comma"
-msgstr ""
+msgstr "čiarka"
 
-#: cache/twig/84/8487b330c1ff2383c131d3af55de06a0a59d6b7675c2fde1df945f9e1c16a8b4.php:44
+#: src/templates/show-view-edit.html:6
 msgid "Select type"
-msgstr ""
+msgstr "Vybrať typ"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:143
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:147
+#: src/templates/show.html:36
 msgid "Expand all"
-msgstr ""
+msgstr "Otvoriť všetko"
 
-#: cache/twig/4a/4ae03ad2ce3f111707799888eaf5c709abe80ae1ea2caa7eb8db2c252e036d14.php:62
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:391
+#: src/templates/head.html:99 src/templates/search.html:318
 msgid "Clear all"
-msgstr ""
+msgstr "Vymazať všetko"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:848
+#: src/templates/sysconfig.html:301
 msgid "Enforce a domain name for emails"
-msgstr ""
+msgstr "Vynútiť doménu pre emaily"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:856
+#: src/templates/sysconfig.html:303
 msgid "Only email addresses at this domain will be allowed to register an account."
-msgstr ""
+msgstr "Iba emailové adresy na tejto doméne si budú môcť registrovať účet."
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:440
+#: src/templates/editusers.html:190
 msgid "Add account"
-msgstr ""
+msgstr "Pridať účet"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:76
+#: src/templates/team.html:21
 msgid "Edit event"
-msgstr ""
+msgstr "Upraviť udalosť"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:90
+#: src/templates/team.html:30 src/templates/team.html:45
 msgid "Unbind"
-msgstr ""
+msgstr "Odpojiť"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:96
+#: src/templates/team.html:32
 msgid "Bind an experiment"
-msgstr ""
+msgstr "Pripojiť experiment"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:109
+#: src/templates/team.html:39 src/templates/team.html:54
 msgid "Attach"
-msgstr ""
+msgstr "Priložiť"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:116
+#: src/templates/team.html:60
 msgid "Delete this event"
-msgstr ""
+msgstr "Vymazať túto udalosť"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:312
+#: src/templates/uploads.html:168
 msgid "Load into JSON Editor"
-msgstr ""
+msgstr "Načítať do JSON Editora"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:486
+#: src/templates/ucp.html:212
 msgid "Display the molecule editor in edit mode"
-msgstr ""
+msgstr "Zobrazovať editor molekúl v editovacom režime"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:576
+#: src/templates/ucp.html:244
 msgid "Default write permission for new experiments"
-msgstr ""
+msgstr "Predvolené právomoci pre nové experimenty"
 
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:152
+#: src/templates/register.html:57
 msgid "Only emails @%s are authorized to register"
-msgstr ""
+msgstr "Iba emaily @%s sú autorizované sa registrovať"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:145
+#: src/templates/show.html:36
 msgid "Collapse all"
-msgstr ""
+msgstr "Zatvoriť všetko"
 
-#: web/app/controllers/CreateUserController.php:56
+#: web/app/controllers/CreateUserController.php:63
 msgid "Account successfully created"
-msgstr ""
-
-#: web/app/controllers/RegisterController.php:45
-msgid "This email domain is not allowed."
-msgstr ""
+msgstr "Účet úspešne vytvorený"
 
 #: src/services/Check.php:36
 msgid "Password must contain at least %d characters."
-msgstr ""
+msgstr "Heslo musí obsahovať aspoň %d znakov."
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:209
+#: src/templates/ucp.html:79
 msgid "Display size:"
-msgstr ""
+msgstr "Veľkosť zobrazenia:"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:216
+#: src/templates/ucp.html:81
 msgid "Large (default)"
-msgstr ""
+msgstr "Veľká (predvolené)"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:222
+#: src/templates/ucp.html:82
 msgid "Medium"
-msgstr ""
+msgstr "Stredná"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:228
+#: src/templates/ucp.html:83
 msgid "Small"
-msgstr ""
+msgstr "Malá"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:76
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:78
+#: src/templates/edit.html:33 src/templates/ucp.html:22
 msgid "Edit permissions"
-msgstr ""
+msgstr "Upraviť právomoci"
 
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:123
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:125
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:129
-#: cache/twig/22/226bf70ee7737fb4f7e0c58a52ee749e8b7a8846394cd81f9897092e0bf159a0.php:74
-#: cache/twig/22/226bf70ee7737fb4f7e0c58a52ee749e8b7a8846394cd81f9897092e0bf159a0.php:76
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:167
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:169
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:173
+#: src/templates/edit.html:105 src/templates/edit.html:108
+#: src/templates/show-templates-view.html:16
+#: src/templates/templates-edit.html:27 src/templates/templates-edit.html:30
+#: src/templates/uploads.html:18 src/templates/uploads.html:22
 msgid "More options"
-msgstr ""
+msgstr "Viac nastavení"
 
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:140
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:178
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:180
+#: src/templates/edit.html:110 src/templates/edit.html:113
+#: src/templates/templates-edit.html:33
 msgid "Manage Permissions"
-msgstr ""
+msgstr "Spravovať právomoci"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:883
+#: src/templates/admin.html:374
 msgid "Tab"
-msgstr ""
+msgstr "Tab"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:154
+#: src/templates/editusers.html:65
 msgid "Team(s)"
-msgstr ""
+msgstr "Tím(y)"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:187
+#: src/templates/ucp.html:69
 msgid "Help us to translate eLabFTW!"
-msgstr ""
+msgstr "Pomôžte nám preložiť eLabFTW!"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:74
+#: src/templates/login.html:10
 msgid "Reset your password"
-msgstr ""
+msgstr "Obnoviť vaše heslo"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:92
+#: src/templates/login.html:19
 msgid "Send reset link"
-msgstr ""
+msgstr "Poslať odkaz na obnovenie"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:170
+#: src/templates/login.html:100
 msgid "Login to your account"
-msgstr ""
+msgstr "Prihlásiť sa do svojho účtu"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:189
+#: src/templates/login.html:108
 msgid "Forgot password?"
-msgstr ""
+msgstr "Zabudli ste heslo?"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:215
+#: src/templates/login.html:144
 msgid "Don't have an account? %sRegister%s now!"
-msgstr ""
+msgstr "Nemáte účet? %sRegister%s teraz!"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:1032
+#: src/templates/admin.html:484
 msgid "From here you can edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags."
-msgstr ""
+msgstr "Odtiaľto môžete upravovať alebo odstraňovať tahy vašeho tímu. Kliknite na tag ktorý chcete editovať. Potom kliknite na tlačidlo zrušiť duplikáciu na spojenie podobných tagov."
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:126
+#: src/templates/login.html:75
 msgid "Your account is linked to several teams. Select in which team you want to log in"
-msgstr ""
+msgstr "Tento účet je prepojený s viacerými tímami. Vyberte do ktorého tímu sa chcete prihlásiť"
 
-#: src/exceptions/InvalidCredentialsException.php:22
+#: src/exceptions/InvalidCredentialsException.php:21
+#: src/services/LocalAuth.php:43 src/services/LocalAuth.php:85
 msgid "Invalid email/password combination."
-msgstr ""
+msgstr "Neplatná kombinácia emailu a hesla."
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:44
+#: src/templates/editusers.html:6
 msgid "Change teams for user"
-msgstr ""
+msgstr "Zmeniť tímy užívateľa"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:179
+#: src/templates/editusers.html:70
 msgid "Add team"
-msgstr ""
+msgstr "Pridať tím"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:185
+#: src/templates/editusers.html:71
 msgid "Remove team"
-msgstr ""
+msgstr "Odstrániť tím"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:497
+#: src/templates/ucp.html:217
 msgid "Display the JSON editor in edit mode"
-msgstr ""
+msgstr "Zobraziť JSON editor v editovacom móde"
 
-#: web/app/init.inc.php:103 src/exceptions/InvalidCsrfTokenException.php:29
+#: src/exceptions/InvalidCsrfTokenException.php:21 web/login.php:86
 msgid "Your session expired."
-msgstr ""
+msgstr "Vaše sedenie expirovalo."
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:42
+#: src/templates/footer.html:4
 msgid "Follow eLabFTW on Twitter!"
-msgstr ""
+msgstr "Sledujte eLabFTW na Twittery!"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:50
+#: src/templates/footer.html:9
 msgid "Code repository on GitHub"
-msgstr ""
+msgstr "Repozitár na GitHube"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:58
+#: src/templates/footer.html:14
 msgid "Join the discussion on Gitter"
-msgstr ""
+msgstr "Pripojte sa k diskusií na Gittery"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:66
+#: src/templates/footer.html:19
 msgid "Report a bug"
-msgstr ""
+msgstr "Nahlásiť chybu"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:103
+#: src/templates/footer.html:34
 msgid "Unconfirmed users"
-msgstr ""
+msgstr "Nepotvrdený užívatelia"
 
-#: cache/twig/f9/f974eb64d32747794d0b955920037440c7278b5937ca310f8d2389ddf14c9b1f.php:67
+#: src/templates/profile.html:11
 msgid "Member of:"
-msgstr ""
+msgstr "Členom:"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:442
+#: src/templates/ucp.html:184
 msgid "Enable french style signature block in pdf export (setting is only set for this browser)"
-msgstr ""
+msgstr "Zapnúť francúzky štýl podpísania v PDF exporte (nastavenie je platné len v tomto prehliadači)"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:346
+#: src/templates/sysconfig.html:114
 msgid "Registration and authentication configuration"
-msgstr ""
+msgstr "Nastavenie authentifikácie a registrácie"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:571
+#: src/templates/sysconfig.html:201
 msgid "Team Name"
-msgstr ""
+msgstr "Meno tímu"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:588
+#: src/templates/sysconfig.html:206
 msgid "Team Organisation ID"
-msgstr ""
+msgstr "ID tímovej organizácie"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:989
-msgid "None"
-msgstr ""
-
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:195
+#: src/templates/head.html:111
 msgid "Logged in as"
-msgstr ""
+msgstr "Prihlásený ako"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:231
-#: web/make.php:26
+#: web/make.php:27 src/templates/admin.html:26 src/templates/admin.html:452
+#: src/templates/admin.html:474 src/templates/show.html:71
 msgid "Export"
-msgstr ""
+msgstr "Export"
 
-#: web/change-pass.php:28
+#: web/app/controllers/ResetPasswordController.php:75 web/change-pass.php:23
 msgid "Reset password"
-msgstr ""
+msgstr "Obnoviť heslo"
 
 #: web/register.php:25
 msgid "Register"
-msgstr ""
+msgstr "Registrovať"
 
 #: web/register.php:36
 msgid "Please %slogout%s before you register another account."
-msgstr ""
+msgstr "Prosím %slogout%s predtým ako zaregistrujete iný účet."
 
 #: web/register.php:44
 msgid "No local account creation is allowed!"
-msgstr ""
+msgstr "Vytvorenie lokálneho účtu nie je dovolené!"
 
-#: web/profile.php:24
+#: web/profile.php:22
 msgid "Profile"
-msgstr ""
+msgstr "Profil"
 
-#: web/ucp.php:28
+#: web/ucp.php:29
 msgid "User Control Panel"
-msgstr ""
+msgstr "Ovládací panel"
 
-#: web/sysconfig.php:28
+#: web/sysconfig.php:30
 msgid "eLabFTW Configuration"
-msgstr ""
+msgstr "eLabFTW konfigurácia"
 
-#: web/revisions.php:30
+#: web/revisions.php:31
 msgid "Revisions"
-msgstr ""
+msgstr "Revízie"
 
-#: web/login.php:104
-msgid "You cannot login now because of too many failed login attempts."
-msgstr ""
-
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:271
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:118
+#: src/templates/filter-order-sort.html:33 src/templates/ucp.html:98
 msgid "Last modified"
-msgstr ""
+msgstr "Naposledy zmenené"
 
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:206
+#: src/templates/register.html:91
 msgid "I agree with the %sPrivacy Policy%s"
-msgstr ""
+msgstr "Súhlasím so %szásadami ochrany osobných údajov%s"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:118
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:204
+#: src/templates/footer.html:40 src/templates/head.html:113
 msgid "User panel"
-msgstr ""
+msgstr "Užívateľský panel"
 
-#: web/app/controllers/CommentsAjaxController.php:87
-msgid "Error sending email"
-msgstr ""
-
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:187
+#: src/templates/edit.html:116
 msgid "Switch editor"
-msgstr ""
+msgstr "Prepnúť editor"
 
-#: cache/twig/c8/c8eeff2d918a6b2d9cc1367d6c8e76805f098b1a1a20523ccb14e92e26480498.php:176
+#: src/templates/steps-links-view.html:51
 msgid "Related items"
-msgstr ""
+msgstr "Príbuzné položky"
 
-#: cache/twig/c8/c8eeff2d918a6b2d9cc1367d6c8e76805f098b1a1a20523ccb14e92e26480498.php:224
+#: src/templates/steps-links-view.html:71
 msgid "Related experiments"
-msgstr ""
+msgstr "Príbuzné experimenty"
 
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:904
+#: src/templates/edit.html:17
 msgid "View mode"
-msgstr ""
+msgstr "Režim zobrazenia"
 
-#: cache/twig/b9/b94e9cafb5985b2e27f241849029052e0fbf50a9337c196ed956cde58fc30649.php:87
+#: src/templates/show-item.html:16
 msgid "Pinned"
-msgstr ""
+msgstr "Pripnuté"
 
-#: cache/twig/b9/b94e9cafb5985b2e27f241849029052e0fbf50a9337c196ed956cde58fc30649.php:169
+#: src/templates/show-item-table.html:61 src/templates/show-item.html:43
 msgid "Toggle content"
-msgstr ""
+msgstr "Prepnúť obsah"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:176
+#: src/templates/sysconfig.html:28
 msgid "External auth"
-msgstr ""
+msgstr "Externá authentifikácia"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:333
+#: src/templates/sysconfig.html:102
 msgid "Maximum number of stored revisions per entry:"
-msgstr ""
+msgstr "Maximálny počet revizií na záznam:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:341
+#: src/templates/sysconfig.html:104
 msgid "Setting this to a low value will help keeping the database size small. Setting this to 0 will allow infinite number of revisions stored."
-msgstr ""
+msgstr "Nižšia hodnota zaistí nízku veľkosť databázi. Ak nastavíte na 0 nekonečný počet revízii bude ukladaný."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1690
+#: src/templates/sysconfig.html:736
 msgid "External authentication mapping"
-msgstr ""
+msgstr "Externé mapovanie authentifikácie"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1697
+#: src/templates/sysconfig.html:740
 msgid "If the server manages authentication, then you can provide here the environment variables names for user information."
-msgstr ""
+msgstr "Ak server spravuje authentifikáciu, potom sem môžete zapísať premenné prostredia pre užívateľské informácie."
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:475
+#: src/templates/ucp.html:202
 msgid "Show templates from the team on the Templates page and in the menus"
-msgstr ""
+msgstr "Zobraziť šablóny z tímu na stránke Šablóny a v menu"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:243
+#: src/templates/admin.html:445 src/templates/admin.html:467
+#: src/templates/show.html:74
 msgid "Make PDF"
-msgstr ""
+msgstr "Vytvoriť PDF"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:247
+#: src/templates/admin.html:447 src/templates/admin.html:469
+#: src/templates/show.html:76
 msgid "Make JSON"
-msgstr ""
+msgstr "Vytvoriť JSON"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:55
+#: src/templates/todolist-panel.html:6 src/templates/todolist-panel.html:42
+#: src/templates/todolist-panel.html:49 src/templates/uploads.html:5
 msgid "Toggle visibility"
-msgstr ""
+msgstr "Prepnúť viditeľnosť"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:185
+#: src/templates/view.html:47 src/templates/view.html:48
 msgid "Toggle pin"
-msgstr ""
+msgstr "Prepnúť pripnúť"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:520
+#: src/templates/view.html:202
 msgid "Last modified on %s"
-msgstr ""
+msgstr "Naposledy zmenené na %s"
 
-#: src/langs/js-strings.php:42
+#: src/langs/js-strings.php:57
 msgid "File comment"
 msgstr "Komentár k súboru"
 
-#: src/services/Email.php:162
-msgid "Hi. A new user registered on elabftw ("
-msgstr ""
-
-#: src/services/Email.php:184
-msgid "[eLabFTW] Your account has been created"
-msgstr ""
-
-#: src/services/Email.php:190
+#: src/services/EmailNotifications.php:125
 msgid "Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done."
-msgstr ""
+msgstr "Ahoj. Váš účet bol vytvorený ale je momentálne neaktívny (nedá sa naň prihlásiť). Administrátor tímu bol oboznámený a validuje Váš účet. Ak tak učiní dostanete e-mail."
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:444
+#: src/templates/editusers.html:191
 msgid "Note: new user will need to use the \"Forgot password\" button on the login page to set a password."
-msgstr ""
+msgstr "Poznámka: Nový užívateľ bude musieť použiť tlačidlo \"Obnoviť heslo\" na prihlasovacej stránke pre nastavenie hesla."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:639
+#: src/templates/sysconfig.html:224
 msgid "Visible on registration page"
-msgstr ""
+msgstr "Viditeľné na registračnej stránke"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:860
+#: src/templates/sysconfig.html:304
 msgid "You can add several domains by separating them with a comma."
-msgstr ""
+msgstr "Môžete pridať niekoľko domén rozdelením ich pomocou čiarky."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1702
+#: src/templates/sysconfig.html:742
 msgid "Remote user"
-msgstr ""
+msgstr "Vzdialený užívateľ"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1747
+#: src/templates/sysconfig.html:757
 msgid "Logout URL"
-msgstr ""
+msgstr "URL Odhlásenia"
 
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:152
+#: src/templates/templates-edit.html:37
 msgid "Download template"
-msgstr ""
+msgstr "Stiahnuť šablónu"
 
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:163
+#: src/templates/show-templates-view.html:27
+#: src/templates/templates-edit.html:42
 msgid "Destroy template"
-msgstr ""
+msgstr "Zničiť šablónu"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:203
+#: src/templates/admin.html:83
 msgid "Enforce read permissions?"
-msgstr ""
+msgstr "Vynútiť povolenie čítania?"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:221
+#: src/templates/admin.html:88
 msgid "Select if you want to enforce read permissions on experiments"
-msgstr ""
+msgstr "Zvoľte ak chcete vynútiť povolenie čítania na experimenty"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:226
+#: src/templates/admin.html:90
 msgid "Enforced read permissions on experiments"
-msgstr ""
+msgstr "Vynútené povolenie čítania na experimentoch"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:256
+#: src/templates/admin.html:97
 msgid "Enforce the read permission for all experiments of users in this team."
-msgstr ""
+msgstr "Vynútiť povolenie čítania na všetky experimenty užívateľov tohoto tímu."
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:261
+#: src/templates/admin.html:99
 msgid "Enforce write permissions?"
-msgstr ""
+msgstr "Vynútiť povolenie písania?"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:279
+#: src/templates/admin.html:104
 msgid "Select if you want to enforce write permissions on experiments"
-msgstr ""
+msgstr "Zvoľte ak chcete vynútiť povolenie písania na experimenty"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:284
+#: src/templates/admin.html:106
 msgid "Enforced write permissions on experiments"
-msgstr ""
+msgstr "Vynútené povolenie písania na experimentoch"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:314
+#: src/templates/admin.html:113
 msgid "Enforce the write permission for all experiments of users in this team."
-msgstr ""
+msgstr "Vynútiť povolenie písania na všetky experimenty užívateľov tohoto tímu."
 
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:232
+#: src/templates/admin.html:266 src/templates/filter-order-sort.html:71
+#: src/templates/show-templates-select.html:12
 msgid "Go"
-msgstr ""
+msgstr "Ísť"
 
-#: cache/twig/4a/4ae03ad2ce3f111707799888eaf5c709abe80ae1ea2caa7eb8db2c252e036d14.php:71
+#: src/templates/todolist-panel.html:26
 msgid "Unfinished steps"
-msgstr ""
+msgstr "Nedokončené kroky"
 
-#: src/models/AbstractEntity.php:382 src/models/AbstractEntity.php:387
+#: src/models/AbstractEntity.php:423 src/models/AbstractEntity.php:428
 msgid "Read permissions enforced by admin. Aborting change."
-msgstr ""
+msgstr "Povolenie čítania je vynútené administrátorom. Ruším zmeny."
 
-#: src/langs/js-strings.php:30
+#: src/langs/js-strings.php:39
 msgid "Please wait…"
-msgstr ""
+msgstr "Prosím počkajte…"
 
-#: cache/twig/7c/7cfde0eb5e5ffee8eb4b8b994723083967cdcf71551fe88873bfc9c50a37709d.php:80
-#: cache/twig/ba/ba6006cc5c8e58c9a9e6cc97accf6b073e46f9efb10f7715a280d2f6deee6d8a.php:48
+#: src/templates/create-new.html:7 src/templates/show-templates-edit.html:11
 msgid "Toggle create new menu"
-msgstr ""
+msgstr "Prepnúť vytvorenie nového menu"
 
-#: cache/twig/7c/7cfde0eb5e5ffee8eb4b8b994723083967cdcf71551fe88873bfc9c50a37709d.php:86
+#: src/templates/show-templates-edit.html:14
 msgid "Import from file"
-msgstr ""
+msgstr "Importovať zo súboru"
 
-#: cache/twig/7c/7cfde0eb5e5ffee8eb4b8b994723083967cdcf71551fe88873bfc9c50a37709d.php:91
+#: src/templates/show-templates-edit.html:17
 msgid "Reorder templates"
-msgstr ""
+msgstr "Roztriediť šablóny"
 
-#: cache/twig/65/6553abe060446074a2f9d9a63a5a190dda7b5858037eada87685fb88ad81f74d.php:61
+#: src/templates/json-editor.html:18
 msgid "Toggle JSON editor save menu"
-msgstr ""
+msgstr "Prepnúť menu uloženia JSON editoru"
 
-#: cache/twig/65/6553abe060446074a2f9d9a63a5a190dda7b5858037eada87685fb88ad81f74d.php:67
-msgid "Save as"
-msgstr ""
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:930
+#: src/templates/admin.html:398
 msgid "Import in database"
-msgstr ""
+msgstr "Importovať v databáze"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:950
+#: src/templates/admin.html:402
 msgid "Import in experiments"
-msgstr ""
+msgstr "Importovať v experimentoch"
 
-#: web/app/controllers/EntityAjaxController.php:245
+#: web/app/controllers/EntityAjaxController.php:216
 msgid "File uploaded successfully"
-msgstr ""
+msgstr "Súbor úspešne nahraný"
 
-#: src/langs/js-strings.php:21
+#: src/langs/js-strings.php:27
 msgid "Filename"
-msgstr ""
+msgstr "Názov súboru"
 
-#: src/langs/js-strings.php:33
+#: src/langs/js-strings.php:45
 msgid "Enter name of the file"
-msgstr ""
+msgstr "Zadajte názov súboru"
+
+#: src/templates/view-edit.html:24
+msgid "Owned by %s"
+msgstr "Vlastní %s"
+
+#: src/templates/admin.html:485
+msgid "Deduplicate"
+msgstr "Zrušiť duplikát"
+
+#: src/templates/editusers.html:140
+msgid "Uses 2FA?"
+msgstr "Používa 2FA?"
+
+#: web/login.php:48 src/templates/mfa.html:7 src/templates/ucp.html:292
+msgid "Two Factor Authentication"
+msgstr "Dvojfázová autetifikácia"
+
+#: src/templates/mfa.html:12
+msgid "Open your authenticator application and scan the QR code."
+msgstr "Otvorte autetifikačnú aplikácia a naskenujte QR kód."
+
+#: src/templates/mfa.html:16
+msgid "Secret for manual setup"
+msgstr "Tajný kód pre manuálne prvotné nastavenie"
+
+#: src/templates/mfa.html:26
+msgid "Authentication code"
+msgstr "Overovací kód"
+
+#: src/templates/mfa.html:28
+msgid "Open the authenticator app on your device to get your authentication code and verify your identity."
+msgstr "Otvorte aplikáciu na authetifikáciu na vašom zariadení, zadajte kód a overte vašu identitu."
+
+#: src/templates/mfa.html:30
+msgid "Verify"
+msgstr "Verifikovať"
+
+#: src/templates/ucp.html:86
+msgid "Display mode:"
+msgstr "Režim zobrazenia:"
+
+#: src/templates/ucp.html:88
+msgid "Item list (default)"
+msgstr "Zoznam položiek (predvolené)"
+
+#: src/templates/ucp.html:89
+msgid "Tabular"
+msgstr "Tabular"
+
+#: src/templates/ucp.html:295
+msgid "Use two-factor authentication?"
+msgstr "Použiť dvojfaktorovú autentifikáciu?"
+
+#: src/templates/sysconfig.html:794
+msgid "LDAP configuration"
+msgstr "LDAP konfigurácia"
+
+#: src/templates/sysconfig.html:798
+msgid "This page allows you to configure LDAP authentication."
+msgstr "Táto stránka vám umožňuje LDAP authentifikáciu."
+
+#: src/templates/sysconfig.html:800
+msgid "Toggle LDAP login"
+msgstr "Prepnúť LDAP login"
+
+#: src/templates/sysconfig.html:806
+msgid "LDAP Host"
+msgstr "LDAP Host"
+
+#: src/templates/sysconfig.html:808
+msgid "Domain name or IP address"
+msgstr "Doména alebo IP adresa"
+
+#: src/templates/sysconfig.html:810
+msgid "LDAP Port"
+msgstr "LDAP Port"
+
+#: src/templates/sysconfig.html:812
+msgid "Default: 389 LDAPS: 636"
+msgstr "Predvolené: 389 LDAPS: 636"
+
+#: src/templates/sysconfig.html:817
+msgid "Username"
+msgstr "Užívateľské meno"
+
+#: src/templates/sysconfig.html:835
+msgid "Use TLS"
+msgstr "Použiť TLS"
+
+#: src/templates/login.html:90
+msgid "You are already authenticated"
+msgstr "Už ste authentifikovaný"
+
+#: src/templates/login.html:92
+msgid "Continue"
+msgstr "Pokračovať"
+
+#: src/templates/login.html:129
+msgid "Local"
+msgstr "Lokálne"
+
+#: src/templates/show.html:95
+msgid "Lock"
+msgstr "Zamknúť"
+
+#: src/templates/show.html:129
+msgid "Actions"
+msgstr "Akcie"
+
+#: src/services/EmailNotifications.php:107
+#: src/services/EmailNotifications.php:116
+msgid "Hi. A new user registered an account on eLabFTW: %s (%s)."
+msgstr "Ahoj. Nový používateľ si zaregistroval účet na eLabFTW: %s (%s)."
+
+#: src/services/EmailNotifications.php:121
+msgid "Head to the admin panel to validate the account: %s"
+msgstr "Navštívne admin panel na validáciu účtu: %s"
+
+#: src/exceptions/UnauthorizedException.php:22
+msgid "Authentication required"
+msgstr "Vyžaduje sa authentifikácia"
+
+#: src/controllers/LoginController.php:58
+msgid "Two Factor Authentication was not enabled!"
+msgstr "Dvojfaktorová authentifikácia nie je zapnutá!"
+
+#: src/controllers/LoginController.php:70
+msgid "The code you entered is not valid!"
+msgstr "Kód ktorý ste zadali nie je platný!"
+
+#: src/controllers/LoginController.php:78
+msgid "Two Factor Authentication is now enabled!"
+msgstr "Dvojfaktorová authentifikácia je od teraz zapnutá!"
+
+#: src/langs/js-strings.php:36
+msgid "Nothing selected!"
+msgstr "Nič nevybrané!"
+
+#: src/langs/js-strings.php:42
+msgid "Do you want to replace the file on the server with this edit?"
+msgstr "Chcete touto úpravou nahradiť súbor na servery?"
+
+#: src/templates/json-editor.html:7
+msgid "Load metadata"
+msgstr "Načítať metadáta"
+
+#: src/templates/json-editor.html:21
+msgid "Save as file"
+msgstr "Uložiť ako súbor"
+
+#: src/templates/json-editor.html:22 src/templates/json-editor.html:31
+msgid "Save as metadata"
+msgstr "Uložiť ako metadáta"
+
+#: src/templates/sysconfig.html:106
+msgid "Minimum number of characters that need to be changed in order to create a new revision per entry:"
+msgstr "Minimálny počet znakov ktoré sa musia dosiahnuť aby sa vytvorila nová revízia pre daný záznam:"
+
+#: src/templates/sysconfig.html:108
+msgid "Setting this to a high value will help keeping the database size small."
+msgstr "Nastavením tejto položky na vysokú hodnotu zaistí nižšiu veľkosť databázy."
+
+#: src/templates/sysconfig.html:310
+msgid "Time after which inactive sessions are invalidated (force logout) (in seconds):"
+msgstr "Čas po ktorom neaktívne sedenie bude zrušené (vynútené odhlásenie) (v sekundách):"
+
+#: src/templates/sysconfig.html:313
+msgid "Set to 0 to disable this feature."
+msgstr "Nastavte 0 pre vypnutie tejto funkcie."
+
+#: src/templates/pdf.html:16
+msgid "Created by"
+msgstr "Vytvoril"
+
+#: src/templates/pdf.html:52
+msgid "Linked item"
+msgid_plural "Linked items"
+msgstr[0] "Pripojená položka"
+msgstr[1] "Pripojené položky"
+msgstr[2] "Pripojených položiek"
+
+#: src/services/EmailValidator.php:59
+msgid "This email domain is not allowed. Allowed domains: %s"
+msgstr "Táto emailová doména nie je povolená. Povolené domény: %s"
+
+#: src/langs/js-strings.php:15
+msgid "Editing metadata"
+msgstr "Upravovať metadáta"
+
+#: src/langs/js-strings.php:24 src/templates/pdf.html:44
+msgid "Extra fields"
+msgstr "Extra polia"
+
+#: src/langs/js-strings.php:60
+msgid "Template title"
+msgstr "Názov šablóny"
+
+#: src/templates/ucp.html:119
+msgid "Display attached files with thumbnails"
+msgstr "Zobrazovať pripojeným súborom miniatúry"
+
+#: src/templates/ucp.html:207
+msgid "Show experiments/database items from outside the team"
+msgstr "Zobraziť experimenty/dazabázové položky mimo tímu"
+
+#: src/templates/edit.html:129 src/templates/view.html:152
+msgid "Started on"
+msgstr "Začaté"
+
+#: src/templates/view.html:117 src/templates/view.html:118
+msgid "Add to blockchain"
+msgstr "Pridať do blockchain"
+
+#: src/templates/sysconfig.html:64
+msgid "Login page announcement"
+msgstr "Oznámenie na prihlasovacej stránke"
+
+#: src/templates/sysconfig.html:66
+msgid "The following text will be displayed only on the login page."
+msgstr "Nasledujúci text bude zobrazený iba na prihlasovacej obrazovke."
+
+#: src/templates/admin.html:51
+msgid "Users can delete items:"
+msgstr "Užívatelia môžu odstraňovať položky:"
+
+#: src/templates/admin.html:56
+msgid "An admin account will always be able to delete items."
+msgstr "Účet administrátora bude vždy môcť odstrániť tagy."
+
+#: src/templates/admin.html:58
+msgid "Users can create tags:"
+msgstr "Užívateľ môže vytvárať tagy:"
+
+#: src/templates/admin.html:63
+msgid "An admin account will always be able to create tags."
+msgstr "Účet administrátora bude vždy môcť vytvoriť tagy."
+
+#: src/templates/uploads.html:32 src/templates/uploads.html:33
+msgid "Edit filename"
+msgstr "Upraviť názov súboru"
+
+#: src/services/Email.php:146
+msgid "Sent from eLabFTW"
+msgstr "Odoslané z eLabFTW"
+
+#: src/services/Transform.php:34
+msgid "Owner + Admin(s)"
+msgstr "Majitel + Admini"
+
+#: src/services/Transform.php:35
+msgid "Owner only"
+msgstr "Iba majitel"
+
+#: src/models/Items.php:98
+msgid "Users cannot delete items."
+msgstr "Užívateľ nemôže zmazať položky."
+
+#: src/models/Tags.php:63
+msgid "Users cannot create tags."
+msgstr "Užívateľ nemôže vytvoriť tagy."
+
+#: src/models/TeamGroups.php:104
+msgid "Only me and admins"
+msgstr "Iba ja a administrátori"
+
+#: src/templates/ucp.html:179
+msgid "Append attached PDFs to exported pdf"
+msgstr "Pridať priložené PDFka na koniec exportovaného PDF"
+
+#: src/templates/ucp.html:232
+msgid "Use ISO datetime in the text editor instead of localized one"
+msgstr "Použiť ISO dátum v textovom editore namiesto lokalizovaného"
+
+#: src/templates/edit.html:74 src/templates/edit.html:113
+msgid "Transfer ownership"
+msgstr "Presunúť vlastníctvo"
+
+#: src/templates/edit.html:81
+msgid "New owner"
+msgstr "Nový majiteľ"
+
+#: src/templates/edit.html:189 src/templates/edit.html:192
+msgid "Main content"
+msgstr "Hlavný obsah"
+
+#: src/templates/steps-links-edit.html:33
+#: src/templates/steps-links-view.html:13
+msgid "Toggle completion"
+msgstr "Prepnúť stav dokončenia"
+
+#: src/templates/head.html:110
+msgid "User menu"
+msgstr "Užívateľské menu"
+
+#: src/templates/head.html:158
+msgid "Make sure to read the %suser guide%s."
+msgstr "Uistite sa že si prečítate %suser guide%s."
+
+#: src/templates/sysconfig.html:144
+msgid "Admins can create local accounts:"
+msgstr "Administrátori môžu vytvoriť lokálne účty:"
+
+#: src/templates/team.html:47
+msgid "Bind an item"
+msgstr "Pripojiť položku"
+
+#: src/templates/team.html:131
+msgid "Admin"
+msgstr "Administrátor"
+
+#: src/templates/show.html:135
+msgid "Owner"
+msgstr "Vlastník"
+
+#: src/templates/edit.html:198
+msgid "Save and go back"
+msgstr "Uložiť a ísť späť"
+
+#: src/templates/editusers.html:48
+msgid "Show all"
+msgstr "Ukáž všetko"
+
+#: src/templates/uploads.html:191
+msgid "OK"
+msgstr "OK"
+
+#: src/templates/admin.html:65
+msgid "Force experiment template use:"
+msgstr "Vnúť vzor experimentu:"
+
+#: src/templates/sysconfig.html:110
+msgid "Number of days between changes to automatically create a revision:"
+msgstr "Počet dní medzi zmenami pre automatické vytvorenie revízie:"
+
+#: src/templates/sysconfig.html:112
+msgid "If the last change is at least this days old, a revision will be created regardless of the minimum characters setting."
+msgstr "Ak je posledná zmena najmenej jeden deň stará, revízia bude vytvorená bez ohľadu na nastavenie minimálneho počtu znakov."
+
+#: src/templates/sysconfig.html:324
+msgid "%d users are currently prevented from logging in from unknown devices."
+msgstr "%d užívateľov je momentálne zablokovaných z neznámych zariadení."
+
+#: src/templates/sysconfig.html:330
+msgid "%d devices are currently denied authentication."
+msgstr "%d zariadení má zakázanú autentifikáciu."
+
+#: src/templates/ucp.html:95
+msgid "(default)"
+msgstr "(default)"
+
+#: src/templates/ucp.html:227
+msgid "Enable the plasmid viewer"
+msgstr "Povoľ plasmid prehliadač"
+
+#: web/app/controllers/ResetPasswordController.php:58
+#: web/app/controllers/ResetPasswordController.php:96
+msgid "If the account exists, an email has been sent."
+msgstr "Ak účet existuje, pošli email."
+
+#: web/app/controllers/ResetPasswordController.php:65
+msgid "Your account is not validated. An admin of your team needs to validate it!"
+msgstr "Váš účet nie je validovaný. Admin vášho tímu ho musí validovať!"
+
+#: web/app/controllers/ResetPasswordController.php:77
+msgid "Hi. Someone (probably you) requested a new password on eLabFTW.%s Please follow this link to reset your password: %s %sThis link is only valid for %s minutes."
+msgstr "Ahoj. Niekto (pravdepodobne Ty) si vyžiadal nové heslo na eLabFTW.%s Prosím klikni na tento link pre reset tvojho hesla: %s %sTento link je platný % minút."
+
+#: src/services/ResetPasswordKey.php:67
+msgid "This link has expired! Password reset links are only valid for %s minutes."
+msgstr "Linka expirovala! Linka pre zmenu hesla je platná len %s minút."
+
+#: src/exceptions/InvalidDeviceTokenException.php:21
+msgid "This browser cannot login anymore because of too many failed attempts."
+msgstr "Tento prehliadač sa nemôže prihlásiť kvôli veľkému počtu neplatných pokusov."
+
+#: src/models/Experiments.php:57
+msgid "Experiments must use a template!"
+msgstr "Experimenty musia použíť vzory!"
+
+#: src/templates/edit.html:100
+msgid "Warning: this entry was modified %s seconds ago by %s."
+msgstr "Pozor: túto položku pred %s sekundami menil %s."
+
+#: src/templates/admin.html:446 src/templates/admin.html:468
+#: src/templates/show.html:75
+msgid "Make QR codes PDF"
+msgstr "Vytvor PDF s QR kódmi"
+
+#: src/templates/search.html:295
+msgid "Extra fields search"
+msgstr "Vyhľadaj extra polia"
+
+#: src/templates/search.html:301
+msgid "Name of field"
+msgstr "Meno poľa"
+
+#: src/templates/search.html:306
+msgid "Value"
+msgstr "Hodnota"
+
+#: src/templates/admin.html:332
+msgid "Sort items types"
+msgstr "Zoraď typy"
+
+#: src/templates/admin.html:433
+msgid "Export database items"
+msgstr "Exportuj prvky databázy"
+
+#: src/templates/admin.html:435
+msgid "Select what to export:"
+msgstr "Vyber čo exportovať:"
+
+#: src/templates/admin.html:441 src/templates/admin.html:463
+msgid "Select export format:"
+msgstr "Vyber formát exportu:"
+
+#: src/templates/admin.html:498
+msgid "Configure timestamping"
+msgstr "Nastav časovú značku"
+
+#: src/templates/admin.html:500
+msgid "The general timestamping configuration is set to %s."
+msgstr "Časová značka je nastavená na %s."
+
+#: src/templates/admin.html:502
+msgid "You can use the general configuration or setup another below."
+msgstr "Môžeš použiť všeobecné nastavenie alebo nižšie vlastné."
+
+#: src/templates/admin.html:504
+msgid "Timestamping service credentials sharing is disabled. You need to enter your own credentials."
+msgstr "Zdieľanie služby poverenia časových značiek je vypnuté. Potrebuješ zadať vlastné poverenia."
+
+#: src/templates/todolist-panel.html:10
+msgid "New item"
+msgstr "Nová položka"
+
+#: src/templates/todolist-panel.html:33
+msgid "Show items steps for team"
+msgstr "Ukáž kroky položiek tímu"
+
+#: src/templates/ts-config.html:5
+msgid "Select timestamping authority (TSA):"
+msgstr "Výber autoritu pre časové značky (TSA):"
+
+#: src/templates/ts-config.html:7
+msgid "DFN (free, no account required)"
+msgstr "DFN (zdarma, bez potreby účtu)"
+
+#: src/templates/ts-config.html:8
+msgid "Universign (requires account)"
+msgstr "Universign (potrebuje účet)"
+
+#: src/templates/ts-config.html:9
+msgid "Digicert (free, no account required)"
+msgstr "Digicert (zdarma, bez potreby účtu)"
+
+#: src/templates/ts-config.html:10
+msgid "Sectigo (free, no account required)"
+msgstr "Sectigo (zdarma, bez potreby účtu)"
+
+#: src/templates/ts-config.html:11
+msgid "GlobalSign (free, no account required)"
+msgstr "GlobalSign (zdarma, bez potreby účtu)"
+
+#: src/templates/ts-config.html:12
+msgid "Custom TSA"
+msgstr "Vlastná TSA"
+
+#: src/templates/favtags-panel.html:6
+msgid "Favorite tags"
+msgstr "Obľúbené značky"
+
+#: src/templates/favtags-panel.html:8
+msgid "Filter"
+msgstr "Filter"
+
+#: src/templates/favtags-panel.html:22
+msgid "Add a tag as favorite"
+msgstr "Pridaj značku do obľúbených"
+
+#: src/templates/show.html:87 src/templates/steps-links-edit.html:129
+msgid "Any category"
+msgstr "Všetky kategórie"
+
+#: src/templates/head.html:134
+msgid "Open favorite tags"
+msgstr "Otvor obľúbené značky"
+
+#: src/langs/js-strings.php:51
+msgid "Are you sure you want to undo this step?"
+msgstr "Naozaj chceš vrátiť krok späť ?"
+
+#: src/services/Email.php:72
+msgid "Test email"
+msgstr "Otestuj email"
+
+#: src/services/EmailNotifications.php:93
+msgid "New comment posted"
+msgstr "Nový koment"
+
+#: src/services/EmailNotifications.php:104
+#: src/services/EmailNotifications.php:113 src/services/Transform.php:68
+msgid "New user added to your team"
+msgstr "Nový užívateľ bol pridaný do tímu"
+
+#: src/services/EmailNotifications.php:113
+msgid "[ACTION REQUIRED]"
+msgstr "[VYŽADOVANÁ AKCIA]"
+
+#: src/services/EmailNotifications.php:124
+msgid "Your account has been created"
+msgstr "Váš účet bol vytvorený"
+
+#: src/services/EmailNotifications.php:128
+msgid "Account validated"
+msgstr "Účet potvrdený"
+
+#: src/services/EmailNotifications.php:133
+msgid "A step deadline is approaching"
+msgstr "Blíži sa termín kroku"
+
+#: src/services/EmailNotifications.php:135
+msgid "Hello. A step deadline is approaching: "
+msgstr "Dobrý deň. Blíži sa termín kroku: "
+
+#: src/services/MakeTimestamp.php:67
+msgid "Timestamp archive"
+msgstr "Archív časovej pečiatky"
+
+#: src/services/Transform.php:61
+msgid "New comment on your experiment."
+msgstr "Nový komentár k vášmu experimentu."
+
+#: src/services/Transform.php:75
+msgid "A user needs account validation."
+msgstr "Používateľ potrebuje overenie účtu."
+
+#: src/services/Transform.php:82
+msgid "There was a problem during PDF creation."
+msgstr "Počas vytvárania PDF sa vyskytol problém."
+
+#: src/services/Transform.php:91
+msgid "Tex rendering failed during PDF generation. The raw tex commands are retained but you might want to carefully check the generated PDF."
+msgstr "Vykresľovanie Tex zlyhalo počas generovania PDF. Príkazy raw tex sa zachovajú, ale možno budete chcieť starostlivo skontrolovať vygenerovaný súbor PDF."
+
+#: src/services/Transform.php:100
+msgid "Some attached PDFs could not be appended."
+msgstr "Niektoré pripojené súbory PDF sa nepodarilo pripojiť."
+
+#: src/services/advancedSearchQuery/exceptions/LimitDepthIsExceededException.php:19
+msgid "Query is too complex!"
+msgstr "Dotaz je príliš zložitý!"
+
+#: web/ucp.php:71
+msgid "New comment notification"
+msgstr "Nové oznámenie o komentári"
+
+#: web/ucp.php:75
+msgid "Step deadline"
+msgstr "Termín kroku"
+
+#: web/ucp.php:83
+msgid "New user created"
+msgstr "Užívateľ bol vytvorený"
+
+#: web/ucp.php:88
+msgid "New user need validation"
+msgstr "Nový používateľ potrebuje overenie"
+
+#: src/templates/admin.html:455
+msgid "Export experiments of user"
+msgstr "Exportné experimenty používateľa"
+
+#: src/templates/admin.html:457
+msgid "Select user:"
+msgstr "Vyberte používateľa:"
+
+#: src/templates/head.html:92 src/templates/head.html:93
+#: src/templates/ucp.html:9
+msgid "Notifications"
+msgstr "Oznámenia"
+
+#: src/templates/head.html:101
+msgid "No new notifications to show."
+msgstr "Žiadne nové upozornenia na zobrazenie."
+
+#: src/templates/head.html:104 src/templates/ucp.html:395
+msgid "Notifications settings"
+msgstr "Nastavenia upozornení"
+
+#: src/templates/login.html:41
+msgid "Request access to a team"
+msgstr "Požiadať o prístup k tímu"
+
+#: src/templates/login.html:63
+msgid "Request access"
+msgstr "Požiadať o prístup"
+
+#: src/templates/login.html:68
+msgid "Your account has been created and will need to be validated by an admin."
+msgstr "Váš účet bol vytvorený a bude ho musieť overiť správca."
+
+#: src/templates/search.html:8
+msgid "Search Syntax"
+msgstr "Syntax vyhľadávania"
+
+#: src/templates/search.html:129
+msgid "Search query"
+msgstr "Vyhľadávací dotaz"
+
+#: src/templates/search.html:163
+msgid "Full syntax"
+msgstr "Úplná syntax"
+
+#: src/templates/search.html:167
+msgid "Search helpers"
+msgstr "Pomocníci vyhľadávania"
+
+#: src/templates/search.html:172
+msgid "And author is:"
+msgstr "A autorom je:"
+
+#: src/templates/search.html:174
+msgid "Select author"
+msgstr "Vybrať autora"
+
+#: src/templates/search.html:187
+msgid "Date from"
+msgstr "Dátum od"
+
+#: src/templates/search.html:191
+msgid "less than"
+msgstr "menej ako"
+
+#: src/templates/search.html:192
+msgid "less than or equal to"
+msgstr "menej ako alebo rovné"
+
+#: src/templates/search.html:193
+msgid "equal to"
+msgstr "rovná sa"
+
+#: src/templates/search.html:194
+msgid "greater than or equal to"
+msgstr "väčšie alebo rovné"
+
+#: src/templates/search.html:195
+msgid "greater than"
+msgstr "väčšie ako"
+
+#: src/templates/search.html:196
+msgid "not equal to"
+msgstr "nerovná sa"
+
+#: src/templates/search.html:203
+msgid "Date to (optional)"
+msgstr "Dátum do (nepovinné)"
+
+#: src/templates/search.html:210
+msgid "Locked"
+msgstr "Uzamknuté"
+
+#: src/templates/search.html:212
+msgid "Select lock status"
+msgstr "Vybrať stav uzamknutia"
+
+#: src/templates/search.html:221
+msgid "Timestamped"
+msgstr "Časová pečiatka"
+
+#: src/templates/search.html:223
+msgid "Select timestamp status"
+msgstr "Výber stavu časovej pečiatky"
+
+#: src/templates/search.html:249
+msgid "And category is"
+msgstr "A kategória je"
+
+#: src/templates/search.html:251
+msgid "Select category"
+msgstr "Vyberte kategóriu"
+
+#: src/templates/steps-links-edit.html:45
+msgid "Completion time:"
+msgstr "Čas na dokončenie:"
+
+#: src/templates/steps-links-edit.html:49
+msgid "Not finished"
+msgstr "Nedokončené"
+
+#: src/templates/steps-links-edit.html:54
+#: src/templates/steps-links-view.html:21
+msgid "Deadline:"
+msgstr "Uzávierka:"
+
+#: src/templates/steps-links-edit.html:60
+msgid "Toggle notifications"
+msgstr "Prepínanie oznámení"
+
+#: src/templates/steps-links-edit.html:62
+msgid "Clear deadline"
+msgstr "Jasný termín"
+
+#: src/templates/steps-links-edit.html:64
+msgid "Add deadline"
+msgstr "Pridanie termínu"
+
+#: src/templates/steps-links-edit.html:67
+msgid "Set deadline in"
+msgstr "Stanoviť termín v"
+
+#: src/templates/steps-links-edit.html:68
+msgid "+1 hour"
+msgstr "+1 hodina"
+
+#: src/templates/steps-links-edit.html:69
+msgid "+1 day"
+msgstr "+1 deň"
+
+#: src/templates/steps-links-edit.html:70
+msgid "+1 week"
+msgstr "+1 týždeň"
+
+#: src/templates/steps-links-view.html:53
+#: src/templates/steps-links-view.html:54
+msgid "Show linked items"
+msgstr "Zobraziť prepojené položky"
+
+#: src/templates/sysconfig.html:30
+msgid "Uploads"
+msgstr "Nahrané súbory"
+
+#: src/templates/sysconfig.html:271
+msgid "Blockchain timestamp configuration"
+msgstr "Konfigurácia časovej pečiatky blockchainu"
+
+#: src/templates/sysconfig.html:273
+msgid "Enable blockchain timestamping with Bloxberg:"
+msgstr "Povoliť blockchain timetamping s Bloxbergom:"
+
+#: src/templates/sysconfig.html:279
+msgid "Anonymize author for GDPR compliance:"
+msgstr "Anonymizovať autora pre súlad s GDPR:"
+
+#: src/templates/sysconfig.html:886
+msgid "Where user uploaded files are stored:"
+msgstr "Kde sú uložené súbory nahrané používateľom:"
+
+#: src/templates/sysconfig.html:888 src/templates/uploads.html:173
+msgid "Local filesystem"
+msgstr "Lokálny súborový systém"
+
+#: src/templates/sysconfig.html:889
+msgid "S3 bucket"
+msgstr "Vedro S3"
+
+#: src/templates/sysconfig.html:891
+msgid "You can select where uploaded files will be stored. The default is local storage but you can configure any S3 compatible object storage."
+msgstr "Môžete vybrať, kde budú nahrané súbory uložené. Predvolená hodnota je lokálny ukladací priestor, ale môžete nakonfigurovať akýkoľvek ukladací priestor objektov kompatibilný so systémom S3."
+
+#: src/templates/ucp.html:398
+msgid "Notification category"
+msgstr "Kategória oznámení"
+
+#: src/templates/ucp.html:399
+msgid "Web"
+msgstr "Web stránka"
+
+#: src/templates/uploads.html:54
+msgid "More information"
+msgstr "Viac informácii"
+
+#: src/templates/uploads.html:173
+msgid "Storage:"
+msgstr "Skladovanie:"
+
+#: src/templates/view.html:17
+msgid "Depending on your configuration, timestamping can incur costs. Are you sure you want to do this?"
+msgstr "V závislosti od konfigurácie môže časové pečiatkovanie vzniknúť náklady. Si si istá, že to chceš urobiť?"

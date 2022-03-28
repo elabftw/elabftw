@@ -113,7 +113,7 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         // Quicksearch
-        $extendedError = $this->prepareAdvancedSearchQuery($visibilityArr, $TeamGroups->read(new ContentParams()));
+        $extendedError = $this->prepareAdvancedSearchQuery($visibilityArr, $TeamGroups->readGroupsWithUsersFromUser());
 
         $itemsArr = $this->getItemsArr();
         // get tags separately

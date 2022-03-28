@@ -44,7 +44,7 @@ if ($Request->query->get('type') !== 'experiments') {
 
 // TEAM GROUPS
 $TeamGroups = new TeamGroups($App->Users);
-$teamGroupsArr = $TeamGroups->read(new ContentParams());
+$teamGroupsArr = $TeamGroups->readGroupsWithUsersFromUser();
 $visibilityArr = $TeamGroups->getVisibilityList();
 
 $usersArr = $App->Users->readAllFromTeam();

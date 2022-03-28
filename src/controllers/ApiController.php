@@ -398,7 +398,7 @@ class ApiController implements ControllerInterface
                     new VisitorParameters(
                         $this->Entity->type,
                         $TeamGroups->getVisibilityList(),
-                        $TeamGroups->read(new ContentParams()),
+                        $TeamGroups->readGroupsWithUsersFromUser(),
                     ),
                 );
                 $whereClause = $advancedQuery->getWhereClause();

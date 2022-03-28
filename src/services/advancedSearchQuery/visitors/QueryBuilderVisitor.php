@@ -237,18 +237,18 @@ class QueryBuilderVisitor implements Visitor
         $users = array();
         foreach ($teamGroups as $teamGroup) {
             if ($searchTerm === $teamGroup['name']) {
-                array_push($users, ...array_column($teamGroup['users'], 'fullname'));
+                array_push($users, ...array_column($teamGroup['users'], 'userid'));
             }
         }
         $queryParts = array('0');
         $bindValues = array();
         foreach (array_unique($users) as $user) {
             $param = $this->getUniqueID();
-            $queryParts[] = "CONCAT(users.firstname, ' ', users.lastname) LIKE " . $param;
+            $queryParts[] = "users.userid = " . $param;
             $bindValues[] = array(
                 'param' => $param,
                 'value' => $user,
-                'type' => PDO::PARAM_STR,
+                'type' => PDO::PARAM_INT,
             );
         }
 

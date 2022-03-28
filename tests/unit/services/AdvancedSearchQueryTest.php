@@ -34,7 +34,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $this->TeamGroups->update(new TeamGroupParams('', 'member', array('how' => 'add', 'group' => $this->groupID, 'userid' => 1)));
 
         $this->visibilityList = $this->TeamGroups->getVisibilityList();
-        $this->groups = $this->TeamGroups->read(new ContentParams());
+        $this->groups = $this->TeamGroups->readGroupsWithUsersFromUser();
     }
 
     protected function tearDown(): void

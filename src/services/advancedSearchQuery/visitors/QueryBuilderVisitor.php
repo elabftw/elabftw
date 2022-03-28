@@ -240,7 +240,7 @@ class QueryBuilderVisitor implements Visitor
                 array_push($users, ...array_column($teamGroup['users'], 'fullname'));
             }
         }
-        $queryParts = array();
+        $queryParts = array('0');
         $bindValues = array();
         foreach (array_unique($users) as $user) {
             $param = $this->getUniqueID();

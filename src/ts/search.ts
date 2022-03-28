@@ -121,13 +121,12 @@ document.addEventListener('DOMContentLoaded', () => {
       // but if we have a correct value, we add the filter
       if (filterValue !== '') {
         let filterName = elem.dataset.filter;
+
         if (filterName === '(?:author|group)') {
-          filterName = 'author';
+          filterName = filterValue.split(':')[0];
+          filterValue = filterValue.substring(filterName.length + 1);
         }
-        if (filterValue.startsWith('group:')) {
-          filterValue = filterValue.substring(6);
-          filterName = 'group';
-        }
+
         filter = `${filterName}:${quotes}${filterValue}${quotes}`;
       }
 

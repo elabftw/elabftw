@@ -179,10 +179,10 @@
           <select id='searchonly' name='owner' data-filter='(?:author|group)' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
             <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
             {% for user in usersArr %}
-              <option {{- Request.query.get('owner') == user.fullname|raw ? ' selected' }}>{{ user.fullname|raw }}</option>
+              <option value='author:{{ user.fullname|raw }}' {{- Request.query.get('owner') == user.fullname|raw ? ' selected' }}>{{ 'author'|trans }}:{{ user.fullname|raw }}</option>
             {% endfor %}
             {% for group in teamGroups %}
-              <option {{- Request.query.get('owner') == 'group:'~group|raw ? ' selected' }}>group:{{ group|raw }}</option>
+              <option value='group:{{ group|raw }}' {{- Request.query.get('owner') == 'group:'~group|raw ? ' selected' }}>{{ 'group'|trans }}:{{ group|raw }}</option>
             {% endfor %}
           </select>
         </div>

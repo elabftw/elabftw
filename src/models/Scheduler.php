@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use DateTime;
+use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
@@ -236,6 +237,18 @@ class Scheduler
         $sql = 'DELETE FROM team_events WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        // send a notification to all team admins
+        $TeamsHelper = new TeamsHelper($this->Items->Users->userData['team']);
+        $Notifications = new Notifications($this->Items->Users);
+        $Notifications->createMultiUsers(
+            new CreateNotificationParams(
+                Notifications::EVENT_DELETED,
+                array('event' => $this->readFromId(), 'actor' => $this->Items->Users->userData['fullname']),
+            ),
+            $TeamsHelper->getAllAdminsUserid(),
+            (int) $this->Items->Users->userData['userid'],
+        );
         return $this->Db->execute($req);
     }
 

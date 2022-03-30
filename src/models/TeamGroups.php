@@ -229,27 +229,45 @@ class TeamGroups implements CrudInterface
 
     public function readGroupsWithUsersFromUser(): array
     {
-        $fullGroups = array();
-        $groups = $this->readGroupsFromUser();
-        if (empty($groups)) {
-            return $fullGroups;
-        }
+        $sql = "SELECT team_groups_of_user.name,
+                GROUP_CONCAT(users.userid ORDER BY users.userid) AS usersids,
+                GROUP_CONCAT(CONCAT(users.firstname, ' ', users.lastname) ORDER BY users.userid) AS fullnames
+            FROM (
+              -- get groups of a certain user
+                SELECT team_groups.id,
+                    team_groups.name
+                FROM users2team_groups
+                LEFT JOIN team_groups ON (
+                  team_groups.id = users2team_groups.groupid
+                )
+                WHERE users2team_groups.userid = :userid
+            ) AS team_groups_of_user
+            -- now get all users of the groups
+            LEFT JOIN users2team_groups ON (
+                users2team_groups.groupid = team_groups_of_user.id
+            )
+            LEFT JOIN users USING (userid)
+            GROUP BY team_groups_of_user.id
+            ORDER BY team_groups_of_user.name ASC";
 
-        $sql = "SELECT DISTINCT users.userid, CONCAT(users.firstname, ' ', users.lastname) AS fullname
-            FROM users
-            CROSS JOIN users2team_groups ON (
-                users2team_groups.userid = users.userid
-                AND users2team_groups.groupid = :groupid
-            )";
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
 
-        foreach ($groups as $group) {
-            $req->bindParam(':groupid', $group['id'], PDO::PARAM_INT);
-            $this->Db->execute($req);
-            $usersInGroup = $req->fetchAll();
+        $fullGroups = array();
+        while ($group = $req->fetch()) {
             $fullGroups[] = array(
                 'name' => $group['name'],
-                'users' => $usersInGroup,
+                'users' => array_map(
+                    function (string $userid, string $fullname): array {
+                        return array(
+                            'userid' => $userid,
+                            'fullname' => $fullname,
+                        );
+                    },
+                    explode(',', $group['usersids']),
+                    explode(',', $group['fullnames'])
+                ),
             );
         }
 

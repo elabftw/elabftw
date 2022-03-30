@@ -48,6 +48,9 @@ class Scheduler
         $start = $this->normalizeDate($start);
         $end = $this->normalizeDate($end, true);
 
+        // users won't be able to create an entry in the past
+        $this->isFutureOrExplode(DateTime::createFromFormat(DateTime::ISO8601, $start));
+
         // fix booking at midnight on monday not working. See #2765
         // we add a second so it works
         $start = preg_replace('/00:00:00/', '00:00:01', $start);
@@ -155,7 +158,9 @@ class Scheduler
             $seconds = substr($delta['milliseconds'], 0, -3);
         }
         $newStart = $oldStart->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
+        $this->isFutureOrExplode($newStart);
         $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
+        $this->isFutureOrExplode($newEnd);
 
         $sql = 'UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
@@ -181,6 +186,7 @@ class Scheduler
             $seconds = substr($delta['milliseconds'], 0, -3);
         }
         $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
+        $this->isFutureOrExplode($newEnd);
 
         $sql = 'UPDATE team_events SET end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
@@ -224,13 +230,32 @@ class Scheduler
     /**
      * Remove an event
      */
-    public function destroy(): void
+    public function destroy(): bool
     {
         $this->canWriteOrExplode();
         $sql = 'DELETE FROM team_events WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
+    }
+
+    /**
+     * Check that the date is in the future
+     * Unlike Admins, Users can't create/modify something in the past
+     * Input can be false because DateTime::createFromFormat will return false on failure
+     */
+    private function isFutureOrExplode(DateTime|false $date): void
+    {
+        if ($date === false) {
+            throw new ImproperActionException('Could not understand date format!');
+        }
+        if ($this->Items->Users->userData['is_admin']) {
+            return;
+        }
+        $now = new DateTime();
+        if ($now > $date) {
+            throw new ImproperActionException(_('Creation/modification of events in the past is not allowed!'));
+        }
     }
 
     /**
@@ -261,7 +286,9 @@ class Scheduler
     private function canWrite(): bool
     {
         $event = $this->readFromId();
-        // if it's our event we can write to it for sure
+        // make sure we are not modifying something in the past if we're not admin
+        $this->isFutureOrExplode(DateTime::createFromFormat(DateTime::ISO8601, $event['start']));
+        // if it's our event (and it's not in the past) we can write to it for sure
         if ($event['userid'] === $this->Items->Users->userData['userid']) {
             return true;
         }

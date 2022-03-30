@@ -13,7 +13,6 @@ use function array_filter;
 use function explode;
 use League\Flysystem\FilesystemOperator;
 use function str_ends_with;
-use function str_starts_with;
 use Symfony\Component\Console\Output\OutputInterface;
 use function trim;
 
@@ -64,7 +63,7 @@ class Sql
         $linesArr = explode(PHP_EOL, $content);
         // now filter out the uninteresting lines
         return array_filter($linesArr, function ($v) {
-            return !empty($v) && !str_starts_with($v, '--') && !str_starts_with($v, '/*');
+            return !empty($v) && !preg_match('/^\s*(?:--|#|\/\*(?!!).*\*\/)/', $v);
         });
     }
 }

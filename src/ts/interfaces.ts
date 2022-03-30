@@ -10,15 +10,12 @@ interface ResponseMsg {
   res: boolean;
   msg: string;
   color?: string;
-  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedEntities> | Array<Upload> | object | MetadataJson | PartialEntity;
-}
-
-interface MetadataJson {
-  metadata: string;
+  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedEntities> | Array<Upload> | object | PartialEntity;
 }
 
 interface PartialEntity {
   body: string;
+  metadata: string;
 }
 
 interface Upload {
@@ -144,7 +141,6 @@ export {
   Payload,
   Method,
   Action,
-  MetadataJson,
   Model,
   Target,
   Todoitem,

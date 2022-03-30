@@ -74,7 +74,8 @@ abstract class AbstractEntityController implements ControllerInterface
         $DisplayParams->adjust($this->App);
 
         // VISIBILITY LIST
-        $visibilityArr = (new TeamGroups($this->Entity->Users))->getVisibilityList();
+        $TeamGroups = new TeamGroups($this->Entity->Users);
+        $visibilityArr = $TeamGroups->getVisibilityList();
 
         // CATEGORY FILTER
         if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {
@@ -112,7 +113,7 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         // Quicksearch
-        $extendedError = $this->prepareAdvancedSearchQuery($visibilityArr);
+        $extendedError = $this->prepareAdvancedSearchQuery($visibilityArr, $TeamGroups->readGroupsWithUsersFromUser());
 
         $itemsArr = $this->getItemsArr();
         // get tags separately
@@ -293,13 +294,13 @@ abstract class AbstractEntityController implements ControllerInterface
         return $deletableXp;
     }
 
-    private function prepareAdvancedSearchQuery(array $visibilityArr): string
+    private function prepareAdvancedSearchQuery(array $visibilityArr, array $teamGroups): string
     {
         $searchException = '';
         if ($this->App->Request->query->has('q') && !empty($this->App->Request->query->get('q'))) {
             $query = trim((string) $this->App->Request->query->get('q'));
 
-            $advancedQuery = new AdvancedSearchQuery($query, new VisitorParameters($this->Entity->type, $visibilityArr));
+            $advancedQuery = new AdvancedSearchQuery($query, new VisitorParameters($this->Entity->type, $visibilityArr, $teamGroups));
             $whereClause = $advancedQuery->getWhereClause();
             if ($whereClause) {
                 $this->Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);

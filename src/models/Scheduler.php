@@ -78,7 +78,8 @@ class Scheduler
         $sql = "SELECT team_events.title, team_events.id, team_events.start, team_events.end, team_events.userid,
             CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
             items.title AS item_title,
-            CONCAT('#', items_types.color) AS color
+            CONCAT('#', items_types.color) AS color,
+            CONCAT(u.firstname, ' ', u.lastname) AS fullname
             FROM team_events
             LEFT JOIN items ON team_events.item = items.id
             LEFT JOIN items_types ON items.category = items_types.id

@@ -89,19 +89,6 @@ try {
         $Response->setData($mentionArr);
     }
 
-    // GET BODY
-    if ($Request->query->has('getBody')) {
-        $Entity->canOrExplode('read');
-        $body = $Entity->entityData['body'];
-        if ($Request->query->get('editor') === 'tiny') {
-            $body = Tools::md2html($body);
-        }
-        $Response->setData(array(
-            'res' => true,
-            'msg' => $body,
-        ));
-    }
-
     // GET LINK LIST
     if ($Request->query->has('term') && !$Request->query->has('mention')) {
         // bind autocomplete targets the experiments

@@ -10,9 +10,7 @@
 namespace Elabftw\Services;
 
 use function date;
-use DateTime;
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Users;
@@ -65,17 +63,8 @@ class MakeSchedulerReport implements FileMakerInterface
      */
     protected function getRows(): array
     {
-        // normalize the from and to
-        $start = DateTime::createFromFormat('Y-m-d', $this->from);
-        if ($start === false) {
-            throw new ImproperActionException('Could not understand the supplied starting date');
-        }
-        $end = DateTime::createFromFormat('Y-m-d', $this->to);
-        if ($end === false) {
-            throw new ImproperActionException('Could not understand the supplied ending date');
-        }
         // read all booking entries from that time period
-        $entries = $this->scheduler->readAllFromTeam($start->format(DateTime::ISO8601), $end->format(DateTime::ISO8601));
+        $entries = $this->scheduler->readAllFromTeam($this->from, $this->to);
         foreach ($entries as $key => $entry) {
             // append the team(s) of user
             $UsersHelper = new UsersHelper((int) $entry['userid']);

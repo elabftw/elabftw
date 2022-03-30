@@ -74,6 +74,9 @@ class Scheduler
      */
     public function readAllFromTeam(string $start, string $end): array
     {
+        $start = $this->normalizeDate($start);
+        $end = $this->normalizeDate($end, true);
+
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = "SELECT team_events.title, team_events.id, team_events.start, team_events.end, team_events.userid,
             CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,

@@ -18,7 +18,6 @@ use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\TeamGroupParamsInterface;
 use Elabftw\Traits\SetIdTrait;
-use function in_array;
 use PDO;
 
 /**
@@ -58,31 +57,40 @@ class TeamGroups implements CrudInterface
      */
     public function read(ContentParamsInterface $params): array
     {
-        $fullGroups = array();
+        $sql = "SELECT team_groups.id,
+                team_groups.name,
+                GROUP_CONCAT(users.userid ORDER BY users.firstname, users.lastname) AS userids,
+                GROUP_CONCAT(CONCAT(users.firstname, ' ', users.lastname) ORDER BY users.firstname, users.lastname) AS fullnames
+            FROM team_groups
+            LEFT JOIN users2team_groups ON (
+                users2team_groups.groupid = team_groups.id
+            )
+            LEFT JOIN users USING (userid)
+            WHERE team_groups.team = :team
+            GROUP BY team_groups.id
+            ORDER BY team_groups.name ASC";
 
-        $sql = 'SELECT DISTINCT team_groups.id, team_groups.name FROM team_groups CROSS JOIN users2teams ON (users2teams.teams_id = team_groups.team AND users2teams.teams_id = :team) ORDER BY name';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $groups = $req->fetchAll();
-        if (empty($groups)) {
-            return $fullGroups;
-        }
-
-        $sql = "SELECT DISTINCT users.userid, CONCAT(users.firstname, ' ', users.lastname) AS fullname
-            FROM users
-            CROSS JOIN users2team_groups ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
-        $req = $this->Db->prepare($sql);
-
-        foreach ($groups as $group) {
-            $req->bindParam(':groupid', $group['id'], PDO::PARAM_INT);
-            $this->Db->execute($req);
-            $usersInGroup = $req->fetchAll();
+        $fullGroups = array();
+        while ($group = $req->fetch()) {
             $fullGroups[] = array(
                 'id' => $group['id'],
                 'name' => $group['name'],
-                'users' => $usersInGroup,
+                'users' => isset($group['userids'])
+                    ? array_map(
+                        function (string $userid, string $fullname): array {
+                            return array(
+                                'userid' => $userid,
+                                'fullname' => $fullname,
+                            );
+                        },
+                        explode(',', $group['usersids']),
+                        explode(',', $group['fullnames'])
+                    )
+                    : array(),
             );
         }
 

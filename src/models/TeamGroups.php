@@ -190,16 +190,12 @@ class TeamGroups implements CrudInterface
      */
     public function isInTeamGroup(int $userid, int $groupid): bool
     {
-        $sql = 'SELECT DISTINCT userid FROM users2team_groups WHERE groupid = :groupid';
+        $sql = 'SELECT count(userid) FROM users2team_groups WHERE groupid = :groupid AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':groupid', $groupid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $authUsersArr = array();
-        while ($authUsers = $req->fetch()) {
-            $authUsersArr[] = (int) $authUsers['userid'];
-        }
-
-        return in_array($userid, $authUsersArr, true);
+        return $req->fetchColumn() > '0';
     }
 
     /**

@@ -198,24 +198,6 @@ class TeamGroups implements CrudInterface
         return $req->fetchColumn() > '0';
     }
 
-    /**
-     * Check if both users are in the same group
-     *
-     * @param int $userid the other user
-     */
-    public function isUserInSameGroup(int $userid): bool
-    {
-        $sql = 'SELECT t1.groupid FROM users2team_groups AS t1
-            INNER JOIN users2team_groups AS t2
-            WHERE t1.userid = :userid AND t2.userid = :userid2';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':userid2', $userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $req->fetch();
-        return $req->rowCount() > 0;
-    }
-
     public function readGroupsFromUser(): array
     {
         $sql = 'SELECT DISTINCT team_groups.id, team_groups.name

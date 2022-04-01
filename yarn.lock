@@ -84,10 +84,10 @@
   resolved "https://registry.yarnpkg.com/@deltablot/malle/-/malle-0.5.0.tgz#4d3f554d1fabf774b85ec1d0a748647297259d90"
   integrity sha512-PebQX8XKrnYZu1HS5elEmJrH9N5nZeGgtg5a8lSpX4789CYZwCyqbBopQ9h1X3A731SuSGpJCNvh7mIgV5+/Dg==
 
-"@deltablot/open-vector-editor-umd@^17.3.6":
-  version "17.4.1"
-  resolved "https://registry.yarnpkg.com/@deltablot/open-vector-editor-umd/-/open-vector-editor-umd-17.4.1.tgz#b433e88d573e7a43f3d048de70ec5e43366bf2d6"
-  integrity sha512-ph2khbCBSzLWo76IcKAuFR15xN0zg/OLNDMCwh02ra9KwBdHgFgImKfSf3vvDuWSEliQU29yGgp5AmfC77OQZQ==
+"@deltablot/open-vector-editor-umd@^17.4.6":
+  version "17.4.6"
+  resolved "https://registry.yarnpkg.com/@deltablot/open-vector-editor-umd/-/open-vector-editor-umd-17.4.6.tgz#36f9d102dd19d6982887ece73a56df03b74d1dc9"
+  integrity sha512-FMYMa1H5SS542HeNqK+VSgWdzFB/qBkNEAAStb+k66Jpo+i6lmT3Zc+PFAr8+mzFjpmZ7vkDg3G8zXSQe0n+Zg==
 
 "@discoveryjs/json-ext@^0.5.0":
   version "0.5.7"

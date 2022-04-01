@@ -87,7 +87,7 @@ class TeamGroups implements CrudInterface
                                 'fullname' => $fullname,
                             );
                         },
-                        explode(',', $group['usersids']),
+                        explode(',', $group['userids']),
                         explode(',', $group['fullnames'])
                     )
                     : array(),

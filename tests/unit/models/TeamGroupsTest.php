@@ -44,6 +44,10 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead(): void
     {
+        // without users
+        $this->assertTrue(is_array($this->TeamGroups->read(new ContentParams())));
+
+        // with users
         $this->TeamGroups->update(new TeamGroupParams('', 'member', array('userid' => 1, 'group' => 1,'how' => 'add')));
         $this->TeamGroups->update(new TeamGroupParams('', 'member', array('userid' => 2, 'group' => 1,'how' => 'add')));
         $this->assertTrue(is_array($this->TeamGroups->read(new ContentParams())));

@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use function array_combine;
+use function array_map;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
@@ -18,6 +19,7 @@ use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\TeamGroupParamsInterface;
 use Elabftw\Traits\SetIdTrait;
+use function explode;
 use function in_array;
 use PDO;
 

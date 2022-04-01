@@ -63,7 +63,7 @@
     "@types/tinymce": "^4.6.0",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",
-    "cypress": "^9.0.0",
+    "cypress": "^9.5.3",
     "eslint": "^8.2.0",
     "postcss": "^8.4.7",
     "postcss-scss": "^4.0.3",

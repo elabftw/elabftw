@@ -62,7 +62,7 @@
     "@types/luxon": "^2.0.0",
     "@types/tinymce": "^4.6.0",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
-    "@typescript-eslint/parser": "^5.3.0",
+    "@typescript-eslint/parser": "^5.17.0",
     "cypress": "^9.0.0",
     "eslint": "^8.2.0",
     "postcss": "^8.4.7",

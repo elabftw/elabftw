@@ -39,7 +39,7 @@ class Sql
         // loop through each line
         foreach ($lines as $line) {
             // Add this line to the current segment
-            $queryline .= trim($line);
+            $queryline .= ' ' . trim($line);
             // If it has a semicolon at the end, it's the end of the query
             if (str_ends_with($line, ';')) {
                 // display which query we are running

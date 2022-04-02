@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use function array_combine;
+use function array_map;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
@@ -18,6 +19,7 @@ use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\TeamGroupParamsInterface;
 use Elabftw\Traits\SetIdTrait;
+use function explode;
 use function in_array;
 use PDO;
 
@@ -169,12 +171,7 @@ class TeamGroups implements CrudInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $res3 = $this->Db->execute($req);
 
-        $sql = 'DELETE FROM users2team_groups WHERE groupid = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $res4 = $this->Db->execute($req);
-
-        return $res1 && $res2 && $res3 && $res4;
+        return $res1 && $res2 && $res3;
     }
 
     /**

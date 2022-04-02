@@ -167,33 +167,42 @@ class Users
     }
 
     /**
-     * Search users based on query. It searches in email, firstname, lastname or team name
+     * Search users based on query. It searches in email, firstname, lastname
      *
      * @param string $query the searched term
-     * @param bool $teamFilter toggle between sysadmin/admin view
+     * @param int|null $teamId limit search to a given team or search all teams
      */
-    public function readFromQuery(string $query, bool $teamFilter = false): array
+    public function readFromQuery(string $query, ?int $teamId = null): array
     {
         $teamFilterSql = '';
-        if ($teamFilter) {
-            $teamFilterSql = 'AND users2teams.teams_id = :team';
+        if ($teamId) {
+            $teamFilterSql = ' AND users2teams.teams_id = :team';
         }
 
-        // NOTE: previously, the ORDER BY started with the team, but that didn't work
-        // with the DISTINCT, so it was removed.
-        $sql = "SELECT DISTINCT users.userid,
+        // Assures to get every user only once
+        $tmpTable = ' (SELECT users_id, MIN(teams_id) AS teams_id
+            FROM users2teams
+            GROUP BY users_id) AS';
+        // unless we use a specific team
+        if ($teamId) {
+            $tmpTable = '';
+        }
+
+        // NOTE: $tmpTable avoids the use of DISTINCT, so we are able to use ORDER BY with teams_id.
+        // Side effect: User is shown in team with lowest id
+        $sql = "SELECT users.userid,
             users.firstname, users.lastname, users.email, users.mfa_secret,
             users.validated, users.usergroup, users.archived, users.last_login,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.cellphone, users.phone, users.website, users.skype
             FROM users
-            CROSS JOIN users2teams ON (users2teams.users_id = users.userid " . $teamFilterSql . ')
+            CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . ')
             WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
-            ORDER BY users.usergroup ASC, users.lastname ASC';
+            ORDER BY users2teams.teams_id ASC, users.usergroup ASC, users.lastname ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
-        if ($teamFilter) {
-            $req->bindValue(':team', $this->userData['team']);
+        if ($teamId) {
+            $req->bindValue(':team', $teamId);
         }
         $this->Db->execute($req);
 
@@ -205,7 +214,7 @@ class Users
      */
     public function readAllFromTeam(): array
     {
-        return $this->readFromQuery('', true);
+        return $this->readFromQuery('', $this->userData['team']);
     }
 
     public function getLockedUsersCount(): int

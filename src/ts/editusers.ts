@@ -45,4 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
+
+  document.getElementById('editusersShowAll').onclick = function() {
+    (document.getElementById('searchUsers') as HTMLInputElement).value = '';
+    (document.getElementById('userSearchForm') as HTMLFormElement).submit();
+  };
 });

@@ -179,12 +179,7 @@ class TeamGroups implements CrudInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $res3 = $this->Db->execute($req);
 
-        $sql = 'DELETE FROM users2team_groups WHERE groupid = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $res4 = $this->Db->execute($req);
-
-        return $res1 && $res2 && $res3 && $res4;
+        return $res1 && $res2 && $res3;
     }
 
     /**

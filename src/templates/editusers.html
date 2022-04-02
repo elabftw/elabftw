@@ -41,7 +41,7 @@
       {% if App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
         <label for='teamFilter' class='ml-2 mb-2'>{{ 'limit to team'|trans }}</label>
         <select class='form-control mb-2' name='teamFilter' id='teamFilter'>
-          <option value=''>all teams</option>
+          <option value=''>{{ 'All teams'|trans }}</option>
           {% for team in teamsArr %}
             <option value='{{ team.id }}' {{- Request.query.get('teamFilter') == team.id ? ' selected' }}>{{ team.name }}</option>
           {% endfor %}

@@ -269,10 +269,9 @@ CREATE TABLE `experiments_templates_revisions` (
 --
 
 CREATE TABLE `favtags2users` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `users_id` int UNSIGNED NOT NULL,
   `tags_id` int UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`users_id`, `tags_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
@@ -778,10 +777,9 @@ CREATE TABLE `users` (
 --
 
 CREATE TABLE `users2team_groups` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `userid` int(10) UNSIGNED NOT NULL,
   `groupid` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`userid`, `groupid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 --
 -- RELATIONSHIPS FOR TABLE `users2team_groups`:
@@ -792,11 +790,17 @@ CREATE TABLE `users2team_groups` (
 --
 
 CREATE TABLE `users2teams` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `users_id` int(10) UNSIGNED NOT NULL,
   `teams_id` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`users_id`, `teams_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+--
+-- RELATIONSHIPS FOR TABLE `users2teams`:
+--   `teams_id`
+--       `teams` -> `id`
+--   `users_id`
+--       `users` -> `userid`
+--
 
 --
 -- Indexes for dumped tables
@@ -1110,8 +1114,9 @@ CREATE TABLE `experiments_templates_links` (
     CONSTRAINT `fk_experiments_templates_links_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_experiments_templates_links_items_id` FOREIGN KEY (`link_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
 --
--- Indexes for table `users2teams`
+-- Indexes and Constraints for table `users2teams`
 --
 ALTER TABLE `users2teams`
   ADD KEY `fk_users2teams_teams_id` (`teams_id`),
@@ -1120,6 +1125,15 @@ ALTER TABLE `users2teams`
   ADD CONSTRAINT `fk_users2teams_teams_id` FOREIGN KEY (`teams_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_users2teams_users_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+--
+-- Indexes and Constraints for table `users2team_groups`
+--
+ALTER TABLE `users2team_groups`
+  ADD KEY `fk_users2team_groups_groupid` (`groupid`),
+  ADD KEY `fk_users2team_groups_userid` (`userid`);
+ALTER TABLE `users2team_groups`
+  ADD CONSTRAINT `fk_users2team_groups_groupid` FOREIGN KEY (`groupid`) REFERENCES `team_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_users2team_groups_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Indexes for table `pin2users`

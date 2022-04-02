@@ -22,6 +22,8 @@ abstract class AbstractMakeZip extends AbstractMake
 
     protected string $folder = '';
 
+    protected array $foldersUsedSoFar = array();
+
     abstract public function getZip(): void;
 
     /**
@@ -34,7 +36,15 @@ abstract class AbstractMakeZip extends AbstractMake
         if ($this->Entity instanceof Items) {
             $prefix = 'category';
         }
-        return sprintf('%s - %s', $this->Entity->entityData[$prefix], Filter::forFilesystem($this->Entity->entityData['title']));
+
+        $folderName = sprintf('%s - %s', $this->Entity->entityData[$prefix], Filter::forFilesystem($this->Entity->entityData['title']));
+        if (in_array($folderName, $this->foldersUsedSoFar, true)) {
+            // add part of elabid
+            $folderName .= ' - ' . substr(explode('-', $this->Entity->entityData['elabid'])[1], 0, 8);
+        }
+        $this->foldersUsedSoFar[] = $folderName;
+
+        return $folderName;
     }
 
     /**

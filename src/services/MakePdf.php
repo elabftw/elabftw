@@ -241,10 +241,6 @@ class MakePdf extends AbstractMake implements FileMakerInterface
         );
 
         $html = $this->getTwig(Config::getConfig())->render('pdf.html', $renderArr);
-
-        // now remove any img src pointing to outside world
-        // prevent blind ssrf (thwarted by CSP on webpage, but not in pdf)
-        return preg_replace('/img src=("|\')(ht|f|)tp/i', 'nope', $html);
     }
 
     /**

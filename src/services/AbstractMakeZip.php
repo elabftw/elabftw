@@ -37,7 +37,12 @@ abstract class AbstractMakeZip extends AbstractMake
             $prefix = 'category';
         }
 
-        $folderName = sprintf('%s - %s', $this->Entity->entityData[$prefix], Filter::forFilesystem($this->Entity->entityData['title']));
+        $folderName = sprintf(
+            '%s - %s',
+            // category is user input, better filter it
+            Filter::forFilesystem($this->Entity->entityData[$prefix]),
+            Filter::forFilesystem($this->Entity->entityData['title'])
+        );
         if (in_array($folderName, $this->foldersUsedSoFar, true)) {
             // add part of elabid
             $folderName .= ' - ' . substr(explode('-', $this->Entity->entityData['elabid'])[1], 0, 8);

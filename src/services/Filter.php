@@ -68,11 +68,7 @@ class Filter
      */
     public static function sanitize(string $input): string
     {
-        $output = filter_var($input, FILTER_SANITIZE_STRING);
-        if ($output === false) {
-            return '';
-        }
-        return $output;
+        return filter_var($input, FILTER_SANITIZE_STRING) ?: '';
     }
 
     /**

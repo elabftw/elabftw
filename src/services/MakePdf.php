@@ -27,7 +27,6 @@ use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
 use function implode;
 use Mpdf\Mpdf;
-use function preg_replace;
 use setasign\Fpdi\FpdiException;
 use const SITE_URL;
 use function str_replace;
@@ -240,11 +239,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
             'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
         );
 
-        $html = $this->getTwig(Config::getConfig())->render('pdf.html', $renderArr);
-
-        // now remove any img src pointing to outside world
-        // prevent blind ssrf (thwarted by CSP on webpage, but not in pdf)
-        return preg_replace('/img src=("|\')(ht|f|)tp/i', 'nope', $html);
+        return $this->getTwig(Config::getConfig())->render('pdf.html', $renderArr);
     }
 
     /**

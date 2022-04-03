@@ -27,7 +27,6 @@ use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
 use function implode;
 use Mpdf\Mpdf;
-use function preg_replace;
 use setasign\Fpdi\FpdiException;
 use const SITE_URL;
 use function str_replace;

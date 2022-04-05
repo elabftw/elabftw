@@ -170,12 +170,12 @@ class Users
      * Search users based on query. It searches in email, firstname, lastname
      *
      * @param string $query the searched term
-     * @param int|null $teamId limit search to a given team or search all teams
+     * @param int $teamId limit search to a given team or search all teams if 0
      */
-    public function readFromQuery(string $query, ?int $teamId = null): array
+    public function readFromQuery(string $query, int $teamId = 0): array
     {
         $teamFilterSql = '';
-        if ($teamId) {
+        if ($teamId > 0) {
             $teamFilterSql = ' AND users2teams.teams_id = :team';
         }
 
@@ -184,7 +184,7 @@ class Users
             FROM users2teams
             GROUP BY users_id) AS';
         // unless we use a specific team
-        if ($teamId) {
+        if ($teamId > 0) {
             $tmpTable = '';
         }
 
@@ -201,7 +201,7 @@ class Users
             ORDER BY users2teams.teams_id ASC, users.usergroup ASC, users.lastname ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
-        if ($teamId) {
+        if ($teamId > 0) {
             $req->bindValue(':team', $teamId);
         }
         $this->Db->execute($req);

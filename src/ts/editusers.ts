@@ -8,6 +8,11 @@
 import { notif, insertParamAndReload } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (window.location.pathname !== '/sysconfig.php'
+    && window.location.pathname !== '/admin.php'
+  ) {
+    return;
+  }
   // ARCHIVE USER TOGGLE
   $(document).on('click', '.toggleArchiveUser', function(e) {
     // don't trigger the form
@@ -46,8 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  document.getElementById('editusersShowAll').onclick = function() {
+  document.getElementById('editusersShowAll').addEventListener('click', () => {
     (document.getElementById('searchUsers') as HTMLInputElement).value = '';
     (document.getElementById('userSearchForm') as HTMLFormElement).submit();
-  };
+  });
 });

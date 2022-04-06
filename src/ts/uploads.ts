@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     inputClasses: ['form-control'],
     listenOn: '.file-comment.editable',
-    onBlur: Action.Ignore,
+    onBlur: Action.Submit,
     onEdit: (original, event, input) => {
       // remove the default text
       if (input.value === 'Click to add a comment') {

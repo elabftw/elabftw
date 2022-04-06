@@ -157,7 +157,7 @@
 
         {% if mode == 'edit' or upload.comment != 'Click to add a comment' %}
           <i class='fas fa-comments'></i>
-          <p class='file-comment editable hl-hover d-inline'
+          <p class='file-comment {{ mode == 'edit' ? 'editable hl-hover' }} d-inline'
             data-type='{{ upload.type }}'
             data-itemid='{{ upload.item_id }}'
             data-id='{{ upload.id }}'>{{ upload.comment}}</p>

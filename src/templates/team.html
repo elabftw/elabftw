@@ -85,8 +85,8 @@
                 <span class='caret'></span>
               </button>
               <div class='dropdown-menu' aria-labelledby='dropdownMenu1'>
-                <a href='team.php?item=all' data-value='{{ 'All bookable items'|trans }}' class='dropdown-item'>
-                  {{ 'All bookable items'|trans }}
+                <a href='team.php?item=all' data-value='{{ 'Show all'|trans }}' class='dropdown-item'>
+                  {{ 'Show all'|trans }}
                 </a>
                 {% for item in itemsArr %}
                   <a href='team.php?item={{ item.id }}' data-value='{{ item.title }}' class='dropdown-item'>

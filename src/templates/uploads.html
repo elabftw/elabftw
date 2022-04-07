@@ -171,9 +171,10 @@
         {% endif %}
 
         <div id='moreInfo_{{ upload.id }}' class='d-none'>
-          <i class='fas fa-fw fa-info-circle mr-1'></i>
-          <p class='d-inline'>{{ 'Storage:'|trans }} {% if upload.storage == '1' %} {{ 'Local filesystem'|trans }} {% endif %} {% if upload.storage == '2' %} S3 bucket {% endif %}<br>
-          {{ upload.hash_algorithm }}: {{ upload.hash }}</p>
+          <i class='fas fa-fw fa-hdd mr-1'></i>
+          <p class='d-inline'>{{ 'Storage:'|trans }} {% if upload.storage == '1' %} {{ 'Local filesystem'|trans }} {% endif %} {% if upload.storage == '2' %} S3 bucket {% endif %}</p><br>
+          <i class='fas fa-fw fa-barcode mr-1'></i>
+          <p class='d-inline' style='word-break: break-all;'>{{ upload.hash_algorithm }}: {{ upload.hash }}</p>
         </div>
 
         </div>

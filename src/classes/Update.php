@@ -90,10 +90,6 @@ class Update
                 $this->addElabidToItems();
                 $this->fixExperimentsRevisions();
             }
-            // schema70: notifications cron needed
-            if ($this->currentSchema === 70) {
-                $warn[] = 'Change in the notification/email system: a cronjob is now REQUIRED for email notifications to be sent. Make sure to read the release notes!';
-            }
         }
 
         return $warn;

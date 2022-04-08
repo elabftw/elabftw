@@ -171,6 +171,7 @@ class Notifications implements CrudInterface
             self::USER_CREATED => 'notif_user_created',
             self::USER_NEED_VALIDATION => 'notif_user_need_validation',
             self::STEP_DEADLINE => 'notif_step_deadline',
+            self::EVENT_DELETED => 'notif_event_deleted',
         );
 
         $suffix = '';

@@ -88,6 +88,11 @@ try {
                 'designation' => _('New user need validation'),
                 'setting' => 'notif_user_need_validation',
             );
+        $notificationsSettings[] =
+            array(
+                'designation' => _('Booking event cancelled'),
+                'setting' => 'notif_event_deleted',
+            );
     }
 
     $template = 'ucp.html';

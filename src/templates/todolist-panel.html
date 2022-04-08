@@ -38,14 +38,14 @@
   </div>
 
   <!-- toggle visibility of experiment steps -->
-  <div class='d-inline-block mx-2 mt-2'>
+  <div class='d-inline-block mx-2 mt-2 w-100'>
     <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='todoStepsExperimentIcon'><i id='todoStepsExperimentIcon' class='fas fa-chevron-circle-down'></i> {% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</h3>
     <!-- id is needed to fill it -->
     <ul id='todoStepsExperiment' data-save-hidden='todoStepsExperiment'></ul>
   </div>
 
   <div class='clear'></div>
-  <div class='d-inline-block mx-2 mt-2'>
+  <div class='d-inline-block mx-2 mt-2 w-100'>
     <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='todoStepsItemIcon'><i id='todoStepsItemIcon' class='fas fa-chevron-circle-down'></i> {{ 'Items'|trans }}</h3>
     <!-- id is needed to fill it -->
     <ul id='todoStepsItem' data-save-hidden='todoStepsItem'></ul>

@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-26 20:37+0100\n"
+"POT-Creation-Date: 2022-04-07 23:47+0200\n"
 "PO-Revision-Date: \n"
-"Last-Translator: Nicolas CARPi <spam@yopmail.com>\n"
+"Last-Translator: Nicolas CARPi\n"
 "Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -32,7 +32,7 @@ msgstr "Cette section est hors de votre portée !"
 msgid "An error occurred!"
 msgstr "Une erreur est survenue!"
 
-#: src/controllers/AbstractEntityController.php:225
+#: src/controllers/AbstractEntityController.php:226
 msgid "This item is locked. You cannot edit it!"
 msgstr "Cet objet est cadenassé. Vous ne pouvez pas l'éditer !"
 
@@ -71,24 +71,20 @@ msgstr "Rien à afficher avec cet ID"
 msgid "Authentication required"
 msgstr "Authentification requise"
 
-#: src/langs/js-strings.php:9 src/templates/view.html:243
-msgid "Add a comment"
-msgstr "Ajouter un commentaire"
-
-#: src/langs/js-strings.php:12
+#: src/langs/js-strings.php:9
 msgid "Drop files here to upload"
 msgstr "Déposez ici les fichiers à uploader"
 
-#: src/langs/js-strings.php:15
+#: src/langs/js-strings.php:12
 msgid "Editing metadata"
 msgstr "Édition des métadonnées"
 
-#: src/langs/js-strings.php:18 src/models/Experiments.php:59
+#: src/langs/js-strings.php:15 src/models/Experiments.php:59
 #: src/models/Items.php:44 src/services/Filter.php:88
 msgid "Untitled"
 msgstr "Sans titre"
 
-#: src/langs/js-strings.php:21
+#: src/langs/js-strings.php:18
 msgid ""
 "The selected item(s) and all associated data will be permanently deleted. "
 "This cannot be undone. Are you sure?"
@@ -96,56 +92,56 @@ msgstr ""
 "Le ou les objet(s) sélectionné(s) ainsi que toutes les données associées "
 "seront supprimés définitivement. Cela est irréversible. Êtes-vous sûr(e) ?"
 
-#: src/langs/js-strings.php:24 src/templates/pdf.html:44
+#: src/langs/js-strings.php:21 src/templates/pdf.html:44
 msgid "Extra fields"
 msgstr "Champs supplémentaires"
 
-#: src/langs/js-strings.php:27
+#: src/langs/js-strings.php:24
 msgid "Filename"
 msgstr "Nom du fichier"
 
-#: src/langs/js-strings.php:30
+#: src/langs/js-strings.php:27
 msgid "Delete this?"
 msgstr "Supprimer ça ?"
 
-#: src/langs/js-strings.php:33
+#: src/langs/js-strings.php:30
 msgid "Delete this link?"
 msgstr "Supprimer ce lien ?"
 
-#: src/langs/js-strings.php:36
+#: src/langs/js-strings.php:33
 msgid "Nothing selected!"
 msgstr "Aucune sélection !"
 
-#: src/langs/js-strings.php:39
+#: src/langs/js-strings.php:36
 msgid "Please wait…"
 msgstr "Patientez…"
 
-#: src/langs/js-strings.php:42
+#: src/langs/js-strings.php:39
 msgid "Do you want to replace the file on the server with this edit?"
 msgstr ""
 "Souhaitez-vous remplacer le fichier sur le serveur avec ce changement ?"
 
-#: src/langs/js-strings.php:45
+#: src/langs/js-strings.php:42
 msgid "Enter name of the file"
 msgstr "Nom du fichier"
 
-#: src/langs/js-strings.php:48
+#: src/langs/js-strings.php:45
 msgid "Delete this step?"
 msgstr "Supprimer cette étape ?"
 
-#: src/langs/js-strings.php:51
+#: src/langs/js-strings.php:48
 msgid "Are you sure you want to undo this step?"
 msgstr "Êtes-vous certain(e) de vouloir défaire cette étape ?"
 
-#: src/langs/js-strings.php:54
+#: src/langs/js-strings.php:51
 msgid "Delete this tag?"
 msgstr "Supprimer ce tag ?"
 
-#: src/langs/js-strings.php:57
+#: src/langs/js-strings.php:54
 msgid "File comment"
 msgstr "Commentaire du fichier"
 
-#: src/langs/js-strings.php:60
+#: src/langs/js-strings.php:57
 msgid "Template title"
 msgstr "Titre du modèle"
 
@@ -167,7 +163,7 @@ msgstr ""
 "Vous ne pouvez pas dévérouiller ou éditer de quelque façon que ce soit une "
 "expérience horodatée."
 
-#: src/models/AbstractEntity.php:423 src/models/AbstractEntity.php:428
+#: src/models/AbstractEntity.php:398 src/models/AbstractEntity.php:403
 msgid "Read permissions enforced by admin. Aborting change."
 msgstr "Permission d'écriture imposée par l'admin. Annulation du changement."
 
@@ -198,24 +194,24 @@ msgstr ""
 msgid "Users cannot create tags."
 msgstr "Les utilisateurs ne peuvent pas créer de tags."
 
-#: src/models/TeamGroups.php:101 src/services/Transform.php:31
+#: src/models/TeamGroups.php:111 src/services/Transform.php:31
 #: src/templates/admin.html:92 src/templates/admin.html:108
 msgid "Public"
 msgstr "Publique"
 
-#: src/models/TeamGroups.php:102
+#: src/models/TeamGroups.php:112
 msgid "Everyone with an account"
 msgstr "Tout le monde avec un compte"
 
-#: src/models/TeamGroups.php:103
+#: src/models/TeamGroups.php:113
 msgid "Only the team"
 msgstr "Seulement l'équipe"
 
-#: src/models/TeamGroups.php:104
+#: src/models/TeamGroups.php:114
 msgid "Only me and admins"
 msgstr "Seulement les admins et moi"
 
-#: src/models/TeamGroups.php:105
+#: src/models/TeamGroups.php:115
 msgid "Only me"
 msgstr "Seulement moi"
 
@@ -312,7 +308,7 @@ msgstr "Ce nom de domaine n'est pas valide. Domaines autorisés : %s"
 
 #: src/services/ListBuilder.php:74 web/experiments.php:27
 #: src/templates/create-new.html:13 src/templates/head.html:67
-#: src/templates/profile.html:35 src/templates/search.html:102
+#: src/templates/profile.html:35 src/templates/search.html:107
 #: src/templates/sysconfig.html:44 src/templates/sysconfig.html:240
 #: src/templates/team.html:109 src/templates/todolist-panel.html:42
 msgid "Experiment"
@@ -339,7 +335,7 @@ msgstr "Organisme"
 
 #: src/services/Transform.php:33 web/team.php:32 src/templates/admin.html:20
 #: src/templates/admin.html:94 src/templates/admin.html:110
-#: src/templates/editusers.html:203 src/templates/head.html:73
+#: src/templates/editusers.html:206 src/templates/head.html:73
 #: src/templates/register.html:42 src/templates/todolist-panel.html:36
 msgid "Team"
 msgstr "Équipe"
@@ -386,8 +382,8 @@ msgstr "Panneau d'administration"
 
 #: web/app/controllers/AdminController.php:41
 #: web/app/controllers/EntityAjaxController.php:50
-#: web/app/controllers/EntityAjaxController.php:186
-#: web/app/controllers/EntityAjaxController.php:234
+#: web/app/controllers/EntityAjaxController.php:173
+#: web/app/controllers/EntityAjaxController.php:221
 #: web/app/controllers/IdpsController.php:75
 #: web/app/controllers/RequestHandler.php:114
 #: web/app/controllers/RevisionsController.php:60
@@ -398,7 +394,7 @@ msgstr "Panneau d'administration"
 #: web/app/controllers/UcpController.php:104
 #: web/app/controllers/UnauthRequestHandler.php:27
 #: web/app/controllers/UsersAjaxController.php:32
-#: web/app/controllers/UsersController.php:63
+#: web/app/controllers/UsersController.php:64
 msgid "Saved"
 msgstr "Enregistré"
 
@@ -411,7 +407,7 @@ msgstr "Un champs obligatoire est manquant!"
 msgid "Account successfully created"
 msgstr "Compte créé avec succès"
 
-#: web/app/controllers/EntityAjaxController.php:216
+#: web/app/controllers/EntityAjaxController.php:203
 msgid "File uploaded successfully"
 msgstr "Le fichier a été envoyé avec succès"
 
@@ -477,11 +473,11 @@ msgstr "Nouveau mot de passe mis à jour. Vous pouvez vous connecter désormais.
 msgid "Email sent to %d users"
 msgstr "Email envoyé à %d utilisateurs"
 
-#: web/app/controllers/UsersController.php:53
+#: web/app/controllers/UsersController.php:54
 msgid "Only a sysadmin can put someone sysadmin."
 msgstr "Seul un sysadmin peut nommer un autre sysadmin."
 
-#: web/database.php:28 src/templates/head.html:69 src/templates/search.html:104
+#: web/database.php:28 src/templates/head.html:69 src/templates/search.html:109
 msgid "Database"
 msgstr "Base de données"
 
@@ -520,7 +516,7 @@ msgstr "La création de compte est désactivée !"
 msgid "Revisions"
 msgstr "Versions précédentes"
 
-#: web/search.php:32 src/templates/editusers.html:41 src/templates/head.html:77
+#: web/search.php:32 src/templates/editusers.html:50 src/templates/head.html:77
 #: src/templates/team.html:35 src/templates/team.html:50
 msgid "Search"
 msgstr "Recherche"
@@ -599,9 +595,9 @@ msgstr "Les utilisateurs peuvent supprimer leurs expériences :"
 #: src/templates/admin.html:46 src/templates/admin.html:53
 #: src/templates/admin.html:60 src/templates/admin.html:67
 #: src/templates/admin.html:73 src/templates/admin.html:85
-#: src/templates/admin.html:101 src/templates/editusers.html:142
-#: src/templates/editusers.html:151 src/templates/search.html:213
-#: src/templates/search.html:224 src/templates/sysconfig.html:97
+#: src/templates/admin.html:101 src/templates/editusers.html:145
+#: src/templates/editusers.html:154 src/templates/search.html:222
+#: src/templates/search.html:233 src/templates/sysconfig.html:97
 #: src/templates/sysconfig.html:118 src/templates/sysconfig.html:125
 #: src/templates/sysconfig.html:140 src/templates/sysconfig.html:146
 #: src/templates/sysconfig.html:152 src/templates/sysconfig.html:226
@@ -615,9 +611,9 @@ msgstr "Oui"
 #: src/templates/admin.html:47 src/templates/admin.html:54
 #: src/templates/admin.html:61 src/templates/admin.html:68
 #: src/templates/admin.html:74 src/templates/admin.html:86
-#: src/templates/admin.html:102 src/templates/editusers.html:143
-#: src/templates/editusers.html:152 src/templates/search.html:214
-#: src/templates/search.html:225 src/templates/sysconfig.html:98
+#: src/templates/admin.html:102 src/templates/editusers.html:146
+#: src/templates/editusers.html:155 src/templates/search.html:223
+#: src/templates/search.html:234 src/templates/sysconfig.html:98
 #: src/templates/sysconfig.html:119 src/templates/sysconfig.html:126
 #: src/templates/sysconfig.html:141 src/templates/sysconfig.html:147
 #: src/templates/sysconfig.html:153 src/templates/sysconfig.html:227
@@ -768,7 +764,7 @@ msgstr "Autoriser l'horodatage"
 
 #: src/templates/admin.html:191 src/templates/admin.html:224
 #: src/templates/admin.html:323 src/templates/edit.html:197
-#: src/templates/edit.html:245 src/templates/editusers.html:158
+#: src/templates/edit.html:245 src/templates/editusers.html:161
 #: src/templates/json-editor.html:15 src/templates/steps-links-edit.html:72
 #: src/templates/sysconfig.html:57 src/templates/sysconfig.html:71
 #: src/templates/sysconfig.html:158 src/templates/sysconfig.html:187
@@ -989,7 +985,7 @@ msgstr ""
 msgid "Override general timestamping config"
 msgstr "Outrepasser les préférences générales d'horodatage"
 
-#: src/templates/change-pass.html:9 src/templates/editusers.html:123
+#: src/templates/change-pass.html:9 src/templates/editusers.html:126
 msgid "characters minimum"
 msgstr "caractères au minimum"
 
@@ -1028,7 +1024,7 @@ msgstr "Éditer les permissions"
 #: src/templates/edit.html:63 src/templates/edit.html:91
 #: src/templates/favtags-panel.html:3 src/templates/footer.html:87
 #: src/templates/head.html:190 src/templates/login.html:24
-#: src/templates/register.html:22 src/templates/search.html:87
+#: src/templates/register.html:22 src/templates/search.html:92
 #: src/templates/todolist-panel.html:2 src/templates/ucp.html:48
 msgid "Close"
 msgstr "Fermer"
@@ -1161,43 +1157,56 @@ msgstr "Editer"
 msgid "Search users"
 msgstr "Chercher des utilisateurs"
 
-#: src/templates/editusers.html:48
+#: src/templates/editusers.html:42
+#, fuzzy
+#| msgid "All the team"
+msgid "limit to team"
+msgstr "Toute l'équipe"
+
+#: src/templates/editusers.html:44
+#, fuzzy
+#| msgid "All the team"
+msgid "All teams"
+msgstr "Toute l'équipe"
+
+#: src/templates/editusers.html:51 src/templates/team.html:88
+#: src/templates/team.html:89
 msgid "Show all"
 msgstr "Montrer tout"
 
-#: src/templates/editusers.html:54
+#: src/templates/editusers.html:57
 msgid "Edit Users"
 msgstr "Éditer les utilisateurs"
 
-#: src/templates/editusers.html:65
+#: src/templates/editusers.html:68
 msgid "Team(s)"
 msgstr "Équipe(s)"
 
-#: src/templates/editusers.html:70
+#: src/templates/editusers.html:73
 msgid "Add team"
 msgstr "Ajouter une équipe"
 
-#: src/templates/editusers.html:71
+#: src/templates/editusers.html:74
 msgid "Remove team"
 msgstr "Retirer l'équipe"
 
-#: src/templates/editusers.html:86
+#: src/templates/editusers.html:89
 msgid "User ID"
 msgstr "ID utilisateur"
 
-#: src/templates/editusers.html:93 src/templates/editusers.html:219
+#: src/templates/editusers.html:96 src/templates/editusers.html:222
 #: src/templates/login.html:58 src/templates/register.html:75
 #: src/templates/sysconfig.html:745 src/templates/ucp.html:308
 msgid "Firstname"
 msgstr "Prénom"
 
-#: src/templates/editusers.html:99 src/templates/editusers.html:225
+#: src/templates/editusers.html:102 src/templates/editusers.html:228
 #: src/templates/login.html:61 src/templates/register.html:81
 #: src/templates/sysconfig.html:748 src/templates/ucp.html:313
 msgid "Lastname"
 msgstr "Nom"
 
-#: src/templates/editusers.html:105 src/templates/editusers.html:213
+#: src/templates/editusers.html:108 src/templates/editusers.html:216
 #: src/templates/login.html:103 src/templates/register.html:53
 #: src/templates/sysconfig.html:25 src/templates/sysconfig.html:751
 #: src/templates/team.html:8 src/templates/team.html:117
@@ -1205,43 +1214,43 @@ msgstr "Nom"
 msgid "Email"
 msgstr "Email"
 
-#: src/templates/editusers.html:111 src/templates/editusers.html:231
+#: src/templates/editusers.html:114 src/templates/editusers.html:234
 msgid "Group"
 msgstr "Groupe"
 
-#: src/templates/editusers.html:122
+#: src/templates/editusers.html:125
 msgid "Reset user password"
 msgstr "Réinitialiser le mot de passe utilisateur"
 
-#: src/templates/editusers.html:140
+#: src/templates/editusers.html:143
 msgid "Uses 2FA?"
 msgstr "Utilise 2FA ?"
 
-#: src/templates/editusers.html:149
+#: src/templates/editusers.html:152
 msgid "Has an active account?"
 msgstr "Compte activé ?"
 
-#: src/templates/editusers.html:164
+#: src/templates/editusers.html:167
 msgid "Unarchive user"
 msgstr "Désarchiver utilisateur"
 
-#: src/templates/editusers.html:166
+#: src/templates/editusers.html:169
 msgid "Archive user"
 msgstr "Archiver utilisateur"
 
-#: src/templates/editusers.html:173
+#: src/templates/editusers.html:176
 msgid "Delete user"
 msgstr "Supprimer l'utilisateur"
 
-#: src/templates/editusers.html:183
+#: src/templates/editusers.html:186
 msgid "No user found!"
 msgstr "Pas d'utilisateur trouvé !"
 
-#: src/templates/editusers.html:190
+#: src/templates/editusers.html:193
 msgid "Add account"
 msgstr "Ajouter un compte"
 
-#: src/templates/editusers.html:191
+#: src/templates/editusers.html:194
 msgid ""
 "Note: new user will need to use the \"Forgot password\" button on the login "
 "page to set a password."
@@ -1249,7 +1258,7 @@ msgstr ""
 "Note : le nouvel utilisateur devra utiliser le boutton \"Mot de passe oublié"
 "\" sur la page de login pour avoir un mot de passe."
 
-#: src/templates/editusers.html:244 src/templates/register.html:99
+#: src/templates/editusers.html:247 src/templates/register.html:99
 msgid "create"
 msgstr "créer"
 
@@ -1371,7 +1380,7 @@ msgstr "octets"
 msgid "Notifications"
 msgstr "Notifications"
 
-#: src/templates/head.html:99 src/templates/search.html:318
+#: src/templates/head.html:99 src/templates/search.html:327
 msgid "Clear all"
 msgstr "Effacer tout"
 
@@ -1674,135 +1683,153 @@ msgstr "Restaurer"
 msgid "Search Syntax"
 msgstr "Syntax de recherche"
 
-#: src/templates/search.html:100
+#: src/templates/search.html:105
 msgid "Search in"
 msgstr "Chercher dans"
 
-#: src/templates/search.html:116
+#: src/templates/search.html:121
 msgid "With the tag"
 msgstr "Avec le tag"
 
-#: src/templates/search.html:129
+#: src/templates/search.html:134
 msgid "Search query"
 msgstr "Requête de recherche"
 
-#: src/templates/search.html:163
+#: src/templates/search.html:169
 msgid "Full syntax"
 msgstr "Syntaxe complète"
 
-#: src/templates/search.html:167
+#: src/templates/search.html:173
 msgid "Search helpers"
 msgstr "Assistants de recherche"
 
-#: src/templates/search.html:172
-msgid "And author is:"
+#: src/templates/search.html:178
+#, fuzzy
+#| msgid "And author is:"
+msgid "And author is"
 msgstr "Et l'auteur est :"
 
-#: src/templates/search.html:174
+#: src/templates/search.html:178
+msgid "belongs to group:"
+msgstr ""
+
+#: src/templates/search.html:180
 msgid "Select author"
 msgstr "Sélectionner auteur"
 
-#: src/templates/search.html:187
+#: src/templates/search.html:180 src/templates/search.html:185
+#, fuzzy
+#| msgid "Group"
+msgid "group"
+msgstr "Groupe"
+
+#: src/templates/search.html:182
+#, fuzzy
+#| msgid "Select author"
+msgid "author"
+msgstr "Sélectionner auteur"
+
+#: src/templates/search.html:196
 msgid "Date from"
 msgstr "Date de"
 
-#: src/templates/search.html:191
+#: src/templates/search.html:200
 msgid "less than"
 msgstr "moins que"
 
-#: src/templates/search.html:192
+#: src/templates/search.html:201
 msgid "less than or equal to"
 msgstr "moins que ou égal à"
 
-#: src/templates/search.html:193
+#: src/templates/search.html:202
 msgid "equal to"
 msgstr "égal à"
 
-#: src/templates/search.html:194
+#: src/templates/search.html:203
 msgid "greater than or equal to"
 msgstr "plus grand ou égal à"
 
-#: src/templates/search.html:195
+#: src/templates/search.html:204
 msgid "greater than"
 msgstr "plus grand que"
 
-#: src/templates/search.html:196
+#: src/templates/search.html:205
 msgid "not equal to"
 msgstr "non égal à"
 
-#: src/templates/search.html:203
+#: src/templates/search.html:212
 msgid "Date to (optional)"
 msgstr "Date à (optionnel)"
 
-#: src/templates/search.html:210
+#: src/templates/search.html:219
 msgid "Locked"
 msgstr "Verrouillé"
 
-#: src/templates/search.html:212
+#: src/templates/search.html:221
 msgid "Select lock status"
 msgstr "Choisir un statut de vérouillage"
 
-#: src/templates/search.html:221
+#: src/templates/search.html:230
 msgid "Timestamped"
 msgstr "Horodaté"
 
-#: src/templates/search.html:223
+#: src/templates/search.html:232
 msgid "Select timestamp status"
 msgstr "Choisir un statut d'horodatage"
 
-#: src/templates/search.html:236
+#: src/templates/search.html:245
 msgid "And status is"
 msgstr "Et le statut est"
 
-#: src/templates/search.html:238
+#: src/templates/search.html:247
 msgid "Select status"
 msgstr "Choisir un statut"
 
-#: src/templates/search.html:249
+#: src/templates/search.html:258
 msgid "And category is"
 msgstr "Et la catégorie est"
 
-#: src/templates/search.html:251
+#: src/templates/search.html:260
 msgid "Select category"
 msgstr "Choisissez une catégorie"
 
-#: src/templates/search.html:263
+#: src/templates/search.html:272
 msgid "And rating is"
 msgstr "Et l'évaluation est"
 
-#: src/templates/search.html:265
+#: src/templates/search.html:274
 msgid "Select number of stars"
 msgstr "Choisir le nombre d'étoiles"
 
-#: src/templates/search.html:266
+#: src/templates/search.html:275
 msgid "Unrated"
 msgstr "Pas d'étoiles"
 
-#: src/templates/search.html:275
+#: src/templates/search.html:284
 msgid "And visibility is:"
 msgstr "Et la visibilité est :"
 
-#: src/templates/search.html:277
+#: src/templates/search.html:286
 msgid "Select visibility"
 msgstr "Sélectionner la visibilité"
 
-#: src/templates/search.html:295
+#: src/templates/search.html:304
 msgid "Extra fields search"
 msgstr "Recherche dans les champs supplémentaires"
 
-#: src/templates/search.html:301
+#: src/templates/search.html:310
 msgid "Name of field"
 msgstr "Nom du champ"
 
-#: src/templates/search.html:306
+#: src/templates/search.html:315
 msgid "Value"
 msgstr "Valeur"
 
-#: src/templates/search.html:308
+#: src/templates/search.html:317
 msgid "Tip: you can use '%' as wildcard"
 msgstr "Conseil : vous pouvez utiliser '%' comme joker"
 
-#: src/templates/search.html:315
+#: src/templates/search.html:324
 msgid "Launch search"
 msgstr "Lancer la recherche"
 
@@ -2550,10 +2577,6 @@ msgstr "Pas d'équipement réservable."
 msgid "Select an equipment"
 msgstr "Choisir un équipement"
 
-#: src/templates/team.html:88 src/templates/team.html:89
-msgid "All bookable items"
-msgstr "Pas d'équipement réservable"
-
 #: src/templates/team.html:108
 msgid "You belong to the %s team."
 msgstr "Vous appartenez à l'équipe %s."
@@ -3051,6 +3074,13 @@ msgstr "Commentaires"
 msgid "commented"
 msgstr "a laissé un commentaire"
 
+#: src/templates/view.html:243
+msgid "Add a comment"
+msgstr "Ajouter un commentaire"
+
+#~ msgid "All bookable items"
+#~ msgstr "Tous les items réservables"
+
 #, fuzzy
 #~| msgid "Email"
 #~ msgid " Email"
@@ -3061,9 +3091,6 @@ msgstr "a laissé un commentaire"
 
 #~ msgid "Yourself"
 #~ msgstr "Vous-même"
-
-#~ msgid "All the team"
-#~ msgstr "Toute l'équipe"
 
 #~ msgid "Where date is between"
 #~ msgstr "Où la date est entre"

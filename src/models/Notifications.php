@@ -30,6 +30,9 @@ class Notifications implements CrudInterface
     // when a step has a deadline with notifications activated
     public const STEP_DEADLINE = 13;
 
+    // when an event is deleted in the team scheduler
+    public const EVENT_DELETED = 14;
+
     /**
      * Send an email to a new user to notify that admin validation is required.
      * This exists because experience shows that users don't read the notification and expect
@@ -105,6 +108,20 @@ class Notifications implements CrudInterface
         return $this->create($params);
     }
 
+    public function createMultiUsers(CreateNotificationParamsInterface $params, array $useridArr, int $currentUserid): int
+    {
+        foreach ($useridArr as $userid) {
+            $userid = (int) $userid;
+            // don't self notify this action
+            if ($userid === $currentUserid) {
+                continue;
+            }
+            $this->userid = $userid;
+            $this->create($params);
+        }
+        return count($useridArr);
+    }
+
     public function read(ContentParamsInterface $params): array
     {
         $sql = 'SELECT id, category, body, is_ack, created_at FROM notifications WHERE userid = :userid AND category != :deadline ORDER BY created_at DESC LIMIT 10';
@@ -154,6 +171,7 @@ class Notifications implements CrudInterface
             self::USER_CREATED => 'notif_user_created',
             self::USER_NEED_VALIDATION => 'notif_user_need_validation',
             self::STEP_DEADLINE => 'notif_step_deadline',
+            self::EVENT_DELETED => 'notif_event_deleted',
         );
 
         $suffix = '';

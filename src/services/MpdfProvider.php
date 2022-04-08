@@ -45,6 +45,7 @@ class MpdfProvider implements MpdfProviderInterface
                 ),
             ),
             'default_font' => 'lato',
+            'whitelistStreamWrappers' => array('file'),
         ));
 
         // make sure we can read the pdf in a long time

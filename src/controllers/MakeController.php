@@ -19,6 +19,7 @@ use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
 use Elabftw\Services\MakeCsv;
 use Elabftw\Services\MakeJson;
@@ -26,6 +27,7 @@ use Elabftw\Services\MakeMultiPdf;
 use Elabftw\Services\MakePdf;
 use Elabftw\Services\MakeQrPdf;
 use Elabftw\Services\MakeReport;
+use Elabftw\Services\MakeSchedulerReport;
 use Elabftw\Services\MakeStreamZip;
 use Elabftw\Services\MpdfProvider;
 use Symfony\Component\HttpFoundation\Response;
@@ -98,6 +100,12 @@ class MakeController implements ControllerInterface
                 }
                 return $this->makeReport();
 
+            case 'schedulerReport':
+                if (!$this->App->Session->get('is_admin')) {
+                    throw new IllegalActionException('Non admin user tried to generate scheduler report.');
+                }
+                return $this->makeSchedulerReport();
+
             case 'zip':
                 return $this->makeZip();
 
@@ -136,6 +144,15 @@ class MakeController implements ControllerInterface
     private function makeReport(): Response
     {
         return $this->getFileResponse(new MakeReport(new Teams($this->App->Users)));
+    }
+
+    private function makeSchedulerReport(): Response
+    {
+        return $this->getFileResponse(new MakeSchedulerReport(
+            new Scheduler(new Items($this->App->Users)),
+            (string) $this->App->Request->query->get('from'),
+            (string) $this->App->Request->query->get('to'),
+        ));
     }
 
     private function makeZip(): Response

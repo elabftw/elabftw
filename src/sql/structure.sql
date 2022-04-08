@@ -760,6 +760,8 @@ CREATE TABLE `users` (
   `notif_user_need_validation_email` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `notif_step_deadline` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `notif_step_deadline_email` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_event_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_event_deleted_email` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `auth_lock_time` datetime DEFAULT NULL,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;

@@ -473,6 +473,17 @@
     <div class='mt-2'>
       <button data-action='export-user' class='button btn btn-primary'>{{ 'Export'|trans }}</button>
     </div>
+
+    <h3 class='mt-3'>{{ 'Export bookings'|trans }}</h3>
+    <hr>
+    <label for='schedulerDateFrom'>{{ 'Date from'|trans }}</label>
+    <input id='schedulerDateFrom' name='schedulerDateFrom' type='date' class='form-control col-md-4' value='{{ "1 month ago"|date('Y-m-d') }}'/>
+    <label for='schedulerDateTo'>{{ 'Date to'|trans }}</label>
+    <input id='schedulerDateTo' name='schedulerDateTo' type='date' class='form-control col-md-4' value='{{ "now"|date('Y-m-d') }}'/>
+
+    <div class='mt-2'>
+      <button data-action='export-scheduler' class='button btn btn-primary'>{{ 'Export'|trans }}</button>
+    </div>
   </div>
 </div>
 

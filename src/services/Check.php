@@ -212,6 +212,8 @@ class Check
             'notif_user_need_validation_email',
             'notif_step_deadline',
             'notif_step_deadline_email',
+            'notif_event_deleted',
+            'notif_event_deleted_email',
             'privacypolicy',
             'rating',
             'real_name',

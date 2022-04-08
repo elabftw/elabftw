@@ -38,7 +38,7 @@
       <div class='modal-body'>
         <!-- CAN READ -->
         <div class='form-group'>
-        <i class='fas fa-eye' title='Visibility'></i>
+        <i class='fas fa-fw fa-eye' title='Visibility'></i>
         <label for='canread_select'>{{ 'Visibility'|trans }}</label>
         <select id='canread_select' class='permissionSelect form-control' data-rw='read'>
           {% for key, value in visibilityArr %}
@@ -48,7 +48,7 @@
           {% endfor %}
         </select>
         <!-- CAN WRITE -->
-        <i class='fas fa-pencil-alt' title='Can write'></i>
+        <i class='fas fa-fw fa-pencil-alt' title='Can write'></i>
         <label for='canwrite_select'>{{ 'Can write'|trans }}</label>
         <select id='canwrite_select' class='permissionSelect form-control' data-rw='write'>
           {% for key, value in visibilityArr %}
@@ -205,7 +205,7 @@
 
 <!-- UPLOAD FORM -->
 <section class='box'>
-  <i class='fas fa-paperclip mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Attach a file'|trans }}</h3>
+  <i class='fas fa-fw fa-paperclip mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Attach a file'|trans }}</h3>
   <form action='app/controllers/EntityAjaxController.php' class='dropzone' id='elabftw-dropzone'></form>
 </section>
 
@@ -217,7 +217,7 @@
 
 <!-- DOODLE -->
 <section class='box' id='doodle-anchor'>
-  <i class='fas fa-paint-brush mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Draw something'|trans }}</h3>
+  <i class='fas fa-fw fa-paint-brush mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Draw something'|trans }}</h3>
   <button class='button btn btn-primary plusMinusButton' data-toggle='collapse' data-target='#doodleDiv' aria-expanded='false' aria-controls='doodleDiv'>+</button>
   <div id='doodleDiv' class='collapse mt-2'>
     <div class='row'>
@@ -252,7 +252,7 @@
 <!-- CHEM EDITOR -->
 {% if Entity.Users.userData.chem_editor %}
   <div class='box chemdoodle'>
-    <i class='fas fa-dna mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Molecule drawer'|trans }}</h3>
+    <i class='fas fa-fw fa-dna mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Molecule drawer'|trans }}</h3>
     <button class='button btn btn-primary plusMinusButton' data-toggle='collapse' data-target='#chemDiv' aria-expanded='false' aria-controls='chemDiv'>+</button>
     <div id='chemDiv' class='collapse mt-2 text-center'>
       <script src='assets/chemdoodle-canvas.bundle.js?v={{ v }}'></script>

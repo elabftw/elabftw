@@ -66,7 +66,7 @@ class Transform
                     '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="team.php?item=%d">%s (%s)</span>' . $relativeMoment,
                     (int) $notif['id'],
                     (int) $notif['body']['event']['item'],
-                    _('A booked slot was deleted from the scheduler.'),
+                    _('A booking was cancelled.'),
                     $notif['body']['actor'],
                     $notif['created_at'],
                 );

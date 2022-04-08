@@ -109,7 +109,7 @@ class EmailNotifications
             case Notifications::EVENT_DELETED:
                 $info = _('A booked slot was deleted from the scheduler.');
                 $subject .= $info;
-                $url = SITE_URL . '/team.php?item=' . $notifBody['item'];
+                $url = SITE_URL . '/team.php?item=' . $notifBody['event']['item'];
                 $body = sprintf(_('Hi. %s (%s). See item: %s'), $info, $notifBody['actor'], $url);
                 break;
             case Notifications::USER_CREATED:

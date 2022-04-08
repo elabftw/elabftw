@@ -51,7 +51,10 @@ try {
     $usersArr = array();
     if ($Request->query->has('q')) {
         $isSearching = true;
-        $usersArr = $App->Users->readFromQuery(filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING));
+        $usersArr = $App->Users->readFromQuery(
+            filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING),
+            (int) filter_var($Request->query->get('teamFilter'), FILTER_SANITIZE_NUMBER_INT)
+        );
         foreach ($usersArr as &$user) {
             $UsersHelper = new UsersHelper((int) $user['userid']);
             $user['teams'] = $UsersHelper->getTeamsFromUserid();
@@ -75,6 +78,7 @@ try {
 
     $template = 'sysconfig.html';
     $renderArr = array(
+        'Request' => $Request,
         'nologinUsersCount' => $App->Users->getLockedUsersCount(),
         'lockoutDevicesCount' => $AuthFail->getLockoutDevicesCount(),
         'elabimgVersion' => $elabimgVersion,

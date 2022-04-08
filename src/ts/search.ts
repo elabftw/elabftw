@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return date + '..' + dateTo;
       }
-      return `${element.options[element.selectedIndex].value}`;
+      return `${element.options[element.selectedIndex].text}`;
     }
     if (element instanceof HTMLInputElement) {
       if (element.id === 'date') {

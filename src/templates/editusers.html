@@ -33,19 +33,22 @@
 </div>
 
   <div class='box form-group'>
-    <form class='d-inline' method='get'>
-      <label for='search-users'>{{ 'Search users'|trans }}</label>
-      <input type='text' autocomplete='off' class='form-control col-md-4 custom-control-inline' id='search-users' value='{{ App.Request.query.get('q') }}' name='q' />
+    <form class='form-inline' method='get' id ='userSearchForm'>
+      <label for='searchUsers' class='mb-2'>{{ 'Search users'|trans }}</label>
+      <input type='text' autocomplete='off' class='form-control col-md-4 mb-2' id='searchUsers' value='{{ App.Request.query.get('q') }}' name='q' />
       <!-- stay on correct tab -->
       <input type='hidden' value='3' name='tab' />
-      <input type='submit' class='button btn btn-primary' value='{{ 'Search'|trans }}' />
-    </form>
-
-    <!-- add a second form with empty q param to show all users; added because it is not evident that searching for nothing shows all results -->
-    <form class='d-inline' method='get'>
-      <input type='hidden' value='3' name='tab' />
-      <input type='hidden' value='' name='q' />
-      <input type='submit' class='button btn btn-secondary' value='{{ 'Show all'|trans }}' />
+      {% if App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
+        <label for='teamFilter' class='ml-2 mb-2'>{{ 'limit to team'|trans }}</label>
+        <select class='form-control mb-2' name='teamFilter' id='teamFilter'>
+          <option value=''>{{ 'All teams'|trans }}</option>
+          {% for team in teamsArr %}
+            <option value='{{ team.id }}' {{- Request.query.get('teamFilter') == team.id ? ' selected' }}>{{ team.name }}</option>
+          {% endfor %}
+        </select>
+      {% endif %}
+      <input type='submit' class='button btn btn-primary ml-2 mb-2' value='{{ 'Search'|trans }}' />
+      <input type='button' id='editusersShowAll' class='button btn btn-secondary ml-2 mb-2' value='{{ 'Show all'|trans }}' />
     </form>
   </div>
 

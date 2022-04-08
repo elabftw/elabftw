@@ -271,6 +271,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const source = (document.getElementById('userExport') as HTMLSelectElement).value;
       const format = (document.getElementById('userExportFormat') as HTMLSelectElement).value;
       window.location.href = `make.php?what=${format}&user=${source}&type=experiments`;
+
+    } else if (el.matches('[data-action="export-scheduler"]')) {
+      const from = (document.getElementById('schedulerDateFrom') as HTMLSelectElement).value;
+      const to = (document.getElementById('schedulerDateTo') as HTMLSelectElement).value;
+      window.location.href = `make.php?what=schedulerReport&from=${from}&to=${to}`;
     }
   });
 });

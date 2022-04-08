@@ -9,15 +9,21 @@
 
 namespace Elabftw\Services;
 
+use function bindtextdomain;
 use function count;
+use function dirname;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Notifications;
 use Elabftw\Models\Users;
 use function json_decode;
 use PDO;
+use function putenv;
+use function setlocale;
 use const SITE_URL;
+use function sprintf;
 use Symfony\Component\Mime\Address;
+use function textdomain;
 
 /**
  * Email notification system
@@ -99,6 +105,12 @@ class EmailNotifications
                     $commenter->userData['fullname'],
                     $url,
                 );
+                break;
+            case Notifications::EVENT_DELETED:
+                $info = _('A booked slot was deleted from the scheduler.');
+                $subject .= $info;
+                $url = SITE_URL . '/team.php?item=' . $notifBody['event']['item'];
+                $body = sprintf(_('Hi. %s (%s). See item: %s'), $info, $notifBody['actor'], $url);
                 break;
             case Notifications::USER_CREATED:
                 $subject .= _('New user added to your team');

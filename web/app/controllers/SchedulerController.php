@@ -59,12 +59,14 @@ try {
     // UPDATE START
     if ($Request->request->has('updateStart')) {
         $Scheduler->setId((int) $Request->request->get('id'));
-        $Scheduler->updateStart($Request->request->get('delta'));
+        // delta is an array, so use all()
+        $Scheduler->updateStart($Request->request->all('delta'));
     }
     // UPDATE END
     if ($Request->request->has('updateEnd')) {
         $Scheduler->setId((int) $Request->request->get('id'));
-        $Scheduler->updateEnd($Request->request->get('end'));
+        // end is an array, so use all()
+        $Scheduler->updateEnd($Request->request->all('end'));
     }
 
     // BIND

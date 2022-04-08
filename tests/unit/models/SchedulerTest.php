@@ -99,7 +99,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Users = new Users(2, 1);
         $Items = new Items($Users, 1);
         $Scheduler = new Scheduler($Items);
-        $d = new DateTime('now');
+        $d = new DateTime('tomorrow');
         $start = $d->format('c');
         $d->add(new DateInterval('PT2H'));
         $end = $d->format('c');
@@ -107,7 +107,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $id = $Scheduler->create($start, $end, 'Yep');
         // write with admin
         $this->Scheduler->setId($id);
-        $this->assertTrue($this->Scheduler->bind(1, 'experiment'));
+        $this->assertTrue($this->Scheduler->destroy());
     }
 
     public function testCanNotWrite(): void

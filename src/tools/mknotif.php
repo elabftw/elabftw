@@ -19,6 +19,6 @@ $Notifications = new Notifications(new Users(1));
             'experiment_id' => 32,
             'commenter_userid' => 2,
         );
-$Notifications->create(new CreateNotificationParams(1, $body));
-$Notifications->create(new CreateNotificationParams(2));
-$Notifications->create(new CreateNotificationParams(3));
+$Notifications->create(new CreateNotificationParams(Notifications::COMMENT_CREATED, $body));
+$Notifications->create(new CreateNotificationParams(Notifications::USER_CREATED, array('userid' => 3)));
+$Notifications->create(new CreateNotificationParams(Notifications::USER_NEED_VALIDATION, array('userid' => 3)));

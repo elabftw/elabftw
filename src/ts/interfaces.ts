@@ -10,10 +10,11 @@ interface ResponseMsg {
   res: boolean;
   msg: string;
   color?: string;
-  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedEntities> | Array<Upload> | object | MetadataJson;
+  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedEntities> | Array<Upload> | object | PartialEntity;
 }
 
-interface MetadataJson {
+interface PartialEntity {
+  body: string;
   metadata: string;
 }
 
@@ -85,6 +86,7 @@ enum Action {
   Deduplicate = 'deduplicate',
   Duplicate = 'duplicate',
   Lock = 'lock',
+  Pin = 'pin',
 }
 
 enum Model {
@@ -119,6 +121,8 @@ enum Target {
   BoundEvent = 'boundevent',
   Comment = 'comment',
   Date = 'date',
+  Deadline = 'deadline',
+  DeadlineNotif = 'deadline_notif',
   Finished = 'finished',
   List = 'list',
   Member = 'member',
@@ -162,13 +166,13 @@ export {
   Payload,
   Method,
   Action,
-  MetadataJson,
   ExtraFields,
   Model,
   Target,
   Todoitem,
   EntityType,
   Entity,
+  PartialEntity,
   UnfinishedEntities,
   Upload,
 };

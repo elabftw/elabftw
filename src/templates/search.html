@@ -40,7 +40,10 @@
           <dt>attachment</dt>
           <dd>yes or no, true or false, 1 or 0, on or off</dd>
           <dt>author</dt>
-          <dd>Term or Quoted term</dd>
+          <dd>
+            Term or Quoted term<br>
+            Without any author the entire team will be searched.
+          </dd>
           <dt>body</dt>
           <dd>Term or Quoted term</dd>
           <dt>category</dt>
@@ -48,6 +51,8 @@
           <dt>date</dt>
           <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
           <dt>elabid</dt>
+          <dd>Term or Quoted term</dd>
+          <dt>group</dt>
           <dd>Term or Quoted term</dd>
           <dt>locked</dt>
           <dd>yes or no, true or false, 1 or 0, on or off</dd>
@@ -125,7 +130,7 @@
 
     <!-- NEW ROW -->
     <div class='row'>
-      <div class='col-md-8'>
+      <div class='col-md-8 mb-2'>
         <label for='extendedArea'><i class='fas fa-search'></i> {{ 'Search query'|trans }}</label>
         <textarea
           id='extendedArea'
@@ -144,40 +149,44 @@
           Press <kbd><kbd>ctrl</kbd> + <kbd>enter</kbd></kbd> or <kbd><kbd>⌘</kbd> + <kbd>enter</kbd></kbd> to submit search.
         </small>
       </div>
-      <div class='col-md-4'>
-      <p>Allowed Fields (<code><strong>field</strong>:value</code>):</p>
-      <ul class='list-unstyled'>
-        <li><strong>attachment</strong>: yes or no</li>
-        <li><strong>author</strong>: Simple or Quoted term</li>
-        <li><strong>body</strong>: Simple or Quoted term</li>
-        <li><strong>category</strong>: Simple or Quoted term</li>
-        <li><strong>date</strong>: see date format</li>
-        <li><strong>elabid</strong>: Simple or Quoted term</li>
-        <li><strong>locked</strong>: yes or no</li>
-        <li><strong>rating</strong>: 1, 2, 3, 4, 5, or unrated or 0</li>
-        <li><strong>status</strong>: Simple or Quoted term</li>
-        <li><strong>timestamped</strong>: yes or no</li>
-        <li><strong>title</strong>: Simple or Quoted term</li>
-        <li><strong>visibility</strong>: Simple or Quoted term</li>
-      </ul>
-      <a class='clickable' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Full syntax'|trans }}</a>
+      <div class='col-md-4 mb-2'>
+        <p>Allowed Fields (<code><strong>field</strong>:value</code>):</p>
+        <ul class='list-unstyled'>
+          <li><strong>attachment</strong>: yes or no</li>
+          <li><strong>author</strong>: Simple or Quoted term</li>
+          <li><strong>body</strong>: Simple or Quoted term</li>
+          <li><strong>category</strong>: Simple or Quoted term</li>
+          <li><strong>date</strong>: see date format</li>
+          <li><strong>elabid</strong>: Simple or Quoted term</li>
+          <li><strong>group</strong>: Simple or Quoted term</li>
+          <li><strong>locked</strong>: yes or no</li>
+          <li><strong>rating</strong>: 1, 2, 3, 4, 5, or unrated or 0</li>
+          <li><strong>status</strong>: Simple or Quoted term</li>
+          <li><strong>timestamped</strong>: yes or no</li>
+          <li><strong>title</strong>: Simple or Quoted term</li>
+          <li><strong>visibility</strong>: Simple or Quoted term</li>
+        </ul>
+        <a class='clickable' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Full syntax'|trans }}</a>
       </div>
     </div>
 
     <h4 data-action='toggle-next' data-icon='extendedSearchIcon'><i id='extendedSearchIcon' class='fas fa-chevron-circle-right'></i> {{ 'Search helpers'|trans }}</h4>
-    <div hidden class='box mb-1' data-save-hidden='searchHelpersDiv'>
+    <div hidden class='box mb-1' data-save-hidden='searchHelpersDiv' style='overflow:visible;'>
       <div class='row'>
-        <!-- AUTHOR HELPER -->
+        <!-- AUTHOR/OWNER HELPER -->
         <div class='col-md-6 mb-md-3'>
-          <label for='searchonly'>{{ 'And author is:'|trans }} </label><br>
-          <select id='searchonly' name='owner' data-filter='author' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
-            <option data-action='clear'>{{ 'Select author'|trans }}</option>
+          <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label><br>
+          <select id='searchonly' name='owner' data-filter='(?:author|group)' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
+            <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
             {% for user in usersArr %}
-              <option value='{{ user.userid }}'>{{ user.fullname|raw }}</option>
+              <option value='author:{{ user.fullname|raw }}' {{- Request.query.get('owner') == 'author:'~user.fullname|raw ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname|raw }}</option>
+            {% endfor %}
+            {% for group in teamGroups %}
+              <option value='group:{{ group|raw }}' {{- Request.query.get('owner') == 'group:'~group|raw ? ' selected' }}>[{{ 'group'|trans }}] {{ group|raw }}</option>
             {% endfor %}
           </select>
         </div>
-        <!-- END AUTHOR HELPER -->
+        <!-- END AUTHOR/OWNER HELPER -->
 
       </div>
       <!-- NEW ROW -->
@@ -187,13 +196,13 @@
           <label class='d-inline' for='date'>{{ 'Date from'|trans }}</label>
           <div class='input-group'>
             <div class='input-group-prepend'>
-              <select id='dateOperator' class='brr-none form-control filterHelper' data-filter='date'>
-                <option value='<' title='{{ 'less than'|trans }}'>&lt;</option>
-                <option value='<=' title='{{ 'less than or equal to'|trans }}'>&le;</option>
-                <option value='=' title='{{ 'equal to'|trans }}' selected>=</option>
-                <option value='>=' title='{{ 'greater than or equal to'|trans }}'>&ge;</option>
-                <option value='>' title='{{ 'greater than'|trans }}'>&gt;</option>
-                <option value='!=' title='{{ 'not equal to'|trans }}'>&ne;</option>
+              <select id='dateOperator' name='dateOperator' class='brr-none form-control filterHelper' data-filter='date'>
+                <option value='<' title='{{ 'less than'|trans }}' {{- Request.query.get('dateOperator') == '<' ? ' selected' }}>&lt;</option>
+                <option value='<=' title='{{ 'less than or equal to'|trans }}' {{- Request.query.get('dateOperator') == '<=' ? ' selected' }}>&le;</option>
+                <option value='=' title='{{ 'equal to'|trans }}' {{- Request.query.get('dateOperator') == '=' or Request.query.get('dateOperator') is null ? ' selected' }}>=</option>
+                <option value='>=' title='{{ 'greater than or equal to'|trans }}' {{- Request.query.get('dateOperator') == '>=' ? ' selected' }}>&ge;</option>
+                <option value='>' title='{{ 'greater than'|trans }}' {{- Request.query.get('dateOperator') == '>' ? ' selected' }}>&gt;</option>
+                <option value='!=' title='{{ 'not equal to'|trans }}' {{- Request.query.get('dateOperator') == '!=' ? ' selected' }}>&ne;</option>
               </select>
             </div>
             <input id='date' name='date' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('date') != '' ? Request.query.get('date') }}'/>
@@ -208,10 +217,10 @@
         <!-- LOCK -->
         <div class='col-md-3'>
           <label class='d-inline' for='locked'>{{ 'Locked'|trans }}</label>
-          <select id='locked' class='form-control filterHelper' data-filter='locked'>
+          <select id='locked' name='locked' class='form-control filterHelper' data-filter='locked'>
             <option value='' data-action='clear'>{{ 'Select lock status'|trans}}</option>
-            <option value='yes'>{{ 'Yes'|trans|lower }}</option>
-            <option value='no'>{{ 'No'|trans|lower }}</option>
+            <option value='yes' {{- Request.query.get('locked') == 'yes' ? ' selected' }}>{{ 'Yes'|trans|lower }}</option>
+            <option value='no' {{- Request.query.get('locked') == 'no' ? ' selected' }}>{{ 'No'|trans|lower }}</option>
           </select>
         </div>
         <!-- END LOCK -->
@@ -219,10 +228,10 @@
         <!-- LOCK -->
         <div class='col-md-3'>
           <label class='d-inline' for='timestamped'>{{ 'Timestamped'|trans }}</label>
-          <select id='timestamped' class='form-control filterHelper' data-filter='timestamped'>
+          <select id='timestamped' name='timestamped' class='form-control filterHelper' data-filter='timestamped'>
             <option value='' data-action='clear'>{{ 'Select timestamp status'|trans}}</option>
-            <option value='yes'>{{ 'Yes'|trans|lower }}</option>
-            <option value='no'>{{ 'No'|trans|lower }}</option>
+            <option value='yes' {{- Request.query.get('timestamped') == 'yes' ? ' selected' }}>{{ 'Yes'|trans|lower }}</option>
+            <option value='no' {{- Request.query.get('timestamped') == 'no' ? ' selected' }}>{{ 'No'|trans|lower }}</option>
           </select>
         </div>
         <!-- END LOCK -->
@@ -237,7 +246,7 @@
             <select id='status' name='status' data-filter='status' class='form-control filterHelper'>
               <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
               {% for status in statusArr %}
-                <option value='{{ status.category_id }}'{{ Request.query.get('status') == status.category_id ? ' selected' }}>
+                <option {{- Request.query.get('status') == status.category ? ' selected' }}>
                   {{ status.category }}
                 </option>
               {% endfor %}
@@ -247,10 +256,10 @@
           <!-- CATEGORY ONLY FOR DATABASE -->
           <div id='searchCategory' hidden>
             <label for='category'>{{ 'And category is'|trans }}</label>
-            <select id='category' name='status' data-filter='category' class='form-control filterHelper'>
+            <select id='category' name='category' data-filter='category' class='form-control filterHelper'>
               <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
               {% for category in itemsTypesArr %}
-                <option value='{{ category.category_id }}'{{ Request.query.get('category') == category.category_id ? ' selected' }}>
+                <option {{- Request.query.get('category') == category.category ? ' selected' }}>
                   {{ category.category }}
                 </option>
               {% endfor %}
@@ -263,9 +272,9 @@
           <label for='rating'>{{ 'And rating is'|trans }}</label>
           <select id='rating' name='rating' data-filter='rating' class='form-control filterHelper'>
             <option value='' data-action='clear'>{{ 'Select number of stars'|trans }}</option>
-            <option value='null'{{ Request.query.get('rating') == 'null' ? ' selected' }}>{{ 'Unrated'|trans }}</option>
+            <option value='unrated' {{- Request.query.get('rating') == 'unrated' ? ' selected' }}>{{ 'Unrated'|trans }}</option>
             {% for i in range(1, 5) %}
-              <option value='{{ i }}'{{ Request.query.get('rating') == i ? ' selected' }}>{{ i }}</option>
+              <option {{- Request.query.get('rating') == i ? ' selected' }}>{{ i }}</option>
             {% endfor %}
           </select>
         </div>
@@ -276,7 +285,7 @@
           <select id='visibility' name='vis' data-filter='visibility' class='form-control filterHelper'>
             <option value='' data-action='clear'>{{ 'Select visibility'|trans }}</option>
             {% for key, value in visibilityArr %}
-              <option value='{{ key }}' {{ Request.query.get('vis') == key ? " selected='selected'" }}>{{ value|trans }}</option>
+              <option value='{{ key }}' {{- Request.query.get('vis') == key ? ' selected' }}>{{ value|trans }}</option>
             {% endfor %}
           </select>
         </div>

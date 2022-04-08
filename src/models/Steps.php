@@ -10,9 +10,11 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\StepParamsInterface;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
@@ -82,7 +84,7 @@ class Steps implements CrudInterface
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        return $this->Db->fetchAll($req);
+        return $req->fetchAll();
     }
 
     /**
@@ -113,16 +115,27 @@ class Steps implements CrudInterface
         }
     }
 
-    public function update(ContentParamsInterface $params): bool
+    public function update(StepParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
-        if ($params->getTarget() === 'body') {
-            return $this->updateBody($params->getContent());
-        }
-        if ($params->getTarget() === 'finished') {
+        $target = $params->getTarget();
+        if ($target === 'finished') {
             return $this->toggleFinished();
         }
-        return false;
+        if ($target === 'deadline_notif') {
+            return $this->toggleNotif();
+        }
+        if ($target === 'body') {
+            $content = $params->getContent();
+        } else {
+            $content = $params->getDatetime();
+        }
+        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET ' . $params->getTarget() . ' = :content WHERE id = :id AND item_id = :item_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':content', $content, PDO::PARAM_STR);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     public function destroy(): bool
@@ -146,11 +159,30 @@ class Steps implements CrudInterface
         return $this->Db->execute($req);
     }
 
-    private function updateBody(string $content): bool
+    private function toggleNotif(): bool
     {
-        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET body = :content WHERE id = :id AND item_id = :item_id';
+        // get the current deadline value so we can insert it in the notification
+        $sql = 'SELECT deadline FROM ' . $this->Entity->type . '_steps WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':content', $content, PDO::PARAM_STR);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->execute();
+        $step = $req->fetch();
+
+        // now create a notification if none exist for this step id already
+        $Notifications = new Notifications($this->Entity->Users);
+        $Notifications->createIfNotExists(new CreateNotificationParams(
+            Notifications::STEP_DEADLINE,
+            array(
+                'step_id' => $this->id,
+                'entity_id' => $this->Entity->entityData['id'],
+                'entity_page' => $this->Entity->page,
+                'deadline' => $step['deadline'],
+            ),
+        ));
+
+        // update the deadline_notif column so we now if this step has a notif set for deadline or not
+        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET deadline_notif = !deadline_notif WHERE id = :id AND item_id = :item_id';
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);

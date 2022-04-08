@@ -10,6 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
-interface ParamsInterface extends CreateUploadParamsInterface, StatusParamsInterface, CreateApikeyParamsInterface, CreateNotificationParamsInterface, ItemTypeParamsInterface, ContentParamsInterface, EntityParamsInterface, UploadParamsInterface, TeamGroupParamsInterface
+interface ParamsInterface extends CreateUploadParamsInterface, StatusParamsInterface, CreateApikeyParamsInterface, CreateNotificationParamsInterface, ItemTypeParamsInterface, ContentParamsInterface, EntityParamsInterface, UploadParamsInterface, TeamGroupParamsInterface, StepParamsInterface
 {
 }

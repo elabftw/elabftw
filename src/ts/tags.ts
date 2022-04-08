@@ -11,9 +11,7 @@ import { Malle } from '@deltablot/malle';
 import FavTag from './FavTag.class';
 import Tag from './Tag.class';
 import i18next from 'i18next';
-import { getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement } from './misc';
-import { Ajax } from './Ajax.class';
-import { Payload, Method, Model, Action, Target } from './interfaces';
+import { addAutocompleteToTagInputs, getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
   let type = $('#info').data('type');
@@ -21,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     type = 'experiments_templates';
   }
 
-  const AjaxC = new Ajax();
   const entity = getEntity();
   const TagC = new Tag(entity);
 
@@ -93,31 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // AUTOCOMPLETE
-  const cache = {};
-
-  function addAutocompleteToTagInputs(): void {
-    ($('[data-autocomplete="tags"]') as JQuery<HTMLInputElement>).autocomplete({
-      source: function(request: Record<string, string>, response: (data) => void): void {
-        const term  = request.term;
-        if (term in cache) {
-          response(cache[term]);
-          return;
-        }
-        const payload: Payload = {
-          method: Method.GET,
-          action: Action.Read,
-          model: Model.Tag,
-          entity: entity,
-          target: Target.List,
-          content: term,
-        };
-        AjaxC.send(payload).then(json => {
-          cache[term] = json.value;
-          response(json.value);
-        });
-      },
-    });
-  }
 
   addAutocompleteToTagInputs();
   if (document.getElementById('favtagsPanel')) {

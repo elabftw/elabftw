@@ -61,11 +61,20 @@ class Transform
                     _('New comment on your experiment.'),
                     $notif['created_at'],
                 );
+            case Notifications::EVENT_DELETED:
+                return sprintf(
+                    '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="team.php?item=%d">%s (%s)</span>' . $relativeMoment,
+                    (int) $notif['id'],
+                    (int) $notif['body']['event']['item'],
+                    _('A booking was cancelled.'),
+                    $notif['body']['actor'],
+                    $notif['created_at'],
+                );
             case Notifications::USER_CREATED:
                 return sprintf(
                     '<span class="clickable" data-action="ack-notif" data-id="%d">%s</span>' . $relativeMoment,
                     (int) $notif['id'],
-                    _('New user added to your team.'),
+                    _('New user added to your team'),
                     $notif['created_at'],
                 );
             case Notifications::USER_NEED_VALIDATION:

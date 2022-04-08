@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TOGGLE PINNED
     } else if (el.matches('[data-action="pin"]')) {
-      AjaxC.post('togglePin').then(() => el.querySelector('svg').classList.toggle('grayed-out'));
+      EntityC.pin(entity.id).then(() => el.querySelector('svg').classList.toggle('grayed-out'));
 
     // TIMESTAMP button in modal
     } else if (el.matches('[data-action="timestamp"]')) {
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // UPDATE MALLEABLE COMMENT
   const malleableComments = new Malle({
     cancel : i18next.t('cancel'),
-    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
+    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],
     fun: (value, original) => {
       CommentC.update(parseInt(original.dataset.id, 10), value);

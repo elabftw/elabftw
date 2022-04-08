@@ -191,7 +191,7 @@ class Teams implements CrudInterface
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 
-        return $this->Db->fetchAll($req);
+        return $req->fetchAll();
     }
 
     public function update(ContentParamsInterface $params): bool

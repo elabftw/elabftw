@@ -40,7 +40,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Deal with things common to experiments and items like tags, uploads, quicksave and lock
- *
+ * @deprecated new code should use proper json payload on requesthandler
  */
 require_once dirname(__DIR__) . '/init.inc.php';
 
@@ -60,11 +60,6 @@ try {
         $id = (int) $Request->query->get('id');
     }
 
-    /**
-     * TODO replace block below with this
-    $Processor = new RequestProcessor($App->Users, $Request);
-    $Model = $Processor->getModel();
-     */
     if ($Request->request->get('type') === 'experiments' ||
         $Request->query->get('type') === 'experiments' ||
         $Request->request->get('type') === 'experiment' ||
@@ -92,19 +87,6 @@ try {
         // see #2404
         $mentionArr = mb_convert_encoding($mentionArr, 'UTF-8', 'UTF-8');
         $Response->setData($mentionArr);
-    }
-
-    // GET BODY
-    if ($Request->query->has('getBody')) {
-        $Entity->canOrExplode('read');
-        $body = $Entity->entityData['body'];
-        if ($Request->query->get('editor') === 'tiny') {
-            $body = Tools::md2html($body);
-        }
-        $Response->setData(array(
-            'res' => true,
-            'msg' => $body,
-        ));
     }
 
     // GET LINK LIST
@@ -184,7 +166,7 @@ try {
     }
 
     // BLOXBERG
-    if ($Request->request->has('bloxberg')) {
+    if ($Request->request->has('bloxberg') && $App->Config->configArr['blox_enabled']) {
         $Make = new MakeBloxberg(new Client(), $Entity);
         $Response->setData(array(
             'res' => $Make->timestamp(),
@@ -195,11 +177,6 @@ try {
     // SAVE AS IMAGE
     if ($Request->request->has('saveAsImage')) {
         $Entity->Uploads->createFromString('png', $Request->request->get('realName'), $Request->request->get('content'));
-    }
-
-    // TOGGLE PIN
-    if ($Request->request->has('togglePin')) {
-        $Entity->Pins->togglePin();
     }
 
     // UPDATE VISIBILITY

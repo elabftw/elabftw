@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -34,6 +33,15 @@ try {
     if (!$App->Session->get('is_sysadmin') && $App->Config->configArr['admins_create_users'] === '0') {
         throw new IllegalActionException('Admin tried to create user directly');
     }
+    // check if we are admin of the correct team
+    if (!$App->Session->get('is_sysadmin') && (int) $Request->request->get('team') !== $App->Users->userData['team']) {
+        throw new IllegalActionException('Admin tried to create user in another team');
+    }
+    $usergroup = Check::usergroupOrExplode((int) $Request->request->get('usergroup'));
+    // a non sysadmin cannot promote someone to sysadmin
+    if ($usergroup === 1 && $App->Session->get('is_sysadmin') !== '1') {
+        throw new IllegalActionException('Only a sysadmin can put someone sysadmin.');
+    }
 
     if ((Check::id((int) $Request->request->get('team')) === false) ||
         !$Request->request->get('firstname') ||
@@ -49,7 +57,7 @@ try {
         array($Request->request->get('team')),
         $Request->request->get('firstname'),
         $Request->request->get('lastname'),
-        (int) $Request->request->get('usergroup'),
+        $usergroup,
     );
 
     $App->Session->getFlashBag()->add('ok', _('Account successfully created'));

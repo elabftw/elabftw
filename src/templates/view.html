@@ -75,10 +75,6 @@
     </a>
 
     {% if Entity.type == 'items' %}
-      <a class='elab-tooltip mr-1' href='experiments.php?mode=show&related={{ Entity.id }}'>
-        <span>{{ 'Show related'|trans }}</span>
-        <i title='{{ 'Show related'|trans }}' class='fas fa-link fa-2x'></i>
-      </a>
       {% if Entity.entityData.bookable %}
         <a class='elab-tooltip mr-1' href='team.php?item={{ Entity.id }}'>
           <span>{{ 'Book item'|trans }}</span>
@@ -116,7 +112,7 @@
     {% endif %}
 
     <!-- BLOXBERG BUTTON -->
-    {% if not Entity.isReadOnly %}
+    {% if not Entity.isReadOnly and App.Config.configArr.blox_enabled %}
       <a href='#' class='elab-tooltip mr-1' data-action='bloxberg'>
         <span>{{ 'Add to blockchain'|trans }}</span>
         <i title='{{ 'Add to blockchain'|trans }}' class='fas fa-cubes fa-2x'></i>

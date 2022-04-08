@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use function date;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Traits\CsvTrait;
@@ -39,7 +40,7 @@ class MakeCsv extends AbstractMake implements FileMakerInterface
      */
     protected function getHeader(): array
     {
-        return  array('id', 'date', 'title', 'content', 'category', 'elabid', 'rating', 'url');
+        return  array('id', 'date', 'title', 'content', 'category', 'elabid', 'rating', 'url', 'metadata');
     }
 
     /**
@@ -50,7 +51,11 @@ class MakeCsv extends AbstractMake implements FileMakerInterface
         $rows = array();
         foreach ($this->idArr as $id) {
             $this->Entity->setId((int) $id);
-            $permissions = $this->Entity->getPermissions();
+            try {
+                $permissions = $this->Entity->getPermissions();
+            } catch (IllegalActionException $e) {
+                continue;
+            }
             if ($permissions['read']) {
                 $row = array(
                     $this->Entity->entityData['id'],
@@ -61,6 +66,7 @@ class MakeCsv extends AbstractMake implements FileMakerInterface
                     $this->Entity->entityData['elabid'],
                     $row[] = $this->Entity->entityData['rating'],
                     $this->getUrl(),
+                    $this->Entity->entityData['metadata'] ?? '',
                 );
                 $rows[] = $row;
             }

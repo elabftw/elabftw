@@ -16,6 +16,11 @@
         {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
     </span>
     {% endif %}
+    {% if step.deadline %}
+    <span class='mr-2 text-muted'>
+        {{ 'Deadline:'|trans }} {{ step.deadline|format_datetime() }}
+    </span>
+    {% endif %}
         </li>
         {% endfor %}
     </ul>
@@ -44,6 +49,10 @@
   {% if relatedItemsArr %}
     <div class='mt-2'>
       <h3 class='d-inline'>{{ 'Related items'|trans }}</h3>
+      <a class='elab-tooltip mr-1' href='database.php?mode=show&related={{ Entity.id }}'>
+        <span>{{ 'Show linked items'|trans }}</span>
+        <i title='{{ 'Show linked items'|trans }}' class='fas fa-external-link-square-alt fa-2x'></i>
+      </a>
       <ul class='list-group'>
         {% for link in relatedItemsArr %}
           <li class='list-group-item'>
@@ -60,6 +69,10 @@
   {% if relatedExperimentsArr %}
     <div class='mt-2'>
       <h3 class='d-inline'>{{ 'Related experiments'|trans }}</h3>
+      <a class='elab-tooltip mr-1' href='experiments.php?mode=show&related={{ Entity.id }}'>
+        <span>{{ 'Show related'|trans }}</span>
+        <i title='{{ 'Show related'|trans }}' class='fas fa-external-link-square-alt fa-2x'></i>
+      </a>
       <ul class='list-group'>
         {% for link in relatedExperimentsArr %}
           <li class='list-group-item'>

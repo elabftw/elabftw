@@ -48,6 +48,11 @@ class StepsTest extends \PHPUnit\Framework\TestCase
             return ((int) $s['id']) === $id;
         });
         $this->assertEquals(array_pop($ourStep)['body'], 'updated step body');
+        // update deadline
+        $Steps->update(new StepParams('2022-03-23 13:37:00', 'deadline'));
+        $Steps->update(new StepParams('', 'deadline_notif'));
+        // update finish time_time
+        $Steps->update(new StepParams('2022-03-23 13:37:00', 'finished_time'));
     }
 
     public function testDestroy(): void

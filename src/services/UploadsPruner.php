@@ -36,7 +36,7 @@ class UploadsPruner implements CleanerInterface
         $req = $this->Db->prepare($sql);
         $req->bindValue(':state', Uploads::STATE_DELETED, PDO::PARAM_INT);
         $this->Db->execute($req);
-        foreach ($this->Db->fetchAll($req) as $upload) {
+        foreach ($req->fetchAll() as $upload) {
             $storageFs = (new StorageFactory((int) $upload['storage']))->getStorage()->getFs();
             $storageFs->delete($upload['long_name']);
             // also delete an hypothetical thumbnail
@@ -44,6 +44,7 @@ class UploadsPruner implements CleanerInterface
             $storageFs->delete($upload['long_name'] . '_th.jpg');
         }
         $this->deleteFromDb();
+
         return $req->rowCount();
     }
 

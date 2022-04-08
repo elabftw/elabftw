@@ -449,7 +449,40 @@
 
 
     <div class='mt-2'>
-      <button data-action='export' class='button btn btn-primary'>{{ 'Export'|trans }}</button>
+      <button data-action='export-category' class='button btn btn-primary'>{{ 'Export'|trans }}</button>
+    </div>
+
+    <h3 class='mt-3'>{{ 'Export experiments of user'|trans }}</h3>
+    <hr>
+    <label for='userExport'>{{ 'Select user:'|trans }}</label>
+    <select class='form-control col-md-4' id='userExport' autocomplete='off'>
+      {% for user in allTeamUsersArr %}
+        <option value='{{ user.userid }}'>{{ user.fullname }}</option>
+      {% endfor %}
+    </select>
+    <label for='userExportFormat'>{{ 'Select export format:'|trans }}</label>
+    <select class='form-control col-md-4' id='userExportFormat' autocomplete='off'>
+      <option value='zip'>{{ 'Make Zip'|trans }}</option>
+      <option value='csv'>{{ 'Make Csv'|trans }}</option>
+      <option value='multiPdf'>{{ 'Make PDF'|trans }}</option>
+      <option value='qrPdf'>{{ 'Make QR codes PDF'|trans }}</option>
+      <option value='json'>{{ 'Make JSON'|trans }}</option>
+    </select>
+
+
+    <div class='mt-2'>
+      <button data-action='export-user' class='button btn btn-primary'>{{ 'Export'|trans }}</button>
+    </div>
+
+    <h3 class='mt-3'>{{ 'Export bookings'|trans }}</h3>
+    <hr>
+    <label for='schedulerDateFrom'>{{ 'Date from'|trans }}</label>
+    <input id='schedulerDateFrom' name='schedulerDateFrom' type='date' class='form-control col-md-4' value='{{ "1 month ago"|date('Y-m-d') }}'/>
+    <label for='schedulerDateTo'>{{ 'Date to'|trans }}</label>
+    <input id='schedulerDateTo' name='schedulerDateTo' type='date' class='form-control col-md-4' value='{{ "now"|date('Y-m-d') }}'/>
+
+    <div class='mt-2'>
+      <button data-action='export-scheduler' class='button btn btn-primary'>{{ 'Export'|trans }}</button>
     </div>
   </div>
 </div>

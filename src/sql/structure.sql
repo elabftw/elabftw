@@ -196,6 +196,8 @@ CREATE TABLE `experiments_steps` (
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `finished` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `finished_time` datetime DEFAULT NULL,
+  `deadline` datetime DEFAULT NULL,
+  `deadline_notif` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -267,10 +269,9 @@ CREATE TABLE `experiments_templates_revisions` (
 --
 
 CREATE TABLE `favtags2users` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `users_id` int UNSIGNED NOT NULL,
   `tags_id` int UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`users_id`, `tags_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
@@ -315,6 +316,7 @@ CREATE TABLE `idps` (
   `slo_url` varchar(255) NOT NULL,
   `slo_binding` varchar(255) NOT NULL,
   `x509` text NOT NULL,
+  `x509_new` text NOT NULL,
   `active` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `email_attr` varchar(255) NOT NULL,
   `team_attr` varchar(255) NULL DEFAULT NULL,
@@ -458,6 +460,8 @@ CREATE TABLE `items_types_steps` (
   `ordering` int UNSIGNED DEFAULT NULL,
   `finished` tinyint(1) NOT NULL DEFAULT '0',
   `finished_time` datetime DEFAULT NULL,
+  `deadline` datetime DEFAULT NULL,
+  `deadline_notif` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -748,8 +752,16 @@ CREATE TABLE `users` (
   `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it',
   `last_login` DATETIME NULL DEFAULT NULL,
   `allow_untrusted` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
-  `notif_new_comment` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
-  `notif_new_comment_email` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_comment_created` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_comment_created_email` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_user_created` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_user_created_email` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_user_need_validation` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_user_need_validation_email` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_step_deadline` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_step_deadline_email` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_event_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `notif_event_deleted_email` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `auth_lock_time` datetime DEFAULT NULL,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
@@ -767,10 +779,9 @@ CREATE TABLE `users` (
 --
 
 CREATE TABLE `users2team_groups` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `userid` int(10) UNSIGNED NOT NULL,
   `groupid` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`userid`, `groupid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 --
 -- RELATIONSHIPS FOR TABLE `users2team_groups`:
@@ -781,11 +792,17 @@ CREATE TABLE `users2team_groups` (
 --
 
 CREATE TABLE `users2teams` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `users_id` int(10) UNSIGNED NOT NULL,
   `teams_id` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`users_id`, `teams_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+--
+-- RELATIONSHIPS FOR TABLE `users2teams`:
+--   `teams_id`
+--       `teams` -> `id`
+--   `users_id`
+--       `users` -> `userid`
+--
 
 --
 -- Indexes for dumped tables
@@ -1057,6 +1074,8 @@ CREATE TABLE `items_steps` (
     `ordering` int(10) unsigned DEFAULT NULL,
     `finished` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
     `finished_time` datetime DEFAULT NULL,
+    `deadline` datetime DEFAULT NULL,
+    `deadline_notif` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
     KEY `fk_items_steps_items_id` (`item_id`),
     CONSTRAINT `fk_items_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1069,6 +1088,8 @@ CREATE TABLE `experiments_templates_steps` (
     `ordering` int(10) unsigned DEFAULT NULL,
     `finished` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
     `finished_time` datetime DEFAULT NULL,
+    `deadline` datetime DEFAULT NULL,
+    `deadline_notif` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
     KEY `fk_experiments_templates_steps_items_id` (`item_id`),
     CONSTRAINT `fk_experiments_templates_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1095,8 +1116,9 @@ CREATE TABLE `experiments_templates_links` (
     CONSTRAINT `fk_experiments_templates_links_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_experiments_templates_links_items_id` FOREIGN KEY (`link_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
 --
--- Indexes for table `users2teams`
+-- Indexes and Constraints for table `users2teams`
 --
 ALTER TABLE `users2teams`
   ADD KEY `fk_users2teams_teams_id` (`teams_id`),
@@ -1105,6 +1127,15 @@ ALTER TABLE `users2teams`
   ADD CONSTRAINT `fk_users2teams_teams_id` FOREIGN KEY (`teams_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_users2teams_users_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+--
+-- Indexes and Constraints for table `users2team_groups`
+--
+ALTER TABLE `users2team_groups`
+  ADD KEY `fk_users2team_groups_groupid` (`groupid`),
+  ADD KEY `fk_users2team_groups_userid` (`userid`);
+ALTER TABLE `users2team_groups`
+  ADD CONSTRAINT `fk_users2team_groups_groupid` FOREIGN KEY (`groupid`) REFERENCES `team_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_users2team_groups_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Indexes for table `pin2users`

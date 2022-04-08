@@ -14,7 +14,6 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Update;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use PDO;
 use const SECRET_KEY;
@@ -82,9 +81,7 @@ final class Config
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
-        if ($config === false) {
-            throw new DatabaseErrorException();
-        }
+
         return array_map(function ($v) {
             return $v[0];
         }, $config);
@@ -171,9 +168,7 @@ final class Config
             ('lang', 'en_GB'),
             ('login_tries', '3'),
             ('mail_from', 'notconfigured@example.com'),
-            ('mail_method', 'smtp'),
             ('proxy', ''),
-            ('sendmail_path', '/usr/sbin/sendmail'),
             ('smtp_address', 'mail.smtp2go.com'),
             ('smtp_encryption', 'ssl'),
             ('smtp_password', ''),
@@ -195,6 +190,7 @@ final class Config
             ('saml_slo_binding', NULL),
             ('saml_nameidformat', 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'),
             ('saml_x509', NULL),
+            ('saml_x509_new', NULL),
             ('saml_privatekey', NULL),
             ('saml_team_create', '1'),
             ('saml_team_default', NULL),
@@ -249,7 +245,9 @@ final class Config
             ('s3_bucket_name', ''),
             ('s3_path_prefix', ''),
             ('s3_region', ''),
-            ('s3_endpoint', '')";
+            ('s3_endpoint', ''),
+            ('blox_anon', '0'),
+            ('blox_enabled', '1')";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);

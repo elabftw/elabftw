@@ -5,9 +5,6 @@
  *
  */
 /** @psalm-suppress UnusedFunctionCall */
-// comment-add
-_('Add a comment');
-/** @psalm-suppress UnusedFunctionCall */
 // dropzone-upload-area
 _('Drop files here to upload');
 /** @psalm-suppress UnusedFunctionCall */
@@ -46,6 +43,9 @@ _('Enter name of the file');
 /** @psalm-suppress UnusedFunctionCall */
 // step-delete-warning
 _('Delete this step?');
+/** @psalm-suppress UnusedFunctionCall */
+// step-unfinish-warning
+_('Are you sure you want to undo this step?');
 /** @psalm-suppress UnusedFunctionCall */
 // tag-delete-warning
 _('Delete this tag?');

@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\ContentParams;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Models\AbstractEntity;
 use function json_decode;
@@ -47,7 +48,11 @@ class MakeJson extends AbstractMake implements FileMakerInterface
         $res = array();
         foreach ($this->idArr as $id) {
             $this->Entity->setId((int) $id);
-            $all = $this->Entity->read(new ContentParams());
+            try {
+                $all = $this->Entity->read(new ContentParams());
+            } catch (IllegalActionException $e) {
+                continue;
+            }
             // decode the metadata column because it's json
             if (isset($all['metadata'])) {
                 $all['metadata'] = json_decode($all['metadata']);

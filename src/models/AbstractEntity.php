@@ -261,10 +261,9 @@ abstract class AbstractEntity implements CrudInterface
         }
 
         $this->bindExtendedValues($req);
-
         $this->Db->execute($req);
 
-        return $this->Db->fetchAll($req);
+        return $req->fetchAll();
     }
 
     public function read(ContentParamsInterface $params): array
@@ -273,37 +272,12 @@ abstract class AbstractEntity implements CrudInterface
             return $this->getBoundEvents();
         }
         if ($params->getTarget() === 'metadata') {
-            return array('metadata' => $this->readAll()['metadata']);
+            return array('metadata' => $this->readCurrent()['metadata']);
         }
-        return $this->readAll();
-    }
-
-    /**
-     * Read all from one entity
-     * Here be dragons!
-     *
-     * @param bool $getTags if true, might take a long time
-     */
-    public function readAll(bool $getTags = true): array
-    {
-        if ($this->id === null) {
-            throw new IllegalActionException('No id was set!');
+        if ($params->getTarget() === 'body') {
+            return array('body' => Tools::md2html($this->readCurrent()['body']));
         }
-        $sql = $this->getReadSqlBeforeWhere($getTags, true);
-
-        $sql .= ' WHERE entity.id = ' . (string) $this->id;
-
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-
-        $item = $req->fetch();
-
-        $permissions = $this->getPermissions($item);
-        if ($permissions['read'] === false) {
-            throw new IllegalActionException(Tools::error(true));
-        }
-
-        return $item;
+        return $this->readCurrent();
     }
 
     public function getTeamFromElabid(string $elabid): int
@@ -336,9 +310,8 @@ abstract class AbstractEntity implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':type', $this->type);
         $this->Db->execute($req);
-        $res = $this->Db->fetchAll($req);
         $allTags = array();
-        foreach ($res as $tags) {
+        foreach ($req->fetchAll() as $tags) {
             $allTags[$tags['item_id']][] = $tags;
         }
         return $allTags;
@@ -589,7 +562,7 @@ abstract class AbstractEntity implements CrudInterface
         $req->bindParam(':to', $to);
         $this->Db->execute($req);
 
-        return array_column($this->Db->fetchAll($req), 'id');
+        return array_column($req->fetchAll(), 'id');
     }
 
     /**
@@ -649,8 +622,18 @@ abstract class AbstractEntity implements CrudInterface
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':category', $category);
         $req->execute();
-        $res = $this->Db->fetchAll($req);
-        return array_column($res, 'id');
+
+        return array_column($req->fetchAll(), 'id');
+    }
+
+    public function getIdFromUser(int $userid): array
+    {
+        $sql = 'SELECT id FROM ' . $this->getTable() . ' WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid);
+        $req->execute();
+
+        return array_column($req->fetchAll(), 'id');
     }
 
     public function addToExtendedFilter(string $extendedFilter, array $bindExtendedValues = array()): void
@@ -680,6 +663,34 @@ abstract class AbstractEntity implements CrudInterface
         $req->bindValue(':value', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    /**
+     * Read all from one entity
+     * Here be dragons!
+     *
+     * @param bool $getTags if true, might take a long time
+     */
+    private function readCurrent(bool $getTags = true): array
+    {
+        if ($this->id === null) {
+            throw new IllegalActionException('No id was set!');
+        }
+        $sql = $this->getReadSqlBeforeWhere($getTags, true);
+
+        $sql .= ' WHERE entity.id = ' . (string) $this->id;
+
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+
+        $item = $req->fetch();
+
+        $permissions = $this->getPermissions($item);
+        if ($permissions['read'] === false) {
+            throw new IllegalActionException(Tools::error(true));
+        }
+
+        return $item;
     }
 
     /**

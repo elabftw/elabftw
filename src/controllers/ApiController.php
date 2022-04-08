@@ -393,8 +393,14 @@ class ApiController implements ControllerInterface
             $DisplayParams->offset = $this->offset;
             if ($this->search) {
                 $TeamGroups = new TeamGroups($this->App->Users);
-                $visibilityArr = $TeamGroups->getVisibilityList();
-                $advancedQuery = new AdvancedSearchQuery($this->search, new VisitorParameters($this->Entity->type, $visibilityArr));
+                $advancedQuery = new AdvancedSearchQuery(
+                    $this->search,
+                    new VisitorParameters(
+                        $this->Entity->type,
+                        $TeamGroups->getVisibilityList(),
+                        $TeamGroups->readGroupsWithUsersFromUser(),
+                    ),
+                );
                 $whereClause = $advancedQuery->getWhereClause();
                 if ($whereClause) {
                     $this->Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);

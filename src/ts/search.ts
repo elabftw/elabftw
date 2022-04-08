@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return date + '..' + dateTo;
       }
-      return `${element.options[element.selectedIndex].innerText}`;
+      return `${element.options[element.selectedIndex].text}`;
     }
     if (element instanceof HTMLInputElement) {
       if (element.id === 'date') {
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const found = curVal.match(regex);
       // don't add quotes unless we need them (space exists)
       let quotes = '';
-      const filterValue = getFilterValueFromElement(elem);
+      let filterValue = getFilterValueFromElement(elem);
       if (filterValue.includes(' ')) {
         quotes = '"';
       }
@@ -120,7 +120,14 @@ document.addEventListener('DOMContentLoaded', () => {
       let filter = '';
       // but if we have a correct value, we add the filter
       if (filterValue !== '') {
-        filter = `${elem.dataset.filter}:${quotes}${filterValue}${quotes}`;
+        let filterName = elem.dataset.filter;
+
+        if (filterName === '(?:author|group)') {
+          filterName = filterValue.split(':')[0];
+          filterValue = filterValue.substring(filterName.length + 1);
+        }
+
+        filter = `${filterName}:${quotes}${filterValue}${quotes}`;
       }
 
       // add additional filter at cursor position

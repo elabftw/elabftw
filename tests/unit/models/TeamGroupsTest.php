@@ -20,11 +20,6 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
         $this->TeamGroups->create(new ContentParams('Group Name'));
     }
 
-    public function testRead(): void
-    {
-        $this->assertTrue(is_array($this->TeamGroups->read(new ContentParams())));
-    }
-
     public function testReadName(): void
     {
         $id = $this->TeamGroups->create(new ContentParams('Group Name'));
@@ -45,6 +40,19 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->TeamGroups->isInTeamGroup(1, 1));
         $this->expectException(IllegalActionException::class);
         $this->TeamGroups->update(new TeamGroupParams('', 'member', array('userid' => 1, 'group' => 1,'how' => 'yep')));
+    }
+
+    public function testRead(): void
+    {
+        // without users
+        $this->assertTrue(is_array($this->TeamGroups->read(new ContentParams())));
+
+        // with users
+        $this->TeamGroups->update(new TeamGroupParams('', 'member', array('userid' => 1, 'group' => 1,'how' => 'add')));
+        $this->TeamGroups->update(new TeamGroupParams('', 'member', array('userid' => 2, 'group' => 1,'how' => 'add')));
+        $this->assertTrue(is_array($this->TeamGroups->read(new ContentParams())));
+        $this->TeamGroups->update(new TeamGroupParams('', 'member', array('userid' => 1, 'group' => 1,'how' => 'rm')));
+        $this->TeamGroups->update(new TeamGroupParams('', 'member', array('userid' => 2, 'group' => 1,'how' => 'rm')));
     }
 
     public function testDestroy(): void

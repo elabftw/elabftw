@@ -42,6 +42,6 @@ final class UploadParams extends ContentParams implements UploadParamsInterface
         if ($ext === 'php') {
             throw new ImproperActionException('No php extension allowed!');
         }
-        return Filter::sanitize($this->content);
+        return Filter::forFilesystem($this->content);
     }
 }

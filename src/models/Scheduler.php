@@ -10,12 +10,15 @@
 namespace Elabftw\Models;
 
 use DateTime;
+use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\EntityTrait;
+use function filter_var;
+use function in_array;
 use PDO;
 use function preg_replace;
 use function strlen;
@@ -48,6 +51,9 @@ class Scheduler
         $start = $this->normalizeDate($start);
         $end = $this->normalizeDate($end, true);
 
+        // users won't be able to create an entry in the past
+        $this->isFutureOrExplode(DateTime::createFromFormat(DateTime::ISO8601, $start));
+
         // fix booking at midnight on monday not working. See #2765
         // we add a second so it works
         $start = preg_replace('/00:00:00/', '00:00:01', $start);
@@ -74,11 +80,15 @@ class Scheduler
      */
     public function readAllFromTeam(string $start, string $end): array
     {
+        $start = $this->normalizeDate($start);
+        $end = $this->normalizeDate($end, true);
+
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = "SELECT team_events.title, team_events.id, team_events.start, team_events.end, team_events.userid,
             CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
             items.title AS item_title,
-            CONCAT('#', items_types.color) AS color
+            CONCAT('#', items_types.color) AS color,
+            CONCAT(u.firstname, ' ', u.lastname) AS fullname
             FROM team_events
             LEFT JOIN items ON team_events.item = items.id
             LEFT JOIN items_types ON items.category = items_types.id
@@ -91,7 +101,7 @@ class Scheduler
         $req->bindParam(':end', $end);
         $this->Db->execute($req);
 
-        return $this->Db->fetchAll($req);
+        return $req->fetchAll();
     }
 
     /**
@@ -120,7 +130,7 @@ class Scheduler
         $req->bindParam(':end', $end);
         $this->Db->execute($req);
 
-        return $this->Db->fetchAll($req);
+        return $req->fetchAll();
     }
 
     /**
@@ -151,7 +161,9 @@ class Scheduler
             $seconds = substr($delta['milliseconds'], 0, -3);
         }
         $newStart = $oldStart->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
+        $this->isFutureOrExplode($newStart);
         $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
+        $this->isFutureOrExplode($newEnd);
 
         $sql = 'UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
@@ -177,6 +189,7 @@ class Scheduler
             $seconds = substr($delta['milliseconds'], 0, -3);
         }
         $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
+        $this->isFutureOrExplode($newEnd);
 
         $sql = 'UPDATE team_events SET end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
@@ -220,13 +233,44 @@ class Scheduler
     /**
      * Remove an event
      */
-    public function destroy(): void
+    public function destroy(): bool
     {
         $this->canWriteOrExplode();
         $sql = 'DELETE FROM team_events WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+
+        // send a notification to all team admins
+        $TeamsHelper = new TeamsHelper($this->Items->Users->userData['team']);
+        $Notifications = new Notifications($this->Items->Users);
+        $Notifications->createMultiUsers(
+            new CreateNotificationParams(
+                Notifications::EVENT_DELETED,
+                array('event' => $this->readFromId(), 'actor' => $this->Items->Users->userData['fullname']),
+            ),
+            $TeamsHelper->getAllAdminsUserid(),
+            (int) $this->Items->Users->userData['userid'],
+        );
+        return $this->Db->execute($req);
+    }
+
+    /**
+     * Check that the date is in the future
+     * Unlike Admins, Users can't create/modify something in the past
+     * Input can be false because DateTime::createFromFormat will return false on failure
+     */
+    private function isFutureOrExplode(DateTime|false $date): void
+    {
+        if ($date === false) {
+            throw new ImproperActionException('Could not understand date format!');
+        }
+        if ($this->Items->Users->userData['is_admin']) {
+            return;
+        }
+        $now = new DateTime();
+        if ($now > $date) {
+            throw new ImproperActionException(_('Creation/modification of events in the past is not allowed!'));
+        }
     }
 
     /**
@@ -257,7 +301,9 @@ class Scheduler
     private function canWrite(): bool
     {
         $event = $this->readFromId();
-        // if it's our event we can write to it for sure
+        // make sure we are not modifying something in the past if we're not admin
+        $this->isFutureOrExplode(DateTime::createFromFormat(DateTime::ISO8601, $event['start']));
+        // if it's our event (and it's not in the past) we can write to it for sure
         if ($event['userid'] === $this->Items->Users->userData['userid']) {
             return true;
         }

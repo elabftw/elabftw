@@ -33,6 +33,30 @@ class Saml
     public function getSettings(?int $id = null): array
     {
         $idp = $this->Idps->getActive($id);
+
+        return $this->getSettingsByIdp($idp);
+    }
+
+    /**
+     * Get the settings array by entity id.
+     *
+     * @param string $entId Entity id of the selected idp
+     */
+    public function getSettingsByEntityId(string $entId): array
+    {
+        $idp = $this->Idps->getActiveByEntityId($entId);
+
+        return $this->getSettingsByIdp($idp);
+    }
+
+    private function getSettingsByIdp(array $idp): array
+    {
+        $idpSigningCerts = array($idp['x509']);
+
+        if (!empty($idp['x509_new'])) {
+            $idpSigningCerts[] = $idp['x509_new'];
+        }
+
         return array(
             // If 'strict' is True, then the PHP Toolkit will reject unsigned
             // or unencrypted messages if it expects them signed or encrypted
@@ -48,6 +72,9 @@ class Saml
             // Ex. http://sp.example.com/
             //     http://example.com/sp/
             'baseurl' => $this->Config->configArr['saml_baseurl'],
+
+            // Save IdP id
+            'idp_id' => (int) $idp['id'],
 
             // Service Provider Data that we are deploying
             'sp' => array(
@@ -98,6 +125,10 @@ class Saml
                 // the certs folder. But we can also provide them with the following parameters
                 'x509cert' => $this->Config->configArr['saml_x509'],
                 'privateKey' => $this->Config->configArr['saml_privatekey'],
+
+                // For certificate rollover purposes, we can also add a second x509 certificate
+                // It is not used for signing or encryption, just included in metadata
+                'x509certNew' => $this->Config->configArr['saml_x509_new'],
             ),
 
             // Identity Provider Data that we want connect with our SP
@@ -123,18 +154,12 @@ class Saml
                     'binding' => $idp['slo_binding'],
                 ),
                 // Public x509 certificate of the IdP
-                'x509cert' => $idp['x509'],
-                /*
-                 *  Instead of use the whole x509cert you can use a fingerprint
-                 *  (openssl x509 -noout -fingerprint -in "idp.crt" to generate it,
-                 *   or add for example the -sha256 , -sha384 or -sha512 parameter)
-                 *
-                 *  If a fingerprint is provided, then the certFingerprintAlgorithm is required in order to
-                 *  let the toolkit know which Algorithm was used. Possible values: sha1, sha256, sha384 or sha512
-                 *  'sha1' is the default value.
-                 */
-                // 'certFingerprint' => '',
-                // 'certFingerprintAlgorithm' => 'sha1',
+                'x509certMulti' => array(
+                    'signing' => $idpSigningCerts,
+                    'encryption' => array(
+                        $idp['x509'],
+                    ),
+                ),
                 'emailAttr' => $idp['email_attr'],
                 'teamAttr' => $idp['team_attr'],
                 'fnameAttr' => $idp['fname_attr'],

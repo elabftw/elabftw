@@ -73,7 +73,7 @@ Fields
   / FieldRating
 
 Field
-  = field:('author'i / 'body'i / 'category'i / 'elabid'i / 'status'i / 'title'i / 'visibility'i) ':' term:(List / Literal)
+  = field:('author'i / 'body'i / 'category'i / 'elabid'i / 'group'i / 'status'i / 'title'i / 'visibility'i) ':' term:(List / Literal)
   {
     return new Field($field, $term);
   }

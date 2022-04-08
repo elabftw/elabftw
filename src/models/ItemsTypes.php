@@ -124,7 +124,7 @@ class ItemsTypes extends AbstractEntity
         $req->bindValue(':state', self::STATE_NORMAL, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        return $this->Db->fetchAll($req);
+        return $req->fetchAll();
     }
 
     /**

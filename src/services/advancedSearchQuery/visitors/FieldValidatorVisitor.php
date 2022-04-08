@@ -144,6 +144,21 @@ class FieldValidatorVisitor implements Visitor
         return new InvalidFieldCollector();
     }
 
+    private function visitFieldGroup(string $searchTerm, VisitorParameters $parameters): InvalidFieldCollector
+    {
+        $teamGroups = $parameters->getTeamGroups();
+        $groupNames = array_column($teamGroups, 'name');
+        if (!in_array($searchTerm, $groupNames, true)) {
+            $message = sprintf(
+                'group:%s. Valid values are %s.',
+                $searchTerm,
+                implode(', ', $groupNames),
+            );
+            return new InvalidFieldCollector(array($message));
+        }
+        return new InvalidFieldCollector();
+    }
+
     private function visitFieldLocked(string $searchTerm, VisitorParameters $parameters): InvalidFieldCollector
     {
         return new InvalidFieldCollector();

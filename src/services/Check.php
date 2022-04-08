@@ -63,6 +63,28 @@ class Check
     }
 
     /**
+     * Currently a usergroup is 1, 2, 3 or 4
+     */
+    public static function usergroup(int $gid): int|false
+    {
+        $filter_options = array(
+            'options' => array(
+                'min_range' => 1,
+                'max_range' => 4,
+            ),
+        );
+        return filter_var($gid, FILTER_VALIDATE_INT, $filter_options);
+    }
+
+    public static function usergroupOrExplode(int $gid): int
+    {
+        if (self::usergroup($gid) === false) {
+            throw new IllegalActionException('Invalid usergroup');
+        }
+        return $gid;
+    }
+
+    /**
      * Get only the relevant part of the color: remove the #
      *
      * @param string $color #121212
@@ -167,18 +189,31 @@ class Check
     {
         $allowed = array(
             'all',
+            'blox_anon',
+            'blox_enabled',
             'body',
             'bodyappend',
             'boundevent',
             'comment',
             'date',
+            'deadline',
+            'deadline_notif',
             'file',
             'finished',
+            'finished_time',
             'list',
             'member',
             'metadata',
-            'notif_new_comment',
-            'notif_new_comment_email',
+            'notif_comment_created',
+            'notif_comment_created_email',
+            'notif_user_created',
+            'notif_user_created_email',
+            'notif_user_need_validation',
+            'notif_user_need_validation_email',
+            'notif_step_deadline',
+            'notif_step_deadline_email',
+            'notif_event_deleted',
+            'notif_event_deleted_email',
             'privacypolicy',
             'rating',
             'real_name',

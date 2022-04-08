@@ -31,7 +31,6 @@ class CacheGenerator
     {
         $TwigEnvironment = $this->getTwig(Config::getConfig());
         $tplFs = FsTools::getFs(dirname(__DIR__, 2) . '/src/templates');
-        $tplDir = dirname(__DIR__, 2) . '/src/templates';
         // iterate over all the templates
         $templates = $tplFs->listContents('.')->filter(function (StorageAttributes $attributes) {
             return $attributes->isFile();

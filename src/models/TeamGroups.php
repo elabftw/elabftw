@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use function array_combine;
+use function array_map;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
@@ -18,7 +19,7 @@ use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\TeamGroupParamsInterface;
 use Elabftw\Traits\SetIdTrait;
-use function in_array;
+use function explode;
 use PDO;
 
 /**
@@ -58,31 +59,40 @@ class TeamGroups implements CrudInterface
      */
     public function read(ContentParamsInterface $params): array
     {
-        $fullGroups = array();
+        $sql = "SELECT team_groups.id,
+                team_groups.name,
+                GROUP_CONCAT(users.userid ORDER BY users.firstname, users.lastname) AS userids,
+                GROUP_CONCAT(CONCAT(users.firstname, ' ', users.lastname) ORDER BY users.firstname, users.lastname) AS fullnames
+            FROM team_groups
+            LEFT JOIN users2team_groups ON (
+                users2team_groups.groupid = team_groups.id
+            )
+            LEFT JOIN users USING (userid)
+            WHERE team_groups.team = :team
+            GROUP BY team_groups.id
+            ORDER BY team_groups.name ASC";
 
-        $sql = 'SELECT DISTINCT team_groups.id, team_groups.name FROM team_groups CROSS JOIN users2teams ON (users2teams.teams_id = team_groups.team AND users2teams.teams_id = :team) ORDER BY name';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $groups = $req->fetchAll();
-        if ($groups === false) {
-            return $fullGroups;
-        }
-
-        $sql = "SELECT DISTINCT users.userid, CONCAT(users.firstname, ' ', users.lastname) AS fullname
-            FROM users
-            CROSS JOIN users2team_groups ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
-        $req = $this->Db->prepare($sql);
-
-        foreach ($groups as $group) {
-            $req->bindParam(':groupid', $group['id'], PDO::PARAM_INT);
-            $this->Db->execute($req);
-            $usersInGroup = $req->fetchAll();
+        $fullGroups = array();
+        while ($group = $req->fetch()) {
             $fullGroups[] = array(
                 'id' => $group['id'],
                 'name' => $group['name'],
-                'users' => $usersInGroup,
+                'users' => isset($group['userids'])
+                    ? array_map(
+                        function (string $userid, string $fullname): array {
+                            return array(
+                                'userid' => $userid,
+                                'fullname' => $fullname,
+                            );
+                        },
+                        explode(',', $group['userids']),
+                        explode(',', $group['fullnames'])
+                    )
+                    : array(),
             );
         }
 
@@ -169,12 +179,7 @@ class TeamGroups implements CrudInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $res3 = $this->Db->execute($req);
 
-        $sql = 'DELETE FROM users2team_groups WHERE groupid = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $res4 = $this->Db->execute($req);
-
-        return $res1 && $res2 && $res3 && $res4;
+        return $res1 && $res2 && $res3;
     }
 
     /**
@@ -182,34 +187,12 @@ class TeamGroups implements CrudInterface
      */
     public function isInTeamGroup(int $userid, int $groupid): bool
     {
-        $sql = 'SELECT DISTINCT userid FROM users2team_groups WHERE groupid = :groupid';
+        $sql = 'SELECT count(userid) FROM users2team_groups WHERE groupid = :groupid AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':groupid', $groupid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $authUsersArr = array();
-        while ($authUsers = $req->fetch()) {
-            $authUsersArr[] = (int) $authUsers['userid'];
-        }
-
-        return in_array($userid, $authUsersArr, true);
-    }
-
-    /**
-     * Check if both users are in the same group
-     *
-     * @param int $userid the other user
-     */
-    public function isUserInSameGroup(int $userid): bool
-    {
-        $sql = 'SELECT t1.groupid FROM users2team_groups AS t1
-            INNER JOIN users2team_groups AS t2
-            WHERE t1.userid = :userid AND t2.userid = :userid2';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':userid2', $userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $req->fetch();
-        return $req->rowCount() > 0;
+        return $req->fetchColumn() > '0';
     }
 
     public function readGroupsFromUser(): array
@@ -217,13 +200,61 @@ class TeamGroups implements CrudInterface
         $sql = 'SELECT DISTINCT team_groups.id, team_groups.name
             FROM team_groups
             CROSS JOIN users2team_groups ON (
-                users2team_groups.userid = :userid AND team_groups.id = users2team_groups.groupid
+                users2team_groups.userid = :userid
+                AND users2team_groups.groupid = team_groups.id
             )';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        return $this->Db->fetchAll($req);
+        return $req->fetchAll();
+    }
+
+    public function readGroupsWithUsersFromUser(): array
+    {
+        $sql = "SELECT team_groups_of_user.name,
+                GROUP_CONCAT(users.userid ORDER BY users.userid) AS usersids,
+                GROUP_CONCAT(CONCAT(users.firstname, ' ', users.lastname) ORDER BY users.userid) AS fullnames
+            FROM (
+              -- get groups of a certain user
+                SELECT team_groups.id,
+                    team_groups.name
+                FROM users2team_groups
+                LEFT JOIN team_groups ON (
+                  team_groups.id = users2team_groups.groupid
+                )
+                WHERE users2team_groups.userid = :userid
+            ) AS team_groups_of_user
+            -- now get all users of the groups
+            LEFT JOIN users2team_groups ON (
+                users2team_groups.groupid = team_groups_of_user.id
+            )
+            LEFT JOIN users USING (userid)
+            GROUP BY team_groups_of_user.id
+            ORDER BY team_groups_of_user.name ASC";
+
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $fullGroups = array();
+        while ($group = $req->fetch()) {
+            $fullGroups[] = array(
+                'name' => $group['name'],
+                'users' => array_map(
+                    function (string $userid, string $fullname): array {
+                        return array(
+                            'userid' => $userid,
+                            'fullname' => $fullname,
+                        );
+                    },
+                    explode(',', $group['usersids']),
+                    explode(',', $group['fullnames'])
+                ),
+            );
+        }
+
+        return $fullGroups;
     }
 
     /**

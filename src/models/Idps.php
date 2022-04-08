@@ -41,14 +41,15 @@ class Idps implements DestroyableInterface
         string $sloUrl,
         string $sloBinding,
         string $x509,
+        string $x509_new,
         string $active,
         string $emailAttr,
         string $teamAttr,
         string $fnameAttr,
         string $lnameAttr,
     ): int {
-        $sql = 'INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509, active, email_attr, team_attr, fname_attr, lname_attr)
-            VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509, :active, :email_attr, :team_attr, :fname_attr, :lname_attr)';
+        $sql = 'INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509, x509_new, active, email_attr, team_attr, fname_attr, lname_attr)
+            VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509, :x509_new, :active, :email_attr, :team_attr, :fname_attr, :lname_attr)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':entityid', $entityid);
@@ -57,6 +58,7 @@ class Idps implements DestroyableInterface
         $req->bindParam(':slo_url', $sloUrl);
         $req->bindParam(':slo_binding', $sloBinding);
         $req->bindParam(':x509', $x509);
+        $req->bindParam(':x509_new', $x509_new);
         $req->bindParam(':active', $active);
         $req->bindParam(':email_attr', $emailAttr);
         $req->bindParam(':team_attr', $teamAttr);
@@ -72,7 +74,8 @@ class Idps implements DestroyableInterface
         $sql = 'SELECT * FROM idps';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
-        return $this->Db->fetchAll($req);
+
+        return $req->fetchAll();
     }
 
     /**
@@ -87,6 +90,7 @@ class Idps implements DestroyableInterface
         string $sloUrl,
         string $sloBinding,
         string $x509,
+        string $x509_new,
         string $active,
         string $emailAttr,
         string $teamAttr,
@@ -101,6 +105,7 @@ class Idps implements DestroyableInterface
             slo_url = :slo_url,
             slo_binding = :slo_binding,
             x509 = :x509,
+            x509_new = :x509_new,
             active = :active,
             email_attr = :email_attr,
             team_attr = :team_attr,
@@ -116,6 +121,7 @@ class Idps implements DestroyableInterface
         $req->bindParam(':slo_url', $sloUrl);
         $req->bindParam(':slo_binding', $sloBinding);
         $req->bindParam(':x509', $x509);
+        $req->bindParam(':x509_new', $x509_new);
         $req->bindParam(':active', $active);
         $req->bindParam(':email_attr', $emailAttr);
         $req->bindParam(':team_attr', $teamAttr);
@@ -137,6 +143,24 @@ class Idps implements DestroyableInterface
         if ($id !== null) {
             $req->bindParam(':id', $id, PDO::PARAM_INT);
         }
+        $this->Db->execute($req);
+
+        $res = $req->fetch();
+        if ($res === false) {
+            throw new ImproperActionException('Could not find active IDP!');
+        }
+        return $res;
+    }
+
+    /**
+     * Get active IDP by entity id
+     */
+    public function getActiveByEntityId(string $entId): array
+    {
+        $sql = 'SELECT * FROM idps WHERE active = 1 AND entityid = :entId';
+        $req = $this->Db->prepare($sql);
+
+        $req->bindParam(':entId', $entId);
         $this->Db->execute($req);
 
         $res = $req->fetch();

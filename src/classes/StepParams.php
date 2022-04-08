@@ -11,11 +11,12 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\StepParamsInterface;
 use Elabftw\Services\Filter;
 use function mb_strlen;
 use function str_replace;
 
-class StepParams extends ContentParams
+class StepParams extends ContentParams implements StepParamsInterface
 {
     public function getContent(): string
     {
@@ -26,5 +27,13 @@ class StepParams extends ContentParams
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
         }
         return $c;
+    }
+
+    public function getDatetime(): ?string
+    {
+        if (empty($this->content)) {
+            return null;
+        }
+        return $this->content;
     }
 }

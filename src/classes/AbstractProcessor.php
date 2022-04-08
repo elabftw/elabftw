@@ -34,8 +34,6 @@ use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
-use function json_decode;
-use function property_exists;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -83,27 +81,6 @@ abstract class AbstractProcessor implements ProcessorInterface
         if ($this->action === 'create' || $this->action === 'read' || $this->action === 'update') {
             $ParamsBuilder = new ParamsBuilder($this->Model, $this->content, $this->target, $this->extra);
             return $ParamsBuilder->getParams();
-        }
-    }
-
-    protected function processJson(string $json): void
-    {
-        $decoded = json_decode($json, false, 512, JSON_THROW_ON_ERROR);
-        $this->action = $decoded->action ?? '';
-        $this->setTarget($decoded->target ?? '');
-
-        if (property_exists($decoded, 'entity') && $decoded->entity !== null) {
-            $id = (int) $decoded->entity->id;
-            if ($id === 0) {
-                $id = null;
-            }
-            $this->Entity = $this->getEntity($decoded->entity->type, $id);
-        }
-        $this->id = $this->setId((int) ($decoded->id ?? 0));
-        $this->Model = $this->buildModel($decoded->model ?? '');
-        $this->content = $decoded->content ?? '';
-        if (property_exists($decoded, 'extraParams')) {
-            $this->extra = (array) $decoded->extraParams;
         }
     }
 

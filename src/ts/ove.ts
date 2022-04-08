@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-import anyToJson from 'bio-parsers/es/parsers/anyToJson';
+import { anyToJson } from 'bio-parsers/umd/bio-parsers';
 import { notif } from './misc';
 
 // DISPLAY Plasmids FILES
@@ -21,6 +21,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
   Array.from(document.getElementsByClassName('viewer-ove')).forEach(el => {
     const oveDivDataset = (el as HTMLDivElement).dataset;
     const viewerID = el.id;
+    const isSnapGeneFile = (new URL(oveDivDataset.href, window.location.origin)).searchParams.get('f').slice(-4) === '.dna';
     const filename = oveDivDataset.href;
     const realName = oveDivDataset.realName;
 
@@ -240,7 +241,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
     }
 
     // load DNA data either as File (.dna files Snapgene) or as String
-    if (filename.slice(-4) === '.dna') {
+    if (isSnapGeneFile) {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', filename, true);
       xhr.responseType = 'blob';

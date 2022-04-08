@@ -15,7 +15,6 @@ import { library, dom } from '@fortawesome/fontawesome-svg-core';
 // SOLID
 import {
   faArrowUp,
-  faBarcode,
   faBold,
   faBug,
   faCalendarPlus,
@@ -54,6 +53,7 @@ import {
   faFilePowerpoint,
   faFileVideo,
   faFileWord,
+  faFingerprint,
   faHdd,
   faHeading,
   faHistory,
@@ -95,7 +95,6 @@ import {
 
 library.add(
   faArrowUp,
-  faBarcode,
   faBold,
   faBug,
   faCalendarPlus,
@@ -134,6 +133,7 @@ library.add(
   faFilePowerpoint,
   faFileVideo,
   faFileWord,
+  faFingerprint,
   faHdd,
   faHeading,
   faHistory,

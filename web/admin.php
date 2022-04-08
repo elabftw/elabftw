@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function array_filter;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -22,6 +23,7 @@ use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Services\UsersHelper;
 use Exception;
+use function filter_var;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

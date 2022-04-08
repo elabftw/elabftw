@@ -16,6 +16,7 @@ use Elabftw\Models\Scheduler;
 use Elabftw\Models\Users;
 use Elabftw\Traits\CsvTrait;
 use Elabftw\Traits\UploadTrait;
+use function implode;
 
 /**
  * Create a report of scheduler bookings

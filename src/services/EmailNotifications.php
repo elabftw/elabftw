@@ -9,15 +9,21 @@
 
 namespace Elabftw\Services;
 
+use function bindtextdomain;
 use function count;
+use function dirname;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Notifications;
 use Elabftw\Models\Users;
 use function json_decode;
 use PDO;
+use function putenv;
+use function setlocale;
 use const SITE_URL;
+use function sprintf;
 use Symfony\Component\Mime\Address;
+use function textdomain;
 
 /**
  * Email notification system

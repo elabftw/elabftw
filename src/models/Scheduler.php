@@ -17,6 +17,8 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\EntityTrait;
+use function filter_var;
+use function in_array;
 use PDO;
 use function preg_replace;
 use function strlen;

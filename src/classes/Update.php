@@ -31,7 +31,7 @@ use function sha1;
 class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    private const REQUIRED_SCHEMA = 79;
+    private const REQUIRED_SCHEMA = 80;
 
     private Db $Db;
 
@@ -89,10 +89,6 @@ class Update
             if ($this->currentSchema === 57) {
                 $this->addElabidToItems();
                 $this->fixExperimentsRevisions();
-            }
-            // schema70: notifications cron needed
-            if ($this->currentSchema === 70) {
-                $warn[] = 'Change in the notification/email system: a cronjob is now REQUIRED for email notifications to be sent. Make sure to read the release notes!';
             }
         }
 

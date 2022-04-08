@@ -75,7 +75,10 @@ try {
     $usersArr = array();
     if ($Request->query->has('q')) {
         $isSearching = true;
-        $usersArr = $App->Users->readFromQuery(filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING), true);
+        $usersArr = $App->Users->readFromQuery(
+            filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING),
+            $App->Users->userData['team']
+        );
         foreach ($usersArr as &$user) {
             $UsersHelper = new UsersHelper((int) $user['userid']);
             $user['teams'] = $UsersHelper->getTeamsFromUserid();

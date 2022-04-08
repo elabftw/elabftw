@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // UPDATE MALLEABLE COMMENT
   const malleableComments = new Malle({
     cancel : i18next.t('cancel'),
-    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
+    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],
     fun: (value, original) => {
       CommentC.update(parseInt(original.dataset.id, 10), value);

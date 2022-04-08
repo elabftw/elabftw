@@ -173,10 +173,7 @@
         <div id='moreInfo_{{ upload.id }}' class='d-none'>
           <i class='fas fa-fw fa-hdd mr-1'></i>
           <p class='d-inline'>{{ 'Storage:'|trans }} {% if upload.storage == '1' %} {{ 'Local filesystem'|trans }} {% endif %} {% if upload.storage == '2' %} S3 bucket {% endif %}</p><br>
-          <span class='fa-layers fa-fw mr-1'>
-            <i class='fa-solid fa-file'></i>
-            <i class='fa-solid fa-fingerprint fa-2xs' data-fa-transform='down-4' style='color:white'></i>
-          </span>
+          <i class='fas fa-fw fa-fingerprint mr-1'></i>
           <p class='d-inline' style='word-break: break-all;'>{{ upload.hash_algorithm }}: {{ upload.hash }}</p>
         </div>
 

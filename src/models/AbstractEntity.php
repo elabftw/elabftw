@@ -238,7 +238,7 @@ abstract class AbstractEntity implements CrudInterface
 
         // build the having clause for metadata
         $metadataHaving = '';
-        if ($this->metadataHaving) {
+        if (!empty($this->metadataHaving)) {
             $metadataHaving = 'HAVING ';
             foreach ($this->metadataHaving as $having) {
                 $metadataHaving .= $having . ' AND ';

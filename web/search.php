@@ -99,8 +99,8 @@ if ($Request->query->count() > 0 && $extendedError === '') {
     /////////////////////////////////////////////////////////////////
     if ($Request->query->has('type')) {
         // Metadata search
-        if (!empty($Request->query->all()['metakey'][0])) {
-            foreach ($Request->query->all()['metakey'] as $i => $metakey) {
+        foreach ($Request->query->all()['metakey'] as $i => $metakey) {
+            if (!empty($Request->query->all()['metakey'][$i])) {
                 $Entity->addMetadataFilter($Request->query->all()['metakey'][$i], $Request->query->all()['metavalue'][$i]);
             }
         }

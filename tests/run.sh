@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/env sh
 #
 # @author Nicolas CARPi <nico-git@deltablot.email>
 # @copyright 2012 Nicolas CARPi
@@ -10,29 +10,22 @@
 
 # stop on failure
 set -eu
+# detect if we are in scrutinizer ci (https://scrutinizer-ci.com/g/elabftw/elabftw/)
 scrutinizer=${SCRUTINIZER:-false}
 
-# only use sudo if available e.g., alpine vs ubuntu
-sudoCmd=''
-if command -v sudo &> /dev/null; then
-    sudoCmd='sudo'
-fi
-
-# make sure we tear down everything when script ends
+# when the script stops (or is stopped), replace the test config with the dev config
 cleanup() {
     if (! $scrutinizer); then
-        $sudoCmd cp -v config.php.dev config.php
-        $sudoCmd chown 101:101 config.php
+        cp -v config.php.dev config.php
     fi
 }
 trap cleanup EXIT
 
-# sudo is needed because config file for docker is owned by 100:101
+# make a backup of the current (dev) config
 if (! $scrutinizer); then
-    $sudoCmd cp -v config.php config.php.dev
+    cp -v config.php config.php.dev
 fi
-$sudoCmd cp -v tests/config-home.php config.php
-$sudoCmd chmod +r config.php
+cp -v tests/config-home.php config.php
 # launch a fresh environment if needed
 if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
     if ($scrutinizer); then

@@ -55,10 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // the first set of inputs is cloned
       const row = document.getElementById('metadataFirstInputs').cloneNode(true);
       // give new ids to the labels/inputs
-      row.querySelectorAll('label').forEach(l => {
+      (row as HTMLElement).querySelectorAll('label').forEach(l => {
         const id = crypto.randomUUID();
         l.setAttribute('for', id);
-        const input = l.nextElementSibling;
+        const input = l.nextElementSibling as HTMLInputElement;
         input.setAttribute('id', id);
         input.value = '';
       });

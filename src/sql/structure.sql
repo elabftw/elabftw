@@ -113,6 +113,8 @@ CREATE TABLE `experiments` (
 -- RELATIONSHIPS FOR TABLE `experiments`:
 --   `userid`
 --       `users` -> `userid`
+--   `category`
+--       `status` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -819,7 +821,8 @@ ALTER TABLE `api_keys`
 --
 ALTER TABLE `experiments`
   ADD KEY `fk_experiments_users_userid` (`userid`),
-  ADD KEY `idx_experiments_state` (`state`);
+  ADD KEY `idx_experiments_state` (`state`),
+  ADD KEY `fk_experiments_status_id` (`category`);
 
 --
 -- Indexes for table `experiments_comments`
@@ -941,7 +944,8 @@ ALTER TABLE `api_keys`
 -- Constraints for table `experiments`
 --
 ALTER TABLE `experiments`
-  ADD CONSTRAINT `fk_experiments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_experiments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_status_id` FOREIGN KEY (`category`) REFERENCES `status` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `experiments_comments`

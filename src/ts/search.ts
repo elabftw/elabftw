@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // a filter helper can be a select or an input (for date), so we need a function to get its value
   function getFilterValueFromElement(element: HTMLElement): string {
     if (element instanceof HTMLSelectElement) {
+      // clear action
       if (element.options[element.selectedIndex].dataset.action === 'clear') {
         return '';
       }
@@ -87,6 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
           return getOperator() + date;
         }
         return date + '..' + dateTo;
+      }
+      // filter on owner
+      if (element.getAttribute('name') === 'owner') {
+        return `${element.options[element.selectedIndex].value}`;
       }
       return `${element.options[element.selectedIndex].text}`;
     }

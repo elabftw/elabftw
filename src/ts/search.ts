@@ -53,16 +53,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add a new key/value inputs block on top of the + button in metadata search block
     if (el.matches('[data-action="add-extra-fields-search-inputs"]')) {
       // the first set of inputs is cloned
-      const row = document.getElementById('metadataFirstInputs').cloneNode(true);
+      const row = (document.getElementById('metadataFirstInputs').cloneNode(true) as HTMLElement);
+      // remove id 'metadataFirstInputs'
+      row.removeAttribute('id');
       // give new ids to the labels/inputs
-      (row as HTMLElement).querySelectorAll('label').forEach(l => {
+      row.querySelectorAll('label').forEach(l => {
         const id = crypto.randomUUID();
         l.setAttribute('for', id);
         const input = l.nextElementSibling as HTMLInputElement;
         input.setAttribute('id', id);
         input.value = '';
       });
-      el.prepend(row);
+      // add inputs block
+      el.parentNode.insertBefore(row, el);
     }
   });
 

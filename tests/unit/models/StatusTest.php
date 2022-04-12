@@ -31,13 +31,11 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testRead(): void
     {
-        $all = $this->Status->read(new ContentParams());
-        $this->assertTrue(is_array($all));
+        $this->assertIsArray($this->Status->read(new ContentParams()));
     }
 
     public function testUpdate(): void
     {
-        $params = new StatusParams('Yep', '#29AEB9', false, true);
         $id = $this->Status->create(new StatusParams('Yep', '#29AEB9', false, true));
         $Status = new Status(1, $id);
         $Status->update(new StatusParams('Updated', '#121212', true, false));
@@ -46,10 +44,18 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('121212', $status['color']);
         $this->assertTrue((bool) $status['is_timestampable']);
         $this->assertFalse((bool) $status['is_default']);
+        $Status->update(new StatusParams('Updated', '#121212', true, true));
+        $status = $Status->read(new ContentParams());
+        $this->assertTrue((bool) $status['is_default']);
+        // undo changes so that MakeTimestampTest.php:testNonTimestampableExperiment works
+        $Status->update(new StatusParams('Updated', '#121212', false, true));
     }
 
     public function testDestroy(): void
     {
+        $id = $this->Status->create(new StatusParams('Yep1', '#29AEB9', false, false));
+        $Status = new Status(1, $id);
+        $this->assertTrue($Status->destroy());
         $this->expectException(ImproperActionException::class);
         $this->Status->destroy();
     }

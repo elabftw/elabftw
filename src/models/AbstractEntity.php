@@ -30,6 +30,7 @@ use Elabftw\Services\Filter;
 use Elabftw\Services\Transform;
 use Elabftw\Traits\EntityTrait;
 use function explode;
+use function implode;
 use function is_bool;
 use PDO;
 use PDOStatement;
@@ -298,12 +299,9 @@ abstract class AbstractEntity implements CrudInterface
      */
     public function getTags(array $items): array
     {
-        $itemIds = '(';
-        foreach ($items as $item) {
-            $itemIds .= 'tags2entity.item_id = ' . $item['id'] . ' OR ';
-        }
-        $sqlid = rtrim($itemIds, ' OR ') . ')';
-        $sql = 'SELECT DISTINCT tags2entity.tag_id, tags2entity.item_id, tags.tag FROM tags2entity
+        $sqlid = 'tags2entity.item_id IN (' . implode(',', array_column($items, 'id')) . ')';
+        $sql = 'SELECT DISTINCT tags2entity.tag_id, tags2entity.item_id, tags.tag
+            FROM tags2entity
             LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
             WHERE tags2entity.item_type = :type AND ' . $sqlid;
         $req = $this->Db->prepare($sql);

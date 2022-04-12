@@ -39,15 +39,14 @@ jobs:
               docker-compose -f tests/docker-compose.yml up -d --quiet-pull
       - run:
           name: Waiting for containers to start...
-          command: |
-              while [ "`docker inspect -f {{.State.Health.Status}} elabtmp`" != "healthy" ];
-              do
-                  printf ".";
-                  sleep 2;
-              done;
+          command: sleep 25
+              # while [ "`docker inspect -f {{.State.Health.Status}} elabtmp`" != "healthy" ];
+              # do
+                  # sleep 1;
+              # done;
       - run:
           name: Install JS dependencies
-          command: docker exec -it elabtmp yarn install
+          command: docker exec -it elabtmp yarn install --silent --non-interactive
       - run:
           name: Run SCSS linter
           command: docker exec -it elabtmp yarn csslint
@@ -57,7 +56,6 @@ jobs:
       - run:
           name: Build all
           command: docker exec -it elabtmp yarn buildall:dev
-          no_output_timeout: 20m
       - run:
           name: Composer install
           command: docker exec -it elabtmp composer install --no-progress -q
@@ -77,7 +75,7 @@ jobs:
           name: Install the database
           command: docker exec -it elabtmp bin/install start -r
       - run:
-          name: "PHP static analysis: pslam + phpsatn"
+          name: "PHP static analysis: psalm + phpsatn"
           command: docker exec -it elabtmp yarn static
       - run:
           name: Populate the database
@@ -90,10 +88,7 @@ jobs:
           command: docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --skip api --coverage --coverage-xml
       - run:
           name: Extract coverage report
-          command: |
-              docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
-              pwd
-              ls -la
+          command: docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
       - codecov/upload:
           file: coverage.xml
 

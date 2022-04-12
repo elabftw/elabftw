@@ -283,7 +283,6 @@ CREATE TABLE `groups` (
   `name` varchar(255) NOT NULL,
   `is_sysadmin` tinyint(1) UNSIGNED NOT NULL,
   `is_admin` tinyint(1) UNSIGNED NOT NULL,
-  `can_lock` tinyint(1) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -295,11 +294,10 @@ CREATE TABLE `groups` (
 -- Dumping data for table `groups`
 --
 
-INSERT INTO `groups` (`id`, `name`, `is_sysadmin`, `is_admin`, `can_lock`) VALUES
-(1, 'Sysadmins', 1, '1', '0'),
-(2, 'Admins', 0, '1', '0'),
-(3, 'Chiefs', 0, '1', '1'),
-(4, 'Users', 0, '0', '0');
+INSERT INTO `groups` (`id`, `name`, `is_sysadmin`, `is_admin`) VALUES
+(1, 'Sysadmins', 1, '1'),
+(2, 'Admins', 0, '1'),
+(4, 'Users', 0, '0');
 
 -- --------------------------------------------------------
 

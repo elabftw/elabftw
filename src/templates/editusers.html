@@ -115,7 +115,6 @@
                       <select class='form-control custom-control-inline' name='usergroup' id='usersUpdateUsergroup_{{ user.userid }}'>
                         <option value='1' {{ user.usergroup == '1' ? " selected='selected'" }}>Sysadmins</option>
                         <option value='2' {{ user.usergroup == '2' ? " selected='selected'" }}>Admins</option>
-                        <option value='3' {{ user.usergroup == '3' ? " selected='selected'" }}>Admins + Lock power</option>
                         <option value='4' {{ user.usergroup == '4' ? " selected='selected'" }}>Users</option>
                       </select>
                     </li>
@@ -237,7 +236,6 @@
             <option value='1'>Sysadmins</option>
           {% endif %}
           <option value='2'>Admins</option>
-          <option value='3'>Admins + Lock power</option>
           <option value='4' selected='selected'>Users</option>
         </select>
       </div>

@@ -48,7 +48,7 @@ if ($scrutinizer); then
     docker exec -it elabtmp yarn install --silent --non-interactive
     docker exec -it elabtmp yarn csslint
     docker exec -it elabtmp yarn jslint-ci
-    docker exec -it elabtmp yarn buildall
+    docker exec -it elabtmp yarn buildall:dev
     docker exec -it elabtmp composer install --no-progress -q
     docker exec -it elabtmp yarn phpcs-dry
     # allow tmpfile, used by phpstan

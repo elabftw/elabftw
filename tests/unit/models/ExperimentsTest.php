@@ -109,4 +109,9 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $res = $this->Experiments->getTags(array(array('id' => 1), array('id' => 2)));
         $this->assertIsArray($res);
     }
+
+    public function testAddMetadataFilter(): void
+    {
+        $this->Experiments->addMetadataFilter('key', 'value');
+    }
 }

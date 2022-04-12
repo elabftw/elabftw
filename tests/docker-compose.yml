@@ -17,6 +17,8 @@ services:
             - SETFCAP
             - NET_RAW
             - SYS_PTRACE
+        env_file:
+            - elabftw-user.env
         environment:
             # no need to change
             - DB_HOST=mysqltmp

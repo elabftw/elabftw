@@ -113,6 +113,8 @@ CREATE TABLE `experiments` (
 -- RELATIONSHIPS FOR TABLE `experiments`:
 --   `userid`
 --       `users` -> `userid`
+--   `category`
+--       `status` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -362,6 +364,8 @@ CREATE TABLE `items` (
 -- RELATIONSHIPS FOR TABLE `items`:
 --   `team`
 --       `teams` -> `id`
+--   `category`
+--       `items_types` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -819,7 +823,8 @@ ALTER TABLE `api_keys`
 --
 ALTER TABLE `experiments`
   ADD KEY `fk_experiments_users_userid` (`userid`),
-  ADD KEY `idx_experiments_state` (`state`);
+  ADD KEY `idx_experiments_state` (`state`),
+  ADD KEY `fk_experiments_status_id` (`category`);
 
 --
 -- Indexes for table `experiments_comments`
@@ -860,7 +865,8 @@ ALTER TABLE `favtags2users`
 --
 ALTER TABLE `items`
   ADD KEY `fk_items_teams_id` (`team`),
-  ADD KEY `idx_items_state` (`state`);
+  ADD KEY `idx_items_state` (`state`),
+  ADD KEY `fk_items_items_types_id` (`category`);
 
 --
 -- Indexes for table `items_comments`
@@ -941,7 +947,8 @@ ALTER TABLE `api_keys`
 -- Constraints for table `experiments`
 --
 ALTER TABLE `experiments`
-  ADD CONSTRAINT `fk_experiments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_experiments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_status_id` FOREIGN KEY (`category`) REFERENCES `status` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `experiments_comments`
@@ -994,7 +1001,8 @@ ALTER TABLE `favtags2users`
 -- Constraints for table `items`
 --
 ALTER TABLE `items`
-  ADD CONSTRAINT `fk_items_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_items_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_items_items_types_id` FOREIGN KEY (`category`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `items_comments`

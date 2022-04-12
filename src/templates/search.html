@@ -305,18 +305,25 @@
 
 
     <div hidden data-save-hidden='metadataSearchDiv' class='box'>
-      <div class='row'>
-        <div class='col-md-4'>
-          <label for='metakey'>{{ 'Name of field'|trans }}</label>
-          <input type='text' id='metakey' class='form-control' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' />
+      {# add as many extra fields as present in the query but at least one #}
+      {% for metakey in (Request.query.all('metakey') ?: ['']) %}
+        {% set metavalue = Request.query.all('metavalue')[loop.index0] %}
+        <div class='row' {{- loop.first ? "id='metadataFirstInputs'" -}} >
+          <div class='col-md-4'>
+            {% set randomid = random() %}
+            <label for='metakey_{{ randomid }}'>{{ 'Name of field'|trans }}</label>
+            <input type='text' id='metakey_{{ randomid }}' class='form-control' name='metakey[]' value='{{ metakey != '' ? metakey }}' />
+          </div>
+          <div class='col-md-4'>
+            <label for='metavalue_{{ randomid }}'>{{ 'Value'|trans }}</label>
+            <input type='text' id='metavalue_{{ randomid }}' class='form-control' name='metavalue[]' value='{{ metavalue != '' ? metavalue }}' />
+            <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
+          </div>
         </div>
+      {% endfor %}
 
-        <div class='col-md-4'>
-          <label for='metavalue'>{{ 'Value'|trans }}</label>
-          <input type='text' id='metavalue' class='form-control' name='metavalue' value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}' />
-          <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
-        </div>
-      </div>
+      {# button to add an extra field input #}
+      <div data-action='add-extra-fields-search-inputs'><i class='fas fa-plus-circle fa-2x'></i></div>
     </div>
 
     <div style='margin:30px;' class='text-center'>

@@ -17,6 +17,8 @@ services:
             - SETFCAP
             - NET_RAW
             - SYS_PTRACE
+        env_file:
+            - elabftw-user.env
         environment:
             # no need to change
             - DB_HOST=mysqltmp
@@ -43,13 +45,6 @@ services:
             - SITE_URL=https://elab.local:3148
             - ELAB_AWS_ACCESS_KEY=yep
             - ELAB_AWS_SECRET_KEY=yop
-            - ELABFTW_USER=ktr
-            # default value: nginx
-            - ELABFTW_GROUP=ktr
-            # default value: 101
-            - ELABFTW_USERID=1000
-            # default value: 101
-            - ELABFTW_GROUPID=1000
         volumes:
             - ..:/elabftw
             - ../_coverage:/elabftw/tests/_output/coverage

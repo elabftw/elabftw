@@ -99,8 +99,10 @@ if ($Request->query->count() > 0 && $extendedError === '') {
     /////////////////////////////////////////////////////////////////
     if ($Request->query->has('type')) {
         // Metadata search
-        if ($Request->query->get('metakey')) {
-            $Entity->addMetadataFilter($Request->query->get('metakey'), $Request->query->get('metavalue'));
+        foreach ($Request->query->all('metakey') as $i => $metakey) {
+            if (!empty($metakey)) {
+                $Entity->addMetadataFilter($metakey, $Request->query->all('metavalue')[$i]);
+            }
         }
 
         if ($Request->query->get('type') !== 'experiments') {

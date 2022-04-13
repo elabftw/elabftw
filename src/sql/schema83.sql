@@ -1,4 +1,4 @@
--- Schema 82
+-- Schema 83
 -- only one kind of admin
 START TRANSACTION;
     ALTER TABLE `groups` DROP COLUMN `can_lock`;

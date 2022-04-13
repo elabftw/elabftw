@@ -38,7 +38,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
       reader.onloadend = function(): void {
         $.post('app/controllers/EntityAjaxController.php', {
           saveAsImage: true,
-          realName: realName,
+          realName: realName + '.png',
           content: reader.result, // the png as data url
           id: about.id,
           type: about.type,

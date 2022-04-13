@@ -81,6 +81,6 @@ class TagsTest extends \PHPUnit\Framework\TestCase
     {
         $id = $this->Experiments->Tags->create(new TagParams('destroy me'));
         $Tags = new Tags($this->Experiments, $id);
-        $this->Experiments->Tags->destroy();
+        $Tags->destroy();
     }
 }

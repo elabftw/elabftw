@@ -1,8 +1,17 @@
 -- Schema 82
--- only one kind of admin
+-- add missing FK and constraints
 START TRANSACTION;
-    ALTER TABLE `groups` DROP COLUMN `can_lock`;
-    UPDATE `users` SET `usergroup` = 2 WHERE `usergroup` = 3;
-    DELETE FROM `groups` WHERE `id` = 3;
+    ALTER TABLE `experiments`
+      ADD KEY `fk_experiments_status_id` (`category`);
+    ALTER TABLE `experiments`
+      ADD CONSTRAINT `fk_experiments_status_id`
+        FOREIGN KEY (`category`) REFERENCES `status` (`id`)
+        ON DELETE CASCADE ON UPDATE CASCADE;
+    ALTER TABLE `items`
+      ADD KEY `fk_items_items_types_id` (`category`);
+    ALTER TABLE `items`
+      ADD CONSTRAINT `fk_items_items_types_id`
+        FOREIGN KEY (`category`) REFERENCES `items_types` (`id`)
+        ON DELETE CASCADE ON UPDATE CASCADE;
     UPDATE config SET conf_value = 82 WHERE conf_name = 'schema';
 COMMIT;

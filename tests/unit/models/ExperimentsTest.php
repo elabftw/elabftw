@@ -101,4 +101,17 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Experiments->create(new EntityParams('0', '', array('tags' => array('tag-bbbtbtbt', 'tag-auristearuiset'))));
     }
+
+    public function testGetTags(): void
+    {
+        $res = $this->Experiments->getTags(array(array('id' => 0)));
+        $this->assertEmpty($res);
+        $res = $this->Experiments->getTags(array(array('id' => 1), array('id' => 2)));
+        $this->assertIsArray($res);
+    }
+
+    public function testAddMetadataFilter(): void
+    {
+        $this->Experiments->addMetadataFilter('key', 'value');
+    }
 }

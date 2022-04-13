@@ -36,7 +36,19 @@ export default class Link {
       action: Action.Destroy,
       model: this.model,
       entity: this.entity,
-      id : id,
+      id: id,
+    };
+    return this.sender.send(payload);
+  }
+
+  importLinks(id: number): Promise<ResponseMsg> {
+    const payload: Payload = {
+      method: Method.POST,
+      action: Action.ImportLinks,
+      model: this.model,
+      entity: this.entity,
+      id: id,
+      notif: true,
     };
     return this.sender.send(payload);
   }

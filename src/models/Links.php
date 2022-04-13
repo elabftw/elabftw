@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
@@ -29,6 +28,7 @@ class Links implements CrudInterface
     public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
         $this->Db = Db::getConnection();
+        // this field corresponds to the target id (link_id)
         $this->id = $id;
     }
 
@@ -42,14 +42,6 @@ class Links implements CrudInterface
         $Items->canOrExplode('read');
         $this->Entity->canOrExplode('write');
 
-        // check if this link doesn't exist already
-        $links = $this->read(new ContentParams());
-        foreach ($links as $existingLink) {
-            if ((int) $existingLink['itemid'] === $link) {
-                return 0;
-            }
-        }
-        // create new link
         $sql = 'INSERT INTO ' . $this->Entity->type . '_links (item_id, link_id) VALUES(:item_id, :link_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
@@ -65,7 +57,6 @@ class Links implements CrudInterface
     public function read(ContentParamsInterface $params): array
     {
         $sql = 'SELECT items.id AS itemid,
-            ' . $this->Entity->type . '_links.id AS linkid,
             items.title,
             category.name,
             category.bookable,
@@ -93,7 +84,7 @@ class Links implements CrudInterface
         $res = array('items' => array(), 'experiments' => array());
 
         foreach (array_keys($res) as $type) {
-            $sql = 'SELECT entity.id AS entityid, entity_links.id AS linkid, entity.title';
+            $sql = 'SELECT entity.id AS entityid, entity.title';
 
             if ($type === 'items') {
                 $sql .= ', category.name, category.bookable, category.color';
@@ -155,24 +146,33 @@ class Links implements CrudInterface
      * @param int $newId The id of the new entity that will receive the links
      * @param bool $fromTpl do we duplicate from template?
      */
-    public function duplicate(int $id, int $newId, $fromTpl = false): void
+    public function duplicate(int $id, int $newId, $fromTpl = false): bool
     {
         $table = $this->Entity->type;
         if ($fromTpl) {
             $table = $this->Entity instanceof Experiments ? 'experiments_templates' : 'items_types';
         }
-        $linksql = 'SELECT link_id FROM ' . $table . '_links WHERE item_id = :id';
-        $linkreq = $this->Db->prepare($linksql);
-        $linkreq->bindParam(':id', $id, PDO::PARAM_INT);
-        $this->Db->execute($linkreq);
 
-        while ($links = $linkreq->fetch()) {
-            $sql = 'INSERT INTO ' . $this->Entity->type . '_links (link_id, item_id) VALUES(:link_id, :item_id)';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':link_id', $links['link_id'], PDO::PARAM_INT);
-            $req->bindParam(':item_id', $newId, PDO::PARAM_INT);
-            $this->Db->execute($req);
-        }
+        $sql = 'INSERT INTO ' . $this->Entity->type . '_links (item_id, link_id) SELECT :new_id, link_id FROM ' . $table . '_links WHERE item_id = :old_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':new_id', $newId, PDO::PARAM_INT);
+        $req->bindParam(':old_id', $id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    /**
+     * Copy the links of an item into our entity
+     */
+    public function import(): bool
+    {
+        $this->Entity->canOrExplode('write');
+
+        // the :item_id of the SELECT will be the same for all rows: our current entity id
+        $sql = 'INSERT INTO ' . $this->Entity->type . '_links (item_id, link_id) SELECT :item_id, link_id FROM items_links WHERE item_id = :link_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     public function update(ContentParamsInterface $params): bool
@@ -184,9 +184,9 @@ class Links implements CrudInterface
     {
         $this->Entity->canOrExplode('write');
 
-        $sql = 'DELETE FROM ' . $this->Entity->type . '_links WHERE id= :id AND item_id = :item_id';
+        $sql = 'DELETE FROM ' . $this->Entity->type . '_links WHERE link_id = :link_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

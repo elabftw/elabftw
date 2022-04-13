@@ -53,8 +53,12 @@ jobs:
       - run:
           name: Copy dependency cache into container
           command: |
-              [ -d ./node_modules ] && docker cp ./node_modules elabtmp:/elabftw/node_modules
-              [ -d ./yarn.cache ] && docker cp ./yarn.cache elabtmp:/root/.cache/yarn/
+              if [ -d ./node_modules ]; then
+                  docker cp ./node_modules elabtmp:/elabftw/node_modules
+              fi
+              if [ -d ./yarn.cache ]; then
+                  docker cp ./yarn.cache elabtmp:/root/.cache/yarn/
+              fi
       - run:
           name: Install JS dependencies
           command: docker exec -it elabtmp yarn install --silent --non-interactive --frozen-lockfile

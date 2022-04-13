@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif } from './misc';
+import { notif, reloadElement } from './misc';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
     TeamGroupC.create(content).then(json => {
       if (json.res) {
         // only reload children
-        $('#team_groups_div').load('admin.php #team_groups_div > *');
-        $('#teamGroupCreate').val('');
+        reloadElement('team_groups_div');
+        (document.getElementById('teamGroupCreate') as HTMLInputElement).value = '';
       }
     });
   });
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (confirm(i18next.t('generic-delete-warning'))) {
       TeamGroupC.destroy($(this).data('id')).then(() => {
         // only reload children
-        $('#team_groups_div').load('admin.php #team_groups_div > *');
+        reloadElement('team_groups_div');
       });
     }
   });
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const group = $(this).data('group');
       TeamGroupC.update(user, group, 'add').then(() => {
         // only reload children
-        $('#team_groups_div').load('admin.php #team_groups_div > *');
+        reloadElement('team_groups_div');
       });
     }
   });
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const group = $(this).data('group');
     TeamGroupC.update(user, group, 'rm').then(() => {
       // only reload children
-      $('#team_groups_div').load('admin.php #team_groups_div > *');
+      reloadElement('team_groups_div');
     });
   });
 

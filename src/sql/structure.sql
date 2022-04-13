@@ -1102,7 +1102,7 @@ CREATE TABLE `experiments_templates_steps` (
 CREATE TABLE `items_links` (
     `item_id` int(10) unsigned NOT NULL,
     `link_id` int(10) unsigned NOT NULL,
-    PRIMARY KEY (`item_id`, `link_id`)
+    PRIMARY KEY (`item_id`, `link_id`),
     KEY `fk_items_links_items_id` (`item_id`),
     KEY `fk_items_links_items_id2` (`link_id`),
     CONSTRAINT `fk_items_links_items_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -1112,7 +1112,7 @@ CREATE TABLE `items_links` (
 CREATE TABLE `experiments_templates_links` (
     `item_id` int(10) unsigned NOT NULL,
     `link_id` int(10) unsigned NOT NULL,
-    PRIMARY KEY (`item_id`, `link_id`)
+    PRIMARY KEY (`item_id`, `link_id`),
     KEY `fk_experiments_templates_links_items_id` (`item_id`),
     KEY `fk_experiments_templates_links_items_id2` (`link_id`),
     CONSTRAINT `fk_experiments_templates_links_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

@@ -25,7 +25,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $id = $this->Experiments->Links->create(new ContentParams('1'));
         $links = $this->Experiments->Links->read(new ContentParams());
         $this->assertIsArray($links);
-        $this->Experiments->Links->setId($id);
+        $this->Experiments->Links->setId(1);
         $this->Experiments->Links->destroy();
     }
 

@@ -23,6 +23,7 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 20.10.11
+          docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
       - run:
           name: prepare docker-compose.yml
           # Don't bind mount here, files are copied. See scrutinizer.dockerfile

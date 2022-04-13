@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
       adjustHiddenState();
       makeSortableGreatAgain();
       relativeMoment();
-    }).observe(document.getElementById('stepsDiv'), {childList: true});
+    }).observe(document.getElementById('stepsDiv'), {childList: true, subtree: true});
   }
 
   // FINISH
@@ -118,12 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const StepNew = new Step(newentity);
     StepNew.finish(stepId).then(() => {
       // only reload children
-      const loadUrl = window.location.href + ' #steps_div_' + entity.id + ' > *';
-      // reload the step list
-      $('#steps_div_' + entity.id).load(loadUrl, function() {
-        relativeMoment();
-        reloadElement('stepsDiv');
-        makeSortableGreatAgain();
+      reloadElement('steps_div_' + entity.id).then(() => {
+        // keep to do list in sync
         $('#todo_step_' + stepId).prop('checked', $('.stepbox[data-stepid="' + stepId + '"]').prop('checked'));
       });
     });
@@ -135,11 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const stepId = e.currentTarget.dataset.stepid;
       StepC.destroy(stepId).then(() => {
         // only reload children
-        const loadUrl = window.location + ' #steps_div_' + entity.id + ' > *';
-        // reload the step list
-        $('#steps_div_' + entity.id).load(loadUrl, function() {
-          relativeMoment();
-          makeSortableGreatAgain();
+        reloadElement('steps_div_' + entity.id).then(() => {
+          // keep to do list in sync
           $('#todo_step_' + stepId).parent().hide();
         });
       });
@@ -164,9 +157,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       LinkC.create(target).then(() => {
         // only reload children of links_div_id
-        $('#links_div_' + entity.id).load(window.location.href + ' #links_div_' + entity.id + ' > *');
-        // clear input field
-        (document.querySelector('.linkinput') as HTMLInputElement).value = '';
+        reloadElement('links_div_' + entity.id).then(() => {
+          // clear input field
+          (document.querySelector('.linkinput') as HTMLInputElement).value = '';
+        });
       });
       $(this).val('');
     }
@@ -209,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (confirm(i18next.t('link-delete-warning'))) {
       LinkC.destroy($(this).data('linkid')).then(() => {
         // only reload children of links_div_id
-        $('#links_div_' + entity.id).load(window.location.href + ' #links_div_' + entity.id + ' > *');
+        reloadElement('links_div_' + entity.id);
       });
     }
   });

@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif } from './misc';
+import { notif, reloadElement } from './misc';
 import i18next from 'i18next';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (type === 'items') {
         type = 'database';
       }
-      $('#filesdiv').load(type + '.php?mode=edit&id=' + id + ' #filesdiv > *');
+      reloadElement('filesdiv');
       notif(json);
     });
   });

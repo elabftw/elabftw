@@ -25,7 +25,7 @@ jobs:
           version: 20.10.11
           docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
       - run:
-          name: prepare docker-compose.yml
+          name: Prepare docker-compose.yml
           # Don't bind mount here, files are copied. See scrutinizer.dockerfile
           # first backslash enables different delimiter than slash
           # remove env_file section
@@ -37,13 +37,13 @@ jobs:
               sed -i '\#env_file:#D' tests/docker-compose.yml
               sed -i '\#- elabftw-user\.env#D' tests/docker-compose.yml
       - run:
-          name: Build image and start elabtmp container
+          name: Build elabtmp image and start containers
           command: |
               docker build -t elabtmp -f tests/scrutinizer.dockerfile --progress plain .
               docker-compose -f tests/docker-compose.yml up -d --quiet-pull
-      - run:
-          name: Waiting for containers to start...
-          command: sleep 25
+      #- run:
+      #    name: Waiting for containers to start...
+      #    command: sleep 25
               # while [ "`docker inspect -f {{.State.Health.Status}} elabtmp`" != "healthy" ];
               # do
                   # sleep 1;
@@ -76,11 +76,11 @@ jobs:
               docker exec -it elabtmp sed -i 's/tmpfile, //' /etc/php8/php.ini
               docker exec -it elabtmp sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/usr/bin/phpstan:/proc/cpuinfo|' /etc/php8/php.ini
       - run:
-          name: Install the database
-          command: docker exec -it elabtmp bin/install start -r
-      - run:
           name: "PHP static analysis: psalm + phpsatn"
           command: docker exec -it elabtmp yarn static
+      - run:
+          name: Install the database
+          command: docker exec -it elabtmp bin/install start -r
       - run:
           name: Populate the database
           command: docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml

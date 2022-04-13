@@ -41,16 +41,34 @@ jobs:
           command: |
               docker build -t elabtmp -f tests/scrutinizer.dockerfile --progress plain .
               docker-compose -f tests/docker-compose.yml up -d --quiet-pull
-      #- run:
-      #    name: Waiting for containers to start...
-      #    command: sleep 25
-              # while [ "`docker inspect -f {{.State.Health.Status}} elabtmp`" != "healthy" ];
-              # do
-                  # sleep 1;
-              # done;
+      # Restore dependency cache
+      - restore_cache:
+          keys:
+            # This branch if available
+            - v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            # Default branch if not
+            - v1-yarn-dep-master-
+            # Any branch if there are none on the default branch
+            - v1-yarn-dep-
+      - run:
+          name: Copy dependency cache into container
+          command: |
+              docker cp ./node_modules elabtmp:/elabftw/node_modules
+              docker cp ./yarn.cache elabtmp:/root/.cache/yarn/
       - run:
           name: Install JS dependencies
-          command: docker exec -it elabtmp yarn install --silent --non-interactive
+          command: docker exec -it elabtmp yarn install --silent --non-interactive --frozen-lockfile
+      - run:
+          name: Extract dependency cache from container
+          command: |
+              docker cp elabtmp:/elabftw/node_modules/ ./node_modules
+              docker cp elabtmp:/root/.cache/yarn/ ./yarn.cache
+      # Save dependency cache
+      - save_cache:
+          key: v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - ./node_modules
+            - ./yarn.cache
       - run:
           name: Run SCSS linter
           command: docker exec -it elabtmp yarn csslint

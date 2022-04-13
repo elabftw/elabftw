@@ -53,11 +53,13 @@ jobs:
       - run:
           name: Copy dependency cache into container
           command: |
+              echo 'export HAS_CACHE="false"' >> $BASH_ENV
               if [ -d ./node_modules ]; then
                   docker cp ./node_modules elabtmp:/elabftw/node_modules
               fi
               if [ -d ./yarn.cache ]; then
                   docker cp ./yarn.cache elabtmp:/usr/local/share/.cache/yarn/
+                  echo 'export HAS_CACHE="true"' >> $BASH_ENV
               fi
       - run:
           name: Install JS dependencies
@@ -65,8 +67,10 @@ jobs:
       - run:
           name: Extract dependency cache from container
           command: |
-              docker cp elabtmp:/elabftw/node_modules/ ./node_modules
-              docker cp elabtmp:/usr/local/share/.cache/yarn/ ./yarn.cache
+              if [ "${HAS_CACHE}" == "false" ]; then
+                  docker cp elabtmp:/elabftw/node_modules/ ./node_modules
+                  docker cp elabtmp:/usr/local/share/.cache/yarn/ ./yarn.cache
+              fi
       # Save dependency cache
       - save_cache:
           key: v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}

@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const png = (document.getElementById(molCanvasId) as HTMLCanvasElement).toDataURL();
     $.post('app/controllers/EntityAjaxController.php', {
       saveAsImage: true,
-      realName: $(this).data('name'),
+      realName: $(this).data('name') + '.png',
       content: png,
       id: about.id,
       type: about.type,

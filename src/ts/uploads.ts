@@ -9,7 +9,7 @@ import $ from 'jquery';
 import { Action, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Target } from './interfaces';
-import { notif, displayMolFiles, display3DMolecules, getEntity } from './misc';
+import { notif, displayMolFiles, display3DMolecules, getEntity, reloadElement } from './misc';
 import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
 import Upload from './Upload.class';
@@ -66,9 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }).done(function(json) {
       notif(json);
       if (json.res) {
-        $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv > *', function() {
-          displayMolFiles();
-        });
+        reloadElement('filesdiv');
       }
     });
   });
@@ -118,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (confirm(i18next.t('generic-delete-warning'))) {
         UploadC.destroy(uploadId).then(json => {
           if (json.res) {
-            $('#filesdiv').load('?mode=edit&id=' + entity.id + ' #filesdiv > *');
+            reloadElement('filesdiv');
           }
         });
       }

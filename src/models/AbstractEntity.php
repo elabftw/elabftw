@@ -30,6 +30,7 @@ use Elabftw\Services\Filter;
 use Elabftw\Services\Transform;
 use Elabftw\Traits\EntityTrait;
 use function explode;
+use function implode;
 use function is_bool;
 use PDO;
 use PDOStatement;
@@ -87,17 +88,19 @@ abstract class AbstractEntity implements CrudInterface
     // inserted in sql
     private array $bindExtendedValues = array();
 
-    private string $metadataFilter = '';
-
-    private string $metadataHaving = '';
-
+    // start metadata stuff
     private bool $isMetadataSearch = false;
 
-    private string $metadataKey = '';
+    private array $metadataFilter = array();
 
-    private string $metadataValuePath = '';
+    private array $metadataHaving = array();
 
-    private string $metadataValue = '';
+    private array $metadataKey = array();
+
+    private array $metadataValuePath = array();
+
+    private array $metadataValue = array();
+    // end metadata stuff
 
     /**
      * Constructor
@@ -201,7 +204,8 @@ abstract class AbstractEntity implements CrudInterface
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
 
-        $sql .= $this->metadataFilter;
+        // metadata filter (this will just be empty if we're not doing anything metadata related)
+        $sql .= implode(' ', $this->metadataFilter);
 
         // experiments related to something?
         if ($displayParams->searchType === 'related') {
@@ -233,11 +237,17 @@ abstract class AbstractEntity implements CrudInterface
         }
         $sql .= ')';
 
+        // build the having clause for metadata
+        $metadataHaving = '';
+        if (!empty($this->metadataHaving)) {
+            $metadataHaving = 'HAVING ' . implode(' AND ', $this->metadataHaving);
+        }
+
         $sqlArr = array(
             $this->extendedFilter,
             $this->idFilter,
             'GROUP BY id',
-            $this->metadataHaving,
+            $metadataHaving,
             'ORDER BY',
             $displayParams->getOrderSql(),
             $displayParams->sort,
@@ -254,9 +264,11 @@ abstract class AbstractEntity implements CrudInterface
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':state', self::STATE_NORMAL, PDO::PARAM_INT);
         if ($this->isMetadataSearch) {
-            $req->bindParam(':metadata_key', $this->metadataKey);
-            $req->bindParam(':metadata_value_path', $this->metadataValuePath);
-            $req->bindParam(':metadata_value', $this->metadataValue);
+            foreach ($this->metadataKey as $i => $v) {
+                $req->bindParam(':metadata_key_' . $i, $this->metadataKey[$i]);
+                $req->bindParam(':metadata_value_path_' . $i, $this->metadataValuePath[$i]);
+                $req->bindParam(':metadata_value_' . $i, $this->metadataValue[$i]);
+            }
         }
 
         $this->bindExtendedValues($req);
@@ -298,12 +310,9 @@ abstract class AbstractEntity implements CrudInterface
      */
     public function getTags(array $items): array
     {
-        $itemIds = '(';
-        foreach ($items as $item) {
-            $itemIds .= 'tags2entity.item_id = ' . $item['id'] . ' OR ';
-        }
-        $sqlid = rtrim($itemIds, ' OR ') . ')';
-        $sql = 'SELECT DISTINCT tags2entity.tag_id, tags2entity.item_id, tags.tag FROM tags2entity
+        $sqlid = 'tags2entity.item_id IN (' . implode(',', array_column($items, 'id')) . ')';
+        $sql = 'SELECT DISTINCT tags2entity.tag_id, tags2entity.item_id, tags.tag
+            FROM tags2entity
             LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
             WHERE tags2entity.item_type = :type AND ' . $sqlid;
         $req = $this->Db->prepare($sql);
@@ -534,12 +543,14 @@ abstract class AbstractEntity implements CrudInterface
     public function addMetadataFilter(string $key, string $value): void
     {
         $this->isMetadataSearch = true;
+        $i = count($this->metadataKey);
         // Note: the key is double quoted so spaces are not an issue
-        $this->metadataKey = '$.extra_fields."' . Filter::sanitize($key) . '"';
-        $this->metadataValuePath = $this->metadataKey . '.value';
-        $this->metadataValue = Filter::sanitize($value);
-        $this->metadataFilter = " AND JSON_CONTAINS_PATH(entity.metadata, 'one', :metadata_key) ";
-        $this->metadataHaving = ' HAVING JSON_UNQUOTE(JSON_EXTRACT(entity.metadata, :metadata_value_path)) LIKE :metadata_value';
+        $key = '$.extra_fields."' . Filter::sanitize($key) . '"';
+        $this->metadataKey[] = $key;
+        $this->metadataValuePath[] = $key . '.value';
+        $this->metadataValue[] = Filter::sanitize($value);
+        $this->metadataFilter[] = " AND JSON_CONTAINS_PATH(entity.metadata, 'one', :metadata_key_" . $i . ') ';
+        $this->metadataHaving[] = ' JSON_UNQUOTE(JSON_EXTRACT(entity.metadata, :metadata_value_path_' . $i . ')) LIKE :metadata_value_' . $i;
     }
 
     /**

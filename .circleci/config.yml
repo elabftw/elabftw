@@ -57,7 +57,7 @@ jobs:
                   docker cp ./node_modules elabtmp:/elabftw/node_modules
               fi
               if [ -d ./yarn.cache ]; then
-                  docker cp ./yarn.cache elabtmp:/root/.cache/yarn/
+                  docker cp ./yarn.cache elabtmp:/usr/local/share/.cache/yarn/
               fi
       - run:
           name: Install JS dependencies
@@ -66,7 +66,7 @@ jobs:
           name: Extract dependency cache from container
           command: |
               docker cp elabtmp:/elabftw/node_modules/ ./node_modules
-              docker cp elabtmp:/root/.cache/yarn/ ./yarn.cache
+              docker cp elabtmp:/usr/local/share/.cache/yarn/ ./yarn.cache
       # Save dependency cache
       - save_cache:
           key: v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}

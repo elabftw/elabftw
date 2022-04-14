@@ -91,7 +91,7 @@
 
     </section>
     <!-- LINKS -->
-    <section class='col-md-6'>
+    <section class='col-md-6' id='linksDiv'>
         <i class='fas fa-fw fa-link mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Linked items'|trans }}</h4>
         <br>
         <div class='mt-2' id='links_div_{{ Entity_id }}'>
@@ -104,11 +104,15 @@
                   {{ link.title|raw }}</a>
                   <div class='float-right'>
                     {% if mode != 'edit-template' %}
+                      <a data-action='import-links' data-target='{{ link.itemid }}' title='{{ 'Import links'|trans }}'>
+                        <i class="fas fa-arrows-down-to-line"></i>
+                      </a>
+
                       <a data-action='import-link' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}'>
                         <i class='fas fa-lg fa-file-import'></i>
                       </a>
                     {% endif %}
-                    <a class='linkDestroy clickable' data-linkid='{{ link.linkid }}' title='{{ 'Delete'|trans }}'>
+                    <a data-action='destroy-link' data-target='{{ link.itemid }}' title='{{ 'Delete'|trans }}'>
                       <i class='fas fa-lg fa-trash-alt'></i>
                     </a>
                   </div>

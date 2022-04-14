@@ -147,10 +147,9 @@ CREATE TABLE `experiments_comments` (
 --
 
 CREATE TABLE `experiments_links` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `item_id` int(10) UNSIGNED NOT NULL,
   `link_id` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`item_id`, `link_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
@@ -443,10 +442,9 @@ CREATE TABLE `items_types` (
 --
 
 CREATE TABLE `items_types_links` (
-  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `item_id` int UNSIGNED NOT NULL,
   `link_id` int UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`item_id`, `link_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -1102,10 +1100,9 @@ CREATE TABLE `experiments_templates_steps` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 CREATE TABLE `items_links` (
-    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `item_id` int(10) unsigned NOT NULL,
     `link_id` int(10) unsigned NOT NULL,
-    PRIMARY KEY (`id`),
+    PRIMARY KEY (`item_id`, `link_id`),
     KEY `fk_items_links_items_id` (`item_id`),
     KEY `fk_items_links_items_id2` (`link_id`),
     CONSTRAINT `fk_items_links_items_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -1113,10 +1110,9 @@ CREATE TABLE `items_links` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 CREATE TABLE `experiments_templates_links` (
-    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `item_id` int(10) unsigned NOT NULL,
     `link_id` int(10) unsigned NOT NULL,
-    PRIMARY KEY (`id`),
+    PRIMARY KEY (`item_id`, `link_id`),
     KEY `fk_experiments_templates_links_items_id` (`item_id`),
     KEY `fk_experiments_templates_links_items_id2` (`link_id`),
     CONSTRAINT `fk_experiments_templates_links_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

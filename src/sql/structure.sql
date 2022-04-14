@@ -280,7 +280,7 @@ CREATE TABLE `favtags2users` (
 --
 
 CREATE TABLE `groups` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `is_sysadmin` tinyint(1) UNSIGNED NOT NULL,
   `is_admin` tinyint(1) UNSIGNED NOT NULL,
@@ -711,7 +711,7 @@ CREATE TABLE `users` (
   `password` varchar(255) NULL DEFAULT NULL,
   `password_hash` varchar(255) NULL DEFAULT NULL,
   `mfa_secret` varchar(32) DEFAULT NULL,
-  `usergroup` int(10) UNSIGNED NOT NULL,
+  `usergroup` tinyint(1) UNSIGNED NOT NULL,
   `firstname` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -768,8 +768,8 @@ CREATE TABLE `users` (
 
 --
 -- RELATIONSHIPS FOR TABLE `users`:
---   `team`
---       `teams` -> `id`
+--   `usergroup`
+--       `groups` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -927,6 +927,12 @@ ALTER TABLE `team_groups`
 --
 ALTER TABLE `todolist`
   ADD KEY `fk_todolist_users_userid` (`userid`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD KEY `fk_users_groups_id` (`usergroup`);
 
 --
 -- Constraints for dumped tables
@@ -1150,6 +1156,12 @@ ALTER TABLE `pin2users`
 --
 ALTER TABLE `pin2users`
   ADD CONSTRAINT `fk_pin2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `users`
+--
+ALTER TABLE `users`
+  ADD CONSTRAINT `fk_users_groups_id` FOREIGN KEY (`usergroup`) REFERENCES `groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 COMMIT;
 

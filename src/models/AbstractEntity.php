@@ -137,7 +137,7 @@ abstract class AbstractEntity implements CrudInterface
     public function toggleLock(): bool
     {
         $this->getPermissions();
-        if (!$this->Users->userData['can_lock'] && $this->entityData['userid'] !== $this->Users->userData['userid']) {
+        if (!$this->Users->userData['is_admin'] && $this->entityData['userid'] !== $this->Users->userData['userid']) {
             throw new ImproperActionException(_("You don't have the rights to lock/unlock this."));
         }
         $locked = (int) $this->entityData['locked'];

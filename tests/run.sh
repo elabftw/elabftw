@@ -26,6 +26,12 @@ if (! $scrutinizer); then
     cp -v config.php config.php.dev
 fi
 cp -v tests/config-home.php config.php
+
+# if there are no custom env_file, touch one, as this will trigger an error
+if [ ! -f tests/elabftw-user.env ]; then
+    touch tests/elabftw-user.env
+fi
+
 # launch a fresh environment if needed
 if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
     if ($scrutinizer); then

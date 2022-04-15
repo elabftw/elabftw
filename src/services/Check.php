@@ -63,17 +63,18 @@ class Check
     }
 
     /**
-     * Currently a usergroup is 1, 2, 3 or 4
+     * Currently a usergroup is 1, 2 or 4
      */
-    public static function usergroup(int $gid): int|false
+    public static function usergroup(int $gid): bool
     {
-        $filter_options = array(
-            'options' => array(
-                'min_range' => 1,
-                'max_range' => 4,
-            ),
-        );
-        return filter_var($gid, FILTER_VALIDATE_INT, $filter_options);
+        switch ($gid) {
+        case 1:
+        case 2:
+        case 4:
+            return true;
+        default:
+            return false;
+        }
     }
 
     public static function usergroupOrExplode(int $gid): int

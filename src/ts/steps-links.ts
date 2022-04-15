@@ -23,6 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // STEPS
   const StepC = new Step(entity);
+
+  // LINKS
+  const LinkC = new Link(entity);
+
   relativeMoment();
 
   // MAIN LISTENER for actions
@@ -45,6 +49,14 @@ document.addEventListener('DOMContentLoaded', () => {
       StepC.update(parseInt(el.dataset.stepid, 10), null, Target.Deadline).then(() => {
         reloadElement('stepsDiv');
       });
+    // IMPORT LINK(S) OF LINK
+    } else if (el.matches('[data-action="import-links"]')) {
+      LinkC.importLinks(parseInt(el.dataset.target, 10)).then(() => reloadElement('linksDiv'));
+    // DESTROY LINK
+    } else if (el.matches('[data-action="destroy-link"]')) {
+      if (confirm(i18next.t('link-delete-warning'))) {
+        LinkC.destroy(parseInt(el.dataset.target, 10)).then(() => reloadElement('linksDiv'));
+      }
     }
   });
 
@@ -141,9 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // END STEPS
 
-  // LINKS
-  const LinkC = new Link(entity);
-
   // CREATE
   // listen keypress, add link when it's enter or on blur
   $(document).on('keypress blur', '#linkinput', function(e) {
@@ -197,14 +206,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // AUTOCOMPLETE
   addAutocompleteToLinkInputs();
-
-  // DESTROY
-  $(document).on('click', '.linkDestroy', function() {
-    if (confirm(i18next.t('link-delete-warning'))) {
-      LinkC.destroy($(this).data('linkid')).then(() => {
-        // only reload children of links_div_id
-        reloadElement('links_div_' + entity.id);
-      });
-    }
-  });
 });

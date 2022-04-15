@@ -25,7 +25,22 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $id = $this->Experiments->Links->create(new ContentParams('1'));
         $links = $this->Experiments->Links->read(new ContentParams());
         $this->assertIsArray($links);
-        $this->Experiments->Links->setId($id);
+        $this->Experiments->Links->setId(1);
         $this->Experiments->Links->destroy();
+    }
+
+    public function testUpdate(): void
+    {
+        $this->assertFalse($this->Experiments->Links->update(new ContentParams('blah')));
+    }
+
+    public function testImport(): void
+    {
+        // create a link in a db item
+        $Items = new Items(new Users(1, 1), 1);
+        $Items->Links->create(new ContentParams('1'));
+        // now import this in our experiment like if we click the import links button
+        $Links = new Links($this->Experiments, $Items->id);
+        $this->assertTrue($Links->import());
     }
 }

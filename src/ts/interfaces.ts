@@ -60,6 +60,7 @@ enum Action {
   DestroyStamppass = 'destroystamppass',
   Deduplicate = 'deduplicate',
   Duplicate = 'duplicate',
+  ImportLinks = 'importlinks',
   Lock = 'lock',
   Pin = 'pin',
 }

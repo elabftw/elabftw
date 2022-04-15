@@ -147,10 +147,9 @@ CREATE TABLE `experiments_comments` (
 --
 
 CREATE TABLE `experiments_links` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `item_id` int(10) UNSIGNED NOT NULL,
   `link_id` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`item_id`, `link_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
@@ -281,11 +280,10 @@ CREATE TABLE `favtags2users` (
 --
 
 CREATE TABLE `groups` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `is_sysadmin` tinyint(1) UNSIGNED NOT NULL,
   `is_admin` tinyint(1) UNSIGNED NOT NULL,
-  `can_lock` tinyint(1) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -297,11 +295,10 @@ CREATE TABLE `groups` (
 -- Dumping data for table `groups`
 --
 
-INSERT INTO `groups` (`id`, `name`, `is_sysadmin`, `is_admin`, `can_lock`) VALUES
-(1, 'Sysadmins', 1, '1', '0'),
-(2, 'Admins', 0, '1', '0'),
-(3, 'Chiefs', 0, '1', '1'),
-(4, 'Users', 0, '0', '0');
+INSERT INTO `groups` (`id`, `name`, `is_sysadmin`, `is_admin`) VALUES
+(1, 'Sysadmins', 1, '1'),
+(2, 'Admins', 0, '1'),
+(4, 'Users', 0, '0');
 
 -- --------------------------------------------------------
 
@@ -445,10 +442,9 @@ CREATE TABLE `items_types` (
 --
 
 CREATE TABLE `items_types_links` (
-  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `item_id` int UNSIGNED NOT NULL,
   `link_id` int UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`item_id`, `link_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -715,7 +711,7 @@ CREATE TABLE `users` (
   `password` varchar(255) NULL DEFAULT NULL,
   `password_hash` varchar(255) NULL DEFAULT NULL,
   `mfa_secret` varchar(32) DEFAULT NULL,
-  `usergroup` int(10) UNSIGNED NOT NULL,
+  `usergroup` tinyint(1) UNSIGNED NOT NULL,
   `firstname` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -772,8 +768,8 @@ CREATE TABLE `users` (
 
 --
 -- RELATIONSHIPS FOR TABLE `users`:
---   `team`
---       `teams` -> `id`
+--   `usergroup`
+--       `groups` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -931,6 +927,12 @@ ALTER TABLE `team_groups`
 --
 ALTER TABLE `todolist`
   ADD KEY `fk_todolist_users_userid` (`userid`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD KEY `fk_users_groups_id` (`usergroup`);
 
 --
 -- Constraints for dumped tables
@@ -1104,10 +1106,9 @@ CREATE TABLE `experiments_templates_steps` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 CREATE TABLE `items_links` (
-    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `item_id` int(10) unsigned NOT NULL,
     `link_id` int(10) unsigned NOT NULL,
-    PRIMARY KEY (`id`),
+    PRIMARY KEY (`item_id`, `link_id`),
     KEY `fk_items_links_items_id` (`item_id`),
     KEY `fk_items_links_items_id2` (`link_id`),
     CONSTRAINT `fk_items_links_items_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -1115,10 +1116,9 @@ CREATE TABLE `items_links` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 CREATE TABLE `experiments_templates_links` (
-    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `item_id` int(10) unsigned NOT NULL,
     `link_id` int(10) unsigned NOT NULL,
-    PRIMARY KEY (`id`),
+    PRIMARY KEY (`item_id`, `link_id`),
     KEY `fk_experiments_templates_links_items_id` (`item_id`),
     KEY `fk_experiments_templates_links_items_id2` (`link_id`),
     CONSTRAINT `fk_experiments_templates_links_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -1156,6 +1156,12 @@ ALTER TABLE `pin2users`
 --
 ALTER TABLE `pin2users`
   ADD CONSTRAINT `fk_pin2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `users`
+--
+ALTER TABLE `users`
+  ADD CONSTRAINT `fk_users_groups_id` FOREIGN KEY (`usergroup`) REFERENCES `groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 COMMIT;
 

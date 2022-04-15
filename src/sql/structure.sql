@@ -1139,11 +1139,11 @@ ALTER TABLE `users2teams`
 -- Indexes and Constraints for table `users2team_groups`
 --
 ALTER TABLE `users2team_groups`
-  ADD KEY `fk_users2team_groups_groupid` (`groupid`),
-  ADD KEY `fk_users2team_groups_userid` (`userid`);
+  ADD KEY `fk_users2team_groups_team_groups_id` (`groupid`),
+  ADD KEY `fk_users2team_groups_users_userid` (`userid`);
 ALTER TABLE `users2team_groups`
-  ADD CONSTRAINT `fk_users2team_groups_groupid` FOREIGN KEY (`groupid`) REFERENCES `team_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_users2team_groups_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_users2team_groups_team_groups_id` FOREIGN KEY (`groupid`) REFERENCES `team_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_users2team_groups_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Indexes for table `pin2users`

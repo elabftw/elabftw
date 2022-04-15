@@ -110,7 +110,7 @@ class EmailNotifications
                 $info = _('A booked slot was deleted from the scheduler.');
                 $subject .= $info;
                 $url = SITE_URL . '/team.php?item=' . $notifBody['event']['item'];
-                $body = sprintf(_('Hi. %s (%s). See item: %s'), $info, $notifBody['actor'], $url);
+                $body = sprintf(_('Hi. %s (%s). See item: %s. It was booked from %s to %s.'), $info, $notifBody['actor'], $url, $notifBody['event']['start'], $notifBody['event']['end']);
                 break;
             case Notifications::USER_CREATED:
                 $subject .= _('New user added to your team');

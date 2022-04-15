@@ -9,119 +9,118 @@ jobs:
     working_directory: ~/elabftw/elabftw
     parallelism: 1
     shell: /bin/bash --login
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
     # The following configuration line tells CircleCI to use the specified docker image as the runtime environment for you job.
     # For more information on choosing an image (or alternatively using a
     # VM instead of a container) see https://circleci.com/docs/2.0/executor-types/
     # To see the list of pre-built images that CircleCI provides for most common languages see
     # https://circleci.com/docs/2.0/circleci-images/
     docker:
-    - image: circleci/php:8.0-cli-node-browsers
+    - image: cimg/base:current
       auth:
         username: nicolascarpi
         password: $DOCKERHUB_PASSWORD
-    - image: circleci/mysql:8.0.4
-      auth:
-        username: nicolascarpi
-        password: $DOCKERHUB_PASSWORD
-      environment:
-        MYSQL_ROOT_PASSWORD: phpunit
-        MYSQL_DATABASE: phpunit
-        MYSQL_USER: phpunit
-        MYSQL_PASSWORD: phpunit
-      # use mysql native password mechanism
-      command: --default-authentication-plugin=mysql_native_password
     steps:
-      # Machine Setup
-      #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
-      # The following `checkout` command checks out your code to your working directory. In 1.0 we did this implicitly. In 2.0 you can choose where in the course of a job your code should be checked out.
       - checkout
+      - setup_remote_docker:
+          version: 20.10.11
+          docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
       - run:
-      # Our primary container isn't MYSQL so run a sleep command until it's ready.
-          name: Waiting for MySQL to be ready
+          name: Prepare docker-compose.yml
+          # Don't bind mount here, files are copied. See scrutinizer.dockerfile
+          # first backslash enables different delimiter than slash
+          # remove env_file section
           command: |
-            for i in `seq 1 10`;
-            do
-              nc -z 127.0.0.1 3306 && echo Success && exit 0
-              echo -n .
-              sleep 1
-            done
-            echo Failed waiting for MySQL && exit 1
-      # Prepare for artifact and test results  collection equivalent to how it was done on 1.0.
-      # In many cases you can simplify this from what is generated here.
-      # 'See docs on artifact collection here https://circleci.com/docs/2.0/artifacts/'
-      - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
-      # Dependencies
-      #   This would typically go in either a build or a build-and-test job when using workflows
-      # Restore the dependency cache
+              sed -i '\#volumes:#D' tests/docker-compose.yml
+              sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
+              sed -i '\#/elabftw/tests/_output/coverage#D' tests/docker-compose.yml
+              sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
+              sed -i '\#env_file:#D' tests/docker-compose.yml
+              sed -i '\#- elabftw-user\.env#D' tests/docker-compose.yml
+      - run:
+          name: Build elabtmp image and start containers
+          command: |
+              docker build -t elabtmp -f tests/scrutinizer.dockerfile --progress plain .
+              docker-compose -f tests/docker-compose.yml up -d --quiet-pull
+      # Restore dependency cache
       - restore_cache:
           keys:
-          # This branch if available
-          - v1-dep-{{ .Branch }}-
-          # Default branch if not
-          - v1-dep-master-
-          # Any branch if there are none on the default branch - this should be unnecessary if you have your default branch configured correctly
-          - v1-dep-
-      # copy the circleci config
-      - run: sudo cp tests/config-ci.php config.php
-      - run: sudo apt-get update
-      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y libldap2-dev brotli zopfli
-      # build imagemagick from source
-      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y tar libxml2 libxml2-dev librsvg2-dev librsvg2-bin libpng-dev libjpeg-dev libfreetype-dev libfontconfig-dev libtool libtiff-dev liblcms2-dev libwebp-dev libxext-dev chrpath libheif-dev ghostscript
+            # This branch if available
+            - v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            # Default branch if not
+            - v1-yarn-dep-master-
+            # Any branch if there are none on the default branch
+            - v1-yarn-dep-
       - run:
-          name: Build ImageMagick from source
+          name: Copy dependency cache into container
           command: |
-            wget https://download.imagemagick.org/ImageMagick/download/releases/ImageMagick-7.1.0-19.tar.xz && \
-            tar -xf ImageMagick-7.1.0-19.tar.xz && \
-            cd ImageMagick-7.1.0-19 && \
-            ./configure --enable-static --disable-openmp --with-threads --with-tiff=yes --with-png=yes --with-webp --with-gslib=yes --with-heic --with-modules=yes --with-xml=yes --without-perl --without-magick-plus-plus --with-rsvg=yes --enable-delegate-build=yes --enable-shared --with-bzlib=yes --with-jpeg=yes && \
-            make && sudo make install && sudo ldconfig /usr/local/lib && \
-            cd .. && rm -rf ImageMagick-7.1.0-19
-      - run: sudo pecl install imagick && sudo docker-php-ext-enable imagick
-      - run: sudo docker-php-ext-install gd gettext zip pdo_mysql exif ldap
-      # The following line was run implicitly in your 1.0 builds based on what CircleCI inferred about the structure of your project. In 2.0 you need to be explicit about which commands should be run. In some cases you can discard inferred commands if they are not relevant to your project.
+              echo 'export HAS_CACHE="false"' >> $BASH_ENV
+              if [ -d ./node_modules ]; then
+                  docker cp ./node_modules elabtmp:/elabftw/node_modules
+              fi
+              if [ -d ./yarn.cache ]; then
+                  docker cp ./yarn.cache elabtmp:/usr/local/share/.cache/yarn/
+                  echo 'export HAS_CACHE="true"' >> $BASH_ENV
+              fi
       - run:
           name: Install JS dependencies
-          command: yarn install
+          command: docker exec -it elabtmp yarn install --silent --non-interactive --frozen-lockfile
       - run:
-          name: Build all
-          command: yarn run buildall
-          no_output_timeout: 20m
-      - run: composer install --no-interaction
+          name: Extract dependency cache from container
+          command: |
+              if [ "${HAS_CACHE}" == "false" ]; then
+                  docker cp elabtmp:/elabftw/node_modules/ ./node_modules
+                  docker cp elabtmp:/usr/local/share/.cache/yarn/ ./yarn.cache
+              fi
       # Save dependency cache
       - save_cache:
-          key: v1-dep-{{ .Branch }}-{{ epoch }}
+          key: v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
-          - ./node_modules
-          - ./vendor
-          - ~/.yarn
-          - ~/.cache
-      - run: php bin/install start
-      - run: php bin/console dev:populate tests/populate-config.yml
-      # Lint
-      - run:
-          name: Run Javascript linter
-          command: yarn run jslint-ci
+            - ./node_modules
+            - ./yarn.cache
       - run:
           name: Run SCSS linter
-          command: yarn run csslint
+          command: docker exec -it elabtmp yarn csslint
+      - run:
+          name: Run Javascript linter
+          command: docker exec -it elabtmp yarn jslint-ci
+      - run:
+          name: Build all
+          command: docker exec -it elabtmp yarn buildall:dev
+      - run:
+          name: Composer install
+          command: docker exec -it elabtmp composer install --no-progress -q
       - run:
           name: Run PHP-CS-Fixer
-          command: yarn phpcs-dry
-      # Tests
+          command: docker exec -it elabtmp yarn phpcs-dry
+      - run:
+          name: Prepare php.ini
+          # allow tmpfile, used by phpstan
+          # extend open_basedir
+          # /usr/bin/psalm, //autoload.php, /root/.cache/ are for psalm
+          # /usr/bin/phpstan, /proc/cpuinfo is for phpstan, https://github.com/phpstan/phpstan/issues/4427 https://github.com/phpstan/phpstan/issues/2965
+          command: |
+              docker exec -it elabtmp sed -i 's/tmpfile, //' /etc/php8/php.ini
+              docker exec -it elabtmp sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/usr/bin/phpstan:/proc/cpuinfo|' /etc/php8/php.ini
+      - run:
+          name: "PHP static analysis: psalm + phpsatn"
+          command: docker exec -it elabtmp yarn static
+      - run:
+          name: Install the database
+          command: docker exec -it elabtmp bin/install start -r
+      - run:
+          name: Populate the database
+          command: docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
+      - run:
+          name: Enable code coverage
+          command: docker exec -it elabtmp bash -c "apk add --update php8-pecl-xdebug && echo 'zend_extension=xdebug.so' >> /etc/php8/php.ini && echo 'xdebug.mode=coverage' >> /etc/php8/php.ini"
       - run:
           name: Run unit tests
-          command: yarn run unit-ci
+          command: docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --skip api --coverage --coverage-xml
       - run:
-          name: Repopulate the db for coverage
-          command: php bin/console dev:populate tests/populate-config.yml
-      - run:
-          name: Code coverage
-          command: echo 'xdebug.mode=coverage' | sudo tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && ./vendor/bin/codecept run --skip api --skip acceptance --coverage --coverage-xml
+          name: Extract coverage report
+          command: docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
       - codecov/upload:
-          file: /home/circleci/elabftw/elabftw/tests/_output/coverage.xml
+          file: coverage.xml
 
 workflows:
   version: 2

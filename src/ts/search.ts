@@ -47,6 +47,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Main click event listener
+  document.getElementById('container').addEventListener('click', event => {
+    const el = (event.target as HTMLElement);
+    // Add a new key/value inputs block on top of the + button in metadata search block
+    if (el.matches('[data-action="add-extra-fields-search-inputs"]')) {
+      // the first set of inputs is cloned
+      const row = (document.getElementById('metadataFirstInputs').cloneNode(true) as HTMLElement);
+      // remove id 'metadataFirstInputs'
+      row.removeAttribute('id');
+      // give new ids to the labels/inputs
+      row.querySelectorAll('label').forEach(l => {
+        const id = crypto.randomUUID();
+        l.setAttribute('for', id);
+        const input = l.nextElementSibling as HTMLInputElement;
+        input.setAttribute('id', id);
+        input.value = '';
+      });
+      // add inputs block
+      el.parentNode.insertBefore(row, el);
+    }
+  });
+
   function getOperator(): string {
     const operatorSelect = document.getElementById('dateOperator') as HTMLSelectElement;
     return operatorSelect.value;
@@ -55,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // a filter helper can be a select or an input (for date), so we need a function to get its value
   function getFilterValueFromElement(element: HTMLElement): string {
     if (element instanceof HTMLSelectElement) {
+      // clear action
       if (element.options[element.selectedIndex].dataset.action === 'clear') {
         return '';
       }
@@ -68,6 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
           return getOperator() + date;
         }
         return date + '..' + dateTo;
+      }
+      // filter on owner
+      if (element.getAttribute('name') === 'owner') {
+        return `${element.options[element.selectedIndex].value}`;
       }
       return `${element.options[element.selectedIndex].text}`;
     }

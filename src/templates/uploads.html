@@ -24,39 +24,39 @@
                     <!-- INSERT IN TEXT in edit mode for images -->
                     {% if ext matches '/(jpg|jpeg|png|gif|svg)$/i' %}
                       <a class='dropdown-item inserter clickable' data-link='{{ upload.long_name }}' data-uploadid='{{ upload.id }}'>
-                        <i class='fas fa-image mr-1'></i>{{ 'Insert in text at cursor position'|trans }}</a>
+                        <i class='fas fa-fw fa-image mr-1'></i>{{ 'Insert in text at cursor position'|trans }}</a>
                     {% endif %}
 
                     <!-- Edit filename -->
                     <a class='dropdown-item clickable' data-action='rename-upload' data-id='{{ upload.id }}' data-type='{{ upload.type }}'
                       data-itemid='{{ upload.item_id }}' data-msg='{{ 'Edit filename'|trans }}' title='{{ 'Edit filename'|trans }}'>
-                      <i class='fas fa-pencil-alt mr-1'></i>{{ 'Edit filename'|trans }}</a>
+                      <i class='fas fa-fw fa-pencil-alt mr-1'></i>{{ 'Edit filename'|trans }}</a>
 
 
                     <!-- Annotate image -->
                     {% if ext matches '/(jpg|jpeg|png|gif)$/i' %}
                       <a class='dropdown-item clickable annotateImg' data-itemid='{{ upload.item_id }}' data-id='{{ upload.id }}' data-type='{{ upload.type }}' data-path='{{ upload.long_name }}'>
-                        <i class='fas fa-paint-brush mr-1'></i>{{ 'Annotate this image'|trans }}</a>
+                        <i class='fas fa-fw fa-paint-brush mr-1'></i>{{ 'Annotate this image'|trans }}</a>
                     {% endif %}
 
                     <!-- Save mol file as image -->
                     {% if ext matches '/(mol)$/i' %}
                       <a class='dropdown-item saveAsImage clickable' data-canvasid='molFile_{{ upload.id }}' data-name='{{ upload.real_name }}'>
-                      <i class='fas fa-image mr-1'></i>{{ 'Save as image'|trans }}</a>
+                      <i class='fas fa-fw fa-image mr-1'></i>{{ 'Save as image'|trans }}</a>
                     {% endif %}
 
                     <!-- Upload a new version -->
                     <a class='dropdown-item clickable' data-action='replace-upload' data-uploadid='{{ upload.id }}'>
-                      <i class='fas fa-sync-alt mr-1'></i>{{ 'Upload a new version of this file'|trans }}</a>
+                      <i class='fas fa-fw fa-sync-alt mr-1'></i>{{ 'Upload a new version of this file'|trans }}</a>
 
                     <!-- More info -->
                     <a class='dropdown-item clickable' data-action='more-info-upload' data-uploadid='{{ upload.id }}'>
-                      <i class='fas fa-info-circle mr-1'></i>{{ 'More information'|trans }}</a>
+                      <i class='fas fa-fw fa-info-circle mr-1'></i>{{ 'More information'|trans }}</a>
 
                     <!-- DESTROY -->
                     <div class='dropdown-divider'></div>
                     <a class='dropdown-item hover-danger clickable' data-action='destroy-upload' data-uploadid='{{ upload.id }}'>
-                      <i class='fas fa-trash-alt fa-fw mr-1' title='{{ 'Delete'|trans }}'></i>{{ 'Delete'|trans }}
+                      <i class='fas fa-fw fa-trash-alt fa-fw mr-1' title='{{ 'Delete'|trans }}'></i>{{ 'Delete'|trans }}
                     </a>
                   </div>
                 </div>
@@ -142,8 +142,8 @@
             {% endif %}
 
         <div class='caption'>
-          <i class='fas fa-download mr-1'></i>
-          <span>
+          <i class='fas fa-fw fa-download mr-1'></i>
+          <p class='d-inline'>
             <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&storage={{ upload.storage }}' rel='noopener'>{{ upload.real_name }}</a>
             <span class='smallgray' style='display:inline'>
               {% if upload.filesize %}
@@ -151,27 +151,30 @@
               {% endif %}
               {{ upload.created_at }}
             </span>
-          </span>
+          </p>
         <br>
         {# if we are in view mode, we don't show the comment if it's the default text. This is to avoid showing 'Click to add a comment' where in fact you can't click to add a comment because you are in view mode #}
 
         {% if mode == 'edit' or upload.comment != 'Click to add a comment' %}
-          <i class='fas fa-comments'></i>
+          <i class='fas fa-fw fa-comments mr-1'></i>
           <p class='file-comment editable hl-hover d-inline'
             data-type='{{ upload.type }}'
             data-itemid='{{ upload.item_id }}'
-            data-id='{{ upload.id }}'>{{ upload.comment}}</p>
+            data-id='{{ upload.id }}'>{{ upload.comment }}</p><br>
         {% endif %}
 
         {% if ext matches '/(json)$/i' %}
           <div class='clickable'>
-            <i class='fas fa-{{ mode == 'edit' ? 'pencil-alt' : 'eye' }} mr-1'></i><p data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name }}' data-link='{{ upload.long_name }}' data-action='json-load-file' class='d-inline'>{{ 'Load into JSON Editor'|trans }}</p>
+            <i class='fas fa-fw fa-{{ mode == 'edit' ? 'pencil-alt' : 'eye' }} mr-1'></i>
+            <p data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name }}' data-link='{{ upload.long_name }}' data-action='json-load-file' class='d-inline'>{{ 'Load into JSON Editor'|trans }}</p>
           </div>
         {% endif %}
 
         <div id='moreInfo_{{ upload.id }}' class='d-none'>
-          <i class='fas fa-info-circle mr-1'></i>{{ 'Storage:'|trans }} {% if upload.storage == '1' %} {{ 'Local filesystem'|trans }} {% endif %} {% if upload.storage == '2' %} S3 bucket {% endif %}<br>
-          {{ upload.hash_algorithm }}: {{ upload.hash }}
+          <i class='fas fa-fw fa-hdd mr-1'></i>
+          <p class='d-inline'>{{ 'Storage:'|trans }} {% if upload.storage == '1' %} {{ 'Local filesystem'|trans }} {% endif %} {% if upload.storage == '2' %} S3 bucket {% endif %}</p><br>
+          <i class='fas fa-fw fa-fingerprint mr-1'></i>
+          <p class='d-inline' style='word-break: break-all;'>{{ upload.hash_algorithm }}: {{ upload.hash }}</p>
         </div>
 
         </div>

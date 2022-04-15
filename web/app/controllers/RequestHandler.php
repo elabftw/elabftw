@@ -21,6 +21,7 @@ use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Links;
 use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Teams;
@@ -98,6 +99,8 @@ try {
         $res = $Model->toggleLock();
     } elseif ($action === 'pin' && $Model instanceof AbstractEntity) {
         $res = $Model->Pins->togglePin();
+    } elseif ($action === 'importlinks' && $Model instanceof Links) {
+        $res = $Model->import();
     }
 
     // special case for uploading an edited json file back: it's a POSTed async form

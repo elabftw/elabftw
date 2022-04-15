@@ -31,3 +31,4 @@ web/app/css/tinymce/fonts/*.woff
 .sass-cache
 src/ts/langs/*.js
 *.gz
+tests/elabftw-user.env

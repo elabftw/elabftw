@@ -9,7 +9,6 @@
 
 namespace Elabftw\Elabftw;
 
-use function array_map;
 use function filter_var;
 use function implode;
 use function json_decode;
@@ -263,13 +262,7 @@ class Tools
 
     public static function getIdFilterSql(array $idArr): string
     {
-        $sql = array_map(
-            function (string $id): string {
-                return 'entity.id = ' . $id;
-            },
-            $idArr
-        );
-        return ' AND (' . implode(' OR ', $sql) . ')';
+        return ' AND entity.id IN (' . implode(',', $idArr) . ')';
     }
 
     /**

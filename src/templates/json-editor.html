@@ -1,12 +1,12 @@
 <!-- JSON EDITOR -->
 <!-- json metadata is preloaded for templates -->
 <section class='box' id='json-editor'>
-  <i class='fas fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
+  <i class='fas fa-fw fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
   <button class='button btn btn-primary plusMinusButton jsonEditorPlusMinusButton' data-toggle='collapse' data-target='#jsonEditorDiv' aria-expanded='false' aria-controls='jsonEditorDiv'>+</button>
-  {% if mode == 'edit' %}
-    <button type='button' data-action='json-load-metadata' class='btn btn-neutral float-right'>{{ 'Load metadata'|trans }}</button>
-  {% endif %}
   <div id='jsonEditorDiv' class='collapse mt-2'>
+    {% if mode == 'edit' %}
+      <button type='button' data-action='json-load-metadata' class='btn btn-neutral mb-2'>{{ 'Load metadata'|trans }}</button>
+    {% endif %}
     <h6 id='jsonEditorTitle'></h6>
     <div id='jsonEditorContainer' {{ mode == 'edit-template' ? 'data-preload-json="1"' : '' }}></div>
     {% if mode == 'edit' %}

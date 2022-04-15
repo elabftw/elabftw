@@ -228,16 +228,20 @@ document.addEventListener('DOMContentLoaded', () => {
     /* TOGGLE NEXT ACTION
      * An element with "toggle-next" as data-action value will appear clickable.
      * Clicking on it will toggle the "hidden" attribute of the next sibling element.
-     * If there is a data-icon value, it is split on '-' and the first part is the type of icon
-     * and second part is the id of the icon so the css classes can be toggled
+     * If there is a data-icon value, it is toggled > or V
      */
     } else if (el.matches('[data-action="toggle-next"]')) {
       const targetEl = el.nextElementSibling as HTMLElement;
       targetEl.toggleAttribute('hidden');
       if (el.dataset.icon) {
         const iconEl = document.getElementById(el.dataset.icon);
-        iconEl.classList.toggle('fa-chevron-circle-right');
-        iconEl.classList.toggle('fa-chevron-circle-down');
+        if (targetEl.hasAttribute('hidden')) {
+          iconEl.classList.remove('fa-chevron-circle-down');
+          iconEl.classList.add('fa-chevron-circle-right');
+        } else {
+          iconEl.classList.add('fa-chevron-circle-down');
+          iconEl.classList.remove('fa-chevron-circle-right');
+        }
       }
       // save the hidden state of the target element in localStorage
       if (targetEl.dataset.saveHidden) {

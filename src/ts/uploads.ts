@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     inputClasses: ['form-control'],
     listenOn: '.file-comment.editable',
-    onBlur: Action.Ignore,
+    onBlur: Action.Submit,
     onEdit: (original, event, input) => {
       // remove the default text
       if (input.value === 'Click to add a comment') {
@@ -52,11 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip: i18next.t('upload-file-comment'),
   });
   malleableFilecomment.listen();
-
-  // add an observer so new comments will get an event handler too
-  new MutationObserver(() => {
-    malleableFilecomment.listen();
-  }).observe(document.getElementById('filesdiv'), {childList: true});
 
   // Export mol in png
   $(document).on('click', '.saveAsImage', function() {
@@ -134,12 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
   $('[data-fancybox]').fancybox();
 
   // Create an observer instance linked to the callback function(mutationList, observer)
-  const filesDivObserver = new MutationObserver(() => {
+  // Start observing the target node for configured mutations
+  new MutationObserver(() => {
     displayMolFiles();
     display3DMolecules(true);
     displayPlasmidViewer(about);
-  });
-
-  // Start observing the target node for configured mutations
-  filesDivObserver.observe(document.getElementById('filesdiv'), {childList: true});
+    malleableFilecomment.listen();
+  }).observe(document.getElementById('filesdiv'), {childList: true});
 });

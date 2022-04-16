@@ -300,14 +300,20 @@ document.addEventListener('DOMContentLoaded', () => {
         id: parseInt(el.dataset.id, 10),
       };
       const AjaxC = new Ajax();
-      AjaxC.send(payload).then(() => {
+      if (el.parentElement.dataset.ack === '0') {
+        AjaxC.send(payload).then(() => {
+          if (el.dataset.href) {
+            window.location.href = el.dataset.href;
+          } else {
+            reloadElement('navbarNotifDiv');
+          }
+        });
+      } else {
         if (el.dataset.href) {
           window.location.href = el.dataset.href;
-        } else {
-          reloadElement('navbarNotifDiv');
         }
-      });
-
+      }
+      
     // DESTROY (clear all) NOTIF
     } else if (el.matches('[data-action="destroy-notif"]')) {
       const payload: Payload = {

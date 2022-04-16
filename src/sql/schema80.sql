@@ -32,14 +32,14 @@ START TRANSACTION;
     RENAME TABLE `tmp` TO `users2team_groups`;
     -- users2team_groups add FKs
     ALTER TABLE `users2team_groups`
-      ADD KEY `fk_users2team_groups_team_groups_id` (`groupid`),
-      ADD KEY `fk_users2team_groups_users_userid` (`userid`);
+      ADD KEY `fk_users2team_groups_groupid` (`groupid`),
+      ADD KEY `fk_users2team_groups_userid` (`userid`);
     -- users2team_groups add constraints
     ALTER TABLE `users2team_groups`
-      ADD CONSTRAINT `fk_users2team_groups_team_groups_id`
+      ADD CONSTRAINT `fk_users2team_groups_groupid`
         FOREIGN KEY (`groupid`) REFERENCES `team_groups` (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE,
-      ADD CONSTRAINT `fk_users2team_groups_users_userid`
+      ADD CONSTRAINT `fk_users2team_groups_userid`
         FOREIGN KEY (`userid`) REFERENCES `users` (`userid`)
         ON DELETE CASCADE ON UPDATE CASCADE;
     UPDATE config SET conf_value = 80 WHERE conf_name = 'schema';

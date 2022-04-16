@@ -174,7 +174,6 @@ export function getTinymceBaseConfig(page: string): object {
           const LinkC = new Link(entity);
           LinkC.create(parseInt(data.id)).then((json) => {
             if (json.res === true) {
-              // only reload children of links_div_id
               reloadElement('links_div_' + entity.id);
             }
           });

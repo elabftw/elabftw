@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // only reload children of links_div_id
         reloadElement('links_div_' + entity.id).then(() => {
           // clear input field
-          (document.querySelector('.linkinput') as HTMLInputElement).value = '';
+          (document.getElementById('linkinput') as HTMLInputElement).value = '';
         });
       });
       $(this).val('');

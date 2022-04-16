@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // only reload children of links_div_id
         $('#links_div_' + entity.id).load(window.location.href + ' #links_div_' + entity.id + ' > *');
         // clear input field
-        (document.querySelector('.linkinput') as HTMLInputElement).value = '';
+        (document.getElementById('linkinput') as HTMLInputElement).value = '';
       });
       $(this).val('');
     }

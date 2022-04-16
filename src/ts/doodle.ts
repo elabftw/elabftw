@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let type = elDataset.type;
     const id = elDataset.id;
     const realName = prompt(i18next.t('request-filename'));
-    if (realName == null) {
+    if (realName === null || realName === '') {
       return;
     }
     $.post('app/controllers/EntityAjaxController.php', {

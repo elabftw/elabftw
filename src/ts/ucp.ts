@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif } from './misc';
+import { notif, reloadElement } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Apikey from './Apikey.class';
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const canwrite = parseInt((document.getElementById('apikeyCanwrite') as HTMLInputElement).value);
       ApikeyC.create(content, canwrite).then(json => {
-        $('#apiTable').load('ucp.php #apiTable > *');
+        reloadElement('apiTable');
         const warningDiv = document.createElement('div');
         warningDiv.classList.add('alert', 'alert-warning');
         const chevron = document.createElement('i');
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (confirm(i18next.t('generic-delete-warning'))) {
         ApikeyC.destroy(parseInt(el.dataset.apikeyid)).then(() => {
           // only reload children of apiTable
-          $('#apiTable').load('ucp.php #apiTable > *');
+          reloadElement('apiTable');
         });
       }
     }

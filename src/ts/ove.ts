@@ -13,7 +13,7 @@ declare global {
 }
 
 import { anyToJson } from 'bio-parsers/umd/bio-parsers';
-import { notif } from './misc';
+import { notif, reloadElement } from './misc';
 
 // DISPLAY Plasmids FILES
 export function displayPlasmidViewer(about: DOMStringMap): void {
@@ -130,7 +130,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         generatePng: true,
         handleFullscreenClose: function(): void { // event could be used as parameter
           editor[viewerID].close();
-          $('#filesdiv').load('?mode=' + about.page + '&id=' + about.id + ' #filesdiv > *');
+          reloadElement('filesdiv');
         },
         onCopy: function(event, copiedSequenceData, editorState): void {
           // the copiedSequenceData is the subset of the sequence that has been copied in the teselagen sequence format

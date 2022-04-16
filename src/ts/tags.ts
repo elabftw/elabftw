@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (json.res === false) {
           notif(json);
         }
-        $('#tags_div_' + entity.id).load(window.location.href + ' #tags_div_' + entity.id + ' > *');
+        reloadElement('tags_div_' + entity.id);
         $(this).val('');
       });
     }

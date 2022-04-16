@@ -303,6 +303,8 @@ document.addEventListener('DOMContentLoaded', () => {
       AjaxC.send(payload).then(() => {
         if (el.dataset.href) {
           window.location.href = el.dataset.href;
+        } else {
+          reloadElement('navbarNotifDiv');
         }
       });
 

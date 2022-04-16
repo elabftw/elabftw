@@ -56,6 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   });
 
+  const AjaxC = new Ajax();
+
+
   // set the language for js translated strings
   i18next.changeLanguage(document.getElementById('user-prefs').dataset.lang);
 
@@ -139,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
           content: value,
           notif: true,
         };
-        (new Ajax()).send(payload)
+        AjaxC.send(payload)
           .then(json => notif(json))
           .then(() => {
             if (el.dataset.reload) {
@@ -207,7 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
         action: Action.Read,
         model: Model.PrivacyPolicy,
       };
-      const AjaxC = new Ajax();
       AjaxC.send(payload).then(json => {
         let policy = json.value as string;
         if (!policy) {
@@ -299,7 +301,6 @@ document.addEventListener('DOMContentLoaded', () => {
         target: Target.Finished,
         id: parseInt(el.dataset.id, 10),
       };
-      const AjaxC = new Ajax();
       if (el.parentElement.dataset.ack === '0') {
         AjaxC.send(payload).then(() => {
           if (el.dataset.href) {
@@ -321,7 +322,6 @@ document.addEventListener('DOMContentLoaded', () => {
         action: Action.Destroy,
         model: Model.Notification,
       };
-      const AjaxC = new Ajax();
       AjaxC.send(payload).then(() => {
         document.querySelectorAll('.notification').forEach(el => el.remove());
       });

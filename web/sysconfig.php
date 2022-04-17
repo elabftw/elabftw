@@ -20,6 +20,7 @@ use Elabftw\Models\Teams;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use function file_get_contents;
+use PDO;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -70,6 +71,7 @@ try {
         PHP_SYSCONFDIR,
         ini_get('upload_max_filesize'),
         ini_get('date.timezone'),
+        Db::getConnection()->getAttribute(PDO::ATTR_SERVER_VERSION),
     );
 
     $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';

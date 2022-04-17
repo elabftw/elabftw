@@ -45,17 +45,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
+  const info = document.getElementById('info').dataset;
+
   // use this setting to prevent bug in fullcalendar
   // see https://github.com/fullcalendar/fullcalendar/issues/5544
+  // FIXME: this line fixes the issue above but will mess up the notification bell active status!
   config.autoReplaceSvg = 'nest';
-  // this setting has a side-effect with the top right fa icon
-  // so we set it at a correct size again
-  $('.fa-user-circle').css('font-size', '130%');
 
   // if we show all items, they are not editable
   let editable = true;
   let selectable = true;
-  if ($('#info').data('all')) {
+  if (info.all) {
     editable = false;
     selectable = false;
   }
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // all available locales
     locales: [ caLocale, deLocale, enLocale, esLocale, frLocale, itLocale, idLocale, jaLocale, koLocale, nlLocale, plLocale, ptLocale, ptbrLocale, ruLocale, skLocale, slLocale, zhcnLocale ],
     // selected locale
-    locale: $('#info').data('calendarlang'),
+    locale: info.calendarlang,
     initialView: 'timeGridWeek',
     // allow selection of range
     selectable: selectable,
@@ -95,12 +95,14 @@ document.addEventListener('DOMContentLoaded', () => {
     dayMaxEventRows: true,
     // set the date loaded
     initialDate: selectedDate,
+    // display a line for the time of now
+    nowIndicator: true,
     // load the events as JSON
     eventSources: [
       {
         url: 'app/controllers/SchedulerController.php',
         extraParams: {
-          item: $('#info').data('item'),
+          item: info.item,
         },
       },
     ],
@@ -119,16 +121,24 @@ document.addEventListener('DOMContentLoaded', () => {
         calendar.unselect();
         return;
       }
+      // get the item id from url
+      const params = new URLSearchParams(document.location.search.slice(1));
+      const itemid = parseInt(params.get('item'), 10);
+      if (!Number.isSafeInteger(itemid)) {
+        calendar.unselect();
+        return;
+      }
       $.post('app/controllers/SchedulerController.php', {
         create: true,
         start: info.startStr,
         end: info.endStr,
         title: title,
-        item: $('#info').data('item'),
+        item: itemid,
       }).done(function(json) {
         notif(json);
         if (json.res) {
-          window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.startStr));
+          // FIXME: it would be best to just properly render the event instead of reloading the whole page
+          window.location.replace(`team.php?tab=1&item=${itemid}&start=${encodeURIComponent(info.startStr)}`);
         }
       });
     },
@@ -267,12 +277,9 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     },
   });
-  // only start it if the element is here
-  // otherwise it will error out if the element is not here
-  if (document.getElementById('scheduler')) {
-    calendar.render();
-    calendar.updateSize();
-  }
+
+  calendar.render();
+  calendar.updateSize();
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {

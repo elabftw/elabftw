@@ -128,7 +128,7 @@
                     <span class='input-group-text'>{{ 'Add a link'|trans }}</span>
                 </div>
                 <input aria-label='{{ 'Add a link'|trans }}' type='text' data-autocomplete='links' id='linkinput' class='form-control' data-id='{{ Entity_id }}' placeholder='{{ 'from the database'|trans }}' />
-                <div class='input-group-append'>
+                <div class='input-group-append' style='max-width:33%;'>
                   <select id='addLinkCatFilter' class='brl-none form-control'>
                     <option selected value=''>{{ 'Any category'|trans }}</option>
                     {% for cat in itemsCategoryArr %}

@@ -67,7 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const malleableTodoitem = new Malle({
     inputClasses: ['form-control'],
     fun: (value, original) => {
-      TodolistC.update(parseInt(original.dataset.todoitemid, 10), value);
+      if (value !== original.innerText) {
+        TodolistC.update(parseInt(original.dataset.todoitemid, 10), value);
+      }
       return value;
     },
     listenOn: '.todoItem',

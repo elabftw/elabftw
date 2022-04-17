@@ -104,7 +104,9 @@ document.addEventListener('DOMContentLoaded', () => {
     inputClasses: ['form-control'],
     formClasses: ['d-inline-flex'],
     fun: (value, original) => {
-      TagC.update(value, parseInt(original.dataset.tagid, 10));
+      if (value !== original.innerText) {
+        TagC.update(value, parseInt(original.dataset.tagid, 10));
+      }
       return value;
     },
     listenOn: '.tag.editable',

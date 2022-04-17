@@ -121,15 +121,17 @@ document.addEventListener('DOMContentLoaded', () => {
     inputClasses: ['form-control'],
     formClasses: ['mb-3'],
     fun: (value, original) => {
-      const payload: Payload = {
-        method: Method.POST,
-        action: Action.Update,
-        model: Model.TeamGroup,
-        content: value,
-        id: parseInt(original.dataset.id, 10),
-        notif: true,
-      };
-      AjaxC.send(payload);
+      if (value !== original.innerText) {
+        const payload: Payload = {
+          method: Method.POST,
+          action: Action.Update,
+          model: Model.TeamGroup,
+          content: value,
+          id: parseInt(original.dataset.id, 10),
+          notif: true,
+        };
+        AjaxC.send(payload);
+      }
       return value;
     },
     listenOn: '.teamgroup_name.editable',

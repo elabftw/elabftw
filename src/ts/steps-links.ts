@@ -82,13 +82,15 @@ document.addEventListener('DOMContentLoaded', () => {
     cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
     inputClasses: ['form-control'],
     fun: (value, original) => {
-      StepC.update(
-        parseInt(original.dataset.stepid, 10),
-        value,
-        original.dataset.target as Target,
-      ).then(() => {
-        reloadElement('stepsDiv');
-      });
+      if (value !== original.innerText) {
+        StepC.update(
+          parseInt(original.dataset.stepid, 10),
+          value,
+          original.dataset.target as Target,
+        ).then(() => {
+          reloadElement('stepsDiv');
+        });
+      }
       return value;
     },
     listenOn: '.step.editable',

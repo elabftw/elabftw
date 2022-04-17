@@ -165,7 +165,9 @@ document.addEventListener('DOMContentLoaded', () => {
     cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],
     fun: (value, original) => {
-      CommentC.update(parseInt(original.dataset.id, 10), value);
+      if (value !== original.innerText) {
+        CommentC.update(parseInt(original.dataset.id, 10), value);
+      }
       return value;
     },
     inputType: InputType.Textarea,

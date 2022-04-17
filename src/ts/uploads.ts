@@ -36,7 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const malleableFilecomment = new Malle({
     formClasses: ['d-inline-flex'],
     fun: (value, original) => {
-      UploadC.update(value, parseInt(original.dataset.id, 10), Target.Comment);
+      if (value !== original.innerText) {
+        UploadC.update(value, parseInt(original.dataset.id, 10), Target.Comment);
+      }
       return value;
     },
     inputClasses: ['form-control'],

@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif } from './misc';
+import { notif, reloadElement } from './misc';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     destructor: function(json): void {
       notif(json);
       if (json.res) {
-        $('#teamsDiv').load('sysconfig.php #teamsDiv > *');
+        reloadElement('teamsDiv');
       }
     },
   };
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }).then(response => response.json())
         .then(json => {
           if (json.res) {
-            $('#bruteforceDiv').load('sysconfig.php #bruteforceDiv > *');
+            reloadElement('bruteforceDiv');
           }
           notif(json);
         });

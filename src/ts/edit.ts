@@ -6,7 +6,7 @@
  * @package elabftw
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-import { notif } from './misc';
+import { notif, reloadElement } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Payload, Method, Action } from './interfaces';
 import './doodle';
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         notif(json);
         // reload the #filesdiv once the file is uploaded
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-          $('#filesdiv').load(`?mode=edit&id=${String(entity.id)} #filesdiv > *`, function() {
+          reloadElement('filesdiv').then(() => {
             const dropZone = Dropzone.forElement(dropZoneElement);
             // Check to make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
             if (typeof dropZone.tinyImageSuccess !== 'undefined' && dropZone.tinyImageSuccess !== null) {

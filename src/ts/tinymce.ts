@@ -51,7 +51,7 @@ import '../js/tinymce-plugins/mention/plugin.js';
 import EntityClass from './Entity.class';
 import Link from './Link.class';
 import { Target } from './interfaces';
-import { getEntity } from './misc';
+import { getEntity, reloadElement } from './misc';
 
 // AUTOSAVE
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
@@ -174,8 +174,7 @@ export function getTinymceBaseConfig(page: string): object {
           const LinkC = new Link(entity);
           LinkC.create(parseInt(data.id)).then((json) => {
             if (json.res === true) {
-              // only reload children of links_div_id
-              $('#links_div_' + entity.id).load(window.location.href + ' #links_div_' + entity.id + ' > *');
+              reloadElement('links_div_' + entity.id);
             }
           });
         }

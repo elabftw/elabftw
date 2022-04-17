@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif } from './misc';
+import { notif, reloadElement } from './misc';
 import i18next from 'i18next';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let type = elDataset.type;
     const id = elDataset.id;
     const realName = prompt(i18next.t('request-filename'));
-    if (realName == null) {
+    if (realName === null || realName === '') {
       return;
     }
     $.post('app/controllers/EntityAjaxController.php', {
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (type === 'items') {
         type = 'database';
       }
-      $('#filesdiv').load(type + '.php?mode=edit&id=' + id + ' #filesdiv > *');
+      reloadElement('filesdiv');
       notif(json);
     });
   });

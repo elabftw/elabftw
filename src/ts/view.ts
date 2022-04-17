@@ -9,7 +9,7 @@ import i18next from 'i18next';
 import { InputType, Malle } from '@deltablot/malle';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
-import { getEntity, relativeMoment } from './misc';
+import { getEntity, relativeMoment, reloadElement } from './misc';
 import { BoundEvent, Payload, Method, Action, Target } from './interfaces';
 import { DateTime } from 'luxon';
 import EntityClass from './Entity.class';
@@ -149,12 +149,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // CREATE COMMENT
     if (el.matches('[data-action="create-comment"]')) {
       const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
-      CommentC.create(content).then(() => $('#commentsDiv').load(window.location.href + ' #comment'));
+      CommentC.create(content).then(() => reloadElement('commentsDiv'));
 
     // DESTROY COMMENT
     } else if (el.matches('[data-action="destroy-comment"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        CommentC.destroy(parseInt(el.dataset.target, 10)).then(() => $('#commentsDiv').load(window.location.href + ' #comment'));
+        CommentC.destroy(parseInt(el.dataset.target, 10)).then(() => reloadElement('commentsDiv'));
       }
     }
   });

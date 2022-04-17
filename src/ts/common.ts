@@ -58,7 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const AjaxC = new Ajax();
 
-
   // set the language for js translated strings
   i18next.changeLanguage(document.getElementById('user-prefs').dataset.lang);
 
@@ -314,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
           window.location.href = el.dataset.href;
         }
       }
-      
+
     // DESTROY (clear all) NOTIF
     } else if (el.matches('[data-action="destroy-notif"]')) {
       const payload: Payload = {

@@ -228,22 +228,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
-    if (el.matches('[data-action="override-timestamp"]')) {
-      document.getElementById('overrideTimestampContent').toggleAttribute('hidden');
-      const value = (document.getElementById('overrideTimestamp') as HTMLInputElement).checked;
-      const payload: Payload = {
-        method: Method.POST,
-        action: Action.Update,
-        model: Model.Team,
-        target: Target.TsOverride,
-        content: value ? '1' : '0',
-        notif: true,
-      };
-      AjaxC.send(payload).then(json => {
-        notif(json);
-      });
     // CREATE ITEMS TYPES
-    } else if (el.matches('[data-action="itemstypes-create"]')) {
+    if (el.matches('[data-action="itemstypes-create"]')) {
       const title = prompt(i18next.t('template-title'));
       if (title) {
         // no body on template creation

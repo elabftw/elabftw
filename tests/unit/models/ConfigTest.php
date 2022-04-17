@@ -30,7 +30,6 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertTrue($this->Config->update(new ContentParams('some-login', 'ts_login')));
         $this->assertTrue($this->Config->update(new ContentParams('some-pass', 'ts_password')));
-        $this->assertTrue($this->Config->update(new ContentParams('1', 'ts_share')));
         $this->assertTrue($this->Config->update(new ContentParams('https://tsa.example.org', 'ts_url')));
         $this->assertTrue($this->Config->update(new ContentParams('/path/to/cert.pem', 'ts_cert')));
         $this->assertTrue($this->Config->update(new ContentParams('custom', 'ts_authority')));

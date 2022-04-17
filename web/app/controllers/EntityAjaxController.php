@@ -19,7 +19,6 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
-use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Services\ListBuilder;
 use Elabftw\Services\MakeBloxberg;
@@ -127,13 +126,6 @@ try {
     if ($Request->request->has('timestamp') && $Entity instanceof Experiments) {
         // by default, use the instance config
         $config = $App->Config->configArr;
-
-        // if the current team chose to override the default, use that
-        $Teams = new Teams($App->Users);
-        $teamConfigArr = $Teams->read(new ContentParams());
-        if ($teamConfigArr['ts_override'] === '1') {
-            $config = $teamConfigArr;
-        }
 
         if ($config['ts_authority'] === 'dfn') {
             $Maker = new MakeDfnTimestamp($config, $Entity);

@@ -103,7 +103,6 @@ enum Target {
   List = 'list',
   Member = 'member',
   Metadata = 'metadata',
-  TsOverride = 'ts_override',
   TsAuthority = 'ts_authority',
   PrivacyPolicy = 'privacypolicy',
   Rating = 'rating',

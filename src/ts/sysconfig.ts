@@ -160,6 +160,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  /**
+   * Timestamp provider select
+   */
+  const noAccountTsa = ['dfn', 'digicert', 'sectigo', 'globalsign'];
+  if (document.getElementById('ts_authority')) {
+    const select = (document.getElementById('ts_authority') as HTMLSelectElement);
+    // trigger the function when the value is changed
+    select.addEventListener('change', () => {
+      updateTsFieldsVisibility(select);
+    });
+    // and also on page load
+    updateTsFieldsVisibility(select);
+  }
+
+  function updateTsFieldsVisibility(select: HTMLSelectElement) {
+    if (noAccountTsa.includes(select.value)) {
+      // mask all
+      document.getElementById('ts_loginpass').toggleAttribute('hidden', true);
+      document.getElementById('ts_urldiv').toggleAttribute('hidden', true);
+    } else if (select.value === 'universign') {
+      // only make loginpass visible
+      document.getElementById('ts_loginpass').removeAttribute('hidden');
+      document.getElementById('ts_urldiv').toggleAttribute('hidden', true);
+    } else if (select.value === 'custom') {
+      // show all
+      document.getElementById('ts_loginpass').removeAttribute('hidden');
+      document.getElementById('ts_urldiv').removeAttribute('hidden');
+    }
+  }
+
   // MASS MAIL
   $(document).on('click', '#massSend', function() {
     $('#massSend').prop('disabled', true);

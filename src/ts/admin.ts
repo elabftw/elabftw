@@ -89,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#team_groups_div').on('click', '.teamGroupDelete', function() {
     if (confirm(i18next.t('generic-delete-warning'))) {
       TeamGroupC.destroy($(this).data('id')).then(() => {
-        // only reload children
         reloadElement('team_groups_div');
       });
     }
@@ -100,17 +99,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.which === 13 || e.type === 'focusout') {
       const user = parseInt($(this).val() as string, 10);
       const group = $(this).data('group');
-      TeamGroupC.update(user, group, 'add').then(() => {
-        // only reload children
-        reloadElement('team_groups_div');
-      });
+      if (e.target.value !== e.target.defaultValue) {
+        TeamGroupC.update(user, group, 'add').then(() => {
+          reloadElement('team_groups_div');
+        });
+      }
     }
   });
   $('#team_groups_div').on('click', '.rmUserFromGroup', function() {
     const user = $(this).data('user');
     const group = $(this).data('group');
     TeamGroupC.update(user, group, 'rm').then(() => {
-      // only reload children
       reloadElement('team_groups_div');
     });
   });

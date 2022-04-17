@@ -149,7 +149,7 @@
           </a>
           <h3 class='editable teamgroup_name' data-id='{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
           {% for user in teamGroup.users %}
-            <span class='user-badge clickable rmUserFromGroup' data-user='{{ user.userid }}' data-group='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>{{ user.fullname|raw }}</span>
+            <span class='user-badge clickable rmUserFromGroup hover-danger' data-user='{{ user.userid }}' data-group='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>{{ user.fullname|raw }}</span>
           {% endfor %}
           <input aria-label='{{ 'Add user'|trans }}' class='form-control col-md-4 addUserToGroup d-block mt-2' autocomplete='off' data-group={{ teamGroup.id }} placeholder='{{ 'Add user'|trans }}' type='text' />
         </div>

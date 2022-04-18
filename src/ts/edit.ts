@@ -8,7 +8,7 @@
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { notif, reloadElement } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
-import { EntityType, Target, Upload, Payload, Method, Action } from './interfaces';
+import { EntityType, Target, Upload, Payload, Method, Action, PartialEntity } from './interfaces';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
@@ -187,16 +187,20 @@ document.addEventListener('DOMContentLoaded', () => {
       editor.switch();
 
     // IMPORT BODY OF LINKED ITEM INTO EDITOR
-    } else if (el.matches('[data-action="import-link"]')) {
-      // this is here because here tinymce exists and is reachable
-      // before this code was in steps-links.ts but it was not working
-      const id = el.dataset.target;
-      $.get('app/controllers/EntityAjaxController.php', {
-        getBody : true,
-        id : id,
-        type : 'items',
-        editor: editor.type,
-      }).done(json => editor.setContent(json.msg));
+    } else if (el.matches('[data-action="import-link-body"]')) {
+      // this is in this file and not in steps-links-edit because here `editor`
+      // exists and is reachable
+      const payload: Payload = {
+        method: Method.GET,
+        action: Action.Read,
+        model: EntityType.Item,
+        entity: {
+          type: EntityType.Item,
+          id: parseInt(el.dataset.target, 10),
+        },
+        target: Target.Body,
+      };
+      (new Ajax()).send(payload).then(json => editor.setContent((json.value as PartialEntity).body));
 
     // DESTROY ENTITY
     } else if (el.matches('[data-action="destroy"]')) {
@@ -272,10 +276,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   titleInput.addEventListener('blur', () => {
-    const content = titleInput.value;
-    EntityC.update(entity.id, Target.Title, content);
-    // update the page's title
-    document.title = content + ' - eLabFTW';
+    if (titleInput.value !== titleInput.defaultValue) {
+      const content = titleInput.value;
+      titleInput.defaultValue = content;
+      EntityC.update(entity.id, Target.Title, content);
+      // update the page's title
+      document.title = content + ' - eLabFTW';
+    }
   });
 
   // ANNOTATE IMAGE

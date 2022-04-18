@@ -876,7 +876,7 @@ ALTER TABLE `items_types`
 --
 ALTER TABLE `items_types_links`
   ADD KEY `fk_items_types_links_items_id` (`item_id`),
-  ADD KEY `fk_items_types_links_items_id2` (`link_id`);
+  ADD KEY `fk_items_types_links_items_types_id` (`link_id`);
 
 --
 -- Indexes for table `items_types_steps`

@@ -40,40 +40,42 @@
                   {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
                 </span>
                 {% endif %}
-                <span class='float-right mr-2' data-action='toggle-next'><i class='fas fa-chevron-circle-down'></i></span>
-                <div hidden data-save-hidden='extendedStep_{{ step.id }}'>
-                {{ 'Completion time:'|trans }}
-                {% if step.finished %}
-                  <span data-stepid='{{ step.id }}' data-target='finished_time' data-ma-type='datetime-local' data-ma-input-value='{{ step.finished_time|date('Y-m-d\\TH:i') }}' class='step editable hl-hover'>{{ step.finished_time|format_datetime() }}</span>
-                {% else %}
-                  {{ 'Not finished'|trans }}
-                {% endif %}
-                <br>
-
-                <div id='stepDeadlineDiv_{{ step.id }}'>
-                  {{ 'Deadline:'|trans }}
-                  {% if step.deadline %}
-                  <!-- here the data-ma-input-value is formatted so it works with the datetime-local input type, and the displayed one is formatted differently to be more readable -->
-                  <span data-stepid='{{ step.id }}' data-target='deadline' data-ma-type='datetime-local' data-ma-input-value='{{ step.deadline|date('Y-m-d\\TH:i') }}' class='step editable hl-hover'>{{ step.deadline|format_datetime() }}</span>
-                  <!-- notification bell is only shown if the user has at least one notification setting activated for that type of notif -->
-                  {% if App.Users.userData.notif_step_deadline or App.Users.userData.notif_step_deadline_email %}
-                    <span class='ml-2' data-action='step-toggle-deadline-notif' data-stepid='{{ step.id }}' title='{{ 'Toggle notifications'|trans }}'><i class='far fa-bell {{ step.deadline_notif ? 'active' }}' ></i></span>
-                  {% endif %}
-                  <span class='ml-2' data-action='step-destroy-deadline' data-stepid='{{ step.id }}' title='{{ 'Clear deadline'|trans }}'><i class='fas fa-trash-alt' ></i></span>
+                {% if mode != 'edit-template' %}
+                  <span class='float-right mr-2' data-action='toggle-next' data-icon='extendedStepIcon_{{ step.id }}'><i id='extendedStepIcon_{{ step.id }}' class='fas fa-chevron-circle-right'></i></span>
+                  <div hidden data-save-hidden='extendedStep_{{ step.id }}'>
+                  {{ 'Completion time:'|trans }}
+                  {% if step.finished %}
+                    <span data-stepid='{{ step.id }}' data-target='finished_time' data-ma-type='datetime-local' data-ma-input-value='{{ step.finished_time|date('Y-m-d\\TH:i') }}' class='step editable hl-hover'>{{ step.finished_time|format_datetime() }}</span>
                   {% else %}
-                  <span data-action='replace-with-next' title='{{ 'Add deadline'|trans }}'><i class='fas fa-plus-circle'></i></span>
-                  <div hidden>
-                    <select class='form-control-inline' id='stepSelectDeadline_{{ step.id }}'>
-                      <option disabled>{{ 'Set deadline in'|trans }}</option>
-                      <option value='{{ '+1 hour'|toDatetime }}'>1 hour</option>
-                      <option value='{{ '+1 day'|toDatetime }}'>1 day</option>
-                      <option value='{{ '+1 week'|toDatetime }}'>1 week</option>
-                    </select>
-                    <button class='button btn btn-primary' data-action='step-update-deadline' data-stepid='{{ step.id }}'>{{ 'Save'|trans }}</button>
-                  </div>
+                    {{ 'Not finished'|trans }}
                   {% endif %}
+                  <br>
+
+                  <div id='stepDeadlineDiv_{{ step.id }}'>
+                    {{ 'Deadline:'|trans }}
+                    {% if step.deadline %}
+                    <!-- here the data-ma-input-value is formatted so it works with the datetime-local input type, and the displayed one is formatted differently to be more readable -->
+                    <span data-stepid='{{ step.id }}' data-target='deadline' data-ma-type='datetime-local' data-ma-input-value='{{ step.deadline|date('Y-m-d\\TH:i') }}' class='step editable hl-hover'>{{ step.deadline|format_datetime() }}</span>
+                    <!-- notification bell is only shown if the user has at least one notification setting activated for that type of notif -->
+                    {% if App.Users.userData.notif_step_deadline or App.Users.userData.notif_step_deadline_email %}
+                      <span class='ml-2' data-action='step-toggle-deadline-notif' data-stepid='{{ step.id }}' title='{{ 'Toggle notifications'|trans }}'><i class='far fa-bell {{ step.deadline_notif ? 'active' }}' ></i></span>
+                    {% endif %}
+                    <span class='ml-2' data-action='step-destroy-deadline' data-stepid='{{ step.id }}' title='{{ 'Clear deadline'|trans }}'><i class='fas fa-trash-alt' ></i></span>
+                    {% else %}
+                    <span data-action='replace-with-next' title='{{ 'Add deadline'|trans }}'><i class='fas fa-plus-circle'></i></span>
+                    <div hidden>
+                      <select class='form-control-inline' id='stepSelectDeadline_{{ step.id }}'>
+                        <option disabled>{{ 'Set deadline in'|trans }}</option>
+                        <option value='{{ '+1 hour'|toDatetime }}'>1 hour</option>
+                        <option value='{{ '+1 day'|toDatetime }}'>1 day</option>
+                        <option value='{{ '+1 week'|toDatetime }}'>1 week</option>
+                      </select>
+                      <button class='button btn btn-primary' data-action='step-update-deadline' data-stepid='{{ step.id }}'>{{ 'Save'|trans }}</button>
+                    </div>
+                    {% endif %}
+                    </div>
                   </div>
-                </div>
+                {% endif %}
               </div>
             </div>
           {% endfor %}
@@ -108,7 +110,7 @@
                         <i class="fas fa-arrows-down-to-line"></i>
                       </a>
 
-                      <a data-action='import-link' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}'>
+                      <a data-action='import-link-body' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}'>
                         <i class='fas fa-lg fa-file-import'></i>
                       </a>
                     {% endif %}
@@ -128,7 +130,7 @@
                     <span class='input-group-text'>{{ 'Add a link'|trans }}</span>
                 </div>
                 <input aria-label='{{ 'Add a link'|trans }}' type='text' data-autocomplete='links' id='linkinput' class='form-control' data-id='{{ Entity_id }}' placeholder='{{ 'from the database'|trans }}' />
-                <div class='input-group-append'>
+                <div class='input-group-append' style='max-width:33%;'>
                   <select id='addLinkCatFilter' class='brl-none form-control'>
                     <option selected value=''>{{ 'Any category'|trans }}</option>
                     {% for cat in itemsCategoryArr %}

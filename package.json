@@ -8,7 +8,7 @@
   "dependencies": {
     "3dmol": "^1.4.0",
     "@deltablot/chemdoodle-web-mini": "^9.2.1",
-    "@deltablot/malle": "0.5.0",
+    "@deltablot/malle": "^0.6.1",
     "@deltablot/open-vector-editor-umd": "^17.3.6",
     "@fancyapps/fancybox": "3.5.*",
     "@fortawesome/fontawesome-svg-core": "^6.1.0",

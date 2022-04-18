@@ -21,22 +21,15 @@ START TRANSACTION;
         ON (users2team_groups.groupid = team_groups.id)
       WHERE team_groups.id IS NULL;
     -- users2team_groups remove duplicates, triplicates, ...
-    DELETE FROM users2team_groups
-    WHERE id IN (
-      SELECT id FROM (
-        SELECT MIN(u2tg1.id) as id
-        FROM users2team_groups AS u2tg1
-        INNER JOIN users2team_groups AS u2tg2
-          ON (u2tg1.userid = u2tg2.userid
-            AND u2tg1.groupid = u2tg2.groupid
-            AND u2tg1.id < u2tg2.id
-          )
-        GROUP BY u2tg1.id
-      ) tmp
-    );
-    -- users2team_groups change PRIMARY KEY
-    ALTER TABLE `users2team_groups` DROP `id`;
-    ALTER TABLE `users2team_groups` ADD PRIMARY KEY(`userid`, `groupid`);
+    CREATE TABLE `tmp` LIKE `users2team_groups`;
+    -- tmp change PRIMARY KEY
+    ALTER TABLE `tmp` DROP `id`;
+    ALTER TABLE `tmp` ADD PRIMARY KEY (`userid`, `groupid`);
+    -- Copy data to tmp, ignore duplicates
+    INSERT IGNORE INTO `tmp` SELECT `userid`, `groupid` FROM `users2team_groups`;
+    -- Drop original and rename tmp
+    DROP TABLE `users2team_groups`;
+    RENAME TABLE `tmp` TO `users2team_groups`;
     -- users2team_groups add FKs
     ALTER TABLE `users2team_groups`
       ADD KEY `fk_users2team_groups_groupid` (`groupid`),

@@ -22,11 +22,11 @@ use Elabftw\Models\Status;
 use Elabftw\Models\Templates;
 use Elabftw\Services\ListBuilder;
 use Elabftw\Services\MakeBloxberg;
+use Elabftw\Services\MakeCustomTimestamp;
 use Elabftw\Services\MakeDfnTimestamp;
 use Elabftw\Services\MakeDigicertTimestamp;
 use Elabftw\Services\MakeGlobalSignTimestamp;
 use Elabftw\Services\MakeSectigoTimestamp;
-use Elabftw\Services\MakeTimestamp;
 use Elabftw\Services\MakeUniversignTimestamp;
 use Elabftw\Services\MakeUniversignTimestampDev;
 use Elabftw\Services\TimestampUtils;
@@ -143,7 +143,7 @@ try {
         } elseif ($config['ts_authority'] === 'globalsign') {
             $Maker = new MakeGlobalSignTimestamp($config, $Entity);
         } else {
-            $Maker = new MakeTimestamp($config, $Entity);
+            $Maker = new MakeCustomTimestamp($config, $Entity);
         }
 
         $pdfBlob = $Maker->generatePdf();

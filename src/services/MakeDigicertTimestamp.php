@@ -15,7 +15,7 @@ use function dirname;
  * RFC3161 timestamping with Digicert timestamping service
  * https://knowledge.digicert.com/generalinformation/INFO4231.html
  */
-class MakeDigicertTimestamp extends MakeTimestamp
+class MakeDigicertTimestamp extends AbstractMakeTimestamp
 {
     protected const TS_URL = 'http://timestamp.digicert.com';
 

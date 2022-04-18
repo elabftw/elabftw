@@ -37,6 +37,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
     {
         $this->configArr = array(
             'proxy' => '',
+            'ts_limit' => '0',
         );
         $this->dataPath = dirname(__DIR__, 2) . '/_data/';
         $this->fixturesFs = (new StorageFactory(StorageFactory::FIXTURES))->getStorage()->getFs();
@@ -48,15 +49,40 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         // create a new experiment for timestamping tests
         $Entity->setId($Entity->create(new EntityParams('ts test')));
         // default status is not timestampable
-        $Maker = new MakeTimestamp($this->configArr, $Entity);
+        $Maker = new MakeDfnTimestamp($this->configArr, $Entity);
         $this->expectException(ImproperActionException::class);
         $Maker->generatePdf();
     }
 
+    public function testTimestampLimitReached(): void
+    {
+        $configArr = array(
+            'proxy' => '',
+            'ts_limit' => '-1',
+        );
+        $this->expectException(ImproperActionException::class);
+        $Maker = new MakeDfnTimestamp($configArr, $this->getFreshTimestampableEntity());
+    }
+
     public function testGetFileName(): void
     {
-        $Maker = new MakeTimestamp($this->configArr, $this->getFreshTimestampableEntity());
+        $Maker = new MakeDfnTimestamp($this->configArr, $this->getFreshTimestampableEntity());
         $this->assertStringContainsString('-timestamped.zip', $Maker->getFileName());
+    }
+
+    public function testCustomTimestamp(): void
+    {
+        $configArr = array(
+            'proxy' => '',
+            'ts_limit' => '0',
+            'ts_login' => '',
+            'ts_password' => Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(SECRET_KEY)),
+            'ts_url' => 'https://ts.example.com',
+            'ts_cert' => 'dummy.crt',
+            'ts_hash' => 'sha1337',
+        );
+        $Maker = new MakeCustomTimestamp($configArr, $this->getFreshTimestampableEntity());
+        $this->assertIsArray($Maker->getTimestampParameters());
     }
 
     public function testDfnTimestamp(): void

@@ -13,7 +13,7 @@ namespace Elabftw\Services;
  * RFC3161 timestamping with GlobalSign timestamping service
  * https://www.globalsign.com/en/timestamp-service
  */
-class MakeGlobalSignTimestamp extends MakeTimestamp
+class MakeGlobalSignTimestamp extends AbstractMakeTimestamp
 {
     protected const TS_URL = 'http://timestamp.globalsign.com/tsa/r6advanced1';
 

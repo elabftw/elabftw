@@ -190,7 +190,7 @@
                         <input type='hidden' name='id' value='{{ upload.id }}' />
                         <input type='hidden' name='model' value='upload' />
                         {{ App.Session.get('csrf')|csrf }}
-                        <input type='file' style='display:inline' name='content' />
+                        <input type='file' style='display:inline' name='content' required />
                         <button type='submit' class='button btn btn-primary'>{{ 'OK'|trans }}</button>
                       </form>
                     </div>

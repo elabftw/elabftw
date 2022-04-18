@@ -276,11 +276,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   titleInput.addEventListener('blur', () => {
-    const content = titleInput.value;
-    EntityC.update(entity.id, Target.Title, content);
-    // update the page's title
-    document.title = content + ' - eLabFTW';
-  });
+    if (titleInput.value !== titleInput.defaultValue) {
+      const content = titleInput.value;
+      titleInput.defaultValue = content;
+      EntityC.update(entity.id, Target.Title, content);
+      // update the page's title
+      document.title = content + ' - eLabFTW';
+    }  });
 
   // ANNOTATE IMAGE
   $(document).on('click', '.annotateImg',  function() {

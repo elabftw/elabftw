@@ -41,7 +41,7 @@
                 </span>
                 {% endif %}
                 {% if mode != 'edit-template' %}
-                  <span class='float-right mr-2' data-action='toggle-next'><i class='fas fa-chevron-circle-down'></i></span>
+                  <span class='float-right mr-2' data-action='toggle-next' data-icon='extendedStepIcon_{{ step.id }}'><i id='extendedStepIcon_{{ step.id }}' class='fas fa-chevron-circle-right'></i></span>
                   <div hidden data-save-hidden='extendedStep_{{ step.id }}'>
                   {{ 'Completion time:'|trans }}
                   {% if step.finished %}

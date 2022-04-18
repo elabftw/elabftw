@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
       adjustHiddenState();
       makeSortableGreatAgain();
       relativeMoment();
-    }).observe(document.getElementById('stepsDiv'), {childList: true, subtree: true});
+    }).observe(document.getElementById('stepsDiv'), {childList: true});
   }
 
   // FINISH
@@ -129,8 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const stepId = e.currentTarget.dataset.stepid;
     const StepNew = new Step(newentity);
     StepNew.finish(stepId).then(() => {
-      // only reload children
-      reloadElement('steps_div_' + entity.id).then(() => {
+      reloadElement('stepsDiv').then(() => {
         // keep to do list in sync
         $('#todo_step_' + stepId).prop('checked', $('.stepbox[data-stepid="' + stepId + '"]').prop('checked'));
       });
@@ -142,8 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (confirm(i18next.t('step-delete-warning'))) {
       const stepId = e.currentTarget.dataset.stepid;
       StepC.destroy(stepId).then(() => {
-        // only reload children
-        reloadElement('steps_div_' + entity.id).then(() => {
+        reloadElement('stepsDiv').then(() => {
           // keep to do list in sync
           $('#todo_step_' + stepId).parent().hide();
         });

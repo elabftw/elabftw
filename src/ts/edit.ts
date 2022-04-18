@@ -282,7 +282,8 @@ document.addEventListener('DOMContentLoaded', () => {
       EntityC.update(entity.id, Target.Title, content);
       // update the page's title
       document.title = content + ' - eLabFTW';
-    }  });
+    }
+  });
 
   // ANNOTATE IMAGE
   $(document).on('click', '.annotateImg',  function() {

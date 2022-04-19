@@ -127,11 +127,13 @@ class Filter
         // create base config for html5
         $config = HTMLPurifier_HTML5Config::createDefault();
         // allow only certain elements
-        $config->set('HTML.Allowed', 'div[class],br,p[class|style],sub,img[src|class],sup,strong,b,em,u,a[href],s,span[style],ul,li,ol,dl,dt,dd,blockquote,h1,h2,h3,h4,h5,h6,hr,table[style],tr[style],td[style],th[style],code,video,audio,pre[class],details,summary,figure,figcaption');
+        $config->set('HTML.Allowed', 'div[class],br,p[class|style],sub,img[src|class|style],sup,strong,b,em,u,a[href],s,span[style],ul,li,ol,dl,dt,dd,blockquote,h1,h2,h3,h4,h5,h6,hr,table[style],tr[style],td[style],th[style],code,video,audio,pre[class],details,summary,figure,figcaption');
         $config->set('HTML.TargetBlank', true);
         // configure the cache for htmlpurifier
         $tmpDir = FsTools::getCacheFolder('purifier');
         $config->set('Cache.SerializerPath', $tmpDir);
+        // allow "display" css attribute
+        $config->set('CSS.AllowTricky', true);
 
         $purifier = new HTMLPurifier($config);
         return $purifier->purify($input);

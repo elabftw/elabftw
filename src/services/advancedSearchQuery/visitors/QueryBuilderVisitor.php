@@ -216,11 +216,12 @@ class QueryBuilderVisitor implements Visitor
         $param = $this->getUniqueID();
 
         return new WhereCollector(
-            '(uploads.comments LIKE ' . $param . ' OR uploads.real_names LIKE ' . $param ')',
+            '(uploads.comments LIKE ' . $param . ' OR uploads.real_names LIKE ' . $param . ')',
             array(array(
                 'param' => $param,
                 'value' => '%' . $searchTerm . '%',
                 'type' => PDO::PARAM_STR,
+                'searchAttachments' => true,
            )),
         );
     }

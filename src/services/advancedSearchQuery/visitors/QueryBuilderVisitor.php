@@ -37,11 +37,14 @@ class QueryBuilderVisitor implements Visitor
     public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): WhereCollector
     {
         $param = $this->getUniqueID();
-        $query = '(entity.body' . ' LIKE ' . $param . ' OR ' . 'entity.title' . ' LIKE ' . $param . ')';
 
         return new WhereCollector(
-            $query,
-            array(array('param' => $param, 'value' => '%' . $simpleValueWrapper->getValue() . '%', 'type' => PDO::PARAM_STR)),
+            '(entity.body LIKE ' . $param . ' OR entity.title LIKE ' . $param . ')',
+            array(array(
+                'param' => $param,
+                'value' => '%' . $simpleValueWrapper->getValue() . '%',
+                'type' => PDO::PARAM_STR,
+            )),
         );
     }
 
@@ -56,13 +59,25 @@ class QueryBuilderVisitor implements Visitor
         if ($dateType === 'simple') {
             $param = $this->getUniqueID();
             $query = $column . $dateField->getOperator() . $param;
-            $bindValues[] = array('param' => $param, 'value' => $dateField->getValue(), 'type' => PDO::PARAM_INT);
+            $bindValues[] = array(
+                'param' => $param,
+                'value' => $dateField->getValue(),
+                'type' => PDO::PARAM_INT,
+            );
         } elseif ($dateType === 'range') {
             $paramMin = $this->getUniqueID();
             $paramMax = $this->getUniqueID();
             $query = $column . ' BETWEEN ' . $paramMin . ' AND ' . $paramMax;
-            $bindValues[] = array('param' => $paramMin, 'value' => $dateField->getValue(), 'type' => PDO::PARAM_INT);
-            $bindValues[] = array('param' => $paramMax, 'value' => $dateField->getDateTo(), 'type' => PDO::PARAM_INT);
+            $bindValues[] = array(
+                'param' => $paramMin,
+                'value' => $dateField->getValue(),
+                'type' => PDO::PARAM_INT,
+            );
+            $bindValues[] = array(
+                'param' => $paramMax,
+                'value' => $dateField->getDateTo(),
+                'type' => PDO::PARAM_INT,
+            );
         }
         return new WhereCollector($query, $bindValues);
     }

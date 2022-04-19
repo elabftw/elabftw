@@ -10,14 +10,11 @@
 
 namespace Elabftw\Services;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\TimestampResponseInterface;
 use Elabftw\Models\Experiments;
-use const SECRET_KEY;
 use ZipArchive;
 
 /**
@@ -25,11 +22,8 @@ use ZipArchive;
  * Based on:
  * http://www.d-mueller.de/blog/dealing-with-trusted-timestamps-in-php-rfc-3161
  */
-class MakeTimestamp extends AbstractMake
+abstract class AbstractMakeTimestamp extends AbstractMake
 {
-    /** default hash algo for file */
-    private const TS_HASH = 'sha256';
-
     public string $pdfPath = '';
 
     /** @var Experiments $Entity */
@@ -39,6 +33,7 @@ class MakeTimestamp extends AbstractMake
     {
         parent::__construct($entity);
         $this->Entity->canOrExplode('write');
+        $this->checkMonthlyLimit();
     }
 
     public function getFileName(): string
@@ -72,30 +67,7 @@ class MakeTimestamp extends AbstractMake
      *
      * @return array<string,string>
      */
-    public function getTimestampParameters(): array
-    {
-        $config = $this->configArr;
-
-        $password = '';
-        if (($config['ts_password'] ?? '') !== '') {
-            $password = Crypto::decrypt($config['ts_password'], Key::loadFromAsciiSafeString(SECRET_KEY));
-        }
-
-        $hash = $config['ts_hash'];
-        $allowedAlgos = array('sha256', 'sha384', 'sha512');
-        if (!in_array($hash, $allowedAlgos, true)) {
-            $hash = self::TS_HASH;
-        }
-
-        return array(
-            'ts_login' => $config['ts_login'],
-            'ts_password' => $password,
-            'ts_url' => $config['ts_url'],
-            'ts_cert' => $config['ts_cert'],
-            'ts_hash' => $hash,
-            'ts_chain' => '/etc/ssl/cert.pem',
-            );
-    }
+    abstract public function getTimestampParameters(): array;
 
     /**
      * Generate the pdf to timestamp
@@ -125,5 +97,17 @@ class MakeTimestamp extends AbstractMake
             throw new ImproperActionException('Could not get response time!');
         }
         return date('Y-m-d H:i:s', $time);
+    }
+
+    private function checkMonthlyLimit(): void
+    {
+        $limit = (int) $this->configArr['ts_limit'];
+        // a limit of 0 means no limit
+        if ($limit === 0) {
+            return;
+        }
+        if ($this->Entity->getTimestampLastMonth() >= $limit) {
+            throw new ImproperActionException(_('Number of timestamps this past month reached the limit!'));
+        }
     }
 }

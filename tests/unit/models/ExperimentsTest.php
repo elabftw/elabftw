@@ -114,4 +114,9 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Experiments->addMetadataFilter('key', 'value');
     }
+
+    public function testGetTimestampThisMonth(): void
+    {
+        $this->assertEquals(0, $this->Experiments->getTimestampLastMonth());
+    }
 }

@@ -181,6 +181,17 @@ class Experiments extends AbstractEntity
         return parent::destroy() && $this->Pins->cleanup();
     }
 
+    /**
+     * Count the number of timestamped experiments during past month (sliding window)
+     */
+    public function getTimestampLastMonth(): int
+    {
+        $sql = 'SELECT COUNT(id) FROM experiments WHERE timestamped = 1 AND timestampedwhen > (NOW() - INTERVAL 1 MONTH)';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
     protected function getBoundEvents(): array
     {
         $sql = 'SELECT team_events.* from team_events WHERE experiment = :id';

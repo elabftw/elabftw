@@ -13,7 +13,7 @@ namespace Elabftw\Services;
  * RFC3161 timestamping with Sectigo timestamping service
  * https://sectigo.com/resource-library/time-stamping-server
  */
-class MakeSectigoTimestamp extends MakeTimestamp
+class MakeSectigoTimestamp extends AbstractMakeTimestamp
 {
     protected const TS_URL = 'http://timestamp.sectigo.com/';
 

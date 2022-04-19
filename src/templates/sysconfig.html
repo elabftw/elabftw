@@ -261,12 +261,6 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 <div class='box' data-tabcontent='4' hidden>
   <h3>{{ 'Timestamping Configuration'|trans }}</h3>
   <hr>
-  <label for='ts_share'>{{ 'The teams can use the credentials below to timestamp:'|trans }}</label>
-  <select class='form-control col-md-4' data-trigger='change' data-model='config' data-target='ts_share' id='ts_share' autocomplete='off'>
-    <option value='1' {{ App.Config.configArr.ts_share ? ' selected' }}>{{ 'Yes'|trans }}</option>
-    <option value='0' {{ not App.Config.configArr.ts_share ? 'selected' }}>{{ 'No'|trans }}</option>
-  </select>
-  <p class='smallgray'>{{ 'You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login information in the admin panel.'|trans|raw }}</p>
   {% include 'ts-config.html' %}
 
   <h3 class='mt-3'>{{ 'Blockchain timestamp configuration'|trans }}</h3>

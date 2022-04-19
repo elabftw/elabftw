@@ -25,7 +25,6 @@
   <li data-action='switch-tab' data-tabtarget='6'>{{ 'Import'|trans }}</li>
   <li data-action='switch-tab' data-tabtarget='7'>{{ 'Export'|trans }}</li>
   <li data-action='switch-tab' data-tabtarget='8'>{{ 'Tag manager'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='9'>{{ 'Timestamp'|trans }}</li>
 </ul>
 
 <!-- loading spinner -->
@@ -499,31 +498,6 @@
       {% for tag in tagsArr %}
         <p><a class='mr-1 clickable' data-action='destroy-tag' data-tagid='{{ tag.id }}' title='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></a><span class='tag editable hl-hover' data-tagid='{{ tag.id }}'>{{ tag.tag|raw }}</span></p>
       {% endfor %}
-    </div>
-  </div>
-</div>
-
-<!-- TAB 9 TIMESTAMP -->
-<div data-tabcontent='9' hidden>
-  <div class='box'>
-    <h3>{{ 'Configure timestamping'|trans }}</h3>
-    <hr>
-    {{ 'The general timestamping configuration is set to %s.'|trans|format(App.Config.configArr.ts_authority|capitalize) }}
-    {% if App.Config.configArr.ts_share %}
-      {{ 'You can use the general configuration or setup another below.'|trans }}
-    {% else %}
-      {{ 'Timestamping service credentials sharing is disabled. You need to enter your own credentials.'|trans }}
-    {% endif %}
-
-    <!-- allow the team admin to select another tsa -->
-    <div class='form-check mt-2'>
-      <input data-action='override-timestamp' {{ teamConfigArr.ts_override ? 'checked' : '' }} autocomplete='off' class='form-check-input' type='checkbox' id='overrideTimestamp' />
-      <label class='form-check-label' for='overrideTimestamp'>{{ 'Override general timestamping config'|trans }}</label>
-    </div>
-
-    <!-- this block is only showed if the override is set to true (1) -->
-    <div class='mt-2' {{ teamConfigArr.ts_override != '1' ? 'hidden' : '' }} id='overrideTimestampContent'>
-      {% include 'ts-config.html' %}
     </div>
   </div>
 </div>

@@ -19,15 +19,14 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
-use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Services\ListBuilder;
 use Elabftw\Services\MakeBloxberg;
+use Elabftw\Services\MakeCustomTimestamp;
 use Elabftw\Services\MakeDfnTimestamp;
 use Elabftw\Services\MakeDigicertTimestamp;
 use Elabftw\Services\MakeGlobalSignTimestamp;
 use Elabftw\Services\MakeSectigoTimestamp;
-use Elabftw\Services\MakeTimestamp;
 use Elabftw\Services\MakeUniversignTimestamp;
 use Elabftw\Services\MakeUniversignTimestampDev;
 use Elabftw\Services\TimestampUtils;
@@ -128,13 +127,6 @@ try {
         // by default, use the instance config
         $config = $App->Config->configArr;
 
-        // if the current team chose to override the default, use that
-        $Teams = new Teams($App->Users);
-        $teamConfigArr = $Teams->read(new ContentParams());
-        if ($teamConfigArr['ts_override'] === '1') {
-            $config = $teamConfigArr;
-        }
-
         if ($config['ts_authority'] === 'dfn') {
             $Maker = new MakeDfnTimestamp($config, $Entity);
         } elseif ($config['ts_authority'] === 'universign') {
@@ -151,7 +143,7 @@ try {
         } elseif ($config['ts_authority'] === 'globalsign') {
             $Maker = new MakeGlobalSignTimestamp($config, $Entity);
         } else {
-            $Maker = new MakeTimestamp($config, $Entity);
+            $Maker = new MakeCustomTimestamp($config, $Entity);
         }
 
         $pdfBlob = $Maker->generatePdf();

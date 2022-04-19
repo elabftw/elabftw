@@ -177,7 +177,6 @@ final class Config
             ('ts_authority', 'dfn'),
             ('ts_login', NULL),
             ('ts_password', NULL),
-            ('ts_share', '1'),
             ('ts_url', 'NULL'),
             ('ts_cert', NULL),
             ('ts_hash', 'sha256'),

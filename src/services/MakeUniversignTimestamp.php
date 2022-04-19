@@ -19,7 +19,7 @@ use const SECRET_KEY;
  * RFC3161 timestamping with Universign service
  * https://www.universign.com/en/
  */
-class MakeUniversignTimestamp extends MakeTimestamp
+class MakeUniversignTimestamp extends AbstractMakeTimestamp
 {
     protected const TS_URL = 'https://ws.universign.eu/tsa';
 

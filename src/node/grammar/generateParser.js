@@ -20,7 +20,7 @@ fs.readFile('./src/node/grammar/queryGrammar.pegjs', 'utf8', (err, data) => {
 
   fs.mkdir(
     './cache/advancedSearchQuery',
-    { recursive: true, mode: 0777 },
+    {recursive: true, mode: 0700},
     err => {
       if (err) {
         throw err;
@@ -36,6 +36,7 @@ fs.readFile('./src/node/grammar/queryGrammar.pegjs', 'utf8', (err, data) => {
             parserClassName: 'Parser',
           },
         }),
+        {mode: 0600},
         err => {
           if (err) {
             throw err;

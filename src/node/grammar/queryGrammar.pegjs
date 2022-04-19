@@ -163,15 +163,15 @@ FieldAttachment
   = 'attachment'i ':' term:(
     bool:Boolean
       {
-        return new SimpleValueWrapper($bool)
+        return new SimpleValueWrapper($bool);
       }
     / terms:(List / Literal)
       {
-        return $terms
+        return $terms;
       }
   )
   {
-    return new Field('attachment', $term));
+    return new Field('attachment', $term);
   }
 
 List 'quoted term'

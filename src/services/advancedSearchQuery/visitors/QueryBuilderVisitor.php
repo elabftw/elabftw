@@ -203,10 +203,25 @@ class QueryBuilderVisitor implements Visitor
 
     private function visitFieldAttachment(string $searchTerm, VisitorParameters $parameters): WhereCollector
     {
-        return $this->getWhereCollector(
-            'IFNULL(uploads.has_attachment, 0) = ',
-            $searchTerm,
-            PDO::PARAM_INT,
+        // Are we checking if there is any attachment at all
+        if ($searchTerm === '0' || $searchTerm === '1') {
+            return $this->getWhereCollector(
+                'IFNULL(uploads.has_attachment, 0) = ',
+                $searchTerm,
+                PDO::PARAM_INT,
+            );
+        }
+
+        // Or are we searching in comments or real_names
+        $param = $this->getUniqueID();
+
+        return new WhereCollector(
+            '(uploads.comments LIKE ' . $param . ' OR uploads.real_names LIKE ' . $param ')',
+            array(array(
+                'param' => $param,
+                'value' => '%' . $searchTerm . '%',
+                'type' => PDO::PARAM_STR,
+           )),
         );
     }
 

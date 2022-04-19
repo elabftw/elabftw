@@ -754,7 +754,9 @@ abstract class AbstractEntity implements CrudInterface
         $uploadsJoin = 'LEFT JOIN (
             SELECT uploads.item_id AS up_item_id,
                 (uploads.item_id IS NOT NULL) AS has_attachment,
-                uploads.type
+                uploads.type,
+                GROUP_CONCAT(DISTINCT uploads.comment SEPARATOR '|') AS comments,
+                GROUP_CONCAT(DISTINCT uploads.real_name SEPARATOR '|') AS real_names
             FROM uploads
             GROUP BY uploads.item_id, uploads.type)
             AS uploads

@@ -31,6 +31,9 @@ jobs:
           command: |
               REPO=elabftw/elabimg
               TAG=hypernext
+              curl -s -H "Authorization: Bearer $DOCKERHUB_PULL_TOKEN" \
+                  -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+                  https://index.docker.io/v2/$REPO/manifests/$TAG
               IMAGE_DIGEST=$(curl -s -H "Authorization: Bearer $DOCKERHUB_PULL_TOKEN" \
                   -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
                   https://index.docker.io/v2/$REPO/manifests/$TAG \

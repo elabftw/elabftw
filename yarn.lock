@@ -2870,10 +2870,10 @@ performance-now@^2.1.0:
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
 
-phpeggy@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/phpeggy/-/phpeggy-1.0.0.tgz#585aa680b813c3d6b78ad1427e2162b5cfa590a2"
-  integrity sha512-nFeM0sE6WfxZ5PlQvBoo0TWvwm3W819RDkv16Or02PQIfVlO0FVmFq56kH6F0aNifBxE5DQKHwhw5HBNA4xCtQ==
+phpeggy@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/phpeggy/-/phpeggy-1.0.1.tgz#c5914fe960a9880b27c9270678b93f5748640983"
+  integrity sha512-wMrxoPlCmKHCRdY4UriTzDE5hBdBaXxCIBuebLeMlk+LkAIBsZAF251i7EspetlZSqcKkT0eo93v+tzZ053glw==
 
 picocolors@^1.0.0:
   version "1.0.0"

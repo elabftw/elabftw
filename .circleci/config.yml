@@ -23,36 +23,42 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 20.10.11
-          # docker_layer_caching is behind a paywall so we do it manually below
           # docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
+          # docker_layer_caching is behind a paywall so we do it manually below
+          # based on: https://anonoz.github.io/tech/2018/06/17/circleci-docker-caching.html
+      - run:
+          name: Check if there are newer images on Docker Hub
+          command: |
+              REPO=elabftw/elabimg
+              TAG=hypernext
+              TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:$REPO:pull" | jq -r .token)
+              IMAGE_DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.docker.distribution.manifest.v2+json" https://index.docker.io/v2/$REPO/manifests/$TAG | jq -r .config.digest)
+              echo $IMAGE_DIGEST >> elabimg-key.txt
+              REPO=library/mysql
+              TAG=8.0
+              TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:$REPO:pull" | jq -r .token)
+              IMAGE_DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.docker.distribution.manifest.v2+json" https://index.docker.io/v2/$REPO/manifests/$TAG | jq -r .config.digest)
+              echo $IMAGE_DIGEST >> mysql-key.txt
       # Restore elabimg cache
       - restore_cache:
           keys:
-            # This branch if available
-            - v1-elabimg-dep-{{ .Branch }}-{{ checksum "elabimg-hypernext.tar" }}
-            # Default branch if not
-            - v1-elabimg-dep-master-
-            # Any branch if there are none on the default branch
-            - v1-elabimg-dep-
+            - v1-elabimg-dep-{{ checksum "elabimg-key.txt" }}
       # Restore mysql cache
       - restore_cache:
           keys:
-            # This branch if available
-            - v1-mysql-dep-{{ .Branch }}-{{ checksum "mysql-8.0.tar" }}
-            # Default branch if not
-            - v1-mysql-dep-master-
-            # Any branch if there are none on the default branch
-            - v1-mysql-dep-
+            - v1-mysql-dep-{{ checksum "mysql-key.txt" }}
       - run:
           name: Load docker images elabimg and mysql from cache
           command: |
-              echo 'export HAS_DOCKER_CACHE="false"' >> $BASH_ENV
-              if [ -f ./elabimg-hypernext.tar ]; then
-                  docker image load -q -i elabimg-hypernext.tar
+              echo 'export HAS_ELABIMG_CACHE="false"' >> $BASH_ENV
+              if [ -f ./elabimg-hypernext.tar.gz ]; then
+                  gunzip -c elabimg-hypernext.tar.gz | docker image load
+                  echo 'export HAS_ELABIMG_CACHE="true"' >> $BASH_ENV
               fi
-              if [ -f ./mysql-8.0.tar ]; then
-                  docker image load -q -i mysql-8.0.tar
-                  echo 'export HAS_DOCKER_CACHE="true"' >> $BASH_ENV
+              echo 'export HAS_MYSQL_CACHE="false"' >> $BASH_ENV
+              if [ -f ./mysql-8.0.tar.gz ]; then
+                  gunzip -c mysql-8.0.tar.gz | docker image load
+                  echo 'export HAS_MYSQL_CACHE="true"' >> $BASH_ENV
               fi
       - run:
           name: Prepare docker-compose.yml
@@ -74,20 +80,22 @@ jobs:
       - run:
           name: Save docker images elabimg and mysql for cache
           command: |
-              if [ "${HAS_DOCKER_CACHE}" == "false" ]; then
-                  docker image save -o elabimg-hypernext.tar elabftw/elabimg:hypernext
-                  docker image save -o mysql-8.0.tar mysql:8.0
+              if [ "${HAS_ELABIMG_CACHE}" == "false" ]; then
+                  docker image save elabftw/elabimg:hypernext | gzip > elabimg-hypernext.tar.gz
+              fi
+              if [ "${HAS_MYSQL_CACHE}" == "false" ]; then
+                  docker image save mysql:8.0 | gzip > mysql-8.0.tar.gz
               fi
       # Save elabimg cache
       - save_cache:
-          key: v1-elabimg-dep-{{ .Branch }}-{{ checksum "elabimg-hypernext.tar" }}
+          key: v1-elabimg-dep-{{ checksum "elabimg-key.txt" }}
           paths:
-            - ./elabimg-hypernext.tar
+            - ./elabimg-hypernext.tar.gz
       # Save mysql cache
       - save_cache:
-          key: v1-mysql-dep-{{ .Branch }}-{{ checksum "mysql-8.0.tar" }}
+          key: v1-mysql-dep-{{ checksum "mysql-key.txt" }}
           paths:
-            - ./mysql-8.0.tar
+            - ./mysql-8.0.tar.gz
       # Restore dependency cache
       - restore_cache:
           keys:

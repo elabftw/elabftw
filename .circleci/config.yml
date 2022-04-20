@@ -23,7 +23,37 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 20.10.11
-          docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
+          # docker_layer_caching is behind a paywall so we do it manually below
+          # docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
+      # Restore elabimg cache
+      - restore_cache:
+          keys:
+            # This branch if available
+            - v1-elabimg-dep-{{ .Branch }}-{{ checksum "elabimg-hypernext.tar" }}
+            # Default branch if not
+            - v1-elabimg-dep-master-
+            # Any branch if there are none on the default branch
+            - v1-elabimg-dep-
+      # Restore mysql cache
+      - restore_cache:
+          keys:
+            # This branch if available
+            - v1-mysql-dep-{{ .Branch }}-{{ checksum "mysql-8.0.tar" }}
+            # Default branch if not
+            - v1-mysql-dep-master-
+            # Any branch if there are none on the default branch
+            - v1-mysql-dep-
+      - run:
+          name: Load docker images elabimg and mysql from cache
+          command: |
+              echo 'export HAS_DOCKER_CACHE="false"' >> $BASH_ENV
+              if [ -f ./elabimg-hypernext.tar ]; then
+                  docker image load -q -i elabimg-hypernext.tar
+              fi
+              if [ -f ./mysql-8.0.tar ]; then
+                  docker image load -q -i mysql-8.0.tar
+                  echo 'export HAS_DOCKER_CACHE="true"' >> $BASH_ENV
+              fi
       - run:
           name: Prepare docker-compose.yml
           # Don't bind mount here, files are copied. See scrutinizer.dockerfile
@@ -41,6 +71,23 @@ jobs:
           command: |
               docker build -t elabtmp -f tests/scrutinizer.dockerfile --progress plain .
               docker-compose -f tests/docker-compose.yml up -d --quiet-pull
+      - run:
+          name: Save docker images elabimg and mysql for cache
+          command: |
+              if [ "${HAS_DOCKER_CACHE}" == "false" ]; then
+                  docker image save -o elabimg-hypernext.tar elabftw/elabimg:hypernext
+                  docker image save -o mysql-8.0.tar mysql:8.0
+              fi
+      # Save elabimg cache
+      - save_cache:
+          key: v1-elabimg-dep-{{ .Branch }}-{{ checksum "elabimg-hypernext.tar" }}
+          paths:
+            - ./elabimg-hypernext.tar
+      # Save mysql cache
+      - save_cache:
+          key: v1-mysql-dep-{{ .Branch }}-{{ checksum "mysql-8.0.tar" }}
+          paths:
+            - ./mysql-8.0.tar
       # Restore dependency cache
       - restore_cache:
           keys:

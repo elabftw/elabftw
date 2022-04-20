@@ -71,9 +71,12 @@ jobs:
               sed -i '\#env_file:#D' tests/docker-compose.yml
               sed -i '\#- elabftw-user\.env#D' tests/docker-compose.yml
       - run:
-          name: Build elabtmp image and start containers
+          name: Build elabtmp image
           command: |
               docker build -t elabtmp -f tests/scrutinizer.dockerfile -q .
+      - run:
+          name: Start containers
+          command: |
               docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       - run:
           name: Save docker images elabimg and mysql for cache

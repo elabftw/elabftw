@@ -49,13 +49,13 @@ jobs:
           name: Load docker images elabimg and mysql from cache
           command: |
               echo 'export HAS_ELABIMG_CACHE="false"' >> $BASH_ENV
-              if [ -f ./elabimg-hypernext.tar.gz ]; then
-                  gunzip -c elabimg-hypernext.tar.gz | docker image load
+              if [ -f ./elabimg-hypernext.tar ]; then
+                  docker image load -q -i elabimg-hypernext.tar
                   echo 'export HAS_ELABIMG_CACHE="true"' >> $BASH_ENV
               fi
               echo 'export HAS_MYSQL_CACHE="false"' >> $BASH_ENV
-              if [ -f ./mysql-8.0.tar.gz ]; then
-                  gunzip -c mysql-8.0.tar.gz | docker image load
+              if [ -f ./mysql-8.0.tar ]; then
+                  docker image load -q -i mysql-8.0.tar
                   echo 'export HAS_MYSQL_CACHE="true"' >> $BASH_ENV
               fi
       - run:
@@ -79,19 +79,19 @@ jobs:
           name: Save docker images elabimg and mysql for cache
           command: |
               if [ "${HAS_ELABIMG_CACHE}" == "false" ]; then
-                  docker image save elabftw/elabimg:hypernext | gzip > elabimg-hypernext.tar.gz
+                  docker image save -o elabimg-hypernext.tar elabftw/elabimg:hypernext
               fi
               if [ "${HAS_MYSQL_CACHE}" == "false" ]; then
-                  docker image save mysql:8.0 | gzip > mysql-8.0.tar.gz
+                  docker image save -o mysql-8.0.tar mysql:8.0
               fi
       - save_cache:
           key: v1-elabimg-dep-{{ checksum "elabimg-key.txt" }}
           paths:
-            - ./elabimg-hypernext.tar.gz
+            - ./elabimg-hypernext.tar
       - save_cache:
           key: v1-mysql-dep-{{ checksum "mysql-key.txt" }}
           paths:
-            - ./mysql-8.0.tar.gz
+            - ./mysql-8.0.tar
       # Restore dependency cache
       - restore_cache:
           keys:

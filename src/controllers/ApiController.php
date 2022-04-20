@@ -146,7 +146,7 @@ class ApiController implements ControllerInterface
                     $this->Request->request->has('bodyappend') ||
                     $this->Request->request->has('body') ||
                     $this->Request->request->has('metadata')) &&
-                    ($this->endpoint === 'experiments' || $this->endpoint === 'items')) {
+                    ($this->endpoint === 'experiments' || $this->endpoint === 'items' || $this->endpoint === 'templates' || $this->endpoint === 'items_types')) {
                     return $this->updateEntity();
                 }
 

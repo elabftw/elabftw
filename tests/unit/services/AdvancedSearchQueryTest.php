@@ -54,6 +54,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $query .= ' timestamped: timestamped:true title:"very cool experiment" visibility:me';
         $query .= ' date:>2020.06,21 date:2020/06-21..20201231';
         $query .= ' group:"Group Name"';
+        $query .= ' attachment:"hello world"';
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',

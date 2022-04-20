@@ -74,7 +74,7 @@ jobs:
           name: Build elabtmp image and start containers
           command: |
               docker build -t elabtmp -f tests/scrutinizer.dockerfile -q .
-              docker compose -f tests/docker-compose.yml up -d --quiet-pull
+              docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       - run:
           name: Save docker images elabimg and mysql for cache
           command: |

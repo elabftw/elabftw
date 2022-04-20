@@ -75,7 +75,6 @@ jobs:
       - run:
           name: Build elabtmp image
           command: |
-              ls -lah
               docker build -t elabtmp -f tests/scrutinizer.dockerfile .
       - run:
           name: Start containers

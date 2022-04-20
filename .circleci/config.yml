@@ -36,6 +36,7 @@ jobs:
                   https://index.docker.io/v2/$REPO/manifests/$TAG \
                   | jq -r .config.digest)
               echo $IMAGE_DIGEST >> elabimg-key.txt
+              cat elabimg-key.txt
               REPO=library/mysql
               TAG=8.0
               IMAGE_DIGEST=$(curl -s -H "Authorization: Bearer $DOCKERHUB_PULL_TOKEN" \

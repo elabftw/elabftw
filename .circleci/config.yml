@@ -51,11 +51,13 @@ jobs:
               echo 'export HAS_ELABIMG_CACHE="false"' >> $BASH_ENV
               if [ -f ./elabimg-hypernext.tar ]; then
                   docker image load -q -i elabimg-hypernext.tar
+                  rm elabimg-hypernext.tar
                   echo 'export HAS_ELABIMG_CACHE="true"' >> $BASH_ENV
               fi
               echo 'export HAS_MYSQL_CACHE="false"' >> $BASH_ENV
               if [ -f ./mysql-8.0.tar ]; then
                   docker image load -q -i mysql-8.0.tar
+                  rm mysql-8.0.tar
                   echo 'export HAS_MYSQL_CACHE="true"' >> $BASH_ENV
               fi
       - run:
@@ -73,6 +75,7 @@ jobs:
       - run:
           name: Build elabtmp image
           command: |
+              ls -lah
               docker build -t elabtmp -f tests/scrutinizer.dockerfile .
       - run:
           name: Start containers

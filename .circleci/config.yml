@@ -63,7 +63,8 @@ jobs:
             - v1-mysql-dep-{{ checksum "mysql-key.txt" }}
       - run:
           name: Log in to docker hub
-          command: docker login -u nicolascarpi -p $DOCKERHUB_PULL_TOKEN
+          command: |
+            docker login -u nicolascarpi -p $DOCKERHUB_PULL_TOKEN
       - run:
           name: Load docker images from cache
           command: |

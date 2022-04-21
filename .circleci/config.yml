@@ -61,17 +61,17 @@ jobs:
       - run:
           name: Load docker images from cache
           command: |
-              echo 'export HAS_ELABIMG_CACHE="false"' >> $BASH_ENV
-              if [ -f ./elabimg-hypernext.tar ]; then
-                  docker image load -q -i elabimg-hypernext.tar
-                  rm elabimg-hypernext.tar
-                  echo 'export HAS_ELABIMG_CACHE="true"' >> $BASH_ENV
-              fi
               echo 'export HAS_ELABCIBASE_CACHE="false"' >> $BASH_ENV
               if [ -f ./elabcibase.tar ]; then
                   docker image load -q -i elabcibase.tar
                   rm elabcibase.tar
                   echo 'export HAS_ELABCIBASE_CACHE="true"' >> $BASH_ENV
+              fi
+              echo 'export HAS_ELABIMG_CACHE="false"' >> $BASH_ENV
+              if [ "${HAS_ELABCIBASE_CACHE}" == "false" ] && [ -f ./elabimg-hypernext.tar ]; then
+                  docker image load -q -i elabimg-hypernext.tar
+                  rm elabimg-hypernext.tar
+                  echo 'export HAS_ELABIMG_CACHE="true"' >> $BASH_ENV
               fi
               echo 'export HAS_MYSQL_CACHE="false"' >> $BASH_ENV
               if [ -f ./mysql-8.0.tar ]; then
@@ -94,14 +94,21 @@ jobs:
       - run:
           name: Build elabtmp image
           command: |
-              source tests/ci-tool-versions.env
-              docker build -t elabcibase \
+              docker images
+              if [ "${HAS_ELABCIBASE_CACHE}" == "false" ]; then
+                  source tests/ci-tool-versions.env
+                  docker build -t elabcibase \
+                      -f tests/scrutinizer.dockerfile \
+                      --build-arg PHPSTAN_VERSION \
+                      --build-arg PSALM_VERSION \
+                      --build-arg PHAN_VERSION \
+                      --build-arg BUILDKIT_INLINE_CACHE=1 \
+                      --target elabcibase .
+              fi
+              docker build -t elabtmp \
                   -f tests/scrutinizer.dockerfile \
-                  --build-arg PHPSTAN_VERSION \
-                  --build-arg PSALM_VERSION \
-                  --build-arg PHAN_VERSION \
-                  --target elabcibase .
-              docker build -t elabtmp -f tests/scrutinizer.dockerfile --target elabtmp .
+                  --cache-from elabcibase:latest
+                  --target elabtmp .
       - run:
           name: Start containers
           command: |

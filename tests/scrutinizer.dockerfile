@@ -1,5 +1,5 @@
 # Dockerfile for CI image
-FROM elabftw/elabimg:hypernext
+FROM elabftw/elabimg:hypernext AS elabcibase
 
 # Set versions of used tools
 ARG PHPSTAN_VERSION=1.4.9
@@ -17,6 +17,8 @@ RUN chmod +x /usr/bin/psalm
 #Phan
 ADD https://github.com/phan/phan/releases/download/$PHAN_VERSION/phan.phar /usr/bin/phan
 RUN chmod +x /usr/bin/phan
+
+FROM elabcibase AS elabtmp
 
 COPY ./bin /elabftw/bin
 COPY ./src /elabftw/src

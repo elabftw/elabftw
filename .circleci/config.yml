@@ -31,13 +31,23 @@ jobs:
           command: |
               REPO=elabftw/elabimg
               TAG=hypernext
-              TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:$REPO:pull" | jq -r .token)
-              IMAGE_DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.docker.distribution.manifest.v2+json" https://index.docker.io/v2/$REPO/manifests/$TAG | jq -r .config.digest)
+              TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:$REPO:pull" \
+                  | jq -r .token)
+              IMAGE_DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" \
+                  -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+                  https://index.docker.io/v2/$REPO/manifests/$TAG \
+                  | jq -r .config.digest)
               echo $IMAGE_DIGEST >> elabimg-key.txt
+              echo $IMAGE_DIGEST >> elabcibase-key.txt
+              sha256sum tests/ci-tool-versions.env >> elabcibase-key.txt
               REPO=library/mysql
               TAG=8.0
-              TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:$REPO:pull" | jq -r .token)
-              IMAGE_DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.docker.distribution.manifest.v2+json" https://index.docker.io/v2/$REPO/manifests/$TAG | jq -r .config.digest)
+              TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:$REPO:pull" \
+                  | jq -r .token)
+              IMAGE_DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" \
+                  -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+                  https://index.docker.io/v2/$REPO/manifests/$TAG \
+                  | jq -r .config.digest)
               echo $IMAGE_DIGEST >> mysql-key.txt
       - restore_cache:
           keys:
@@ -45,6 +55,9 @@ jobs:
       - restore_cache:
           keys:
             - v1-mysql-dep-{{ checksum "mysql-key.txt" }}
+      - restore_cache:
+          keys:
+            - v1-elabcibase-dep-{{ checksum "elabcibase-key.txt" }}
       - run:
           name: Load docker images elabimg and mysql from cache
           command: |
@@ -59,6 +72,12 @@ jobs:
                   docker image load -q -i mysql-8.0.tar
                   rm mysql-8.0.tar
                   echo 'export HAS_MYSQL_CACHE="true"' >> $BASH_ENV
+              fi
+              echo 'export HAS_ELABCIBASE_CACHE="false"' >> $BASH_ENV
+              if [ -f ./elabcibase.tar ]; then
+                  docker image load -q -i elabcibase.tar
+                  rm elabcibase.tar
+                  echo 'export HAS_ELABCIBASE_CACHE="true"' >> $BASH_ENV
               fi
       - run:
           name: Prepare docker-compose.yml
@@ -75,7 +94,16 @@ jobs:
       - run:
           name: Build elabtmp image
           command: |
-              docker build -t elabtmp -f tests/scrutinizer.dockerfile .
+              if [ "${HAS_ELABCIBASE_CACHE}" == "false" ]; then
+                  source tests/ci-tool-versions.env
+                  docker build -t elabcibase \
+                      -f tests/scrutinizer.dockerfile \
+                      --build-arg PHPSTAN_VERSION \
+                      --build-arg PSALM_VERSION \
+                      --build-arg PHAN_VERSION \
+                      --target elabcibase .
+              fi
+              docker build -t elabtmp -f tests/scrutinizer.dockerfile --target elabtmp .
       - run:
           name: Start containers
           command: |
@@ -89,6 +117,9 @@ jobs:
               if [ "${HAS_MYSQL_CACHE}" == "false" ]; then
                   docker image save -o mysql-8.0.tar mysql:8.0
               fi
+              if [ "${HAS_ELABCIBASE_CACHE}" == "false" ]; then
+                  docker image save -o elabcibase.tar elabcibase:latest
+              fi
       - save_cache:
           key: v1-elabimg-dep-{{ checksum "elabimg-key.txt" }}
           paths:
@@ -97,6 +128,10 @@ jobs:
           key: v1-mysql-dep-{{ checksum "mysql-key.txt" }}
           paths:
             - ./mysql-8.0.tar
+      - save_cache:
+          key: v1-elabcibase-dep-{{ checksum "elabcibase-key.txt" }}
+          paths:
+            - ./elabcibase.tar
       # Restore dependency cache
       - restore_cache:
           keys:

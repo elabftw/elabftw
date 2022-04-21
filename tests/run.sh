@@ -42,7 +42,7 @@ if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
         sed -i '\#/elabftw/tests/_output/coverage#D' tests/docker-compose.yml
         # Use the freshly built elabtmp image
         sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
-        docker build -t elabtmp -f tests/scrutinizer.dockerfile --progress plain .
+        docker build -t elabtmp -f tests/scrutinizer.dockerfile --target elabtmp --progress plain .
     fi
     docker-compose -f tests/docker-compose.yml up -d --quiet-pull
     # give some time for containers to start

@@ -19,6 +19,9 @@ jobs:
       auth:
         username: nicolascarpi
         password: $DOCKERHUB_PASSWORD
+    environment:
+        DOCKER_BUILDKIT: 1
+        COMPOSE_DOCKER_CLI_BUILD: 1
     steps:
       - checkout
       - setup_remote_docker:
@@ -58,6 +61,9 @@ jobs:
       - restore_cache:
           keys:
             - v1-mysql-dep-{{ checksum "mysql-key.txt" }}
+      - run:
+          name: Log in to docker hub
+          command: docker login -u nicolascarpi -p $DOCKERHUB_PASSWORD
       - run:
           name: Load docker images from cache
           command: |

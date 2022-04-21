@@ -15,10 +15,10 @@ jobs:
     # To see the list of pre-built images that CircleCI provides for most common languages see
     # https://circleci.com/docs/2.0/circleci-images/
     docker:
-    - image: cimg/base:current
-      auth:
-        username: nicolascarpi
-        password: $DOCKERHUB_PASSWORD
+      - image: cimg/base:current
+        auth:
+          username: nicolascarpi
+          password: $DOCKERHUB_PASSWORD
     environment:
         DOCKER_BUILDKIT: 1
         COMPOSE_DOCKER_CLI_BUILD: 1

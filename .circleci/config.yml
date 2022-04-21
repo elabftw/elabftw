@@ -20,8 +20,8 @@ jobs:
           username: nicolascarpi
           password: $DOCKERHUB_PASSWORD
     environment:
-        DOCKER_BUILDKIT: 1
-        COMPOSE_DOCKER_CLI_BUILD: 1
+      DOCKER_BUILDKIT: 1
+      COMPOSE_DOCKER_CLI_BUILD: 1
     steps:
       - checkout
       - setup_remote_docker:
@@ -32,26 +32,26 @@ jobs:
       - run:
           name: Check if there are newer images on Docker Hub
           command: |
-              REPO=elabftw/elabimg
-              TAG=hypernext
-              TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:$REPO:pull" \
-                  | jq -r .token)
-              IMAGE_DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" \
-                  -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-                  https://index.docker.io/v2/$REPO/manifests/$TAG \
-                  | jq -r .config.digest)
-              echo $IMAGE_DIGEST >> elabimg-key.txt
-              echo $IMAGE_DIGEST >> elabcibase-key.txt
-              sha256sum tests/ci-tool-versions.env >> elabcibase-key.txt
-              REPO=library/mysql
-              TAG=8.0
-              TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:$REPO:pull" \
-                  | jq -r .token)
-              IMAGE_DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" \
-                  -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-                  https://index.docker.io/v2/$REPO/manifests/$TAG \
-                  | jq -r .config.digest)
-              echo $IMAGE_DIGEST >> mysql-key.txt
+            REPO=elabftw/elabimg
+            TAG=hypernext
+            TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:$REPO:pull" \
+              | jq -r .token)
+            IMAGE_DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" \
+              -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+              https://index.docker.io/v2/$REPO/manifests/$TAG \
+              | jq -r .config.digest)
+            echo $IMAGE_DIGEST >> elabimg-key.txt
+            echo $IMAGE_DIGEST >> elabcibase-key.txt
+            sha256sum tests/ci-tool-versions.env >> elabcibase-key.txt
+            REPO=library/mysql
+            TAG=8.0
+            TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:$REPO:pull" \
+              | jq -r .token)
+            IMAGE_DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" \
+              -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+              https://index.docker.io/v2/$REPO/manifests/$TAG \
+              | jq -r .config.digest)
+            echo $IMAGE_DIGEST >> mysql-key.txt
       - restore_cache:
           keys:
             - v1-elabimg-dep-{{ checksum "elabimg-key.txt" }}
@@ -67,70 +67,70 @@ jobs:
       - run:
           name: Load docker images from cache
           command: |
-              echo 'export HAS_ELABCIBASE_CACHE="false"' >> $BASH_ENV
-              if [ -f ./elabcibase.tar ]; then
-                  docker image load -q -i elabcibase.tar
-                  rm elabcibase.tar
-                  echo 'export HAS_ELABCIBASE_CACHE="true"' >> $BASH_ENV
-              fi
-              echo 'export HAS_ELABIMG_CACHE="false"' >> $BASH_ENV
-              if [ "${HAS_ELABCIBASE_CACHE}" == "false" ] && [ -f ./elabimg-hypernext.tar ]; then
-                  docker image load -q -i elabimg-hypernext.tar
-                  rm elabimg-hypernext.tar
-                  echo 'export HAS_ELABIMG_CACHE="true"' >> $BASH_ENV
-              fi
-              echo 'export HAS_MYSQL_CACHE="false"' >> $BASH_ENV
-              if [ -f ./mysql-8.0.tar ]; then
-                  docker image load -q -i mysql-8.0.tar
-                  rm mysql-8.0.tar
-                  echo 'export HAS_MYSQL_CACHE="true"' >> $BASH_ENV
-              fi
+            echo 'export HAS_ELABCIBASE_CACHE="false"' >> $BASH_ENV
+            if [ -f ./elabcibase.tar ]; then
+              docker image load -q -i elabcibase.tar
+              rm elabcibase.tar
+              echo 'export HAS_ELABCIBASE_CACHE="true"' >> $BASH_ENV
+            fi
+            echo 'export HAS_ELABIMG_CACHE="false"' >> $BASH_ENV
+            if [ "${HAS_ELABCIBASE_CACHE}" == "false" ] && [ -f ./elabimg-hypernext.tar ]; then
+              docker image load -q -i elabimg-hypernext.tar
+              rm elabimg-hypernext.tar
+              echo 'export HAS_ELABIMG_CACHE="true"' >> $BASH_ENV
+            fi
+            echo 'export HAS_MYSQL_CACHE="false"' >> $BASH_ENV
+            if [ -f ./mysql-8.0.tar ]; then
+              docker image load -q -i mysql-8.0.tar
+              rm mysql-8.0.tar
+              echo 'export HAS_MYSQL_CACHE="true"' >> $BASH_ENV
+            fi
       - run:
           name: Prepare docker-compose.yml
           # Don't bind mount here, files are copied. See scrutinizer.dockerfile
           # first backslash enables different delimiter than slash
           # remove env_file section
           command: |
-              sed -i '\#volumes:#D' tests/docker-compose.yml
-              sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
-              sed -i '\#/elabftw/tests/_output/coverage#D' tests/docker-compose.yml
-              sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
-              sed -i '\#env_file:#D' tests/docker-compose.yml
-              sed -i '\#- elabftw-user\.env#D' tests/docker-compose.yml
+            sed -i '\#volumes:#D' tests/docker-compose.yml
+            sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
+            sed -i '\#/elabftw/tests/_output/coverage#D' tests/docker-compose.yml
+            sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
+            sed -i '\#env_file:#D' tests/docker-compose.yml
+            sed -i '\#- elabftw-user\.env#D' tests/docker-compose.yml
       - run:
           name: Build elabtmp image
           command: |
-              docker images
-              if [ "${HAS_ELABCIBASE_CACHE}" == "false" ]; then
-                  source tests/ci-tool-versions.env
-                  docker build -t elabcibase \
-                      -f tests/scrutinizer.dockerfile \
-                      --build-arg PHPSTAN_VERSION \
-                      --build-arg PSALM_VERSION \
-                      --build-arg PHAN_VERSION \
-                      --build-arg BUILDKIT_INLINE_CACHE=1 \
-                      --target elabcibase .
-              fi
-              docker build -t elabtmp \
-                  -f tests/scrutinizer.dockerfile \
-                  --cache-from elabcibase:latest \
-                  --target elabtmp .
+            docker images
+            if [ "${HAS_ELABCIBASE_CACHE}" == "false" ]; then
+              source tests/ci-tool-versions.env
+              docker build -t elabcibase \
+                -f tests/scrutinizer.dockerfile \
+                --build-arg PHPSTAN_VERSION \
+                --build-arg PSALM_VERSION \
+                --build-arg PHAN_VERSION \
+                --build-arg BUILDKIT_INLINE_CACHE=1 \
+                --target elabcibase .
+            fi
+            docker build -t elabtmp \
+              -f tests/scrutinizer.dockerfile \
+              --cache-from elabcibase:latest \
+              --target elabtmp .
       - run:
           name: Start containers
           command: |
-              docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
+            docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       - run:
           name: Save docker images elabimg and mysql for cache
           command: |
-              if [ "${HAS_ELABIMG_CACHE}" == "false" ]; then
-                  docker image save -o elabimg-hypernext.tar elabftw/elabimg:hypernext
-              fi
-              if [ "${HAS_ELABCIBASE_CACHE}" == "false" ]; then
-                  docker image save -o elabcibase.tar elabcibase:latest
-              fi
-              if [ "${HAS_MYSQL_CACHE}" == "false" ]; then
-                  docker image save -o mysql-8.0.tar mysql:8.0
-              fi
+            if [ "${HAS_ELABIMG_CACHE}" == "false" ]; then
+              docker image save -o elabimg-hypernext.tar elabftw/elabimg:hypernext
+            fi
+            if [ "${HAS_ELABCIBASE_CACHE}" == "false" ]; then
+              docker image save -o elabcibase.tar elabcibase:latest
+            fi
+            if [ "${HAS_MYSQL_CACHE}" == "false" ]; then
+              docker image save -o mysql-8.0.tar mysql:8.0
+            fi
       - save_cache:
           key: v1-elabimg-dep-{{ checksum "elabimg-key.txt" }}
           paths:
@@ -155,24 +155,24 @@ jobs:
       - run:
           name: Copy dependency cache into container
           command: |
-              echo 'export HAS_CACHE="false"' >> $BASH_ENV
-              if [ -d ./node_modules ]; then
-                  docker cp ./node_modules elabtmp:/elabftw/node_modules
-              fi
-              if [ -d ./yarn.cache ]; then
-                  docker cp ./yarn.cache elabtmp:/usr/local/share/.cache/yarn/
-                  echo 'export HAS_CACHE="true"' >> $BASH_ENV
-              fi
+            echo 'export HAS_CACHE="false"' >> $BASH_ENV
+            if [ -d ./node_modules ]; then
+              docker cp ./node_modules elabtmp:/elabftw/node_modules
+            fi
+            if [ -d ./yarn.cache ]; then
+              docker cp ./yarn.cache elabtmp:/usr/local/share/.cache/yarn/
+              echo 'export HAS_CACHE="true"' >> $BASH_ENV
+            fi
       - run:
           name: Install JS dependencies
           command: docker exec -it elabtmp yarn install --silent --non-interactive --frozen-lockfile
       - run:
           name: Extract dependency cache from container
           command: |
-              if [ "${HAS_CACHE}" == "false" ]; then
-                  docker cp elabtmp:/elabftw/node_modules/ ./node_modules
-                  docker cp elabtmp:/usr/local/share/.cache/yarn/ ./yarn.cache
-              fi
+            if [ "${HAS_CACHE}" == "false" ]; then
+              docker cp elabtmp:/elabftw/node_modules/ ./node_modules
+              docker cp elabtmp:/usr/local/share/.cache/yarn/ ./yarn.cache
+            fi
       # Save dependency cache
       - save_cache:
           key: v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}
@@ -201,8 +201,8 @@ jobs:
           # /usr/bin/psalm, //autoload.php, /root/.cache/ are for psalm
           # /usr/bin/phpstan, /proc/cpuinfo is for phpstan, https://github.com/phpstan/phpstan/issues/4427 https://github.com/phpstan/phpstan/issues/2965
           command: |
-              docker exec -it elabtmp sed -i 's/tmpfile, //' /etc/php8/php.ini
-              docker exec -it elabtmp sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/usr/bin/phpstan:/proc/cpuinfo|' /etc/php8/php.ini
+            docker exec -it elabtmp sed -i 's/tmpfile, //' /etc/php8/php.ini
+            docker exec -it elabtmp sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/usr/bin/phpstan:/proc/cpuinfo|' /etc/php8/php.ini
       - run:
           name: "PHP static analysis: psalm + phpsatn"
           command: docker exec -it elabtmp yarn static

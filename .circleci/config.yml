@@ -62,10 +62,6 @@ jobs:
           keys:
             - v1-mysql-dep-{{ checksum "mysql-key.txt" }}
       - run:
-          name: Log in to docker hub
-          command: |
-            docker login -u nicolascarpi -p $DOCKERHUB_PULL_TOKEN
-      - run:
           name: Load docker images from cache
           command: |
             echo 'export HAS_ELABCIBASE_CACHE="false"' >> $BASH_ENV

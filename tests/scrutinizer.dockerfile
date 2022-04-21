@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.3
 # Dockerfile for CI image
 FROM elabftw/elabimg:hypernext AS elabcibase
 

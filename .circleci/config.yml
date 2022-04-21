@@ -21,11 +21,12 @@ jobs:
           password: $DOCKERHUB_PULL_TOKEN
     environment:
       DOCKER_BUILDKIT: 1
+      BUILDKIT_PROGRESS: plain
       COMPOSE_DOCKER_CLI_BUILD: 1
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.11
+          version: 20.10.13
           # docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
           # docker_layer_caching is behind a paywall so we do it manually below
           # based on: https://anonoz.github.io/tech/2018/06/17/circleci-docker-caching.html

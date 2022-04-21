@@ -18,7 +18,7 @@ jobs:
       - image: cimg/base:current
         auth:
           username: nicolascarpi
-          password: $DOCKERHUB_PASSWORD
+          password: $DOCKERHUB_PULL_TOKEN
     environment:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
@@ -63,7 +63,7 @@ jobs:
             - v1-mysql-dep-{{ checksum "mysql-key.txt" }}
       - run:
           name: Log in to docker hub
-          command: docker login -u nicolascarpi -p $DOCKERHUB_PASSWORD
+          command: docker login -u nicolascarpi -p $DOCKERHUB_PULL_TOKEN
       - run:
           name: Load docker images from cache
           command: |

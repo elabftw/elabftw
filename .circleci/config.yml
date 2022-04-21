@@ -107,7 +107,7 @@ jobs:
               fi
               docker build -t elabtmp \
                   -f tests/scrutinizer.dockerfile \
-                  --cache-from elabcibase:latest
+                  --cache-from elabcibase:latest \
                   --target elabtmp .
       - run:
           name: Start containers

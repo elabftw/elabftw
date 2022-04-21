@@ -120,7 +120,7 @@ jobs:
       - run:
           name: Save docker images elabimg and mysql for cache
           command: |
-            if [ "${HAS_ELABIMG_CACHE}" == "false" ]; then
+            if [ "${HAS_ELABCIBASE_CACHE}" == "false" ] && [ "${HAS_ELABIMG_CACHE}" == "false" ]; then
               docker image save -o elabimg-hypernext.tar elabftw/elabimg:hypernext
             fi
             if [ "${HAS_ELABCIBASE_CACHE}" == "false" ]; then

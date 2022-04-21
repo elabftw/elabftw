@@ -51,18 +51,25 @@ jobs:
               echo $IMAGE_DIGEST >> mysql-key.txt
       - restore_cache:
           keys:
+            - v1-elabcibase-dep-{{ checksum "elabcibase-key.txt" }}
+      # ToDo: Should be skipped if elabcibase is there
+      - restore_cache:
+          keys:
             - v1-elabimg-dep-{{ checksum "elabimg-key.txt" }}
       - restore_cache:
           keys:
             - v1-mysql-dep-{{ checksum "mysql-key.txt" }}
-      - restore_cache:
-          keys:
-            - v1-elabcibase-dep-{{ checksum "elabcibase-key.txt" }}
       - run:
-          name: Load docker images elabimg and mysql from cache
+          name: Load docker images from cache
           command: |
+              echo 'export HAS_ELABCIBASE_CACHE="false"' >> $BASH_ENV
+              if [ -f ./elabcibase.tar ]; then
+                  docker image load -q -i elabcibase.tar
+                  rm elabcibase.tar
+                  echo 'export HAS_ELABCIBASE_CACHE="true"' >> $BASH_ENV
+              fi
               echo 'export HAS_ELABIMG_CACHE="false"' >> $BASH_ENV
-              if [ -f ./elabimg-hypernext.tar ]; then
+              if [ "${HAS_ELABCIBASE_CACHE}" == "false" ] && [ -f ./elabimg-hypernext.tar ]; then
                   docker image load -q -i elabimg-hypernext.tar
                   rm elabimg-hypernext.tar
                   echo 'export HAS_ELABIMG_CACHE="true"' >> $BASH_ENV
@@ -72,12 +79,6 @@ jobs:
                   docker image load -q -i mysql-8.0.tar
                   rm mysql-8.0.tar
                   echo 'export HAS_MYSQL_CACHE="true"' >> $BASH_ENV
-              fi
-              echo 'export HAS_ELABCIBASE_CACHE="false"' >> $BASH_ENV
-              if [ -f ./elabcibase.tar ]; then
-                  docker image load -q -i elabcibase.tar
-                  rm elabcibase.tar
-                  echo 'export HAS_ELABCIBASE_CACHE="true"' >> $BASH_ENV
               fi
       - run:
           name: Prepare docker-compose.yml
@@ -114,24 +115,24 @@ jobs:
               if [ "${HAS_ELABIMG_CACHE}" == "false" ]; then
                   docker image save -o elabimg-hypernext.tar elabftw/elabimg:hypernext
               fi
-              if [ "${HAS_MYSQL_CACHE}" == "false" ]; then
-                  docker image save -o mysql-8.0.tar mysql:8.0
-              fi
               if [ "${HAS_ELABCIBASE_CACHE}" == "false" ]; then
                   docker image save -o elabcibase.tar elabcibase:latest
+              fi
+              if [ "${HAS_MYSQL_CACHE}" == "false" ]; then
+                  docker image save -o mysql-8.0.tar mysql:8.0
               fi
       - save_cache:
           key: v1-elabimg-dep-{{ checksum "elabimg-key.txt" }}
           paths:
             - ./elabimg-hypernext.tar
       - save_cache:
-          key: v1-mysql-dep-{{ checksum "mysql-key.txt" }}
-          paths:
-            - ./mysql-8.0.tar
-      - save_cache:
           key: v1-elabcibase-dep-{{ checksum "elabcibase-key.txt" }}
           paths:
             - ./elabcibase.tar
+      - save_cache:
+          key: v1-mysql-dep-{{ checksum "mysql-key.txt" }}
+          paths:
+            - ./mysql-8.0.tar
       # Restore dependency cache
       - restore_cache:
           keys:

@@ -126,6 +126,7 @@ jobs:
       - run:
           name: Save docker images for cache
           command: |
+            docker images
             if [ "${HAS_ELABCIBASE_CACHE}" == "false" ] && [ "${HAS_ELABIMG_CACHE}" == "false" ]; then
               echo "Saving elabftw/elabimg:hypernext to elabimg-hypernext.tar"
               docker image save -o elabimg-hypernext.tar elabftw/elabimg:hypernext

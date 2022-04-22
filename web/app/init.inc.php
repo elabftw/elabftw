@@ -20,7 +20,6 @@ use Elabftw\Services\LoginHelper;
 use Exception;
 use function header;
 use function in_array;
-use function is_readable;
 use Monolog\Logger;
 use PDOException;
 use function setcookie;
@@ -47,14 +46,8 @@ $Session->start();
 $Request->setSession($Session);
 
 try {
-    // CONFIG.PHP
-    // Make sure config.php is readable and load it
-    $configFilePath = dirname(__DIR__, 2) . '/config.php';
-    if (!is_readable($configFilePath)) {
-        throw new ImproperActionException('The config file is missing! Did you run the installer?');
-    }
-    require_once $configFilePath;
-    // END CONFIG.PHP
+    // Load config.php created by prepare.sh during container initialization
+    require_once dirname(__DIR__, 2) . '/config.php';
 
     // Config::getConfig() will make the first SQL request
     // PDO will throw an exception if the SQL structure is not imported yet
@@ -62,6 +55,10 @@ try {
         $Config = Config::getConfig();
     } catch (DatabaseErrorException | PDOException $e) {
         throw new ImproperActionException('The database structure is not loaded! Did you run the installer?');
+    }
+    // @phpstan-ignore-next-line
+    if (SITE_URL === '') {
+        throw new ImproperActionException('<h1>Could not find mandatory <code>SITE_URL</code> variable! Please <a href="https://doc.elabftw.net/changelog.html#version-4-3-0">have a look at the changelog</a>.</h1>');
     }
 
     // CSRF

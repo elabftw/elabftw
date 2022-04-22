@@ -28,6 +28,66 @@ jobs:
       - setup_remote_docker:
           version: 20.10.12
           # docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
+          # docker_layer_caching is behind a paywall so we do it manually below
+          # based on: https://anonoz.github.io/tech/2018/06/17/circleci-docker-caching.html
+      - run:
+          name: Check if there are newer images on Docker Hub
+          command: |
+            MYSQL_VERSION="$(cat tests/docker-compose.yml | grep -m 1 'image: mysql:' | awk -F : '{print $3}')"
+            echo "MySQL Version: ${MYSQL_VERSION}"
+            echo "export MYSQL_VERSION=${MYSQL_VERSION}" >> $BASH_ENV
+            TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:elabftw/elabimg:pull" \
+              | jq -r .token)
+            IMAGE_DIGEST=$(curl -s -H "Authorization: Bearer ${TOKEN}" \
+              -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+              https://index.docker.io/v2/elabftw/elabimg/manifests/hypernext \
+              | jq -r .config.digest)
+            echo ${IMAGE_DIGEST} >> elabimg-key.txt
+            echo ${IMAGE_DIGEST} >> elabcibase-key.txt
+            sha256sum tests/ci-tool-versions.env >> elabcibase-key.txt
+            TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:library/mysql:pull" \
+              | jq -r .token)
+            IMAGE_DIGEST=$(curl -s -H "Authorization: Bearer ${TOKEN}" \
+              -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+              https://index.docker.io/v2/library/mysql/manifests/${MYSQL_VERSION} \
+              | jq -r .config.digest)
+            echo ${IMAGE_DIGEST} >> mysql-key.txt
+      # todo: only load elabimg from cache if elabcibase is changed because of a change in ci-tool-versions
+      - restore_cache:
+          keys:
+            - v1.1-elabimg-dep-{{ checksum "elabimg-key.txt" }}
+      - restore_cache:
+          keys:
+            - v1.1-elabcibase-dep-{{ checksum "elabcibase-key.txt" }}
+      - restore_cache:
+          keys:
+            - v1.1-mysql-dep-{{ checksum "mysql-key.txt" }}
+      - run:
+          name: Load docker images from cache
+          command: |
+            HAS_ELABCIBASE_CACHE="false"
+            echo "export HAS_ELABCIBASE_CACHE=${HAS_ELABCIBASE_CACHE}" >> $BASH_ENV
+            if [ -f ./elabcibase.tar ]; then
+              echo "Loading elabftw/elabcibase:latest ..."
+              docker image load -q -i elabcibase.tar
+              rm elabcibase.tar
+              HAS_ELABCIBASE_CACHE="true"
+              echo "export HAS_ELABCIBASE_CACHE=${HAS_ELABCIBASE_CACHE}" >> $BASH_ENV
+            fi
+            echo 'export HAS_ELABIMG_CACHE="false"' >> $BASH_ENV
+            if [ "${HAS_ELABCIBASE_CACHE}" == "false" ] && [ -f ./elabimg-hypernext.tar ]; then
+              echo "Loading elabftw/elabimg:hypernext ..."
+              docker image load -q -i elabimg-hypernext.tar
+              rm elabimg-hypernext.tar
+              echo 'export HAS_ELABIMG_CACHE="true"' >> $BASH_ENV
+            fi
+            echo 'export HAS_MYSQL_CACHE="false"' >> $BASH_ENV
+            if [ -f ./mysql.tar ]; then
+              echo "Loading mysql:${MYSQL_VERSION} ..."
+              docker image load -q -i mysql.tar
+              rm mysql.tar
+              echo 'export HAS_MYSQL_CACHE="true"' >> $BASH_ENV
+            fi
       - run:
           name: Prepare docker-compose.yml
           # Don't bind mount here, files are copied. See scrutinizer.dockerfile
@@ -43,16 +103,18 @@ jobs:
       - run:
           name: Build elabtmp image
           command: |
-            . ./tests/ci-tool-versions.env
-            docker image pull -q elabftw/elabimg:hypernext
-            docker build -q -t elabftw/elabcibase:latest \
-              -f tests/scrutinizer.dockerfile \
-              --build-arg PHPSTAN_VERSION \
-              --build-arg PSALM_VERSION \
-              --build-arg PHAN_VERSION \
-              --build-arg BUILDKIT_INLINE_CACHE=1 \
-              --cache-from elabftw/elabimg:hypernext \
-              --target elabcibase .
+            if [ "${HAS_ELABCIBASE_CACHE}" == "false" ]; then
+              . ./tests/ci-tool-versions.env
+              docker image pull -q elabftw/elabimg:hypernext
+              docker build -q -t elabftw/elabcibase:latest \
+                -f tests/scrutinizer.dockerfile \
+                --build-arg PHPSTAN_VERSION \
+                --build-arg PSALM_VERSION \
+                --build-arg PHAN_VERSION \
+                --build-arg BUILDKIT_INLINE_CACHE=1 \
+                --cache-from elabftw/elabimg:hypernext \
+                --target elabcibase .
+            fi
             docker build -q -t elabtmp \
               -f tests/scrutinizer.dockerfile \
               --cache-from elabftw/elabcibase:latest \
@@ -61,6 +123,34 @@ jobs:
           name: Start containers
           command: |
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
+      - run:
+          name: Save docker images for cache
+          command: |
+            docker images
+            if [ "${HAS_ELABCIBASE_CACHE}" == "false" ] && [ "${HAS_ELABIMG_CACHE}" == "false" ]; then
+              echo "Saving elabftw/elabimg:hypernext to elabimg-hypernext.tar"
+              docker image save -o elabimg-hypernext.tar elabftw/elabimg:hypernext
+            fi
+            if [ "${HAS_ELABCIBASE_CACHE}" == "false" ]; then
+              echo "Saving elabftw/elabcibase:latest to elabcibase.tar"
+              docker image save -o elabcibase.tar elabftw/elabcibase:latest
+            fi
+            if [ "${HAS_MYSQL_CACHE}" == "false" ]; then
+              echo "Saving mysql:${MYSQL_VERSION} to mysql.tar"
+              docker image save -o mysql.tar mysql:${MYSQL_VERSION}
+            fi
+      - save_cache:
+          key: v1.1-elabimg-dep-{{ checksum "elabimg-key.txt" }}
+          paths:
+            - ./elabimg-hypernext.tar
+      - save_cache:
+          key: v1.1-elabcibase-dep-{{ checksum "elabcibase-key.txt" }}
+          paths:
+            - ./elabcibase.tar
+      - save_cache:
+          key: v1.1-mysql-dep-{{ checksum "mysql-key.txt" }}
+          paths:
+            - ./mysql.tar
       # Restore dependency cache
       - restore_cache:
           keys:

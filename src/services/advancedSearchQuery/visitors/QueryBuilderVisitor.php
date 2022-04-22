@@ -222,7 +222,7 @@ class QueryBuilderVisitor implements Visitor
                 'value' => '%' . $searchTerm . '%',
                 'type' => PDO::PARAM_STR,
                 'searchAttachments' => true,
-           )),
+            )),
         );
     }
 

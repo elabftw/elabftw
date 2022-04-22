@@ -53,6 +53,7 @@ jobs:
               https://index.docker.io/v2/$REPO/manifests/$TAG \
               | jq -r .config.digest)
             echo $IMAGE_DIGEST >> mysql-key.txt
+      # todo: only load elabimg from cache if elabcibase is change because of a change in ci-tool-versions
       - restore_cache:
           keys:
             - v1-elabimg-dep-{{ checksum "elabimg-key.txt" }}
@@ -98,7 +99,6 @@ jobs:
       - run:
           name: Build elabtmp image
           command: |
-            docker images
             if [ "${HAS_ELABCIBASE_CACHE}" == "false" ]; then
               source tests/ci-tool-versions.env
               docker build -t elabcibase \

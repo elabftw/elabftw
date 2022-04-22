@@ -3,6 +3,7 @@
 FROM elabftw/elabimg:hypernext AS elabcibase
 
 # Set versions of used tools
+# do not update here but in tests/ci-tool-versions.env
 ARG PHPSTAN_VERSION=1.4.9
 ARG PSALM_VERSION=4.22.0
 ARG PHAN_VERSION=5.3.2

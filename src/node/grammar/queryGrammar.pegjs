@@ -71,6 +71,7 @@ Fields
   / FieldDate
   / FieldBoolean
   / FieldRating
+  / FieldAttachment
 
 Field
   = field:('author'i / 'body'i / 'category'i / 'elabid'i / 'group'i / 'status'i / 'title'i / 'visibility'i) ':' term:(List / Literal)
@@ -135,7 +136,7 @@ DD
   }
 
 FieldBoolean
-  = field:('locked'i / 'timestamped'i / 'attachment'i) ':' term:Boolean
+  = field:('locked'i / 'timestamped'i) ':' term:Boolean
   {
     return new Field($field, new SimpleValueWrapper($term));
   }
@@ -146,7 +147,7 @@ Boolean
   {
     return '0';
   }
-  / ('1' / 'true' / 'yes' / 'on' / '')
+  / ('1' / 'true' / 'yes' / 'on')
   {
     return '1';
   }
@@ -156,6 +157,21 @@ FieldRating
   = 'rating'i ':' term:($([0-5]) / 'unrated'i { return '0';})
   {
     return new Field('rating', new SimpleValueWrapper($term));
+  }
+
+FieldAttachment
+  = 'attachment'i ':' term:(
+    bool:Boolean
+      {
+        return new SimpleValueWrapper($bool);
+      }
+    / terms:(List / Literal)
+      {
+        return $terms;
+      }
+  )
+  {
+    return new Field('attachment', $term);
   }
 
 List 'quoted term'

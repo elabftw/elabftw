@@ -37,11 +37,14 @@ class QueryBuilderVisitor implements Visitor
     public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): WhereCollector
     {
         $param = $this->getUniqueID();
-        $query = '(entity.body' . ' LIKE ' . $param . ' OR ' . 'entity.title' . ' LIKE ' . $param . ')';
 
         return new WhereCollector(
-            $query,
-            array(array('param' => $param, 'value' => '%' . $simpleValueWrapper->getValue() . '%', 'type' => PDO::PARAM_STR)),
+            '(entity.body LIKE ' . $param . ' OR entity.title LIKE ' . $param . ')',
+            array(array(
+                'param' => $param,
+                'value' => '%' . $simpleValueWrapper->getValue() . '%',
+                'type' => PDO::PARAM_STR,
+            )),
         );
     }
 
@@ -56,13 +59,25 @@ class QueryBuilderVisitor implements Visitor
         if ($dateType === 'simple') {
             $param = $this->getUniqueID();
             $query = $column . $dateField->getOperator() . $param;
-            $bindValues[] = array('param' => $param, 'value' => $dateField->getValue(), 'type' => PDO::PARAM_INT);
+            $bindValues[] = array(
+                'param' => $param,
+                'value' => $dateField->getValue(),
+                'type' => PDO::PARAM_INT,
+            );
         } elseif ($dateType === 'range') {
             $paramMin = $this->getUniqueID();
             $paramMax = $this->getUniqueID();
             $query = $column . ' BETWEEN ' . $paramMin . ' AND ' . $paramMax;
-            $bindValues[] = array('param' => $paramMin, 'value' => $dateField->getValue(), 'type' => PDO::PARAM_INT);
-            $bindValues[] = array('param' => $paramMax, 'value' => $dateField->getDateTo(), 'type' => PDO::PARAM_INT);
+            $bindValues[] = array(
+                'param' => $paramMin,
+                'value' => $dateField->getValue(),
+                'type' => PDO::PARAM_INT,
+            );
+            $bindValues[] = array(
+                'param' => $paramMax,
+                'value' => $dateField->getDateTo(),
+                'type' => PDO::PARAM_INT,
+            );
         }
         return new WhereCollector($query, $bindValues);
     }
@@ -188,10 +203,26 @@ class QueryBuilderVisitor implements Visitor
 
     private function visitFieldAttachment(string $searchTerm, VisitorParameters $parameters): WhereCollector
     {
-        return $this->getWhereCollector(
-            'IFNULL(uploads.has_attachment, 0) = ',
-            $searchTerm,
-            PDO::PARAM_INT,
+        // Are we checking if there is any attachment at all
+        if ($searchTerm === '0' || $searchTerm === '1') {
+            return $this->getWhereCollector(
+                'IFNULL(uploads.has_attachment, 0) = ',
+                $searchTerm,
+                PDO::PARAM_INT,
+            );
+        }
+
+        // Or are we searching in comments or real_names
+        $param = $this->getUniqueID();
+
+        return new WhereCollector(
+            '(uploads.comments LIKE ' . $param . ' OR uploads.real_names LIKE ' . $param . ')',
+            array(array(
+                'param' => $param,
+                'value' => '%' . $searchTerm . '%',
+                'type' => PDO::PARAM_STR,
+                'searchAttachments' => true,
+            )),
         );
     }
 

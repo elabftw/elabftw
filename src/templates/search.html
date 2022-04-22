@@ -12,7 +12,8 @@
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
         <h3>Search terms</h3>
-        <p>The search is performed against the title and the body.</p>
+        <p>The search is performed against the title and the body.<br>
+            The entire team will be searched unless there is an author fields.</p>
         <dl>
           <dt>Term</dt>
           <dd>A sequence of characters without space (<code>&blank;</code>).<br>
@@ -38,7 +39,10 @@
         <p>Basic syntax <code>[<strong>field</strong>]:[value]</code></p>
         <dl>
           <dt>attachment</dt>
-          <dd>yes or no, true or false, 1 or 0, on or off</dd>
+          <dd>yes or no, true or false, 1 or 0, on or off:<br>
+              search entries with/out attachments<br>
+              Term or Quoted term:<br>
+              search in filenames and comments of attachments</dd>
           <dt>author</dt>
           <dd>
             Term or Quoted term<br>
@@ -65,7 +69,8 @@
           <dt>title</dt>
           <dd>Term or Quoted term</dd>
           <dt>visibility</dt>
-          <dd>Term or Quoted term<br>A group name (e.g., 'Lab Heroes') or 'public', 'organization', 'team', 'user', or 'useronly'.</dd>
+          <dd>Term or Quoted term<br>
+              A group name (e.g., 'Lab Heroes') or 'public', 'organization', 'team', 'user', or 'useronly'.</dd>
         </dl>
         <h3 id='dateFormats'>Date formats</h3>
         <p>A date has to be provided in the following format: <code>YYYYMMDD</code>,
@@ -152,7 +157,7 @@
       <div class='col-md-4 mb-2'>
         <p>Allowed Fields (<code><strong>field</strong>:value</code>):</p>
         <ul class='list-unstyled'>
-          <li><strong>attachment</strong>: yes or no</li>
+          <li><strong>attachment</strong>: yes, no, Simple or Quoted term</li>
           <li><strong>author</strong>: Simple or Quoted term</li>
           <li><strong>body</strong>: Simple or Quoted term</li>
           <li><strong>category</strong>: Simple or Quoted term</li>

@@ -146,7 +146,7 @@ class ApiController implements ControllerInterface
                     $this->Request->request->has('bodyappend') ||
                     $this->Request->request->has('body') ||
                     $this->Request->request->has('metadata')) &&
-                    ($this->endpoint === 'experiments' || $this->endpoint === 'items')) {
+                    ($this->endpoint === 'experiments' || $this->endpoint === 'items' || $this->endpoint === 'templates' || $this->endpoint === 'items_types')) {
                     return $this->updateEntity();
                 }
 
@@ -218,26 +218,14 @@ class ApiController implements ControllerInterface
         $req = explode('/', rtrim((string) $this->Request->query->get('req'), '/'));
 
         // now parse the query string (part after ?)
-        $args = (string) ($this->Request->query->get('args') ?? '');
-        if (!empty($args)) {
-            // this is where we store the parsed query string parameters
-            $result = array(
-                'limit' => $this->limit,
-                'offset' => $this->offset,
-                'search' => $this->search,
-            );
-            // this function doesn't return anything
-            parse_str($args, $result);
-            // now assign our result to class properties
-            if (isset($result['limit'])) {
-                $this->limit = (int) $result['limit'];
-            }
-            if (isset($result['offset'])) {
-                $this->offset = (int) $result['offset'];
-            }
-            if (isset($result['search'])) {
-                $this->search = trim($result['search']);
-            }
+        if ($this->Request->query->has('limit')) {
+            $this->limit = (int) $this->Request->query->get('limit');
+        }
+        if ($this->Request->query->has('offset')) {
+            $this->offset = (int) $this->Request->query->get('offset');
+        }
+        if ($this->Request->query->has('search')) {
+            $this->search = trim((string) $this->Request->query->get('search'));
         }
 
         // assign the id if there is one

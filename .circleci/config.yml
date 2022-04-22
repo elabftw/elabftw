@@ -56,10 +56,10 @@ jobs:
       # todo: only load elabimg from cache if elabcibase is change because of a change in ci-tool-versions
       - restore_cache:
           keys:
-            - v1-elabimg-dep-{{ checksum "elabimg-key.txt" }}
+            - v0-elabimg-dep-{{ checksum "elabimg-key.txt" }}
       - restore_cache:
           keys:
-            - v1-elabcibase-dep-{{ checksum "elabcibase-key.txt" }}
+            - v0-elabcibase-dep-{{ checksum "elabcibase-key.txt" }}
       - restore_cache:
           keys:
             - v1-mysql-dep-{{ checksum "mysql-key.txt" }}
@@ -100,18 +100,19 @@ jobs:
           name: Build elabtmp image
           command: |
             if [ "${HAS_ELABCIBASE_CACHE}" == "false" ]; then
-              source tests/ci-tool-versions.env
-              docker build -t elabcibase \
+              . ./tests/ci-tool-versions.env
+              docker build -t elabftw/elabcibase:latest \
                 -f tests/scrutinizer.dockerfile \
                 --build-arg PHPSTAN_VERSION \
                 --build-arg PSALM_VERSION \
                 --build-arg PHAN_VERSION \
                 --build-arg BUILDKIT_INLINE_CACHE=1 \
+                --cache-from elabftw/elabimg:hypernext \
                 --target elabcibase .
             fi
             docker build -t elabtmp \
               -f tests/scrutinizer.dockerfile \
-              --cache-from elabcibase:latest \
+              --cache-from elabftw/elabcibase:latest \
               --target elabtmp .
       - run:
           name: Start containers
@@ -124,17 +125,17 @@ jobs:
               docker image save -o elabimg-hypernext.tar elabftw/elabimg:hypernext
             fi
             if [ "${HAS_ELABCIBASE_CACHE}" == "false" ]; then
-              docker image save -o elabcibase.tar elabcibase:latest
+              docker image save -o elabcibase.tar elabftw/elabcibase:latest
             fi
             if [ "${HAS_MYSQL_CACHE}" == "false" ]; then
               docker image save -o mysql-8.0.tar mysql:8.0
             fi
       - save_cache:
-          key: v1-elabimg-dep-{{ checksum "elabimg-key.txt" }}
+          key: v0-elabimg-dep-{{ checksum "elabimg-key.txt" }}
           paths:
             - ./elabimg-hypernext.tar
       - save_cache:
-          key: v1-elabcibase-dep-{{ checksum "elabcibase-key.txt" }}
+          key: v0-elabcibase-dep-{{ checksum "elabcibase-key.txt" }}
           paths:
             - ./elabcibase.tar
       - save_cache:

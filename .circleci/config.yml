@@ -56,10 +56,10 @@ jobs:
       # todo: only load elabimg from cache if elabcibase is change because of a change in ci-tool-versions
       - restore_cache:
           keys:
-            - v0-elabimg-dep-{{ checksum "elabimg-key.txt" }}
+            - v0.1-elabimg-dep-{{ checksum "elabimg-key.txt" }}
       - restore_cache:
           keys:
-            - v0-elabcibase-dep-{{ checksum "elabcibase-key.txt" }}
+            - v0.1-elabcibase-dep-{{ checksum "elabcibase-key.txt" }}
       - restore_cache:
           keys:
             - v1-mysql-dep-{{ checksum "mysql-key.txt" }}
@@ -101,6 +101,7 @@ jobs:
           command: |
             if [ "${HAS_ELABCIBASE_CACHE}" == "false" ]; then
               . ./tests/ci-tool-versions.env
+              docker image pull -q elabftw/elabimg:hypernext
               docker build -t elabftw/elabcibase:latest \
                 -f tests/scrutinizer.dockerfile \
                 --build-arg PHPSTAN_VERSION \
@@ -131,11 +132,11 @@ jobs:
               docker image save -o mysql-8.0.tar mysql:8.0
             fi
       - save_cache:
-          key: v0-elabimg-dep-{{ checksum "elabimg-key.txt" }}
+          key: v0.1-elabimg-dep-{{ checksum "elabimg-key.txt" }}
           paths:
             - ./elabimg-hypernext.tar
       - save_cache:
-          key: v0-elabcibase-dep-{{ checksum "elabcibase-key.txt" }}
+          key: v0.1-elabcibase-dep-{{ checksum "elabcibase-key.txt" }}
           paths:
             - ./elabcibase.tar
       - save_cache:

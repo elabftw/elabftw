@@ -19,6 +19,10 @@ jobs:
         auth:
           username: nicolascarpi
           password: $DOCKERHUB_PULL_TOKEN
+    environment:
+      DOCKER_BUILDKIT: 1
+      BUILDKIT_PROGRESS: plain
+      COMPOSE_DOCKER_CLI_BUILD: 1
     steps:
       - checkout
       - setup_remote_docker:
@@ -37,10 +41,26 @@ jobs:
             sed -i '\#env_file:#D' tests/docker-compose.yml
             sed -i '\#- elabftw-user\.env#D' tests/docker-compose.yml
       - run:
-          name: Build elabtmp image and start containers
+          name: Build elabtmp image
           command: |
-              docker build -t elabtmp -f tests/scrutinizer.dockerfile --progress plain .
-              docker-compose -f tests/docker-compose.yml up -d --quiet-pull
+            . ./tests/ci-tool-versions.env
+            docker image pull -q elabftw/elabimg:hypernext
+            docker build -q -t elabftw/elabcibase:latest \
+              -f tests/scrutinizer.dockerfile \
+              --build-arg PHPSTAN_VERSION \
+              --build-arg PSALM_VERSION \
+              --build-arg PHAN_VERSION \
+              --build-arg BUILDKIT_INLINE_CACHE=1 \
+              --cache-from elabftw/elabimg:hypernext \
+              --target elabcibase .
+            docker build -q -t elabtmp \
+              -f tests/scrutinizer.dockerfile \
+              --cache-from elabftw/elabcibase:latest \
+              --target elabtmp .
+      - run:
+          name: Start containers
+          command: |
+            docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       # Restore dependency cache
       - restore_cache:
           keys:

@@ -1,7 +1,9 @@
+# syntax=docker/dockerfile:1.3
 # Dockerfile for CI image
-FROM elabftw/elabimg:hypernext
+FROM elabftw/elabimg:hypernext AS elabcibase
 
 # Set versions of used tools
+# do not update here but in tests/ci-tool-versions.env
 ARG PHPSTAN_VERSION=1.4.9
 ARG PSALM_VERSION=4.22.0
 ARG PHAN_VERSION=5.3.2
@@ -17,6 +19,8 @@ RUN chmod +x /usr/bin/psalm
 #Phan
 ADD https://github.com/phan/phan/releases/download/$PHAN_VERSION/phan.phar /usr/bin/phan
 RUN chmod +x /usr/bin/phan
+
+FROM elabcibase AS elabtmp
 
 COPY ./bin /elabftw/bin
 COPY ./src /elabftw/src

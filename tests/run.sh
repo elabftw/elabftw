@@ -57,7 +57,7 @@ if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
             --target elabtmp .
         docker build -t elabtmp -f tests/scrutinizer.dockerfile --target elabtmp .
     fi
-    docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
+    docker-compose -f tests/docker-compose.yml up -d --quiet-pull
     # give some time for containers to start
     echo -n "Waiting for containers to start..."
     while [ "`docker inspect -f {{.State.Health.Status}} elabtmp`" != "healthy" ]; do echo -n .; sleep 2; done; echo

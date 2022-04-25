@@ -211,15 +211,12 @@
 
 {% include 'uploads.html' %}
 
-{% if Entity.Users.userData.json_editor %}
-  {% include 'json-editor.html' %}
-{% endif %}
+{% include 'json-editor.html' %}
 
 <!-- DOODLE -->
 <section class='box' id='doodle-anchor'>
-  <i class='fas fa-fw fa-paint-brush mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Draw something'|trans }}</h3>
-  <button class='button btn btn-primary plusMinusButton' data-toggle='collapse' data-target='#doodleDiv' aria-expanded='false' aria-controls='doodleDiv'>+</button>
-  <div id='doodleDiv' class='collapse mt-2'>
+  <h3 data-action='toggle-next' data-icon='doodleDivIcon' class='d-inline'><i id='doodleDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paint-brush'></i> {{ 'Draw something'|trans }}</h3>
+  <div id='doodleDiv' hidden class='mt-2' data-save-hidden='doodleDiv'>
     <div class='row'>
       <div>
         <canvas class='doodle' id='doodleCanvas' width='600' height='600'></canvas>
@@ -252,9 +249,8 @@
 <!-- CHEM EDITOR -->
 {% if Entity.Users.userData.chem_editor %}
   <div class='box chemdoodle'>
-    <i class='fas fa-fw fa-dna mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Molecule drawer'|trans }}</h3>
-    <button class='button btn btn-primary plusMinusButton' data-toggle='collapse' data-target='#chemDiv' aria-expanded='false' aria-controls='chemDiv'>+</button>
-    <div id='chemDiv' class='collapse mt-2 text-center'>
+    <h3 data-action='toggle-next' data-icon='chemDivIcon' class='d-inline'><i id='chemDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-dna'></i> {{ 'Molecule drawer'|trans }}</h3>
+    <div id='chemDiv' hidden data-save-hidden='chemDiv' class='mt-2 text-center'>
       <script src='assets/chemdoodle-canvas.bundle.js?v={{ v }}'></script>
     </div>
   </div>

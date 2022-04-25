@@ -63,25 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   makeSortableGreatAgain();
 
-  // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR/JSON EDITOR
-  const plusMinusButton = document.getElementsByClassName('plusMinusButton');
-  if (plusMinusButton) {
-    Array.from(plusMinusButton).forEach(element => {
-      element.addEventListener('click', (event) => {
-        const el = (event.target as HTMLElement);
-        if (el.innerText === '+') {
-          el.classList.add('btn-neutral');
-          el.classList.remove('btn-primary');
-          el.innerText = '-';
-        } else {
-          el.classList.add('btn-primary');
-          el.classList.remove('btn-neutral');
-          el.innerText = '+';
-        }
-      });
-    });
-  }
-
   // BACK TO TOP BUTTON
   const btn = document.createElement('div');
   btn.dataset.action = 'scroll-top';

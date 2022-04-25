@@ -43,18 +43,7 @@ if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
         # Use the freshly built elabtmp image
         sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
         export DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain COMPOSE_DOCKER_CLI_BUILD=1
-        . ./tests/ci-tool-versions.env
-        docker build -t elabftw/elabcibase:latest \
-            -f tests/scrutinizer.dockerfile \
-            --build-arg PHPSTAN_VERSION \
-            --build-arg PSALM_VERSION \
-            --build-arg PHAN_VERSION \
-            --build-arg BUILDKIT_INLINE_CACHE=1 \
-            --target elabcibase .
-        docker build -t elabtmp \
-            -f tests/scrutinizer.dockerfile \
-            --cache-from elabftw/elabcibase:latest \
-            --target elabtmp .
+        docker build -q -t elabtmp -f tests/scrutinizer.dockerfile .
     fi
     docker-compose -f tests/docker-compose.yml up -d --quiet-pull
     # give some time for containers to start

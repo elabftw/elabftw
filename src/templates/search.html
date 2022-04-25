@@ -144,7 +144,14 @@
           class='form-control {{- extendedError ? ' is-invalid' }}'
           style='font-family:monospace;'
           placeholder='author:"{{ App.Users.userData.fullname|raw }}" status:"Running"'
+          spellcheck='false'
           aria-describedby='extendedFeedback'
+          data-author='{{ usersArr|column('fullname')|join('|') }}'
+          data-category='{{ itemsTypesArr|column('category')|join('|') }}'
+          data-group='{{ teamGroups|join('|') }}'
+          data-rating='{{ ['1', '2', '3', '4', '5', 'unrated']|join('|') }}'
+          data-status='{{ statusArr|column('category')|join('|') }}'
+          data-visibility='{{ visibilityArr|join('|') }}'
         >{{ extended }}</textarea>
 
         <!-- this is where the errors will be displayed -->

@@ -6,6 +6,9 @@
  * @package elabftw
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+import Tribute from 'tributejs';
+type value = {value: string};
+type TributeValue = Tribute<value>;
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/search.php') {
@@ -16,6 +19,71 @@ document.addEventListener('DOMContentLoaded', () => {
   if (params.has('type')) {
     window.location.hash = '#anchor';
   }
+
+  const extendedArea = (document.getElementById('extendedArea') as HTMLTextAreaElement);
+
+  function getAutocompleteValues(field): Array<value> {
+    return extendedArea.dataset[field].split('|').sort().map(v => {
+      let quotes = '';
+      if (v.includes(' ')) {
+        quotes = '"';
+      }
+      return {value: `${field}:${quotes}${v}${quotes} `};
+    });
+  }
+
+  function initAutocomplete(oldTribute?: TributeValue): TributeValue {
+    if (oldTribute) {
+      oldTribute.detach(extendedArea);
+    }
+
+    const searchIn = (document.getElementById('searchin') as HTMLSelectElement).value;
+
+    const tribute = new Tribute({
+      autocompleteMode: true,
+      replaceTextSuffix: '',
+      noMatchTemplate: () => null,
+      lookup: 'value',
+      selectTemplate: item => {
+        if (typeof item === 'undefined') {
+          return null;
+        }
+        return item.original.value;
+      },
+      // menuItemLimit is not included in tributejs.d.ts
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      menuItemLimit: 6,
+      values: [
+        {value: 'attachment:'},
+        {value: 'attachment:no '},
+        {value: 'attachment:yes '},
+        ...getAutocompleteValues('author'),
+        {value: 'body:'},
+        ...(searchIn === 'database'
+          ? getAutocompleteValues('category')
+          : []
+        ),
+        {value: 'date:'},
+        {value: 'elabid:'},
+        ...getAutocompleteValues('group'),
+        {value: 'locked:no '},
+        {value: 'locked:yes '},
+        ...getAutocompleteValues('rating'),
+        ...(searchIn === 'experiments'
+          ? getAutocompleteValues('status')
+          : []
+        ),
+        {value: 'timestamped:no '},
+        {value: 'timestamped:yes '},
+        {value: 'title:'},
+        ...getAutocompleteValues('visibility'),
+      ],
+    });
+    tribute.attach(extendedArea);
+    return tribute;
+  }
+  let tribute = initAutocomplete();
 
   if ((document.getElementById('searchin') as HTMLSelectElement).value === 'database') {
     document.getElementById('searchStatus').toggleAttribute('hidden', true);
@@ -36,9 +104,9 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('searchStatus').toggleAttribute('hidden', true);
       document.getElementById('searchCategory').toggleAttribute('hidden', true);
     }
+    // update autocomplete values
+    tribute = initAutocomplete(tribute);
   });
-
-  const extendedArea = (document.getElementById('extendedArea') as HTMLTextAreaElement);
 
   // Submit form with ctrl+enter from within textarea
   extendedArea.addEventListener('keydown', event => {

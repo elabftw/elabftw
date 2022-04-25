@@ -104,21 +104,12 @@ jobs:
       - run:
           name: Build elabtmp image
           command: |
-            if [ "${HAS_ELABCIBASE_CACHE}" == "false" ]; then
-              . ./tests/ci-tool-versions.env
-              docker image pull -q elabftw/elabimg:hypernext
-              docker build -q -t elabftw/elabcibase:latest \
-                -f tests/scrutinizer.dockerfile \
-                --build-arg PHPSTAN_VERSION \
-                --build-arg PSALM_VERSION \
-                --build-arg PHAN_VERSION \
-                --build-arg BUILDKIT_INLINE_CACHE=1 \
-                --cache-from elabftw/elabimg:hypernext \
-                --target elabcibase .
-            fi
+            . ./tests/ci-tool-versions.env
             docker build -q -t elabtmp \
               -f tests/scrutinizer.dockerfile \
-              --cache-from elabftw/elabcibase:latest \
+              --build-arg PHPSTAN_VERSION \
+              --build-arg PSALM_VERSION \
+              --build-arg PHAN_VERSION \
               --target elabtmp .
       - run:
           name: Start containers

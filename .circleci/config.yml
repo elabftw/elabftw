@@ -16,9 +16,10 @@ jobs:
     # https://circleci.com/docs/2.0/circleci-images/
     docker:
       - image: cimg/base:current
-        auth:
-          username: nicolascarpi
-          password: $DOCKERHUB_PULL_TOKEN
+      # ignore login credentials for now
+      #  auth:
+      #    username: nicolascarpi
+      #    password: $DOCKERHUB_PULL_TOKEN
     environment:
       DOCKER_BUILDKIT: 1
       BUILDKIT_PROGRESS: plain

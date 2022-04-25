@@ -23,15 +23,14 @@ use function sha1;
  *
  * How to modify the structure:
  * 1. add a file in src/sql/ named 'schemaXX.sql' where XX is the current schema version + 1
- * 2. this file should use transactions (see other files for examples)
- * 3. increment the REQUIRED_SCHEMA number
+ * 2. increment the REQUIRED_SCHEMA number
  * 4. Run `bin/console db:update`
  * 5. reflect the changes in src/sql/structure.sql (or models/Config.php for the config table)
  */
 class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    private const REQUIRED_SCHEMA = 87;
+    private const REQUIRED_SCHEMA = 88;
 
     private Db $Db;
 

@@ -232,7 +232,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
             'stepsArr' => $this->Entity->Steps->read(new ContentParams()),
             'tags' => $this->Entity->entityData['tags'],
             'title' => $this->Entity->entityData['title'],
-            'uploadsArr' => $this->Entity->Uploads->readAll(),
+            'uploadsArr' => $this->Entity->Uploads->readAllNormal(),
             'uploadsFolder' => dirname(__DIR__, 2) . '/uploads/',
             'url' => $this->getURL(),
             'linkBaseUrl' => SITE_URL . '/database.php',

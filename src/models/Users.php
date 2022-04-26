@@ -161,7 +161,7 @@ class Users
         $usersArr = $this->readFromQuery($params->getContent());
         $res = array();
         foreach ($usersArr as $user) {
-            $res[] = $user['userid'] . ' - ' . $user['fullname'];
+            $res[] = $user['userid'] . ' - ' . $user['fullname'] . ' - ' . $user['email'];
         }
         return $res;
     }

@@ -56,17 +56,15 @@ export default class JsonEditorHelper {
   }
 
   focus(): void {
-    // show the editor (use jQuery selector here for collapse())
-    ($('#jsonEditorDiv') as JQuery<HTMLDivElement>).collapse('show');
-    // toggle the +/- button
-    const plusMinusButton = document.querySelector('.jsonEditorPlusMinusButton') as HTMLButtonElement;
-    if (plusMinusButton.innerText === '+') {
-      plusMinusButton.innerText = '-';
-      plusMinusButton.classList.add('btn-neutral');
-      plusMinusButton.classList.remove('btn-primary');
-    }
+    // toggle the arrow icon
+    const iconEl = document.getElementById('jsonEditorIcon');
+    iconEl.classList.add('fa-chevron-circle-down');
+    iconEl.classList.remove('fa-chevron-circle-right');
+    const jsonEditorDiv = document.getElementById('jsonEditorDiv');
+    // make sure it's not hidden
+    jsonEditorDiv.toggleAttribute('hidden', false);
     // and scroll page into editor view
-    document.getElementById('jsonEditorContainer').scrollIntoView();
+    jsonEditorDiv.scrollIntoView();
   }
 
   loadFile(link: string, name: string, uploadid: string): void {
@@ -101,6 +99,8 @@ export default class JsonEditorHelper {
     this.editorTitle.innerText = i18next.t('editing-metadata');
     this.MetadataC.read().then(metadata => this.editor.set(metadata));
     this.editorDiv.dataset.what = 'metadata';
+    // disable the button
+    document.getElementById('jsonEditorMetadataLoadButton').toggleAttribute('disabled', true);
   }
 
   loadMetadataFromId(entity: Entity): void {

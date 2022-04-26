@@ -99,7 +99,6 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'sc_todo' => 't',
             'show_team' => 'on',
             'chem_editor' => 'on',
-            'json_editor' => 'on',
             'lang' => 'en_GB',
             'pdf_format' => 'A4',
             'default_vis' => 'organization',

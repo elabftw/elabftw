@@ -1,11 +1,10 @@
 <!-- JSON EDITOR -->
 <!-- json metadata is preloaded for templates -->
 <section class='box' id='json-editor'>
-  <i class='fas fa-fw fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
-  <button class='button btn btn-primary plusMinusButton jsonEditorPlusMinusButton' data-toggle='collapse' data-target='#jsonEditorDiv' aria-expanded='false' aria-controls='jsonEditorDiv'>+</button>
-  <div id='jsonEditorDiv' class='collapse mt-2'>
+  <h3 data-action='toggle-next' data-icon='jsonEditorIcon' class='d-inline'><i id='jsonEditorIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-list'></i> {{ 'JSON Editor'|trans }}</h3>
+  <div id='jsonEditorDiv' class='mt-2' hidden data-save-hidden='jsonEditorDiv'>
     {% if mode == 'edit' %}
-      <button type='button' data-action='json-load-metadata' class='btn btn-neutral mb-2'>{{ 'Load metadata'|trans }}</button>
+    <button type='button' id='jsonEditorMetadataLoadButton' data-action='json-load-metadata' class='btn btn-neutral mb-2'>{{ 'Load metadata'|trans }}</button> <span data-action='toggle-next'><i class='fas fa-fw fa-info-circle'></i></span><span hidden><a target='_blank' href='https://doc.elabftw.net/metadata.html'>{{ 'See documentation about extra fields.'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></span>
     {% endif %}
     <h6 id='jsonEditorTitle'></h6>
     <div id='jsonEditorContainer' {{ mode == 'edit-template' ? 'data-preload-json="1"' : '' }}></div>

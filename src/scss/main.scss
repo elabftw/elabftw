@@ -198,7 +198,7 @@ h2 {
 h3 {
     color: $maingray;
     font-size: 150%;
-    margin: 0 auto 10px;
+    margin: 0 auto;
 }
 
 h4 {
@@ -405,12 +405,6 @@ label {
 
 button:disabled {
     cursor: not-allowed;
-}
-
-/* make the +/- button rounder */
-/* stylelint-disable-next-line selector-class-pattern */
-.plusMinusButton {
-    font-size: 110%;
 }
 
 .separator {

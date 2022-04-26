@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -23,9 +22,9 @@ use function sha1;
  *
  * How to modify the structure:
  * 1. add a file in src/sql/ named 'schemaXX.sql' where XX is the current schema version + 1
- * 2. increment the REQUIRED_SCHEMA number
- * 4. Run `bin/console db:update`
- * 5. reflect the changes in src/sql/structure.sql (or models/Config.php for the config table)
+ * 2. increment the REQUIRED_SCHEMA number in this file
+ * 3. Run `bin/console db:update`
+ * 4. reflect the changes in src/sql/structure.sql (or models/Config.php for the config table)
  */
 class Update
 {

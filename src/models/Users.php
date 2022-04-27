@@ -141,7 +141,7 @@ class Users
 
         // now add the user to the team
         $Teams->addUserToTeams($userid, array_column($teams, 'id'));
-        if ($alertAdmin) {
+        if ($alertAdmin && !$TeamsHelper->isFirstUserInTeam()) {
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $validated);
         }
         if ($validated === 0) {
@@ -429,10 +429,6 @@ class Users
 
     private function notifyAdmins(array $admins, int $userid, int $validated): void
     {
-        // don't do that for the userid 1
-        if ($userid === 1) {
-            return;
-        }
         $body = array(
             'userid' => $userid,
         );

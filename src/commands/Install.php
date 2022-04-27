@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
@@ -16,6 +15,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Services\DatabaseInstaller;
+use const SITE_URL;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -77,6 +77,7 @@ class Install extends Command
         $Installer = new DatabaseInstaller(new Sql($sqlFs));
         $Installer->install();
         $output->writeln('<info>✓ Installation successful! You can now start using your eLabFTW instance.</info>');
+        $output->writeln('<info>→ Register your Sysadmin account here: ' . SITE_URL . '/register.php</info>');
         $output->writeln('<info>→ Subscribe to the low volume newsletter to stay informed about new releases: http://eepurl.com/bTjcMj</info>');
         return 0;
     }

@@ -15,32 +15,38 @@ jobs:
     # To see the list of pre-built images that CircleCI provides for most common languages see
     # https://circleci.com/docs/2.0/circleci-images/
     docker:
-    - image: cimg/base:current
-      auth:
-        username: nicolascarpi
-        password: $DOCKERHUB_PASSWORD
+      - image: cimg/base:current
+      # ignore login credentials for now
+      #  auth:
+      #    username: nicolascarpi
+      #    password: $DOCKERHUB_PULL_TOKEN
+    environment:
+      DOCKER_BUILDKIT: 1
+      BUILDKIT_PROGRESS: plain
+      COMPOSE_DOCKER_CLI_BUILD: 1
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.11
-          docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
+          version: 20.10.12
+          # docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
+          # docker_layer_caching is behind a paywall
       - run:
           name: Prepare docker-compose.yml
           # Don't bind mount here, files are copied. See scrutinizer.dockerfile
           # first backslash enables different delimiter than slash
           # remove env_file section
           command: |
-              sed -i '\#volumes:#D' tests/docker-compose.yml
-              sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
-              sed -i '\#/elabftw/tests/_output/coverage#D' tests/docker-compose.yml
-              sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
-              sed -i '\#env_file:#D' tests/docker-compose.yml
-              sed -i '\#- elabftw-user\.env#D' tests/docker-compose.yml
+            sed -i '\#volumes:#D' tests/docker-compose.yml
+            sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
+            sed -i '\#/elabftw/tests/_output/coverage#D' tests/docker-compose.yml
+            sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
+            sed -i '\#env_file:#D' tests/docker-compose.yml
+            sed -i '\#- elabftw-user\.env#D' tests/docker-compose.yml
       - run:
           name: Build elabtmp image and start containers
           command: |
-              docker build -t elabtmp -f tests/scrutinizer.dockerfile --progress plain .
-              docker-compose -f tests/docker-compose.yml up -d --quiet-pull
+            docker build -q -t elabtmp -f tests/scrutinizer.dockerfile .
+            docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       # Restore dependency cache
       - restore_cache:
           keys:
@@ -53,24 +59,24 @@ jobs:
       - run:
           name: Copy dependency cache into container
           command: |
-              echo 'export HAS_CACHE="false"' >> $BASH_ENV
-              if [ -d ./node_modules ]; then
-                  docker cp ./node_modules elabtmp:/elabftw/node_modules
-              fi
-              if [ -d ./yarn.cache ]; then
-                  docker cp ./yarn.cache elabtmp:/usr/local/share/.cache/yarn/
-                  echo 'export HAS_CACHE="true"' >> $BASH_ENV
-              fi
+            echo 'export HAS_CACHE="false"' >> $BASH_ENV
+            if [ -d ./node_modules ]; then
+              docker cp ./node_modules elabtmp:/elabftw/node_modules
+            fi
+            if [ -d ./yarn.cache ]; then
+              docker cp ./yarn.cache elabtmp:/usr/local/share/.cache/yarn/
+              echo 'export HAS_CACHE="true"' >> $BASH_ENV
+            fi
       - run:
           name: Install JS dependencies
           command: docker exec -it elabtmp yarn install --silent --non-interactive --frozen-lockfile
       - run:
           name: Extract dependency cache from container
           command: |
-              if [ "${HAS_CACHE}" == "false" ]; then
-                  docker cp elabtmp:/elabftw/node_modules/ ./node_modules
-                  docker cp elabtmp:/usr/local/share/.cache/yarn/ ./yarn.cache
-              fi
+            if [ "${HAS_CACHE}" == "false" ]; then
+              docker cp elabtmp:/elabftw/node_modules/ ./node_modules
+              docker cp elabtmp:/usr/local/share/.cache/yarn/ ./yarn.cache
+            fi
       # Save dependency cache
       - save_cache:
           key: v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}
@@ -99,8 +105,8 @@ jobs:
           # /usr/bin/psalm, //autoload.php, /root/.cache/ are for psalm
           # /usr/bin/phpstan, /proc/cpuinfo is for phpstan, https://github.com/phpstan/phpstan/issues/4427 https://github.com/phpstan/phpstan/issues/2965
           command: |
-              docker exec -it elabtmp sed -i 's/tmpfile, //' /etc/php8/php.ini
-              docker exec -it elabtmp sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/usr/bin/phpstan:/proc/cpuinfo|' /etc/php8/php.ini
+            docker exec -it elabtmp sed -i 's/tmpfile, //' /etc/php8/php.ini
+            docker exec -it elabtmp sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/usr/bin/phpstan:/proc/cpuinfo|' /etc/php8/php.ini
       - run:
           name: "PHP static analysis: psalm + phpsatn"
           command: docker exec -it elabtmp yarn static

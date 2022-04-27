@@ -45,6 +45,11 @@ services:
             - SITE_URL=https://elab.local:3148
             - ELAB_AWS_ACCESS_KEY=yep
             - ELAB_AWS_SECRET_KEY=yop
+        healthcheck:
+            test: /etc/nginx/healthcheck.sh
+            interval: 10s
+            timeout: 5s
+            retries: 3
         volumes:
             - ..:/elabftw
             - ../_coverage:/elabftw/tests/_output/coverage

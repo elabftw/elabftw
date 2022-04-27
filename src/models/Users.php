@@ -429,6 +429,10 @@ class Users
 
     private function notifyAdmins(array $admins, int $userid, int $validated): void
     {
+        // don't do that for the userid 1
+        if ($userid === 1) {
+            return;
+        }
         $body = array(
             'userid' => $userid,
         );

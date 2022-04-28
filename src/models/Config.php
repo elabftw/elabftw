@@ -180,6 +180,7 @@ final class Config
             ('ts_url', 'NULL'),
             ('ts_cert', NULL),
             ('ts_hash', 'sha256'),
+            ('ts_limit', '0'),
             ('saml_toggle', '0'),
             ('saml_debug', '0'),
             ('saml_strict', '1'),

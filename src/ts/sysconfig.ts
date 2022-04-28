@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const TabMenu = new Tab();
+  const AjaxC = new Ajax();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
   // GET the latest version information
@@ -81,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const Teams = {
     controller: 'app/controllers/SysconfigAjaxController.php',
     editUser2Team(action: Action, teamid: number, userid: number): void {
-      const AjaxC = new Ajax();
       const payload: Payload = {
         method: Method.POST,
         action: action,
@@ -156,19 +156,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // CLEAR-LOCKEDUSERS and CLEAR-LOCKOUTDEVICES
     if (el.matches('[data-action="clear-nologinusers"]') || el.matches('[data-action="clear-lockoutdevices"]')) {
-      const formData  = new FormData();
-      formData.append(el.dataset.action, 'yep');
-      formData.append('csrf', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-      fetch('app/controllers/SysconfigAjaxController.php', {
-        method: 'POST',
-        body: formData,
-      }).then(response => response.json())
+      AjaxC.postForm('app/controllers/SysconfigAjaxController.php', { [el.dataset.action]: '1' })
         .then(json => {
           if (json.res) {
             reloadElement('bruteforceDiv');
           }
           notif(json);
         });
+
     // ADD USER TO TEAM
     } else if (el.matches('[data-action="create-user2team"]')) {
       const selectEl = (el.previousElementSibling as HTMLSelectElement);

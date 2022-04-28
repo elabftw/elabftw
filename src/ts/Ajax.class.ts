@@ -62,6 +62,18 @@ export class Ajax {
     });
   }
 
+  postForm(controller: string, params: Record<string, string>): Promise<ResponseMsg> {
+    const formData = new FormData();
+    formData.append('csrf', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+    for (const [key, value] of Object.entries(params)) {
+      formData.append(key, value);
+    }
+    return fetch(controller, {
+      method: 'POST',
+      body: formData,
+    }).then(response => response.json());
+  }
+
   send(payload: Payload): Promise<ResponseMsg> {
     // get request should not have a body, and that's a shame, it would make things simpler IMHO..
     let response: Promise<Response>;

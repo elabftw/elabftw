@@ -25,6 +25,7 @@ use Elabftw\Models\Links;
 use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Teams;
+use Elabftw\Models\Users2Teams;
 use Exception;
 use PDOException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -60,8 +61,9 @@ try {
         throw new IllegalActionException('Non admin user tried to edit status or items types.');
     }
     // only sysadmins can update the config
-    if ($action === 'update' && $Model instanceof Config && !$App->Users->userData['is_sysadmin']) {
-        throw new IllegalActionException('Non sysadmin user tried to update instance config.');
+    if ((($action === 'update' && $Model instanceof Config)
+        || (($action === 'create' || $action === 'destroy') && $Model instanceof Users2Teams)) && !$App->Users->userData['is_sysadmin']) {
+        throw new IllegalActionException('Non sysadmin user tried to update instance config or edit users2teams.');
     }
 
 
@@ -87,8 +89,11 @@ try {
                 || $App->Config->configArr['deletable_xp'] === '0') {
                 throw new ImproperActionException('You cannot delete experiments!');
             }
+        } elseif ($Model instanceof Users2Teams) {
+            $res = $Model->destroy($Params);
+        } else {
+            $res = $Model->destroy();
         }
-        $res = $Model->destroy();
     } elseif ($action === 'destroystamppass' && ($Model instanceof Config || $Model instanceof Teams)) {
         $res = $Model->destroyStamppass();
     } elseif ($action === 'duplicate' && $Model instanceof AbstractEntity) {

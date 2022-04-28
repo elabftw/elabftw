@@ -33,6 +33,7 @@ use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Elabftw\Models\Users2Teams;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -51,7 +52,7 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     protected ?int $id = null;
 
-    protected CrudInterface | Users | Config $Model;
+    protected CrudInterface | Users | Config | Users2Teams $Model;
 
     protected array $extra = array();
 
@@ -60,7 +61,7 @@ abstract class AbstractProcessor implements ProcessorInterface
         $this->process($request);
     }
 
-    public function getModel(): CrudInterface | Users | Config
+    public function getModel(): CrudInterface | Users | Config | Users2Teams
     {
         return $this->Model;
     }
@@ -78,7 +79,7 @@ abstract class AbstractProcessor implements ProcessorInterface
     // @phpstan-ignore-next-line
     public function getParams()
     {
-        if ($this->action === 'create' || $this->action === 'read' || $this->action === 'update') {
+        if ($this->action === 'create' || $this->action === 'read' || $this->action === 'update' || $this->action === 'destroy') {
             $ParamsBuilder = new ParamsBuilder($this->Model, $this->content, $this->target, $this->extra);
             return $ParamsBuilder->getParams();
         }
@@ -103,7 +104,7 @@ abstract class AbstractProcessor implements ProcessorInterface
         return new Items($this->Users, $itemId);
     }
 
-    protected function buildModel(string $model): CrudInterface | Users | Config
+    protected function buildModel(string $model): CrudInterface | Users | Config | Users2Teams
     {
         switch ($model) {
             case 'apikey':
@@ -143,6 +144,8 @@ abstract class AbstractProcessor implements ProcessorInterface
                 return new Todolist((int) $this->Users->userData['userid'], $this->id);
             case 'user':
                 return $this->Users;
+            case 'user2team':
+                return new Users2Teams();
             default:
                 throw new IllegalActionException('Bad model');
         }

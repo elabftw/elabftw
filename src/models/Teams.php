@@ -18,7 +18,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
@@ -63,48 +62,6 @@ class Teams implements CrudInterface
     }
 
     /**
-     * Add one user to n teams
-     *
-     * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
-     */
-    public function addUserToTeams(int $userid, array $teamIdArr): void
-    {
-        foreach ($teamIdArr as $teamId) {
-            $TeamsHelper = new TeamsHelper((int) $teamId);
-            // don't add a second time
-            if ($TeamsHelper->isUserInTeam($userid)) {
-                break;
-            }
-            $sql = 'INSERT INTO users2teams (`users_id`, `teams_id`) VALUES (:userid, :team);';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-            $req->bindParam(':team', $teamId, PDO::PARAM_INT);
-            $this->Db->execute($req);
-        }
-    }
-
-    /**
-     * Remove a user from teams
-     *
-     * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
-     */
-    public function rmUserFromTeams(int $userid, array $teamIdArr): void
-    {
-        // make sure that the user is in more than one team before removing the team
-        $UsersHelper = new UsersHelper($userid);
-        if (count($UsersHelper->getTeamsFromUserid()) === 1) {
-            return;
-        }
-        foreach ($teamIdArr as $teamId) {
-            $sql = 'DELETE FROM users2teams WHERE `users_id` = :userid AND `teams_id` = :team';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-            $req->bindParam(':team', $teamId, PDO::PARAM_INT);
-            $this->Db->execute($req);
-        }
-    }
-
-    /**
      * When the user logs in, make sure that the teams they are part of
      * are the same teams than the one sent by an external auth
      *
@@ -112,6 +69,7 @@ class Teams implements CrudInterface
      */
     public function synchronize(int $userid, array $teams): void
     {
+        $Users2Teams = new Users2Teams();
         $teamIdArr = array_column($teams, 'id');
         // get the difference between the teams sent by idp
         // and the teams that the user is in
@@ -119,11 +77,11 @@ class Teams implements CrudInterface
         $currentTeams = $UsersHelper->getTeamsIdFromUserid();
 
         $addToTeams = array_diff($teamIdArr, $currentTeams);
-        $this->addUserToTeams($userid, $addToTeams);
+        $Users2Teams->addUserToTeams($userid, $addToTeams);
         $currentTeams = $UsersHelper->getTeamsIdFromUserid();
 
         $rmFromTeams = array_diff($currentTeams, $teamIdArr);
-        $this->rmUserFromTeams($userid, $rmFromTeams);
+        $Users2Teams->rmUserFromTeams($userid, $rmFromTeams);
     }
 
     /**

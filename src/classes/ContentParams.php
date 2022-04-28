@@ -57,6 +57,6 @@ class ContentParams implements ContentParamsInterface
 
     public function getExtra(string $key): string
     {
-        return Filter::sanitize($this->extra[$key] ?? '');
+        return Filter::sanitize((string) $this->extra[$key]);
     }
 }

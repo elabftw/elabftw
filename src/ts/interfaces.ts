@@ -82,6 +82,7 @@ enum Model {
   Todolist = 'todolist',
   Upload = 'upload',
   User = 'user',
+  User2Team = 'user2team',
 }
 
 enum EntityType {

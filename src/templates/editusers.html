@@ -1,59 +1,25 @@
-<!-- Modal for adding a user to a team -->
-<div class='modal fade' id='editUserToTeamModal' tabindex='-1' role='dialog' aria-labelledby='editUserToTeamModalLabel' aria-hidden='true'>
-  <div class='modal-dialog' role='document'>
-    <div class='modal-content'>
-      <div class='modal-header'>
-        <h5 class='modal-title' id='editUserToTeamModalLabel'>{{ 'Change teams for user'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
-          <span aria-hidden='true'>&times;</span>
-        </button>
-      </div>
-      <form method='post' action='app/controllers/SysconfigController.php'>
-        <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
-            {{ App.Session.get('csrf')|csrf }}
-            <input type='hidden' id='editUserToTeamUserid' name='userid' value='' />
-            <input type='hidden' id='editUserToTeamAction' name='action' value='' />
-            <!-- so we can redirect back to the correct page -->
-            <input type='hidden' id='editUserToTeamQuery' name='query' value='' />
-            <input type='hidden' name='editUserToTeam' value='1' />
-            <label for='teamSelect'>{{ 'Select a team'|trans }}</label>
-            <select id='teamSelect' class='form-control' name='team'>
-              {% for team in teamsArr %}
-                <option value='{{ team.id }}'>{{ team.name }}</option>
-              {% endfor %}
-            </select>
-        </div>
-        <div class='modal-footer'>
-          <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-          <button type='submit' class='btn btn-primary'>{{ 'Edit'|trans }}</button>
-        </div>
-      </form>
-    </div>
-  </div>
+<div class='box form-group'>
+  <form class='form-inline' method='get' id ='userSearchForm'>
+    <label for='searchUsers' class='mb-2'>{{ 'Search users'|trans }}</label>
+    <input type='text' autocomplete='off' class='form-control col-md-4 mb-2' id='searchUsers' value='{{ App.Request.query.get('q') }}' name='q' />
+    <!-- stay on correct tab -->
+    <input type='hidden' value='3' name='tab' />
+    {% if App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
+      <label for='teamFilter' class='ml-2 mb-2'>{{ 'limit to team'|trans }}</label>
+      <select class='form-control mb-2' name='teamFilter' id='teamFilter'>
+        <option value=''>{{ 'All teams'|trans }}</option>
+        {% for team in teamsArr %}
+          <option value='{{ team.id }}' {{- Request.query.get('teamFilter') == team.id ? ' selected' }}>{{ team.name }}</option>
+        {% endfor %}
+      </select>
+    {% endif %}
+    <input type='submit' class='button btn btn-primary ml-2 mb-2' value='{{ 'Search'|trans }}' />
+    <input type='button' id='editusersShowAll' class='button btn btn-secondary ml-2 mb-2' value='{{ 'Show all'|trans }}' />
+  </form>
 </div>
 
-  <div class='box form-group'>
-    <form class='form-inline' method='get' id ='userSearchForm'>
-      <label for='searchUsers' class='mb-2'>{{ 'Search users'|trans }}</label>
-      <input type='text' autocomplete='off' class='form-control col-md-4 mb-2' id='searchUsers' value='{{ App.Request.query.get('q') }}' name='q' />
-      <!-- stay on correct tab -->
-      <input type='hidden' value='3' name='tab' />
-      {% if App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
-        <label for='teamFilter' class='ml-2 mb-2'>{{ 'limit to team'|trans }}</label>
-        <select class='form-control mb-2' name='teamFilter' id='teamFilter'>
-          <option value=''>{{ 'All teams'|trans }}</option>
-          {% for team in teamsArr %}
-            <option value='{{ team.id }}' {{- Request.query.get('teamFilter') == team.id ? ' selected' }}>{{ team.name }}</option>
-          {% endfor %}
-        </select>
-      {% endif %}
-      <input type='submit' class='button btn btn-primary ml-2 mb-2' value='{{ 'Search'|trans }}' />
-      <input type='button' id='editusersShowAll' class='button btn btn-secondary ml-2 mb-2' value='{{ 'Show all'|trans }}' />
-    </form>
-  </div>
-
 {% if isSearching %}
-    <div class='box'>
+    <div id='editUsersBox' class='box'>
         <h3>{{ 'Edit Users'|trans }}</h3>
         <hr>
         {% if usersArr %}
@@ -66,13 +32,23 @@
                 <!-- TEAM -->
                 <li class='list-inline-item mb-2'>
                   <label for='usersUpdateTeam_{{ user.userid }}'>{{ 'Team(s)'|trans }}</label>
-                    {% for team in user.teams %}
-                      <span class='btn btn-secondary disabled'>{{ team.name }}</span>
-                    {% endfor %}
-                    {% if App.Session.get('is_sysadmin') %}
-                    <span class='btn btn-primary clickable editUserToTeam' data-action='toggle-modal' data-target='editUserToTeamModal' data-useraction='add' data-userid='{{ user.userid }}'><i class='color-white fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
-                    <span class='btn btn-danger clickable editUserToTeam' data-action='toggle-modal' data-target='editUserToTeamModal' data-useraction='rm' data-userid='{{ user.userid }}'><i class='color-white fas fa-minus-circle'></i> {{ 'Remove team'|trans }}</span>
+                  {% for team in user.teams %}
+                    <span data-action='destroy-user2team' data-teamid='{{ team.id }}' data-userid='{{ user.userid }}' class='btn btn-secondary hover-danger'>{{ team.name }}</span>
+                  {% endfor %}
+                  {% if App.Session.get('is_sysadmin') %}
+                    {% set addableToTeams = teamsArr|filter(v => v.visible == 1)|filter(v => v.id not in user.teams|column('id')) %}
+                    {% if addableToTeams %}
+                      <span class='btn btn-primary' data-action='toggle-next'><i class='color-white fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
+                      <span class='form-group form-inline mt-2' hidden>
+                        <select class='form-control'>
+                          {% for team in addableToTeams %}
+                          <option value='{{ team.id }}'>{{ team.name }}</option>
+                        {% endfor %}
+                      </select>
+                      <button data-action='create-user2team' data-userid='{{ user.userid }}' class='btn btn-primary'>{{ 'Go'|trans }}</button>
+                      </span>
                     {% endif %}
+                  {% endif %}
                 </li>
 
 

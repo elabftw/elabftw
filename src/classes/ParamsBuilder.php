@@ -24,6 +24,7 @@ use Elabftw\Models\Templates;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Elabftw\Models\Users2Teams;
 
 /**
  * Return the corresponding parameters object based on the model
@@ -31,7 +32,7 @@ use Elabftw\Models\Users;
 class ParamsBuilder
 {
     public function __construct(
-        private CrudInterface | Users | Config $model,
+        private CrudInterface | Users | Config | Users2Teams $model,
         private string $content = '',
         private string $target = '',
         private array $extra = array(),
@@ -72,6 +73,6 @@ class ParamsBuilder
         if ($this->model instanceof TeamGroups) {
             return new TeamGroupParams($this->content, $this->target, $this->extra);
         }
-        return new ContentParams($this->content, $this->target);
+        return new ContentParams($this->content, $this->target, $this->extra);
     }
 }

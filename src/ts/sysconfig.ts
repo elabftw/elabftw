@@ -6,10 +6,12 @@
  * @package elabftw
  */
 import { notif, reloadElement } from './misc';
+import { Action, Method, Payload, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
+import { Ajax } from './Ajax.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/sysconfig.php') {
@@ -74,17 +76,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }).catch(error => latestVersionDiv.append(error));
 
+
   // TEAMS
   const Teams = {
     controller: 'app/controllers/SysconfigAjaxController.php',
-    editUserToTeam(userid, action): void {
-      $('#editUserToTeamUserid').attr('value', userid);
-      $('#editUserToTeamAction').attr('value', action);
-      const params = new URLSearchParams(document.location.search);
-      $('#editUserToTeamQuery').attr('value', params.get('q'));
+    editUser2Team(action: Action, teamid: number, userid: number): void {
+      const AjaxC = new Ajax();
+      const payload: Payload = {
+        method: Method.POST,
+        action: action,
+        model: Model.User2Team,
+        notif: true,
+        extraParams: {
+          teamid: teamid,
+          userid: userid,
+        },
+      };
+      AjaxC.send(payload)
+        .then(json => {
+          notif(json);
+          reloadElement('editUsersBox');
+        });
     },
     create: function(): void {
-      const name = $('#teamsName').val();
+      const name = (document.getElementById('teamsName') as HTMLInputElement).value;
       $.post(this.controller, {
         teamsCreate: true,
         teamsName: name,
@@ -135,9 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
   $(document).on('click', '.teamsArchiveButton', function() {
     notif({'msg': 'Feature not yet implemented :)', 'res': true});
   });
-  $(document).on('click', '.editUserToTeam', function() {
-    Teams.editUserToTeam($(this).data('userid'), $(this).data('useraction'));
-  });
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
@@ -157,6 +169,24 @@ document.addEventListener('DOMContentLoaded', () => {
           }
           notif(json);
         });
+    // ADD USER TO TEAM
+    } else if (el.matches('[data-action="create-user2team"]')) {
+      const selectEl = (el.previousElementSibling as HTMLSelectElement);
+      Teams.editUser2Team(
+        Action.Create,
+        parseInt(selectEl.options[selectEl.selectedIndex].value, 10),
+        parseInt(el.dataset.userid, 10),
+      );
+    // REMOVE USER FROM TEAM
+    } else if (el.matches('[data-action="destroy-user2team"]')) {
+      if (!confirm(i18next.t('generic-delete-warning'))) {
+        return;
+      }
+      Teams.editUser2Team(
+        Action.Destroy,
+        parseInt(el.dataset.teamid, 10),
+        parseInt(el.dataset.userid, 10),
+      );
     }
   });
 

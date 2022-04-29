@@ -1,6 +1,6 @@
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2012, 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
@@ -22,22 +22,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     if (el.matches('[data-action="update-user"]')) {
       const formGroup = el.closest('div.form-group');
-      const formData = new FormData();
-      formData.append('csrf', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-      formData.append('usersUpdate', '1');
+      let params = { 'usersUpdate': '1' };
       // text inputs
       ['userid', 'firstname', 'lastname', 'email', 'password'].forEach(input => {
-        formData.append(input, (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value);
+        params = Object.assign(params, {[input]: (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value});
+        if (input === 'password') {
+          (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value = '';
+        }
       });
+      // clear the password field once collected
       // select inputs
       ['usergroup', 'use_mfa', 'validated'].forEach(input => {
-        formData.append(input, (formGroup.querySelector(`select[name="${input}"]`) as HTMLSelectElement).value);
+        params = Object.assign(params, {[input]: (formGroup.querySelector(`select[name="${input}"]`) as HTMLSelectElement).value});
       });
       // now doing POST request
-      return fetch(controller, {
-        method: 'POST',
-        body: formData,
-      }).then(response => response.json())
+      AjaxC.postForm(controller, params)
         .then(json => notif(json));
 
     // ARCHIVE USER TOGGLE

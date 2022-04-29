@@ -95,13 +95,17 @@ export default class JsonEditorHelper {
     this.editorDiv.dataset.what = 'file';
   }
 
+  loadMetadataAfterButtonClick(): void {
+    // disable the load metadata button
+    document.getElementById('jsonEditorMetadataLoadButton').toggleAttribute('disabled', true);
+    this.loadMetadata();
+  }
+
   loadMetadata(): void {
     // set the title
     this.editorTitle.innerText = i18next.t('editing-metadata');
     this.MetadataC.read().then(metadata => this.editor.set(metadata));
     this.editorDiv.dataset.what = 'metadata';
-    // disable the button
-    document.getElementById('jsonEditorMetadataLoadButton').toggleAttribute('disabled', true);
   }
 
   loadMetadataFromId(entity: Entity): void {

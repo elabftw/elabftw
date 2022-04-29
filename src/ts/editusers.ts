@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       // now doing POST request
       AjaxC.postForm(controller, params)
-        .then(json => notif(json));
+        .then(res => res.json().then(json => notif(json)));
 
     // ARCHIVE USER TOGGLE
     } else if (el.matches('[data-action="toggle-archive-user"]')) {
@@ -48,12 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
       AjaxC.postForm(controller, {
         toggleArchiveUser: '1',
         userid: el.dataset.userid,
-      }).then(json => {
+      }).then(res => res.json().then(json => {
         notif(json);
         if (json.res) {
           insertParamAndReload('tab', '3');
         }
-      });
+      }));
 
     // DESTROY USER
     } else if (el.matches('[data-action="destroy-user"]')) {
@@ -63,12 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
       AjaxC.postForm(controller, {
         destroyUser: '1',
         userid: el.dataset.userid,
-      }).then(json => {
+      }).then(res => res.json().then(json => {
         notif(json);
         if (json.res) {
           el.closest('li.list-group-item').remove();
         }
-      });
+      }));
     }
   });
 

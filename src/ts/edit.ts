@@ -332,34 +332,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const dropZone = Dropzone.forElement('#elabftw-dropzone');
         // Edgecase for editing an image using tinymce ImageTools
         // Check if it was selected. This is set by an event hook below
-        if (tinymceEditImage.selected == true && confirm(i18next.t('replace-edited-file'))) {
-          // Replace the file on the server
-          const formData = new FormData();
-          formData.append('action', 'update');
-          formData.append('target', 'file');
-          formData.append('replace', 'true');
-          formData.append('id', String(tinymceEditImage.uploadId));
-          formData.append('entity_id', String(entity.id));
-          formData.append('entity_type', entity.type);
-          formData.append('model', 'upload');
-          formData.append('csrf', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-          formData.append('content', blobInfo.blob());
-
-          $.post({
-            url: 'app/controllers/RequestHandler.php',
-            data: formData,
-            processData: false,
-            contentType: false,
-          }).done(function() {
-            // Send the same url we stored before the edit menu was clicked to tinymce
-            success(tinymceEditImage.url);
-            tinymceEditImage.reset();
-          });
+        if (tinymceEditImage.selected === true) {
+          const AjaxC = new Ajax();
+          const uploadId = tinymceEditImage.uploadId;
+          const imageUrl = tinymceEditImage.url;
+          // Note: the confirm will unselect tinymceEditImage and we lose information
+          // so it is done after we grab uploadId
+          if (confirm(i18next.t('replace-edited-file'))) {
+            // Replace the file on the server
+            AjaxC.postForm('app/controllers/RequestHandler.php', {
+              action: 'update',
+              target: 'file',
+              replace: '1',
+              id: String(uploadId),
+              entity_id: String(entity.id),
+              entity_type: entity.type,
+              model: 'upload',
+              content: blobInfo.blob(),
+            }).then(() => {
+              // Send the same url we stored before the edit menu was clicked to tinymce
+              success(imageUrl);
+              tinymceEditImage.reset();
+            });
+          }
         // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
         } else if (typeof blobInfo.blob().name === 'undefined') {
           const filename = prompt('Enter filename with extension e.g. .jpeg');
           if (typeof filename !== 'undefined' && filename !== null) {
-            const fileOfBlob = new File([blobInfo.blob()], filename);
+            // use window.File here not dropzone.File
+            const fileOfBlob = new window.File([blobInfo.blob()], filename);
             dropZone.addFile(fileOfBlob);
             dropZone.tinyImageSuccess = success;
           } else {

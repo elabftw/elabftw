@@ -62,7 +62,7 @@ export class Ajax {
     });
   }
 
-  postForm(controller: string, params: Record<string, string>): Promise<ResponseMsg> {
+  postForm(controller: string, params: Record<string, string|Blob>): Promise<Response> {
     const formData = new FormData();
     formData.append('csrf', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
     for (const [key, value] of Object.entries(params)) {
@@ -71,7 +71,8 @@ export class Ajax {
     return fetch(controller, {
       method: 'POST',
       body: formData,
-    }).then(response => response.json());
+    });
+    // don't response.json() here as we don't always get json back
   }
 
   send(payload: Payload): Promise<ResponseMsg> {

@@ -157,12 +157,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // CLEAR-LOCKEDUSERS and CLEAR-LOCKOUTDEVICES
     if (el.matches('[data-action="clear-nologinusers"]') || el.matches('[data-action="clear-lockoutdevices"]')) {
       AjaxC.postForm('app/controllers/SysconfigAjaxController.php', { [el.dataset.action]: '1' })
-        .then(json => {
+        .then(res => res.json().then(json => {
           if (json.res) {
             reloadElement('bruteforceDiv');
           }
           notif(json);
-        });
+        }));
 
     // ADD USER TO TEAM
     } else if (el.matches('[data-action="create-user2team"]')) {

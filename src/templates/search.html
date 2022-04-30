@@ -244,7 +244,8 @@
             data-visibility='{{ visibilityArr|join('|') }}'
           >{{ extended }}</textarea>
           <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
-          <!-- this is where the errors will be displayed -->
+
+          {# this is where the errors will be displayed #}
           <div id='extendedFeedback' class='invalid-feedback'>{{ extendedError|raw }}</div>
         </div>
         <small class='form-text text-muted'>

@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
+  const AjaxC = new Ajax();
 
   // add extra fields elements from metadata json
   const MetadataC = new Metadata(entity);
@@ -200,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         target: Target.Body,
       };
-      (new Ajax()).send(payload).then(json => editor.setContent((json.value as PartialEntity).body));
+      AjaxC.send(payload).then(json => editor.setContent((json.value as PartialEntity).body));
 
     // DESTROY ENTITY
     } else if (el.matches('[data-action="destroy"]')) {
@@ -317,11 +318,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const tinymceEditImage = {
       selected: false,
       uploadId: 0,
-      url: '',
       reset: function(): void {
         this.selected = false;
         this.uploadId = 0;
-        this.url = '';
       },
     };
 
@@ -333,9 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Edgecase for editing an image using tinymce ImageTools
         // Check if it was selected. This is set by an event hook below
         if (tinymceEditImage.selected === true) {
-          const AjaxC = new Ajax();
-          const uploadId = tinymceEditImage.uploadId;
-          const imageUrl = tinymceEditImage.url;
+          const uploadId = String(tinymceEditImage.uploadId);
           // Note: the confirm will unselect tinymceEditImage and we lose information
           // so it is done after we grab uploadId
           if (confirm(i18next.t('replace-edited-file'))) {
@@ -344,15 +341,26 @@ document.addEventListener('DOMContentLoaded', () => {
               action: 'update',
               target: 'file',
               replace: '1',
-              id: String(uploadId),
+              id: uploadId,
               entity_id: String(entity.id),
               entity_type: entity.type,
               model: 'upload',
               content: blobInfo.blob(),
             }).then(() => {
-              // Send the same url we stored before the edit menu was clicked to tinymce
-              success(imageUrl);
-              tinymceEditImage.reset();
+              reloadElement('filesdiv').then(() => {
+                // now fetch the new url of the upload so we can replace our image with that.
+                // Problem is: we don't have the id of the new upload
+                // so get all the link to attached files and we will take the highest one (most recent upload id)
+                const ids = [];
+                document.querySelectorAll('[id^="upload-filename"]').forEach(l => {
+                  ids.push(parseInt(l.getAttribute('id').split('_').pop(), 10));
+                });
+                const imgHref = (document.getElementById(`upload-filename_${ids.sort().pop()}`) as HTMLLinkElement).href;
+                const q = new URL(imgHref).searchParams;
+                // call the success callback function with the new URL
+                success(`app/download.php?f=${q.get('f')}&storage=${q.get('storage')}`);
+                tinymceEditImage.reset();
+              });
             });
           }
         // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
@@ -385,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
           },
           target: Target.List,
         };
-        (new Ajax()).send(payload).then(json => callback(json.value));
+        AjaxC.send(payload).then(json => callback(json.value));
       },
       // use a custom function for the save button in toolbar
       save_onsavecallback: (): void => quickSave(),
@@ -402,16 +410,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // the uploadid is added as a data-uploadid attribute when inserted in the text
         // this allows us to know which corresponding upload is selected so we can replace it if needed (after a crop for instance)
         const uploadId = parseInt(selectedImage.dataset.uploadid);
-        let url = selectedImage.src;
-        url = url.slice(url.lastIndexOf('app/'));
-        // Sometimes tinymce adds an identifier on modification
-        // This checks for and removes it
-        if (url.lastIndexOf('&') != -1){
-          url = url.slice(0, url.lastIndexOf('&'));
-        }
         tinymceEditImage.selected = true;
         tinymceEditImage.uploadId = uploadId;
-        tinymceEditImage.url = url;
       } else {
         tinymceEditImage.reset();
       }

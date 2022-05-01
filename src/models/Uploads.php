@@ -257,9 +257,9 @@ class Uploads implements CrudInterface
      */
     private function replace(UploadedFile $file): bool
     {
-        // read the current one to get the real_name
+        // read the current one to get the comment
         $upload = $this->read(new ContentParams());
-        $params = new CreateUpload($upload['real_name'], $file->getPathname(), $upload['comment']);
+        $params = new CreateUpload($file->getClientOriginalName(), $file->getPathname(), $upload['comment']);
         $this->create($params);
 
         return $this->update(new UploadParams((string) self::STATE_ARCHIVED, 'state'));

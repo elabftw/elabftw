@@ -140,7 +140,8 @@ class Users
         $userid = $this->Db->lastInsertId();
 
         // now add the user to the team
-        $Teams->addUserToTeams($userid, array_column($teams, 'id'));
+        $Users2Teams = new Users2Teams();
+        $Users2Teams->addUserToTeams($userid, array_column($teams, 'id'));
         if ($alertAdmin && !$TeamsHelper->isFirstUserInTeam()) {
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $validated);
         }

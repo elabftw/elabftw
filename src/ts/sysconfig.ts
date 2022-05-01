@@ -6,10 +6,12 @@
  * @package elabftw
  */
 import { notif, reloadElement } from './misc';
+import { Action, Method, Payload, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
+import { Ajax } from './Ajax.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/sysconfig.php') {
@@ -17,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const TabMenu = new Tab();
+  const AjaxC = new Ajax();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
   // GET the latest version information
@@ -74,17 +77,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }).catch(error => latestVersionDiv.append(error));
 
+
   // TEAMS
   const Teams = {
     controller: 'app/controllers/SysconfigAjaxController.php',
-    editUserToTeam(userid, action): void {
-      $('#editUserToTeamUserid').attr('value', userid);
-      $('#editUserToTeamAction').attr('value', action);
-      const params = new URLSearchParams(document.location.search);
-      $('#editUserToTeamQuery').attr('value', params.get('q'));
+    editUser2Team(action: Action, teamid: number, userid: number): void {
+      const payload: Payload = {
+        method: Method.POST,
+        action: action,
+        model: Model.User2Team,
+        notif: true,
+        extraParams: {
+          teamid: teamid,
+          userid: userid,
+        },
+      };
+      AjaxC.send(payload)
+        .then(json => {
+          notif(json);
+          reloadElement('editUsersBox');
+        });
     },
     create: function(): void {
-      const name = $('#teamsName').val();
+      const name = (document.getElementById('teamsName') as HTMLInputElement).value;
       $.post(this.controller, {
         teamsCreate: true,
         teamsName: name,
@@ -135,28 +150,38 @@ document.addEventListener('DOMContentLoaded', () => {
   $(document).on('click', '.teamsArchiveButton', function() {
     notif({'msg': 'Feature not yet implemented :)', 'res': true});
   });
-  $(document).on('click', '.editUserToTeam', function() {
-    Teams.editUserToTeam($(this).data('userid'), $(this).data('useraction'));
-  });
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
     // CLEAR-LOCKEDUSERS and CLEAR-LOCKOUTDEVICES
     if (el.matches('[data-action="clear-nologinusers"]') || el.matches('[data-action="clear-lockoutdevices"]')) {
-      const formData  = new FormData();
-      formData.append(el.dataset.action, 'yep');
-      formData.append('csrf', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-      fetch('app/controllers/SysconfigAjaxController.php', {
-        method: 'POST',
-        body: formData,
-      }).then(response => response.json())
-        .then(json => {
+      AjaxC.postForm('app/controllers/SysconfigAjaxController.php', { [el.dataset.action]: '1' })
+        .then(res => res.json().then(json => {
           if (json.res) {
             reloadElement('bruteforceDiv');
           }
           notif(json);
-        });
+        }));
+
+    // ADD USER TO TEAM
+    } else if (el.matches('[data-action="create-user2team"]')) {
+      const selectEl = (el.previousElementSibling as HTMLSelectElement);
+      Teams.editUser2Team(
+        Action.Create,
+        parseInt(selectEl.options[selectEl.selectedIndex].value, 10),
+        parseInt(el.dataset.userid, 10),
+      );
+    // REMOVE USER FROM TEAM
+    } else if (el.matches('[data-action="destroy-user2team"]')) {
+      if (!confirm(i18next.t('generic-delete-warning'))) {
+        return;
+      }
+      Teams.editUser2Team(
+        Action.Destroy,
+        parseInt(el.dataset.teamid, 10),
+        parseInt(el.dataset.userid, 10),
+      );
     }
   });
 

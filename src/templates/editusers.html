@@ -1,59 +1,25 @@
-<!-- Modal for adding a user to a team -->
-<div class='modal fade' id='editUserToTeamModal' tabindex='-1' role='dialog' aria-labelledby='editUserToTeamModalLabel' aria-hidden='true'>
-  <div class='modal-dialog' role='document'>
-    <div class='modal-content'>
-      <div class='modal-header'>
-        <h5 class='modal-title' id='editUserToTeamModalLabel'>{{ 'Change teams for user'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
-          <span aria-hidden='true'>&times;</span>
-        </button>
-      </div>
-      <form method='post' action='app/controllers/SysconfigController.php'>
-        <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
-            {{ App.Session.get('csrf')|csrf }}
-            <input type='hidden' id='editUserToTeamUserid' name='userid' value='' />
-            <input type='hidden' id='editUserToTeamAction' name='action' value='' />
-            <!-- so we can redirect back to the correct page -->
-            <input type='hidden' id='editUserToTeamQuery' name='query' value='' />
-            <input type='hidden' name='editUserToTeam' value='1' />
-            <label for='teamSelect'>{{ 'Select a team'|trans }}</label>
-            <select id='teamSelect' class='form-control' name='team'>
-              {% for team in teamsArr %}
-                <option value='{{ team.id }}'>{{ team.name }}</option>
-              {% endfor %}
-            </select>
-        </div>
-        <div class='modal-footer'>
-          <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-          <button type='submit' class='btn btn-primary'>{{ 'Edit'|trans }}</button>
-        </div>
-      </form>
-    </div>
-  </div>
+<div class='box form-group'>
+  <form class='form-inline' method='get' id ='userSearchForm'>
+    <label for='searchUsers' class='mb-2'>{{ 'Search users'|trans }}</label>
+    <input type='text' autocomplete='off' class='form-control col-md-4 mb-2' id='searchUsers' value='{{ App.Request.query.get('q') }}' name='q' />
+    <!-- stay on correct tab -->
+    <input type='hidden' value='3' name='tab' />
+    {% if App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
+      <label for='teamFilter' class='ml-2 mb-2'>{{ 'limit to team'|trans }}</label>
+      <select class='form-control mb-2' name='teamFilter' id='teamFilter'>
+        <option value=''>{{ 'All teams'|trans }}</option>
+        {% for team in teamsArr %}
+          <option value='{{ team.id }}' {{- Request.query.get('teamFilter') == team.id ? ' selected' }}>{{ team.name }}</option>
+        {% endfor %}
+      </select>
+    {% endif %}
+    <input type='submit' class='button btn btn-primary ml-2 mb-2' value='{{ 'Search'|trans }}' />
+    <input type='button' id='editusersShowAll' class='button btn btn-secondary ml-2 mb-2' value='{{ 'Show all'|trans }}' />
+  </form>
 </div>
 
-  <div class='box form-group'>
-    <form class='form-inline' method='get' id ='userSearchForm'>
-      <label for='searchUsers' class='mb-2'>{{ 'Search users'|trans }}</label>
-      <input type='text' autocomplete='off' class='form-control col-md-4 mb-2' id='searchUsers' value='{{ App.Request.query.get('q') }}' name='q' />
-      <!-- stay on correct tab -->
-      <input type='hidden' value='3' name='tab' />
-      {% if App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
-        <label for='teamFilter' class='ml-2 mb-2'>{{ 'limit to team'|trans }}</label>
-        <select class='form-control mb-2' name='teamFilter' id='teamFilter'>
-          <option value=''>{{ 'All teams'|trans }}</option>
-          {% for team in teamsArr %}
-            <option value='{{ team.id }}' {{- Request.query.get('teamFilter') == team.id ? ' selected' }}>{{ team.name }}</option>
-          {% endfor %}
-        </select>
-      {% endif %}
-      <input type='submit' class='button btn btn-primary ml-2 mb-2' value='{{ 'Search'|trans }}' />
-      <input type='button' id='editusersShowAll' class='button btn btn-secondary ml-2 mb-2' value='{{ 'Show all'|trans }}' />
-    </form>
-  </div>
-
 {% if isSearching %}
-    <div class='box'>
+    <div id='editUsersBox' class='box'>
         <h3>{{ 'Edit Users'|trans }}</h3>
         <hr>
         {% if usersArr %}
@@ -66,116 +32,118 @@
                 <!-- TEAM -->
                 <li class='list-inline-item mb-2'>
                   <label for='usersUpdateTeam_{{ user.userid }}'>{{ 'Team(s)'|trans }}</label>
-                    {% for team in user.teams %}
-                      <span class='btn btn-secondary disabled'>{{ team.name }}</span>
-                    {% endfor %}
-                    {% if App.Session.get('is_sysadmin') %}
-                    <span class='btn btn-primary clickable editUserToTeam' data-action='toggle-modal' data-target='editUserToTeamModal' data-useraction='add' data-userid='{{ user.userid }}'><i class='color-white fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
-                    <span class='btn btn-danger clickable editUserToTeam' data-action='toggle-modal' data-target='editUserToTeamModal' data-useraction='rm' data-userid='{{ user.userid }}'><i class='color-white fas fa-minus-circle'></i> {{ 'Remove team'|trans }}</span>
+                  {% for team in user.teams %}
+                  <span data-action='destroy-user2team' data-teamid='{{ team.id }}' data-userid='{{ user.userid }}' class='btn btn-secondary {{ App.Request.getScriptName|split('/')|last == 'sysconfig.php' ? 'hover-danger' }}'>{{ team.name }}</span>
+                  {% endfor %}
+                  {% if App.Session.get('is_sysadmin') and (App.Request.getScriptName|split('/')|last == 'sysconfig.php') %}
+                    {% set addableToTeams = teamsArr|filter(v => v.visible == 1)|filter(v => v.id not in user.teams|column('id')) %}
+                    {% if addableToTeams %}
+                      <span class='btn btn-primary' data-action='toggle-next'><i class='color-white fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
+                      <span class='form-group form-inline mt-2' hidden>
+                        <select class='form-control'>
+                          {% for team in addableToTeams %}
+                          <option value='{{ team.id }}'>{{ team.name }}</option>
+                        {% endfor %}
+                      </select>
+                      <button data-action='create-user2team' data-userid='{{ user.userid }}' class='btn btn-primary'>{{ 'Go'|trans }}</button>
+                      </span>
                     {% endif %}
+                  {% endif %}
                 </li>
 
 
-                <form method='post' action='app/controllers/UsersController.php'>
-                  <div class='form-group'>
-                    <input type='hidden' value='true' name='usersUpdate' />
-                    {{ App.Session.get('csrf')|csrf }}
-                    {% if fromSysconfig %}
-                      <input type='hidden' value='1' name='fromSysconfig' />
-                    {% endif %}
+                <div class='form-group'>
+                  <!-- USERID (readonly) -->
+                  <li class='list-inline-item'>
+                    <label for='usersUpdateUserid_{{ user.userid }}'>{{ 'User ID'|trans }}</label>
+                    <input type='text' class='form-control custom-control-inline' value='{{ user.userid }}' name='userid' readonly />
+                  </li>
 
-                    <!-- USERID (readonly) -->
-                    <li class='list-inline-item'>
-                      <label for='usersUpdateUserid_{{ user.userid }}'>{{ 'User ID'|trans }}</label>
-                      <input type='text' class='form-control custom-control-inline' value='{{ user.userid }}' name='userid' readonly />
-                    </li>
+                  <!-- FIRSTNAME -->
+                  <li class='list-inline-item'>
+                    {# add the userid in the for and id to prevent having more than one id on the page. Label wrapping wouldn't display nice #}
+                    <label for='usersUpdateFirstname_{{ user.userid }}'>{{ 'Firstname'|trans }}</label>
+                    <input autocomplete='off' class='form-control custom-control-inline' id='usersUpdateFirstname_{{ user.userid }}' type='text' value='{{ user.firstname|raw }}' name='firstname' />
+                  </li>
 
-                    <!-- FIRSTNAME -->
-                    <li class='list-inline-item'>
-                      {# add the userid in the for and id to prevent having more than one id on the page. Label wrapping wouldn't display nice #}
-                      <label for='usersUpdateFirstname_{{ user.userid }}'>{{ 'Firstname'|trans }}</label>
-                      <input autocomplete='off' class='form-control custom-control-inline' id='usersUpdateFirstname_{{ user.userid }}' type='text' value='{{ user.firstname|raw }}' name='firstname' />
-                    </li>
+                  <!-- LASTNAME -->
+                  <li class='list-inline-item'>
+                    <label for='usersUpdateLastname_{{ user.userid }}'>{{ 'Lastname'|trans }}</label>
+                    <input autocomplete='off' class='form-control custom-control-inline' id='usersUpdateLastname_{{ user.userid }}' type='text' value='{{ user.lastname|raw }}' name='lastname' />
+                  </li>
 
-                    <!-- LASTNAME -->
-                    <li class='list-inline-item'>
-                      <label for='usersUpdateLastname_{{ user.userid }}'>{{ 'Lastname'|trans }}</label>
-                      <input autocomplete='off' class='form-control custom-control-inline' id='usersUpdateLastname_{{ user.userid }}' type='text' value='{{ user.lastname|raw }}' name='lastname' />
-                    </li>
+                  <!-- EMAIL -->
+                  <li class='list-inline-item'>
+                    <label for='usersUpdateEmail_{{ user.userid }}'>{{ 'Email'|trans }}</label>
+                    <input autocomplete='off' class='form-control custom-control-inline' id='usersUpdateEmail_{{ user.userid }}' type='email' value='{{ user.email }}' name='email' />
+                  </li>
 
-                    <!-- EMAIL -->
-                    <li class='list-inline-item'>
-                      <label for='usersUpdateEmail_{{ user.userid }}'>{{ 'Email'|trans }}</label>
-                      <input autocomplete='off' class='form-control custom-control-inline' id='usersUpdateEmail_{{ user.userid }}' type='email' value='{{ user.email }}' name='email' />
-                    </li>
+                  <!-- PERMISSION GROUP -->
+                  <li class='list-inline-item'>
+                    <label for='usersUpdateUsergroup_{{ user.userid }}'>{{ 'Group'|trans }}</label>
+                    <select class='form-control custom-control-inline' name='usergroup' id='usersUpdateUsergroup_{{ user.userid }}'>
+                      <option value='1' {{ user.usergroup == '1' ? " selected='selected'" }}>Sysadmins</option>
+                      <option value='2' {{ user.usergroup == '2' ? " selected='selected'" }}>Admins</option>
+                      <option value='4' {{ user.usergroup == '4' ? " selected='selected'" }}>Users</option>
+                    </select>
+                  </li>
 
-                    <!-- PERMISSION GROUP -->
-                    <li class='list-inline-item'>
-                      <label for='usersUpdateUsergroup_{{ user.userid }}'>{{ 'Group'|trans }}</label>
-                      <select class='form-control custom-control-inline' name='usergroup' id='usersUpdateUsergroup_{{ user.userid }}'>
-                        <option value='1' {{ user.usergroup == '1' ? " selected='selected'" }}>Sysadmins</option>
-                        <option value='2' {{ user.usergroup == '2' ? " selected='selected'" }}>Admins</option>
-                        <option value='4' {{ user.usergroup == '4' ? " selected='selected'" }}>Users</option>
-                      </select>
-                    </li>
-
-                    <!-- RESET PASSWORD -->
-                    <li class='list-inline-item'>
-                      <label for='usersUpdatePassword_{{ user.userid }}'>{{ 'Reset user password'|trans }}
-                        <span class='smallgray'>({{ minPasswordLength() }} {{ 'characters minimum'|trans }})</span>
-                      </label>
-                      <!-- add empty input to prevent FF from putting password in field because autocomplete doesn't work. from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox -->
-                      <!-- chrome will continue to behave badly. See crbug.com/468153 and crbug.com/587466 -->
-                      <input type='text' hidden>
-                      <input type='password' hidden>
-                      {% set pattern = '.{' ~ minPasswordLength() ~ ',}' %}
-                      <div class='input-group'>
-                        <input autocomplete='new-password' class='form-control' id='usersUpdatePassword_{{ user.userid }}' type='password' pattern='{{ pattern }}' value='' name='password' />
-                        <div class='input-group-append'>
-                          <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='usersUpdatePassword_{{ user.userid }}'><i class='fas fa-eye' aria-hidden='true'></i></span>
-                        </div>
+                  <!-- RESET PASSWORD -->
+                  <li class='list-inline-item'>
+                    <label for='usersUpdatePassword_{{ user.userid }}'>{{ 'Reset user password'|trans }}
+                      <span class='smallgray'>({{ minPasswordLength() }} {{ 'characters minimum'|trans }})</span>
+                    </label>
+                    <!-- add empty input to prevent FF from putting password in field because autocomplete doesn't work. from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox -->
+                    <!-- chrome will continue to behave badly. See crbug.com/468153 and crbug.com/587466 -->
+                    <input type='text' hidden>
+                    <input type='password' hidden>
+                    {% set pattern = '.{' ~ minPasswordLength() ~ ',}' %}
+                    <div class='input-group'>
+                      <input autocomplete='new-password' class='form-control' id='usersUpdatePassword_{{ user.userid }}' type='password' pattern='{{ pattern }}' value='' name='password' />
+                      <div class='input-group-append'>
+                        <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='usersUpdatePassword_{{ user.userid }}'><i class='fas fa-eye' aria-hidden='true'></i></span>
                       </div>
-                    </li>
+                    </div>
+                  </li>
 
-                    <!-- 2FA -->
+                  <!-- 2FA -->
+                  <li class='list-inline-item'>
+                    <label for='usersUpdate2FA_{{ user.userid }}'>{{ 'Uses 2FA?'|trans }}</label>
+                    <select class='form-control custom-control-inline' autocomplete='off' name='use_mfa' id='usersUpdate2FA_{{ user.userid }}'{{ not user.mfa_secret ? ' disabled' }}>
+                      <option value='on'{{ user.mfa_secret ? ' selected' }}>{{ 'Yes'|trans }}</option>
+                      <option value='off'{{ not user.mfa_secret ? ' selected' }}>{{ 'No'|trans }}</option>
+                    </select>
+                  </li>
+
+                  <!-- ACTIVE ACCOUNT -->
+                  <li class='list-inline-item'>
+                    <label for='usersUpdateValidated_{{ user.userid }}'>{{ 'Has an active account?'|trans }}</label>
+                    <select class='form-control custom-control-inline' autocomplete='off' name='validated' id='usersUpdateValidated_{{ user.userid }}'>
+                      <option value='1' {{ user.validated ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+                      <option value='0' {{ not user.validated ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+                    </select>
+                  </li>
+
+                  <!-- SAVE -->
+                  <li class='list-inline-item'>
+                    <button data-action='update-user' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+                  </li>
+
+                  <!-- ARCHIVE USER -->
+                  <li class='list-inline-item'>
+                    {% if user.archived %}
+                      <button class='button btn btn-neutral' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>{{ 'Unarchive user'|trans }}</button>
+                    {% else %}
+                      <button class='button btn btn-danger' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>{{ 'Archive user'|trans }}</button>
+                    {% endif %}
+                  </li>
+
+                  <!-- DESTROY USER -->
+                  {% if not UsersHelper.hasExperiments(user.userid) %}
                     <li class='list-inline-item'>
-                      <label for='usersUpdate2FA_{{ user.userid }}'>{{ 'Uses 2FA?'|trans }}</label>
-                      <select class='form-control custom-control-inline' autocomplete='off' name='use_mfa' id='usersUpdate2FA_{{ user.userid }}'{{ not user.mfa_secret ? ' disabled' }}>
-                        <option value='on'{{ user.mfa_secret ? ' selected' }}>{{ 'Yes'|trans }}</option>
-                        <option value='off'{{ not user.mfa_secret ? ' selected' }}>{{ 'No'|trans }}</option>
-                      </select>
-                    </li>
-
-                    <!-- ACTIVE ACCOUNT -->
-                    <li class='list-inline-item'>
-                      <label for='usersUpdateValidated_{{ user.userid }}'>{{ 'Has an active account?'|trans }}</label>
-                      <select class='form-control custom-control-inline' autocomplete='off' name='validated' id='usersUpdateValidated_{{ user.userid }}'>
-                        <option value='1' {{ user.validated ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-                        <option value='0' {{ not user.validated ? " selected='selected'" }}>{{ 'No'|trans }}</option>
-                      </select>
-                    </li>
-
-                    <!-- SAVE -->
-                    <li class='list-inline-item'>
-                      <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-                    </li>
-
-                    <!-- ARCHIVE USER -->
-                    <li class='list-inline-item'>
-                      {% if user.archived %}
-                        <button class='button btn btn-neutral toggleArchiveUser' data-userid='{{ user.userid }}'>{{ 'Unarchive user'|trans }}</button>
-                      {% else %}
-                        <button class='button btn btn-danger toggleArchiveUser' data-userid='{{ user.userid }}'>{{ 'Archive user'|trans }}</button>
-                      {% endif %}
-                    </li>
-
-                    <!-- DESTROY USER -->
-                    {% if not UsersHelper.hasExperiments(user.userid) %}
-                      <li class='list-inline-item'>
-                        <button class='button btn btn-danger destroyUser' data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
-                     </li>
-                   {% endif %}
-                </form>
+                      <button class='button btn btn-danger' data-action='destroy-user' data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
+                   </li>
+                 {% endif %}
                 <hr>
               </ul>
             </li>

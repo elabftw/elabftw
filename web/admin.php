@@ -95,7 +95,6 @@ try {
     $renderArr = array(
         'allTeamUsersArr' => $allTeamUsersArr,
         'tagsArr' => $tagsArr,
-        'fromSysconfig' => false,
         'isSearching' => $isSearching,
         'itemsCategoryArr' => $itemsCategoryArr,
         'statusArr' => $statusArr,

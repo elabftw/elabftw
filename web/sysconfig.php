@@ -84,7 +84,6 @@ try {
         'nologinUsersCount' => $App->Users->getLockedUsersCount(),
         'lockoutDevicesCount' => $AuthFail->getLockoutDevicesCount(),
         'elabimgVersion' => $elabimgVersion,
-        'fromSysconfig' => true,
         'idpsArr' => $idpsArr,
         'isSearching' => $isSearching,
         'langsArr' => $langsArr,

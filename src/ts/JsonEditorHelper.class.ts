@@ -10,6 +10,7 @@ import JSONEditor from 'jsoneditor';
 import i18next from 'i18next';
 import { notif, reloadElement } from './misc';
 import { Entity } from './interfaces';
+import { Ajax } from './Ajax.class';
 
 // This class is named helper because the jsoneditor lib already exports JSONEditor
 export default class JsonEditorHelper {
@@ -176,27 +177,17 @@ export default class JsonEditorHelper {
 
   // edit an existing file
   saveFile(): void {
-    const formData = new FormData();
-    const blob = new Blob([JSON.stringify(this.editor.get())], { type: 'application/json' });
-    formData.append('action', 'update');
-    formData.append('target', 'file');
-    formData.append('entity_id', this.entity.id.toString());
-    formData.append('entity_type', this.entity.type);
-    formData.append('id', this.currentUploadId);
-    formData.append('model', 'upload');
-    formData.append('csrf', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-    formData.append('content', blob);
-    formData.append('extraParam', 'jsoneditor');
-
-    $.post({
-      url: 'app/controllers/RequestHandler.php',
-      data: formData,
-      processData: false,
-      contentType: false,
-      success: (json) => {
-        notif(json);
-      },
-    });
+    const AjaxC = new Ajax();
+    AjaxC.postForm('app/controllers/RequestHandler.php', {
+      action: 'update',
+      target: 'file',
+      entity_id: this.entity.id.toString(),
+      entity_type: this.entity.type,
+      id: this.currentUploadId,
+      model: 'upload',
+      extraParam: 'jsoneditor',
+      content: new Blob([JSON.stringify(this.editor.get())], { type: 'application/json' }),
+    }).then(res => res.json().then(json => notif(json)));
   }
 
   clear(): void {

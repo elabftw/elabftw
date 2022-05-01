@@ -1,11 +1,12 @@
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2012, 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
 import { notif, insertParamAndReload } from './misc';
+import { Ajax } from './Ajax.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/sysconfig.php'
@@ -13,41 +14,61 @@ document.addEventListener('DOMContentLoaded', () => {
   ) {
     return;
   }
-  // ARCHIVE USER TOGGLE
-  $(document).on('click', '.toggleArchiveUser', function(e) {
-    // don't trigger the form
-    e.preventDefault();
-    // show alert
-    if (confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and user will not be able to login anymore.')) {
-      $.post('app/controllers/UsersAjaxController.php', {
-        toggleArchiveUser: true,
-        userid: $(this).data('userid'),
-      }).done(function(json) {
+
+  const AjaxC = new Ajax();
+  const controller = 'app/controllers/UsersAjaxController.php';
+
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    if (el.matches('[data-action="update-user"]')) {
+      const formGroup = el.closest('div.form-group');
+      let params = { 'usersUpdate': '1' };
+      // text inputs
+      ['userid', 'firstname', 'lastname', 'email', 'password'].forEach(input => {
+        params = Object.assign(params, {[input]: (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value});
+        if (input === 'password') {
+          (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value = '';
+        }
+      });
+      // clear the password field once collected
+      // select inputs
+      ['usergroup', 'use_mfa', 'validated'].forEach(input => {
+        params = Object.assign(params, {[input]: (formGroup.querySelector(`select[name="${input}"]`) as HTMLSelectElement).value});
+      });
+      // now doing POST request
+      AjaxC.postForm(controller, params)
+        .then(res => res.json().then(json => notif(json)));
+
+    // ARCHIVE USER TOGGLE
+    } else if (el.matches('[data-action="toggle-archive-user"]')) {
+      // show alert
+      if (!confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and user will not be able to login anymore.')) {
+        return;
+      }
+      AjaxC.postForm(controller, {
+        toggleArchiveUser: '1',
+        userid: el.dataset.userid,
+      }).then(res => res.json().then(json => {
         notif(json);
         if (json.res) {
           insertParamAndReload('tab', '3');
         }
-      });
-    }
-  });
+      }));
 
-  // DESTROY USER
-  $(document).on('click', '.destroyUser', function(e) {
-    // don't trigger the form
-    e.preventDefault();
-    // show alert
-    if (confirm('Are you sure you want to remove permanently this user and all associated data?')) {
-      // store the element here because 'this' will change in the done function
-      const elem = $(this);
-      $.post('app/controllers/UsersAjaxController.php', {
-        usersDestroy: true,
-        userid: elem.data('userid'),
-      }).done(function(json) {
+    // DESTROY USER
+    } else if (el.matches('[data-action="destroy-user"]')) {
+      if (!confirm('Are you sure you want to remove permanently this user and all associated data?')) {
+        return;
+      }
+      AjaxC.postForm(controller, {
+        destroyUser: '1',
+        userid: el.dataset.userid,
+      }).then(res => res.json().then(json => {
         notif(json);
         if (json.res) {
-          elem.closest('li.list-group-item').hide();
+          el.closest('li.list-group-item').remove();
         }
-      });
+      }));
     }
   });
 

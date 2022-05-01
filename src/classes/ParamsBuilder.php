@@ -58,7 +58,7 @@ class ParamsBuilder
                 $this->content,
                 $this->extra['color'],
                 (bool) $this->extra['isTimestampable'],
-                (bool) $this->extra['isDefault']
+                (bool) ($this->extra['isDefault'] ?? false),
             );
         }
         if ($this->model instanceof ApiKeys) {

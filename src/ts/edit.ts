@@ -355,7 +355,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelectorAll('[id^="upload-filename"]').forEach(l => {
                   ids.push(parseInt(l.getAttribute('id').split('_').pop(), 10));
                 });
-                const imgHref = (document.getElementById(`upload-filename_${ids.sort().pop()}`) as HTMLLinkElement).href;
+                const mostRecent = ids.sort((a, b) => a - b).pop();
+                const imgHref = (document.getElementById(`upload-filename_${mostRecent}`) as HTMLLinkElement).href;
                 const q = new URL(imgHref).searchParams;
                 // call the success callback function with the new URL
                 success(`app/download.php?f=${q.get('f')}&storage=${q.get('storage')}`);

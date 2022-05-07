@@ -74,9 +74,9 @@ Fields
   / FieldAttachment
 
 Field
-  = field:('author'i / 'body'i / 'category'i / 'elabid'i / 'group'i / 'status'i / 'title'i / 'visibility'i) ':' term:(List / Literal)
+  = field:('author'i / 'body'i / 'category'i / 'elabid'i / 'group'i / 'status'i / 'title'i / 'visibility'i) ':' strict:('s:' {return true;})? term:(List / Literal)
   {
-    return new Field($field, $term);
+    return new Field($field, $term, $strict);
   }
 
 FieldDate
@@ -160,7 +160,7 @@ FieldRating
   }
 
 FieldAttachment
-  = 'attachment'i ':' term:(
+  = 'attachment'i ':' strict:('s:' {return true;})? term:(
     bool:Boolean
       {
         return new SimpleValueWrapper($bool);
@@ -171,7 +171,7 @@ FieldAttachment
       }
   )
   {
-    return new Field('attachment', $term);
+    return new Field('attachment', $term, $strict);
   }
 
 List 'quoted term'

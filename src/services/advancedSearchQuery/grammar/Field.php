@@ -20,7 +20,7 @@ use function strtolower;
 
 class Field implements Term, Visitable, FieldType
 {
-    public function __construct(private string $field, private SimpleValueWrapper $valueWrapper)
+    public function __construct(private string $field, private SimpleValueWrapper $valueWrapper, private ?bool $strict = null)
     {
     }
 
@@ -37,5 +37,10 @@ class Field implements Term, Visitable, FieldType
     public function getFieldType(): string
     {
         return filter_var(strtolower($this->field), FILTER_SANITIZE_STRING) ?: '';
+    }
+
+    public function getAffix(): string
+    {
+        return $this->strict ? '' : '%';
     }
 }

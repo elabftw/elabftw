@@ -173,6 +173,9 @@
         </ul>
         <a class='clickable' data-action='toggle-modal' data-target='advancedSearchModal'>{{ 'Full syntax'|trans }}</a>
       </div>
+      {% if App.Config.configArr.debug %}
+          <div><pre>{{ whereClause|raw }}</pre></div>
+      {% endif %}
     </div>
 
     <h4 data-action='toggle-next' data-icon='extendedSearchIcon'><i id='extendedSearchIcon' class='fas fa-chevron-circle-right'></i> {{ 'Search helpers'|trans }}</h4>

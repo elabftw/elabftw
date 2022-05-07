@@ -87,6 +87,7 @@ $renderArr = array(
     'extended' => $extended,
     'extendedError' => $extendedError,
     'teamGroups' => array_column($teamGroupsArr, 'name'),
+    'whereClause' => print_r($whereClause ?? '', true), // only for dev
 );
 echo $App->render('search.html', $renderArr);
 

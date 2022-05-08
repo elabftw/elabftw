@@ -61,7 +61,6 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
         $AuthService = new SamlAuth($this->SamlAuthLib, $this->configArr, $this->settings);
         $authResponse = $AuthService->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);
-        $this->assertEquals('saml', $authResponse->isAuthBy);
     }
 
     public function testAssertIdpResponse(): void
@@ -70,7 +69,6 @@ class SamlAuthTest extends \PHPUnit\Framework\TestCase
         $AuthService = new SamlAuth($this->SamlAuthLib, $this->configArr, $this->settings);
         $authResponse = $AuthService->assertIdpResponse();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);
-        $this->assertEquals('saml', $authResponse->isAuthBy);
         $this->assertEquals(1, $authResponse->userid);
         $this->assertFalse($authResponse->isAnonymous);
         $this->assertEquals(1, $authResponse->selectedTeam);

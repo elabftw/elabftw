@@ -45,6 +45,16 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
  */
 class LoginController implements ControllerInterface
 {
+    public const AUTH_LOCAL = 10;
+
+    public const AUTH_SAML = 20;
+
+    public const AUTH_LDAP = 30;
+
+    public const AUTH_EXTERNAL = 40;
+
+    public const AUTH_ANON = 50;
+
     public function __construct(private App $App)
     {
     }
@@ -206,6 +216,7 @@ class LoginController implements ControllerInterface
         switch ($authType) {
             // AUTH WITH LDAP
             case 'ldap':
+                $this->App->Session->set('auth_service', self::AUTH_LDAP);
                 $c = $this->App->Config->configArr;
                 $ldapPassword = null;
                 // assume there is a password to decrypt if username is not null
@@ -225,12 +236,14 @@ class LoginController implements ControllerInterface
 
             // AUTH WITH LOCAL DATABASE
             case 'local':
+                $this->App->Session->set('auth_service', self::AUTH_LOCAL);
                 // only local auth validates device token
                 $this->validateDeviceToken();
                 return new LocalAuth((string) $this->App->Request->request->get('email'), (string) $this->App->Request->request->get('password'));
 
             // AUTH WITH SAML
             case 'saml':
+                $this->App->Session->set('auth_service', self::AUTH_SAML);
                 $Saml = new Saml($this->App->Config, new Idps());
                 $idpId = (int) $this->App->Request->request->get('idpId');
                 // No cookie is required anymore, as entity Id is extracted from response
@@ -238,6 +251,7 @@ class LoginController implements ControllerInterface
                 return new SamlAuth(new SamlAuthLib($settings), $this->App->Config->configArr, $settings);
 
             case 'external':
+                $this->App->Session->set('auth_service', self::AUTH_EXTERNAL);
                 return new ExternalAuth(
                     $this->App->Config->configArr,
                     $this->App->Request->server->all(),
@@ -246,6 +260,7 @@ class LoginController implements ControllerInterface
 
             // AUTH AS ANONYMOUS USER
             case 'anon':
+                $this->App->Session->set('auth_service', self::AUTH_ANON);
                 return new AnonAuth($this->App->Config->configArr, (int) $this->App->Request->request->get('team_id'));
 
             // AUTH in a team (after the team selection page)

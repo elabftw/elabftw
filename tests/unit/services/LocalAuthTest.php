@@ -31,7 +31,6 @@ class LocalAuthTest extends \PHPUnit\Framework\TestCase
     public function testTryAuth(): void
     {
         $authResponse = $this->AuthService->tryAuth();
-        $this->assertEquals('local', $authResponse->isAuthBy);
         $this->assertEquals(1, $authResponse->userid);
         $this->assertEquals(1, $authResponse->selectedTeam);
     }

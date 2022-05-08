@@ -53,7 +53,7 @@ class SamlAuth implements AuthInterface
 
     public function __construct(private SamlAuthLib $SamlAuthLib, private array $configArr, private array $settings)
     {
-        $this->AuthResponse = new AuthResponse('saml');
+        $this->AuthResponse = new AuthResponse();
     }
 
     public static function getJWTConfig(): Configuration

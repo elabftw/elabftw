@@ -18,7 +18,6 @@ class TeamAuthTest extends \PHPUnit\Framework\TestCase
         $AuthService = new TeamAuth(1, 1);
         $authResponse = $AuthService->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);
-        $this->assertEquals('team', $authResponse->isAuthBy);
         $this->assertEquals(1, $authResponse->userid);
         $this->assertFalse($authResponse->isAnonymous);
         $this->assertEquals(1, $authResponse->selectedTeam);

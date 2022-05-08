@@ -238,6 +238,17 @@ class MakePdf extends AbstractMake implements FileMakerInterface
             $lockDate = $ldate[0] . ' at ' . $ldate[1];
         }
 
+        // read the content of the thumbnail here to feed the template
+        $uploadsArr =  $this->Entity->Uploads->readAllNormal();
+        foreach ($uploadsArr as $key => $upload) {
+            $storageFs = (new StorageFactory((int) $upload['storage']))->getStorage()->getFs();
+            $thumbnail = $upload['long_name'] . '_th.jpg';
+            // no need to filter on extension, just insert the thumbnail if it exists
+            if ($storageFs->fileExists($thumbnail)) {
+                $uploadsArr[$key]['base64_thumbnail'] = base64_encode($storageFs->read($thumbnail));
+            }
+        }
+
         $renderArr = array(
             'body' => $this->getBody(),
             'commentsArr' => $this->Entity->Comments->read(new ContentParams()),
@@ -255,8 +266,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
             'stepsArr' => $this->Entity->Steps->read(new ContentParams()),
             'tags' => $this->Entity->entityData['tags'],
             'title' => $this->Entity->entityData['title'],
-            'uploadsArr' => $this->Entity->Uploads->readAllNormal(),
-            'uploadsFolder' => dirname(__DIR__, 2) . '/uploads/',
+            'uploadsArr' => $uploadsArr,
             'url' => $this->getURL(),
             'linkBaseUrl' => SITE_URL . '/database.php',
             'useCjk' => $this->Entity->Users->userData['cjk_fonts'],

@@ -88,16 +88,9 @@
       {# add hash? don't add if we don't have it #}
       {% if upload.hash|length >= 32 %}<br>{{ upload.hash_algorithm }}: {{ upload.hash }}{% endif %}
 
-      {# if this is an image file, add the thumbnail picture #}
-      {% set ext = upload.real_name|getExt|lower %}
-      {% set filePath = uploadsFolder ~ upload.long_name %}
-
-      {# if it's a TIF file, we can't add it like that to the pdf, but we can add the thumbnail #}
-      {% if ext in tiff %}
-        {% set filePath = filePath ~ '_th.jpg' %}
-      {% endif %}
-      {% if ext in ['tiff', 'jpg', 'jpeg', 'png', 'gif'] %}
-        <br><img class='attached-image' src='{{ filePath|raw }}' alt='{{ upload.comment }}' />
+      {% if upload.base64_thumbnail %}
+      {# Note: adding charset to the data string makes it fail #}
+        <br><img class='attached-image' src="data:image/jpeg;base64,{{ upload.base64_thumbnail }}" alt='{{ upload.comment }}' />
       {% endif %}
       </p>
     {% endfor %}

@@ -102,7 +102,7 @@ class QueryBuilderVisitor implements Visitor
         // Call class methods dynamically to avoid many if statements.
         // This works here because the parser defines the list of fields.
         $method = 'visitField' . ucfirst($field->getFieldType());
-        return $this->$method($field->getValue(), $parameters);
+        return $this->$method($field->getValue(), $field->getAffix(), $parameters);
     }
 
     public function visitNotExpression(NotExpression $notExpression, VisitorParameters $parameters): WhereCollector
@@ -201,7 +201,7 @@ class QueryBuilderVisitor implements Visitor
         );
     }
 
-    private function visitFieldAttachment(string $searchTerm, VisitorParameters $parameters): WhereCollector
+    private function visitFieldAttachment(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
         // Are we checking if there is any attachment at all
         if ($searchTerm === '0' || $searchTerm === '1') {
@@ -219,50 +219,50 @@ class QueryBuilderVisitor implements Visitor
             '(uploads.comments LIKE ' . $param . ' OR uploads.real_names LIKE ' . $param . ')',
             array(array(
                 'param' => $param,
-                'value' => '%' . $searchTerm . '%',
+                'value' => $affix . $searchTerm . $affix,
                 'type' => PDO::PARAM_STR,
                 'searchAttachments' => true,
             )),
         );
     }
 
-    private function visitFieldAuthor(string $searchTerm, VisitorParameters $parameters): WhereCollector
+    private function visitFieldAuthor(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
         return $this->getWhereCollector(
             "CONCAT(users.firstname, ' ', users.lastname) LIKE ",
-            '%' . $searchTerm . '%',
+            $affix . $searchTerm . $affix,
             PDO::PARAM_STR,
         );
     }
 
-    private function visitFieldBody(string $searchTerm, VisitorParameters $parameters): WhereCollector
+    private function visitFieldBody(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
         return $this->getWhereCollector(
             'entity.body LIKE ',
-            '%' . $searchTerm . '%',
+            $affix . $searchTerm . $affix,
             PDO::PARAM_STR,
         );
     }
 
-    private function visitFieldCategory(string $searchTerm, VisitorParameters $parameters): WhereCollector
+    private function visitFieldCategory(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
         return $this->getWhereCollector(
             'categoryt.name LIKE ',
-            '%' . $searchTerm . '%',
+            $affix . $searchTerm . $affix,
             PDO::PARAM_STR,
         );
     }
 
-    private function visitFieldElabid(string $searchTerm, VisitorParameters $parameters): WhereCollector
+    private function visitFieldElabid(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
         return $this->getWhereCollector(
             'entity.elabid LIKE ',
-            '%' . $searchTerm . '%',
+            $affix . $searchTerm . $affix,
             PDO::PARAM_STR,
         );
     }
 
-    private function visitFieldGroup(string $searchTerm, VisitorParameters $parameters): WhereCollector
+    private function visitFieldGroup(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
         $teamGroups = $parameters->getTeamGroups();
         $users = array();
@@ -286,7 +286,7 @@ class QueryBuilderVisitor implements Visitor
         return new WhereCollector('(' . implode(' OR ', $queryParts) . ')', $bindValues);
     }
 
-    private function visitFieldLocked(string $searchTerm, VisitorParameters $parameters): WhereCollector
+    private function visitFieldLocked(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
         return $this->getWhereCollector(
             'entity.locked = ',
@@ -295,7 +295,7 @@ class QueryBuilderVisitor implements Visitor
         );
     }
 
-    private function visitFieldRating(string $searchTerm, VisitorParameters $parameters): WhereCollector
+    private function visitFieldRating(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
         return $this->getWhereCollector(
             'entity.rating = ',
@@ -304,16 +304,16 @@ class QueryBuilderVisitor implements Visitor
         );
     }
 
-    private function visitFieldStatus(string $searchTerm, VisitorParameters $parameters): WhereCollector
+    private function visitFieldStatus(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
         return $this->getWhereCollector(
             'categoryt.name LIKE ',
-            '%' . $searchTerm . '%',
+            $affix . $searchTerm . $affix,
             PDO::PARAM_STR,
         );
     }
 
-    private function visitFieldTimestamped(string $searchTerm, VisitorParameters $parameters): WhereCollector
+    private function visitFieldTimestamped(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
         return $this->getWhereCollector(
             'entity.timestamped = ',
@@ -322,18 +322,18 @@ class QueryBuilderVisitor implements Visitor
         );
     }
 
-    private function visitFieldTitle(string $searchTerm, VisitorParameters $parameters): WhereCollector
+    private function visitFieldTitle(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
         return $this->getWhereCollector(
             'entity.title LIKE ',
-            '%' . $searchTerm . '%',
+            $affix . $searchTerm . $affix,
             PDO::PARAM_STR,
         );
     }
 
-    private function visitFieldVisibility(string $searchTerm, VisitorParameters $parameters): WhereCollector
+    private function visitFieldVisibility(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
-        $filteredSearchArr = (new VisibilityFieldHelper($searchTerm, $parameters->getVisArr()))->getArr();
+        $filteredSearchArr = (new VisibilityFieldHelper($searchTerm, $parameters->getVisArr(), $affix))->getArr();
 
         $queryParts = array();
         $bindValues = array();

@@ -8,51 +8,47 @@
  */
 
 OrExpression
-  = _* expression:AndExpression tail:(_+ tail:Or {return $tail;})?
+  = _* expression:AndExpression tail:OrOperand?
   {
     return new OrExpression($expression, $tail);
   }
 
-Or
-  = OrOp operand:AndExpression tail:(_+ tail:Or {return $tail;})?
+OrOperand
+  = OrOperator operand:AndExpression tail:OrOperand?
   {
     return new OrOperand($operand, $tail);
   }
 
-OrOp '"OR", "|"'
-  = $('OR'i_+)
-  / $('|'_*)
+OrOperator '"OR", "|"'
+  = (_+ 'OR'i _+)
+  / (_* '|' _*)
 
 AndExpression
-  = expression:Not tail:(_+ tail:And {return $tail;})?
+  = expression:(NotExpression / Wrapper) tail:AndOperand?
   {
     return new AndExpression($expression, $tail);
   }
 
-And
-  = AndOp? operand:Not tail:(_+ tail:And {return $tail;})?
+AndOperand
+  = AndOperator operand:(NotExpression / Wrapper) tail:AndOperand?
   {
     return new AndOperand($operand, $tail);
   }
 
-AndOp '"AND", "&"'
-  = $('AND'i_+)
-  / $('&'_*)
+AndOperator '"AND", "&"'
+  = (_+ 'AND'i _+)
+  / (_* '&' _*)
+  / _+
 
-Not
-  = NotOp expression:Wrapper
+NotExpression
+  = NotOperator expression:Wrapper
   {
     return new NotExpression($expression);
   }
-  / e:Wrapper
-  {
-    return $e;
-  }
 
-NotOp '"NOT", "-", "!"'
-  = $('NOT'i_+)
-  / $('-'_*)
-  / $('!'_*)
+NotOperator '"NOT", "-", "!"'
+  = ('NOT'i _+)
+  / ([!-] _*)
 
 Wrapper
   = Parenthesis
@@ -74,9 +70,9 @@ Fields
   / FieldAttachment
 
 Field
-  = field:('author'i / 'body'i / 'category'i / 'elabid'i / 'group'i / 'status'i / 'title'i / 'visibility'i) ':' term:(List / Literal)
+  = field:('author'i / 'body'i / 'category'i / 'elabid'i / 'group'i / 'status'i / 'title'i / 'visibility'i) ':' strict:('s:' {return true;})? term:(List / LiteralInField)
   {
-    return new Field($field, $term);
+    return new Field($field, $term, $strict);
   }
 
 FieldDate
@@ -96,7 +92,7 @@ DateBetween
   }
 
 DateSimple
-  = operator:$('<=' / '<' / '>=' / '>' / '=' / '!=')? date:Date
+  = operator:$([<>] '='? / '!'? '=' )? date:Date
   {
     return array(
       'type' => 'simple',
@@ -112,10 +108,7 @@ Date
   }
 
 DateSeparator
-  = '-'
-  / '/'
-  / '.'
-  / ','
+  = [.,/-]
 
 YYYY
   = year:$(Digit Digit Digit Digit)
@@ -143,11 +136,11 @@ FieldBoolean
 
 // return strings because SimpleValueWrapper() takes strings
 Boolean
-  = ('0' / 'false' / 'no' / 'off')
+  = ('0' / 'false'i / 'no'i / 'off'i)
   {
     return '0';
   }
-  / ('1' / 'true' / 'yes' / 'on')
+  / ('1' / 'true'i / 'yes'i / 'on'i)
   {
     return '1';
   }
@@ -160,18 +153,18 @@ FieldRating
   }
 
 FieldAttachment
-  = 'attachment'i ':' term:(
+  = 'attachment'i ':' strict:('s:' {return true;})? term:(
     bool:Boolean
       {
         return new SimpleValueWrapper($bool);
       }
-    / terms:(List / Literal)
+    / terms:(List / LiteralInField)
       {
         return $terms;
       }
   )
   {
-    return new Field('attachment', $term);
+    return new Field('attachment', $term, $strict);
   }
 
 List 'quoted term'
@@ -189,7 +182,6 @@ List1
 ListString1
   = chars:(
     [^\n\r\f\\']
-    / nlEscaped
     / Escape
   )+
   {
@@ -205,24 +197,34 @@ List2
 ListString2
   = chars:(
     [^\n\r\f\\"]
-    / nlEscaped
     / Escape
   )+
   {
     return join("", $chars);
   }
 
+LiteralInField 'term'
+  = literal:String
+  {
+    return new SimpleValueWrapper($literal);
+  }
+
 Literal 'term'
-  // Need to negate operators here to prevent them being a term themselves
-  = !OrOp !AndOp !NotOp literal:$(String)
+  = literal:String
+  // Prevent operators being a term themselves
+  !{
+    $l = strtolower($literal);
+    return $l === 'not'
+      || $l === 'and'
+      || $l === 'or';
+  }
   {
     return new SimpleValueWrapper($literal);
   }
 
 String
   = chars:(
-    [^\n\r\f\\"\\'() ]
-    / nlEscaped
+    [^\n\r\f\\"'|&!() -]
     / Escape
   )+
   {
@@ -230,32 +232,14 @@ String
   }
 
 Escape
-  = Unicode
-  / '\\' ch:[^\r\n\f0-9a-f]i
-  {
-    return $ch;
-  }
-
-Unicode
-  = '\\u' digits:$(Hex Hex? Hex? Hex? Hex? Hex?)
-  {
-    return chr_unicode(intval($digits, 16));
-  }
-
-Hex
-  = [0-9a-f]i
+  = $('\\' [%_]) // Escape MySQL wildcard characters
+  / '\\' {return '\\\\';} // Search for literal slash by default
 
 Digit
   = [0-9]
 
 Digit19
   = [1-9]
-
-nlEscaped
-  =  '\\' $('\r\n' / '\r' / '\n' / '\f')
-  {
-    return "";
-  }
 
 _ 'whitespace'
   = [\t\n\r ]

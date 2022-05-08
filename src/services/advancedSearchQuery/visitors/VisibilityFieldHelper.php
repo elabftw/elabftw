@@ -14,7 +14,7 @@ class VisibilityFieldHelper
 {
     public string $possibleInput;
 
-    public function __construct(private string $userInput, private array $visArr)
+    public function __construct(private string $userInput, private array $visArr, private string $affix)
     {
     }
 
@@ -28,7 +28,9 @@ class VisibilityFieldHelper
         $this->possibleInput = "'" . implode("', '", array_keys($searchArr)) . "'";
 
         // Emulate SQL LIKE search functionality so the user can use the same placeholders
-        $pattern = '/' . str_replace(array('%', '_'), array('.*', '.'), $this->userInput) . '/i';
+        $prefix = $this->affix === '%' ? '' : '^';
+        $suffix = $this->affix === '%' ? '' : '$';
+        $pattern = '/' . $prefix . str_replace(array('%', '_'), array('.*', '.'), $this->userInput) . $suffix . '/i';
         // Filter visibility entries based on user input
         $filteredArr = preg_grep($pattern, array_keys($searchArr)) ?: array();
 

@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // scroll to anchor if there is a search
   const params = new URLSearchParams(document.location.search.slice(1));
   if (params.has('type')) {
-    window.location.hash = '#anchor';
+    document.getElementById('anchor').scrollIntoView();
   }
 
   const extendedArea = document.getElementById('extendedArea') as HTMLTextAreaElement;

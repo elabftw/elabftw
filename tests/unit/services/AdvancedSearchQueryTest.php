@@ -106,7 +106,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 
     public function testFieldValidatorInvalidFields(): void
     {
-        $visInput = 'no-valid-input';
+        $visInput = 'noValidInput';
         $from = '20210101';
         $to = '20200101';
         $query = 'visibility:' . $visInput;

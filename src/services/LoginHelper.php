@@ -43,6 +43,22 @@ class LoginHelper
         }
         $this->updateLastLogin();
         $this->setDeviceToken();
+        // only update this value if it is set, won't be set for cookie login for instance
+        if ($this->Session->has('auth_service')) {
+            $this->updateAuthService();
+        }
+    }
+
+    /**
+     * Update the authentication service used
+     */
+    private function updateAuthService(): void
+    {
+        $sql = 'UPDATE users SET auth_service = :auth_service WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->AuthResponse->userid, PDO::PARAM_INT);
+        $req->bindValue(':auth_service', $this->Session->get('auth_service'), PDO::PARAM_INT);
+        $this->Db->execute($req);
     }
 
     /**
@@ -84,10 +100,6 @@ class LoginHelper
 
         // ANON will get userid 0 here
         $this->Session->set('userid', $this->AuthResponse->userid);
-
-        // store the auth method so the logout page will know what to do
-        // TODO this doesn't work if mfa or team second step
-        $this->Session->set('is_auth_by', $this->AuthResponse->isAuthBy);
 
         // ANON LOGIN
         if ($this->AuthResponse->isAnonymous) {

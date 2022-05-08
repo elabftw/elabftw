@@ -33,7 +33,6 @@ class AnonAuthTest extends \PHPUnit\Framework\TestCase
     {
         $authResponse = $this->AnonAuth->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);
-        $this->assertEquals('anon', $authResponse->isAuthBy);
         $this->assertTrue($authResponse->isAnonymous);
 
         // now try anon login but it's disabled by sysadmin

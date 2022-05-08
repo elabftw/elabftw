@@ -24,7 +24,7 @@ class MfaAuth implements AuthInterface
 
     public function __construct(private MfaHelper $MfaHelper, private string $code)
     {
-        $this->AuthResponse = new AuthResponse('mfa');
+        $this->AuthResponse = new AuthResponse();
     }
 
     public function tryAuth(): AuthResponse

@@ -35,7 +35,7 @@ class LdapAuth implements AuthInterface
     public function __construct(private Connection $connection, private array $configArr, string $email, private string $password)
     {
         $this->email = Filter::sanitize($email);
-        $this->AuthResponse = new AuthResponse('ldap');
+        $this->AuthResponse = new AuthResponse();
     }
 
     public function tryAuth(): AuthResponse

@@ -23,7 +23,7 @@ class TeamAuth implements AuthInterface
 
     public function __construct(int $userid, int $team)
     {
-        $this->AuthResponse = new AuthResponse('team');
+        $this->AuthResponse = new AuthResponse();
         $this->AuthResponse->userid = $userid;
         $this->AuthResponse->selectedTeam = $team;
     }

@@ -45,7 +45,7 @@ class LocalAuth implements AuthInterface
         $this->Db = Db::getConnection();
         $this->email = Filter::sanitize($email);
         $this->userid = $this->getUseridFromEmail();
-        $this->AuthResponse = new AuthResponse('local');
+        $this->AuthResponse = new AuthResponse();
     }
 
     public function tryAuth(): AuthResponse

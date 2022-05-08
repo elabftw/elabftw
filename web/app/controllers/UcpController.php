@@ -1,16 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2012, 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
 use function dirname;
+use Elabftw\Controllers\LoginController;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -58,25 +58,32 @@ try {
     // END TAB 1
 
     // TAB 2 : ACCOUNT
-    if ($Request->request->has('currpass')) {
+    if ($Request->request->has('use_mfa')) {
         $tab = '2';
-        // check that we got the good password
-        // TODO what if we don't have a password (external, saml, ldap login), should we allow changing parameters on this page?
-        $LocalAuth = new LocalAuth($App->Users->userData['email'], $Request->request->get('currpass'));
-        try {
-            $AuthResponse = $LocalAuth->tryAuth();
-        } catch (InvalidCredentialsException $e) {
-            throw new ImproperActionException('The current password is not valid!');
+        $postData = $Request->request->all();
+        // if user is authenticated through external service we skip the password verification
+        if ((int) $App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
+            // check that we got the good password
+            $LocalAuth = new LocalAuth($App->Users->userData['email'], $Request->request->get('currpass'));
+            try {
+                $AuthResponse = $LocalAuth->tryAuth();
+            } catch (InvalidCredentialsException $e) {
+                throw new ImproperActionException('The current password is not valid!');
+            }
+            // update the email if necessary
+            if (isset($params['email']) && ($params['email'] !== $App->Users->userData['email'])) {
+                $App->Users->updateEmail($params['email']);
+            }
         }
-        $App->Users->updateAccount($Request->request->all());
+        $App->Users->updateAccount($postData);
 
-        // CHANGE PASSWORD
-        if (!empty($Request->request->get('newpass'))) {
-            $App->Users->updatePassword($Request->request->get('newpass'));
+        // CHANGE PASSWORD (only for local accounts)
+        if (!empty($Request->request->get('newpass')) && (int) $App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
+            $App->Users->updatePassword($postData['newpass']);
         }
 
         // TWO FACTOR AUTHENTICATION
-        $useMFA = Filter::onToBinary($Request->request->get('use_mfa') ?? '');
+        $useMFA = Filter::onToBinary($postData['use_mfa'] ?? '');
         $MfaHelper = new MfaHelper((int) $App->Users->userData['userid']);
 
         if ($useMFA && !$App->Users->userData['mfa_secret']) {

@@ -1,14 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * app/logout.php
- *
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -58,7 +55,7 @@ $destroySession = function () use ($App, $Request) {
 };
 
 // now if we are logged in through external auth, hit the external auth url
-if ($App->Session->get('is_auth_by') === 'external') {
+if ((int) $App->Users->userData['auth_service'] === \Elabftw\Controllers\LoginController::AUTH_EXTERNAL) {
     $redirectUrl = $App->Config->configArr['logout_url'];
     if (empty($redirectUrl)) {
         $redirectUrl = '../login.php';

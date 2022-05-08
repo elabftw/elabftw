@@ -33,7 +33,7 @@ class CookieAuth implements AuthInterface
         $this->Db = Db::getConnection();
         $this->token = Check::token($token);
         $this->tokenTeam = (int) Filter::sanitize($tokenTeam);
-        $this->AuthResponse = new AuthResponse('cookie');
+        $this->AuthResponse = new AuthResponse();
     }
 
     public function tryAuth(): AuthResponse

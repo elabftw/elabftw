@@ -38,10 +38,6 @@ class AuthResponse
 
     public bool $hasVerifiedMfa = false;
 
-    public function __construct(public string $isAuthBy)
-    {
-    }
-
     public function setTeams(): void
     {
         $UsersHelper = new UsersHelper($this->userid);

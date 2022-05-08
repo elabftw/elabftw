@@ -6,6 +6,7 @@
  * @package elabftw
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+import { SearchSyntaxHighlighting } from './SearchSyntaxHighlighting.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/search.php') {
@@ -14,8 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // scroll to anchor if there is a search
   const params = new URLSearchParams(document.location.search.slice(1));
   if (params.has('type')) {
-    window.location.hash = '#anchor';
+    document.getElementById('anchor').scrollIntoView();
   }
+
+  const extendedArea = document.getElementById('extendedArea') as HTMLTextAreaElement;
+
+  SearchSyntaxHighlighting.init(extendedArea);
 
   if ((document.getElementById('searchin') as HTMLSelectElement).value === 'database') {
     document.getElementById('searchStatus').toggleAttribute('hidden', true);
@@ -37,8 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('searchCategory').toggleAttribute('hidden', true);
     }
   });
-
-  const extendedArea = (document.getElementById('extendedArea') as HTMLTextAreaElement);
 
   // Submit form with ctrl+enter from within textarea
   extendedArea.addEventListener('keydown', event => {
@@ -70,8 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function getOperator(): string {
-    const operatorSelect = document.getElementById('dateOperator') as HTMLSelectElement;
-    return operatorSelect.value;
+    return (document.getElementById('dateOperator') as HTMLSelectElement).value;
   }
 
   // a filter helper can be a select or an input (for date), so we need a function to get its value
@@ -167,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasSpaceAfter = val.substring(pos, pos + 1) === ' ';
         const insert = (hasSpaceBefore ? '' : pos === 0 ? '' : ' ') + filter + (hasSpaceAfter ? '' : ' ');
         extendedArea.value = start + insert + end;
+        SearchSyntaxHighlighting.update(extendedArea.value);
         return;
       }
 
@@ -175,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         extendedArea.value = extendedArea.value + addSpace + filter;
       }
+      SearchSyntaxHighlighting.update(extendedArea.value);
     });
   });
 });

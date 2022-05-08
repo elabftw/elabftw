@@ -14,8 +14,6 @@ use Elabftw\Services\AdvancedSearchQuery\Interfaces\Term;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
-use function filter_var;
-use function trim;
 
 class SimpleValueWrapper implements Term, Visitable
 {
@@ -30,8 +28,6 @@ class SimpleValueWrapper implements Term, Visitable
 
     public function getValue(): string
     {
-        $value = filter_var(trim($this->value), FILTER_SANITIZE_STRING);
-        // Strict comparison to keep 0
-        return $value !== false ? $value : '';
+        return htmlspecialchars($this->value, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
     }
 }

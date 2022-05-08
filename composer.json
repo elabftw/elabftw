@@ -19,7 +19,7 @@
     "ext-pdo": "*",
     "ext-zip": "*",
     "defuse/php-encryption": "2.3.*",
-    "mpdf/mpdf": "8.0.*",
+    "mpdf/mpdf": "^8.1.0",
     "onelogin/php-saml": "^4.0.0",
     "guzzlehttp/guzzle": "^7.0.1",
     "symfony/http-foundation": "^6.0",

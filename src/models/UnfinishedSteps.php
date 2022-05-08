@@ -43,7 +43,7 @@ class UnfinishedSteps extends Steps
 
         $sql .= $params->getExtra('scope') === 'team' ? $this->getTeamWhereClause() : ' WHERE entity.userid = :userid';
 
-        $sql .= ' GROUP BY entity.id ORDER BY entity.id DESC';
+        $sql .= ' AND entity.state = ' . $this->Entity::STATE_NORMAL . ' GROUP BY entity.id ORDER BY entity.id DESC';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);

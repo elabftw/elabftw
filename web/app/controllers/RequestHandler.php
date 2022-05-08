@@ -89,6 +89,7 @@ try {
                 || $App->Config->configArr['deletable_xp'] === '0') {
                 throw new ImproperActionException('You cannot delete experiments!');
             }
+            $res = $Model->destroy();
         } elseif ($Model instanceof Users2Teams) {
             $res = $Model->destroy($Params);
         } else {

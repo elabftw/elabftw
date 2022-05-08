@@ -42,11 +42,11 @@ abstract class AbstractEntity implements CrudInterface
 {
     use EntityTrait;
 
-    protected const STATE_NORMAL = 1;
+    public const STATE_NORMAL = 1;
 
-    protected const STATE_ARCHIVED = 2;
+    public const STATE_ARCHIVED = 2;
 
-    protected const STATE_DELETED = 3;
+    public const STATE_DELETED = 3;
 
     public Comments $Comments;
 
@@ -654,8 +654,6 @@ abstract class AbstractEntity implements CrudInterface
 
     public function destroy(): bool
     {
-        $this->canOrExplode('write');
-
         // set state to deleted
         return $this->update(new EntityParams((string) self::STATE_DELETED, 'state'));
     }

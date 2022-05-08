@@ -36,7 +36,8 @@
         <p>The operators are listed in increasing order of precedence. Note the space around the operators. <em>termA termB OR termC</em> is equivalent to <em>(termA AND termB) OR termC</em>. To give priority to <code>OR</code> use parenthesis: <em>termA AND (termB OR termC)</em>.</p>
         <h3>Field/value pair searches</h3>
         <p>Field/value pairs are also applicable in the quick search fields.</p>
-        <p>Basic syntax <code>[<strong>field</strong>]:[value]</code></p>
+        <p>Basic syntax <code><strong>field</strong>:value</code></p>
+        <p>By default wildcards are added to Terms and Quoted terms. The strict switch (<code>field:s:value</code>) disables the wildcards.</p>
         <dl>
           <dt>attachment</dt>
           <dd>yes or no, true or false, 1 or 0, on or off:<br>

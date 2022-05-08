@@ -4,6 +4,7 @@
   {% set Entity_id = Entity.id %}
 {% endif %}
 <!-- STEPS -->
+<div id='stepsDiv'>
 {% if stepsArr %}
   <div class='mt-2'>
     <h3 class='d-inline'>{{ 'Steps'|trans }}</h3>
@@ -26,6 +27,7 @@
     </ul>
   </div>
 {% endif %}
+</div>
 
 <!-- LINKS -->
 {% if linksArr %}

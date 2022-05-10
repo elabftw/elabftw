@@ -423,7 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // INSERT IMAGE AT CURSOR POSITION IN TEXT
   $(document).on('click', '.inserter',  function() {
     // link to the image
-    const url = 'app/download.php?f=' + $(this).data('link');
+    const url = `app/download.php?f=${$(this).data('link')}&storage=${$(this).data('storage')}`;
     // switch for markdown or tinymce editor
     let content;
     if (editor.type === 'md') {

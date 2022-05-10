@@ -161,7 +161,7 @@
           <p class='file-comment editable hl-hover d-inline'
             data-type='{{ upload.type }}'
             data-itemid='{{ upload.item_id }}'
-            data-id='{{ upload.id }}'>{{ upload.comment }}</p><br>
+            data-id='{{ upload.id }}'>{{ upload.comment|raw }}</p><br>
         {% endif %}
 
         {% if ext matches '/(json)$/i' %}

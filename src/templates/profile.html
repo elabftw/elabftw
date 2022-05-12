@@ -15,9 +15,15 @@
       </h5>
       {% if teamGroupsArr %}
         <h5>{{ 'Groups'|trans }}:
-          {% for group in teamGroupsArr %}
-          <span class='btn btn-secondary disabled'>{{ group.name }}</span>
+        <ul>
+          {% for teamGroup in teamGroupsArr %}
+            <li class='mt-2'>{{ teamGroup.name }}
+            {% for user in teamGroup.users %}
+              <span class='btn btn-secondary disabled'>{{ user.fullname|raw }}</span>
+            {% endfor %}
+            </li>
           {% endfor %}
+        </ul>
         </h5>
       {% endif %}
       <p><a href='ucp.php'>{% trans %}Go to user control panel{% endtrans %}</a>

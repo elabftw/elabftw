@@ -37,7 +37,7 @@ try {
 
     // get the team groups in which the user is
     $TeamGroups = new TeamGroups($App->Users);
-    $teamGroupsArr = $TeamGroups->readGroupsFromUser();
+    $teamGroupsArr = $TeamGroups->readGroupsWithUsersFromUser();
 
     $template = 'profile.html';
     $renderArr = array(

@@ -31,6 +31,7 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
             1,
             ',',
             'team',
+            'team',
             $uploadedFile,
         );
         $Import->import();
@@ -53,6 +54,7 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
             1,
             'tab',
             'team',
+            'team',
             $uploadedFile,
         );
         $Import->import();
@@ -74,6 +76,7 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
             1,
             ',',
             'team',
+            'team',
             $uploadedFile,
         );
         $this->expectException(ImproperActionException::class);
@@ -94,6 +97,7 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
             new Users(1, 1),
             1,
             ',',
+            'team',
             'team',
             $uploadedFile,
         );

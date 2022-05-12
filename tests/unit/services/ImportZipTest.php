@@ -44,6 +44,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
             new Users(1, 1),
             1,
             'team',
+            'team',
             $uploadedFile,
             $this->fs,
         );
@@ -63,6 +64,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
             new Users(1, 1),
             1,
             'team',
+            'team',
             $uploadedFile,
             $this->fs,
         );
@@ -81,6 +83,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
         $Import = new ImportZip(
             new Users(1, 1),
             1,
+            'team',
             'team',
             $uploadedFile,
             $this->fs,
@@ -103,6 +106,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
             new Users(1, 1),
             1,
             'team',
+            'team',
             $uploadedFile,
             $this->fs,
         );
@@ -123,6 +127,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
         $Import = new ImportZip(
             new Users(1, 1),
             1,
+            'team',
             'team',
             $uploadedFile,
             $this->fs,

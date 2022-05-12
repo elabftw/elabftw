@@ -43,14 +43,16 @@ try {
             $App->Users,
             (int) $Request->request->get('target'),
             $Request->request->get('delimiter'),
-            $Request->request->getAlnum('visibility'),
+            $Request->request->getAlnum('canread'),
+            $Request->request->getAlnum('canwrite'),
             $Request->files->all()['file'],
         );
     } elseif ($Request->request->get('type') === 'zip') {
         $Import = new ImportZip(
             $App->Users,
             (int) $Request->request->get('target'),
-            $Request->request->getAlnum('visibility'),
+            $Request->request->getAlnum('canread'),
+            $Request->request->getAlnum('canwrite'),
             $Request->files->all()['file'],
             (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs(),
         );

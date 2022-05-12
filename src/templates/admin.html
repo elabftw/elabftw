@@ -358,13 +358,23 @@
       </select>
 
       <label for='visibility_csv'>{{ '2. Select a visibility:'|trans }}</label>
-      <select class='form-control col-md-4' id='visibility_csv' autocomplete='off' name='visibility'>
+      <select class='form-control col-md-4' id='visibility_csv' autocomplete='off' name='canread'>
         {% for key, value in visibilityArr %}
           <option value='{{ key }}'
           {{ 'team' == key ? ' selected' }}
           >{{ value|trans }}</option>
         {% endfor %}
       </select>
+
+      <label for='canwrite_csv'>{{ '2b. Select write access:'|trans }}</label>
+      <select class='form-control col-md-4' id='canwrite_csv' autocomplete='off' name='canwrite'>
+        {% for key, value in visibilityArr %}
+          <option value='{{ key }}'
+          {{ 'team' == key ? ' selected' }}
+          >{{ value|trans }}</option>
+        {% endfor %}
+      </select>
+
 
       <label for='separator_csv'>{{ '3. Select a delimiter:'|trans }}</label>
       <select class='form-control col-md-4' id='separator_csv' autocomplete='off' name='delimiter'>
@@ -405,12 +415,21 @@
       </select>
 
       <label for='visibility_zip'>{{ '2. Select a visibility:'|trans }}</label>
-      <select class='form-control col-md-4' id='visibility_zip' autocomplete='off' name='visibility'>
+      <select class='form-control col-md-4' id='visibility_zip' autocomplete='off' name='canread'>
         {% for key, value in visibilityArr %}
           <option value='{{ key }}'
           {{ 'team' == key ? ' selected' }}
           >{{ value|trans }}</option>
           {% endfor %}
+      </select>
+
+      <label for='canwrite_zip'>{{ '2b. Select write access:'|trans }}</label>
+      <select class='form-control col-md-4' id='canwrite_zip' autocomplete='off' name='canwrite'>
+        {% for key, value in visibilityArr %}
+          <option value='{{ key }}'
+          {{ 'team' == key ? ' selected' }}
+          >{{ value|trans }}</option>
+        {% endfor %}
       </select>
 
       {{ App.Session.get('csrf')|csrf }}

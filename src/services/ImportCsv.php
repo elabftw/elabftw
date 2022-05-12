@@ -34,9 +34,9 @@ class ImportCsv extends AbstractImport
     // the separation character of the csv provided by user
     private string $delimiter;
 
-    public function __construct(Users $users, int $target, string $delimiter, string $canread, UploadedFile $uploadedFile)
+    public function __construct(Users $users, int $target, string $delimiter, string $canread, string $canwrite, UploadedFile $uploadedFile)
     {
-        parent::__construct($users, $target, $canread, $uploadedFile);
+        parent::__construct($users, $target, $canread, $canwrite, $uploadedFile);
         $this->delimiter = Filter::sanitize($delimiter);
         if ($this->delimiter === 'tab') {
             $this->delimiter = "\t";
@@ -57,8 +57,8 @@ class ImportCsv extends AbstractImport
         $rows = $csv->getRecords();
 
         // SQL for importing
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, elabid)
-            VALUES(:team, :title, CURDATE(), :body, :userid, :category, :canread, :elabid)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, canwrite, elabid)
+            VALUES(:team, :title, CURDATE(), :body, :userid, :category, :canread, :canwrite, :elabid)';
         $req = $this->Db->prepare($sql);
 
         // now loop the rows and do the import
@@ -75,6 +75,7 @@ class ImportCsv extends AbstractImport
             $req->bindParam(':userid', $this->Users->userData['userid']);
             $req->bindParam(':category', $this->target);
             $req->bindParam(':canread', $this->canread);
+            $req->bindParam(':canwrite', $this->canwrite);
             $req->bindParam(':elabid', $elabid);
             $this->Db->execute($req);
             $itemId = $this->Db->lastInsertId();

@@ -49,9 +49,9 @@ class ImportZip extends AbstractImport
     // experiments or items
     private string $type = 'experiments';
 
-    public function __construct(Users $users, int $target, string $canread, UploadedFile $uploadedFile, private FilesystemOperator $fs)
+    public function __construct(Users $users, int $target, string $canread, string $canwrite, UploadedFile $uploadedFile, private FilesystemOperator $fs)
     {
-        parent::__construct($users, $target, $canread, $uploadedFile);
+        parent::__construct($users, $target, $canread, $canwrite, $uploadedFile);
         $this->Entity = new Items($users);
         // set up a temporary directory in the cache to extract the zip to
         $this->tmpDir = FsTools::getUniqueString();
@@ -107,12 +107,12 @@ class ImportZip extends AbstractImport
      */
     private function dbInsert($item): void
     {
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, elabid, metadata)
-            VALUES(:team, :title, :date, :body, :userid, :category, :canread, :elabid, :metadata)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, canwrite, elabid, metadata)
+            VALUES(:team, :title, :date, :body, :userid, :category, :canread, :canwrite, :elabid, :metadata)';
 
         if ($this->type === 'experiments') {
-            $sql = 'INSERT into experiments(title, date, body, userid, canread, category, elabid, metadata)
-                VALUES(:title, :date, :body, :userid, :canread, :category, :elabid, :metadata)';
+            $sql = 'INSERT into experiments(title, date, body, userid, canread, canwrite, category, elabid, metadata)
+                VALUES(:title, :date, :body, :userid, :canread, :canwrite, :category, :elabid, :metadata)';
         }
 
         // make sure there is an elabid (might not exist for items before v4.0)
@@ -126,6 +126,7 @@ class ImportZip extends AbstractImport
         $req->bindParam(':date', $item['date']);
         $req->bindParam(':body', $item['body']);
         $req->bindValue(':canread', $this->canread);
+        $req->bindValue(':canwrite', $this->canwrite);
         $req->bindParam(':elabid', $elabid);
         $req->bindParam(':metadata', $item['metadata']);
         if ($this->type === 'items') {

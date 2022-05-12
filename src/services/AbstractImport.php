@@ -22,13 +22,11 @@ abstract class AbstractImport
 {
     protected Db $Db;
 
-    // read permission for the imported items
-    protected string $canread;
-
-    public function __construct(protected Users $Users, protected int $target, string $canread, protected UploadedFile $UploadedFile)
+    public function __construct(protected Users $Users, protected int $target, protected string $canread, protected string $canwrite, protected UploadedFile $UploadedFile)
     {
         $this->Db = Db::getConnection();
         $this->canread = Check::visibility($canread);
+        $this->canwrite = Check::visibility($canwrite);
         if ($this->UploadedFile->getError()) {
             throw new ImproperActionException($this->UploadedFile->getErrorMessage());
         }

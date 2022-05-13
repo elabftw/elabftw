@@ -1,1705 +1,1358 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: elabftw\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Nicolas CARPi\n"
+"Language-Team: \n"
+"Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3.1\n"
-"Project-Id-Version: elabftw\n"
-"Language: id\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"X-Generator: Poedit 3.0.1\n"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:150
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:173
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:210
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:268
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:354
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:317
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:358
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:381
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:434
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:453
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:649
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:741
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:832
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1479
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1609
+#: src/templates/admin.html:46 src/templates/admin.html:53
+#: src/templates/admin.html:60 src/templates/admin.html:67
+#: src/templates/admin.html:73 src/templates/admin.html:85
+#: src/templates/admin.html:101 src/templates/editusers.html:144
+#: src/templates/editusers.html:153 src/templates/search.html:222
+#: src/templates/search.html:233 src/templates/sysconfig.html:97
+#: src/templates/sysconfig.html:118 src/templates/sysconfig.html:125
+#: src/templates/sysconfig.html:140 src/templates/sysconfig.html:146
+#: src/templates/sysconfig.html:152 src/templates/sysconfig.html:226
+#: src/templates/sysconfig.html:265 src/templates/sysconfig.html:275
+#: src/templates/sysconfig.html:281 src/templates/sysconfig.html:296
+#: src/templates/sysconfig.html:634 src/templates/sysconfig.html:697
+#: src/templates/sysconfig.html:837 src/templates/ucp.html:297
 msgid "Yes"
 msgstr "Ya"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:156
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:179
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:216
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:274
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:360
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:323
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:364
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:387
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:440
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:459
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:655
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:747
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:838
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1483
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1615
+#: src/templates/admin.html:47 src/templates/admin.html:54
+#: src/templates/admin.html:61 src/templates/admin.html:68
+#: src/templates/admin.html:74 src/templates/admin.html:86
+#: src/templates/admin.html:102 src/templates/editusers.html:145
+#: src/templates/editusers.html:154 src/templates/search.html:223
+#: src/templates/search.html:234 src/templates/sysconfig.html:98
+#: src/templates/sysconfig.html:119 src/templates/sysconfig.html:126
+#: src/templates/sysconfig.html:141 src/templates/sysconfig.html:147
+#: src/templates/sysconfig.html:153 src/templates/sysconfig.html:227
+#: src/templates/sysconfig.html:266 src/templates/sysconfig.html:276
+#: src/templates/sysconfig.html:282 src/templates/sysconfig.html:297
+#: src/templates/sysconfig.html:635 src/templates/sysconfig.html:698
+#: src/templates/sysconfig.html:838 src/templates/ucp.html:298
 msgid "No"
 msgstr "Tidak"
 
-#: cache/twig/67/67ed4dc915a2a958b53f7776ba416ce1223b3b10f0c5cf8998fa67c864d6c2be.php:115
-#: cache/twig/67/67ed4dc915a2a958b53f7776ba416ce1223b3b10f0c5cf8998fa67c864d6c2be.php:127
-#: web/app/controllers/UcpController.php:65
-msgid "The passwords do not match!"
-msgstr "Kata sandi tidak cocok!"
-
-#: web/app/controllers/CreateUserController.php:43
-#: web/app/controllers/RegisterController.php:54
+#: web/app/controllers/CreateUserController.php:51
+#: web/app/controllers/RegisterController.php:41
 msgid "A mandatory field is missing!"
 msgstr "Ada kolom wajib diisi yang masih kosong!"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:184
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:164
+#: src/templates/login.html:105 src/templates/register.html:64
+#: src/templates/sysconfig.html:820
 msgid "Password"
 msgstr "Kata sandi"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:706
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:230
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:512
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:181
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1711
+#: src/templates/editusers.html:96 src/templates/editusers.html:221
+#: src/templates/login.html:58 src/templates/register.html:75
+#: src/templates/sysconfig.html:745 src/templates/ucp.html:308
 msgid "Firstname"
 msgstr "Nama depan"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:717
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:246
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:521
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:190
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1720
+#: src/templates/editusers.html:102 src/templates/editusers.html:227
+#: src/templates/login.html:61 src/templates/register.html:81
+#: src/templates/sysconfig.html:748 src/templates/ucp.html:313
 msgid "Lastname"
 msgstr "Nama belakang"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:670
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:65
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:176
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:262
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:503
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:142
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:164
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1729
+#: src/templates/editusers.html:108 src/templates/editusers.html:215
+#: src/templates/login.html:103 src/templates/register.html:53
+#: src/templates/sysconfig.html:25 src/templates/sysconfig.html:751
+#: src/templates/team.html:8 src/templates/team.html:117
+#: src/templates/ucp.html:276 src/templates/ucp.html:400
 msgid "Email"
 msgstr "Surel"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:232
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:132
-#: cache/twig/ba/ba6006cc5c8e58c9a9e6cc97accf6b073e46f9efb10f7715a280d2f6deee6d8a.php:62
-#: cache/twig/f9/f974eb64d32747794d0b955920037440c7278b5937ca310f8d2389ddf14c9b1f.php:121
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:418
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:199
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:683
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:53
-#: web/experiments.php:27 src/services/ListBuilder.php:74
+#: src/services/ListBuilder.php:74 web/experiments.php:27
+#: src/templates/create-new.html:13 src/templates/head.html:67
+#: src/templates/profile.html:35 src/templates/search.html:107
+#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:240
+#: src/templates/team.html:109 src/templates/todolist-panel.html:42
 msgid "Experiment"
 msgid_plural "Experiments"
 msgstr[0] "Eksperimen"
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:140
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:60
-#: web/database.php:27
+#: web/database.php:28 src/templates/head.html:69 src/templates/search.html:109
 msgid "Database"
 msgstr "Basis data"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:534
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:595
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:95
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:245
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:303
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:152
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:471
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:111
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:139
-#: web/team.php:31
+#: src/services/Transform.php:33 web/team.php:32 src/templates/admin.html:20
+#: src/templates/admin.html:94 src/templates/admin.html:110
+#: src/templates/editusers.html:205 src/templates/head.html:73
+#: src/templates/register.html:42 src/templates/todolist-panel.html:36
 msgid "Team"
 msgstr "Tim"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:253
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:112
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:316
+#: src/templates/filter-order-sort.html:32 src/templates/pdf.html:12
+#: src/templates/show.html:114 src/templates/ucp.html:95
 msgid "Date"
 msgstr "Tanggal"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:259
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:143
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:405
+#: src/templates/edit.html:164 src/templates/filter-order-sort.html:39
+#: src/templates/show.html:117 src/templates/templates-edit.html:50
+#: src/templates/ucp.html:96
 msgid "Title"
 msgstr "Judul"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:88
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:171
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:90
+#: src/templates/admin.html:291 src/templates/edit.html:42
+#: src/templates/ucp.html:31 src/templates/view.html:144
 msgid "Visibility"
 msgstr "Tampilan"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:107
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:149
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:335
+#: src/templates/admin.html:23 src/templates/edit.html:140
 msgid "Status"
 msgid_plural "Status"
 msgstr[0] "Status"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:343
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:177
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:207
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:93
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1043
+#: src/templates/editusers.html:28 src/templates/show-item.html:40
+#: src/templates/sysconfig.html:369 src/templates/sysconfig.html:830
+#: src/templates/ucp.html:134 src/templates/view.html:55
+#: src/templates/view.html:56 src/templates/view.html:145
 msgid "Edit"
 msgstr "Sunting"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:640
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:525
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:593
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:657
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:736
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:791
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:207
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:620
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:646
-#: cache/twig/65/6553abe060446074a2f9d9a63a5a190dda7b5858037eada87685fb88ad81f74d.php:55
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:369
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:537
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:234
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:470
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:542
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:669
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:806
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:893
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1055
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1434
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1490
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1621
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1673
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1796
+#: src/templates/admin.html:191 src/templates/admin.html:224
+#: src/templates/admin.html:323 src/templates/edit.html:197
+#: src/templates/edit.html:245 src/templates/editusers.html:160
+#: src/templates/json-editor.html:15 src/templates/steps-links-edit.html:72
+#: src/templates/sysconfig.html:57 src/templates/sysconfig.html:71
+#: src/templates/sysconfig.html:158 src/templates/sysconfig.html:187
+#: src/templates/sysconfig.html:233 src/templates/sysconfig.html:316
+#: src/templates/sysconfig.html:375 src/templates/sysconfig.html:571
+#: src/templates/sysconfig.html:638 src/templates/sysconfig.html:702
+#: src/templates/sysconfig.html:725 src/templates/sysconfig.html:783
+#: src/templates/sysconfig.html:874 src/templates/sysconfig.html:907
+#: src/templates/templates-edit.html:58 src/templates/ucp.html:255
+#: src/templates/view.html:245
 msgid "Save"
 msgstr "Simpan"
 
-#: web/app/controllers/EntityAjaxController.php:38
-#: web/app/controllers/EntityAjaxController.php:275
-#: web/app/controllers/SortableAjaxController.php:37
-#: web/app/controllers/UsersAjaxController.php:32
-#: web/app/controllers/IdpsController.php:67
-#: web/app/controllers/ExperimentsAjaxController.php:34
-#: web/app/controllers/AdminAjaxController.php:29
-#: web/app/controllers/TeamGroupsController.php:31
-#: web/app/controllers/StatusController.php:31
-#: web/app/controllers/SysconfigController.php:109
-#: web/app/controllers/AjaxController.php:36
-#: web/app/controllers/TagsController.php:34
-#: web/app/controllers/CommentsAjaxController.php:36
-#: web/app/controllers/CommentsAjaxController.php:59
-#: web/app/controllers/CommentsAjaxController.php:72
-#: web/app/controllers/UsersController.php:63
-#: web/app/controllers/RevisionsController.php:51
-#: web/app/controllers/ItemsTypesAjaxController.php:32
-#: web/app/controllers/UcpController.php:98
-#: web/app/controllers/TodolistController.php:30
-#: web/app/controllers/TodolistController.php:42
+#: web/app/controllers/AdminController.php:41
+#: web/app/controllers/EntityAjaxController.php:50
+#: web/app/controllers/EntityAjaxController.php:173
+#: web/app/controllers/EntityAjaxController.php:221
+#: web/app/controllers/IdpsController.php:75
+#: web/app/controllers/RequestHandler.php:117
+#: web/app/controllers/RevisionsController.php:60
+#: web/app/controllers/SchedulerController.php:32
+#: web/app/controllers/SortableAjaxController.php:36
 #: web/app/controllers/SysconfigAjaxController.php:34
-#: web/app/controllers/SchedulerController.php:31
-#: web/app/controllers/AdminController.php:54
+#: web/app/controllers/SysconfigController.php:125
+#: web/app/controllers/UcpController.php:104
+#: web/app/controllers/UnauthRequestHandler.php:27
+#: web/app/controllers/UsersAjaxController.php:32
+#: web/app/controllers/UsersController.php:64
 msgid "Saved"
 msgstr "Tersimpan"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:126
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:79
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:622
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:89
+#: src/templates/editusers.html:27 src/templates/mfa.html:32
+#: src/templates/team.html:64 src/templates/view.html:22
 msgid "Cancel"
 msgstr "Batal"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:618
-msgid "Saving"
-msgstr "Menyimpan"
-
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:453
-msgid "Save and go back"
-msgstr "Simpan dan kembali"
-
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:324
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:823
+#: src/templates/ucp.html:127 src/templates/ucp.html:376
 msgid "Action"
 msgstr "Tindakan"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:328
+#: src/templates/ucp.html:128
 msgid "Shortcut"
 msgstr "Pintasan"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:333
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:413
-#: cache/twig/7c/7cfde0eb5e5ffee8eb4b8b994723083967cdcf71551fe88873bfc9c50a37709d.php:97
-#: cache/twig/ba/ba6006cc5c8e58c9a9e6cc97accf6b073e46f9efb10f7715a280d2f6deee6d8a.php:136
+#: src/templates/admin.html:138 src/templates/admin.html:251
+#: src/templates/create-new.html:41 src/templates/show-templates-edit.html:21
+#: src/templates/ucp.html:130
 msgid "Create"
 msgstr "Membuat"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:353
+#: src/templates/ucp.html:138
 msgid "Submit"
 msgstr "Kirim"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:363
+#: src/templates/ucp.html:142
 msgid "TODO list"
 msgstr "Daftar tugas"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:811
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:898
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:253
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:499
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:552
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:627
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:685
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:183
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1453
+#: src/templates/admin.html:174 src/templates/admin.html:205
+#: src/templates/admin.html:276 src/templates/team.html:116
+#: src/templates/ucp.html:358 src/templates/ucp.html:373
 msgid "Name"
 msgstr "Nama"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:735
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:257
+#: src/templates/team.html:118 src/templates/ucp.html:322
 msgid "Phone"
 msgstr "Telepon"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:745
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:261
+#: src/templates/team.html:119 src/templates/ucp.html:326
 msgid "Mobile"
 msgstr "Seluler"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:767
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:265
+#: src/templates/team.html:120 src/templates/ucp.html:336
 msgid "Website"
 msgstr "Situs web"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:757
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:269
+#: src/templates/team.html:121 src/templates/ucp.html:332
 msgid "Skype"
 msgstr "Skype"
 
-#: src/services/Email.php:156
-msgid "[eLabFTW] New user registered"
-msgstr "[eLabFTW] Pengguna baru telah terdaftar"
-
-#: web/app/controllers/ResetPasswordController.php:87
-msgid "Email sent. Check your INBOX."
-msgstr "Surel terkirim. Periksa kotak masuk anda."
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:58
+#: src/templates/admin.html:7
 msgid "There are users waiting for validation of their account:"
 msgstr "Ada pengguna yang menunggu validasi akunnya:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:103
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:152
+#: src/templates/admin.html:22 src/templates/sysconfig.html:22
 msgid "Users"
 msgstr "Pengguna"
 
 #. what/where is this used (for)?
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:111
+#: src/templates/admin.html:24
 msgid "Types of items"
 msgstr "Jenis barang"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:115
-msgid "Experiments template"
-msgstr "Templat eksperimen"
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:143
+#: src/templates/admin.html:44
 msgid "Users can delete experiments:"
 msgstr "Pengguna dapat menghapus eksperimen:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:185
+#: src/templates/admin.html:77
 msgid "Name of the link in the top menu:"
 msgstr "Nama tautan di menu utama:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:194
+#: src/templates/admin.html:80
 msgid "Address where this link should point:"
 msgstr "Alamat yang dituju tautan ini:"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:344
+#: src/templates/editusers.html:151
 msgid "Has an active account?"
 msgstr "Punya akun yang aktif?"
 
-#: src/models/Status.php:192
+#: src/models/Status.php:123
 msgid "Remove all experiments with this status before deleting this status."
 msgstr "Hapus seluruh eksperimen dengan status ini sebelum menghapus statusnya."
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:587
+#: src/templates/admin.html:220
 msgid "Default status"
 msgstr "Status awal"
 
-#: src/models/ItemsTypes.php:187
+#: src/models/ItemsTypes.php:102
 msgid "Remove all database items with this type before deleting this type."
 msgstr "Hapus seluruh komponen basis data dengan jenis ini sebelum menghapus jenisnya."
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:780
+#: src/templates/admin.html:120
 msgid "This is the default text when someone creates an experiment."
 msgstr "Ini adalah teks awal ketika seseorang membuat eksperimen."
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:917
+#: src/templates/admin.html:391
 msgid "You should make a backup of your database before importing thousands of items!"
 msgstr "Anda disarankan membuat cadangan basis data sebelum mengimpor ribuan komponen!"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:815
+#: src/templates/admin.html:353
 msgid "1. Select a type of item to import to:"
 msgstr "1. Pilih jenis komponen untuk diimpor:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:900
+#: src/templates/admin.html:382
 msgid "Import CSV"
 msgstr "Impor CSV"
 
-#: web/app/controllers/UsersController.php:57
+#: web/app/controllers/UsersController.php:54
 msgid "Only a sysadmin can put someone sysadmin."
 msgstr "Hanya sysadmin yang dapat menjadikan seseorang sysadmin."
 
-#: cache/twig/67/67ed4dc915a2a958b53f7776ba416ce1223b3b10f0c5cf8998fa67c864d6c2be.php:100
-msgid "Type it again"
-msgstr "Ketik itu lagi"
-
-#: cache/twig/67/67ed4dc915a2a958b53f7776ba416ce1223b3b10f0c5cf8998fa67c864d6c2be.php:131
+#: src/templates/change-pass.html:34
 msgid "Save new password"
 msgstr "Simpan kata sandi baru"
 
-#: src/services/Filter.php:107 src/models/Database.php:52
-#: src/models/Experiments.php:57 src/langs/js-strings.php:15
+#: src/langs/js-strings.php:15 src/models/Experiments.php:59
+#: src/models/Items.php:44 src/services/Filter.php:88
 msgid "Untitled"
 msgstr "Tanpa Judul"
 
-#: web/app/controllers/ExperimentsAjaxController.php:62
-msgid "You don't have the rights to delete this experiment."
-msgstr "Anda tidak memiliki hak untuk menghapus eksperimen ini."
-
-#: src/models/AbstractEntity.php:149
+#: src/models/AbstractEntity.php:141
 msgid "You don't have the rights to lock/unlock this."
 msgstr "Anda tidak memiliki hak untuk mengunci/membuka kunci ini."
 
-#: web/app/controllers/LoginController.php:89 src/classes/Auth.php:204
-msgid "Login failed. Either you mistyped your password or your account isn't activated yet."
-msgstr "Gagal masuk. Mungkin anda salah mengetik kata sandi atau akun anda belum aktif."
-
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:150
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:210
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:270
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:324
-#: web/login.php:32
+#: web/login.php:31 src/templates/login.html:82 src/templates/login.html:141
+#: src/templates/login.html:172 src/templates/login.html:196
 msgid "Login"
 msgstr "Masuk"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:87
+#: src/templates/login.html:17
 msgid "Enter your email address"
 msgstr "Masukkan alamat surel anda"
 
-#: cache/twig/f9/f974eb64d32747794d0b955920037440c7278b5937ca310f8d2389ddf14c9b1f.php:112
+#: src/templates/profile.html:40
 msgid "experiments done since"
 msgstr "eksperimen selesai sejak"
 
-#: src/models/Users.php:92 src/models/Users.php:409
+#: src/services/EmailValidator.php:41
 msgid "Someone is already using that email address!"
 msgstr "Seseorang telah menggunakan alamat surel itu!"
 
-#: web/app/controllers/RegisterController.php:69
+#: web/app/controllers/RegisterController.php:56
 msgid "Registration successful :)<br>Welcome to eLabFTW o/"
 msgstr "Pendaftaran berhasil :)<br>Selamat datang di eLabFTW o/"
 
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:53
+#: src/templates/register.html:5
 msgid "go back to login page"
 msgstr "kembali ke halaman masuk"
 
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:90
+#: src/templates/register.html:30
 msgid "Create your account"
 msgstr "Buat akun anda"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:551
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:219
+#: src/templates/editusers.html:245 src/templates/register.html:99
 msgid "create"
 msgstr "buat"
 
-#: web/app/controllers/ResetPasswordController.php:83
-msgid "Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s"
-msgstr "Hai. Seseorang (mungkin anda) dengan alamat IP: %s dan agen pengguna %s meminta kata sandi baru di eLabFTW. Silahkan ikuti tautan ini untuk mengatur ulang kata sandi : %s"
-
-#: src/models/Users.php:245
-msgid "Email not found in database!"
-msgstr "Surel tidak ditemukan di basis data!"
-
-#: cache/twig/ef/eff883bfa5e9b3945df5583d8cc0665cddd18790a95735a4606bbb9d16e91aaf.php:83
+#: src/templates/revisions.html:14
 msgid "Restore"
 msgstr "Pulihkan"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:102
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:164
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:115
-#: web/search.php:34
+#: web/search.php:32 src/templates/editusers.html:50 src/templates/head.html:77
+#: src/templates/team.html:35 src/templates/team.html:50
 msgid "Search"
 msgstr "Cari"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:180
-msgid "Search only in experiments owned by:"
-msgstr "Cari hanya di eksperimen yang dimiliki oleh:"
-
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:185
-msgid "Yourself"
-msgstr "Diri anda"
-
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:48
+#: src/templates/search.html:105
 msgid "Search in"
 msgstr "Cari di"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:230
-msgid "Where date is between"
-msgstr "Pada periode antara"
-
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:238
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:326
-msgid "and"
-msgstr "dan"
-
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:255
-msgid "And title contains"
-msgstr "Dan judul mengandung"
-
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:309
-msgid "And body contains"
-msgstr "Dan isi mengandung"
-
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:268
+#: src/templates/search.html:245
 msgid "And status is"
 msgstr "Dan statusnya"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:342
+#: src/templates/search.html:272
 msgid "And rating is"
 msgstr "Dan peringkatnya"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:351
+#: src/templates/search.html:275
 msgid "Unrated"
 msgstr "Belum diberi rating"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:385
+#: src/templates/search.html:331
 msgid "Launch search"
 msgstr "Lakukan pencarian"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:77
-#: src/controllers/AbstractEntityController.php:112
+#: src/templates/show.html:18
 msgid "Sorry. I couldn't find anything :("
 msgstr "Maaf. Saya tidak dapat menemukan apa-apa :("
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:144
+#: src/templates/sysconfig.html:20
 msgid "Server"
 msgstr "Peladen"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:83
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:156
+#: src/templates/admin.html:28 src/templates/show.html:97
+#: src/templates/sysconfig.html:23 src/templates/view.html:23
 msgid "Timestamp"
 msgstr "Stempel waktu"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:160
+#: src/templates/sysconfig.html:24
 msgid "Security"
 msgstr "Keamanan"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:228
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:247
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:195
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:677
+#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:238
+#: src/templates/team.html:109 src/templates/team.html:113
 msgid "Members"
 msgstr "Anggota"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:238
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:205
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:691
+#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:244
+#: src/templates/team.html:109 src/templates/todolist-panel.html:49
 msgid "Items"
 msgstr "Komponen"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:695
+#: src/templates/sysconfig.html:244
 msgid "Created"
 msgstr "Dibuat"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:734
+#: src/templates/sysconfig.html:263
 msgid "The teams can use the credentials below to timestamp:"
 msgstr "Tim dapat menggunakan kredensial di bawah ini untuk mengaudit:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:350
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:783
+#: src/templates/ts-config.html:17
 msgid "Login for external timestamping service:"
 msgstr "Masuk untuk layanan audit dari luar:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:363
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:791
+#: src/templates/ts-config.html:21
 msgid "Password for external timestamping service:"
 msgstr "Kata sandi untuk layanan audit dari luar:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:825
+#: src/templates/sysconfig.html:294
 msgid "Users need validation by admin after registration:"
 msgstr "Pengguna membutuhkan validasi oleh admin setelah pendaftaran:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:843
+#: src/templates/sysconfig.html:299
 msgid "Set to yes for added security."
 msgstr "Atur ke ya untuk keamanan tambahan."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:865
+#: src/templates/sysconfig.html:306
 msgid "Number of allowed login attempts:"
 msgstr "Jumlah usaha masuk yang dibolehkan:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:873
+#: src/templates/sysconfig.html:308
 msgid "3 might be too few. See for yourself :)"
 msgstr "3 mungkin terlalu sedikit. Coba deh :)"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:887
-msgid "To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems."
-msgstr "Untuk mengidentifikasi pengguna, kami menggunakan md5 dari agen pengguna + IP. Sebab kalau hanya alamat IP bisa menimbulkan masalah."
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:965
+#: src/templates/sysconfig.html:350
 msgid "Address of the SMTP server:"
 msgstr "Alamat peladen SMTP:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:994
-msgid "Probably TLS"
-msgstr "Mungkin TLS"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:999
+#: src/templates/sysconfig.html:353
 msgid "SMTP Port:"
 msgstr "Port SMTP:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1007
+#: src/templates/sysconfig.html:355
 msgid "Default is 587."
 msgstr "Standarnya 587."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1012
+#: src/templates/sysconfig.html:357
 msgid "SMTP username:"
 msgstr "Nama pengguna SMTP:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1020
+#: src/templates/sysconfig.html:359
 msgid "SMTP password"
 msgstr "Kata sandi SMTP"
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:306
+#: src/templates/head.html:170
 msgid "The admin of a team can edit the status and the types of items available (%sAdmin Panel%s)."
 msgstr "Admin tim dapat menyunting status dan tipe komponen yang tersedia (%sPanel Admin%s)."
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:318
+#: src/templates/head.html:176
 msgid "Custom shortcuts are available (%sControl Panel%s)."
 msgstr "Pintasan ubah suai tersedia (%sPanel Kontrol%s)."
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:324
+#: src/templates/head.html:179
 msgid "You can duplicate experiments in one click."
 msgstr "Anda dapat menyalin eksperimen dalam satu klik."
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:330
+#: src/templates/head.html:182
 msgid "Click a tag to list all items with this tag."
 msgstr "Pilih label untuk mendata semua komponen dengan label ini."
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:336
+#: src/templates/head.html:185
 msgid "Once timestamped an experiment cannot be unlocked or modified. Only comments can be added."
 msgstr "Sekali diaudit, eksperimen tidak dapat dibuka atau diubah. Hanya komentar yang dapat ditambahkan."
 
-#: web/app/controllers/EntityAjaxController.php:304
-msgid "The template name must be 3 characters long."
-msgstr "Nama templat setidaknya 3 karakter."
-
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:57
+#: src/templates/ucp.html:6
 msgid "Account"
 msgstr "Akun"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:53
+#: src/templates/ucp.html:5
 msgid "Preferences"
 msgstr "Preferensi"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:61
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:61
+#: src/templates/team.html:7 src/templates/ucp.html:7
 msgid "Templates"
 msgstr "Templat"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:661
+#: src/templates/ucp.html:268
 msgid "Modify your personal informations"
 msgstr "Ubah informasi pribadi anda"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:699
+#: src/templates/ucp.html:304
 msgid "Modify your identity"
 msgstr "Ubah identitas anda"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:680
+#: src/templates/ucp.html:280
 msgid "Modify your password"
 msgstr "Ubah kata sandi anda"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:684
-#: cache/twig/67/67ed4dc915a2a958b53f7776ba416ce1223b3b10f0c5cf8998fa67c864d6c2be.php:85
+#: src/templates/change-pass.html:20 src/templates/ucp.html:281
 msgid "New password"
 msgstr "Kata sandi baru"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:689
-msgid "Confirm new password"
-msgstr "Pastikan kata sandi baru"
-
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:729
+#: src/templates/ucp.html:319
 msgid "Modify your contact information"
 msgstr "Ubah informasi kontak anda"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:779
+#: src/templates/ucp.html:342
 msgid "Update profile"
 msgstr "Perbarui profil"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:200
+#: src/templates/ucp.html:76
 msgid "Items per page:"
 msgstr "Komponen per halaman:"
 
-#: cache/twig/ba/ba6006cc5c8e58c9a9e6cc97accf6b073e46f9efb10f7715a280d2f6deee6d8a.php:53
+#: src/templates/create-new.html:9
 msgid "Create new"
 msgstr "Buat baru"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:157
+#: src/templates/ucp.html:60
 msgid "Language"
 msgstr "Bahasa"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:532
+#: src/templates/pdf.html:127 src/templates/view.html:206
 msgid "Unique eLabID:"
 msgstr "eLabID unik:"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:570
+#: src/templates/view.html:223
 msgid "Comments"
 msgstr "Komentar"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:639
-#: src/langs/js-strings.php:9
+#: src/templates/view.html:243
 msgid "Add a comment"
 msgstr "Tambahkan komentar"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:92
-#: src/langs/js-strings.php:24
+#: src/langs/js-strings.php:27
 msgid "Delete this?"
 msgstr "Hapus ini?"
 
-#: cache/twig/0e/0e5573d973749d5139ce07236914a6a9517320275fda0d5a3d52f337d2d8544c.php:337
-#: cache/twig/a3/a3c30216424db37fa2d72e6c858b60a917f3dfbf1cdbc90ba7b0fdcb2110194e.php:337
-msgid "Tag cloud"
-msgstr "Awan label"
-
-#: cache/twig/f9/f974eb64d32747794d0b955920037440c7278b5937ca310f8d2389ddf14c9b1f.php:105
+#: src/templates/profile.html:32
 msgid "Statistics"
 msgstr "Statistik"
 
-#: cache/twig/f9/f974eb64d32747794d0b955920037440c7278b5937ca310f8d2389ddf14c9b1f.php:99
+#: src/templates/profile.html:30
 msgid "No statistics available yet."
 msgstr "Belum ada statistik tersedia."
 
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:63
+#: src/templates/filter-order-sort.html:18
 msgid "Filter status"
 msgstr "Saring status"
 
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:207
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:64
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:220
+#: src/templates/edit.html:170 src/templates/filter-order-sort.html:65
+#: src/templates/pdf.html:14 src/templates/show.html:126
+#: src/templates/templates-edit.html:5
 msgid "Tags"
 msgstr "Label"
 
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:115
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:291
+#: src/templates/edit.html:182 src/templates/show.html:80
+#: src/templates/templates-edit.html:20
 msgid "Add a tag"
 msgstr "Tambahkan label"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:145
-#: src/models/TeamGroups.php:114
+#: src/models/TeamGroups.php:115
 msgid "Only me"
 msgstr "Hanya saya"
 
-#: cache/twig/91/91137d0b25ddc6ffe70e66ce9fe3f0c4993aa87875d9b434662baec5bad20fcc.php:172
-#: cache/twig/c8/c8eeff2d918a6b2d9cc1367d6c8e76805f098b1a1a20523ccb14e92e26480498.php:124
+#: src/templates/steps-links-edit.html:95
+#: src/templates/steps-links-view.html:33
 msgid "Linked items"
 msgstr "Komponen terkait"
 
-#: cache/twig/91/91137d0b25ddc6ffe70e66ce9fe3f0c4993aa87875d9b434662baec5bad20fcc.php:248
+#: src/templates/show.html:84 src/templates/steps-links-edit.html:128
+#: src/templates/steps-links-edit.html:130
 msgid "Add a link"
 msgstr "Tambahkan tautan"
 
-#: cache/twig/91/91137d0b25ddc6ffe70e66ce9fe3f0c4993aa87875d9b434662baec5bad20fcc.php:255
+#: src/templates/steps-links-edit.html:130
 msgid "from the database"
 msgstr "dari basis data"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:247
+#: src/templates/sysconfig.html:79
 msgid "Settings"
 msgstr "Pengaturan"
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:243
+#: src/templates/head.html:126
 msgid "Logout"
 msgstr "Keluar"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:77
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:228
+#: src/templates/footer.html:25 src/templates/head.html:120
 msgid "Sysadmin panel"
 msgstr "Panel sysadmin"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:91
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:219
-#: web/admin.php:33
+#: web/admin.php:34 src/templates/footer.html:30 src/templates/head.html:117
 msgid "Admin panel"
 msgstr "Panel admin"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:129
+#: src/templates/footer.html:46
 msgid "Powered by"
 msgstr "Dipersembahkan oleh"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:134
+#: src/templates/footer.html:51
 msgid "Page generated in"
 msgstr "Halaman dibuat pada"
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:294
+#: src/templates/head.html:164
 msgid "You can have experiments templates (%sControl Panel%s)."
 msgstr "Anda dapat memiliki templat eksperimen (%sPanel Kontrol%s)."
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:312
+#: src/templates/head.html:173
 msgid "If you press Ctrl Shift D in the editor, the date will appear under the cursor."
 msgstr "Jika anda menekan Ctrl Shift D di editor, tanggal akan muncul di bawah kursor."
 
-#: cache/twig/f9/f974eb64d32747794d0b955920037440c7278b5937ca310f8d2389ddf14c9b1f.php:87
+#: src/templates/profile.html:23
 msgid "Go to user control panel"
 msgstr "Menuju panel kontrol pengguna"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:148
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:191
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1738
+#: src/templates/sysconfig.html:21 src/templates/sysconfig.html:44
+#: src/templates/sysconfig.html:754
 msgid "Teams"
 msgstr "Tim"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:324
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:757
+#: src/templates/ts-config.html:31
 msgid "URL for external timestamping service:"
 msgstr "URL untuk layanan audit luar:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:338
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:770
-msgid "Chain of certificates of the external timestamping service:"
-msgstr "Rantai sertifikat dari layanan audit luar:"
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:358
-msgid "This should be the login associated with your timestamping service provider"
-msgstr "Ini harusnya akun terkait penyedia layanan audit anda"
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:385
-msgid "Your timestamping service provider password"
-msgstr "Kata sandi penyedia layanan audit anda"
-
-#: src/models/AbstractEntity.php:171
+#: src/models/AbstractEntity.php:163
 msgid "You cannot unlock or edit in any way a timestamped experiment."
 msgstr "Anda tidak dapat membuka kunci atau mengubah eksperimen yang sudah diaudit."
 
-#: web/app/controllers/RegisterController.php:67
+#: web/app/controllers/RegisterController.php:54
 msgid "Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done."
 msgstr "Pendaftaran berhasil :)<br>Akun anda harus divalidasi oleh admin.<br>Anda akan menerima surel jika sudah selesai."
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:46
+#: src/templates/pdf.html:79 src/templates/uploads.html:5
 msgid "Attached file"
 msgid_plural "Attached files"
 msgstr[0] "Berkas terlampir"
 
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:468
+#: src/templates/edit.html:208
 msgid "Attach a file"
 msgstr "Lampirkan berkas"
 
-#: src/langs/js-strings.php:12
+#: src/langs/js-strings.php:9
 msgid "Drop files here to upload"
 msgstr "Taruh berkas di sini untuk mengunggah"
 
-#: src/models/Revisions.php:123
+#: src/models/Revisions.php:101
 msgid "You cannot restore a revision of a locked item!"
 msgstr "Anda tidak dapat memulihkan revisi dari berkas yang terkunci!"
 
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:553
+#: src/templates/edit.html:255
 msgid "Molecule drawer"
 msgstr "Laci molekul"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:92
+#: src/templates/search.html:121
 msgid "With the tag"
 msgstr "Dengan label"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:332
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:765
+#: src/templates/ts-config.html:33
 msgid "This should be the URL used for %sRFC 3161%s-compliant timestamping requests."
 msgstr "Ini harusnya URL yang digunakan untuk permintaan audit yang kompatibel dengan %sRFC 3161%s."
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:110
-msgid "Download timestamped pdf"
-msgstr "Unduh pdf hasil audit"
-
-#: web/app/controllers/ImportController.php:52
+#: web/app/controllers/ImportController.php:63
 msgid "item imported successfully."
 msgid_plural "items imported successfully."
 msgstr[0] "komponen berhasil diimpor."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:72
+#: src/templates/sysconfig.html:5
 msgid "Installed version:"
 msgstr "Versi terpasang:"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:453
+#: src/templates/ucp.html:192
 msgid "Miscellaneous"
 msgstr "Lain-lain"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:1015
+#: src/templates/admin.html:423
 msgid "Import ZIP"
 msgstr "Impor ZIP"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:138
+#: src/templates/footer.html:51
 msgid "seconds"
 msgstr "detik"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:161
+#: src/templates/admin.html:49
 msgid "An admin account will always be able to delete experiments."
 msgstr "Akun admin selalu bisa menghapus eksperimen."
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:282
-msgid "There is a manual available %shere%s."
-msgstr "Panduan tersedia %sdi sini%s."
-
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:94
+#: src/templates/filter-order-sort.html:29
 msgid "Order by"
 msgstr "Urut berdasarkan"
 
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:157
+#: src/templates/filter-order-sort.html:46
 msgid "Sort"
 msgstr "Urut"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:119
-msgid "Download token"
-msgstr "Unduh token"
-
-#: src/services/MakeTimestamp.php:252
-msgid "Please configure Timestamping in the admin panel."
-msgstr "Harap atur Audit di panel admin."
-
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:203
+#: src/templates/login.html:120 src/templates/login.html:170
 msgid "Remember me"
 msgstr "Ingat saya"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:192
-msgid "All the team"
-msgstr "Semua tim"
-
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:319
-msgid "Space means"
-msgstr "Spasi berarti"
-
-#: web/app/controllers/TodolistController.php:63
-#: web/app/controllers/TodolistController.php:72
-msgid "Item deleted successfully"
-msgstr "Komponen berhasil dihapus"
-
-#: web/app/controllers/EntityAjaxController.php:296
-msgid "File deleted successfully"
-msgstr "Berkas berhasil dihapus"
-
-#: web/change-pass.php:48 web/app/controllers/ResetPasswordController.php:104
-msgid "Invalid link. Reset links are only valid for one hour."
-msgstr "Tautan tidak valid. Tautan atur ulang hanya berlaku satu jam."
-
-#: web/app/controllers/ResetPasswordController.php:110
+#: web/app/controllers/ResetPasswordController.php:107
 msgid "New password inserted. You can now login."
 msgstr "Kata sandi baru sudah dicatat. Anda dapat masuk."
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:301
+#: src/templates/show-templates-edit.html:39 src/templates/view.html:88
 msgid "Lock/Unlock item"
 msgstr "Kunci/Buka komponen"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:71
-msgid "Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?"
-msgstr "Sekali diaudit, eksperimen tidak dapat diubah lagi! Yakin untuk melakukannya?"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1065
+#: src/templates/sysconfig.html:382
 msgid "Send a test email"
 msgstr "Kirim surel percobaan"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:370
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1074
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1100
+#: src/templates/sysconfig.html:385 src/templates/sysconfig.html:399
+#: src/templates/team.html:169
 msgid "Send"
 msgstr "Kirim"
 
-#: cache/twig/ba/ba6006cc5c8e58c9a9e6cc97accf6b073e46f9efb10f7715a280d2f6deee6d8a.php:93
+#: src/templates/create-new.html:26
 msgid "No templates found"
 msgstr "Templat tidak ditemukan"
 
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:63
+#: src/templates/filter-order-sort.html:18
 msgid "Filter by type"
 msgstr "Saring berdasarkan jenis"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:247
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:100
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:341
+#: src/templates/edit.html:142 src/templates/filter-order-sort.html:30
+#: src/templates/show.html:123 src/templates/ucp.html:94
 msgid "Category"
 msgstr "Kategori"
 
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:127
+#: src/templates/edit.html:155 src/templates/edit.html:157
+#: src/templates/filter-order-sort.html:35
+#: src/templates/filter-order-sort.html:41 src/templates/show.html:132
 msgid "Rating"
 msgstr "Peringkat"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:296
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:163
+#: src/templates/filter-order-sort.html:47 src/templates/ucp.html:105
 msgid "DESC"
 msgstr "Turun"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:290
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:169
+#: src/templates/filter-order-sort.html:48 src/templates/ucp.html:104
 msgid "ASC"
 msgstr "Naik"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:492
+#: src/templates/admin.html:170
 msgid "Add a New Status"
 msgstr "Tambahkan Status Baru"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:507
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:562
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:635
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:700
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:514
+#: src/templates/admin.html:179 src/templates/admin.html:210
+#: src/templates/admin.html:281 src/templates/edit.html:235
 msgid "Color"
 msgstr "Warna"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:534
+#: src/templates/admin.html:197
 msgid "Edit an Existing Status"
 msgstr "Sunting Status yang Ada"
 
-#: cache/twig/91/91137d0b25ddc6ffe70e66ce9fe3f0c4993aa87875d9b434662baec5bad20fcc.php:212
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:252
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:120
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:600
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:744
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:210
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:212
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:612
+#: src/templates/admin.html:147 src/templates/admin.html:152
+#: src/templates/admin.html:228 src/templates/admin.html:324
+#: src/templates/admin.html:500 src/templates/edit.html:123
+#: src/templates/show.html:100 src/templates/steps-links-edit.html:115
+#: src/templates/sysconfig.html:213 src/templates/sysconfig.html:585
+#: src/templates/team.html:61 src/templates/ucp.html:386
+#: src/templates/uploads.html:59 src/templates/view.html:231
 msgid "Delete"
 msgstr "Hapus"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:620
-msgid "Add a new type of item"
-msgstr "Tambahkan tipe komponen baru"
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:645
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:720
+#: src/templates/admin.html:287
 msgid "Bookable"
 msgstr "Dapat dipesan"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:647
-msgid "in the %sscheduler%s"
-msgstr "pada %spenjadwal%s"
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:666
+#: src/templates/admin.html:247
 msgid "Database Items Types"
 msgstr "Basis Data Tipe Komponen"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:728
-msgid "Edit the template"
-msgstr "Sunting templat"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:536
+#: src/templates/sysconfig.html:184
 msgid "Add a New Team"
 msgstr "Tambahkan Tim Baru"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:550
+#: src/templates/sysconfig.html:192
 msgid "Edit Existing Teams"
 msgstr "Sunting Tim yang Ada"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1083
+#: src/templates/sysconfig.html:391
 msgid "Send a Mass Email"
 msgstr "Kirim Surel Massal"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1088
+#: src/templates/sysconfig.html:393
 msgid "Email Subject"
 msgstr "Judul Surel"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1094
+#: src/templates/sysconfig.html:396
 msgid "Email Body"
 msgstr "Isi Surel"
 
-#: web/app/controllers/UcpController.php:56
-msgid "Please input your current password!"
-msgstr "Harap masukkan kata sandi saat ini!"
-
-#: src/classes/Tools.php:182
+#: src/classes/Tools.php:166
 msgid "This section is out of your reach!"
 msgstr "Bagian ini di luar jangkauan anda!"
 
-#: src/classes/Tools.php:184
+#: src/classes/Tools.php:168
 msgid "An error occurred!"
 msgstr "Terjadi galat!"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:218
+#: src/templates/uploads.html:121
 msgid "Stick"
 msgstr "Tempel"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:171
+#: src/templates/uploads.html:102
 msgid "Style"
 msgstr "Gaya"
 
-#: src/models/Comments.php:195
-msgid "[eLabFTW] New comment posted"
-msgstr "[eLabFTW] Ada Komentar Baru"
-
-#: src/services/Email.php:84
-msgid "[eLabFTW] Test email"
-msgstr "[eLabFTW] Surel percobaan"
-
-#: web/team.php:70 src/exceptions/ResourceNotFoundException.php:29
-#: src/models/ItemsTypes.php:90
+#: src/exceptions/ResourceNotFoundException.php:22
 msgid "Nothing to show with this id"
 msgstr "Tidak ada yang bisa ditampilkan dengan id ini"
 
-#: cache/twig/ef/eff883bfa5e9b3945df5583d8cc0665cddd18790a95735a4606bbb9d16e91aaf.php:59
+#: src/templates/revisions.html:10
 msgid "Go back"
 msgstr "Kembali"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:53
+#: src/templates/team.html:5
 msgid "Scheduler"
 msgstr "Penjadwal"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:141
+#: src/templates/team.html:74
 msgid "No bookable items."
 msgstr "Tidak ada komponen yang bisa dipesan."
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:155
+#: src/templates/team.html:81
 msgid "Select an equipment"
 msgstr "Pilih peralatan"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:195
+#: src/templates/ucp.html:74
 msgid "Display"
 msgstr "Tampilan"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:315
+#: src/templates/ucp.html:124
 msgid "Keyboard Shortcuts"
 msgstr "Pintasan Papan Ketik"
 
-#: cache/twig/7c/7cfde0eb5e5ffee8eb4b8b994723083967cdcf71551fe88873bfc9c50a37709d.php:40
+#: src/templates/show-templates-edit.html:4
+#: src/templates/show-templates-view.html:2
 msgid "Experiments Templates"
 msgstr "Templat Eksperimen"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:332
-msgid "or"
-msgstr "atau"
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:76
+#: src/templates/admin.html:11
 msgid "Validate"
 msgstr "Validasi"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:99
+#: src/templates/admin.html:21 src/templates/profile.html:17
 msgid "Groups"
 msgstr "Grup"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:132
+#: src/templates/admin.html:39
 msgid "Configure your Team"
 msgstr "Atur Tim Anda"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:319
+#: src/templates/admin.html:521
 msgid "Override general timestamping config"
 msgstr "Timpa pengaturan umum audit"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:127
+#: src/templates/editusers.html:57
 msgid "Edit Users"
 msgstr "Sunting Pengguna"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:560
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:621
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:278
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:530
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:160
+#: src/templates/editusers.html:114 src/templates/editusers.html:233
 msgid "Group"
 msgstr "Grup"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:314
+#: src/templates/editusers.html:124
 msgid "Reset user password"
 msgstr "Atur ulang kata sandi"
 
-#: cache/twig/67/67ed4dc915a2a958b53f7776ba416ce1223b3b10f0c5cf8998fa67c864d6c2be.php:58
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:320
+#: src/templates/change-pass.html:9 src/templates/editusers.html:125
 msgid "characters minimum"
 msgstr "minimal karakter"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:776
+#: src/templates/admin.html:116
 msgid "Common Experiment Template"
 msgstr "Templat Eksperimen Bersama"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:802
+#: src/templates/admin.html:346
 msgid "Import a CSV File"
 msgstr "Impor berkas CSV"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:909
+#: src/templates/admin.html:388
 msgid "Import a ZIP File"
 msgstr "Impor berkas ZIP"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:924
+#: src/templates/admin.html:395
 msgid "1. Select where to import:"
 msgstr "1. Pilih impor di mana:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:401
+#: src/templates/admin.html:132
 msgid "Manage Groups of Users"
 msgstr "Kelola Grup Pengguna"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:408
+#: src/templates/admin.html:136
 msgid "Create a group"
 msgstr "Buat Grup"
 
-#: cache/twig/4a/4ae03ad2ce3f111707799888eaf5c709abe80ae1ea2caa7eb8db2c252e036d14.php:50
+#: src/templates/todolist-panel.html:10 src/templates/todolist-panel.html:12
+#: src/templates/todolist-panel.html:13
 msgid "Add"
 msgstr "Tambah"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:422
+#: src/templates/admin.html:144
 msgid "Existing groups"
 msgstr "Grup yang ada"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:100
+#: src/templates/sysconfig.html:7
 msgid "Latest version:"
 msgstr "Versi terakhir:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:186
+#: src/templates/sysconfig.html:42
 msgid "Usage Statistics"
 msgstr "Statistik Penggunaan"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:297
+#: src/templates/sysconfig.html:91
 msgid "Address of the Proxy:"
 msgstr "Alamat Proksi:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:485
+#: src/templates/sysconfig.html:167
 msgid "Operating System"
 msgstr "Sistem Operasi"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:491
+#: src/templates/sysconfig.html:168
 msgid "PHP Version"
 msgstr "Versi PHP"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:497
+#: src/templates/sysconfig.html:169
 msgid "Largest integer supported"
 msgstr "Integer terbesar yang didukung"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:503
+#: src/templates/sysconfig.html:170
 msgid "PHP configuration directory"
 msgstr "Direktori pengaturan PHP"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:727
+#: src/templates/sysconfig.html:261
 msgid "Timestamping Configuration"
 msgstr "Pengaturan Audit"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:817
+#: src/templates/sysconfig.html:288
 msgid "Security Settings"
 msgstr "Pengaturan Keamanan"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:878
-msgid "Time of the ban after failed login attempts (in minutes):"
-msgstr "Waktu blokir setelah usaha masuk gagal (dalam menit):"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:904
+#: src/templates/sysconfig.html:340
 msgid "E-mail Settings"
 msgstr "Pengaturan Surel"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:916
-msgid "Send e-mails via:"
-msgstr "Kirim surel melalui:"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:924
-msgid "Select mailing method..."
-msgstr "Pilih metode menyurat..."
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:943
+#: src/templates/sysconfig.html:347
 msgid "Sender address:"
 msgstr "Alamat pengirim:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:954
-msgid "Path to sendmail:"
-msgstr "Lokasi sendmail:"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:974
-msgid "SMTP encryption:"
-msgstr "Enkripsi SMTP:"
-
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:208
+#: src/templates/head.html:114
 msgid "My Profile"
 msgstr "Profil Saya"
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:238
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:268
+#: src/templates/head.html:124 src/templates/head.html:150
 msgid "Help"
 msgstr "Bantuan"
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:300
+#: src/templates/head.html:167
 msgid "You can make links inside the text by typing # and an autocomplete menu will spawn with a list of Experiments/Items."
 msgstr "Anda dapat membuat tautan di dalam teks dengan mengetik # dan menu akan muncul dengan daftar eksperimen/komponen."
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:122
+#: src/templates/search.html:284
 msgid "And visibility is:"
 msgstr "Dan tampilannya:"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:127
+#: src/templates/search.html:286
 msgid "Select visibility"
 msgstr "Pilih tampilan"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:525
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:586
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:239
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:297
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:133
+#: src/services/Transform.php:32 src/templates/admin.html:93
+#: src/templates/admin.html:109
 msgid "Organization"
 msgstr "Organisasi"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:149
+#: src/templates/footer.html:54
 msgid "Memory usage:"
 msgstr "Penggunaan memori:"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:157
+#: src/templates/footer.html:55
 msgid "bytes"
 msgstr "bita"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:59
-msgid "Number of login attempt left before being banned for %s minutes: %s"
-msgstr "Jumlah usaha masuk tersisa sebelum diblokir selama %s menit: %s"
-
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:230
+#: src/templates/login.html:153
 msgid "Login through your institution"
 msgstr "Masuk melalui institusi anda"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:917
+#: src/templates/ucp.html:365
 msgid "Generate an API Key"
 msgstr "Buat kunci API"
 
-#: cache/twig/0e/0e5573d973749d5139ce07236914a6a9517320275fda0d5a3d52f337d2d8544c.php:350
-#: cache/twig/a3/a3c30216424db37fa2d72e6c858b60a917f3dfbf1cdbc90ba7b0fdcb2110194e.php:350
-msgid "Not enough tags to make a tagcloud"
-msgstr "Tidak cukup label untuk membuat awan label"
-
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:222
+#: src/templates/view.html:62 src/templates/view.html:63
 msgid "Duplicate"
 msgstr "Salin"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:241
+#: src/templates/view.html:68 src/templates/view.html:69
 msgid "Make a PDF"
 msgstr "Buat PDF"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:254
+#: src/templates/view.html:73 src/templates/view.html:74
 msgid "Make a ZIP"
 msgstr "Buat ZIP"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:268
+#: src/templates/steps-links-view.html:73
+#: src/templates/steps-links-view.html:74
 msgid "Show related"
 msgstr "Tampilkan terkait"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:58
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:362
+#: src/templates/view.html:10 src/templates/view.html:109
+#: src/templates/view.html:110
 msgid "Timestamp Experiment"
 msgstr "Audit Eksperimen"
 
-#: cache/twig/b9/b94e9cafb5985b2e27f241849029052e0fbf50a9337c196ed956cde58fc30649.php:126
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:471
+#: src/templates/show-item.html:31 src/templates/show.html:120
+#: src/templates/view.html:179
 msgid "Next step"
 msgstr "Langkah berikutnya"
 
-#: cache/twig/91/91137d0b25ddc6ffe70e66ce9fe3f0c4993aa87875d9b434662baec5bad20fcc.php:157
+#: src/templates/steps-links-edit.html:86
+#: src/templates/steps-links-edit.html:89
 msgid "Add a step"
 msgstr "Tambahkan langkah"
 
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:493
+#: src/templates/edit.html:220
 msgid "Draw something"
 msgstr "Gambar sesuatu"
 
-#: cache/twig/65/6553abe060446074a2f9d9a63a5a190dda7b5858037eada87685fb88ad81f74d.php:71
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:529
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:238
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1677
+#: src/templates/edit.html:244 src/templates/json-editor.html:26
+#: src/templates/json-editor.html:32 src/templates/sysconfig.html:58
+#: src/templates/sysconfig.html:72 src/templates/sysconfig.html:325
+#: src/templates/sysconfig.html:331 src/templates/sysconfig.html:726
 msgid "Clear"
 msgstr "Bersihkan"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:346
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:778
-msgid "This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. You should add it in the 'uploads' folder. The file needs to be in %sPEM-encoded (ASCII)%s format!"
-msgstr "Ini harusnya mengacu pada rantai sertifikat yang digunakan oleh penyedia layanan audit luar anda untuk mengaudit.%sLokasi bergantung pada direktori eLabFTW terpasang. Anda harus menambahkannya pada folder 'uploads'. Berkas harus dalam %sPEM-encoded (ASCII)%s format!"
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:370
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1033
+#: src/templates/sysconfig.html:364 src/templates/sysconfig.html:825
 msgid "A password is already set."
 msgstr "Kata sandi telah diatur."
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:374
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1037
+#: src/templates/sysconfig.html:365 src/templates/sysconfig.html:826
 msgid "%sClear it%s or change it below:"
 msgstr "%sBersihkan%s atau ubah di bawah ini:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:517
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:577
+#: src/templates/admin.html:186 src/templates/admin.html:215
 msgid "Allow timestamp"
 msgstr "Bolehkan audit"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:234
+#: src/templates/ucp.html:92
 msgid "Order by:"
 msgstr "Urut berdasarkan:"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:241
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:284
+#: src/templates/ucp.html:103
 msgid "Use default"
 msgstr "Gunakan standar"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:265
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:135
+#: src/templates/filter-order-sort.html:37 src/templates/pdf.html:110
+#: src/templates/ucp.html:97
 msgid "Comment"
-msgstr "Komentar"
+msgid_plural "Comments"
+msgstr[0] "Komentar-komentar"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:277
+#: src/templates/ucp.html:101
 msgid "Sort:"
 msgstr "Urut:"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:319
+#: src/templates/ucp.html:125
 msgid "Only lowercase letters are allowed."
 msgstr "Hanya huruf kecil yang dibolehkan."
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:508
+#: src/templates/ucp.html:222
 msgid "Disable the rich text editor and write Markdown directly"
 msgstr "Matikan penyunting teks kaya dan tulis penanda secara langsung"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:515
+#: src/templates/ucp.html:236
 msgid "Default visibility for new experiments"
 msgstr "Tampilan awal untuk eksperimen baru"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:543
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:604
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:149
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:251
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:309
+#: src/templates/admin.html:95 src/templates/admin.html:111
+#: src/templates/filter-order-sort.html:40 src/templates/todolist-panel.html:29
 msgid "User"
 msgstr "Pengguna"
 
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:196
+#: src/templates/templates-edit.html:53
 msgid "Template content"
 msgstr "Konten templat"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:111
-msgid "%s - A new version is available! %sUpdate elabftw%sRead changelog%s"
-msgstr "%s - Versi baru tersedia! %sPerbarui eLabFTW%sBaca catatan perubahan%s"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:125
+#: src/templates/sysconfig.html:11
 msgid "Please finalize install: %slink to documentation%s."
 msgstr "Harap selesaikan pemasangan: %s tautan ke dokumentasi%s."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:168
-msgid "SAML"
-msgstr "SAML"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:625
+#: src/templates/sysconfig.html:217
 msgid "Archive"
 msgstr "Arsip"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:305
+#: src/templates/sysconfig.html:93
 msgid "If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128"
 msgstr "Jika anda menggunakan firewall/proksi, masukkan alamatnya di sini. Contoh: http://proxy.example.com:3128"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:427
+#: src/templates/sysconfig.html:138
 msgid "Enable local account creation:"
 msgstr "Sediakan pembuatan akun lokal:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:446
+#: src/templates/sysconfig.html:150
 msgid "Show local login form:"
 msgstr "Tampilkan formulir masuk lokal:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:464
+#: src/templates/sysconfig.html:155
 msgid "You can still show the local login form by appending ?letmein to the login page URL."
 msgstr "Anda tetap dapat menampilkan formulir masuk lokal dengan menambahkan ?letmein ke URL halaman masuk."
 
-#: cache/twig/ca/cac1739bc89d90c642a794cc4c079b2f588a6d4e73eedfc7f3b4b6231942b161.php:88
+#: src/templates/view-edit.html:15
 msgid "Back to listing"
 msgstr "Kembali ke daftar"
 
-#: cache/twig/ca/cac1739bc89d90c642a794cc4c079b2f588a6d4e73eedfc7f3b4b6231942b161.php:108
-msgid "Experiment of %s"
-msgstr "Eksperimen dari %s"
-
-#: cache/twig/ba/ba6006cc5c8e58c9a9e6cc97accf6b073e46f9efb10f7715a280d2f6deee6d8a.php:102
+#: src/templates/create-new.html:30
 msgid "Manage templates"
 msgstr "Kelola templat"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:84
+#: src/templates/show.html:22
 msgid "Welcome to eLabFTW. Use the 'Create new' button to get started!"
 msgstr "Selamat datang ke eLabFTW. Gunakan tombol 'buat baru' untuk memulai!"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:149
+#: src/templates/show.html:37
 msgid "Select all"
 msgstr "Pilih semua"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:153
+#: src/templates/show.html:39
 msgid "Clear selection"
 msgstr "Batal memilih"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:157
+#: src/templates/show.html:40
 msgid "Invert selection"
 msgstr "Balikkan pilihan"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:163
+#: src/templates/show.html:45
 msgid "With selected:"
 msgstr "Untuk yang terpilih:"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:172
+#: src/templates/show.html:50
 msgid "Change status"
 msgstr "Ubah status"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:178
+#: src/templates/show.html:52
 msgid "Change item type"
 msgstr "Ubah tipe komponen"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:235
+#: src/templates/admin.html:443 src/templates/admin.html:465
+#: src/templates/show.html:72
 msgid "Make Zip"
 msgstr "Buat ZIP"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:239
+#: src/templates/admin.html:444 src/templates/admin.html:466
+#: src/templates/show.html:73
 msgid "Make Csv"
 msgstr "Buat CSV"
 
-#: web/app/controllers/EntityAjaxController.php:292
+#: src/models/Uploads.php:226
 msgid "Please make sure to remove any reference to this file in the body!"
 msgstr "Pastikan pada isi tidak ada lagi referensi ke berkas ini!"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:125
-msgid "Decode token"
-msgstr "Membaca token"
-
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:329
+#: src/templates/uploads.html:27
 msgid "Insert in text at cursor position"
 msgstr "Sisipkan teks pada posisi kursor"
 
-#: src/models/Comments.php:202
+#: src/services/EmailNotifications.php:104
 msgid "Hi. %s left a comment on your experiment. Have a look: %s"
 msgstr "Hai. %s meninggalkan komentar pada eksperimen anda. Silahkan lihat: %s"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:390
+#: src/templates/editusers.html:168
 msgid "Archive user"
 msgstr "Arsipkan pengguna"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:285
+#: src/templates/login.html:179
 msgid "Login as anonymous visitor"
 msgstr "Masuk sebagai pengunjung anonim"
 
-#: cache/twig/22/226bf70ee7737fb4f7e0c58a52ee749e8b7a8846394cd81f9897092e0bf159a0.php:86
+#: src/templates/show-templates-view.html:21
 msgid "Import to your profile"
 msgstr "Impor ke profil anda"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:166
+#: src/templates/admin.html:71
 msgid "Anonymous visitors can see database items:"
 msgstr "Pengunjung anonim dapat melihat komponen basis data:"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:377
+#: src/templates/ucp.html:150
 msgid "PDF configuration"
 msgstr "Pengaturan PDF"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:383
+#: src/templates/ucp.html:153
 msgid "Select paper format for PDF"
 msgstr "Pilih format kertas untuk PDF"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:420
+#: src/templates/ucp.html:169
 msgid "Generate PDF/A compliant pdfs (will embed the fonts and make the file bigger)"
 msgstr "Buat pdf dengan PDF/A (termasuk jenis huruf dan membuat ukuran berkas membesar)"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:431
+#: src/templates/ucp.html:174
 msgid "Add attached files summary to the pdf"
 msgstr "Tambah lampiran kesimpulan ke pdf"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:464
+#: src/templates/ucp.html:197
 msgid "Show experiments from the team on the Experiments page"
 msgstr "Tampilkan eksperimen dari tim pada halaman Eksperimen"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:351
+#: src/templates/sysconfig.html:116
 msgid "Allow anonymous visitors to login and see Public experiments:"
 msgstr "Bolehkan pengunjung anonim untuk masuk dan lihat eksperimen Publik:"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:207
+#: src/templates/show.html:63
 msgid "Change visibility"
 msgstr "Ubah tampilan"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:300
+#: src/templates/show.html:148
 msgid "Previous page"
 msgstr "Halaman sebelum"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:309
+#: src/templates/show.html:151
 msgid "Next page"
 msgstr "Halaman berikut"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:390
+#: src/templates/uploads.html:50
 msgid "Upload a new version of this file"
 msgstr "Unggah versi terbaru berkas ini"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:186
+#: src/templates/uploads.html:109
 msgid "Cartoon (proteins only)"
 msgstr "Kartun (hanya protein)"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:194
+#: src/templates/uploads.html:112
 msgid "Cross"
 msgstr "Silang"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:202
+#: src/templates/uploads.html:115
 msgid "Line"
 msgstr "Garis"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:210
+#: src/templates/uploads.html:118
 msgid "Sphere"
 msgstr "Bola"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:284
-msgid "Installation URL:"
-msgstr "URL pemasangan:"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:509
+#: src/templates/sysconfig.html:171
 msgid "Maximum file size for uploaded files"
 msgstr "Ukuran berkas maksimal untuk diunggah"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:518
+#: src/templates/sysconfig.html:173
 msgid "Timezone"
 msgstr "Zona waktu"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:752
+#: src/templates/sysconfig.html:268
 msgid "You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login information in the admin panel."
 msgstr "Anda dapat mengatur apakah tim bisa menggunakan akun audit umum. Jika diatur ke <em>tidak</em>, admin tim harus menambahkan informasi masuk pada panel admin."
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:57
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:424
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:479
+#: src/templates/sysconfig.html:164 src/templates/team.html:6
 msgid "Information"
 msgstr "Informasi"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:672
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:201
+#: src/templates/edit.html:119 src/templates/show-templates-edit.html:61
+#: src/templates/view.html:255
 msgid "revision available"
 msgid_plural "revisions available"
 msgstr[0] "revisi tersedia"
 
-#: cache/twig/91/91137d0b25ddc6ffe70e66ce9fe3f0c4993aa87875d9b434662baec5bad20fcc.php:133
-#: cache/twig/c8/c8eeff2d918a6b2d9cc1367d6c8e76805f098b1a1a20523ccb14e92e26480498.php:95
+#: src/templates/steps-links-edit.html:40
+#: src/templates/steps-links-view.html:16
 msgid "completed"
 msgstr "selesai"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:588
+#: src/templates/view.html:228
 msgid "commented"
 msgstr "dikomentari"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:139
-#: cache/twig/4a/4ae03ad2ce3f111707799888eaf5c709abe80ae1ea2caa7eb8db2c252e036d14.php:40
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:344
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:100
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:79
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:153
+#: src/templates/edit.html:63 src/templates/edit.html:91
+#: src/templates/favtags-panel.html:3 src/templates/footer.html:87
+#: src/templates/head.html:190 src/templates/login.html:24
+#: src/templates/register.html:22 src/templates/search.html:92
+#: src/templates/todolist-panel.html:2 src/templates/ucp.html:48
 msgid "Close"
 msgstr "Tutup"
 
-#: cache/twig/4a/4ae03ad2ce3f111707799888eaf5c709abe80ae1ea2caa7eb8db2c252e036d14.php:44
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:212
+#: src/templates/head.html:115 src/templates/todolist-panel.html:6
 msgid "Todolist"
 msgstr "Daftar Tugas"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:409
+#: src/templates/ucp.html:164
 msgid "Enable Chinese, Japanese and Korean fonts in PDF generation (WARNING: this will dramatically increase the file size unless you disable PDF/A)"
 msgstr "Sediakan huruf Mandarin, Jepang, dan Korea di pembuatan PDF (PERINGATAN: ini akan memperbesar ukuran berkas kecuali anda menonaktifkan PDF/A)"
 
-#: cache/twig/91/91137d0b25ddc6ffe70e66ce9fe3f0c4993aa87875d9b434662baec5bad20fcc.php:224
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:119
+#: src/templates/admin.html:25 src/templates/steps-links-edit.html:111
 msgid "Import"
 msgstr "Impor"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:123
+#: src/templates/admin.html:27
 msgid "Tag manager"
 msgstr "Pengelola label"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:915
+#: src/templates/admin.html:391
 msgid "Import a .elabftw.zip archive."
 msgstr "Impor arsip .elabftw.zip."
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:1028
+#: src/templates/admin.html:493
 msgid "Manage tags of the team"
 msgstr "Kelola label tim"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:273
+#: src/templates/search.html:247
 msgid "Select status"
 msgstr "Pilih status"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:347
+#: src/templates/search.html:274
 msgid "Select number of stars"
 msgstr "Pilih jumlah bintang"
 
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:378
+#: src/templates/search.html:320
 msgid "Tip: you can use '%' as wildcard"
 msgstr "Tip: anda bisa gunakan '%' sebagai penebak"
 
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:288
+#: src/templates/head.html:161
 msgid "You can use a TODOlist by pressing '%s'."
 msgstr "Anda dapat menggunakan DAFTAR TUGAS dengan menekan '%s'."
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:299
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:64
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:116
+#: src/templates/editusers.html:19 src/templates/login.html:47
+#: src/templates/login.html:50 src/templates/login.html:185
+#: src/templates/login.html:188 src/templates/register.html:44
 msgid "Select a team"
 msgstr "Pilih tim"
 
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:64
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:172
+#: src/templates/footer.html:49 src/templates/footer.html:79
+#: src/templates/register.html:13 src/templates/sysconfig.html:27
 msgid "Privacy policy"
 msgstr "Kebijakan privasi"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:212
+#: src/templates/sysconfig.html:46
 msgid "Generate report"
 msgstr "Buat laporan"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:254
+#: src/templates/sysconfig.html:83
 msgid "Language:"
 msgstr "Bahasa:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:292
-msgid "The canonical address of the eLabFTW installation. If this value is empty, eLabFTW will try to guess it, but in some instances, it might not be correct so you should fill this setting. Example: https://elabftw.example.org"
-msgstr "Alamat kanonik penginstalan eLabFTW. Jika nilai ini kosong, eLabFTW akan mencoba menebaknya, tetapi dalam beberapa kasus, mungkin tidak benar sehingga Anda harus mengisi pengaturan ini. Contoh: https://elabftw.example.org"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:369
+#: src/templates/sysconfig.html:121
 msgid "This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible."
 msgstr "Ini memungkinkan pengguna tanpa akun untuk masuk ke tim dan melihat eksperimen yang dibuka untuk publik. Admin dari tiap tim dapat memilih apakah komponen basis data dapat terlihat atau tidak."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:374
+#: src/templates/sysconfig.html:123
 msgid "Switch this instance in open science mode:"
 msgstr "Alihkan instance ini dalam mode sains terbuka:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:392
+#: src/templates/sysconfig.html:128
 msgid "This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team."
 msgstr "Ini memungkinkan mesin telusur merayapi situs. Pengunjung akan masuk secara otomatis di tim yang ditentukan."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:397
+#: src/templates/sysconfig.html:130
 msgid "Select which team will be open to the world in open science mode:"
 msgstr "Pilih tim mana yang akan terbuka untuk dunia dalam mode sains terbuka:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:422
+#: src/templates/sysconfig.html:136
 msgid "This has no effect if open science mode is disabled."
 msgstr "Ini tidak berpengaruh jika mode sains terbuka dinonaktifkan."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:911
+#: src/templates/sysconfig.html:345
 msgid "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific %ssmtp2go.com%s account and add the information here."
 msgstr "Tanpa cara yang valid untuk mengirim email, pengguna tidak akan dapat menyetel ulang sandi mereka. Direkomendasikan untuk membuat akun %ssmtp2go.com%s tertentu dan menambahkan informasi di sini."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:930
-msgid "SMTP (recommended)"
-msgstr "SMTP (direkomendasikan)"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:936
-msgid "Local MTA"
-msgstr "MTA Lokal"
-
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1645
+#: src/templates/sysconfig.html:713
 msgid "Adjust your privacy policy notice"
 msgstr "Atur pemberitahuan kebijakan privasi anda"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1653
+#: src/templates/sysconfig.html:716
 msgid "Note: the text below is a template and must be edited and saved."
 msgstr "Catatan: teks di bawah adalah templat yang harus disunting dan disimpan."
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:105
+#: src/templates/editusers.html:37
 msgid "Search users"
 msgstr "Cari pengguna"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:215
+#: src/templates/editusers.html:89
 msgid "User ID"
 msgstr "ID pengguna"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:407
+#: src/templates/editusers.html:175
 msgid "Delete user"
 msgstr "Hapus pengguna"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:427
+#: src/templates/editusers.html:185
 msgid "No user found!"
 msgstr "Pengguna tidak ditemukan!"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:241
+#: src/templates/login.html:159
 msgid "Select an identity provider"
 msgstr "Pilih penyedia identitas"
 
@@ -1707,136 +1360,121 @@ msgstr "Pilih penyedia identitas"
 msgid "The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?"
 msgstr "Komponen terpilih dan data terkait akan dihapus permanen. Ini tidak dapat dibatalkan. Anda yakin?"
 
-#: src/langs/js-strings.php:39
+#: src/langs/js-strings.php:51
 msgid "Delete this tag?"
 msgstr "Hapus label ini?"
 
-#: cache/twig/ef/eff883bfa5e9b3945df5583d8cc0665cddd18790a95735a4606bbb9d16e91aaf.php:71
+#: src/templates/revisions.html:14
 msgid "by"
 msgstr "oleh"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:102
+#: src/templates/view.html:40
 msgid "Experiment was timestamped by %s on %s at %s"
 msgstr "Eksperimen diberi stempel waktu oleh %s pada %s di %s"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:281
+#: src/templates/view.html:80 src/templates/view.html:81
 msgid "Book item"
 msgstr "Pesan komponen"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:308
+#: src/templates/ucp.html:112
 msgid "Use single column layout"
 msgstr "Gunakan tampilan satu kolom"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:665
+#: src/templates/ucp.html:269
 msgid "Enter your password to edit your profile."
 msgstr "Ketik kata sandi untuk menyunting profil Anda."
 
-#: cache/twig/f9/f974eb64d32747794d0b955920037440c7278b5937ca310f8d2389ddf14c9b1f.php:54
+#: src/templates/profile.html:6
 msgid "Info"
 msgstr "Info"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:65
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:799
+#: src/templates/ucp.html:8 src/templates/ucp.html:354
 msgid "API keys"
 msgstr "Kunci API"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:803
+#: src/templates/ucp.html:368
 msgid "Existing keys"
 msgstr "Kunci tersedia"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:815
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:903
+#: src/templates/ucp.html:360 src/templates/ucp.html:374
 msgid "Permissions"
 msgstr "Izin"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:819
+#: src/templates/ucp.html:375
 msgid "Creation date"
 msgstr "Tanggal dibuat"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:858
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:912
+#: src/templates/ucp.html:363 src/templates/ucp.html:384
 msgid "Read/Write"
 msgstr "Baca/Tulis"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:858
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:908
+#: src/templates/ucp.html:362 src/templates/ucp.html:384
 msgid "Read Only"
 msgstr "Hanya Baca"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:888
+#: src/templates/ucp.html:356
 msgid "Create new key"
 msgstr "Buat kunci baru"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:840
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:973
+#: src/templates/admin.html:361 src/templates/admin.html:408
 msgid "2. Select a visibility:"
 msgstr "2. Pilih kenampakan:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:1007
+#: src/templates/admin.html:418
 msgid "3. Select a ZIP file to import:"
 msgstr "3. Pilih berkas ZIP untuk diimpor:"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:224
+#: src/templates/team.html:108
 msgid "You belong to the %s team."
 msgstr "Anda termasuk dalam tim %s."
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:339
+#: src/templates/team.html:153
 msgid "No templates from other members of the team to display!"
 msgstr "Tidak ada templat dari anggota lain dalam tim untuk ditampilkan!"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:347
+#: src/templates/team.html:158
 msgid "Send an email to all team members"
 msgstr "Kirim surel ke semua anggota tim"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:358
+#: src/templates/team.html:163
 msgid "Subject"
 msgstr "Subyek"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:363
+#: src/templates/team.html:165
 msgid "Content"
 msgstr "Konten"
 
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:106
+#: src/templates/filter-order-sort.html:31
 msgid "Id"
 msgstr "Id"
 
-#: web/app/controllers/TeamController.php:40
+#: web/app/controllers/TeamController.php:44
 msgid "Email sent to %d users"
 msgstr "Surel terkirim ke %d pengguna"
 
-#: web/app/controllers/RegisterController.php:29
+#: web/app/controllers/RegisterController.php:28
 msgid "Registration is disabled."
 msgstr "Pendaftaran dinon-aktifkan."
 
-#: web/app/controllers/UcpController.php:95
-msgid "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again: %s"
-msgstr "Kunci hanya ditampilkan saat ini saja! Pastikan untuk menyimpannya di tempat yang aman atau Anda tidak dapat melihatnya lagi: %s"
-
-#: web/app/controllers/ResetPasswordController.php:37
+#: web/app/controllers/ResetPasswordController.php:48
 msgid "Email provided is invalid."
 msgstr "Surel tidak valid."
 
-#: web/app/controllers/ResetPasswordController.php:97
-msgid "Wrong key for resetting password"
-msgstr "Kunci untuk mengatur ulang sandi salah"
-
-#: src/services/Email.php:222
+#: src/services/EmailNotifications.php:142
 msgid "Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: "
 msgstr "Halo. Akun Anda untuk eLabFTW telah divalidasi admin. Ikuti tautan ini untuk masuk: "
 
-#: src/controllers/AbstractEntityController.php:224
+#: src/controllers/AbstractEntityController.php:226
 msgid "This item is locked. You cannot edit it!"
 msgstr "Komponen ini terkunci. Anda tidak dapat menyuntingnya!"
 
-#: src/services/Filter.php:161 src/services/Filter.php:166
-#: src/models/Uploads.php:222 src/models/Comments.php:144
-#: src/models/TeamGroups.php:53 src/models/Todolist.php:90
+#: src/classes/ContentParams.php:48 src/classes/StepParams.php:27
+#: src/services/Filter.php:150 src/services/Filter.php:155
 msgid "Input is too short! (minimum: %d)"
 msgstr "Terlalu pendek! (minimal: %d)"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:233
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:291
-#: src/models/TeamGroups.php:111
+#: src/models/TeamGroups.php:111 src/services/Transform.php:31
+#: src/templates/admin.html:92 src/templates/admin.html:108
 msgid "Public"
 msgstr "Umum"
 
@@ -1848,352 +1486,329 @@ msgstr "Semua orang dengan akun"
 msgid "Only the team"
 msgstr "Hanya tim"
 
-#: src/models/AbstractEntity.php:340
-msgid "Cannot update a locked entity!"
-msgstr "Tidak dapat memperbarui entitas yang terkunci!"
-
-#: src/models/AbstractEntity.php:165
+#: src/models/AbstractEntity.php:157
 msgid "This experiment was locked by %s. You don't have the rights to unlock this."
 msgstr "Eksperimen ini dikunci oleh %s. Anda tidak memiliki wewenang untuk membukanya."
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:808
+#: src/templates/admin.html:349
 msgid "Import a .csv (Excel spreadsheet) file into the database. First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv. IMPORTANT: one of the column MUST be named 'title'. You should make a tiny import of 3 lines to see if everything works before importing a big file."
 msgstr "Impor file .csv (spreadsheet Excel) ke dalam database. Pertama, Anda perlu membuka file .xls / .xlsx di Excel atau Libreoffice dan menyimpannya sebagai .csv. PENTING: salah satu kolom HARUS diberi nama 'title'. Anda harus membuat impor kecil 3 baris untuk melihat apakah semuanya berfungsi sebelum mengimpor file besar."
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:870
+#: src/templates/admin.html:370
 msgid "3. Select a delimiter:"
 msgstr "3. Pilih pembatas:"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:893
+#: src/templates/admin.html:378
 msgid "4. Select a CSV file to import:"
 msgstr "4. Pilih file CSV yang akan diimpor:"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:382
+#: src/templates/editusers.html:166
 msgid "Unarchive user"
 msgstr "Batalkan pengarsipan pengguna"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:351
+#: src/templates/uploads.html:39
 msgid "Annotate this image"
 msgstr "Beri anotasi pada gambar ini"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:368
+#: src/templates/uploads.html:45
 msgid "Save as image"
 msgstr "Simpan sebagai gambar"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:339
+#: src/templates/view.html:100 src/templates/view.html:101
+#: src/templates/view.html:103
 msgid "Share"
 msgstr "Bagikan"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:219
+#: src/templates/sysconfig.html:50
 msgid "Announcement"
 msgstr "Pengumuman"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:224
+#: src/templates/sysconfig.html:52
 msgid "The following text will be displayed to all users on all pages while it's active."
 msgstr "Teks berikut akan ditampilkan kepada semua pengguna di semua halaman saat aktif."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:310
+#: src/templates/sysconfig.html:95
 msgid "Admins can always delete experiments:"
 msgstr "Admin selalu dapat menghapus eksperimen:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:328
+#: src/templates/sysconfig.html:100
 msgid "Setting this to «no» will completely remove the ability to delete experiments for everyone."
 msgstr "Menyetel ini ke «tidak» akan sepenuhnya menghapus kemampuan untuk menghapus eksperimen untuk semua orang."
 
-#: cache/twig/91/91137d0b25ddc6ffe70e66ce9fe3f0c4993aa87875d9b434662baec5bad20fcc.php:59
-#: cache/twig/c8/c8eeff2d918a6b2d9cc1367d6c8e76805f098b1a1a20523ccb14e92e26480498.php:61
+#: src/templates/pdf.html:67 src/templates/steps-links-edit.html:10
+#: src/templates/steps-links-view.html:9
 msgid "Steps"
 msgstr "Langkah"
 
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:177
+#: src/templates/filter-order-sort.html:57
 msgid "Results per page"
 msgstr "Hasil per halaman"
 
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:506
+#: src/templates/edit.html:230
 msgid "Stroke width"
 msgstr "Lebar guratan"
 
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:522
+#: src/templates/edit.html:240
 msgid "Eraser"
 msgstr "Penghapus"
 
-#: src/langs/js-strings.php:36
+#: src/langs/js-strings.php:45
 msgid "Delete this step?"
 msgstr "Hapus langkah ini?"
 
-#: src/langs/js-strings.php:27
+#: src/langs/js-strings.php:30
 msgid "Delete this link?"
 msgstr "Hapus tautan ini?"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:436
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:446
+#: src/templates/view.html:165 src/templates/view.html:168
 msgid "%s%d%sSee bookings%s"
 msgstr "%s%d%sLihat pemesanan%s"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:113
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:121
+#: src/templates/admin.html:302 src/templates/edit.html:52
+#: src/templates/ucp.html:39
 msgid "Can write"
 msgstr "Bisa menulis"
 
-#: cache/twig/65/6553abe060446074a2f9d9a63a5a190dda7b5858037eada87685fb88ad81f74d.php:41
+#: src/templates/json-editor.html:4
 msgid "JSON Editor"
 msgstr "Editor JSON"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:175
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:179
-msgid "All bookable items"
-msgstr "Semua item yang dapat dipesan"
-
-#: cache/twig/22/226bf70ee7737fb4f7e0c58a52ee749e8b7a8846394cd81f9897092e0bf159a0.php:93
+#: src/templates/show-templates-view.html:23
 msgid "Create experiment from template"
 msgstr "Buat eksperimen dari template"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:465
+#: src/templates/admin.html:154
 msgid "Add user"
 msgstr "Tambahkan pengguna"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:875
+#: src/templates/admin.html:372
 msgid "semicolon"
 msgstr "titik koma"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:879
+#: src/templates/admin.html:373
 msgid "comma"
 msgstr "koma"
 
-#: cache/twig/84/8487b330c1ff2383c131d3af55de06a0a59d6b7675c2fde1df945f9e1c16a8b4.php:44
+#: src/templates/show-view-edit.html:6
 msgid "Select type"
 msgstr "Pilih tipe"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:143
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:147
+#: src/templates/show.html:36
 msgid "Expand all"
 msgstr "Melebarkan semua"
 
-#: cache/twig/4a/4ae03ad2ce3f111707799888eaf5c709abe80ae1ea2caa7eb8db2c252e036d14.php:62
-#: cache/twig/1c/1c4889b5cdbb20770e4607c4cb53b8e76845b7108be31008f7c96ddb0575764a.php:391
+#: src/templates/head.html:99 src/templates/search.html:334
 msgid "Clear all"
 msgstr "Bersihkan semua"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:848
+#: src/templates/sysconfig.html:301
 msgid "Enforce a domain name for emails"
 msgstr "Terapkan nama domain untuk email"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:856
+#: src/templates/sysconfig.html:303
 msgid "Only email addresses at this domain will be allowed to register an account."
 msgstr "Hanya alamat email di domain ini yang akan diizinkan untuk mendaftarkan akun."
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:440
+#: src/templates/editusers.html:192
 msgid "Add account"
 msgstr "Menambahkan akun"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:76
+#: src/templates/team.html:21
 msgid "Edit event"
 msgstr "Edit acara"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:90
+#: src/templates/team.html:30 src/templates/team.html:45
 msgid "Unbind"
 msgstr "Memperlonggar"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:96
+#: src/templates/team.html:32
 msgid "Bind an experiment"
 msgstr "Ikat eksperimen"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:109
+#: src/templates/team.html:39 src/templates/team.html:54
 msgid "Attach"
 msgstr "Melampirkan"
 
-#: cache/twig/4e/4e8b415d771531f077a240c018c314dc4a93f9b7424fc0b02a688c7a007f2a35.php:116
+#: src/templates/team.html:60
 msgid "Delete this event"
 msgstr "Hapus acara ini"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:312
+#: src/templates/uploads.html:169
 msgid "Load into JSON Editor"
 msgstr "Muat ke JSON Editor"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:486
+#: src/templates/ucp.html:212
 msgid "Display the molecule editor in edit mode"
 msgstr "Tampilkan editor molekul dalam mode edit"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:576
+#: src/templates/ucp.html:244
 msgid "Default write permission for new experiments"
 msgstr "Izin menulis default untuk eksperimen baru"
 
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:152
+#: src/templates/register.html:57
 msgid "Only emails @%s are authorized to register"
 msgstr "Hanya email @%s yang diizinkan untuk mendaftar"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:145
+#: src/templates/show.html:36
 msgid "Collapse all"
 msgstr "Tutup semua"
 
-#: web/app/controllers/CreateUserController.php:56
+#: web/app/controllers/CreateUserController.php:63
 msgid "Account successfully created"
 msgstr "Akun berhasil dibuat"
-
-#: web/app/controllers/RegisterController.php:45
-msgid "This email domain is not allowed."
-msgstr "Domain email ini tidak diperbolehkan."
 
 #: src/services/Check.php:36
 msgid "Password must contain at least %d characters."
 msgstr "Kata sandi harus terdiri dari setidaknya %d karakter."
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:209
+#: src/templates/ucp.html:79
 msgid "Display size:"
 msgstr "Ukuran layar:"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:216
+#: src/templates/ucp.html:81
 msgid "Large (default)"
 msgstr "Besar (default)"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:222
+#: src/templates/ucp.html:82
 msgid "Medium"
 msgstr "Medium"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:228
+#: src/templates/ucp.html:83
 msgid "Small"
 msgstr "Kecil"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:76
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:78
+#: src/templates/edit.html:33 src/templates/ucp.html:22
 msgid "Edit permissions"
 msgstr "Edit izin"
 
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:123
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:125
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:129
-#: cache/twig/22/226bf70ee7737fb4f7e0c58a52ee749e8b7a8846394cd81f9897092e0bf159a0.php:74
-#: cache/twig/22/226bf70ee7737fb4f7e0c58a52ee749e8b7a8846394cd81f9897092e0bf159a0.php:76
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:167
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:169
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:173
+#: src/templates/edit.html:105 src/templates/edit.html:108
+#: src/templates/show-templates-view.html:16
+#: src/templates/templates-edit.html:27 src/templates/templates-edit.html:30
+#: src/templates/uploads.html:18 src/templates/uploads.html:22
 msgid "More options"
 msgstr "Lebih banyak pilihan"
 
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:140
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:178
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:180
+#: src/templates/edit.html:110 src/templates/edit.html:113
+#: src/templates/templates-edit.html:33
 msgid "Manage Permissions"
 msgstr "Kelola Izin"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:883
+#: src/templates/admin.html:374
 msgid "Tab"
 msgstr "Tab"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:154
+#: src/templates/editusers.html:68
 msgid "Team(s)"
 msgstr "Tim"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:187
+#: src/templates/ucp.html:69
 msgid "Help us to translate eLabFTW!"
 msgstr "Bantu kami menerjemahkan eLabFTW!"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:74
+#: src/templates/login.html:10
 msgid "Reset your password"
 msgstr "Mereset password Anda"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:92
+#: src/templates/login.html:19
 msgid "Send reset link"
 msgstr "Kirim tautan setel ulang"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:170
+#: src/templates/login.html:100
 msgid "Login to your account"
 msgstr "Masuk ke akun Anda"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:189
+#: src/templates/login.html:108
 msgid "Forgot password?"
 msgstr "Tidak ingat kata sandi?"
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:215
+#: src/templates/login.html:144
 msgid "Don't have an account? %sRegister%s now!"
 msgstr "Belum punya akun? %sDaftarkan%s sekarang!"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:1032
+#: src/templates/admin.html:495
 msgid "From here you can edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags."
 msgstr "Dari sini Anda dapat mengedit atau menghapus tag untuk tim Anda. Klik tag untuk mengeditnya. Kemudian klik tombol hapus duplikat untuk menggabungkan tag serupa."
 
-#: cache/twig/43/430da890e1e78451323f1d6c66faeacea44356f3fbb1295ec1fce07a395e63c5.php:126
+#: src/templates/login.html:75
 msgid "Your account is linked to several teams. Select in which team you want to log in"
 msgstr "Akun Anda ditautkan ke beberapa tim. Pilih di tim mana Anda ingin masuk"
 
-#: src/exceptions/InvalidCredentialsException.php:22
+#: src/exceptions/InvalidCredentialsException.php:21
+#: src/services/LocalAuth.php:43 src/services/LocalAuth.php:85
 msgid "Invalid email/password combination."
 msgstr "Kombinasi email / kata sandi tidak valid."
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:44
+#: src/templates/editusers.html:6
 msgid "Change teams for user"
 msgstr "Ubah tim untuk pengguna"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:179
+#: src/templates/editusers.html:73
 msgid "Add team"
 msgstr "Tambahkan tim"
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:185
+#: src/templates/editusers.html:74
 msgid "Remove team"
 msgstr "Hapus tim"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:497
+#: src/templates/ucp.html:217
 msgid "Display the JSON editor in edit mode"
 msgstr "Tampilkan editor JSON dalam mode edit"
 
-#: web/app/init.inc.php:103 src/exceptions/InvalidCsrfTokenException.php:29
+#: src/exceptions/InvalidCsrfTokenException.php:21 web/login.php:86
 msgid "Your session expired."
 msgstr "Sesi Anda telah berakhir."
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:42
+#: src/templates/footer.html:4
 msgid "Follow eLabFTW on Twitter!"
 msgstr "Ikuti eLabFTW di Twitter!"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:50
+#: src/templates/footer.html:9
 msgid "Code repository on GitHub"
 msgstr "Repositori kode di GitHub"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:58
+#: src/templates/footer.html:14
 msgid "Join the discussion on Gitter"
 msgstr "Bergabunglah dengan diskusi di Gitter"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:66
+#: src/templates/footer.html:19
 msgid "Report a bug"
 msgstr "Laporkan bug"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:103
+#: src/templates/footer.html:34
 msgid "Unconfirmed users"
 msgstr "Pengguna yang belum dikonfirmasi"
 
-#: cache/twig/f9/f974eb64d32747794d0b955920037440c7278b5937ca310f8d2389ddf14c9b1f.php:67
+#: src/templates/profile.html:11
 msgid "Member of:"
 msgstr "Anggota dari:"
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:442
+#: src/templates/ucp.html:184
 msgid "Enable french style signature block in pdf export (setting is only set for this browser)"
 msgstr "Aktifkan blok tanda tangan gaya Prancis dalam ekspor pdf (pengaturan hanya diatur untuk browser ini)"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:346
+#: src/templates/sysconfig.html:114
 msgid "Registration and authentication configuration"
 msgstr "Registrasi dan konfigurasi otentikasi"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:571
+#: src/templates/sysconfig.html:201
 msgid "Team Name"
 msgstr "Nama tim"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:588
+#: src/templates/sysconfig.html:206
 msgid "Team Organisation ID"
 msgstr "ID Organisasi Tim"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:989
-msgid "None"
-msgstr "Tidak ada"
-
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:195
+#: src/templates/head.html:111
 msgid "Logged in as"
 msgstr "Masuk sebagai"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:231
-#: web/make.php:26
+#: web/make.php:27 src/templates/admin.html:26 src/templates/admin.html:452
+#: src/templates/admin.html:474 src/templates/admin.html:485
+#: src/templates/show.html:71
 msgid "Export"
 msgstr "Ekspor"
 
-#: web/change-pass.php:28
+#: web/app/controllers/ResetPasswordController.php:75 web/change-pass.php:23
 msgid "Reset password"
 msgstr "Setel ulang kata sandi"
 
@@ -2209,241 +1824,1049 @@ msgstr "Harap %slogout%s sebelum Anda mendaftarkan akun lain."
 msgid "No local account creation is allowed!"
 msgstr "Pembuatan akun lokal tidak diperbolehkan!"
 
-#: web/profile.php:24
+#: web/profile.php:22
 msgid "Profile"
 msgstr "Profil"
 
-#: web/ucp.php:28
+#: web/ucp.php:29
 msgid "User Control Panel"
 msgstr "Panel Kontrol Pengguna"
 
-#: web/sysconfig.php:28
+#: web/sysconfig.php:30
 msgid "eLabFTW Configuration"
 msgstr "Konfigurasi eLabFTW"
 
-#: web/revisions.php:30
+#: web/revisions.php:31
 msgid "Revisions"
 msgstr "Revisi"
 
-#: web/login.php:104
-msgid "You cannot login now because of too many failed login attempts."
-msgstr "Anda tidak dapat masuk sekarang karena terlalu banyak upaya masuk yang gagal."
-
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:271
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:118
+#: src/templates/filter-order-sort.html:33 src/templates/ucp.html:98
 msgid "Last modified"
 msgstr "Terakhir diubah"
 
-#: cache/twig/62/62dd1c15da548a0e806cd113d6681a24367133fa0e86cc04f514cffd7a150d21.php:206
+#: src/templates/register.html:91
 msgid "I agree with the %sPrivacy Policy%s"
 msgstr "Saya setuju dengan %sKebijakan Privasi%s"
 
-#: cache/twig/38/387bc01186005f23ebcf5a2cd2ae05888a6411aadc09f244062e0d9c83087652.php:118
-#: cache/twig/c6/c66ca56f9cb9ef13fcb4deccbe1b24f84ce8374501abe80b8da306ac34a2cc5f.php:204
+#: src/templates/footer.html:40 src/templates/head.html:113
 msgid "User panel"
 msgstr "Panel pengguna"
 
-#: web/app/controllers/CommentsAjaxController.php:87
-msgid "Error sending email"
-msgstr "Terjadi kesalahan saat mengirim email"
-
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:187
+#: src/templates/edit.html:116
 msgid "Switch editor"
 msgstr "Ganti editor"
 
-#: cache/twig/c8/c8eeff2d918a6b2d9cc1367d6c8e76805f098b1a1a20523ccb14e92e26480498.php:176
+#: src/templates/steps-links-view.html:51
 msgid "Related items"
 msgstr "Item terkait"
 
-#: cache/twig/c8/c8eeff2d918a6b2d9cc1367d6c8e76805f098b1a1a20523ccb14e92e26480498.php:224
+#: src/templates/steps-links-view.html:71
 msgid "Related experiments"
 msgstr "Eksperimen terkait"
 
-#: cache/twig/e8/e8df2004f82634959597f00eaf1477b492c9fa6831c3377531f303e779266fe3.php:904
+#: src/templates/edit.html:17
 msgid "View mode"
 msgstr "Mode tampilan"
 
-#: cache/twig/b9/b94e9cafb5985b2e27f241849029052e0fbf50a9337c196ed956cde58fc30649.php:87
+#: src/templates/show-item.html:16
 msgid "Pinned"
 msgstr "Dipasangi pin"
 
-#: cache/twig/b9/b94e9cafb5985b2e27f241849029052e0fbf50a9337c196ed956cde58fc30649.php:169
+#: src/templates/show-item-table.html:61 src/templates/show-item.html:43
 msgid "Toggle content"
 msgstr "Alihkan konten"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:176
+#: src/templates/sysconfig.html:28
 msgid "External auth"
 msgstr "Otorisasi eksternal"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:333
+#: src/templates/sysconfig.html:102
 msgid "Maximum number of stored revisions per entry:"
 msgstr "Jumlah maksimum revisi yang disimpan per entri:"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:341
+#: src/templates/sysconfig.html:104
 msgid "Setting this to a low value will help keeping the database size small. Setting this to 0 will allow infinite number of revisions stored."
 msgstr "Menyetel ini ke nilai yang rendah akan membantu menjaga ukuran database tetap kecil. Menyetel ini ke 0 akan memungkinkan jumlah revisi yang tidak terbatas disimpan."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1690
+#: src/templates/sysconfig.html:736
 msgid "External authentication mapping"
 msgstr "Pemetaan otentikasi eksternal"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1697
+#: src/templates/sysconfig.html:740
 msgid "If the server manages authentication, then you can provide here the environment variables names for user information."
 msgstr "Jika server mengelola otentikasi, maka Anda dapat memberikan di sini nama variabel lingkungan untuk informasi pengguna."
 
-#: cache/twig/98/9897e7b788bf0bd874539cfa931906012907392f1a4cbf2107a35afc0d2c852c.php:475
+#: src/templates/ucp.html:202
 msgid "Show templates from the team on the Templates page and in the menus"
 msgstr "Perlihatkan templat dari tim di halaman Templat dan di menu"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:243
+#: src/templates/admin.html:445 src/templates/admin.html:467
+#: src/templates/show.html:74
 msgid "Make PDF"
 msgstr "Buat PDF"
 
-#: cache/twig/c2/c202ce9f35a278419e5957b97147f2c27711654acca15dd4472750309c20b40c.php:247
+#: src/templates/admin.html:447 src/templates/admin.html:469
+#: src/templates/show.html:76
 msgid "Make JSON"
 msgstr "Buat JSON"
 
-#: cache/twig/2d/2dd90d724d789f36c3a183406b8bbeeb987154113fa5b5edb021d97968091642.php:55
+#: src/templates/todolist-panel.html:6 src/templates/todolist-panel.html:42
+#: src/templates/todolist-panel.html:49 src/templates/uploads.html:5
 msgid "Toggle visibility"
 msgstr "Alihkan visibilitas"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:185
+#: src/templates/view.html:47 src/templates/view.html:48
 msgid "Toggle pin"
 msgstr "Alihkan pin"
 
-#: cache/twig/8b/8b056a1d26ab610f5fc269f36e93f01347d37f32ea1d65f34a02b510b2a27348.php:520
+#: src/templates/view.html:202
 msgid "Last modified on %s"
 msgstr "Terakhir diubah pada %s"
 
-#: src/langs/js-strings.php:42
+#: src/langs/js-strings.php:54
 msgid "File comment"
 msgstr "File komentar"
 
-#: src/services/Email.php:162
-msgid "Hi. A new user registered on elabftw ("
-msgstr "Hai. Pengguna baru terdaftar di elabftw ("
-
-#: src/services/Email.php:184
-msgid "[eLabFTW] Your account has been created"
-msgstr "[eLabFTW] Akun Anda telah dibuat"
-
-#: src/services/Email.php:190
+#: src/services/EmailNotifications.php:137
 msgid "Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done."
 msgstr "Hai. Akun Anda telah dibuat tetapi saat ini tidak aktif (Anda tidak dapat masuk). Admin tim telah diberitahu dan akan memvalidasi akun Anda. Anda akan menerima email setelah selesai."
 
-#: cache/twig/f1/f1c25a4bcb6fe9188ba19ddc21a7a2cd01f2d6cb9337355f2988cee727db2c46.php:444
+#: src/templates/editusers.html:193
 msgid "Note: new user will need to use the \"Forgot password\" button on the login page to set a password."
 msgstr "Catatan: pengguna baru perlu menggunakan tombol \"Lupa kata sandi\" di halaman login untuk menyetel kata sandi."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:639
+#: src/templates/sysconfig.html:224
 msgid "Visible on registration page"
 msgstr "Dapat dilihat di halaman pendaftaran"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:860
+#: src/templates/sysconfig.html:304
 msgid "You can add several domains by separating them with a comma."
 msgstr "Anda dapat menambahkan beberapa domain dengan memisahkannya menggunakan koma."
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1702
+#: src/templates/sysconfig.html:742
 msgid "Remote user"
 msgstr "Pengguna jarak jauh"
 
-#: cache/twig/e8/e8d7403f4ab152c9f40d35552a423ee4a43ee95313cdb05ea913d1a06b0f674d.php:1747
+#: src/templates/sysconfig.html:757
 msgid "Logout URL"
 msgstr "URL Keluar"
 
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:152
+#: src/templates/templates-edit.html:37
 msgid "Download template"
 msgstr "Unduh template"
 
-#: cache/twig/d0/d0dd9e7c8ac3b625fce784c4a3a7d5a4c34b35ce9c73be94c81415ef21684181.php:163
+#: src/templates/show-templates-view.html:27
+#: src/templates/templates-edit.html:42
 msgid "Destroy template"
 msgstr "Hancurkan template"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:203
+#: src/templates/admin.html:83
 msgid "Enforce read permissions?"
 msgstr "Terapkan izin baca?"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:221
+#: src/templates/admin.html:88
 msgid "Select if you want to enforce read permissions on experiments"
 msgstr "Pilih jika Anda ingin menerapkan izin baca pada eksperimen"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:226
+#: src/templates/admin.html:90
 msgid "Enforced read permissions on experiments"
 msgstr "Izin baca yang diberlakukan pada eksperimen"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:256
+#: src/templates/admin.html:97
 msgid "Enforce the read permission for all experiments of users in this team."
 msgstr "Terapkan izin baca untuk semua eksperimen pengguna di tim ini."
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:261
+#: src/templates/admin.html:99
 msgid "Enforce write permissions?"
 msgstr "Terapkan izin menulis?"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:279
+#: src/templates/admin.html:104
 msgid "Select if you want to enforce write permissions on experiments"
 msgstr "Pilih jika Anda ingin menerapkan izin menulis pada eksperimen"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:284
+#: src/templates/admin.html:106
 msgid "Enforced write permissions on experiments"
 msgstr "Izin menulis yang diberlakukan pada eksperimen"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:314
+#: src/templates/admin.html:113
 msgid "Enforce the write permission for all experiments of users in this team."
 msgstr "Terapkan izin tulis untuk semua eksperimen pengguna di tim ini."
 
-#: cache/twig/2a/2a888eaf79121c23964d84ba8e37b07b6df8e6dab2e34d5c365a9fd09d1cca57.php:232
+#: src/templates/admin.html:266 src/templates/filter-order-sort.html:71
+#: src/templates/show-templates-select.html:12
 msgid "Go"
 msgstr "Pergilah"
 
-#: cache/twig/4a/4ae03ad2ce3f111707799888eaf5c709abe80ae1ea2caa7eb8db2c252e036d14.php:71
+#: src/templates/todolist-panel.html:26
 msgid "Unfinished steps"
 msgstr "Langkah yang belum selesai"
 
-#: src/models/AbstractEntity.php:382 src/models/AbstractEntity.php:387
+#: src/models/AbstractEntity.php:407 src/models/AbstractEntity.php:412
 msgid "Read permissions enforced by admin. Aborting change."
 msgstr "Izin baca yang diberlakukan oleh admin. Membatalkan perubahan."
 
-#: src/langs/js-strings.php:30
+#: src/langs/js-strings.php:36
 msgid "Please wait…"
 msgstr "Mohon tunggu…"
 
-#: cache/twig/7c/7cfde0eb5e5ffee8eb4b8b994723083967cdcf71551fe88873bfc9c50a37709d.php:80
-#: cache/twig/ba/ba6006cc5c8e58c9a9e6cc97accf6b073e46f9efb10f7715a280d2f6deee6d8a.php:48
+#: src/templates/create-new.html:7 src/templates/show-templates-edit.html:11
 msgid "Toggle create new menu"
 msgstr "Alihkan buat menu baru"
 
-#: cache/twig/7c/7cfde0eb5e5ffee8eb4b8b994723083967cdcf71551fe88873bfc9c50a37709d.php:86
+#: src/templates/show-templates-edit.html:14
 msgid "Import from file"
 msgstr "Impor dari file"
 
-#: cache/twig/7c/7cfde0eb5e5ffee8eb4b8b994723083967cdcf71551fe88873bfc9c50a37709d.php:91
+#: src/templates/show-templates-edit.html:17
 msgid "Reorder templates"
 msgstr "Susun ulang template"
 
-#: cache/twig/65/6553abe060446074a2f9d9a63a5a190dda7b5858037eada87685fb88ad81f74d.php:61
+#: src/templates/json-editor.html:18
 msgid "Toggle JSON editor save menu"
 msgstr "Alihkan menu simpan editor JSON"
 
-#: cache/twig/65/6553abe060446074a2f9d9a63a5a190dda7b5858037eada87685fb88ad81f74d.php:67
-msgid "Save as"
-msgstr "Simpan sebagai"
-
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:930
+#: src/templates/admin.html:398
 msgid "Import in database"
 msgstr "Impor dalam database"
 
-#: cache/twig/81/81dd678202b68a001b6865f2f1ebf00421132abafdd01f43b5f612850e20b321.php:950
+#: src/templates/admin.html:402
 msgid "Import in experiments"
 msgstr "Impor dalam eksperimen"
 
-#: web/app/controllers/EntityAjaxController.php:245
+#: web/app/controllers/EntityAjaxController.php:203
 msgid "File uploaded successfully"
 msgstr "Berkas berhasil diunggah"
 
-#: src/langs/js-strings.php:21
+#: src/langs/js-strings.php:24
 msgid "Filename"
 msgstr "Nama file"
 
-#: src/langs/js-strings.php:33
+#: src/langs/js-strings.php:42
 msgid "Enter name of the file"
 msgstr "Masukkan nama file"
+
+#: src/templates/view-edit.html:24
+msgid "Owned by %s"
+msgstr "Dimiliki oleh %s"
+
+#: src/templates/admin.html:496
+msgid "Deduplicate"
+msgstr "Hapus duplikasi"
+
+#: src/templates/editusers.html:142
+msgid "Uses 2FA?"
+msgstr "Menggunakan 2FA?"
+
+#: web/login.php:48 src/templates/mfa.html:7 src/templates/ucp.html:292
+msgid "Two Factor Authentication"
+msgstr "Otentikasi Dua Faktor"
+
+#: src/templates/mfa.html:12
+msgid "Open your authenticator application and scan the QR code."
+msgstr "Buka aplikasi autentikator Anda dan pindai kode QR."
+
+#: src/templates/mfa.html:16
+msgid "Secret for manual setup"
+msgstr "Rahasia untuk pengaturan manual"
+
+#: src/templates/mfa.html:26
+msgid "Authentication code"
+msgstr "Kode otentikasi"
+
+#: src/templates/mfa.html:28
+msgid "Open the authenticator app on your device to get your authentication code and verify your identity."
+msgstr "Buka aplikasi autentikator di perangkat Anda untuk mendapatkan kode autentikasi dan melakukan verifikasi identitas Anda."
+
+#: src/templates/mfa.html:30
+msgid "Verify"
+msgstr "Verifikasi"
+
+#: src/templates/ucp.html:86
+msgid "Display mode:"
+msgstr "Mode tampilan:"
+
+#: src/templates/ucp.html:88
+msgid "Item list (default)"
+msgstr "Datar item (bawaan)"
+
+#: src/templates/ucp.html:89
+msgid "Tabular"
+msgstr "Berbentuk tabel"
+
+#: src/templates/ucp.html:295
+msgid "Use two-factor authentication?"
+msgstr "Gunakan otentikasi dua faktor?"
+
+#: src/templates/sysconfig.html:794
+msgid "LDAP configuration"
+msgstr "Konfigurasi LDAP"
+
+#: src/templates/sysconfig.html:798
+msgid "This page allows you to configure LDAP authentication."
+msgstr "Halaman ini memungkinkan Anda untuk mengonfigurasi autentikasi LDAP."
+
+#: src/templates/sysconfig.html:800
+msgid "Toggle LDAP login"
+msgstr "Alihkan login LDAP"
+
+#: src/templates/sysconfig.html:806
+msgid "LDAP Host"
+msgstr "Host LDAP"
+
+#: src/templates/sysconfig.html:808
+msgid "Domain name or IP address"
+msgstr "Nama domain atau alamat IP"
+
+#: src/templates/sysconfig.html:810
+msgid "LDAP Port"
+msgstr "Port LDAP"
+
+#: src/templates/sysconfig.html:812
+msgid "Default: 389 LDAPS: 636"
+msgstr "Bawaan: 389 LDAPS: 636"
+
+#: src/templates/sysconfig.html:817
+msgid "Username"
+msgstr "Nama pengguna"
+
+#: src/templates/sysconfig.html:835
+msgid "Use TLS"
+msgstr "Gunakan TLS"
+
+#: src/templates/login.html:90
+msgid "You are already authenticated"
+msgstr "Anda sudah diautentikasi"
+
+#: src/templates/login.html:92
+msgid "Continue"
+msgstr "Lanjutkan"
+
+#: src/templates/login.html:129
+msgid "Local"
+msgstr "Lokal"
+
+#: src/templates/show.html:95
+msgid "Lock"
+msgstr "Kunci"
+
+#: src/templates/show.html:129
+msgid "Actions"
+msgstr "Aksi"
+
+#: src/services/EmailNotifications.php:119
+#: src/services/EmailNotifications.php:128
+msgid "Hi. A new user registered an account on eLabFTW: %s (%s)."
+msgstr "Hai. Seorang pengguna baru mendaftarkan akun di eLabFTW: %s (%s)."
+
+#: src/services/EmailNotifications.php:133
+msgid "Head to the admin panel to validate the account: %s"
+msgstr "Buka panel admin untuk memvalidasi akun: %s"
+
+#: src/exceptions/UnauthorizedException.php:22
+msgid "Authentication required"
+msgstr "Otentikasi diperlukan"
+
+#: src/controllers/LoginController.php:58
+msgid "Two Factor Authentication was not enabled!"
+msgstr "Otentikasi Dua Faktor tidak diaktifkan!"
+
+#: src/controllers/LoginController.php:70
+msgid "The code you entered is not valid!"
+msgstr "Kode yang Anda masukkan tidak valid!"
+
+#: src/controllers/LoginController.php:78
+msgid "Two Factor Authentication is now enabled!"
+msgstr "Otentikasi Dua Faktor sekarang diaktifkan!"
+
+#: src/langs/js-strings.php:33
+msgid "Nothing selected!"
+msgstr "Tidak ada yang dipilih!"
+
+#: src/langs/js-strings.php:39
+msgid "Do you want to replace the file on the server with this edit?"
+msgstr "Apakah Anda ingin mengganti file di server dengan hasil edit ini?"
+
+#: src/templates/json-editor.html:8
+msgid "Load metadata"
+msgstr "Muat metadata"
+
+#: src/templates/json-editor.html:21
+msgid "Save as file"
+msgstr "Simpan sebagai file"
+
+#: src/templates/json-editor.html:22 src/templates/json-editor.html:31
+msgid "Save as metadata"
+msgstr "Simpan sebagai metadata"
+
+#: src/templates/sysconfig.html:106
+msgid "Minimum number of characters that need to be changed in order to create a new revision per entry:"
+msgstr "Jumlah minimum karakter yang perlu diubah untuk membuat revisi baru per entri:"
+
+#: src/templates/sysconfig.html:108
+msgid "Setting this to a high value will help keeping the database size small."
+msgstr "Mengatur ini ke nilai tinggi akan membantu menjaga ukuran database tetap kecil."
+
+#: src/templates/sysconfig.html:310
+msgid "Time after which inactive sessions are invalidated (force logout) (in seconds):"
+msgstr "Waktu setelah sesi tidak aktif menjadi tidak valid (logout paksa) (dalam detik):"
+
+#: src/templates/sysconfig.html:313
+msgid "Set to 0 to disable this feature."
+msgstr "Setel ke 0 untuk menonaktifkan fitur ini."
+
+#: src/templates/pdf.html:16
+msgid "Created by"
+msgstr "Dibuat oleh"
+
+#: src/templates/pdf.html:52
+msgid "Linked item"
+msgid_plural "Linked items"
+msgstr[0] "Item tertaut"
+
+#: src/services/EmailValidator.php:59
+msgid "This email domain is not allowed. Allowed domains: %s"
+msgstr "Domain email ini tidak diizinkan. Domain yang diizinkan: %s"
+
+#: src/langs/js-strings.php:12
+msgid "Editing metadata"
+msgstr "Mengedit metadata"
+
+#: src/langs/js-strings.php:21 src/templates/pdf.html:44
+msgid "Extra fields"
+msgstr "Kolom tambahan"
+
+#: src/langs/js-strings.php:57
+msgid "Template title"
+msgstr "Judul templat"
+
+#: src/templates/ucp.html:119
+msgid "Display attached files with thumbnails"
+msgstr "Tampilkan file terlampir dengan thumbnail"
+
+#: src/templates/ucp.html:207
+msgid "Show experiments/database items from outside the team"
+msgstr "Tampilkan item eksperimen/database dari luar tim"
+
+#: src/templates/edit.html:129 src/templates/view.html:152
+msgid "Started on"
+msgstr "Dimulai pada"
+
+#: src/templates/view.html:117 src/templates/view.html:118
+msgid "Add to blockchain"
+msgstr "Tambahkan ke blockchain"
+
+#: src/templates/sysconfig.html:64
+msgid "Login page announcement"
+msgstr "Pengumuman halaman login"
+
+#: src/templates/sysconfig.html:66
+msgid "The following text will be displayed only on the login page."
+msgstr "Teks berikut hanya akan ditampilkan pada halaman login."
+
+#: src/templates/admin.html:51
+msgid "Users can delete items:"
+msgstr "Pengguna dapat menghapus item:"
+
+#: src/templates/admin.html:56
+msgid "An admin account will always be able to delete items."
+msgstr "Akun admin akan selalu dapat menghapus item."
+
+#: src/templates/admin.html:58
+msgid "Users can create tags:"
+msgstr "Pengguna dapat membuat tag:"
+
+#: src/templates/admin.html:63
+msgid "An admin account will always be able to create tags."
+msgstr "Akun admin akan selalu dapat membuat tag."
+
+#: src/templates/uploads.html:32 src/templates/uploads.html:33
+msgid "Edit filename"
+msgstr "Edit nama file"
+
+#: src/services/Email.php:146
+msgid "Sent from eLabFTW"
+msgstr "Dikirim dari eLabFTW"
+
+#: src/services/Transform.php:34
+msgid "Owner + Admin(s)"
+msgstr "Pemilik + (para) admin"
+
+#: src/services/Transform.php:35
+msgid "Owner only"
+msgstr "Hanya pemilik"
+
+#: src/models/Items.php:98
+msgid "Users cannot delete items."
+msgstr "Pengguna tidak dapat menghapus item."
+
+#: src/models/Tags.php:63
+msgid "Users cannot create tags."
+msgstr "Pengguna tidak dapat membuat tag."
+
+#: src/models/TeamGroups.php:114
+msgid "Only me and admins"
+msgstr "Hanya saya dan admin"
+
+#: src/templates/ucp.html:179
+msgid "Append attached PDFs to exported pdf"
+msgstr "Tambahkan PDF terlampir ke PDF yang diekspor"
+
+#: src/templates/ucp.html:232
+msgid "Use ISO datetime in the text editor instead of localized one"
+msgstr "Gunakan tanggal dan waktu ISO yang terdapat di editor teks, bukan tanggal waktu lokal"
+
+#: src/templates/edit.html:74 src/templates/edit.html:113
+msgid "Transfer ownership"
+msgstr "Transfer kepemilikan"
+
+#: src/templates/edit.html:81
+msgid "New owner"
+msgstr "Pemilik baru"
+
+#: src/templates/edit.html:189 src/templates/edit.html:192
+msgid "Main content"
+msgstr "Konten utama"
+
+#: src/templates/steps-links-edit.html:33
+#: src/templates/steps-links-view.html:13
+msgid "Toggle completion"
+msgstr "Alihkan penyelesaian"
+
+#: src/templates/head.html:110
+msgid "User menu"
+msgstr "Menu pengguna"
+
+#: src/templates/head.html:158
+msgid "Make sure to read the %suser guide%s."
+msgstr "Pastikan untuk membaca %s panduan pengguna %s ."
+
+#: src/templates/sysconfig.html:144
+msgid "Admins can create local accounts:"
+msgstr "Admin dapat membuat akun lokal:"
+
+#: src/templates/team.html:47
+msgid "Bind an item"
+msgstr "Bendelkan item"
+
+#: src/templates/team.html:131
+msgid "Admin"
+msgstr "Admin"
+
+#: src/templates/show.html:135
+msgid "Owner"
+msgstr "Pemilik"
+
+#: src/templates/edit.html:198
+msgid "Save and go back"
+msgstr "Simpan dan kembali ke halaman sebelumnya"
+
+#: src/templates/editusers.html:51 src/templates/team.html:88
+#: src/templates/team.html:89
+msgid "Show all"
+msgstr "Tunjukkan semua"
+
+#: src/templates/uploads.html:194
+msgid "OK"
+msgstr "OK"
+
+#: src/templates/admin.html:65
+msgid "Force experiment template use:"
+msgstr "Paksa penggunaan templat eksperimen:"
+
+#: src/templates/sysconfig.html:110
+msgid "Number of days between changes to automatically create a revision:"
+msgstr "Jumlah hari antara perubahan untuk membuat revisi secara otomatis:"
+
+#: src/templates/sysconfig.html:112
+msgid "If the last change is at least this days old, a revision will be created regardless of the minimum characters setting."
+msgstr "Jika perubahan terakhir terjadi setidaknya hari ini, revisi akan dibuat terlepas dari pengaturan karakter minimum."
+
+#: src/templates/sysconfig.html:324
+msgid "%d users are currently prevented from logging in from unknown devices."
+msgstr "%d pengguna saat ini dicegah masuk dari perangkat yang tidak dikenal."
+
+#: src/templates/sysconfig.html:330
+msgid "%d devices are currently denied authentication."
+msgstr "%d perangkat saat ini ditolak autentikasinya."
+
+#: src/templates/ucp.html:95
+msgid "(default)"
+msgstr "(bawaan)"
+
+#: src/templates/ucp.html:227
+msgid "Enable the plasmid viewer"
+msgstr "Aktifkan penampil plasmid"
+
+#: web/app/controllers/ResetPasswordController.php:58
+#: web/app/controllers/ResetPasswordController.php:96
+msgid "If the account exists, an email has been sent."
+msgstr "Jika akun tersebut ada, email telah dikirim."
+
+#: web/app/controllers/ResetPasswordController.php:65
+msgid "Your account is not validated. An admin of your team needs to validate it!"
+msgstr "Akun Anda tidak divalidasi. Admin tim Anda perlu memvalidasinya!"
+
+#: web/app/controllers/ResetPasswordController.php:77
+msgid "Hi. Someone (probably you) requested a new password on eLabFTW.%s Please follow this link to reset your password: %s %sThis link is only valid for %s minutes."
+msgstr "Hai. Seseorang (mungkin Anda) meminta kata sandi baru di eLabFTW.%s Ikuti tautan ini untuk mengatur ulang kata sandi Anda: %s %sTautan ini hanya berlaku untuk %s menit."
+
+#: src/services/ResetPasswordKey.php:67
+msgid "This link has expired! Password reset links are only valid for %s minutes."
+msgstr "Tautan ini telah kedaluwarsa! Tautan pengaturan ulang kata sandi hanya berlaku selama %s menit."
+
+#: src/exceptions/InvalidDeviceTokenException.php:21
+msgid "This browser cannot login anymore because of too many failed attempts."
+msgstr "Browser ini tidak dapat login lagi karena terlalu banyak percobaan yang gagal."
+
+#: src/models/Experiments.php:57
+msgid "Experiments must use a template!"
+msgstr "Eksperimen harus menggunakan template!"
+
+#: src/templates/edit.html:100
+msgid "Warning: this entry was modified %s seconds ago by %s."
+msgstr "Peringatan: entri ini diubah %s detik yang lalu oleh %s."
+
+#: src/templates/admin.html:446 src/templates/admin.html:468
+#: src/templates/show.html:75
+msgid "Make QR codes PDF"
+msgstr "Buat kode QR PDF"
+
+#: src/templates/search.html:304
+msgid "Extra fields search"
+msgstr "Pencarian kolom ekstra"
+
+#: src/templates/search.html:314
+msgid "Name of field"
+msgstr "Nama kolom"
+
+#: src/templates/search.html:318
+msgid "Value"
+msgstr "Nilai"
+
+#: src/templates/admin.html:332
+msgid "Sort items types"
+msgstr "Urutkan jenis-jenis item"
+
+#: src/templates/admin.html:433
+msgid "Export database items"
+msgstr "Ekspor item basis data"
+
+#: src/templates/admin.html:435
+msgid "Select what to export:"
+msgstr "Pilih apa yang akan diekspor:"
+
+#: src/templates/admin.html:441 src/templates/admin.html:463
+msgid "Select export format:"
+msgstr "Pilih format ekspor:"
+
+#: src/templates/admin.html:509
+msgid "Configure timestamping"
+msgstr "Konfigurasikan timestamp"
+
+#: src/templates/admin.html:511
+msgid "The general timestamping configuration is set to %s."
+msgstr "Konfigurasi stempel waktu secara umum diatur ke %s."
+
+#: src/templates/admin.html:513
+msgid "You can use the general configuration or setup another below."
+msgstr "Anda dapat menggunakan konfigurasi dari konfigurasi umum atau juga dapat melakukan pengaturan lain di bawah ini."
+
+#: src/templates/admin.html:515
+msgid "Timestamping service credentials sharing is disabled. You need to enter your own credentials."
+msgstr "Berbagi kredensial untuk timestamp dinonaktifkan. Anda harus memasukkan kredensial Anda sendiri."
+
+#: src/templates/todolist-panel.html:10
+msgid "New item"
+msgstr "Item baru"
+
+#: src/templates/todolist-panel.html:33
+msgid "Show items steps for team"
+msgstr "Tampilkan langkah item untuk tim"
+
+#: src/templates/ts-config.html:5
+msgid "Select timestamping authority (TSA):"
+msgstr "Pilih otoritas pemberi timestamp / Timestamping Authority (TSA):"
+
+#: src/templates/ts-config.html:7
+msgid "DFN (free, no account required)"
+msgstr "DFN (gratis, tidak perlu akun)"
+
+#: src/templates/ts-config.html:8
+msgid "Universign (requires account)"
+msgstr "Universign (memerlukan akun)"
+
+#: src/templates/ts-config.html:9
+msgid "Digicert (free, no account required)"
+msgstr "Digicert (gratis, tidak perlu akun)"
+
+#: src/templates/ts-config.html:10
+msgid "Sectigo (free, no account required)"
+msgstr "Sectigo (gratis, tidak perlu akun)"
+
+#: src/templates/ts-config.html:11
+msgid "GlobalSign (free, no account required)"
+msgstr "GlobalSign (gratis, tidak perlu akun)"
+
+#: src/templates/ts-config.html:12
+msgid "Custom TSA"
+msgstr "TSA khusus"
+
+#: src/templates/favtags-panel.html:6
+msgid "Favorite tags"
+msgstr "Tag favorit"
+
+#: src/templates/favtags-panel.html:8
+msgid "Filter"
+msgstr "Saring"
+
+#: src/templates/favtags-panel.html:22
+msgid "Add a tag as favorite"
+msgstr "Tambahkan tag sebagai favorit"
+
+#: src/templates/show.html:87 src/templates/steps-links-edit.html:133
+msgid "Any category"
+msgstr "Kategori apa saja"
+
+#: src/templates/head.html:134
+msgid "Open favorite tags"
+msgstr "Buka tag favorit"
+
+#: src/langs/js-strings.php:48
+msgid "Are you sure you want to undo this step?"
+msgstr "Anda yakin ingin mengurungkan langkah ini?"
+
+#: src/services/Email.php:72
+msgid "Test email"
+msgstr "Uji email"
+
+#: src/services/EmailNotifications.php:99
+msgid "New comment posted"
+msgstr "Komentar baru diposting"
+
+#: src/services/EmailNotifications.php:116
+#: src/services/EmailNotifications.php:125 src/services/Transform.php:77
+msgid "New user added to your team"
+msgstr "Pengguna baru ditambahkan ke tim Anda"
+
+#: src/services/EmailNotifications.php:125
+msgid "[ACTION REQUIRED]"
+msgstr "[PERLU TINDAKAN]"
+
+#: src/services/EmailNotifications.php:136
+msgid "Your account has been created"
+msgstr "Akun anda telah dibuat"
+
+#: src/services/EmailNotifications.php:140
+msgid "Account validated"
+msgstr "Akun divalidasi"
+
+#: src/services/EmailNotifications.php:145
+msgid "A step deadline is approaching"
+msgstr "Batas waktu langkah mendekat"
+
+#: src/services/EmailNotifications.php:147
+msgid "Hello. A step deadline is approaching: "
+msgstr "Halo. Batas waktu langkah semakin dekat: "
+
+#: src/services/MakeTimestamp.php:67
+msgid "Timestamp archive"
+msgstr "Arsip timestamp"
+
+#: src/services/Transform.php:61
+msgid "New comment on your experiment."
+msgstr "Komentar baru pada eksperimen anda."
+
+#: src/services/Transform.php:84
+msgid "A user needs account validation."
+msgstr "Seorang pengguna membutuhkan validasi akun."
+
+#: src/services/Transform.php:91
+msgid "There was a problem during PDF creation."
+msgstr "Ada masalah dalam pembuatan PDF."
+
+#: src/services/Transform.php:100
+msgid "Tex rendering failed during PDF generation. The raw tex commands are retained but you might want to carefully check the generated PDF."
+msgstr "Render tex gagal selama pembuatan PDF. Perintah tex mentah dipertahankan namun Anda perlu berhati-hati dalam memeriksa PDF yang dihasilkan."
+
+#: src/services/Transform.php:109
+msgid "Some attached PDFs could not be appended."
+msgstr "Beberapa PDF terlampir tidak dapat ditambahkan."
+
+#: src/services/advancedSearchQuery/exceptions/LimitDepthIsExceededException.php:19
+msgid "Query is too complex!"
+msgstr "Kueri terlalu rumit!"
+
+#: web/ucp.php:71
+msgid "New comment notification"
+msgstr "Notifikasi komentar baru"
+
+#: web/ucp.php:75
+msgid "Step deadline"
+msgstr "Tenggat waktu bertahap"
+
+#: web/ucp.php:83
+msgid "New user created"
+msgstr "Pengguna baru dibuat"
+
+#: web/ucp.php:88
+msgid "New user need validation"
+msgstr "Pengguna baru membutuhkan validasi"
+
+#: src/templates/admin.html:455
+msgid "Export experiments of user"
+msgstr "Eksperimen ekspor dari pengguna"
+
+#: src/templates/admin.html:457
+msgid "Select user:"
+msgstr "Pilih pengguna:"
+
+#: src/templates/head.html:92 src/templates/head.html:93
+#: src/templates/ucp.html:9
+msgid "Notifications"
+msgstr "Notifikasi"
+
+#: src/templates/head.html:101
+msgid "No new notifications to show."
+msgstr "Tidak ada pemberitahuan baru untuk ditampilkan."
+
+#: src/templates/head.html:104 src/templates/ucp.html:395
+msgid "Notifications settings"
+msgstr "Pengaturan notifikasi"
+
+#: src/templates/login.html:41
+msgid "Request access to a team"
+msgstr "Meminta akses ke tim"
+
+#: src/templates/login.html:63
+msgid "Request access"
+msgstr "Minta akses"
+
+#: src/templates/login.html:68
+msgid "Your account has been created and will need to be validated by an admin."
+msgstr "Akun Anda telah dibuat dan perlu divalidasi oleh admin."
+
+#: src/templates/search.html:8
+msgid "Search Syntax"
+msgstr "Sintaks Pencarian"
+
+#: src/templates/search.html:134
+msgid "Search query"
+msgstr "Permintaan pencarian"
+
+#: src/templates/search.html:169
+msgid "Full syntax"
+msgstr "Sintaks lengkap"
+
+#: src/templates/search.html:173
+msgid "Search helpers"
+msgstr "Pembantu pencarian"
+
+#: src/templates/search.html:180
+msgid "Select author"
+msgstr "Pilih penulis"
+
+#: src/templates/admin.html:479 src/templates/search.html:196
+msgid "Date from"
+msgstr "Tanggal dari"
+
+#: src/templates/search.html:200
+msgid "less than"
+msgstr "kurang dari"
+
+#: src/templates/search.html:201
+msgid "less than or equal to"
+msgstr "kurang dari atau sama dengan"
+
+#: src/templates/search.html:202
+msgid "equal to"
+msgstr "sama dengan"
+
+#: src/templates/search.html:203
+msgid "greater than or equal to"
+msgstr "lebih besar atau sama dengan"
+
+#: src/templates/search.html:204
+msgid "greater than"
+msgstr "lebih besar dari"
+
+#: src/templates/search.html:205
+msgid "not equal to"
+msgstr "tidak sama dengan"
+
+#: src/templates/search.html:212
+msgid "Date to (optional)"
+msgstr "Tanggal hingga (opsional)"
+
+#: src/templates/search.html:219
+msgid "Locked"
+msgstr "Terkunci"
+
+#: src/templates/search.html:221
+msgid "Select lock status"
+msgstr "Pilih status terkunci"
+
+#: src/templates/search.html:230
+msgid "Timestamped"
+msgstr "Memiliki timestamp"
+
+#: src/templates/search.html:232
+msgid "Select timestamp status"
+msgstr "Pilih status timestamp"
+
+#: src/templates/search.html:258
+msgid "And category is"
+msgstr "Dan kategori adalah"
+
+#: src/templates/search.html:260
+msgid "Select category"
+msgstr "Pilih kategori"
+
+#: src/templates/steps-links-edit.html:45
+msgid "Completion time:"
+msgstr "Waktu penyelesaian:"
+
+#: src/templates/steps-links-edit.html:49
+msgid "Not finished"
+msgstr "Tidak selesai"
+
+#: src/templates/steps-links-edit.html:54
+#: src/templates/steps-links-view.html:21
+msgid "Deadline:"
+msgstr "Tenggat waktu:"
+
+#: src/templates/steps-links-edit.html:60
+msgid "Toggle notifications"
+msgstr "Alihkan notifikasi"
+
+#: src/templates/steps-links-edit.html:62
+msgid "Clear deadline"
+msgstr "Hapus tenggat waktu"
+
+#: src/templates/steps-links-edit.html:64
+msgid "Add deadline"
+msgstr "Tambahkan tenggat waktu"
+
+#: src/templates/steps-links-edit.html:67
+msgid "Set deadline in"
+msgstr "Atur tenggat waktu dalamn"
+
+#: src/templates/steps-links-edit.html:68
+msgid "+1 hour"
+msgstr "+1 jam"
+
+#: src/templates/steps-links-edit.html:69
+msgid "+1 day"
+msgstr "+1 hari"
+
+#: src/templates/steps-links-edit.html:70
+msgid "+1 week"
+msgstr "+1 minggu"
+
+#: src/templates/steps-links-view.html:53
+#: src/templates/steps-links-view.html:54
+msgid "Show linked items"
+msgstr "Tampilkan item tertaut"
+
+#: src/templates/sysconfig.html:30
+msgid "Uploads"
+msgstr "Unggahan-unggahan"
+
+#: src/templates/sysconfig.html:271
+msgid "Blockchain timestamp configuration"
+msgstr "Konfigurasi timestamp berdasarkan Blockchain"
+
+#: src/templates/sysconfig.html:273
+msgid "Enable blockchain timestamping with Bloxberg:"
+msgstr "Aktifkan timestamp blockchain dengan Bloxberg:"
+
+#: src/templates/sysconfig.html:279
+msgid "Anonymize author for GDPR compliance:"
+msgstr "Anonimkan penulis demi kesesuain GDPR:"
+
+#: src/templates/sysconfig.html:886
+msgid "Where user uploaded files are stored:"
+msgstr "Di mana file yang diunggah pengguna disimpan:"
+
+#: src/templates/sysconfig.html:888 src/templates/uploads.html:175
+msgid "Local filesystem"
+msgstr "Sistem file lokal"
+
+#: src/templates/sysconfig.html:889
+msgid "S3 bucket"
+msgstr "S3 bucket"
+
+#: src/templates/sysconfig.html:891
+msgid "You can select where uploaded files will be stored. The default is local storage but you can configure any S3 compatible object storage."
+msgstr "Anda dapat memilih di mana file yang diunggah akan disimpan. Penyimpanan lokal akan digunakan secara default tetapi Anda dapat mengonfigurasi penyimpanan objek yang kompatibel dengan S3."
+
+#: src/templates/ucp.html:398
+msgid "Notification category"
+msgstr "Kategori notifikasi"
+
+#: src/templates/ucp.html:399
+msgid "Web"
+msgstr "Web"
+
+#: src/templates/uploads.html:54
+msgid "More information"
+msgstr "Informasi lebih lanjut"
+
+#: src/templates/uploads.html:175
+msgid "Storage:"
+msgstr "Penyimpanan:"
+
+#: src/templates/view.html:17
+msgid "Depending on your configuration, timestamping can incur costs. Are you sure you want to do this?"
+msgstr "Tergantung pada konfigurasi Anda, membuat timestamp dapat dikenakan biaya. Apakah Anda yakin ingin melakukan ini?"
+
+#: src/models/Scheduler.php:272
+msgid "Creation/modification of events in the past is not allowed!"
+msgstr "Pembuatan/modifikasi event di masa lalu tidak diperbolehkan!"
+
+#: src/services/EmailNotifications.php:110 src/services/Transform.php:69
+msgid "A booked slot was deleted from the scheduler."
+msgstr "Slot yang dipesan telah dihapus dari penjadwal."
+
+#: src/services/EmailNotifications.php:113
+msgid "Hi. %s (%s). See item: %s. It was booked from %s to %s."
+msgstr "Hai. %s (%s). Lihat item: %s. Item ini dipesan dari %s hingga %s."
+
+#: web/ucp.php:93
+msgid "Booking event cancelled"
+msgstr "Pemesanan event dibatalkan"
+
+#: src/templates/admin.html:477
+msgid "Export bookings"
+msgstr "Ekspor pemesanan"
+
+#: src/templates/admin.html:481
+msgid "Date to"
+msgstr "Tanggal hingga"
+
+#: src/templates/editusers.html:42
+msgid "limit to team"
+msgstr "batasi untuk tim"
+
+#: src/templates/editusers.html:44
+msgid "All teams"
+msgstr "Semua tim"
+
+#: src/templates/search.html:178
+msgid "And author is"
+msgstr "Dan penulisnya adalah"
+
+#: src/templates/search.html:178
+msgid "belongs to group:"
+msgstr "milik kelompok:"
+
+#: src/templates/search.html:180 src/templates/search.html:185
+msgid "group"
+msgstr "kelompok"
+
+#: src/templates/search.html:182
+msgid "author"
+msgstr "penulis"
+
+#: src/templates/steps-links-edit.html:107
+msgid "Import links"
+msgstr "Impor tautan-tautan"

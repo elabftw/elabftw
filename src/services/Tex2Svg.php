@@ -162,7 +162,8 @@ class Tex2Svg
         $image->setRegistry('temporary-path', FsTools::getCacheFolder('elab'));
         // resolution could be lower to reduce file size
         $image->setResolution(300, 300);
-        $image->setBackgroundColor('#0000'); // #rgba, a=0: fully transparent
+        // do not use alpha channel if PDFA
+        $image->setBackgroundColor('#FFF' . ($this->mpdf->PDFA === true ? '' : '0')); // #rgba, a=0: fully transparent
         $image->readImageBlob('<?xml version="1.0" encoding="UTF-8" standalone="no"?>' . $svg);
         $image->setImageFormat('png');
         // remove all profiles and comments including date:create, date:modify which conflicts with unit testing

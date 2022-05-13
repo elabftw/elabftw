@@ -281,6 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       AjaxC.send(payload).then(() => {
         document.querySelectorAll('.notification').forEach(el => el.remove());
+        reloadElement('navbarNotifDiv');
       });
 
     // CREATE EXPERIMENT or DATABASE item: main create button in top right

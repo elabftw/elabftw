@@ -51,7 +51,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $query .= ' attachment:0 author:"Phpunit TestUser" body:"some text goes here"';
         $query .= ' elabid:7bebdd3512dc6cbee0b1 locked:yes rating:5 rating:unrated';
         $query .= ' status:"only meaningful with experiments but no error"';
-        $query .= ' timestamped: timestamped:true title:"very cool experiment" visibility:me';
+        $query .= ' timestamped: timestamped:true title:"very cool experiment" visibility:%me';
         $query .= ' date:>2020.06,21 date:2020/06-21..20201231';
         $query .= ' group:"Group Name"';
         $query .= ' attachment:"hello world"';

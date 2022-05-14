@@ -17,7 +17,7 @@ export default class Status {
     this.sender = new Ajax();
   }
 
-  create(content: string, color: string, isTimestampable: boolean): Promise<ResponseMsg> {
+  create(content: string, color: string): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,
       action: Action.Create,
@@ -25,14 +25,13 @@ export default class Status {
       content: content,
       extraParams: {
         color: color,
-        isTimestampable: isTimestampable,
       },
       notif: true,
     };
     return this.sender.send(payload);
   }
 
-  update(id: number, content: string, color: string, isTimestampable: boolean, isDefault: boolean): Promise<ResponseMsg> {
+  update(id: number, content: string, color: string, isDefault: boolean): Promise<ResponseMsg> {
     const payload: Payload = {
       method: Method.POST,
       action: Action.Update,
@@ -41,7 +40,6 @@ export default class Status {
       id : id,
       extraParams: {
         color: color,
-        isTimestampable: isTimestampable,
         isDefault: isDefault,
       },
       notif: true,

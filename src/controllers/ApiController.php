@@ -714,14 +714,12 @@ class ApiController implements ControllerInterface
      *             "category_id": "1",
      *             "category": "Running",
      *             "color": "3360ff",
-     *             "is_timestampable": "1",
      *             "is_default": "1"
      *           },
      *           {
      *             "category_id": "2",
      *             "category": "Success",
      *             "color": "54aa08",
-     *             "is_timestampable": "1",
      *             "is_default": "0"
      *             }
      *         ]

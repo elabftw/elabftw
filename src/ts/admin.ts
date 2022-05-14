@@ -148,9 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelector('[data-action="create-status"]').addEventListener('click', () => {
     const content = (document.getElementById('statusName') as HTMLInputElement).value;
     const color = (document.getElementById('statusColor') as HTMLInputElement).value;
-    const isTimestampable = (document.getElementById('statusTimestamp') as HTMLInputElement).checked;
     if (content.length > 1) {
-      StatusC.create(content, color, isTimestampable).then(() => window.location.replace('admin.php?tab=4'));
+      StatusC.create(content, color).then(() => window.location.replace('admin.php?tab=4'));
     }
   });
 
@@ -159,9 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const statusId = parseInt((ev.target as HTMLElement).dataset.statusid);
       const content = (document.getElementById('statusName_' + statusId) as HTMLInputElement).value;
       const color = (document.getElementById('statusColor_' + statusId) as HTMLInputElement).value;
-      const isTimestampable = (document.getElementById('statusTimestamp_' + statusId) as HTMLInputElement).checked;
       const isDefault = (document.getElementById('statusDefault_' + statusId) as HTMLInputElement).checked;
-      StatusC.update(statusId, content, color, isTimestampable, isDefault);
+      StatusC.update(statusId, content, color, isDefault);
     });
   });
 

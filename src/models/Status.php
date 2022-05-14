@@ -31,13 +31,12 @@ class Status extends AbstractCategory
 
     public function create(StatusParamsInterface $params): int
     {
-        $sql = 'INSERT INTO status(name, color, team, is_timestampable, is_default)
-            VALUES(:name, :color, :team, :is_timestampable, :is_default)';
+        $sql = 'INSERT INTO status(name, color, team, is_default)
+            VALUES(:name, :color, :team, :is_default)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':name', $params->getContent(), PDO::PARAM_STR);
         $req->bindValue(':color', $params->getColor(), PDO::PARAM_STR);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
-        $req->bindValue(':is_timestampable', $params->getIsTimestampable(), PDO::PARAM_INT);
         $req->bindValue(':is_default', $params->getIsDefault(), PDO::PARAM_INT);
         $this->Db->execute($req);
 
@@ -50,19 +49,19 @@ class Status extends AbstractCategory
     public function createDefault(): bool
     {
         return $this->create(
-            new StatusParams('Running', '#29AEB9', false, true)
+            new StatusParams('Running', '#29AEB9', true)
         ) && $this->create(
-            new StatusParams('Success', '#54AA08', true)
+            new StatusParams('Success', '#54AA08')
         ) && $this->create(
-            new StatusParams('Need to be redone', '#C0C0C0', true)
+            new StatusParams('Need to be redone', '#C0C0C0')
         ) && $this->create(
-            new StatusParams('Fail', '#C24F3D', true)
+            new StatusParams('Fail', '#C24F3D')
         );
     }
 
     public function read(ContentParamsInterface $params): array
     {
-        $sql = 'SELECT id as category_id, name as category, color, is_timestampable, is_default
+        $sql = 'SELECT id as category_id, name as category, color, is_default
             FROM status WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
@@ -79,7 +78,6 @@ class Status extends AbstractCategory
         $sql = 'SELECT status.id AS category_id,
             status.name AS category,
             status.color,
-            status.is_timestampable,
             status.is_default
             FROM status WHERE team = :team ORDER BY ordering ASC';
         $req = $this->Db->prepare($sql);
@@ -102,14 +100,12 @@ class Status extends AbstractCategory
         $sql = 'UPDATE status SET
             name = :name,
             color = :color,
-            is_timestampable = :is_timestampable,
             is_default = :is_default
             WHERE id = :id AND team = :team';
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':name', $params->getContent(), PDO::PARAM_STR);
         $req->bindValue(':color', $params->getColor(), PDO::PARAM_STR);
-        $req->bindValue(':is_timestampable', $params->getIsTimestampable(), PDO::PARAM_INT);
         $req->bindValue(':is_default', $params->getIsDefault(), PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);

@@ -57,7 +57,6 @@ class ParamsBuilder
             return new StatusParams(
                 $this->content,
                 $this->extra['color'] ?? '000000',
-                (bool) ($this->extra['isTimestampable'] ?? false),
                 (bool) ($this->extra['isDefault'] ?? false),
             );
         }

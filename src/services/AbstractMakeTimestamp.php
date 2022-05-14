@@ -74,9 +74,6 @@ abstract class AbstractMakeTimestamp extends AbstractMake
      */
     public function generatePdf(): string
     {
-        if (!$this->Entity->isTimestampable()) {
-            throw new ImproperActionException('Timestamping is not allowed for this experiment.');
-        }
         $userData = $this->Entity->Users->userData;
         $MpdfProvider = new MpdfProvider(
             $userData['fullname'],

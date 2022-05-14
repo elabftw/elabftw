@@ -14,7 +14,5 @@ interface StatusParamsInterface extends ContentParamsInterface
 {
     public function getColor(): string;
 
-    public function getIsTimestampable(): int;
-
     public function getIsDefault(): int;
 }

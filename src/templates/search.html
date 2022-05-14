@@ -385,8 +385,8 @@
           <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
           <select id='visibility' name='vis' data-filter='visibility' class='form-control filterHelper'>
             <option value='' data-action='clear'>{{ 'Select visibility'|trans }}</option>
-            {% for key, value in visibilityArr %}
-              <option value='{{ key }}' {{- Request.query.get('vis') == key ? ' selected' }}>{{ value|trans }}</option>
+            {% for value in visibilityArr %}
+              <option {{- Request.query.get('vis') == value ? ' selected' }}>{{ value|trans }}</option>
             {% endfor %}
           </select>
         </div>
@@ -394,7 +394,7 @@
       </div>
       <div class='row'>
         <div class='col'>
-          <small class="form-text text-muted">
+          <small class='form-text text-muted'>
             Tip: Add a field/value pair to the query at the cursor position by pressing <kbd>ctrl</kbd> or <kbd>⌘</kbd> while selecting.
           </small>
         </div>

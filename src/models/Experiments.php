@@ -101,18 +101,6 @@ class Experiments extends AbstractEntity
     }
 
     /**
-     * Can this experiment be timestamped?
-     */
-    public function isTimestampable(): bool
-    {
-        $sql = 'SELECT is_timestampable FROM status WHERE id = (SELECT category FROM experiments WHERE id = :id)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return (bool) $req->fetchColumn();
-    }
-
-    /**
      * Set the experiment as timestamped with a path to the token
      *
      * @param string $responseTime the date of the timestamp

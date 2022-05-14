@@ -179,13 +179,6 @@
         <input class='form-control randomColor' type='color' id='statusColor' />
       </div>
 
-      <div class='col-auto'>
-        <div class='form-check mt-4'>
-          <input class='form-check-input' type='checkbox' id='statusTimestamp' />
-          <label class='form-check-label' for='statusTimestamp'>{{ 'Allow timestamp'|trans }}</label>
-        </div>
-      </div>
-
       <div class='col-auto mt-4'>
         <button class='button btn btn-primary' data-action='create-status'>{{ 'Save'|trans }}</button>
       </div>
@@ -208,10 +201,6 @@
             <li class='list-inline-item col-1 align-top'>
               <label for='statusColor_{{ status.category_id }}'>{{ 'Color'|trans }}</label>
               <input class='form-control' type='color' id='statusColor_{{ status.category_id }}' value='#{{ status.color }}' />
-            </li>
-            <li class='list-inline-item'>
-              <input type='checkbox' id='statusTimestamp_{{ status.category_id }}' {{ status.is_timestampable ? " checked" }} />
-              <label for='statusTimestamp_{{ status.category_id }}'>{{ 'Allow timestamp'|trans }}</label>
             </li>
 
             <li class='list-inline-item'>

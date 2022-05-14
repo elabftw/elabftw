@@ -74,7 +74,6 @@ class ParamsBuilderTest extends \PHPUnit\Framework\TestCase
         // Status
         $builder = new ParamsBuilder(new Status(1), 'status-name', '', array(
             'color' => '00FF00',
-            'isTimestampable' => '1',
             'isDefault' => '0',
         ));
         $this->assertInstanceOf(StatusParams::class, $builder->getParams());

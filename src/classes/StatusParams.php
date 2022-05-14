@@ -15,7 +15,7 @@ use Elabftw\Services\Check;
 
 final class StatusParams extends ContentParams implements StatusParamsInterface
 {
-    public function __construct(string $content, private string $color, private bool $isTimestampable = false, private bool $isDefault = false)
+    public function __construct(string $content, private string $color, private bool $isDefault = false)
     {
         parent::__construct($content);
         $this->content = $content;
@@ -24,11 +24,6 @@ final class StatusParams extends ContentParams implements StatusParamsInterface
     public function getColor(): string
     {
         return Check::color($this->color);
-    }
-
-    public function getIsTimestampable(): int
-    {
-        return (int) $this->isTimestampable;
     }
 
     public function getIsDefault(): int

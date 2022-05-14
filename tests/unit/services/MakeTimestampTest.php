@@ -43,17 +43,6 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $this->fixturesFs = (new StorageFactory(StorageFactory::FIXTURES))->getStorage()->getFs();
     }
 
-    public function testNonTimestampableExperiment(): void
-    {
-        $Entity = new Experiments(new Users(1, 1));
-        // create a new experiment for timestamping tests
-        $Entity->setId($Entity->create(new EntityParams('ts test')));
-        // default status is not timestampable
-        $Maker = new MakeDfnTimestamp($this->configArr, $Entity);
-        $this->expectException(ImproperActionException::class);
-        $Maker->generatePdf();
-    }
-
     public function testTimestampLimitReached(): void
     {
         $configArr = array(
@@ -189,8 +178,6 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $Entity = new Experiments(new Users(1, 1));
         // create a new experiment for timestamping tests
         $Entity->setId($Entity->create(new EntityParams('ts test')));
-        // set it to a status that is timestampable
-        $Entity->updateCategory(2);
         return $Entity;
     }
 }

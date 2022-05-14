@@ -520,7 +520,6 @@ CREATE TABLE `status` (
   `team` int(10) UNSIGNED NOT NULL,
   `name` text NOT NULL,
   `color` varchar(6) NOT NULL,
-  `is_timestampable` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `is_default` tinyint(1) UNSIGNED DEFAULT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`id`)

@@ -279,12 +279,16 @@
           <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label><br>
           <select id='searchonly' name='owner' data-filter='(?:author|group)' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
             <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
-            {% for user in usersArr %}
-              <option value='author:{{ user.fullname|raw }}' {{- Request.query.get('owner') == 'author:'~user.fullname|raw ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname|raw }}</option>
-            {% endfor %}
-            {% for group in teamGroups %}
-              <option value='group:{{ group|raw }}' {{- Request.query.get('owner') == 'group:'~group|raw ? ' selected' }}>[{{ 'group'|trans }}] {{ group|raw }}</option>
-            {% endfor %}
+            <optgroup label='{{ 'Users'|trans }}'>
+              {% for user in usersArr %}
+                <option value='author:{{ user.fullname|raw }}' {{- Request.query.get('owner') == 'author:'~user.fullname|raw ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname|raw }}</option>
+              {% endfor %}
+            </optgroup>
+            <optgroup label='{{ 'Groups'|trans }}'>
+              {% for group in teamGroups %}
+                <option value='group:{{ group|raw }}' {{- Request.query.get('owner') == 'group:'~group|raw ? ' selected' }}>[{{ 'group'|trans }}] {{ group|raw }}</option>
+              {% endfor %}
+            </optgroup>
           </select>
         </div>
         <!-- END AUTHOR/OWNER HELPER -->

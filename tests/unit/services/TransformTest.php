@@ -32,7 +32,7 @@ class TransformTest extends \PHPUnit\Framework\TestCase
 
     public function testNotifPdfGenericError(): void
     {
-        $expected = '<span class="clickable" data-action="ack-notif" data-id="1">';
+        $expected = '<span data-action="ack-notif" data-id="1">';
         $expected .= 'There was a problem during PDF creation.';
         $expected .= '</span><br><span class="relative-moment" title="test"></span>';
         $actual = Transform::notif(array(
@@ -45,7 +45,7 @@ class TransformTest extends \PHPUnit\Framework\TestCase
 
     public function testNotifMathJaxFailed(): void
     {
-        $expected = '<span class="clickable" data-action="ack-notif" data-id="1" data-href="experiment.php?mode=view&id=2">';
+        $expected = '<span data-action="ack-notif" data-id="1" data-href="experiment.php?mode=view&id=2">';
         $expected .= 'Tex rendering failed during PDF generation. The raw tex commands are retained but you might want to carefully check the generated PDF.';
         $expected .= '</span><br><span class="relative-moment" title="test"></span>';
         $actual = Transform::notif(array(
@@ -62,7 +62,7 @@ class TransformTest extends \PHPUnit\Framework\TestCase
 
     public function testNotifPdfAppendmentFailed(): void
     {
-        $expected = '<span class="clickable" data-action="ack-notif" data-id="1" data-href="experiment.php?mode=view&id=2">';
+        $expected = '<span data-action="ack-notif" data-id="1" data-href="experiment.php?mode=view&id=2">';
         $expected .= 'Some attached PDFs could not be appended. (file1.pdf, file2.pdf)';
         $expected .= '</span><br><span class="relative-moment" title="TIMESTAMP"></span>';
         $actual = Transform::notif(array(

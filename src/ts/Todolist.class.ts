@@ -42,7 +42,7 @@ export default class Todolist extends SidePanel {
       let html = '';
       for (const entry of json.value as Array<Todoitem>) {
         html += `<li data-todoitemid=${entry.id} id='todoItem_${entry.id}'>
-        <a class='clickable float-right mr-2' data-action='destroy-todoitem' data-todoitemid='${entry.id}' title='` + i18next.t('generic-delete-warning') + `'>
+        <a class='float-right mr-2' data-action='destroy-todoitem' data-todoitemid='${entry.id}' title='` + i18next.t('generic-delete-warning') + `'>
           <i class='fas fa-trash-alt'></i>
         </a>
         <span style='font-size:90%;display:block;'><span class='draggable sortableHandle'><i class='fas fa-sort'></i></span> <span class='relative-moment' title='${entry.creation_time}'></span></span>

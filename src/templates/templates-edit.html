@@ -11,7 +11,7 @@
           {% set tagsValueArr = templateData.tags|split('|') %}
           {% for key, tag in tagsValueArr -%}
             {#- the key allows to get the id stored in tagsIdArr -#}
-            <a class='tag mr-1 clickable hover-danger' data-action='unreference-tag' data-id='{{ templateData.id }}' data-tagid='{{ tagsIdArr[key] }}'>
+            <a class='tag mr-1 hover-danger' data-action='unreference-tag' data-id='{{ templateData.id }}' data-tagid='{{ tagsIdArr[key] }}'>
               {{- tag|raw -}}
             </a>
           {%- endfor -%}

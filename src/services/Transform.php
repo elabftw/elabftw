@@ -55,7 +55,7 @@ class Transform
         switch ($category) {
             case Notifications::COMMENT_CREATED:
                 return sprintf(
-                    '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="experiments.php?mode=view&id=%d">%s</span>' . $relativeMoment,
+                    '<span data-action="ack-notif" data-id="%d" data-href="experiments.php?mode=view&id=%d">%s</span>' . $relativeMoment,
                     (int) $notif['id'],
                     (int) $notif['body']['experiment_id'],
                     _('New comment on your experiment.'),
@@ -63,7 +63,7 @@ class Transform
                 );
             case Notifications::EVENT_DELETED:
                 return sprintf(
-                    '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="team.php?item=%d">%s (%s)</span>' . $relativeMoment,
+                    '<span data-action="ack-notif" data-id="%d" data-href="team.php?item=%d">%s (%s)</span>' . $relativeMoment,
                     (int) $notif['id'],
                     (int) $notif['body']['event']['item'],
                     _('A booked slot was deleted from the scheduler.'),
@@ -72,28 +72,28 @@ class Transform
                 );
             case Notifications::USER_CREATED:
                 return sprintf(
-                    '<span class="clickable" data-action="ack-notif" data-id="%d">%s</span>' . $relativeMoment,
+                    '<span data-action="ack-notif" data-id="%d">%s</span>' . $relativeMoment,
                     (int) $notif['id'],
                     _('New user added to your team'),
                     $notif['created_at'],
                 );
             case Notifications::USER_NEED_VALIDATION:
                 return sprintf(
-                    '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="admin.php">%s</span>' . $relativeMoment,
+                    '<span data-action="ack-notif" data-id="%d" data-href="admin.php">%s</span>' . $relativeMoment,
                     (int) $notif['id'],
                     _('A user needs account validation.'),
                     $notif['created_at'],
                 );
             case Notifications::PDF_GENERIC_ERROR:
                 return sprintf(
-                    '<span class="clickable" data-action="ack-notif" data-id="%d">%s</span>' . $relativeMoment,
+                    '<span data-action="ack-notif" data-id="%d">%s</span>' . $relativeMoment,
                     (int) $notif['id'],
                     _('There was a problem during PDF creation.'),
                     $notif['created_at'],
                 );
             case Notifications::MATHJAX_FAILED:
                 return sprintf(
-                    '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="%s.php?mode=view&id=%d">%s</span>' . $relativeMoment,
+                    '<span data-action="ack-notif" data-id="%d" data-href="%s.php?mode=view&id=%d">%s</span>' . $relativeMoment,
                     (int) $notif['id'],
                     $notif['body']['entity_page'],
                     (int) $notif['body']['entity_id'],
@@ -102,7 +102,7 @@ class Transform
                 );
             case Notifications::PDF_APPENDMENT_FAILED:
                 return sprintf(
-                    '<span class="clickable" data-action="ack-notif" data-id="%d" data-href="%s.php?mode=view&id=%d">%s (%s)</span>' . $relativeMoment,
+                    '<span data-action="ack-notif" data-id="%d" data-href="%s.php?mode=view&id=%d">%s (%s)</span>' . $relativeMoment,
                     (int) $notif['id'],
                     $notif['body']['entity_page'],
                     (int) $notif['body']['entity_id'],

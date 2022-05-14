@@ -381,7 +381,7 @@
           <td>{{ key.name }}</td>
           <td>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
           <td>{{ key.created_at }}</td>
-          <td><a class='clickable' data-action='destroy-apikey' title='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt fa-2x'></i></a></td>
+          <td><a data-action='destroy-apikey' title='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt fa-2x'></i></a></td>
         </tr>
       {% endfor %}
     </tbody>

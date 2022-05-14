@@ -105,7 +105,7 @@
           <label for='password'>{{ 'Password'|trans }}</label>
           <!-- add tabindex=-1 to the forget password so we can switch from login to password with tab -->
           {% if showLocal %}
-            <a class='float-right clickable underlined resetPassword' tabindex='-1' data-action='toggle-modal' data-target='resetModal'>{{ 'Forgot password?'|trans }}</a>
+            <a class='float-right underlined resetPassword' tabindex='-1' data-action='toggle-modal' data-target='resetModal'>{{ 'Forgot password?'|trans }}</a>
           {% endif %}
           <div class='input-group'>
             <input class='form-control' id='password' name='password' type='password' autocomplete='current-password' required />

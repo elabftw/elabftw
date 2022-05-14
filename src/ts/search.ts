@@ -94,11 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return date + '..' + dateTo;
       }
-      // filter on owner
-      if (element.getAttribute('name') === 'owner') {
-        return `${element.options[element.selectedIndex].value}`;
-      }
-      return `${element.options[element.selectedIndex].text}`;
+      return `${element.options[element.selectedIndex].value}`;
     }
     if (element instanceof HTMLInputElement) {
       if (element.id === 'date') {

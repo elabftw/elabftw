@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use function array_filter;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
@@ -159,7 +160,9 @@ class Users
      */
     public function read(ContentParamsInterface $params): array
     {
-        $usersArr = $this->readFromQuery($params->getContent());
+        $usersArr = array_filter($this->readFromQuery($params->getContent()), function ($u) {
+            return ((int) $u['archived']) === 0;
+        });
         $res = array();
         foreach ($usersArr as $user) {
             $res[] = $user['userid'] . ' - ' . $user['fullname'] . ' - ' . $user['email'];

@@ -70,7 +70,7 @@
               {% if itemtagsArr|length > 0 %}
                 <span class='tags'><i class='fas fa-tags mr-1'></i>
                   {% for tag in itemtagsArr %}
-                    <a class='tag' href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+                    <a class='tag mathjax-ignore' href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
                   {% endfor %}
                 </span>
               {% endif %}

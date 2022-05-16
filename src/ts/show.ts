@@ -103,6 +103,78 @@ document.addEventListener('DOMContentLoaded', () => {
     return parseInt(currentOffset, 10);
   }
 
+  /////////////////////////////////////////
+  // CHANGE LISTENER FOR SELECT ELEMENTS //
+  // The select elements don't use a click event because on firefox the click is triggered on the option
+  // and on chrome it is on the select instead
+  /////////////////////////////////////////
+  document.getElementById('container').addEventListener('change', event => {
+    const el = (event.target as HTMLSelectElement);
+    // EXPORT SELECTED
+    if (el.matches('[data-action="export-selected-entities"]')) {
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        notif(nothingSelectedError);
+        return;
+      }
+      window.location.href = `make.php?what=${el.value}&type=${about.type}&id=${checked.map(value => value.id).join('+')}`;
+
+    // UPDATE CATEGORY
+    } else if (el.matches('[data-action="update-category-selected-entities"]')) {
+      const ajaxs = [];
+      // get the item id of all checked boxes
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        notif(nothingSelectedError);
+        return;
+      }
+      // loop on it and update the status/item type
+      checked.forEach(chk => {
+        ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
+          updateCategory : true,
+          id: chk.id,
+          categoryId : el.value,
+          type : about.type,
+        }));
+      });
+      // reload the page once it's done
+      // a simple reload would not work here
+      // we need to use when/then
+      $.when.apply(null, ajaxs).then(function() {
+        reloadEntitiesShow();
+      });
+      notif({'msg': 'Saved', 'res': true});
+
+
+    // UPDATE VISIBILITY
+    } else if (el.matches('[data-action="update-visibility-selected-entities"]')) {
+      const ajaxs = [];
+      // get the item id of all checked boxes
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        notif(nothingSelectedError);
+        return;
+      }
+      // loop on it and update the status/item type
+      checked.forEach(chk => {
+        ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
+          updatePermissions : true,
+          rw: 'read',
+          id: chk.id,
+          value: el.value,
+          type : about.type,
+        }));
+      });
+      // reload the page once it's done
+      // a simple reload would not work here
+      // we need to use when/then
+      $.when.apply(null, ajaxs).then(function() {
+        reloadEntitiesShow();
+      });
+      notif({'msg': 'Saved', 'res': true});
+    }
+  });
+
   /////////////////////////
   // MAIN CLICK LISTENER //
   /////////////////////////
@@ -243,69 +315,6 @@ document.addEventListener('DOMContentLoaded', () => {
         (box.closest('.item') as HTMLElement).style.backgroundColor = newBgColor;
       });
 
-    // UPDATE CATEGORY
-    } else if (el.matches('[data-action="update-category-selected-entities"]')) {
-      const ajaxs = [];
-      // get the item id of all checked boxes
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        notif(nothingSelectedError);
-        return;
-      }
-      // loop on it and update the status/item type
-      checked.forEach(chk => {
-        ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
-          updateCategory : true,
-          id: chk.id,
-          categoryId : (el as HTMLInputElement).value,
-          type : about.type,
-        }));
-      });
-      // reload the page once it's done
-      // a simple reload would not work here
-      // we need to use when/then
-      $.when.apply(null, ajaxs).then(function() {
-        reloadEntitiesShow();
-      });
-      notif({'msg': 'Saved', 'res': true});
-
-
-    // UPDATE VISIBILITY
-    } else if (el.matches('[data-action="update-visibility-selected-entities"]')) {
-      const ajaxs = [];
-      // get the item id of all checked boxes
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        notif(nothingSelectedError);
-        return;
-      }
-      // loop on it and update the status/item type
-      checked.forEach(chk => {
-        ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
-          updatePermissions : true,
-          rw: 'read',
-          id: chk.id,
-          value: (el as HTMLInputElement).value,
-          type : about.type,
-        }));
-      });
-      // reload the page once it's done
-      // a simple reload would not work here
-      // we need to use when/then
-      $.when.apply(null, ajaxs).then(function() {
-        reloadEntitiesShow();
-      });
-      notif({'msg': 'Saved', 'res': true});
-
-    // EXPORT SELECTED
-    } else if (el.matches('[data-action="export-selected-entities"]')) {
-      const what = (el as HTMLInputElement).value;
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        notif(nothingSelectedError);
-        return;
-      }
-      window.location.href = `make.php?what=${what}&type=${about.type}&id=${checked.map(value => value.id).join('+')}`;
 
     // THE LOCK BUTTON FOR CHECKED BOXES
     } else if (el.matches('[data-action="lock-selected-entities"]')) {

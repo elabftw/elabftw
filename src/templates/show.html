@@ -44,7 +44,7 @@
       <div id='withSelected' class='row mx-0 form-inline d-none'>
         <p class='mr-1 mb-2'>{{ 'With selected:'|trans }}</p>
         <!-- Change category -->
-        <select autocomplete='off' class='mr-1 mb-2 form-control'>
+        <select data-action='update-category-selected-entities' autocomplete='off' class='mr-1 mb-2 form-control'>
             <option selected disabled>
             {% if Entity.type == 'experiments' %}
                 {{ 'Change status'|trans }}
@@ -54,26 +54,26 @@
             </option>
 
             {% for category in categoryArr %}
-                <option data-action='update-category-selected-entities' value='{{ category.category_id }}'>{{ category.category }}</option>
+                <option value='{{ category.category_id }}'>{{ category.category }}</option>
             {% endfor %}
         </select>
 
         <!-- Change visibility -->
-        <select autocomplete='off' class='mr-1 mb-2 form-control'>
+        <select data-action='update-visibility-selected-entities' autocomplete='off' class='mr-1 mb-2 form-control'>
           <option selected disabled>{{ 'Change visibility'|trans }}</option>
           {% for key, value in visibilityArr %}
-            <option data-action='update-visibility-selected-entities' value='{{ key }}'>{{ value }}</option>
+            <option value='{{ key }}'>{{ value }}</option>
           {% endfor %}
         </select>
 
         <!-- Export -->
-        <select autocomplete='off' class='mr-1 mb-2 form-control'>
+        <select data-action='export-selected-entities' autocomplete='off' class='mr-1 mb-2 form-control'>
           <option selected disabled>{{ 'Export'|trans }}</option>
-          <option data-action='export-selected-entities' value='zip'>{{ 'Make Zip'|trans }}</option>
-          <option data-action='export-selected-entities' value='csv'>{{ 'Make Csv'|trans }}</option>
-          <option data-action='export-selected-entities' value='multiPdf'>{{ 'Make PDF'|trans }}</option>
-          <option data-action='export-selected-entities' value='qrPdf'>{{ 'Make QR codes PDF'|trans }}</option>
-          <option data-action='export-selected-entities' value='json'>{{ 'Make JSON'|trans }}</option>
+          <option value='zip'>{{ 'Make Zip'|trans }}</option>
+          <option value='csv'>{{ 'Make Csv'|trans }}</option>
+          <option value='multiPdf'>{{ 'Make PDF'|trans }}</option>
+          <option value='qrPdf'>{{ 'Make QR codes PDF'|trans }}</option>
+          <option value='json'>{{ 'Make JSON'|trans }}</option>
         </select>
 
         <!-- Add a tag -->

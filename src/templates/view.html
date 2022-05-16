@@ -122,7 +122,7 @@
 
   <!-- build the tag array -->
   {% if Entity.entityData.tags|length > 0 %}
-    <span class='tags'>
+    <span class='tags mathjax-ignore'>
       <i class='fas fa-tags fa-2x'></i>
       {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
       {% set tagsValueArr = Entity.entityData.tags|split('|') %}

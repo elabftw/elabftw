@@ -54,6 +54,9 @@ insert(
       processEscapes: true,
       packages: ['base', 'ams', 'autoload'],
     },
+    options: {
+      ignoreHtmlClass: 'mathjax-ignore',
+    },
     startup: {
       ready: (): void => {
         MathJax.startup.defaultReady();

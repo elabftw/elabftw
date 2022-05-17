@@ -214,7 +214,7 @@
 {% include 'json-editor.html' %}
 
 <!-- DOODLE -->
-<section class='box' id='doodle-anchor'>
+<section class='box'>
   <h3 data-action='toggle-next' data-icon='doodleDivIcon' class='d-inline'><i id='doodleDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paint-brush'></i> {{ 'Draw something'|trans }}</h3>
   <div id='doodleDiv' hidden class='mt-2' data-save-hidden='doodleDiv'>
     <div class='row'>
@@ -241,6 +241,7 @@
           <button id='clearCanvas' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
           <button id='saveCanvas' class='button btn btn-primary' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
         <p>
+        <p>{{ 'Use %sCtrl%s + click to add text'|trans|format('<kbd>', '</kbd>')|raw }}</p>
       </div>
     </div>
   </div>

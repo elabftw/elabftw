@@ -35,7 +35,7 @@
 
                     <!-- Annotate image -->
                     {% if ext matches '/(jpg|jpeg|png|gif)$/i' %}
-                      <a class='dropdown-item clickable annotateImg' data-itemid='{{ upload.item_id }}' data-id='{{ upload.id }}' data-type='{{ upload.type }}' data-path='{{ upload.long_name }}'>
+                    <a class='dropdown-item' data-action='annotate-image' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}'>
                         <i class='fas fa-fw fa-paint-brush mr-1'></i>{{ 'Annotate this image'|trans }}</a>
                     {% endif %}
 

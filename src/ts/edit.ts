@@ -187,6 +187,29 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="switch-editor"]')) {
       editor.switch();
 
+    // ANNOTATE IMAGE
+    } else if (el.matches('[data-action="annotate-image"]')) {
+      // show doodle canvas
+      const doodleDiv = document.getElementById('doodleDiv');
+      doodleDiv.removeAttribute('hidden');
+      doodleDiv.scrollIntoView();
+      // adjust chevron icon
+      const doodleDivIcon = document.getElementById('doodleDivIcon');
+      doodleDivIcon.classList.remove('fa-chevron-circle-right');
+      doodleDivIcon.classList.add('fa-chevron-circle-down');
+
+      const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
+      const img = new Image();
+      // set src attribute to image path
+      img.addEventListener('load', function() {
+        // make canvas bigger than image
+        context.canvas.width = (this as HTMLImageElement).width * 2;
+        context.canvas.height = (this as HTMLImageElement).height * 2;
+        // add image to canvas
+        context.drawImage(img, (this as HTMLImageElement).width / 2, (this as HTMLImageElement).height / 2);
+      });
+      img.src = `app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`;
+
     // IMPORT BODY OF LINKED ITEM INTO EDITOR
     } else if (el.matches('[data-action="import-link-body"]')) {
       // this is in this file and not in steps-links-edit because here `editor`
@@ -284,23 +307,6 @@ document.addEventListener('DOMContentLoaded', () => {
       // update the page's title
       document.title = content + ' - eLabFTW';
     }
-  });
-
-  // ANNOTATE IMAGE
-  $(document).on('click', '.annotateImg',  function() {
-    $('#doodleDiv').show();
-    $(document).scrollTop($('#doodle-anchor').offset().top);
-    const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
-    const img = new Image();
-    // set src attribute to image path
-    img.addEventListener('load', function() {
-      // make canvas bigger than image
-      context.canvas.width = (this as HTMLImageElement).width * 2;
-      context.canvas.height = (this as HTMLImageElement).height * 2;
-      // add image to canvas
-      context.drawImage(img, (this as HTMLImageElement).width / 2, (this as HTMLImageElement).height / 2);
-    });
-    img.src = 'app/download.php?f=' + $(this).data('path');
   });
 
   // STAR RATING

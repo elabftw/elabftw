@@ -132,7 +132,7 @@
                                   id='3Dmol_{{ upload.id }}'>
                                 </div>
 
-            {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::DNA') and App.Users.userData.use_ove %}
+            {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::DNA') %}
               <div class='viewer-ove'
                    data-href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'
                 data-real-name='{{ upload.real_name }}'

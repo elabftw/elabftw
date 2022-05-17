@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // add the title in the page name (see #324)
-  document.title = document.querySelector('.title-view').textContent + ' - eLabFTW';
+  document.title = document.getElementById('documentTitle').textContent + ' - eLabFTW';
 
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);

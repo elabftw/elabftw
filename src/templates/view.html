@@ -153,12 +153,13 @@
   </div>
 
   <!-- TITLE : click on it to go to edit mode only if we are not in read only mode -->
-  <h2 class='title-view' {{ not Entity.isReadOnly and not Entity.entityData.locked ? 'data-action="edit"' }}>
+  {% set isEditable = not Entity.isReadOnly and not Entity.entityData.locked %}
+  <h1 id='documentTitle' class='overflow-break-word {{ isEditable ? 'hover-action' }}' {{ isEditable ? 'data-action="edit"' }}>
       {% if Entity.type == 'items' %}
           <span style='color:#{{ Entity.entityData.color }}'>{{ Entity.entityData.category }}</span>
       {% endif %}
       {{ Entity.entityData.title|raw }}
-  </h2>
+  </h1>
 
   <!-- SHOW EVENTS -->
   {% if Entity.entityData.events_id and Entity.type == 'items' %}<i class='far fa-calendar-alt'></i>

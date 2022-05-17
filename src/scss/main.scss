@@ -188,17 +188,23 @@ blockquote::before {
 }
 
 /* TITLES */
-h1,
+h1 {
+    color: $maingray;
+    font-size: 200%;
+    font-weight: normal;
+    margin-top: 0;
+}
+
 h2 {
     color: $maingray;
-    font-size: 30px;
+    font-size: 180%;
     font-weight: normal;
     margin-top: 0;
 }
 
 h3 {
     color: $maingray;
-    font-size: 150%;
+    font-size: 160%;
     margin: 0 auto;
 }
 
@@ -281,6 +287,12 @@ label {
     color: $darkred;
     transition-duration: 500ms;
 }
+
+.hover-action:hover {
+    color: $elabblue;
+    transition: color 0.8s ease;
+}
+
 
 .alert-danger .close {
     color: #e6614c;
@@ -835,15 +847,8 @@ the form-control fails to do that so we do the border ourselves */
     }
 }
 
-.title-view {
-    font-size: 160%;
+.overflow-break-word {
     overflow-wrap: break-word;
-}
-
-.title-view[data-action='edit']:hover {
-    color: $elabblue;
-    cursor: pointer;
-    transition: color 0.8s ease;
 }
 
 .item-date {

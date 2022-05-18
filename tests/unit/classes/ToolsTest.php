@@ -27,6 +27,12 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('unknown', Tools::getExt('/path/to/myfilegif'));
     }
 
+    public function testGetMimeExt(): void
+    {
+        $this->assertEquals('gif', Tools::getMimeExt('myfile.gif'));
+        $this->assertEquals('jpeg', Tools::getMimeExt('myfile.JPG'));
+    }
+
     public function testMd2html(): void
     {
         $md = '[a link](https://www.elabftw.net) **in bold** _in italic_';

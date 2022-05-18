@@ -155,6 +155,16 @@ class Tools
         return 'unknown';
     }
 
+    public static function getMimeExt(string $filename): string
+    {
+        $ext = strtolower(self::getExt($filename));
+        // special case for jpg
+        if ($ext === 'jpg') {
+            return 'jpeg';
+        }
+        return $ext;
+    }
+
     /**
      * Display a generic error message
      *

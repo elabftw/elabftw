@@ -11,7 +11,6 @@ namespace Elabftw\Services;
 
 use function date;
 use DateTime;
-use function dirname;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\FsTools;
@@ -306,7 +305,29 @@ class MakePdf extends AbstractMake implements FileMakerInterface
         // the next line (HTMLPurifier) rescues the invalid parts and thus avoids some MathJax errors
         // the consequence is a slightly different layout
         $body = Filter::body($body);
-        // we need to fix the file path in the body so it shows properly into the pdf for timestamping (issue #131)
-        return str_replace('src="app/download.php?f=', 'src="' . dirname(__DIR__, 2) . '/uploads/', $body);
+
+        // now this part of the code will look for embeded images in the text and download them from storage and insert them as base64
+        // it would have been preferable to avoid such complexity and regexes, but this is the most robust way to get images in there.
+        // it works for gif png jpg images from any storage source
+        $matches = array();
+        // for some reason &storage=[0-9] didn't work so we match .{14}
+        // u is a modifier for multibyte/utf8 support. So why 14 and not 10 you might ask? Dunno. It works.
+        preg_match_all('/app\/download.php\?f=[[:alnum:]]{2}\/[[:alnum:]]{128}\.(?:png|jpeg|jpg|gif).{14}/u', $body, $matches);
+        foreach ($matches[0] as $src) {
+            // src will look like: app/download.php?f=c2/c2741a{...}016a3.png&storage=1
+            // so we parse it to get the file path and storage type
+            $query = parse_url($src, PHP_URL_QUERY);
+            if (!$query) {
+                continue;
+            }
+            $res = array();
+            parse_str($query, $res);
+            $storage = (int) $res['amp;storage'];
+            $storageFs = (new StorageFactory($storage))->getStorage()->getFs();
+            $encoded = base64_encode($storageFs->read($res['f']));
+            // get filetype based on extension so we can declare correctly the type of image
+            $body = str_replace($src, 'data:image/' . Tools::getMimeExt($res['f']) . ';base64,' . $encoded, $body);
+        }
+        return $body;
     }
 }

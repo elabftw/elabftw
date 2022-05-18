@@ -9,7 +9,6 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Models\Config;
 use Elabftw\Models\Items;
 use ZipStream\ZipStream;
 
@@ -61,9 +60,6 @@ abstract class AbstractMakeZip extends AbstractMake
     {
         $real_names_so_far = array();
         $i = 0;
-        $Config = Config::getConfig();
-        $storage = (int) $Config->configArr['uploads_storage'];
-        $storageFs = (new StorageFactory($storage))->getStorage()->getFs();
         foreach ($filesArr as $file) {
             $i++;
             $realName = $file['real_name'];
@@ -74,6 +70,7 @@ abstract class AbstractMakeZip extends AbstractMake
             $real_names_so_far[] = $realName;
 
             // add files to archive
+            $storageFs = (new StorageFactory((int) $file['storage']))->getStorage()->getFs();
             $this->Zip->addFileFromStream($this->folder . '/' . $realName, $storageFs->readStream($file['long_name']));
         }
     }

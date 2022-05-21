@@ -504,7 +504,14 @@
     <hr>
     <div class='mt-2' id='tagMgrDiv'>
       {% for tag in tagsArr %}
-        <p><a class='mr-1' data-action='destroy-tag' data-tagid='{{ tag.id }}' title='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></a><span class='tag editable hl-hover' data-tagid='{{ tag.id }}'>{{ tag.tag|raw }}</span></p>
+        <p>
+        <a title='{{ 'Show tagged experiments'|trans }}' href='experiments.php?mode=show&tags[]={{ tag.tag|url_encode }}'>
+          <i class='fas fa-external-link-square-alt'></i>
+        </a>
+        <a title='{{ 'Show tagged items'|trans }}' href='database.php?mode=show&tags[]={{ tag.tag|url_encode }}'>
+          <i class='fas fa-external-link-square-alt'></i>
+        </a>
+        <a class='mr-1' data-action='destroy-tag' data-tagid='{{ tag.id }}' title='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></a><span class='tag editable hl-hover' data-tagid='{{ tag.id }}'>{{ tag.tag|raw }}</span></p>
       {% endfor %}
     </div>
   </div>

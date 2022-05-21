@@ -20,7 +20,7 @@
             <!-- IMPORT -->
             <a href='#' class='dropdown-item' data-action='import-template' data-id='{{ templateData.id }}'><i class='fas fa-file-import fa-fw mr-1'></i>{{ 'Import to your profile'|trans }}</a>
             <!-- CREATE EXPERIMENT FROM TPL -->
-            <a href='experiments.php?create=true&tpl={{ templateData.id }}' class='dropdown-item'><i class='fas fa-pencil-alt fa-fw mr-1'></i>{{ 'Create experiment from template'|trans }}</a>
+            <a href='#' data-action='create-entity' data-tplid='{{ templateData.id }}' class='dropdown-item'><i class='fas fa-pencil-alt fa-fw mr-1'></i>{{ 'Create experiment from template'|trans }}</a>
             <!-- DESTROY TPL -->
             {% if App.Session.get('is_admin') %}
             <div class='dropdown-divider'></div>

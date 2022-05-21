@@ -287,13 +287,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // CREATE EXPERIMENT or DATABASE item: main create button in top right
     } else if (el.matches('[data-action="create-entity"]')) {
       const path = window.location.pathname;
-      if (path.split('/').pop() === 'experiments.php') {
+      const page = path.split('/').pop();
+      // team.php for "create experiment from this template
+      if (page === 'experiments.php' || page === 'team.php') {
         const tplid = el.dataset.tplid;
         const urlParams = new URLSearchParams(document.location.search);
         const tags = urlParams.getAll('tags[]');
         (new EntityClass(EntityType.Experiment)).create(tplid, tags).then(json => {
           if (json.res) {
-            window.location.replace(`?mode=edit&id=${json.value}`);
+            window.location.replace(`experiments.php?mode=edit&id=${json.value}`);
           } else {
             notif(json);
           }

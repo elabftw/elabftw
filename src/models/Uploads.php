@@ -242,6 +242,15 @@ class Uploads implements CrudInterface
         }
     }
 
+    public function getStorageFromLongname(string $longname): int
+    {
+        $sql = 'SELECT storage FROM uploads WHERE long_name = :long_name LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':long_name', $longname, PDO::PARAM_STR);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
     /**
      * This function will not remove the files but set them to "deleted" state
      * A manual purge must be made by sysadmin if they wish to really remove them.

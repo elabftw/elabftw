@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Services\StorageFactory;
 
@@ -60,5 +61,14 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
 
         $Uploads = new Uploads($this->Entity);
         $Uploads->create($params);
+    }
+
+    public function testGetStorageFromLongname(): void
+    {
+        $Uploads = new Uploads($this->Entity);
+        $id = $Uploads->create(new CreateUpload('example.png', dirname(__DIR__, 2) . '/_data/example.png'));
+        $Uploads->setId($id);
+        $upArr = $Uploads->read(new ContentParams());
+        $this->assertEquals($upArr['storage'], $Uploads->getStorageFromLongname($upArr['long_name']));
     }
 }

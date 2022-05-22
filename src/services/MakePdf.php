@@ -238,7 +238,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
         }
 
         // read the content of the thumbnail here to feed the template
-        $uploadsArr =  $this->Entity->Uploads->readAllNormal();
+        $uploadsArr = $this->Entity->Uploads->readAllNormal();
         foreach ($uploadsArr as $key => $upload) {
             $storageFs = (new StorageFactory((int) $upload['storage']))->getStorage()->getFs();
             $thumbnail = $upload['long_name'] . '_th.jpg';
@@ -310,11 +310,10 @@ class MakePdf extends AbstractMake implements FileMakerInterface
         // it would have been preferable to avoid such complexity and regexes, but this is the most robust way to get images in there.
         // it works for gif png jpg images from any storage source
         $matches = array();
-        // for some reason &storage=[0-9] didn't work so we match .{14}
-        // u is a modifier for multibyte/utf8 support. So why 14 and not 10 you might ask? Dunno. It works.
-        preg_match_all('/app\/download.php\?f=[[:alnum:]]{2}\/[[:alnum:]]{128}\.(?:png|jpeg|jpg|gif).{14}/u', $body, $matches);
+        // ampersand (&) in html attributes is encoded (&amp;) so we need to use &amp; in the regex
+        preg_match_all('/app\/download.php\?f=[[:alnum:]]{2}\/[[:alnum:]]{128}\.(?:png|jpeg|jpg|gif)(?:&amp;storage=[0-9])?/', $body, $matches);
         foreach ($matches[0] as $src) {
-            // src will look like: app/download.php?f=c2/c2741a{...}016a3.png&storage=1
+            // src will look like: app/download.php?f=c2/c2741a{...}016a3.png&amp;storage=1
             // so we parse it to get the file path and storage type
             $query = parse_url($src, PHP_URL_QUERY);
             if (!$query) {
@@ -322,7 +321,8 @@ class MakePdf extends AbstractMake implements FileMakerInterface
             }
             $res = array();
             parse_str($query, $res);
-            $storage = (int) $res['amp;storage'];
+            // there might be no storage value. In this case get it from the uploads table via the long name
+            $storage = (int) ($res['amp;storage'] ?? $this->Entity->Uploads->getStorageFromLongname($res['f']));
             $storageFs = (new StorageFactory($storage))->getStorage()->getFs();
             $encoded = base64_encode($storageFs->read($res['f']));
             // get filetype based on extension so we can declare correctly the type of image

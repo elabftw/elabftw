@@ -156,6 +156,8 @@ class TimestampUtils
             'openssl',
             'ts',
             '-verify',
+            // skip cert validity check
+            '-no_check_time',
             '-data',
             $this->dataPath,
             '-in',

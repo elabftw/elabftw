@@ -66,23 +66,29 @@ class LdapAuth implements AuthInterface
             // GET FIRSTNAME AND LASTNAME
             $firstname = $record[$this->configArr['ldap_firstname']][0] ?? 'Unknown';
             $lastname = $record[$this->configArr['ldap_lastname']][0] ?? 'Unknown';
+
             // GET TEAMS
-            $teamFromLdap = $record[$this->configArr['ldap_team']][0];
-            // if no team attribute is sent by the LDAP server, use the default team
-            if (empty($teamFromLdap)) {
+            $teamFromLdap = $record[$this->configArr['ldap_team']];
+            // the attribute is not found
+            if ($teamFromLdap === null) {
                 // we directly get the id from the stored config
                 $teamId = (int) $this->configArr['saml_team_default'];
                 if ($teamId === 0) {
                     throw new ImproperActionException('Could not find team ID to assign user!');
                 }
                 $teamFromLdap = array($teamId);
+            // it is found and it is a string
             } elseif (is_string($teamFromLdap)) {
                 $teamFromLdap = array($teamFromLdap);
+            // it is found and it is an array
+            } elseif (is_array($teamFromLdap)) {
+                if (is_array($teamFromLdap[0])) {
+                    // go one level deeper
+                    $teamFromLdap = $teamFromLdap[0];
+                }
             }
-            // normalize the team(s)
-            $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teamFromLdap)[0];
             // CREATE USER (and force validation of user)
-            $Users = ValidatedUser::fromExternal($this->email, $teams, $firstname, $lastname);
+            $Users = ValidatedUser::fromExternal($this->email, $teamFromLdap, $firstname, $lastname);
         }
 
         $this->AuthResponse->userid = (int) $Users->userData['userid'];

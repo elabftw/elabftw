@@ -43,6 +43,16 @@ class Install extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        require_once dirname(__DIR__, 2) . '/config.php';
+        $Db = Db::getConnection();
+
+        $req = $Db->q('SELECT COUNT(*) AS cnt FROM information_schema.tables WHERE table_schema = "' . DB_NAME . '"');
+        $res = $req->fetch();
+        if ((int) $res['cnt'] > 1 && !$input->getOption('reset')) {
+            $output->writeln('<info>→ Database structure already present. Skipping initialization.</info>');
+            return 0;
+        }
+
         $output->writeln(array(
             '',
             '      _          _     _____ _______        __',
@@ -61,12 +71,8 @@ class Install extends Command
             '',
         ));
 
-        $output->writeln('<info>→ Reading file config.php...</info>');
-        require_once dirname(__DIR__, 2) . '/config.php';
-
         if ($input->getOption('reset')) {
             $output->writeln('<info>→ Resetting MySQL database...</info>');
-            $Db = Db::getConnection();
             $Db->q('DROP DATABASE ' . DB_NAME);
             $Db->q('CREATE DATABASE ' . DB_NAME . ' CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci');
             $Db->q('USE ' . DB_NAME);

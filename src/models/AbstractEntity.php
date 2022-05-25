@@ -663,8 +663,8 @@ abstract class AbstractEntity implements CrudInterface
      */
     protected function updateJsonField(EntityParamsInterface $params): bool
     {
-        // build field (input is double quoted to allow for whitespace in key)
-        $field = '$.extra_fields."' . $params->getField() . '".value';
+        // build field
+        $field = '$.extra_fields.' . $params->getField() . '.value';
         $sql = 'UPDATE ' . $this->getTable() . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':field', $field);

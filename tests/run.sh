@@ -66,7 +66,8 @@ if ($scrutinizer); then
     docker exec -it elabtmp sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/usr/bin/phpstan:/proc/cpuinfo|' /etc/php8/php.ini
 fi
 # install the database
-docker exec -it elabtmp bin/install start -r
+echo "Initializing the database..."
+docker exec -it elabtmp bin/install start -r -q
 if ($scrutinizer); then
     docker exec -it elabtmp yarn static
 fi

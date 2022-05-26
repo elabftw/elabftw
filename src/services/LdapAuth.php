@@ -16,8 +16,6 @@ use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\ExistingUser;
-use Elabftw\Models\Teams;
-use Elabftw\Models\Users;
 use Elabftw\Models\ValidatedUser;
 use function is_array;
 use LdapRecord\Connection;
@@ -54,7 +52,6 @@ class LdapAuth implements AuthInterface
         if (!$this->connection->auth()->attempt($dn, $this->password)) {
             throw new InvalidCredentialsException(0);
         }
-        $Teams = new Teams(new Users());
         try {
             $Users = ExistingUser::fromEmail($this->email);
         } catch (ResourceNotFoundException) {

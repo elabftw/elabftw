@@ -37,7 +37,7 @@ class MakeStreamZipTest extends \PHPUnit\Framework\TestCase
 
     public function testGetZipExp(): void
     {
-        $this->MakeExp->getZip();
+        $this->MakeExp->getStreamZip();
     }
 
     public function testGetZipOneExp(): void
@@ -50,12 +50,12 @@ class MakeStreamZipTest extends \PHPUnit\Framework\TestCase
         $Experiments->Uploads->create(new CreateUpload($filename, $filepath));
         $Zip = $this->createMock(ZipStream::class);
         $MakeExp = new MakeStreamZip($Zip, $Experiments, array('1'));
-        $MakeExp->getZip();
+        $MakeExp->getStreamZip();
         $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}\s-\s.*.zip$/', $MakeExp->getFileName());
     }
 
     public function testGetZipDb(): void
     {
-        $this->MakeDb->getZip();
+        $this->MakeDb->getStreamZip();
     }
 }

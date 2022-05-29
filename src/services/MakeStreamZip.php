@@ -12,8 +12,8 @@ namespace Elabftw\Services;
 use function count;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
+use Elabftw\Interfaces\StringMakerInterface;
+use Elabftw\Models\AbstractEntity;
 use function json_encode;
 use League\Flysystem\UnableToReadFile;
 use ZipStream\ZipStream;
@@ -28,7 +28,7 @@ class MakeStreamZip extends AbstractMakeZip
 
     protected string $extension = '.zip';
 
-    public function __construct(protected ZipStream $Zip, Experiments | Items $entity, protected array $idArr)
+    public function __construct(protected ZipStream $Zip, AbstractEntity $entity, protected array $idArr)
     {
         parent::__construct($entity);
     }
@@ -50,7 +50,7 @@ class MakeStreamZip extends AbstractMakeZip
      * Loop on each id and add it to our zip archive
      * This could be called the main function.
      */
-    public function getZip(): void
+    public function getStreamZip(): void
     {
         foreach ($this->idArr as $id) {
             $this->addToZip((int) $id);
@@ -62,14 +62,19 @@ class MakeStreamZip extends AbstractMakeZip
         $this->Zip->finish();
     }
 
+    protected function getCsv(int $id): StringMakerInterface
+    {
+        return new MakeCsv($this->Entity, array($id));
+    }
+
     /**
      * Add a CSV file to the ZIP archive
      *
      * @param int $id The id of the item we are zipping
      */
-    private function addCsv(int $id): void
+    protected function addCsv(int $id): void
     {
-        $MakeCsv = new MakeCsv($this->Entity, array($id));
+        $MakeCsv = $this->getCsv($id);
         $this->Zip->addFile($this->folder . '/' . $this->folder . '.csv', $MakeCsv->getFileContent());
     }
 

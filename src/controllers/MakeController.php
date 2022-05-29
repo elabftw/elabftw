@@ -14,8 +14,9 @@ use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
-use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
+use Elabftw\Interfaces\StringMakerInterface;
+use Elabftw\Interfaces\ZipMakerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -123,27 +124,17 @@ class MakeController implements ControllerInterface
         return $this->getFileResponse(new MakeCsv($this->Entity, $this->idArr));
     }
 
+    private function getZipStreamLib(): ZipStream
+    {
+        $opt = new ArchiveOptions();
+        // crucial option for a stream output
+        $opt->setZeroHeader(true);
+        return new ZipStream(null, $opt);
+    }
+
     private function makeEln(): Response
     {
-        // FIXME copied from makezip currently
-        if (!($this->Entity instanceof Experiments || $this->Entity instanceof Items)) {
-            throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', $this->Entity::class));
-        }
-        $opt = new ArchiveOptions();
-        // crucial option for a stream input
-        $opt->setZeroHeader(true);
-        $Zip = new ZipStream(null, $opt);
-        $Make = new MakeEln($Zip, $this->Entity, $this->idArr);
-        $Response = new StreamedResponse();
-        $Response->headers->set('X-Accel-Buffering', 'no');
-        $Response->headers->set('Content-Type', 'application/zip');
-        $Response->headers->set('Cache-Control', 'no-store');
-        $contentDisposition = $Response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $Make->getFileName(), 'elabftw-export.zip');
-        $Response->headers->set('Content-Disposition', $contentDisposition);
-        $Response->setCallback(function () use ($Make) {
-            $Make->getZip();
-        });
-        return $Response;
+        return $this->makeStreamZip(new MakeEln($this->getZipStreamLib(), $this->Entity, $this->idArr));
     }
 
     private function makeJson(): Response
@@ -184,22 +175,22 @@ class MakeController implements ControllerInterface
 
     private function makeZip(): Response
     {
+        return $this->makeStreamZip(new MakeStreamZip($this->getZipStreamLib(), $this->Entity, $this->idArr));
+    }
+
+    private function makeStreamZip(ZipMakerInterface $Maker): Response
+    {
         if (!($this->Entity instanceof Experiments || $this->Entity instanceof Items)) {
             throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', $this->Entity::class));
         }
-        $opt = new ArchiveOptions();
-        // crucial option for a stream input
-        $opt->setZeroHeader(true);
-        $Zip = new ZipStream(null, $opt);
-        $Make = new MakeStreamZip($Zip, $this->Entity, $this->idArr);
         $Response = new StreamedResponse();
         $Response->headers->set('X-Accel-Buffering', 'no');
-        $Response->headers->set('Content-Type', 'application/zip');
+        $Response->headers->set('Content-Type', $Maker->getContentType());
         $Response->headers->set('Cache-Control', 'no-store');
-        $contentDisposition = $Response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $Make->getFileName(), 'elabftw-export.zip');
+        $contentDisposition = $Response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $Maker->getFileName(), 'elabftw-export.zip');
         $Response->headers->set('Content-Disposition', $contentDisposition);
-        $Response->setCallback(function () use ($Make) {
-            $Make->getZip();
+        $Response->setCallback(function () use ($Maker) {
+            $Maker->getStreamZip();
         });
         return $Response;
     }
@@ -214,7 +205,7 @@ class MakeController implements ControllerInterface
         );
     }
 
-    private function getFileResponse(FileMakerInterface $Maker): Response
+    private function getFileResponse(StringMakerInterface $Maker): Response
     {
         return new Response(
             $Maker->getFileContent(),

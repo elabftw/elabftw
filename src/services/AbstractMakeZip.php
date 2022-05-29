@@ -9,21 +9,21 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Interfaces\PdfMakerInterface;
+use Elabftw\Interfaces\ZipMakerInterface;
 use Elabftw\Models\Items;
 use ZipStream\ZipStream;
 
 /**
  * Mother class of the Make*Zip services
  */
-abstract class AbstractMakeZip extends AbstractMake
+abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
 {
     protected ZipStream $Zip;
 
     protected string $folder = '';
 
     protected array $foldersUsedSoFar = array();
-
-    abstract public function getZip(): void;
 
     /**
      * Folder and zip file name begins with date for experiments
@@ -75,10 +75,7 @@ abstract class AbstractMakeZip extends AbstractMake
         }
     }
 
-    /**
-     * Add a PDF file to the ZIP archive
-     */
-    protected function addPdf(): void
+    protected function getPdf(): PdfMakerInterface
     {
         $userData = $this->Entity->Users->userData;
         $MpdfProvider = new MpdfProvider(
@@ -86,9 +83,17 @@ abstract class AbstractMakeZip extends AbstractMake
             $userData['pdf_format'],
             (bool) $userData['pdfa'],
         );
-        $MakePdf = new MakePdf($MpdfProvider, $this->Entity);
+        return new MakePdf($MpdfProvider, $this->Entity);
+    }
+
+    /**
+     * Add a PDF file to the ZIP archive
+     */
+    protected function addPdf(): void
+    {
+        $MakePdf = $this->getPdf();
         // disable makepdf notifications because they are handled by calling class
-        $MakePdf->createNotifications = false;
+        $MakePdf->setNotifications(false);
         $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $MakePdf->getFileContent());
     }
 }

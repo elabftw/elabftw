@@ -12,7 +12,7 @@ namespace Elabftw\Services;
 use function date;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Interfaces\FileMakerInterface;
+use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Traits\CsvTrait;
@@ -22,7 +22,7 @@ use PDO;
 /**
  * Create a report of usage for all users
  */
-class MakeReport implements FileMakerInterface
+class MakeReport extends AbstractMake implements StringMakerInterface
 {
     use CsvTrait;
     use UploadTrait;

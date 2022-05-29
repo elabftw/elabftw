@@ -11,14 +11,14 @@ namespace Elabftw\Services;
 
 use function date;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\FileMakerInterface;
+use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Traits\CsvTrait;
 
 /**
  * Make a CSV file from a list of id and a type
  */
-class MakeCsv extends AbstractMake implements FileMakerInterface
+class MakeCsv extends AbstractMake implements StringMakerInterface
 {
     use CsvTrait;
 

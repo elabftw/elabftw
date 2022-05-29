@@ -22,6 +22,7 @@ use Elabftw\Models\Items;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
 use Elabftw\Services\MakeCsv;
+use Elabftw\Services\MakeEln;
 use Elabftw\Services\MakeJson;
 use Elabftw\Services\MakeMultiPdf;
 use Elabftw\Services\MakePdf;
@@ -79,6 +80,9 @@ class MakeController implements ControllerInterface
             case 'csv':
                 return $this->makeCsv();
 
+            case 'eln':
+                return $this->makeEln();
+
             case 'json':
                 return $this->makeJson();
 
@@ -117,6 +121,29 @@ class MakeController implements ControllerInterface
     private function makeCsv(): Response
     {
         return $this->getFileResponse(new MakeCsv($this->Entity, $this->idArr));
+    }
+
+    private function makeEln(): Response
+    {
+        // FIXME copied from makezip currently
+        if (!($this->Entity instanceof Experiments || $this->Entity instanceof Items)) {
+            throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', $this->Entity::class));
+        }
+        $opt = new ArchiveOptions();
+        // crucial option for a stream input
+        $opt->setZeroHeader(true);
+        $Zip = new ZipStream(null, $opt);
+        $Make = new MakeEln($Zip, $this->Entity, $this->idArr);
+        $Response = new StreamedResponse();
+        $Response->headers->set('X-Accel-Buffering', 'no');
+        $Response->headers->set('Content-Type', 'application/zip');
+        $Response->headers->set('Cache-Control', 'no-store');
+        $contentDisposition = $Response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $Make->getFileName(), 'elabftw-export.zip');
+        $Response->headers->set('Content-Disposition', $contentDisposition);
+        $Response->setCallback(function () use ($Make) {
+            $Make->getZip();
+        });
+        return $Response;
     }
 
     private function makeJson(): Response

@@ -24,9 +24,11 @@ use ZipStream\ZipStream;
 class MakeStreamZip extends AbstractMakeZip
 {
     // array that will be converted to json
-    private array $jsonArr = array();
+    protected array $jsonArr = array();
 
-    public function __construct(protected ZipStream $Zip, Experiments | Items $entity, private array $idArr)
+    protected string $extension = '.zip';
+
+    public function __construct(protected ZipStream $Zip, Experiments | Items $entity, protected array $idArr)
     {
         parent::__construct($entity);
     }
@@ -39,9 +41,9 @@ class MakeStreamZip extends AbstractMakeZip
         if (count($this->idArr) === 1) {
             $this->Entity->setId((int) $this->idArr[0]);
             $this->Entity->canOrExplode('read');
-            return $this->getBaseFileName() . '.zip';
+            return $this->getBaseFileName() . $this->extension;
         }
-        return 'export.elabftw.zip';
+        return 'export.elabftw' . $this->extension;
     }
 
     /**

@@ -12,6 +12,7 @@ namespace Elabftw\Services;
 use DateTimeImmutable;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
+use League\Flysystem\UnableToReadFile;
 use const SITE_URL;
 use ZipStream\ZipStream;
 
@@ -126,6 +127,27 @@ class MakeEln extends MakeStreamZip
                     'contentSize' => (string) $MakePdf->getContentSize(),
                     'sha256' => hash('sha256', $pdf),
                 );
+
+                // UPLOADS
+                $uploadedFilesArr = $this->Entity->Uploads->readAllNormal();
+                if (!empty($uploadedFilesArr)) {
+                    try {
+                        $this->addAttachedFiles($uploadedFilesArr);
+                    } catch (UnableToReadFile $e) {
+                        continue;
+                    }
+                    // FIXME addattachedfiles should be reworked
+                    foreach ($uploadedFilesArr as $file) {
+                        $dataEntities[] = array(
+                            '@id' => './' . $currentDatasetFolder . '/' . $file['real_name'],
+                            '@type' => 'File',
+                            'description' => $file['comment'],
+                            'name' => $file['real_name'],
+                            'contentSize' => $file['filesize'],
+                            'sha256' => $file['hash'],
+                        );
+                    }
+                }
             }
         }
         $this->jsonArr['@graph'] = array_merge($this->jsonArr['@graph'], $dataEntities);

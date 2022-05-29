@@ -26,8 +26,6 @@ class MakeStreamZip extends AbstractMakeZip
     // array that will be converted to json
     protected array $jsonArr = array();
 
-    protected string $extension = '.zip';
-
     public function __construct(protected ZipStream $Zip, AbstractEntity $entity, protected array $idArr)
     {
         parent::__construct($entity);

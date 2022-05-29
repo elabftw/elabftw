@@ -25,6 +25,10 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
 
     protected array $foldersUsedSoFar = array();
 
+    protected string $contentType = 'application/zip';
+
+    protected string $extension = '.zip';
+
     /**
      * Folder and zip file name begins with date for experiments
      */

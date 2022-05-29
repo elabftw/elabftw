@@ -12,22 +12,27 @@ namespace Elabftw\Services;
 use function basename;
 use DateTimeImmutable;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Models\AbstractEntity;
 use const SITE_URL;
+use ZipStream\ZipStream;
 
 /**
  * Make an ELN archive
  */
 class MakeEln extends MakeStreamZip
 {
-    protected string $extension = '.eln';
+    protected string $extension = '.eln.zip';
 
-    /**
-     * Loop on each id and add it to our eln archive
-     */
-    public function getStreamZip(): void
+    private DateTimeImmutable $now;
+
+    // name of the folder containing everything
+    private string $root;
+
+    public function __construct(protected ZipStream $Zip, AbstractEntity $entity, protected array $idArr)
     {
-        $now = new DateTimeImmutable();
-        $root = $now->format('Y-m-d') . '-ro-crate/';
+        parent::__construct($Zip, $entity, $idArr);
+        $this->now = new DateTimeImmutable();
+        $this->root = $this->now->format('Y-m-d') . '-ro-crate';
         $this->jsonArr = array(
             '@context' => 'https://w3id.org/ro/crate/1.1/context',
             '@graph' => array(
@@ -36,7 +41,7 @@ class MakeEln extends MakeStreamZip
                     '@type' => 'CreativeWork',
                     'about' => array('@id' => './'),
                     'conformsTo' => array('@id' => 'https://w3id.org/ro/crate/1.1'),
-                    'dateCreated' => $now->format(DateTimeImmutable::ISO8601),
+                    'dateCreated' => $this->now->format(DateTimeImmutable::ISO8601),
                     'sdPublisher' => array(
                         '@type' => 'Organization',
                         'name' => 'eLabFTW',
@@ -55,7 +60,18 @@ class MakeEln extends MakeStreamZip
                 ),
             ),
         );
+    }
 
+    public function getFileName(): string
+    {
+        return $this->root . $this->extension;
+    }
+
+    /**
+     * Loop on each id and add it to our eln archive
+     */
+    public function getStreamZip(): void
+    {
         $dataEntities = array();
         foreach ($this->idArr as $id) {
             $this->Entity->setId((int) $id);
@@ -66,7 +82,7 @@ class MakeEln extends MakeStreamZip
             }
             $e = $this->Entity->entityData;
             if ($permissions['read']) {
-                $this->folder = $root . $this->getBaseFileName();
+                $this->folder = $this->root . '/' . $this->getBaseFileName();
                 $dataEntities[] =  array(
                     '@id' => './' . basename($this->folder),
                     '@type' => 'Dataset',
@@ -82,38 +98,40 @@ class MakeEln extends MakeStreamZip
                     'text' => $e['body'],
                     'url' => SITE_URL . '/' . $this->Entity->page . '.php?mode=view&id=' . $e['id'],
                 );
+
+                // CSV
+                $MakeCsv = $this->getCsv((int) $id);
+                $csv = $MakeCsv->getFileContent();
+                $this->Zip->addFile($this->folder . '/' . $MakeCsv->getFileName(), $csv);
+                $dataEntities[] = array(
+                    '@id' => './' . $MakeCsv->getFileName(),
+                    '@type' => 'File',
+                    'description' => 'CSV Export',
+                    'name' => $MakeCsv->getFileName(),
+                    'contentType' => $MakeCsv->getContentType(),
+                    'contentSize' => (string) $MakeCsv->getContentSize(),
+                    'sha256' => hash('sha256', $csv),
+                );
+
+                // PDF
+                $MakePdf = $this->getPdf();
+                $pdf = $MakePdf->getFileContent();
+                $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $pdf);
+                $dataEntities[] = array(
+                    '@id' => './' . basename($this->folder) . '.pdf',
+                    '@type' => 'File',
+                    'description' => 'PDF Export',
+                    'name' => $MakePdf->getFileName(),
+                    'contentType' => $MakePdf->getContentType(),
+                    'contentSize' => (string) $MakePdf->getContentSize(),
+                    'sha256' => hash('sha256', $pdf),
+                );
             }
-
-            // CSV
-            $MakeCsv = $this->getCsv((int) $id);
-            $csv = $MakeCsv->getFileContent();
-            $this->Zip->addFile($this->folder . '/' . $MakeCsv->getFileName(), $csv);
-            $dataEntities[] = array(
-                '@id' => './' . $MakeCsv->getFileName(),
-                '@type' => 'File',
-                'name' => $MakeCsv->getFileName(),
-                'contentType' => $MakeCsv->getContentType(),
-                'contentSize' => (string) $MakeCsv->getContentSize(),
-                'sha256' => hash('sha256', $csv),
-            );
-
-            // PDF
-            $MakePdf = $this->getPdf();
-            $pdf = $MakePdf->getFileContent();
-            $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $pdf);
-            $dataEntities[] = array(
-                '@id' => './' . basename($this->folder) . '.pdf',
-                '@type' => 'File',
-                'name' => $MakePdf->getFileName(),
-                'contentType' => $MakePdf->getContentType(),
-                'contentSize' => (string) $MakePdf->getContentSize(),
-                'sha256' => hash('sha256', $pdf),
-            );
         }
         $this->jsonArr['@graph'] = array_merge($this->jsonArr['@graph'], $dataEntities);
 
         // add the metadata json file containing references to all the content of our crate
-        $this->Zip->addFile($root . 'ro-crate-metadata.json', json_encode($this->jsonArr, JSON_THROW_ON_ERROR, 512));
+        $this->Zip->addFile($this->root . '/ro-crate-metadata.json', json_encode($this->jsonArr, JSON_THROW_ON_ERROR, 512));
         $this->Zip->finish();
     }
 }

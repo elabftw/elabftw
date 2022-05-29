@@ -9,7 +9,6 @@
 
 namespace Elabftw\Services;
 
-use function basename;
 use DateTimeImmutable;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
@@ -82,9 +81,10 @@ class MakeEln extends MakeStreamZip
             }
             $e = $this->Entity->entityData;
             if ($permissions['read']) {
-                $this->folder = $this->root . '/' . $this->getBaseFileName();
+                $currentDatasetFolder = $this->getBaseFileName();
+                $this->folder = $this->root . '/' . $currentDatasetFolder;
                 $dataEntities[] =  array(
-                    '@id' => './' . basename($this->folder),
+                    '@id' => './' . $currentDatasetFolder,
                     '@type' => 'Dataset',
                     'author' => array(
                         '@type' => 'Person',
@@ -104,7 +104,7 @@ class MakeEln extends MakeStreamZip
                 $csv = $MakeCsv->getFileContent();
                 $this->Zip->addFile($this->folder . '/' . $MakeCsv->getFileName(), $csv);
                 $dataEntities[] = array(
-                    '@id' => './' . $MakeCsv->getFileName(),
+                    '@id' => './' . $currentDatasetFolder . '/' . $MakeCsv->getFileName(),
                     '@type' => 'File',
                     'description' => 'CSV Export',
                     'name' => $MakeCsv->getFileName(),
@@ -118,7 +118,7 @@ class MakeEln extends MakeStreamZip
                 $pdf = $MakePdf->getFileContent();
                 $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $pdf);
                 $dataEntities[] = array(
-                    '@id' => './' . basename($this->folder) . '.pdf',
+                    '@id' => './' . $currentDatasetFolder . '/' . $MakePdf->getFileName(),
                     '@type' => 'File',
                     'description' => 'PDF Export',
                     'name' => $MakePdf->getFileName(),

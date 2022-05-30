@@ -150,6 +150,12 @@ class MakeEln extends MakeStreamZip
                 }
             }
         }
+        // add the description of root with hasPart property
+        $dataEntities[] = array(
+            '@id' => './',
+            '@type' => array('Dataset'),
+            'hasPart' => array_column($dataEntities, '@id'),
+        );
         $this->jsonArr['@graph'] = array_merge($this->jsonArr['@graph'], $dataEntities);
 
         // add the metadata json file containing references to all the content of our crate

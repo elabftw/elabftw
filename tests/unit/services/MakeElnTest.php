@@ -31,7 +31,7 @@ class MakeElnTest extends \PHPUnit\Framework\TestCase
 
     public function testGetFileName(): void
     {
-        $this->assertStringEndsWith('-export.eln.zip', $this->MakeExp->getFileName());
+        $this->assertStringEndsWith('-export.eln', $this->MakeExp->getFileName());
     }
 
     public function testGetElnExp(): void

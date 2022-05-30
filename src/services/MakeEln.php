@@ -128,6 +128,20 @@ class MakeEln extends MakeStreamZip
                     'sha256' => hash('sha256', $pdf),
                 );
 
+                // JSON
+                $MakeJson = new MakeJson($this->Entity, array((int) $e['id']));
+                $json = $MakeJson->getFileContent();
+                $this->Zip->addFile($this->folder . '/' . $MakeJson->getFileName(), $json);
+                $dataEntities[] = array(
+                    '@id' => './' . $currentDatasetFolder . '/' . $MakeJson->getFileName(),
+                    '@type' => 'File',
+                    'description' => 'JSON export',
+                    'name' => $MakeJson->getFileName(),
+                    'contentType' => $MakeJson->getContentType(),
+                    'contentSize' => (string) $MakeJson->getContentSize(),
+                    'sha256' => hash('sha256', $json),
+                );
+
                 // UPLOADS
                 $uploadedFilesArr = $this->Entity->Uploads->readAllNormal();
                 if (!empty($uploadedFilesArr)) {

@@ -432,8 +432,8 @@ class Users
     public function destroy(): bool
     {
         $UsersHelper = new UsersHelper((int) $this->userData['userid']);
-        if ($UsersHelper->hasExperiments()) {
-            throw new ImproperActionException('Cannot delete a user that owns experiments!');
+        if ($UsersHelper->hasStuff()) {
+            throw new ImproperActionException('Cannot delete a user that owns experiments or items!');
         }
         $sql = 'DELETE FROM users WHERE userid = :userid';
         $req = $this->Db->prepare($sql);

@@ -139,11 +139,9 @@
                   </li>
 
                   <!-- DESTROY USER -->
-                  {% if not UsersHelper.hasExperiments(user.userid) %}
-                    <li class='list-inline-item'>
-                      <button class='button btn btn-danger' data-action='destroy-user' data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
-                   </li>
-                 {% endif %}
+                  <li class='list-inline-item'>
+                    <button class='button btn btn-danger' data-action='destroy-user' data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
+                 </li>
                 <hr>
               </ul>
             </li>

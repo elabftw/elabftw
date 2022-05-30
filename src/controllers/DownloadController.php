@@ -40,7 +40,7 @@ class DownloadController implements ControllerInterface
         $this->longName = Filter::forFilesystem(basename($longName));
         // get the first two letters to get the folder
         $this->filePath = substr($this->longName, 0, 2) . '/' . $this->longName;
-        $this->realName = Filter::forFilesystem($realName ?? '');
+        $this->realName = Filter::toAscii($realName ?? '');
         if (empty($this->realName)) {
             $this->realName = 'unnamed_file';
         }

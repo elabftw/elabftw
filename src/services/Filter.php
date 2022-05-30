@@ -17,6 +17,7 @@ use function filter_var;
 use HTMLPurifier;
 use HTMLPurifier_HTML5Config;
 use function htmlspecialchars_decode;
+use function mb_convert_encoding;
 use function mb_strlen;
 use function strlen;
 use function trim;
@@ -107,6 +108,12 @@ class Filter
         $input = str_replace(array('%20', '+'), '-', $input);
         $input = preg_replace('/[\r\n\t -]+/', '-', $input);
         return trim($input ?? 'file', '.-_');
+    }
+
+    public static function toAscii(string $input): string
+    {
+        // mb_convert_encoding will replace invalid characters with ?, but we want _ instead
+        return str_replace('?', '_', mb_convert_encoding(self::forFilesystem($input), 'ASCII', 'UTF-8'));
     }
 
     /**

@@ -21,7 +21,7 @@ use ZipStream\ZipStream;
  */
 class MakeEln extends MakeStreamZip
 {
-    protected string $extension = '.eln.zip';
+    protected string $extension = '.eln';
 
     private DateTimeImmutable $now;
 

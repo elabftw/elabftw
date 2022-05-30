@@ -60,23 +60,26 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
      *
      * @param array<array-key, array<string, string>> $filesArr the files array
      */
-    protected function addAttachedFiles($filesArr): void
+    protected function addAttachedFiles($filesArr): array
     {
-        $real_names_so_far = array();
+        $realNamesSoFar = array();
         $i = 0;
-        foreach ($filesArr as $file) {
+        foreach ($filesArr as &$file) {
             $i++;
             $realName = $file['real_name'];
             // if we have a file with the same name, it shouldn't overwrite the previous one
-            if (in_array($realName, $real_names_so_far, true)) {
+            if (in_array($realName, $realNamesSoFar, true)) {
                 $realName = (string) $i . '_' . $realName;
             }
-            $real_names_so_far[] = $realName;
+            $realNamesSoFar[] = $realName;
+            // modify the real_name in place
+            $file['real_name'] = $realName;
 
             // add files to archive
             $storageFs = (new StorageFactory((int) $file['storage']))->getStorage()->getFs();
             $this->Zip->addFileFromStream($this->folder . '/' . $realName, $storageFs->readStream($file['long_name']));
         }
+        return $filesArr;
     }
 
     protected function getPdf(): PdfMakerInterface

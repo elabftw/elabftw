@@ -32,7 +32,7 @@ class MakeEln extends MakeStreamZip
     {
         parent::__construct($Zip, $entity, $idArr);
         $this->now = new DateTimeImmutable();
-        $this->root = $this->now->format('Y-m-d') . '-ro-crate';
+        $this->root = $this->now->format('Y-m-d') . '-export';
         $this->jsonArr = array(
             '@context' => 'https://w3id.org/ro/crate/1.1/context',
             '@graph' => array(
@@ -132,11 +132,11 @@ class MakeEln extends MakeStreamZip
                 $uploadedFilesArr = $this->Entity->Uploads->readAllNormal();
                 if (!empty($uploadedFilesArr)) {
                     try {
-                        $this->addAttachedFiles($uploadedFilesArr);
+                        // this gets modified by the function so we have the correct real_names
+                        $uploadedFilesArr = $this->addAttachedFiles($uploadedFilesArr);
                     } catch (UnableToReadFile $e) {
                         continue;
                     }
-                    // FIXME addattachedfiles should be reworked
                     foreach ($uploadedFilesArr as $file) {
                         $dataEntities[] = array(
                             '@id' => './' . $currentDatasetFolder . '/' . $file['real_name'],

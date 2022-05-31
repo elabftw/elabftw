@@ -272,7 +272,7 @@ class Tools
 
     public static function getIdFilterSql(array $idArr): string
     {
-        if ($idArr) {
+        if (!empty($idArr)) {
             return ' AND entity.id IN (' . implode(',', $idArr) . ')';
         }
         return ' AND entity.id IN (0)';

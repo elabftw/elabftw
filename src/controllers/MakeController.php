@@ -12,16 +12,15 @@ namespace Elabftw\Controllers;
 use function count;
 use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Interfaces\ZipMakerInterface;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
+use Elabftw\Services\EntityFactory;
 use Elabftw\Services\MakeCsv;
 use Elabftw\Services\MakeEln;
 use Elabftw\Services\MakeJson;
@@ -51,10 +50,7 @@ class MakeController implements ControllerInterface
 
     public function __construct(private App $App)
     {
-        $this->Entity = new Items($this->App->Users);
-        if ($this->App->Request->query->get('type') === 'experiments') {
-            $this->Entity = new Experiments($this->App->Users);
-        }
+        $this->Entity = (new EntityFactory($this->App->Users, (string) $this->App->Request->query->get('type')))->getEntity();
         // generate the id array
         if ($this->App->Request->query->has('category')) {
             $this->idArr = $this->Entity->getIdFromCategory((int) $this->App->Request->query->get('category'));
@@ -180,9 +176,6 @@ class MakeController implements ControllerInterface
 
     private function makeStreamZip(ZipMakerInterface $Maker): Response
     {
-        if (!($this->Entity instanceof Experiments || $this->Entity instanceof Items)) {
-            throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', $this->Entity::class));
-        }
         $Response = new StreamedResponse();
         $Response->headers->set('X-Accel-Buffering', 'no');
         $Response->headers->set('Content-Type', $Maker->getContentType());

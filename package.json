@@ -29,7 +29,6 @@
     "css-minimizer-webpack-plugin": "^3.0.0",
     "dropzone": "^5.8.0",
     "expose-loader": "^3.0.0",
-    "file-saver": "2.0.*",
     "i18next": "^21.0.2",
     "jquery": "^3.5.1",
     "jquery-ui": "^1.13.0",

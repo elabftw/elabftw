@@ -16,10 +16,7 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\FavTags;
-use Elabftw\Models\Items;
-use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
 use Elabftw\Models\Notifications;
 use Elabftw\Models\PrivacyPolicy;
@@ -28,13 +25,13 @@ use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Models\Users2Teams;
 use Elabftw\Services\Check;
+use Elabftw\Services\EntityFactory;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -94,14 +91,7 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     protected function getEntity(string $type, ?int $itemId = null): AbstractEntity
     {
-        if ($type === 'experiment') {
-            return new Experiments($this->Users, $itemId);
-        } elseif ($type === 'template') {
-            return new Templates($this->Users, $itemId);
-        } elseif ($type === 'itemtype') {
-            return new ItemsTypes($this->Users, $itemId);
-        }
-        return new Items($this->Users, $itemId);
+        return (new EntityFactory($this->Users, $type, $itemId))->getEntity();
     }
 
     protected function buildModel(string $model): CrudInterface | Users | Config | Users2Teams

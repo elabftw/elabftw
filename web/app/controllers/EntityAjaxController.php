@@ -19,7 +19,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
-use Elabftw\Models\Templates;
+use Elabftw\Services\EntityFactory;
 use Elabftw\Services\ListBuilder;
 use Elabftw\Services\MakeBloxberg;
 use Elabftw\Services\MakeCustomTimestamp;
@@ -59,16 +59,12 @@ try {
         $id = (int) $Request->query->get('id');
     }
 
-    if ($Request->request->get('type') === 'experiments' ||
-        $Request->query->get('type') === 'experiments' ||
-        $Request->request->get('type') === 'experiment' ||
-        $Request->query->get('type') === 'experiment') {
-        $Entity = new Experiments($App->Users, $id);
-    } elseif ($Request->request->get('type') === 'experiments_templates') {
-        $Entity = new Templates($App->Users, $id);
-    } else {
-        $Entity = new Items($App->Users, $id);
+    // can come from get or post
+    $type = $Request->query->get('type');
+    if ($Request->getMethod() === 'POST') {
+        $type = $Request->request->get('type');
     }
+    $Entity = (new EntityFactory($App->Users, (string) $type))->getEntity();
 
     /**
      * GET REQUESTS

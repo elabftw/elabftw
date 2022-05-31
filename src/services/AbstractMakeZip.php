@@ -12,6 +12,8 @@ namespace Elabftw\Services;
 use Elabftw\Interfaces\PdfMakerInterface;
 use Elabftw\Interfaces\ZipMakerInterface;
 use Elabftw\Models\Items;
+use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Templates;
 use ZipStream\ZipStream;
 
 /**
@@ -34,18 +36,20 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
      */
     protected function getBaseFileName(): string
     {
-        $prefix = 'date';
         // items will show category instead of date as file name prefix
-        if ($this->Entity instanceof Items) {
-            $prefix = 'category';
+        if ($this->Entity instanceof Items || $this->Entity instanceof ItemsTypes) {
+            $prefix = $this->Entity->entityData['category'];
+        } elseif ($this->Entity instanceof Templates) {
+            $prefix = 'Experiment template';
+        } else { // Experiments
+            $prefix = $this->Entity->entityData['date'];
         }
 
-        $folderName = sprintf(
+        $folderName = Filter::forFilesystem(sprintf(
             '%s - %s',
-            // category is user input, better filter it
-            Filter::forFilesystem($this->Entity->entityData[$prefix]),
-            Filter::forFilesystem($this->Entity->entityData['title'])
-        );
+            $prefix,
+            $this->Entity->entityData['title']
+        ));
         if (in_array($folderName, $this->foldersUsedSoFar, true)) {
             // add part of elabid
             $folderName .= ' - ' . substr(explode('-', $this->Entity->entityData['elabid'])[1], 0, 8);

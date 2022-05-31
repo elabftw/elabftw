@@ -59,7 +59,7 @@ class MakeCsv extends AbstractMakeCsv
                     htmlspecialchars_decode((string) $this->Entity->entityData['title'], ENT_QUOTES | ENT_COMPAT),
                     html_entity_decode(strip_tags(htmlspecialchars_decode((string) $this->Entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
                     htmlspecialchars_decode((string) $this->Entity->entityData['category'], ENT_QUOTES | ENT_COMPAT),
-                    $this->Entity->entityData['elabid'],
+                    $this->Entity->entityData['elabid'] ?? '',
                     $row[] = $this->Entity->entityData['rating'],
                     $this->getUrl(),
                     $this->Entity->entityData['metadata'] ?? '',

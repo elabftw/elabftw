@@ -8,8 +8,6 @@
 import { Payload, Method, EntityType, Action, Target, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
 import tinymce from 'tinymce/tinymce';
-import { saveAs } from 'file-saver/dist/FileSaver.js';
-
 
 export default class Entity {
   model: EntityType;
@@ -53,15 +51,6 @@ export default class Entity {
       notif: true,
     };
     return this.sender.send(payload);
-  }
-
-  saveToFile(id, name): void {
-    // we have the name of the template used for filename
-    // and we have the id of the editor to get the content from
-    // we don't use activeEditor because it requires a click inside the editing area
-    const content = tinymce.get('e' + id).getContent();
-    const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
-    saveAs(blob, name + '.elabftw.tpl');
   }
 
   lock(id: number): Promise<ResponseMsg> {

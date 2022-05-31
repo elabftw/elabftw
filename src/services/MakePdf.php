@@ -10,7 +10,7 @@
 namespace Elabftw\Services;
 
 use function date;
-use DateTime;
+use DateTimeImmutable;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\FsTools;
@@ -19,6 +19,7 @@ use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\Notifications;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
@@ -98,7 +99,8 @@ class MakePdf extends AbstractMakePdf
     public function getFileName(): string
     {
         $title = Filter::forFilesystem($this->Entity->entityData['title']);
-        return $this->Entity->entityData['date'] . ' - ' . $title . '.pdf';
+        $now = new DateTimeImmutable();
+        return $this->Entity->entityData['date'] ?? $now->format('Y-m-d') . ' - ' . $title . '.pdf';
     }
 
     /**
@@ -214,7 +216,7 @@ class MakePdf extends AbstractMakePdf
                 str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />';
         }
 
-        $date = new DateTime($this->Entity->entityData['date'] ?? date('Ymd'));
+        $date = new DateTimeImmutable($this->Entity->entityData['date'] ?? date('Ymd'));
 
         $locked = $this->Entity->entityData['locked'];
         $lockDate = '';
@@ -241,9 +243,14 @@ class MakePdf extends AbstractMakePdf
             }
         }
 
+        $commentsArr = array();
+        if ($this->Entity instanceof Experiments || $this->Entity instanceof Items) {
+            $commentsArr = $this->Entity->Comments->read(new ContentParams());
+        }
+
         $renderArr = array(
             'body' => $this->getBody(),
-            'commentsArr' => $this->Entity->Comments->read(new ContentParams()),
+            'commentsArr' => $commentsArr,
             'css' => $this->getCss(),
             'date' => $date->format('Y-m-d'),
             'elabid' => $this->Entity->entityData['elabid'],

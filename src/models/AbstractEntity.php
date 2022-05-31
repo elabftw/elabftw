@@ -349,11 +349,10 @@ abstract class AbstractEntity implements CrudInterface
                 $content = $params->getRating();
                 break;
             case 'metadata':
-                if (!empty($params->getField())) {
-                    return $this->updateJsonField($params);
-                }
                 $content = $params->getMetadata();
                 break;
+            case 'metadatafield':
+                return $this->updateJsonField($params);
             case 'userid':
                 $content = $params->getUserId();
                 break;

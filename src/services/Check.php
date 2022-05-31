@@ -205,6 +205,7 @@ class Check
             'list',
             'member',
             'metadata',
+            'metadatafield',
             'notif_comment_created',
             'notif_comment_created_email',
             'notif_user_created',

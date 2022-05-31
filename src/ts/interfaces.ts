@@ -104,6 +104,7 @@ enum Target {
   List = 'list',
   Member = 'member',
   Metadata = 'metadata',
+  MetadataField = 'metadatafield',
   TsAuthority = 'ts_authority',
   PrivacyPolicy = 'privacypolicy',
   Rating = 'rating',

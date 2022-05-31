@@ -64,7 +64,7 @@ export class Metadata {
       action: Action.Update,
       model: this.model,
       entity: this.entity,
-      target: Target.Metadata,
+      target: Target.MetadataField,
       content: value,
       extraParams: {
         jsonField: event.target.dataset.field,

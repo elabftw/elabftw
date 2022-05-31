@@ -46,9 +46,9 @@ NotExpression
     return new NotExpression($expression);
   }
 
-NotOperator '"NOT", "-", "!"'
+NotOperator '"NOT", "!"'
   = ('NOT'i _+)
-  / ([!-] _*)
+  / ('!' _*)
 
 Wrapper
   = Parenthesis
@@ -224,7 +224,7 @@ Literal 'term'
 
 String
   = chars:(
-    [^\n\r\f\\"'|&!() -]
+    [^\n\r\f\\"'|&!() ]
     / Escape
   )+
   {

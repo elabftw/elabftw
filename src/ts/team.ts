@@ -278,15 +278,27 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   });
 
-  calendar.render();
-  calendar.updateSize();
+  // only try to render if we actually have some bookable items
+  if (calendarEl.dataset.render === 'true') {
+    calendar.render();
+    calendar.updateSize();
+  }
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
+    const TemplateC = new EntityClass(EntityType.Template);
     // IMPORT TPL
     if (el.matches('[data-action="import-template"]')) {
-      new EntityClass(EntityType.Template).duplicate(parseInt(el.dataset.id));
+      TemplateC.duplicate(parseInt(el.dataset.id)).then(json => notif(json));
+
+    // DESTROY TEMPLATE
+    } else if (el.matches('[data-action="destroy-template"]')) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        TemplateC.destroy(parseInt(el.dataset.id))
+          .then(() => window.location.replace('team.php?tab=3'))
+          .catch((e) => notif({'res': false, 'msg': e.message}));
+      }
     }
   });
 });

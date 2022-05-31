@@ -195,8 +195,6 @@
 
   <div id='metadataDiv' class='col-md-6'></div>
 
-  {% include 'steps-links-view.html' %}
-
   <div class='row'>
     <div class='col-6'>
       <!-- SHOW LAST MOD -->
@@ -210,8 +208,9 @@
 
 </section>
 
-
 {% include 'uploads.html' %}
+
+{% include 'steps-links-view.html' %}
 
 <!-- only show the json editor if there is at least one file with a .json extension -->
 {% if uploadsArr|filter(u => u.real_name|getExt == 'json') %}

@@ -42,15 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.real-container').addEventListener('click', (event) => {
       const el = (event.target as HTMLElement);
       if (el.matches('[data-action="json-load-metadata"]')) {
-        JsonEditorHelperC.loadMetadataAfterButtonClick();
-      } else if (el.matches('[data-action="json-load-metadata-from-id"]')) {
-        const entityWithId = {
-          type: entity.type,
-          id: parseInt(el.dataset.id, 10),
-        };
-        JsonEditorHelperC.loadMetadataFromId(entityWithId);
-        // add the id of the currently edited item on the save button
-        document.getElementById('templateJsonSave').dataset.id = el.dataset.id;
+        JsonEditorHelperC.loadMetadata();
       } else if (el.matches('[data-action="json-load-file"]')) {
         JsonEditorHelperC.loadFile(el.dataset.link, el.dataset.name, el.dataset.uploadid);
       } else if (el.matches('[data-action="json-save-metadata"]')) {

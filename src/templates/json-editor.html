@@ -3,11 +3,10 @@
 <section class='box' id='json-editor'>
   <h3 data-action='toggle-next' data-icon='jsonEditorIcon' class='d-inline'><i id='jsonEditorIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-list'></i> {{ 'JSON Editor'|trans }}</h3>
   <div id='jsonEditorDiv' class='mt-2' hidden data-save-hidden='jsonEditorDiv'>
-    {% if mode == 'edit' %}
-    <button type='button' id='jsonEditorMetadataLoadButton' data-action='json-load-metadata' class='btn btn-neutral mb-2'>{{ 'Load metadata'|trans }}</button> <span data-action='toggle-next'><i class='fas fa-fw fa-info-circle'></i></span><span hidden><a target='_blank' href='https://doc.elabftw.net/metadata.html'>{{ 'See documentation about extra fields.'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></span>
-    {% endif %}
+    <button type='button' id='jsonEditorMetadataLoadButton' data-action='json-load-metadata' class='btn btn-neutral mb-2'>{{ 'Load metadata'|trans }}</button> <button type='button' data-action='json-clear' class='btn btn-danger mb-2'>{{ 'Clear'|trans }}</button>
+    <span data-action='toggle-next'><i class='fas fa-fw fa-info-circle'></i></span><span hidden><a target='_blank' href='https://doc.elabftw.net/metadata.html'>{{ 'See documentation about extra fields.'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></span>
     <h6 id='jsonEditorTitle'></h6>
-    <div id='jsonEditorContainer' {{ mode == 'edit-template' ? 'data-preload-json="1"' : '' }}></div>
+    <div id='jsonEditorContainer' data-preload-json='1'></div>
     {% if mode == 'edit' %}
       <div class='mt-4 text-center'>
         <div class='btn-group'>
@@ -22,7 +21,6 @@
             </div>
           </div>
         </div>
-        <button type='button' data-action='json-clear' class='btn btn-danger float-right'>{{ 'Clear'|trans }}</button>
       </div>
     {% endif %}
     {% if mode == 'edit-template' %}

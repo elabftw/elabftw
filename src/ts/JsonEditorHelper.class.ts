@@ -93,12 +93,7 @@ export default class JsonEditorHelper {
     this.editorTitle.innerText = `${i18next.t('filename')}: ${name}`;
     this.currentUploadId = uploadid;
     this.editorDiv.dataset.what = 'file';
-  }
-
-  loadMetadataAfterButtonClick(): void {
-    // disable the load metadata button
-    document.getElementById('jsonEditorMetadataLoadButton').toggleAttribute('disabled', true);
-    this.loadMetadata();
+    document.getElementById('jsonEditorMetadataLoadButton').removeAttribute('disabled');
   }
 
   loadMetadata(): void {
@@ -106,6 +101,8 @@ export default class JsonEditorHelper {
     this.editorTitle.innerText = i18next.t('editing-metadata');
     this.MetadataC.read().then(metadata => this.editor.set(metadata));
     this.editorDiv.dataset.what = 'metadata';
+    // disable the load metadata button
+    document.getElementById('jsonEditorMetadataLoadButton').toggleAttribute('disabled', true);
   }
 
   loadMetadataFromId(entity: Entity): void {
@@ -195,5 +192,6 @@ export default class JsonEditorHelper {
     this.currentUploadId = undefined;
     this.editor.set({});
     this.editorDiv.dataset.what = '';
+    document.getElementById('jsonEditorMetadataLoadButton').removeAttribute('disabled');
   }
 }

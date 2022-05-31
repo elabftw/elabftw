@@ -36,12 +36,34 @@ class UsersHelper
         return $this->countExperiments() > 0;
     }
 
+    public function hasItems(): bool
+    {
+        return $this->countItems() > 0;
+    }
+
+    public function hasStuff(): bool
+    {
+        return $this->hasExperiments() || $this->hasItems();
+    }
+
     /**
      * Count all the experiments owned by a user
      */
     public function countExperiments(): int
     {
         $sql = 'SELECT COUNT(id) FROM experiments WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
+    /**
+     * Count all the items owned by a user
+     */
+    public function countItems(): int
+    {
+        $sql = 'SELECT COUNT(id) FROM items WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);

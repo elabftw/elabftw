@@ -209,7 +209,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                   </li>
 
                   <li class='list-inline-item mb-2'>
-                    {% if count.totusers == 0 %}
+                    {% if count.totusers == 0 and team.id != App.Users.userData.team %}
                     <button data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' class='button btn btn-danger teamsDestroyButton'>
                         {{ 'Delete'|trans }}
                     </button>

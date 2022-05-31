@@ -31,59 +31,69 @@
 
 <!-- LINKS -->
 {% if linksArr %}
-  <div class='mt-2'>
-    <h3 class='d-inline'>{{ 'Linked items'|trans }}</h3>
-    <ul class='list-group'>
-      {% for link in linksArr %}
-        <li class='list-group-item'>
-          <i class='fas fa-link mr-1'></i>
-          {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
-          <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
-              {{ link.title|raw }}</a>
-        </li>
-      {% endfor %}
-    </ul>
+  <div class='box'>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedItemsIcon'><i id='linkedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Linked items'|trans }}</h3>
+    <div class='row' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
+      <ul class='list-group mt-2 ml-3'>
+        {% for link in linksArr %}
+          <li class='list-group-item'>
+            <i class='fas fa-link mr-1'></i>
+            {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
+            <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
+                {{ link.title|raw }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
 {% endif %}
 
 <!-- RELATED ITEMS/EXPERIMENTS -->
 {% if Entity.type == 'items' %}
   {% if relatedItemsArr %}
-    <div class='mt-2'>
-      <h3 class='d-inline'>{{ 'Related items'|trans }}</h3>
-      <a class='elab-tooltip mr-1' href='database.php?mode=show&related={{ Entity.id }}'>
-        <span>{{ 'Show linked items'|trans }}</span>
-        <i title='{{ 'Show linked items'|trans }}' class='fas fa-external-link-square-alt fa-2x'></i>
-      </a>
-      <ul class='list-group'>
-        {% for link in relatedItemsArr %}
+    <div class='box'>
+      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='relatedItemsIcon'><i id='relatedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Related items'|trans }}</h3>
+      <div class='row' id='relatedItemsDiv' data-save-hidden='relatedItemsDiv'>
+        <ul class='list-group mt-2 ml-3'>
           <li class='list-group-item'>
-            <i class='fas fa-link mr-1'></i>
-            {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
-            <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.entityid }}'>
-                {{ link.title|raw }}</a>
+            <i title='{{ 'Show linked items'|trans }}' class='fas fa-external-link-square-alt fa-2x mr-1'></i>
+            <a href='database.php?mode=show&related={{ Entity.id }}'>
+              <span>{{ 'Show linked items'|trans }}</span>
+            </a>
           </li>
-        {% endfor %}
-      </ul>
+          {% for link in relatedItemsArr %}
+            <li class='list-group-item'>
+              <i class='fas fa-link mr-1'></i>
+              {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
+              <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.entityid }}'>
+                  {{ link.title|raw }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
   {% endif %}
 
   {% if relatedExperimentsArr %}
-    <div class='mt-2'>
-      <h3 class='d-inline'>{{ 'Related experiments'|trans }}</h3>
-      <a class='elab-tooltip mr-1' href='experiments.php?mode=show&related={{ Entity.id }}'>
-        <span>{{ 'Show related'|trans }}</span>
-        <i title='{{ 'Show related'|trans }}' class='fas fa-external-link-square-alt fa-2x'></i>
-      </a>
-      <ul class='list-group'>
-        {% for link in relatedExperimentsArr %}
+    <div class='box'>
+      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='relatedExperimentsIcon'><i id='relatedExperimentsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Related experiments'|trans }}</h3>
+      <div class='row' id='relatedExperimentsDiv' data-save-hidden='relatedExperimentsDiv'>
+        <ul class='list-group mt-2 ml-3'>
           <li class='list-group-item'>
-            <i class='fas fa-link mr-1'></i>
-            <a href='experiments.php?mode=view&id={{ link.entityid }}'>
-                {{ link.title|raw }}</a>
+            <i title='{{ 'Show related'|trans }}' class='fas fa-external-link-square-alt fa-2x mr-1'></i>
+            <a href='experiments.php?mode=show&related={{ Entity.id }}'>
+              <span>{{ 'Show related'|trans }}</span>
+            </a>
           </li>
-        {% endfor %}
-      </ul>
+          {% for link in relatedExperimentsArr %}
+            <li class='list-group-item'>
+              <i class='fas fa-link mr-1'></i>
+              <a href='experiments.php?mode=view&id={{ link.entityid }}'>
+                  {{ link.title|raw }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
   {% endif %}
 {% endif %}

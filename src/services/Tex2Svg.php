@@ -48,6 +48,11 @@ class Tex2Svg
         // decode html entities, otherwise it crashes
         // compare to https://github.com/mathjax/MathJax-demos-node/issues/16
         $contentDecode = html_entity_decode($this->source, ENT_HTML5, 'UTF-8');
+
+        // fix issue with pdf stopping after '<<' see #3032
+        $contentDecode = str_replace('<<', '< <', $contentDecode);
+        // hey don't look at me like that, if it works, it works.
+
         $this->contentWithMathJaxSVG = $this->runNodeApp($contentDecode);
 
         // was there actually tex in the content?

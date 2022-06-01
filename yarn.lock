@@ -615,10 +615,10 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-ace-builds@^1.4.14:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/ace-builds/-/ace-builds-1.5.1.tgz#7ed9fe277acdc14e6522aa866b0980ac196d797e"
-  integrity sha512-2G313uyM7lfqZgCs6xCW4QPeuX2GZKaCyRqKhTC2mBeZqC7TjkTXguKRyLzsAIMLJfj3koq98RXCBoemoZVAnQ==
+ace-builds@^1.5.3:
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/ace-builds/-/ace-builds-1.5.3.tgz#05f81d3464a9ea19696e5e6fd0f924d37dab442f"
+  integrity sha512-WN5BKR2aTSuBmisO8jo3Fytk6sOmJGki82v/Boeic81IgYN8pFHNkXq2anDF0XkmfDWMqLbRoW9sjc/GtKzQbQ==
 
 acorn-import-assertions@^1.7.6:
   version "1.8.0"
@@ -2350,12 +2350,12 @@ jsondiffpatch@^0.3.11:
     chalk "^2.3.0"
     diff-match-patch "^1.0.0"
 
-jsoneditor@^9.0.3:
-  version "9.7.4"
-  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-9.7.4.tgz#00ddbd99950f8551e0d5e5d0bb9c69584beabda4"
-  integrity sha512-Ln+WdNKLwaqaA64RgI8SI5PRA5RpcVougDNF9ILVzgyj3gDY9ev4WIQcgjoEoQC3Ymml3V7scQ08sDKiNSjo9Q==
+jsoneditor@^9.8.0:
+  version "9.8.0"
+  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-9.8.0.tgz#08db81ccf6f6e9fdff8691e42c4fb62d3efdd6ad"
+  integrity sha512-q1ekwYizbSAny0/UAEOzLviVCyBS5XFGwM/EUNf9KnfB1MRSDmJDWjt4lAqMVz1TUV5O/l3J4/WzUSLQh2tZjw==
   dependencies:
-    ace-builds "^1.4.14"
+    ace-builds "^1.5.3"
     ajv "^6.12.6"
     javascript-natural-sort "^0.7.1"
     jmespath "^0.16.0"

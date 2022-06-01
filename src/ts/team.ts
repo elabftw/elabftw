@@ -34,7 +34,6 @@ import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { config } from '@fortawesome/fontawesome-svg-core';
 import Tab from './Tab.class';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -46,11 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
   const info = document.getElementById('info').dataset;
-
-  // use this setting to prevent bug in fullcalendar
-  // see https://github.com/fullcalendar/fullcalendar/issues/5544
-  // FIXME: this line fixes the issue above but will mess up the notification bell active status!
-  config.autoReplaceSvg = 'nest';
 
   // if we show all items, they are not editable
   let editable = true;

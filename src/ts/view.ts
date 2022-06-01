@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TOGGLE PINNED
     } else if (el.matches('[data-action="pin"]')) {
-      EntityC.pin(entity.id).then(() => el.querySelector('svg').classList.toggle('grayed-out'));
+      EntityC.pin(entity.id).then(() => document.getElementById('toggle-pin-icon').classList.toggle('grayed-out'));
 
     // TIMESTAMP button in modal
     } else if (el.matches('[data-action="timestamp"]')) {

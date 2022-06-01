@@ -19,7 +19,7 @@
             <p class='title'>
               <!-- lock icon -->
               {% if item.locked %}
-                <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
+                <i class='fas fa-lock' style='color:#29AEB9'></i>
               {% endif %}
 
               <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>

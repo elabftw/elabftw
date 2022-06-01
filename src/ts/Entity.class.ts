@@ -7,7 +7,6 @@
  */
 import { Payload, Method, EntityType, Action, Target, ResponseMsg } from './interfaces';
 import { Ajax } from './Ajax.class';
-import tinymce from 'tinymce/tinymce';
 
 export default class Entity {
   model: EntityType;

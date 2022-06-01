@@ -98,8 +98,8 @@
           </div>
         </div>
         <br>
-        <div id='scheduler'></div>
     {% endif %}
+    <div id='scheduler' data-render={{ itemsArr|length > 0 ? 'true' : 'false' }}></div>
 </div>
 
 <!-- TAB 2 INFO -->

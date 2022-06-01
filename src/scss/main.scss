@@ -81,8 +81,11 @@ body::before {
 .real-container {
     margin: auto;
     margin-top: 20px;
-    max-width: 1636px;
     padding: 0 5%;
+    /* reduce padding for small screen sizes */
+    @media (max-width: 992px) {
+        padding: 1%;
+    }
 }
 
 /* LINKS */
@@ -1174,7 +1177,6 @@ input[type='color'] {
     @media (min-width: 992px) {
         height: 43px;
     }
-    margin-right: 120px !important;
 }
 
 /* pure css pie chart based on: https://codepen.io/chriscoyier/pen/RPLqMg */

@@ -45,7 +45,7 @@ jobs:
       - run:
           name: Build elabtmp image and start containers
           command: |
-            docker build -q -t elabtmp -f tests/scrutinizer.dockerfile .
+            docker build -q --no-cache -t elabtmp -f tests/scrutinizer.dockerfile .
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       # Restore dependency cache
       #- restore_cache:
@@ -67,9 +67,6 @@ jobs:
       #        docker cp ./yarn.cache elabtmp:/usr/local/share/.cache/yarn/
       #        echo 'export HAS_CACHE="true"' >> $BASH_ENV
       #      fi
-      - run:
-          name: Clear yarn cache
-          command: docker exec -it elabtmp yarn cache clean
       - run:
           name: Install JS dependencies
           command: docker exec -it elabtmp yarn install --silent --non-interactive --frozen-lockfile

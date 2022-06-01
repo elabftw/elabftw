@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
             response(cacheExp[term]);
             return;
           }
-          $.getJSON('app/controllers/EntityAjaxController.php?source=experiments', request, function(data) {
+          $.getJSON('app/controllers/EntityAjaxController.php?type=experiments', request, function(data) {
             cacheExp[term] = data;
             response(data);
           });
@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
             response(cacheDb[term]);
             return;
           }
-          $.getJSON('app/controllers/EntityAjaxController.php?source=items', request, function(data) {
+          $.getJSON('app/controllers/EntityAjaxController.php?type=items', request, function(data) {
             cacheDb[term] = data;
             response(data);
           });

@@ -86,12 +86,6 @@ try {
 
     // GET LINK LIST
     if ($Request->query->has('term') && !$Request->query->has('mention')) {
-        // bind autocomplete targets the experiments
-        if ($Request->query->get('source') === 'experiments') {
-            $Entity = new Experiments($App->Users);
-        } else {
-            $Entity = new Items($App->Users);
-        }
         $catFilter = (int) $Request->query->get('filter');
         $ListBuilder = new ListBuilder($Entity, $catFilter);
         // fix issue with Malformed UTF-8 characters, possibly incorrectly encoded

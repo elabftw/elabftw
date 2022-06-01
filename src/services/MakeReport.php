@@ -81,7 +81,7 @@ class MakeReport extends AbstractMakeCsv
                 'mfa_secret',
                 'phone',
                 'cellphone',
-                'skype',
+                'orcid',
                 'website',
                 'token',
                 'auth_lock_time',

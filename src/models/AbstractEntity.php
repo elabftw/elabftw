@@ -738,7 +738,7 @@ abstract class AbstractEntity implements CrudInterface
             categoryt.id AS category_id,
             categoryt.name AS category,
             categoryt.color,
-            users.firstname, users.lastname, users.email,
+            users.firstname, users.lastname, users.orcid,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             commentst.recent_comment,
             (commentst.recent_comment IS NOT NULL) AS has_comment";

@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use League\Flysystem\UnableToReadFile;
@@ -84,20 +85,56 @@ class MakeEln extends MakeStreamZip
             if ($permissions['read']) {
                 $currentDatasetFolder = $this->getBaseFileName();
                 $this->folder = $this->root . '/' . $currentDatasetFolder;
+                $orcid = '';
+                if ($e['orcid'] !== null) {
+                    $orcid = 'https://orcid.org/' . $e['orcid'];
+                }
+
+                // LINKS
+                $linksArr = $this->Entity->Links->read(new ContentParams());
+                $hasPart = array();
+                foreach ($linksArr as $link) {
+                    $hasPart[] = array(
+                        '@id' => SITE_URL . '/database.php?mode=view&id=' . $link['itemid'],
+                        '@type' => 'Dataset',
+                        'identifier' => $link['elabid'],
+                    );
+                }
+
+                // STEPS
+                $stepsArr = $this->Entity->Steps->read(new ContentParams());
+                $itemList = array();
+                foreach ($stepsArr as $step) {
+                    $itemList[] = array(
+                        '@id' => 'step_' . $step['id'],
+                        '@type' => 'ListItem',
+                        'position' => $step['ordering'],
+                        'item' => array(
+                            '@type' => 'HowToItem',
+                            'requiredQuantity' => $step['body'],
+                        ),
+                    );
+                }
+
+                // MAIN ENTRY
                 $dataEntities[] =  array(
                     '@id' => './' . $currentDatasetFolder,
                     '@type' => 'Dataset',
                     'author' => array(
                         '@type' => 'Person',
-                        'email' => $e['email'] ?? '',
                         'familyName' => $e['lastname'] ?? '',
                         'givenName' => $e['firstname'] ?? '',
+                        'identifier' => $orcid,
                     ),
                     'dateCreated' => $e['datetime'] ?? '',
                     'dateModified' => $e['lastchange'],
+                    'identifier' => $e['elabid'] ?? '',
+                    'itemList' => $itemList,
+                    'keywords' => explode('|', $this->Entity->entityData['tags']),
                     'name' => $e['title'],
                     'text' => $e['body'],
                     'url' => SITE_URL . '/' . $this->Entity->page . '.php?mode=view&id=' . $e['id'],
+                    'hasPart' => $hasPart,
                 );
 
                 // CSV

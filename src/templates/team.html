@@ -118,7 +118,7 @@
             <th>{{ 'Phone'|trans }}</th>
             <th>{{ 'Mobile'|trans }}</th>
             <th>{{ 'Website'|trans }}</th>
-            <th>{{ 'Skype'|trans }}</th>
+            <th>ORCID</th>
         </tr>
         <!-- archived users are hidden on this page -->
         {% for user in App.Users.readAllFromTeam()|filter(u => u.archived == 0) %}
@@ -137,7 +137,7 @@
           <td>{{ user.phone }}</td>
           <td>{{ user.cellphone }}</td>
           <td><a href='{{ user.website }}'>{{ user.website }}</a></td>
-          <td>{{ user.skype }}</td>
+          <td>{{ user.orcid }}</td>
         </tr>
         {% endfor %}
     </table>

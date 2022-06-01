@@ -713,7 +713,7 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `phone` varchar(127) DEFAULT NULL,
   `cellphone` varchar(127) DEFAULT NULL,
-  `skype` varchar(255) DEFAULT NULL,
+  `orcid` varchar(19) DEFAULT NULL,
   `website` varchar(255) DEFAULT NULL,
   `register_date` bigint(20) UNSIGNED NOT NULL,
   `token` varchar(255) DEFAULT NULL,

@@ -48,35 +48,35 @@ jobs:
             docker build -q -t elabtmp -f tests/scrutinizer.dockerfile .
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       # Restore dependency cache
-      #- restore_cache:
-      #    keys:
-      #      # This branch if available
-      #      - v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}
-      #      # Default branch if not
-      #      - v1-yarn-dep-master-
-      #      # Any branch if there are none on the default branch
-      #      - v1-yarn-dep-
-      #- run:
-      #    name: Copy dependency cache into container
-      #    command: |
-      #      echo 'export HAS_CACHE="false"' >> $BASH_ENV
-      #      if [ -d ./node_modules ]; then
-      #        docker cp ./node_modules elabtmp:/elabftw/node_modules
-      #      fi
-      #      if [ -d ./yarn.cache ]; then
-      #        docker cp ./yarn.cache elabtmp:/usr/local/share/.cache/yarn/
-      #        echo 'export HAS_CACHE="true"' >> $BASH_ENV
-      #      fi
+      - restore_cache:
+          keys:
+            # This branch if available
+            - v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            # Default branch if not
+            - v1-yarn-dep-master-
+            # Any branch if there are none on the default branch
+            - v1-yarn-dep-
+      - run:
+          name: Copy dependency cache into container
+          command: |
+            echo 'export HAS_CACHE="false"' >> $BASH_ENV
+            if [ -d ./node_modules ]; then
+              docker cp ./node_modules elabtmp:/elabftw/node_modules
+            fi
+            if [ -d ./yarn.cache ]; then
+              docker cp ./yarn.cache elabtmp:/usr/local/share/.cache/yarn/
+              echo 'export HAS_CACHE="true"' >> $BASH_ENV
+            fi
       - run:
           name: Install JS dependencies
           command: docker exec -it elabtmp yarn install --silent --non-interactive --frozen-lockfile
-      - run:
-          name: Extract dependency cache from container
-          command: |
-            if [ "${HAS_CACHE}" == "false" ]; then
-              docker cp elabtmp:/elabftw/node_modules/ ./node_modules
-              docker cp elabtmp:/usr/local/share/.cache/yarn/ ./yarn.cache
-            fi
+          #- run:
+          #    name: Extract dependency cache from container
+          #    command: |
+          #      if [ "${HAS_CACHE}" == "false" ]; then
+          #        docker cp elabtmp:/elabftw/node_modules/ ./node_modules
+          #        docker cp elabtmp:/usr/local/share/.cache/yarn/ ./yarn.cache
+          #      fi
       # Save dependency cache
       - save_cache:
           key: v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}

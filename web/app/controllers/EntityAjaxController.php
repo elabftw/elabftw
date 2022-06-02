@@ -64,7 +64,7 @@ try {
     if ($Request->getMethod() === 'POST') {
         $type = $Request->request->get('type');
     }
-    $Entity = (new EntityFactory($App->Users, (string) $type))->getEntity();
+    $Entity = (new EntityFactory($App->Users, (string) $type, $id))->getEntity();
 
     /**
      * GET REQUESTS

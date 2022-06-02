@@ -45,6 +45,7 @@ jobs:
       - run:
           name: Build elabtmp image and start containers
           command: |
+            ls -la
             docker build -q -t elabtmp -f tests/scrutinizer.dockerfile .
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       # Restore dependency cache

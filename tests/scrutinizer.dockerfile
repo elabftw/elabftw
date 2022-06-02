@@ -30,4 +30,4 @@ COPY ./composer.lock /elabftw
 COPY ./cypress.json /elabftw
 COPY ./node-builder.js /elabftw
 COPY ./package.json /elabftw
-#COPY ./yarn.lock /elabftw
+COPY ./yarn.lock /elabftw

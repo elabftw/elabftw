@@ -32,5 +32,6 @@ $Application->add(new AddMissingLinks());
 $Application->add(new SendNotifications());
 $Application->add(new PruneUploads());
 $Application->add(new MigrateUploads());
+$Application->add(new PruneItems());
 
 $Application->run();

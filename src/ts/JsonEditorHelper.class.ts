@@ -109,7 +109,6 @@ export default class JsonEditorHelper {
     const MetadataC = new Metadata(entity);
     MetadataC.read().then(metadata => {
       this.editor.set(metadata);
-      this.focus();
     });
     this.editorDiv.dataset.what = 'metadata';
   }

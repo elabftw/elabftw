@@ -6,25 +6,27 @@
 <!-- STEPS -->
 <div id='stepsDiv'>
 {% if stepsArr %}
-  <div class='mt-2'>
-    <h3 class='d-inline'>{{ 'Steps'|trans }}</h3>
-    <ul class='list-group mt-2' id='steps_div_{{ Entity_id }}' >
-        {% for step in stepsArr %}
-        <li class='list-group-item {{ step.finished ? 'finished' }}'>
-          <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} {{ Entity.type == 'experiments_templates' ? 'disabled' }} data-id='{{ Entity.entityData.id }}' autocomplete='off' data-stepid='{{ step.id }}' class='stepbox mr-1' id='stepCheckbox_{{ step.id }}' />{{ step.body|raw }}
-    {% if step.finished %}
-    <span class='mr-2 text-muted'>
-        {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
-    </span>
-    {% endif %}
-    {% if step.deadline %}
-    <span class='mr-2 text-muted'>
-        {{ 'Deadline:'|trans }} {{ step.deadline|format_datetime() }}
-    </span>
-    {% endif %}
-        </li>
-        {% endfor %}
-    </ul>
+  <div class='box'>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='stepsIcon'><i id='stepsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-check-square'></i> {{ 'Steps'|trans }}</h3>
+    <div class='row' id='stepsDivContent' data-save-hidden='stepsDivContent'>
+      <ul class='list-group mt-2 ml-3' id='steps_div_{{ Entity_id }}' >
+          {% for step in stepsArr %}
+          <li class='list-group-item {{ step.finished ? 'finished' }}'>
+            <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} {{ Entity.type == 'experiments_templates' ? 'disabled' }} data-id='{{ Entity.entityData.id }}' autocomplete='off' data-stepid='{{ step.id }}' class='stepbox mr-1' id='stepCheckbox_{{ step.id }}' />{{ step.body|raw }}
+      {% if step.finished %}
+      <span class='mr-2 text-muted'>
+          {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
+      </span>
+      {% endif %}
+      {% if step.deadline %}
+      <span class='mr-2 text-muted'>
+          {{ 'Deadline:'|trans }} {{ step.deadline|format_datetime() }}
+      </span>
+      {% endif %}
+          </li>
+          {% endfor %}
+      </ul>
+    </div>
   </div>
 {% endif %}
 </div>

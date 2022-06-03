@@ -653,6 +653,15 @@ abstract class AbstractEntity implements CrudInterface
 
     public function destroy(): bool
     {
+        if ($this instanceof Experiments || $this instanceof Items) {
+            // mark all uploads related to that entity as deleted
+            $sql = 'UPDATE uploads SET state = :state WHERE item_id = :entity_id AND type = :type';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
+            $req->bindValue(':type', $this->type);
+            $req->bindValue(':state', Uploads::STATE_DELETED, PDO::PARAM_INT);
+            $this->Db->execute($req);
+        }
         // set state to deleted
         return $this->update(new EntityParams((string) self::STATE_DELETED, 'state'));
     }
@@ -738,6 +747,7 @@ abstract class AbstractEntity implements CrudInterface
             categoryt.id AS category_id,
             categoryt.name AS category,
             categoryt.color,
+            users.firstname, users.lastname, users.orcid,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             commentst.recent_comment,
             (commentst.recent_comment IS NOT NULL) AS has_comment";

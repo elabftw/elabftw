@@ -10,19 +10,18 @@
 namespace Elabftw\Services;
 
 use function date;
-use DateTime;
+use DateTimeImmutable;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\Notifications;
 use Elabftw\Models\Users;
-use Elabftw\Traits\PdfTrait;
 use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
 use function implode;
@@ -37,10 +36,9 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Create a pdf from an Entity
  */
-class MakePdf extends AbstractMake implements FileMakerInterface
+class MakePdf extends AbstractMakePdf
 {
     use TwigTrait;
-    use PdfTrait;
     use UploadTrait;
 
     public string $longName;
@@ -49,10 +47,6 @@ class MakePdf extends AbstractMake implements FileMakerInterface
 
     // collect paths of files to delete
     public array $trash = array();
-
-    // switch to disable notifications from within class
-    // if notifications are handled by calling class
-    public bool $createNotifications = true;
 
     private FileSystem $cacheFs;
 
@@ -63,11 +57,10 @@ class MakePdf extends AbstractMake implements FileMakerInterface
      */
     public function __construct(MpdfProviderInterface $mpdfProvider, AbstractEntity $entity)
     {
-        parent::__construct($entity);
+        parent::__construct($mpdfProvider, $entity);
 
         $this->longName = $this->getLongName() . '.pdf';
 
-        $this->mpdf = $mpdfProvider->getInstance();
         $this->mpdf->SetTitle($this->Entity->entityData['title']);
         $this->mpdf->SetKeywords(str_replace('|', ' ', $this->Entity->entityData['tags'] ?? ''));
 
@@ -93,7 +86,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
     public function getFileContent(): string
     {
         $output = $this->generate()->Output('', 'S');
-        if ($this->errors && $this->createNotifications) {
+        if ($this->errors && $this->notifications) {
             $Notifications = new Notifications($this->Entity->Users);
             $Notifications->create(new CreateNotificationParams(Notifications::PDF_GENERIC_ERROR));
         }
@@ -106,7 +99,8 @@ class MakePdf extends AbstractMake implements FileMakerInterface
     public function getFileName(): string
     {
         $title = Filter::forFilesystem($this->Entity->entityData['title']);
-        return $this->Entity->entityData['date'] . ' - ' . $title . '.pdf';
+        $now = new DateTimeImmutable();
+        return ($this->Entity->entityData['date'] ?? $now->format('Y-m-d')) . ' - ' . $title . '.pdf';
     }
 
     /**
@@ -127,6 +121,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
                 ),
             );
         }
+        $this->contentSize = mb_strlen($content);
         return $content;
     }
 
@@ -221,7 +216,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
                 str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />';
         }
 
-        $date = new DateTime($this->Entity->entityData['date'] ?? date('Ymd'));
+        $date = new DateTimeImmutable($this->Entity->entityData['date'] ?? date('Ymd'));
 
         $locked = $this->Entity->entityData['locked'];
         $lockDate = '';
@@ -248,9 +243,14 @@ class MakePdf extends AbstractMake implements FileMakerInterface
             }
         }
 
+        $commentsArr = array();
+        if ($this->Entity instanceof Experiments || $this->Entity instanceof Items) {
+            $commentsArr = $this->Entity->Comments->read(new ContentParams());
+        }
+
         $renderArr = array(
             'body' => $this->getBody(),
-            'commentsArr' => $this->Entity->Comments->read(new ContentParams()),
+            'commentsArr' => $commentsArr,
             'css' => $this->getCss(),
             'date' => $date->format('Y-m-d'),
             'elabid' => $this->Entity->entityData['elabid'],

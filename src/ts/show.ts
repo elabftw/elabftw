@@ -378,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;
-      const plusMinusIcon = el.querySelector('[data-fa-i2svg]');
+      const plusMinusIcon = el.querySelector('.fas');
       const bodyDiv = document.getElementById(randId);
       let action = 'hide';
       // transform the + in - and vice versa

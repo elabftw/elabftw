@@ -12,19 +12,16 @@ namespace Elabftw\Services;
 use function date;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
-use Elabftw\Traits\CsvTrait;
 use Elabftw\Traits\UploadTrait;
 use PDO;
 
 /**
  * Create a report of usage for all users
  */
-class MakeReport implements FileMakerInterface
+class MakeReport extends AbstractMakeCsv
 {
-    use CsvTrait;
     use UploadTrait;
 
     protected Db $Db;
@@ -84,7 +81,7 @@ class MakeReport implements FileMakerInterface
                 'mfa_secret',
                 'phone',
                 'cellphone',
-                'skype',
+                'orcid',
                 'website',
                 'token',
                 'auth_lock_time',

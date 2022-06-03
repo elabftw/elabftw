@@ -1,12 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2012, 2022 Nicolas CARPi
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -29,10 +28,14 @@ abstract class AbstractMake
     // a place to gather errors or warnings generated during the making
     public array $errors = array();
 
+    protected int $contentSize = 0;
+
     protected Db $Db;
 
     /** @var AbstractEntity $Entity */
     protected $Entity;
+
+    protected string $contentType = 'application/octet-stream';
 
     public function __construct(AbstractEntity $entity)
     {
@@ -44,6 +47,16 @@ abstract class AbstractMake
      * The filename for what we are making
      */
     abstract public function getFileName(): string;
+
+    public function getContentSize(): int
+    {
+        return $this->contentSize;
+    }
+
+    public function getContentType(): string
+    {
+        return $this->contentType;
+    }
 
     /**
      * Get the contents of assets/pdf.min.css

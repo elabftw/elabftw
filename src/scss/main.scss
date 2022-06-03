@@ -34,6 +34,11 @@ $text-muted: $lightgray;
 @import '../../node_modules/jquery-ui/themes/base/sortable';
 @import '../../node_modules/jquery-ui/themes/base/theme';
 
+@import './fontawesome/fontawesome';
+@import './fontawesome/solid';
+@import './fontawesome/brands';
+@import './fontawesome/regular';
+
 @import 'autocomplete';
 @import 'chemdoodle';
 @import 'footer';
@@ -645,7 +650,8 @@ tr:nth-child(odd) {
 
     h2,
     h3,
-    svg {
+    .fas,
+    .far {
         color: $lightwhite;
     }
 
@@ -798,6 +804,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .thumb {
+    font-size: 5em !important;
     height: 100px;
     min-height: 50px;
     min-width: 50px;
@@ -1074,10 +1081,12 @@ the form-control fails to do that so we do the border ourselves */
     display: flex;
 }
 
-/* don't register clicks with the svg (fontawesome icons)
+/* don't register clicks with the fontawesome icons
  * this way the click event is registered by the parent and all is well
  */
-[data-fa-i2svg] {
+.far,
+.fas,
+.fab, {
     pointer-events: none;
 }
 
@@ -1093,18 +1102,10 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 /* font awesome icons color */
-.svg-inline--fa {
+.far,
+.fas,
+.fab {
     color: $maingray;
-}
-
-/* custom font awesome icon size */
-.navbar-icon {
-    color: $lightgray;
-    font-size: 170%;
-
-    &.active {
-        color: $elabblue;
-    }
 }
 
 [data-icon='bell'].active {
@@ -1114,13 +1115,6 @@ the form-control fails to do that so we do the border ourselves */
 /* for icons such as pin */
 .grayed-out {
     color: $lightgraybutnottoolight;
-}
-
-/* in the fullcalendar toolbar icons are used in a button so we want them white */
-.fc-toolbar {
-    .svg-inline--fa {
-        color: #fff;
-    }
 }
 
 /* caption for tinymce */
@@ -1211,14 +1205,8 @@ input[type='color'] {
     }
 }
 
-.action-topmenu {
-    svg {
-        margin: 0 7px;
-    }
-}
-
 .fa-2x {
-    font-size: 1.3em;
+    font-size: 1.6em;
 }
 
 /* fix border radius for custom-select. brl = border radius left */
@@ -1247,6 +1235,10 @@ input[type='color'] {
 
 #backToTopButton {
     transition: all 0.5s ease;
+
+    i {
+        color: $white;
+    }
 }
 
 .switch-btn {

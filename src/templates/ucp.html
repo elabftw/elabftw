@@ -322,8 +322,8 @@
         </div>
         <div class='row'>
             <div class='col-md-6'>
-                <label for='skype'>{{ 'Skype'|trans }}</label>
-                <input class='form-control' id='skype' name='skype' value='{{ App.Users.userData.skype }}' />
+                <label for='orcid'>ORCID</label>
+                <input class='form-control' placeholder='0000-0002-1234-1111' title='0000-1111-2222-3333' pattern='[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}' id='orcid' name='orcid' value='{{ App.Users.userData.orcid }}' />
             </div>
             <div class='col-md-6'>
                 <label for='website'>{{ 'Website'|trans }}</label>

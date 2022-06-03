@@ -1,23 +1,25 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
- * @see https://www.elabftw.net Official website
- * @license AGPL-3.0
- * @package elabftw
+ * @package   Elabftw\Elabftw
+ * @author    Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2022 Nicolas CARPi
+ * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
+ * @see       https://www.elabftw.net Official website
  */
-declare(strict_types=1);
 
-namespace Elabftw\Traits;
+namespace Elabftw\Services;
 
+use Elabftw\Interfaces\StringMakerInterface;
 use League\Csv\Reader;
 use League\Csv\Writer;
 
 /**
- * For producing CSV files
+ * Mother class of the Make*Csv services
  */
-trait CsvTrait
+abstract class AbstractMakeCsv extends AbstractMake implements StringMakerInterface
 {
+    protected string $contentType = 'text/csv; charset=UTF-8';
+
     /**
      * Create a CSV file from header and rows
      */
@@ -35,12 +37,9 @@ trait CsvTrait
         // add UTF8 BOM
         $csv->setOutputBOM(Reader::BOM_UTF8);
 
-        return $csv->toString();
-    }
-
-    public function getContentType(): string
-    {
-        return 'text/csv; charset=UTF-8';
+        $content = $csv->toString();
+        $this->contentSize = mb_strlen($content);
+        return $content;
     }
 
     /**

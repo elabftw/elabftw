@@ -11,26 +11,21 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
-use Elabftw\Traits\PdfTrait;
 use Elabftw\Traits\TwigTrait;
 
 /**
  * Make a PDF from several experiments or db items showing only minimal info with QR codes
  */
-class MakeQrPdf extends AbstractMake implements FileMakerInterface
+class MakeQrPdf extends AbstractMakePdf
 {
     use TwigTrait;
-    use PdfTrait;
 
     public function __construct(MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, private array $idArr)
     {
-        parent::__construct($entity);
-
-        $this->mpdf = $mpdfProvider->getInstance();
+        parent::__construct($mpdfProvider, $entity);
     }
 
     /**

@@ -31,7 +31,7 @@ describe('Experiments', () => {
     cy.get('[data-action="destroy-comment"]').click()
     cy.contains('Toto Le sysadmin commented').should('not.exist')
     // go back in edit mode for destroy action
-    cy.get('.action-topmenu > [data-action="edit"]').click()
+    cy.get('[data-action="edit"]').first().click()
   }
 
   const entityDuplicate = () => {

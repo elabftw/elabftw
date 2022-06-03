@@ -40,7 +40,6 @@ module.exports = {
       'bootstrap/js/src/button.js',
       'bootstrap/js/src/collapse.js',
       'bootstrap/js/src/dropdown.js',
-      './src/ts/fontawesome.ts',
       './src/ts/mathjax.ts',
       'prismjs',
       // see list in tinymce.ts for codesample plugin settings

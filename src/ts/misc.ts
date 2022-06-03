@@ -241,7 +241,7 @@ export function addAutocompleteToLinkInputs(): void {
           return;
         }
         // TODO use AjaxC as for tags below
-        $.getJSON(`app/controllers/EntityAjaxController.php?source=items&filter=${catFilterEl.value}`, request, function(data) {
+        $.getJSON(`app/controllers/EntityAjaxController.php?type=items&filter=${catFilterEl.value}`, request, function(data) {
           cache[term] = data;
           response(data);
         });

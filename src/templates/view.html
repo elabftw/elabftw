@@ -45,40 +45,45 @@
   <p class='float-right d-inline'>
     <a class='elab-tooltip ml-2' data-action='pin' href='#'>
       <span>{{ 'Toggle pin'|trans }}</span>
-      <i title='{{ 'Toggle pin'|trans }}' class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }} fa-2x'></i>
+      <i title='{{ 'Toggle pin'|trans }}' id='toggle-pin-icon' class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }} fa-2x'></i>
     </a>
   </p>
 
-  <div class='action-topmenu'>
+  <div>
     {% if not (Entity.isReadOnly or Entity.entityData.locked) %}
       <a class='elab-tooltip mr-1' href='#' data-action='edit'>
         <span>{{ 'Edit'|trans }}</span>
-        <i title='{{ 'Edit'|trans }}' class='fas fa-pencil-alt fa-2x' style='color:#29AEB9'></i>
+        <i title='{{ 'Edit'|trans }}' class='fas fa-pencil-alt fa-2x mr-2' style='color:#29AEB9'></i>
       </a>
     {% endif %}
 
     {% if not App.Session.has('is_anon') %}
       <a class='elab-tooltip mr-1' href='#' data-action='duplicate-entity'>
         <span>{{ 'Duplicate'|trans }}</span>
-        <i title='{{ 'Duplicate'|trans }}' class='far fa-copy fa-2x'></i>
+        <i title='{{ 'Duplicate'|trans }}' class='far fa-copy fa-2x mr-2'></i>
       </a>
     {% endif %}
 
     <a class='elab-tooltip mr-1' href='make.php?what=pdf&id={{ Entity.id }}&type={{ Entity.type }}'>
       <span>{{ 'Make a PDF'|trans }}</span>
-      <i title='{{ 'Make a PDF'|trans }}' class='fas fa-file-pdf fa-2x'></i>
+      <i title='{{ 'Make a PDF'|trans }}' class='fas fa-file-pdf fa-2x mr-2'></i>
     </a>
 
     <a class='elab-tooltip mr-1' href='make.php?what=zip&id={{ Entity.id }}&type={{ Entity.type }}'>
       <span>{{ 'Make a ZIP'|trans }}</span>
-      <i title='{{ 'Make a ZIP'|trans }}' class='fas fa-file-archive fa-2x'></i>
+      <i title='{{ 'Make a ZIP'|trans }}' class='fas fa-file-archive fa-2x mr-2'></i>
+    </a>
+
+    <a class='elab-tooltip mr-1' href='make.php?what=eln&id={{ Entity.id }}&type={{ Entity.type }}'>
+      <span>{{ 'Make an ELN'|trans }}</span>
+      <i title='{{ 'Make an ELN'|trans }}' class='fas fa-box-archive fa-2x mr-2'></i>
     </a>
 
     {% if Entity.type == 'items' %}
       {% if Entity.entityData.bookable %}
         <a class='elab-tooltip mr-1' href='team.php?item={{ Entity.id }}'>
           <span>{{ 'Book item'|trans }}</span>
-          <i title='{{ 'Book item'|trans }}' class='fas fa-calendar-plus fa-2x'></i>
+          <i title='{{ 'Book item'|trans }}' class='fas fa-calendar-plus fa-2x mr-2'></i>
         </a>
       {% endif %}
     {% endif %}
@@ -92,13 +97,13 @@
     {% endif %}
     <a class='elab-tooltip mr-1' href='#' data-action='lock-entity'>
         <span>{{ alt }}</span>
-        <i title='{{ alt }}' class='fas {{lockIcon}} fa-2x'></i>
+        <i title='{{ alt }}' class='fas {{lockIcon}} fa-2x mr-2'></i>
     </a>
 
     {% if not App.Session.has('is_anon') and App.Config.configArr.anon_users %}
       <a class='elab-tooltip mr-1' href='#' data-action='share'>
         <span>{{ 'Share'|trans }}</span>
-        <i title='{{ 'Share'|trans }}' class='fas fa-share-alt fa-2x'></i>
+        <i title='{{ 'Share'|trans }}' class='fas fa-share-alt fa-2x mr-2'></i>
       </a>
       <input type='text' class='form-control' aria-label='{{ 'Share'|trans }}' id='shareLinkInput' value='' hidden />
     {% endif %}
@@ -107,7 +112,7 @@
     {% if Entity.type == 'experiments' and not App.Session.has('is_anon') %}
       <a href='#' class='elab-tooltip mr-1' data-action='toggle-modal' data-target='timestampModal'>
         <span>{{ 'Timestamp Experiment'|trans }}</span>
-        <i title='{{ 'Timestamp Experiment'|trans }}' class='far fa-calendar-check fa-2x'></i>
+        <i title='{{ 'Timestamp Experiment'|trans }}' class='far fa-calendar-check fa-2x mr-2'></i>
       </a>
     {% endif %}
 
@@ -115,7 +120,7 @@
     {% if not Entity.isReadOnly and App.Config.configArr.blox_enabled %}
       <a href='#' class='elab-tooltip mr-1' data-action='bloxberg'>
         <span>{{ 'Add to blockchain'|trans }}</span>
-        <i title='{{ 'Add to blockchain'|trans }}' class='fas fa-cubes fa-2x'></i>
+        <i title='{{ 'Add to blockchain'|trans }}' class='fas fa-cubes fa-2x mr-2'></i>
       </a>
     {% endif %}
   </div>
@@ -123,7 +128,7 @@
   <!-- build the tag array -->
   {% if Entity.entityData.tags|length > 0 %}
     <span class='tags mathjax-ignore'>
-      <i class='fas fa-tags fa-2x'></i>
+      <i class='fas fa-tags mr-2'></i>
       {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
       {% set tagsValueArr = Entity.entityData.tags|split('|') %}
       {% for key, tag in tagsValueArr %}

@@ -1,14 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * revisions.php
- *
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2012, 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -16,10 +13,8 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
 use Elabftw\Models\Revisions;
-use Elabftw\Models\Templates;
+use Elabftw\Services\EntityFactory;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -34,16 +29,7 @@ $Response = new Response();
 $Response->prepare($Request);
 
 try {
-    if ($Request->query->get('type') === 'experiments') {
-        $Entity = new Experiments($App->Users);
-    } elseif ($Request->query->get('type') === 'experiments_templates') {
-        $Entity = new Templates($App->Users);
-    } elseif ($Request->query->get('type') === 'items') {
-        $Entity = new Items($App->Users);
-    } else {
-        throw new IllegalActionException('Bad type!');
-    }
-
+    $Entity = (new EntityFactory($App->Users, (string) $Request->query->get('type')))->getEntity();
     $Entity->setId((int) $Request->query->get('item_id'));
     $Entity->canOrExplode('write');
 

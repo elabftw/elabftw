@@ -11,19 +11,16 @@ namespace Elabftw\Services;
 
 use function date;
 use Elabftw\Elabftw\Db;
-use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Users;
-use Elabftw\Traits\CsvTrait;
 use Elabftw\Traits\UploadTrait;
 use function implode;
 
 /**
  * Create a report of scheduler bookings
  */
-class MakeSchedulerReport implements FileMakerInterface
+class MakeSchedulerReport extends AbstractMakeCsv
 {
-    use CsvTrait;
     use UploadTrait;
 
     protected Db $Db;

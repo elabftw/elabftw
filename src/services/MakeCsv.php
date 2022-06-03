@@ -11,17 +11,13 @@ namespace Elabftw\Services;
 
 use function date;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Traits\CsvTrait;
 
 /**
  * Make a CSV file from a list of id and a type
  */
-class MakeCsv extends AbstractMake implements FileMakerInterface
+class MakeCsv extends AbstractMakeCsv
 {
-    use CsvTrait;
-
     public function __construct(AbstractEntity $entity, private array $idArr)
     {
         parent::__construct($entity);
@@ -63,7 +59,7 @@ class MakeCsv extends AbstractMake implements FileMakerInterface
                     htmlspecialchars_decode((string) $this->Entity->entityData['title'], ENT_QUOTES | ENT_COMPAT),
                     html_entity_decode(strip_tags(htmlspecialchars_decode((string) $this->Entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
                     htmlspecialchars_decode((string) $this->Entity->entityData['category'], ENT_QUOTES | ENT_COMPAT),
-                    $this->Entity->entityData['elabid'],
+                    $this->Entity->entityData['elabid'] ?? '',
                     $row[] = $this->Entity->entityData['rating'],
                     $this->getUrl(),
                     $this->Entity->entityData['metadata'] ?? '',

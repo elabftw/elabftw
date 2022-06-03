@@ -51,11 +51,11 @@ class MakeBackupZipTest extends \PHPUnit\Framework\TestCase
         // add a file to it
         $Experiments->setId($id);
         $Experiments->Uploads->create(new CreateUpload('a.txt', __FILE__));
-        $this->MakeExp->getZip();
+        $this->MakeExp->getStreamZip();
     }
 
     public function testGetZipDb(): void
     {
-        $this->MakeDb->getZip();
+        $this->MakeDb->getStreamZip();
     }
 }

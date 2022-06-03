@@ -16,6 +16,10 @@ ADD --chmod=755 https://github.com/vimeo/psalm/releases/download/$PSALM_VERSION/
 #Phan
 ADD --chmod=755 https://github.com/phan/phan/releases/download/$PHAN_VERSION/phan.phar /usr/bin/phan
 
+# Remove all stuff in /elabftw/ to avoid carry over from hypernext branch
+RUN rm -rf /elabftw/*
+
+# Add files
 COPY ./bin /elabftw/bin
 COPY ./src /elabftw/src
 COPY ./tests /elabftw/tests

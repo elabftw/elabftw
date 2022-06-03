@@ -58,6 +58,7 @@ class Links implements CrudInterface
     {
         $sql = 'SELECT items.id AS itemid,
             items.title,
+            items.elabid,
             category.name,
             category.bookable,
             category.color

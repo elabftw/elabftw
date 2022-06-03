@@ -11,23 +11,18 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\FileMakerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Notifications;
-use Elabftw\Traits\PdfTrait;
 
 /**
  * Make a PDF from several experiments or db items
  */
-class MakeMultiPdf extends AbstractMake implements FileMakerInterface
+class MakeMultiPdf extends AbstractMakePdf
 {
-    use PdfTrait;
-
     public function __construct(private MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, private array $idArr)
     {
-        parent::__construct($entity);
-        $this->mpdf = $mpdfProvider->getInstance();
+        parent::__construct($mpdfProvider, $entity);
     }
 
     /**
@@ -76,7 +71,7 @@ class MakeMultiPdf extends AbstractMake implements FileMakerInterface
         }
         if ($permissions['read']) {
             $currentEntity = new MakePdf($this->mpdfProvider, $this->Entity);
-            $currentEntity->createNotifications = false;
+            $currentEntity->setNotifications(false);
             // write content
             $this->mpdf->WriteHTML($currentEntity->getContent());
 

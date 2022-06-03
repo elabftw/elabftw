@@ -520,7 +520,7 @@ class ApiController implements ControllerInterface
         $Make = new MakeBackupZip($Zip, $this->Entity, $this->param);
         $Response = new StreamedResponse();
         $Response->setCallback(function () use ($Make) {
-            $Make->getZip();
+            $Make->getStreamZip();
         });
         return $Response;
     }

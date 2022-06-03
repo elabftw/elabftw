@@ -9,7 +9,7 @@ describe('Experiments templates', () => {
     cy.window().then(win => {
       cy.stub(win, 'prompt').returns('New template')
       cy.get('button[data-action="create-template"]').click()
-      cy.get('.dropdown > .float-right').click()
+      cy.get('.dropdown.float-right > [data-toggle="dropdown"]').click()
       cy.get('.hover-danger').click()
     })
   })

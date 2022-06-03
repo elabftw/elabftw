@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="export-category"]')) {
       const source = (document.getElementById('categoryExport') as HTMLSelectElement).value;
       const format = (document.getElementById('categoryExportFormat') as HTMLSelectElement).value;
-      window.location.href = `make.php?what=${format}&category=${source}`;
+      window.location.href = `make.php?what=${format}&category=${source}&type=items`;
 
     } else if (el.matches('[data-action="export-user"]')) {
       const source = (document.getElementById('userExport') as HTMLSelectElement).value;

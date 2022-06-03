@@ -100,7 +100,7 @@ class MakePdf extends AbstractMakePdf
     {
         $title = Filter::forFilesystem($this->Entity->entityData['title']);
         $now = new DateTimeImmutable();
-        return $this->Entity->entityData['date'] ?? $now->format('Y-m-d') . ' - ' . $title . '.pdf';
+        return ($this->Entity->entityData['date'] ?? $now->format('Y-m-d')) . ' - ' . $title . '.pdf';
     }
 
     /**

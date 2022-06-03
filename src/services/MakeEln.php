@@ -33,7 +33,7 @@ class MakeEln extends MakeStreamZip
     {
         parent::__construct($Zip, $entity, $idArr);
         $this->now = new DateTimeImmutable();
-        $this->root = $this->now->format('Y-m-d') . '-export';
+        $this->root = $this->now->format('Y-m-d-His') . '-export';
         $this->jsonArr = array(
             '@context' => 'https://w3id.org/ro/crate/1.1/context',
             '@graph' => array(
@@ -79,7 +79,7 @@ class MakeEln extends MakeStreamZip
             try {
                 $permissions = $this->Entity->getPermissions();
             } catch (IllegalActionException $e) {
-                return;
+                continue;
             }
             $e = $this->Entity->entityData;
             if ($permissions['read']) {
@@ -130,9 +130,9 @@ class MakeEln extends MakeStreamZip
                     'dateModified' => $e['lastchange'],
                     'identifier' => $e['elabid'] ?? '',
                     'itemList' => $itemList,
-                    'keywords' => explode('|', $this->Entity->entityData['tags']),
+                    'keywords' => explode('|', (string) $this->Entity->entityData['tags']),
                     'name' => $e['title'],
-                    'text' => $e['body'],
+                    'text' => $e['body'] ?? '',
                     'url' => SITE_URL . '/' . $this->Entity->page . '.php?mode=view&id=' . $e['id'],
                     'hasPart' => $hasPart,
                 );

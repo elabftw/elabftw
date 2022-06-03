@@ -7,7 +7,7 @@
 <div id='stepsDiv'>
 {% if stepsArr %}
   <div class='box'>
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='stepsIcon'><i id='stepsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Steps'|trans }}</h3>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='stepsIcon'><i id='stepsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-check-square'></i> {{ 'Steps'|trans }}</h3>
     <div class='row' id='stepsDivContent' data-save-hidden='stepsDivContent'>
       <ul class='list-group mt-2 ml-3' id='steps_div_{{ Entity_id }}' >
           {% for step in stepsArr %}

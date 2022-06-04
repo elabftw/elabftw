@@ -9,7 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Services\StorageFactory;
+use Elabftw\Factories\StorageFactory;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\UnableToReadFile;
 

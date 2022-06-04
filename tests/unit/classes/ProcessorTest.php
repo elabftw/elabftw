@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Factories\ProcessorFactory;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\Request;
 

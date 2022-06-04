@@ -7,7 +7,13 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Factories;
+
+use Elabftw\Services\CacheStorage;
+use Elabftw\Services\FixturesStorage;
+use Elabftw\Services\LocalStorage;
+use Elabftw\Services\MemoryStorage;
+use Elabftw\Services\S3Storage;
 
 class StorageFactoryTest extends \PHPUnit\Framework\TestCase
 {

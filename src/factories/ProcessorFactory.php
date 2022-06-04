@@ -7,8 +7,11 @@
  * @package elabftw
  */
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Factories;
 
+use Elabftw\Elabftw\FormProcessor;
+use Elabftw\Elabftw\GetJsonProcessor;
+use Elabftw\Elabftw\PostJsonProcessor;
 use Elabftw\Interfaces\ProcessorInterface;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\Request;

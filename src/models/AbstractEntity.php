@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -48,6 +47,14 @@ abstract class AbstractEntity implements CrudInterface
 
     public const STATE_DELETED = 3;
 
+    public const TYPE_EXPERIMENTS = 'experiments';
+
+    public const TYPE_ITEMS = 'items';
+
+    public const TYPE_ITEMS_TYPES = 'items_types';
+
+    public const TYPE_TEMPLATES = 'experiments_templates';
+
     public Comments $Comments;
 
     public Links $Links;
@@ -60,7 +67,7 @@ abstract class AbstractEntity implements CrudInterface
 
     public Pins $Pins;
 
-    // experiments or items
+    // some TYPE_ const
     public string $type = '';
 
     // use that to ignore the canOrExplode calls

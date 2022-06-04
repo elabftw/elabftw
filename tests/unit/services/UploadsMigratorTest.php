@@ -9,6 +9,8 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Factories\StorageFactory;
+
 class UploadsMigratorTest extends \PHPUnit\Framework\TestCase
 {
     public function testMigrate(): void

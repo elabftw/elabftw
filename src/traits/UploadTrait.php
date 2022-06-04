@@ -10,7 +10,7 @@
 namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Services\StorageFactory;
+use Elabftw\Factories\StorageFactory;
 use League\Flysystem\Visibility;
 
 /**

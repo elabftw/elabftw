@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Factories\EntityFactory;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -31,7 +32,7 @@ abstract class AbstractJsonProcessor extends AbstractProcessor
             if ($id === 0) {
                 $id = null;
             }
-            $this->Entity = $this->getEntity($decoded->entity->type, $id);
+            $this->Entity = (new EntityFactory($this->Users, $decoded->entity->type, $id))->getEntity();
         }
         $this->id = $this->setId((int) ($decoded->id ?? 0));
         $this->Model = $this->buildModel($decoded->model ?? '');

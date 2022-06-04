@@ -12,6 +12,7 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\StorageFactory;
 use Elabftw\Interfaces\TimestampResponseInterface;
 use Elabftw\Models\Config;
 use Elabftw\Traits\ProcessTrait;

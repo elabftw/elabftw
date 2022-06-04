@@ -9,6 +9,8 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Factories\StorageFactory;
+
 class UploadsCleanerTest extends \PHPUnit\Framework\TestCase
 {
     public function testCleanup(): void

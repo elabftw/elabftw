@@ -11,7 +11,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateUpload;
-use Elabftw\Services\StorageFactory;
+use Elabftw\Factories\StorageFactory;
 
 class UploadsTest extends \PHPUnit\Framework\TestCase
 {

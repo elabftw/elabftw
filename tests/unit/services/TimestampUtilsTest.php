@@ -11,6 +11,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\TimestampResponse;
+use Elabftw\Factories\StorageFactory;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use GuzzleHttp\Client;

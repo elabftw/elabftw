@@ -7,7 +7,7 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Factories;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
@@ -29,18 +29,13 @@ class EntityFactory
     public function getEntity(): AbstractEntity
     {
         switch ($this->type) {
-            case 'experiments':
-            // FIXME should be only one way to express this
-            case 'experiment':
+            case AbstractEntity::TYPE_EXPERIMENTS:
                 return new Experiments($this->users, $this->itemId);
-            case 'items':
-            case 'item':
+            case AbstractEntity::TYPE_ITEMS:
                 return new Items($this->users, $this->itemId);
-            case 'experiments_templates':
-            case 'template':
+            case AbstractEntity::TYPE_TEMPLATES:
                 return new Templates($this->users, $this->itemId);
-            case 'items_types':
-            case 'itemtype':
+            case AbstractEntity::TYPE_ITEMS_TYPES:
                 return new ItemsTypes($this->users, $this->itemId);
             default:
                 throw new ImproperActionException('Incorrect entity type');

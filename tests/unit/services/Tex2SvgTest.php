@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Factories\StorageFactory;
 use League\Flysystem\Filesystem;
 use Mpdf\Mpdf;
 

@@ -73,6 +73,9 @@
       "Elabftw\\Exceptions\\": [
         "src/exceptions"
       ],
+      "Elabftw\\Factories\\": [
+        "src/factories"
+      ],
       "Elabftw\\Interfaces\\": [
         "src/interfaces"
       ],

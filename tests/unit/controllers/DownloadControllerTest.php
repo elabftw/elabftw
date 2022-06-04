@@ -9,7 +9,7 @@
 
 namespace Elabftw\Controllers;
 
-use Elabftw\Services\StorageFactory;
+use Elabftw\Factories\StorageFactory;
 use League\Flysystem\Filesystem;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 

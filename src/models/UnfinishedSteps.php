@@ -36,7 +36,7 @@ class UnfinishedSteps extends Steps
                 WHERE finished = 0 GROUP BY item_id
             ) AS stepst ON (stepst.item_id = entity.id)';
 
-        if ($this->Entity->type === 'experiments'
+        if ($this->Entity instanceof Experiments
             && $params->getExtra('scope') === 'team') {
             $sql .= ' JOIN users2teams ON (users2teams.users_id = entity.userid AND users2teams.teams_id = :teamid)';
         }
@@ -86,7 +86,7 @@ class UnfinishedSteps extends Steps
             $teamgroups .= " OR entity.canread = $teamgroup";
         }
 
-        return ' WHERE' . ($this->Entity->type === 'items' ? ' entity.team = :teamid AND' : '') . " (
+        return ' WHERE' . ($this->Entity instanceof Items ? ' entity.team = :teamid AND' : '') . " (
             entity.canread = 'public'
             OR entity.canread = 'organization'
             OR entity.canread = 'team'

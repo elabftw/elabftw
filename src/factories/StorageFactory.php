@@ -7,13 +7,18 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Factories;
 
 use Aws\Credentials\Credentials;
 use const ELAB_AWS_ACCESS_KEY;
 use const ELAB_AWS_SECRET_KEY;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\Config;
+use Elabftw\Services\CacheStorage;
+use Elabftw\Services\FixturesStorage;
+use Elabftw\Services\LocalStorage;
+use Elabftw\Services\MemoryStorage;
+use Elabftw\Services\S3Storage;
 
 /**
  * This factory is responsible for providing a storage provider

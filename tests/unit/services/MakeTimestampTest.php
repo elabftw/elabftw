@@ -14,6 +14,7 @@ use Defuse\Crypto\Key;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\StorageFactory;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use GuzzleHttp\Client;

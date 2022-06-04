@@ -14,10 +14,10 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\EntityFactory;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Check;
-use Elabftw\Services\EntityFactory;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 

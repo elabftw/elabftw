@@ -11,6 +11,7 @@ namespace Elabftw\Services;
 
 use function count;
 use Elabftw\Elabftw\Db;
+use Elabftw\Factories\StorageFactory;
 use Elabftw\Models\Uploads;
 use League\Flysystem\FilesystemOperator;
 use PDO;

@@ -43,7 +43,7 @@ export class Metadata {
     return this.sender.send(payload).then(json => {
       // if there are no metadata.json file available, return an empty object
       const fulljson = (json.value as PartialEntity);
-      if (!fulljson.metadata) {
+      if (typeof fulljson === 'undefined' || !fulljson.metadata) {
         return {};
       }
       return JSON.parse(fulljson.metadata);

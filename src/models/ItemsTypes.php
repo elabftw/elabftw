@@ -31,7 +31,7 @@ class ItemsTypes extends AbstractEntity
         $this->team = $this->Users->team;
         $this->Links = new Links($this);
         $this->Steps = new Steps($this);
-        $this->type = 'items_types';
+        $this->type = parent::TYPE_ITEMS_TYPES;
         if ($id !== null) {
             $this->setId($id);
         }

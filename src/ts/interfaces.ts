@@ -85,11 +85,12 @@ enum Model {
   User2Team = 'user2team',
 }
 
+// Match TYPE_ consts in AbstractEntity
 enum EntityType {
-  Experiment = 'experiment',
-  Item = 'item',
-  ItemType = 'itemtype',
-  Template = 'template',
+  Experiment = 'experiments',
+  Item = 'items',
+  ItemType = 'items_types',
+  Template = 'experiments_templates',
 }
 
 enum Target {

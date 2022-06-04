@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Factories\StorageFactory;
 use Elabftw\Interfaces\PdfMakerInterface;
 use Elabftw\Interfaces\ZipMakerInterface;
 use Elabftw\Models\Items;

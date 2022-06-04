@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Factories\StorageFactory;
 use Elabftw\Interfaces\CleanerInterface;
 use Elabftw\Models\Uploads;
 use PDO;

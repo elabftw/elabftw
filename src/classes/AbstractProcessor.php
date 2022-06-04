@@ -31,7 +31,6 @@ use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Models\Users2Teams;
 use Elabftw\Services\Check;
-use Elabftw\Services\EntityFactory;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -53,7 +52,7 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     protected array $extra = array();
 
-    public function __construct(private Users $Users, Request $request)
+    public function __construct(protected Users $Users, Request $request)
     {
         $this->process($request);
     }
@@ -89,11 +88,6 @@ abstract class AbstractProcessor implements ProcessorInterface
         $this->target = Check::target($target);
     }
 
-    protected function getEntity(string $type, ?int $itemId = null): AbstractEntity
-    {
-        return (new EntityFactory($this->Users, $type, $itemId))->getEntity();
-    }
-
     protected function buildModel(string $model): CrudInterface | Users | Config | Users2Teams
     {
         switch ($model) {
@@ -125,10 +119,10 @@ abstract class AbstractProcessor implements ProcessorInterface
                 return new TeamGroups($this->Users, $this->id);
             case 'tag':
                 return new Tags($this->Entity, $this->id);
-            case 'experiment':
-            case 'item':
-            case 'template':
-            case 'itemtype':
+            case AbstractEntity::TYPE_EXPERIMENTS:
+            case AbstractEntity::TYPE_ITEMS:
+            case AbstractEntity::TYPE_TEMPLATES:
+            case AbstractEntity::TYPE_ITEMS_TYPES:
                 return $this->Entity;
             case 'todolist':
                 return new Todolist((int) $this->Users->userData['userid'], $this->id);

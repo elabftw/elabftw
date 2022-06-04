@@ -27,8 +27,8 @@ class Experiments extends AbstractEntity
     public function __construct(Users $users, ?int $id = null)
     {
         parent::__construct($users, $id);
-        $this->page = 'experiments';
-        $this->type = 'experiments';
+        $this->page = parent::TYPE_EXPERIMENTS;
+        $this->type = parent::TYPE_EXPERIMENTS;
     }
 
     public function create(EntityParamsInterface $params): int

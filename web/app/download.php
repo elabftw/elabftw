@@ -11,7 +11,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\DownloadController;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Services\StorageFactory;
+use Elabftw\Factories\StorageFactory;
 use function error_reporting;
 use Exception;
 use function set_time_limit;

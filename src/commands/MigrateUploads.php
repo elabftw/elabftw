@@ -9,7 +9,7 @@
 
 namespace Elabftw\Commands;
 
-use Elabftw\Services\StorageFactory;
+use Elabftw\Factories\StorageFactory;
 use Elabftw\Services\UploadsMigrator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

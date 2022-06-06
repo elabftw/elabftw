@@ -168,7 +168,7 @@ abstract class AbstractEntityController implements ControllerInterface
     protected function view(): Response
     {
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
-        $this->Entity->canOrExplode('read');
+        $this->Entity->populate();
 
         // REVISIONS
         $Revisions = new Revisions(
@@ -178,20 +178,14 @@ abstract class AbstractEntityController implements ControllerInterface
             (int) $this->App->Config->configArr['min_days_revisions'],
         );
 
-        $template = 'view.html';
-
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
-            'commentsArr' => $this->Entity->Comments->read(new ContentParams()),
-            'linksArr' => $this->Entity->Links->read(new ContentParams()),
             'mode' => 'view',
             'revNum' => $Revisions->readCount(),
-            'stepsArr' => $this->Entity->Steps->read(new ContentParams()),
             'templatesArr' => $this->Templates->readForUser(),
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
-            'uploadsArr' => $this->Entity->Uploads->readAllNormal(),
         );
 
         // RELATED ITEMS AND EXPERIMENTS
@@ -203,7 +197,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         $Response = new Response();
         $Response->prepare($this->App->Request);
-        $Response->setContent($this->App->render($template, $renderArr));
+        $Response->setContent($this->App->render('view.html', $renderArr));
 
         return $Response;
     }
@@ -228,11 +222,9 @@ abstract class AbstractEntityController implements ControllerInterface
             $lastModifierFullname = $lastModifier->userData['fullname'];
         }
 
-
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();
-
 
         // REVISIONS
         $Revisions = new Revisions(
@@ -245,28 +237,24 @@ abstract class AbstractEntityController implements ControllerInterface
         // VISIBILITY ARR
         $TeamGroups = new TeamGroups($this->Entity->Users);
 
-        $template = 'edit.html';
-
         $renderArr = array(
             'Entity' => $this->Entity,
+            'entityData' => $this->Entity->entityData,
             'categoryArr' => $this->categoryArr,
             'deletableXp' => $this->getDeletableXp(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'lang' => Tools::getCalendarLang($this->App->Users->userData['lang'] ?? 'en_GB'),
             'lastModifierFullname' => $lastModifierFullname,
-            'linksArr' => $this->Entity->Links->read(new ContentParams()),
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',
             'revNum' => $Revisions->readCount(),
-            'stepsArr' => $this->Entity->Steps->read(new ContentParams()),
             'templatesArr' => $this->Templates->readForUser(),
-            'uploadsArr' => $this->Entity->Uploads->readAllNormal(),
             'visibilityArr' => $TeamGroups->getVisibilityList(),
         );
 
         $Response = new Response();
         $Response->prepare($this->App->Request);
-        $Response->setContent($this->App->render($template, $renderArr));
+        $Response->setContent($this->App->render('edit.html', $renderArr));
         return $Response;
     }
 

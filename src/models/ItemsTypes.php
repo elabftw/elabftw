@@ -83,7 +83,12 @@ class ItemsTypes extends AbstractTemplateEntity
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        return $this->Db->fetch($req);
+        $this->entityData = $this->Db->fetch($req);
+        $this->canOrExplode('read');
+        // add steps and links in there too
+        $this->entityData['steps'] = $this->Steps->readAll();
+        $this->entityData['links'] = $this->Links->readAll();
+        return $this->entityData;
     }
 
     public function duplicate(): int

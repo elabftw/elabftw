@@ -52,6 +52,11 @@ class Comments implements CrudInterface
 
     public function read(ContentParamsInterface $params): array
     {
+        return $this->readAll();
+    }
+
+    public function readAll(): array
+    {
         $sql = 'SELECT ' . $this->Entity->type . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname
             FROM " . $this->Entity->type . '_comments

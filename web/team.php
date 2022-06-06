@@ -42,9 +42,6 @@ try {
     $TeamGroups = new TeamGroups($App->Users);
     $teamGroupsArr = $TeamGroups->read(new ContentParams());
 
-    $stepsArr = array();
-    $linksArr = array();
-
     $Database = new Items($App->Users);
     // we only want the bookable type of items
     $Database->addFilter('categoryt.bookable', '1');
@@ -76,33 +73,23 @@ try {
 
     $Templates = new Templates($App->Users);
     $templatesArr = $Templates->getTemplatesList();
-    $templateData = array();
+    $entityData = array();
     if ($Request->query->has('templateid')) {
         $Templates->setId((int) $Request->query->get('templateid'));
-        $templateData = $Templates->readOne();
-        $permissions = $Templates->getPermissions($templateData);
-        if ($permissions['read'] === false) {
-            throw new IllegalActionException('User tried to access a template without read permissions');
-        }
-        $stepsArr = $Templates->Steps->read(new ContentParams());
-        $linksArr = $Templates->Links->read(new ContentParams());
+        $entityData = $Templates->readOne();
     }
 
     $template = 'team.html';
     $renderArr = array(
-        'Entity' => $Templates,
-        //'TagCloud' => $TagCloud,
         'Scheduler' => $Scheduler,
         'allItems' => $allItems,
         'itemsArr' => $itemsArr,
         'itemData' => $itemData,
         'selectedItem' => $selectedItem,
-        'stepsArr' => $stepsArr,
-        'linksArr' => $linksArr,
         'teamArr' => $teamArr,
         'teamGroupsArr' => $teamGroupsArr,
         'teamsStats' => $teamsStats,
-        'templateData' => $templateData,
+        'entityData' => $entityData,
         'templatesArr' => $templatesArr,
         'calendarLang' => Tools::getCalendarLang($App->Users->userData['lang']),
     );

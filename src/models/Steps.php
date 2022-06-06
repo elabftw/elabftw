@@ -87,6 +87,11 @@ class Steps implements CrudInterface
         return $req->fetchAll();
     }
 
+    public function readAll(): array
+    {
+        return $this->read(new ContentParams());
+    }
+
     /**
      * Copy the steps from one entity to an other
      *

@@ -5,16 +5,16 @@
   </a>
   <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
     <!-- MANAGE PERMISSIONS -->
-    <a href='#' class='dropdown-item' data-action='toggle-modal' data-target='permModal' data-read='{{ templateData.canread }}' data-write='{{ templateData.canwrite }}'>
+    <a href='#' class='dropdown-item' data-action='toggle-modal' data-target='permModal' data-read='{{ Entity.entityData.canread }}' data-write='{{ Entity.entityData.canwrite }}'>
       <i class='fas fa-share-alt fa-fw mr-1'></i>{{ 'Manage Permissions'|trans }}
     </a>
     <!-- DOWNLOAD -->
-    <a href='#' class='dropdown-item' data-action='download-template' data-name='{{ templateData.title }}' data-id='{{ templateData.id }}'>
+    <a href='#' class='dropdown-item' data-action='download-template' data-name='{{ Entity.entityData.title }}' data-id='{{ Entity.id }}'>
       <i class='fas fa-download fa-fw mr-1'></i>{{ 'Download template'|trans }}
     </a>
     <!-- DESTROY -->
     <div class='dropdown-divider'></div>
-    <a href='#' data-action='destroy-template' class='dropdown-item hover-danger' data-id='{{ templateData.id }}'>
+    <a href='#' data-action='destroy-template' class='dropdown-item hover-danger' data-id='{{ Entity.id }}'>
       <i class='fas fa-trash-alt fa-fw mr-1'></i>{{ 'Destroy template'|trans }}
     </a>
   </div>
@@ -27,33 +27,33 @@
     <i class='fas fa-tags'></i>
     <label>{{ 'Tags'|trans }}</label>
     <div class='tags form-inline'>
-      <div id='tags_div_{{ templateData.id }}' class='mb-2 mb-sm-0'>
+      <div id='tags_div_{{ Entity.id }}' class='mb-2 mb-sm-0'>
         <!--  build the tag array -->
-        {% if templateData.tags|length > 0 %}
-          {% set tagsIdArr = templateData.tags_id|split(',') %}
-          {% set tagsValueArr = templateData.tags|split('|') %}
+        {% if Entity.entityData.tags|length > 0 %}
+          {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
+          {% set tagsValueArr = Entity.entityData.tags|split('|') %}
           {% for key, tag in tagsValueArr -%}
             {#- the key allows to get the id stored in tagsIdArr -#}
-            <a class='tag mr-1 hover-danger' data-action='unreference-tag' data-id='{{ templateData.id }}' data-tagid='{{ tagsIdArr[key] }}'>
+            <a class='tag mr-1 hover-danger' data-action='unreference-tag' data-id='{{ Entity.id }}' data-tagid='{{ tagsIdArr[key] }}'>
               {{- tag|raw -}}
             </a>
           {%- endfor -%}
         {% endif %}
       </div>
-      <input type='text' data-autocomplete='tags' class='createTagInput form-control' id='createTagInput_{{ templateData.id }}' data-id='{{ templateData.id }}' placeholder='{{ 'Add a tag'|trans }}' />
+      <input type='text' data-autocomplete='tags' class='createTagInput form-control' id='createTagInput_{{ Entity.id }}' data-id='{{ Entity.id }}' placeholder='{{ 'Add a tag'|trans }}' />
     </div>
   </div>
 </div>
 
 <label for='title_input'>{{ 'Title'|trans }}</label>
-<input id='title_input' class='form-control' data-id='{{ templateData.id }}' value='{{ templateData.title|raw }}' />
+<input id='title_input' class='form-control' data-id='{{ Entity.id }}' value='{{ Entity.entityData.title|raw }}' />
 {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
-<label for='e{{ templateData.id }}'>{{ 'Template content'|trans }}</label>
+<label for='e{{ Entity.entityData.id }}'>{{ 'Template content'|trans }}</label>
 <div>
-  <textarea id='e{{ templateData.id }}' class='mceditable' style='height:500px;'>{{ templateData.body }}</textarea>
+  <textarea id='e{{ Entity.entityData.id }}' class='mceditable' style='height:500px;'>{{ Entity.entityData.body }}</textarea>
 </div>
 <div class='text-center mt-4'>
-  <button data-action='update-template' data-id='{{ templateData.id }}' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+  <button data-action='update-template' data-id='{{ Entity.entityData.id }}' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
 </div>
 {% set mode = 'edit-template' %}
 {% include 'steps-links-edit.html' %}

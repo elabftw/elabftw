@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use function array_column;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
@@ -309,18 +308,18 @@ abstract class AbstractEntity implements CrudInterface
             return $this->getBoundEvents();
         }
         if ($params->getTarget() === 'metadata') {
-            return array('metadata' => $this->readCurrent()['metadata']);
+            return array('metadata' => $this->readOne()['metadata']);
         }
         if ($params->getTarget() === 'body') {
-            return array('body' => Tools::md2html($this->readCurrent()['body']));
+            return array('body' => Tools::md2html($this->readOne()['body']));
         }
         if ($params->getTarget() === 'sharelink') {
             if (!$this instanceof AbstractConcreteEntity) {
                 throw new ImproperActionException('Can only share experiments or items.');
             }
-            return array('sharelink' => SITE_URL . '/' . $this->page . '.php?mode=view&id=' . $this->id . '&elabid=' . $this->readCurrent()['elabid']);
+            return array('sharelink' => SITE_URL . '/' . $this->page . '.php?mode=view&id=' . $this->id . '&elabid=' . $this->readOne()['elabid']);
         }
-        return $this->readCurrent();
+        return $this->readOne();
     }
 
     public function getTeamFromElabid(string $elabid): int
@@ -615,8 +614,8 @@ abstract class AbstractEntity implements CrudInterface
             throw new ImproperActionException('No id was set.');
         }
 
-        // load the entity in entityData array
-        $this->entityData = $this->read(new ContentParams());
+        // load the entity in entityData property and also check for read permission at the same time
+        $this->readOne();
     }
 
     /**
@@ -699,6 +698,30 @@ abstract class AbstractEntity implements CrudInterface
     }
 
     /**
+     * Read all from one entity
+     */
+    public function readOne(): array
+    {
+        if ($this->id === null) {
+            throw new IllegalActionException('No id was set!');
+        }
+        $sql = $this->getReadSqlBeforeWhere(true, true);
+
+        $sql .= ' WHERE entity.id = ' . (string) $this->id;
+
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        $this->entityData = $this->Db->fetch($req);
+        $this->canOrExplode('read');
+        $this->entityData['steps'] = $this->Steps->readAll();
+        $this->entityData['links'] = $this->Links->readAll();
+        $this->entityData['uploads'] = $this->Uploads->readAllNormal();
+        $this->entityData['comments'] = $this->Comments->readAll();
+
+        return $this->entityData;
+    }
+
+    /**
      * Update only one field in the metadata json
      */
     protected function updateJsonField(EntityParamsInterface $params): bool
@@ -711,34 +734,6 @@ abstract class AbstractEntity implements CrudInterface
         $req->bindValue(':value', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Read all from one entity
-     * Here be dragons!
-     *
-     * @param bool $getTags if true, might take a long time
-     */
-    protected function readCurrent(bool $getTags = true): array
-    {
-        if ($this->id === null) {
-            throw new IllegalActionException('No id was set!');
-        }
-        $sql = $this->getReadSqlBeforeWhere($getTags, true);
-
-        $sql .= ' WHERE entity.id = ' . (string) $this->id;
-
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-
-        $item = $req->fetch();
-
-        $permissions = $this->getPermissions($item);
-        if ($permissions['read'] === false) {
-            throw new IllegalActionException(Tools::error(true));
-        }
-
-        return $item;
     }
 
     /**

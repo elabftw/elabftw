@@ -33,7 +33,7 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead(): void
     {
-        $this->assertIsArray($this->Comments->read(new ContentParams()));
+        $this->assertIsArray($this->Comments->readAll());
     }
 
     public function testUpdate(): void

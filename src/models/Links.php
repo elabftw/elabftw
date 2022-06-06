@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,10 +6,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
@@ -72,6 +72,11 @@ class Links implements CrudInterface
         $this->Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    public function readAll(): array
+    {
+        return $this->read(new ContentParams());
     }
 
     /**

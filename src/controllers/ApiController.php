@@ -597,7 +597,7 @@ class ApiController implements ControllerInterface
             return new JsonResponse($this->Scheduler->readAllFromTeam('2018-12-23T00:00:00 01:00', '2119-12-23T00:00:00 01:00'));
         }
         $this->Scheduler->setId($this->id);
-        return new JsonResponse($this->Scheduler->readFromId());
+        return new JsonResponse($this->Scheduler->readOne());
     }
 
     /**

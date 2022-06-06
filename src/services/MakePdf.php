@@ -17,10 +17,10 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Factories\StorageFactory;
 use Elabftw\Interfaces\MpdfProviderInterface;
+use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
 use Elabftw\Models\Notifications;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
@@ -245,7 +245,7 @@ class MakePdf extends AbstractMakePdf
         }
 
         $commentsArr = array();
-        if ($this->Entity instanceof Experiments || $this->Entity instanceof Items) {
+        if ($this->Entity instanceof AbstractConcreteEntity) {
             $commentsArr = $this->Entity->Comments->read(new ContentParams());
         }
 

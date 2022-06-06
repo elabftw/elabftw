@@ -128,11 +128,11 @@ try {
         } else {
             $Category = new ItemsTypes($App->Users, $id);
         }
-        $categoryArr = $Category->readOne();
+        $category = $Category->readOne();
         $Response->setData(array(
             'res' => true,
             'msg' => _('Saved'),
-            'color' => $categoryArr['color'],
+            'color' => $category['color'],
         ));
     }
 } catch (ImproperActionException | UnauthorizedException | PDOException $e) {

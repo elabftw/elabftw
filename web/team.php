@@ -79,7 +79,7 @@ try {
     $templateData = array();
     if ($Request->query->has('templateid')) {
         $Templates->setId((int) $Request->query->get('templateid'));
-        $templateData = $Templates->read(new ContentParams());
+        $templateData = $Templates->readOne();
         $permissions = $Templates->getPermissions($templateData);
         if ($permissions['read'] === false) {
             throw new IllegalActionException('User tried to access a template without read permissions');

@@ -14,7 +14,7 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\Config;
 use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\Client;
@@ -43,12 +43,9 @@ class MakeBloxberg extends AbstractMake
 
     private const API_KEY_URL = 'https://get.elabftw.net/?bloxbergapikey';
 
-    /** @var AbstractEntity $Entity */
-    protected $Entity;
-
     private string $apiKey;
 
-    public function __construct(private Client $client, AbstractEntity $entity)
+    public function __construct(private Client $client, AbstractConcreteEntity $entity)
     {
         parent::__construct($entity);
         $this->Entity->canOrExplode('write');

@@ -45,7 +45,7 @@ try {
 
     if ($Request->query->has('templateid')) {
         $Templates->setId((int) $Request->query->get('templateid'));
-        $templateData = $Templates->read(new ContentParams());
+        $templateData = $Templates->readOne();
         $permissions = $Templates->getPermissions($templateData);
         if ($permissions['write'] === false) {
             throw new IllegalActionException('User tried to access a template without write permissions');
@@ -66,7 +66,7 @@ try {
 
     // the items categoryArr for add link input
     $ItemsTypes = new ItemsTypes($App->Users);
-    $itemsCategoryArr = $ItemsTypes->read(new ContentParams());
+    $itemsCategoryArr = $ItemsTypes->readAll();
 
     // Notifications
     $notificationsSettings = array(

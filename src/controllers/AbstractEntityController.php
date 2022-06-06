@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
@@ -40,13 +39,9 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $categoryArr = array();
 
-    /** @var AbstractEntity $Entity */
-    protected $Entity;
-
-    public function __construct(protected App $App, AbstractEntity $entity)
+    public function __construct(protected App $App, protected AbstractEntity $Entity)
     {
-        $this->Entity = $entity;
-        $this->Templates = new Templates($entity->Users);
+        $this->Templates = new Templates($this->Entity->Users);
     }
 
     /**
@@ -133,7 +128,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->read(new ContentParams());
+        $itemsCategoryArr = $ItemsTypes->readAll();
 
         $template = 'show.html';
 
@@ -236,7 +231,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->read(new ContentParams());
+        $itemsCategoryArr = $ItemsTypes->readAll();
 
 
         // REVISIONS

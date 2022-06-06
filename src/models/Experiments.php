@@ -9,7 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\EntityParamsInterface;
@@ -20,7 +20,7 @@ use PDO;
 /**
  * All about the experiments
  */
-class Experiments extends AbstractEntity
+class Experiments extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 
@@ -41,7 +41,7 @@ class Experiments extends AbstractEntity
         // do we want template ?
         if ($tpl > 0) {
             $Templates->setId($tpl);
-            $templateArr = $Templates->read(new ContentParams());
+            $templateArr = $Templates->readOne();
             $permissions = $Templates->getPermissions($templateArr);
             if ($permissions['read'] === false) {
                 throw new IllegalActionException('User tried to access a template without read permissions');
@@ -79,7 +79,7 @@ class Experiments extends AbstractEntity
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $body, PDO::PARAM_STR);
         $req->bindValue(':category', $this->getStatus(), PDO::PARAM_INT);
-        $req->bindValue(':elabid', $this->generateElabid(), PDO::PARAM_STR);
+        $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
         $req->bindParam(':canread', $canread, PDO::PARAM_STR);
         $req->bindParam(':canwrite', $canwrite, PDO::PARAM_STR);
         $req->bindParam(':metadata', $metadata, PDO::PARAM_STR);
@@ -142,7 +142,7 @@ class Experiments extends AbstractEntity
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $this->entityData['body'], PDO::PARAM_STR);
         $req->bindValue(':category', $this->getStatus(), PDO::PARAM_INT);
-        $req->bindValue(':elabid', $this->generateElabid(), PDO::PARAM_STR);
+        $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
         $req->bindParam(':canread', $this->entityData['canread'], PDO::PARAM_STR);
         $req->bindParam(':canwrite', $this->entityData['canwrite'], PDO::PARAM_STR);
         $req->bindParam(':metadata', $this->entityData['metadata'], PDO::PARAM_STR);
@@ -167,17 +167,6 @@ class Experiments extends AbstractEntity
     {
         // delete from pinned too
         return parent::destroy() && $this->Pins->cleanup();
-    }
-
-    /**
-     * Count the number of timestamped experiments during past month (sliding window)
-     */
-    public function getTimestampLastMonth(): int
-    {
-        $sql = 'SELECT COUNT(id) FROM experiments WHERE timestamped = 1 AND timestampedwhen > (NOW() - INTERVAL 1 MONTH)';
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-        return (int) $req->fetchColumn();
     }
 
     protected function getBoundEvents(): array

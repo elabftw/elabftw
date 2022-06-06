@@ -42,8 +42,7 @@ use ZipStream\ZipStream;
  */
 class MakeController implements ControllerInterface
 {
-    /** @var AbstractEntity $Entity */
-    private $Entity;
+    private AbstractEntity $Entity;
 
     // an array of id to process
     private array $idArr = array();

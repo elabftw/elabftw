@@ -70,7 +70,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Items = new Items(new Users(1, 1), 1337);
         $Scheduler = new Scheduler($Items);
         $this->expectException(ResourceNotFoundException::class);
-        $Scheduler->readFromId();
+        $Scheduler->readOne();
     }
 
     public function testBind(): void

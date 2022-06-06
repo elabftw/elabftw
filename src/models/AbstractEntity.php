@@ -139,6 +139,25 @@ abstract class AbstractEntity implements CrudInterface
     abstract public function duplicate(): int;
 
     /**
+     * Only Experiments will currently implement this correctly
+     */
+    public function updateTimestamp(string $responseTime): void
+    {
+        return;
+    }
+
+    /**
+     * Count the number of timestamped experiments during past month (sliding window)
+     */
+    public function getTimestampLastMonth(): int
+    {
+        $sql = 'SELECT COUNT(id) FROM experiments WHERE timestamped = 1 AND timestampedwhen > (NOW() - INTERVAL 1 MONTH)';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
+    /**
      * Lock/unlock
      */
     public function toggleLock(): bool
@@ -296,8 +315,8 @@ abstract class AbstractEntity implements CrudInterface
             return array('body' => Tools::md2html($this->readCurrent()['body']));
         }
         if ($params->getTarget() === 'sharelink') {
-            if (!($this instanceof Experiments || $this instanceof Items)) {
-                throw new IllegalActionException('Can only share experiments or items.');
+            if (!$this instanceof AbstractConcreteEntity) {
+                throw new ImproperActionException('Can only share experiments or items.');
             }
             return array('sharelink' => SITE_URL . '/' . $this->page . '.php?mode=view&id=' . $this->id . '&elabid=' . $this->readCurrent()['elabid']);
         }
@@ -666,7 +685,7 @@ abstract class AbstractEntity implements CrudInterface
 
     public function destroy(): bool
     {
-        if ($this instanceof Experiments || $this instanceof Items) {
+        if ($this instanceof AbstractConcreteEntity) {
             // mark all uploads related to that entity as deleted
             $sql = 'UPDATE uploads SET state = :state WHERE item_id = :entity_id AND type = :type';
             $req = $this->Db->prepare($sql);
@@ -700,7 +719,7 @@ abstract class AbstractEntity implements CrudInterface
      *
      * @param bool $getTags if true, might take a long time
      */
-    private function readCurrent(bool $getTags = true): array
+    protected function readCurrent(bool $getTags = true): array
     {
         if ($this->id === null) {
             throw new IllegalActionException('No id was set!');

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -49,7 +48,7 @@ try {
     $TeamGroups = new TeamGroups($App->Users);
     $Teams = new Teams($App->Users);
 
-    $itemsCategoryArr = $ItemsTypes->read(new ContentParams());
+    $itemsCategoryArr = $ItemsTypes->readAll();
     $templateData = array();
     $stepsArr = array();
     $linksArr = array();

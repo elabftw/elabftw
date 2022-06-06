@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Services\Filter;
@@ -20,7 +19,7 @@ use PDO;
 /**
  * All about the templates
  */
-class Templates extends AbstractEntity
+class Templates extends AbstractTemplateEntity
 {
     use SortableTrait;
 
@@ -103,7 +102,11 @@ class Templates extends AbstractEntity
         if ($params->getTarget() === 'list') {
             return $this->getList();
         }
+        return $this->readOne();
+    }
 
+    public function readOne(): array
+    {
         $sql = "SELECT experiments_templates.id, experiments_templates.title, experiments_templates.body,
             experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
             experiments_templates.locked, experiments_templates.lockedby, experiments_templates.lockedwhen,
@@ -117,14 +120,7 @@ class Templates extends AbstractEntity
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-
-        $res = $req->fetch();
-        if ($res === false) {
-            throw new ImproperActionException('No template found with this id!');
-        }
-        $this->entityData = $res;
-
-        return $res;
+        return $this->Db->fetch($req);
     }
 
     /**
@@ -197,10 +193,7 @@ class Templates extends AbstractEntity
      */
     public function readForUser(): array
     {
-        if (empty($this->Users->userData['userid'])) {
-            return array();
-        }
-        if (!$this->Users->userData['show_team_templates']) {
+        if ($this->Users->userData['show_team_templates'] === '0') {
             $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
         }
         return $this->getTemplatesList();

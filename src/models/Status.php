@@ -1,12 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2012, 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -15,13 +14,27 @@ use Elabftw\Elabftw\StatusParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\StatusParamsInterface;
+use Elabftw\Traits\CategoryTrait;
 use PDO;
 
 /**
- * Things related to status in admin panel
+ * Experiments have a Status which is expressed as a Category, the same way Items have an ItemType
  */
 class Status extends AbstractCategory
 {
+    use CategoryTrait;
+
+    private const DEFAULT_BLUE = '#29AEB9';
+
+    private const DEFAULT_GREEN = '#54AA08';
+
+    private const DEFAULT_GRAY = '#C0C0C0';
+
+    private const DEFAULT_RED = '#C24F3D';
+
+    // the mysql table containing entities that we can count for a given category
+    private string $countableTable = 'experiments';
+
     public function __construct(int $team, ?int $id = null)
     {
         $this->team = $team;
@@ -49,16 +62,27 @@ class Status extends AbstractCategory
     public function createDefault(): bool
     {
         return $this->create(
-            new StatusParams('Running', '#29AEB9', true)
+            new StatusParams(_('Running'), self::DEFAULT_BLUE, true)
         ) && $this->create(
-            new StatusParams('Success', '#54AA08')
+            new StatusParams(_('Success'), self::DEFAULT_GREEN)
         ) && $this->create(
-            new StatusParams('Need to be redone', '#C0C0C0')
+            new StatusParams(_('Need to be redone'), self::DEFAULT_GRAY)
         ) && $this->create(
-            new StatusParams('Fail', '#C24F3D')
+            new StatusParams(_('Fail'), self::DEFAULT_RED)
         );
     }
 
+    public function read(ContentParamsInterface $params): array
+    {
+        if ($params->getTarget() === 'all') {
+            return $this->readAll();
+        }
+        return $this->readOne();
+    }
+
+    /**
+     * Read the current status
+     */
     public function readOne(): array
     {
         $sql = 'SELECT id as category_id, name as category, color, is_default
@@ -70,15 +94,10 @@ class Status extends AbstractCategory
         return $this->Db->fetch($req);
     }
 
-    public function readAll(): array
-    {
-        return array();
-    }
-
     /**
      * SQL to get all status from team
      */
-    public function read(ContentParamsInterface $params): array
+    public function readAll(): array
     {
         $sql = 'SELECT status.id AS category_id,
             status.name AS category,
@@ -88,7 +107,6 @@ class Status extends AbstractCategory
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $this->Db->execute($req);
-
         return $req->fetchAll();
     }
 
@@ -120,7 +138,7 @@ class Status extends AbstractCategory
     public function destroy(): bool
     {
         // don't allow deletion of a status with experiments
-        if ($this->countItems() > 0) {
+        if ($this->countEntities() > 0) {
             throw new ImproperActionException(_('Remove all experiments with this status before deleting this status.'));
         }
 
@@ -130,19 +148,6 @@ class Status extends AbstractCategory
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Count all experiments with this status
-     */
-    protected function countItems(): int
-    {
-        $sql = 'SELECT COUNT(id) FROM experiments WHERE category = :category';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':category', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return (int) $req->fetchColumn();
     }
 
     /**

@@ -16,6 +16,7 @@ interface ResponseMsg {
 interface PartialEntity {
   body: string;
   metadata: string;
+  sharelink: string;
 }
 
 interface Categories {
@@ -69,6 +70,7 @@ enum Action {
   ImportLinks = 'importlinks',
   Lock = 'lock',
   Pin = 'pin',
+  Timestamp = 'timestamp',
 }
 
 enum Model {
@@ -116,7 +118,10 @@ enum Target {
   PrivacyPolicy = 'privacypolicy',
   Rating = 'rating',
   RealName = 'real_name',
+  ShareLink = 'sharelink',
   Title = 'title',
+  TsBloxberg = 'ts_bloxberg',
+  TsClassic = 'ts_classic',
   Unreference = 'unreference',
   UserId = 'userid',
 }

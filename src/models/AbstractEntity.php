@@ -295,6 +295,12 @@ abstract class AbstractEntity implements CrudInterface
         if ($params->getTarget() === 'body') {
             return array('body' => Tools::md2html($this->readCurrent()['body']));
         }
+        if ($params->getTarget() === 'sharelink') {
+            if (!($this instanceof Experiments || $this instanceof Items)) {
+                throw new IllegalActionException('Can only share experiments or items.');
+            }
+            return array('sharelink' => SITE_URL . '/' . $this->page . '.php?mode=view&id=' . $this->id . '&elabid=' . $this->readCurrent()['elabid']);
+        }
         return $this->readCurrent();
     }
 

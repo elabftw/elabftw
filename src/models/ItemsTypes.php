@@ -48,12 +48,30 @@ class ItemsTypes extends AbstractEntity
         return $this->Db->lastInsertId();
     }
 
+    /**
+     * SQL to get all items type
+     */
     public function read(ContentParamsInterface $params): array
     {
-        if ($params->getTarget() === 'all') {
-            return $this->readAll();
-        }
+        $sql = 'SELECT items_types.id AS category_id,
+            items_types.name AS category,
+            items_types.color,
+            items_types.bookable,
+            items_types.body,
+            items_types.ordering,
+            items_types.canread,
+            items_types.canwrite
+            FROM items_types WHERE team = :team AND state = :state ORDER BY ordering ASC';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+        $req->bindValue(':state', self::STATE_NORMAL, PDO::PARAM_INT);
+        $this->Db->execute($req);
 
+        return $req->fetchAll();
+    }
+
+    public function readOne(): array
+    {
         $sql = 'SELECT id, team, color, bookable, name, body, canread, canwrite, metadata, state
             FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
@@ -103,28 +121,6 @@ class ItemsTypes extends AbstractEntity
         }
 
         return parent::destroy();
-    }
-
-    /**
-     * SQL to get all items type
-     */
-    public function readAll(bool $getTags = true): array
-    {
-        $sql = 'SELECT items_types.id AS category_id,
-            items_types.name AS category,
-            items_types.color,
-            items_types.bookable,
-            items_types.body,
-            items_types.ordering,
-            items_types.canread,
-            items_types.canwrite
-            FROM items_types WHERE team = :team AND state = :state ORDER BY ordering ASC';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
-        $req->bindValue(':state', self::STATE_NORMAL, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $req->fetchAll();
     }
 
     /**

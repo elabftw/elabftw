@@ -41,7 +41,7 @@
 </div>
 {% endif %}
 
-<section class='item' style='padding:15px;border-left: 6px solid #{{ Entity.entityData.color }}'>
+<section class='item' id='main_section' style='padding:15px;border-left: 6px solid #{{ Entity.entityData.color }}'>
   <p class='float-right d-inline'>
     <a class='elab-tooltip ml-2' data-action='pin' href='#'>
       <span>{{ 'Toggle pin'|trans }}</span>
@@ -138,11 +138,12 @@
     </span>
   {% endif %}
 
+  <!-- CATEGORY, RATING AND CANREAD/CANWRITE ROW -->
   <div class='row'>
     <div class='col-6'>
       <p>
         <i aria-hidden='true' class='fas fa-clipboard-{{ Entity.type == 'experiments' ? 'check' : 'list' }}'></i>
-          {{ Entity.entityData.category }}
+        <span class='malleableCategory'>{{ Entity.entityData.category }}</span>
           {% if Entity.entityData.rating > 0 %}
             {{ Entity.entityData.rating|stars|raw }}
           {% endif %}

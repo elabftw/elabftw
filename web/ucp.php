@@ -66,7 +66,7 @@ try {
 
     // the items categoryArr for add link input
     $ItemsTypes = new ItemsTypes($App->Users);
-    $itemsCategoryArr = $ItemsTypes->readAll();
+    $itemsCategoryArr = $ItemsTypes->read(new ContentParams());
 
     // Notifications
     $notificationsSettings = array(

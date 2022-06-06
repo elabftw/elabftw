@@ -276,3 +276,24 @@ export function addAutocompleteToTagInputs(): void {
     },
   });
 }
+
+export function updateCategory(entity: Entity, value: string): string {
+  $.post('app/controllers/EntityAjaxController.php', {
+    updateCategory: true,
+    id: entity.id,
+    type: entity.type,
+    categoryId : value,
+  }).done(function(json) {
+    notif(json);
+    if (json.res) {
+      // change the color of the item border
+      // we first remove any status class
+      $('#main_section').css('border', null);
+      // and we add our new border color
+      // first : get what is the color of the new status
+      const css = '6px solid #' + json.color;
+      $('#main_section').css('border-left', css);
+    }
+  });
+  return value;
+}

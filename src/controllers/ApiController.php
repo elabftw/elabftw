@@ -731,7 +731,7 @@ class ApiController implements ControllerInterface
      */
     private function getCategory(): Response
     {
-        return new JsonResponse($this->Category->readAll());
+        return new JsonResponse($this->Category->read(new ContentParams()));
     }
 
     /**
@@ -817,7 +817,7 @@ class ApiController implements ControllerInterface
     {
         // check that the id we have is a valid item type from our team
         $ItemsTypes = new ItemsTypes($this->Users);
-        $itemsTypesArr = $ItemsTypes->readAll();
+        $itemsTypesArr = $ItemsTypes->read(new ContentParams());
         $validIds = array();
         foreach ($itemsTypesArr as $itemsTypes) {
             $validIds[] = $itemsTypes['category_id'];

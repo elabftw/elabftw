@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Status;
@@ -28,7 +29,7 @@ class ExperimentsController extends AbstractEntityController
         parent::__construct($app, $entity);
 
         $Category = new Status($this->App->Users->team);
-        $this->categoryArr = $Category->readAll();
+        $this->categoryArr = $Category->read(new ContentParams());
     }
 
     /**

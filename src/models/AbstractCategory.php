@@ -1,16 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2012, 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\SortableTrait;
@@ -30,7 +30,12 @@ abstract class AbstractCategory implements CrudInterface
     /**
      * Get all the things
      */
-    abstract public function readAll(): array;
+    abstract public function read(ContentParamsInterface $params): array;
+
+    /**
+     * Read just one category
+     */
+    abstract public function readOne(): array;
 
     /**
      * Count all items of this type

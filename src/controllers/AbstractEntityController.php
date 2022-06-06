@@ -133,7 +133,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->readAll();
+        $itemsCategoryArr = $ItemsTypes->read(new ContentParams());
 
         $template = 'show.html';
 
@@ -236,7 +236,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->readAll();
+        $itemsCategoryArr = $ItemsTypes->read(new ContentParams());
 
 
         // REVISIONS

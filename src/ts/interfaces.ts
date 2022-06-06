@@ -10,12 +10,18 @@ interface ResponseMsg {
   res: boolean;
   msg: string;
   color?: string;
-  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedEntities> | Array<Upload> | object | PartialEntity;
+  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedEntities> | Array<Upload> | Array<Categories> | object | PartialEntity;
 }
 
 interface PartialEntity {
   body: string;
   metadata: string;
+}
+
+interface Categories {
+  category_id: string;
+  category: string;
+  color: string;
 }
 
 interface Upload {
@@ -139,6 +145,7 @@ interface Payload {
 
 export {
   BoundEvent,
+  Categories,
   CheckableItem,
   ResponseMsg,
   Payload,

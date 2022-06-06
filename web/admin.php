@@ -49,7 +49,7 @@ try {
     $TeamGroups = new TeamGroups($App->Users);
     $Teams = new Teams($App->Users);
 
-    $itemsCategoryArr = $ItemsTypes->readAll();
+    $itemsCategoryArr = $ItemsTypes->read(new ContentParams());
     $templateData = array();
     $stepsArr = array();
     $linksArr = array();

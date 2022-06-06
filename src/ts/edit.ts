@@ -6,7 +6,7 @@
  * @package elabftw
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-import { notif, reloadElement } from './misc';
+import { notif, reloadElement, updateCategory } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Payload, Method, Action, PartialEntity } from './interfaces';
 import './doodle';
@@ -266,24 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // STATUS SELECT
   $(document).on('change', '#category_select', function() {
-    const categoryId = $(this).val();
-    $.post('app/controllers/EntityAjaxController.php', {
-      updateCategory: true,
-      id: entity.id,
-      type: entity.type,
-      categoryId : categoryId,
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        // change the color of the item border
-        // we first remove any status class
-        $('#main_section').css('border', null);
-        // and we add our new border color
-        // first : get what is the color of the new status
-        const css = '6px solid #' + json.color;
-        $('#main_section').css('border-left', css);
-      }
-    });
+    updateCategory(entity, String($(this).val()));
   });
 
   // TITLE STUFF

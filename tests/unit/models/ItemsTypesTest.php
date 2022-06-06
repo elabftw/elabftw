@@ -33,7 +33,7 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
         $this->ItemsTypes->create(
             new ItemTypeParams('new', 'all', $extra)
         );
-        $itemsTypes = $this->ItemsTypes->readAll();
+        $itemsTypes = $this->ItemsTypes->read(new ContentParams());
         $last = array_pop($itemsTypes);
         $this->ItemsTypes->setId((int) $last['category_id']);
         $extra = array(

@@ -59,7 +59,7 @@ class Status extends AbstractCategory
         );
     }
 
-    public function read(ContentParamsInterface $params): array
+    public function readOne(): array
     {
         $sql = 'SELECT id as category_id, name as category, color, is_default
             FROM status WHERE team = :team AND id = :id';
@@ -70,10 +70,15 @@ class Status extends AbstractCategory
         return $this->Db->fetch($req);
     }
 
+    public function readAll(): array
+    {
+        return array();
+    }
+
     /**
      * SQL to get all status from team
      */
-    public function readAll(): array
+    public function read(ContentParamsInterface $params): array
     {
         $sql = 'SELECT status.id AS category_id,
             status.name AS category,

@@ -6,11 +6,11 @@
  * @package elabftw
  */
 import i18next from 'i18next';
-import { InputType, Malle } from '@deltablot/malle';
+import { InputType, Malle, SelectOptions } from '@deltablot/malle';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
-import { getEntity, relativeMoment, reloadElement } from './misc';
-import { BoundEvent, Payload, Method, Action, Target } from './interfaces';
+import { getEntity, updateCategory, relativeMoment, reloadElement } from './misc';
+import { BoundEvent, EntityType, Payload, Method, Action, Target, Model } from './interfaces';
 import { DateTime } from 'luxon';
 import EntityClass from './Entity.class';
 import Comment from './Comment.class';
@@ -174,6 +174,30 @@ document.addEventListener('DOMContentLoaded', () => {
     submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
   });
+
+  // UPDATE MALLEABLE CATEGORY
+  new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2', 'ml-1'],
+    inputClasses: ['form-control'],
+    fun: value => updateCategory(entity, value),
+    inputType: InputType.Select,
+    selectOptionsValueKey: 'category_id',
+    selectOptionsTextKey: 'category',
+    selectOptions: AjaxC.send({
+      method: Method.GET,
+      action: Action.Read,
+      // problem here is that status is a subtype of experiments, and itemstypes is an abstractentity itself
+      // so processor will read model for experiments and return entity for itemstypes
+      // even if model is defined as itemstypes, it will return the entity, so fill entity key with itemstype and no id
+      entity: {type: EntityType.ItemType, id: null},
+      model: entity.type === EntityType.Experiment ? Model.Status : EntityType.ItemType,
+    }).then(json => (json.value as Array<SelectOptions>)),
+    listenOn: '.malleableCategory',
+    submit : i18next.t('save'),
+    submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
 
   // listen on existing comments
   malleableComments.listen();

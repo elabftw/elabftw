@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\StepParams;
 use Elabftw\Elabftw\TagParams;
@@ -53,9 +54,9 @@ class Populate
             $tpl = 0;
         } else {
             $Category = new ItemsTypes($Entity->Users);
-            $tpl = (int) $Category->readAll()[0]['category_id'];
+            $tpl = (int) $Category->read(new ContentParams())[0]['category_id'];
         }
-        $categories = $Category->readAll();
+        $categories = $Category->read(new ContentParams());
 
 
         printf("Generating %s \n", $Entity->type);

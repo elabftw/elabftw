@@ -197,7 +197,7 @@ try {
         } else {
             $Category = new ItemsTypes($App->Users, $id);
         }
-        $categoryArr = $Category->read(new ContentParams());
+        $categoryArr = $Category->readOne();
         $Response->setData(array(
             'res' => true,
             'msg' => _('Saved'),

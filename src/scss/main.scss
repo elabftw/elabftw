@@ -1108,7 +1108,7 @@ the form-control fails to do that so we do the border ourselves */
     color: $maingray;
 }
 
-[data-icon='bell'].active {
+.fa-bell.active {
     color: $elabblue;
 }
 

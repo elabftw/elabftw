@@ -46,7 +46,7 @@ class Populate
     /**
      * Populate the db with fake experiments or items
      */
-    public function generate(Experiments|Items $Entity): void
+    public function generate(Experiments | Items $Entity): void
     {
         if ($Entity instanceof Experiments) {
             $Category = new Status($Entity->Users->team);

@@ -65,7 +65,8 @@ class MakeBloxberg extends AbstractMake
                 'headers' => array(
                     'api_key' => $this->apiKey,
                 ),
-                'json' => $certifyResponse, ));
+                'json' => $certifyResponse,
+            ));
         } catch (RequestException $e) {
             throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);
         }

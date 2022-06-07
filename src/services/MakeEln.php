@@ -113,7 +113,7 @@ class MakeEln extends MakeStreamZip
             }
 
             // MAIN ENTRY
-            $dataEntities[] =  array(
+            $dataEntities[] = array(
                 '@id' => './' . $currentDatasetFolder,
                 '@type' => 'Dataset',
                 'author' => array(

@@ -32,12 +32,10 @@ class Status extends AbstractCategory
 
     private const DEFAULT_RED = '#C24F3D';
 
-    // the mysql table containing entities that we can count for a given category
-    private string $countableTable = 'experiments';
-
     public function __construct(int $team, ?int $id = null)
     {
         $this->team = $team;
+        $this->countableTable = 'experiments';
         $this->Db = Db::getConnection();
         $this->id = $id;
     }

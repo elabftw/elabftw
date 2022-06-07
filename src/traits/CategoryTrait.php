@@ -20,6 +20,9 @@ trait CategoryTrait
 {
     protected Db $Db;
 
+    // the mysql table containing entities that we can count for a given category
+    protected string $countableTable;
+
     public function countEntities(): int
     {
         $sql = 'SELECT COUNT(id) FROM ' . $this->countableTable . ' WHERE category = :category';

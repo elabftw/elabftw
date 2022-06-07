@@ -32,6 +32,7 @@ use function implode;
 use function is_bool;
 use PDO;
 use PDOStatement;
+use const SITE_URL;
 
 /**
  * The mother class of Experiments, Items, Templates and ItemsTypes

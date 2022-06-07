@@ -26,14 +26,12 @@ class ItemsTypes extends AbstractTemplateEntity
 
     private int $team;
 
-    // the mysql table containing entities that we can count for a given category
-    private string $countableTable = 'items';
-
     public function __construct(public Users $Users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->team = $this->Users->team;
         $this->Links = new Links($this);
+        $this->countableTable = 'items';
         $this->Steps = new Steps($this);
         $this->type = parent::TYPE_ITEMS_TYPES;
         if ($id !== null) {

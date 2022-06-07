@@ -208,13 +208,6 @@ class MakePdf extends AbstractMakePdf
      */
     private function getHtml(): string
     {
-        $Request = Request::createFromGlobals();
-
-        if ($this->Entity->entityData['tags']) {
-            $tags = '<strong>Tags:</strong> <em>' .
-                str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />';
-        }
-
         $date = new DateTimeImmutable($this->Entity->entityData['date'] ?? date('Ymd'));
 
         $locked = $this->Entity->entityData['locked'];
@@ -241,6 +234,9 @@ class MakePdf extends AbstractMakePdf
                 $uploadsArr[$key]['base64_thumbnail'] = base64_encode($storageFs->read($thumbnail));
             }
         }
+
+        // used for pdf_sig
+        $Request = Request::createFromGlobals();
 
         $renderArr = array(
             'body' => $this->getBody(),

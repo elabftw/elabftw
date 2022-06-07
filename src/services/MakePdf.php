@@ -225,13 +225,12 @@ class MakePdf extends AbstractMakePdf
         }
 
         // read the content of the thumbnail here to feed the template
-        $uploadsArr = $this->Entity->entityData['uploads'];
-        foreach ($uploadsArr as $key => $upload) {
+        foreach ($this->Entity->entityData['uploads'] as $key => $upload) {
             $storageFs = (new StorageFactory((int) $upload['storage']))->getStorage()->getFs();
             $thumbnail = $upload['long_name'] . '_th.jpg';
             // no need to filter on extension, just insert the thumbnail if it exists
             if ($storageFs->fileExists($thumbnail)) {
-                $uploadsArr[$key]['base64_thumbnail'] = base64_encode($storageFs->read($thumbnail));
+                $this->Entity->entityData['uploads'][$key]['base64_thumbnail'] = base64_encode($storageFs->read($thumbnail));
             }
         }
 

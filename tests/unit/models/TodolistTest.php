@@ -22,7 +22,7 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
 
     public function testRead(): void
     {
-        $this->assertTrue(is_array($this->Todolist->read(new ContentParams())));
+        $this->assertIsArray($this->Todolist->readAll());
     }
 
     public function testUpdate(): void
@@ -44,6 +44,6 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
     public function testDestroy(): void
     {
         $this->Todolist->setId(1);
-        $this->Todolist->destroy();
+        $this->assertTrue($this->Todolist->destroy());
     }
 }

@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
@@ -41,7 +40,7 @@ class Steps implements CrudInterface
         $this->Entity->canOrExplode('write');
         // make sure the newly added step is at the bottom
         // count the number of steps and add 1 to be sure we're last
-        $ordering = count($this->read(new ContentParams())) + 1;
+        $ordering = count($this->readAll()) + 1;
 
         $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :content, :ordering)';
         $req = $this->Db->prepare($sql);
@@ -75,10 +74,8 @@ class Steps implements CrudInterface
         $this->Db->execute($req);
     }
 
-    public function read(ContentParamsInterface $params): array
+    public function readAll(): array
     {
-        $this->Entity->canOrExplode('read');
-
         $sql = 'SELECT * FROM ' . $this->Entity->type . '_steps WHERE item_id = :id ORDER BY ordering';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
@@ -87,9 +84,14 @@ class Steps implements CrudInterface
         return $req->fetchAll();
     }
 
-    public function readAll(): array
+    public function readOne(): array
     {
-        return $this->read(new ContentParams());
+        $sql = 'SELECT * FROM ' . $this->Entity->type . '_steps WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $this->Db->fetch($req);
     }
 
     /**

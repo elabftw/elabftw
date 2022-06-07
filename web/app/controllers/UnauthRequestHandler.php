@@ -25,7 +25,7 @@ try {
     $Response->setData(array(
         'res' => true,
         'msg' => _('Saved'),
-        'value' => $PrivacyPolicy->read(new ContentParams()),
+        'value' => $PrivacyPolicy->readAll()[0],
     ));
 } catch (ResourceNotFoundException $e) {
     $Response->setData(array(

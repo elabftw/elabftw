@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
@@ -54,7 +53,7 @@ class Links implements CrudInterface
     /**
      * Get links for an entity
      */
-    public function read(ContentParamsInterface $params): array
+    public function readAll(): array
     {
         $sql = 'SELECT items.id AS itemid,
             items.title,
@@ -74,9 +73,9 @@ class Links implements CrudInterface
         return $req->fetchAll();
     }
 
-    public function readAll(): array
+    public function readOne(): array
     {
-        return $this->read(new ContentParams());
+        return $this->readAll();
     }
 
     /**

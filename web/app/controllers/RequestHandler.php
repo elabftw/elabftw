@@ -95,7 +95,7 @@ try {
     } elseif ($action === 'destroy') {
         if ($Model instanceof Experiments) {
             $Teams = new Teams($App->Users);
-            $teamConfigArr = $Teams->read(new ContentParams());
+            $teamConfigArr = $Teams->readOne();
             if ((!$teamConfigArr['deletable_xp'] && !$App->Session->get('is_admin'))
                 || $App->Config->configArr['deletable_xp'] === '0') {
                 throw new ImproperActionException('You cannot delete experiments!');

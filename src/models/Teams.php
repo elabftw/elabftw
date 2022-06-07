@@ -125,19 +125,14 @@ class Teams implements CrudInterface
     /**
      * Read from the current team
      */
-    public function read(ContentParamsInterface $params): array
+    public function readOne(): array
     {
         $sql = 'SELECT * FROM `teams` WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $res = $req->fetch();
-        if ($res === false) {
-            return array();
-        }
-
-        return $res;
+        return $this->Db->fetch($req);
     }
 
     /**

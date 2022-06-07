@@ -32,10 +32,10 @@ $Response->prepare($Request);
 
 try {
     $ApiKeys = new ApiKeys($App->Users);
-    $apiKeysArr = $ApiKeys->read(new ContentParams());
+    $apiKeysArr = $ApiKeys->readAll();
 
     $TeamGroups = new TeamGroups($App->Users);
-    $teamGroupsArr = $TeamGroups->read(new ContentParams());
+    $teamGroupsArr = $TeamGroups->readAll();
 
     $Templates = new Templates($App->Users);
     $templatesArr = $Templates->getWriteableTemplatesList();

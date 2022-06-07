@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Interfaces\ContentParamsInterface;
 use PDO;
 
@@ -22,6 +23,17 @@ class UnfinishedSteps extends Steps
     public function __construct(AbstractEntity $Entity)
     {
         parent::__construct($Entity);
+    }
+
+    public function readAll(): array
+    {
+        return $this->read(new ContentParams());
+    }
+
+    public function readOne(): array
+    {
+        // not used
+        return array();
     }
 
     public function read(ContentParamsInterface $params): array

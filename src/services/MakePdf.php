@@ -11,13 +11,11 @@ namespace Elabftw\Services;
 
 use function date;
 use DateTimeImmutable;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Factories\StorageFactory;
 use Elabftw\Interfaces\MpdfProviderInterface;
-use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
@@ -133,7 +131,7 @@ class MakePdf extends AbstractMakePdf
      */
     public function getAttachedPdfs(): array
     {
-        $uploadsArr = $this->Entity->Uploads->readAllNormal();
+        $uploadsArr = $this->Entity->entityData['uploads'];
         $listOfPdfs = array();
 
         if (empty($uploadsArr)) {
@@ -234,7 +232,7 @@ class MakePdf extends AbstractMakePdf
         }
 
         // read the content of the thumbnail here to feed the template
-        $uploadsArr = $this->Entity->Uploads->readAllNormal();
+        $uploadsArr = $this->Entity->entityData['uploads'];
         foreach ($uploadsArr as $key => $upload) {
             $storageFs = (new StorageFactory((int) $upload['storage']))->getStorage()->getFs();
             $thumbnail = $upload['long_name'] . '_th.jpg';
@@ -244,29 +242,16 @@ class MakePdf extends AbstractMakePdf
             }
         }
 
-        $commentsArr = array();
-        if ($this->Entity instanceof AbstractConcreteEntity) {
-            $commentsArr = $this->Entity->Comments->read(new ContentParams());
-        }
-
         $renderArr = array(
             'body' => $this->getBody(),
-            'commentsArr' => $commentsArr,
             'css' => $this->getCss(),
             'date' => $date->format('Y-m-d'),
-            'elabid' => $this->Entity->entityData['elabid'],
-            'fullname' => $this->Entity->entityData['fullname'],
+            'entityData' => $this->Entity->entityData,
             'includeFiles' => $this->Entity->Users->userData['inc_files_pdf'],
-            'linksArr' => $this->Entity->Links->read(new ContentParams()),
             'locked' => $locked,
             'lockDate' => $lockDate,
             'lockerName' => $lockerName,
-            'metadata' => $this->Entity->entityData['metadata'],
             'pdfSig' => $Request->cookies->get('pdf_sig'),
-            'stepsArr' => $this->Entity->Steps->read(new ContentParams()),
-            'tags' => $this->Entity->entityData['tags'],
-            'title' => $this->Entity->entityData['title'],
-            'uploadsArr' => $uploadsArr,
             'url' => $this->getURL(),
             'linkBaseUrl' => SITE_URL . '/database.php',
             'useCjk' => $this->Entity->Users->userData['cjk_fonts'],

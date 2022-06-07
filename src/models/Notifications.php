@@ -122,7 +122,7 @@ class Notifications implements CrudInterface
         return count($useridArr);
     }
 
-    public function read(ContentParamsInterface $params): array
+    public function readAll(): array
     {
         $sql = 'SELECT id, category, body, is_ack, created_at FROM notifications WHERE userid = :userid AND category != :deadline ORDER BY created_at DESC LIMIT 10';
         $req = $this->Db->prepare($sql);
@@ -135,6 +135,12 @@ class Notifications implements CrudInterface
             $notif['body'] = json_decode($notif['body'], true, 512, JSON_THROW_ON_ERROR);
         }
         return $notifs;
+    }
+
+    public function readOne(): array
+    {
+        // not used
+        return $this->readAll();
     }
 
     public function update(ContentParamsInterface $params): bool

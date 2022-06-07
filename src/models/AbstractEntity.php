@@ -196,6 +196,12 @@ abstract class AbstractEntity implements CrudInterface
         return $this->Db->execute($req);
     }
 
+    public function readAll(): array
+    {
+        // use readShow() instead
+        return array();
+    }
+
     /**
      * Read several entities for show mode
      * The goal here is to decrease the number of read columns to reduce memory footprint
@@ -463,7 +469,8 @@ abstract class AbstractEntity implements CrudInterface
     {
         // if it's a number, then lookup the name of the team group
         if (Check::id((int) $permission) !== false) {
-            return ucfirst($this->TeamGroups->readName((int) $permission));
+            $this->TeamGroups->setId((int) $permission);
+            return ucfirst($this->TeamGroups->readOne()['name']);
         }
         return Transform::permission($permission);
     }
@@ -716,7 +723,7 @@ abstract class AbstractEntity implements CrudInterface
         $this->canOrExplode('read');
         $this->entityData['steps'] = $this->Steps->readAll();
         $this->entityData['links'] = $this->Links->readAll();
-        $this->entityData['uploads'] = $this->Uploads->readAllNormal();
+        $this->entityData['uploads'] = $this->Uploads->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
 
         return $this->entityData;

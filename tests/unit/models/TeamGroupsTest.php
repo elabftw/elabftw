@@ -20,10 +20,11 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
         $this->TeamGroups->create(new ContentParams('Group Name'));
     }
 
-    public function testReadName(): void
+    public function testReadOne(): void
     {
         $id = $this->TeamGroups->create(new ContentParams('Group Name'));
-        $this->assertEquals('Group Name', $this->TeamGroups->readName($id));
+        $this->TeamGroups->setId($id);
+        $this->assertEquals('Group Name', $this->TeamGroups->readOne()['name']);
     }
 
     public function testUpdate(): void
@@ -45,12 +46,12 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
     public function testRead(): void
     {
         // without users
-        $this->assertTrue(is_array($this->TeamGroups->read(new ContentParams())));
+        $this->assertIsArray($this->TeamGroups->readAll());
 
         // with users
         $this->TeamGroups->update(new TeamGroupParams('', 'member', array('userid' => 1, 'group' => 1,'how' => 'add')));
         $this->TeamGroups->update(new TeamGroupParams('', 'member', array('userid' => 2, 'group' => 1,'how' => 'add')));
-        $this->assertTrue(is_array($this->TeamGroups->read(new ContentParams())));
+        $this->assertIsArray($this->TeamGroups->readAll());
         $this->TeamGroups->update(new TeamGroupParams('', 'member', array('userid' => 1, 'group' => 1,'how' => 'rm')));
         $this->TeamGroups->update(new TeamGroupParams('', 'member', array('userid' => 2, 'group' => 1,'how' => 'rm')));
     }
@@ -58,6 +59,6 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
     public function testDestroy(): void
     {
         $this->TeamGroups->setId(1);
-        $this->TeamGroups->destroy();
+        $this->assertTrue($this->TeamGroups->destroy());
     }
 }

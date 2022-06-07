@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\StepParams;
 
 class StepsTest extends \PHPUnit\Framework\TestCase
@@ -36,7 +35,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead(): void
     {
-        $this->assertIsArray($this->Steps->read(new ContentParams()));
+        $this->assertIsArray($this->Steps->readAll());
     }
 
     public function testUpdate(): void
@@ -44,7 +43,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
         $id = $this->Steps->create(new StepParams('do that'));
         $Steps = new Steps($this->Experiments, $id);
         $Steps->update(new StepParams('updated step body', 'body'));
-        $ourStep = array_filter($this->Steps->read(new ContentParams()), function ($s) use ($id) {
+        $ourStep = array_filter($this->Steps->readAll(), function ($s) use ($id) {
             return ((int) $s['id']) === $id;
         });
         $this->assertEquals(array_pop($ourStep)['body'], 'updated step body');

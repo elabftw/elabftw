@@ -137,7 +137,7 @@ class Templates extends AbstractTemplateEntity
         $TeamGroups = new TeamGroups($this->Users);
         $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
 
-        return array_filter($this->getTemplatesList(), function ($t) use ($teamgroupsOfUser) {
+        return array_filter($this->readAll(), function ($t) use ($teamgroupsOfUser) {
             return $t['canwrite'] === 'public' || $t['canwrite'] === 'organization' ||
                 ($t['canwrite'] === 'team' && ((int) $t['teams_id'] === $this->Users->userData['team'])) ||
                 ($t['canwrite'] === 'user' && $t['userid'] === $this->Users->userData['userid']) ||
@@ -150,7 +150,7 @@ class Templates extends AbstractTemplateEntity
      * Get a list of fullname + id + title of template
      * Use this to build a select of the readable templates
      */
-    public function getTemplatesList(): array
+    public function readAll(): array
     {
         $TeamGroups = new TeamGroups($this->Users);
         $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
@@ -201,7 +201,7 @@ class Templates extends AbstractTemplateEntity
         if ($this->Users->userData['show_team_templates'] === '0') {
             $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
         }
-        return $this->getTemplatesList();
+        return $this->readAll();
     }
 
     /**

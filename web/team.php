@@ -36,11 +36,11 @@ $Response->prepare($Request);
 
 try {
     $Teams = new Teams($App->Users);
-    $teamArr = $Teams->read(new ContentParams());
+    $teamArr = $Teams->readOne();
     $teamsStats = $Teams->getStats((int) $App->Users->userData['team']);
 
     $TeamGroups = new TeamGroups($App->Users);
-    $teamGroupsArr = $TeamGroups->read(new ContentParams());
+    $teamGroupsArr = $TeamGroups->readAll();
 
     $Database = new Items($App->Users);
     // we only want the bookable type of items
@@ -72,7 +72,7 @@ try {
     }
 
     $Templates = new Templates($App->Users);
-    $templatesArr = $Templates->getTemplatesList();
+    $templatesArr = $Templates->readAll();
     $entityData = array();
     if ($Request->query->has('templateid')) {
         $Templates->setId((int) $Request->query->get('templateid'));

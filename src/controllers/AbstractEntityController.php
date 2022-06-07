@@ -10,7 +10,6 @@
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
@@ -124,7 +123,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // FAVTAGS
         $FavTags = new FavTags($this->App->Users);
-        $favTagsArr = $FavTags->read(new ContentParams());
+        $favTagsArr = $FavTags->readAll();
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);

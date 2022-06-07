@@ -54,8 +54,8 @@ try {
         $ItemsTypes->populate();
     }
     $statusArr = $Status->readAll();
-    $teamConfigArr = $Teams->read(new ContentParams());
-    $teamGroupsArr = $TeamGroups->read(new ContentParams());
+    $teamConfigArr = $Teams->readOne();
+    $teamGroupsArr = $TeamGroups->readAll();
     $teamsArr = $Teams->readAll();
     $allTeamUsersArr = $App->Users->readAllFromTeam();
     // only the unvalidated ones

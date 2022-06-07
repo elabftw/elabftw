@@ -50,7 +50,7 @@ class Comments implements CrudInterface
         return $this->Db->lastInsertId();
     }
 
-    public function read(ContentParamsInterface $params): array
+    public function readOne(): array
     {
         return $this->readAll();
     }

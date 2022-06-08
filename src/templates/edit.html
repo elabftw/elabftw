@@ -94,6 +94,27 @@
   </div>
 </div>
 
+<!-- Modal to display plain text content -->
+<div class='modal fade' id='plainTextModal' tabindex='-1' role='dialog' aria-labelledby='plainTextModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='plainTextModalLabel'>{{ 'File content'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <label for='plainTextArea' id='plainTextAreaLabel'>Filename</label>
+        <textarea class='form-control' name='plainTextArea' id='plainTextArea' rows='10' readonly></textarea>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- show message if it was recently modified -->
 {% set lastchangeDiff = 'now'|date('U') - Entity.entityData.lastchange|date('U') %}
 {% if (lastchangeDiff < 600) and not Entity.entityData.lastchangeby is null and Entity.entityData.lastchangeby != Entity.Users.userData.userid %}

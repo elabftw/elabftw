@@ -281,11 +281,13 @@ class MakePdf extends AbstractMakePdf
 
     private function getBody(): string
     {
-        $body = Tools::md2html($this->Entity->entityData['body'] ?? '');
-        // md2html can result in invalid html, see https://github.com/elabftw/elabftw/issues/3076
-        // the next line (HTMLPurifier) rescues the invalid parts and thus avoids some MathJax errors
-        // the consequence is a slightly different layout
-        $body = Filter::body($body);
+        $body = $this->Entity->entityData['body'] ?? '';
+        if ($this->Entity->entityData['content_type'] === AbstractEntity::CONTENT_MD) {
+            // md2html can result in invalid html, see https://github.com/elabftw/elabftw/issues/3076
+            // the Filter::body (HTMLPurifier) rescues the invalid parts and thus avoids some MathJax errors
+            // the consequence is a slightly different layout
+            $body = Filter::body(Tools::md2html($body));
+        }
 
         // now this part of the code will look for embeded images in the text and download them from storage and insert them as base64
         // it would have been preferable to avoid such complexity and regexes, but this is the most robust way to get images in there.

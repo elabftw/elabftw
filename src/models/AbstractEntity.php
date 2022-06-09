@@ -55,6 +55,10 @@ abstract class AbstractEntity implements CrudInterface
 
     public const TYPE_TEMPLATES = 'experiments_templates';
 
+    public const CONTENT_HTML = 1;
+
+    public const CONTENT_MD = 2;
+
     public Comments $Comments;
 
     public Links $Links;
@@ -318,7 +322,11 @@ abstract class AbstractEntity implements CrudInterface
             return array('metadata' => $this->readOne()['metadata']);
         }
         if ($params->getTarget() === 'body') {
-            return array('body' => Tools::md2html($this->readOne()['body']));
+            $body = $this->readOne()['body'] ?? '';
+            if ((int) $this->entityData['content_type'] === self::CONTENT_MD) {
+                $body = Tools::md2html($body);
+            }
+            return array('body' => $body);
         }
         if ($params->getTarget() === 'sharelink') {
             if (!$this instanceof AbstractConcreteEntity) {
@@ -382,6 +390,9 @@ abstract class AbstractEntity implements CrudInterface
                 break;
             case 'bodyappend':
                 $content = $this->entityData['body'] . $params->getBody();
+                break;
+            case 'content_type':
+                $content = $params->getState();
                 break;
             case 'rating':
                 $content = $params->getRating();

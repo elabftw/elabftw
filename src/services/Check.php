@@ -196,6 +196,7 @@ class Check
             'bodyappend',
             'boundevent',
             'comment',
+            'content_type',
             'date',
             'deadline',
             'deadline_notif',

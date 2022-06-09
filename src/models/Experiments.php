@@ -64,13 +64,18 @@ class Experiments extends AbstractConcreteEntity
             }
         }
 
+        $contentType = AbstractEntity::CONTENT_HTML;
+        if ($this->Users->userData['use_markdown']) {
+            $contentType = AbstractEntity::CONTENT_MD;
+        }
+
         // enforce the permissions if the admin has set them
         $canread = $Team->getDoForceCanread() === 1 ? $Team->getForceCanread() : $canread;
         $canwrite = $Team->getDoForceCanwrite() === 1 ? $Team->getForceCanwrite() : $canwrite;
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, metadata, userid)
-            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, NOW(), :metadata, :userid)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, metadata, userid, content_type)
+            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, NOW(), :metadata, :userid, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $body, PDO::PARAM_STR);
@@ -80,6 +85,7 @@ class Experiments extends AbstractConcreteEntity
         $req->bindParam(':canwrite', $canwrite, PDO::PARAM_STR);
         $req->bindParam(':metadata', $metadata, PDO::PARAM_STR);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
@@ -132,8 +138,8 @@ class Experiments extends AbstractConcreteEntity
         // capital i looks good enough
         $title = $this->entityData['title'] . ' I';
 
-        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid, metadata)
-            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, NOW(), :userid, :metadata)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid, metadata, content_type)
+            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, NOW(), :userid, :metadata, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $this->entityData['body'], PDO::PARAM_STR);
@@ -143,6 +149,7 @@ class Experiments extends AbstractConcreteEntity
         $req->bindParam(':canwrite', $this->entityData['canwrite'], PDO::PARAM_STR);
         $req->bindParam(':metadata', $this->entityData['metadata'], PDO::PARAM_STR);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':content_type', $this->entityData['content_type'], PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 

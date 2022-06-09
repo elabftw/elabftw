@@ -106,6 +106,7 @@ enum Target {
   Body = 'body',
   BoundEvent = 'boundevent',
   Comment = 'comment',
+  ContentType = 'content_type',
   Date = 'date',
   Deadline = 'deadline',
   DeadlineNotif = 'deadline_notif',

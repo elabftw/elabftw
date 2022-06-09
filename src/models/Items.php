@@ -63,8 +63,8 @@ class Items extends AbstractConcreteEntity
     {
         $this->canOrExplode('read');
 
-        $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, category, elabid, metadata)
-            VALUES(:team, :title, CURDATE(), :body, :userid, :canread, :canwrite, :category, :elabid, :metadata)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, category, elabid, metadata, content_type)
+            VALUES(:team, :title, CURDATE(), :body, :userid, :canread, :canwrite, :category, :elabid, :metadata, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
@@ -76,6 +76,7 @@ class Items extends AbstractConcreteEntity
             'canwrite' => $this->entityData['canwrite'],
             'category' => $this->entityData['category_id'],
             'metadata' => $this->entityData['metadata'],
+            'content_type' => $this->entityData['content_type'],
         ));
         $newId = $this->Db->lastInsertId();
 

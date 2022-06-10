@@ -19,12 +19,8 @@ use Elabftw\Models\Items;
  */
 class ListBuilder
 {
-    /** @var AbstractEntity $Entity */
-    private $Entity;
-
-    public function __construct(AbstractEntity $entity, private int $catFilter = 0)
+    public function __construct(private AbstractEntity $Entity, private int $catFilter = 0)
     {
-        $this->Entity = $entity;
     }
 
     /**

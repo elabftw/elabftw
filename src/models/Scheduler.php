@@ -136,7 +136,7 @@ class Scheduler
     /**
      * Read info from an event id
      */
-    public function readFromId(): array
+    public function readOne(): array
     {
         $sql = 'SELECT * from team_events WHERE id = :id';
         $req = $this->Db->prepare($sql);
@@ -153,7 +153,7 @@ class Scheduler
     public function updateStart(array $delta): void
     {
         $this->canWriteOrExplode();
-        $event = $this->readFromId();
+        $event = $this->readOne();
         $oldStart = DateTime::createFromFormat(DateTime::ISO8601, $event['start']);
         $oldEnd = DateTime::createFromFormat(DateTime::ISO8601, $event['end']);
         $seconds = '0';
@@ -182,7 +182,7 @@ class Scheduler
     public function updateEnd(array $delta): void
     {
         $this->canWriteOrExplode();
-        $event = $this->readFromId();
+        $event = $this->readOne();
         $oldEnd = DateTime::createFromFormat(DateTime::ISO8601, $event['end']);
         $seconds = '0';
         if (strlen($delta['milliseconds']) > 3) {
@@ -246,7 +246,7 @@ class Scheduler
         $Notifications->createMultiUsers(
             new CreateNotificationParams(
                 Notifications::EVENT_DELETED,
-                array('event' => $this->readFromId(), 'actor' => $this->Items->Users->userData['fullname']),
+                array('event' => $this->readOne(), 'actor' => $this->Items->Users->userData['fullname']),
             ),
             $TeamsHelper->getAllAdminsUserid(),
             (int) $this->Items->Users->userData['userid'],
@@ -300,7 +300,7 @@ class Scheduler
      */
     private function canWrite(): bool
     {
-        $event = $this->readFromId();
+        $event = $this->readOne();
         // make sure we are not modifying something in the past if we're not admin
         $this->isFutureOrExplode(DateTime::createFromFormat(DateTime::ISO8601, $event['start']));
         // if it's our event (and it's not in the past) we can write to it for sure

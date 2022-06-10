@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -54,7 +53,7 @@ class Links implements CrudInterface
     /**
      * Get links for an entity
      */
-    public function read(ContentParamsInterface $params): array
+    public function readAll(): array
     {
         $sql = 'SELECT items.id AS itemid,
             items.title,
@@ -72,6 +71,11 @@ class Links implements CrudInterface
         $this->Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    public function readOne(): array
+    {
+        return $this->readAll();
     }
 
     /**

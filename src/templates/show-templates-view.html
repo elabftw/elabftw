@@ -3,11 +3,11 @@
   <hr>
   {% include 'show-templates-select.html' %}
 
-  {% if templateData %}
+  {% if Entity.entityData %}
     <div class='row mt-3'>
       <!-- NAME OF TPL AND OWNER -->
       <div class='col'>
-        <h4>{{ templateData.fullname|raw }} - {{ templateData.title|raw }}</h4>
+        <h4>{{ Entity.entityData.fullname|raw }} - {{ Entity.entityData.title|raw }}</h4>
       </div>
 
       <div class='col-2 text-right'>
@@ -18,13 +18,13 @@
           </div>
           <div class='dropdown-menu dropdown-menu-right'>
             <!-- IMPORT -->
-            <a href='#' class='dropdown-item' data-action='import-template' data-id='{{ templateData.id }}'><i class='fas fa-file-import fa-fw mr-1'></i>{{ 'Import to your profile'|trans }}</a>
+            <a href='#' class='dropdown-item' data-action='import-template' data-id='{{ Entity.id }}'><i class='fas fa-file-import fa-fw mr-1'></i>{{ 'Import to your profile'|trans }}</a>
             <!-- CREATE EXPERIMENT FROM TPL -->
-            <a href='#' data-action='create-entity' data-tplid='{{ templateData.id }}' class='dropdown-item'><i class='fas fa-pencil-alt fa-fw mr-1'></i>{{ 'Create experiment from template'|trans }}</a>
+            <a href='#' data-action='create-entity' data-tplid='{{ Entity.id }}' class='dropdown-item'><i class='fas fa-pencil-alt fa-fw mr-1'></i>{{ 'Create experiment from template'|trans }}</a>
             <!-- DESTROY TPL -->
             {% if App.Session.get('is_admin') %}
             <div class='dropdown-divider'></div>
-            <a href='#' data-action='destroy-template' data-id='{{ templateData.id }}' class='dropdown-item hover-danger'><i class='fas fa-trash-alt fa-fw mr-1'></i>{{ 'Destroy template'|trans }}</a>
+            <a href='#' data-action='destroy-template' data-id='{{ Entity.id }}' class='dropdown-item hover-danger'><i class='fas fa-trash-alt fa-fw mr-1'></i>{{ 'Destroy template'|trans }}</a>
             {% endif %}
           </div>
         </div>

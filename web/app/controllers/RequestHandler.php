@@ -27,7 +27,17 @@ use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users2Teams;
+use Elabftw\Services\MakeBloxberg;
+use Elabftw\Services\MakeCustomTimestamp;
+use Elabftw\Services\MakeDfnTimestamp;
+use Elabftw\Services\MakeDigicertTimestamp;
+use Elabftw\Services\MakeGlobalSignTimestamp;
+use Elabftw\Services\MakeSectigoTimestamp;
+use Elabftw\Services\MakeUniversignTimestamp;
+use Elabftw\Services\MakeUniversignTimestampDev;
+use Elabftw\Services\TimestampUtils;
 use Exception;
+use GuzzleHttp\Client;
 use PDOException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -85,7 +95,7 @@ try {
     } elseif ($action === 'destroy') {
         if ($Model instanceof Experiments) {
             $Teams = new Teams($App->Users);
-            $teamConfigArr = $Teams->read(new ContentParams());
+            $teamConfigArr = $Teams->readOne();
             if ((!$teamConfigArr['deletable_xp'] && !$App->Session->get('is_admin'))
                 || $App->Config->configArr['deletable_xp'] === '0') {
                 throw new ImproperActionException('You cannot delete experiments!');
@@ -108,6 +118,47 @@ try {
         $res = $Model->Pins->togglePin();
     } elseif ($action === 'importlinks' && $Model instanceof Links) {
         $res = $Model->import();
+    // TIMESTAMP
+    } elseif ($action === 'timestamp' && $Model instanceof Experiments) {
+        $config = $App->Config->configArr;
+        // CLASSIC
+        if ($target === 'ts_classic') {
+            if ($config['ts_authority'] === 'dfn') {
+                $Maker = new MakeDfnTimestamp($config, $Model);
+            } elseif ($config['ts_authority'] === 'universign') {
+                if ($config['debug']) {
+                    // this will use the sandbox endpoint
+                    $Maker = new MakeUniversignTimestampDev($config, $Model);
+                } else {
+                    $Maker = new MakeUniversignTimestamp($config, $Model);
+                }
+            } elseif ($config['ts_authority'] === 'digicert') {
+                $Maker = new MakeDigicertTimestamp($config, $Model);
+            } elseif ($config['ts_authority'] === 'sectigo') {
+                $Maker = new MakeSectigoTimestamp($config, $Model);
+            } elseif ($config['ts_authority'] === 'globalsign') {
+                $Maker = new MakeGlobalSignTimestamp($config, $Model);
+            } else {
+                $Maker = new MakeCustomTimestamp($config, $Model);
+            }
+
+            $pdfBlob = $Maker->generatePdf();
+            $TimestampUtils = new TimestampUtils(
+                new Client(),
+                $pdfBlob,
+                $Maker->getTimestampParameters(),
+                new TimestampResponse(),
+            );
+            $tsResponse = $TimestampUtils->timestamp();
+            $res = $Maker->saveTimestamp($TimestampUtils->getDataPath(), $tsResponse);
+        // BLOXBERG
+        } elseif ($target === 'ts_bloxberg') {
+            if ($config['blox_enabled'] !== '1') {
+                throw new ImproperActionException('Bloxberg timestamping is disabled on this instance.');
+            }
+            $Make = new MakeBloxberg(new Client(), $Model);
+            $res = $Make->timestamp();
+        }
     }
 
     // special case for uploading an edited json file back: it's a POSTed async form

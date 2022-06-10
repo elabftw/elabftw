@@ -26,9 +26,6 @@ abstract class AbstractMakeTimestamp extends AbstractMake
 {
     public string $pdfPath = '';
 
-    /** @var Experiments $Entity */
-    protected $Entity;
-
     public function __construct(protected array $configArr, Experiments $entity)
     {
         parent::__construct($entity);

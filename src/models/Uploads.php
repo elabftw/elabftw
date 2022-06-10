@@ -160,43 +160,39 @@ class Uploads implements CrudInterface
         return $this->create($params);
     }
 
-    /**
-     * Read from current id
-     */
     public function read(ContentParamsInterface $params): array
     {
         if ($params->getTarget() === 'all') {
-            return $this->readAllNormal();
+            return $this->readAll();
         }
+        return $this->readOne();
+    }
 
-        $sql = 'SELECT * FROM uploads WHERE id = :id AND state = :state';
+    /**
+     * Read from current id
+     */
+    public function readOne(): array
+    {
+        $sql = 'SELECT * FROM uploads WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindValue(':state', self::STATE_NORMAL, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->Db->fetch($req);
     }
 
     /**
-     * Read all uploads for an item
+     * Read only the normal ones (not archived/deleted)
      */
     public function readAll(): array
     {
-        $sql = 'SELECT * FROM uploads WHERE item_id = :id AND type = :type';
+        $sql = 'SELECT * FROM uploads WHERE item_id = :id AND type = :type AND state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
+        $req->bindValue(':state', self::STATE_NORMAL, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
-    }
-
-    public function readAllNormal(): array
-    {
-        // we read all but only return the ones with normal state
-        return array_filter($this->readAll(), function ($u) {
-            return ((int) $u['state']) === self::STATE_NORMAL;
-        });
     }
 
     public function update(UploadParamsInterface $params): bool

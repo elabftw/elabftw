@@ -39,12 +39,12 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $id = $this->Status->create(new StatusParams('Yep', '#29AEB9'));
         $Status = new Status(1, $id);
         $Status->update(new StatusParams('Updated', '#121212'));
-        $status = $Status->read(new ContentParams());
+        $status = $Status->readOne();
         $this->assertEquals('Updated', $status['category']);
         $this->assertEquals('121212', $status['color']);
         $this->assertFalse((bool) $status['is_default']);
         $Status->update(new StatusParams('Updated', '#121212', true));
-        $status = $Status->read(new ContentParams());
+        $status = $Status->readOne();
         $this->assertTrue((bool) $status['is_default']);
     }
 

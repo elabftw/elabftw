@@ -161,12 +161,12 @@ class App
         $this->Users = $users;
         // we have an user in a team, load the top menu link
         $Teams = new Teams($this->Users);
-        $teamConfigArr = $Teams->read(new ContentParams());
+        $teamConfigArr = $Teams->readOne();
         $this->linkName = $teamConfigArr['link_name'];
         $this->linkHref = $teamConfigArr['link_href'];
         // Notifs
         $Notifications = new Notifications($this->Users);
-        $this->notifsArr = $Notifications->read(new ContentParams());
+        $this->notifsArr = $Notifications->readAll();
     }
 
     /**

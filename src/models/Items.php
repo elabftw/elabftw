@@ -9,7 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\EntityParamsInterface;
@@ -20,7 +20,7 @@ use PDO;
 /**
  * All about the database items
  */
-class Items extends AbstractEntity
+class Items extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 
@@ -35,7 +35,7 @@ class Items extends AbstractEntity
     {
         $category = (int) $params->getContent();
         $ItemsTypes = new ItemsTypes($this->Users, $category);
-        $itemTemplate = $ItemsTypes->read(new ContentParams());
+        $itemTemplate = $ItemsTypes->readOne();
 
         $sql = 'INSERT INTO items(team, title, date, body, userid, category, elabid, canread, canwrite, metadata)
             VALUES(:team, :title, CURDATE(), :body, :userid, :category, :elabid, :canread, :canwrite, :metadata)';
@@ -44,7 +44,7 @@ class Items extends AbstractEntity
         $req->bindValue(':title', _('Untitled'), PDO::PARAM_STR);
         $req->bindParam(':body', $itemTemplate['body'], PDO::PARAM_STR);
         $req->bindParam(':category', $category, PDO::PARAM_INT);
-        $req->bindValue(':elabid', $this->generateElabid(), PDO::PARAM_STR);
+        $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
         $req->bindParam(':canread', $itemTemplate['canread'], PDO::PARAM_STR);
         $req->bindParam(':canwrite', $itemTemplate['canwrite'], PDO::PARAM_STR);
         $req->bindParam(':metadata', $itemTemplate['metadata'], PDO::PARAM_STR);
@@ -63,19 +63,20 @@ class Items extends AbstractEntity
     {
         $this->canOrExplode('read');
 
-        $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, category, elabid, metadata)
-            VALUES(:team, :title, CURDATE(), :body, :userid, :canread, :canwrite, :category, :elabid, :metadata)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, category, elabid, metadata, content_type)
+            VALUES(:team, :title, CURDATE(), :body, :userid, :canread, :canwrite, :category, :elabid, :metadata, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
             'title' => $this->entityData['title'],
             'body' => $this->entityData['body'],
             'userid' => $this->Users->userData['userid'],
-            'elabid' => $this->generateElabid(),
+            'elabid' => Tools::generateElabid(),
             'canread' => $this->entityData['canread'],
             'canwrite' => $this->entityData['canwrite'],
             'category' => $this->entityData['category_id'],
             'metadata' => $this->entityData['metadata'],
+            'content_type' => $this->entityData['content_type'],
         ));
         $newId = $this->Db->lastInsertId();
 

@@ -32,14 +32,10 @@ abstract class AbstractMake
 
     protected Db $Db;
 
-    /** @var AbstractEntity $Entity */
-    protected $Entity;
-
     protected string $contentType = 'application/octet-stream';
 
-    public function __construct(AbstractEntity $entity)
+    public function __construct(protected AbstractEntity $Entity)
     {
-        $this->Entity = $entity;
         $this->Db = Db::getConnection();
     }
 

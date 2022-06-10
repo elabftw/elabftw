@@ -9,6 +9,8 @@
 
 namespace Elabftw\Elabftw;
 
+use function bin2hex;
+use function date;
 use function filter_var;
 use function implode;
 use function json_decode;
@@ -16,6 +18,8 @@ use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 use function mb_strlen;
 use function pathinfo;
+use function random_bytes;
+use function sha1;
 use Symfony\Component\HttpFoundation\Request;
 use function trim;
 
@@ -136,6 +140,16 @@ class Tools
         $sizes = array('B', 'KiB', 'MiB', 'GiB', 'TiB');
         $factor = (int) floor((strlen((string) $bytes) - 1) / 3);
         return sprintf('%.2f', $bytes / 1024** $factor) . ' ' . $sizes[$factor];
+    }
+
+    /**
+     * Generate unique elabID
+     *
+     * @return string unique elabid with date in front of it
+     */
+    public static function generateElabid(): string
+    {
+        return date('Ymd') . '-' . sha1(bin2hex(random_bytes(16)));
     }
 
     /**

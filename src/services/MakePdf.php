@@ -11,7 +11,6 @@ namespace Elabftw\Services;
 
 use function date;
 use DateTimeImmutable;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
@@ -20,7 +19,6 @@ use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
 use Elabftw\Models\Notifications;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
@@ -133,7 +131,7 @@ class MakePdf extends AbstractMakePdf
      */
     public function getAttachedPdfs(): array
     {
-        $uploadsArr = $this->Entity->Uploads->readAllNormal();
+        $uploadsArr = $this->Entity->entityData['uploads'];
         $listOfPdfs = array();
 
         if (empty($uploadsArr)) {
@@ -210,13 +208,6 @@ class MakePdf extends AbstractMakePdf
      */
     private function getHtml(): string
     {
-        $Request = Request::createFromGlobals();
-
-        if ($this->Entity->entityData['tags']) {
-            $tags = '<strong>Tags:</strong> <em>' .
-                str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />';
-        }
-
         $date = new DateTimeImmutable($this->Entity->entityData['date'] ?? date('Ymd'));
 
         $locked = $this->Entity->entityData['locked'];
@@ -234,39 +225,28 @@ class MakePdf extends AbstractMakePdf
         }
 
         // read the content of the thumbnail here to feed the template
-        $uploadsArr = $this->Entity->Uploads->readAllNormal();
-        foreach ($uploadsArr as $key => $upload) {
+        foreach ($this->Entity->entityData['uploads'] as $key => $upload) {
             $storageFs = (new StorageFactory((int) $upload['storage']))->getStorage()->getFs();
             $thumbnail = $upload['long_name'] . '_th.jpg';
             // no need to filter on extension, just insert the thumbnail if it exists
             if ($storageFs->fileExists($thumbnail)) {
-                $uploadsArr[$key]['base64_thumbnail'] = base64_encode($storageFs->read($thumbnail));
+                $this->Entity->entityData['uploads'][$key]['base64_thumbnail'] = base64_encode($storageFs->read($thumbnail));
             }
         }
 
-        $commentsArr = array();
-        if ($this->Entity instanceof Experiments || $this->Entity instanceof Items) {
-            $commentsArr = $this->Entity->Comments->read(new ContentParams());
-        }
+        // used for pdf_sig
+        $Request = Request::createFromGlobals();
 
         $renderArr = array(
             'body' => $this->getBody(),
-            'commentsArr' => $commentsArr,
             'css' => $this->getCss(),
             'date' => $date->format('Y-m-d'),
-            'elabid' => $this->Entity->entityData['elabid'],
-            'fullname' => $this->Entity->entityData['fullname'],
+            'entityData' => $this->Entity->entityData,
             'includeFiles' => $this->Entity->Users->userData['inc_files_pdf'],
-            'linksArr' => $this->Entity->Links->read(new ContentParams()),
             'locked' => $locked,
             'lockDate' => $lockDate,
             'lockerName' => $lockerName,
-            'metadata' => $this->Entity->entityData['metadata'],
             'pdfSig' => $Request->cookies->get('pdf_sig'),
-            'stepsArr' => $this->Entity->Steps->read(new ContentParams()),
-            'tags' => $this->Entity->entityData['tags'],
-            'title' => $this->Entity->entityData['title'],
-            'uploadsArr' => $uploadsArr,
             'url' => $this->getURL(),
             'linkBaseUrl' => SITE_URL . '/database.php',
             'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
@@ -301,11 +281,13 @@ class MakePdf extends AbstractMakePdf
 
     private function getBody(): string
     {
-        $body = Tools::md2html($this->Entity->entityData['body'] ?? '');
-        // md2html can result in invalid html, see https://github.com/elabftw/elabftw/issues/3076
-        // the next line (HTMLPurifier) rescues the invalid parts and thus avoids some MathJax errors
-        // the consequence is a slightly different layout
-        $body = Filter::body($body);
+        $body = $this->Entity->entityData['body'] ?? '';
+        if ($this->Entity->entityData['content_type'] === AbstractEntity::CONTENT_MD) {
+            // md2html can result in invalid html, see https://github.com/elabftw/elabftw/issues/3076
+            // the Filter::body (HTMLPurifier) rescues the invalid parts and thus avoids some MathJax errors
+            // the consequence is a slightly different layout
+            $body = Filter::body(Tools::md2html($body));
+        }
 
         // now this part of the code will look for embeded images in the text and download them from storage and insert them as base64
         // it would have been preferable to avoid such complexity and regexes, but this is the most robust way to get images in there.

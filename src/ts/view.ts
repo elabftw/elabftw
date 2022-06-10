@@ -10,7 +10,7 @@ import { InputType, Malle, SelectOptions } from '@deltablot/malle';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
 import { getEntity, updateCategory, relativeMoment, reloadElement } from './misc';
-import { BoundEvent, EntityType, Payload, Method, Action, Target, Model } from './interfaces';
+import { BoundEvent, EntityType, Payload, Method, Action, Target, Model, PartialEntity } from './interfaces';
 import { DateTime } from 'luxon';
 import EntityClass from './Entity.class';
 import Comment from './Comment.class';
@@ -35,9 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
   const CommentC = new Comment(entity);
-
-  // DEPRECATED, use EntityC
-  const AjaxC = new Ajax(entity.type, String(entity.id));
+  const AjaxC = new Ajax();
 
   // add extra fields elements from metadata json
   const MetadataC = new Metadata(entity);
@@ -104,10 +102,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // SHARE
     } else if (el.matches('[data-action="share"]')) {
-      AjaxC.get('getShareLink').then(json => {
-        // TODO action read, target sharelink
+      const payload: Payload = {
+        method: Method.GET,
+        action: Action.Read,
+        entity: entity,
+        model: entity.type,
+        target: Target.ShareLink,
+      };
+      AjaxC.send(payload).then(json => {
         const link = (document.getElementById('shareLinkInput') as HTMLInputElement);
-        link.value = (json.msg as string);
+        link.value = (json.value as PartialEntity).sharelink;
         link.hidden = false;
         link.focus();
         link.select();
@@ -121,7 +125,14 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="timestamp"]')) {
       // prevent double click
       (event.target as HTMLButtonElement).disabled = true;
-      AjaxC.post('timestamp').then(() => window.location.replace(`experiments.php?mode=view&id=${entity.id}`));
+      const payload: Payload = {
+        method: Method.POST,
+        action: Action.Timestamp,
+        entity: entity,
+        model: entity.type,
+        target: Target.TsClassic,
+      };
+      AjaxC.send(payload).then(() => window.location.replace(`experiments.php?mode=view&id=${entity.id}`));
 
     // BLOXBERG
     } else if (el.matches('[data-action="bloxberg"]')) {
@@ -139,7 +150,14 @@ document.addEventListener('DOMContentLoaded', () => {
       loading.appendChild(ring);
       overlay.appendChild(loading);
       document.getElementById('container').append(overlay);
-      AjaxC.post('bloxberg').then(() => window.location.replace(`?mode=view&id=${entity.id}`));
+      const payload: Payload = {
+        method: Method.POST,
+        action: Action.Timestamp,
+        entity: entity,
+        model: entity.type,
+        target: Target.TsBloxberg,
+      };
+      AjaxC.send(payload).then(() => window.location.replace(`?mode=view&id=${entity.id}`));
     }
   });
 

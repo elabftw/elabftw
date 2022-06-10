@@ -36,14 +36,11 @@ $Response->prepare($Request);
 
 try {
     $Teams = new Teams($App->Users);
-    $teamArr = $Teams->read(new ContentParams());
+    $teamArr = $Teams->readOne();
     $teamsStats = $Teams->getStats((int) $App->Users->userData['team']);
 
     $TeamGroups = new TeamGroups($App->Users);
-    $teamGroupsArr = $TeamGroups->read(new ContentParams());
-
-    $stepsArr = array();
-    $linksArr = array();
+    $teamGroupsArr = $TeamGroups->readAll();
 
     $Database = new Items($App->Users);
     // we only want the bookable type of items
@@ -75,34 +72,24 @@ try {
     }
 
     $Templates = new Templates($App->Users);
-    $templatesArr = $Templates->getTemplatesList();
-    $templateData = array();
+    $templatesArr = $Templates->readAll();
+    $entityData = array();
     if ($Request->query->has('templateid')) {
         $Templates->setId((int) $Request->query->get('templateid'));
-        $templateData = $Templates->read(new ContentParams());
-        $permissions = $Templates->getPermissions($templateData);
-        if ($permissions['read'] === false) {
-            throw new IllegalActionException('User tried to access a template without read permissions');
-        }
-        $stepsArr = $Templates->Steps->read(new ContentParams());
-        $linksArr = $Templates->Links->read(new ContentParams());
+        $entityData = $Templates->readOne();
     }
 
     $template = 'team.html';
     $renderArr = array(
-        'Entity' => $Templates,
-        //'TagCloud' => $TagCloud,
         'Scheduler' => $Scheduler,
         'allItems' => $allItems,
         'itemsArr' => $itemsArr,
         'itemData' => $itemData,
         'selectedItem' => $selectedItem,
-        'stepsArr' => $stepsArr,
-        'linksArr' => $linksArr,
         'teamArr' => $teamArr,
         'teamGroupsArr' => $teamGroupsArr,
         'teamsStats' => $teamsStats,
-        'templateData' => $templateData,
+        'entityData' => $entityData,
         'templatesArr' => $templatesArr,
         'calendarLang' => Tools::getCalendarLang($App->Users->userData['lang']),
     );

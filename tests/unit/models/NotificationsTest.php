@@ -34,7 +34,7 @@ class NotificationsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead(): void
     {
-        $this->assertIsArray($this->Notifications->read(new ContentParams()));
+        $this->assertIsArray($this->Notifications->readAll());
     }
 
     public function testUpdate(): void

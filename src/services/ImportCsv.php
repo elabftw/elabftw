@@ -11,10 +11,10 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\TagParams;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
-use Elabftw\Traits\EntityTrait;
 use League\Csv\Info as CsvInfo;
 use League\Csv\Reader;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -24,8 +24,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class ImportCsv extends AbstractImport
 {
-    use EntityTrait;
-
     private const TAGS_SEPARATOR = '|';
 
     // number of items we got into the database
@@ -67,7 +65,6 @@ class ImportCsv extends AbstractImport
                 throw new ImproperActionException('Could not find the title column!');
             }
             $body = $this->getBodyFromRow($row);
-            $elabid = $this->generateElabid();
 
             $req->bindParam(':team', $this->Users->userData['team']);
             $req->bindParam(':title', $row['title']);
@@ -76,7 +73,7 @@ class ImportCsv extends AbstractImport
             $req->bindParam(':category', $this->target);
             $req->bindParam(':canread', $this->canread);
             $req->bindParam(':canwrite', $this->canwrite);
-            $req->bindParam(':elabid', $elabid);
+            $req->bindValue(':elabid', Tools::generateElabid());
             $this->Db->execute($req);
             $itemId = $this->Db->lastInsertId();
 

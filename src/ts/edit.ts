@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // END GET MOL FILES
 
   // Shared function to UPDATE ENTITY BODY via save shortcut and/or save button
-  function updateEntity(el?: HTMLElement): void {
+  function updateEntityBody(el?: HTMLElement): void {
     EntityC.update(entity.id, Target.Body, editor.getContent()).then(json => {
       if (json.res && editor.type === 'tiny') {
         // set the editor as non dirty so we can navigate out without a warning to clear
@@ -174,18 +174,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // KEYBOARD SHORTCUT
-  key(about.scsubmit, () => updateEntity());
+  key(about.scsubmit, () => updateEntityBody());
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     // UPDATE ENTITY BODY
     if (el.matches('[data-action="update-entity-body"]')) {
-      updateEntity(el);
+      updateEntityBody(el);
 
     // SWITCH EDITOR
     } else if (el.matches('[data-action="switch-editor"]')) {
-      editor.switch();
+      EntityC.update(entity.id, Target.ContentType, editor.switch() === 'tiny' ? '1' : '2');
 
     // ANNOTATE IMAGE
     } else if (el.matches('[data-action="annotate-image"]')) {

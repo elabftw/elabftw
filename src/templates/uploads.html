@@ -1,14 +1,14 @@
 <!-- UPLOADED FILES -->
 <div id='filesdiv'>
-  {% if uploadsArr %}
+  {% if Entity.entityData.uploads %}
     <div class='box'>
       <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='uploadedFilesIcon'><i id='uploadedFilesIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {% trans %}Attached file
-            {% plural uploadsArr|length %}
+            {% plural Entity.entityData.uploads|length %}
             Attached files
             {% endtrans %}
       </h3>
       <div class='row' id='uploadsDiv' data-save-hidden='uploadedFilesDiv'>
-        {% for upload in uploadsArr %}
+        {% for upload in Entity.entityData.uploads %}
           {% set ext = upload.real_name|getExt %}
           <div class='col-md-4 col-sm-6'>
             <div class='thumbnail box' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' style='overflow: visible'>

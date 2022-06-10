@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 
 class PopulateTest extends \PHPUnit\Framework\TestCase
@@ -35,20 +34,5 @@ class PopulateTest extends \PHPUnit\Framework\TestCase
     public function testGenerateItems(): void
     {
         $this->Populate->generate(new Items($this->Users));
-    }
-
-    public function testGenerateUser(): void
-    {
-        $Teams = new Teams($this->Users);
-        $user = array(
-            'team' => 'Alpha',
-            'create_mfa_secret' => true,
-            'create_experiments' => true,
-            'create_items' => true,
-            'api_key' => 'yepyep',
-            'create_templates' => true,
-        );
-
-        $this->Populate->createUser($Teams, $user);
     }
 }

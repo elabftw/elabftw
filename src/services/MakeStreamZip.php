@@ -10,7 +10,6 @@
 namespace Elabftw\Services;
 
 use function count;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\AbstractEntity;
@@ -91,14 +90,8 @@ class MakeStreamZip extends AbstractMakeZip
             return;
         }
         if ($permissions['read']) {
-            $uploadedFilesArr = $this->Entity->Uploads->readAllNormal();
             $entityArr = $this->Entity->entityData;
-            // save the uploads in entityArr for the json file
-            $entityArr['uploads'] = $uploadedFilesArr;
-            // add links
-            $entityArr['links'] = $this->Entity->Links->read(new ContentParams());
-            // add steps
-            $entityArr['steps'] = $this->Entity->Steps->read(new ContentParams());
+            $uploadedFilesArr = $entityArr['uploads'];
             $this->folder = $this->getBaseFileName();
 
             if (!empty($uploadedFilesArr)) {

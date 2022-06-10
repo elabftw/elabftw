@@ -31,7 +31,7 @@ class FavTagsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead(): void
     {
-        $this->assertIsArray($this->FavTags->read(new ContentParams()));
+        $this->assertIsArray($this->FavTags->readAll());
     }
 
     public function testUpdate(): void

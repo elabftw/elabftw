@@ -450,7 +450,7 @@ class ApiController implements ControllerInterface
     private function getTemplate(): Response
     {
         if ($this->id === null && $this->Entity instanceof Templates) {
-            return new JsonResponse($this->Entity->getTemplatesList());
+            return new JsonResponse($this->Entity->readAll());
         }
         $this->Entity->read(new ContentParams());
         $permissions = $this->Entity->getPermissions($this->Entity->entityData);
@@ -597,7 +597,7 @@ class ApiController implements ControllerInterface
             return new JsonResponse($this->Scheduler->readAllFromTeam('2018-12-23T00:00:00 01:00', '2119-12-23T00:00:00 01:00'));
         }
         $this->Scheduler->setId($this->id);
-        return new JsonResponse($this->Scheduler->readFromId());
+        return new JsonResponse($this->Scheduler->readOne());
     }
 
     /**
@@ -731,7 +731,7 @@ class ApiController implements ControllerInterface
      */
     private function getCategory(): Response
     {
-        return new JsonResponse($this->Category->read(new ContentParams()));
+        return new JsonResponse($this->Category->readAll());
     }
 
     /**

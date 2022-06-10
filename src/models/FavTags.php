@@ -53,7 +53,7 @@ class FavTags implements CrudInterface
         return (int) $this->Db->execute($req);
     }
 
-    public function read(ContentParamsInterface $params): array
+    public function readAll(): array
     {
         $sql = 'SELECT users_id, tags_id, tag FROM favtags2users
            LEFT JOIN tags ON (tags.id = favtags2users.tags_id) WHERE users_id = :userid
@@ -63,6 +63,11 @@ class FavTags implements CrudInterface
         $this->Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    public function readOne(): array
+    {
+        return $this->readAll();
     }
 
     public function update(ContentParamsInterface $params): bool

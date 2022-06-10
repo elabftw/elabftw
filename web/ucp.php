@@ -32,32 +32,24 @@ $Response->prepare($Request);
 
 try {
     $ApiKeys = new ApiKeys($App->Users);
-    $apiKeysArr = $ApiKeys->read(new ContentParams());
+    $apiKeysArr = $ApiKeys->readAll();
 
     $TeamGroups = new TeamGroups($App->Users);
-    $teamGroupsArr = $TeamGroups->read(new ContentParams());
+    $teamGroupsArr = $TeamGroups->readAll();
 
     $Templates = new Templates($App->Users);
     $templatesArr = $Templates->getWriteableTemplatesList();
-    $templateData = array();
-    $stepsArr = array();
-    $linksArr = array();
+    $entityData = array();
 
     if ($Request->query->has('templateid')) {
         $Templates->setId((int) $Request->query->get('templateid'));
-        $templateData = $Templates->read(new ContentParams());
-        $permissions = $Templates->getPermissions($templateData);
-        if ($permissions['write'] === false) {
-            throw new IllegalActionException('User tried to access a template without write permissions');
-        }
+        $Templates->populate();
         $Revisions = new Revisions(
             $Templates,
             (int) $App->Config->configArr['max_revisions'],
             (int) $App->Config->configArr['min_delta_revisions'],
             (int) $App->Config->configArr['min_days_revisions'],
         );
-        $stepsArr = $Templates->Steps->read(new ContentParams());
-        $linksArr = $Templates->Links->read(new ContentParams());
     }
 
     // TEAM GROUPS
@@ -66,7 +58,7 @@ try {
 
     // the items categoryArr for add link input
     $ItemsTypes = new ItemsTypes($App->Users);
-    $itemsCategoryArr = $ItemsTypes->read(new ContentParams());
+    $itemsCategoryArr = $ItemsTypes->readAll();
 
     // Notifications
     $notificationsSettings = array(
@@ -103,12 +95,9 @@ try {
         'Entity' => $Templates,
         'apiKeysArr' => $apiKeysArr,
         'langsArr' => Tools::getLangsArr(),
-        'stepsArr' => $stepsArr,
-        'linksArr' => $linksArr,
         'itemsCategoryArr' => $itemsCategoryArr,
         'notificationsSettings' => $notificationsSettings,
         'teamGroupsArr' => $teamGroupsArr,
-        'templateData' => $templateData,
         'templatesArr' => $templatesArr,
         'visibilityArr' => $visibilityArr,
         'revNum' => isset($Revisions) ? $Revisions->readCount() : 0,

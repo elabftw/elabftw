@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateApikey;
 use function mb_strlen;
 
@@ -31,7 +30,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAll(): void
     {
-        $res = $this->ApiKeys->read(new ContentParams());
+        $res = $this->ApiKeys->readAll();
         $this->assertIsArray($res);
         $this->assertTrue($res[1]['name'] === 'test key');
         $this->assertTrue($res[1]['can_write'] === '1');

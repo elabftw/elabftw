@@ -324,8 +324,8 @@ class MakePdf extends AbstractMake implements FileMakerInterface
             // there might be no storage value. In this case get it from the uploads table via the long name
             $storage = (int) ($res['amp;storage'] ?? $this->Entity->Uploads->getStorageFromLongname($res['f']));
             $storageFs = (new StorageFactory($storage))->getStorage()->getFs();
-            // use mpdf image data as variable
-            // https://mpdf.github.io/what-else-can-i-do/images.html#image-data-as-a-variable
+            // pass image data to mpdf via variable. See https://mpdf.github.io/what-else-can-i-do/images.html#image-data-as-a-variable
+            // avoid using data URLs (data:...) because it add too many characters to $body, see https://github.com/elabftw/elabftw/issues/3627
             $this->mpdf->imageVars[$res['f']] = $storageFs->read($res['f']);
             $body = str_replace($src, 'var:' . $res['f'], $body);
         }

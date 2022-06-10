@@ -40,7 +40,7 @@
     "sass": "^1.23.7",
     "stream-browserify": "^3.0.0",
     "timers-browserify": "^2.0.12",
-    "tinymce": "^5.10.0",
+    "tinymce": "^6.0.3",
     "ts-loader": "^9.1.1",
     "typescript": "^4.0.3",
     "ve-range-utils": "^2.6.3",

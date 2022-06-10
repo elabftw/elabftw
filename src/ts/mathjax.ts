@@ -61,7 +61,7 @@ insert(
       ready: (): void => {
         MathJax.startup.defaultReady();
       },
-      pageReady(): void {
+      pageReady(): Promise<void> {
         const options = MathJax.startup.document.options;
         const BaseMathItem = options.MathItem;
         options.MathItem = class FixedMathItem extends BaseMathItem {

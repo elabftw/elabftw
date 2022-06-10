@@ -173,10 +173,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function updateContentType(target: string): void {
-    EntityC.update(entity.id, Target.ContentType, target === 'tiny' ? '1' : '2');
-  }
-
   // KEYBOARD SHORTCUT
   key(about.scsubmit, () => updateEntityBody());
 
@@ -189,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // SWITCH EDITOR
     } else if (el.matches('[data-action="switch-editor"]')) {
-      updateContentType(editor.switch());
+      EntityC.update(entity.id, Target.ContentType, editor.switch() === 'tiny' ? '1' : '2');
 
     // ANNOTATE IMAGE
     } else if (el.matches('[data-action="annotate-image"]')) {

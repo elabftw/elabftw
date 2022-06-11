@@ -32,15 +32,7 @@ Loader.preLoad(
   'a11y/assistive-mml',
 );
 
-// Update the configuration
-import { MathJaxObject as MJObject } from 'mathjax-full/js/components/startup';
-// We need this because defaultPageReady() is not part of the MathJaxObject interface.
-// See https://github.com/mathjax/MathJax/issues/2774
-interface MathJaxObject extends MJObject {
-  startup: MJObject['startup'] & {
-    defaultPageReady(): Promise<void>;
-  };
-}
+import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 
 // Now insert the config
@@ -58,9 +50,6 @@ insert(
       ignoreHtmlClass: 'mathjax-ignore',
     },
     startup: {
-      ready: (): void => {
-        MathJax.startup.defaultReady();
-      },
       pageReady(): Promise<void> {
         const options = MathJax.startup.document.options;
         const BaseMathItem = options.MathItem;

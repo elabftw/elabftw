@@ -198,7 +198,7 @@ class Users
             users.firstname, users.lastname, users.email, users.mfa_secret,
             users.validated, users.usergroup, users.archived, users.last_login,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            users.cellphone, users.phone, users.website, users.orcid
+            users.cellphone, users.phone, users.website, users.orcid, users.auth_service
             FROM users
             CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . ')
             WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)

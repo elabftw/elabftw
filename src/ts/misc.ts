@@ -216,7 +216,7 @@ export function adjustHiddenState(): void {
     const localStorageKey = (el as HTMLElement).dataset.saveHidden + '-isHidden';
     if (localStorage.getItem(localStorageKey) === '1') {
       el.setAttribute('hidden', 'hidden');
-    // make sure to explicitely check for the value, because the key might not exist!
+    // make sure to explicitly check for the value, because the key might not exist!
     } else if (localStorage.getItem(localStorageKey) === '0') {
       el.removeAttribute('hidden');
     }

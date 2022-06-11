@@ -289,7 +289,7 @@ class MakePdf extends AbstractMakePdf
             $body = Filter::body(Tools::md2html($body));
         }
 
-        // now this part of the code will look for embeded images in the text and download them from storage and insert them as base64
+        // now this part of the code will look for embedded images in the text and download them from storage and insert them as base64
         // it would have been preferable to avoid such complexity and regexes, but this is the most robust way to get images in there.
         // it works for gif png jpg images from any storage source
         $matches = array();

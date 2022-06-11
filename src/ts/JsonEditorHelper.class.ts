@@ -45,7 +45,7 @@ export default class JsonEditorHelper {
       },
     };
 
-    // instanciate the editor
+    // instantiate the editor
     this.editor = new JSONEditor(this.editorDiv, options);
     // default mode is tree if editable
     if (editable) {
@@ -74,7 +74,7 @@ export default class JsonEditorHelper {
     fetch(`app/download.php?f=${link}`, { headers: headers })
       .then(response => {
         if (!response.ok) {
-          throw new Error('An unexpected error occured!');
+          throw new Error('An unexpected error occurred!');
         }
         return response.json();
       })

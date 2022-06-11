@@ -17,6 +17,6 @@ final class DatabaseErrorException extends Exception
 {
     public function __construct(?Exception $previous = null)
     {
-        parent::__construct('An error occured during the execution of the SQL query.', 515, $previous);
+        parent::__construct('An error occurred during the execution of the SQL query.', 515, $previous);
     }
 }

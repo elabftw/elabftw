@@ -34,7 +34,7 @@ export class Ajax {
     }
     return response.then(response => {
       if (!response.ok) {
-        throw new Error('An unexpected error occured!');
+        throw new Error('An unexpected error occurred!');
       }
       if (response.headers.has('X-Elab-Need-Auth')) {
         notif({res: false, msg: 'Your session expired!'});

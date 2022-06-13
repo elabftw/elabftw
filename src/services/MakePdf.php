@@ -307,9 +307,10 @@ class MakePdf extends AbstractMakePdf
             // there might be no storage value. In this case get it from the uploads table via the long name
             $storage = (int) ($res['amp;storage'] ?? $this->Entity->Uploads->getStorageFromLongname($res['f']));
             $storageFs = (new StorageFactory($storage))->getStorage()->getFs();
-            $encoded = base64_encode($storageFs->read($res['f']));
-            // get filetype based on extension so we can declare correctly the type of image
-            $body = str_replace($src, 'data:image/' . Tools::getMimeExt($res['f']) . ';base64,' . $encoded, $body);
+            // pass image data to mpdf via variable. See https://mpdf.github.io/what-else-can-i-do/images.html#image-data-as-a-variable
+            // avoid using data URLs (data:...) because it add too many characters to $body, see https://github.com/elabftw/elabftw/issues/3627
+            $this->mpdf->imageVars[$res['f']] = $storageFs->read($res['f']);
+            $body = str_replace($src, 'var:' . $res['f'], $body);
         }
         return $body;
     }

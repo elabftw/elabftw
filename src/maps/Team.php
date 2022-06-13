@@ -286,11 +286,6 @@ class Team implements MapInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $res = $req->fetch();
-        if ($res === false) {
-            throw new ImproperActionException('Could not find a team with that id!');
-        }
-
-        return $res;
+        return $this->Db->fetch($req);
     }
 }

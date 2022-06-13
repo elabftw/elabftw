@@ -65,7 +65,12 @@
     </form>
   <!-- Show message when initial team selection is done -->
   {% elseif App.Session.has('teaminit_done') %}
-    {{ 'Your account has been created and will need to be validated by an admin.'|trans|msg('ok') }}
+    {% if App.Session.get('teaminit_done_need_validation') == '1' %}
+      {{ 'Your account has been created and will need to be validated by an admin.'|trans|msg('ok') }}
+    {% else %}
+      {{ 'Your account has been created and is now active. Try logging in again.'|trans|msg('ok') }}
+      <a href='login.php?rm_teaminit=1'><button class='button btn btn-primary'>{{ 'Continue'|trans }}</button></a>
+    {% endif %}
 
   {% elseif App.Session.has('team_selection_required') %}
     <form method='post' action='app/controllers/LoginController.php'>

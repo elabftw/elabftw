@@ -123,6 +123,7 @@ class Templates extends AbstractEntity
             throw new ImproperActionException('No template found with this id!');
         }
         $this->entityData = $res;
+        $this->canOrExplode('read');
 
         return $res;
     }

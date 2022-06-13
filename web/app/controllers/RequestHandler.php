@@ -74,7 +74,6 @@ try {
         }
     } elseif ($action === 'read' && !$Model instanceof Config) {
         $res = $Model->read($Params);
-        $Model->canOrExplode('read');
     } elseif ($action === 'update') {
         // TODO should not exist, but it's here for now
         if ($Model instanceof ItemsTypes && ($target !== 'metadata')) {

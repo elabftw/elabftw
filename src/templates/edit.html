@@ -205,7 +205,7 @@
 
 <!-- UPLOAD FORM -->
 <section class='box'>
-  <i class='fas fa-fw fa-paperclip mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Attach a file'|trans }}</h3>
+  <h3><i class='fas fa-fw fa-paperclip align-baseline'></i> {{ 'Attach a file'|trans }}</h3>
   <form action='app/controllers/EntityAjaxController.php' class='dropzone' id='elabftw-dropzone'></form>
 </section>
 
@@ -215,8 +215,8 @@
 
 <!-- DOODLE -->
 <section class='box'>
-  <h3 data-action='toggle-next' data-icon='doodleDivIcon' class='d-inline'><i id='doodleDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paint-brush'></i> {{ 'Draw something'|trans }}</h3>
-  <div id='doodleDiv' hidden class='mt-2' data-save-hidden='doodleDiv'>
+  <h3 data-action='toggle-next' data-icon='doodleDivIcon'><i id='doodleDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paint-brush'></i> {{ 'Draw something'|trans }}</h3>
+  <div id='doodleDiv' hidden data-save-hidden='doodleDiv'>
     <div class='row'>
       <div>
         <canvas class='doodle' id='doodleCanvas' width='600' height='600'></canvas>
@@ -250,8 +250,8 @@
 <!-- CHEM EDITOR -->
 {% if Entity.Users.userData.chem_editor %}
   <div class='box chemdoodle'>
-    <h3 data-action='toggle-next' data-icon='chemDivIcon' class='d-inline'><i id='chemDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-dna'></i> {{ 'Molecule drawer'|trans }}</h3>
-    <div id='chemDiv' hidden data-save-hidden='chemDiv' class='mt-2 text-center'>
+    <h3 data-action='toggle-next' data-icon='chemDivIcon'><i id='chemDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-dna'></i> {{ 'Molecule drawer'|trans }}</h3>
+    <div id='chemDiv' hidden data-save-hidden='chemDiv' class='text-center'>
       <script src='assets/chemdoodle-canvas.bundle.js?v={{ v }}'></script>
     </div>
   </div>

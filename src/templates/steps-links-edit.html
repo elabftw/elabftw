@@ -1,7 +1,7 @@
 <div class='row mt-4'>
     <!-- STEPS -->
     <section class='col-md-6'>
-      <h4><i class='fas fa-fw fa-check-square'></i> {{ 'Steps'|trans }}</h4>
+      <h4 data-action='toggle-next' data-toggle-next-n='2' data-icon='stepsDivIcon'><i id='stepsDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-check-square'></i> {{ 'Steps'|trans }}</h4>
       <!-- ADD STEP -->
       <div class='input-group mb-3'>
           <div class='input-group-prepend'>
@@ -53,9 +53,9 @@
                   <div id='stepDeadlineDiv_{{ step.id }}'>
                     {{ 'Deadline:'|trans }}
                     {% if step.deadline %}
-                    <!-- here the data-ma-input-value is formatted so it works with the datetime-local input type, and the displayed one is formatted differently to be more readable -->
+                    {# here the data-ma-input-value is formatted so it works with the datetime-local input type, and the displayed one is formatted differently to be more readable #}
                     <span data-stepid='{{ step.id }}' data-target='deadline' data-ma-type='datetime-local' data-ma-input-value='{{ step.deadline|date('Y-m-d\\TH:i') }}' class='step editable hl-hover'>{{ step.deadline|format_datetime() }}</span>
-                    <!-- notification bell is only shown if the user has at least one notification setting activated for that type of notif -->
+                    {# notification bell is only shown if the user has at least one notification setting activated for that type of notif #}
                     {% if App.Users.userData.notif_step_deadline or App.Users.userData.notif_step_deadline_email %}
                       <span class='ml-2' data-action='step-toggle-deadline-notif' data-stepid='{{ step.id }}' title='{{ 'Toggle notifications'|trans }}'><i class='far fa-bell {{ step.deadline_notif ? 'active' }}' ></i></span>
                     {% endif %}
@@ -83,7 +83,7 @@
     </section>
     <!-- LINKS -->
     <section class='col-md-6'>
-        <h4><i class='fas fa-fw fa-link'></i> {{ 'Linked items'|trans }}</h4>
+        <h4 data-action='toggle-next' data-toggle-next-n='2' data-icon='linksDivIcon'><i id='linksDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-link'></i> {{ 'Linked items'|trans }}</h4>
         <!-- ADD LINK -->
         <div class='mb-3'>
             <div class='input-group'>

@@ -13,7 +13,6 @@ use function array_key_exists;
 use function ctype_alpha;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MapInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
@@ -298,7 +297,7 @@ class UserPreferences implements MapInterface
     }
 
     /**
-     * Read from the current team
+     * Read the preferences from the current user
      */
     private function read(): array
     {
@@ -331,11 +330,6 @@ class UserPreferences implements MapInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $res = $req->fetch();
-        if ($res === false) {
-            throw new ImproperActionException('Could not find a user with that id!');
-        }
-
-        return $res;
+        return $this->Db->fetch($req);
     }
 }

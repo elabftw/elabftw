@@ -435,7 +435,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
               <input class='form-control col-md-6' type='url' id='saml-base' name='saml_baseurl' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_baseurl }}' />
 
               <label for='saml-entityid'>EntityId:</label>
-              <input class='form-control col-md-6' type='url' id='saml-entityid' name='saml_entityid' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_entityid }}' />
+              <input class='form-control col-md-6' type='text' id='saml-entityid' name='saml_entityid' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_entityid }}' />
 
               <label for='saml-acs-binding'>Assertion Consumer Service binding (only POST supported)</label>
               <select class='form-control col-md-6' id='saml-acs-binding' name='saml_acs_binding'>

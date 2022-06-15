@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Services\Filter;
@@ -118,11 +117,9 @@ class Templates extends AbstractEntity
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $res = $req->fetch();
-        if ($res === false) {
-            throw new ImproperActionException('No template found with this id!');
-        }
+        $res = $this->Db->fetch($req);
         $this->entityData = $res;
+        $this->canOrExplode('read');
 
         return $res;
     }

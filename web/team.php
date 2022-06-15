@@ -1,14 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * team.php
- *
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -25,8 +22,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * The team page
- *
+ * The TEAM page
  */
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Team');
@@ -49,9 +45,6 @@ try {
     // we only want the bookable type of items
     $Database->addFilter('categoryt.bookable', '1');
     $Scheduler = new Scheduler($Database);
-
-    // disabled because takes too much resources
-    //$TagCloud = new TagCloud((int) $App->Users->userData['team']);
 
     $DisplayParams = new DisplayParams();
     $DisplayParams->adjust($App);
@@ -91,7 +84,6 @@ try {
     $template = 'team.html';
     $renderArr = array(
         'Entity' => $Templates,
-        //'TagCloud' => $TagCloud,
         'Scheduler' => $Scheduler,
         'allItems' => $allItems,
         'itemsArr' => $itemsArr,

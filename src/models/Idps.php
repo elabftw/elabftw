@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\DestroyableInterface;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
@@ -145,11 +144,7 @@ class Idps implements DestroyableInterface
         }
         $this->Db->execute($req);
 
-        $res = $req->fetch();
-        if ($res === false) {
-            throw new ImproperActionException('Could not find active IDP!');
-        }
-        return $res;
+        return $this->Db->fetch($req);
     }
 
     /**
@@ -163,11 +158,7 @@ class Idps implements DestroyableInterface
         $req->bindParam(':entId', $entId);
         $this->Db->execute($req);
 
-        $res = $req->fetch();
-        if ($res === false) {
-            throw new ImproperActionException('Could not find active IDP!');
-        }
-        return $res;
+        return $this->Db->fetch($req);
     }
 
     public function destroy(): bool

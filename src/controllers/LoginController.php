@@ -120,7 +120,7 @@ class LoginController implements ControllerInterface
         // INITIAL TEAM SELECTION
         if ($authType === 'teaminit' && $this->App->Session->get('initial_team_selection_required')) {
             // create an unvalidated user in the requested team
-            ExistingUser::fromScratch(
+            $newUser = ExistingUser::fromScratch(
                 $this->App->Session->get('teaminit_email'),
                 array((int) $this->App->Request->request->get('team_id')),
                 (string) $this->App->Request->request->get('teaminit_firstname'),
@@ -128,6 +128,10 @@ class LoginController implements ControllerInterface
             );
             $this->App->Session->set('teaminit_done', true);
             $this->App->Session->remove('initial_team_selection_required');
+            // set a session flag to show correct message
+            if ($newUser->needValidation) {
+                $this->App->Session->set('teaminit_done_need_validation', '1');
+            }
             $location = '../../login.php';
             echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
             exit;

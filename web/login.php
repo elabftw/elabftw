@@ -43,6 +43,10 @@ try {
         throw new ImproperActionException($message);
     }
 
+    if ($Request->query->has('rm_teaminit')) {
+        $App->Session->remove('teaminit_done');
+    }
+
     // Show MFA if necessary
     if ($App->Session->has('mfa_auth_required')) {
         $App->pageTitle = _('Two Factor Authentication');

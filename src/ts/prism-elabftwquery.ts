@@ -26,7 +26,7 @@ import Prism from 'prismjs';
     inside: {
       'important': /[\\]?(?:_|%)/,
     },
-    pattern: /[^\n\r\f"'|!&() -]+/,
+    pattern: /[^\n\r\f"'|!&() ]+/,
   };
 
   Prism.languages.elabftwquery = {
@@ -79,7 +79,7 @@ import Prism from 'prismjs';
     },
     'operator': {
       lookbehind: true,
-      pattern: /[&|!-]|\b(?:and|or|not)\b/i,
+      pattern: /[&|!]|\b(?:and|or|not)\b/i,
     },
     'quoted-term': quotedTerm,
     'simple-term': simpleTerm,

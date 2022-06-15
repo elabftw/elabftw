@@ -3,7 +3,7 @@
 {% if Entity.entityData.steps %}
   <div class='box'>
     <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='stepsIcon'><i id='stepsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-check-square'></i> {{ 'Steps'|trans }}</h3>
-    <div class='row' id='stepsDivContent' data-save-hidden='stepsDivContent'>
+    <div class='row mt-2' id='stepsDivContent' data-save-hidden='stepsDivContent'>
       <ul class='list-group ml-3' id='steps_div_{{ Entity.id }}' >
           {% for step in Entity.entityData.steps %}
           <li class='list-group-item {{ step.finished ? 'finished' }}'>
@@ -30,7 +30,7 @@
 {% if Entity.entityData.links %}
   <div class='box'>
     <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedItemsIcon'><i id='linkedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Linked items'|trans }}</h3>
-    <div class='row' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
+    <div class='row mt-2' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
       <ul class='list-group ml-3'>
         {% for link in Entity.entityData.links %}
           <li class='list-group-item'>
@@ -50,7 +50,7 @@
   {% if relatedItemsArr %}
     <div class='box'>
       <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='relatedItemsIcon'><i id='relatedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Related items'|trans }}</h3>
-      <div class='row' id='relatedItemsDiv' data-save-hidden='relatedItemsDiv'>
+      <div class='row mt-2' id='relatedItemsDiv' data-save-hidden='relatedItemsDiv'>
         <ul class='list-group ml-3'>
           <li class='list-group-item'>
             <i title='{{ 'Show linked items'|trans }}' class='fas fa-external-link-square-alt fa-2x mr-1 align-middle'></i>
@@ -74,7 +74,7 @@
   {% if relatedExperimentsArr %}
     <div class='box'>
       <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='relatedExperimentsIcon'><i id='relatedExperimentsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Related experiments'|trans }}</h3>
-      <div class='row' id='relatedExperimentsDiv' data-save-hidden='relatedExperimentsDiv'>
+      <div class='row mt-2' id='relatedExperimentsDiv' data-save-hidden='relatedExperimentsDiv'>
         <ul class='list-group ml-3'>
           <li class='list-group-item'>
             <i title='{{ 'Show related'|trans }}' class='fas fa-external-link-square-alt fa-2x mr-1 align-middle'></i>

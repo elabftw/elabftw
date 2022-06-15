@@ -2,7 +2,7 @@
 <div id='filesdiv'>
   {% if Entity.entityData.uploads %}
     <div class='box'>
-      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='uploadedFilesIcon'><i id='uploadedFilesIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {% trans %}Attached file
+      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='uploadedFilesIcon' class='d-inline'><i id='uploadedFilesIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {% trans %}Attached file
             {% plural Entity.entityData.uploads|length %}
             Attached files
             {% endtrans %}

@@ -2,7 +2,7 @@
 <div id='stepsDiv'>
 {% if Entity.entityData.steps %}
   <div class='box'>
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='stepsIcon'><i id='stepsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-check-square'></i> {{ 'Steps'|trans }}</h3>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='stepsIcon' class='d-inline'><i id='stepsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-check-square'></i> {{ 'Steps'|trans }}</h3>
     <div class='row mt-2' id='stepsDivContent' data-save-hidden='stepsDivContent'>
       <ul class='list-group ml-3' id='steps_div_{{ Entity.id }}' >
           {% for step in Entity.entityData.steps %}
@@ -29,7 +29,7 @@
 <!-- LINKS -->
 {% if Entity.entityData.links %}
   <div class='box'>
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedItemsIcon'><i id='linkedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Linked items'|trans }}</h3>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedItemsIcon' class='d-inline'><i id='linkedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Linked items'|trans }}</h3>
     <div class='row mt-2' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
       <ul class='list-group ml-3'>
         {% for link in Entity.entityData.links %}
@@ -49,7 +49,7 @@
 {% if Entity.type == 'items' %}
   {% if relatedItemsArr %}
     <div class='box'>
-      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='relatedItemsIcon'><i id='relatedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Related items'|trans }}</h3>
+      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='relatedItemsIcon' class='d-inline'><i id='relatedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Related items'|trans }}</h3>
       <div class='row mt-2' id='relatedItemsDiv' data-save-hidden='relatedItemsDiv'>
         <ul class='list-group ml-3'>
           <li class='list-group-item'>
@@ -73,7 +73,7 @@
 
   {% if relatedExperimentsArr %}
     <div class='box'>
-      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='relatedExperimentsIcon'><i id='relatedExperimentsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Related experiments'|trans }}</h3>
+      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='relatedExperimentsIcon' class='d-inline'><i id='relatedExperimentsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Related experiments'|trans }}</h3>
       <div class='row mt-2' id='relatedExperimentsDiv' data-save-hidden='relatedExperimentsDiv'>
         <ul class='list-group ml-3'>
           <li class='list-group-item'>

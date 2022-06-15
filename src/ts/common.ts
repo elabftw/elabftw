@@ -186,11 +186,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /* TOGGLE NEXT ACTION
      * An element with "toggle-next" as data-action value will appear clickable.
-     * Clicking on it will toggle the "hidden" attribute of the next sibling element.
+     * Clicking on it will toggle the "hidden" attribute of the next sibling element by default.
+     * If there is a data-toggle-next-n value, the "hidden" attribute of the nth next sibling element will be toggled. 
      * If there is a data-icon value, it is toggled > or V
      */
     } else if (el.matches('[data-action="toggle-next"]')) {
-      const targetEl = el.nextElementSibling as HTMLElement;
+      const n = Array.from(el.parentNode.children).indexOf(el) + (parseInt(el.dataset.toggleNextN, 10) || 1);
+      const targetEl = el.parentNode.children[n] as HTMLElement;
       targetEl.toggleAttribute('hidden');
       if (el.dataset.icon) {
         const iconEl = document.getElementById(el.dataset.icon);

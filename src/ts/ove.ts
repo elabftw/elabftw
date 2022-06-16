@@ -242,20 +242,18 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
     }
 
     // load DNA data either as File (.dna files Snapgene) or as String
-    if (isSnapGeneFile) {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', filename, true);
-      xhr.responseType = 'blob';
-      xhr.onload = function(): void {
-        if (this.status == 200) {
-          parseFile(blobToFile(this.response, realName));
+    fetch(filename).then(response => {
+      if (response.ok) {
+        if (isSnapGeneFile) {
+          return response.blob().then(blob => parseFile(blobToFile(blob, realName)));
         }
-      };
-      xhr.send();
-    } else {
-      $.get(filename, function(fileContent) {
-        parseFile(fileContent);
-      }, 'text');
-    }
+
+        return response.text().then(fileContent => parseFile(fileContent));
+      }
+
+      return Promise.reject(response.status);
+    }).catch(error => {
+      console.error(error);
+    });
   });
 }

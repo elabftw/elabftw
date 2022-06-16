@@ -306,12 +306,16 @@ class MakePdf extends AbstractMake implements FileMakerInterface
         // the consequence is a slightly different layout
         $body = Filter::body($body);
 
-        // now this part of the code will look for embeded images in the text and download them from storage and insert them as base64
+        // now this part of the code will look for embeded images in the text and download them from storage and passes them to mpdf via variables.
         // it would have been preferable to avoid such complexity and regexes, but this is the most robust way to get images in there.
-        // it works for gif png jpg images from any storage source
+        // it works for any storage source
+        // mpdf supports jpg, gif, png (+/- transparency), svg, webp, wmf and bmp (not documented but in source).
+        // see https://mpdf.github.io/what-else-can-i-do/images.html
+        // and https://github.com/mpdf/mpdf/blob/development/src/Image/ImageProcessor.php ImageProcessor::getImage() around line 218
+        // and https://github.com/mpdf/mpdf/blob/development/src/Image/ImageTypeGuesser.php
         $matches = array();
         // ampersand (&) in html attributes is encoded (&amp;) so we need to use &amp; in the regex
-        preg_match_all('/app\/download.php\?f=[[:alnum:]]{2}\/[[:alnum:]]{128}\.(?:png|jpeg|jpg|gif)(?:&amp;storage=[0-9])?/', $body, $matches);
+        preg_match_all('/app\/download.php\?f=[[:alnum:]]{2}\/[[:alnum:]]{128}\.(?:jpe?g|gif|png|svg|webp|wmf|bmp)(?:&amp;storage=[0-9])?/', $body, $matches);
         foreach ($matches[0] as $src) {
             // src will look like: app/download.php?f=c2/c2741a{...}016a3.png&amp;storage=1
             // so we parse it to get the file path and storage type
@@ -325,7 +329,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
             $storage = (int) ($res['amp;storage'] ?? $this->Entity->Uploads->getStorageFromLongname($res['f']));
             $storageFs = (new StorageFactory($storage))->getStorage()->getFs();
             // pass image data to mpdf via variable. See https://mpdf.github.io/what-else-can-i-do/images.html#image-data-as-a-variable
-            // avoid using data URLs (data:...) because it add too many characters to $body, see https://github.com/elabftw/elabftw/issues/3627
+            // avoid using data URLs (data:...) because it adds too many characters to $body, see https://github.com/elabftw/elabftw/issues/3627
             $this->mpdf->imageVars[$res['f']] = $storageFs->read($res['f']);
             $body = str_replace($src, 'var:' . $res['f'], $body);
         }

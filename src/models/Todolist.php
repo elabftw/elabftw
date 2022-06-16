@@ -44,6 +44,11 @@ class Todolist implements CrudInterface
         return $this->Db->lastInsertId();
     }
 
+    public function read(): array
+    {
+        return $this->readAll();
+    }
+
     /**
      * Select all the todoitems for a user
      */

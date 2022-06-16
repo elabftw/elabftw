@@ -125,6 +125,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         showMenuBar: false,
         withRotateCircularView: false,
         showReadOnly: false,
+        disableSetReadOnly: true,
         showGCContentByDefault: true,
         alwaysAllowSave: true,
         generatePng: true,
@@ -187,7 +188,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         },
         StatusBarProps: {
           showCircularity: false,
-          showReadOnly: false,
+          showReadOnly: true,
           showAvailability: false,
         },
       };

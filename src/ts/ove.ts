@@ -58,18 +58,17 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
       // parsedData[0].messages //either an array of strings giving any warnings or errors generated during the parsing process
       // Test if fileContent was parsed successfully. if false: show notification
       if (parsedData.length === 0) {
-        console.error('Problem with file: ' + realName);
-        return;
+        throw 'Problem with file: ' + realName;
       }
 
       if (parsedData[0].success === false) {
-        notif({res: false, msg: 'Invalid DNA data in file ' + realName});
-        return;
+        const msg = 'Invalid DNA data in file ' + realName;
+        notif({res: false, msg: msg});
+        throw msg;
       }
 
       if (parsedData[0].messages.length !== 0) {
-        console.error('File: ' + realName + '; ' + parsedData[0].messages[0]);
-        return;
+        throw 'File: ' + realName + '\n' + parsedData[0].messages.join('\n');
       }
 
       const parsedSequence = parsedData[0].parsedSequence;

@@ -324,9 +324,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const tinymceEditImage = {
       selected: false,
       uploadId: 0,
+      filename: undefined,
       reset: function(): void {
         this.selected = false;
         this.uploadId = 0;
+        this.filename = undefined;
       },
     };
 
@@ -339,8 +341,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Check if it was selected. This is set by an event hook below
         if (tinymceEditImage.selected === true) {
           const uploadId = String(tinymceEditImage.uploadId);
+          const filename = tinymceEditImage.filename;
           // Note: the confirm will unselect tinymceEditImage and we lose information
-          // so it is done after we grab uploadId
+          // so it is done after we grab uploadId and filename
           if (confirm(i18next.t('replace-edited-file'))) {
             // Replace the file on the server
             AjaxC.postForm('app/controllers/RequestHandler.php', {
@@ -351,7 +354,8 @@ document.addEventListener('DOMContentLoaded', () => {
               entity_id: String(entity.id),
               entity_type: entity.type,
               model: 'upload',
-              content: blobInfo.blob(),
+              // use window.File here not dropzone.File
+              content: new window.File([blobInfo.blob()], filename, { lastModified: new Date().getTime(), type: blobInfo.blob().type }),
             }).then(() => {
               reloadElement('filesdiv').then(() => {
                 // now fetch the new url of the upload so we can replace our image with that.
@@ -416,9 +420,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedImage = (tinymce.activeEditor.selection.getNode() as HTMLImageElement);
         // the uploadid is added as a data-uploadid attribute when inserted in the text
         // this allows us to know which corresponding upload is selected so we can replace it if needed (after a crop for instance)
+        // ToDo: the data-uploadid attribute is missing in some cases because HTMLPurifier stripped it away between version 4.3.0? and 4.3.4, need a way to add it back
         const uploadId = parseInt(selectedImage.dataset.uploadid);
         tinymceEditImage.selected = true;
         tinymceEditImage.uploadId = uploadId;
+        tinymceEditImage.filename = document.getElementById(`upload-filename_${uploadId}`).textContent;
       } else {
         tinymceEditImage.reset();
       }

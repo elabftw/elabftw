@@ -35,6 +35,11 @@
                 {{ category.category }}
               </a>
             {% endfor %}
+            <div class='dropdown-divider'></div>
+            <div class='dropdown-item' data-action='import-eln'>
+              <i class='fas fa-upload'></i> {{ 'Import'|trans }}
+            </div>
+
           {% endif %}
         </div>
       </div>

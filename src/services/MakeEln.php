@@ -197,10 +197,14 @@ class MakeEln extends MakeStreamZip
             }
         }
         // add the description of root with hasPart property
+        $parts = array_map(function ($id) {
+            return array('@id' => $id);
+        }, array_column($dataEntities, '@id'));
+
         $dataEntities[] = array(
             '@id' => './',
             '@type' => array('Dataset'),
-            'hasPart' => array_column($dataEntities, '@id'),
+            'hasPart' => $parts,
         );
         $this->jsonArr['@graph'] = array_merge($this->jsonArr['@graph'], $dataEntities);
 

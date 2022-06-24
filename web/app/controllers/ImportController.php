@@ -17,6 +17,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\StorageFactory;
 use Elabftw\Services\ImportCsv;
+use Elabftw\Services\ImportEln;
 use Elabftw\Services\ImportZip;
 use Exception;
 use League\Csv\SyntaxError;
@@ -28,15 +29,15 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once dirname(__DIR__) . '/init.inc.php';
 
-$Response = new RedirectResponse('../../admin.php');
+$Response = new RedirectResponse('../../database.php');
 
 try {
-    if (!$App->Session->get('is_admin')) {
-        throw new IllegalActionException('Non admin user tried to access import controller.');
-    }
-
     // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
     set_time_limit(0);
+
+    $uploadedFile = $Request->files->get('file');
+
+    // TODO import factory?
 
     if ($Request->request->get('type') === 'csv') {
         $Import = new ImportCsv(
@@ -45,17 +46,29 @@ try {
             $Request->request->get('delimiter'),
             $Request->request->getAlnum('canread'),
             $Request->request->getAlnum('canwrite'),
-            $Request->files->all()['file'],
+            $uploadedFile,
         );
-    } elseif ($Request->request->get('type') === 'zip') {
-        $Import = new ImportZip(
-            $App->Users,
-            (int) $Request->request->get('target'),
-            $Request->request->getAlnum('canread'),
-            $Request->request->getAlnum('canwrite'),
-            $Request->files->all()['file'],
-            (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs(),
-        );
+    } elseif ($Request->request->get('type') === 'archive') {
+        // figure out the filetype depending on file extension
+        if ($uploadedFile->getClientOriginalExtension() === 'zip') {
+            $Import = new ImportZip(
+                $App->Users,
+                (int) $Request->request->get('target'),
+                $Request->request->getAlnum('canread'),
+                $Request->request->getAlnum('canwrite'),
+                $uploadedFile,
+                (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs(),
+            );
+        } elseif ($uploadedFile->getClientOriginalExtension() === 'eln') {
+            $Import = new ImportEln(
+                $App->Users,
+                (int) $Request->request->get('target'),
+                $Request->request->getAlnum('canread'),
+                $Request->request->getAlnum('canwrite'),
+                $uploadedFile,
+                (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs(),
+            );
+        }
     } else {
         throw new IllegalActionException('Invalid argument');
     }

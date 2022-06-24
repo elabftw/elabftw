@@ -389,7 +389,7 @@ abstract class AbstractEntity implements CrudInterface
                 $content = $params->getBody();
                 break;
             case 'bodyappend':
-                $content = $this->entityData['body'] . $params->getBody();
+                $content = $this->readOne()['body'] . $params->getBody();
                 break;
             case 'content_type':
                 $content = $params->getState();

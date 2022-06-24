@@ -21,7 +21,7 @@
     "defuse/php-encryption": "2.3.*",
     "mpdf/mpdf": "^8.1.0",
     "onelogin/php-saml": "^4.0.0",
-    "guzzlehttp/guzzle": "^7.0.1",
+    "guzzlehttp/guzzle": "^7.4.5",
     "symfony/http-foundation": "^6.0",
     "twig/twig": "^3.3.8",
     "monolog/monolog": "^2.1.0",

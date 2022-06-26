@@ -11,17 +11,18 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\ItemTypeParamsInterface;
+use Elabftw\Traits\CategoryTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
 /**
  * The kind of items you can have in the database for a team
  */
-class ItemsTypes extends AbstractEntity
+class ItemsTypes extends AbstractTemplateEntity
 {
     use SortableTrait;
+    use CategoryTrait;
 
     private int $team;
 
@@ -30,6 +31,7 @@ class ItemsTypes extends AbstractEntity
         $this->Db = Db::getConnection();
         $this->team = $this->Users->team;
         $this->Links = new Links($this);
+        $this->countableTable = 'items';
         $this->Steps = new Steps($this);
         $this->type = parent::TYPE_ITEMS_TYPES;
         if ($id !== null) {
@@ -51,7 +53,7 @@ class ItemsTypes extends AbstractEntity
     /**
      * SQL to get all items type
      */
-    public function read(ContentParamsInterface $params): array
+    public function readAll(): array
     {
         $sql = 'SELECT items_types.id AS category_id,
             items_types.name AS category,
@@ -78,7 +80,13 @@ class ItemsTypes extends AbstractEntity
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $this->Db->execute($req);
-        return $this->Db->fetch($req);
+
+        $this->entityData = $this->Db->fetch($req);
+        $this->canOrExplode('read');
+        // add steps and links in there too
+        $this->entityData['steps'] = $this->Steps->readAll();
+        $this->entityData['links'] = $this->Links->readAll();
+        return $this->entityData;
     }
 
     public function duplicate(): int
@@ -116,24 +124,10 @@ class ItemsTypes extends AbstractEntity
     public function destroy(): bool
     {
         // don't allow deletion of an item type with items
-        if ($this->countItems() > 0) {
+        if ($this->countEntities() > 0) {
             throw new ImproperActionException(_('Remove all database items with this type before deleting this type.'));
         }
 
         return parent::destroy();
-    }
-
-    /**
-     * Count all items of this type
-     * TODO have a countable interface and maybe counttrait to merge this function with Status
-     */
-    protected function countItems(): int
-    {
-        $sql = 'SELECT COUNT(id) FROM items WHERE category = :category';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':category', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return (int) $req->fetchColumn();
     }
 }

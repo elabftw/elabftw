@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\SortableTrait;
@@ -30,15 +29,10 @@ abstract class AbstractCategory implements CrudInterface
     /**
      * Get all the things
      */
-    abstract public function read(ContentParamsInterface $params): array;
+    abstract public function readAll(): array;
 
     /**
      * Read just one category
      */
     abstract public function readOne(): array;
-
-    /**
-     * Count all items of this type
-     */
-    abstract protected function countItems(): int;
 }

@@ -57,7 +57,7 @@ class TeamGroups implements CrudInterface
      *
      * @return array all team groups with users in group as array
      */
-    public function read(ContentParamsInterface $params): array
+    public function readAll(): array
     {
         $sql = "SELECT team_groups.id,
                 team_groups.name,
@@ -127,19 +127,16 @@ class TeamGroups implements CrudInterface
     }
 
     /**
-     * Get the name of a group
+     * Get info about a team group
      */
-    public function readName(int $id): string
+    public function readOne(): array
     {
-        $sql = 'SELECT name FROM team_groups WHERE id = :id';
+        $sql = 'SELECT * FROM team_groups WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $res = $req->fetchColumn();
-        if ($res === false || $res === null) {
-            return '';
-        }
-        return (string) $res;
+
+        return $this->Db->fetch($req);
     }
 
     public function update(TeamGroupParamsInterface $params): bool

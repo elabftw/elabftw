@@ -9,7 +9,6 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\StepParams;
 use Elabftw\Elabftw\TagParams;
@@ -47,16 +46,16 @@ class Populate
     /**
      * Populate the db with fake experiments or items
      */
-    public function generate(Experiments|Items $Entity): void
+    public function generate(Experiments | Items $Entity): void
     {
         if ($Entity instanceof Experiments) {
             $Category = new Status($Entity->Users->team);
             $tpl = 0;
         } else {
             $Category = new ItemsTypes($Entity->Users);
-            $tpl = (int) $Category->read(new ContentParams())[0]['category_id'];
+            $tpl = (int) $Category->readAll()[0]['category_id'];
         }
-        $categories = $Category->read(new ContentParams());
+        $categoryArr = $Category->readAll();
 
 
         printf("Generating %s \n", $Entity->type);
@@ -89,7 +88,7 @@ class Populate
             }
 
             // change the category (status/item type)
-            $category = $this->faker->randomElement($categories);
+            $category = $this->faker->randomElement($categoryArr);
             $Entity->updateCategory((int) $category['category_id']);
 
             // maybe upload a file but not on the first one

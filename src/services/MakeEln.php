@@ -10,7 +10,6 @@
 namespace Elabftw\Services;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use League\Flysystem\UnableToReadFile;
@@ -77,127 +76,123 @@ class MakeEln extends MakeStreamZip
         foreach ($this->idArr as $id) {
             $this->Entity->setId((int) $id);
             try {
-                $permissions = $this->Entity->getPermissions();
+                $this->Entity->populate();
             } catch (IllegalActionException $e) {
                 continue;
             }
             $e = $this->Entity->entityData;
-            if ($permissions['read']) {
-                $currentDatasetFolder = $this->getBaseFileName();
-                $this->folder = $this->root . '/' . $currentDatasetFolder;
-                $orcid = '';
-                if ($e['orcid'] !== null) {
-                    $orcid = 'https://orcid.org/' . $e['orcid'];
-                }
+            $currentDatasetFolder = $this->getBaseFileName();
+            $this->folder = $this->root . '/' . $currentDatasetFolder;
+            $orcid = '';
+            if ($e['orcid'] !== null) {
+                $orcid = 'https://orcid.org/' . $e['orcid'];
+            }
 
-                // LINKS
-                $linksArr = $this->Entity->Links->read(new ContentParams());
-                $hasPart = array();
-                foreach ($linksArr as $link) {
-                    $hasPart[] = array(
-                        '@id' => SITE_URL . '/database.php?mode=view&id=' . $link['itemid'],
-                        '@type' => 'Dataset',
-                        'identifier' => $link['elabid'],
-                    );
-                }
-
-                // STEPS
-                $stepsArr = $this->Entity->Steps->read(new ContentParams());
-                $itemList = array();
-                foreach ($stepsArr as $step) {
-                    $itemList[] = array(
-                        '@id' => 'step_' . $step['id'],
-                        '@type' => 'ListItem',
-                        'position' => $step['ordering'],
-                        'item' => array(
-                            '@type' => 'HowToItem',
-                            'requiredQuantity' => $step['body'],
-                        ),
-                    );
-                }
-
-                // MAIN ENTRY
-                $dataEntities[] =  array(
-                    '@id' => './' . $currentDatasetFolder,
+            // LINKS
+            $hasPart = array();
+            foreach ($e['links'] as $link) {
+                $hasPart[] = array(
+                    '@id' => SITE_URL . '/database.php?mode=view&id=' . $link['itemid'],
                     '@type' => 'Dataset',
-                    'author' => array(
-                        '@type' => 'Person',
-                        'familyName' => $e['lastname'] ?? '',
-                        'givenName' => $e['firstname'] ?? '',
-                        'identifier' => $orcid,
+                    'identifier' => $link['elabid'],
+                );
+            }
+
+            // STEPS
+            $itemList = array();
+            foreach ($e['steps'] as $step) {
+                $itemList[] = array(
+                    '@id' => 'step_' . $step['id'],
+                    '@type' => 'ListItem',
+                    'position' => $step['ordering'],
+                    'item' => array(
+                        '@type' => 'HowToItem',
+                        'requiredQuantity' => $step['body'],
                     ),
-                    'dateCreated' => $e['datetime'] ?? '',
-                    'dateModified' => $e['lastchange'],
-                    'identifier' => $e['elabid'] ?? '',
-                    'itemList' => $itemList,
-                    'keywords' => explode('|', (string) $this->Entity->entityData['tags']),
-                    'name' => $e['title'],
-                    'text' => $e['body'] ?? '',
-                    'url' => SITE_URL . '/' . $this->Entity->page . '.php?mode=view&id=' . $e['id'],
-                    'hasPart' => $hasPart,
                 );
+            }
 
-                // CSV
-                $MakeCsv = $this->getCsv((int) $id);
-                $csv = $MakeCsv->getFileContent();
-                $this->Zip->addFile($this->folder . '/' . $MakeCsv->getFileName(), $csv);
-                $dataEntities[] = array(
-                    '@id' => './' . $currentDatasetFolder . '/' . $MakeCsv->getFileName(),
-                    '@type' => 'File',
-                    'description' => 'CSV Export',
-                    'name' => $MakeCsv->getFileName(),
-                    'contentType' => $MakeCsv->getContentType(),
-                    'contentSize' => (string) $MakeCsv->getContentSize(),
-                    'sha256' => hash('sha256', $csv),
-                );
+            // MAIN ENTRY
+            $dataEntities[] = array(
+                '@id' => './' . $currentDatasetFolder,
+                '@type' => 'Dataset',
+                'author' => array(
+                    '@type' => 'Person',
+                    'familyName' => $e['lastname'] ?? '',
+                    'givenName' => $e['firstname'] ?? '',
+                    'identifier' => $orcid,
+                ),
+                'dateCreated' => $e['datetime'] ?? '',
+                'dateModified' => $e['lastchange'],
+                'identifier' => $e['elabid'] ?? '',
+                'itemList' => $itemList,
+                'keywords' => explode('|', (string) $this->Entity->entityData['tags']),
+                'name' => $e['title'],
+                'text' => $e['body'] ?? '',
+                'url' => SITE_URL . '/' . $this->Entity->page . '.php?mode=view&id=' . $e['id'],
+                'hasPart' => $hasPart,
+            );
 
-                // PDF
-                $MakePdf = $this->getPdf();
-                $pdf = $MakePdf->getFileContent();
-                $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $pdf);
-                $dataEntities[] = array(
-                    '@id' => './' . $currentDatasetFolder . '/' . $MakePdf->getFileName(),
-                    '@type' => 'File',
-                    'description' => 'PDF Export',
-                    'name' => $MakePdf->getFileName(),
-                    'contentType' => $MakePdf->getContentType(),
-                    'contentSize' => (string) $MakePdf->getContentSize(),
-                    'sha256' => hash('sha256', $pdf),
-                );
+            // CSV
+            $MakeCsv = $this->getCsv((int) $id);
+            $csv = $MakeCsv->getFileContent();
+            $this->Zip->addFile($this->folder . '/' . $MakeCsv->getFileName(), $csv);
+            $dataEntities[] = array(
+                '@id' => './' . $currentDatasetFolder . '/' . $MakeCsv->getFileName(),
+                '@type' => 'File',
+                'description' => 'CSV Export',
+                'name' => $MakeCsv->getFileName(),
+                'contentType' => $MakeCsv->getContentType(),
+                'contentSize' => (string) $MakeCsv->getContentSize(),
+                'sha256' => hash('sha256', $csv),
+            );
 
-                // JSON
-                $MakeJson = new MakeJson($this->Entity, array((int) $e['id']));
-                $json = $MakeJson->getFileContent();
-                $this->Zip->addFile($this->folder . '/' . $MakeJson->getFileName(), $json);
-                $dataEntities[] = array(
-                    '@id' => './' . $currentDatasetFolder . '/' . $MakeJson->getFileName(),
-                    '@type' => 'File',
-                    'description' => 'JSON export',
-                    'name' => $MakeJson->getFileName(),
-                    'contentType' => $MakeJson->getContentType(),
-                    'contentSize' => (string) $MakeJson->getContentSize(),
-                    'sha256' => hash('sha256', $json),
-                );
+            // PDF
+            $MakePdf = $this->getPdf();
+            $pdf = $MakePdf->getFileContent();
+            $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $pdf);
+            $dataEntities[] = array(
+                '@id' => './' . $currentDatasetFolder . '/' . $MakePdf->getFileName(),
+                '@type' => 'File',
+                'description' => 'PDF Export',
+                'name' => $MakePdf->getFileName(),
+                'contentType' => $MakePdf->getContentType(),
+                'contentSize' => (string) $MakePdf->getContentSize(),
+                'sha256' => hash('sha256', $pdf),
+            );
 
-                // UPLOADS
-                $uploadedFilesArr = $this->Entity->Uploads->readAllNormal();
-                if (!empty($uploadedFilesArr)) {
-                    try {
-                        // this gets modified by the function so we have the correct real_names
-                        $uploadedFilesArr = $this->addAttachedFiles($uploadedFilesArr);
-                    } catch (UnableToReadFile $e) {
-                        continue;
-                    }
-                    foreach ($uploadedFilesArr as $file) {
-                        $dataEntities[] = array(
-                            '@id' => './' . $currentDatasetFolder . '/' . $file['real_name'],
-                            '@type' => 'File',
-                            'description' => $file['comment'],
-                            'name' => $file['real_name'],
-                            'contentSize' => $file['filesize'],
-                            'sha256' => $file['hash'],
-                        );
-                    }
+            // JSON
+            $MakeJson = new MakeJson($this->Entity, array((int) $e['id']));
+            $json = $MakeJson->getFileContent();
+            $this->Zip->addFile($this->folder . '/' . $MakeJson->getFileName(), $json);
+            $dataEntities[] = array(
+                '@id' => './' . $currentDatasetFolder . '/' . $MakeJson->getFileName(),
+                '@type' => 'File',
+                'description' => 'JSON export',
+                'name' => $MakeJson->getFileName(),
+                'contentType' => $MakeJson->getContentType(),
+                'contentSize' => (string) $MakeJson->getContentSize(),
+                'sha256' => hash('sha256', $json),
+            );
+
+            // UPLOADS
+            $uploadedFilesArr = $e['uploads'];
+            if (!empty($uploadedFilesArr)) {
+                try {
+                    // this gets modified by the function so we have the correct real_names
+                    $uploadedFilesArr = $this->addAttachedFiles($uploadedFilesArr);
+                } catch (UnableToReadFile $e) {
+                    continue;
+                }
+                foreach ($uploadedFilesArr as $file) {
+                    $dataEntities[] = array(
+                        '@id' => './' . $currentDatasetFolder . '/' . $file['real_name'],
+                        '@type' => 'File',
+                        'description' => $file['comment'],
+                        'name' => $file['real_name'],
+                        'contentSize' => $file['filesize'],
+                        'sha256' => $file['hash'],
+                    );
                 }
             }
         }

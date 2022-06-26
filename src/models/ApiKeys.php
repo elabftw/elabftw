@@ -12,7 +12,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CreateApikeyParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\ParamsInterface;
@@ -76,7 +75,7 @@ class ApiKeys implements CrudInterface
     /**
      * Read all keys for current user
      */
-    public function read(ContentParamsInterface $params): array
+    public function readAll(): array
     {
         $sql = 'SELECT id, name, created_at, hash, can_write FROM api_keys WHERE userid = :userid AND team = :team';
         $req = $this->Db->prepare($sql);
@@ -85,6 +84,11 @@ class ApiKeys implements CrudInterface
         $this->Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    public function readOne(): array
+    {
+        return $this->readAll();
     }
 
     /**

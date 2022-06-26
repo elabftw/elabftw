@@ -44,10 +44,15 @@ class Todolist implements CrudInterface
         return $this->Db->lastInsertId();
     }
 
+    public function read(): array
+    {
+        return $this->readAll();
+    }
+
     /**
      * Select all the todoitems for a user
      */
-    public function read(ContentParamsInterface $params): array
+    public function readAll(): array
     {
         $sql = 'SELECT id, body, creation_time FROM todolist WHERE userid = :userid ORDER BY ordering ASC, creation_time DESC';
         $req = $this->Db->prepare($sql);
@@ -55,6 +60,16 @@ class Todolist implements CrudInterface
         $this->Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    public function readOne(): array
+    {
+        $sql = 'SELECT * FROM todolist WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $this->Db->fetch($req);
     }
 
     public function update(ContentParamsInterface $params): bool

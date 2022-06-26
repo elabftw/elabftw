@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -49,23 +48,14 @@ try {
     $TeamGroups = new TeamGroups($App->Users);
     $Teams = new Teams($App->Users);
 
-    $itemsCategoryArr = $ItemsTypes->read(new ContentParams());
-    $templateData = array();
-    $stepsArr = array();
-    $linksArr = array();
+    $itemsCategoryArr = $ItemsTypes->readAll();
     if ($Request->query->has('templateid')) {
         $ItemsTypes->setId((int) $App->Request->query->get('templateid'));
-        $templateData = $ItemsTypes->read(new ContentParams());
-        $permissions = $ItemsTypes->getPermissions($templateData);
-        if ($permissions['write'] === false) {
-            throw new IllegalActionException('User tried to access a template without write permissions');
-        }
-        $stepsArr = $ItemsTypes->Steps->read(new ContentParams());
-        $linksArr = $ItemsTypes->Links->read(new ContentParams());
+        $ItemsTypes->populate();
     }
     $statusArr = $Status->readAll();
-    $teamConfigArr = $Teams->read(new ContentParams());
-    $teamGroupsArr = $TeamGroups->read(new ContentParams());
+    $teamConfigArr = $Teams->readOne();
+    $teamGroupsArr = $TeamGroups->readAll();
     $teamsArr = $Teams->readAll();
     $allTeamUsersArr = $App->Users->readAllFromTeam();
     // only the unvalidated ones
@@ -93,6 +83,7 @@ try {
 
     $template = 'admin.html';
     $renderArr = array(
+        'Entity' => $ItemsTypes,
         'allTeamUsersArr' => $allTeamUsersArr,
         'tagsArr' => $tagsArr,
         'isSearching' => $isSearching,
@@ -102,9 +93,6 @@ try {
         'teamGroupsArr' => $teamGroupsArr,
         'visibilityArr' => $TeamGroups->getVisibilityList(),
         'teamsArr' => $teamsArr,
-        'templateData' => $templateData,
-        'stepsArr' => $stepsArr,
-        'linksArr' => $linksArr,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,
     );

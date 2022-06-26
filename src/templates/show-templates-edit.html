@@ -27,28 +27,28 @@
 
   {% include 'show-templates-select.html' %}
 
-  {% if templateData %}
+  {% if Entity.entityData %}
     <div class='row mt-3'>
       <!-- NAME OF TPL AND OWNER -->
       <div class='col'>
         <h4 class='d-inline'>
-          {{ templateData.fullname|raw }} - {{ templateData.title|raw }}
+          {{ Entity.entityData.fullname|raw }} - {{ Entity.entityData.title|raw }}
         </h4>
         <!-- LOCK -->
         {% set lockIcon = 'fa-lock-open' %}
         {% set alt = 'Lock/Unlock item'|trans %}
-        {% if templateData.locked %}
+        {% if Entity.entityData.locked %}
             {% set lockIcon = 'fa-lock' %}
-            {% set alt = templateData.lockedwhen %}
+            {% set alt = Entity.entityData.lockedwhen %}
         {% endif %}
-        <a data-action='lock-template' data-id="{{ templateData.id }}" href='#' class='elab-tooltip'>
+        <a data-action='lock-template' data-id="{{ Entity.id }}" href='#' class='elab-tooltip'>
           <span>{{ alt }}</span>
           <i class='fas {{lockIcon}}'></i>
         </a>
       </div>
     </div>
 
-    {% if templateData.locked %}
+    {% if Entity.entityData.locked %}
       {% include 'templates-view.html' %}
     {% else %}
       {% include 'templates-edit.html' %}
@@ -57,10 +57,10 @@
     <!-- REVISIONS -->
     {% if revNum > 0 %}
     <span class='float-right'><i class='fas fa-history mr-1'></i>
-        <a href='revisions.php?type=experiments_templates&item_id={{ templateData.id }}'>{{ revNum }}
+        <a href='revisions.php?type=experiments_templates&item_id={{ Entity.id }}'>{{ revNum }}
             {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
     </span>
     {% endif %}
   {% endif %}
   </div>
-  <div id='info' data-page='template-edit' data-type='experiments_templates' data-id='{{ templateData.id }}'></div>
+  <div id='info' data-page='template-edit' data-type='experiments_templates' data-id='{{ Entity.id }}'></div>

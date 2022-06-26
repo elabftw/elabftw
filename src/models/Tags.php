@@ -90,6 +90,12 @@ class Tags implements CrudInterface
         return $this->readAll();
     }
 
+    public function readOne(): array
+    {
+        // not used
+        return array();
+    }
+
     /**
      * Read all the tags from team
      *

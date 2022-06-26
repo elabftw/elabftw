@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // CREATE API KEY
     } else if (el.matches('[data-action="create-apikey"]')) {
-      // clear any prevous new key message
+      // clear any previous new key message
       const nameInput = (document.getElementById('apikeyName') as HTMLInputElement);
       const content = nameInput.value;
       if (!content) {

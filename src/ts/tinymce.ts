@@ -28,6 +28,8 @@ import 'tinymce/plugins/save';
 import 'tinymce/plugins/searchreplace';
 import 'tinymce/plugins/table';
 import 'tinymce/plugins/template';
+import 'tinymce/plugins/visualblocks';
+import 'tinymce/plugins/visualchars';
 import 'tinymce/themes/silver';
 import 'tinymce/themes/mobile';
 import '../js/tinymce-langs/ca_ES.js';
@@ -111,7 +113,7 @@ function doneTyping(): void {
 
 // options for tinymce to pass to tinymce.init()
 export function getTinymceBaseConfig(page: string): object {
-  let plugins = 'anchor table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template';
+  let plugins = 'anchor table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template visualblocks visualchars';
   if (page !== 'admin') {
     plugins += ' autosave';
   }

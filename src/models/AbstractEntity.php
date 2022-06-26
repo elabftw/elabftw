@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use function array_column;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
@@ -33,6 +32,7 @@ use function implode;
 use function is_bool;
 use PDO;
 use PDOStatement;
+use const SITE_URL;
 
 /**
  * The mother class of Experiments, Items, Templates and ItemsTypes
@@ -54,6 +54,10 @@ abstract class AbstractEntity implements CrudInterface
     public const TYPE_ITEMS_TYPES = 'items_types';
 
     public const TYPE_TEMPLATES = 'experiments_templates';
+
+    public const CONTENT_HTML = 1;
+
+    public const CONTENT_MD = 2;
 
     public Comments $Comments;
 
@@ -139,6 +143,25 @@ abstract class AbstractEntity implements CrudInterface
     abstract public function duplicate(): int;
 
     /**
+     * Only Experiments will currently implement this correctly
+     */
+    public function updateTimestamp(string $responseTime): void
+    {
+        return;
+    }
+
+    /**
+     * Count the number of timestamped experiments during past month (sliding window)
+     */
+    public function getTimestampLastMonth(): int
+    {
+        $sql = 'SELECT COUNT(id) FROM experiments WHERE timestamped = 1 AND timestampedwhen > (NOW() - INTERVAL 1 MONTH)';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
+    /**
      * Lock/unlock
      */
     public function toggleLock(): bool
@@ -175,6 +198,12 @@ abstract class AbstractEntity implements CrudInterface
         $req->bindParam(':lockedby', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    public function readAll(): array
+    {
+        // use readShow() instead
+        return array();
     }
 
     /**
@@ -290,12 +319,22 @@ abstract class AbstractEntity implements CrudInterface
             return $this->getBoundEvents();
         }
         if ($params->getTarget() === 'metadata') {
-            return array('metadata' => $this->readCurrent()['metadata']);
+            return array('metadata' => $this->readOne()['metadata']);
         }
         if ($params->getTarget() === 'body') {
-            return array('body' => Tools::md2html($this->readCurrent()['body']));
+            $body = $this->readOne()['body'] ?? '';
+            if ((int) $this->entityData['content_type'] === self::CONTENT_MD) {
+                $body = Tools::md2html($body);
+            }
+            return array('body' => $body);
         }
-        return $this->readCurrent();
+        if ($params->getTarget() === 'sharelink') {
+            if (!$this instanceof AbstractConcreteEntity) {
+                throw new ImproperActionException('Can only share experiments or items.');
+            }
+            return array('sharelink' => SITE_URL . '/' . $this->page . '.php?mode=view&id=' . $this->id . '&elabid=' . $this->readOne()['elabid']);
+        }
+        return $this->readOne();
     }
 
     public function getTeamFromElabid(string $elabid): int
@@ -351,6 +390,9 @@ abstract class AbstractEntity implements CrudInterface
                 break;
             case 'bodyappend':
                 $content = $this->entityData['body'] . $params->getBody();
+                break;
+            case 'content_type':
+                $content = $params->getState();
                 break;
             case 'rating':
                 $content = $params->getRating();
@@ -438,7 +480,8 @@ abstract class AbstractEntity implements CrudInterface
     {
         // if it's a number, then lookup the name of the team group
         if (Check::id((int) $permission) !== false) {
-            return ucfirst($this->TeamGroups->readName((int) $permission));
+            $this->TeamGroups->setId((int) $permission);
+            return ucfirst($this->TeamGroups->readOne()['name']);
         }
         return Transform::permission($permission);
     }
@@ -590,8 +633,8 @@ abstract class AbstractEntity implements CrudInterface
             throw new ImproperActionException('No id was set.');
         }
 
-        // load the entity in entityData array
-        $this->entityData = $this->read(new ContentParams());
+        // load the entity in entityData property and also check for read permission at the same time
+        $this->readOne();
     }
 
     /**
@@ -660,7 +703,7 @@ abstract class AbstractEntity implements CrudInterface
 
     public function destroy(): bool
     {
-        if ($this instanceof Experiments || $this instanceof Items) {
+        if ($this instanceof AbstractConcreteEntity) {
             // mark all uploads related to that entity as deleted
             $sql = 'UPDATE uploads SET state = :state WHERE item_id = :entity_id AND type = :type';
             $req = $this->Db->prepare($sql);
@@ -671,6 +714,30 @@ abstract class AbstractEntity implements CrudInterface
         }
         // set state to deleted
         return $this->update(new EntityParams((string) self::STATE_DELETED, 'state'));
+    }
+
+    /**
+     * Read all from one entity
+     */
+    public function readOne(): array
+    {
+        if ($this->id === null) {
+            throw new IllegalActionException('No id was set!');
+        }
+        $sql = $this->getReadSqlBeforeWhere(true, true);
+
+        $sql .= ' WHERE entity.id = ' . (string) $this->id;
+
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        $this->entityData = $this->Db->fetch($req);
+        $this->canOrExplode('read');
+        $this->entityData['steps'] = $this->Steps->readAll();
+        $this->entityData['links'] = $this->Links->readAll();
+        $this->entityData['uploads'] = $this->Uploads->readAll();
+        $this->entityData['comments'] = $this->Comments->readAll();
+
+        return $this->entityData;
     }
 
     /**
@@ -686,34 +753,6 @@ abstract class AbstractEntity implements CrudInterface
         $req->bindValue(':value', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Read all from one entity
-     * Here be dragons!
-     *
-     * @param bool $getTags if true, might take a long time
-     */
-    private function readCurrent(bool $getTags = true): array
-    {
-        if ($this->id === null) {
-            throw new IllegalActionException('No id was set!');
-        }
-        $sql = $this->getReadSqlBeforeWhere($getTags, true);
-
-        $sql .= ' WHERE entity.id = ' . (string) $this->id;
-
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-
-        $item = $req->fetch();
-
-        $permissions = $this->getPermissions($item);
-        if ($permissions['read'] === false) {
-            throw new IllegalActionException(Tools::error(true));
-        }
-
-        return $item;
     }
 
     /**

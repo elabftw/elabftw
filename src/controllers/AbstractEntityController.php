@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,12 +6,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
@@ -40,13 +38,9 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $categoryArr = array();
 
-    /** @var AbstractEntity $Entity */
-    protected $Entity;
-
-    public function __construct(protected App $App, AbstractEntity $entity)
+    public function __construct(protected App $App, protected AbstractEntity $Entity)
     {
-        $this->Entity = $entity;
-        $this->Templates = new Templates($entity->Users);
+        $this->Templates = new Templates($this->Entity->Users);
     }
 
     /**
@@ -129,11 +123,11 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // FAVTAGS
         $FavTags = new FavTags($this->App->Users);
-        $favTagsArr = $FavTags->read(new ContentParams());
+        $favTagsArr = $FavTags->readAll();
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->read(new ContentParams());
+        $itemsCategoryArr = $ItemsTypes->readAll();
 
         $template = 'show.html';
 
@@ -173,7 +167,7 @@ abstract class AbstractEntityController implements ControllerInterface
     protected function view(): Response
     {
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
-        $this->Entity->canOrExplode('read');
+        $this->Entity->populate();
 
         // REVISIONS
         $Revisions = new Revisions(
@@ -183,20 +177,14 @@ abstract class AbstractEntityController implements ControllerInterface
             (int) $this->App->Config->configArr['min_days_revisions'],
         );
 
-        $template = 'view.html';
-
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
-            'commentsArr' => $this->Entity->Comments->read(new ContentParams()),
-            'linksArr' => $this->Entity->Links->read(new ContentParams()),
             'mode' => 'view',
             'revNum' => $Revisions->readCount(),
-            'stepsArr' => $this->Entity->Steps->read(new ContentParams()),
             'templatesArr' => $this->Templates->readForUser(),
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
-            'uploadsArr' => $this->Entity->Uploads->readAllNormal(),
         );
 
         // RELATED ITEMS AND EXPERIMENTS
@@ -208,7 +196,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         $Response = new Response();
         $Response->prepare($this->App->Request);
-        $Response->setContent($this->App->render($template, $renderArr));
+        $Response->setContent($this->App->render('view.html', $renderArr));
 
         return $Response;
     }
@@ -233,11 +221,9 @@ abstract class AbstractEntityController implements ControllerInterface
             $lastModifierFullname = $lastModifier->userData['fullname'];
         }
 
-
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->read(new ContentParams());
-
+        $itemsCategoryArr = $ItemsTypes->readAll();
 
         // REVISIONS
         $Revisions = new Revisions(
@@ -250,28 +236,24 @@ abstract class AbstractEntityController implements ControllerInterface
         // VISIBILITY ARR
         $TeamGroups = new TeamGroups($this->Entity->Users);
 
-        $template = 'edit.html';
-
         $renderArr = array(
             'Entity' => $this->Entity,
+            'entityData' => $this->Entity->entityData,
             'categoryArr' => $this->categoryArr,
             'deletableXp' => $this->getDeletableXp(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'lang' => Tools::getCalendarLang($this->App->Users->userData['lang'] ?? 'en_GB'),
             'lastModifierFullname' => $lastModifierFullname,
-            'linksArr' => $this->Entity->Links->read(new ContentParams()),
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',
             'revNum' => $Revisions->readCount(),
-            'stepsArr' => $this->Entity->Steps->read(new ContentParams()),
             'templatesArr' => $this->Templates->readForUser(),
-            'uploadsArr' => $this->Entity->Uploads->readAllNormal(),
             'visibilityArr' => $TeamGroups->getVisibilityList(),
         );
 
         $Response = new Response();
         $Response->prepare($this->App->Request);
-        $Response->setContent($this->App->render($template, $renderArr));
+        $Response->setContent($this->App->render('edit.html', $renderArr));
         return $Response;
     }
 

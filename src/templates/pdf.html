@@ -6,14 +6,14 @@
   <body {{ useCjk ? " style='font-family:sun-extA;'" }}>
     <htmlpageheader name='header'>
       <div id='header'>
-        <h1>{{ title }}</h1>
+        <h1>{{ entityData.title }}</h1>
         <p style='float:left; width:90%;'>
         {{ entityDate }}
           <strong>{{ 'Date'|trans }}:</strong> {{ date }}<br>
-          {% if tags %}
-          <strong>{{ 'Tags'|trans }}:</strong> <em>{{ tags|replace({'|': ' '}) }}</em><br>
+          {% if entityData.tags %}
+          <strong>{{ 'Tags'|trans }}:</strong> <em>{{ entityData.tags|replace({'|': ' '}) }}</em><br>
           {% endif %}
-          <strong>{{ 'Created by'|trans }}:</strong> {{ fullname }}
+          <strong>{{ 'Created by'|trans }}:</strong> {{ entityData.fullname }}
         </p>
         <p style='float:right; width:10%;'><br><br>
           {PAGENO} / {nbpg}
@@ -39,22 +39,22 @@
 
 {{ body|raw }}
 
-{% if metadata %}
+{% if entityData.metadata %}
 <section class='no-break'>
   <h3>{{ 'Extra fields'|trans }}</h3>
-  {{ metadata|formatMetadata }}
+  {{ entityData.metadata|formatMetadata }}
 </section>
 {% endif %}
 
-{% if linksArr %}
+{% if entityData.links %}
   <section class='no-break'>
     <h3>{% trans %}
       Linked item
-      {% plural linksArr|length %}
+      {% plural links|length %}
       Linked items
       {% endtrans %}</h3>
 
-    {% for link in linksArr %}
+    {% for link in entityData.links %}
       <p class='pdf-ul'>
         <span style='color:#{{ link.color }}'>{{ link.name }}</span> - <a href='{{ linkBaseUrl }}?mode=view&id={{ link.itemid }}'>{{ link.title }}</a>
       </p>
@@ -62,10 +62,10 @@
   </section>
 {% endif %}
 
-{% if stepsArr %}
+{% if entityData.steps %}
   <section class='no-break'>
     <h3>{{ 'Steps'|trans }}</h3>
-    {% for step in stepsArr %}
+    {% for step in entityData.steps %}
       <p class='pdf-ul'>{{ step.body }}
       {% if step.finished %} ({{ step.finished_time }}){% endif %}
     </p>
@@ -73,15 +73,15 @@
   </section>
 {% endif %}
 
-{% if includeFiles and uploadsArr %}
+{% if includeFiles and entityData.uploads %}
   <section class='no-break'>
     <h3>{% trans %}
       Attached file
-      {% plural uploadsArr|length %}
+      {% plural entityData.uploads|length %}
       Attached files
       {% endtrans %}
     </h3>
-    {% for upload in uploadsArr %}
+    {% for upload in entityData.uploads %}
       <p class='pdf-ul'>{{ upload.real_name }}
       {# add a comment? don't add if it's the default text #}
       {% if upload.comment != 'Click to add a comment' %} ({{ upload.comment }}){% endif %}
@@ -97,15 +97,15 @@
   </section>
 {% endif %}
 
-{% if commentsArr %}
+{% if entityData.comments %}
   <section class='no-break'>
     <h3>{% trans %}
       Comment
-      {% plural commentsArr|length %}
+      {% plural entityData.comments|length %}
       Comments
       {% endtrans %}
     </h3>
-    {% for comment in commentsArr %}
+    {% for comment in entityData.comments %}
       <p class='pdf-ul'>On {{ comment.datetime }} {{ comment.fullname|raw }} wrote:<br>{{ comment.comment|raw }}</p>
     {% endfor %}
   </section>
@@ -117,7 +117,7 @@
       <barcode code='{{ url|raw }}' type='QR' class='barcode' size='0.8' error='M' />
     </td>
     <td class='noborder'>
-      <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ elabid }}</p>
+      <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ entityData.elabid }}</p>
       {% if locked %}
         <p class='elabid'>Locked by {{ lockerName }} on {{ lockDate }}</p>
       {% endif %}

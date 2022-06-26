@@ -258,20 +258,20 @@
     <hr>
 
     <!-- templateData will be loaded with content from an item type if templateid is present is url -->
-    {% if templateData %}
+    {% if Entity.entityData %}
       <ul class='list-inline'>
         <li class='list-inline-item'>
           <label for='itemsTypesName'>{{ 'Name'|trans }}</label>
-          <input type='text' class='form-control' id='itemsTypesName' value='{{ templateData.name|raw }}' />
+          <input type='text' class='form-control' id='itemsTypesName' value='{{ Entity.entityData.name|raw }}' />
         </li>
 
         <li class='list-inline-item col-1 align-top'>
           <label for='itemsTypesColor'>{{ 'Color'|trans }}</label>
-          <input class='form-control' type='color' id='itemsTypesColor' value='#{{ templateData.color }}' />
+          <input class='form-control' type='color' id='itemsTypesColor' value='#{{ Entity.entityData.color }}' />
         </li>
 
         <li class='list-inline-item'>
-          <input id='itemsTypesBookable' type='checkbox' {{ templateData.bookable ? " checked" }} />
+          <input id='itemsTypesBookable' type='checkbox' {{ Entity.entityData.bookable ? " checked" }} />
           <label for='itemsTypesBookable'>{{ 'Bookable'|trans }}</label>
         </li>
 
@@ -280,7 +280,7 @@
           <select id='itemsTypesCanread' class='form-control'>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'
-              {{ key == templateData.canread ? ' selected' }}
+              {{ key == Entity.entityData.canread ? ' selected' }}
               >{{ value|trans }}</option>
             {% endfor %}
           </select>
@@ -291,7 +291,7 @@
           <select id='itemsTypesCanwrite' class='form-control'>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'
-              {{ key == templateData.canwrite ? ' selected' }}
+              {{ key == Entity.entityData.canwrite ? ' selected' }}
               >{{ value|trans }}</option>
             {% endfor %}
           </select>
@@ -299,7 +299,7 @@
       </ul>
 
       <div>
-        <textarea class='mceditable' id='itemsTypesBody'>{{ templateData.body }}</textarea>
+        <textarea class='mceditable' id='itemsTypesBody'>{{ Entity.entityData.body }}</textarea>
       </div>
 
       {% set mode = 'edit-template' %}
@@ -308,8 +308,8 @@
       {% include 'json-editor.html' %}
 
       <div class='text-center'>
-        <button class='button btn btn-primary' data-id='{{ templateData.id }}' data-action='itemstypes-update'>{{ 'Save'|trans }}</button>
-        <button class='button btn btn-danger' data-id='{{ templateData.id }}' data-action='itemstypes-destroy'>{{ 'Delete'|trans }}</button>
+        <button class='button btn btn-primary' data-id='{{ Entity.id }}' data-action='itemstypes-update'>{{ 'Save'|trans }}</button>
+        <button class='button btn btn-danger' data-id='{{ Entity.id }}' data-action='itemstypes-destroy'>{{ 'Delete'|trans }}</button>
       </div>
     {% endif %}
 

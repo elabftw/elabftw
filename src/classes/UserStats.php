@@ -43,10 +43,10 @@ class UserStats
 
         // get all status name and id
         $Status = new Status($this->Users->team);
-        $statusAll = $Status->readAll();
+        $statusArr = $Status->readAll();
 
         // populate arrays
-        foreach ($statusAll as $status) {
+        foreach ($statusArr as $status) {
             $statusArr = array();
             $statusArr['name'] = $status['category'];
             $statusArr['id'] = $status['category_id'];

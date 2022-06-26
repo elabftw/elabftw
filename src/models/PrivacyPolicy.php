@@ -28,9 +28,15 @@ class PrivacyPolicy implements CrudInterface
         return 0;
     }
 
-    public function read(ContentParamsInterface $params): string
+    public function readAll(): array
     {
-        return $this->Config->configArr['privacy_policy'] ?? throw new ResourceNotFoundException('No policy set');
+        $privacyPolicy = $this->Config->configArr['privacy_policy'] ?? throw new ResourceNotFoundException('No policy set');
+        return array($privacyPolicy);
+    }
+
+    public function readOne(): array
+    {
+        return $this->readAll();
     }
 
     public function update(ContentParamsInterface $params): bool

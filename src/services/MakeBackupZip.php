@@ -59,7 +59,7 @@ class MakeBackupZip extends AbstractMakeZip
         $this->Entity->bypassReadPermission = true;
         $this->Entity->setId($id);
         $this->Entity->populate();
-        $uploadedFilesArr = $this->Entity->Uploads->readAllNormal();
+        $uploadedFilesArr = $this->Entity->entityData['uploads'];
         $this->folder = Filter::forFilesystem($fullname) . '/' . $this->getBaseFileName();
 
         if (!empty($uploadedFilesArr)) {

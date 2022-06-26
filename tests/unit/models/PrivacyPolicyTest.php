@@ -24,7 +24,7 @@ class PrivacyPolicyTest extends \PHPUnit\Framework\TestCase
     public function testReadEmpty(): void
     {
         $this->expectException(ResourceNotFoundException::class);
-        $this->PrivacyPolicy->read(new ContentParams());
+        $this->PrivacyPolicy->readAll();
     }
 
     public function testUpdate(): void
@@ -32,7 +32,7 @@ class PrivacyPolicyTest extends \PHPUnit\Framework\TestCase
         $txt = 'Some privacy policy';
         $this->PrivacyPolicy->update(new ContentParams($txt));
         $this->setUp();
-        $this->assertEquals($txt, $this->PrivacyPolicy->read(new ContentParams()));
+        $this->assertEquals($txt, $this->PrivacyPolicy->readAll()[0]);
     }
 
     public function testClear(): void
@@ -40,6 +40,6 @@ class PrivacyPolicyTest extends \PHPUnit\Framework\TestCase
         $this->PrivacyPolicy->destroy();
         $this->setUp();
         $this->expectException(ResourceNotFoundException::class);
-        $this->PrivacyPolicy->read(new ContentParams());
+        $this->PrivacyPolicy->readOne();
     }
 }

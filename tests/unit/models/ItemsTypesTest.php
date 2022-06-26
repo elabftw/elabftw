@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\ItemTypeParams;
 
 class ItemsTypesTest extends \PHPUnit\Framework\TestCase
@@ -33,8 +32,8 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
         $this->ItemsTypes->create(
             new ItemTypeParams('new', 'all', $extra)
         );
-        $itemsTypes = $this->ItemsTypes->read(new ContentParams());
-        $last = array_pop($itemsTypes);
+        $itemsTypesArr = $this->ItemsTypes->readAll();
+        $last = array_pop($itemsTypesArr);
         $this->ItemsTypes->setId((int) $last['category_id']);
         $extra = array(
             'color' => '#fffccc',
@@ -46,8 +45,7 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
         $this->ItemsTypes->updateAll(
             new ItemTypeParams('new', 'all', $extra)
         );
-        $this->assertEquals('newbody', $this->ItemsTypes->read(new ContentParams())['body']);
-        $this->ItemsTypes->setId((int) $last['category_id']);
-        $this->ItemsTypes->destroy();
+        $this->assertEquals('newbody', $this->ItemsTypes->readOne()['body']);
+        $this->assertTrue($this->ItemsTypes->destroy());
     }
 }

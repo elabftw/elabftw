@@ -15,26 +15,14 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Factories\EntityFactory;
-use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Services\ListBuilder;
-use Elabftw\Services\MakeBloxberg;
-use Elabftw\Services\MakeCustomTimestamp;
-use Elabftw\Services\MakeDfnTimestamp;
-use Elabftw\Services\MakeDigicertTimestamp;
-use Elabftw\Services\MakeGlobalSignTimestamp;
-use Elabftw\Services\MakeSectigoTimestamp;
-use Elabftw\Services\MakeUniversignTimestamp;
-use Elabftw\Services\MakeUniversignTimestampDev;
-use Elabftw\Services\TimestampUtils;
 use Exception;
-use GuzzleHttp\Client;
 use function mb_convert_encoding;
 use PDOException;
-use const SITE_URL;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -94,67 +82,10 @@ try {
         $Response->setData(mb_convert_encoding($responseArr, 'UTF-8', 'UTF-8'));
     }
 
-    // SHARE
-    if ($Request->query->has('getShareLink')) {
-        if (!($Entity instanceof Experiments || $Entity instanceof Items)) {
-            throw new IllegalActionException('Can only share experiments or items.');
-        }
-        $Entity->canOrExplode('read');
-        $link = SITE_URL . '/' . $Entity->page . '.php?mode=view&id=' . $Entity->id . '&elabid=' . $Entity->entityData['elabid'];
-        $Response->setData(array(
-            'res' => true,
-            'msg' => $link,
-        ));
-    }
-
     /**
      * POST REQUESTS
      *
      */
-
-    // TIMESTAMP
-    if ($Request->request->has('timestamp') && $Entity instanceof Experiments) {
-        // by default, use the instance config
-        $config = $App->Config->configArr;
-
-        if ($config['ts_authority'] === 'dfn') {
-            $Maker = new MakeDfnTimestamp($config, $Entity);
-        } elseif ($config['ts_authority'] === 'universign') {
-            if ($App->Config->configArr['debug']) {
-                // this will use the sandbox endpoint
-                $Maker = new MakeUniversignTimestampDev($config, $Entity);
-            } else {
-                $Maker = new MakeUniversignTimestamp($config, $Entity);
-            }
-        } elseif ($config['ts_authority'] === 'digicert') {
-            $Maker = new MakeDigicertTimestamp($config, $Entity);
-        } elseif ($config['ts_authority'] === 'sectigo') {
-            $Maker = new MakeSectigoTimestamp($config, $Entity);
-        } elseif ($config['ts_authority'] === 'globalsign') {
-            $Maker = new MakeGlobalSignTimestamp($config, $Entity);
-        } else {
-            $Maker = new MakeCustomTimestamp($config, $Entity);
-        }
-
-        $pdfBlob = $Maker->generatePdf();
-        $TimestampUtils = new TimestampUtils(
-            new Client(),
-            $pdfBlob,
-            $Maker->getTimestampParameters(),
-            new TimestampResponse(),
-        );
-        $tsResponse = $TimestampUtils->timestamp();
-        $Maker->saveTimestamp($TimestampUtils->getDataPath(), $tsResponse);
-    }
-
-    // BLOXBERG
-    if ($Request->request->has('bloxberg') && $App->Config->configArr['blox_enabled']) {
-        $Make = new MakeBloxberg(new Client(), $Entity);
-        $Response->setData(array(
-            'res' => $Make->timestamp(),
-            'msg' => _('Saved'),
-        ));
-    }
 
     // SAVE AS IMAGE
     if ($Request->request->has('saveAsImage')) {
@@ -197,11 +128,11 @@ try {
         } else {
             $Category = new ItemsTypes($App->Users, $id);
         }
-        $categoryArr = $Category->readOne();
+        $category = $Category->readOne();
         $Response->setData(array(
             'res' => true,
             'msg' => _('Saved'),
-            'color' => $categoryArr['color'],
+            'color' => $category['color'],
         ));
     }
 } catch (ImproperActionException | UnauthorizedException | PDOException $e) {

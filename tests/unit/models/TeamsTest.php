@@ -21,7 +21,8 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead(): void
     {
-        $this->assertTrue(is_array($this->Teams->read(new ContentParams())));
+        $this->assertIsArray($this->Teams->readOne());
+        $this->assertIsArray($this->Teams->readAll());
     }
 
     public function testDestroy(): void

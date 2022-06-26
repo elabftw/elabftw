@@ -35,7 +35,7 @@ try {
     $Controller = new DatabaseController($App, new Items($App->Users));
     // show nothing to anon if admin didn't set the DB as public
     $Teams = new Teams($App->Users);
-    $teamConfigArr = $Teams->read(new ContentParams());
+    $teamConfigArr = $Teams->readOne();
     if ($App->Session->has('is_anon') && ($teamConfigArr['public_db'] === '0')) {
         throw new ImproperActionException(Tools::error(true));
     }

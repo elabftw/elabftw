@@ -50,7 +50,12 @@ class Comments implements CrudInterface
         return $this->Db->lastInsertId();
     }
 
-    public function read(ContentParamsInterface $params): array
+    public function readOne(): array
+    {
+        return $this->readAll();
+    }
+
+    public function readAll(): array
     {
         $sql = 'SELECT ' . $this->Entity->type . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname

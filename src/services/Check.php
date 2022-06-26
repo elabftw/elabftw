@@ -41,7 +41,7 @@ class Check
     /**
      * Check ID is valid (pos int)
      */
-    public static function id(int $id): int|false
+    public static function id(int $id): int | false
     {
         $filter_options = array(
             'options' => array(
@@ -196,6 +196,7 @@ class Check
             'bodyappend',
             'boundevent',
             'comment',
+            'content_type',
             'date',
             'deadline',
             'deadline_notif',
@@ -219,9 +220,12 @@ class Check
             'privacypolicy',
             'rating',
             'real_name',
+            'sharelink',
             'state',
             'ts_authority',
             'ts_cert',
+            'ts_bloxberg',
+            'ts_classic',
             'ts_limit',
             'ts_login',
             'ts_password',

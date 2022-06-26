@@ -13,12 +13,12 @@ use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TagParams;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
-use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\UploadTrait;
 use function json_decode;
 use League\Flysystem\FilesystemOperator;
@@ -32,14 +32,12 @@ use ZipArchive;
  */
 class ImportZip extends AbstractImport
 {
-    use EntityTrait;
     use UploadTrait;
 
     // number of items we got into the database
     public int $inserted = 0;
 
-    /** @var AbstractEntity $Entity instance of Entity */
-    private $Entity;
+    private AbstractEntity $Entity;
 
     private string $tmpPath;
 
@@ -116,7 +114,7 @@ class ImportZip extends AbstractImport
         }
 
         // make sure there is an elabid (might not exist for items before v4.0)
-        $elabid = $item['elabid'] ?? $this->generateElabid();
+        $elabid = $item['elabid'] ?? Tools::generateElabid();
 
         $req = $this->Db->prepare($sql);
         if ($this->type === 'items') {

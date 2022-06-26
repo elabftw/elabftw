@@ -29,12 +29,14 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
     public function testRead(): void
     {
         $this->Templates->setId(1);
-        $this->assertTrue(is_array($this->Templates->read(new ContentParams())));
+        $this->assertIsArray($this->Templates->read(new ContentParams()));
+        $this->assertIsArray($this->Templates->readOne());
+        $this->assertIsArray($this->Templates->read(new ContentParams('', 'list')));
     }
 
     public function testGetWriteableTemplatesList(): void
     {
-        $this->assertTrue(is_array($this->Templates->getWriteableTemplatesList()));
+        $this->assertIsArray($this->Templates->getWriteableTemplatesList());
     }
 
     public function testDuplicate(): void
@@ -45,7 +47,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
 
     public function testReadForUser(): void
     {
-        $this->assertTrue(is_array($this->Templates->readForUser()));
+        $this->assertIsArray($this->Templates->readForUser());
     }
 
     public function testUpdate(): void

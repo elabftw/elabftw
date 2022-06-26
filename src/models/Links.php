@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -42,7 +41,8 @@ class Links implements CrudInterface
         $Items->canOrExplode('read');
         $this->Entity->canOrExplode('write');
 
-        $sql = 'INSERT INTO ' . $this->Entity->type . '_links (item_id, link_id) VALUES(:item_id, :link_id)';
+        // use IGNORE to avoid failure due to a key constraint violations
+        $sql = 'INSERT IGNORE INTO ' . $this->Entity->type . '_links (item_id, link_id) VALUES(:item_id, :link_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':link_id', $link, PDO::PARAM_INT);
@@ -54,7 +54,7 @@ class Links implements CrudInterface
     /**
      * Get links for an entity
      */
-    public function read(ContentParamsInterface $params): array
+    public function readAll(): array
     {
         $sql = 'SELECT items.id AS itemid,
             items.title,
@@ -72,6 +72,11 @@ class Links implements CrudInterface
         $this->Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    public function readOne(): array
+    {
+        return $this->readAll();
     }
 
     /**

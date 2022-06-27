@@ -6,7 +6,7 @@
  * @package elabftw
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-import { notif, reloadElement, updateCategory } from './misc';
+import { notif, reloadElement, updateCategory, showContentPlainText } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Payload, Method, Action, PartialEntity } from './interfaces';
 import './doodle';
@@ -239,13 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // SHOW CONTENT OF PLAIN TEXT FILES
     } else if (el.matches('[data-action="show-plain-text"]')) {
-      document.getElementById('plainTextAreaLabel').textContent = el.dataset.name;
-      fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {
-        return response.text();
-      }).then(fileContent => {
-        (document.getElementById('plainTextArea') as HTMLTextAreaElement).value = fileContent;
-        $('#plainTextModal').modal();
-      });
+      showContentPlainText(el);
 
     // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT
     } else if (el.matches('[data-action="insert-plain-text"]')) {

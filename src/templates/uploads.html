@@ -49,13 +49,13 @@
                     {% endif %}
 
                     <!-- INSERT IN TEXT in edit mode for plain text -->
-                    {% if ext matches '/(txt)$/i' %}
+                    {% if ext matches '/txt$/i' %}
                       <a class='dropdown-item' data-action='insert-plain-text' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}'>
                         <i class='fas fa-fw fa-file-import mr-1'></i>{{ 'Insert in text at cursor position'|trans }}</a>
                     {% endif %}
 
                     <!-- Show content of plain text -->
-                    {% if ext matches '/(txt)$/i' %}
+                    {% if ext matches '/txt$/i' %}
                       <a class='dropdown-item' data-action='show-plain-text' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}' data-name='{{ upload.real_name }}'>
                         <i class='fas fa-fw fa-eye mr-1'></i>{{ 'Show content of file'|trans }}</a>
                     {% endif %}
@@ -171,8 +171,15 @@
                 data-real-name='{{ upload.real_name }}'
                 id='OVE_{{ upload.id }}'>
               </div>
+            {% elseif ext matches '/txt$/i' %}
+              <span data-action='show-plain-text'
+                data-storage='{{ upload.storage }}'
+                data-path='{{ upload.long_name }}'
+                data-name='{{ upload.real_name }}'>
+                <i class='fas fa-file-alt thumb rounded mx-auto d-block'></i>
+              </span>
             {% elseif App.Users.userData.uploads_layout %}
-            <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block'></i>
+              <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block'></i>
             {% endif %}
 
         <div class='caption'>

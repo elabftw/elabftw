@@ -96,7 +96,7 @@
               {% endif %}
 
               {% if ext matches '/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
-              {# don't make the thumbnail clickable if it's a tif #}
+                {# don't make the thumbnail clickable if it's a tif #}
                 {% if ext matches '/(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
                   <div class='text-center'>
                     <a class='text-break' href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'
@@ -109,7 +109,7 @@
                        >
                 {% endif %}
                 {% set thumb_name = upload.long_name ~ '_th.jpg' %}
-                <!-- old timestamp pdf don't have a thumbnail, so don't try to display one for them -->
+                {# old timestamp pdf don't have a thumbnail, so don't try to display one for them #}
                 {% if App.Users.userData.uploads_layout %}
                   {% if ext matches '/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
                     <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ thumb_name }}&storage={{ upload.storage }}' alt='thumbnail' />
@@ -167,7 +167,7 @@
 
             {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::DNA') %}
               <div class='viewer-ove'
-                   data-href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'
+                data-href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'
                 data-real-name='{{ upload.real_name }}'
                 id='OVE_{{ upload.id }}'>
               </div>

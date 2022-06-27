@@ -168,6 +168,9 @@ class Uploads implements CrudInterface
         if ($params->getTarget() === 'all') {
             return $this->readAllNormal();
         }
+        if ($params->getTarget() === 'uploadid') {
+            $this->id = $this->getIdFromLongname($params->getContent());
+        }
 
         $sql = 'SELECT * FROM uploads WHERE id = :id AND state = :state';
         $req = $this->Db->prepare($sql);
@@ -245,6 +248,15 @@ class Uploads implements CrudInterface
     public function getStorageFromLongname(string $longname): int
     {
         $sql = 'SELECT storage FROM uploads WHERE long_name = :long_name LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':long_name', $longname, PDO::PARAM_STR);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
+    public function getIdFromLongname(string $longname): int
+    {
+        $sql = 'SELECT id FROM uploads WHERE long_name = :long_name LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':long_name', $longname, PDO::PARAM_STR);
         $this->Db->execute($req);

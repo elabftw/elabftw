@@ -8,7 +8,7 @@
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { notif, reloadElement } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
-import { EntityType, Target, Upload, Payload, Method, Action, PartialEntity } from './interfaces';
+import { EntityType, Target, Upload, Model, Payload, Method, Action, PartialEntity } from './interfaces';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
@@ -324,11 +324,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const tinymceEditImage = {
       selected: false,
       uploadId: 0,
-      filename: undefined,
+      filename: 'unknown.png',
       reset: function(): void {
         this.selected = false;
         this.uploadId = 0;
-        this.filename = undefined;
+        this.filename = 'unknown.png';
       },
     };
 
@@ -347,13 +347,13 @@ document.addEventListener('DOMContentLoaded', () => {
           if (confirm(i18next.t('replace-edited-file'))) {
             // Replace the file on the server
             AjaxC.postForm('app/controllers/RequestHandler.php', {
-              action: 'update',
+              action: Action.Update,
               target: 'file',
               replace: '1',
               id: uploadId,
               entity_id: String(entity.id),
               entity_type: entity.type,
-              model: 'upload',
+              model: Model.Upload,
               // use window.File here not dropzone.File
               content: new window.File([blobInfo.blob()], filename, { lastModified: new Date().getTime(), type: blobInfo.blob().type }),
             }).then(() => {
@@ -370,6 +370,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const q = new URL(imgHref).searchParams;
                 // call the success callback function with the new URL
                 success(`app/download.php?f=${q.get('f')}&storage=${q.get('storage')}`);
+                // replace or add data-uploadid="xyz"
+                let tinyContent = tinymce.activeEditor.getContent();
+                const search = `data-uploadid="${uploadId}"`;
+                const reg = new RegExp(search, 'g');
+                tinyContent = tinyContent.replace(reg, `data-uploadid="${mostRecent}"`);
+                tinymce.activeEditor.setContent(tinyContent);
                 tinymceEditImage.reset();
               });
             });
@@ -418,13 +424,33 @@ document.addEventListener('DOMContentLoaded', () => {
         // Save all the details needed for replacing upload
         // Then check for and get those details when you are handling file uploads
         const selectedImage = (tinymce.activeEditor.selection.getNode() as HTMLImageElement);
-        // the uploadid is added as a data-uploadid attribute when inserted in the text
+        // Get id and filename (real_name) from uploads table
         // this allows us to know which corresponding upload is selected so we can replace it if needed (after a crop for instance)
-        // ToDo: the data-uploadid attribute is missing in some cases because HTMLPurifier stripped it away between version 4.3.0? and 4.3.4, need a way to add it back
-        const uploadId = parseInt(selectedImage.dataset.uploadid);
-        tinymceEditImage.selected = true;
-        tinymceEditImage.uploadId = uploadId;
-        tinymceEditImage.filename = document.getElementById(`upload-filename_${uploadId}`).textContent;
+        // Fixed: the data-uploadid attribute is missing in some cases because HTMLPurifier stripped it away between version 4.1.0? and 4.3.5
+        const q = new URL(selectedImage.src).searchParams;
+        const payload: Payload = {
+          method: Method.GET,
+          action: Action.Read,
+          model: Model.Upload,
+          entity: {
+            type: entity.type,
+            id: entity.id,
+          },
+          content: q.get('f'),
+          target: Target.UploadId,
+        };
+        AjaxC.send(payload).then(json => {
+          const uploadId = parseInt(String((json.value as object).id), 10);
+          selectedImage.dataset.uploadid = uploadId;
+          return {
+            id: uploadId,
+            filename: json.value.real_name,
+          };
+        }).then(upload => {
+          tinymceEditImage.selected = true;
+          tinymceEditImage.uploadId = upload.id;
+          tinymceEditImage.filename = upload.filename;
+        });
       } else {
         tinymceEditImage.reset();
       }
@@ -441,7 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (editor.type === 'md') {
       content = '\n![image](' + url + ')\n';
     } else if (editor.type === 'tiny') {
-      content = '<img src="' + url + '" data-uploadid="' + $(this).data('uploadid') + '" />';
+      content = '<img src="' + url + '" />';
     }
     editor.setContent(content);
   });

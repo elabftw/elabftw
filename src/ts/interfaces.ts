@@ -112,6 +112,7 @@ enum Target {
   Title = 'title',
   Unreference = 'unreference',
   UserId = 'userid',
+  UploadId = 'uploadid',
 }
 
 interface Entity {

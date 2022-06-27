@@ -229,6 +229,7 @@ class Check
             'title',
             'unreference',
             'userid',
+            'uploadid',
             // no target is also valid
             '',
         );

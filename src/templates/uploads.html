@@ -113,12 +113,12 @@
                 {% if App.Users.userData.uploads_layout %}
                   <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ thumb_name }}&storage={{ upload.storage }}' alt='thumbnail' />
                 {% else %}
-                  <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block'></i>
+                  <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block text-center'></i>
                 {% endif %}
                 {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
                     </a>
                   </div>
-                 {% endif %}
+                {% endif %}
                             {% elseif ext == 'mol' and App.Users.userData.chem_editor %}
                             <div class='text-center'>
                               <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'></canvas>
@@ -174,10 +174,10 @@
                 data-storage='{{ upload.storage }}'
                 data-path='{{ upload.long_name }}'
                 data-name='{{ upload.real_name }}'>
-                <i class='fas fa-file-alt thumb rounded mx-auto d-block'></i>
+                <i class='fas fa-file-alt thumb rounded mx-auto d-block text-center'></i>
               </span>
             {% elseif App.Users.userData.uploads_layout %}
-              <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block'></i>
+              <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block text-center'></i>
             {% endif %}
 
         <div class='caption'>

@@ -298,7 +298,7 @@ export function updateCategory(entity: Entity, value: string): string {
   return value;
 }
 
-export function showContentPlainText (el: HTMLElement): void {
+export function showContentPlainText(el: HTMLElement): void {
   document.getElementById('plainTextAreaLabel').textContent = el.dataset.name;
   fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {
     return response.text();

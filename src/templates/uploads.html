@@ -172,7 +172,8 @@
                 id='OVE_{{ upload.id }}'>
               </div>
             {% elseif ext matches '/txt$/i' %}
-              <span data-action='show-plain-text'
+              <span class='eye-overlay'
+                data-action='show-plain-text'
                 data-storage='{{ upload.storage }}'
                 data-path='{{ upload.long_name }}'
                 data-name='{{ upload.real_name }}'>

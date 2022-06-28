@@ -1051,6 +1051,29 @@ the form-control fails to do that so we do the border ourselves */
     }
 }
 
+/* eye overlay for uploaded file icons */
+
+.eye-overlay {
+    display: block;
+    position: relative;
+}
+
+.eye-overlay:hover::after {
+    background-color: $maingray;
+    color: $white;
+    content: '\f06e';
+    display: block;
+    font-family: 'Font Awesome 6 Free';
+    font-size: 3em;
+    font-weight: 900;
+    left: 50%;
+    margin-left: -33px; // half width
+    position: absolute;
+    text-align: center;
+    top: 37px;
+    width: 66px;
+}
+
 /* fix for 3Dmoljs uploaded files */
 .file-uploaded {
     height: 250px;

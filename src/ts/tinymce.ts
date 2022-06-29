@@ -129,6 +129,9 @@ export function getTinymceBaseConfig(page: string): object {
     images_reuse_filename: true,
     contextmenu: false,
     paste_data_images: Boolean(page === 'edit'),
+    paste_preprocess: function(plugin, args) {
+      args.content = args.content.replaceAll('bgcolor="', 'style="background-color:');
+    },
     content_style: '.mce-content-body {font-size:10pt;}',
     codesample_languages: [
       {text: 'Bash', value: 'bash'},

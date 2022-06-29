@@ -804,7 +804,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .thumb {
-    font-size: 5em !important;
+    font-size: 100px !important;
     height: 100px;
     min-height: 50px;
     min-width: 50px;
@@ -1049,6 +1049,29 @@ the form-control fails to do that so we do the border ourselves */
     .ve-propertiesPanel .bp3-tab-list { /* stylelint-disable-line */
         overflow: auto !important;
     }
+}
+
+/* eye overlay for uploaded file icons */
+
+.eye-overlay {
+    display: block;
+    position: relative;
+}
+
+.eye-overlay:hover::after {
+    background-color: $maingray;
+    color: $white;
+    content: '\f06e';
+    display: block;
+    font-family: 'Font Awesome 6 Free';
+    font-size: 3em;
+    font-weight: 900;
+    left: 50%;
+    margin-left: -33px; // half width
+    position: absolute;
+    text-align: center;
+    top: 37px;
+    width: 66px;
 }
 
 /* fix for 3Dmoljs uploaded files */

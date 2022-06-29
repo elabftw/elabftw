@@ -6,7 +6,7 @@
  * @package elabftw
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-import { notif, reloadElement, updateCategory } from './misc';
+import { notif, reloadElement, updateCategory, showContentPlainText } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Payload, Method, Action, PartialEntity } from './interfaces';
 import './doodle';
@@ -236,6 +236,24 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
       }
+
+    // SHOW CONTENT OF PLAIN TEXT FILES
+    } else if (el.matches('[data-action="show-plain-text"]')) {
+      showContentPlainText(el);
+
+    // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT
+    } else if (el.matches('[data-action="insert-plain-text"]')) {
+      fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {
+        return response.text();
+      }).then(fileContent => {
+        const specialChars = {
+          '<': '&lt;',
+          '>': '&gt;',
+        };
+
+        // wrap in pre element to retain whitespace, html encode '<' and '>'
+        editor.setContent('<pre>' + fileContent.replace(/[<>]/g, char => specialChars[char]) + '</pre>');
+      });
     }
   });
 

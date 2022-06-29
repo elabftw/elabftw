@@ -201,13 +201,14 @@ class ImportZip extends AbstractImport
             // upload the attached files
             if (is_array($item['uploads'])) {
                 $titlePath = Filter::forFilesystem($item['title']);
+                $shortElabid = substr(explode('-', $item['elabid'])[1], 0, 8);
                 foreach ($item['uploads'] as $file) {
                     if ($this->type === 'experiments') {
                         $filePath = $this->tmpPath . '/' .
-                            $item['date'] . ' - ' . $titlePath . '/' . $file['real_name'];
+                            $item['date'] . ' - ' . $titlePath . ' - ' . $shortElabid . '/' . $file['real_name'];
                     } else {
                         $filePath = $this->tmpPath . '/' .
-                            $item['category'] . ' - ' . $titlePath . '/' . $file['real_name'];
+                            $item['category'] . ' - ' . $titlePath . ' - ' . $shortElabid . '/' . $file['real_name'];
                     }
 
                     /**

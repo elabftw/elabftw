@@ -143,7 +143,7 @@ abstract class AbstractEntity implements CrudInterface
         $locked = (int) $this->entityData['locked'];
 
         // if we try to unlock something we didn't lock
-        if ($locked === 1 && ($this->entityData['lockedby'] != $this->Users->userData['userid'])) {
+        if ($locked === 1 && !$this->Users->userData['is_admin'] && ($this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
             // Get the first name of the locker to show in error message
             $sql = 'SELECT firstname FROM users WHERE userid = :userid';
             $req = $this->Db->prepare($sql);
@@ -156,11 +156,6 @@ abstract class AbstractEntity implements CrudInterface
             throw new ImproperActionException(
                 sprintf(_("This experiment was locked by %s. You don't have the rights to unlock this."), $firstname)
             );
-        }
-
-        // check if the experiment is timestamped. Disallow unlock in this case.
-        if ($locked === 1 && $this instanceof Experiments && $this->entityData['timestamped']) {
-            throw new ImproperActionException(_('You cannot unlock or edit in any way a timestamped experiment.'));
         }
 
         $sql = 'UPDATE ' . $this->type . ' SET locked = IF(locked = 1, 0, 1), lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id';

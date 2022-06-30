@@ -7,8 +7,7 @@
 <div class='row justify-content-around mt-4'>
     <!-- STEPS -->
     <section class='col-md-6'>
-      <i class='fas fa-fw fa-check-square mr-1 align-baseline'></i><h5 class='d-inline'>{{ 'Steps'|trans }}</h5>
-      <br>
+      <h4 class='d-inline'><i class='fas fa-fw fa-check-square'></i> {{ 'Steps'|trans }}</h4>
       <!-- the stepsDiv id is in its own div because otherwise if it's on the section above it doesn't work well, not sure why -->
       <div id='stepsDiv'>
         <div class='mt-2 sortable' id='steps_div_{{ Entity_id }}' data-axis='y' data-table='{{ Entity.type ? Entity.type : 'items_types'}}_steps'>
@@ -94,8 +93,7 @@
     </section>
     <!-- LINKS -->
     <section class='col-md-6' id='linksDiv'>
-        <i class='fas fa-fw fa-link mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Linked items'|trans }}</h4>
-        <br>
+        <h4 class='d-inline'><i class='fas fa-fw fa-link'></i> {{ 'Linked items'|trans }}</h4>
         <div class='mt-2' id='links_div_{{ Entity_id }}'>
             {% if linksArr %}
             <ul class='list-group'>
@@ -107,7 +105,7 @@
                   <div class='float-right'>
                     {% if mode != 'edit-template' %}
                       <a data-action='import-links' data-target='{{ link.itemid }}' title='{{ 'Import links'|trans }}'>
-                        <i class="fas fa-arrows-down-to-line"></i>
+                        <i class='fas fa-arrows-down-to-line'></i>
                       </a>
 
                       <a data-action='import-link-body' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}'>

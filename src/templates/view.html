@@ -220,7 +220,7 @@
 <section id='commentsDiv'>
   {% if App.Session.get('is_auth') and not App.Session.has('is_anon') %}
     <div id='comment' class='box'>
-      <i class='fas fa-comments mr-1 align-baseline'></i><h2 class='d-inline'>{{ 'Comments'|trans }}</h2>
+      <h3 class='d-inline'><i class='fas fa-comments'></i> {{ 'Comments'|trans }}</h3>
       {% if commentsArr %}
         {% for comment in commentsArr %}
           <div class='box'>

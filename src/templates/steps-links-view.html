@@ -6,25 +6,27 @@
 <!-- STEPS -->
 <div id='stepsDiv'>
 {% if stepsArr %}
-  <div class='mt-2'>
-    <h3 class='d-inline'>{{ 'Steps'|trans }}</h3>
-    <ul class='list-group mt-2' id='steps_div_{{ Entity_id }}' >
-        {% for step in stepsArr %}
-        <li class='list-group-item {{ step.finished ? 'finished' }}'>
-          <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} {{ Entity.type == 'experiments_templates' ? 'disabled' }} data-id='{{ Entity.entityData.id }}' autocomplete='off' data-stepid='{{ step.id }}' class='stepbox mr-1' id='stepCheckbox_{{ step.id }}' />{{ step.body|raw }}
-    {% if step.finished %}
-    <span class='mr-2 text-muted'>
-        {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
-    </span>
-    {% endif %}
-    {% if step.deadline %}
-    <span class='mr-2 text-muted'>
-        {{ 'Deadline:'|trans }} {{ step.deadline|format_datetime() }}
-    </span>
-    {% endif %}
-        </li>
-        {% endfor %}
-    </ul>
+  <div class='box'>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='stepsIcon' class='d-inline'><i id='stepsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-check-square'></i> {{ 'Steps'|trans }}</h3>
+    <div class='row mt-2' id='stepsDivContent' data-save-hidden='stepsDivContent'>
+      <ul class='list-group ml-3' id='steps_div_{{ Entity_id }}' >
+          {% for step in stepsArr %}
+          <li class='list-group-item {{ step.finished ? 'finished' }}'>
+            <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} {{ Entity.type == 'experiments_templates' ? 'disabled' }} data-id='{{ Entity.entityData.id }}' autocomplete='off' data-stepid='{{ step.id }}' class='stepbox mr-1' id='stepCheckbox_{{ step.id }}' />{{ step.body|raw }}
+      {% if step.finished %}
+      <span class='mr-2 text-muted'>
+          {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
+      </span>
+      {% endif %}
+      {% if step.deadline %}
+      <span class='mr-2 text-muted'>
+          {{ 'Deadline:'|trans }} {{ step.deadline|format_datetime() }}
+      </span>
+      {% endif %}
+          </li>
+          {% endfor %}
+      </ul>
+    </div>
   </div>
 {% endif %}
 </div>
@@ -32,9 +34,9 @@
 <!-- LINKS -->
 {% if linksArr %}
   <div class='box'>
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedItemsIcon'><i id='linkedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Linked items'|trans }}</h3>
-    <div class='row' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
-      <ul class='list-group mt-2 ml-3'>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedItemsIcon' class='d-inline'><i id='linkedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Linked items'|trans }}</h3>
+    <div class='row mt-2' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
+      <ul class='list-group ml-3'>
         {% for link in linksArr %}
           <li class='list-group-item'>
             <i class='fas fa-link mr-1'></i>
@@ -52,9 +54,9 @@
 {% if Entity.type == 'items' %}
   {% if relatedItemsArr %}
     <div class='box'>
-      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='relatedItemsIcon'><i id='relatedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Related items'|trans }}</h3>
-      <div class='row' id='relatedItemsDiv' data-save-hidden='relatedItemsDiv'>
-        <ul class='list-group mt-2 ml-3'>
+      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='relatedItemsIcon' class='d-inline'><i id='relatedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Related items'|trans }}</h3>
+      <div class='row mt-2' id='relatedItemsDiv' data-save-hidden='relatedItemsDiv'>
+        <ul class='list-group ml-3'>
           <li class='list-group-item'>
             <i title='{{ 'Show linked items'|trans }}' class='fas fa-external-link-square-alt fa-2x mr-1'></i>
             <a href='database.php?mode=show&related={{ Entity.id }}'>
@@ -76,9 +78,9 @@
 
   {% if relatedExperimentsArr %}
     <div class='box'>
-      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='relatedExperimentsIcon'><i id='relatedExperimentsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Related experiments'|trans }}</h3>
-      <div class='row' id='relatedExperimentsDiv' data-save-hidden='relatedExperimentsDiv'>
-        <ul class='list-group mt-2 ml-3'>
+      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='relatedExperimentsIcon' class='d-inline'><i id='relatedExperimentsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Related experiments'|trans }}</h3>
+      <div class='row mt-2' id='relatedExperimentsDiv' data-save-hidden='relatedExperimentsDiv'>
+        <ul class='list-group ml-3'>
           <li class='list-group-item'>
             <i title='{{ 'Show related'|trans }}' class='fas fa-external-link-square-alt fa-2x mr-1'></i>
             <a href='experiments.php?mode=show&related={{ Entity.id }}'>

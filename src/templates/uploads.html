@@ -1,3 +1,24 @@
+<!-- Modal to display plain text content -->
+<div class='modal fade' id='plainTextModal' tabindex='-1' role='dialog' aria-labelledby='plainTextModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='plainTextModalLabel'>{{ 'File content'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <label for='plainTextArea' id='plainTextAreaLabel'>Filename</label>
+        <textarea class='form-control' name='plainTextArea' id='plainTextArea' rows='10' readonly></textarea>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- UPLOADED FILES -->
 <div id='filesdiv'>
   {% if Entity.entityData.uploads %}
@@ -25,6 +46,18 @@
                     {% if ext matches '/(jpg|jpeg|png|gif|svg)$/i' %}
                       <a class='dropdown-item inserter clickable' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name }}' data-uploadid='{{ upload.id }}'>
                         <i class='fas fa-fw fa-image mr-1'></i>{{ 'Insert in text at cursor position'|trans }}</a>
+                    {% endif %}
+
+                    <!-- INSERT IN TEXT in edit mode for plain text -->
+                    {% if ext matches '/txt$/i' %}
+                      <a class='dropdown-item' data-action='insert-plain-text' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}'>
+                        <i class='fas fa-fw fa-file-import mr-1'></i>{{ 'Insert in text at cursor position'|trans }}</a>
+                    {% endif %}
+
+                    <!-- Show content of plain text -->
+                    {% if ext matches '/txt$/i' %}
+                      <a class='dropdown-item' data-action='show-plain-text' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}' data-name='{{ upload.real_name }}'>
+                        <i class='fas fa-fw fa-eye mr-1'></i>{{ 'Show content of file'|trans }}</a>
                     {% endif %}
 
                     <!-- Edit filename -->
@@ -63,7 +96,7 @@
               {% endif %}
 
               {% if ext matches '/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
-              {# don't make the thumbnail clickable if it's a tif #}
+                {# don't make the thumbnail clickable if it's a tif #}
                 {% if ext matches '/(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
                   <div class='text-center'>
                     <a class='text-break' href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'
@@ -76,18 +109,18 @@
                        >
                 {% endif %}
                 {% set thumb_name = upload.long_name ~ '_th.jpg' %}
-                <!-- old timestamp pdf don't have a thumbnail, so don't try to display one for them -->
+                {# old timestamp pdf don't have a thumbnail, so don't try to display one for them #}
                 {% if App.Users.userData.uploads_layout %}
                   {% if ext matches '/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
                     <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ thumb_name }}&storage={{ upload.storage }}' alt='thumbnail' />
                   {% else %}
-                  <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block'></i>
+                    <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block text-center'></i>
                   {% endif %}
                 {% endif %}
                 {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
                     </a>
                   </div>
-                 {% endif %}
+                {% endif %}
                             {% elseif ext == 'mol' and App.Users.userData.chem_editor %}
                             <div class='text-center'>
                               <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'></canvas>
@@ -134,12 +167,20 @@
 
             {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::DNA') %}
               <div class='viewer-ove'
-                   data-href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'
+                data-href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'
                 data-real-name='{{ upload.real_name }}'
                 id='OVE_{{ upload.id }}'>
               </div>
+            {% elseif ext matches '/txt$/i' %}
+              <span class='eye-overlay'
+                data-action='show-plain-text'
+                data-storage='{{ upload.storage }}'
+                data-path='{{ upload.long_name }}'
+                data-name='{{ upload.real_name }}'>
+                <i class='fas fa-file-alt thumb rounded mx-auto d-block text-center'></i>
+              </span>
             {% elseif App.Users.userData.uploads_layout %}
-            <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block'></i>
+              <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block text-center'></i>
             {% endif %}
 
         <div class='caption'>
@@ -168,6 +209,17 @@
           <div class='clickable'>
             <i class='fas fa-fw fa-{{ mode == 'edit' ? 'pencil-alt' : 'eye' }} mr-1'></i>
             <p data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name }}' data-link='{{ upload.long_name }}' data-action='json-load-file' class='d-inline'>{{ 'Load into JSON Editor'|trans }}</p>
+          </div>
+        {% endif %}
+
+        {% if ext matches '/txt$/i' %}
+          <div class='clickable'>
+            <i class='fas fa-fw fa-eye mr-1'></i>
+            <p data-action='show-plain-text'
+               data-storage='{{ upload.storage }}'
+               data-path='{{ upload.long_name }}'
+               data-name='{{ upload.real_name }}'
+               class='d-inline'>{{ 'Show content of file'|trans }}</p>
           </div>
         {% endif %}
 

@@ -330,4 +330,12 @@ class Tools
         }
         return $output;
     }
+
+    public static function getShortElabid(string $elabid): string
+    {
+        if (empty($elabid)) {
+            return bin2hex(random_bytes(4));
+        }
+        return substr(explode('-', $elabid)[1], 0, 8);
+    }
 }

@@ -297,3 +297,13 @@ export function updateCategory(entity: Entity, value: string): string {
   });
   return value;
 }
+
+export function showContentPlainText(el: HTMLElement): void {
+  document.getElementById('plainTextAreaLabel').textContent = el.dataset.name;
+  fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {
+    return response.text();
+  }).then(fileContent => {
+    (document.getElementById('plainTextArea') as HTMLTextAreaElement).value = fileContent;
+    $('#plainTextModal').modal();
+  });
+}

@@ -9,7 +9,7 @@ import i18next from 'i18next';
 import { InputType, Malle, SelectOptions } from '@deltablot/malle';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
-import { getEntity, updateCategory, relativeMoment, reloadElement } from './misc';
+import { getEntity, updateCategory, relativeMoment, reloadElement, showContentPlainText } from './misc';
 import { BoundEvent, EntityType, Payload, Method, Action, Target, Model, PartialEntity } from './interfaces';
 import { DateTime } from 'luxon';
 import EntityClass from './Entity.class';
@@ -158,6 +158,10 @@ document.addEventListener('DOMContentLoaded', () => {
         target: Target.TsBloxberg,
       };
       AjaxC.send(payload).then(() => window.location.replace(`?mode=view&id=${entity.id}`));
+
+    // SHOW CONTENT OF PLAIN TEXT FILES
+    } else if (el.matches('[data-action="show-plain-text"]')) {
+      showContentPlainText(el);
     }
   });
 

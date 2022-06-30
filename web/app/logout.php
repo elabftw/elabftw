@@ -55,7 +55,7 @@ $destroySession = function () use ($App, $Request) {
 };
 
 // now if we are logged in through external auth, hit the external auth url
-if ((int) $App->Users->userData['auth_service'] === \Elabftw\Controllers\LoginController::AUTH_EXTERNAL) {
+if ((int) ($App->Users->userData['auth_service'] ?? 0) === \Elabftw\Controllers\LoginController::AUTH_EXTERNAL) {
     $redirectUrl = $App->Config->configArr['logout_url'];
     if (empty($redirectUrl)) {
         $redirectUrl = '../login.php';

@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\Tools;
 use Elabftw\Factories\StorageFactory;
 use Elabftw\Interfaces\PdfMakerInterface;
 use Elabftw\Interfaces\ZipMakerInterface;
@@ -25,8 +26,6 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
     protected ZipStream $Zip;
 
     protected string $folder = '';
-
-    protected array $foldersUsedSoFar = array();
 
     protected string $contentType = 'application/zip';
 
@@ -46,18 +45,13 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
             $prefix = $this->Entity->entityData['date'];
         }
 
-        $folderName = Filter::forFilesystem(sprintf(
-            '%s - %s',
-            $prefix,
-            $this->Entity->entityData['title']
-        ));
-        if (in_array($folderName, $this->foldersUsedSoFar, true)) {
-            // add part of elabid
-            $folderName .= ' - ' . substr(explode('-', $this->Entity->entityData['elabid'])[1], 0, 8);
-        }
-        $this->foldersUsedSoFar[] = $folderName;
-
-        return $folderName;
+        return sprintf(
+            '%s - %s - %s',
+            // category is user input, better filter it
+            Filter::forFilesystem($this->Entity->entityData[$prefix]),
+            Filter::forFilesystem($this->Entity->entityData['title']),
+            Tools::getShortElabid($this->Entity->entityData['elabid'] ?? ''),
+        );
     }
 
     /**

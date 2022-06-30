@@ -13,6 +13,7 @@ use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TagParams;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
@@ -201,7 +202,7 @@ class ImportZip extends AbstractImport
             // upload the attached files
             if (is_array($item['uploads'])) {
                 $titlePath = Filter::forFilesystem($item['title']);
-                $shortElabid = substr(explode('-', $item['elabid'])[1], 0, 8);
+                $shortElabid = Tools::getShortElabid($item['elabid']);
                 foreach ($item['uploads'] as $file) {
                     if ($this->type === 'experiments') {
                         $filePath = $this->tmpPath . '/' .
@@ -216,9 +217,10 @@ class ImportZip extends AbstractImport
                      * the same, but the extracted file will have a 1_ in front of the name. So here we will skip the
                      * import but this should be handled. One day. Maybe.
                      */
-                    if (is_readable($filePath)) {
-                        $this->Entity->Uploads->create(new CreateUpload(basename($filePath), $filePath, $file['comment']));
+                    if (!is_readable($filePath)) {
+                        throw new ImproperActionException(sprintf('Tried to import a file but it was not present in the zip archive: %s.', basename($filePath)));
                     }
+                    $this->Entity->Uploads->create(new CreateUpload(basename($filePath), $filePath, $file['comment']));
                 }
             }
             ++$this->inserted;

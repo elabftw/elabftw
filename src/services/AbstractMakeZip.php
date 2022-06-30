@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\Tools;
 use Elabftw\Models\Items;
 use ZipStream\ZipStream;
 
@@ -20,8 +21,6 @@ abstract class AbstractMakeZip extends AbstractMake
     protected ZipStream $Zip;
 
     protected string $folder = '';
-
-    protected array $foldersUsedSoFar = array();
 
     abstract public function getZip(): void;
 
@@ -36,19 +35,13 @@ abstract class AbstractMakeZip extends AbstractMake
             $prefix = 'category';
         }
 
-        $folderName = sprintf(
-            '%s - %s',
+        return sprintf(
+            '%s - %s - %s',
             // category is user input, better filter it
             Filter::forFilesystem($this->Entity->entityData[$prefix]),
-            Filter::forFilesystem($this->Entity->entityData['title'])
+            Filter::forFilesystem($this->Entity->entityData['title']),
+            Tools::getShortElabid($this->Entity->entityData['elabid']),
         );
-        if (in_array($folderName, $this->foldersUsedSoFar, true)) {
-            // add part of elabid
-            $folderName .= ' - ' . substr(explode('-', $this->Entity->entityData['elabid'])[1], 0, 8);
-        }
-        $this->foldersUsedSoFar[] = $folderName;
-
-        return $folderName;
     }
 
     /**

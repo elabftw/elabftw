@@ -316,4 +316,9 @@ class Tools
         }
         return $output;
     }
+
+    public static function getShortElabid(string $elabid): string
+    {
+        return substr(explode('-', $elabid)[1], 0, 8);
+    }
 }

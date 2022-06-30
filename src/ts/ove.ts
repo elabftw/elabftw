@@ -58,18 +58,17 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
       // parsedData[0].messages //either an array of strings giving any warnings or errors generated during the parsing process
       // Test if fileContent was parsed successfully. if false: show notification
       if (parsedData.length === 0) {
-        console.error('Problem with file: ' + realName);
-        return;
+        throw 'Problem with file: ' + realName;
       }
 
       if (parsedData[0].success === false) {
-        notif({res: false, msg: 'Invalid DNA data in file ' + realName});
-        return;
+        const msg = 'Invalid DNA data in file ' + realName;
+        notif({res: false, msg: msg});
+        throw msg;
       }
 
       if (parsedData[0].messages.length !== 0) {
-        console.error('File: ' + realName + '; ' + parsedData[0].messages[0]);
-        return;
+        throw 'File: ' + realName + '\n' + parsedData[0].messages.join('\n');
       }
 
       const parsedSequence = parsedData[0].parsedSequence;
@@ -125,6 +124,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         showMenuBar: false,
         withRotateCircularView: false,
         showReadOnly: false,
+        disableSetReadOnly: true,
         showGCContentByDefault: true,
         alwaysAllowSave: true,
         generatePng: true,
@@ -187,7 +187,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         },
         StatusBarProps: {
           showCircularity: false,
-          showReadOnly: false,
+          showReadOnly: true,
           showAvailability: false,
         },
       };
@@ -241,20 +241,18 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
     }
 
     // load DNA data either as File (.dna files Snapgene) or as String
-    if (isSnapGeneFile) {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', filename, true);
-      xhr.responseType = 'blob';
-      xhr.onload = function(): void {
-        if (this.status == 200) {
-          parseFile(blobToFile(this.response, realName));
+    fetch(filename).then(response => {
+      if (response.ok) {
+        if (isSnapGeneFile) {
+          return response.blob().then(blob => parseFile(blobToFile(blob, realName)));
         }
-      };
-      xhr.send();
-    } else {
-      $.get(filename, function(fileContent) {
-        parseFile(fileContent);
-      }, 'text');
-    }
+
+        return response.text().then(fileContent => parseFile(fileContent));
+      }
+
+      return Promise.reject(response.status);
+    }).catch(error => {
+      console.error(error);
+    });
   });
 }

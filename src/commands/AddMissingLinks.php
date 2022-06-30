@@ -88,17 +88,8 @@ class AddMissingLinks extends Command
                             // locked/timestamped entities are a problem because of canOrExplode
                             if ($data['lockedby']) {
                                 // manually create new link
-                                $sql = 'INSERT INTO ' . $table . '_links (item_id, link_id)';
-                                $sql .= ' SELECT ' . $data['id'] . ' item_id, ' . $match . ' link_id FROM DUAL';
-                                // if it does not exist
-                                $sql .= ' WHERE NOT EXISTS (';
-                                $sql .= 'SELECT 1 FROM ' . $table . '_links WHERE item_id = :item_id AND link_id = :link_id LIMIT 1';
-                                $sql .= ')';
-
-                                // https://stackoverflow.com/a/8534693
-                                // it would be better to add a UNIQUE KEY to (item_id, link_id) for all the link tables:
-                                // ALTER TABLE `x` ADD UNIQUE KEY `link_uniq_key` (item_id, link_id);
-                                // and than use "INSERT IGNORE INTO ' . $table . '_links (item_id, link_id) VALUES(:item_id, :link_id)";
+                                // use IGNORE to avoid failure due to a key constraint violations
+                                $sql = 'INSERT IGNORE INTO ' . $table . '_links (item_id, link_id) VALUES (:item_id, :link_id);';
 
                                 $req = $Db->prepare($sql);
                                 $req->bindParam(':item_id', $data['id'], PDO::PARAM_INT);

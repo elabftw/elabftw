@@ -1,2 +1,7 @@
+coverage:
+  status:
+    project:
+      default:
+        threshold: 0.5%
 # Disable PR comments
 comment: false

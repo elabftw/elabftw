@@ -79,8 +79,6 @@ CREATE TABLE `config` (
 
 --
 -- Table structure for table `experiments`
--- Here the datetime column cannot have current_timestamp on update because
--- of the way the code is in MySQL. It is fixed in 5.6 but we still target 5.5
 --
 
 CREATE TABLE `experiments` (
@@ -102,7 +100,7 @@ CREATE TABLE `experiments` (
   `canread` varchar(255) NOT NULL DEFAULT 'team',
   `canwrite` varchar(255) NOT NULL DEFAULT 'user',
   `content_type` tinyint(1) NOT NULL DEFAULT '1',
-  `datetime` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
@@ -344,6 +342,7 @@ CREATE TABLE `items` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `date` date NOT NULL,
   `body` mediumtext,
   `elabid` varchar(255) NOT NULL,

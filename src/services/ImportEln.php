@@ -13,7 +13,6 @@ use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TagParams;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\EntityFactory;
 use Elabftw\Models\AbstractEntity;
@@ -23,7 +22,6 @@ use Elabftw\Models\Users;
 use Elabftw\Traits\UploadTrait;
 use function json_decode;
 use League\Flysystem\FilesystemOperator;
-use function mb_strlen;
 use PDO;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use ZipArchive;
@@ -149,7 +147,7 @@ class ImportEln extends AbstractImport
             return;
         }
 
-        switch($part['@type']) {
+        switch ($part['@type']) {
         case 'Dataset':
             $Entity->update(new EntityParams($this->part2html($part), 'bodyappend'));
             // TODO here handle sub datasets as linked entries

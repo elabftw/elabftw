@@ -116,40 +116,6 @@ class MakeEln extends MakeStreamZip
                 );
             }
 
-            // CSV
-            $MakeCsv = $this->getCsv((int) $id);
-            $csv = $MakeCsv->getFileContent();
-            $this->Zip->addFile($this->folder . '/' . $MakeCsv->getFileName(), $csv);
-            $csvAtId = './' . $currentDatasetFolder . '/' . $MakeCsv->getFileName();
-            // add the csv in the hasPart of the entry
-            $hasPart[] = array('@id' => $csvAtId);
-            $dataEntities[] = array(
-                '@id' => $csvAtId,
-                '@type' => 'File',
-                'description' => 'CSV Export',
-                'name' => $MakeCsv->getFileName(),
-                'contentType' => $MakeCsv->getContentType(),
-                'contentSize' => (string) $MakeCsv->getContentSize(),
-                'sha256' => hash('sha256', $csv),
-            );
-
-            // PDF
-            $MakePdf = $this->getPdf();
-            $pdf = $MakePdf->getFileContent();
-            $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $pdf);
-            $pdfAtId = './' . $currentDatasetFolder . '/' . $MakePdf->getFileName();
-            // add the pdf in the hasPart of the entry
-            $hasPart[] = array('@id' => $pdfAtId);
-            $dataEntities[] = array(
-                '@id' => $pdfAtId,
-                '@type' => 'File',
-                'description' => 'PDF Export',
-                'name' => $MakePdf->getFileName(),
-                'contentType' => $MakePdf->getContentType(),
-                'contentSize' => (string) $MakePdf->getContentSize(),
-                'sha256' => hash('sha256', $pdf),
-            );
-
             // JSON
             $MakeJson = new MakeJson($this->Entity, array((int) $e['id']));
             $json = $MakeJson->getFileContent();

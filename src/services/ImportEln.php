@@ -14,6 +14,7 @@ use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TagParams;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Factories\EntityFactory;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
@@ -33,7 +34,7 @@ class ImportEln extends AbstractImport
 {
     use UploadTrait;
 
-    // number of items we got into the database
+    // final number of items imported
     public int $inserted = 0;
 
     private AbstractEntity $Entity;
@@ -44,17 +45,27 @@ class ImportEln extends AbstractImport
 
     private array $graph;
 
-    // the folder where we extract the zip
+    // the folder where we extract the archive
     private string $tmpDir;
 
-    // experiments or items
-    private string $type = 'experiments';
+    private int $categoryOrUserid;
 
-    public function __construct(Users $users, int $target, string $canread, string $canwrite, UploadedFile $uploadedFile, private FilesystemOperator $fs)
+    public function __construct(Users $users, string $target, string $canread, string $canwrite, UploadedFile $uploadedFile, private FilesystemOperator $fs)
     {
-        parent::__construct($users, $target, $canread, $canwrite, $uploadedFile);
-        $this->Entity = new Items($users);
-        // set up a temporary directory in the cache to extract the zip to
+        $this->categoryOrUserid = (int) explode('_', $target)[1];
+        $entityType = AbstractEntity::TYPE_ITEMS;
+        if (str_starts_with($target, 'userid')) {
+            // check that we can import stuff in experiments of target user
+            if ($this->categoryOrUserid !== (int) $users->userData['userid'] && $users->isAdminOf($this->categoryOrUserid) === false) {
+                throw new IllegalActionException('User tried to import archive in experiments of a user but they are not admin of that user');
+            }
+            $entityType = AbstractEntity::TYPE_EXPERIMENTS;
+            $users = new Users($this->categoryOrUserid, $users->userData['team']);
+        }
+        // TODO check the category is in our team
+        parent::__construct($users, $this->categoryOrUserid, $canread, $canwrite, $uploadedFile);
+        $this->Entity = (new EntityFactory($users, $entityType))->getEntity();
+        // set up a temporary directory in the cache to extract the archive to
         $this->tmpDir = FsTools::getUniqueString();
         $this->tmpPath = FsTools::getCacheFolder('elab') . '/' . $this->tmpDir;
     }
@@ -111,17 +122,21 @@ class ImportEln extends AbstractImport
 
     private function importRootDataset(array $dataset): void
     {
-        $Entity = (new EntityFactory($this->Users, AbstractEntity::TYPE_ITEMS))->getEntity();
+        $createTarget = (string) $this->categoryOrUserid;
+        if ($this->Entity instanceof Experiments) {
+            // no template
+            $createTarget = '0';
+        }
         // I believe this is a bug in phpstan. Using directly new Experiements() is ok but not the factory for some reason.
         // Might also be a bug in elab, not sure where it is FIXME
         // @phpstan-ignore-next-line
-        $id = $Entity->create(new EntityParams((string) $this->target));
-        $Entity->setId($id);
-        $Entity->update(new EntityParams($dataset['name'] ?? _('Untitled'), 'title'));
-        $Entity->update(new EntityParams($dataset['text'] ?? '', 'bodyappend'));
+        $id = $this->Entity->create(new EntityParams($createTarget));
+        $this->Entity->setId($id);
+        $this->Entity->update(new EntityParams($dataset['name'] ?? _('Untitled'), 'title'));
+        $this->Entity->update(new EntityParams($dataset['text'] ?? '', 'bodyappend'));
         // tags are stored in the 'keywords' property
         foreach ($dataset['keywords'] as $tag) {
-            $Entity->Tags->create(new TagParams($tag));
+            $this->Entity->Tags->create(new TagParams($tag));
         }
         // links are in the 'mentions' property as remote ids
         if ($dataset['mentions']) {
@@ -130,18 +145,18 @@ class ImportEln extends AbstractImport
                 $linkHtml .= sprintf("<li><a href='%s'>%s</a></li>", $link['@id'], $link['name']);
             }
             $linkHtml .= '</ul>';
-            $Entity->update(new EntityParams($linkHtml, 'bodyappend'));
+            $this->Entity->update(new EntityParams($linkHtml, 'bodyappend'));
         }
 
         $this->inserted++;
         // now loop over the parts of this node to find the rest of the files
         // the getNodeFromId might return nothing but that's okay, we just continue to try and find stuff
         foreach ($dataset['hasPart'] as $part) {
-            $this->importPart($this->getNodeFromId($part['@id']), $Entity);
+            $this->importPart($this->getNodeFromId($part['@id']));
         }
     }
 
-    private function importPart(array $part, AbstractEntity $Entity): void
+    private function importPart(array $part): void
     {
         if (!isset($part['@type'])) {
             return;
@@ -149,11 +164,11 @@ class ImportEln extends AbstractImport
 
         switch ($part['@type']) {
         case 'Dataset':
-            $Entity->update(new EntityParams($this->part2html($part), 'bodyappend'));
+            $this->Entity->update(new EntityParams($this->part2html($part), 'bodyappend'));
             // TODO here handle sub datasets as linked entries
             foreach ($part['hasPart'] as $subpart) {
                 if ($subpart['@type'] === 'File') {
-                    $this->importFile($subpart, $Entity);
+                    $this->importFile($subpart);
                 }
             }
             break;
@@ -162,32 +177,33 @@ class ImportEln extends AbstractImport
                 // we don't import remote files
                 return;
             }
-            $this->importFile($part, $Entity);
+            $this->importFile($part);
             break;
         default:
             return;
         }
     }
 
-    private function importFile(array $file, AbstractEntity $Entity): void
+    private function importFile(array $file): void
     {
         // note: path transversal vuln is detected and handled by flysystem
         $filepath = $this->tmpPath . '/' . basename($this->root) . '/' . $file['@id'];
         if (isset($file['sha256'])) {
             $this->checksum($filepath, $file['sha256']);
         }
-        $Entity->Uploads->create(new CreateUpload($file['name'] ?? basename($file['@id']), $filepath, $file['description'] ?? null));
+        $this->Entity->Uploads->create(new CreateUpload($file['name'] ?? basename($file['@id']), $filepath, $file['description'] ?? null));
         // special case for export-elabftw.json
         if (basename($filepath) === 'export-elabftw.json') {
-            $json = json_decode(file_get_contents($filepath), true, 512, JSON_THROW_ON_ERROR)[0];
-            $Entity->update(new EntityParams($json['rating'], 'rating'));
+            $fs = FsTools::getFs(dirname($filepath));
+            $json = json_decode($fs->read(basename($filepath)), true, 512, JSON_THROW_ON_ERROR)[0];
+            $this->Entity->update(new EntityParams($json['rating'], 'rating'));
             if ($json['metadata'] !== null) {
-                $Entity->update(new EntityParams(json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512), 'metadata'));
+                $this->Entity->update(new EntityParams(json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512), 'metadata'));
             }
             // add steps
             if (!empty($json['steps'])) {
                 foreach ($json['steps'] as $step) {
-                    $Entity->Steps->import($step);
+                    $this->Entity->Steps->import($step);
                 }
             }
             // TODO handle links: linked items should be included as datasets in the .eln, with a relationship to the main entry, and they should be imported as links
@@ -209,19 +225,5 @@ class ImportEln extends AbstractImport
             $html .= '<li>' . basename($subpart['@id']) . ' ' . ($subpart['description'] ?? '') . '</li>';
         }
         return $html .= '</ul>';
-    }
-
-    /**
-     * Select a status for our experiments.
-     *
-     * @return int The default status ID of the team
-     */
-    private function getDefaultStatus(): int
-    {
-        $sql = 'SELECT id FROM status WHERE team = :team AND is_default = 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->execute();
-        return (int) $req->fetchColumn();
     }
 }

@@ -74,8 +74,8 @@ class Experiments extends AbstractConcreteEntity
         $canwrite = $Team->getDoForceCanwrite() === 1 ? $Team->getForceCanwrite() : $canwrite;
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, metadata, userid, content_type)
-            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, NOW(), :metadata, :userid, :content_type)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, metadata, userid, content_type)
+            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, :metadata, :userid, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $body, PDO::PARAM_STR);
@@ -138,8 +138,8 @@ class Experiments extends AbstractConcreteEntity
         // capital i looks good enough
         $title = $this->entityData['title'] . ' I';
 
-        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid, metadata, content_type)
-            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, NOW(), :userid, :metadata, :content_type)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, userid, metadata, content_type)
+            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, :userid, :metadata, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $this->entityData['body'], PDO::PARAM_STR);

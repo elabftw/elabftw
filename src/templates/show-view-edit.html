@@ -31,20 +31,21 @@
       <div class='modal-body'>
         <form class='form-group' enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
           <label for='target_zip'>{{ '1. Select where to import:'|trans }}</label>
-          <select class='form-control col-md-4' id='target_zip' autocomplete='off' name='target'>
+          <select class='form-control' id='target_zip' autocomplete='off' name='target'>
             <option selected disabled>-------</option>
             <option disabled>{{ 'Import in database'|trans }}</option>
             {% for itemsType in itemsCategoryArr %}
-              <option value='{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
+              <option value='category_{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
             {% endfor %}
             <option disabled>{{ 'Import in experiments'|trans }}</option>
-            {% for user in allTeamUsersArr %}
-              <option value='{{ user.userid }}'>{{ user.fullname|raw }}</option>
+            {# if we are admin we can import in other users experiments, otherwise just for ourself #}
+            {% for user in allTeamUsersArr|filter(u => App.Users.userData.is_admin ? true : u.userid == App.Users.userData.userid ? u) %}
+              <option value='userid_{{ user.userid }}'>{{ user.fullname|raw }}</option>
             {% endfor %}
           </select>
 
           <label for='visibility_zip'>{{ '2. Select a visibility:'|trans }}</label>
-          <select class='form-control col-md-4' id='visibility_zip' autocomplete='off' name='canread'>
+          <select class='form-control' id='visibility_zip' autocomplete='off' name='canread'>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'
               {{ 'team' == key ? ' selected' }}
@@ -53,7 +54,7 @@
           </select>
 
           <label for='canwrite_zip'>{{ '2b. Select write access:'|trans }}</label>
-          <select class='form-control col-md-4' id='canwrite_zip' autocomplete='off' name='canwrite'>
+          <select class='form-control' id='canwrite_zip' autocomplete='off' name='canwrite'>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'
               {{ 'team' == key ? ' selected' }}
@@ -63,7 +64,7 @@
 
           {{ App.Session.get('csrf')|csrf }}
           <label class='d-block' for='archiveuploader'>{{ '3. Select a file to import:'|trans }}</label>
-          <input id='archiveuploader' name='file' type='file' accept='.zip,.eln' />
+          <input id='archiveuploader' required name='file' type='file' accept='.zip,.eln' />
           <input name='type' type='hidden' value='archive' />
           <span class='smallgray'>{{ 'Allowed extensions: .eln, .zip'|trans }}</span>
 

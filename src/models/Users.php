@@ -492,4 +492,13 @@ class Users
         $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);
         $EmailValidator->validate();
     }
+    /**
+     * Check if this instance's user is admin of the userid in function argument
+     */
+    public function isAdminOf(int $userid): bool
+    {
+        $TeamsHelper = new TeamsHelper($this->userData['team']);
+        return $TeamsHelper->isUserInTeam($userid) && $this->userData['is_admin'] === '1';
+    }
+
 }

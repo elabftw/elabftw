@@ -76,6 +76,7 @@ class MakeEln extends MakeStreamZip
         // an array of "@id" for main datasets
         $rootParts = array();
         foreach ($this->idArr as $id) {
+            $hasPart = array();
             $this->Entity->setId((int) $id);
             try {
                 $this->Entity->populate();
@@ -156,6 +157,12 @@ class MakeEln extends MakeStreamZip
                 }
             }
 
+            // TAGS
+            $keywords = array();
+            if ($this->Entity->entityData['tags']) {
+                $keywords = explode('|', (string) $this->Entity->entityData['tags']);
+            }
+
             // MAIN ENTRY
             $dataEntities[] = array(
                 '@id' => './' . $currentDatasetFolder,
@@ -172,7 +179,7 @@ class MakeEln extends MakeStreamZip
                 'dateModified' => (new DateTimeImmutable($e['lastchange'] ?? date('Y-m-d')))->format(DateTimeImmutable::ISO8601),
                 'identifier' => $e['elabid'] ?? '',
                 'itemList' => $itemList,
-                'keywords' => explode('|', (string) $this->Entity->entityData['tags']),
+                'keywords' => $keywords,
                 'name' => $e['title'],
                 'text' => $e['body'] ?? '',
                 'url' => SITE_URL . '/' . $this->Entity->page . '.php?mode=view&id=' . $e['id'],

@@ -40,11 +40,15 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $visibilityArr = array();
 
+    // all the users from the current team
+    protected array $allTeamUsersArr = array();
+
     public function __construct(protected App $App, protected AbstractEntity $Entity)
     {
         $this->Templates = new Templates($this->Entity->Users);
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $this->visibilityArr = $TeamGroups->getVisibilityList();
+        $this->allTeamUsersArr = $this->App->Users->readAllFromTeam();
     }
 
     /**
@@ -133,6 +137,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $template = 'show.html';
 
         $renderArr = array(
+            'allTeamUsersArr' => $this->allTeamUsersArr,
             'DisplayParams' => $DisplayParams,
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
@@ -184,6 +189,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // the mode parameter is for the uploads tpl
         $renderArr = array(
+            'allTeamUsersArr' => $this->allTeamUsersArr,
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
             'itemsCategoryArr' => $itemsCategoryArr,
@@ -244,6 +250,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $TeamGroups = new TeamGroups($this->Entity->Users);
 
         $renderArr = array(
+            'allTeamUsersArr' => $this->allTeamUsersArr,
             'Entity' => $this->Entity,
             'entityData' => $this->Entity->entityData,
             'categoryArr' => $this->categoryArr,

@@ -103,20 +103,6 @@ class MakeEln extends MakeStreamZip
                 );
             }
 
-            // STEPS
-            $itemList = array();
-            foreach ($e['steps'] as $step) {
-                $itemList[] = array(
-                    '@id' => 'step_' . $step['id'],
-                    '@type' => 'ListItem',
-                    'position' => $step['ordering'],
-                    'item' => array(
-                        '@type' => 'HowToItem',
-                        'requiredQuantity' => $step['body'],
-                    ),
-                );
-            }
-
             // JSON
             $MakeJson = new MakeJson($this->Entity, array((int) $e['id']));
             $json = $MakeJson->getFileContent();
@@ -178,7 +164,6 @@ class MakeEln extends MakeStreamZip
                 // lastchange can be null
                 'dateModified' => (new DateTimeImmutable($e['lastchange'] ?? date('Y-m-d')))->format(DateTimeImmutable::ISO8601),
                 'identifier' => $e['elabid'] ?? '',
-                'itemList' => $itemList,
                 'keywords' => $keywords,
                 'name' => $e['title'],
                 'text' => $e['body'] ?? '',

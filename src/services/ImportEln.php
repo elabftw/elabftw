@@ -59,6 +59,10 @@ class ImportEln extends AbstractImport
             $entityType = AbstractEntity::TYPE_EXPERIMENTS;
             $users = new Users($this->categoryOrUserid, $users->userData['team']);
         }
+        // we try to import a template
+        if (str_starts_with($target, 'templates')) {
+            $entityType = AbstractEntity::TYPE_TEMPLATES;
+        }
         // TODO check the category is in our team
         parent::__construct($users, $this->categoryOrUserid, $canread, $canwrite, $uploadedFile);
         $this->Entity = (new EntityFactory($users, $entityType))->getEntity();

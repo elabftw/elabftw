@@ -13,6 +13,7 @@ import i18next from 'i18next';
 import { EntityType, Target } from './interfaces';
 import EntityClass from './Entity.class';
 import Tab from './Tab.class';
+import { Ajax } from './Ajax.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/ucp.php') {
@@ -104,11 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
           reloadElement('apiTable');
         });
       }
+    } else if (el.matches('[data-action="show-import-tpl"]')) {
+      document.getElementById('import_tpl').toggleAttribute('hidden');
     }
-  });
-
-  $('#import-from-file').on('click', function() {
-    document.getElementById('import_tpl').hidden = false;
   });
 
   // CAN READ/WRITE SELECT PERMISSION
@@ -130,23 +129,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // input to upload an elabftw.tpl file
   document.getElementById('import_tpl').addEventListener('change', (event) => {
     const el = (event.target as HTMLInputElement);
-    const title = el.value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
-    if (!window.FileReader) {
-      alert('Please use a modern web browser. Import aborted.');
-      return false;
-    }
-    const file = (event.target as HTMLInputElement).files[0];
-    const reader = new FileReader();
-    reader.onload = function(event): void {
-      const body = event.target.result as string;
-      EntityC.create(title, []).then(json => {
-        const newid = parseInt(json.value as string);
-        EntityC.update(newid, Target.Body, body).then(() => {
-          window.location.replace(`ucp.php?tab=3&templateid=${json.value}`);
-        });
-      });
+    const AjaxC = new Ajax();
+    const params = {
+      'type': 'archive',
+      'file': el.files[0],
+      'target': 'templates_0',
+      'canread': 'team',
+      'canwrite': 'user',
     };
-    reader.readAsText(file);
+    AjaxC.postForm('app/controllers/ImportController.php', params).then(() => {
+      window.location.reload();
+    });
   });
 
   // TinyMCE

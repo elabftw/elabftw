@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, reloadElement } from './misc';
+import { notif, reloadElement, addAutocompleteToTagInputs } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Apikey from './Apikey.class';
@@ -44,10 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     // LOCK TEMPLATE
-    } else if (el.matches('[data-action="lock-template"]')) {
-      // reload the page to change the icon and make the edit button disappear (#1897)
-      const id = el.dataset.id;
-      EntityC.lock(parseInt(id)).then(() => window.location.href = `?tab=3&templateid=${id}`);
+    } else if (el.matches('[data-action="toggle-lock"]')) {
+      EntityC.lock(parseInt(el.dataset.id)).then(() => {
+        reloadElement('templatesDiv').then(() => {
+          addAutocompleteToTagInputs();
+          tinymce.remove();
+          tinymce.init(getTinymceBaseConfig('ucp'));
+        });
+      });
     // UPDATE TEMPLATE
     } else if (el.matches('[data-action="update-template"]')) {
       const id = el.dataset.id;
@@ -107,6 +111,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else if (el.matches('[data-action="show-import-tpl"]')) {
       document.getElementById('import_tpl').toggleAttribute('hidden');
+    } else if (el.matches('[data-action="pin"]')) {
+      EntityC.pin(parseInt(el.dataset.id)).then(() => {
+        reloadElement('templatesDiv').then(() => {
+          addAutocompleteToTagInputs();
+          tinymce.remove();
+          tinymce.init(getTinymceBaseConfig('ucp'));
+        });
+      });
     }
   });
 
@@ -126,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // input to upload an elabftw.tpl file
+  // input to upload an ELN archive
   document.getElementById('import_tpl').addEventListener('change', (event) => {
     const el = (event.target as HTMLInputElement);
     const AjaxC = new Ajax();

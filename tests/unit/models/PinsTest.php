@@ -15,25 +15,34 @@ class PinsTest extends \PHPUnit\Framework\TestCase
 
     private Items $Items;
 
+    private Templates $Templates;
+
     protected function setUp(): void
     {
         $Users = new Users(1, 1);
         $this->Experiments = new Experiments($Users, 1);
         $this->Items = new Items($Users, 1);
+        $this->Templates = new Templates($Users, 1);
     }
 
     public function testTogglePin(): void
     {
         $this->Experiments->Pins->togglePin();
         $this->assertTrue($this->Experiments->Pins->isPinned());
-        $this->assertCount(1, $this->Experiments->Pins->getPinned());
+        $this->assertCount(1, $this->Experiments->Pins->readAll());
         $this->Experiments->Pins->togglePin();
-        $this->assertCount(0, $this->Experiments->Pins->getPinned());
+        $this->assertCount(0, $this->Experiments->Pins->readAll());
 
         $this->Items->Pins->togglePin();
         $this->assertTrue($this->Items->Pins->isPinned());
-        $this->assertCount(1, $this->Items->Pins->getPinned());
+        $this->assertCount(1, $this->Items->Pins->readAll());
         $this->Items->Pins->togglePin();
-        $this->assertCount(0, $this->Items->Pins->getPinned());
+        $this->assertCount(0, $this->Items->Pins->readAll());
+
+        $this->Templates->Pins->togglePin();
+        $this->assertTrue($this->Templates->Pins->isPinned());
+        $this->assertCount(1, $this->Templates->Pins->readAll());
+        $this->Templates->Pins->togglePin();
+        $this->assertCount(0, $this->Templates->Pins->readAll());
     }
 }

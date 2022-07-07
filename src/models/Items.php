@@ -92,7 +92,6 @@ class Items extends AbstractConcreteEntity
 
     public function destroy(): bool
     {
-
         // check if we can actually delete items (for non-admins)
         $Team = new Team($this->Users->team);
         if ($Team->getDeletableItem() === 0 && $this->Users->userData['is_admin'] === '0') {
@@ -110,9 +109,6 @@ class Items extends AbstractConcreteEntity
         $sql = 'DELETE FROM items_links WHERE link_id = :link_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        // delete from pinned
-        return $this->Pins->cleanup();
+        return $this->Db->execute($req);
     }
 }

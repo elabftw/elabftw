@@ -304,7 +304,8 @@ class Tags implements CrudInterface
     private function getList(string $term): array
     {
         $tagListArr = array();
-        $tagsArr = $this->readAll($term);
+        // limit to 20 entries
+        $tagsArr = array_slice($this->readAll($term), 0, 20);
 
         foreach ($tagsArr as $tag) {
             $tagListArr[] = $tag['tag'];

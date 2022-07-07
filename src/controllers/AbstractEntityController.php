@@ -144,14 +144,14 @@ abstract class AbstractEntityController implements ControllerInterface
             'deletableXp' => $this->getDeletableXp(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'favTagsArr' => $favTagsArr,
-            'pinnedArr' => $this->Entity->Pins->getPinned(),
+            'pinnedArr' => $this->Entity->Pins->readAll(),
             'itemsArr' => $itemsArr,
             // generate light show page
             'searchPage' => $isSearchPage,
             'searchType' => $isSearchPage ? 'something' : $DisplayParams->searchType,
             'tagsArr' => $tagsArr,
             'tagsArrForSelect' => $tagsArrForSelect,
-            'templatesArr' => $this->Templates->readForUser(),
+            'templatesArr' => $this->Templates->Pins->readAll(),
             'visibilityArr' => $this->visibilityArr,
             'extendedError' => $extendedError,
         );
@@ -195,7 +195,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
             'revNum' => $Revisions->readCount(),
-            'templatesArr' => $this->Templates->readForUser(),
+            'templatesArr' => $this->Templates->Pins->readAll(),
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -261,7 +261,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',
             'revNum' => $Revisions->readCount(),
-            'templatesArr' => $this->Templates->readForUser(),
+            'templatesArr' => $this->Templates->Pins->readAll(),
             'visibilityArr' => $this->visibilityArr,
         );
 

@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TagParams;
@@ -125,7 +126,7 @@ class ImportEln extends AbstractImport
         $createTarget = (string) $this->categoryOrUserid;
         if ($this->Entity instanceof Experiments) {
             // no template
-            $createTarget = '0';
+            $createTarget = '-1';
         }
         // I believe this is a bug in phpstan. Using directly new Experiements() is ok but not the factory for some reason.
         // Might also be a bug in elab, not sure where it is FIXME
@@ -134,11 +135,13 @@ class ImportEln extends AbstractImport
         $this->Entity->setId($id);
         $this->Entity->update(new EntityParams($dataset['name'] ?? _('Untitled'), 'title'));
         $this->Entity->update(new EntityParams($dataset['text'] ?? '', 'bodyappend'));
-        // tags are stored in the 'keywords' property
+
+        // TAGS
         foreach ($dataset['keywords'] as $tag) {
             $this->Entity->Tags->create(new TagParams($tag));
         }
-        // links are in the 'mentions' property as remote ids
+
+        // LINKS
         if ($dataset['mentions']) {
             $linkHtml = sprintf('<h1>%s</h1><ul>', _('Links'));
             foreach ($dataset['mentions'] as $link) {
@@ -146,6 +149,18 @@ class ImportEln extends AbstractImport
             }
             $linkHtml .= '</ul>';
             $this->Entity->update(new EntityParams($linkHtml, 'bodyappend'));
+        }
+
+        // COMMENTS
+        foreach ($dataset['comment'] as $comment) {
+            $content = sprintf(
+                "Imported comment from %s %s (%s)\n\n%s",
+                $comment['author']['firstname'] ?? '',
+                $comment['author']['lastname'] ?? 'Unknown',
+                $comment['dateCreated'],
+                $comment['text'],
+            );
+            $this->Entity->Comments->create(new ContentParams($content));
         }
 
         $this->inserted++;

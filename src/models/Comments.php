@@ -34,10 +34,9 @@ class Comments implements CrudInterface
 
     public function create(ContentParamsInterface $params): int
     {
-        $sql = 'INSERT INTO ' . $this->Entity->type . '_comments(datetime, item_id, comment, userid)
-            VALUES(:datetime, :item_id, :content, :userid)';
+        $sql = 'INSERT INTO ' . $this->Entity->type . '_comments(item_id, comment, userid)
+            VALUES(:item_id, :content, :userid)';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':datetime', date('Y-m-d H:i:s'));
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindValue(':content', nl2br($params->getContent()));
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
@@ -58,10 +57,11 @@ class Comments implements CrudInterface
     public function readAll(): array
     {
         $sql = 'SELECT ' . $this->Entity->type . "_comments.*,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            users.firstname, users.lastname, users.orcid
             FROM " . $this->Entity->type . '_comments
             LEFT JOIN users ON (' . $this->Entity->type . '_comments.userid = users.userid)
-            WHERE item_id = :id ORDER BY ' . $this->Entity->type . '_comments.datetime ASC';
+            WHERE item_id = :id ORDER BY ' . $this->Entity->type . '_comments.created_at ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);

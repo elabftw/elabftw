@@ -36,7 +36,13 @@ class Experiments extends AbstractConcreteEntity
         $Templates = new Templates($this->Users);
         $Team = new Team((int) $this->Users->userData['team']);
 
+        // defaults
+        $title = _('Untitled');
+        $body = null;
+        $canread = 'team';
+        $canwrite = 'user';
         $metadata = null;
+
         $tpl = (int) $params->getContent();
         // do we want template ?
         if ($tpl > 0) {
@@ -47,15 +53,14 @@ class Experiments extends AbstractConcreteEntity
             $body = $templateArr['body'];
             $canread = $templateArr['canread'];
             $canwrite = $templateArr['canwrite'];
-        } else {
+        }
+
+        if ($tpl === 0) {
             // no template, make sure admin didn't disallow it
             if ($Team->getForceExpTpl() === 1) {
                 throw new ImproperActionException(_('Experiments must use a template!'));
             }
-            $title = _('Untitled');
             $body = $Team->getCommonTemplate();
-            $canread = 'team';
-            $canwrite = 'user';
             if ($this->Users->userData['default_read'] !== null) {
                 $canread = $this->Users->userData['default_read'];
             }
@@ -90,7 +95,7 @@ class Experiments extends AbstractConcreteEntity
         $newId = $this->Db->lastInsertId();
 
         // insert the tags from the template
-        if ($tpl !== 0) {
+        if ($tpl > 0) {
             $this->Links->duplicate($tpl, $newId, true);
             $this->Steps->duplicate($tpl, $newId, true);
             $Tags = new Tags($Templates);

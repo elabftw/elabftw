@@ -67,6 +67,14 @@ class MakeEln extends MakeStreamZip
         return $this->root . $this->extension;
     }
 
+    private function formatOrcid(?string $orcid): ?string
+    {
+        if ($orcid === null) {
+            return null;
+        }
+        return 'https://orcid.org/' . $orcid;
+    }
+
     /**
      * Loop on each id and add it to our eln archive
      */
@@ -120,6 +128,21 @@ class MakeEln extends MakeStreamZip
                 'sha256' => hash('sha256', $json),
             );
 
+            // COMMENTS
+            $comments = array();
+            foreach ($e['comments'] as $comment) {
+                $comments[] = array(
+                    'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ISO8601),
+                    'text' => $comment['comment'],
+                    'author' => array(
+                        '@type' => 'Person',
+                        'familyName' => $comment['lastname'] ?? '',
+                        'givenName' => $comment['firstname'] ?? '',
+                        'identifier' => $this->formatOrcid($e['orcid']),
+                    ),
+                );
+            }
+
             // UPLOADS
             $uploadedFilesArr = $e['uploads'];
             if (!empty($uploadedFilesArr)) {
@@ -157,13 +180,14 @@ class MakeEln extends MakeStreamZip
                     '@type' => 'Person',
                     'familyName' => $e['lastname'] ?? '',
                     'givenName' => $e['firstname'] ?? '',
-                    'identifier' => $orcid,
+                    'identifier' => $this->formatOrcid($e['orcid']),
                 ),
                 // created_at cannot be null
                 'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ISO8601),
                 // lastchange can be null
                 'dateModified' => (new DateTimeImmutable($e['lastchange'] ?? date('Y-m-d')))->format(DateTimeImmutable::ISO8601),
                 'identifier' => $e['elabid'] ?? '',
+                'comment' => $comments,
                 'keywords' => $keywords,
                 'name' => $e['title'],
                 'text' => $e['body'] ?? '',

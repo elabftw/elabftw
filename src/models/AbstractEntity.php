@@ -833,7 +833,7 @@ abstract class AbstractEntity implements CrudInterface
 
         $commentsJoin = 'LEFT JOIN (
             SELECT MAX(
-                %1$s_comments.datetime) AS recent_comment,
+                %1$s_comments.created_at) AS recent_comment,
                 %1$s_comments.item_id
                 FROM %1$s_comments GROUP BY %1$s_comments.item_id
             ) AS commentst

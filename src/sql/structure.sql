@@ -124,7 +124,8 @@ CREATE TABLE `experiments` (
 
 CREATE TABLE `experiments_comments` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `datetime` datetime NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `item_id` int(10) UNSIGNED NOT NULL,
   `comment` text NOT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
@@ -381,7 +382,8 @@ CREATE TABLE `items` (
 
 CREATE TABLE `items_comments` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `datetime` datetime NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `item_id` int(10) UNSIGNED NOT NULL,
   `comment` text NOT NULL,
   `userid` int(10) UNSIGNED NOT NULL,

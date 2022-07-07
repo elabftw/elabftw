@@ -594,7 +594,7 @@ CREATE TABLE `teams` (
   `force_exp_tpl` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `link_name` text NOT NULL,
   `link_href` text NOT NULL,
-  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `orgid` varchar(255) DEFAULT NULL,
   `public_db` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `force_canread` varchar(255) NOT NULL DEFAULT 'team',

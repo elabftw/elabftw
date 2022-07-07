@@ -242,7 +242,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                     {% plural count.totxp %}
                     Experiments
                     {% endtrans %}
-                    : {{ count.totxp }} ({{ count.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ count.totdb }} − {{ 'Created'|trans }}: {{ team.datetime }}<p>
+                    : {{ count.totxp }} ({{ count.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ count.totdb }} − {{ 'Created'|trans }}: {{ team.created_at }}<p>
                   </li>
                 </ul>
               </li>

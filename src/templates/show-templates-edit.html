@@ -1,4 +1,4 @@
-<div class='box' style='min-height: 600px;'>
+<div class='box'>
   <div class='row'>
     <div class='col'>
       <h3><i class='fas fa-layer-group'></i> {{ 'Experiments Templates'|trans }}</h3>
@@ -11,7 +11,7 @@
             <span class='sr-only'>{{ 'Toggle create new menu'|trans }}</span>
           </button>
           <div class='dropdown-menu' aria-labelledby='btnGroupDrop1'>
-            <div data-action='show-import-tpl' class='dropdown-item'><i class='fas fa-upload fa-fw'></i> {{ 'Import from file'|trans }}</div>
+            <div data-action='show-import-tpl' class='dropdown-item'><i class='fas fa-upload fa-fw'></i> {{ 'Import from file'|trans }} (.eln)</div>
             <!-- disable the reordering for now
             <div class='dropdown-divider'></div>
             <a id='toggleReorder' class='dropdown-item'><i class='fas fa-sort fa-fw' data-fa-transform='rotate-90 down-1'></i> {{ 'Reorder templates'|trans }}</a>
@@ -28,25 +28,54 @@
   {% include 'show-templates-select.html' %}
 
   {% if Entity.entityData %}
-    <div class='row mt-3'>
-      <!-- NAME OF TPL AND OWNER -->
-      <div class='col'>
-        <h4 class='d-inline'>
-          {{ Entity.entityData.fullname|raw }} - {{ Entity.entityData.title|raw }}
-        </h4>
-        <!-- LOCK -->
-        {% set lockIcon = 'fa-lock-open' %}
-        {% set alt = 'Lock/Unlock item'|trans %}
-        {% if Entity.entityData.locked %}
-            {% set lockIcon = 'fa-lock' %}
-            {% set alt = Entity.entityData.lockedwhen %}
-        {% endif %}
-        <a data-action='lock-template' data-id="{{ Entity.id }}" href='#' class='elab-tooltip'>
-          <span>{{ alt }}</span>
-          <i class='fas {{lockIcon}}'></i>
-        </a>
-      </div>
+<!-- MORE OPTIONS DROPDOWN MENU (···) -->
+<div class='d-flex'>
+  <!-- NAME OF TPL AND OWNER -->
+  <div class='mr-auto'>
+    <h2>
+      <!-- lock icon -->
+      {% if entityData.locked %}
+        <i class='fas fa-lock' style='color:#29AEB9'></i>
+      {% endif %}
+      {{ Entity.entityData.fullname|raw }} - {{ Entity.entityData.title|raw }}
+    </h2>
+  </div>
+
+  <!-- MORE OPTIONS MENU (...) -->
+  <div class='dropdown'>
+    <div data-toggle='dropdown' aria-haspopup='true' class='button-on-hover' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
+      <h3><i class='fas fa-ellipsis-v fa-2x'></i></h3>
     </div>
+    <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
+      {% if not Entity.entityData.locked %}
+        <!-- MANAGE PERMISSIONS -->
+        <a href='#' class='dropdown-item' data-action='toggle-modal' data-target='permModal' data-read='{{ Entity.entityData.canread }}' data-write='{{ Entity.entityData.canwrite }}'>
+          <i class='fas fa-share-alt fa-fw mr-1'></i>{{ 'Manage Permissions'|trans }}
+        </a>
+      {% endif %}
+      <!-- LOCK -->
+      <a data-action='lock-template' data-id="{{ Entity.id }}" href='#' class='dropdown-item'>
+        <i class='fas fa-lock fa-fw mr-1'></i>{{ 'Lock/Unlock item'|trans }}
+      </a>
+      <!-- DOWNLOAD -->
+      <a href='#' class='dropdown-item' data-action='download-template' data-id='{{ Entity.id }}'>
+        <i class='fas fa-download fa-fw mr-1'></i>{{ 'Download template'|trans }}
+      </a>
+      <!-- REVISIONS -->
+      {% if revNum > 0 %}
+      <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ revNum }} {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
+      {% endif %}
+      {% if not Entity.entityData.locked %}
+        <!-- DESTROY -->
+        <div class='dropdown-divider'></div>
+        <a href='#' data-action='destroy-template' class='dropdown-item hover-danger' data-id='{{ Entity.id }}'>
+          <i class='fas fa-trash-alt fa-fw mr-1'></i>{{ 'Destroy template'|trans }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+  </div>
+
 
     {% if Entity.entityData.locked %}
       {% include 'templates-view.html' %}
@@ -54,13 +83,6 @@
       {% include 'templates-edit.html' %}
     {% endif %}
 
-    <!-- REVISIONS -->
-    {% if revNum > 0 %}
-    <span class='float-right'><i class='fas fa-history mr-1'></i>
-        <a href='revisions.php?type=experiments_templates&item_id={{ Entity.id }}'>{{ revNum }}
-            {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
-    </span>
-    {% endif %}
   {% endif %}
   </div>
   <div id='info' data-page='template-edit' data-type='experiments_templates' data-id='{{ Entity.id }}'></div>

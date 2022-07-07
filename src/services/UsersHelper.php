@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 
 use function array_column;
 use Elabftw\Elabftw\Db;
-use Elabftw\Models\Users;
 use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 

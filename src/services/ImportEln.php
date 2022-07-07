@@ -9,13 +9,13 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TagParams;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\EntityFactory;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
@@ -24,7 +24,6 @@ use Elabftw\Models\Users;
 use Elabftw\Traits\UploadTrait;
 use function json_decode;
 use League\Flysystem\FilesystemOperator;
-use PDO;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use ZipArchive;
 

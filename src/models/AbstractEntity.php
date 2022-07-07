@@ -614,7 +614,7 @@ abstract class AbstractEntity implements CrudInterface
             $period = '15000101-30000101';
         }
         [$from, $to] = explode('-', $period);
-        $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid AND lastchange BETWEEN :from AND :to';
+        $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid AND modified_at BETWEEN :from AND :to';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindParam(':from', $from);
@@ -781,7 +781,7 @@ abstract class AbstractEntity implements CrudInterface
                 entity.locked,
                 entity.canread,
                 entity.canwrite,
-                entity.lastchange,';
+                entity.modified_at,';
             // don't include the metadata column unless we really need it
             // see https://stackoverflow.com/questions/29575835/error-1038-out-of-sort-memory-consider-increasing-sort-buffer-size
             if ($this->isMetadataSearch) {

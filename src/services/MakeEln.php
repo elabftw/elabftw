@@ -67,14 +67,6 @@ class MakeEln extends MakeStreamZip
         return $this->root . $this->extension;
     }
 
-    private function formatOrcid(?string $orcid): ?string
-    {
-        if ($orcid === null) {
-            return null;
-        }
-        return 'https://orcid.org/' . $orcid;
-    }
-
     /**
      * Loop on each id and add it to our eln archive
      */
@@ -182,10 +174,8 @@ class MakeEln extends MakeStreamZip
                     'givenName' => $e['firstname'] ?? '',
                     'identifier' => $this->formatOrcid($e['orcid']),
                 ),
-                // created_at cannot be null
                 'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ISO8601),
-                // lastchange can be null
-                'dateModified' => (new DateTimeImmutable($e['lastchange'] ?? date('Y-m-d')))->format(DateTimeImmutable::ISO8601),
+                'dateModified' => (new DateTimeImmutable($e['modified_at']))->format(DateTimeImmutable::ISO8601),
                 'identifier' => $e['elabid'] ?? '',
                 'comment' => $comments,
                 'keywords' => $keywords,
@@ -207,5 +197,13 @@ class MakeEln extends MakeStreamZip
         // add the metadata json file containing references to all the content of our crate
         $this->Zip->addFile($this->root . '/ro-crate-metadata.json', json_encode($this->jsonArr, JSON_THROW_ON_ERROR, 512));
         $this->Zip->finish();
+    }
+
+    private function formatOrcid(?string $orcid): ?string
+    {
+        if ($orcid === null) {
+            return null;
+        }
+        return 'https://orcid.org/' . $orcid;
     }
 }

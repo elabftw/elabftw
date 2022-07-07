@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -6,21 +6,24 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\ImportInterface;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * Mother class of ImportCsv and ImportZip
+ * Mother class of ImportCsv, ImportZip and ImportEln
  */
-abstract class AbstractImport
+abstract class AbstractImport implements ImportInterface
 {
     protected Db $Db;
+
+    // final number of items imported
+    protected int $inserted = 0;
 
     public function __construct(protected Users $Users, protected int $target, protected string $canread, protected string $canwrite, protected UploadedFile $UploadedFile)
     {
@@ -32,6 +35,11 @@ abstract class AbstractImport
         }
 
         $this->checkMimeType();
+    }
+
+    public function getInserted(): int
+    {
+        return $this->inserted;
     }
 
     /**

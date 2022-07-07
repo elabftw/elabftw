@@ -26,9 +26,6 @@ class ImportCsv extends AbstractImport
 {
     private const TAGS_SEPARATOR = '|';
 
-    // number of items we got into the database
-    public int $inserted = 0;
-
     // the separation character of the csv provided by user
     private string $delimiter;
 

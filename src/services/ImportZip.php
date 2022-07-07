@@ -34,9 +34,6 @@ class ImportZip extends AbstractImport
 {
     use UploadTrait;
 
-    // number of items we got into the database
-    public int $inserted = 0;
-
     private AbstractEntity $Entity;
 
     private string $tmpPath;

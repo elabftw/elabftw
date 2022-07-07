@@ -89,7 +89,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
             $this->fs,
         );
         $Import->import();
-        $this->assertEquals(1, $Import->inserted);
+        $this->assertEquals(1, $Import->getInserted());
     }
 
     public function testImportExperimentsMulti(): void
@@ -111,7 +111,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
             $this->fs,
         );
         $Import->import();
-        $this->assertEquals(2, $Import->inserted);
+        $this->assertEquals(2, $Import->getInserted());
     }
 
     public function testImportItems(): void
@@ -133,7 +133,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
             $this->fs,
         );
         $Import->import();
-        $this->assertEquals(1, $Import->inserted);
+        $this->assertEquals(1, $Import->getInserted());
     }
 
     public function testImportNoJson(): void

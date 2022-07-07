@@ -35,7 +35,7 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
         );
         $Import->import();
-        $this->assertEquals(3, $Import->inserted);
+        $this->assertEquals(3, $Import->getInserted());
     }
 
     // import a tab delimited csv file
@@ -58,7 +58,7 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
         );
         $Import->import();
-        $this->assertEquals(3, $Import->inserted);
+        $this->assertEquals(3, $Import->getInserted());
     }
 
     public function testImportNoTitle(): void

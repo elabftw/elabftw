@@ -34,9 +34,6 @@ class ImportEln extends AbstractImport
 {
     use UploadTrait;
 
-    // final number of items imported
-    public int $inserted = 0;
-
     private AbstractEntity $Entity;
 
     private string $tmpPath;
@@ -136,8 +133,10 @@ class ImportEln extends AbstractImport
         $this->Entity->update(new EntityParams($dataset['text'] ?? '', 'bodyappend'));
 
         // TAGS
-        foreach ($dataset['keywords'] as $tag) {
-            $this->Entity->Tags->create(new TagParams($tag));
+        if ($dataset['keywords']) {
+            foreach ($dataset['keywords'] as $tag) {
+                $this->Entity->Tags->create(new TagParams($tag));
+            }
         }
 
         // LINKS
@@ -151,15 +150,17 @@ class ImportEln extends AbstractImport
         }
 
         // COMMENTS
-        foreach ($dataset['comment'] as $comment) {
-            $content = sprintf(
-                "Imported comment from %s %s (%s)\n\n%s",
-                $comment['author']['firstname'] ?? '',
-                $comment['author']['lastname'] ?? 'Unknown',
-                $comment['dateCreated'],
-                $comment['text'],
-            );
-            $this->Entity->Comments->create(new ContentParams($content));
+        if ($dataset['comment']) {
+            foreach ($dataset['comment'] as $comment) {
+                $content = sprintf(
+                    "Imported comment from %s %s (%s)\n\n%s",
+                    $comment['author']['firstname'] ?? '',
+                    $comment['author']['lastname'] ?? 'Unknown',
+                    $comment['dateCreated'],
+                    $comment['text'],
+                );
+                $this->Entity->Comments->create(new ContentParams($content));
+            }
         }
 
         $this->inserted++;
@@ -210,7 +211,7 @@ class ImportEln extends AbstractImport
         if (basename($filepath) === 'export-elabftw.json') {
             $fs = FsTools::getFs(dirname($filepath));
             $json = json_decode($fs->read(basename($filepath)), true, 512, JSON_THROW_ON_ERROR)[0];
-            $this->Entity->update(new EntityParams($json['rating'], 'rating'));
+            $this->Entity->update(new EntityParams($json['rating'] ?? '', 'rating'));
             if ($json['metadata'] !== null) {
                 $this->Entity->update(new EntityParams(json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512), 'metadata'));
             }

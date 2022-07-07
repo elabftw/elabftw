@@ -1,28 +1,28 @@
-{% if Entity.entityData.tags|length > 0 %}
+{% if entityData.tags|length > 0 %}
   <span class='tags'><i class='fas fa-tags'></i></span>
-  {% set tagsValueArr = Entity.entityData.tags|split('|') %}
+  {% set tagsValueArr = entityData.tags|split('|') %}
   {% for tag in tagsValueArr %}
     <span class='tag'>{{ tag|raw }}</span>
   {% endfor %}
 {% endif %}
 
 <div class='mt-2'>
-  {% if Entity.entityData.canread > 0 %}
-    {% for teamGroup in teamGroupsArr|filter(teamGroup => teamGroup.id == Entity.entityData.canread) %}
+  {% if entityData.canread > 0 %}
+    {% for teamGroup in teamGroupsArr|filter(teamGroup => teamGroup.id == entityData.canread) %}
       <i class='fas fa-eye'></i> {{ teamGroup.name }}
     {% endfor %}
   {% else %}
-    <i class='fas fa-eye'></i> {{ Entity.entityData.canread }}
+    <i class='fas fa-eye'></i> {{ entityData.canread }}
   {% endif %}
 
-  {% if Entity.entityData.canwrite > 0 %}
-    {% for teamGroup in teamGroupsArr|filter(teamGroup =>  teamGroup.id == Entity.entityData.canwrite) %}
+  {% if entityData.canwrite > 0 %}
+    {% for teamGroup in teamGroupsArr|filter(teamGroup =>  teamGroup.id == entityData.canwrite) %}
       <i class='fas fa-pencil-alt'></i> {{ teamGroup.name }}
     {% endfor %}
   {% else %}
-    <i class='fas fa-pencil-alt'></i> {{ Entity.entityData.canwrite }}
+    <i class='fas fa-pencil-alt'></i> {{ entityData.canwrite }}
   {% endif %}
 </div>
 
-<div id='body_view' class='txt'>{{ Entity.entityData.body|raw }}</div>
+<div id='body_view' class='txt'>{{ entityData.body|raw }}</div>
 {% include 'steps-links-view.html' %}

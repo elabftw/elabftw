@@ -19,6 +19,7 @@ interface PartialEntity {
 }
 
 interface Upload {
+  id?: string;
   real_name: string;
   long_name: string;
 }
@@ -63,6 +64,7 @@ enum Action {
   ImportLinks = 'importlinks',
   Lock = 'lock',
   Pin = 'pin',
+  Replace = 'replace',
 }
 
 enum Model {

@@ -81,6 +81,8 @@ try {
         } else {
             $res = $Model->update($Params);
         }
+    } elseif ($action === 'replace') {
+        $res = $Model->replace($Params);
     } elseif ($action === 'destroy') {
         if ($Model instanceof Experiments) {
             $Teams = new Teams($App->Users);

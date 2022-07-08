@@ -31,7 +31,6 @@ use function in_array;
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
 use RuntimeException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -202,12 +201,9 @@ class Uploads implements CrudInterface
         });
     }
 
-    public function update(UploadParamsInterface $params): bool|array
+    public function update(UploadParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
-        if ($params->getTarget() === 'file') {
-            return $this->replace($params->getFile());
-        }
         $sql = 'UPDATE uploads SET ' . $params->getTarget() . ' = :content WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
@@ -264,33 +260,34 @@ class Uploads implements CrudInterface
     }
 
     /**
+     * Attached files are immutable (change history is kept), so the current
+     * file gets its state changed to "archived" and a new one is added
+     */
+    public function replace(UploadParamsInterface $params): array
+    {
+        $this->Entity->canOrExplode('write');
+        // read the current one to get the comment
+        $upload = $this->read(new ContentParams());
+        $replaceRes = $this->update(new UploadParams((string) self::STATE_ARCHIVED, 'state'));
+        
+        if (!$replaceRes) {
+            throw new ImproperActionException(_('Error while replacing file!'));
+        }
+
+        $file = $params->getFile();
+        $newID = $this->create(new CreateUpload($file->getClientOriginalName(), $file->getPathname(), $upload['comment']));
+        $this->setId((int) $newID);
+
+        return $this->read(new ContentParams());
+    }
+
+    /**
      * This function will not remove the files but set them to "deleted" state
      * A manual purge must be made by sysadmin if they wish to really remove them.
      */
     private function nuke(): bool
     {
         return $this->update(new UploadParams((string) self::STATE_DELETED, 'state'));
-    }
-
-    /**
-     * Attached files are immutable (change history is kept), so the current
-     * file gets its state changed to "archived" and a new one is added
-     */
-    private function replace(UploadedFile $file): array
-    {
-        // read the current one to get the comment
-        $upload = $this->read(new ContentParams());
-        // archive the current
-        $replacedRes = $this->update(new UploadParams((string) self::STATE_ARCHIVED, 'state'));
-        // create new version
-        $newID = $this->create(new CreateUpload($file->getClientOriginalName(), $file->getPathname(), $upload['comment']));
-        $this->setId((int) $newID);
-        $newEntry = $this->read(new ContentParams());
-
-        return array(
-            'replaced' => $replacedRes,
-            'created' => $newEntry,
-        );
     }
 
     /**

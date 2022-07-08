@@ -347,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (confirm(i18next.t('replace-edited-file'))) {
             // Replace the file on the server
             AjaxC.postForm('app/controllers/RequestHandler.php', {
-              action: Action.Update,
+              action: Action.Replace,
               target: 'file',
               id: uploadId,
               entity_id: String(entity.id),
@@ -359,27 +359,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }).then(response => {
               return response.json();
             }).then(json => {
-              success(`app/download.php?f=${json.value.created.long_name}&storage=${json.value.created.storage}`);
+              success(`app/download.php?f=${json.value.long_name}&storage=${json.value.storage}`);
               tinymceEditImage.reset();
               reloadElement('filesdiv');
-                // now fetch the new url of the upload so we can replace our image with that.
-                // Problem is: we don't have the id of the new upload
-                // so get all the link to attached files and we will take the highest one (most recent upload id)
-                //const ids = [];
-                //document.querySelectorAll('[id^="upload-filename"]').forEach(l => {
-                //  ids.push(parseInt(l.getAttribute('id').split('_').pop(), 10));
-                //});
-                //const mostRecent = ids.sort((a, b) => a - b).pop();
-                //const imgHref = (document.getElementById(`upload-filename_${mostRecent}`) as HTMLLinkElement).href;
-                //const q = new URL(imgHref).searchParams;
-                // call the success callback function with the new URL
-                // replace or add data-uploadid="xyz"
-                let tinyContent = tinymce.activeEditor.getContent();
-                const search = `data-uploadid="${uploadId}"`;
-                const reg = new RegExp(search, 'g');
-                tinyContent = tinyContent.replace(reg, '');
-                tinymce.activeEditor.setContent(tinyContent);
-              //});
             });
           }
         // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
@@ -428,7 +410,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedImage = (tinymce.activeEditor.selection.getNode() as HTMLImageElement);
         // Get id and filename (real_name) from uploads table
         // this allows us to know which corresponding upload is selected so we can replace it if needed (after a crop for instance)
-        // Fixed: the data-uploadid attribute is missing in some cases because HTMLPurifier stripped it away between version 4.1.0? and 4.3.6
         const q = new URL(selectedImage.src).searchParams;
         const payload: Payload = {
           method: Method.GET,
@@ -442,16 +423,10 @@ document.addEventListener('DOMContentLoaded', () => {
           target: Target.UploadId,
         };
         AjaxC.send(payload).then(json => {
-          const uploadId = parseInt(String((json.value as any).id), 10);
-          selectedImage.dataset.uploadid = String(uploadId);
-          return {
-            id: uploadId,
-            filename: (json.value as any).real_name,
-          };
-        }).then(upload => {
+          const upload = json.value as Upload;
           tinymceEditImage.selected = true;
-          tinymceEditImage.uploadId = upload.id;
-          tinymceEditImage.filename = upload.filename;
+          tinymceEditImage.uploadId = parseInt(upload.id, 10);
+          tinymceEditImage.filename = upload.real_name;
         });
       } else {
         tinymceEditImage.reset();

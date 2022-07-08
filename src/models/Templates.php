@@ -185,7 +185,7 @@ class Templates extends AbstractTemplateEntity
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
 
-        $sql .= 'GROUP BY id ORDER BY is_pinned DESC, fullname, experiments_templates.ordering ASC';
+        $sql .= 'GROUP BY id ORDER BY fullname DESC, is_pinned DESC, experiments_templates.ordering ASC';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
@@ -206,6 +206,12 @@ class Templates extends AbstractTemplateEntity
             $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
         }
         return $this->readAll();
+    }
+
+    public function destroy(): bool
+    {
+        // delete from pinned too
+        return parent::destroy() && $this->Pins->cleanup();
     }
 
     /**

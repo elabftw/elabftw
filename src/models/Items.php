@@ -109,6 +109,9 @@ class Items extends AbstractConcreteEntity
         $sql = 'DELETE FROM items_links WHERE link_id = :link_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $this->Db->execute($req);
+
+        // delete from pinned
+        return $this->Pins->cleanup();
     }
 }

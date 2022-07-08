@@ -168,6 +168,15 @@ class Experiments extends AbstractConcreteEntity
         return $newId;
     }
 
+    /**
+     * Experiment is not actually deleted but the state is changed from normal to deleted
+     */
+    public function destroy(): bool
+    {
+        // delete from pinned too
+        return parent::destroy() && $this->Pins->cleanup();
+    }
+
     protected function getBoundEvents(): array
     {
         $sql = 'SELECT team_events.* from team_events WHERE experiment = :id';

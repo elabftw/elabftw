@@ -70,6 +70,18 @@ class Pins
     }
 
     /**
+     * Remove all traces of that entity because it has been set to deleted
+     */
+    public function cleanup(): bool
+    {
+        $sql = 'DELETE FROM pin_' . $this->Entity->type . '2users WHERE entity_id = :entity_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
+
+        return $this->Db->execute($req);
+    }
+
+    /**
      * Remove current entity from pinned of current user
      */
     private function rmFromPinned(): bool

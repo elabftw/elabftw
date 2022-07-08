@@ -508,16 +508,35 @@ CREATE TABLE `notifications` (
 
 
 --
--- Table structure for table `pin2users`
+-- Table structure for table `pin_experiments2users`
 --
 
-CREATE TABLE `pin2users` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `users_id` int(10) UNSIGNED NOT NULL,
-  `entity_id` int(10) UNSIGNED NOT NULL,
-  `type` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+CREATE TABLE `pin_experiments2users` (
+  `users_id` int UNSIGNED NOT NULL,
+  `entity_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`users_id`,`entity_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `pin_experiments_templates2users`
+--
+
+CREATE TABLE `pin_experiments_templates2users` (
+  `users_id` int UNSIGNED NOT NULL,
+  `entity_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`users_id`,`entity_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `pin_items2users`
+--
+
+CREATE TABLE `pin_items2users` (
+  `users_id` int UNSIGNED NOT NULL,
+  `entity_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`users_id`,`entity_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 --
 -- Table structure for table `status`
@@ -1153,22 +1172,54 @@ ALTER TABLE `users2team_groups`
   ADD CONSTRAINT `fk_users2team_groups_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Indexes for table `pin2users`
---
-ALTER TABLE `pin2users`
-  ADD KEY `fk_pin2users_userid` (`users_id`);
-
---
--- Constraints for table `pin2users`
---
-ALTER TABLE `pin2users`
-  ADD CONSTRAINT `fk_pin2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
 -- Constraints for table `users`
 --
 ALTER TABLE `users`
   ADD CONSTRAINT `fk_users_groups_id` FOREIGN KEY (`usergroup`) REFERENCES `groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `pin_experiments_templates2users`
+--
+ALTER TABLE `pin_experiments_templates2users`
+  ADD CONSTRAINT `fk_pin_experiments_templates2experiments_templates_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_pin_experiments_templates2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Indexes for table `pin_experiments2users`
+--
+ALTER TABLE `pin_experiments2users`
+  ADD KEY `fk_pin_experiments2users_userid` (`users_id`),
+  ADD KEY `fk_pin_experiments2experiments_id` (`entity_id`);
+
+--
+-- Constraints for table `pin_experiments2users`
+--
+ALTER TABLE `pin_experiments2users`
+  ADD CONSTRAINT `fk_pin_experiments2experiments_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_pin_experiments2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Indexes for table `pin_experiments_templates2users`
+--
+ALTER TABLE `pin_experiments_templates2users`
+  ADD KEY `fk_pin_experiments_templates2users_userid` (`users_id`),
+  ADD KEY `fk_pin_experiments_templates2experiments_templates_id` (`entity_id`);
+
+--
+-- Indexes for table `pin_items2users`
+--
+ALTER TABLE `pin_items2users`
+  ADD KEY `fk_pin_items2users_userid` (`users_id`),
+  ADD KEY `fk_pin_items2items_id` (`entity_id`);
+
+--
+-- Constraints for table `pin_items2users`
+--
+ALTER TABLE `pin_items2users`
+  ADD CONSTRAINT `fk_pin_items2items_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_pin_items2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
 
 COMMIT;
 

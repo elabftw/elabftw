@@ -202,7 +202,7 @@ class Uploads implements CrudInterface
         });
     }
 
-    public function update(UploadParamsInterface $params): bool
+    public function update(UploadParamsInterface $params): bool|array
     {
         $this->Entity->canOrExplode('write');
         if ($params->getTarget() === 'file') {
@@ -276,14 +276,21 @@ class Uploads implements CrudInterface
      * Attached files are immutable (change history is kept), so the current
      * file gets its state changed to "archived" and a new one is added
      */
-    private function replace(UploadedFile $file): bool
+    private function replace(UploadedFile $file): array
     {
         // read the current one to get the comment
         $upload = $this->read(new ContentParams());
-        $params = new CreateUpload($file->getClientOriginalName(), $file->getPathname(), $upload['comment']);
-        $this->create($params);
+        // archive the current
+        $replacedRes = $this->update(new UploadParams((string) self::STATE_ARCHIVED, 'state'));
+        // create new version
+        $newID = $this->create(new CreateUpload($file->getClientOriginalName(), $file->getPathname(), $upload['comment']));
+        $this->setId((int) $newID);
+        $newEntry = $this->read(new ContentParams());
 
-        return $this->update(new UploadParams((string) self::STATE_ARCHIVED, 'state'));
+        return array(
+            'replaced' => $replacedRes,
+            'created' => $newEntry,
+        );
     }
 
     /**

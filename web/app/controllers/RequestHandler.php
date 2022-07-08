@@ -111,8 +111,8 @@ try {
 
     // special case for uploading an edited json file back: it's a POSTed async form
     // for the rest of the cases, we redirect to the entity page edit mode because IIRC only the attached file update feature will use this
-    if ($Processor instanceof FormProcessor && !($Request->request->get('extraParam') === 'jsoneditor')) {
-        $Response = new RedirectResponse('../../' . $Processor->Entity->page . '.php?mode=edit&id=' . $Processor->Entity->id);
+    if ($Processor instanceof FormProcessor && !($Request->request->get('extraParam') === 'jsoneditor' || $Request->request->get('extraParam') === 'noRedirect')) {
+        $Response = new RedirectResponse('../../' . $Processor->Entity->page . '.php?mode=edit&id=' . $Processor->Entity->id . '&test=' . $Request->request->get('extraParam'));
         $Response->send();
         exit;
     }

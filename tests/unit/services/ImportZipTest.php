@@ -89,14 +89,14 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
             $this->fs,
         );
         $Import->import();
-        $this->assertEquals(2, $Import->inserted);
+        $this->assertEquals(1, $Import->inserted);
     }
 
-    public function testImportItems(): void
+    public function testImportExperimentsMulti(): void
     {
         $uploadedFile = new UploadedFile(
-            dirname(__DIR__, 2) . '/_data/importable.items.zip',
-            'importable.items.zip',
+            dirname(__DIR__, 2) . '/_data/importable-multi.zip',
+            'importable-multi.zip',
             null,
             UPLOAD_ERR_OK,
             true,
@@ -112,6 +112,28 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
         );
         $Import->import();
         $this->assertEquals(2, $Import->inserted);
+    }
+
+    public function testImportItems(): void
+    {
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/importable-item.zip',
+            'importable.items.zip',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        $Import = new ImportZip(
+            new Users(1, 1),
+            1,
+            'team',
+            'team',
+            $uploadedFile,
+            $this->fs,
+        );
+        $Import->import();
+        $this->assertEquals(1, $Import->inserted);
     }
 
     public function testImportNoJson(): void

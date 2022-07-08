@@ -129,6 +129,10 @@ export function getTinymceBaseConfig(page: string): object {
     images_reuse_filename: true,
     contextmenu: false,
     paste_data_images: Boolean(page === 'edit'),
+    // use the preprocessing function on paste event to fix the bgcolor attribute from libreoffice into proper background-color style
+    paste_preprocess: function(plugin, args) {
+      args.content = args.content.replaceAll('bgcolor="', 'style="background-color:');
+    },
     content_style: '.mce-content-body {font-size:10pt;}',
     codesample_languages: [
       {text: 'Bash', value: 'bash'},

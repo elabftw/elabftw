@@ -55,7 +55,7 @@ $destroySession = function () use ($App, $Request) {
 };
 
 // now if we are logged in through external auth, hit the external auth url
-if ((int) $App->Users->userData['auth_service'] === \Elabftw\Controllers\LoginController::AUTH_EXTERNAL) {
+if ((int) ($App->Users->userData['auth_service'] ?? 0) === \Elabftw\Controllers\LoginController::AUTH_EXTERNAL) {
     $redirectUrl = $App->Config->configArr['logout_url'];
     if (empty($redirectUrl)) {
         $redirectUrl = '../login.php';
@@ -143,15 +143,14 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
 
         $samlAuthLib = new SamlAuthLib($settings);
 
+        // destroy local session in all cases
+        $destroySession();
         // do not attempt SLO if no SLO is configured/supported
         if (!empty($settings['idp']['singleLogoutService']['url'])) {
-            // initiate SAML SLO, skip destroying session
+            // initiate SAML SLO
             $samlAuthLib->logout($redirectUrl, array(), null, $sessionIndex ?? null);
             exit;
         }
-
-        // otherwise, destroy session anyway
-        $destroySession();
     } catch (Exception $e) {
         // log error and show general error message
         $destroySession();  // destroy session anyway

@@ -126,7 +126,8 @@ export function getTinymceBaseConfig(page: string): object {
     toolbar1: 'undo redo | styleselect fontsizeselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | save',
     removed_menuitems: 'newdocument, image',
     image_caption: true,
-    images_reuse_filename: true,
+    images_reuse_filename: false, // if set to true the src url gets a date appended
+    images_upload_credentials: true,
     contextmenu: false,
     paste_data_images: Boolean(page === 'edit'),
     // use the preprocessing function on paste event to fix the bgcolor attribute from libreoffice into proper background-color style

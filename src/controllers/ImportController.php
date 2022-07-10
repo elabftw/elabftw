@@ -10,7 +10,7 @@
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\StorageFactory;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Interfaces\ImportInterface;
@@ -48,41 +48,38 @@ class ImportController implements ControllerInterface
     private function getImporter(): ImportInterface
     {
         $uploadedFile = $this->request->files->get('file');
+        $allowedExtensions = array('.eln', '.zip', '.csv');
 
-        switch ($this->request->request->get('type')) {
+        // figure out the filetype depending on file extension
+        switch ($uploadedFile->getClientOriginalExtension()) {
+            case 'eln':
+                return new ImportEln(
+                    $this->app->Users,
+                    (string) $this->request->request->get('target'),
+                    $this->request->request->getAlnum('canread'),
+                    $this->request->request->getAlnum('canwrite'),
+                    $uploadedFile,
+                    (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs(),
+                );
+            case 'zip':
+                return new ImportZip(
+                    $this->app->Users,
+                    (string) $this->request->request->get('target'),
+                    $this->request->request->getAlnum('canread'),
+                    $this->request->request->getAlnum('canwrite'),
+                    $uploadedFile,
+                    (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs(),
+                );
             case 'csv':
                 return new ImportCsv(
                     $this->app->Users,
-                    (int) $this->request->request->get('target'),
-                    (string) $this->request->request->get('delimiter'),
+                    (string) $this->request->request->get('target'),
                     $this->request->request->getAlnum('canread'),
                     $this->request->request->getAlnum('canwrite'),
                     $uploadedFile,
                 );
-            case 'archive':
-                // figure out the filetype depending on file extension
-                if ($uploadedFile->getClientOriginalExtension() === 'zip') {
-                    return new ImportZip(
-                        $this->app->Users,
-                        (int) $this->request->request->get('target'),
-                        $this->request->request->getAlnum('canread'),
-                        $this->request->request->getAlnum('canwrite'),
-                        $uploadedFile,
-                        (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs(),
-                    );
-                } elseif ($uploadedFile->getClientOriginalExtension() === 'eln') {
-                    return new ImportEln(
-                        $this->app->Users,
-                        (string) $this->request->request->get('target'),
-                        $this->request->request->getAlnum('canread'),
-                        $this->request->request->getAlnum('canwrite'),
-                        $uploadedFile,
-                        (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs(),
-                    );
-                }
-                // no break
             default:
-                throw new IllegalActionException('Invalid file type for import');
+                throw new ImproperActionException(sprintf(_('Error: invalid file extension for import. Allowed extensions: %s.'), implode(', ', $allowedExtensions)));
         }
     }
 }

@@ -15,10 +15,7 @@ use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TagParams;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Factories\EntityFactory;
-use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
@@ -30,52 +27,22 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use ZipArchive;
 
 /**
- * Import a .eln file
+ * Import a .eln file.
  */
 class ImportEln extends AbstractImport
 {
-    private AbstractEntity $Entity;
-
-    // path where we extract the archive content (subfolder of cache/elab)
-    private string $tmpPath;
-
     // path where the metadata.json file lives (first folder found in archive)
     private string $root;
 
     // complete graph: all nodes from metadata json
     private array $graph;
 
-    // the folder name where we extract the archive
-    private string $tmpDir;
-
-    // userid for experiments, category for items, for templates we don't care about the id (0 is sent anyway)
-    private int $targetNumber;
-
     /**
      * The $target will be userid_X or category_X or templates_X
      */
     public function __construct(Users $users, string $target, string $canread, string $canwrite, UploadedFile $uploadedFile, private FilesystemOperator $fs)
     {
-        $this->targetNumber = (int) explode('_', $target)[1];
-        $entityType = AbstractEntity::TYPE_ITEMS;
-        if (str_starts_with($target, 'userid')) {
-            // check that we can import stuff in experiments of target user
-            if ($this->targetNumber !== (int) $users->userData['userid'] && $users->isAdminOf($this->targetNumber) === false) {
-                throw new IllegalActionException('User tried to import archive in experiments of a user but they are not admin of that user');
-            }
-            $entityType = AbstractEntity::TYPE_EXPERIMENTS;
-            $users = new Users($this->targetNumber, $users->userData['team']);
-        }
-        // we try to import a template
-        if (str_starts_with($target, 'templates')) {
-            $entityType = AbstractEntity::TYPE_TEMPLATES;
-        }
-        // TODO check the category is in our team
-        parent::__construct($users, $this->targetNumber, $canread, $canwrite, $uploadedFile);
-        $this->Entity = (new EntityFactory($users, $entityType))->getEntity();
-        // set up a temporary directory in the cache to extract the archive to
-        $this->tmpDir = FsTools::getUniqueString();
-        $this->tmpPath = FsTools::getCacheFolder('elab') . '/' . $this->tmpDir;
+        parent::__construct($users, $target, $canread, $canwrite, $uploadedFile);
     }
 
     /**

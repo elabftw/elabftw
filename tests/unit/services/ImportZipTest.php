@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use League\Flysystem\Filesystem;
-use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -42,7 +41,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         $Import = new ImportZip(
             new Users(1, 1),
-            1,
+            'category_1',
             'team',
             'team',
             $uploadedFile,
@@ -62,7 +61,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         $Import = new ImportZip(
             new Users(1, 1),
-            1,
+            'category_1',
             'team',
             'team',
             $uploadedFile,
@@ -82,7 +81,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportZip(
             new Users(1, 1),
-            1,
+            'userid_1',
             'team',
             'team',
             $uploadedFile,
@@ -104,7 +103,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportZip(
             new Users(1, 1),
-            1,
+            'userid_1',
             'team',
             'team',
             $uploadedFile,
@@ -126,7 +125,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportZip(
             new Users(1, 1),
-            1,
+            'category_1',
             'team',
             'team',
             $uploadedFile,
@@ -148,13 +147,13 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportZip(
             new Users(1, 1),
-            1,
+            'category_1',
             'team',
             'team',
             $uploadedFile,
             $this->fs,
         );
-        $this->expectException(FilesystemException::class);
+        $this->expectException(ImproperActionException::class);
         $Import->import();
     }
 }

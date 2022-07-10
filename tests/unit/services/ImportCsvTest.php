@@ -28,8 +28,7 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportCsv(
             new Users(1, 1),
-            1,
-            ',',
+            'category_1',
             'team',
             'team',
             $uploadedFile,
@@ -51,8 +50,7 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportCsv(
             new Users(1, 1),
-            1,
-            'tab',
+            'category_1',
             'team',
             'team',
             $uploadedFile,
@@ -73,30 +71,7 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportCsv(
             new Users(1, 1),
-            1,
-            ',',
-            'team',
-            'team',
-            $uploadedFile,
-        );
-        $this->expectException(ImproperActionException::class);
-        $Import->import();
-    }
-
-    public function testImportBadDelimiter(): void
-    {
-        $uploadedFile = new UploadedFile(
-            dirname(__DIR__, 2) . '/_data/importable-tab.csv',
-            'tab.csv',
-            null,
-            UPLOAD_ERR_OK,
-            true,
-        );
-
-        $Import = new ImportCsv(
-            new Users(1, 1),
-            1,
-            ',',
+            'category_1',
             'team',
             'team',
             $uploadedFile,

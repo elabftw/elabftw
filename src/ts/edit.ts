@@ -15,7 +15,7 @@ import { getEditor } from './Editor.class';
 import { getEntity } from './misc';
 import Dropzone from 'dropzone';
 // don't overwrite default JS File API
-//import { File as DropzoneFile } from 'dropzone';
+import { File as DropzoneFile } from 'dropzone';
 import i18next from 'i18next';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       // once it is done
-      this.on('complete', function(answer: any) {
+      this.on('complete', function(answer: DropzoneFile) {
         // check the answer we get back from the controller
         const json = JSON.parse(answer.xhr.responseText);
         notif(json);
@@ -337,44 +337,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const tinyConfigForEdit = {
       images_upload_handler: (blobInfo, success): void => {
-        console.log('blobInfo', blobInfo, blobInfo.name(), blobInfo.filename());
         const dropZone = Dropzone.forElement('#elabftw-dropzone');
         // Edgecase for editing an image using tinymce ImageTools
         // Check if it was selected. This is set by an event hook below
-        console.log('images_upload_handler', tinymceEditImage);
         if (tinymceEditImage.selected === true) {
-          console.log('selected');
-          const uploadId = String(tinymceEditImage.uploadId);
-          const filename = tinymceEditImage.filename;
-          // Note: the confirm will unselect tinymceEditImage and we lose information
-          // so it is done after we grab the information from tinymceEditImage
-          // the new file name (long_name) is returned from RequestHandler.php
+          // Note: confirm will trigger the SelectionChange event hook below again
+          // Note: the new filename (long_name) is returned from RequestHandler.php
           if (confirm(i18next.t('replace-edited-file'))) {
             // Replace the file on the server
             AjaxC.postForm('app/controllers/RequestHandler.php', {
               action: Action.Replace,
               target: 'file',
-              id: uploadId,
+              id: String(tinymceEditImage.uploadId),
               entity_id: String(entity.id),
               entity_type: entity.type,
               model: Model.Upload,
-              content: new File([blobInfo.blob()], filename, { lastModified: new Date().getTime(), type: blobInfo.blob().type }),
+              content: new File(
+                [blobInfo.blob()],
+                tinymceEditImage.filename,
+                { lastModified: new Date().getTime(), type: blobInfo.blob().type },
+              ),
               extraParam: 'noRedirect',
             }).then(response => {
               return response.json();
             }).then(json => {
-              console.log(typeof success);
               success(`app/download.php?f=${json.value.long_name}&storage=${json.value.storage}`);
-              tinymceEditImage.reset();
+              // save here because using the old real_name will not return anything from the db (status is archived now)
+              updateEntity();
               reloadElement('filesdiv');
             });
           } else {
             // Revert changes if confirm is cancelled
+            // ToDo: several times undo, e.g. if user rotated twice 90° but does not confirm the change
             tinymce.activeEditor.undoManager.undo();
           }
         // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
+        // ToDo: this should not be a problem anymore after removing @types/tinymce 4.6.1 (seems to be incompatible with tinymce 5.10.5)
         } else if (typeof blobInfo.blob().name === 'undefined') {
-          console.log('no filename');
           const filename = prompt('Enter filename with extension e.g. .jpeg');
           if (typeof filename !== 'undefined' && filename !== null) {
             const file = new File([blobInfo.blob()], filename, { lastModified: new Date().getTime(), type: blobInfo.blob().type });
@@ -385,7 +384,6 @@ document.addEventListener('DOMContentLoaded', () => {
             tinymce.activeEditor.undoManager.undo();
           }
         } else {
-          console.log('default');
           dropZone.addFile(blobInfo.blob());
           dropZone.tinyImageSuccess = success;
         }
@@ -417,7 +415,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Hook into the SelectionChange event - This is to make sure we reset our control variable correctly
     tinymce.activeEditor.on('SelectionChange', () => {
       // Check if the user has selected an image
-      console.log(tinymceEditImage);
       if (tinymce.activeEditor.selection.getNode().tagName === 'IMG') {
         // Save all the details needed for replacing upload
         // Then check for and get those details when you are handling file uploads
@@ -441,15 +438,12 @@ document.addEventListener('DOMContentLoaded', () => {
           tinymceEditImage.selected = true;
           tinymceEditImage.uploadId = parseInt(upload.id, 10);
           tinymceEditImage.filename = upload.real_name;
-          console.log(tinymceEditImage);
         });
-      } else {
-        if (tinymceEditImage.selected === true) {
-          console.log(tinymce);
-          tinymce.activeEditor.uploadImages();
-        }
-        console.log('reset');
-        tinymceEditImage.reset();
+      } else if (tinymceEditImage.selected === true) {
+        // delay reset a bit so that images_upload_handler gets called first and can finish
+        setTimeout(() => {
+          tinymceEditImage.reset();
+        }, 50);
       }
     });
   }

@@ -276,7 +276,7 @@ export class Metadata {
         elements.push({
           name: name,
           element: this.generateElement(name, description),
-          position: parseInt(description.elabftwPosition, 10),
+          position: parseInt(description.elabftwPosition, 10) || 99999,
         });
       }
       // now display the names/values from extra_fields
@@ -305,7 +305,7 @@ export class Metadata {
         elements.push({
           name: name,
           element: this.generateInput(name, description),
-          position: parseInt(description.elabftwPosition, 10),
+          position: parseInt(description.elabftwPosition, 10) || 99999,
         });
       }
       // now display the inputs from extra_fields

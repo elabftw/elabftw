@@ -273,7 +273,11 @@ export class Metadata {
       // the input elements that will be created from the extra fields
       const elements = [];
       for (const [name, description] of Object.entries(json.extra_fields)) {
-        elements.push({ name: name, element: this.generateElement(name, description), position: parseInt(description.elabftwPosition, 10)});
+        elements.push({
+          name: name,
+          element: this.generateElement(name, description),
+          position: parseInt(description.elabftwPosition, 10),
+        });
       }
       // now display the names/values from extra_fields
       for (const element of elements.sort((a, b) => a.position - b.position)) {
@@ -298,7 +302,11 @@ export class Metadata {
       // the input elements that will be created from the extra fields
       const elements = [];
       for (const [name, description] of Object.entries(json.extra_fields)) {
-        elements.push({ name: name, element: this.generateInput(name, description), position: parseInt(description.elabftwPosition, 10)});
+        elements.push({
+          name: name,
+          element: this.generateInput(name, description),
+          position: parseInt(description.elabftwPosition, 10),
+        });
       }
       // now display the inputs from extra_fields
       for (const element of elements.sort((a, b) => a.position - b.position)) {

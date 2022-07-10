@@ -19,7 +19,6 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
-use Elabftw\Traits\UploadTrait;
 use function json_decode;
 use League\Flysystem\FilesystemOperator;
 use function mb_strlen;
@@ -32,8 +31,6 @@ use ZipArchive;
  */
 class ImportZip extends AbstractImport
 {
-    use UploadTrait;
-
     private AbstractEntity $Entity;
 
     private string $tmpPath;

@@ -16,9 +16,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use ZipArchive;
 
 /**
- * Mother class for importing zip or eln
+ * Mother class for importing zip file
  */
-abstract class AbstractImportArchive extends AbstractImport
+abstract class AbstractImportZip extends AbstractImport
 {
     // path where we extract the archive content (subfolder of cache/elab)
     protected string $tmpPath;

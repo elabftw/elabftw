@@ -26,7 +26,7 @@ use PDO;
 /**
  * Import a .elabftw.zip file into the database.
  */
-class ImportZip extends AbstractImportArchive
+class ImportZip extends AbstractImportZip
 {
     /**
      * Do the import

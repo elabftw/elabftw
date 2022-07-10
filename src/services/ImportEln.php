@@ -26,7 +26,7 @@ use function sprintf;
 /**
  * Import a .eln file.
  */
-class ImportEln extends AbstractImportArchive
+class ImportEln extends AbstractImportZip
 {
     // path where the metadata.json file lives (first folder found in archive)
     private string $root;

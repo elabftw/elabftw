@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use function basename;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\EntityParams;
@@ -21,9 +22,10 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
-use Elabftw\Traits\UploadTrait;
+use function hash_file;
 use function json_decode;
 use League\Flysystem\FilesystemOperator;
+use function sprintf;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use ZipArchive;
 
@@ -32,39 +34,44 @@ use ZipArchive;
  */
 class ImportEln extends AbstractImport
 {
-    use UploadTrait;
-
     private AbstractEntity $Entity;
 
+    // path where we extract the archive content (subfolder of cache/elab)
     private string $tmpPath;
 
+    // path where the metadata.json file lives (first folder found in archive)
     private string $root;
 
+    // complete graph: all nodes from metadata json
     private array $graph;
 
-    // the folder where we extract the archive
+    // the folder name where we extract the archive
     private string $tmpDir;
 
-    private int $categoryOrUserid;
+    // userid for experiments, category for items, for templates we don't care about the id (0 is sent anyway)
+    private int $targetNumber;
 
+    /**
+     * The $target will be userid_X or category_X or templates_X
+     */
     public function __construct(Users $users, string $target, string $canread, string $canwrite, UploadedFile $uploadedFile, private FilesystemOperator $fs)
     {
-        $this->categoryOrUserid = (int) explode('_', $target)[1];
+        $this->targetNumber = (int) explode('_', $target)[1];
         $entityType = AbstractEntity::TYPE_ITEMS;
         if (str_starts_with($target, 'userid')) {
             // check that we can import stuff in experiments of target user
-            if ($this->categoryOrUserid !== (int) $users->userData['userid'] && $users->isAdminOf($this->categoryOrUserid) === false) {
+            if ($this->targetNumber !== (int) $users->userData['userid'] && $users->isAdminOf($this->targetNumber) === false) {
                 throw new IllegalActionException('User tried to import archive in experiments of a user but they are not admin of that user');
             }
             $entityType = AbstractEntity::TYPE_EXPERIMENTS;
-            $users = new Users($this->categoryOrUserid, $users->userData['team']);
+            $users = new Users($this->targetNumber, $users->userData['team']);
         }
         // we try to import a template
         if (str_starts_with($target, 'templates')) {
             $entityType = AbstractEntity::TYPE_TEMPLATES;
         }
         // TODO check the category is in our team
-        parent::__construct($users, $this->categoryOrUserid, $canread, $canwrite, $uploadedFile);
+        parent::__construct($users, $this->targetNumber, $canread, $canwrite, $uploadedFile);
         $this->Entity = (new EntityFactory($users, $entityType))->getEntity();
         // set up a temporary directory in the cache to extract the archive to
         $this->tmpDir = FsTools::getUniqueString();
@@ -84,18 +91,22 @@ class ImportEln extends AbstractImport
      */
     public function import(): void
     {
+        // start by extracting the archive to the temporary folder
         $Zip = new ZipArchive();
         $Zip->open($this->UploadedFile->getPathname());
         $Zip->extractTo($this->tmpPath);
 
+        // figure out the path to the root of the eln (where the metadata file lives)
+        // the name of the folder is not fixed, so list folders and pick the first one found (there should be only one)
         $listing = $this->fs->listContents($this->tmpDir);
-        $root = '';
         foreach ($listing as $item) {
             if ($item instanceof \League\Flysystem\DirectoryAttributes) {
                 $this->root = $item->path();
                 break;
             }
         }
+
+        // now read the metadata json file
         $file = '/ro-crate-metadata.json';
         $content = $this->fs->read($this->root . $file);
         $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
@@ -123,7 +134,7 @@ class ImportEln extends AbstractImport
 
     private function importRootDataset(array $dataset): void
     {
-        $createTarget = (string) $this->categoryOrUserid;
+        $createTarget = (string) $this->targetNumber;
         if ($this->Entity instanceof Experiments) {
             // no template
             $createTarget = '-1';

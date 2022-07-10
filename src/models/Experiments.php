@@ -45,6 +45,7 @@ class Experiments extends AbstractConcreteEntity
 
         $tpl = (int) $params->getContent();
         // do we want template ?
+        // $tpl can be template id, or 0: common template, or -1: null body
         if ($tpl > 0) {
             $Templates->setId($tpl);
             $templateArr = $Templates->readOne();

@@ -10,7 +10,6 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\EntityFactory;
@@ -36,26 +35,22 @@ abstract class AbstractImport implements ImportInterface
 
     protected AbstractEntity $Entity;
 
-    // path where we extract the archive content (subfolder of cache/elab)
-    protected string $tmpPath;
+    protected array $allowedMimes = array();
 
-    // the folder name where we extract the archive
-    protected string $tmpDir;
-
-    public function __construct(protected Users $Users, protected string $target, protected string $canread, protected string $canwrite, protected UploadedFile $UploadedFile)
+    public function __construct(protected Users $Users, string $target, protected string $canread, protected string $canwrite, protected UploadedFile $UploadedFile)
     {
         $this->Db = Db::getConnection();
-        $entityType = $this->processTarget();
-        $this->Entity = (new EntityFactory($this->Users, $entityType))->getEntity();
-        // set up a temporary directory in the cache to extract the archive to
-        $this->tmpDir = FsTools::getUniqueString();
-        $this->tmpPath = FsTools::getCacheFolder('elab') . '/' . $this->tmpDir;
+        // target will look like items:N or experiments:N or experiments_templates:0
+        // where N is the category for items, and userid for experiments
+        [$type, $id] = explode(':', $target);
+        $this->targetNumber = (int) $id;
+        $this->setTargetUsers($type);
+        $this->Entity = (new EntityFactory($this->Users, $type))->getEntity();
         $this->canread = Check::visibility($canread);
         $this->canwrite = Check::visibility($canwrite);
         if ($this->UploadedFile->getError()) {
             throw new ImproperActionException($this->UploadedFile->getErrorMessage());
         }
-
         $this->checkMimeType();
     }
 
@@ -64,45 +59,33 @@ abstract class AbstractImport implements ImportInterface
         return $this->inserted;
     }
 
-    protected function processTarget(): string
+    protected function setTargetUsers(string $type): void
     {
-        // we try to import a template and don't care about the rest
-        if (str_starts_with($this->target, 'templates')) {
-            return AbstractEntity::TYPE_TEMPLATES;
+        switch ($type) {
+            case AbstractEntity::TYPE_TEMPLATES:
+                // for templates we can only import for our user, so there is no target and nothing to check
+            case AbstractEntity::TYPE_ITEMS:
+                // TODO check the category is in our team
+                return;
+            case AbstractEntity::TYPE_EXPERIMENTS:
+                // check that we can import stuff in experiments of target user
+                if ($this->targetNumber !== (int) $this->Users->userData['userid'] && $this->Users->isAdminOf($this->targetNumber) === false) {
+                    throw new IllegalActionException('User tried to import archive in experiments of a user but they are not admin of that user');
+                }
+                // set the Users object to the target user
+                $this->Users = new Users($this->targetNumber, $this->Users->userData['team']);
+                break;
+            default:
+                throw new IllegalActionException('Incorrect target for import action.');
         }
-        $this->targetNumber = (int) explode('_', $this->target)[1];
-        if (str_starts_with($this->target, 'userid')) {
-            // check that we can import stuff in experiments of target user
-            if ($this->targetNumber !== (int) $this->Users->userData['userid'] && $this->Users->isAdminOf($this->targetNumber) === false) {
-                throw new IllegalActionException('User tried to import archive in experiments of a user but they are not admin of that user');
-            }
-            // set the Users object to the target user
-            $this->Users = new Users($this->targetNumber, $this->Users->userData['team']);
-            return AbstractEntity::TYPE_EXPERIMENTS;
-        }
-        // TODO check the category is in our team
-        return AbstractEntity::TYPE_ITEMS;
     }
 
     /**
-     * Look at mime type. not a trusted source, but it can prevent dumb errors
-     * There is null in the mimes array because it can happen that elabftw files are like that.
+     * Look at MIME type. Not a trusted source, but it can prevent dumb errors.
      */
     protected function checkMimeType(): bool
     {
-        $mimes = array(
-            null,
-            'application/csv',
-            'application/vnd.ms-excel',
-            'text/plain',
-            'text/csv',
-            'text/tsv',
-            'application/zip',
-            'application/force-download',
-            'application/x-zip-compressed',
-        );
-
-        if (in_array($this->UploadedFile->getMimeType(), $mimes, true)) {
+        if (in_array($this->UploadedFile->getMimeType(), $this->allowedMimes, true)) {
             return true;
         }
         throw new ImproperActionException("This doesn't look like the right kind of file. Import aborted.");

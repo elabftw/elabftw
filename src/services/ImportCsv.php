@@ -24,6 +24,14 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class ImportCsv extends AbstractImport
 {
+    protected array $allowedMimes = array(
+        'application/csv',
+        'application/vnd.ms-excel',
+        'text/plain',
+        'text/csv',
+        'text/tsv',
+    );
+
     public function __construct(Users $users, string $target, string $canread, string $canwrite, UploadedFile $uploadedFile)
     {
         parent::__construct($users, $target, $canread, $canwrite, $uploadedFile);

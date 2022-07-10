@@ -41,7 +41,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         $Import = new ImportZip(
             new Users(1, 1),
-            'category_1',
+            'items:1',
             'team',
             'team',
             $uploadedFile,
@@ -61,7 +61,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         $Import = new ImportZip(
             new Users(1, 1),
-            'category_1',
+            'items:1',
             'team',
             'team',
             $uploadedFile,
@@ -81,7 +81,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportZip(
             new Users(1, 1),
-            'userid_1',
+            'experiments:1',
             'team',
             'team',
             $uploadedFile,
@@ -103,7 +103,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportZip(
             new Users(1, 1),
-            'userid_1',
+            'experiments:1',
             'team',
             'team',
             $uploadedFile,
@@ -125,7 +125,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportZip(
             new Users(1, 1),
-            'category_1',
+            'items:1',
             'team',
             'team',
             $uploadedFile,
@@ -147,7 +147,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportZip(
             new Users(1, 1),
-            'category_1',
+            'items:1',
             'team',
             'team',
             $uploadedFile,

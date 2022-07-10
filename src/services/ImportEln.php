@@ -18,18 +18,15 @@ use Elabftw\Elabftw\TagParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\Users;
 use function hash_file;
 use function json_decode;
-use League\Flysystem\FilesystemOperator;
+use League\Flysystem\UnableToReadFile;
 use function sprintf;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use ZipArchive;
 
 /**
  * Import a .eln file.
  */
-class ImportEln extends AbstractImport
+class ImportEln extends AbstractImportArchive
 {
     // path where the metadata.json file lives (first folder found in archive)
     private string $root;
@@ -38,31 +35,10 @@ class ImportEln extends AbstractImport
     private array $graph;
 
     /**
-     * The $target will be userid_X or category_X or templates_X
-     */
-    public function __construct(Users $users, string $target, string $canread, string $canwrite, UploadedFile $uploadedFile, private FilesystemOperator $fs)
-    {
-        parent::__construct($users, $target, $canread, $canwrite, $uploadedFile);
-    }
-
-    /**
-     * Cleanup: remove the temporary folder created
-     */
-    public function __destruct()
-    {
-        $this->fs->deleteDirectory($this->tmpDir);
-    }
-
-    /**
      * Do the import
      */
     public function import(): void
     {
-        // start by extracting the archive to the temporary folder
-        $Zip = new ZipArchive();
-        $Zip->open($this->UploadedFile->getPathname());
-        $Zip->extractTo($this->tmpPath);
-
         // figure out the path to the root of the eln (where the metadata file lives)
         // the name of the folder is not fixed, so list folders and pick the first one found (there should be only one)
         $listing = $this->fs->listContents($this->tmpDir);
@@ -75,7 +51,11 @@ class ImportEln extends AbstractImport
 
         // now read the metadata json file
         $file = '/ro-crate-metadata.json';
-        $content = $this->fs->read($this->root . $file);
+        try {
+            $content = $this->fs->read($this->root . $file);
+        } catch (UnableToReadFile $e) {
+            throw new ImproperActionException(sprintf(_('Error: could not read archive file properly! (missing %s)'), $file));
+        }
         $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         $this->graph = $json['@graph'];
         // find the node describing the crate

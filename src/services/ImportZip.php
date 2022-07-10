@@ -17,48 +17,28 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\Users;
 use function is_readable;
 use function json_decode;
-use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToReadFile;
 use function mb_strlen;
 use PDO;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use ZipArchive;
 
 /**
  * Import a .elabftw.zip file into the database.
  */
-class ImportZip extends AbstractImport
+class ImportZip extends AbstractImportArchive
 {
-    public function __construct(Users $users, string $target, string $canread, string $canwrite, UploadedFile $uploadedFile, private FilesystemOperator $fs)
-    {
-        parent::__construct($users, $target, $canread, $canwrite, $uploadedFile);
-    }
-
-    /**
-     * Cleanup: remove the temporary folder created
-     */
-    public function __destruct()
-    {
-        $this->fs->deleteDirectory($this->tmpDir);
-    }
-
     /**
      * Do the import
      * We get all the info we need from the embedded .json file
      */
     public function import(): void
     {
-        $Zip = new ZipArchive();
-        $Zip->open($this->UploadedFile->getPathname());
-        $Zip->extractTo($this->tmpPath);
-
+        $file = '/.elabftw.json';
         try {
-            $content = $this->fs->read($this->tmpDir . '/.elabftw.json');
+            $content = $this->fs->read($this->tmpDir . $file);
         } catch (UnableToReadFile $e) {
-            throw new ImproperActionException(_('Error: it appears this zip file was not created by eLabFTW! (missing .elabftw.json)'));
+            throw new ImproperActionException(sprintf(_('Error: could not read archive file properly! (missing %s)'), $file));
         }
         $this->importAll(json_decode($content, true, 512, JSON_THROW_ON_ERROR));
     }

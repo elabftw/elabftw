@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = {
       'type': 'archive',
       'file': el.files[0],
-      'target': 'templates_0',
+      'target': 'experiments_templates:0',
       'canread': 'team',
       'canwrite': 'user',
     };

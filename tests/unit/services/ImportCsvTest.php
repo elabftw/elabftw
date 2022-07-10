@@ -28,7 +28,7 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportCsv(
             new Users(1, 1),
-            'category_1',
+            'items:1',
             'team',
             'team',
             $uploadedFile,
@@ -50,7 +50,7 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportCsv(
             new Users(1, 1),
-            'category_1',
+            'items:1',
             'team',
             'team',
             $uploadedFile,
@@ -71,7 +71,7 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportCsv(
             new Users(1, 1),
-            'category_1',
+            'items:1',
             'team',
             'team',
             $uploadedFile,

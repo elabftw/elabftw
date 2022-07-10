@@ -37,12 +37,12 @@
             <option selected disabled>-------</option>
             <option disabled>{{ 'Import in database'|trans }}</option>
             {% for itemsType in itemsCategoryArr %}
-              <option value='category_{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
+              <option value='items:{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
             {% endfor %}
             <option disabled>{{ 'Import in experiments'|trans }}</option>
             {# if we are admin we can import in other users experiments, otherwise just for ourself #}
             {% for user in allTeamUsersArr|filter(u => App.Users.userData.is_admin ? true : u.userid == App.Users.userData.userid ? u) %}
-              <option value='userid_{{ user.userid }}'>{{ user.fullname|raw }}</option>
+              <option value='experiments:{{ user.userid }}'>{{ user.fullname|raw }}</option>
             {% endfor %}
           </select>
 

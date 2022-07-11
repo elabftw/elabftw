@@ -74,6 +74,7 @@ try {
 
     $template = 'team.html';
     $renderArr = array(
+        'Entity' => $Templates,
         'Scheduler' => $Scheduler,
         'allItems' => $allItems,
         'itemsArr' => $itemsArr,

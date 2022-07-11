@@ -41,8 +41,10 @@ class ImportController implements ControllerInterface
         );
         // @phpstan-ignore-next-line
         $this->app->Session->getFlashBag()->add('ok', $msg);
-        // TODO redirect to correct page
-        return new RedirectResponse('../../database.php');
+        if (str_starts_with((string) $this->request->request->get('target'), 'items')) {
+            return new RedirectResponse('../../database.php?order=lastchange');
+        }
+        return new RedirectResponse('../../experiments.php?order=lastchange');
     }
 
     private function getImporter(): ImportInterface

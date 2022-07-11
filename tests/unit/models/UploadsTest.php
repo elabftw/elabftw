@@ -71,4 +71,13 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $upArr = $Uploads->read(new ContentParams());
         $this->assertEquals($upArr['storage'], $Uploads->getStorageFromLongname($upArr['long_name']));
     }
+
+    public function testGetIdFromLongname(): void
+    {
+        $Uploads = new Uploads($this->Entity);
+        $id = $Uploads->create(new CreateUpload('example.png', dirname(__DIR__, 2) . '/_data/example.png'));
+        $Uploads->setId($id);
+        $upArr = $Uploads->read(new ContentParams());
+        $this->assertEquals($upArr['id'], $Uploads->getIdFromLongname($upArr['long_name']));
+    }
 }

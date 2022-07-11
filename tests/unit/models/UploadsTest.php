@@ -97,9 +97,9 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $Uploads->setId($id);
         // need to use readAll() because read() only gets entries with state = STATE_NORMAL
         $upArrAfter = $Uploads->readAll();
-        $upArrAfter = array_filter($upArrAfter, function ($u) use ($id) {
+        $upArrAfter = array_values(array_filter($upArrAfter, function ($u) use ($id) {
             return ((int) $u['id']) === $id;
-        });
+        }));
 
         // access the updated entry in the nested array
         $this->assertEquals((int) $upArrAfter[0]['state'], $Uploads::STATE_ARCHIVED);

@@ -11,7 +11,9 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\UploadParams;
 use Elabftw\Services\StorageFactory;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadsTest extends \PHPUnit\Framework\TestCase
 {
@@ -79,5 +81,21 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $Uploads->setId($id);
         $upArr = $Uploads->read(new ContentParams());
         $this->assertEquals($upArr['id'], $Uploads->getIdFromLongname($upArr['long_name']));
+    }
+
+    public function testReplace(): void
+    {
+        $Uploads = new Uploads($this->Entity);
+        $id = $Uploads->create(new CreateUpload('example.png', dirname(__DIR__, 2) . '/_data/example.png'));
+        $Uploads->setId($id);
+        $upArrBefore = $Uploads->read(new ContentParams());
+
+        $upArrNew = $Uploads->replace(new UploadParams('', 'file', new UploadedFile(dirname(__DIR__, 2) . '/_data/example.png', 'example.png')));
+        $this->assertIsArray($upArrNew);
+
+        $Uploads->setId($id);
+        $upArrAfter = $Uploads->read(new ContentParams());
+
+        $this->assertEquals($upArrAfter['state'], $Uploads::STATE_ARCHIVED);
     }
 }

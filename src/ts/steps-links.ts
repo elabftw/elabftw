@@ -67,10 +67,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.which === 13 || e.type === 'focusout') {
       const content = e.currentTarget.value;
       if (content.length > 0) {
-        StepC.create(content).then(() => {
+        StepC.create(content).then(json => {
           reloadElement('stepsDiv');
           // clear input field
           e.currentTarget.value = '';
+
+          if (document.getElementById('stepsDiv').hidden) {
+            const msg = {
+              'msg': i18next.t('step-added'),
+              'res': true,
+            };
+            if (!json.res) {
+               msg.msg = i18next.t('step-not-added');
+            }
+            notif(msg);
+          }
         });
       }
     }
@@ -162,12 +173,23 @@ document.addEventListener('DOMContentLoaded', () => {
       if (Number.isNaN(target)) {
         return;
       }
-      LinkC.create(target).then(() => {
+      LinkC.create(target).then(json => {
         // only reload children of links_div_id
         reloadElement('links_div_' + entity.id).then(() => {
           // clear input field
           (document.getElementById('linkinput') as HTMLInputElement).value = '';
         });
+
+        if (document.getElementById('linksDiv').hidden) {
+          const msg = {
+            'msg': i18next.t('link-added'),
+            'res': true,
+          };
+          if (!json.res) {
+             msg.msg = i18next.t('link-not-added');
+          }
+          notif(msg);
+        }
       });
       $(this).val('');
     }

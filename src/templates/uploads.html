@@ -184,7 +184,7 @@
                     <!-- replace upload form -->
                     <div id='replaceUploadForm_{{ upload.id }}' hidden>
                       <form enctype='multipart/form-data' action='app/controllers/RequestHandler.php' method='POST'>
-                        <input type='hidden' name='action' value='update' />
+                        <input type='hidden' name='action' value='replace' />
                         <input type='hidden' name='target' value='file' />
                         <input type='hidden' name='entity_id' value='{{ upload.item_id }}' />
                         <input type='hidden' name='entity_type' value='{{ upload.type }}' />

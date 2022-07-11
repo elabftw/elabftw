@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
               'res': true,
             };
             if (!json.res) {
-               msg.msg = i18next.t('step-not-added');
+              msg.msg = i18next.t('step-not-added');
             }
             notif(msg);
           }
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'res': true,
           };
           if (!json.res) {
-             msg.msg = i18next.t('link-not-added');
+            msg.msg = i18next.t('link-not-added');
           }
           notif(msg);
         }

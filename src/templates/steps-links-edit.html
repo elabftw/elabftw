@@ -9,7 +9,7 @@
           </div>
           <input aria-label='{{ 'Add a step'|trans }}' type='text' size='60' class='form-control stepinput' data-id='{{ Entity.id }}' />
       </div>
-      <div id='stepsDiv' class='mt-2'>
+      <div id='stepsDiv' class='mt-2' data-save-hidden='stepsDiv'>
         <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.type ? Entity.type : 'items_types'}}_steps'>
           {% for step in Entity.entityData.steps %}
             <div class='input-group mb-2' id='step_{{ step.id }}'>
@@ -99,7 +99,7 @@
               </select>
             </div>
         </div>
-        <div id='linksDiv' class='mt-2'>
+        <div id='linksDiv' class='mt-2' data-save-hidden='linksDiv'>
           <div id='links_div_{{ Entity.id }}'>
               {% if Entity.entityData.links %}
               <ul class='list-group'>

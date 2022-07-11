@@ -21,6 +21,7 @@
     "@fullcalendar/interaction": "^5.1.0",
     "@fullcalendar/list": "^5.1.0",
     "@fullcalendar/timegrid": "^5.1.0",
+    "@types/dropzone": "^5.7.4",
     "bio-parsers": "^8.3.16",
     "bootstrap": "^4.5.0",
     "bootstrap-markdown-fa5": "2.10.*",

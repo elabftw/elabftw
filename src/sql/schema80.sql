@@ -2,6 +2,8 @@
 -- drop some unnecessary id columns part 1
 -- check data integrity
 START TRANSACTION;
+    -- allow dropping primary keys before creating new ones
+    SET SESSION sql_require_primary_key = 0;
     -- favtags2users change PRIMARY KEY
     ALTER TABLE `favtags2users` DROP `id`;
     ALTER TABLE `favtags2users` ADD PRIMARY KEY(`users_id`, `tags_id`);

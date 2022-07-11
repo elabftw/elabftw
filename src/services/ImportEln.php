@@ -95,14 +95,14 @@ class ImportEln extends AbstractImportZip
         $this->Entity->update(new EntityParams($dataset['text'] ?? '', 'bodyappend'));
 
         // TAGS
-        if ($dataset['keywords']) {
+        if (isset($dataset['keywords'])) {
             foreach ($dataset['keywords'] as $tag) {
                 $this->Entity->Tags->create(new TagParams($tag));
             }
         }
 
         // LINKS
-        if ($dataset['mentions']) {
+        if (isset($dataset['mentions'])) {
             $linkHtml = sprintf('<h1>%s</h1><ul>', _('Links'));
             foreach ($dataset['mentions'] as $link) {
                 $linkHtml .= sprintf("<li><a href='%s'>%s</a></li>", $link['@id'], $link['name']);
@@ -112,7 +112,7 @@ class ImportEln extends AbstractImportZip
         }
 
         // COMMENTS
-        if ($dataset['comment']) {
+        if (isset($dataset['comment'])) {
             foreach ($dataset['comment'] as $comment) {
                 $content = sprintf(
                     "Imported comment from %s %s (%s)\n\n%s",

@@ -14,11 +14,16 @@ import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
 import { getEntity } from './misc';
 import Dropzone from 'dropzone';
+import type { DropzoneFile } from 'dropzone';
 import i18next from 'i18next';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
 import UploadClass from './Upload.class';
 import EntityClass from './Entity.class';
+
+class CustomDropzone extends Dropzone {
+  tinyImageSuccess: null | undefined | ((url: string) => void);
+}
 
 // the dropzone is created programmatically, disable autodiscover
 Dropzone.autoDiscover = false;
@@ -68,14 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       // once it is done
-      this.on('complete', function(answer: any) {
+      this.on('complete', function(answer: DropzoneFile) {
         // check the answer we get back from the controller
         const json = JSON.parse(answer.xhr.responseText);
         notif(json);
         // reload the #filesdiv once the file is uploaded
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
           reloadElement('filesdiv').then(() => {
-            const dropZone = Dropzone.forElement(dropZoneElement);
+            const dropZone = Dropzone.forElement(dropZoneElement) as CustomDropzone;
             // Check to make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
             if (typeof dropZone.tinyImageSuccess !== 'undefined' && dropZone.tinyImageSuccess !== null) {
               // Uses the newly updated HTML element for the uploads section to find the last file uploaded and use that to get the remote url for the image.
@@ -335,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const tinyConfigForEdit = {
       images_upload_handler: (blobInfo, success): void => {
-        const dropZone = Dropzone.forElement('#elabftw-dropzone');
+        const dropZone = Dropzone.forElement('#elabftw-dropzone') as CustomDropzone;
         // Edgecase for editing an image using tinymce ImageTools
         // Check if it was selected. This is set by an event hook below
         if (tinymceEditImage.selected === true) {
@@ -374,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (typeof blobInfo.blob().name === 'undefined') {
           const filename = prompt('Enter filename with extension e.g. .jpeg');
           if (typeof filename !== 'undefined' && filename !== null) {
-            const file = new File([blobInfo.blob()], filename, { lastModified: new Date().getTime(), type: blobInfo.blob().type });
+            const file = new File([blobInfo.blob()], filename, { lastModified: new Date().getTime(), type: blobInfo.blob().type }) as DropzoneFile;
             dropZone.addFile(file);
             dropZone.tinyImageSuccess = success;
           } else {

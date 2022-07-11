@@ -14,8 +14,6 @@ import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
 import { getEntity } from './misc';
 import Dropzone from 'dropzone';
-// don't overwrite default JS File API
-import { File as DropzoneFile } from 'dropzone';
 import i18next from 'i18next';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
@@ -70,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       // once it is done
-      this.on('complete', function(answer: DropzoneFile) {
+      this.on('complete', function(answer: any) {
         // check the answer we get back from the controller
         const json = JSON.parse(answer.xhr.responseText);
         notif(json);
@@ -408,8 +406,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     tinymce.init(Object.assign(tinyConfig, tinyConfigForEdit));
-    // Hook into the blur event - Finalize potential changes to images
+    // Hook into the blur event - Finalize potential changes to images if user clicks outside of editor
     tinymce.activeEditor.on('blur', () => {
+      // this will trigger the images_upload_handler event hook defined further above
       tinymce.activeEditor.uploadImages();
     });
     // Hook into the SelectionChange event - This is to make sure we reset our control variable correctly

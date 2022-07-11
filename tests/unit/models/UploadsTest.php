@@ -92,6 +92,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
 
         $upArrNew = $Uploads->replace(new UploadParams('', 'file', new UploadedFile(dirname(__DIR__, 2) . '/_data/example.png', 'example.png')));
         $this->assertIsArray($upArrNew);
+        $this->assertEquals($upArrBefore['comment'], $upArrNew['comment']);
 
         $Uploads->setId($id);
         $upArrAfter = $Uploads->read(new ContentParams());

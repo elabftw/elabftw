@@ -43,12 +43,12 @@ class Uploads implements CrudInterface
 
     public const STATE_DELETED = 3;
 
+    public const STATE_ARCHIVED = 2;
+
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
     private const BIG_FILE_THRESHOLD = 50000000;
 
     private const STATE_NORMAL = 1;
-
-    private const STATE_ARCHIVED = 2;
 
     protected Db $Db;
 

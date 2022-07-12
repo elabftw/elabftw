@@ -38,17 +38,16 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
     {
         // items will show category instead of date as file name prefix
         if ($this->Entity instanceof Items || $this->Entity instanceof ItemsTypes) {
-            $prefix = 'category';
+            $prefix = Filter::forFilesystem($this->Entity->entityData['category']);
         } elseif ($this->Entity instanceof Templates) {
             $prefix = 'Experiment template';
         } else { // Experiments
-            $prefix = 'date';
+            $prefix = Filter::forFilesystem($this->Entity->entityData['date']);
         }
 
         return sprintf(
             '%s - %s - %s',
-            // category is user input, better filter it
-            Filter::forFilesystem($this->Entity->entityData[$prefix]),
+            $prefix,
             Filter::forFilesystem($this->Entity->entityData['title']),
             Tools::getShortElabid($this->Entity->entityData['elabid'] ?? ''),
         );

@@ -30,7 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
 use function trim;
 
 /**
- * For experiments.php
+ * For displaying an entity in show, view or edit mode
  */
 abstract class AbstractEntityController implements ControllerInterface
 {
@@ -38,9 +38,17 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $categoryArr = array();
 
+    protected array $visibilityArr = array();
+
+    // all the users from the current team
+    protected array $allTeamUsersArr = array();
+
     public function __construct(protected App $App, protected AbstractEntity $Entity)
     {
         $this->Templates = new Templates($this->Entity->Users);
+        $TeamGroups = new TeamGroups($this->Entity->Users);
+        $this->visibilityArr = $TeamGroups->getVisibilityList();
+        $this->allTeamUsersArr = $this->App->Users->readAllFromTeam();
     }
 
     /**
@@ -66,10 +74,6 @@ abstract class AbstractEntityController implements ControllerInterface
         // create the DisplayParams object from the query
         $DisplayParams = new DisplayParams();
         $DisplayParams->adjust($this->App);
-
-        // VISIBILITY LIST
-        $TeamGroups = new TeamGroups($this->Entity->Users);
-        $visibilityArr = $TeamGroups->getVisibilityList();
 
         // CATEGORY FILTER
         if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {
@@ -107,7 +111,8 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         // Quicksearch
-        $extendedError = $this->prepareAdvancedSearchQuery($visibilityArr, $TeamGroups->readGroupsWithUsersFromUser());
+        $TeamGroups = new TeamGroups($this->Entity->Users);
+        $extendedError = $this->prepareAdvancedSearchQuery($TeamGroups->readGroupsWithUsersFromUser());
 
         $itemsArr = $this->getItemsArr();
         // get tags separately
@@ -132,21 +137,22 @@ abstract class AbstractEntityController implements ControllerInterface
         $template = 'show.html';
 
         $renderArr = array(
+            'allTeamUsersArr' => $this->allTeamUsersArr,
             'DisplayParams' => $DisplayParams,
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
             'deletableXp' => $this->getDeletableXp(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'favTagsArr' => $favTagsArr,
-            'pinnedArr' => $this->Entity->Pins->getPinned(),
+            'pinnedArr' => $this->Entity->Pins->readAll(),
             'itemsArr' => $itemsArr,
             // generate light show page
             'searchPage' => $isSearchPage,
             'searchType' => $isSearchPage ? 'something' : $DisplayParams->searchType,
             'tagsArr' => $tagsArr,
             'tagsArrForSelect' => $tagsArrForSelect,
-            'templatesArr' => $this->Templates->readForUser(),
-            'visibilityArr' => $visibilityArr,
+            'templatesArr' => $this->Templates->Pins->readAll(),
+            'visibilityArr' => $this->visibilityArr,
             'extendedError' => $extendedError,
         );
         $Response = new Response();
@@ -177,14 +183,21 @@ abstract class AbstractEntityController implements ControllerInterface
             (int) $this->App->Config->configArr['min_days_revisions'],
         );
 
+        // the items categoryArr for add link input
+        $ItemsTypes = new ItemsTypes($this->App->Users);
+        $itemsCategoryArr = $ItemsTypes->readAll();
+
         // the mode parameter is for the uploads tpl
         $renderArr = array(
+            'allTeamUsersArr' => $this->allTeamUsersArr,
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
+            'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
             'revNum' => $Revisions->readCount(),
-            'templatesArr' => $this->Templates->readForUser(),
+            'templatesArr' => $this->Templates->Pins->readAll(),
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
+            'visibilityArr' => $this->visibilityArr,
         );
 
         // RELATED ITEMS AND EXPERIMENTS
@@ -237,6 +250,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $TeamGroups = new TeamGroups($this->Entity->Users);
 
         $renderArr = array(
+            'allTeamUsersArr' => $this->allTeamUsersArr,
             'Entity' => $this->Entity,
             'entityData' => $this->Entity->entityData,
             'categoryArr' => $this->categoryArr,
@@ -247,8 +261,8 @@ abstract class AbstractEntityController implements ControllerInterface
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',
             'revNum' => $Revisions->readCount(),
-            'templatesArr' => $this->Templates->readForUser(),
-            'visibilityArr' => $TeamGroups->getVisibilityList(),
+            'templatesArr' => $this->Templates->Pins->readAll(),
+            'visibilityArr' => $this->visibilityArr,
         );
 
         $Response = new Response();
@@ -276,13 +290,13 @@ abstract class AbstractEntityController implements ControllerInterface
         return $deletableXp;
     }
 
-    private function prepareAdvancedSearchQuery(array $visibilityArr, array $teamGroups): string
+    private function prepareAdvancedSearchQuery(array $teamGroups): string
     {
         $searchException = '';
         if ($this->App->Request->query->has('q') && !empty($this->App->Request->query->get('q'))) {
             $query = trim((string) $this->App->Request->query->get('q'));
 
-            $advancedQuery = new AdvancedSearchQuery($query, new VisitorParameters($this->Entity->type, $visibilityArr, $teamGroups));
+            $advancedQuery = new AdvancedSearchQuery($query, new VisitorParameters($this->Entity->type, $this->visibilityArr, $teamGroups));
             $whereClause = $advancedQuery->getWhereClause();
             if ($whereClause) {
                 $this->Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);

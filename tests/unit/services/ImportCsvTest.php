@@ -28,14 +28,13 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportCsv(
             new Users(1, 1),
-            1,
-            ',',
+            'items:1',
             'team',
             'team',
             $uploadedFile,
         );
         $Import->import();
-        $this->assertEquals(3, $Import->inserted);
+        $this->assertEquals(3, $Import->getInserted());
     }
 
     // import a tab delimited csv file
@@ -51,14 +50,13 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportCsv(
             new Users(1, 1),
-            1,
-            'tab',
+            'items:1',
             'team',
             'team',
             $uploadedFile,
         );
         $Import->import();
-        $this->assertEquals(3, $Import->inserted);
+        $this->assertEquals(3, $Import->getInserted());
     }
 
     public function testImportNoTitle(): void
@@ -73,30 +71,7 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new ImportCsv(
             new Users(1, 1),
-            1,
-            ',',
-            'team',
-            'team',
-            $uploadedFile,
-        );
-        $this->expectException(ImproperActionException::class);
-        $Import->import();
-    }
-
-    public function testImportBadDelimiter(): void
-    {
-        $uploadedFile = new UploadedFile(
-            dirname(__DIR__, 2) . '/_data/importable-tab.csv',
-            'tab.csv',
-            null,
-            UPLOAD_ERR_OK,
-            true,
-        );
-
-        $Import = new ImportCsv(
-            new Users(1, 1),
-            1,
-            ',',
+            'items:1',
             'team',
             'team',
             $uploadedFile,

@@ -1,58 +1,91 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2012, 2022 Nicolas CARPi
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\EntityFactory;
+use Elabftw\Interfaces\ImportInterface;
+use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * Mother class of ImportCsv and ImportZip
+ * Mother class of ImportCsv, ImportZip and ImportEln
  */
-abstract class AbstractImport
+abstract class AbstractImport implements ImportInterface
 {
+    protected const TAGS_SEPARATOR = '|';
+
     protected Db $Db;
 
-    public function __construct(protected Users $Users, protected int $target, protected string $canread, protected string $canwrite, protected UploadedFile $UploadedFile)
+    // final number of items imported
+    protected int $inserted = 0;
+
+    // userid for experiments, category for items, for templates we don't care about the id (0 is sent anyway)
+    protected int $targetNumber = 0;
+
+    protected AbstractEntity $Entity;
+
+    protected array $allowedMimes = array();
+
+    public function __construct(protected Users $Users, string $target, protected string $canread, protected string $canwrite, protected UploadedFile $UploadedFile)
     {
         $this->Db = Db::getConnection();
+        // target will look like items:N or experiments:N or experiments_templates:0
+        // where N is the category for items, and userid for experiments
+        [$type, $id] = explode(':', $target);
+        $this->targetNumber = (int) $id;
+        $this->setTargetUsers($type);
+        $this->Entity = (new EntityFactory($this->Users, $type))->getEntity();
         $this->canread = Check::visibility($canread);
         $this->canwrite = Check::visibility($canwrite);
         if ($this->UploadedFile->getError()) {
             throw new ImproperActionException($this->UploadedFile->getErrorMessage());
         }
-
         $this->checkMimeType();
     }
 
+    public function getInserted(): int
+    {
+        return $this->inserted;
+    }
+
+    protected function setTargetUsers(string $type): void
+    {
+        switch ($type) {
+            case AbstractEntity::TYPE_TEMPLATES:
+                // for templates we can only import for our user, so there is no target and nothing to check
+            case AbstractEntity::TYPE_ITEMS:
+                // Note: here we don't check that the category belongs to our team as editing the request and setting an incorrect category number isn't really an issue
+                return;
+            case AbstractEntity::TYPE_EXPERIMENTS:
+                // check that we can import stuff in experiments of target user
+                if ($this->targetNumber !== (int) $this->Users->userData['userid'] && $this->Users->isAdminOf($this->targetNumber) === false) {
+                    throw new IllegalActionException('User tried to import archive in experiments of a user but they are not admin of that user');
+                }
+                // set the Users object to the target user
+                $this->Users = new Users($this->targetNumber, $this->Users->userData['team']);
+                break;
+            default:
+                throw new IllegalActionException('Incorrect target for import action.');
+        }
+    }
+
     /**
-     * Look at mime type. not a trusted source, but it can prevent dumb errors
-     * There is null in the mimes array because it can happen that elabftw files are like that.
+     * Look at MIME type. Not a trusted source, but it can prevent dumb errors.
      */
     protected function checkMimeType(): bool
     {
-        $mimes = array(
-            null,
-            'application/csv',
-            'application/vnd.ms-excel',
-            'text/plain',
-            'text/csv',
-            'text/tsv',
-            'application/zip',
-            'application/force-download',
-            'application/x-zip-compressed',
-        );
-
-        if (in_array($this->UploadedFile->getMimeType(), $mimes, true)) {
+        if (in_array($this->UploadedFile->getMimeType(), $this->allowedMimes, true)) {
             return true;
         }
         throw new ImproperActionException("This doesn't look like the right kind of file. Import aborted.");

@@ -17,3 +17,65 @@
   </div>
 </div>
 <!-- end modal -->
+
+<!-- Modal for import -->
+<div class='modal fade' id='importModal' tabindex='-1' role='dialog' aria-labelledby='importModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='importModalLabel'>{{ 'Import from file'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <p>{{ 'You can import data from a .eln archive, a .zip archive (created by eLabFTW) or a .csv file. %sSee documentation %s%s.'|trans|format("<a href='https://doc.elabftw.net/user-guide.html#importing-data' target='_blank'>", "<i class='fas fa-arrow-up-right-from-square'></i>", '</a>')|raw }}</p>
+        <form class='form-group' enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
+          {{ App.Session.get('csrf')|csrf }}
+          <label for='import_modal_target'>{{ '1. Select where to import:'|trans }}</label>
+          <select class='form-control' id='import_modal_target' autocomplete='off' name='target'>
+            <option selected disabled>-------</option>
+            <option disabled>{{ 'Import in database'|trans }}</option>
+            {% for itemsType in itemsCategoryArr %}
+              <option value='items:{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
+            {% endfor %}
+            <option disabled>{{ 'Import in experiments'|trans }}</option>
+            {# if we are admin we can import in other users experiments, otherwise just for ourself #}
+            {% for user in allTeamUsersArr|filter(u => App.Users.userData.is_admin ? true : u.userid == App.Users.userData.userid ? u) %}
+              <option value='experiments:{{ user.userid }}'>{{ user.fullname|raw }}</option>
+            {% endfor %}
+          </select>
+
+          <label for='import_modal_canread'>{{ '2. Select a visibility:'|trans }}</label>
+          <select class='form-control' id='import_modal_canread' autocomplete='off' name='canread'>
+            {% for key, value in visibilityArr %}
+              <option value='{{ key }}'
+              {{ 'team' == key ? ' selected' }}
+              >{{ value|trans }}</option>
+              {% endfor %}
+          </select>
+
+          <label for='import_modal_canwrite'>{{ '2b. Select write access:'|trans }}</label>
+          <select class='form-control' id='import_modal_canwrite' autocomplete='off' name='canwrite'>
+            {% for key, value in visibilityArr %}
+              <option value='{{ key }}'
+              {{ 'team' == key ? ' selected' }}
+              >{{ value|trans }}</option>
+            {% endfor %}
+          </select>
+
+          <label class='d-block' for='import_modal_file_input'>{{ '3. Select a file to import:'|trans }}</label>
+          <input id='import_modal_file_input' required name='file' type='file' accept='.eln,.zip,.csv' />
+          <input name='type' type='hidden' value='archive' />
+          <span class='smallgray'>{{ 'Allowed extensions: .eln, .zip, .csv'|trans }}</span>
+
+          <div class='mt-4 text-center'>
+            <button type='submit' class='button btn btn-primary'>{{ 'Import'|trans }}</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end modal -->

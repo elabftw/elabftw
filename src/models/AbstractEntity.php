@@ -384,7 +384,7 @@ abstract class AbstractEntity implements CrudInterface
                 $content = $params->getBody();
                 break;
             case 'bodyappend':
-                $content = $this->entityData['body'] . $params->getBody();
+                $content = $this->readOne()['body'] . $params->getBody();
                 break;
             case 'content_type':
                 $content = $params->getState();
@@ -609,7 +609,7 @@ abstract class AbstractEntity implements CrudInterface
             $period = '15000101-30000101';
         }
         [$from, $to] = explode('-', $period);
-        $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid AND lastchange BETWEEN :from AND :to';
+        $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid AND modified_at BETWEEN :from AND :to';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindParam(':from', $from);
@@ -776,7 +776,7 @@ abstract class AbstractEntity implements CrudInterface
                 entity.locked,
                 entity.canread,
                 entity.canwrite,
-                entity.lastchange,';
+                entity.modified_at,';
             // don't include the metadata column unless we really need it
             // see https://stackoverflow.com/questions/29575835/error-1038-out-of-sort-memory-consider-increasing-sort-buffer-size
             if ($this->isMetadataSearch) {
@@ -828,7 +828,7 @@ abstract class AbstractEntity implements CrudInterface
 
         $commentsJoin = 'LEFT JOIN (
             SELECT MAX(
-                %1$s_comments.datetime) AS recent_comment,
+                %1$s_comments.created_at) AS recent_comment,
                 %1$s_comments.item_id
                 FROM %1$s_comments GROUP BY %1$s_comments.item_id
             ) AS commentst

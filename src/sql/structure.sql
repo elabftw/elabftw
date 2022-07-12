@@ -79,8 +79,6 @@ CREATE TABLE `config` (
 
 --
 -- Table structure for table `experiments`
--- Here the datetime column cannot have current_timestamp on update because
--- of the way the code is in MySQL. It is fixed in 5.6 but we still target 5.5
 --
 
 CREATE TABLE `experiments` (
@@ -102,8 +100,8 @@ CREATE TABLE `experiments` (
   `canread` varchar(255) NOT NULL DEFAULT 'team',
   `canwrite` varchar(255) NOT NULL DEFAULT 'user',
   `content_type` tinyint(1) NOT NULL DEFAULT '1',
-  `datetime` timestamp NULL DEFAULT NULL,
-  `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
@@ -126,7 +124,8 @@ CREATE TABLE `experiments` (
 
 CREATE TABLE `experiments_comments` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `datetime` datetime NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `item_id` int(10) UNSIGNED NOT NULL,
   `comment` text NOT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
@@ -221,7 +220,6 @@ CREATE TABLE `experiments_templates` (
   `team` int(10) UNSIGNED DEFAULT NULL,
   `body` text,
   `title` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(10) UNSIGNED DEFAULT NULL,
   `locked` tinyint(3) UNSIGNED DEFAULT NULL,
   `lockedby` int(10) UNSIGNED DEFAULT NULL,
@@ -230,7 +228,8 @@ CREATE TABLE `experiments_templates` (
   `canwrite` varchar(255) NOT NULL,
   `content_type` tinyint(1) NOT NULL DEFAULT '1',
   `ordering` int(10) UNSIGNED DEFAULT NULL,
-  `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
@@ -344,6 +343,7 @@ CREATE TABLE `items` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `date` date NOT NULL,
   `body` mediumtext,
   `elabid` varchar(255) NOT NULL,
@@ -357,7 +357,7 @@ CREATE TABLE `items` (
   `canwrite` varchar(255) NOT NULL DEFAULT 'team',
   `content_type` tinyint(1) NOT NULL DEFAULT '1',
   `available` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
-  `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
@@ -382,7 +382,8 @@ CREATE TABLE `items` (
 
 CREATE TABLE `items_comments` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `datetime` datetime NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `item_id` int(10) UNSIGNED NOT NULL,
   `comment` text NOT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
@@ -435,7 +436,7 @@ CREATE TABLE `items_types` (
   `bookable` tinyint(1) UNSIGNED DEFAULT '0',
   `canread` varchar(255) NOT NULL DEFAULT 'team',
   `canwrite` varchar(255) NOT NULL DEFAULT 'team',
-  `lastchange` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
@@ -507,16 +508,35 @@ CREATE TABLE `notifications` (
 
 
 --
--- Table structure for table `pin2users`
+-- Table structure for table `pin_experiments2users`
 --
 
-CREATE TABLE `pin2users` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `users_id` int(10) UNSIGNED NOT NULL,
-  `entity_id` int(10) UNSIGNED NOT NULL,
-  `type` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+CREATE TABLE `pin_experiments2users` (
+  `users_id` int UNSIGNED NOT NULL,
+  `entity_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`users_id`,`entity_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `pin_experiments_templates2users`
+--
+
+CREATE TABLE `pin_experiments_templates2users` (
+  `users_id` int UNSIGNED NOT NULL,
+  `entity_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`users_id`,`entity_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `pin_items2users`
+--
+
+CREATE TABLE `pin_items2users` (
+  `users_id` int UNSIGNED NOT NULL,
+  `entity_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`users_id`,`entity_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 --
 -- Table structure for table `status`
@@ -593,7 +613,7 @@ CREATE TABLE `teams` (
   `force_exp_tpl` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `link_name` text NOT NULL,
   `link_href` text NOT NULL,
-  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `orgid` varchar(255) DEFAULT NULL,
   `public_db` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `force_canread` varchar(255) NOT NULL DEFAULT 'team',
@@ -1152,22 +1172,54 @@ ALTER TABLE `users2team_groups`
   ADD CONSTRAINT `fk_users2team_groups_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Indexes for table `pin2users`
---
-ALTER TABLE `pin2users`
-  ADD KEY `fk_pin2users_userid` (`users_id`);
-
---
--- Constraints for table `pin2users`
---
-ALTER TABLE `pin2users`
-  ADD CONSTRAINT `fk_pin2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
 -- Constraints for table `users`
 --
 ALTER TABLE `users`
   ADD CONSTRAINT `fk_users_groups_id` FOREIGN KEY (`usergroup`) REFERENCES `groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `pin_experiments_templates2users`
+--
+ALTER TABLE `pin_experiments_templates2users`
+  ADD CONSTRAINT `fk_pin_experiments_templates2experiments_templates_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_pin_experiments_templates2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Indexes for table `pin_experiments2users`
+--
+ALTER TABLE `pin_experiments2users`
+  ADD KEY `fk_pin_experiments2users_userid` (`users_id`),
+  ADD KEY `fk_pin_experiments2experiments_id` (`entity_id`);
+
+--
+-- Constraints for table `pin_experiments2users`
+--
+ALTER TABLE `pin_experiments2users`
+  ADD CONSTRAINT `fk_pin_experiments2experiments_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_pin_experiments2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Indexes for table `pin_experiments_templates2users`
+--
+ALTER TABLE `pin_experiments_templates2users`
+  ADD KEY `fk_pin_experiments_templates2users_userid` (`users_id`),
+  ADD KEY `fk_pin_experiments_templates2experiments_templates_id` (`entity_id`);
+
+--
+-- Indexes for table `pin_items2users`
+--
+ALTER TABLE `pin_items2users`
+  ADD KEY `fk_pin_items2users_userid` (`users_id`),
+  ADD KEY `fk_pin_items2items_id` (`entity_id`);
+
+--
+-- Constraints for table `pin_items2users`
+--
+ALTER TABLE `pin_items2users`
+  ADD CONSTRAINT `fk_pin_items2items_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_pin_items2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
 
 COMMIT;
 

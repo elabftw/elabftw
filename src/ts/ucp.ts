@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, reloadElement } from './misc';
+import { notif, reloadElement, addAutocompleteToTagInputs } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Apikey from './Apikey.class';
@@ -13,6 +13,7 @@ import i18next from 'i18next';
 import { EntityType, Target } from './interfaces';
 import EntityClass from './Entity.class';
 import Tab from './Tab.class';
+import { Ajax } from './Ajax.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/ucp.php') {
@@ -43,10 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     // LOCK TEMPLATE
-    } else if (el.matches('[data-action="lock-template"]')) {
-      // reload the page to change the icon and make the edit button disappear (#1897)
-      const id = el.dataset.id;
-      EntityC.lock(parseInt(id)).then(() => window.location.href = `?tab=3&templateid=${id}`);
+    } else if (el.matches('[data-action="toggle-lock"]')) {
+      EntityC.lock(parseInt(el.dataset.id)).then(() => {
+        reloadElement('templatesDiv').then(() => {
+          addAutocompleteToTagInputs();
+          tinymce.remove();
+          tinymce.init(getTinymceBaseConfig('ucp'));
+        });
+      });
     // UPDATE TEMPLATE
     } else if (el.matches('[data-action="update-template"]')) {
       const id = el.dataset.id;
@@ -104,11 +109,17 @@ document.addEventListener('DOMContentLoaded', () => {
           reloadElement('apiTable');
         });
       }
+    } else if (el.matches('[data-action="show-import-tpl"]')) {
+      document.getElementById('import_tpl').toggleAttribute('hidden');
+    } else if (el.matches('[data-action="pin"]')) {
+      EntityC.pin(parseInt(el.dataset.id)).then(() => {
+        reloadElement('templatesDiv').then(() => {
+          addAutocompleteToTagInputs();
+          tinymce.remove();
+          tinymce.init(getTinymceBaseConfig('ucp'));
+        });
+      });
     }
-  });
-
-  $('#import-from-file').on('click', function() {
-    document.getElementById('import_tpl').hidden = false;
   });
 
   // CAN READ/WRITE SELECT PERMISSION
@@ -127,26 +138,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // input to upload an elabftw.tpl file
+  // input to upload an ELN archive
   document.getElementById('import_tpl').addEventListener('change', (event) => {
     const el = (event.target as HTMLInputElement);
-    const title = el.value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
-    if (!window.FileReader) {
-      alert('Please use a modern web browser. Import aborted.');
-      return false;
-    }
-    const file = (event.target as HTMLInputElement).files[0];
-    const reader = new FileReader();
-    reader.onload = function(event): void {
-      const body = event.target.result as string;
-      EntityC.create(title, []).then(json => {
-        const newid = parseInt(json.value as string);
-        EntityC.update(newid, Target.Body, body).then(() => {
-          window.location.replace(`ucp.php?tab=3&templateid=${json.value}`);
-        });
-      });
+    const AjaxC = new Ajax();
+    const params = {
+      'type': 'archive',
+      'file': el.files[0],
+      'target': 'experiments_templates:0',
+      'canread': 'team',
+      'canwrite': 'user',
     };
-    reader.readAsText(file);
+    AjaxC.postForm('app/controllers/ImportController.php', params).then(() => {
+      window.location.reload();
+    });
   });
 
   // TinyMCE

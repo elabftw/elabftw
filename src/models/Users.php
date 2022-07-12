@@ -441,6 +441,15 @@ class Users
         return $this->Db->execute($req);
     }
 
+    /**
+     * Check if this instance's user is admin of the userid in function argument
+     */
+    public function isAdminOf(int $userid): bool
+    {
+        $TeamsHelper = new TeamsHelper($this->userData['team']);
+        return $TeamsHelper->isUserInTeam($userid) && $this->userData['is_admin'] === '1';
+    }
+
     private function notifyAdmins(array $admins, int $userid, int $validated): void
     {
         $body = array(

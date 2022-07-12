@@ -344,7 +344,7 @@ class ApiController implements ControllerInterface
      * @apiSuccess {Number} category_id Id of the status
      * @apiSuccess {String} color Hexadecimal color code for the status
      * @apiSuccess {Number} date Date in YYYYMMDD format
-     * @apiSuccess {DateTime} datetime Date and time when the experiment was created
+     * @apiSuccess {DateTime} created_at Timestamp of when the experiment was created
      * @apiSuccess {String} elabid Unique elabid of the experiment
      * @apiSuccess {String} fullname Name of the owner of the experiment
      * @apiSuccess {Number} has_attachment Number of files attached

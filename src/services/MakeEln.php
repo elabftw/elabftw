@@ -73,7 +73,10 @@ class MakeEln extends MakeStreamZip
     public function getStreamZip(): void
     {
         $dataEntities = array();
+        // an array of "@id" for main datasets
+        $rootParts = array();
         foreach ($this->idArr as $id) {
+            $hasPart = array();
             $this->Entity->setId((int) $id);
             try {
                 $this->Entity->populate();
@@ -83,90 +86,32 @@ class MakeEln extends MakeStreamZip
             $e = $this->Entity->entityData;
             $currentDatasetFolder = $this->getBaseFileName();
             $this->folder = $this->root . '/' . $currentDatasetFolder;
+            $rootParts[] = array('@id' => './' . $currentDatasetFolder);
             $orcid = '';
             if ($e['orcid'] !== null) {
                 $orcid = 'https://orcid.org/' . $e['orcid'];
             }
 
             // LINKS
-            $hasPart = array();
+            $mentions = array();
             foreach ($e['links'] as $link) {
-                $hasPart[] = array(
+                $mentions[] = array(
                     '@id' => SITE_URL . '/database.php?mode=view&id=' . $link['itemid'],
                     '@type' => 'Dataset',
+                    'name' => $link['name'] . ' - ' . $link['title'],
                     'identifier' => $link['elabid'],
                 );
             }
-
-            // STEPS
-            $itemList = array();
-            foreach ($e['steps'] as $step) {
-                $itemList[] = array(
-                    '@id' => 'step_' . $step['id'],
-                    '@type' => 'ListItem',
-                    'position' => $step['ordering'],
-                    'item' => array(
-                        '@type' => 'HowToItem',
-                        'requiredQuantity' => $step['body'],
-                    ),
-                );
-            }
-
-            // MAIN ENTRY
-            $dataEntities[] = array(
-                '@id' => './' . $currentDatasetFolder,
-                '@type' => 'Dataset',
-                'author' => array(
-                    '@type' => 'Person',
-                    'familyName' => $e['lastname'] ?? '',
-                    'givenName' => $e['firstname'] ?? '',
-                    'identifier' => $orcid,
-                ),
-                'dateCreated' => $e['datetime'] ?? '',
-                'dateModified' => $e['lastchange'],
-                'identifier' => $e['elabid'] ?? '',
-                'itemList' => $itemList,
-                'keywords' => explode('|', (string) $this->Entity->entityData['tags']),
-                'name' => $e['title'],
-                'text' => $e['body'] ?? '',
-                'url' => SITE_URL . '/' . $this->Entity->page . '.php?mode=view&id=' . $e['id'],
-                'hasPart' => $hasPart,
-            );
-
-            // CSV
-            $MakeCsv = $this->getCsv((int) $id);
-            $csv = $MakeCsv->getFileContent();
-            $this->Zip->addFile($this->folder . '/' . $MakeCsv->getFileName(), $csv);
-            $dataEntities[] = array(
-                '@id' => './' . $currentDatasetFolder . '/' . $MakeCsv->getFileName(),
-                '@type' => 'File',
-                'description' => 'CSV Export',
-                'name' => $MakeCsv->getFileName(),
-                'contentType' => $MakeCsv->getContentType(),
-                'contentSize' => (string) $MakeCsv->getContentSize(),
-                'sha256' => hash('sha256', $csv),
-            );
-
-            // PDF
-            $MakePdf = $this->getPdf();
-            $pdf = $MakePdf->getFileContent();
-            $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $pdf);
-            $dataEntities[] = array(
-                '@id' => './' . $currentDatasetFolder . '/' . $MakePdf->getFileName(),
-                '@type' => 'File',
-                'description' => 'PDF Export',
-                'name' => $MakePdf->getFileName(),
-                'contentType' => $MakePdf->getContentType(),
-                'contentSize' => (string) $MakePdf->getContentSize(),
-                'sha256' => hash('sha256', $pdf),
-            );
 
             // JSON
             $MakeJson = new MakeJson($this->Entity, array((int) $e['id']));
             $json = $MakeJson->getFileContent();
             $this->Zip->addFile($this->folder . '/' . $MakeJson->getFileName(), $json);
+            $jsonAtId = './' . $currentDatasetFolder . '/' . $MakeJson->getFileName();
+            // add the json in the hasPart of the entry
+            $hasPart[] = array('@id' => $jsonAtId);
             $dataEntities[] = array(
-                '@id' => './' . $currentDatasetFolder . '/' . $MakeJson->getFileName(),
+                '@id' => $jsonAtId,
                 '@type' => 'File',
                 'description' => 'JSON export',
                 'name' => $MakeJson->getFileName(),
@@ -174,6 +119,21 @@ class MakeEln extends MakeStreamZip
                 'contentSize' => (string) $MakeJson->getContentSize(),
                 'sha256' => hash('sha256', $json),
             );
+
+            // COMMENTS
+            $comments = array();
+            foreach ($e['comments'] as $comment) {
+                $comments[] = array(
+                    'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ISO8601),
+                    'text' => $comment['comment'],
+                    'author' => array(
+                        '@type' => 'Person',
+                        'familyName' => $comment['lastname'] ?? '',
+                        'givenName' => $comment['firstname'] ?? '',
+                        'identifier' => $this->formatOrcid($e['orcid']),
+                    ),
+                );
+            }
 
             // UPLOADS
             $uploadedFilesArr = $e['uploads'];
@@ -185,8 +145,10 @@ class MakeEln extends MakeStreamZip
                     continue;
                 }
                 foreach ($uploadedFilesArr as $file) {
+                    $uploadAtId = './' . $currentDatasetFolder . '/' . $file['real_name'];
+                    $hasPart[] = array('@id' => $uploadAtId);
                     $dataEntities[] = array(
-                        '@id' => './' . $currentDatasetFolder . '/' . $file['real_name'],
+                        '@id' => $uploadAtId,
                         '@type' => 'File',
                         'description' => $file['comment'],
                         'name' => $file['real_name'],
@@ -195,17 +157,53 @@ class MakeEln extends MakeStreamZip
                     );
                 }
             }
+
+            // TAGS
+            $keywords = array();
+            if ($this->Entity->entityData['tags']) {
+                $keywords = explode('|', (string) $this->Entity->entityData['tags']);
+            }
+
+            // MAIN ENTRY
+            $dataEntities[] = array(
+                '@id' => './' . $currentDatasetFolder,
+                '@type' => 'Dataset',
+                'author' => array(
+                    '@type' => 'Person',
+                    'familyName' => $e['lastname'] ?? '',
+                    'givenName' => $e['firstname'] ?? '',
+                    'identifier' => $this->formatOrcid($e['orcid']),
+                ),
+                'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ISO8601),
+                'dateModified' => (new DateTimeImmutable($e['modified_at']))->format(DateTimeImmutable::ISO8601),
+                'identifier' => $e['elabid'] ?? '',
+                'comment' => $comments,
+                'keywords' => $keywords,
+                'name' => $e['title'],
+                'text' => $e['body'] ?? '',
+                'url' => SITE_URL . '/' . $this->Entity->page . '.php?mode=view&id=' . $e['id'],
+                'hasPart' => $hasPart,
+                'mentions' => $mentions,
+            );
         }
         // add the description of root with hasPart property
         $dataEntities[] = array(
             '@id' => './',
             '@type' => array('Dataset'),
-            'hasPart' => array_column($dataEntities, '@id'),
+            'hasPart' => $rootParts,
         );
         $this->jsonArr['@graph'] = array_merge($this->jsonArr['@graph'], $dataEntities);
 
         // add the metadata json file containing references to all the content of our crate
         $this->Zip->addFile($this->root . '/ro-crate-metadata.json', json_encode($this->jsonArr, JSON_THROW_ON_ERROR, 512));
         $this->Zip->finish();
+    }
+
+    private function formatOrcid(?string $orcid): ?string
+    {
+        if ($orcid === null) {
+            return null;
+        }
+        return 'https://orcid.org/' . $orcid;
     }
 }

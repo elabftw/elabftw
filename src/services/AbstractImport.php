@@ -65,7 +65,7 @@ abstract class AbstractImport implements ImportInterface
             case AbstractEntity::TYPE_TEMPLATES:
                 // for templates we can only import for our user, so there is no target and nothing to check
             case AbstractEntity::TYPE_ITEMS:
-                // TODO check the category is in our team
+                // Note: here we don't check that the category belongs to our team as editing the request and setting an incorrect category number isn't really an issue
                 return;
             case AbstractEntity::TYPE_EXPERIMENTS:
                 // check that we can import stuff in experiments of target user

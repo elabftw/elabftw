@@ -375,7 +375,6 @@ document.addEventListener('DOMContentLoaded', () => {
             tinymce.activeEditor.undoManager.undo();
           }
         // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
-        // ToDo: this should not be a problem anymore after removing @types/tinymce 4.6.1 (seems to be incompatible with tinymce 5.10.5)
         } else if (typeof blobInfo.blob().name === 'undefined') {
           const filename = prompt('Enter filename with extension e.g. .jpeg');
           if (typeof filename !== 'undefined' && filename !== null) {

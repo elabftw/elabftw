@@ -115,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const uploadId = parseInt(el.dataset.uploadid);
       if (confirm(i18next.t('generic-delete-warning'))) {
         UploadC.destroy(uploadId).then(json => {
+          notif(json);
           if (json.res) {
             reloadElement('filesdiv');
           }

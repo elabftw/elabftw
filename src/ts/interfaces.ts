@@ -19,7 +19,7 @@ interface PartialEntity {
 }
 
 interface Upload {
-  id?: string;
+  id?: number;
   real_name: string;
   long_name: string;
 }

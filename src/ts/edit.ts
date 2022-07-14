@@ -439,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
         AjaxC.send(payload).then(json => {
           const upload = json.value as Upload;
           tinymceEditImage.selected = true;
-          tinymceEditImage.uploadId = parseInt(upload.id, 10);
+          tinymceEditImage.uploadId = upload.id;
           tinymceEditImage.filename = upload.real_name;
         });
       } else if (tinymceEditImage.selected === true) {

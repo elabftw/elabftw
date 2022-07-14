@@ -351,7 +351,7 @@
                 nodePosition = $(this.editor.dom.select('span#autocomplete')).offset();
 
             return {
-                top: contentAreaPosition.top + nodePosition.top + $(this.editor.selection.getNode()).innerHeight() + 5,
+                top: contentAreaPosition.top + nodePosition.top + $(this.editor.selection.getNode()).innerHeight() - $(this.editor.getDoc()).scrollTop() + 5,
                 left: contentAreaPosition.left + nodePosition.left
             };
         },

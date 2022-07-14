@@ -268,11 +268,7 @@ class Uploads implements CrudInterface
         $this->Entity->canOrExplode('write');
         // read the current one to get the comment
         $upload = $this->read(new ContentParams());
-        $replaceRes = $this->update(new UploadParams((string) self::STATE_ARCHIVED, 'state'));
-        
-        if (!$replaceRes) {
-            throw new ImproperActionException(_('Error while replacing file!'));
-        }
+        $this->update(new UploadParams((string) self::STATE_ARCHIVED, 'state'));
 
         $file = $params->getFile();
         $newID = $this->create(new CreateUpload($file->getClientOriginalName(), $file->getPathname(), $upload['comment']));

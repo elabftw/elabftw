@@ -424,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedImage = (tinymce.activeEditor.selection.getNode() as HTMLImageElement);
         // Get id and filename (real_name) from uploads table
         // this allows us to know which corresponding upload is selected so we can replace it if needed (after a crop for instance)
-        const q = new URL(selectedImage.src).searchParams;
+        const searchParams = new URL(selectedImage.src).searchParams;
         const payload: Payload = {
           method: Method.GET,
           action: Action.Read,
@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
             type: entity.type,
             id: entity.id,
           },
-          content: q.get('f'),
+          content: searchParams.get('f'),
           target: Target.UploadId,
         };
         AjaxC.send(payload).then(json => {

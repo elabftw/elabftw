@@ -469,4 +469,59 @@ document.addEventListener('DOMContentLoaded', () => {
     const content = (document.getElementById('date_input') as HTMLInputElement).value;
     EntityC.update(entity.id, Target.Date, content);
   });
+
+  function RegExpEscaped(input: string): RegExp {
+    return new RegExp(input
+      .replace('.', '\\.')
+      .replace('?', '\\?')
+      .replace('[', '\\[')
+      .replace('(', '\\('),
+    'g');
+  }
+
+  // this should be in uploads but there is no good way so far to interact with the two editors there
+  document.querySelectorAll('.replace-uploaded-file').forEach(el => {
+    el.addEventListener('submit', event => {
+      event.preventDefault();
+
+      // we can identify an image by the src attribute in this context
+      const searchPrefixSrc = 'src="app/download.php?f=';
+      const searchPrefixMd = '![image](app/download.php?f=';
+      const formElement = event.target as HTMLFormElement;
+      const editorCurrentContent = editor.getContent();
+
+      // submit form if longName is not found in body
+      if ((editorCurrentContent.indexOf(searchPrefixSrc + formElement.dataset.longName) === -1)
+        && (editorCurrentContent.indexOf(searchPrefixMd + formElement.dataset.longName) === -1)
+      ) {
+        formElement.submit();
+        return true;
+      }
+
+      const formData = new FormData(formElement);
+      formData.set('extraParam', 'noRedirect');
+      fetch('app/controllers/RequestHandler.php', {
+        method: 'POST',
+        body: formData,
+      }).then(response => {
+        return response.json();
+      }).then(json => {
+        // use regExp in replace to find all occurrence
+        const editorNewContent = editorCurrentContent.replace(
+          RegExpEscaped(searchPrefixSrc + formElement.dataset.longName),
+          searchPrefixSrc + json.value.long_name,
+        ).replace(
+          RegExpEscaped(searchPrefixMd + formElement.dataset.longName),
+          searchPrefixMd + json.value.long_name,
+        );
+        editor.replaceContent(editorNewContent);
+
+        // status of previous file is archived now
+        // save because using the old file will not return an id from the db
+        updateEntity();
+        reloadElement('filesdiv');
+      });
+      return false;
+    });
+  });
 });

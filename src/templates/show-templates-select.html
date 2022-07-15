@@ -3,7 +3,7 @@
     <input type='hidden' name='tab' value='3' />
     <select class='form-control selectpicker' name='templateid' required data-show-subtext='true' data-live-search='true'>
       {% for template in templatesArr %}
-        <option value='{{ template.id }}'{{ App.Request.query.get('templateid') == template.id ? ' selected' }}>{{ template.fullname|raw }} - {{ template.title|raw }}</option>
+      <option value='{{ template.id }}'{{ App.Request.query.get('templateid') == template.id ? ' selected' }}>{{ template.fullname|raw }} - {{ template.title|raw }} {{ template.is_pinned ? '(pinned)'|trans }}</option>
       {% endfor %}
     </select>
   </div>

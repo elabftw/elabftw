@@ -71,7 +71,7 @@ class DisplayParams
             case 'id':
                 return 'entity.id';
             case 'lastchange':
-                return 'entity.lastchange';
+                return 'entity.modified_at';
             case 'comment':
                 return 'commentst.recent_comment';
             case 'user':

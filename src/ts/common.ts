@@ -307,6 +307,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // modal plugin requires jquery
         ($('#createModal') as JQuery).modal('toggle');
       }
+    } else if (el.matches('[data-action="import-file"]')) {
+      ($('#importModal') as JQuery).modal('toggle');
     } else if (el.matches('[data-action="create-item"]')) {
       const tplid = el.dataset.tplid;
       const urlParams = new URLSearchParams(document.location.search);

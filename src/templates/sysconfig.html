@@ -242,7 +242,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                     {% plural count.totxp %}
                     Experiments
                     {% endtrans %}
-                    : {{ count.totxp }} ({{ count.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ count.totdb }} − {{ 'Created'|trans }}: {{ team.datetime }}<p>
+                    : {{ count.totxp }} ({{ count.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ count.totdb }} − {{ 'Created'|trans }}: {{ team.created_at }}<p>
                   </li>
                 </ul>
               </li>
@@ -597,6 +597,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                       <select class='form-control col-md-6' id='ssoBinding_{{ idp.id }}' name='ssoBinding'>
                         <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ idp.sso_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
                         <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ idp.sso_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
+                        <option value='urn:mace:shibboleth:1.0:profiles:AuthnRequest' {{ idp.sso_binding == 'urn:mace:shibboleth:1.0:profiles:AuthnRequest' ? 'selected' }}>Shibboleth AuthnRequest</option>
                       </select>
                       <label for='sloUrl_{{ idp.id }}'>Single Log Out URL:</label>
                       <input class='form-control col-md-6' type='url' id='sloUrl_{{ idp.id }}' name='sloUrl' value='{{ idp.slo_url }}' />
@@ -658,6 +659,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                 <select class='form-control col-md-6' id='ssoBinding' name='ssoBinding'>
                   <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'>Redirect</option>
                   <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'>POST</option>
+                  <option value='urn:mace:shibboleth:1.0:profiles:AuthnRequest'>Shibboleth AuthnRequest</option>
                 </select>
 
                 <label for='sloUrl'>Single Log Out URL:</label>

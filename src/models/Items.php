@@ -92,7 +92,6 @@ class Items extends AbstractConcreteEntity
 
     public function destroy(): bool
     {
-
         // check if we can actually delete items (for non-admins)
         $Team = new Team($this->Users->team);
         if ($Team->getDeletableItem() === 0 && $this->Users->userData['is_admin'] === '0') {

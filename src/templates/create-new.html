@@ -8,25 +8,18 @@
         </button>
         <div class='dropdown-menu' aria-label='{{ 'Create new'|trans }}'>
           {% if Entity.type == 'experiments' %}
-            <a href='#' data-action='create-entity' data-tplid='0' class='dropdown-item'>
-              {% trans %}
-              Experiment
-              {% plural 1 %}
-              Experiments
-              {% endtrans %}
-            </a>
-            <div class='dropdown-divider'></div>
             {% if templatesArr|length > 0 %}
+              <h6 class='dropdown-header'>{{ 'Experiments templates'|trans }}</h6>
               {% for tpl in templatesArr %}
                 <a href='#' data-action='create-entity' data-tplid='{{ tpl.id }}' class='dropdown-item'>
                   {{ tpl.title|raw }}
                 </a>
               {% endfor %}
             {% else %}
-            <h6 class='dropdown-header'>{{ 'No templates found'|trans }}</h6>
+              <h6 class='dropdown-header'>{{ 'No pinned templates found'|trans }}</h6>
             {% endif %}
             <div class='dropdown-divider'></div>
-            <a href='ucp.php?tab=3' class='dropdown-item'>
+            <a href='ucp.php?tab=3' class='dropdown-item'><i class='fas fa-layer-group'></i>
               {{ 'Manage templates'|trans }}
             </a>
           {% else %}
@@ -36,6 +29,10 @@
               </a>
             {% endfor %}
           {% endif %}
+          <div class='dropdown-divider'></div>
+          <div class='dropdown-item' data-action='import-file'>
+            <i class='fas fa-upload'></i> {{ 'Import from file'|trans }}
+          </div>
         </div>
       </div>
       <button type='button' data-action='create-entity' data-tplid='0' class='btn btn-primary'>{{ 'Create'|trans }}</button>

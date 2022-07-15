@@ -82,7 +82,8 @@ class ItemsTypes extends AbstractTemplateEntity
         $this->Db->execute($req);
 
         $this->entityData = $this->Db->fetch($req);
-        $this->canOrExplode('read');
+        // don't check for read permissions for items types as it can be read from many places/users
+        //$this->canOrExplode('read');
         // add steps and links in there too
         $this->entityData['steps'] = $this->Steps->readAll();
         $this->entityData['links'] = $this->Links->readAll();

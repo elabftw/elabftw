@@ -31,11 +31,10 @@ class Pins
      */
     public function isPinned(): bool
     {
-        $sql = 'SELECT DISTINCT id FROM pin2users WHERE entity_id = :entity_id AND type = :type AND users_id = :users_id';
+        $sql = 'SELECT entity_id FROM pin_' . $this->Entity->type . '2users WHERE entity_id = :entity_id AND users_id = :users_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
 
         $this->Db->execute($req);
         return $req->rowCount() > 0;
@@ -52,12 +51,11 @@ class Pins
     /**
      * Get the items pinned by current users to display in show mode
      */
-    public function getPinned(): array
+    public function readAll(): array
     {
-        $sql = 'SELECT DISTINCT entity_id FROM pin2users WHERE users_id = :users_id AND type = :type';
+        $sql = 'SELECT entity_id FROM pin_' . $this->Entity->type . '2users WHERE users_id = :users_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
-        $req->bindParam(':type', $this->Entity->type);
 
         $this->Db->execute($req);
 
@@ -72,14 +70,13 @@ class Pins
     }
 
     /**
-     * Remove all traces of that entity because it has been destroyed
+     * Remove all traces of that entity because it has been set to deleted
      */
     public function cleanup(): bool
     {
-        $sql = 'DELETE FROM pin2users WHERE entity_id = :entity_id AND type = :type';
+        $sql = 'DELETE FROM pin_' . $this->Entity->type . '2users WHERE entity_id = :entity_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
 
         return $this->Db->execute($req);
     }
@@ -91,11 +88,10 @@ class Pins
     {
         $this->Entity->canOrExplode('read');
 
-        $sql = 'DELETE FROM pin2users WHERE entity_id = :entity_id AND users_id = :users_id AND type = :type';
+        $sql = 'DELETE FROM pin_' . $this->Entity->type . '2users WHERE entity_id = :entity_id AND users_id = :users_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
 
         return $this->Db->execute($req);
     }
@@ -107,11 +103,10 @@ class Pins
     {
         $this->Entity->canOrExplode('read');
 
-        $sql = 'INSERT INTO pin2users(users_id, entity_id, type) VALUES (:users_id, :entity_id, :type)';
+        $sql = 'INSERT INTO pin_' . $this->Entity->type . '2users(users_id, entity_id) VALUES (:users_id, :entity_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
 
         return $this->Db->execute($req);
     }

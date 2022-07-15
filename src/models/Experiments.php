@@ -36,9 +36,16 @@ class Experiments extends AbstractConcreteEntity
         $Templates = new Templates($this->Users);
         $Team = new Team((int) $this->Users->userData['team']);
 
+        // defaults
+        $title = _('Untitled');
+        $body = null;
+        $canread = 'team';
+        $canwrite = 'user';
         $metadata = null;
+
         $tpl = (int) $params->getContent();
         // do we want template ?
+        // $tpl can be template id, or 0: common template, or -1: null body
         if ($tpl > 0) {
             $Templates->setId($tpl);
             $templateArr = $Templates->readOne();
@@ -47,15 +54,14 @@ class Experiments extends AbstractConcreteEntity
             $body = $templateArr['body'];
             $canread = $templateArr['canread'];
             $canwrite = $templateArr['canwrite'];
-        } else {
+        }
+
+        if ($tpl === 0) {
             // no template, make sure admin didn't disallow it
             if ($Team->getForceExpTpl() === 1) {
                 throw new ImproperActionException(_('Experiments must use a template!'));
             }
-            $title = _('Untitled');
             $body = $Team->getCommonTemplate();
-            $canread = 'team';
-            $canwrite = 'user';
             if ($this->Users->userData['default_read'] !== null) {
                 $canread = $this->Users->userData['default_read'];
             }
@@ -74,8 +80,8 @@ class Experiments extends AbstractConcreteEntity
         $canwrite = $Team->getDoForceCanwrite() === 1 ? $Team->getForceCanwrite() : $canwrite;
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, metadata, userid, content_type)
-            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, NOW(), :metadata, :userid, :content_type)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, metadata, userid, content_type)
+            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, :metadata, :userid, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $body, PDO::PARAM_STR);
@@ -90,7 +96,7 @@ class Experiments extends AbstractConcreteEntity
         $newId = $this->Db->lastInsertId();
 
         // insert the tags from the template
-        if ($tpl !== 0) {
+        if ($tpl > 0) {
             $this->Links->duplicate($tpl, $newId, true);
             $this->Steps->duplicate($tpl, $newId, true);
             $Tags = new Tags($Templates);
@@ -138,8 +144,8 @@ class Experiments extends AbstractConcreteEntity
         // capital i looks good enough
         $title = $this->entityData['title'] . ' I';
 
-        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid, metadata, content_type)
-            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, NOW(), :userid, :metadata, :content_type)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, userid, metadata, content_type)
+            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, :userid, :metadata, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $this->entityData['body'], PDO::PARAM_STR);

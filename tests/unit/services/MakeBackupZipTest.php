@@ -45,7 +45,7 @@ class MakeBackupZipTest extends \PHPUnit\Framework\TestCase
         // there are no public method to set last change, so do it manually
         // it has to be in the past because it's a timestamp
         $Db = Db::getConnection();
-        $sql = 'UPDATE experiments SET lastchange = "2000-01-01 12:00:00" WHERE id = ' . $id;
+        $sql = 'UPDATE experiments SET modified_at = "2000-01-01 12:00:00" WHERE id = ' . $id;
         $req = $Db->prepare($sql);
         $req->execute();
         // add a file to it

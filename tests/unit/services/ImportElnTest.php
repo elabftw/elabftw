@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use const UPLOAD_ERR_INI_SIZE;
 use const UPLOAD_ERR_OK;
 
-class ImportZipTest extends \PHPUnit\Framework\TestCase
+class ImportElnTest extends \PHPUnit\Framework\TestCase
 {
     private FilesystemOperator $fs;
 
@@ -31,15 +31,15 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
     public function testFailUploadedFile(): void
     {
         $uploadedFile = new UploadedFile(
-            dirname(__DIR__, 2) . '/_data/importable.zip',
-            'importable.zip',
+            dirname(__DIR__, 2) . '/_data/single-experiment.eln',
+            'importable.eln',
             null,
             UPLOAD_ERR_INI_SIZE, // file is too big!
             true,
         );
 
         $this->expectException(ImproperActionException::class);
-        $Import = new ImportZip(
+        $Import = new ImportEln(
             new Users(1, 1),
             'items:1',
             'team',
@@ -53,13 +53,13 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
     {
         $uploadedFile = new UploadedFile(
             dirname(__DIR__, 2) . '/_data/universign.asn1',
-            'importable.zip',
+            'importable.eln',
             null,
             UPLOAD_ERR_OK,
             true,
         );
         $this->expectException(ImproperActionException::class);
-        $Import = new ImportZip(
+        $Import = new ImportEln(
             new Users(1, 1),
             'items:1',
             'team',
@@ -72,14 +72,14 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
     public function testImportExperiments(): void
     {
         $uploadedFile = new UploadedFile(
-            dirname(__DIR__, 2) . '/_data/importable.zip',
-            'importable.zip',
+            dirname(__DIR__, 2) . '/_data/single-experiment.eln',
+            'importable.eln',
             null,
             UPLOAD_ERR_OK,
             true,
         );
 
-        $Import = new ImportZip(
+        $Import = new ImportEln(
             new Users(1, 1),
             'experiments:1',
             'team',
@@ -94,14 +94,14 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
     public function testImportExperimentsMulti(): void
     {
         $uploadedFile = new UploadedFile(
-            dirname(__DIR__, 2) . '/_data/importable-multi.zip',
-            'importable-multi.zip',
+            dirname(__DIR__, 2) . '/_data/multiple-experiments.eln',
+            'importable-multi.eln',
             null,
             UPLOAD_ERR_OK,
             true,
         );
 
-        $Import = new ImportZip(
+        $Import = new ImportEln(
             new Users(1, 1),
             'experiments:1',
             'team',
@@ -116,14 +116,14 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
     public function testImportItems(): void
     {
         $uploadedFile = new UploadedFile(
-            dirname(__DIR__, 2) . '/_data/importable-item.zip',
-            'importable.items.zip',
+            dirname(__DIR__, 2) . '/_data/single-experiment.eln',
+            'importable.items.eln',
             null,
             UPLOAD_ERR_OK,
             true,
         );
 
-        $Import = new ImportZip(
+        $Import = new ImportEln(
             new Users(1, 1),
             'items:1',
             'team',
@@ -145,7 +145,29 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
             true,
         );
 
-        $Import = new ImportZip(
+        $Import = new ImportEln(
+            new Users(1, 1),
+            'items:1',
+            'team',
+            'team',
+            $uploadedFile,
+            $this->fs,
+        );
+        $this->expectException(ImproperActionException::class);
+        $Import->import();
+    }
+
+    public function testInvalidShasum(): void
+    {
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/invalid-shasum.eln',
+            'invalid-shasum.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        $Import = new ImportEln(
             new Users(1, 1),
             'items:1',
             'team',

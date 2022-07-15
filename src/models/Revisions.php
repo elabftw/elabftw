@@ -180,7 +180,7 @@ class Revisions implements DestroyableInterface
      */
     private function satisfyTimeConstraint(): bool
     {
-        $lastchange = new DateTimeImmutable($this->Entity->entityData['lastchange'] ?? 'now');
+        $lastchange = new DateTimeImmutable($this->Entity->entityData['modified_at'] ?? 'now');
         $now = new DateTimeImmutable();
         $interval = $lastchange->diff($now);
         return ((int) $interval->format('%a')) >= $this->minDays;

@@ -40,10 +40,9 @@ try {
     $Templates = new Templates($App->Users);
     $templatesArr = $Templates->getWriteableTemplatesList();
     $entityData = array();
-
     if ($Request->query->has('templateid')) {
         $Templates->setId((int) $Request->query->get('templateid'));
-        $Templates->populate();
+        $entityData = $Templates->readOne();
         $Revisions = new Revisions(
             $Templates,
             (int) $App->Config->configArr['max_revisions'],
@@ -95,6 +94,7 @@ try {
         'Entity' => $Templates,
         'apiKeysArr' => $apiKeysArr,
         'langsArr' => Tools::getLangsArr(),
+        'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
         'notificationsSettings' => $notificationsSettings,
         'teamGroupsArr' => $teamGroupsArr,

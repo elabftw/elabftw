@@ -281,5 +281,5 @@ export function addAutocompleteToTagInputs(): void {
 // taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping
 export function escapeRegExp(string: string): string {
   // $& means the whole matched string
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

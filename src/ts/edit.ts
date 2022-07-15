@@ -6,7 +6,7 @@
  * @package elabftw
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-import { notif, reloadElement } from './misc';
+import { notif, reloadElement, escapeRegExp } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Model, Payload, Method, Action, PartialEntity } from './interfaces';
 import './doodle';
@@ -470,17 +470,8 @@ document.addEventListener('DOMContentLoaded', () => {
     EntityC.update(entity.id, Target.Date, content);
   });
 
-  function RegExpEscaped(input: string): RegExp {
-    return new RegExp(input
-      .replace('.', '\\.')
-      .replace('?', '\\?')
-      .replace('[', '\\[')
-      .replace('(', '\\('),
-    'g');
-  }
-
   // this should be in uploads but there is no good way so far to interact with the two editors there
-  document.querySelectorAll('.replace-uploaded-file').forEach(el => {
+  document.getElementById('filesdiv').querySelectorAll('[data-action="replace-uploaded-file"]').forEach(el => {
     el.addEventListener('submit', event => {
       event.preventDefault();
 
@@ -507,11 +498,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return response.json();
       }).then(json => {
         // use regExp in replace to find all occurrence
+        // images are identified by 'src="app/download.php?f=' (html) and '![image](app/download.php?f=' (md)
+        // '.', '?', '[' and '(' need to be escaped in js regex
         const editorNewContent = editorCurrentContent.replace(
-          RegExpEscaped(searchPrefixSrc + formElement.dataset.longName),
+          new RegExp(escapeRegExp(searchPrefixSrc + formElement.dataset.longName), 'g'),
           searchPrefixSrc + json.value.long_name,
         ).replace(
-          RegExpEscaped(searchPrefixMd + formElement.dataset.longName),
+          new RegExp(escapeRegExp(searchPrefixMd + formElement.dataset.longName), 'g'),
           searchPrefixMd + json.value.long_name,
         );
         editor.replaceContent(editorNewContent);

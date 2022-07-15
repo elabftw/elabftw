@@ -183,7 +183,7 @@
                   {% if mode == 'edit' %}
                     <!-- replace upload form -->
                     <div id='replaceUploadForm_{{ upload.id }}' class='mt-1' hidden>
-                      <form enctype='multipart/form-data' action='app/controllers/RequestHandler.php' method='POST' class='form-inline replace-uploaded-file' data-long-name='{{ upload.long_name }}'>
+                      <form enctype='multipart/form-data' action='app/controllers/RequestHandler.php' method='POST' class='form-inline' data-action='replace-uploaded-file' data-long-name='{{ upload.long_name }}'>
                         <input type='hidden' name='action' value='replace' />
                         <input type='hidden' name='target' value='file' />
                         <input type='hidden' name='entity_id' value='{{ upload.item_id }}' />

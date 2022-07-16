@@ -24,10 +24,6 @@ const t = {
     "tag-delete-warning": "Delete this tag?",
     "template-title": "Template title",
     "upload-file-comment": "File comment",
-    "step-added": "Step added",
-    "step-not-added": "Step not added!",
-    "link-added": "Link added",
-    "link-not-added": "Link not added!",
   },
 };
 

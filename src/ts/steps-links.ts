@@ -72,15 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
           // clear input field
           e.currentTarget.value = '';
 
-          if (document.getElementById('stepsDiv').hidden) {
-            const msg = {
-              'msg': i18next.t('step-added'),
-              'res': true,
-            };
-            if (!json.res) {
-              msg.msg = i18next.t('step-not-added');
-            }
-            notif(msg);
+          if (document.getElementById('stepsDiv').hidden && json.res) {
+            notif(json);
           }
         });
       }
@@ -180,15 +173,8 @@ document.addEventListener('DOMContentLoaded', () => {
           (document.getElementById('linkinput') as HTMLInputElement).value = '';
         });
 
-        if (document.getElementById('linksDiv').hidden) {
-          const msg = {
-            'msg': i18next.t('link-added'),
-            'res': true,
-          };
-          if (!json.res) {
-            msg.msg = i18next.t('link-not-added');
-          }
-          notif(msg);
+        if (document.getElementById('linksDiv').hidden && json.res) {
+          notif(json);
         }
       });
       $(this).val('');

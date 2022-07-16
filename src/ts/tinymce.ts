@@ -72,6 +72,9 @@ export function quickSave(): void {
     // reload the page so user gets redirected to the login page
     location.reload();
     return;
+  }).then(() => {
+    // remove dirty state of editor
+    tinymce.activeEditor.setDirty(false);
   });
 }
 

@@ -6,7 +6,7 @@
  * @package elabftw
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-import { notif, reloadElement } from './misc';
+import { notif, reloadElement, escapeRegExp } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Model, Payload, Method, Action, PartialEntity } from './interfaces';
 import './doodle';
@@ -468,5 +468,53 @@ document.addEventListener('DOMContentLoaded', () => {
   $(document).on('blur', '#date_input', function() {
     const content = (document.getElementById('date_input') as HTMLInputElement).value;
     EntityC.update(entity.id, Target.Date, content);
+  });
+
+  // this should be in uploads but there is no good way so far to interact with the two editors there
+  document.getElementById('filesdiv').querySelectorAll('[data-action="replace-uploaded-file"]').forEach(el => {
+    el.addEventListener('submit', event => {
+      event.preventDefault();
+
+      // we can identify an image by the src attribute in this context
+      const searchPrefixSrc = 'src="app/download.php?f=';
+      const searchPrefixMd = '![image](app/download.php?f=';
+      const formElement = event.target as HTMLFormElement;
+      const editorCurrentContent = editor.getContent();
+
+      // submit form if longName is not found in body
+      if ((editorCurrentContent.indexOf(searchPrefixSrc + formElement.dataset.longName) === -1)
+        && (editorCurrentContent.indexOf(searchPrefixMd + formElement.dataset.longName) === -1)
+      ) {
+        formElement.submit();
+        return true;
+      }
+
+      const formData = new FormData(formElement);
+      formData.set('extraParam', 'noRedirect');
+      fetch('app/controllers/RequestHandler.php', {
+        method: 'POST',
+        body: formData,
+      }).then(response => {
+        return response.json();
+      }).then(json => {
+        // use regExp in replace to find all occurrence
+        // images are identified by 'src="app/download.php?f=' (html) and '![image](app/download.php?f=' (md)
+        // '.', '?', '[' and '(' need to be escaped in js regex
+        const editorNewContent = editorCurrentContent.replace(
+          new RegExp(escapeRegExp(searchPrefixSrc + formElement.dataset.longName), 'g'),
+          searchPrefixSrc + json.value.long_name,
+        ).replace(
+          new RegExp(escapeRegExp(searchPrefixMd + formElement.dataset.longName), 'g'),
+          searchPrefixMd + json.value.long_name,
+        );
+        editor.replaceContent(editorNewContent);
+
+        // status of previous file is archived now
+        // save because using the old file will not return an id from the db
+        updateEntity();
+        reloadElement('filesdiv');
+      });
+      return false;
+    });
   });
 });

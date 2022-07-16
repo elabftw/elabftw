@@ -471,14 +471,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // this should be in uploads but there is no good way so far to interact with the two editors there
-  document.getElementById('filesdiv').querySelectorAll('[data-action="replace-uploaded-file"]').forEach(el => {
-    el.addEventListener('submit', event => {
+  document.getElementById('filesdiv').addEventListener('submit', event => {
+    const el = event.target as HTMLElement;
+    if (el.matches('[data-action="replace-uploaded-file"]')) {
       event.preventDefault();
 
       // we can identify an image by the src attribute in this context
       const searchPrefixSrc = 'src="app/download.php?f=';
       const searchPrefixMd = '![image](app/download.php?f=';
-      const formElement = event.target as HTMLFormElement;
+      const formElement = el as HTMLFormElement;
       const editorCurrentContent = editor.getContent();
 
       // submit form if longName is not found in body
@@ -515,6 +516,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reloadElement('filesdiv');
       });
       return false;
-    });
+    }
   });
 });

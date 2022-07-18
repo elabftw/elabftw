@@ -32,7 +32,7 @@
     "file-saver": "2.0.*",
     "i18next": "^21.0.2",
     "jquery": "^3.5.1",
-    "jquery-ui": "^1.13.0",
+    "jquery-ui": "^1.13.2",
     "jsoneditor": "^9.0.3",
     "luxon": "^2.0.1",
     "marked": "^4.0.10",

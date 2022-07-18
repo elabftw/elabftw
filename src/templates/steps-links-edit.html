@@ -1,10 +1,16 @@
-<div class='row justify-content-around mt-4'>
+<div class='row mt-4'>
     <!-- STEPS -->
     <section class='col-md-6'>
-      <h4 class='d-inline'><i class='fas fa-fw fa-check-square'></i> {{ 'Steps'|trans }}</h4>
-      <!-- the stepsDiv id is in its own div because otherwise if it's on the section above it doesn't work well, not sure why -->
-      <div id='stepsDiv'>
-        <div class='mt-2 sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.type ? Entity.type : 'items_types'}}_steps'>
+      <h4 data-action='toggle-next' data-toggle-next-n='2' data-icon='stepsDivIcon' class='d-inline'><i id='stepsDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-check-square'></i> {{ 'Steps'|trans }}</h4>
+      <!-- ADD STEP -->
+      <div class='input-group mt-2'>
+          <div class='input-group-prepend'>
+            <span class='input-group-text'>{{ 'Add a step'|trans }}</span>
+          </div>
+          <input aria-label='{{ 'Add a step'|trans }}' type='text' size='60' class='form-control stepinput' data-id='{{ Entity.id }}' />
+      </div>
+      <div id='stepsDiv' class='mt-2' data-save-hidden='stepsDiv'>
+        <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.type ? Entity.type : 'items_types'}}_steps'>
           {% for step in Entity.entityData.steps %}
             <div class='input-group mb-2' id='step_{{ step.id }}'>
               <div class='input-group-prepend'>
@@ -47,9 +53,9 @@
                   <div id='stepDeadlineDiv_{{ step.id }}'>
                     {{ 'Deadline:'|trans }}
                     {% if step.deadline %}
-                    <!-- here the data-ma-input-value is formatted so it works with the datetime-local input type, and the displayed one is formatted differently to be more readable -->
+                    {# here the data-ma-input-value is formatted so it works with the datetime-local input type, and the displayed one is formatted differently to be more readable #}
                     <span data-stepid='{{ step.id }}' data-target='deadline' data-ma-type='datetime-local' data-ma-input-value='{{ step.deadline|date('Y-m-d\\TH:i') }}' class='step editable hl-hover'>{{ step.deadline|format_datetime() }}</span>
-                    <!-- notification bell is only shown if the user has at least one notification setting activated for that type of notif -->
+                    {# notification bell is only shown if the user has at least one notification setting activated for that type of notif #}
                     {% if App.Users.userData.notif_step_deadline or App.Users.userData.notif_step_deadline_email %}
                       <span class='ml-2' data-action='step-toggle-deadline-notif' data-stepid='{{ step.id }}' title='{{ 'Toggle notifications'|trans }}'><i class='far fa-bell {{ step.deadline_notif ? 'active' }}' ></i></span>
                     {% endif %}
@@ -74,31 +80,36 @@
           {% endfor %}
         </div>
       </div>
-
-        <!-- ADD STEP -->
-        <div class='input-group mb-3'>
-            <div class='input-group-prepend'>
-              <span class='input-group-text'>{{ 'Add a step'|trans }}</span>
-            </div>
-
-            <input aria-label='{{ 'Add a step'|trans }}' type='text' size='60' class='form-control stepinput' data-id='{{ Entity.id }}' />
-        </div>
-
     </section>
     <!-- LINKS -->
-    <section class='col-md-6' id='linksDiv'>
-        <h4 class='d-inline'><i class='fas fa-fw fa-link'></i> {{ 'Linked items'|trans }}</h4>
-        <div class='mt-2' id='links_div_{{ Entity.id }}'>
-            {% if Entity.entityData.links %}
-            <ul class='list-group'>
-                {% for link in Entity.entityData.links %}
+    <section class='col-md-6'>
+        <h4 data-action='toggle-next' data-toggle-next-n='2' data-icon='linksDivIcon' class='d-inline'><i id='linksDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-link'></i> {{ 'Linked items'|trans }}</h4>
+        <!-- ADD LINK -->
+        <div class='input-group mt-2'>
+            <div class='input-group-prepend'>
+                <span class='input-group-text'>{{ 'Add a link'|trans }}</span>
+            </div>
+            <input aria-label='{{ 'Add a link'|trans }}' type='text' data-autocomplete='links' id='linkinput' class='form-control' data-id='{{ Entity.id }}' placeholder='{{ 'from the database'|trans }}' />
+            <div class='input-group-append' style='max-width:33%;'>
+              <select id='addLinkCatFilter' class='brl-none form-control'>
+                <option selected value=''>{{ 'Any category'|trans }}</option>
+                {% for cat in itemsCategoryArr %}
+                  <option value='{{ cat.category_id }}'>{{ cat.category }}</option>
+                {% endfor %}
+              </select>
+            </div>
+        </div>
+        <div id='linksDiv' class='mt-2' data-save-hidden='linksDiv'>
+          <div id='links_div_{{ Entity.id }}'>
+              {% if Entity.entityData.links %}
+              <ul class='list-group'>
+                  {% for link in Entity.entityData.links %}
                   <li class='list-group-item'>
                     <div class='float-right ml-1'>
                       {% if mode != 'edit-template' %}
                         <a data-action='import-links' data-target='{{ link.itemid }}' title='{{ 'Import links'|trans }}'>
                           <i class='fas fa-arrows-down-to-line'></i>
                         </a>
-
                         <a data-action='import-link-body' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}'>
                           <i class='fas fa-lg fa-file-import'></i>
                         </a>
@@ -109,28 +120,12 @@
                     </div>
                     <i class='fas fa-link mr-1'></i>
                     <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
-                  {{ link.title|raw }}</a>
-                </li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
-        <!-- ADD LINK -->
-        <div class='mt-2'>
-            <div class='input-group mb-3'>
-                <div class='input-group-prepend'>
-                    <span class='input-group-text'>{{ 'Add a link'|trans }}</span>
-                </div>
-                <input aria-label='{{ 'Add a link'|trans }}' type='text' data-autocomplete='links' id='linkinput' class='form-control' data-id='{{ Entity.id }}' placeholder='{{ 'from the database'|trans }}' />
-                <div class='input-group-append' style='max-width:33%;'>
-                  <select id='addLinkCatFilter' class='brl-none form-control'>
-                    <option selected value=''>{{ 'Any category'|trans }}</option>
-                    {% for cat in itemsCategoryArr %}
-                      <option value='{{ cat.category_id }}'>{{ cat.category }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-            </div>
+                    {{ link.title|raw }}</a>
+                  </li>
+                  {% endfor %}
+              </ul>
+              {% endif %}
+          </div>
         </div>
     </section>
 </div>

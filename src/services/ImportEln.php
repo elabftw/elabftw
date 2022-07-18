@@ -140,24 +140,24 @@ class ImportEln extends AbstractImportZip
         }
 
         switch ($part['@type']) {
-        case 'Dataset':
-            $this->Entity->update(new EntityParams($this->part2html($part), 'bodyappend'));
-            // TODO here handle sub datasets as linked entries
-            foreach ($part['hasPart'] as $subpart) {
-                if ($subpart['@type'] === 'File') {
-                    $this->importFile($subpart);
+            case 'Dataset':
+                $this->Entity->update(new EntityParams($this->part2html($part), 'bodyappend'));
+                // TODO here handle sub datasets as linked entries
+                foreach ($part['hasPart'] as $subpart) {
+                    if ($subpart['@type'] === 'File') {
+                        $this->importFile($subpart);
+                    }
                 }
-            }
-            break;
-        case 'File':
-            if (str_starts_with($part['@id'], 'http')) {
-                // we don't import remote files
+                break;
+            case 'File':
+                if (str_starts_with($part['@id'], 'http')) {
+                    // we don't import remote files
+                    return;
+                }
+                $this->importFile($part);
+                break;
+            default:
                 return;
-            }
-            $this->importFile($part);
-            break;
-        default:
-            return;
         }
     }
 

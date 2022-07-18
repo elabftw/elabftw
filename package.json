@@ -55,12 +55,12 @@
   },
   "devDependencies": {
     "@types/bootstrap": "^5.0.17",
+    "@types/dropzone": "^5.7.4",
     "@types/fancybox": "^3.5.2",
     "@types/file-saver": "^2.0.1",
     "@types/jquery": "^3.5.1",
     "@types/jqueryui": "^1.12.14",
     "@types/luxon": "^2.0.0",
-    "@types/tinymce": "^4.6.0",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",
     "cypress": "^9.0.0",

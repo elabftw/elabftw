@@ -16,6 +16,7 @@ interface EditorInterface {
   init(): void;
   getContent(): string;
   setContent(content: string): void;
+  replaceContent(content: string): void;
   switch(): void;
 }
 
@@ -39,6 +40,9 @@ class TinyEditor extends Editor implements EditorInterface {
   }
   setContent(content: string): void {
     tinymce.editors[0].insertContent(content);
+  }
+  replaceContent(content: string): void {
+    tinymce.editors[0].setContent(content);
   }
 }
 
@@ -70,6 +74,9 @@ class MdEditor extends Editor implements EditorInterface {
     const before = oldcontent.substring(0, cursorPosition);
     const after = oldcontent.substring(cursorPosition);
     $('#body_area').val(before + content + after);
+  }
+  replaceContent(content: string): void {
+    $('#body_area').val(content);
   }
 }
 

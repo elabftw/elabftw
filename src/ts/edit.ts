@@ -6,20 +6,24 @@
  * @package elabftw
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-import { notif, reloadElement } from './misc';
+import { notif, reloadElement, escapeRegExp } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
-import { EntityType, Target, Upload, Payload, Method, Action, PartialEntity } from './interfaces';
+import { EntityType, Target, Upload, Model, Payload, Method, Action, PartialEntity } from './interfaces';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
 import { getEntity } from './misc';
 import Dropzone from 'dropzone';
-import { File } from 'dropzone';
+import type { DropzoneFile } from 'dropzone';
 import i18next from 'i18next';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
 import UploadClass from './Upload.class';
 import EntityClass from './Entity.class';
+
+class CustomDropzone extends Dropzone {
+  tinyImageSuccess: null | undefined | ((url: string) => void);
+}
 
 // the dropzone is created programmatically, disable autodiscover
 Dropzone.autoDiscover = false;
@@ -69,14 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       // once it is done
-      this.on('complete', function(answer: File) {
+      this.on('complete', function(answer: DropzoneFile) {
         // check the answer we get back from the controller
         const json = JSON.parse(answer.xhr.responseText);
         notif(json);
         // reload the #filesdiv once the file is uploaded
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
           reloadElement('filesdiv').then(() => {
-            const dropZone = Dropzone.forElement(dropZoneElement);
+            const dropZone = Dropzone.forElement(dropZoneElement) as CustomDropzone;
             // Check to make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
             if (typeof dropZone.tinyImageSuccess !== 'undefined' && dropZone.tinyImageSuccess !== null) {
               // Uses the newly updated HTML element for the uploads section to find the last file uploaded and use that to get the remote url for the image.
@@ -324,9 +328,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const tinymceEditImage = {
       selected: false,
       uploadId: 0,
+      filename: 'unknown.png',
       reset: function(): void {
         this.selected = false;
         this.uploadId = 0;
+        this.filename = 'unknown.png';
       },
     };
 
@@ -334,49 +340,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const tinyConfigForEdit = {
       images_upload_handler: (blobInfo, success): void => {
-        const dropZone = Dropzone.forElement('#elabftw-dropzone');
+        const dropZone = Dropzone.forElement('#elabftw-dropzone') as CustomDropzone;
         // Edgecase for editing an image using tinymce ImageTools
         // Check if it was selected. This is set by an event hook below
         if (tinymceEditImage.selected === true) {
-          const uploadId = String(tinymceEditImage.uploadId);
-          // Note: the confirm will unselect tinymceEditImage and we lose information
-          // so it is done after we grab uploadId
+          // Note: confirm will trigger the SelectionChange event hook below again
+          // Note: the new filename (long_name) is returned from RequestHandler.php
           if (confirm(i18next.t('replace-edited-file'))) {
             // Replace the file on the server
             AjaxC.postForm('app/controllers/RequestHandler.php', {
-              action: 'update',
+              action: Action.Replace,
               target: 'file',
-              replace: '1',
-              id: uploadId,
+              id: String(tinymceEditImage.uploadId),
               entity_id: String(entity.id),
               entity_type: entity.type,
-              model: 'upload',
-              content: blobInfo.blob(),
-            }).then(() => {
-              reloadElement('filesdiv').then(() => {
-                // now fetch the new url of the upload so we can replace our image with that.
-                // Problem is: we don't have the id of the new upload
-                // so get all the link to attached files and we will take the highest one (most recent upload id)
-                const ids = [];
-                document.querySelectorAll('[id^="upload-filename"]').forEach(l => {
-                  ids.push(parseInt(l.getAttribute('id').split('_').pop(), 10));
-                });
-                const mostRecent = ids.sort((a, b) => a - b).pop();
-                const imgHref = (document.getElementById(`upload-filename_${mostRecent}`) as HTMLLinkElement).href;
-                const q = new URL(imgHref).searchParams;
-                // call the success callback function with the new URL
-                success(`app/download.php?f=${q.get('f')}&storage=${q.get('storage')}`);
-                tinymceEditImage.reset();
-              });
+              model: Model.Upload,
+              content: new File(
+                [blobInfo.blob()],
+                tinymceEditImage.filename,
+                { lastModified: new Date().getTime(), type: blobInfo.blob().type },
+              ),
+              extraParam: 'noRedirect',
+            }).then(response => {
+              return response.json();
+            }).then(json => {
+              success(`app/download.php?f=${json.value.long_name}&storage=${json.value.storage}`);
+              // save here because using the old real_name will not return anything from the db (status is archived now)
+              updateEntity();
+              reloadElement('filesdiv');
             });
+          } else {
+            // Revert changes if confirm is cancelled
+            // ToDo: several times undo, e.g. if user rotated twice 90° but does not confirm the change
+            tinymce.activeEditor.undoManager.undo();
           }
         // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
         } else if (typeof blobInfo.blob().name === 'undefined') {
           const filename = prompt('Enter filename with extension e.g. .jpeg');
           if (typeof filename !== 'undefined' && filename !== null) {
-            // use window.File here not dropzone.File
-            const fileOfBlob = new window.File([blobInfo.blob()], filename);
-            dropZone.addFile(fileOfBlob);
+            const file = new File([blobInfo.blob()], filename, { lastModified: new Date().getTime(), type: blobInfo.blob().type }) as DropzoneFile;
+            dropZone.addFile(file);
             dropZone.tinyImageSuccess = success;
           } else {
             // Just disregard the edit if the name prompt is cancelled
@@ -407,6 +410,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     tinymce.init(Object.assign(tinyConfig, tinyConfigForEdit));
+    // Hook into the blur event - Finalize potential changes to images if user clicks outside of editor
+    tinymce.activeEditor.on('blur', () => {
+      // this will trigger the images_upload_handler event hook defined further above
+      tinymce.activeEditor.uploadImages();
+    });
     // Hook into the SelectionChange event - This is to make sure we reset our control variable correctly
     tinymce.activeEditor.on('SelectionChange', () => {
       // Check if the user has selected an image
@@ -414,17 +422,34 @@ document.addEventListener('DOMContentLoaded', () => {
         // Save all the details needed for replacing upload
         // Then check for and get those details when you are handling file uploads
         const selectedImage = (tinymce.activeEditor.selection.getNode() as HTMLImageElement);
-        // the uploadid is added as a data-uploadid attribute when inserted in the text
+        // Get id and filename (real_name) from uploads table
         // this allows us to know which corresponding upload is selected so we can replace it if needed (after a crop for instance)
-        const uploadId = parseInt(selectedImage.dataset.uploadid);
-        tinymceEditImage.selected = true;
-        tinymceEditImage.uploadId = uploadId;
-      } else {
-        tinymceEditImage.reset();
+        const searchParams = new URL(selectedImage.src).searchParams;
+        const payload: Payload = {
+          method: Method.GET,
+          action: Action.Read,
+          model: Model.Upload,
+          entity: {
+            type: entity.type,
+            id: entity.id,
+          },
+          content: searchParams.get('f'),
+          target: Target.UploadId,
+        };
+        AjaxC.send(payload).then(json => {
+          const upload = json.value as Upload;
+          tinymceEditImage.selected = true;
+          tinymceEditImage.uploadId = upload.id;
+          tinymceEditImage.filename = upload.real_name;
+        });
+      } else if (tinymceEditImage.selected === true) {
+        // delay reset a bit so that images_upload_handler gets called first and can finish
+        setTimeout(() => {
+          tinymceEditImage.reset();
+        }, 50);
       }
     });
   }
-
 
   // INSERT IMAGE AT CURSOR POSITION IN TEXT
   $(document).on('click', '.inserter',  function() {
@@ -435,7 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (editor.type === 'md') {
       content = '\n![image](' + url + ')\n';
     } else if (editor.type === 'tiny') {
-      content = '<img src="' + url + '" data-uploadid="' + $(this).data('uploadid') + '" />';
+      content = '<img src="' + url + '" />';
     }
     editor.setContent(content);
   });
@@ -443,5 +468,54 @@ document.addEventListener('DOMContentLoaded', () => {
   $(document).on('blur', '#date_input', function() {
     const content = (document.getElementById('date_input') as HTMLInputElement).value;
     EntityC.update(entity.id, Target.Date, content);
+  });
+
+  // this should be in uploads but there is no good way so far to interact with the two editors there
+  document.getElementById('filesdiv').addEventListener('submit', event => {
+    const el = event.target as HTMLElement;
+    if (el.matches('[data-action="replace-uploaded-file"]')) {
+      event.preventDefault();
+
+      // we can identify an image by the src attribute in this context
+      const searchPrefixSrc = 'src="app/download.php?f=';
+      const searchPrefixMd = '![image](app/download.php?f=';
+      const formElement = el as HTMLFormElement;
+      const editorCurrentContent = editor.getContent();
+
+      // submit form if longName is not found in body
+      if ((editorCurrentContent.indexOf(searchPrefixSrc + formElement.dataset.longName) === -1)
+        && (editorCurrentContent.indexOf(searchPrefixMd + formElement.dataset.longName) === -1)
+      ) {
+        formElement.submit();
+        return true;
+      }
+
+      const formData = new FormData(formElement);
+      formData.set('extraParam', 'noRedirect');
+      fetch('app/controllers/RequestHandler.php', {
+        method: 'POST',
+        body: formData,
+      }).then(response => {
+        return response.json();
+      }).then(json => {
+        // use regExp in replace to find all occurrence
+        // images are identified by 'src="app/download.php?f=' (html) and '![image](app/download.php?f=' (md)
+        // '.', '?', '[' and '(' need to be escaped in js regex
+        const editorNewContent = editorCurrentContent.replace(
+          new RegExp(escapeRegExp(searchPrefixSrc + formElement.dataset.longName), 'g'),
+          searchPrefixSrc + json.value.long_name,
+        ).replace(
+          new RegExp(escapeRegExp(searchPrefixMd + formElement.dataset.longName), 'g'),
+          searchPrefixMd + json.value.long_name,
+        );
+        editor.replaceContent(editorNewContent);
+
+        // status of previous file is archived now
+        // save because using the old file will not return an id from the db
+        updateEntity();
+        reloadElement('filesdiv');
+      });
+      return false;
+    }
   });
 });

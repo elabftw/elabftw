@@ -182,17 +182,17 @@
 
                   {% if mode == 'edit' %}
                     <!-- replace upload form -->
-                    <div id='replaceUploadForm_{{ upload.id }}' hidden>
-                      <form enctype='multipart/form-data' action='app/controllers/RequestHandler.php' method='POST'>
-                        <input type='hidden' name='action' value='update' />
+                    <div id='replaceUploadForm_{{ upload.id }}' class='mt-1' hidden>
+                      <form enctype='multipart/form-data' action='app/controllers/RequestHandler.php' method='POST' class='form-inline' data-action='replace-uploaded-file' data-long-name='{{ upload.long_name }}'>
+                        <input type='hidden' name='action' value='replace' />
                         <input type='hidden' name='target' value='file' />
                         <input type='hidden' name='entity_id' value='{{ upload.item_id }}' />
                         <input type='hidden' name='entity_type' value='{{ upload.type }}' />
                         <input type='hidden' name='id' value='{{ upload.id }}' />
                         <input type='hidden' name='model' value='upload' />
                         {{ App.Session.get('csrf')|csrf }}
-                        <input type='file' style='display:inline' name='content' required />
-                        <button type='submit' class='button btn btn-primary'>{{ 'OK'|trans }}</button>
+                        <input type='file' class='form-control mr-1 mt-1' name='content' required />
+                        <button type='submit' class='button btn btn-primary mt-1'>{{ 'OK'|trans }}</button>
                       </form>
                     </div>
                   {% endif %}

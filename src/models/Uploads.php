@@ -31,7 +31,6 @@ use function in_array;
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
 use RuntimeException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -44,12 +43,12 @@ class Uploads implements CrudInterface
 
     public const STATE_DELETED = 3;
 
+    public const STATE_ARCHIVED = 2;
+
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
     private const BIG_FILE_THRESHOLD = 50000000;
 
     private const STATE_NORMAL = 1;
-
-    private const STATE_ARCHIVED = 2;
 
     protected Db $Db;
 
@@ -168,6 +167,9 @@ class Uploads implements CrudInterface
         if ($params->getTarget() === 'all') {
             return $this->readAllNormal();
         }
+        if ($params->getTarget() === 'uploadid') {
+            $this->id = $this->getIdFromLongname($params->getContent());
+        }
 
         $sql = 'SELECT * FROM uploads WHERE id = :id AND state = :state';
         $req = $this->Db->prepare($sql);
@@ -202,9 +204,6 @@ class Uploads implements CrudInterface
     public function update(UploadParamsInterface $params): bool
     {
         $this->Entity->canOrExplode('write');
-        if ($params->getTarget() === 'file') {
-            return $this->replace($params->getFile());
-        }
         $sql = 'UPDATE uploads SET ' . $params->getTarget() . ' = :content WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
@@ -251,6 +250,33 @@ class Uploads implements CrudInterface
         return (int) $req->fetchColumn();
     }
 
+    public function getIdFromLongname(string $longname): int
+    {
+        $sql = 'SELECT id FROM uploads WHERE long_name = :long_name LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':long_name', $longname, PDO::PARAM_STR);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
+    /**
+     * Attached files are immutable (change history is kept), so the current
+     * file gets its state changed to "archived" and a new one is added
+     */
+    public function replace(UploadParamsInterface $params): array
+    {
+        $this->Entity->canOrExplode('write');
+        // read the current one to get the comment
+        $upload = $this->read(new ContentParams());
+        $this->update(new UploadParams((string) self::STATE_ARCHIVED, 'state'));
+
+        $file = $params->getFile();
+        $newID = $this->create(new CreateUpload($file->getClientOriginalName(), $file->getPathname(), $upload['comment']));
+        $this->setId((int) $newID);
+
+        return $this->read(new ContentParams());
+    }
+
     /**
      * This function will not remove the files but set them to "deleted" state
      * A manual purge must be made by sysadmin if they wish to really remove them.
@@ -258,20 +284,6 @@ class Uploads implements CrudInterface
     private function nuke(): bool
     {
         return $this->update(new UploadParams((string) self::STATE_DELETED, 'state'));
-    }
-
-    /**
-     * Attached files are immutable (change history is kept), so the current
-     * file gets its state changed to "archived" and a new one is added
-     */
-    private function replace(UploadedFile $file): bool
-    {
-        // read the current one to get the comment
-        $upload = $this->read(new ContentParams());
-        $params = new CreateUpload($file->getClientOriginalName(), $file->getPathname(), $upload['comment']);
-        $this->create($params);
-
-        return $this->update(new UploadParams((string) self::STATE_ARCHIVED, 'state'));
     }
 
     /**

@@ -276,6 +276,13 @@
   dependencies:
     "@popperjs/core" "^2.9.2"
 
+"@types/dropzone@^5.7.4":
+  version "5.7.4"
+  resolved "https://registry.yarnpkg.com/@types/dropzone/-/dropzone-5.7.4.tgz#667e6f22fac6428db7553663fd1e31547d994161"
+  integrity sha512-9kLJ2YAmVRWYrHvDoa95pQzHF0HUMKcznsS7FM1Mht5Yieec+HMB6Ybfm+ocvLjvFCvgyYGFTp4nzNFxhZmo3g==
+  dependencies:
+    "@types/jquery" "*"
+
 "@types/eslint-scope@^3.7.3":
   version "3.7.3"
   resolved "https://registry.yarnpkg.com/@types/eslint-scope/-/eslint-scope-3.7.3.tgz#125b88504b61e3c8bc6f870882003253005c3224"
@@ -367,13 +374,6 @@
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.3.tgz#ff5e2f1902969d305225a047c8a0fd5c915cebef"
   integrity sha512-JYM8x9EGF163bEyhdJBpR2QX1R5naCJHC8ucJylJ3w9/CVBaskdQ8WqBf8MmQrd1kRvp/a4TS8HJ+bxzR7ZJYQ==
-
-"@types/tinymce@^4.6.0":
-  version "4.6.5"
-  resolved "https://registry.yarnpkg.com/@types/tinymce/-/tinymce-4.6.5.tgz#5301cf23d65102571795a022f6c8b257826cecae"
-  integrity sha512-C5gdEi85rUeYEXzXlwAm9MzvfMI8SooVbBMLLN/BQTeDnHWNtRWAkB6ON9s0lhWZYrmjSgLPrWSe86rjciACEQ==
-  dependencies:
-    "@types/jquery" "*"
 
 "@types/utf8@^2.1.6":
   version "2.1.6"

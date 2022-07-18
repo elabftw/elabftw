@@ -273,10 +273,14 @@ export class Metadata {
       // the input elements that will be created from the extra fields
       const elements = [];
       for (const [name, description] of Object.entries(json.extra_fields)) {
-        elements.push({ name: name, element: this.generateElement(name, description)});
+        elements.push({
+          name: name,
+          element: this.generateElement(name, description),
+          position: parseInt(description.position, 10) || 99999,
+        });
       }
       // now display the names/values from extra_fields
-      for (const element of elements) {
+      for (const element of elements.sort((a, b) => a.position - b.position)) {
         const rowDiv = document.createElement('div');
         rowDiv.classList.add('row');
         this.metadataDiv.append(rowDiv);
@@ -298,10 +302,14 @@ export class Metadata {
       // the input elements that will be created from the extra fields
       const elements = [];
       for (const [name, description] of Object.entries(json.extra_fields)) {
-        elements.push({ name: name, element: this.generateInput(name, description)});
+        elements.push({
+          name: name,
+          element: this.generateInput(name, description),
+          position: parseInt(description.position, 10) || 99999,
+        });
       }
       // now display the inputs from extra_fields
-      for (const element of elements) {
+      for (const element of elements.sort((a, b) => a.position - b.position)) {
         const rowDiv = document.createElement('div');
         rowDiv.classList.add('row');
         this.metadataDiv.append(rowDiv);

@@ -57,7 +57,7 @@ try {
     if ($action !== 'read' &&
         ($Model instanceof Status || $Model instanceof ItemsTypes) &&
         !$App->Session->get('is_admin')
-        ) {
+    ) {
         throw new IllegalActionException('Non admin user tried to edit status or items types.');
     }
     // only sysadmins can update the config

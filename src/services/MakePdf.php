@@ -200,7 +200,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
                     $mpdf->useTemplate($page);
                 }
                 // not all pdf will be able to be integrated, so for the one that will trigger an exception
-            // we simply ignore it and collect information for notification
+                // we simply ignore it and collect information for notification
             } catch (FpdiException) {
                 // collect real name of attached pdf
                 $this->failedAppendPdfs[] = $pdf[1];

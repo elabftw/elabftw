@@ -15,10 +15,10 @@ use Elabftw\Models\Users;
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 require_once dirname(__DIR__, 2) . '/config.php';
 $Notifications = new Notifications(new Users(1));
-        $body = array(
-            'experiment_id' => 32,
-            'commenter_userid' => 2,
-        );
+$body = array(
+    'experiment_id' => 32,
+    'commenter_userid' => 2,
+);
 $Notifications->create(new CreateNotificationParams(Notifications::COMMENT_CREATED, $body));
 $Notifications->create(new CreateNotificationParams(Notifications::USER_CREATED, array('userid' => 3)));
 $Notifications->create(new CreateNotificationParams(Notifications::USER_NEED_VALIDATION, array('userid' => 3)));

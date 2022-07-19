@@ -68,12 +68,12 @@ class Check
     public static function usergroup(int $gid): bool
     {
         switch ($gid) {
-        case 1:
-        case 2:
-        case 4:
-            return true;
-        default:
-            return false;
+            case 1:
+            case 2:
+            case 4:
+                return true;
+            default:
+                return false;
         }
     }
 

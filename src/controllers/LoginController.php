@@ -238,14 +238,14 @@ class LoginController implements ControllerInterface
                 $connection = new Connection($ldapConfig);
                 return new LdapAuth($connection, $c, (string) $this->App->Request->request->get('email'), (string) $this->App->Request->request->get('password'));
 
-            // AUTH WITH LOCAL DATABASE
+                // AUTH WITH LOCAL DATABASE
             case 'local':
                 $this->App->Session->set('auth_service', self::AUTH_LOCAL);
                 // only local auth validates device token
                 $this->validateDeviceToken();
                 return new LocalAuth((string) $this->App->Request->request->get('email'), (string) $this->App->Request->request->get('password'));
 
-            // AUTH WITH SAML
+                // AUTH WITH SAML
             case 'saml':
                 $this->App->Session->set('auth_service', self::AUTH_SAML);
                 $Saml = new Saml($this->App->Config, new Idps());
@@ -262,20 +262,20 @@ class LoginController implements ControllerInterface
                     $this->App->Log,
                 );
 
-            // AUTH AS ANONYMOUS USER
+                // AUTH AS ANONYMOUS USER
             case 'anon':
                 $this->App->Session->set('auth_service', self::AUTH_ANON);
                 return new AnonAuth($this->App->Config->configArr, (int) $this->App->Request->request->get('team_id'));
 
-            // AUTH in a team (after the team selection page)
-            // we are already authenticated
+                // AUTH in a team (after the team selection page)
+                // we are already authenticated
             case 'team':
                 return new TeamAuth(
                     $this->App->Session->get('auth_userid'),
                     (int) $this->App->Request->request->get('selected_team'),
                 );
 
-            // MFA AUTH
+                // MFA AUTH
             case 'mfa':
                 return new MfaAuth(
                     new MfaHelper(

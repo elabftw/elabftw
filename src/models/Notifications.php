@@ -124,15 +124,24 @@ class Notifications implements CrudInterface
 
     public function read(ContentParamsInterface $params): array
     {
-        $sql = 'SELECT id, category, body, is_ack, created_at FROM notifications WHERE userid = :userid AND category != :deadline ORDER BY created_at DESC LIMIT 10';
+        // for step deadline only select notifications where deadline is in the next hour
+        $sql = 'SELECT id, category, body, is_ack, created_at FROM notifications WHERE userid = :userid AND (
+                category != :deadline OR
+                (category = :deadline and JSON_UNQUOTE(JSON_EXTRACT(body, :deadline_json_path)) > (NOW() - INTERVAL 1 HOUR))
+            ) ORDER BY created_at DESC LIMIT 10';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $req->bindValue(':deadline', self::STEP_DEADLINE, PDO::PARAM_INT);
+        $req->bindValue(':deadline_json_path', '$.deadline', PDO::PARAM_STR);
         $this->Db->execute($req);
 
         $notifs = $req->fetchAll();
-        foreach ($notifs as &$notif) {
+        foreach ($notifs as $key => &$notif) {
             $notif['body'] = json_decode($notif['body'], true, 512, JSON_THROW_ON_ERROR);
+            // remove the step deadline web notif if user doesn't want it shown
+            if ($this->users->userData['notif_step_deadline'] === '0' && ((int) $notif['category']) === self::STEP_DEADLINE) {
+                unset($notifs[$key]);
+            }
         }
         return $notifs;
     }

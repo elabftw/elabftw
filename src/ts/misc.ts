@@ -307,3 +307,9 @@ export function showContentPlainText(el: HTMLElement): void {
     $('#plainTextModal').modal();
   });
 }
+// used in edit.ts to build search patterns from strings that contain special characters
+// taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping
+export function escapeRegExp(string: string): string {
+  // $& means the whole matched string
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}

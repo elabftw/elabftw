@@ -110,6 +110,15 @@ class Transform
                     $notif['body']['file_names'],
                     $notif['created_at'],
                 );
+            case Notifications::STEP_DEADLINE:
+                return sprintf(
+                    '<span data-action="ack-notif" data-id="%d" data-href="%s.php?mode=view&id=%d">%s</span>' . $relativeMoment,
+                    (int) $notif['id'],
+                    $notif['body']['entity_page'],
+                    (int) $notif['body']['entity_id'],
+                    _('A step dealine is approaching.'),
+                    $notif['created_at'],
+                );
             default:
                 return '';
         }

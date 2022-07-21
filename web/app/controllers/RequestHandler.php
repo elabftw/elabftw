@@ -92,6 +92,8 @@ try {
         } else {
             $res = $Model->update($Params);
         }
+    } elseif ($action === 'replace') {
+        $res = $Model->replace($Params);
     } elseif ($action === 'destroy') {
         if ($Model instanceof Experiments) {
             $Teams = new Teams($App->Users);
@@ -163,7 +165,7 @@ try {
 
     // special case for uploading an edited json file back: it's a POSTed async form
     // for the rest of the cases, we redirect to the entity page edit mode because IIRC only the attached file update feature will use this
-    if ($Processor instanceof FormProcessor && !($Request->request->get('extraParam') === 'jsoneditor')) {
+    if ($Processor instanceof FormProcessor && !($Request->request->get('extraParam') === 'jsoneditor' || $Request->request->get('extraParam') === 'noRedirect')) {
         $Response = new RedirectResponse('../../' . $Processor->Entity->page . '.php?mode=edit&id=' . $Processor->Entity->id);
         $Response->send();
         exit;

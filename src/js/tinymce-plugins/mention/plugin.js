@@ -347,13 +347,12 @@
         },
 
         offset: function () {
-            var rtePosition = $(this.editor.getContainer()).offset(),
-                contentAreaPosition = $(this.editor.getContentAreaContainer()).position(),
-                nodePosition = $(this.editor.dom.select('span#autocomplete')).position();
+            var contentAreaPosition = $(this.editor.getContentAreaContainer()).offset(),
+                nodePosition = $(this.editor.dom.select('span#autocomplete')).offset();
 
             return {
-                top: rtePosition.top + contentAreaPosition.top + nodePosition.top + $(this.editor.selection.getNode()).innerHeight() - $(this.editor.getDoc()).scrollTop() + 5,
-                left: rtePosition.left + contentAreaPosition.left + nodePosition.left
+                top: contentAreaPosition.top + nodePosition.top + $(this.editor.selection.getNode()).innerHeight() - $(this.editor.getDoc()).scrollTop() + 5,
+                left: contentAreaPosition.left + nodePosition.left
             };
         },
 

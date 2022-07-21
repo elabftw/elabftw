@@ -26,6 +26,7 @@ interface Categories {
 }
 
 interface Upload {
+  id?: number;
   real_name: string;
   long_name: string;
 }
@@ -53,8 +54,8 @@ interface CheckableItem {
 }
 
 enum Method {
-  POST = 'POST',
   GET = 'GET',
+  POST = 'POST',
   UNAUTHGET = 'UNAUTHGET',
 }
 
@@ -64,30 +65,31 @@ enum Action {
   Update = 'update',
   Destroy = 'destroy',
 
-  DestroyStamppass = 'destroystamppass',
   Deduplicate = 'deduplicate',
+  DestroyStamppass = 'destroystamppass',
   Duplicate = 'duplicate',
   ImportLinks = 'importlinks',
   Lock = 'lock',
   Pin = 'pin',
   Timestamp = 'timestamp',
+  Replace = 'replace',
 }
 
 enum Model {
   Apikey = 'apikey',
   Comment = 'comment',
   Config = 'config',
-  Link = 'link',
   FavTag = 'favtag',
+  Link = 'link',
   Notification = 'notification',
   PrivacyPolicy = 'privacypolicy',
   Status = 'status',
   Step = 'step',
-  UnfinishedSteps = 'unfinishedsteps',
   Tag = 'tag',
   Team = 'team',
   TeamGroup = 'teamgroup',
   Todolist = 'todolist',
+  UnfinishedSteps = 'unfinishedsteps',
   Upload = 'upload',
   User = 'user',
   User2Team = 'user2team',
@@ -115,7 +117,6 @@ enum Target {
   Member = 'member',
   Metadata = 'metadata',
   MetadataField = 'metadatafield',
-  TsAuthority = 'ts_authority',
   PrivacyPolicy = 'privacypolicy',
   Rating = 'rating',
   RealName = 'real_name',
@@ -123,7 +124,9 @@ enum Target {
   Title = 'title',
   TsBloxberg = 'ts_bloxberg',
   TsClassic = 'ts_classic',
+  TsAuthority = 'ts_authority',
   Unreference = 'unreference',
+  UploadId = 'uploadid',
   UserId = 'userid',
 }
 
@@ -150,19 +153,19 @@ interface Payload {
 }
 
 export {
+  Action,
   BoundEvent,
   Categories,
   CheckableItem,
-  ResponseMsg,
-  Payload,
+  Entity,
+  EntityType,
   Method,
-  Action,
   Model,
+  PartialEntity,
+  Payload,
+  ResponseMsg,
   Target,
   Todoitem,
-  EntityType,
-  Entity,
-  PartialEntity,
   UnfinishedEntities,
   Upload,
 };

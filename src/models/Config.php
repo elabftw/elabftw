@@ -220,6 +220,7 @@ final class Config
             ('saml_lowercaseurlencoding', 0),
             ('email_domain', NULL),
             ('saml_sync_teams', 0),
+            ('support_url', 'https://github.com/elabftw/elabftw/issues'),
             ('deletable_xp', 1),
             ('max_revisions', 10),
             ('min_delta_revisions', 100),

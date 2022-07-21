@@ -154,6 +154,9 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           </select>
           <p class='smallgray'>{{ 'You can still show the local login form by appending ?letmein to the login page URL.'|trans }}</p>
 
+          <label for='support_url'>{{ 'URL where the Support menu entry from Help dropdown points:'|trans }}</label>
+          <input class='form-control col-md-4' type='url' value='{{ App.Config.configArr.support_url }}' name='support_url' id='support_url' />
+
           <div class='mt-4 text-center'>
               <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
           </div>

@@ -59,7 +59,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake
         $ZipArchive->addFile($pdfPath, $pdfName);
         $ZipArchive->addFile($tsResponse->getTokenPath(), $tokenName);
         $ZipArchive->close();
-        return $this->Entity->Uploads->create(new CreateUpload($zipName, $zipPath, _('Timestamp archive')));
+        return $this->Entity->Uploads->create(new CreateUpload($zipName, $zipPath, sprintf(_('Timestamp archive by %s'), $this->Entity->Users->userData['fullname'])));
     }
 
     /**

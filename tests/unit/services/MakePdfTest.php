@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
@@ -29,6 +30,18 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
         $Entity->Uploads->create(new CreateUpload('digicert.pdf', dirname(__DIR__, 2) . '/_data/digicert.pdf'));
         // add a pdf with password -> cannot be appended
         $Entity->Uploads->create(new CreateUpload('with_password_123456.pdf', dirname(__DIR__, 2) . '/_data/with_password_123456.pdf'));
+        // add an image to the body
+        $id = $Entity->Uploads->create(new CreateUpload('example.png', dirname(__DIR__, 2) . '/_data/example.png'));
+        $Entity->Uploads->setId($id);
+        $upArr = $Entity->Uploads->read(new ContentParams());
+        $Entity->entityData['body'] .= '\n<p><img src="app/download.php?f=' . $upArr['long_name'] . '&amp;storage=' . $upArr['storage'] . '"></p>';
+        // without storage part of the query to test getStorageFromLongname
+        $Entity->entityData['body'] .= '\n<p><img src="app/download.php?f=' . $upArr['long_name'] . '"></p>';
+        // test upper case file extension
+        $id = $Entity->Uploads->create(new CreateUpload('example.PNG', dirname(__DIR__, 2) . '/_data/example.png'));
+        $Entity->Uploads->setId($id);
+        $upArr = $Entity->Uploads->read(new ContentParams());
+        $Entity->entityData['body'] .= '\n<p><img src="app/download.php?f=' . $upArr['long_name'] . '"></p>';
         $MpdfProvider = new MpdfProvider('Toto');
         $this->MakePdf = new MakePdf($MpdfProvider, $Entity);
     }

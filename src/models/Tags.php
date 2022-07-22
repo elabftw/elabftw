@@ -236,11 +236,10 @@ class Tags implements CrudInterface
     public function getIdFromTags(array $tags, int $team): array
     {
         $results = array();
-        $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
+        $sql = 'SELECT id FROM tags WHERE tag = :tag';
         $req = $this->Db->prepare($sql);
         foreach ($tags as $tag) {
             $req->bindParam(':tag', $tag);
-            $req->bindParam(':team', $team, PDO::PARAM_INT);
             $req->execute();
             $res = $req->fetch();
             if ($res !== false) {
@@ -248,6 +247,9 @@ class Tags implements CrudInterface
             }
         }
         $tagIds = array_column($results, 'id');
+        if (empty($tagIds)) {
+            return array();
+        }
 
         // look for item ids that have all the tags not only one of them
         // note: you can't have a parameter for the IN clause

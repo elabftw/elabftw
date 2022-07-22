@@ -21,7 +21,7 @@ use Mpdf\Mpdf;
  */
 class MpdfProvider implements MpdfProviderInterface
 {
-    public function __construct(private string $author, private string $format = 'A4', private bool $pdfa = true)
+    public function __construct(private string $author, private string $format = 'A4', private bool $pdfa = false)
     {
     }
 

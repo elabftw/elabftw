@@ -740,7 +740,7 @@ CREATE TABLE `users` (
   `inc_files_pdf` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `append_pdfs` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `archived` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-  `pdfa` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  `pdfa` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
   `display_size` varchar(2) NOT NULL DEFAULT 'lg',
   `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it',

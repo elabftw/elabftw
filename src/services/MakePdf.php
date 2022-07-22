@@ -315,7 +315,7 @@ class MakePdf extends AbstractMake implements FileMakerInterface
         // and https://github.com/mpdf/mpdf/blob/development/src/Image/ImageTypeGuesser.php
         $matches = array();
         // ampersand (&) in html attributes is encoded (&amp;) so we need to use &amp; in the regex
-        preg_match_all('/app\/download.php\?f=[[:alnum:]]{2}\/[[:alnum:]]{128}\.(?:jpe?g|gif|png|svg|webp|wmf|bmp)(?:&amp;storage=[0-9])?/', $body, $matches);
+        preg_match_all('/app\/download.php\?f=[[:alnum:]]{2}\/[[:alnum:]]{128}\.(?:jpe?g|gif|png|svg|webp|wmf|bmp)(?:&amp;storage=[0-9])?/i', $body, $matches);
         foreach ($matches[0] as $src) {
             // src will look like: app/download.php?f=c2/c2741a{...}016a3.png&amp;storage=1
             // so we parse it to get the file path and storage type

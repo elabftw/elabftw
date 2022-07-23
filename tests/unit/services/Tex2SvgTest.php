@@ -35,7 +35,7 @@ class Tex2SvgTest extends \PHPUnit\Framework\TestCase
     public function testMathJax(): void
     {
         $mathJaxHtml = $this->fixturesFs->read('mathjax.html');
-        $Tex2Svg = new Tex2Svg($this->mpdf, $mathJaxHtml);
+        $Tex2Svg = new Tex2Svg((new MpdfProvider('Toto', 'A4', true))->getInstance(), $mathJaxHtml);
         $mathJaxOut = $Tex2Svg->getContent();
         $mathJaxOutExpect = $this->fixturesFs->read('mathjax.out.html');
         $this->assertEquals($mathJaxOutExpect, $mathJaxOut);
@@ -44,7 +44,7 @@ class Tex2SvgTest extends \PHPUnit\Framework\TestCase
     public function testMathJaxNoPDFA(): void
     {
         $mathJaxHtml = $this->fixturesFs->read('mathjax.html');
-        $Tex2Svg = new Tex2Svg((new MpdfProvider('Toto', 'A4', false))->getInstance(), $mathJaxHtml);
+        $Tex2Svg = new Tex2Svg($this->mpdf, $mathJaxHtml);
         $mathJaxOut = $Tex2Svg->getContent();
         $mathJaxOutExpect = $this->fixturesFs->read('mathjaxNoPDFA.out.html');
         $this->assertEquals($mathJaxOutExpect, $mathJaxOut);

@@ -367,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }).then(json => {
               success(`app/download.php?f=${json.value.long_name}&storage=${json.value.storage}`);
               // save here because using the old real_name will not return anything from the db (status is archived now)
-              updateEntity();
+              updateEntityBody();
               reloadElement('filesdiv');
             });
           } else {
@@ -513,7 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // status of previous file is archived now
         // save because using the old file will not return an id from the db
-        updateEntity();
+        updateEntityBody();
         reloadElement('filesdiv');
       });
       return false;

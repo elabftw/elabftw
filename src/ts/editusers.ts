@@ -21,10 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
     if (el.matches('[data-action="update-user"]')) {
-      const formGroup = el.closest('div.form-group');
-      let params = { 'usersUpdate': '1' };
+      const formGroup = (el.closest('div.form-group') as HTMLElement);
+      let params = {
+        'usersUpdate': '1',
+        'userid': formGroup.dataset.userid,
+      };
       // text inputs
-      ['userid', 'firstname', 'lastname', 'email', 'password'].forEach(input => {
+      ['firstname', 'lastname', 'email', 'password'].forEach(input => {
         params = Object.assign(params, {[input]: (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value});
         if (input === 'password') {
           (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value = '';
@@ -32,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       // clear the password field once collected
       // select inputs
-      ['usergroup', 'use_mfa', 'validated'].forEach(input => {
+      ['usergroup', 'validated'].forEach(input => {
         params = Object.assign(params, {[input]: (formGroup.querySelector(`select[name="${input}"]`) as HTMLSelectElement).value});
       });
       // now doing POST request

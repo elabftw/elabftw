@@ -28,6 +28,12 @@
             {% for user in usersArr %}
             <li class='list-group-item'>
               <ul class='list-inline'>
+                <p class='float-right'>
+                  {% if user.mfa_secret %}
+                    <span class='elab-tooltip'><span>{{ '2FA enabled'|trans }}</span><i title='' class='fas fa-user-shield'></i></span>
+                  {% endif %}
+                  <span class='elab-tooltip badge badge-secondary'><span>{{ 'User ID'|trans }}</span>{{ user.userid }}</span>
+                </p>
                 <p>Last login: {{ user.last_login ?? 'never' }}</p>
                 <!-- TEAM -->
                 <li class='list-inline-item mb-2'>
@@ -52,13 +58,7 @@
                 </li>
 
 
-                <div class='form-group'>
-                  <!-- USERID (readonly) -->
-                  <li class='list-inline-item'>
-                    <label for='usersUpdateUserid_{{ user.userid }}'>{{ 'User ID'|trans }}</label>
-                    <input type='text' class='form-control custom-control-inline' value='{{ user.userid }}' name='userid' readonly />
-                  </li>
-
+                <div class='form-group' data-userid='{{ user.userid }}'>
                   <!-- FIRSTNAME -->
                   <li class='list-inline-item'>
                     {# add the userid in the for and id to prevent having more than one id on the page. Label wrapping wouldn't display nice #}
@@ -80,7 +80,7 @@
 
                   <!-- PERMISSION GROUP -->
                   <li class='list-inline-item'>
-                    <label for='usersUpdateUsergroup_{{ user.userid }}'>{{ 'Group'|trans }}</label>
+                    <label for='usersUpdateUsergroup_{{ user.userid }}'>{{ 'Permission group'|trans }}</label>
                     <select class='form-control custom-control-inline' name='usergroup' id='usersUpdateUsergroup_{{ user.userid }}'>
                       <option value='1' {{ user.usergroup == '1' ? " selected='selected'" }}>Sysadmins</option>
                       <option value='2' {{ user.usergroup == '2' ? " selected='selected'" }}>Admins</option>
@@ -104,15 +104,6 @@
                         <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='usersUpdatePassword_{{ user.userid }}'><i class='fas fa-eye' aria-hidden='true'></i></span>
                       </div>
                     </div>
-                  </li>
-
-                  <!-- 2FA -->
-                  <li class='list-inline-item'>
-                    <label for='usersUpdate2FA_{{ user.userid }}'>{{ 'Uses 2FA?'|trans }}</label>
-                    <select class='form-control custom-control-inline' autocomplete='off' name='use_mfa' id='usersUpdate2FA_{{ user.userid }}'{{ not user.mfa_secret ? ' disabled' }}>
-                      <option value='on'{{ user.mfa_secret ? ' selected' }}>{{ 'Yes'|trans }}</option>
-                      <option value='off'{{ not user.mfa_secret ? ' selected' }}>{{ 'No'|trans }}</option>
-                    </select>
                   </li>
 
                   <!-- ACTIVE ACCOUNT -->
@@ -196,7 +187,7 @@
 
       <!-- GROUP -->
       <div class='col-md-2'>
-        <label for='create-user-group'>{{ 'Group'|trans }}</label>
+        <label for='create-user-group'>{{ 'Permission group'|trans }}</label>
         <select class='form-control custom-control-inline' name='usergroup' id='create-user-group'>
           {% if App.Session.get('is_sysadmin') %}
             <option value='1'>Sysadmins</option>

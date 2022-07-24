@@ -122,7 +122,7 @@ class Links implements CrudInterface
                 $sql .= ' OR (entity.canread = ' . $teamgroup . ')';
             }
 
-            $sql .= ') ORDER by';
+            $sql .= ') AND entity.state = ' . $this->Entity::STATE_NORMAL . ' ORDER by';
 
             if ($type === 'items') {
                 $sql .= ' category.name ASC,';

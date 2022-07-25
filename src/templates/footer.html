@@ -30,7 +30,7 @@
         <a href='admin.php'>{{ 'Admin panel'|trans }}
 
           {% if unvalidatedUsersCount > 0 %}
-            <span class='badge badge-dark p-1'>{{ unvalidatedUsersCount }}</span>
+            <span class='badge badge-dark p-1' title='{{ 'Unconfirmed users'|trans }}'>{{ unvalidatedUsersCount }}</span>
             <span class='sr-only'>{{ 'Unconfirmed users'|trans }}</span>
           {% endif %}
         </a>

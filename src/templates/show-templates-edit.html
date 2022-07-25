@@ -42,7 +42,6 @@
           <i id='toggle-pin-icon' class='fas fa-thumbtack fa-fw' style='color:#29AEB9'></i>
         {% endif %}
         {{ Entity.entityData.fullname|raw }} - {{ Entity.entityData.title|raw }}
-    </p>
       </h2>
     </div>
 
@@ -87,16 +86,16 @@
         {% endif %}
       </div>
     </div>
-    </div>
+  </div>
 
-
-    {% if Entity.entityData.locked %}
-      {% include 'templates-view.html' %}
-    {% else %}
-      {% include 'templates-edit.html' %}
-    {% endif %}
-
+  {% if Entity.entityData.locked %}
+    {% include 'templates-view.html' %}
+  {% else %}
+    {% include 'templates-edit.html' %}
   {% endif %}
+
   </div>
-  </div>
-  <div id='info' data-page='template-edit' data-type='experiments_templates' data-id='{{ Entity.id }}'></div>
+  {% endif %}
+
+</div>
+<div id='info' data-page='template-edit' data-type='experiments_templates' data-id='{{ Entity.id }}'></div>

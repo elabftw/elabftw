@@ -15,6 +15,7 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Models\Config;
 use jblond\TwigTrans\Translation;
 use Twig\Environment;
+use Twig\Extension\DebugExtension;
 use Twig\Extra\Intl\IntlExtension;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFilter;
@@ -78,6 +79,10 @@ trait TwigTrait
         $TwigEnvironment->addExtension(new Translation());
         // intl extension
         $TwigEnvironment->addExtension(new IntlExtension());
+        // enable twig dump function in debug mode {{ dump(variable) }}
+        if ($config->configArr['debug']) {
+            $TwigEnvironment->addExtension(new DebugExtension());
+        }
 
         $TwigEnvironment->addFilter($msgFilter);
         $TwigEnvironment->addFilter($mdFilter);

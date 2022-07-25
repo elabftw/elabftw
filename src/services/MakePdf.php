@@ -47,6 +47,8 @@ class MakePdf extends AbstractMakePdf
     // collect paths of files to delete
     public array $trash = array();
 
+    protected bool $includeAttachments = false;
+
     private FileSystem $cacheFs;
 
     /**
@@ -69,6 +71,9 @@ class MakePdf extends AbstractMakePdf
         error_reporting(E_ERROR);
 
         $this->cacheFs = (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs();
+        if ($this->includeAttachments === false && $this->Entity->Users->userData['inc_files_pdf']) {
+            $this->includeAttachments = true;
+        }
     }
 
     public function __destruct()
@@ -242,7 +247,7 @@ class MakePdf extends AbstractMakePdf
             'css' => $this->getCss(),
             'date' => $date->format('Y-m-d'),
             'entityData' => $this->Entity->entityData,
-            'includeFiles' => $this->Entity->Users->userData['inc_files_pdf'],
+            'includeFiles' => $this->includeAttachments,
             'locked' => $locked,
             'lockDate' => $lockDate,
             'lockerName' => $lockerName,

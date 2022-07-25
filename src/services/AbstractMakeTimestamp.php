@@ -77,7 +77,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake
             $userData['pdf_format'],
             (bool) $userData['pdfa'],
         );
-        $MakePdf = new MakePdf($MpdfProvider, $this->Entity);
+        $MakePdf = new MakeTimestampPdf($MpdfProvider, $this->Entity);
         return $MakePdf->getFileContent();
     }
 

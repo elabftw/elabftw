@@ -61,12 +61,12 @@ class ImportCsv extends AbstractImport
             $createTarget = '-1';
         }
         // SQL for importing
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, canwrite, elabid)
-            VALUES(:team, :title, CURDATE(), :body, :userid, :category, :canread, :canwrite, :elabid)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, canwrite, elabid, metadata)
+            VALUES(:team, :title, CURDATE(), :body, :userid, :category, :canread, :canwrite, :elabid, :metadata)';
 
         if ($this->Entity instanceof Experiments) {
-            $sql = 'INSERT INTO experiments(title, date, body, userid, canread, canwrite, category, elabid)
-                VALUES(:title, CURDATE(), :body, :userid, :canread, :canwrite, :category, :elabid)';
+            $sql = 'INSERT INTO experiments(title, date, body, userid, canread, canwrite, category, elabid, metadata)
+                VALUES(:title, CURDATE(), :body, :userid, :canread, :canwrite, :category, :elabid, :metadata)';
         }
         $req = $this->Db->prepare($sql);
 
@@ -76,6 +76,10 @@ class ImportCsv extends AbstractImport
                 throw new ImproperActionException('Could not find the title column!');
             }
             $body = $this->getBodyFromRow($row);
+            $metadata = null;
+            if (isset($row['metadata'])) {
+                $metadata = $row['metadata'];
+            }
 
             if ($this->Entity instanceof Items) {
                 $req->bindParam(':team', $this->Users->userData['team']);
@@ -87,6 +91,7 @@ class ImportCsv extends AbstractImport
             $req->bindParam(':canread', $this->canread);
             $req->bindParam(':canwrite', $this->canwrite);
             $req->bindValue(':elabid', Tools::generateElabid());
+            $req->bindParam(':metadata', $metadata);
             $this->Db->execute($req);
             $itemId = $this->Db->lastInsertId();
 
@@ -110,6 +115,8 @@ class ImportCsv extends AbstractImport
         unset($row['title']);
         // and the tags
         unset($row['tags']);
+        // and the metadata
+        unset($row['metadata']);
         // deal with the rest of the columns
         $body = '';
         foreach ($row as $subheader => $content) {

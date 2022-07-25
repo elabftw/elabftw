@@ -198,13 +198,23 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
   addAutocompleteToTagInputs();
 }
 
-export async function reloadElement(elementId): Promise<void> {
-  if (!document.getElementById(elementId)) {
-    console.error('Could not find element to reload!');
-    return;
+export async function reloadElement(elementIds: string|string[]): Promise<void> {
+  if (!Array.isArray(elementIds)) {
+    elementIds = new Array(elementIds);
   }
-  const html = await fetchCurrentPage();
-  document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
+  elementIds.filter(elementId => {
+    if (document.getElementById(elementId)) {
+      return true;
+    }
+    console.error('Could not find element with id "' + elementId + '" to reload!');
+    return false;
+  });
+  if (elementIds.length > 0) {
+    const html = await fetchCurrentPage();
+    elementIds.forEach(elementId => {
+      document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
+    });
+  }
 }
 
 /**
@@ -225,29 +235,64 @@ export function adjustHiddenState(): void {
 
 // AUTOCOMPLETE
 export function addAutocompleteToLinkInputs(): void {
-  let cache = {};
-  // this is the select category filter on add link input
-  const catFilterEl = (document.getElementById('addLinkCatFilter') as HTMLInputElement);
-  if (catFilterEl) {
-    // when we change the category filter, reset the cache
-    catFilterEl.addEventListener('change', () => {
-      cache = {};
-    });
-    ($('[data-autocomplete="links"]') as JQuery<HTMLInputElement>).autocomplete({
-      source: function(request: Record<string, string>, response: (data) => void): void {
-        const term = request.term;
-        if (term in cache) {
-          response(cache[term]);
-          return;
-        }
-        // TODO use AjaxC as for tags below
-        $.getJSON(`app/controllers/EntityAjaxController.php?type=items&filter=${catFilterEl.value}`, request, function(data) {
-          cache[term] = data;
-          response(data);
-        });
-      },
-    });
-  }
+  const cache = {};
+  const AjaxC = new Ajax();
+  [{
+    selectElid: 'addLinkCatFilter',
+    itemType: EntityType.Item,
+    inputElId: 'linkinput',
+  }, {
+    selectElid: 'addLinkExpCatFilter',
+    itemType: EntityType.Experiment,
+    inputElId: 'linkExpInput',
+  }, {
+    selectElid: 'addLinkCatFilter',
+    itemType: EntityType.Item,
+    inputElId: 'linkInputMultiple',
+  }].forEach(object => {
+    const filterEl = (document.getElementById(object.selectElid) as HTMLInputElement);
+    if (filterEl) {
+      cache[object.selectElid] = {};
+      // when we change the category filter, reset the cache
+      filterEl.addEventListener('change', () => {
+        cache[object.selectElid] = {};
+      });
+      ($(`#${object.inputElId}`) as JQuery<HTMLInputElement>).autocomplete({
+        source: function(request: Record<string, string>, response: (data) => void): void {
+          const term = request.term;
+          if (term in cache[object.selectElid]) {
+            response(cache[object.selectElid][term]);
+            return;
+          }
+          const payload: Payload = {
+            method: Method.GET,
+            action: Action.Read,
+            model: object.itemType,
+            entity: {
+              type: object.itemType,
+              id: 0,
+            },
+            target: Target.List,
+            content: term,
+            extraParams: {
+              'filterValue' : filterEl.value,
+            },
+          };
+          AjaxC.send(payload).then(json => {
+            cache[object.selectElid][term] = json.value;
+            response(json.value);
+          });
+        },
+        select: function(event: Event, ui): boolean {
+          const inputEl = event.target as HTMLInputElement;
+          inputEl.dataset.targetId = ui.item.value;
+          inputEl.value = ui.item.label;
+          // don't let autocomplete change value of input element
+          return false;
+        },
+      });
+    }    
+  });
 }
 
 export function addAutocompleteToTagInputs(): void {
@@ -312,4 +357,13 @@ export function showContentPlainText(el: HTMLElement): void {
 export function escapeRegExp(string: string): string {
   // $& means the whole matched string
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+export function getLinkTargetEntityType(el: HTMLElement): EntityType {
+  let type = EntityType.Item;
+  const linksExpDiv = document.getElementById('linksExpDiv');
+  if (linksExpDiv && linksExpDiv.contains(el)) {
+    type = EntityType.Experiment;
+  }
+  return type;
 }

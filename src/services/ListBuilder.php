@@ -13,13 +13,16 @@ use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use function mb_convert_encoding;
 
 /**
  * Create lists of experiments/items for consumption by js code
  */
 class ListBuilder
 {
-    public function __construct(private AbstractEntity $Entity, private int $catFilter = 0)
+    private string $filterValue = '';
+
+    public function __construct(private AbstractEntity $Entity)
     {
     }
 
@@ -27,16 +30,26 @@ class ListBuilder
      * Get an array formatted for the autocomplete input (link and bind)
      *
      * @param string $term the query
+     * @param string $filterValue Narrow down search space: Either a category id (items) or an author full name (experiments)
      */
-    public function getAutocomplete(string $term): array
+    public function getAutocomplete(string $term, string $filterValue = ''): array
     {
+        $this->filterValue = filter_var($filterValue, FILTER_SANITIZE_STRING) ?: '';
         $items = $this->getList($term);
 
         $linksArr = array();
         foreach ($items as $item) {
-            $linksArr[] = $item['id'] . ' - ' . $item['category'] . ' - ' . substr($item['title'], 0, 60);
+            $linksArr[] = array(
+                'label' => (
+                    $this->filterValue === ''
+                    ? ($this->Entity->type === $this->Entity::TYPE_EXPERIMENTS ? $item['fullname'] : '') . $item['category'] . ' - '
+                    : ''
+                ) . $item['date'] . ' - ' . substr($item['title'], 0, 60),
+                'value' => $item['id'],
+            );
         }
-        return $linksArr;
+
+        return $this->fixMalformedUTF8($linksArr);
     }
 
     /**
@@ -75,7 +88,7 @@ class ListBuilder
             }
         }
 
-        return $mentionArr;
+        return $this->fixMalformedUTF8($mentionArr);
     }
 
     /**
@@ -87,10 +100,26 @@ class ListBuilder
     {
         $term = filter_var($term, FILTER_SANITIZE_STRING);
         $this->Entity->addToExtendedFilter(" AND entity.title LIKE '%$term%'");
-        if ($this->catFilter !== 0) {
-            $this->Entity->addFilter('categoryt.id', (string) $this->catFilter);
+        if ($this->filterValue !== '') {
+            if ($this->Entity->type === $this->Entity::TYPE_ITEMS) {
+                $this->Entity->addFilter('categoryt.id', $this->filterValue);
+            }
+            if ($this->Entity->type === $this->Entity::TYPE_EXPERIMENTS) {
+                $this->Entity->addToExtendedFilter(" AND CONCAT(users.firstname, ' ', users.lastname) LIKE '" . $this->filterValue . "'");
+            }
         }
 
         return $this->Entity->readShow(new DisplayParams());
+    }
+
+    /**
+     * fix issue with Malformed UTF-8 characters, possibly incorrectly encoded
+     * see #2404
+     *
+     * @param array $arr
+     */
+    private function fixMalformedUTF8(array $arr): array
+    {
+        return mb_convert_encoding($arr, 'UTF-8', 'UTF-8');
     }
 }

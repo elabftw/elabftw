@@ -25,6 +25,7 @@ use Elabftw\Interfaces\ItemTypeParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
+use Elabftw\Services\ListBuilder;
 use Elabftw\Services\Transform;
 use Elabftw\Traits\EntityTrait;
 use function explode;
@@ -328,6 +329,9 @@ abstract class AbstractEntity implements CrudInterface
                 throw new ImproperActionException('Can only share experiments or items.');
             }
             return array('sharelink' => SITE_URL . '/' . $this->page . '.php?mode=view&id=' . $this->id . '&elabid=' . $this->readOne()['elabid']);
+        }
+        if ($params->getTarget() === 'list') {
+            return (new ListBuilder($this))->getAutocomplete($params->getContent(), $params->getExtra('filterValue'));
         }
         return $this->readOne();
     }

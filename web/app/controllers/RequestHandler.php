@@ -103,7 +103,7 @@ try {
                 throw new ImproperActionException('You cannot delete experiments!');
             }
             $res = $Model->destroy();
-        } elseif ($Model instanceof Users2Teams) {
+        } elseif ($Model instanceof Users2Teams || $Model instanceof Links) {
             $res = $Model->destroy($Params);
         } else {
             $res = $Model->destroy();
@@ -119,7 +119,7 @@ try {
     } elseif ($action === 'pin' && $Model instanceof AbstractEntity) {
         $res = $Model->Pins->togglePin();
     } elseif ($action === 'importlinks' && $Model instanceof Links) {
-        $res = $Model->import();
+        $res = $Model->import($target);
     // TIMESTAMP
     } elseif ($action === 'timestamp' && $Model instanceof Experiments) {
         $config = $App->Config->configArr;

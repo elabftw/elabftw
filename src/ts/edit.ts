@@ -6,7 +6,7 @@
  * @package elabftw
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-import { notif, reloadElement, updateCategory, showContentPlainText, escapeRegExp } from './misc';
+import { notif, reloadElement, updateCategory, showContentPlainText, escapeRegExp, getLinkTargetEntityType } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Model, Payload, Method, Action, PartialEntity } from './interfaces';
 import './doodle';
@@ -218,12 +218,13 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="import-link-body"]')) {
       // this is in this file and not in steps-links-edit because here `editor`
       // exists and is reachable
+      const type = getLinkTargetEntityType(el);
       const payload: Payload = {
         method: Method.GET,
         action: Action.Read,
-        model: EntityType.Item,
+        model: type,
         entity: {
-          type: EntityType.Item,
+          type: type,
           id: parseInt(el.dataset.target, 10),
         },
         target: Target.Body,

@@ -11,9 +11,9 @@ import { Malle } from '@deltablot/malle';
 import Link from './Link.class';
 import Step from './Step.class';
 import i18next from 'i18next';
-import { relativeMoment, makeSortableGreatAgain, reloadElement } from './misc';
+import { relativeMoment, makeSortableGreatAgain, reloadElement, getLinkTargetEntityType } from './misc';
 import { addAutocompleteToLinkInputs, getCheckedBoxes, notif, getEntity, adjustHiddenState } from './misc';
-import { Entity, Target } from './interfaces';
+import { Entity, Target, EntityType } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // MAIN LISTENER for actions
   document.querySelector('.real-container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
+
     // ADD DEADLINE ON STEP
     if (el.matches('[data-action="step-update-deadline"]')) {
       const value = (document.getElementById('stepSelectDeadline_' + el.dataset.stepid) as HTMLSelectElement).value;
@@ -51,11 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     // IMPORT LINK(S) OF LINK
     } else if (el.matches('[data-action="import-links"]')) {
-      LinkC.importLinks(parseInt(el.dataset.target, 10)).then(() => reloadElement('linksDiv'));
+      LinkC.importLinks(parseInt(el.dataset.target, 10), getLinkTargetEntityType(el)).then(() => reloadElement(['linksDiv', 'linksExpDiv']));
     // DESTROY LINK
     } else if (el.matches('[data-action="destroy-link"]')) {
       if (confirm(i18next.t('link-delete-warning'))) {
-        LinkC.destroy(parseInt(el.dataset.target, 10)).then(() => reloadElement('linksDiv'));
+        LinkC.destroy(parseInt(el.dataset.target, 10), getLinkTargetEntityType(el)).then(() => reloadElement(['linksDiv', 'linksExpDiv']));
       }
     }
   });
@@ -161,12 +162,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
       // grab the id from the target
-      const target = parseInt($(this).val() as string);
+      const target = parseInt($(this).data('targetId') as string);
       // only send request if there is a targetId
       if (Number.isNaN(target)) {
         return;
       }
-      LinkC.create(target).then(json => {
+      const targetEntity = EntityType.Item;
+      LinkC.create(target, targetEntity).then(json => {
         // only reload children of links_div_id
         reloadElement('links_div_' + entity.id).then(() => {
           // clear input field
@@ -178,9 +180,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
       $(this).val('');
+      $(this).removeData('targetId');
     }
   });
+  // listen keypress, add link when it's enter or on blur
+  $(document).on('keypress blur', '#linkExpInput', function(e) {
+    // Enter is ascii code 13
+    if (e.which === 13 || e.type === 'focusout') {
+      // grab the id from the target
+      const target = parseInt($(this).data('targetId') as string);
+      // only send request if there is a targetId
+      if (Number.isNaN(target)) {
+        return;
+      }
+      const targetEntity = EntityType.Experiment;
+      LinkC.create(target, targetEntity).then(json => {
+        // only reload children of links_div_id
+        reloadElement('links_exp_div_' + entity.id).then(() => {
+          // clear input field
+          (document.getElementById('linkExpInput') as HTMLInputElement).value = '';
+        });
 
+        if (document.getElementById('linksExpDiv').hidden && json.res) {
+          notif(json);
+        }
+      });
+      $(this).val('');
+      $(this).removeData('targetId');
+    }
+  });
   // CREATE FOR MULTIPLE ENTITIES
   $(document).on('keypress blur', '#linkInputMultiple', function(e) {
     if ($(this).val() === '') {
@@ -204,9 +232,10 @@ document.addEventListener('DOMContentLoaded', () => {
           id: checked[index]['id'],
         };
         const TmpLinkC = new Link(tmpEntity);
-        TmpLinkC.create(parseInt($('#linkInputMultiple').val() as string));
+        TmpLinkC.create(parseInt($('#linkInputMultiple').data('targetId') as string), EntityType.Item);
       });
       $(this).val('');
+      $(this).removeData('targetId');
     }
   });
 

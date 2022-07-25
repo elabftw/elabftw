@@ -81,7 +81,9 @@
         </div>
       </div>
     </section>
+    <div class='col-md-6'></div>
     <!-- LINKS -->
+    <!-- Links to database items -->
     <section class='col-md-6'>
         <h4 data-action='toggle-next' data-toggle-next-n='2' data-icon='linksDivIcon' class='d-inline'><i id='linksDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-link'></i> {{ 'Linked items'|trans }}</h4>
         <!-- ADD LINK -->
@@ -89,7 +91,7 @@
             <div class='input-group-prepend'>
                 <span class='input-group-text'>{{ 'Add a link'|trans }}</span>
             </div>
-            <input aria-label='{{ 'Add a link'|trans }}' type='text' data-autocomplete='links' id='linkinput' class='form-control' data-id='{{ Entity.id }}' placeholder='{{ 'from the database'|trans }}' />
+            <input aria-label='{{ 'Add a link'|trans }}' type='text' id='linkinput' class='form-control' data-id='{{ Entity.id }}' placeholder='{{ 'from the database'|trans }}' />
             <div class='input-group-append' style='max-width:33%;'>
               <select id='addLinkCatFilter' class='brl-none form-control'>
                 <option selected value=''>{{ 'Any category'|trans }}</option>
@@ -101,9 +103,9 @@
         </div>
         <div id='linksDiv' class='mt-2' data-save-hidden='linksDiv'>
           <div id='links_div_{{ Entity.id }}'>
-              {% if Entity.entityData.links %}
+              {% if Entity.entityData.links.items %}
               <ul class='list-group'>
-                  {% for link in Entity.entityData.links %}
+                  {% for link in Entity.entityData.links.items %}
                     {% set randomId = random() %}
                     <li class='list-group-item' id='parent_{{ randomId }}'>
                       <div class='float-right ml-1'>
@@ -136,4 +138,62 @@
           </div>
         </div>
     </section>
+    {% if Entity.type == 'items' or Entity.type == 'experiments' %}
+    <!-- Links to experiments -->
+    <section class='col-md-6'>
+        <h4 data-action='toggle-next' data-toggle-next-n='2' data-icon='linksExpDivIcon' class='d-inline'><i id='linksExpDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-link align-baseline'></i> {{ 'Linked experiments'|trans }}</h4>
+        <!-- ADD LINK -->
+        <div class='input-group mt-2'>
+            <div class='input-group-prepend'>
+                <span class='input-group-text'>{{ 'Add a link'|trans }}</span>
+            </div>
+            <input aria-label='{{ 'Add a link'|trans }}' type='text' id='linkExpInput' class='form-control' data-id='{{ Entity.id }}' placeholder='{{ 'to an experiment'|trans }}' />
+            <div class='input-group-append' style='max-width:33%;'>
+              <select id='addLinkExpCatFilter' class='brl-none form-control'>
+                <option selected value=''>{{ 'Any author'|trans }}</option>
+                {% for user in allTeamUsersArr %}
+                  <option value='{{ user.fullname }}'>{{ user.fullname }}</option>
+                {% endfor %}
+              </select>
+            </div>
+        </div>
+        <div id='linksExpDiv' class='mt-2' data-save-hidden='linksExpDiv'>
+          <div id='links_exp_div_{{ Entity.id }}'>
+              {% if Entity.entityData.links.experiments %}
+              <ul class='list-group'>
+                  {% for link in Entity.entityData.links.experiments %}
+                    {% set randomId = random() %}
+                    <li class='list-group-item' id='parent_{{ randomId }}'>
+                      <div class='float-right ml-1'>
+                        <!-- toggle body -->
+                        <span data-type='experiments' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
+                          <i class='fas fa-plus-circle'></i>
+                        </span>
+                        {% if mode != 'edit-template' %}
+                          <a data-action='import-links' data-target='{{ link.itemid }}' title='{{ 'Import links'|trans }}'>
+                            <i class='fas fa-arrows-down-to-line'></i>
+                          </a>
+
+                          <a data-action='import-link-body' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}'>
+                            <i class='fas fa-lg fa-file-import'></i>
+                          </a>
+                        {% endif %}
+                        <a data-action='destroy-link' data-target='{{ link.itemid }}' title='{{ 'Delete'|trans }}'>
+                          <i class='fas fa-lg fa-trash-alt'></i>
+                        </a>
+                      </div>
+                      <i class='fas fa-link mr-1'></i>
+                      <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='experiments.php?mode=view&id={{ link.itemid }}'>
+                      {{ link.title|raw }}</a>
+                      <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
+                      <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
+                      <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
+                    </li>
+                  {% endfor %}
+              </ul>
+              {% endif %}
+          </div>
+        </div>
+    </section>
+    {% endif %}
 </div>

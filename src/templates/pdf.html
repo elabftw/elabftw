@@ -46,17 +46,32 @@
 </section>
 {% endif %}
 
-{% if entityData.links %}
+{% if entityData.links.items %}
   <section class='no-break'>
     <h3>{% trans %}
       Linked item
-      {% plural links|length %}
+      {% plural links.items|length %}
       Linked items
       {% endtrans %}</h3>
 
-    {% for link in entityData.links %}
+    {% for link in entityData.links.items %}
       <p class='pdf-ul'>
-        <span style='color:#{{ link.color }}'>{{ link.name }}</span> - <a href='{{ linkBaseUrl }}?mode=view&id={{ link.itemid }}'>{{ link.title }}</a>
+        <span style='color:#{{ link.color }}'>{{ link.name }}</span> - <a href='{{ linkBaseUrl.items }}?mode=view&id={{ link.itemid }}'>{{ link.title }}</a>
+      </p>
+    {% endfor %}
+  </section>
+{% endif %}
+{% if entityData.links.experiments %}
+  <section class='no-break'>
+    <h3>{% trans %}
+      Linked experiment
+      {% plural links.experiments|length %}
+      Linked experiments
+      {% endtrans %}</h3>
+
+    {% for link in entityData.links.experiments %}
+      <p class='pdf-ul'>
+        <span style='color:#{{ link.color }}'>{{ link.name }}</span> - <a href='{{ linkBaseUrl.experiments }}?mode=view&id={{ link.itemid }}'>{{ link.title }}</a>
       </p>
     {% endfor %}
   </section>

@@ -52,7 +52,7 @@ import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-plugins/mention/plugin.js';
 import EntityClass from './Entity.class';
 import Link from './Link.class';
-import { Target } from './interfaces';
+import { Target, EntityType } from './interfaces';
 import { getEntity, reloadElement } from './misc';
 
 // AUTOSAVE
@@ -182,9 +182,17 @@ export function getTinymceBaseConfig(page: string): object {
       insert: function(data): string {
         if (data.type === 'items') {
           const LinkC = new Link(entity);
-          LinkC.create(parseInt(data.id)).then((json) => {
+          LinkC.create(parseInt(data.id), EntityType.Item).then(json => {
             if (json.res === true) {
               reloadElement('links_div_' + entity.id);
+            }
+          });
+        }
+        if (data.type === 'experiments' && (entity.type === EntityType.Experiment || entity.type === EntityType.Item)) {
+          const LinkC = new Link(entity);
+          LinkC.create(parseInt(data.id), EntityType.Experiment).then(json => {
+            if (json.res === true) {
+              reloadElement('links_exp_div_' + entity.id);
             }
           });
         }

@@ -21,7 +21,6 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Services\ListBuilder;
 use Exception;
-use function mb_convert_encoding;
 use PDOException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -62,24 +61,11 @@ try {
     // GET MENTION LIST
     if ($Request->query->has('term') && $Request->query->has('mention')) {
         $term = $Request->query->get('term');
-        $ExperimentsHelper = new ListBuilder(new Experiments($App->Users));
-        $DatabaseHelper = new ListBuilder(new Items($App->Users));
         // return list of itemd and experiments
-        $mentionArr = array_merge($DatabaseHelper->getMentionList($term), $ExperimentsHelper->getMentionList($term));
-        // fix issue with Malformed UTF-8 characters, possibly incorrectly encoded
-        // see #2404
-        $mentionArr = mb_convert_encoding($mentionArr, 'UTF-8', 'UTF-8');
-        $Response->setData($mentionArr);
-    }
-
-    // GET LINK LIST
-    if ($Request->query->has('term') && !$Request->query->has('mention')) {
-        $catFilter = (int) $Request->query->get('filter');
-        $ListBuilder = new ListBuilder($Entity, $catFilter);
-        // fix issue with Malformed UTF-8 characters, possibly incorrectly encoded
-        // see #2404
-        $responseArr = $ListBuilder->getAutocomplete($Request->query->get('term'));
-        $Response->setData(mb_convert_encoding($responseArr, 'UTF-8', 'UTF-8'));
+        $Response->setData(array_merge(
+            (new ListBuilder(new Items($App->Users)))->getMentionList($term),
+            (new ListBuilder(new Experiments($App->Users)))->getMentionList($term)
+        ));
     }
 
     /**

@@ -813,6 +813,12 @@ CREATE TABLE `users2team_groups` (
 --       `users` -> `userid`
 --
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users2teams`
+--
+
 CREATE TABLE `users2teams` (
   `users_id` int(10) UNSIGNED NOT NULL,
   `teams_id` int(10) UNSIGNED NOT NULL,
@@ -826,9 +832,46 @@ CREATE TABLE `users2teams` (
 --       `users` -> `userid`
 --
 
+-- --------------------------------------------------------
+
 --
--- Indexes for dumped tables
+-- Table structure for table `experiments2experiments`
 --
+
+CREATE TABLE `experiments2experiments` (
+  `item_id` int UNSIGNED NOT NULL,
+  `link_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`item_id`, `link_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `experiments2experiments`:
+--   `item_id`
+--       `experiments` -> `id`
+--   `link_id`
+--       `experiments` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `items2experiments`
+--
+CREATE TABLE `items2experiments` (
+  `item_id` int UNSIGNED NOT NULL,
+  `link_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`item_id`, `link_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `items2experiments`:
+--   `item_id`
+--       `items` -> `id`
+--   `link_id`
+--       `experiments` -> `id`
+--
+
+-- --------------------------------------------------------
 
 --
 -- Indexes for table `api_keys`
@@ -959,9 +1002,18 @@ ALTER TABLE `users`
   ADD KEY `fk_users_groups_id` (`usergroup`);
 
 --
--- Constraints for dumped tables
+-- Indexes for table `experiments2experiments`
 --
+ALTER TABLE `experiments2experiments`
+  ADD KEY `fk_experiments2experiments_item_id` (`item_id`),
+  ADD KEY `fk_experiments2experiments_link_id` (`link_id`);
 
+--
+-- Indexes for table `items2experiments`
+--
+ALTER TABLE `items2experiments`
+  ADD KEY `fk_items2experiments_item_id` (`item_id`),
+  ADD KEY `fk_items2experiments_link_id` (`link_id`);
 --
 -- Constraints for table `api_keys`
 --
@@ -1178,6 +1230,28 @@ ALTER TABLE `users`
   ADD CONSTRAINT `fk_users_groups_id` FOREIGN KEY (`usergroup`) REFERENCES `groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `experiments2experiments`
+--
+ALTER TABLE `experiments2experiments`
+  ADD CONSTRAINT `fk_experiments2experiments_item_id`
+    FOREIGN KEY (`item_id`) REFERENCES `experiments` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments2experiments_link_id`
+    FOREIGN KEY (`link_id`) REFERENCES `experiments` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `items2experiments`
+--
+ALTER TABLE `items2experiments`
+  ADD CONSTRAINT `fk_items2experiments_item_id`
+    FOREIGN KEY (`item_id`) REFERENCES `items` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_items2experiments_link_id`
+    FOREIGN KEY (`link_id`) REFERENCES `experiments` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `pin_experiments_templates2users`
 --
 ALTER TABLE `pin_experiments_templates2users`
@@ -1218,8 +1292,6 @@ ALTER TABLE `pin_items2users`
 ALTER TABLE `pin_items2users`
   ADD CONSTRAINT `fk_pin_items2items_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_pin_items2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-
 
 COMMIT;
 

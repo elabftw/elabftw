@@ -834,21 +834,29 @@ class ApiController implements ControllerInterface
     }
 
     /**
-     * @api {post} /experiments/:id Add a link
+     * @api {post} /:endpoint/:id Add a link
      * @apiName AddLink
      * @apiGroup Entity
-     * @apiParam {Number} id Experiment id
-     * @apiParam {Number} link Id of the database item to link to
+     * @apiParam {String} endpoint 'experiments' or 'items'
+     * @apiParam {Number} id Experiment or Database item id
+     * @apiParam {Number} link Id of the database item or experiment to link to
+     * @apiParam {String} targetEntity items or experiments
      * @apiExample {python} Python example
      * import elabapy
      * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
      * # link database item 106 to experiment 42
-     * params = { "link": 106 }
+     * params = { "link": 106, "targetEntity": "items" }
      * print(manager.add_link_to_experiment(42, params)
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * # link experiment 56 to experiment 55
+     * params = { "link": 56, "targetEntity": "experiments" }
+     * print(manager.add_link_to_experiment(55, params)
      * @apiExample {shell} Curl example
      * export TOKEN="3148"
      * # link database item 106 to experiment 42
-     * curl -X POST -F "link=106" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments/42
+     * curl -X POST -F "link=106" -F "targetEntity=items" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments/42
      * @apiSuccess {String} result Success or error message
      * @apiSuccessExample {Json} Success-Response:
      *     HTTP/2 200 OK
@@ -858,7 +866,15 @@ class ApiController implements ControllerInterface
      */
     private function createLink(): Response
     {
-        $this->Entity->Links->create(new EntityParams($this->Request->request->getDigits('link')));
+        $targetEntity = 'items';
+        if ($this->Request->request->getAlpha('targetEntity') === 'experiments') {
+            $targetEntity = 'experiments';
+        }
+        $this->Entity->Links->create(new EntityParams(
+            $this->Request->request->getDigits('link'),
+            '',
+            array('targetEntity' => $targetEntity),
+        ));
         return new JsonResponse(array('result' => 'success'));
     }
 

@@ -9,14 +9,18 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\EntityFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Services\Check;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
 /**
- * All about the experiments links
+ * All about Links
  */
 class Links implements CrudInterface
 {
@@ -24,54 +28,90 @@ class Links implements CrudInterface
 
     protected Db $Db;
 
+    protected array $categoryTables;
+
     public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         // this field corresponds to the target id (link_id)
         $this->id = $id;
+
+        $this->categoryTables = array(
+            $this->Entity::TYPE_ITEMS => 'items_types',
+            $this->Entity::TYPE_EXPERIMENTS => 'status',
+        );
     }
 
     /**
-     * Add a link to an experiment
+     * Add a link to an entity
+     * Links to Items are possible from all entities
+     * Links to Experiments are only allowed from other Experiments and Items
      */
     public function create(ContentParamsInterface $params): int
     {
-        $link = (int) $params->getContent();
-        $Items = new Items($this->Entity->Users, $link);
-        $Items->canOrExplode('read');
+        $targetEntityType = $params->getExtra('targetEntity');
+        if (!($targetEntityType === $this->Entity::TYPE_ITEMS || $targetEntityType === $this->Entity::TYPE_EXPERIMENTS)) {
+            throw new ImproperActionException('Links can only be created to experiments and database items.');
+        }
+        if ($this->canNotLinkToExp($targetEntityType)) {
+            throw new ImproperActionException('Links to experiments can only be added to other experiments and database items.');
+        }
+
+        $link = Check::idOrExplode((int) $params->getContent());
+        $targetEntity = (new EntityFactory($this->Entity->Users, $targetEntityType, $link))->getEntity();
+        $targetEntity->canOrExplode('read');
         $this->Entity->canOrExplode('write');
 
         // use IGNORE to avoid failure due to a key constraint violations
-        $sql = 'INSERT IGNORE INTO ' . $this->Entity->type . '_links (item_id, link_id) VALUES(:item_id, :link_id)';
+        $sql = 'INSERT IGNORE INTO ' . $this->getTableName($targetEntityType) . ' (item_id, link_id) VALUES(:item_id, :link_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':link_id', $link, PDO::PARAM_INT);
-        $this->Db->execute($req);
 
-        return $this->Db->lastInsertId();
+        return (int) $this->Db->execute($req);
     }
 
     /**
      * Get links for an entity
+     *
+     * @return array It contains two result arrays (items, experiments).
      */
     public function readAll(): array
     {
-        $sql = 'SELECT items.id AS itemid,
-            items.title,
-            items.elabid,
-            category.name,
-            category.bookable,
-            category.color
-            FROM ' . $this->Entity->type . '_links
-            LEFT JOIN items ON (' . $this->Entity->type . '_links.link_id = items.id)
-            LEFT JOIN items_types AS category ON (items.category = category.id)
-            WHERE ' . $this->Entity->type . '_links.item_id = :id
-            ORDER by category.name ASC, items.date ASC, items.title ASC';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        $res = array(
+            $this->Entity::TYPE_ITEMS => array(),
+            $this->Entity::TYPE_EXPERIMENTS => array(),
+        );
 
-        return $req->fetchAll();
+        foreach (array_map('strval', array_keys($res)) as $targetEntityType) {
+            // Don't try to get links to experiments for templates
+            if ($this->canNotLinkToExp($targetEntityType)) {
+                continue;
+            }
+
+            $sql = 'SELECT entity.id AS itemid,
+                entity.title,
+                entity.elabid,
+                category.name,
+                ' . ($targetEntityType === $this->Entity::TYPE_EXPERIMENTS ? '' : 'category.bookable,') . '
+                category.color
+                FROM ' . $this->getTableName($targetEntityType) . '
+                LEFT JOIN ' . $targetEntityType . ' AS entity ON (' . $this->getTableName($targetEntityType) . '.link_id = entity.id)
+                LEFT JOIN ' . $this->categoryTables[$targetEntityType] . ' AS category ON (entity.category = category.id)
+                WHERE ' . $this->getTableName($targetEntityType) . '.item_id = :id
+                ORDER by category.name ASC, entity.date ASC, entity.title ASC';
+
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+            $this->Db->execute($req);
+
+            $partialRes = $req->fetchAll();
+            if ($partialRes !== false) {
+                $res[$targetEntityType] = $partialRes;
+            }
+        }
+
+        return $res;
     }
 
     public function readOne(): array
@@ -87,26 +127,31 @@ class Links implements CrudInterface
      */
     public function readRelated(): array
     {
-        $res = array('items' => array(), 'experiments' => array());
+        $res = array(
+            $this->Entity::TYPE_ITEMS => array(),
+            $this->Entity::TYPE_EXPERIMENTS => array(),
+        );
 
-        foreach (array_keys($res) as $type) {
+        foreach (array_map('strval', array_keys($res)) as $targetEntityType) {
             $sql = 'SELECT entity.id AS entityid, entity.title';
 
-            if ($type === 'items') {
+            if ($targetEntityType === $this->Entity::TYPE_ITEMS) {
                 $sql .= ', category.name, category.bookable, category.color';
             }
 
-            $sql .= ' FROM %1$s_links as entity_links
-                LEFT JOIN %1$s AS entity ON (entity_links.item_id = entity.id)';
+            $sql .= ' FROM ' . $this->getTableName($targetEntityType) . ' as entity_links
+                LEFT JOIN ' . $targetEntityType . ' AS entity ON (entity_links.item_id = entity.id)';
 
-            if ($type === 'items') {
-                $sql .= ' LEFT JOIN %1$s_types AS category ON (entity.category = category.id)';
+            if ($targetEntityType === $this->Entity::TYPE_ITEMS) {
+                $sql .= ' LEFT JOIN ' . $this->categoryTables[$targetEntityType] . ' AS category ON (entity.category = category.id)';
             }
 
             // Only load entities from database for which the user has read permission.
             $sql .= " LEFT JOIN users ON (entity.userid = users.userid)
-                CROSS JOIN users2teams ON (users2teams.users_id = users.userid
-                                           AND users2teams.teams_id = :team_id)
+                CROSS JOIN users2teams ON (
+                    users2teams.users_id = users.userid
+                    AND users2teams.teams_id = :team_id
+                )
                 WHERE entity_links.link_id = :id
                 AND (entity.canread = 'public'
                      OR entity.canread = 'organization'
@@ -124,13 +169,13 @@ class Links implements CrudInterface
 
             $sql .= ') AND entity.state = ' . $this->Entity::STATE_NORMAL . ' ORDER by';
 
-            if ($type === 'items') {
+            if ($targetEntityType === $this->Entity::TYPE_ITEMS) {
                 $sql .= ' category.name ASC,';
             }
 
             $sql .= ' entity.title ASC';
 
-            $req = $this->Db->prepare(sprintf($sql, $type));
+            $req = $this->Db->prepare($sql);
             $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
             $req->bindParam(':user_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':team_id', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
@@ -139,7 +184,7 @@ class Links implements CrudInterface
 
             $partialRes = $req->fetchAll();
             if ($partialRes !== false) {
-                $res[$type] = $partialRes;
+                $res[$targetEntityType] = $partialRes;
             }
         }
         return $res;
@@ -154,31 +199,71 @@ class Links implements CrudInterface
      */
     public function duplicate(int $id, int $newId, $fromTpl = false): bool
     {
-        $table = $this->Entity->type;
-        if ($fromTpl) {
-            $table = $this->Entity instanceof Experiments ? 'experiments_templates' : 'items_types';
+        $res = array(
+            $this->Entity::TYPE_ITEMS => true,
+            $this->Entity::TYPE_EXPERIMENTS => true,
+        );
+
+        foreach (array_map('strval', array_keys($res)) as $targetEntityType) {
+            // Don't try to get links to experiments for and from templates
+            if ($this->canNotLinkToExp($targetEntityType, $fromTpl)) {
+                continue;
+            }
+
+            $table = $this->getTableName($targetEntityType);
+            if ($fromTpl) {
+                $table = ($this->Entity->type === $this->Entity::TYPE_EXPERIMENTS
+                    || $this->Entity->type === $this->Entity::TYPE_TEMPLATES)
+                    ? 'experiments_templates_links'
+                    : 'items_types_links';
+            }
+
+            $sql = 'INSERT INTO ' . $this->getTableName($targetEntityType) . ' (item_id, link_id)
+                SELECT :new_id, link_id
+                FROM ' . $table . '
+                WHERE item_id = :old_id';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':new_id', $newId, PDO::PARAM_INT);
+            $req->bindParam(':old_id', $id, PDO::PARAM_INT);
+
+            $res[$targetEntityType] = $this->Db->execute($req);
         }
 
-        $sql = 'INSERT INTO ' . $this->Entity->type . '_links (item_id, link_id) SELECT :new_id, link_id FROM ' . $table . '_links WHERE item_id = :old_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':new_id', $newId, PDO::PARAM_INT);
-        $req->bindParam(':old_id', $id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        return $res[$this->Entity::TYPE_ITEMS] && $res[$this->Entity::TYPE_EXPERIMENTS];
     }
 
     /**
      * Copy the links of an item into our entity
+     * Also copy links of an experiment into our entity unless it is a template
      */
-    public function import(): bool
+    public function import(string $targetEntityType): bool
     {
         $this->Entity->canOrExplode('write');
 
-        // the :item_id of the SELECT will be the same for all rows: our current entity id
-        $sql = 'INSERT INTO ' . $this->Entity->type . '_links (item_id, link_id) SELECT :item_id, link_id FROM items_links WHERE item_id = :link_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $res = array(
+            $this->Entity::TYPE_ITEMS => true,
+            $this->Entity::TYPE_EXPERIMENTS => true,
+        );
+
+        foreach (array_map('strval', array_keys($res)) as $entityType) {
+            // Don't try to get links to experiments for templates
+            if ($this->canNotLinkToExp($entityType)) {
+                continue;
+            }
+            // the :item_id of the SELECT will be the same for all rows: our current entity id
+            // use IGNORE to avoid failure due to a key constraint violations
+            $sql = 'INSERT IGNORE INTO ' . $this->getTableName($entityType) . ' (item_id, link_id)
+                SELECT :item_id, link_id
+                FROM ' . $this->getTableName($entityType, $targetEntityType) . '
+                WHERE item_id = :link_id';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+            $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
+
+            $res[$entityType] = $this->Db->execute($req);
+        }
+
+        return $res[$this->Entity::TYPE_ITEMS] && $res[$this->Entity::TYPE_EXPERIMENTS];
     }
 
     public function update(ContentParamsInterface $params): bool
@@ -186,14 +271,42 @@ class Links implements CrudInterface
         return false;
     }
 
-    public function destroy(): bool
+    // make params parameter optional so we don't break the interface
+    public function destroy(ContentParamsInterface $params = null): bool
     {
         $this->Entity->canOrExplode('write');
+        if ($params === null) {
+            $params = new ContentParams('', '', array('targetEntity' => 'links'));
+        }
 
-        $sql = 'DELETE FROM ' . $this->Entity->type . '_links WHERE link_id = :link_id AND item_id = :item_id';
+        $sql = 'DELETE FROM ' . $this->getTableName($params->getExtra('targetEntity')) . ' WHERE link_id = :link_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    // links to experiments only exist for experiments and database items but not for any templates
+    protected function canNotLinkToExp(string $targetEntityType, bool $fromTpl = false): bool
+    {
+        return (
+            $targetEntityType === $this->Entity::TYPE_EXPERIMENTS
+            && (
+                $fromTpl
+                || !(
+                    $this->Entity->type === $this->Entity::TYPE_ITEMS
+                    || $this->Entity->type === $this->Entity::TYPE_EXPERIMENTS
+                )
+            )
+        );
+    }
+
+    protected function getTableName(string $targetEntityType, ?string $importEntityType = null): string
+    {
+        if ($targetEntityType === $this->Entity::TYPE_EXPERIMENTS) {
+            return ($importEntityType ?? $this->Entity->type) . '2' . $this->Entity::TYPE_EXPERIMENTS;
+        }
+
+        return ($importEntityType ?? $this->Entity->type) . '_links';
     }
 }

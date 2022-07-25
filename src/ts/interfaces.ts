@@ -113,6 +113,8 @@ enum Target {
   Deadline = 'deadline',
   DeadlineNotif = 'deadline_notif',
   Finished = 'finished',
+  LinkedExperiments = 'experiments',
+  LinkedItems = 'items',
   List = 'list',
   Member = 'member',
   Metadata = 'metadata',

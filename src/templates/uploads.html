@@ -33,7 +33,6 @@
           {% set ext = upload.real_name|getExt %}
           <div class='col-md-4 col-sm-6'>
             <div class='thumbnail box' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' style='overflow: visible'>
-              {% if mode == 'edit' %}
                 <!-- DROPDOWN MENU FOR UPLOAD -->
                 <div class='dropdown'>
                   <a class='clickable float-right p-2' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
@@ -42,6 +41,7 @@
 
                   <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
 
+                  {% if mode == 'edit' %}
                     <!-- INSERT IN TEXT in edit mode for images -->
                     {% if ext matches '/(jpg|jpeg|png|gif|svg)$/i' %}
                       <a class='dropdown-item inserter clickable' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name }}' data-uploadid='{{ upload.id }}'>
@@ -52,12 +52,6 @@
                     {% if ext matches '/txt$/i' %}
                       <a class='dropdown-item' data-action='insert-plain-text' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}'>
                         <i class='fas fa-fw fa-file-import mr-1'></i>{{ 'Insert in text at cursor position'|trans }}</a>
-                    {% endif %}
-
-                    <!-- Show content of plain text -->
-                    {% if ext matches '/txt$/i' %}
-                      <a class='dropdown-item' data-action='show-plain-text' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}' data-name='{{ upload.real_name }}'>
-                        <i class='fas fa-fw fa-eye mr-1'></i>{{ 'Show content of file'|trans }}</a>
                     {% endif %}
 
                     <!-- Edit filename -->
@@ -82,18 +76,27 @@
                     <a class='dropdown-item' data-action='replace-upload' data-uploadid='{{ upload.id }}'>
                       <i class='fas fa-fw fa-sync-alt mr-1'></i>{{ 'Upload a new version of this file'|trans }}</a>
 
+                  {% endif %}
+
+                    <!-- Show content of plain text -->
+                    {% if ext matches '/txt$/i' %}
+                      <a class='dropdown-item' data-action='show-plain-text' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}' data-name='{{ upload.real_name }}'>
+                        <i class='fas fa-fw fa-eye mr-1'></i>{{ 'Show content of file'|trans }}</a>
+                    {% endif %}
+
                     <!-- More info -->
                     <a class='dropdown-item' data-action='more-info-upload' data-uploadid='{{ upload.id }}'>
                       <i class='fas fa-fw fa-info-circle mr-1'></i>{{ 'More information'|trans }}</a>
 
+                  {% if mode == 'edit' %}
                     <!-- DESTROY -->
                     <div class='dropdown-divider'></div>
                     <a class='dropdown-item hover-danger' data-action='destroy-upload' data-uploadid='{{ upload.id }}'>
                       <i class='fas fa-fw fa-trash-alt fa-fw mr-1' title='{{ 'Delete'|trans }}'></i>{{ 'Delete'|trans }}
                     </a>
+                  {% endif %}
                   </div>
                 </div>
-              {% endif %}
 
               {% if ext matches '/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
                 {# don't make the thumbnail clickable if it's a tif #}
@@ -227,7 +230,9 @@
           <i class='fas fa-fw fa-hdd mr-1'></i>
           <p class='d-inline'>{{ 'Storage:'|trans }} {% if upload.storage == '1' %} {{ 'Local filesystem'|trans }} {% endif %} {% if upload.storage == '2' %} S3 bucket {% endif %}</p><br>
           <i class='fas fa-fw fa-fingerprint mr-1'></i>
-          <p class='d-inline' style='word-break: break-all;'>{{ upload.hash_algorithm }}: {{ upload.hash }}</p>
+          <p class='d-inline' style='word-break: break-all;'>{{ upload.hash_algorithm }}: {{ upload.hash }}</p><br>
+          <i class='fas fa-user mr-1'></i>
+          <p class='d-inline'>{{ 'Uploaded by %s'|trans|format(upload.fullname) }}</p>
         </div>
 
         </div>

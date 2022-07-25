@@ -175,7 +175,8 @@ class Uploads implements CrudInterface
      */
     public function readOne(): array
     {
-        $sql = 'SELECT * FROM uploads WHERE id = :id';
+        $sql = 'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
+            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -187,7 +188,8 @@ class Uploads implements CrudInterface
      */
     public function readAll(): array
     {
-        $sql = 'SELECT * FROM uploads WHERE item_id = :id AND type = :type AND state = :state';
+        $sql = 'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
+            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type AND state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);

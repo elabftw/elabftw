@@ -405,9 +405,9 @@ class ApiController implements ControllerInterface
         // add the uploaded files
         $this->Entity->entityData['uploads'] = $this->Entity->Uploads->readAll();
         // add the linked items
-        $this->Entity->entityData['links'] = $this->Entity->Links->read(new ContentParams());
+        $this->Entity->entityData['links'] = $this->Entity->Links->readAll();
         // add the steps
-        $this->Entity->entityData['steps'] = $this->Entity->Steps->read(new ContentParams());
+        $this->Entity->entityData['steps'] = $this->Entity->Steps->readAll();
 
         return new JsonResponse($this->Entity->entityData);
     }
@@ -817,7 +817,7 @@ class ApiController implements ControllerInterface
     {
         // check that the id we have is a valid item type from our team
         $ItemsTypes = new ItemsTypes($this->Users);
-        $itemsTypesArr = $ItemsTypes->read(new ContentParams());
+        $itemsTypesArr = $ItemsTypes->readAll();
         $validIds = array();
         foreach ($itemsTypesArr as $itemsTypes) {
             $validIds[] = $itemsTypes['category_id'];

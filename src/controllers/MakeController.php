@@ -54,8 +54,8 @@ class MakeController implements ControllerInterface
         if ($this->App->Request->query->has('category')) {
             $this->idArr = $this->Entity->getIdFromCategory((int) $this->App->Request->query->get('category'));
         } elseif ($this->App->Request->query->has('user')) {
-            // only admin can export a user
-            if (!$this->App->Users->userData['is_admin']) {
+            // only admin can export a user, or it is ourself
+            if (!$this->App->Users->userData['is_admin'] && $this->App->Request->query->get('user') !== $this->App->Users->userData['userid']) {
                 throw new IllegalActionException('User tried to export another user but is not admin.');
             }
             // being admin is good, but we also need to be in the same team as the requested user

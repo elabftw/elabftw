@@ -12,7 +12,9 @@ import 'bootstrap/js/src/modal.js';
 import { notif, makeSortableGreatAgain, reloadElement, adjustHiddenState } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
-import { EntityType, Payload, Target, Method, Model, Action } from './interfaces';
+import { PartialEntity, EntityType, Payload, Target, Method, Model, Action } from './interfaces';
+import { MathJaxObject } from 'mathjax-full/js/components/startup';
+declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.de.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.es.js';
@@ -187,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /* TOGGLE NEXT ACTION
      * An element with "toggle-next" as data-action value will appear clickable.
      * Clicking on it will toggle the "hidden" attribute of the next sibling element by default.
-     * If there is a data-toggle-next-n value, the "hidden" attribute of the nth next sibling element will be toggled. 
+     * If there is a data-toggle-next-n value, the "hidden" attribute of the nth next sibling element will be toggled.
      * If there is a data-icon value, it is toggled > or V
      */
     } else if (el.matches('[data-action="toggle-next"]')) {
@@ -314,6 +316,51 @@ document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(document.location.search);
       const tags = urlParams.getAll('tags[]');
       (new EntityClass(EntityType.Item)).create(tplid, tags).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
+
+    } else if (el.matches('[data-action="toggle-body"]')) {
+      const randId = el.dataset.randid;
+      const plusMinusIcon = el.querySelector('.fas');
+      const bodyDiv = document.getElementById(randId);
+      let action = 'hide';
+      // transform the + in - and vice versa
+      if (bodyDiv.hasAttribute('hidden')) {
+        plusMinusIcon.classList.remove('fa-plus-circle');
+        plusMinusIcon.classList.add('fa-minus-circle');
+        action = 'show';
+      } else {
+        plusMinusIcon.classList.add('fa-plus-circle');
+        plusMinusIcon.classList.remove('fa-minus-circle');
+      }
+      // don't reload body if it is already loaded for show action
+      // and the hide action is just toggle hidden attribute and do nothing else
+      if ((action === 'show' && bodyDiv.dataset.bodyLoaded) || action === 'hide') {
+        bodyDiv.toggleAttribute('hidden');
+        return;
+      }
+
+      // prepare the get request
+      const entityType = el.dataset.type === 'experiments' ? EntityType.Experiment : EntityType.Item;
+      const payload: Payload = {
+        method: Method.GET,
+        action: Action.Read,
+        model: entityType,
+        entity: {
+          type: entityType,
+          id: parseInt(el.dataset.id, 10),
+        },
+        target: Target.Body,
+      };
+      (new Ajax()).send(payload).then(json => {
+        // add html content and adjust the width of the children
+        bodyDiv.innerHTML = (json.value as PartialEntity).body;
+        // get the width of the parent. The -30 is to make it smaller than parent even with the margins
+        const width = document.getElementById('parent_' + randId).clientWidth - 30;
+        bodyDiv.style.width = String(width);
+        bodyDiv.toggleAttribute('hidden');
+        bodyDiv.dataset.bodyLoaded = '1';
+        // ask mathjax to reparse the page
+        MathJax.typeset();
+      });
     }
   });
 });

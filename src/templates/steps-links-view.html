@@ -33,11 +33,19 @@
     <div class='row mt-2' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
       <ul class='list-group ml-3'>
         {% for link in Entity.entityData.links %}
-          <li class='list-group-item'>
+          {% set randomId = random() %}
+          <li class='list-group-item' id='parent_{{ randomId }}'>
             <i class='fas fa-link mr-1'></i>
+            <!-- toggle body -->
+            <span data-type='items' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
+              <i class='fas fa-plus-circle'></i>
+            </span>
             {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
             <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
                 {{ link.title|raw }}</a>
+            <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
+            <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
+            <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
           </li>
         {% endfor %}
       </ul>

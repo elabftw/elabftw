@@ -31,7 +31,7 @@ $Response->prepare($Request);
 try {
     $Entity = (new EntityFactory($App->Users, (string) $Request->query->get('type')))->getEntity();
     $Entity->setId((int) $Request->query->get('item_id'));
-    $Entity->canOrExplode('write');
+    $Entity->canOrExplode('read');
 
     $Revisions = new Revisions(
         $Entity,

@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use DateTime;
+use DateTimeImmutable;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
@@ -175,6 +176,33 @@ class Scheduler
     }
 
     /**
+     * Use a direct target date (from the modal) instead of a delta (from the calendar)
+     */
+    public function updateDirect(string $what, string $datetime): bool
+    {
+        $column = 'start';
+        if ($what === 'end') {
+            $column = 'end';
+        }
+        $this->canWriteOrExplode();
+        $event = $this->readOne();
+        $tz = date_default_timezone_get();
+        $new = DateTimeImmutable::createFromFormat('U', $datetime);
+        if ($new === false) {
+            return false;
+        }
+        $this->isFutureOrExplode($new);
+        $sql = 'UPDATE team_events SET ' . $column . ' = :new WHERE team = :team AND id = :id';
+        $req = $this->Db->prepare($sql);
+        // don't use 'c' here but a custom construct so the timezone is correctly registered
+        $req->bindValue(':new', $new->format('Y-m-d\TH:i:s') . date('P'));
+        $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        return $this->Db->execute($req);
+    }
+
+    /**
      * Update the end of an event (when you resize it)
      *
      * @param array<string, string> $delta timedelta
@@ -259,7 +287,7 @@ class Scheduler
      * Unlike Admins, Users can't create/modify something in the past
      * Input can be false because DateTime::createFromFormat will return false on failure
      */
-    private function isFutureOrExplode(DateTime|false $date): void
+    private function isFutureOrExplode(DateTime|DateTimeImmutable|false $date): void
     {
         if ($date === false) {
             throw new ImproperActionException('Could not understand date format!');

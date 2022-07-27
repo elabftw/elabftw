@@ -62,6 +62,10 @@ try {
         // delta is an array, so use all()
         $Scheduler->updateStart($Request->request->all('delta'));
     }
+    if ($Request->request->has('updateDirect')) {
+        $Scheduler->setId((int) $Request->request->get('id'));
+        $Scheduler->updateDirect($Request->request->get('what'), $Request->request->get('datetime'));
+    }
     // UPDATE END
     if ($Request->request->has('updateEnd')) {
         $Scheduler->setId((int) $Request->request->get('id'));

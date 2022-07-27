@@ -7,7 +7,9 @@
  */
 import EntityClass from './Entity.class';
 import { EntityType } from './interfaces';
+import { Ajax } from './Ajax.class';
 import { notif } from './misc';
+import { DateTime } from 'luxon';
 import i18next from 'i18next';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'bootstrap/js/src/modal.js';
@@ -45,6 +47,14 @@ document.addEventListener('DOMContentLoaded', () => {
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
   const info = document.getElementById('info').dataset;
+
+  const AjaxC = new Ajax();
+
+  // transform a Date object into something we can put as a value of an input of type datetime-local
+  function toDateTimeInputValueNumber(datetime: Date): number {
+    const offset = datetime.getTimezoneOffset() * 60 * 1000;
+    return datetime.valueOf() - offset;
+  }
 
   // if we show all items, they are not editable
   let editable = true;
@@ -154,8 +164,33 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
       });
-      // fill the bound div
-      $('#eventTitle').text(info.event.title);
+      // FILL THE BOUND DIV
+
+      // title
+      document.getElementById('eventTitle').innerText = info.event.title;
+
+      // start and end inputs
+      const startInput = (document.getElementById('schedulerEventModalStart') as HTMLInputElement);
+      startInput.valueAsNumber = toDateTimeInputValueNumber(info.event.start);
+      const endInput = (document.getElementById('schedulerEventModalEnd') as HTMLInputElement);
+      endInput.valueAsNumber = toDateTimeInputValueNumber(info.event.end);
+      // add on change event listener on datetime inputs
+      [startInput, endInput].forEach(input => {
+        input.addEventListener('change', event => {
+          const input = (event.currentTarget as HTMLInputElement);
+          const dt = DateTime.fromJSDate(input.valueAsDate);
+          AjaxC.postForm('app/controllers/SchedulerController.php', {
+            updateDirect: 'true',
+            what: input.dataset.what,
+            datetime: String(dt.toUnixInteger()),
+            id: info.event.id,
+          }).then(res => res.json().then(json => {
+            notif(json);
+            calendar.refetchEvents();
+          }));
+        });
+      });
+
       if (info.event.extendedProps.experiment != null) {
         $('#eventBoundExp').html('Event is bound to an <a href="experiments.php?mode=view&id=' + info.event.extendedProps.experiment + '">experiment</a>.');
         $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();

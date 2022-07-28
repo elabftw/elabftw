@@ -419,11 +419,11 @@ class Users
         $req->execute();
         $res = $req->fetch();
 
-        if ($res['allow_untrusted'] === '1') {
+        if ($res['allow_untrusted'] === 1) {
             return true;
         }
         // check for the time when it was locked
-        return $res['currently_locked'] === '0';
+        return $res['currently_locked'] === 0;
     }
 
     /**
@@ -447,7 +447,7 @@ class Users
     public function isAdminOf(int $userid): bool
     {
         $TeamsHelper = new TeamsHelper($this->userData['team']);
-        return $TeamsHelper->isUserInTeam($userid) && $this->userData['is_admin'] === '1';
+        return $TeamsHelper->isUserInTeam($userid) && $this->userData['is_admin'] === 1;
     }
 
     private function notifyAdmins(array $admins, int $userid, int $validated): void

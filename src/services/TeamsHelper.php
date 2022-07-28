@@ -76,7 +76,7 @@ class TeamsHelper
         $this->Db->execute($req);
         $test = $req->fetch();
 
-        return $test['usernb'] === '0';
+        return $test['usernb'] === 0;
     }
 
     /**
@@ -89,6 +89,6 @@ class TeamsHelper
         $this->Db->execute($req);
         $test = $req->fetch();
 
-        return $test['usernb'] === '0';
+        return $test['usernb'] === 0;
     }
 }

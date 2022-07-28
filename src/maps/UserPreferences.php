@@ -142,9 +142,9 @@ class UserPreferences implements MapInterface
         return $this->Db->execute($req);
     }
 
-    final public function setLimit(string $setting): void
+    final public function setLimit(int $setting): void
     {
-        $this->limit = Check::limit((int) $setting);
+        $this->limit = Check::limit($setting);
     }
 
     final public function setDisplaySize(string $setting): void
@@ -269,29 +269,29 @@ class UserPreferences implements MapInterface
      */
     public function hydrate(array $source): void
     {
-        $this->setLimit($source['limit_nb'] ?? $this->limit);
+        $this->setLimit((int) ($source['limit_nb'] ?? $this->limit));
         $this->setLang($source['lang'] ?? $this->lang);
         $this->setDisplaySize($source['display_size'] ?? $this->displaySize);
         $this->setDisplayMode($source['display_mode'] ?? $this->displayMode);
         $this->setSort($source['sort'] ?? $this->sort);
         $this->setOrderby($source['orderby'] ?? $this->orderby);
-        $this->setSingleColumnLayout($source['single_column_layout'] ?? '0');
-        $this->setUploadsLayout($source['uploads_layout'] ?? '0');
+        $this->setSingleColumnLayout((string) ($source['single_column_layout'] ?? '0'));
+        $this->setUploadsLayout((string) ($source['uploads_layout'] ?? '0'));
         $this->setShortcut('create', $source['sc_create'] ?? $this->shortcuts['create']);
         $this->setShortcut('edit', $source['sc_edit'] ?? $this->shortcuts['edit']);
         $this->setShortcut('submit', $source['sc_submit'] ?? $this->shortcuts['submit']);
         $this->setShortcut('todo', $source['sc_todo'] ?? $this->shortcuts['todo']);
-        $this->setShowTeam($source['show_team'] ?? '0');
-        $this->setShowTeamTemplates($source['show_team_templates'] ?? '0');
-        $this->setShowPublic($source['show_public'] ?? '0');
-        $this->setCjkFonts($source['cjk_fonts'] ?? '0');
-        $this->setPdfa($source['pdfa'] ?? '0');
+        $this->setShowTeam((string) ($source['show_team'] ?? '0'));
+        $this->setShowTeamTemplates((string) ($source['show_team_templates'] ?? '0'));
+        $this->setShowPublic((string) ($source['show_public'] ?? '0'));
+        $this->setCjkFonts((string) ($source['cjk_fonts'] ?? '0'));
+        $this->setPdfa((string) ($source['pdfa'] ?? '0'));
         $this->setPdfFormat($source['pdf_format'] ?? $this->pdfFormat);
-        $this->setUseMarkdown($source['use_markdown'] ?? '0');
-        $this->setUseIsodate($source['use_isodate'] ?? '0');
-        $this->setIncFilesPdf($source['inc_files_pdf'] ?? '0');
-        $this->setAppendPdfs($source['append_pdfs'] ?? '0');
-        $this->setChemEditor($source['chem_editor'] ?? '0');
+        $this->setUseMarkdown((string) ($source['use_markdown'] ?? '0'));
+        $this->setUseIsodate((string) ($source['use_isodate'] ?? '0'));
+        $this->setIncFilesPdf((string) ($source['inc_files_pdf'] ?? '0'));
+        $this->setAppendPdfs((string) ($source['append_pdfs'] ?? '0'));
+        $this->setChemEditor((string) ($source['chem_editor'] ?? '0'));
         $this->setDefaultRead($source['default_read'] ?? $this->defaultRead);
         $this->setDefaultWrite($source['default_write'] ?? $this->defaultWrite);
     }

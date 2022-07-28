@@ -92,7 +92,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testUpdatePreferences(): void
     {
         $prefsArr = array(
-            'limit_nb' => '12',
+            'limit_nb' => 12,
             'sc_create' => 'c',
             'sc_edit' => 'e',
             'sc_submit' => 's',

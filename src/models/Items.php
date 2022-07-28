@@ -94,7 +94,7 @@ class Items extends AbstractConcreteEntity
     {
         // check if we can actually delete items (for non-admins)
         $Team = new Team($this->Users->team);
-        if ($Team->getDeletableItem() === 0 && $this->Users->userData['is_admin'] === '0') {
+        if ($Team->getDeletableItem() === 0 && $this->Users->userData['is_admin'] === 0) {
             throw new ImproperActionException(_('Users cannot delete items.'));
         }
 

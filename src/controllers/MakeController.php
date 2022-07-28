@@ -49,49 +49,36 @@ class MakeController implements ControllerInterface
 
     public function __construct(private App $App)
     {
-        $this->Entity = (new EntityFactory($this->App->Users, (string) $this->App->Request->query->get('type')))->getEntity();
-        // generate the id array
-        if ($this->App->Request->query->has('category')) {
-            $this->idArr = $this->Entity->getIdFromCategory((int) $this->App->Request->query->get('category'));
-        } elseif ($this->App->Request->query->has('user')) {
-            // only admin can export a user
-            if (!$this->App->Users->userData['is_admin']) {
-                throw new IllegalActionException('User tried to export another user but is not admin.');
-            }
-            // being admin is good, but we also need to be in the same team as the requested user
-            $Teams = new Teams($this->App->Users);
-            $targetUserid = (int) $this->App->Request->query->get('user');
-            if (!$Teams->hasCommonTeamWithCurrent($targetUserid, $this->App->Users->userData['team'])) {
-                throw new IllegalActionException('User tried to export another user but is not in same team.');
-            }
-            $this->idArr = $this->Entity->getIdFromUser($targetUserid);
-        } elseif ($this->App->Request->query->has('id')) {
-            $this->idArr = explode(' ', (string) $this->App->Request->query->get('id'));
-        }
     }
 
     public function getResponse(): Response
     {
         switch ($this->App->Request->query->get('what')) {
             case 'csv':
+                $this->populateIdArr();
                 return $this->makeCsv();
 
             case 'eln':
+                $this->populateIdArr();
                 return $this->makeEln();
 
             case 'json':
+                $this->populateIdArr();
                 return $this->makeJson();
 
             case 'pdf':
+                $this->populateIdArr();
                 return $this->makePdf();
 
             case 'multiPdf':
+                $this->populateIdArr();
                 if (count($this->idArr) === 1) {
                     return $this->makePdf();
                 }
                 return $this->makeMultiPdf();
 
             case 'qrPdf':
+                $this->populateIdArr();
                 return $this->makeQrPdf();
 
             case 'report':
@@ -107,10 +94,34 @@ class MakeController implements ControllerInterface
                 return $this->makeSchedulerReport();
 
             case 'zip':
+                $this->populateIdArr();
                 return $this->makeZip();
 
             default:
                 throw new IllegalActionException('Bad make what value');
+        }
+    }
+
+    private function populateIdArr(): void
+    {
+        $this->Entity = (new EntityFactory($this->App->Users, (string) $this->App->Request->query->get('type')))->getEntity();
+        // generate the id array
+        if ($this->App->Request->query->has('category')) {
+            $this->idArr = $this->Entity->getIdFromCategory((int) $this->App->Request->query->get('category'));
+        } elseif ($this->App->Request->query->has('user')) {
+            // only admin can export a user, or it is ourself
+            if (!$this->App->Users->userData['is_admin'] && $this->App->Request->query->get('user') !== $this->App->Users->userData['userid']) {
+                throw new IllegalActionException('User tried to export another user but is not admin.');
+            }
+            // being admin is good, but we also need to be in the same team as the requested user
+            $Teams = new Teams($this->App->Users);
+            $targetUserid = (int) $this->App->Request->query->get('user');
+            if (!$Teams->hasCommonTeamWithCurrent($targetUserid, $this->App->Users->userData['team'])) {
+                throw new IllegalActionException('User tried to export another user but is not in same team.');
+            }
+            $this->idArr = $this->Entity->getIdFromUser($targetUserid);
+        } elseif ($this->App->Request->query->has('id')) {
+            $this->idArr = explode(' ', (string) $this->App->Request->query->get('id'));
         }
     }
 

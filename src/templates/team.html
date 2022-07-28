@@ -25,6 +25,14 @@
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
         <h3 id='eventTitle'></h3>
+        <!-- START AND END TIMES -->
+        <div class='mt-2'>
+          <label for='schedulerEventModalStart'>{{ 'Start time'|trans }}</label>
+          <input id='schedulerEventModalStart' class='form-control' type='datetime-local' data-what='start' value='' />
+          <label for='schedulerEventModalEnd'>{{ 'End time'|trans }}</label>
+          <input id='schedulerEventModalEnd' class='form-control' type='datetime-local' data-what='end' value='' />
+        </div>
+
         <!-- BIND EXPERIMENT -->
         <div id='eventBoundExp'></div>
         <button data-action='scheduler-rm-bind' data-type='experiment' aria-hidden='true' class='button btn btn-danger' type='button'>{{ 'Unbind'|trans }}</button>

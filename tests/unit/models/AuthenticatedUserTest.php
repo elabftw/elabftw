@@ -17,7 +17,7 @@ class AuthenticatedUserTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(AuthenticatedUser::class, $User);
         $this->assertEquals(1, $User->userData['team']);
         $this->assertEquals('en_GB', $User->userData['lang']);
-        $this->assertEquals('1', $User->userData['is_admin']);
-        $this->assertEquals('1', $User->userData['is_sysadmin']);
+        $this->assertEquals(1, $User->userData['is_admin']);
+        $this->assertEquals(1, $User->userData['is_sysadmin']);
     }
 }

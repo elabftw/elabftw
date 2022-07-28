@@ -262,18 +262,18 @@ class Team implements MapInterface
         $this->setName($source['name'] ?? $this->name);
         $this->setCommonTemplate($source['common_template'] ?? $this->commonTemplate);
         $this->setOrgid($source['orgid'] ?? $this->orgid);
-        $this->setDeletableXp($source['deletable_xp'] ?? (string) $this->deletableXp);
-        $this->setDeletableItem($source['deletable_item'] ?? (string) $this->deletableItem);
-        $this->setUserCreateTag($source['user_create_tag'] ?? (string) $this->userCreateTag);
-        $this->setForceExpTpl($source['force_exp_tpl'] ?? (string) $this->forceExpTpl);
+        $this->setDeletableXp((string) ($source['deletable_xp'] ?? $this->deletableXp));
+        $this->setDeletableItem((string) ($source['deletable_item'] ?? $this->deletableItem));
+        $this->setUserCreateTag((string) ($source['user_create_tag'] ?? $this->userCreateTag));
+        $this->setForceExpTpl((string) ($source['force_exp_tpl'] ?? $this->forceExpTpl));
         $this->setLinkName($source['link_name'] ?? $this->linkName);
         $this->setLinkHref($source['link_href'] ?? $this->linkHref);
-        $this->setPublicDb($source['public_db'] ?? (string) $this->publicDb);
-        $this->setDoForceCanread($source['do_force_canread'] ?? (string) $this->doForceCanread);
-        $this->setDoForceCanwrite($source['do_force_canwrite'] ?? (string) $this->doForceCanwrite);
+        $this->setPublicDb((string) ($source['public_db'] ?? $this->publicDb));
+        $this->setDoForceCanread((string) ($source['do_force_canread'] ?? $this->doForceCanread));
+        $this->setDoForceCanwrite((string) ($source['do_force_canwrite'] ?? $this->doForceCanwrite));
         $this->setForceCanread($source['force_canread'] ?? $this->forceCanread);
         $this->setForceCanwrite($source['force_canwrite'] ?? $this->forceCanwrite);
-        $this->setVisible($source['visible'] ?? (string) $this->visible);
+        $this->setVisible((string) ($source['visible'] ?? $this->visible));
     }
 
     /**

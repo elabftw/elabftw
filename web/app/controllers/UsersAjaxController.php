@@ -50,11 +50,11 @@ try {
     if ($Request->request->has('usersUpdate')) {
         // a non sysadmin cannot promote someone to sysadmin
         $usergroup = Check::usergroupOrExplode((int) $Request->request->get('usergroup'));
-        if ($usergroup === 1 && $App->Session->get('is_sysadmin') !== '1') {
+        if ($usergroup === 1 && $App->Session->get('is_sysadmin') !== 1) {
             throw new ImproperActionException(_('Only a sysadmin can put someone sysadmin.'));
         }
         // a non sysadmin cannot demote a sysadmin
-        if ($targetUser->userData['is_sysadmin'] && $usergroup !== 1 && $App->Session->get('is_sysadmin') !== '1') {
+        if ($targetUser->userData['is_sysadmin'] && $usergroup !== 1 && $App->Session->get('is_sysadmin') !== 1) {
             throw new IllegalActionException('Only a sysadmin can demote another sysadmin.');
         }
 

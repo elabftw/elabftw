@@ -288,6 +288,12 @@ document.addEventListener('DOMContentLoaded', () => {
         reloadElement('navbarNotifDiv');
       });
 
+    } else if (el.matches('[data-action="export-user"]')) {
+      const source = (document.getElementById('userExport') as HTMLSelectElement).value;
+      const format = (document.getElementById('userExportFormat') as HTMLSelectElement).value;
+      window.location.href = `make.php?what=${format}&user=${source}&type=experiments`;
+
+
     // CREATE EXPERIMENT or DATABASE item: main create button in top right
     } else if (el.matches('[data-action="create-entity"]')) {
       const path = window.location.pathname;

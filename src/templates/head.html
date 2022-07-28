@@ -85,7 +85,7 @@
 
         <!-- Notification bell -->
         {% if App.Session.has('is_auth') and not App.Session.has('is_anon') %}
-        <div class='nav-item dropdown ml-3' id='navbarNotifDiv'>
+        <div class='nav-item dropdown ml-2' id='navbarNotifDiv'>
           <a class='nav-link dropdown-toggle' href='#' id='navbarNotifDropdown' role='button' aria-label='{{ 'Notifications'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='far fa-bell fa-2x {{ App.notifsArr|filter(n => n.is_ack == 0)|length ? 'active' }}'></i></a>
           <div class='dropdown-menu dropdown-menu-right' id='navbar-notif-dropdown' aria-labelledby='navbarNotifDropdown'><span class='dropdown-header'>{{ 'Notifications'|trans }}</span>
             {% if App.notifsArr %}

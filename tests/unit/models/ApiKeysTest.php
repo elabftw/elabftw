@@ -33,7 +33,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
         $res = $this->ApiKeys->readAll();
         $this->assertIsArray($res);
         $this->assertTrue($res[1]['name'] === 'test key');
-        $this->assertTrue($res[1]['can_write'] === '1');
+        $this->assertTrue($res[1]['can_write'] === 1);
     }
 
     public function testReadFromApiKey(): void
@@ -41,8 +41,8 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
         $params = new CreateApikey('my key', '', 0);
         $this->ApiKeys->create($params);
         $res = $this->ApiKeys->readFromApiKey($params->getKey());
-        $this->assertTrue($res['userid'] === '1');
-        $this->assertTrue($res['canWrite'] === '0');
+        $this->assertTrue($res['userid'] === 1);
+        $this->assertTrue($res['canWrite'] === 0);
     }
 
     public function testDestroy(): void

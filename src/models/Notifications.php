@@ -194,6 +194,6 @@ class Notifications implements CrudInterface
             $suffix = '_email';
         }
 
-        return (int) $this->users->userData[$map[$category] . $suffix];
+        return $this->users->userData[$map[$category] . $suffix];
     }
 }

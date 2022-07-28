@@ -59,11 +59,11 @@ if ($scrutinizer); then
     docker exec -it elabtmp composer install --no-progress -q
     docker exec -it elabtmp yarn phpcs-dry
     # allow tmpfile, used by phpstan
-    docker exec -it elabtmp sed -i 's/tmpfile, //' /etc/php8/php.ini
+    docker exec -it elabtmp sed -i 's/tmpfile, //' /etc/php81/php.ini
     # extend open_basedir
     # /usr/bin/psalm, //autoload.php, /root/.cache/ are for psalm
     # /usr/bin/phpstan, /proc/cpuinfo is for phpstan, https://github.com/phpstan/phpstan/issues/4427 https://github.com/phpstan/phpstan/issues/2965
-    docker exec -it elabtmp sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/usr/bin/phpstan:/proc/cpuinfo|' /etc/php8/php.ini
+    docker exec -it elabtmp sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/usr/bin/phpstan:/proc/cpuinfo|' /etc/php81/php.ini
 fi
 # install the database
 echo "Initializing the database..."
@@ -81,7 +81,7 @@ if [ "${1:-}" != "unit" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip acceptance
 fi
 # now install xdebug in the container so we can do code coverage
-docker exec -it elabtmp bash -c "apk add --update php8-pecl-xdebug && echo 'zend_extension=xdebug.so' >> /etc/php8/php.ini && echo 'xdebug.mode=coverage' >> /etc/php8/php.ini"
+docker exec -it elabtmp bash -c "apk add --update php81-pecl-xdebug && echo 'zend_extension=xdebug.so' >> /etc/php81/php.ini && echo 'xdebug.mode=coverage' >> /etc/php81/php.ini"
 # generate the coverage, results will be available in _coverage directory
 docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --skip api --coverage --coverage-html --coverage-xml
 if ($scrutinizer); then

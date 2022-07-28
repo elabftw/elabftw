@@ -185,8 +185,6 @@ class Scheduler
             $column = 'end';
         }
         $this->canWriteOrExplode();
-        $event = $this->readOne();
-        $tz = date_default_timezone_get();
         $new = DateTimeImmutable::createFromFormat('U', $datetime);
         if ($new === false) {
             return false;

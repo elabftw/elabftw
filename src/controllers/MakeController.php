@@ -49,6 +49,61 @@ class MakeController implements ControllerInterface
 
     public function __construct(private App $App)
     {
+    }
+
+    public function getResponse(): Response
+    {
+        switch ($this->App->Request->query->get('what')) {
+            case 'csv':
+                $this->populateIdArr();
+                return $this->makeCsv();
+
+            case 'eln':
+                $this->populateIdArr();
+                return $this->makeEln();
+
+            case 'json':
+                $this->populateIdArr();
+                return $this->makeJson();
+
+            case 'pdf':
+                $this->populateIdArr();
+                return $this->makePdf();
+
+            case 'multiPdf':
+                $this->populateIdArr();
+                if (count($this->idArr) === 1) {
+                    return $this->makePdf();
+                }
+                return $this->makeMultiPdf();
+
+            case 'qrPdf':
+                $this->populateIdArr();
+                return $this->makeQrPdf();
+
+            case 'report':
+                if (!$this->App->Session->get('is_sysadmin')) {
+                    throw new IllegalActionException('Non sysadmin user tried to generate report.');
+                }
+                return $this->makeReport();
+
+            case 'schedulerReport':
+                if (!$this->App->Session->get('is_admin')) {
+                    throw new IllegalActionException('Non admin user tried to generate scheduler report.');
+                }
+                return $this->makeSchedulerReport();
+
+            case 'zip':
+                $this->populateIdArr();
+                return $this->makeZip();
+
+            default:
+                throw new IllegalActionException('Bad make what value');
+        }
+    }
+
+    private function populateIdArr(): void
+    {
         $this->Entity = (new EntityFactory($this->App->Users, (string) $this->App->Request->query->get('type')))->getEntity();
         // generate the id array
         if ($this->App->Request->query->has('category')) {
@@ -67,50 +122,6 @@ class MakeController implements ControllerInterface
             $this->idArr = $this->Entity->getIdFromUser($targetUserid);
         } elseif ($this->App->Request->query->has('id')) {
             $this->idArr = explode(' ', (string) $this->App->Request->query->get('id'));
-        }
-    }
-
-    public function getResponse(): Response
-    {
-        switch ($this->App->Request->query->get('what')) {
-            case 'csv':
-                return $this->makeCsv();
-
-            case 'eln':
-                return $this->makeEln();
-
-            case 'json':
-                return $this->makeJson();
-
-            case 'pdf':
-                return $this->makePdf();
-
-            case 'multiPdf':
-                if (count($this->idArr) === 1) {
-                    return $this->makePdf();
-                }
-                return $this->makeMultiPdf();
-
-            case 'qrPdf':
-                return $this->makeQrPdf();
-
-            case 'report':
-                if (!$this->App->Session->get('is_sysadmin')) {
-                    throw new IllegalActionException('Non sysadmin user tried to generate report.');
-                }
-                return $this->makeReport();
-
-            case 'schedulerReport':
-                if (!$this->App->Session->get('is_admin')) {
-                    throw new IllegalActionException('Non admin user tried to generate scheduler report.');
-                }
-                return $this->makeSchedulerReport();
-
-            case 'zip':
-                return $this->makeZip();
-
-            default:
-                throw new IllegalActionException('Bad make what value');
         }
     }
 

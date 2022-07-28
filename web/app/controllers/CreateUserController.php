@@ -30,7 +30,7 @@ try {
     if (!$App->Session->get('is_admin')) {
         throw new IllegalActionException('Non admin user tried to create a user.');
     }
-    if (!$App->Session->get('is_sysadmin') && $App->Config->configArr['admins_create_users'] === '0') {
+    if (!$App->Session->get('is_sysadmin') && $App->Config->configArr['admins_create_users'] === 0) {
         throw new IllegalActionException('Admin tried to create user directly');
     }
     // check if we are admin of the correct team
@@ -39,7 +39,7 @@ try {
     }
     $usergroup = Check::usergroupOrExplode((int) $Request->request->get('usergroup'));
     // a non sysadmin cannot promote someone to sysadmin
-    if ($usergroup === 1 && $App->Session->get('is_sysadmin') !== '1') {
+    if ($usergroup === 1 && $App->Session->get('is_sysadmin') !== 1) {
         throw new IllegalActionException('Only a sysadmin can put someone sysadmin.');
     }
 

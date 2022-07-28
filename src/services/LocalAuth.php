@@ -84,7 +84,7 @@ class LocalAuth implements AuthInterface
             // here we rethrow an quantum exception because we don't want to let the user know if the email exists or not
             throw new QuantumException(_('Invalid email/password combination.'));
         }
-        return (int) $Users->userData['userid'];
+        return $Users->userData['userid'];
     }
 
     /**

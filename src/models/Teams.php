@@ -180,7 +180,7 @@ class Teams implements CrudInterface
         // check for stats, should be 0
         $count = $this->getStats($this->id);
 
-        if ($count['totxp'] !== '0' || $count['totdb'] !== '0' || $count['totusers'] !== '0') {
+        if ($count['totxp'] !== 0 || $count['totdb'] !== 0 || $count['totusers'] !== 0) {
             throw new ImproperActionException('The team is not empty! Aborting deletion!');
         }
 

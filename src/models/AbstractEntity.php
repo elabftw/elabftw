@@ -524,7 +524,7 @@ abstract class AbstractEntity implements CrudInterface
         }
 
         // if it has the deleted state, don't show it.
-        if ((int) $item['state'] === self::STATE_DELETED) {
+        if ($item['state'] === self::STATE_DELETED) {
             return array('read' => false, 'write' => false);
         }
 
@@ -637,12 +637,12 @@ abstract class AbstractEntity implements CrudInterface
      */
     public function getTimestamperFullname(): string
     {
-        if ($this instanceof Items || $this->entityData['timestamped'] === '0') {
+        if ($this instanceof Items || $this->entityData['timestamped'] === 0) {
             return 'Unknown';
         }
         // maybe user was deleted!
         try {
-            $timestamper = new Users((int) $this->entityData['timestampedby']);
+            $timestamper = new Users($this->entityData['timestampedby']);
         } catch (ResourceNotFoundException $e) {
             return 'User not found!';
         }

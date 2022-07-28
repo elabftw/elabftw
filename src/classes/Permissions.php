@@ -74,18 +74,18 @@ class Permissions
         // if the vis. setting is team, check we are in the same team than the $item
         if ($this->item['canread'] === 'team') {
             // items will have a team, make sure it's the same as the one we are logged in
-            if (isset($this->item['team']) && ((int) $this->item['team'] === $this->Users->userData['team'])) {
+            if (isset($this->item['team']) && ($this->item['team'] === $this->Users->userData['team'])) {
                 return array('read' => true, 'write' => $write);
             }
             // check if we have a team in common
-            if ($this->Teams->hasCommonTeamWithCurrent((int) $this->item['userid'], $this->Users->userData['team'])) {
+            if ($this->Teams->hasCommonTeamWithCurrent($this->item['userid'], (int) $this->Users->userData['team'])) {
                 return array('read' => true, 'write' => $write);
             }
         }
 
         // if the setting is 'user' (meaning user + admin(s)) check we are admin
         if ($this->item['canread'] === 'user') {
-            if ($this->Users->userData['is_admin'] && $this->Teams->hasCommonTeamWithCurrent((int) $this->item['userid'], $this->Users->userData['team'])) {
+            if ($this->Users->userData['is_admin'] && $this->Teams->hasCommonTeamWithCurrent($this->item['userid'], (int) $this->Users->userData['team'])) {
                 return array('read' => true, 'write' => $write);
             }
         }
@@ -103,7 +103,7 @@ class Permissions
      */
     public function forItemType(): array
     {
-        if ($this->Users->userData['is_admin'] && ((int) $this->item['team'] === $this->Users->userData['team'])) {
+        if ($this->Users->userData['is_admin'] && ($this->item['team'] === $this->Users->userData['team'])) {
             return array('read' => true, 'write' => true);
         }
         return array('read' => false, 'write' => false);
@@ -116,7 +116,7 @@ class Permissions
     {
         // locked entity cannot be written to
         // only the locker can unlock an entity
-        if ($this->item['locked'] && ($this->item['lockedby'] !== $this->Users->userData['userid'])) {
+        if ($this->item['locked'] && ($this->item['lockedby'] !== (int) $this->Users->userData['userid'])) {
             return false;
         }
 
@@ -137,11 +137,11 @@ class Permissions
 
         if ($this->item['canwrite'] === 'team') {
             // items will have a team, make sure it's the same as the one we are logged in
-            if (isset($this->item['team']) && ((int) $this->item['team'] === (int) $this->Users->userData['team'])) {
+            if (isset($this->item['team']) && ($this->item['team'] === $this->Users->userData['team'])) {
                 return true;
             }
             // check if we have a team in common
-            if ($this->Teams->hasCommonTeamWithCurrent((int) $this->item['userid'], $this->Users->userData['team'])) {
+            if ($this->Teams->hasCommonTeamWithCurrent($this->item['userid'], (int) $this->Users->userData['team'])) {
                 return true;
             }
         }
@@ -152,7 +152,7 @@ class Permissions
         }
 
         // if we own the entity, we have write access on it for sure
-        if ($this->item['userid'] === $this->Users->userData['userid']) {
+        if ($this->item['userid'] === (int) $this->Users->userData['userid']) {
             return true;
         }
 
@@ -161,12 +161,12 @@ class Permissions
         if ($this->Users->userData['is_admin'] && $this->item['canwrite'] !== 'useronly') {
             // if it's an item (has team attribute), we need to be logged in in same team
             if (isset($this->item['team'])) {
-                if ((int) $this->item['team'] === $this->Users->userData['team']) {
+                if ($this->item['team'] === $this->Users->userData['team']) {
                     return true;
                 }
             } else { // experiment
-                $Owner = new Users((int) $this->item['userid']);
-                if ($this->Teams->hasCommonTeamWithCurrent((int) $Owner->userData['userid'], $this->Users->userData['team'])) {
+                $Owner = new Users($this->item['userid']);
+                if ($this->Teams->hasCommonTeamWithCurrent((int) $Owner->userData['userid'], (int) $this->Users->userData['team'])) {
                     return true;
                 }
             }

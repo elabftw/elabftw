@@ -59,7 +59,7 @@ class Tags implements CrudInterface
         if ($req->rowCount() === 0) {
             // check if we can actually create tags (for non-admins)
             $Team = new Team($this->Entity->Users->team);
-            if ($Team->getUserCreateTag() === 0 && $this->Entity->Users->userData['is_admin'] === '0') {
+            if ($Team->getUserCreateTag() === 0 && $this->Entity->Users->userData['is_admin'] === 0) {
                 throw new ImproperActionException(_('Users cannot create tags.'));
             }
 
@@ -156,7 +156,7 @@ class Tags implements CrudInterface
         if ($params->getTarget() === 'unreference') {
             return $this->unreference();
         }
-        if ($this->Entity->Users->userData['is_admin'] !== '1') {
+        if ($this->Entity->Users->userData['is_admin'] !== 1) {
             throw new IllegalActionException('Only an admin can update a tag!');
         }
 
@@ -178,7 +178,7 @@ class Tags implements CrudInterface
      */
     public function deduplicate(): int
     {
-        if ($this->Entity->Users->userData['is_admin'] !== '1') {
+        if ($this->Entity->Users->userData['is_admin'] !== 1) {
             throw new IllegalActionException('Only an admin can deduplicate!');
         }
         // first get the ids of all the tags that are duplicated in the team
@@ -203,7 +203,7 @@ class Tags implements CrudInterface
      */
     public function destroy(): bool
     {
-        if ($this->Entity->Users->userData['is_admin'] !== '1') {
+        if ($this->Entity->Users->userData['is_admin'] !== 1) {
             throw new IllegalActionException('Only an admin can update a tag!');
         }
         // first unreference the tag

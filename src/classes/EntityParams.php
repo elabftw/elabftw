@@ -34,7 +34,7 @@ class EntityParams extends ContentParams implements EntityParamsInterface
 
     public function getDate(): string
     {
-        return Filter::kdate($this->content);
+        return $this->content;
     }
 
     public function getBody(): string

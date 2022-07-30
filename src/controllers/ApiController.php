@@ -815,20 +815,16 @@ class ApiController implements ControllerInterface
      */
     private function createItem(): Response
     {
-        // check that the id we have is a valid item type from our team
-        $ItemsTypes = new ItemsTypes($this->Users);
-        $itemsTypesArr = $ItemsTypes->readAll();
-        $validIds = array();
-        foreach ($itemsTypesArr as $itemsTypes) {
-            $validIds[] = $itemsTypes['category_id'];
-        }
-        if (!in_array((string) $this->id, $validIds, true)) {
-            return new Response('Cannot create an item with an item type id not in your team!', 403);
-        }
-
         if ($this->id === null) {
             return new Response('Invalid id', 400);
         }
+        // check that the id we have is a valid item type from our team
+        $ItemsTypes = new ItemsTypes($this->Users);
+        $validIds = array_column($ItemsTypes->readAll(), 'category_id');
+        if (!in_array($this->id, $validIds, true)) {
+            return new Response('Cannot create an item with an item type id not in your team!', 403);
+        }
+
         $id = $this->Entity->create(new EntityParams((string) $this->id));
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }

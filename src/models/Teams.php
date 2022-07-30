@@ -251,7 +251,7 @@ class Teams implements CrudInterface
     {
         $UsersHelper = new UsersHelper($userid);
         $teams = $UsersHelper->getTeamsIdFromUserid();
-        return in_array((string) $team, $teams, true);
+        return in_array($team, $teams, true);
     }
 
     private function createTeamIfAllowed(string $name): int

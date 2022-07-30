@@ -97,3 +97,4 @@ These projects were created by users of eLabFTW, check them out if interested!
 * [shabihsherjeel/nionswift_elabftw_plugin](https://github.com/shabihsherjeel/nionswift_elabftw_plugin): python plugin for [Nionswift](https://github.com/nion-software/nionswift)
 * [iam-cms/elabapy-cli](https://gitlab.com/iam-cms/workflows/extra-nodes/elabapy-cli): command line interface for elabftw API
 * [Elab::Client](https://metacpan.org/pod/ELab::Client): perl module for eLab API by Andreas K. Hüttel
+* [LabView client](https://www.vipm.io/package/plasmapper_lib_pl_elabftw_client/): LabView client library by @plasmapper

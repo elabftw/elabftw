@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UploadParams;
+use Elabftw\Enums\FileFromString;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\StorageFactory;
@@ -27,7 +28,6 @@ use Elabftw\Services\MakeThumbnail;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\UploadTrait;
 use ImagickException;
-use function in_array;
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
 use RuntimeException;
@@ -133,20 +133,16 @@ class Uploads implements CrudInterface
      * Create an upload from a string (binary png data or json string or mol file)
      * For mol file the code is actually in chemdoodle-uis-unpacked.js from chemdoodle-web-mini repository
      */
-    public function createFromString(string $fileType, string $realName, string $content): int
+    public function createFromString(FileFromString $fileType, string $realName, string $content): int
     {
-        $allowedFileTypes = array('png', 'mol', 'json');
-        if (!in_array($fileType, $allowedFileTypes, true)) {
-            throw new IllegalActionException('Bad filetype!');
-        }
-
-        if ($fileType === 'png') {
+        // a png file will be received as dataurl, so we need to convert it to binary before saving it
+        if ($fileType === FileFromString::Png) {
             $content = $this->pngDataUrlToBinary($content);
         }
 
         // add file extension if it wasn't provided
         if (Tools::getExt($realName) === 'unknown') {
-            $realName .= '.' . $fileType;
+            $realName .= '.' . $fileType->value;
         }
         // create a temporary file so we can upload it using create()
         $tmpFilePath = FsTools::getCacheFile();

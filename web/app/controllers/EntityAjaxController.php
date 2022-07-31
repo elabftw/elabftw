@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use function dirname;
+use Elabftw\Enums\FileFromString;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -90,7 +91,7 @@ try {
     // CREATE FILE ATTACHMENT FROM STRING
     if ($Request->request->has('addFromString')) {
         $uploadId = $Entity->Uploads->createFromString(
-            $Request->request->get('fileType'),
+            FileFromString::from($Request->request->get('fileType')),
             $Request->request->get('realName'),
             $Request->request->get('content'),
         );

@@ -44,8 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
     onBlur: Action.Submit,
     onEdit: (original, event, input) => {
       // remove the default text
-      if (input.value === 'Click to add a comment') {
+      // we use a data-isempty attribute so "Click to add comment" can be translated
+      if (original.dataset.isempty === '1') {
         input.value = '';
+        original.dataset.isempty = '0';
         return true;
       }
     },

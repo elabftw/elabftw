@@ -149,7 +149,7 @@ class MakeEln extends MakeStreamZip
                     $dataEntities[] = array(
                         '@id' => $uploadAtId,
                         '@type' => 'File',
-                        'description' => $file['comment'],
+                        'description' => $file['comment'] ?? '',
                         'name' => $file['real_name'],
                         'contentSize' => $file['filesize'],
                         'sha256' => $file['hash'],

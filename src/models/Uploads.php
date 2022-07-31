@@ -31,7 +31,6 @@ use ImagickException;
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
 use RuntimeException;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * All about the file uploads
@@ -121,12 +120,47 @@ class Uploads implements CrudInterface
         $storageFs->writeStream($longName, $inputStream);
 
         // final sql
-        $id = $this->dbInsert($realName, $longName, $hash, $filesize, $storage, $params->getImmutable(), $params->getComment());
+        $sql = 'INSERT INTO uploads(
+            real_name,
+            long_name,
+            comment,
+            item_id,
+            userid,
+            type,
+            hash,
+            hash_algorithm,
+            storage,
+            filesize,
+            immutable
+        ) VALUES(
+            :real_name,
+            :long_name,
+            :comment,
+            :item_id,
+            :userid,
+            :type,
+            :hash,
+            :hash_algorithm,
+            :storage,
+            :filesize,
+            :immutable
+        )';
 
-        // TODO useful?
-        $sourceFs->delete($params->getFilePath());
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':real_name', $realName);
+        $req->bindParam(':long_name', $longName);
+        $req->bindValue(':comment', $params->getComment());
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':type', $this->Entity->type);
+        $req->bindParam(':hash', $hash);
+        $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
+        $req->bindParam(':storage', $storage, PDO::PARAM_INT);
+        $req->bindParam(':filesize', $filesize, PDO::PARAM_INT);
+        $req->bindValue(':immutable', $params->getImmutable(), PDO::PARAM_INT);
+        $this->Db->execute($req);
 
-        return $id;
+        return $this->Db->lastInsertId();
     }
 
     /**
@@ -317,56 +351,5 @@ class Uploads implements CrudInterface
             throw new ImproperActionException('PHP files are forbidden!');
         }
         return $ext;
-    }
-
-    /**
-     * Make the final SQL request to store the file
-     */
-    private function dbInsert(string $realName, string $longName, string $hash, int $filesize, int $storage, int $immutable, ?string $comment = null): int
-    {
-        $comment ??= 'Click to add a comment';
-
-        $sql = 'INSERT INTO uploads(
-            real_name,
-            long_name,
-            comment,
-            item_id,
-            userid,
-            type,
-            hash,
-            hash_algorithm,
-            storage,
-            filesize,
-            immutable
-        ) VALUES(
-            :real_name,
-            :long_name,
-            :comment,
-            :item_id,
-            :userid,
-            :type,
-            :hash,
-            :hash_algorithm,
-            :storage,
-            :filesize,
-            :immutable
-        )';
-
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':real_name', $realName);
-        $req->bindParam(':long_name', $longName);
-        // comment can be edited after upload
-        // not i18n friendly because it is used somewhere else (not a valid reason, but for the moment that will do)
-        $req->bindValue(':comment', $comment);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
-        $req->bindParam(':hash', $hash);
-        $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
-        $req->bindParam(':storage', $storage, PDO::PARAM_INT);
-        $req->bindParam(':filesize', $filesize, PDO::PARAM_INT);
-        $req->bindParam(':immutable', $immutable, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $this->Db->lastInsertId();
     }
 }

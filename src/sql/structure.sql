@@ -705,7 +705,7 @@ CREATE TABLE `uploads` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `real_name` text NOT NULL,
   `long_name` text NOT NULL,
-  `comment` text NOT NULL,
+  `comment` text NULL DEFAULT NULL,
   `item_id` int(10) UNSIGNED DEFAULT NULL,
   `userid` text NOT NULL,
   `type` varchar(255) NOT NULL,

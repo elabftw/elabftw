@@ -651,14 +651,9 @@ abstract class AbstractEntity implements CrudInterface
         return $req->rowCount() > 0;
     }
 
-    public function getTable(): string
-    {
-        return $this->type;
-    }
-
     public function getIdFromCategory(int $category): array
     {
-        $sql = 'SELECT id FROM ' . $this->getTable() . ' WHERE team = :team AND category = :category';
+        $sql = 'SELECT id FROM ' . $this->type . ' WHERE team = :team AND category = :category';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':category', $category);
@@ -669,7 +664,7 @@ abstract class AbstractEntity implements CrudInterface
 
     public function getIdFromUser(int $userid): array
     {
-        $sql = 'SELECT id FROM ' . $this->getTable() . ' WHERE userid = :userid';
+        $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid);
         $req->execute();
@@ -733,7 +728,7 @@ abstract class AbstractEntity implements CrudInterface
     {
         // build field
         $field = '$.extra_fields.' . $params->getField() . '.value';
-        $sql = 'UPDATE ' . $this->getTable() . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
+        $sql = 'UPDATE ' . $this->type . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':field', $field);
         $req->bindValue(':value', $params->getContent());

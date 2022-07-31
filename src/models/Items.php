@@ -26,9 +26,9 @@ class Items extends AbstractConcreteEntity
 
     public function __construct(Users $users, ?int $id = null)
     {
-        parent::__construct($users, $id);
         $this->type = parent::TYPE_ITEMS;
         $this->page = 'database';
+        parent::__construct($users, $id);
     }
 
     public function create(EntityParamsInterface $params): int

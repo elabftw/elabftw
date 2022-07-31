@@ -54,10 +54,14 @@ class Uploads implements CrudInterface
 
     private string $hashAlgorithm = 'sha256';
 
-    public function __construct(public AbstractEntity $Entity, ?int $id = null)
+    private array $uploadData = array();
+
+    public function __construct(public AbstractEntity $Entity, public ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->id = $id;
+        if ($this->id !== null) {
+            $this->readOne();
+        }
     }
 
     /**
@@ -117,7 +121,7 @@ class Uploads implements CrudInterface
         $storageFs->writeStream($longName, $inputStream);
 
         // final sql
-        $id = $this->dbInsert($realName, $longName, $hash, $filesize, $storage, $params->getComment());
+        $id = $this->dbInsert($realName, $longName, $hash, $filesize, $storage, $params->getImmutable(), $params->getComment());
 
         // TODO useful?
         $sourceFs->delete($params->getFilePath());
@@ -126,24 +130,18 @@ class Uploads implements CrudInterface
     }
 
     /**
-     * Create an upload from a string, from Chemdoodle or Doodle
+     * Create an upload from a string (binary png data or json string or mol file)
+     * For mol file the code is actually in chemdoodle-uis-unpacked.js from chemdoodle-web-mini repository
      */
-    public function createFromString(string $fileType, string $realName, string $content, ?string $comment = null): int
+    public function createFromString(string $fileType, string $realName, string $content): int
     {
-        $this->Entity->canOrExplode('write');
-
-        $allowedFileTypes = array('pdf', 'png', 'mol', 'json', 'zip');
+        $allowedFileTypes = array('png', 'mol', 'json');
         if (!in_array($fileType, $allowedFileTypes, true)) {
             throw new IllegalActionException('Bad filetype!');
         }
 
         if ($fileType === 'png') {
-            // get the image in binary
-            $content = str_replace(array('data:image/png;base64,', ' '), array('', '+'), $content);
-            $content = base64_decode($content, true);
-            if ($content === false) {
-                throw new RuntimeException('Could not decode content!');
-            }
+            $content = $this->pngDataUrlToBinary($content);
         }
 
         // add file extension if it wasn't provided
@@ -155,8 +153,7 @@ class Uploads implements CrudInterface
         $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
         $tmpFilePathFs->write(basename($tmpFilePath), $content);
 
-        $params = new CreateUpload($realName, $tmpFilePath, $comment);
-        return $this->create($params);
+        return $this->create(new CreateUpload($realName, $tmpFilePath));
     }
 
     public function read(ContentParamsInterface $params): array
@@ -180,7 +177,8 @@ class Uploads implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        return $this->Db->fetch($req);
+        $this->uploadData = $this->Db->fetch($req);
+        return $this->uploadData;
     }
 
     /**
@@ -201,7 +199,7 @@ class Uploads implements CrudInterface
 
     public function update(UploadParamsInterface $params): bool
     {
-        $this->Entity->canOrExplode('write');
+        $this->canWriteOrExplode();
         $sql = 'UPDATE uploads SET ' . $params->getTarget() . ' = :content WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
@@ -215,11 +213,9 @@ class Uploads implements CrudInterface
      */
     public function destroy(): bool
     {
-        // set the check here so entityData gets loaded
-        $this->Entity->canOrExplode('write');
-        $uploadArr = $this->read(new ContentParams());
+        $this->canWriteOrExplode();
         // check that the filename is not in the body. see #432
-        if (strpos($this->Entity->entityData['body'], $uploadArr['long_name'])) {
+        if (strpos($this->Entity->entityData['body'], $this->uploadData['long_name'])) {
             throw new ImproperActionException(_('Please make sure to remove any reference to this file in the body!'));
         }
         return $this->nuke();
@@ -234,7 +230,7 @@ class Uploads implements CrudInterface
         $uploadArr = $this->readAll();
 
         foreach ($uploadArr as $upload) {
-            $this->setId((int) $upload['id']);
+            $this->setId($upload['id']);
             $this->nuke();
         }
     }
@@ -263,7 +259,7 @@ class Uploads implements CrudInterface
      */
     public function replace(UploadParamsInterface $params): array
     {
-        $this->Entity->canOrExplode('write');
+        $this->canWriteOrExplode();
         // read the current one to get the comment
         $upload = $this->read(new ContentParams());
         $this->update(new UploadParams((string) self::STATE_ARCHIVED, 'state'));
@@ -273,6 +269,27 @@ class Uploads implements CrudInterface
         $this->setId((int) $newID);
 
         return $this->read(new ContentParams());
+    }
+
+    /**
+     * Transform a png data url into its binary form
+     */
+    private function pngDataUrlToBinary(string $content): string
+    {
+        $content = str_replace(array('data:image/png;base64,', ' '), array('', '+'), $content);
+        $content = base64_decode($content, true);
+        if ($content === false) {
+            throw new RuntimeException('Could not decode content!');
+        }
+        return $content;
+    }
+
+    private function canWriteOrExplode(): void
+    {
+        if ($this->uploadData['immutable'] === 1) {
+            throw new IllegalActionException('User tried to edit an immutable upload.');
+        }
+        $this->Entity->canOrExplode('write');
     }
 
     /**
@@ -309,7 +326,7 @@ class Uploads implements CrudInterface
     /**
      * Make the final SQL request to store the file
      */
-    private function dbInsert(string $realName, string $longName, string $hash, int $filesize, int $storage, ?string $comment = null): int
+    private function dbInsert(string $realName, string $longName, string $hash, int $filesize, int $storage, int $immutable, ?string $comment = null): int
     {
         $comment ??= 'Click to add a comment';
 
@@ -323,7 +340,8 @@ class Uploads implements CrudInterface
             hash,
             hash_algorithm,
             storage,
-            filesize
+            filesize,
+            immutable
         ) VALUES(
             :real_name,
             :long_name,
@@ -334,7 +352,8 @@ class Uploads implements CrudInterface
             :hash,
             :hash_algorithm,
             :storage,
-            :filesize
+            :filesize,
+            :immutable
         )';
 
         $req = $this->Db->prepare($sql);
@@ -350,6 +369,7 @@ class Uploads implements CrudInterface
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
         $req->bindParam(':storage', $storage, PDO::PARAM_INT);
         $req->bindParam(':filesize', $filesize, PDO::PARAM_INT);
+        $req->bindParam(':immutable', $immutable, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->Db->lastInsertId();
     }

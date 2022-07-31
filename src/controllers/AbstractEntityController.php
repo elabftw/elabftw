@@ -173,7 +173,6 @@ abstract class AbstractEntityController implements ControllerInterface
     protected function view(): Response
     {
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
-        $this->Entity->populate();
 
         // REVISIONS
         $Revisions = new Revisions(

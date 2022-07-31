@@ -1010,7 +1010,6 @@ class ApiController implements ControllerInterface
     private function updateEntity(): Response
     {
         // make sure a locked entry cannot be updated
-        $this->Entity->populate();
         if ($this->Entity->entityData['locked']) {
             return new Response('Cannot update a locked entry!', 403);
         }

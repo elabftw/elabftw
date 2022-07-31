@@ -26,9 +26,9 @@ class Experiments extends AbstractConcreteEntity
 
     public function __construct(Users $users, ?int $id = null)
     {
-        parent::__construct($users, $id);
         $this->page = parent::TYPE_EXPERIMENTS;
         $this->type = parent::TYPE_EXPERIMENTS;
+        parent::__construct($users, $id);
     }
 
     public function create(EntityParamsInterface $params): int
@@ -174,6 +174,9 @@ class Experiments extends AbstractConcreteEntity
      */
     public function destroy(): bool
     {
+        if ($this->entityData['timestamped'] === 1) {
+            throw new IllegalActionException('User tried to delete an experiment that was timestamped.');
+        }
         // delete from pinned too
         return parent::destroy() && $this->Pins->cleanup();
     }

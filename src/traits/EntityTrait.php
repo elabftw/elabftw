@@ -37,8 +37,8 @@ trait EntityTrait
             throw new IllegalActionException('The id parameter is not valid!');
         }
         $this->id = $id;
-        // clear any previous entityData content
-        $this->entityData = array();
+        // this will load it in entityData
+        $this->readOne();
         // clear out filters
         $this->filters = array();
     }

@@ -21,6 +21,7 @@ class UploadsPrunerTest extends \PHPUnit\Framework\TestCase
         $Experiments = new Experiments(new Users(1, 1), 1);
         $uploadId = $Experiments->Uploads->create(new CreateUpload('to_delete.sql', dirname(__DIR__, 2) . '/_data/dummy.sql'));
         $Experiments->Uploads->setId($uploadId);
+        $Experiments->Uploads->readOne();
         $Experiments->Uploads->destroy();
 
         $Cleaner = new UploadsPruner();

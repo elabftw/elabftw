@@ -81,11 +81,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     $.post('app/controllers/EntityAjaxController.php', {
       addFromString: true,
-      type: type,
-      realName: realName,
-      id: id,
       fileType: 'png',
-      string: image,
+      realName: realName,
+      content: image,
+      id: id,
+      type: type,
     }).done(function(json) {
       if (type === 'items') {
         type = 'database';

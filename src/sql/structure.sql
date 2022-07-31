@@ -715,6 +715,7 @@ CREATE TABLE `uploads` (
   `storage` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `filesize` int(10) UNSIGNED NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
+  `immutable` tinyint(1) UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 

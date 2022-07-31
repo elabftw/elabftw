@@ -25,4 +25,6 @@ interface CreateUploadParamsInterface
     public function getSourceFs(): Filesystem;
 
     public function getSourcePath(): string;
+
+    public function getImmutable(): int;
 }

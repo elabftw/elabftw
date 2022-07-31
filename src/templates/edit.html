@@ -120,7 +120,7 @@
       {% endif %}
 
       <div class='dropdown-divider'></div>
-      <a class='dropdown-item hover-danger {{ not deletableXp and (Entity.type == 'experiments') ? 'disabled' }}' href='#' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</a>
+      <a class='dropdown-item hover-danger {{ Entity.entityData.timestamped or (not deletableXp and (Entity.type == 'experiments')) ? 'disabled' }}' href='#' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</a>
     </div>
   </div>
 

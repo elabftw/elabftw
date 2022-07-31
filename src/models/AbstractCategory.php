@@ -30,9 +30,4 @@ abstract class AbstractCategory implements CrudInterface
      * Get all the things
      */
     abstract public function readAll(): array;
-
-    /**
-     * Read just one category
-     */
-    abstract public function readOne(): array;
 }

@@ -713,6 +713,7 @@ abstract class AbstractEntity implements CrudInterface
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         $this->entityData = $this->Db->fetch($req);
+        // Note: this is returning something with all values set to null instead of resource not found exception if the id is incorrect.
         if ($this->entityData['id'] === null) {
             throw new ResourceNotFoundException();
         }

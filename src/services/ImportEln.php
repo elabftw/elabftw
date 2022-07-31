@@ -102,7 +102,7 @@ class ImportEln extends AbstractImportZip
         }
 
         // LINKS
-        if (isset($dataset['mentions'])) {
+        if (isset($dataset['mentions']) && !empty($dataset['mentions'])) {
             $linkHtml = sprintf('<h1>%s</h1><ul>', _('Links'));
             foreach ($dataset['mentions'] as $link) {
                 $linkHtml .= sprintf("<li><a href='%s'>%s</a></li>", $link['@id'], $link['name']);

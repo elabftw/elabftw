@@ -14,7 +14,7 @@ use Exception;
  * Throw this if the requested resource cannot be found
  * Should reply with status code 404
  */
-final class ResourceNotFoundException extends Exception
+final class ResourceNotFoundException extends ImproperActionException
 {
     public function __construct(string $message = null, int $code = 404, Exception $previous = null)
     {

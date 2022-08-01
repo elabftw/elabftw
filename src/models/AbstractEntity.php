@@ -516,7 +516,7 @@ abstract class AbstractEntity implements CrudInterface
             return array('read' => true, 'write' => false);
         }
         if (empty($this->entityData) && !isset($item)) {
-            $this->populate();
+            $this->readOne();
         }
         // don't try to read() again if we have the item (for show where there are several items to check)
         if (!isset($item)) {
@@ -620,19 +620,6 @@ abstract class AbstractEntity implements CrudInterface
     }
 
     /**
-     * Now that we have an id, load the data in entityData array
-     */
-    public function populate(): void
-    {
-        if ($this->id === null) {
-            throw new ImproperActionException('No id was set.');
-        }
-
-        // load the entity in entityData property and also check for read permission at the same time
-        $this->readOne();
-    }
-
-    /**
      * Get timestamper full name for display in view mode
      */
     public function getTimestamperFullname(): string
@@ -664,14 +651,9 @@ abstract class AbstractEntity implements CrudInterface
         return $req->rowCount() > 0;
     }
 
-    public function getTable(): string
-    {
-        return $this->type;
-    }
-
     public function getIdFromCategory(int $category): array
     {
-        $sql = 'SELECT id FROM ' . $this->getTable() . ' WHERE team = :team AND category = :category';
+        $sql = 'SELECT id FROM ' . $this->type . ' WHERE team = :team AND category = :category';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':category', $category);
@@ -682,7 +664,7 @@ abstract class AbstractEntity implements CrudInterface
 
     public function getIdFromUser(int $userid): array
     {
-        $sql = 'SELECT id FROM ' . $this->getTable() . ' WHERE userid = :userid';
+        $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid);
         $req->execute();
@@ -721,11 +703,15 @@ abstract class AbstractEntity implements CrudInterface
         }
         $sql = $this->getReadSqlBeforeWhere(true, true);
 
-        $sql .= ' WHERE entity.id = ' . (string) $this->id;
+        $sql .= sprintf(' WHERE entity.id = %d', $this->id);
 
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         $this->entityData = $this->Db->fetch($req);
+        // Note: this is returning something with all values set to null instead of resource not found exception if the id is incorrect.
+        if ($this->entityData['id'] === null) {
+            throw new ResourceNotFoundException();
+        }
         $this->canOrExplode('read');
         $this->entityData['steps'] = $this->Steps->readAll();
         $this->entityData['links'] = $this->Links->readAll();
@@ -742,7 +728,7 @@ abstract class AbstractEntity implements CrudInterface
     {
         // build field
         $field = '$.extra_fields.' . $params->getField() . '.value';
-        $sql = 'UPDATE ' . $this->getTable() . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
+        $sql = 'UPDATE ' . $this->type . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':field', $field);
         $req->bindValue(':value', $params->getContent());

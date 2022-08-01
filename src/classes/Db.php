@@ -132,12 +132,9 @@ final class Db
      */
     public function fetch(PDOStatement $req): array
     {
-        if ($req->rowCount() === 0) {
-            throw new ResourceNotFoundException();
-        }
         $res = $req->fetch();
-        if ($res === false || $res === null) {
-            return array();
+        if ($res === false || $res === null || $req->rowCount() === 0) {
+            throw new ResourceNotFoundException();
         }
         return $res;
     }

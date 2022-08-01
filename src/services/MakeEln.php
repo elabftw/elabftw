@@ -77,9 +77,8 @@ class MakeEln extends MakeStreamZip
         $rootParts = array();
         foreach ($this->idArr as $id) {
             $hasPart = array();
-            $this->Entity->setId((int) $id);
             try {
-                $this->Entity->populate();
+                $this->Entity->setId((int) $id);
             } catch (IllegalActionException $e) {
                 continue;
             }
@@ -150,7 +149,7 @@ class MakeEln extends MakeStreamZip
                     $dataEntities[] = array(
                         '@id' => $uploadAtId,
                         '@type' => 'File',
-                        'description' => $file['comment'],
+                        'description' => $file['comment'] ?? '',
                         'name' => $file['real_name'],
                         'contentSize' => $file['filesize'],
                         'sha256' => $file['hash'],

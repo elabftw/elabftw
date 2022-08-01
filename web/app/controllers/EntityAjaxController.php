@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use function dirname;
+use Elabftw\Enums\FileFromString;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -87,9 +88,18 @@ try {
      *
      */
 
-    // SAVE AS IMAGE
-    if ($Request->request->has('saveAsImage')) {
-        $Entity->Uploads->createFromString('png', $Request->request->get('realName'), $Request->request->get('content'));
+    // CREATE FILE ATTACHMENT FROM STRING
+    if ($Request->request->has('addFromString')) {
+        $uploadId = $Entity->Uploads->createFromString(
+            FileFromString::from($Request->request->get('fileType')),
+            $Request->request->get('realName'),
+            $Request->request->get('content'),
+        );
+        $Response->setData(array(
+            'res' => true,
+            'msg' => _('File uploaded successfully'),
+            'uploadId' => $uploadId,
+        ));
     }
 
     // UPDATE VISIBILITY
@@ -102,20 +112,6 @@ try {
         $realName = $Request->files->get('file')->getClientOriginalName();
         $filePath = $Request->files->get('file')->getPathname();
         $Entity->Uploads->create(new CreateUpload($realName, $filePath));
-    }
-
-    // ADD MOL FILE OR PNG
-    if ($Request->request->has('addFromString')) {
-        $uploadId = $Entity->Uploads->createFromString(
-            $Request->request->get('fileType'),
-            $Request->request->get('realName'),
-            $Request->request->get('string')
-        );
-        $Response->setData(array(
-            'res' => true,
-            'msg' => _('File uploaded successfully'),
-            'uploadId' => $uploadId,
-        ));
     }
 
     // UPDATE CATEGORY (item type or status)

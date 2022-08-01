@@ -51,7 +51,6 @@ try {
     $itemsCategoryArr = $ItemsTypes->readAll();
     if ($Request->query->has('templateid')) {
         $ItemsTypes->setId((int) $App->Request->query->get('templateid'));
-        $ItemsTypes->populate();
     }
     $statusArr = $Status->readAll();
     $teamConfigArr = $Teams->readOne();

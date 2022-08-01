@@ -28,12 +28,12 @@ class ItemsTypes extends AbstractTemplateEntity
 
     public function __construct(public Users $Users, ?int $id = null)
     {
+        $this->type = parent::TYPE_ITEMS_TYPES;
         $this->Db = Db::getConnection();
         $this->team = $this->Users->team;
         $this->Links = new Links($this);
         $this->countableTable = 'items';
         $this->Steps = new Steps($this);
-        $this->type = parent::TYPE_ITEMS_TYPES;
         if ($id !== null) {
             $this->setId($id);
         }

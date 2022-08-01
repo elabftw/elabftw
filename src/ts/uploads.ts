@@ -44,32 +44,16 @@ document.addEventListener('DOMContentLoaded', () => {
     onBlur: Action.Submit,
     onEdit: (original, event, input) => {
       // remove the default text
-      if (input.value === 'Click to add a comment') {
+      // we use a data-isempty attribute so "Click to add comment" can be translated
+      if (original.dataset.isempty === '1') {
         input.value = '';
+        original.dataset.isempty = '0';
         return true;
       }
     },
     tooltip: i18next.t('upload-file-comment'),
   });
   malleableFilecomment.listen();
-
-  // Export mol in png
-  $(document).on('click', '.saveAsImage', function() {
-    const molCanvasId = $(this).data('canvasid');
-    const png = (document.getElementById(molCanvasId) as HTMLCanvasElement).toDataURL();
-    $.post('app/controllers/EntityAjaxController.php', {
-      saveAsImage: true,
-      realName: $(this).data('name') + '.png',
-      content: png,
-      id: about.id,
-      type: about.type,
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        reloadElement('filesdiv');
-      }
-    });
-  });
 
   function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
     if (event.key === 'Enter' || event.type === 'blur') {
@@ -109,6 +93,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // MORE INFORMATION
     } else if (el.matches('[data-action="more-info-upload"]')) {
       document.getElementById('moreInfo_' + el.dataset.uploadid).classList.remove('d-none');
+
+    // SAVE MOL AS PNG
+    } else if (el.matches('[data-action="save-mol-as-png"]')) {
+      const molCanvasId = el.dataset.canvasid;
+      const pngDataUrl = (document.getElementById(molCanvasId) as HTMLCanvasElement).toDataURL();
+      $.post('app/controllers/EntityAjaxController.php', {
+        addFromString: true,
+        fileType: 'png',
+        realName: el.dataset.name + '.png',
+        content: pngDataUrl,
+        id: about.id,
+        type: about.type,
+      }).done(function(json) {
+        notif(json);
+        if (json.res) {
+          reloadElement('filesdiv');
+        }
+      });
 
     // DESTROY UPLOAD
     } else if (el.matches('[data-action="destroy-upload"]')) {

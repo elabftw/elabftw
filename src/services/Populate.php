@@ -12,6 +12,7 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\StepParams;
 use Elabftw\Elabftw\TagParams;
+use Elabftw\Enums\FileFromString;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -93,7 +94,7 @@ class Populate
 
             // maybe upload a file but not on the first one
             if ($this->faker->randomDigit() > 7 && $id !== 1) {
-                $Entity->Uploads->createFromString('json', $this->faker->word() . $this->faker->word(), '{ "some": "content" }');
+                $Entity->Uploads->createFromString(FileFromString::Json, $this->faker->word() . $this->faker->word(), '{ "some": "content" }');
             }
 
             // maybe add a few steps

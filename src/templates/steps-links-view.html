@@ -55,7 +55,7 @@
 
 {% if Entity.entityData.links.experiments %}
   <div class='box'>
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedExperimentsIcon'><i id='linkedExperimentsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Linked experiments'|trans }}</h3>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedExperimentsIcon' class='d-inline'><i id='linkedExperimentsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Linked experiments'|trans }}</h3>
     <div class='row mt-2' id='linkedExperimentsDiv' data-save-hidden='linkedExperimentsDiv'>
       <ul class='list-group ml-3'>
         {% for link in Entity.entityData.links.experiments %}

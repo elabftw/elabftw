@@ -24,8 +24,8 @@ use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\UploadParamsInterface;
+use Elabftw\Services\Check;
 use Elabftw\Services\MakeThumbnail;
-use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\UploadTrait;
 use ImagickException;
 use League\Flysystem\UnableToRetrieveMetadata;
@@ -38,7 +38,6 @@ use RuntimeException;
 class Uploads implements CrudInterface
 {
     use UploadTrait;
-    use SetIdTrait;
 
     public const STATE_DELETED = 3;
 
@@ -49,11 +48,11 @@ class Uploads implements CrudInterface
 
     private const STATE_NORMAL = 1;
 
+    public array $uploadData = array();
+
     protected Db $Db;
 
     private string $hashAlgorithm = 'sha256';
-
-    private array $uploadData = array();
 
     public function __construct(public AbstractEntity $Entity, public ?int $id = null)
     {
@@ -251,6 +250,16 @@ class Uploads implements CrudInterface
         return $this->nuke();
     }
 
+    public function setId(int $id): void
+    {
+        if (Check::id($id) === false) {
+            throw new IllegalActionException('The id parameter is not valid!');
+        }
+        $this->id = $id;
+        // load it
+        $this->readOne();
+    }
+
     /**
      * Delete all uploaded files for an entity
      */
@@ -296,9 +305,9 @@ class Uploads implements CrudInterface
 
         $file = $params->getFile();
         $newID = $this->create(new CreateUpload($file->getClientOriginalName(), $file->getPathname(), $upload['comment']));
-        $this->setId((int) $newID);
+        $this->setId($newID);
 
-        return $this->read(new ContentParams());
+        return $this->uploadData;
     }
 
     /**
@@ -328,7 +337,10 @@ class Uploads implements CrudInterface
      */
     private function nuke(): bool
     {
-        return $this->update(new UploadParams((string) self::STATE_DELETED, 'state'));
+        if ($this->uploadData['immutable'] === 0) {
+            return $this->update(new UploadParams((string) self::STATE_DELETED, 'state'));
+        }
+        return false;
     }
 
     /**

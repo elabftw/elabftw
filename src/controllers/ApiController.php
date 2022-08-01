@@ -630,13 +630,12 @@ class ApiController implements ControllerInterface
         }
         // note: we don't really care about this entity yet
         $Uploads = new Uploads($this->Entity, $this->id);
-        $uploadData = $Uploads->read(new ContentParams());
         // now we know the id and type of the entity
         // so get the Entity to check for read permissions
-        if ($uploadData['type'] === 'experiments') {
-            $Entity = new Experiments($this->Users, (int) $uploadData['item_id']);
-        } elseif ($uploadData['type'] === 'items') {
-            $Entity = new Items($this->Users, (int) $uploadData['item_id']);
+        if ($Uploads->uploadData['type'] === 'experiments') {
+            $Entity = new Experiments($this->Users, $Uploads->uploadData['item_id']);
+        } elseif ($Uploads->uploadData['type'] === 'items') {
+            $Entity = new Items($this->Users, $Uploads->uploadData['item_id']);
         } else {
             return new Response('Invalid upload id', 400);
         }
@@ -647,7 +646,7 @@ class ApiController implements ControllerInterface
         } catch (IllegalActionException) {
             return new Response('You do not have permission to access this resource.', 403);
         }
-        $filePath = dirname(__DIR__, 2) . '/uploads/' . $uploadData['long_name'];
+        $filePath = dirname(__DIR__, 2) . '/uploads/' . $Uploads->uploadData['long_name'];
         return new BinaryFileResponse($filePath);
     }
 
@@ -815,20 +814,16 @@ class ApiController implements ControllerInterface
      */
     private function createItem(): Response
     {
-        // check that the id we have is a valid item type from our team
-        $ItemsTypes = new ItemsTypes($this->Users);
-        $itemsTypesArr = $ItemsTypes->readAll();
-        $validIds = array();
-        foreach ($itemsTypesArr as $itemsTypes) {
-            $validIds[] = $itemsTypes['category_id'];
-        }
-        if (!in_array((string) $this->id, $validIds, true)) {
-            return new Response('Cannot create an item with an item type id not in your team!', 403);
-        }
-
         if ($this->id === null) {
             return new Response('Invalid id', 400);
         }
+        // check that the id we have is a valid item type from our team
+        $ItemsTypes = new ItemsTypes($this->Users);
+        $validIds = array_column($ItemsTypes->readAll(), 'category_id');
+        if (!in_array($this->id, $validIds, true)) {
+            return new Response('Cannot create an item with an item type id not in your team!', 403);
+        }
+
         $id = $this->Entity->create(new EntityParams((string) $this->id));
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
@@ -1030,7 +1025,6 @@ class ApiController implements ControllerInterface
     private function updateEntity(): Response
     {
         // make sure a locked entry cannot be updated
-        $this->Entity->populate();
         if ($this->Entity->entityData['locked']) {
             return new Response('Cannot update a locked entry!', 403);
         }

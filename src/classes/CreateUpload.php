@@ -16,6 +16,8 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 
 class CreateUpload implements CreateUploadParamsInterface
 {
+    protected bool $immutable = false;
+
     public function __construct(private string $realName, private string $filePath, private ?string $comment = null)
     {
     }
@@ -46,5 +48,14 @@ class CreateUpload implements CreateUploadParamsInterface
     public function getSourcePath(): string
     {
         return dirname($this->filePath) . '/';
+    }
+
+    // convert that bool to int for db insert
+    public function getImmutable(): int
+    {
+        if ($this->immutable) {
+            return 1;
+        }
+        return 0;
     }
 }

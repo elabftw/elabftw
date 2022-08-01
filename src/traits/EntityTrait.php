@@ -1,12 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2012, 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
@@ -28,8 +27,10 @@ trait EntityTrait
 
     protected Db $Db;
 
+    abstract public function readOne(): array;
+
     /**
-     * Check and set id
+     * Check and set id; populate the data object
      */
     public function setId(int $id): void
     {
@@ -37,8 +38,8 @@ trait EntityTrait
             throw new IllegalActionException('The id parameter is not valid!');
         }
         $this->id = $id;
-        // clear any previous entityData content
-        $this->entityData = array();
+        // this will load it in entityData
+        $this->readOne();
         // clear out filters
         $this->filters = array();
     }

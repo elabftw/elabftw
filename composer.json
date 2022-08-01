@@ -73,6 +73,9 @@
       "Elabftw\\Exceptions\\": [
         "src/exceptions"
       ],
+      "Elabftw\\Enums\\": [
+        "src/enums"
+      ],
       "Elabftw\\Factories\\": [
         "src/factories"
       ],

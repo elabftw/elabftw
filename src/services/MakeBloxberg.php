@@ -1,16 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2015 Nicolas CARPi
+ * @copyright 2015, 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\CreateImmutableUpload;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -73,15 +73,22 @@ class MakeBloxberg extends AbstractMake
 
         // the binary response is a zip archive that contains the certificate in pdf format
         $zip = $proofResponse->getBody()->getContents();
+        // add the pdf to the zipfile and get the path to where it is stored in cache
+        $tmpFilePath = $this->addToZip($zip, $pdf);
         // save the zip file as an upload
-        $zip = $this->addToZip($zip, $pdf);
-        return (bool) $this->Entity->Uploads->createFromString('zip', $this->getFileName(), $zip);
+        return (bool) $this->Entity->Uploads->create(
+            new CreateImmutableUpload(
+                $this->getFileName(),
+                $tmpFilePath,
+                sprintf(_('Timestamp archive by %s'), $this->Entity->Users->userData['fullname'])
+            )
+        );
     }
 
     public function getFileName(): string
     {
         $DateTime = new DateTimeImmutable();
-        return sprintf('bloxberg-proof_%s', $DateTime->format('c'));
+        return sprintf('bloxberg-proof_%s.zip', $DateTime->format('c'));
     }
 
     private function getApiKey(): string
@@ -151,6 +158,7 @@ class MakeBloxberg extends AbstractMake
         }
         $ZipArchive->addFromString('timestamped-data.pdf', $pdf);
         $ZipArchive->close();
-        return $tmpFilePathFs->read(basename($tmpFilePath));
+        // return the path where the zip is stored in temp folder
+        return $tmpFilePath;
     }
 }

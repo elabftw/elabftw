@@ -10,7 +10,7 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\CreateImmutableUpload;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\TimestampResponseInterface;
@@ -56,7 +56,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake
         $ZipArchive->addFile($pdfPath, $pdfName);
         $ZipArchive->addFile($tsResponse->getTokenPath(), $tokenName);
         $ZipArchive->close();
-        return $this->Entity->Uploads->create(new CreateUpload($zipName, $zipPath, sprintf(_('Timestamp archive by %s'), $this->Entity->Users->userData['fullname'])));
+        return $this->Entity->Uploads->create(new CreateImmutableUpload($zipName, $zipPath, sprintf(_('Timestamp archive by %s'), $this->Entity->Users->userData['fullname'])));
     }
 
     /**

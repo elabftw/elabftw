@@ -12,6 +12,6 @@ namespace Elabftw\Exceptions;
 /**
  * For errors that make the execution halt but can happen and are not malicious
  */
-final class ImproperActionException extends WithMessageException
+class ImproperActionException extends WithMessageException
 {
 }

@@ -13,7 +13,6 @@ use DateInterval;
 use DateTime;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 
 class SchedulerTest extends \PHPUnit\Framework\TestCase
 {
@@ -63,14 +62,6 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $d->add(new DateInterval('P6D'));
         $end = $d->format('c');
         $this->assertIsArray($this->Scheduler->read($start, $end));
-    }
-
-    public function testReadFromIdNotFound(): void
-    {
-        $Items = new Items(new Users(1, 1), 1337);
-        $Scheduler = new Scheduler($Items);
-        $this->expectException(ResourceNotFoundException::class);
-        $Scheduler->readOne();
     }
 
     public function testBind(): void

@@ -159,11 +159,11 @@ export default class JsonEditorHelper {
     this.editorTitle.innerText = i18next.t('filename') + ': ' + realName + '.json';
     $.post('app/controllers/EntityAjaxController.php', {
       addFromString: true,
+      fileType: 'json',
       type: this.entity.type,
       id: this.entity.id,
-      realName: realName,
-      fileType: 'json',
-      string: JSON.stringify(this.editor.get()),
+      realName: realName + '.json',
+      content: JSON.stringify(this.editor.get()),
     }).done(json => {
       reloadElement('filesdiv');
       this.currentUploadId = String(json.uploadId);

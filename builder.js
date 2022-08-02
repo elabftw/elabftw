@@ -69,9 +69,6 @@ module.exports = {
     '3Dmol-notrack': [
       './src/ts/3Dmol-notrack.ts',
     ],
-    'chemdoodle-canvas': [
-      './src/js/chemdoodle-canvas.js',
-    ],
   },
   // uncomment this to find where the error is coming from
   // makes the build slower

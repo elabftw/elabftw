@@ -14,4 +14,5 @@ enum FileFromString: string
     case Png = 'png';
     case Mol = 'mol';
     case Json = 'json';
+    case ChemJson = 'chemjson';
 }

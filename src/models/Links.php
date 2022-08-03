@@ -139,7 +139,7 @@ class Links implements CrudInterface
                 $sql .= ', category.name, category.bookable, category.color';
             }
 
-            $sql .= ' FROM ' . $this->getTableName($targetEntityType) . ' as entity_links
+            $sql .= ' FROM ' . $this->getTableNameRelated($targetEntityType) . ' as entity_links
                 LEFT JOIN ' . $targetEntityType . ' AS entity ON (entity_links.item_id = entity.id)';
 
             if ($targetEntityType === $this->Entity::TYPE_ITEMS) {
@@ -308,5 +308,14 @@ class Links implements CrudInterface
         }
 
         return ($importEntityType ?? $this->Entity->type) . '_links';
+    }
+
+    protected function getTableNameRelated(string $targetEntityType): string
+    {
+        if ($this->Entity->type === $this->Entity::TYPE_EXPERIMENTS) {
+            return $targetEntityType . '2' . $this->Entity->type;
+        }
+
+        return $targetEntityType . '_links';
     }
 }

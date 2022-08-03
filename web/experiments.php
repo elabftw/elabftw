@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -21,7 +20,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Entry point for all experiment stuff
- *
  */
 require_once 'app/init.inc.php';
 $App->pageTitle = ngettext('Experiment', 'Experiments', 2);

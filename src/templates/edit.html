@@ -251,8 +251,12 @@
 {% if Entity.Users.userData.chem_editor %}
   <div class='box chemdoodle'>
     <h3 data-action='toggle-next' data-icon='chemDivIcon' class='d-inline'><i id='chemDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-dna'></i> {{ 'Molecule drawer'|trans }}</h3>
+    <div class='text-center'>
+      <button class='btn btn-primary' data-filetype='chemjson' data-action='save-chem-as-file'>{{ 'Save as JSON'|trans }}</button>
+      <button class='btn btn-primary' data-filetype='png' data-action='save-chem-as-file'>{{ 'Save as image'|trans }}</button>
+    </div>
     <div id='chemDiv' hidden data-save-hidden='chemDiv' class='mt-2 text-center'>
-      <script src='assets/chemdoodle-canvas.bundle.js?v={{ v }}'></script>
+      <canvas id='sketcher'></canvas>
     </div>
   </div>
 {% endif %}

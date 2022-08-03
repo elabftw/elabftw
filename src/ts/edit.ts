@@ -6,6 +6,7 @@
  * @package elabftw
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { notif, reloadElement, updateCategory, showContentPlainText, escapeRegExp, getLinkTargetEntityType } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Model, Payload, Method, Action, PartialEntity } from './interfaces';
@@ -134,7 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const UploadC = new UploadClass(entity);
     UploadC.read().then(json => {
       for (const upload of json.value as Array<Upload>) {
-        if (upload.real_name.split('.').pop() === 'mol') {
+        const extension = upload.real_name.split('.').pop();
+        if (['mol', 'chemjson'].includes(extension)) {
           mols.push([upload.real_name, upload.long_name]);
         }
       }
@@ -158,6 +160,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load the content of a mol file from the list in the mol editor
   $(document).on('click', '.loadableMolLink', function() {
     $.get($(this).data('target')).done(function(molContent) {
+      // a .chemjson file will be an object but we want a string
+      if (typeof molContent === 'object') {
+        molContent = JSON.stringify(molContent);
+      }
       $('#sketcher_open_text').val(molContent);
     });
   });
@@ -180,6 +186,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // KEYBOARD SHORTCUT
   key(about.scsubmit, () => updateEntityBody());
 
+  // DRAW THE MOLECULE SKETCHER
+  // documentation: https://web.chemdoodle.com/tutorial/2d-structure-canvases/sketcher-canvas#options
+  const sketcher = new ChemDoodle.SketcherCanvas('sketcher', 750, 300, {
+    oneMolecule: false,
+  });
+
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
@@ -190,6 +202,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // SWITCH EDITOR
     } else if (el.matches('[data-action="switch-editor"]')) {
       EntityC.update(entity.id, Target.ContentType, editor.switch() === 'tiny' ? '1' : '2');
+
+    // SAVE CHEM CANVAS AS FILE: chemjson or png
+    } else if (el.matches('[data-action="save-chem-as-file"]')) {
+      const realName = prompt(i18next.t('request-filename'));
+      if (realName === null || realName === '') {
+        return;
+      }
+      const content = el.dataset.filetype === 'chemjson' ?
+        // CHEMJSON
+        JSON.stringify(new ChemDoodle.io.JSONInterpreter().contentTo(sketcher.molecules, sketcher.shapes))
+        // PNG
+        : (document.getElementById('sketcher') as HTMLCanvasElement).toDataURL();
+
+      const params = {
+        'addFromString': 'true',
+        'fileType': el.dataset.filetype,
+        'realName': realName,
+        'content': content,
+        'id': String(entity.id),
+        'type': entity.type,
+      };
+
+      AjaxC.postForm('app/controllers/EntityAjaxController.php', params)
+        .then(res => res.json().then(json => {
+          reloadElement('filesdiv');
+          notif(json);
+        }));
 
     // ANNOTATE IMAGE
     } else if (el.matches('[data-action="annotate-image"]')) {

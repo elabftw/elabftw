@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // show a little green check if we have latest version
       const successIcon = document.createElement('i');
       successIcon.style.color = 'green';
-      successIcon.classList.add('fas', 'fa-check', 'fa-lg', 'align-top', 'ml-1');
+      successIcon.classList.add('fas', 'fa-check', 'fa-lg', 'ml-1');
       latestVersionDiv.appendChild(successIcon);
     } else {
       currentVersionDiv.style.color = 'red';

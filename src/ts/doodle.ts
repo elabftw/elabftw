@@ -73,8 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('saveCanvas').addEventListener('click', (e) => {
     const image = doodleCanvas.toDataURL();
     const elDataset = (e.target as HTMLButtonElement).dataset;
-    let type = elDataset.type;
-    const id = elDataset.id;
     const realName = prompt(i18next.t('request-filename'));
     if (realName === null || realName === '') {
       return;
@@ -84,12 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
       fileType: 'png',
       realName: realName,
       content: image,
-      id: id,
-      type: type,
+      id: elDataset.id,
+      type: elDataset.type,
     }).done(function(json) {
-      if (type === 'items') {
-        type = 'database';
-      }
       reloadElement('filesdiv');
       notif(json);
     });

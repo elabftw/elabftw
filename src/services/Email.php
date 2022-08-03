@@ -27,6 +27,7 @@ use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email as Memail;
 use Symfony\Component\Mime\RawMessage;
+use function urlencode;
 
 /**
  * Email service
@@ -164,7 +165,7 @@ class Email
         $dsn = sprintf(
             'smtp://%s:%s@%s:%d',
             $username,
-            $password,
+            urlencode($password),
             $this->Config->configArr['smtp_address'],
             $this->Config->configArr['smtp_port'],
         );

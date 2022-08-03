@@ -10,6 +10,7 @@
 namespace Elabftw\Controllers;
 
 use Elabftw\Interfaces\ControllerInterface;
+use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -19,15 +20,13 @@ abstract class AbstractApiController implements ControllerInterface
 {
     protected ?int $id = null;
 
-    protected bool $canWrite = false;
-
     protected int $limit = 15;
 
     protected int $offset = 0;
 
     protected string $search = '';
 
-    public function __construct(protected Request $Request)
+    public function __construct(protected Users $Users, protected Request $Request, protected bool $canWrite = false)
     {
     }
 

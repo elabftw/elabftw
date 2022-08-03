@@ -15,7 +15,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\EntityFactory;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -37,8 +36,6 @@ class Apiv2Controller extends AbstractApiController
 
     // experiments, items or uploads
     private string $endpoint;
-
-    private Users $Users;
 
     private AbstractEntity | Config $Model;
 
@@ -130,12 +127,6 @@ class Apiv2Controller extends AbstractApiController
         // assign the endpoint (experiments, items, uploads, items_types, status)
         // 0 is "", 1 is "api", 2 is "v1"
         $this->endpoint = $req[3];
-
-        // verify the key and load user info
-        $ApiKeys = new ApiKeys(new Users());
-        $keyArr = $ApiKeys->readFromApiKey($this->Request->server->get('HTTP_AUTHORIZATION') ?? '');
-        $this->Users = new Users((int) $keyArr['userid'], (int) $keyArr['team']);
-        $this->canWrite = (bool) $keyArr['canWrite'];
 
         // load Model
         $this->Model = $this->getModel();

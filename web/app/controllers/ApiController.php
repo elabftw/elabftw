@@ -12,16 +12,24 @@ namespace Elabftw\Elabftw;
 use function dirname;
 use Elabftw\Controllers\ApiController;
 use Elabftw\Controllers\Apiv2Controller;
+use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Users;
 
 /**
  * Entrypoint for API requests. Nginx redirects all the /api/vN requests here.
  */
 require_once dirname(__DIR__) . '/init.inc.php';
 
+// verify the key and load user info
+$ApiKeys = new ApiKeys(new Users());
+$keyArr = $ApiKeys->readFromApiKey($App->Request->server->get('HTTP_AUTHORIZATION') ?? '');
+$Users = new Users($keyArr['userid'], $keyArr['team']);
+$canWrite = (bool) $keyArr['canWrite'];
+
 if (str_contains($App->Request->server->get('QUERY_STRING'), 'api/v2')) {
-    $Controller = new Apiv2Controller($App->Request);
+    $Controller = new Apiv2Controller($Users, $App->Request, $canWrite);
 } else {
-    $Controller = new ApiController($App->Request);
+    $Controller = new ApiController($Users, $App->Request, $canWrite);
 }
 $Response = $Controller->getResponse();
 $Response->send();

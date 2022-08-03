@@ -24,7 +24,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AbstractCategory;
-use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
@@ -63,8 +62,6 @@ class ApiController extends AbstractApiController
 
     /** @psalm-suppress PropertyNotSetInConstructor */
     private Scheduler $Scheduler;
-
-    private Users $Users;
 
     private array $allowedMethods = array('GET', 'POST', 'DELETE');
 
@@ -218,12 +215,6 @@ class ApiController extends AbstractApiController
         $this->endpoint = $req[3];
         // used by backup zip only for now
         $this->param = $req[4] ?? '';
-
-        // verify the key and load user info
-        $ApiKeys = new ApiKeys(new Users());
-        $keyArr = $ApiKeys->readFromApiKey($this->Request->server->get('HTTP_AUTHORIZATION') ?? '');
-        $this->Users = new Users((int) $keyArr['userid'], (int) $keyArr['team']);
-        $this->canWrite = (bool) $keyArr['canWrite'];
 
         // load Entity
         // if endpoint is uploads we don't actually care about the entity type

@@ -31,5 +31,4 @@ if (str_contains($App->Request->server->get('QUERY_STRING'), 'api/v2')) {
 } else {
     $Controller = new Apiv1Controller($Users, $App->Request, $canWrite);
 }
-$Response = $Controller->getResponse();
-$Response->send();
+$Controller->getResponse()->send();

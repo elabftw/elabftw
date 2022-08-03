@@ -71,8 +71,6 @@ class UserPreferences implements MapInterface
 
     private int $appendPdfs = 0;
 
-    private int $chemEditor = 0;
-
     private string $lang = 'en_GB';
 
     private string $defaultRead = 'team';
@@ -100,7 +98,6 @@ class UserPreferences implements MapInterface
             show_team = :new_show_team,
             show_team_templates = :new_show_team_templates,
             show_public = :new_show_public,
-            chem_editor = :new_chem_editor,
             lang = :new_lang,
             default_read = :new_default_read,
             default_write = :new_default_write,
@@ -127,7 +124,6 @@ class UserPreferences implements MapInterface
         $req->bindParam(':new_show_team', $this->showTeam);
         $req->bindParam(':new_show_team_templates', $this->showTeamTemplates);
         $req->bindParam(':new_show_public', $this->showPublic);
-        $req->bindParam(':new_chem_editor', $this->chemEditor);
         $req->bindParam(':new_lang', $this->lang);
         $req->bindParam(':new_default_read', $this->defaultRead);
         $req->bindParam(':new_default_write', $this->defaultWrite);
@@ -221,11 +217,6 @@ class UserPreferences implements MapInterface
         $this->appendPdfs = Filter::toBinary($setting);
     }
 
-    final public function setChemEditor(string $setting): void
-    {
-        $this->chemEditor = Filter::toBinary($setting);
-    }
-
     final public function setLang(string $setting): void
     {
         if (array_key_exists($setting, Tools::getLangsArr())) {
@@ -273,7 +264,6 @@ class UserPreferences implements MapInterface
         $this->setUseIsodate((string) ($source['use_isodate'] ?? '0'));
         $this->setIncFilesPdf((string) ($source['inc_files_pdf'] ?? '0'));
         $this->setAppendPdfs((string) ($source['append_pdfs'] ?? '0'));
-        $this->setChemEditor((string) ($source['chem_editor'] ?? '0'));
         $this->setDefaultRead($source['default_read'] ?? $this->defaultRead);
         $this->setDefaultWrite($source['default_write'] ?? $this->defaultWrite);
     }
@@ -304,7 +294,6 @@ class UserPreferences implements MapInterface
             use_isodate,
             inc_files_pdf,
             append_pdfs,
-            chem_editor,
             default_read,
             default_write
             FROM users WHERE userid = :id';

@@ -206,11 +206,6 @@
         />
         <label for='show_public'>{{ 'Show experiments/database items from outside the team'|trans }}</label>
         <br>
-        <input id='chem_editor' type='checkbox' name='chem_editor'
-          {{ App.Users.userData.chem_editor == '1' ? " checked='checked'" }}
-        />
-        <label for='chem_editor'>{{ 'Display the molecule editor in edit mode'|trans }}</label>
-        <br>
         <input id='use_markdown' type='checkbox' name='use_markdown'
           {{ App.Users.userData.use_markdown == '1' ? " checked='checked'" }}
         />

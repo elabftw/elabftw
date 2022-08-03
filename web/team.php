@@ -43,8 +43,8 @@ try {
     $Database->addFilter('categoryt.bookable', '1');
     $Scheduler = new Scheduler($Database);
 
-    $DisplayParams = new DisplayParams();
-    $DisplayParams->adjust($App);
+    $DisplayParams = new DisplayParams($App->Users, $App->Request);
+    $DisplayParams->adjust();
     // make limit very big because we want to see ALL the bookable items here
     $DisplayParams->limit = 900000;
     $itemsArr = $Database->readShow($DisplayParams);

@@ -71,35 +71,6 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         Check::visibility('pwet');
     }
 
-    public function testDisplaySize(): void
-    {
-        $this->assertEquals('lg', Check::displaySize('blah'));
-        $this->assertEquals('xs', Check::displaySize('xs'));
-        $this->assertEquals('md', Check::displaySize('md'));
-    }
-
-    public function testDisplayMode(): void
-    {
-        $this->assertEquals('it', Check::displayMode('blah'));
-        $this->assertEquals('it', Check::displayMode('it'));
-        $this->assertEquals('tb', Check::displayMode('tb'));
-    }
-
-    public function testOrderby(): void
-    {
-        $this->assertEquals('date', Check::orderby('date'));
-        $this->expectException(ImproperActionException::class);
-        Check::orderby('blah');
-    }
-
-    public function testSort(): void
-    {
-        $this->assertEquals('asc', Check::sort('asc'));
-        $this->assertEquals('desc', Check::sort('desc'));
-        $this->expectException(ImproperActionException::class);
-        Check::sort('blah');
-    }
-
     public function testRw(): void
     {
         $this->assertEquals('read', Check::rw('read'));
@@ -118,7 +89,7 @@ class CheckTest extends \PHPUnit\Framework\TestCase
 
     public function testInvalidTarget(): void
     {
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ImproperActionException::class);
         Check::target('Grogu');
     }
 

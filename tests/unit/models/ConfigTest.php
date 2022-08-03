@@ -45,7 +45,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'login_tries' => 15,
         );
 
-        $this->Config->updateAll($post);
+        $this->Config->patch($post);
     }
 
     public function testDestroyStamppass(): void

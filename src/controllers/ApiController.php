@@ -10,18 +10,19 @@
 namespace Elabftw\Controllers;
 
 use function dirname;
-use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\TagParams;
+use Elabftw\Elabftw\Tools;
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
-use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractCategory;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Experiments;
@@ -37,6 +38,7 @@ use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Check;
 use Elabftw\Services\MakeBackupZip;
+use Exception;
 use function implode;
 use function in_array;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -48,12 +50,10 @@ use ZipStream\Option\Archive as ArchiveOptions;
 use ZipStream\ZipStream;
 
 /**
- * For API requests
+ * For API v1 requests
  */
-class ApiController implements ControllerInterface
+class ApiController extends AbstractApiController
 {
-    private Request $Request;
-
     /** @psalm-suppress PropertyNotSetInConstructor */
     private AbstractCategory | ItemsTypes $Category;
 
@@ -68,35 +68,19 @@ class ApiController implements ControllerInterface
 
     private array $allowedMethods = array('GET', 'POST', 'DELETE');
 
-    private bool $canWrite = false;
-
-    private int $limit = 15;
-
-    private int $offset = 0;
-
-    private string $search = '';
-
-    private ?int $id;
-
     // experiments, items or uploads
     private string $endpoint;
 
     // used by backupzip to get the period
     private string $param;
 
-    public function __construct(private App $App)
+    public function getResponse(): Response
     {
-        $this->Request = $App->Request;
         // Check if the Authorization Token was sent along
         if (!$this->Request->server->has('HTTP_AUTHORIZATION')) {
             throw new UnauthorizedException('No access token provided!');
         }
-
         $this->parseReq();
-    }
-
-    public function getResponse(): Response
-    {
         try {
             // GET ENTITY/CATEGORY
             if ($this->Request->server->get('REQUEST_METHOD') === 'GET') {
@@ -183,19 +167,28 @@ class ApiController implements ControllerInterface
             if ($this->Request->server->get('REQUEST_METHOD') === 'DELETE') {
                 return $this->destroyEvent();
             }
+            // send error 405 for Method Not Allowed, with Allow header as per spec:
+            // https://tools.ietf.org/html/rfc7231#section-7.4.1
+            return new Response('Invalid HTTP request method!', 405, array('Allow' => implode(', ', $this->allowedMethods)));
         } catch (ResourceNotFoundException $e) {
             return new JsonResponse(array('result' => $e->getMessage()), 404);
+        } catch (UnauthorizedException $e) {
+            // send error 401 if it's lacking an Authorization header, with WWW-Authenticate header as per spec:
+            // https://tools.ietf.org/html/rfc7235#section-3.1
+            return new Response($e->getMessage(), 401, array('WWW-Authenticate' => 'Bearer'));
+        } catch (ImproperActionException $e) {
+            return new Response($e->getMessage(), 400);
+        } catch (IllegalActionException $e) {
+            return new Response(Tools::error(true), 403);
+        } catch (Exception | DatabaseErrorException | FilesystemErrorException $e) {
+            return new Response(Tools::error(), 500);
         }
-
-        // send error 405 for Method Not Allowed, with Allow header as per spec:
-        // https://tools.ietf.org/html/rfc7231#section-7.4.1
-        return new Response('Invalid HTTP request method!', 405, array('Allow' => implode(', ', $this->allowedMethods)));
     }
 
     /**
      * Set the id and endpoints fields
      */
-    private function parseReq(): void
+    protected function parseReq(): void
     {
         /**
          * so we receive the request already split in two by nginx
@@ -372,15 +365,15 @@ class ApiController implements ControllerInterface
     private function getEntity(): Response
     {
         if ($this->id === null) {
-            $DisplayParams = new DisplayParams();
-            $DisplayParams->adjust($this->App);
+            $DisplayParams = new DisplayParams($this->Users, $this->Request);
+            $DisplayParams->adjust();
 
             // use our limit/offset
             // remove 1 to limit as there is 1 added in the sql query
             $DisplayParams->limit = $this->limit - 1;
             $DisplayParams->offset = $this->offset;
             if ($this->search) {
-                $TeamGroups = new TeamGroups($this->App->Users);
+                $TeamGroups = new TeamGroups($this->Users);
                 $advancedQuery = new AdvancedSearchQuery(
                     $this->search,
                     new VisitorParameters(

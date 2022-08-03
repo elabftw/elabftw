@@ -13,6 +13,7 @@ use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Create lists of experiments/items for consumption by js code
@@ -91,6 +92,6 @@ class ListBuilder
             $this->Entity->addFilter('categoryt.id', (string) $this->catFilter);
         }
 
-        return $this->Entity->readShow(new DisplayParams());
+        return $this->Entity->readShow(new DisplayParams($this->Entity->Users, Request::createFromGlobals()));
     }
 }

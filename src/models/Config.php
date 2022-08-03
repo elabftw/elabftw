@@ -87,6 +87,11 @@ final class Config
         }, $config);
     }
 
+    public function readOne(): array
+    {
+        return $this->read();
+    }
+
     public function update(ContentParamsInterface $params): bool
     {
         $column = $params->getTarget();
@@ -104,11 +109,10 @@ final class Config
      * NOTE: it is unlikely that someone with sysadmin level tries and edit requests to input incorrect values
      * so there is no real need for ensuring the values make sense, client side validation is enough this time
      *
-     * @deprecated
      * @param array<string, mixed> $post (conf_name => conf_value)
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    public function updateAll(array $post): void
+    public function patch(array $post): array
     {
         $passwords = array('smtp_password', 'ldap_password');
 
@@ -130,6 +134,9 @@ final class Config
             $this->Db->execute($req);
             $this->configArr[$name] = $value;
         }
+
+        // return empty array because we don't want to expose sensitive values
+        return array();
     }
 
     /**

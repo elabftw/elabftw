@@ -116,53 +116,6 @@ class Check
     }
 
     /**
-     * Check the display size user setting
-     */
-    public static function displaySize(string $input): string
-    {
-        switch ($input) {
-            case 'xs':
-                return 'xs';
-            case 'md':
-                return 'md';
-            default:
-                return 'lg';
-        }
-    }
-
-    /**
-     * Check the display mode (item or table)
-     */
-    public static function displayMode(string $input): string
-    {
-        return $input === 'tb' ? 'tb' : 'it';
-    }
-
-    /**
-     * Check orderby param
-     */
-    public static function orderby(string $input): string
-    {
-        $allowed = array('cat', 'date', 'title', 'comment', 'lastchange');
-        if (!in_array($input, $allowed, true)) {
-            throw new ImproperActionException('Invalid orderby');
-        }
-        return $input;
-    }
-
-    /**
-     * Check sort (asc/desc) param
-     */
-    public static function sort(string $input): string
-    {
-        $allowed = array('asc', 'desc');
-        if (!in_array($input, $allowed, true)) {
-            throw new ImproperActionException('Invalid sort');
-        }
-        return $input;
-    }
-
-    /**
      * Check if we have a correct value for visibility
      */
     public static function visibility(string $visibility): string
@@ -238,7 +191,7 @@ class Check
             '',
         );
         if (!in_array($target, $allowed, true)) {
-            throw new IllegalActionException('Invalid target!');
+            throw new ImproperActionException('Invalid target!');
         }
         return $target;
     }

@@ -105,7 +105,7 @@ class PopulateDatabase extends Command
         $configArr['smtp_password'] = $input->getOption('smtppass') ?? 'afakepassword';
         $configArr['smtp_username'] = $input->getOption('smtpuser') ?? 'somesmtpuser';
         $Config = Config::getConfig();
-        $Config->updateAll($configArr);
+        $Config->patch($configArr);
 
         // create teams
         $Users = new Users();

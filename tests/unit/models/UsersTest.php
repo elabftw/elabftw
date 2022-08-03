@@ -104,6 +104,8 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'default_vis' => 'organization',
             'display_size' => 'lg',
             'display_mode' => 'it',
+            'sort' => 'date',
+            'orderby' => 'desc',
         );
         $Prefs = new UserPreferences((int) $this->Users->userData['userid']);
         $Prefs->hydrate($prefsArr);

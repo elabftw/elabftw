@@ -39,8 +39,8 @@ class SearchController extends AbstractEntityController
      */
     protected function getItemsArr(): array
     {
-        $DisplayParams = new DisplayParams();
-        $DisplayParams->adjust($this->App);
+        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);
+        $DisplayParams->adjust();
         return $this->Entity->readShow($DisplayParams);
     }
 }

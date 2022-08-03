@@ -128,7 +128,7 @@
                     </a>
                   </div>
                 {% endif %}
-                            {% elseif ext == 'mol' and App.Users.userData.chem_editor %}
+                            {% elseif ext == 'mol' %}
                             <div class='text-center'>
                               <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'></canvas>
                             </div>

@@ -13,6 +13,10 @@ use function array_key_exists;
 use function ctype_alpha;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\DisplayMode;
+use Elabftw\Enums\DisplaySize;
+use Elabftw\Enums\Orderby;
+use Elabftw\Enums\Sort;
 use Elabftw\Interfaces\MapInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
@@ -27,13 +31,11 @@ class UserPreferences implements MapInterface
 
     private int $limit = 15;
 
-    private string $displaySize = 'lg';
+    private DisplaySize $displaySize = DisplaySize::Large;
 
-    // Can have two values: 'it' for item list (the default mode)
-    // and 'tb' for tabular view
-    private string $displayMode = 'it';
+    private DisplayMode $displayMode = DisplayMode::Normal;
 
-    private string $orderby = 'date';
+    private Orderby $orderby = Orderby::Date;
 
     private int $singleColumnLayout = 0;
 
@@ -47,7 +49,7 @@ class UserPreferences implements MapInterface
         'todo' => 't',
     );
 
-    private string $sort = 'desc';
+    private Sort $sort = Sort::Desc;
 
     private int $showTeam = 0;
 
@@ -114,10 +116,10 @@ class UserPreferences implements MapInterface
             WHERE userid = :userid;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':new_limit', $this->limit);
-        $req->bindParam(':new_display_size', $this->displaySize);
-        $req->bindParam(':new_display_mode', $this->displayMode);
-        $req->bindParam(':new_orderby', $this->orderby);
-        $req->bindParam(':new_sort', $this->sort);
+        $req->bindValue(':new_display_size', $this->displaySize->value);
+        $req->bindValue(':new_display_mode', $this->displayMode->value);
+        $req->bindValue(':new_orderby', $this->orderby->value);
+        $req->bindValue(':new_sort', $this->sort->value);
         $req->bindParam(':new_sc_create', $this->shortcuts['create']);
         $req->bindParam(':new_sc_edit', $this->shortcuts['edit']);
         $req->bindParam(':new_sc_submit', $this->shortcuts['submit']);
@@ -145,26 +147,6 @@ class UserPreferences implements MapInterface
     final public function setLimit(int $setting): void
     {
         $this->limit = Check::limit($setting);
-    }
-
-    final public function setDisplaySize(string $setting): void
-    {
-        $this->displaySize = Check::displaySize($setting);
-    }
-
-    final public function setDisplayMode(string $setting): void
-    {
-        $this->displayMode = Check::displayMode($setting);
-    }
-
-    final public function setSort(string $setting): void
-    {
-        $this->sort = Check::sort($setting);
-    }
-
-    final public function setOrderby(string $setting): void
-    {
-        $this->orderby = Check::orderby($setting);
     }
 
     final public function setSingleColumnLayout(string $setting): void
@@ -271,10 +253,10 @@ class UserPreferences implements MapInterface
     {
         $this->setLimit((int) ($source['limit_nb'] ?? $this->limit));
         $this->setLang($source['lang'] ?? $this->lang);
-        $this->setDisplaySize($source['display_size'] ?? $this->displaySize);
-        $this->setDisplayMode($source['display_mode'] ?? $this->displayMode);
-        $this->setSort($source['sort'] ?? $this->sort);
-        $this->setOrderby($source['orderby'] ?? $this->orderby);
+        $this->displaySize = DisplaySize::tryFrom((string) $source['display_size']) ?? $this->displaySize;
+        $this->displayMode = DisplayMode::tryFrom((string) $source['display_mode']) ?? $this->displayMode;
+        $this->sort = Sort::tryFrom((string) $source['sort']) ?? $this->sort;
+        $this->orderby = Orderby::tryFrom((string) $source['orderby']) ?? $this->orderby;
         $this->setSingleColumnLayout((string) ($source['single_column_layout'] ?? '0'));
         $this->setUploadsLayout((string) ($source['uploads_layout'] ?? '0'));
         $this->setShortcut('create', $source['sc_create'] ?? $this->shortcuts['create']);

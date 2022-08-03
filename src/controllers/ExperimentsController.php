@@ -41,8 +41,8 @@ class ExperimentsController extends AbstractEntityController
             $this->Entity->addFilter('entity.userid', $this->App->Users->userData['userid']);
         }
 
-        $DisplayParams = new DisplayParams();
-        $DisplayParams->adjust($this->App);
+        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);
+        $DisplayParams->adjust();
         return $this->Entity->readShow($DisplayParams);
     }
 }

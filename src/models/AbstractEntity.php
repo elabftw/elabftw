@@ -280,13 +280,13 @@ abstract class AbstractEntity implements CrudInterface
             'GROUP BY id',
             $metadataHaving,
             'ORDER BY',
-            $displayParams->getOrderSql(),
-            $displayParams->sort,
+            $displayParams->orderby::toSql($displayParams->orderby),
+            $displayParams->sort->value,
             ', entity.id',
-            $displayParams->sort,
+            $displayParams->sort->value,
             // add one so we can display Next page if there are more things to display
-            'LIMIT ' . (string) ($displayParams->limit + 1),
-            'OFFSET ' . (string) $displayParams->offset,
+            sprintf('LIMIT %d', $displayParams->limit + 1),
+            sprintf('OFFSET %d', $displayParams->offset),
         );
 
         $sql .= implode(' ', $sqlArr);
@@ -364,6 +364,14 @@ abstract class AbstractEntity implements CrudInterface
             $allTags[$tags['item_id']][] = $tags;
         }
         return $allTags;
+    }
+
+    public function patch(array $params): array
+    {
+        foreach ($params as $key => $value) {
+            $this->update(new EntityParams($value, $key));
+        }
+        return $this->readOne();
     }
 
     /**

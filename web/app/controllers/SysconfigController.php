@@ -34,28 +34,28 @@ try {
     // CLEAR SMTP PASS
     if ($Request->query->get('clearSmtppass')) {
         $tab = '6';
-        $App->Config->updateAll(array('smtp_password' => null));
+        $App->Config->patch(array('smtp_password' => null));
     }
     // CLEAR LDAP PASS
     if ($Request->query->get('clearLdappass')) {
         $tab = '10';
-        $App->Config->updateAll(array('ldap_password' => null));
+        $App->Config->patch(array('ldap_password' => null));
     }
 
     // ANNOUNCEMENT
     if ($Request->request->has('announcement')) {
         if ($Request->request->has('clear_announcement')) {
-            $App->Config->updateAll(array('announcement' => null));
+            $App->Config->patch(array('announcement' => null));
         } else {
-            $App->Config->updateAll(array('announcement' => $Request->request->get('announcement')));
+            $App->Config->patch(array('announcement' => $Request->request->get('announcement')));
         }
     }
 
     if ($Request->request->has('login_announcement')) {
         if ($Request->request->has('clear_login_announcement')) {
-            $App->Config->updateAll(array('login_announcement' => null));
+            $App->Config->patch(array('login_announcement' => null));
         } else {
-            $App->Config->updateAll(array('login_announcement' => $Request->request->get('login_announcement')));
+            $App->Config->patch(array('login_announcement' => $Request->request->get('login_announcement')));
         }
     }
 
@@ -100,7 +100,7 @@ try {
             $tab = '11';
         }
 
-        $App->Config->updateAll($Request->request->all());
+        $App->Config->patch($Request->request->all());
     }
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));

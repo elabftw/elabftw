@@ -22,13 +22,13 @@ class LinksTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateReadDestroy(): void
     {
-        $this->Experiments->Links->create(new ContentParams('1', '', array('targetEntity' => 'items')));
-        $this->Experiments->Links->create(new ContentParams('2', '', array('targetEntity' => 'experiments')));
+        $this->Experiments->Links->create(new ContentParams('1', extra: array('targetEntity' => 'items')));
+        $this->Experiments->Links->create(new ContentParams('2', extra: array('targetEntity' => 'experiments')));
         $this->assertIsArray($this->Experiments->Links->readAll());
         $this->Experiments->Links->setId(1);
-        $this->Experiments->Links->destroy(new ContentParams('', '', array('targetEntity' => 'items')));
+        $this->Experiments->Links->destroy(new ContentParams(extra: array('targetEntity' => 'items')));
         $this->Experiments->Links->setId(2);
-        $this->Experiments->Links->destroy(new ContentParams('', '', array('targetEntity' => 'experiments')));
+        $this->Experiments->Links->destroy(new ContentParams(extra: array('targetEntity' => 'experiments')));
     }
 
     public function testUpdate(): void
@@ -40,7 +40,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
     {
         // create a link in a db item
         $Items = new Items(new Users(1, 1), 1);
-        $Items->Links->create(new ContentParams('1', '', array('targetEntity' => 'items')));
+        $Items->Links->create(new ContentParams('1', extra: array('targetEntity' => 'items')));
         // now import this in our experiment like if we click the import links button
         $Links = new Links($this->Experiments, $Items->id);
         $this->assertTrue($Links->import('items'));

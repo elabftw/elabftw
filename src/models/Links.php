@@ -276,7 +276,7 @@ class Links implements CrudInterface
     {
         $this->Entity->canOrExplode('write');
         if ($params === null) {
-            $params = new ContentParams('', '', array('targetEntity' => 'links'));
+            $params = new ContentParams(extra: array('targetEntity' => 'links'));
         }
 
         $sql = 'DELETE FROM ' . $this->getTableName($params->getExtra('targetEntity')) . ' WHERE link_id = :link_id AND item_id = :item_id';

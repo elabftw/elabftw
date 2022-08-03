@@ -25,6 +25,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->Links->create(new ContentParams('1', extra: array('targetEntity' => 'items')));
         $this->Experiments->Links->create(new ContentParams('2', extra: array('targetEntity' => 'experiments')));
         $this->assertIsArray($this->Experiments->Links->readAll());
+        $this->assertIsArray($this->Experiments->Links->readOne());
         $this->Experiments->Links->setId(1);
         $this->Experiments->Links->destroy(new ContentParams(extra: array('targetEntity' => 'items')));
         $this->Experiments->Links->setId(2);
@@ -44,5 +45,13 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         // now import this in our experiment like if we click the import links button
         $Links = new Links($this->Experiments, $Items->id);
         $this->assertTrue($Links->import('items'));
+    }
+
+    public function testReadRelated(): void
+    {
+        $this->Experiments->Links->create(new ContentParams('1', extra: array('targetEntity' => 'items')));
+        $this->Experiments->Links->create(new ContentParams('2', extra: array('targetEntity' => 'experiments')));
+        (new Experiments(new Users(1, 1), 2))->Links->readRelated();
+        (new Items(new Users(1, 1), 1))->Links->readRelated();
     }
 }

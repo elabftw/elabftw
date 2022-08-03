@@ -301,7 +301,6 @@ class Apiv1Controller extends AbstractApiController
     {
         if ($this->id === null) {
             $DisplayParams = new DisplayParams($this->Users, $this->Request);
-            $DisplayParams->adjust();
 
             // use our limit/offset
             // remove 1 to limit as there is 1 added in the sql query

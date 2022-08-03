@@ -108,7 +108,7 @@ try {
         } else {
             $res = $Model->destroy();
         }
-    } elseif ($action === 'destroystamppass' && ($Model instanceof Config || $Model instanceof Teams)) {
+    } elseif ($action === 'destroystamppass' && $Model instanceof Config) {
         $res = $Model->destroyStamppass();
     } elseif ($action === 'duplicate' && $Model instanceof AbstractEntity) {
         $res = $Model->duplicate();

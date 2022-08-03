@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
@@ -70,6 +71,14 @@ class Todolist implements CrudInterface
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);
+    }
+
+    public function patch(array $params): array
+    {
+        foreach ($params as $key => $value) {
+            $this->update(new ContentParams($value, $key));
+        }
+        return $this->readOne();
     }
 
     public function update(ContentParamsInterface $params): bool

@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * This class holds the values for limit, offset, order and sort
- * A new instance will contain the default values
+ * It is based on user preferences, overriden by request parameters
  */
 class DisplayParams
 {
@@ -43,12 +43,13 @@ class DisplayParams
         $this->limit = $Users->userData['limit_nb'];
         $this->orderby = Orderby::tryFrom($Users->userData['orderby']) ?? $this->orderby;
         $this->sort = Sort::tryFrom($Users->userData['sort']) ?? $this->sort;
+        $this->adjust();
     }
 
     /**
      * Adjust the settings based on the Request
      */
-    public function adjust(): void
+    private function adjust(): void
     {
         if ($this->Request->query->has('limit')) {
             $this->limit = Check::limit($this->Request->query->getInt('limit'));

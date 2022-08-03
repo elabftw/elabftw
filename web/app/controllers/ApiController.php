@@ -20,15 +20,20 @@ use Elabftw\Models\Users;
  */
 require_once dirname(__DIR__) . '/init.inc.php';
 
-// verify the key and load user info
-$ApiKeys = new ApiKeys(new Users());
-$keyArr = $ApiKeys->readFromApiKey($App->Request->server->get('HTTP_AUTHORIZATION') ?? '');
-$Users = new Users($keyArr['userid'], $keyArr['team']);
-$canWrite = (bool) $keyArr['canWrite'];
+$canWrite = false;
+// switch between a web request and an api request for auth
+if ($App->Request->server->has('HTTP_AUTHORIZATION')) {
+    // verify the key and load user info
+    $ApiKeys = new ApiKeys(new Users());
+    $keyArr = $ApiKeys->readFromApiKey($App->Request->server->get('HTTP_AUTHORIZATION') ?? '');
+    // replace the Users in App
+    $App->Users = new Users($keyArr['userid'], $keyArr['team']);
+    $canWrite = (bool) $keyArr['canWrite'];
+}
 
 if (str_contains($App->Request->server->get('QUERY_STRING'), 'api/v2')) {
-    $Controller = new Apiv2Controller($Users, $App->Request, $canWrite);
+    $Controller = new Apiv2Controller($App->Users, $App->Request, $canWrite);
 } else {
-    $Controller = new Apiv1Controller($Users, $App->Request, $canWrite);
+    $Controller = new Apiv1Controller($App->Users, $App->Request, $canWrite);
 }
 $Controller->getResponse()->send();

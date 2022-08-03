@@ -11,6 +11,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\StepParams;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\StepParamsInterface;
@@ -120,6 +121,14 @@ class Steps implements CrudInterface
             $req->bindParam(':ordering', $steps['ordering'], PDO::PARAM_INT);
             $this->Db->execute($req);
         }
+    }
+
+    public function patch(array $params): array
+    {
+        foreach ($params as $key => $value) {
+            $this->update(new StepParams($value, $key));
+        }
+        return $this->readOne();
     }
 
     public function update(StepParamsInterface $params): bool

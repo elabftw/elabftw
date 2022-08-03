@@ -42,7 +42,6 @@ class ExperimentsController extends AbstractEntityController
         }
 
         $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);
-        $DisplayParams->adjust();
         return $this->Entity->readShow($DisplayParams);
     }
 }

@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 use function array_combine;
 use function array_map;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\TeamGroupParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
@@ -137,6 +138,14 @@ class TeamGroups implements CrudInterface
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);
+    }
+
+    public function patch(array $params): array
+    {
+        foreach ($params as $key => $value) {
+            $this->update(new TeamGroupParams($value, $key));
+        }
+        return $this->readOne();
     }
 
     public function update(TeamGroupParamsInterface $params): bool

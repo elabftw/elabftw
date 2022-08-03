@@ -148,7 +148,6 @@ class Notifications implements CrudInterface
 
     public function readOne(): array
     {
-        // not used
         return $this->readAll();
     }
 

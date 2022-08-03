@@ -2,7 +2,7 @@
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2022 Nicolas CARPi
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
@@ -10,8 +10,11 @@
 namespace Elabftw\Interfaces;
 
 /**
- * For things that can be created, read, updated and destroyed
+ * For models that are Crud + other stuff needed by api
  */
-interface CrudInterface extends CreatableInterface, ReadableInterface, UpdatableInterface, DestroyableInterface
+interface RestInterface extends CrudInterface
 {
+    public function patch(array $params): array;
+
+    public function getViewPage(): string;
 }

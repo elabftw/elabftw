@@ -108,6 +108,14 @@ class Status extends AbstractCategory
         return $req->fetchAll();
     }
 
+    public function patch(array $params): array
+    {
+        foreach ($params as $key => $value) {
+            $this->update(new StatusParams($value, $key));
+        }
+        return $this->readOne();
+    }
+
     /**
      * Update a status
      */

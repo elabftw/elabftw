@@ -147,6 +147,14 @@ class Teams implements CrudInterface
         return $req->fetchAll();
     }
 
+    public function patch(array $params): array
+    {
+        foreach ($params as $key => $value) {
+            $this->update(new ContentParams($value, $key));
+        }
+        return $this->readOne();
+    }
+
     public function update(ContentParamsInterface $params): bool
     {
         if (!$this->Users->userData['is_admin']) {
@@ -188,18 +196,6 @@ class Teams implements CrudInterface
         $sql = 'DELETE FROM teams WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
-    /**
-     * Clear the timestamp password
-     */
-    public function destroyStamppass(): bool
-    {
-        $sql = 'UPDATE teams SET ts_password = NULL WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Users->userData['team'], PDO::PARAM_INT);
-
         return $this->Db->execute($req);
     }
 

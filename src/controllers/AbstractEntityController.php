@@ -73,7 +73,6 @@ abstract class AbstractEntityController implements ControllerInterface
     {
         // create the DisplayParams object from the query
         $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);
-        $DisplayParams->adjust();
 
         // CATEGORY FILTER
         if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {

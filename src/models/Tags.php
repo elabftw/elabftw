@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 
 use function array_column;
 use function count;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -149,6 +150,14 @@ class Tags implements CrudInterface
                 $this->Db->execute($insertReq);
             }
         }
+    }
+
+    public function patch(array $params): array
+    {
+        foreach ($params as $key => $value) {
+            $this->update(new ContentParams($value, $key));
+        }
+        return $this->readOne();
     }
 
     public function update(ContentParamsInterface $params): bool

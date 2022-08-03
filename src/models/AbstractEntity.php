@@ -19,9 +19,9 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Interfaces\ItemTypeParamsInterface;
+use Elabftw\Interfaces\RestInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
@@ -33,11 +33,12 @@ use function is_bool;
 use PDO;
 use PDOStatement;
 use const SITE_URL;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * The mother class of Experiments, Items, Templates and ItemsTypes
  */
-abstract class AbstractEntity implements CrudInterface
+abstract class AbstractEntity implements RestInterface
 {
     use EntityTrait;
 
@@ -142,6 +143,11 @@ abstract class AbstractEntity implements CrudInterface
      */
     abstract public function duplicate(): int;
 
+    public function getViewPage(): string
+    {
+        return sprintf('%s.php?mode=view&id=', $this->page);
+    }
+
     /**
      * Only Experiments will currently implement this correctly
      */
@@ -197,8 +203,7 @@ abstract class AbstractEntity implements CrudInterface
 
     public function readAll(): array
     {
-        // use readShow() instead
-        return array();
+        return $this->readShow(new DisplayParams($this->Users, Request::createFromGlobals()), true);
     }
 
     /**

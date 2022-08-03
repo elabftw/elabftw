@@ -9,15 +9,17 @@
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\EntityFactory;
-use Elabftw\Models\AbstractEntity;
+use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use function implode;
+use JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +31,9 @@ class Apiv2Controller extends AbstractApiController
 {
     private array $allowedMethods = array('GET', 'POST', 'DELETE', 'PATCH', 'PUT');
 
-    private AbstractEntity | Config $Model;
+    private RestInterface $Model;
+
+    private array $reqBody = array();
 
     public function getResponse(): Response
     {
@@ -37,14 +41,14 @@ class Apiv2Controller extends AbstractApiController
             $this->parseReq();
 
             return match ($this->Request->server->get('REQUEST_METHOD')) {
-                Request::METHOD_GET => new JsonResponse($this->Model->readOne(), Response::HTTP_OK),
-                Request::METHOD_POST => die('POST'),
+                Request::METHOD_GET => new JsonResponse($this->handleGet(), Response::HTTP_OK),
+                Request::METHOD_POST => $this->handlePost(),
                 Request::METHOD_DELETE => new JsonResponse($this->Model->destroy(), Response::HTTP_NO_CONTENT),
-                Request::METHOD_PATCH => $this->handlePatch(),
+                Request::METHOD_PATCH => new JsonResponse($this->Model->patch($this->reqBody), Response::HTTP_OK),
                 // send error 405 for Method Not Allowed, with Allow header as per spec:
                 // https://tools.ietf.org/html/rfc7231#section-7.4.1
                 // Note: can only be triggered with a HEAD because the allowed methods are filtered at nginx level too
-                default => new Response('Invalid HTTP request method!', 405, array('Allow' => implode(', ', $this->allowedMethods)))
+                default => new Response('Invalid HTTP request method!', Response::HTTP_METHOD_NOT_ALLOWED, array('Allow' => implode(', ', $this->allowedMethods)))
             };
         } catch (IllegalActionException $e) {
             $error = array(
@@ -79,15 +83,33 @@ class Apiv2Controller extends AbstractApiController
         parent::parseReq();
         // load Model
         $this->Model = $this->getModel();
+        if ($this->Request->getContent()) {
+            try {
+                $this->reqBody = json_decode((string) $this->Request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            } catch (JsonException $e) {
+                throw new ImproperActionException('Error decoding json payload.');
+            }
+        }
     }
 
-    private function handlePatch(): Response
+    private function handlePost(): Response
     {
-        $reqBody = json_decode((string) $this->Request->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        return new JsonResponse($this->Model->patch($reqBody), Response::HTTP_OK);
+        // todo make it so we don't need to cast to string!!
+        $params = new EntityParams((string) ($this->reqBody['category_id'] ?? -1));
+        // @phpstan-ignore-next-line
+        $id = $this->Model->create($params);
+        return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', SITE_URL, $this->Model->getViewPage(), $id)));
     }
 
-    private function getModel(): AbstractEntity | Config
+    private function handleGet(): array
+    {
+        if ($this->id !== null) {
+            return $this->Model->readOne();
+        }
+        return $this->Model->readAll();
+    }
+
+    private function getModel(): RestInterface
     {
         switch ($this->endpoint) {
             case 'config':
@@ -98,7 +120,7 @@ class Apiv2Controller extends AbstractApiController
                 return Config::getConfig();
             case 'experiments':
             case 'items':
-            case 'templates':
+            case 'experiments_templates':
             case 'items_types':
                 return (new EntityFactory($this->Users, $this->endpoint, $this->id))->getEntity();
             default:

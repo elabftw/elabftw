@@ -226,14 +226,26 @@ class Uploads implements CrudInterface
         return $req->fetchAll();
     }
 
+    public function patch(array $params): array
+    {
+        foreach ($params as $key => $value) {
+            $this->update(new UploadParams($value, $key));
+        }
+        return $this->readOne();
+    }
+
+    public function getViewPage(): string
+    {
+        return $this->Entity->getViewPage();
+    }
+
     public function update(UploadParamsInterface $params): bool
     {
         $this->canWriteOrExplode();
-        $sql = 'UPDATE uploads SET ' . $params->getTarget() . ' = :content WHERE id = :id AND item_id = :item_id';
+        $sql = 'UPDATE uploads SET ' . $params->getTarget() . ' = :content WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 

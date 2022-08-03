@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\ContentParamsInterface;
@@ -67,6 +68,14 @@ class Comments implements CrudInterface
         $this->Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    public function patch(array $params): array
+    {
+        foreach ($params as $key => $value) {
+            $this->update(new ContentParams($value, $key));
+        }
+        return $this->readOne();
     }
 
     public function update(ContentParamsInterface $params): bool

@@ -83,93 +83,78 @@ class ApiController extends AbstractApiController
         $this->parseReq();
         try {
             // GET ENTITY/CATEGORY
-            if ($this->Request->server->get('REQUEST_METHOD') === 'GET') {
-                // GET UPLOAD
-                if ($this->endpoint === 'uploads') {
-                    return $this->getUpload();
-                }
-                if ($this->endpoint === 'backupzip') {
-                    return $this->getBackupZip();
-                }
+            switch ($this->Request->server->get('REQUEST_METHOD')) {
 
-                if ($this->endpoint === 'experiments' || $this->endpoint === 'items') {
-                    return $this->getEntity();
-                }
-                if ($this->endpoint === 'templates') {
-                    return $this->getTemplate();
-                }
-                if ($this->endpoint === 'status' || $this->endpoint === 'items_types') {
-                    return $this->getCategory();
-                }
-                if ($this->endpoint === 'bookable') {
-                    return $this->getBookable();
-                }
-                if ($this->endpoint === 'events') {
-                    return $this->getEvents();
-                }
-                if ($this->endpoint === 'tags') {
-                    return $this->getTags();
-                }
+                // GET REQUEST
+                case Request::METHOD_GET:
+                    return match ($this->endpoint) {
+                        'uploads' => $this->getUpload(),
+                        'backupzip' => $this->getBackupZip(),
+                        'experiments', 'items' => $this->getEntity(),
+                        'templates' => $this->getTemplate(),
+                        'status', 'items_types' => $this->getCategory(),
+                        'bookable' => $this->getBookable(),
+                        'events' => $this->getEvents(),
+                        'tags' => $this->getTags(),
+                        default => throw new ImproperActionException('Invalid endpoint.'),
+                    };
+
+                    // POST REQUEST
+                case Request::METHOD_POST:
+                    // POST means write access for the access token
+                    if (!$this->canWrite) {
+                        return new Response('Cannot use readonly key with POST method!', 403);
+                    }
+                    // FILE UPLOAD
+                    if ($this->Request->files->count() > 0) {
+                        return $this->uploadFile();
+                    }
+
+                    // TITLE DATE BODY METADATA UPDATE
+                    if (($this->Request->request->has('date') ||
+                        $this->Request->request->has('title') ||
+                        $this->Request->request->has('bodyappend') ||
+                        $this->Request->request->has('body') ||
+                        $this->Request->request->has('metadata')) &&
+                        ($this->endpoint === 'experiments' || $this->endpoint === 'items' || $this->endpoint === 'templates' || $this->endpoint === 'items_types')) {
+                        return $this->updateEntity();
+                    }
+
+                    // ADD TAG
+                    if ($this->Request->request->has('tag')) {
+                        return $this->createTag();
+                    }
+
+                    // ADD LINK
+                    if ($this->Request->request->has('link')) {
+                        return $this->createLink();
+                    }
+
+                    // CHANGE CATEGORY
+                    if ($this->Request->request->has('category')) {
+                        return $this->updateCategory();
+                    }
+
+                    // CREATE EVENT
+                    if ($this->endpoint === 'events') {
+                        return $this->createEvent();
+                    }
+
+                    // CREATE AN EXPERIMENT/ITEM
+                    if ($this->Entity instanceof Items) {
+                        return $this->createItem();
+                    } elseif ($this->Entity instanceof Templates) {
+                        return $this->createTemplate();
+                    }
+                    return $this->createExperiment();
+
+                case Request::METHOD_DELETE:
+                    return $this->destroyEvent();
+                default:
+                    // send error 405 for Method Not Allowed, with Allow header as per spec:
+                    // https://tools.ietf.org/html/rfc7231#section-7.4.1
+                    return new Response('Invalid HTTP request method!', 405, array('Allow' => implode(', ', $this->allowedMethods)));
             }
-
-
-            // POST request
-            if ($this->Request->server->get('REQUEST_METHOD') === 'POST') {
-                // POST means write access for the access token
-                if (!$this->canWrite) {
-                    return new Response('Cannot use readonly key with POST method!', 403);
-                }
-                // FILE UPLOAD
-                if ($this->Request->files->count() > 0) {
-                    return $this->uploadFile();
-                }
-
-                // TITLE DATE BODY METADATA UPDATE
-                if (($this->Request->request->has('date') ||
-                    $this->Request->request->has('title') ||
-                    $this->Request->request->has('bodyappend') ||
-                    $this->Request->request->has('body') ||
-                    $this->Request->request->has('metadata')) &&
-                    ($this->endpoint === 'experiments' || $this->endpoint === 'items' || $this->endpoint === 'templates' || $this->endpoint === 'items_types')) {
-                    return $this->updateEntity();
-                }
-
-                // ADD TAG
-                if ($this->Request->request->has('tag')) {
-                    return $this->createTag();
-                }
-
-                // ADD LINK
-                if ($this->Request->request->has('link')) {
-                    return $this->createLink();
-                }
-
-                // CHANGE CATEGORY
-                if ($this->Request->request->has('category')) {
-                    return $this->updateCategory();
-                }
-
-                // CREATE EVENT
-                if ($this->endpoint === 'events') {
-                    return $this->createEvent();
-                }
-
-                // CREATE AN EXPERIMENT/ITEM
-                if ($this->Entity instanceof Items) {
-                    return $this->createItem();
-                } elseif ($this->Entity instanceof Templates) {
-                    return $this->createTemplate();
-                }
-                return $this->createExperiment();
-            }
-
-            // DELETE requests
-            if ($this->Request->server->get('REQUEST_METHOD') === 'DELETE') {
-                return $this->destroyEvent();
-            }
-            // send error 405 for Method Not Allowed, with Allow header as per spec:
-            // https://tools.ietf.org/html/rfc7231#section-7.4.1
-            return new Response('Invalid HTTP request method!', 405, array('Allow' => implode(', ', $this->allowedMethods)));
         } catch (ResourceNotFoundException $e) {
             return new JsonResponse(array('result' => $e->getMessage()), 404);
         } catch (UnauthorizedException $e) {
@@ -242,21 +227,32 @@ class ApiController extends AbstractApiController
 
         // load Entity
         // if endpoint is uploads we don't actually care about the entity type
-        if ($this->endpoint === 'experiments' || $this->endpoint === 'uploads' || $this->endpoint === 'backupzip' || $this->endpoint === 'tags') {
-            $this->Entity = new Experiments($this->Users, $this->id);
-        } elseif ($this->endpoint === 'items' || $this->endpoint === 'bookable') {
-            $this->Entity = new Items($this->Users, $this->id);
-        } elseif ($this->endpoint === 'templates') {
-            $this->Entity = new Templates($this->Users, $this->id);
-        } elseif ($this->endpoint === 'items_types') {
-            $this->Category = new ItemsTypes($this->Users);
-        } elseif ($this->endpoint === 'status') {
-            $this->Category = new Status($this->Users->team);
-        } elseif ($this->endpoint === 'events') {
-            $this->Entity = new Items($this->Users, $this->id);
-            $this->Scheduler = new Scheduler($this->Entity);
-        } else {
-            throw new ImproperActionException('Bad endpoint!');
+        switch ($this->endpoint) {
+            case 'experiments':
+            case 'uploads':
+            case 'backupzip':
+            case 'tags':
+                $this->Entity = new Experiments($this->Users, $this->id);
+                break;
+            case 'items':
+            case 'bookable':
+                $this->Entity = new Items($this->Users, $this->id);
+                break;
+            case 'templates':
+                $this->Entity = new Templates($this->Users, $this->id);
+                break;
+            case 'items_types':
+                $this->Category = new ItemsTypes($this->Users);
+                break;
+            case 'status':
+                $this->Category = new Status($this->Users->team);
+                break;
+            case 'events':
+                $this->Entity = new Items($this->Users, $this->id);
+                $this->Scheduler = new Scheduler($this->Entity);
+                break;
+            default:
+                throw new ImproperActionException('Invalid endpoint.');
         }
     }
 

@@ -33,10 +33,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Apiv2Controller extends AbstractApiController
 {
-    /** @psalm-suppress PropertyNotSetInConstructor */
-    //@phpstan-ignore-next-line
-    private $Entity;
-
     private array $allowedMethods = array('GET', 'POST', 'DELETE', 'PATCH', 'PUT');
 
     // experiments, items or uploads
@@ -44,7 +40,7 @@ class Apiv2Controller extends AbstractApiController
 
     private Users $Users;
 
-    private AbstractEntity|Config $Model;
+    private AbstractEntity | Config $Model;
 
     public function getResponse(): Response
     {
@@ -151,7 +147,7 @@ class Apiv2Controller extends AbstractApiController
         return new JsonResponse($this->Model->patch($reqBody), Response::HTTP_OK);
     }
 
-    private function getModel(): AbstractEntity|Config
+    private function getModel(): AbstractEntity | Config
     {
         switch ($this->endpoint) {
             case 'config':

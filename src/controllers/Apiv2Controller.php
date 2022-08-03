@@ -16,12 +16,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\EntityFactory;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
-use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
-use Elabftw\Models\Status;
-use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
-use Elabftw\Services\Check;
 use function implode;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,19 +29,12 @@ class Apiv2Controller extends AbstractApiController
 {
     private array $allowedMethods = array('GET', 'POST', 'DELETE', 'PATCH', 'PUT');
 
-    // experiments, items or uploads
-    private string $endpoint;
-
     private AbstractEntity | Config $Model;
 
     public function getResponse(): Response
     {
         try {
             $this->parseReq();
-
-            if ($this->canWrite === false && $this->Request->server->get('REQUEST_METHOD') !== Request::METHOD_GET) {
-                throw new ImproperActionException('You are using a read-only key to execute a write action.');
-            }
 
             return match ($this->Request->server->get('REQUEST_METHOD')) {
                 Request::METHOD_GET => new JsonResponse($this->Model->readOne(), Response::HTTP_OK),
@@ -88,46 +76,7 @@ class Apiv2Controller extends AbstractApiController
      */
     protected function parseReq(): void
     {
-        /**
-         * so we receive the request already split in two by nginx
-         * first part is "req" and then if there is any query string it ends up in "args"
-         * generate an array with the request that looks like this
-         * for /api/v1/experiments/1:
-         *   array(5) {
-         *   [0]=>
-         *   string(0) ""
-         *   [1]=>
-         *   string(3) "api"
-         *   [2]=>
-         *   string(2) "v1"
-         *   [3]=>
-         *   string(11) "experiments"
-         *   [4]=>
-         *   string(1) "1"
-         *   }
-         */
-        $req = explode('/', rtrim((string) $this->Request->query->get('req'), '/'));
-
-        // now parse the query string (part after ?)
-        if ($this->Request->query->has('limit')) {
-            $this->limit = (int) $this->Request->query->get('limit');
-        }
-        if ($this->Request->query->has('offset')) {
-            $this->offset = (int) $this->Request->query->get('offset');
-        }
-        if ($this->Request->query->has('search')) {
-            $this->search = trim((string) $this->Request->query->get('search'));
-        }
-
-        // assign the id if there is one
-        if (Check::id((int) end($req)) !== false) {
-            $this->id = (int) end($req);
-        }
-
-        // assign the endpoint (experiments, items, uploads, items_types, status)
-        // 0 is "", 1 is "api", 2 is "v1"
-        $this->endpoint = $req[3];
-
+        parent::parseReq();
         // load Model
         $this->Model = $this->getModel();
     }

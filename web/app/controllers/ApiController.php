@@ -10,7 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use function dirname;
-use Elabftw\Controllers\ApiController;
+use Elabftw\Controllers\Apiv1Controller;
 use Elabftw\Controllers\Apiv2Controller;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Users;
@@ -29,7 +29,7 @@ $canWrite = (bool) $keyArr['canWrite'];
 if (str_contains($App->Request->server->get('QUERY_STRING'), 'api/v2')) {
     $Controller = new Apiv2Controller($Users, $App->Request, $canWrite);
 } else {
-    $Controller = new ApiController($Users, $App->Request, $canWrite);
+    $Controller = new Apiv1Controller($Users, $App->Request, $canWrite);
 }
 $Response = $Controller->getResponse();
 $Response->send();

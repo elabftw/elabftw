@@ -35,7 +35,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->toggleLock();
         $this->Experiments->destroy();
         $Templates = new Templates($this->Users);
-        $Templates->create(new EntityParams('my template', '', array('body' => 'is so cool')));
+        $Templates->create(new EntityParams('my template', extra: array('body' => 'is so cool')));
         $new = $this->Experiments->create(new EntityParams('1'));
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments = new Experiments($this->Users, $new);
@@ -93,14 +93,14 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->canOrExplode('read');
         // add some steps and links in there, too
         $this->Experiments->Steps->create(new ContentParams('some step'));
-        $this->Experiments->Links->create(new ContentParams('3', '', array('targetEntity' => 'items')));
-        $this->Experiments->Links->create(new ContentParams('2', '', array('targetEntity' => 'experiments')));
+        $this->Experiments->Links->create(new ContentParams('3', extra: array('targetEntity' => 'items')));
+        $this->Experiments->Links->create(new ContentParams('2', extra: array('targetEntity' => 'experiments')));
         $this->assertIsInt($this->Experiments->duplicate());
     }
 
     public function testInsertTags(): void
     {
-        $this->Experiments->create(new EntityParams('0', '', array('tags' => array('tag-bbbtbtbt', 'tag-auristearuiset'))));
+        $this->Experiments->create(new EntityParams('0', extra: array('tags' => array('tag-bbbtbtbt', 'tag-auristearuiset'))));
     }
 
     public function testGetTags(): void

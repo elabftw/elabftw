@@ -92,15 +92,19 @@ class AddMissingLinks extends Command
                     // ItemsTypes entries have no user only a team but we need a admin to create a link
                     // -> get an admin from that team
                     if ($table === 'items_types') {
-                        $adminOfTeam = (new TeamsHelper((int) $data['team']))->getAllAdminsUserid()[0];
-                        $User = new Users((int) $adminOfTeam);
+                        $adminOfTeam = (new TeamsHelper($data['team']))->getAllAdminsUserid()[0];
+                        $User = new Users($adminOfTeam);
                     } else {
-                        $User = new Users((int) $data['userid']);
+                        $User = new Users($data['userid']);
                     }
-                    $entity = (new EntityFactory($User, $table, (int) $data['id']))->getEntity();
+
+                    // don't set entity id yet, user has userData['team'] == 0 at this point
+                    // this will result in permission issues during setId -> readOne -> canOrExplode('read') -> hasCommonTeamWithCurrent()
+                    $entity = (new EntityFactory($User, $table))->getEntity();
 
                     // make sure we can access all entries with write access
                     $entity->bypassWritePermission = true;
+                    $entity->setId($data['id']);
                     $links = new Links($entity);
 
                     // look for links to items and experiments in the body and create links
@@ -109,7 +113,7 @@ class AddMissingLinks extends Command
                     foreach ($matches as $match) {
                         try {
                             $targetEntity = $match['target'] === 'experiments' ? 'experiments' : 'items';
-                            if ($links->create(new ContentParams($match['id'], '', array('targetEntity' => $targetEntity)))) {
+                            if ($links->create(new ContentParams($match['id'], extra: array('targetEntity' => $targetEntity)))) {
                                 $count++;
                             }
                         } catch (IllegalActionException | ImproperActionException $e) {

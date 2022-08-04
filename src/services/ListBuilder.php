@@ -42,7 +42,7 @@ class ListBuilder
             $linksArr[] = array(
                 'label' => (
                     $this->filterValue === ''
-                    ? ($this->Entity->type === $this->Entity::TYPE_EXPERIMENTS ? $item['fullname'] : '') . $item['category'] . ' - '
+                    ? ($this->Entity instanceof Experiments ? $item['fullname'] : '') . $item['category'] . ' - '
                     : ''
                 ) . $item['date'] . ' - ' . substr($item['title'], 0, 60),
                 'value' => $item['id'],
@@ -101,10 +101,10 @@ class ListBuilder
         $term = filter_var($term, FILTER_SANITIZE_STRING);
         $this->Entity->addToExtendedFilter(" AND entity.title LIKE '%$term%'");
         if ($this->filterValue !== '') {
-            if ($this->Entity->type === $this->Entity::TYPE_ITEMS) {
+            if ($this->Entity instanceof Items) {
                 $this->Entity->addFilter('categoryt.id', $this->filterValue);
             }
-            if ($this->Entity->type === $this->Entity::TYPE_EXPERIMENTS) {
+            if ($this->Entity instanceof Experiments) {
                 $this->Entity->addToExtendedFilter(" AND CONCAT(users.firstname, ' ', users.lastname) LIKE '" . $this->filterValue . "'");
             }
         }

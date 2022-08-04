@@ -15,6 +15,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Maps\Team;
+use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\FavTags;
@@ -200,7 +201,7 @@ abstract class AbstractEntityController implements ControllerInterface
         );
 
         // RELATED ITEMS AND EXPERIMENTS
-        if ($this->Entity->type === $this->Entity::TYPE_ITEMS || $this->Entity->type === $this->Entity::TYPE_EXPERIMENTS) {
+        if ($this->Entity instanceof AbstractConcreteEntity) {
             ['items' => $renderArr['relatedItemsArr'],
                 'experiments' => $renderArr['relatedExperimentsArr']
             ] = $this->Entity->Links->readRelated();

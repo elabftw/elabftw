@@ -50,7 +50,7 @@ class Links implements CrudInterface
     public function create(ContentParamsInterface $params): int
     {
         $targetEntityType = $params->getExtra('targetEntity');
-        if (!($targetEntityType === $this->Entity::TYPE_ITEMS || $targetEntityType === $this->Entity::TYPE_EXPERIMENTS)) {
+        if (!($this->Entity instanceof AbstractConcreteEntity)) {
             throw new ImproperActionException('Links can only be created to experiments and database items.');
         }
         if ($this->canNotLinkToExp($targetEntityType)) {
@@ -212,8 +212,7 @@ class Links implements CrudInterface
 
             $table = $this->getTableName($targetEntityType);
             if ($fromTpl) {
-                $table = ($this->Entity->type === $this->Entity::TYPE_EXPERIMENTS
-                    || $this->Entity->type === $this->Entity::TYPE_TEMPLATES)
+                $table = ($this->Entity instanceof Experiments || $this->Entity instanceof Templates)
                     ? 'experiments_templates_links'
                     : 'items_types_links';
             }
@@ -291,13 +290,7 @@ class Links implements CrudInterface
     {
         return (
             $targetEntityType === $this->Entity::TYPE_EXPERIMENTS
-            && (
-                $fromTpl
-                || !(
-                    $this->Entity->type === $this->Entity::TYPE_ITEMS
-                    || $this->Entity->type === $this->Entity::TYPE_EXPERIMENTS
-                )
-            )
+            && ($fromTpl || !($this->Entity instanceof AbstractConcreteEntity))
         );
     }
 
@@ -312,7 +305,7 @@ class Links implements CrudInterface
 
     protected function getTableNameRelated(string $targetEntityType): string
     {
-        if ($this->Entity->type === $this->Entity::TYPE_EXPERIMENTS) {
+        if ($this->Entity instanceof Experiments) {
             return $targetEntityType . '2' . $this->Entity->type;
         }
 

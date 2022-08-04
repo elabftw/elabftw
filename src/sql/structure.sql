@@ -95,7 +95,6 @@ CREATE TABLE `experiments` (
   `lockedwhen` timestamp NULL DEFAULT NULL,
   `timestamped` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `timestampedby` int(11) NULL DEFAULT NULL,
-  `timestamptoken` text,
   `timestampedwhen` timestamp NULL DEFAULT NULL,
   `canread` varchar(255) NOT NULL DEFAULT 'team',
   `canwrite` varchar(255) NOT NULL DEFAULT 'user',

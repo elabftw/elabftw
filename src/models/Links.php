@@ -210,16 +210,9 @@ class Links implements CrudInterface
                 continue;
             }
 
-            $table = $this->getTableName($targetEntityType);
-            if ($fromTpl) {
-                $table = ($this->Entity instanceof Experiments || $this->Entity instanceof Templates)
-                    ? 'experiments_templates_links'
-                    : 'items_types_links';
-            }
-
             $sql = 'INSERT INTO ' . $this->getTableName($targetEntityType) . ' (item_id, link_id)
                 SELECT :new_id, link_id
-                FROM ' . $table . '
+                FROM ' . $this->getTableName($targetEntityType, fromTpl: $fromTpl) . '
                 WHERE item_id = :old_id';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':new_id', $newId, PDO::PARAM_INT);
@@ -294,8 +287,14 @@ class Links implements CrudInterface
         );
     }
 
-    protected function getTableName(string $targetEntityType, ?string $importEntityType = null): string
+    protected function getTableName(string $targetEntityType, ?string $importEntityType = null, bool $fromTpl = false): string
     {
+        if ($fromTpl) {
+            return ($this->Entity instanceof Experiments || $this->Entity instanceof Templates)
+                ? 'experiments_templates_links'
+                : 'items_types_links';
+        }
+
         if ($targetEntityType === $this->Entity::TYPE_EXPERIMENTS) {
             return ($importEntityType ?? $this->Entity->type) . '2' . $this->Entity::TYPE_EXPERIMENTS;
         }

@@ -120,4 +120,21 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(0, $this->Experiments->getTimestampLastMonth());
     }
+
+    public function testReadTargets(): void
+    {
+        $new = $this->Experiments->create(new EntityParams('0'));
+        $this->Experiments->setId($new);
+        $this->Experiments->canOrExplode('read');
+        // List
+        $this->assertIsArray($this->Experiments->read(new ContentParams('a', 'list', array('filterValue' => ''))));
+        // Share Link
+        $this->assertIsArray($this->Experiments->read(new ContentParams(target: 'sharelink')));
+        // Body
+        $this->assertIsArray($this->Experiments->read(new ContentParams(target: 'body')));
+        // Metadata
+        $this->assertIsArray($this->Experiments->read(new ContentParams(target: 'metadata')));
+        // Boundevent
+        $this->assertIsArray($this->Experiments->read(new ContentParams(target: 'boundevent')));
+    }
 }

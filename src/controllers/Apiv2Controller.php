@@ -20,6 +20,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use function implode;
 use JsonException;
+use const SITE_URL;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

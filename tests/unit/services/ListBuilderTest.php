@@ -27,14 +27,14 @@ class ListBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetAutocomplete(): void
     {
-        $this->assertTrue(is_array($this->ListBuilderExp->getAutocomplete('a')));
-        $this->assertTrue(is_array($this->ListBuilderExp->getAutocomplete('a', '1')));
-        $this->assertTrue(is_array($this->ListBuilderDb->getAutocomplete('a', '1')));
+        $this->assertIsArray($this->ListBuilderExp->getAutocomplete('a'));
+        $this->assertIsArray($this->ListBuilderExp->getAutocomplete('a', '1'));
+        $this->assertIsArray($this->ListBuilderDb->getAutocomplete('a', '1'));
     }
 
     public function testGetMentionList(): void
     {
-        $this->assertTrue(is_array($this->ListBuilderExp->getMentionList('a')));
-        $this->assertTrue(is_array($this->ListBuilderDb->getMentionList('a')));
+        $this->assertIsArray($this->ListBuilderExp->getMentionList('a'));
+        $this->assertIsArray($this->ListBuilderDb->getMentionList('a'));
     }
 }

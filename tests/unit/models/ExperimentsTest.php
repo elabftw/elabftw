@@ -54,7 +54,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('read');
         $experiment = $this->Experiments->read(new ContentParams());
-        $this->assertTrue(is_array($experiment));
+        $this->assertIsArray($experiment);
         $this->assertEquals('Untitled', $experiment['title']);
         //$this->assertEquals('20160729', $experiment['date']);
     }

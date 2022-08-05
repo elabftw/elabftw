@@ -123,9 +123,6 @@
         <tr>
             <th>{{ 'Name'|trans }}</th>
             <th>{{ 'Email'|trans }}</th>
-            <th>{{ 'Phone'|trans }}</th>
-            <th>{{ 'Mobile'|trans }}</th>
-            <th>{{ 'Website'|trans }}</th>
             <th>ORCID</th>
         </tr>
         <!-- archived users are hidden on this page -->
@@ -142,9 +139,6 @@
             </a>
           </td>
           <td><a href='mailto:{{ user.email }}'>{{ user.email }}</a></td>
-          <td>{{ user.phone }}</td>
-          <td>{{ user.cellphone }}</td>
-          <td><a href='{{ user.website }}'>{{ user.website }}</a></td>
           <td>{{ user.orcid }}</td>
         </tr>
         {% endfor %}

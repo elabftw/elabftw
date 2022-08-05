@@ -302,27 +302,10 @@
             <input class='form-control' id='lastname' name='lastname' value='{{ App.Users.userData.lastname|raw }}' />
           </div>
         </div>
-
-        <hr><br>
-        <h4>{{ 'Modify your contact information'|trans }}</h4>
-        <div class='row'>
-            <div class='col-md-6'>
-                <label for='phone'>{{ 'Phone'|trans }} </label>
-                <input class='form-control' id='phone' name='phone' value='{{ App.Users.userData.phone }}' />
-            </div>
-            <div class='col-md-6'>
-                <label for='cellphone'>{{ 'Mobile'|trans }}</label>
-                <input class='form-control' id='cellphone' name='cellphone' value='{{ App.Users.userData.cellphone }}' />
-            </div>
-        </div>
         <div class='row'>
             <div class='col-md-6'>
                 <label for='orcid'>ORCID</label>
                 <input class='form-control' placeholder='0000-0002-1234-1111' title='0000-1111-2222-3333' pattern='[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}' id='orcid' name='orcid' value='{{ App.Users.userData.orcid }}' />
-            </div>
-            <div class='col-md-6'>
-                <label for='website'>{{ 'Website'|trans }}</label>
-                <input class='form-control' id='website' name='website' type='url' value='{{ App.Users.userData.website }}' autocomplete='url' />
             </div>
         </div>
 

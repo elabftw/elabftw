@@ -81,10 +81,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'email' => 'tata@yopmail.com',
             'firstname' => 'Tata',
             'lastname' => 'Yep',
-            'phone' => '+336123456',
-            'cellphone' => 'Nope',
             'orcid' => '0000-0002-7494-5555',
-            'website' => 'https://www.elabftw.net',
         );
         $this->assertTrue((new Users(4))->updateAccount($post));
     }

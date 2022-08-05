@@ -198,7 +198,7 @@ class Users
             users.firstname, users.lastname, users.email, users.mfa_secret,
             users.validated, users.usergroup, users.archived, users.last_login,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            users.cellphone, users.phone, users.website, users.orcid, users.auth_service
+            users.orcid, users.auth_service
             FROM users
             CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . ')
             WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
@@ -310,32 +310,19 @@ class Users
         $params['firstname'] = Filter::sanitize($params['firstname']);
         $params['lastname'] = Filter::sanitize($params['lastname']);
 
-        // Check phone
-        $params['phone'] = filter_var($params['phone'], FILTER_SANITIZE_STRING);
-        // Check cellphone
-        $params['cellphone'] = filter_var($params['cellphone'], FILTER_SANITIZE_STRING);
         // Check orcid
         $params['orcid'] = Check::orcid($params['orcid']);
-
-        // Check website
-        $params['website'] = filter_var($params['website'], FILTER_VALIDATE_URL);
 
         $sql = 'UPDATE users SET
             firstname = :firstname,
             lastname = :lastname,
-            phone = :phone,
-            cellphone = :cellphone,
-            orcid = :orcid,
-            website = :website
+            orcid = :orcid
             WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':firstname', $params['firstname']);
         $req->bindParam(':lastname', $params['lastname']);
-        $req->bindParam(':phone', $params['phone']);
-        $req->bindParam(':cellphone', $params['cellphone']);
         $req->bindParam(':orcid', $params['orcid']);
-        $req->bindParam(':website', $params['website']);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

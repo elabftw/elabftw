@@ -30,12 +30,12 @@ class Check
     /**
      * Check the number of character of a password
      */
-    public static function passwordLength(string $password): bool
+    public static function passwordLength(string $password): string
     {
         if (mb_strlen($password) < self::MIN_PASSWORD_LENGTH) {
             throw new ImproperActionException(sprintf(_('Password must contain at least %d characters.'), self::MIN_PASSWORD_LENGTH));
         }
-        return true;
+        return $password;
     }
 
     /**
@@ -62,27 +62,12 @@ class Check
         return $id;
     }
 
-    /**
-     * Currently a usergroup is 1, 2 or 4
-     */
-    public static function usergroup(int $gid): bool
+    public static function usergroup(int $gid): int
     {
-        switch ($gid) {
-            case 1:
-            case 2:
-            case 4:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    public static function usergroupOrExplode(int $gid): int
-    {
-        if (self::usergroup($gid) === false) {
-            throw new IllegalActionException('Invalid usergroup');
-        }
-        return $gid;
+        return match ($gid) {
+            1, 2, 4 => $gid,
+            default => throw new ImproperActionException('Invalid usergroup value.'),
+        };
     }
 
     /**
@@ -138,11 +123,13 @@ class Check
     /**
      * A target is like a subpart of a model
      * example: update the comment of an upload
+     * todo: this will disappear in favor of better params classes handling the columns for each model
      */
     public static function target(string $target): string
     {
         $allowed = array(
             'all',
+            'action',
             'blox_anon',
             'blox_enabled',
             'body',
@@ -151,11 +138,14 @@ class Check
             'comment',
             'content_type',
             'date',
+            'email',
             'deadline',
             'deadline_notif',
             'file',
             'finished',
             'finished_time',
+            'firstname',
+            'lastname',
             'list',
             'member',
             'metadata',
@@ -187,11 +177,13 @@ class Check
             'unreference',
             'uploadid',
             'userid',
+            'validated',
             // no target is also valid
             '',
         );
         if (!in_array($target, $allowed, true)) {
-            throw new ImproperActionException('Invalid target!');
+            // TODO
+            //throw new ImproperActionException('Invalid target!');
         }
         return $target;
     }

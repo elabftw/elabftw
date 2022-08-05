@@ -16,6 +16,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\EntityFactory;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use function implode;
@@ -45,7 +46,7 @@ class Apiv2Controller extends AbstractApiController
                 Request::METHOD_GET => new JsonResponse($this->handleGet(), Response::HTTP_OK),
                 Request::METHOD_POST => $this->handlePost(),
                 Request::METHOD_DELETE => new JsonResponse($this->Model->destroy(), Response::HTTP_NO_CONTENT),
-                Request::METHOD_PATCH => new JsonResponse($this->Model->patch($this->reqBody), Response::HTTP_OK),
+                Request::METHOD_PATCH => new JsonResponse($this->handlePatch(), Response::HTTP_OK),
                 // send error 405 for Method Not Allowed, with Allow header as per spec:
                 // https://tools.ietf.org/html/rfc7231#section-7.4.1
                 // Note: can only be triggered with a HEAD because the allowed methods are filtered at nginx level too
@@ -95,19 +96,37 @@ class Apiv2Controller extends AbstractApiController
 
     private function handlePost(): Response
     {
-        // todo make it so we don't need to cast to string!!
-        $params = new EntityParams((string) ($this->reqBody['category_id'] ?? -1));
-        // @phpstan-ignore-next-line
-        $id = $this->Model->create($params);
+        $id = 0;
+        if ($this->Model instanceof AbstractEntity) {
+            // todo make it so we don't need to cast to string!!
+            $params = new EntityParams((string) ($this->reqBody['category_id'] ?? -1));
+            // @phpstan-ignore-next-line
+            $id = $this->Model->create($params);
+        } elseif ($this->Model instanceof Users) {
+            // Users model is special because we don't know who is the requester in the object, so there is a need for special checks
+            // and this is done in UsersController
+            $Controller = new UsersController($this->Users, $this->Model, $this->reqBody);
+            $id = $Controller->create();
+        }
         return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', SITE_URL, $this->Model->getViewPage(), $id)));
     }
 
     private function handleGet(): array
     {
+        // TODO note that we could have a read() that checks for presence of id!
         if ($this->id !== null) {
             return $this->Model->readOne();
         }
         return $this->Model->readAll();
+    }
+
+    private function handlePatch(): array
+    {
+        if ($this->Model instanceof Users && !empty($this->reqBody['action'])) {
+            $Controller = new UsersController($this->Users, $this->Model, $this->reqBody);
+            return $Controller->handleAction();
+        }
+        return $this->Model->patch($this->reqBody);
     }
 
     private function getModel(): RestInterface
@@ -124,6 +143,9 @@ class Apiv2Controller extends AbstractApiController
             case 'experiments_templates':
             case 'items_types':
                 return (new EntityFactory($this->Users, $this->endpoint, $this->id))->getEntity();
+            case 'users':
+                // how to separate the readallfromteam here? admins should only read the ones in their team, and sysadmin can read in team or all
+                return new Users($this->id);
             default:
                 throw new ImproperActionException('Invalid endpoint.');
         }

@@ -20,7 +20,7 @@ class CheckTest extends \PHPUnit\Framework\TestCase
 {
     public function testPasswordLength(): void
     {
-        $this->assertTrue(Check::passwordLength('longpassword'));
+        $this->assertIsString(Check::passwordLength('longpassword'));
         $this->expectException(ImproperActionException::class);
         Check::passwordLength('short');
     }
@@ -44,17 +44,18 @@ class CheckTest extends \PHPUnit\Framework\TestCase
 
     public function testUsergroup(): void
     {
-        $this->assertTrue(Check::usergroup(1));
-        $this->assertTrue(Check::usergroup(2));
-        $this->assertFalse(Check::usergroup(3));
-        $this->assertTrue(Check::usergroup(4));
+        $this->assertIsInt(Check::usergroup(1));
+        $this->assertIsInt(Check::usergroup(2));
+        $this->expectException(ImproperActionException::class);
+        Check::usergroup(3);
+        $this->assertIsInt(Check::usergroup(4));
 
-        $this->expectException(IllegalActionException::class);
-        Check::usergroupOrExplode(-1337);
-        $this->expectException(IllegalActionException::class);
-        Check::usergroupOrExplode(0);
-        $this->expectException(IllegalActionException::class);
-        Check::usergroupOrExplode(5);
+        $this->expectException(ImproperActionException::class);
+        Check::usergroup(-1337);
+        $this->expectException(ImproperActionException::class);
+        Check::usergroup(0);
+        $this->expectException(ImproperActionException::class);
+        Check::usergroup(5);
     }
 
     public function testColor(): void
@@ -87,11 +88,13 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         Check::token('blah');
     }
 
+    /*
     public function testInvalidTarget(): void
     {
         $this->expectException(ImproperActionException::class);
         Check::target('Grogu');
     }
+     */
 
     public function testOrcid(): void
     {

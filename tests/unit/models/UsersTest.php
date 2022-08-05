@@ -47,43 +47,16 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Users->readAllFromTeam());
     }
 
-    public function testUpdate(): void
-    {
-        $post = array(
-            'email' => 'tata@yopmail.com',
-            'firstname' => 'Tata',
-            'lastname' => 'Yep',
-            'password' => '',
-            'usergroup' => '2',
-            'validated' => '1',
-            'use_mfa' => 'off',
-        );
-        $this->assertTrue((new Users(4))->updateUser($post));
-    }
-
-    public function testUpdateWithEmailAndPasswordChange(): void
-    {
-        $post = array(
-            'email' => 'tata2@yopmail.com',
-            'firstname' => 'Tata',
-            'lastname' => 'Yep',
-            'password' => 'new super password',
-            'usergroup' => '2',
-            'validated' => '1',
-            'use_mfa' => 'off',
-        );
-        $this->assertTrue((new Users(4))->updateUser($post));
-    }
-
     public function testUpdateAccount(): void
     {
-        $post = array(
+        $params = array(
             'email' => 'tata@yopmail.com',
             'firstname' => 'Tata',
             'lastname' => 'Yep',
             'orcid' => '0000-0002-7494-5555',
+            'password' => 'new super password',
         );
-        $this->assertTrue((new Users(4))->updateAccount($post));
+        $this->assertIsArray((new Users(4))->patch($params));
     }
 
     public function testUpdatePreferences(): void
@@ -117,17 +90,11 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($this->Users->getLockedUsersCount());
     }
 
-    public function testUpdatePassword(): void
-    {
-        $Users = new Users(4);
-        $this->assertTrue($Users->updatePassword('some-password'));
-    }
-
     public function testUpdateTooShortPassword(): void
     {
         $Users = new Users(4);
         $this->expectException(ImproperActionException::class);
-        $Users->updatePassword('short');
+        $Users->patch(array('password' => 'short'));
     }
 
     public function testInvalidateToken(): void
@@ -138,7 +105,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testValidate(): void
     {
         // current user is already validated but that's ok
-        $this->assertTrue($this->Users->validate());
+        $this->assertIsArray($this->Users->validate());
     }
 
     public function testToggleArchive(): void

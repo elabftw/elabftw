@@ -115,7 +115,7 @@ class Populate
         $password = $user['password'] ?? self::DEFAULT_PASSWORD;
         $email = $user['email'] ?? $this->faker->safeEmail();
 
-        $userid = $Teams->Users->create($email, array($user['team']), $firstname, $lastname, $password, null, true, false);
+        $userid = $Teams->Users->createOne($email, array($user['team']), $firstname, $lastname, $password, null, true, false);
         $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));
         $Users = new Users($userid, (int) $team[0]['id']);
 

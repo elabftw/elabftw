@@ -58,7 +58,7 @@
                 </li>
 
 
-                <div class='form-group' data-userid='{{ user.userid }}'>
+                <div class='form-group'>
                   <!-- FIRSTNAME -->
                   <li class='list-inline-item'>
                     {# add the userid in the for and id to prevent having more than one id on the page. Label wrapping wouldn't display nice #}
@@ -117,7 +117,7 @@
 
                   <!-- SAVE -->
                   <li class='list-inline-item'>
-                    <button data-action='update-user' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+                    <button data-action='update-user' data-userid='{{ user.userid }}' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
                   </li>
 
                   <!-- ARCHIVE USER -->
@@ -145,7 +145,7 @@
 {% endif %}
 
 {% if App.Config.configArr.admins_create_users or App.Users.userData.is_sysadmin %}
-<form class='box' method='post' autocomplete='off' action='app/controllers/CreateUserController.php'>
+<div class='box'>
   <h3>{{ 'Add account'|trans }}</h3>
   <p>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
   <div class='form-group'>
@@ -199,9 +199,9 @@
 
       <!-- SUBMIT -->
       <div class='col-md-2'>
-        <input type='submit' name='submit' style='margin-top: 26px' class='button btn btn-primary' value='{{ 'create'|trans }}' />
+        <button style='margin-top: 26px' data-action='create-user' class='button btn btn-primary'>{{ 'create'|trans }}</button>
       </div>
     </div>
   </div>
-</form>
+</div>
 {% endif %}

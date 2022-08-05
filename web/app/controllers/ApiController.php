@@ -20,7 +20,7 @@ use Elabftw\Models\Users;
  */
 require_once dirname(__DIR__) . '/init.inc.php';
 
-$canWrite = false;
+$canWrite = true;
 // switch between a web request and an api request for auth
 if ($App->Request->server->has('HTTP_AUTHORIZATION')) {
     // verify the key and load user info

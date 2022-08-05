@@ -31,20 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // activate editor for common template
   tinymce.init(getTinymceBaseConfig('admin'));
 
-  // VALIDATE USERS
-  $(document).on('click', '.usersValidate', function() {
-    $(this).attr('disabled', 'disabled').text('Please wait…');
-    $.post('app/controllers/UsersAjaxController.php', {
-      usersValidate: true,
-      userid: $(this).data('userid'),
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        window.location.reload();
-      }
-    });
-  });
-
   // AUTOCOMPLETE user list for team groups
   const cache = {};
   $(document).on('focus', '.addUserToGroup', function() {

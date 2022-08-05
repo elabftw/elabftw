@@ -50,6 +50,11 @@ class ContentParams implements ContentParamsInterface
         return $c;
     }
 
+    public function getColumn(): string
+    {
+        return $this->getTarget();
+    }
+
     public function getBody(): string
     {
         return Filter::body($this->content);

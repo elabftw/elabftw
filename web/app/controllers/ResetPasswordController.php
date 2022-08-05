@@ -102,7 +102,7 @@ try {
         // we get the Users object from the email encrypted in the key
         $Users = $ResetPasswordKey->validate($Request->request->get('key'));
         // Replace new password in database
-        $Users->updatePassword($Request->request->get('password'));
+        $Users->patch(array('password' => $Request->request->get('password')));
         $App->Log->info('Password was changed for this user', array('userid' => $Users->userData['userid']));
         $App->Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
     }

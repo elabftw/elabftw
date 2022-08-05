@@ -6,7 +6,8 @@
  * @package elabftw
  */
 import { notif, insertParamAndReload } from './misc';
-import { Ajax } from './Ajax.class';
+import { Api } from './Apiv2.class';
+import { Method } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/sysconfig.php'
@@ -15,32 +16,47 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  const AjaxC = new Ajax();
-  const controller = 'app/controllers/UsersAjaxController.php';
+  const ApiC = new Api();
 
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
-    if (el.matches('[data-action="update-user"]')) {
+    if (el.matches('[data-action="create-user"]')) {
+      const formGroup = (el.closest('div.row') as HTMLElement);
+      let params = {};
+      // text inputs
+      ['firstname', 'lastname', 'email'].forEach(input => {
+        params = Object.assign(params, {[input]: (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value});
+      });
+      // select inputs
+      ['team', 'usergroup'].forEach(input => {
+        params = Object.assign(params, {[input]: (formGroup.querySelector(`select[name="${input}"]`) as HTMLSelectElement).value});
+      });
+      return ApiC.send('users', Method.POST, params).then(() => {
+        notif({'res': true, 'msg': 'New user created'});
+      });
+
+    // UPDATE USER
+    } else if (el.matches('[data-action="update-user"]')) {
       const formGroup = (el.closest('div.form-group') as HTMLElement);
-      let params = {
-        'usersUpdate': '1',
-        'userid': formGroup.dataset.userid,
-      };
+      let params = {};
       // text inputs
       ['firstname', 'lastname', 'email', 'password'].forEach(input => {
         params = Object.assign(params, {[input]: (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value});
         if (input === 'password') {
+          // clear the password field once collected
           (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value = '';
         }
       });
-      // clear the password field once collected
+      if (params['password'] === '') {
+        delete params['password'];
+      }
       // select inputs
       ['usergroup', 'validated'].forEach(input => {
         params = Object.assign(params, {[input]: (formGroup.querySelector(`select[name="${input}"]`) as HTMLSelectElement).value});
       });
-      // now doing POST request
-      AjaxC.postForm(controller, params)
-        .then(res => res.json().then(json => notif(json)));
+      return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, params).then(() => {
+        notif({'res': true, 'msg': 'Saved'});
+      });
 
     // ARCHIVE USER TOGGLE
     } else if (el.matches('[data-action="toggle-archive-user"]')) {
@@ -48,30 +64,27 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and user will not be able to login anymore.')) {
         return;
       }
-      AjaxC.postForm(controller, {
-        toggleArchiveUser: '1',
-        userid: el.dataset.userid,
-      }).then(res => res.json().then(json => {
-        notif(json);
-        if (json.res) {
-          insertParamAndReload('tab', '3');
-        }
-      }));
+      return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'archive'}).then(() => {
+        notif({'res': true, 'msg': 'Saved'});
+        insertParamAndReload('tab', '3');
+      });
+
+    // VALIDATE USER
+    } else if (el.matches('[data-action="validate-user"]')) {
+      return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'validate'}).then(() => {
+        notif({'res': true, 'msg': 'Saved'});
+        insertParamAndReload('tab', '3');
+      });
 
     // DESTROY USER
     } else if (el.matches('[data-action="destroy-user"]')) {
       if (!confirm('Are you sure you want to remove permanently this user and all associated data?')) {
         return;
       }
-      AjaxC.postForm(controller, {
-        destroyUser: '1',
-        userid: el.dataset.userid,
-      }).then(res => res.json().then(json => {
-        notif(json);
-        if (json.res) {
-          el.closest('li.list-group-item').remove();
-        }
-      }));
+      return ApiC.send(`users/${el.dataset.userid}`, Method.DELETE).then(() => {
+        notif({'res': true, 'msg': 'User deleted'});
+        el.closest('li.list-group-item').remove();
+      });
     }
   });
 

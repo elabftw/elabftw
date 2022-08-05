@@ -59,7 +59,7 @@ class Notifications implements CrudInterface
     public function __construct(private Users $users, private ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->userid = (int) $this->users->userData['userid'];
+        $this->userid = $this->users->userData['userid'];
     }
 
     public function create(CreateNotificationParamsInterface $params): int

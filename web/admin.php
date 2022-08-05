@@ -59,7 +59,7 @@ try {
     $allTeamUsersArr = $App->Users->readAllFromTeam();
     // only the unvalidated ones
     $unvalidatedUsersArr = array_filter($allTeamUsersArr, function ($u) {
-        return $u['validated'] === '0';
+        return $u['validated'] === 0;
     });
     // Users search
     $isSearching = false;

@@ -72,10 +72,9 @@ try {
             }
             // update the email if necessary
             if (isset($params['email']) && ($params['email'] !== $App->Users->userData['email'])) {
-                $App->Users->updateEmail($params['email']);
+                $App->Users->patch(array('email' => $params['email']));
             }
         }
-        $App->Users->updateAccount($postData);
 
         // CHANGE PASSWORD (only for local accounts)
         if (!empty($Request->request->get('newpass')) && (int) $App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {

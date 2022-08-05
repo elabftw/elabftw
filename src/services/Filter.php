@@ -13,6 +13,7 @@ namespace Elabftw\Services;
 use function checkdate;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Config;
 use function filter_var;
 use HTMLPurifier;
 use HTMLPurifier_HTML5Config;
@@ -74,6 +75,14 @@ class Filter
             return '';
         }
         return $output;
+    }
+
+    public static function email(string $input): string
+    {
+        // if the sent email is different from the existing one, check it's valid (not duplicate and respects domain constraint)
+        $Config = Config::getConfig();
+        $EmailValidator = new EmailValidator($input, $Config->configArr['email_domain']);
+        return $EmailValidator->validate();
     }
 
     /**

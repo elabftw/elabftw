@@ -42,8 +42,7 @@ class ExistingUser extends Users
         bool $alertAdmin = true,
     ): Users {
         $Users = new self();
-        $userid = $Users->create($email, $teams, $firstname, $lastname, '', $usergroup, $forceValidation, $alertAdmin);
-        $Users->populate($userid);
-        return $Users;
+        $userid = $Users->createOne($email, $teams, $firstname, $lastname, '', $usergroup, $forceValidation, $alertAdmin);
+        return new self($userid);
     }
 }

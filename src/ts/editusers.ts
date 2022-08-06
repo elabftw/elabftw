@@ -19,34 +19,37 @@ document.addEventListener('DOMContentLoaded', () => {
   const ApiC = new Api();
 
   document.querySelector('.real-container').addEventListener('click', (event) => {
-    const el = (event.target as HTMLElement);
-    // CREATE USER
-    if (el.matches('[data-action="create-user"]')) {
-      return ApiC.send('users', Method.POST, collectForm(el.closest('div.form-group')));
+    const act = (el: HTMLElement) => {
+      // CREATE USER
+      if (el.matches('[data-action="create-user"]')) {
+        return ApiC.send('users', Method.POST, collectForm(el.closest('div.form-group')));
 
-    // UPDATE USER
-    } else if (el.matches('[data-action="update-user"]')) {
-      return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, collectForm(el.closest('div.form-group'))).then(() => reloadElement('editUsersBox'));
+      // UPDATE USER
+      } else if (el.matches('[data-action="update-user"]')) {
+        return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, collectForm(el.closest('div.form-group')));
 
-    // ARCHIVE USER TOGGLE
-    } else if (el.matches('[data-action="toggle-archive-user"]')) {
-      // show alert
-      if (!confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and user will not be able to login anymore.')) {
-        return;
+      // ARCHIVE USER TOGGLE
+      } else if (el.matches('[data-action="toggle-archive-user"]')) {
+        // show alert
+        if (!confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and user will not be able to login anymore.')) {
+          return;
+        }
+        return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'archive'});
+
+      // VALIDATE USER
+      } else if (el.matches('[data-action="validate-user"]')) {
+        return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'validate'});
+
+      // DESTROY USER
+      } else if (el.matches('[data-action="destroy-user"]')) {
+        if (!confirm('Are you sure you want to remove permanently this user and all associated data?')) {
+          return;
+        }
+        return ApiC.send(`users/${el.dataset.userid}`, Method.DELETE);
       }
-      return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'archive'}).then(() => reloadElement('editUsersBox'));
+    };
 
-    // VALIDATE USER
-    } else if (el.matches('[data-action="validate-user"]')) {
-      return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'validate'}).then(() => reloadElement('editUsersBox'));
-
-    // DESTROY USER
-    } else if (el.matches('[data-action="destroy-user"]')) {
-      if (!confirm('Are you sure you want to remove permanently this user and all associated data?')) {
-        return;
-      }
-      return ApiC.send(`users/${el.dataset.userid}`, Method.DELETE).then(() => el.closest('li.list-group-item').remove());
-    }
+    act(event.target as HTMLElement).then(() => reloadElement('editUsersBox'));
   });
 
   document.getElementById('editusersShowAll').addEventListener('click', () => {

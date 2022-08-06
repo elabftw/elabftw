@@ -99,6 +99,7 @@ class Apiv2Controller extends AbstractApiController
         $id = 0;
         if ($this->Model instanceof AbstractEntity) {
             // todo make it so we don't need to cast to string!!
+            // idea: just send the reqBody to the create function
             $params = new EntityParams((string) ($this->reqBody['category_id'] ?? -1));
             // @phpstan-ignore-next-line
             $id = $this->Model->create($params);
@@ -107,6 +108,8 @@ class Apiv2Controller extends AbstractApiController
             // and this is done in UsersController
             $Controller = new UsersController($this->Users, $this->Model, $this->reqBody);
             $id = $Controller->create();
+        } elseif ($this->Model instanceof Config) {
+            throw new ImproperActionException('No POST action for Config endpoint.');
         }
         return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', SITE_URL, $this->Model->getViewPage(), $id)));
     }

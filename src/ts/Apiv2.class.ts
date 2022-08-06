@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import { Method } from './interfaces';
+import { notifSaved, notifError } from './misc';
 
 export class Api {
   send(query: string, method: Method, params = {}): Promise<Response>
@@ -24,6 +25,12 @@ export class Api {
         throw new Error('An unexpected error occurred!');
       }
       return response;
+    }).then(response => {
+      notifSaved();
+      return response;
+    }).catch(error => {
+      notifError(error);
+      return new Promise((resolve, reject) => reject(new Error(error.message)));
     });
   }
 

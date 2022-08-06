@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, insertParamAndReload } from './misc';
+import { notif, notifSaved, insertParamAndReload } from './misc';
 import { Api } from './Apiv2.class';
 import { Method } from './interfaces';
 
@@ -31,9 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ['team', 'usergroup'].forEach(input => {
         params = Object.assign(params, {[input]: (formGroup.querySelector(`select[name="${input}"]`) as HTMLSelectElement).value});
       });
-      return ApiC.send('users', Method.POST, params).then(() => {
-        notif({'res': true, 'msg': 'New user created'});
-      });
+      return ApiC.send('users', Method.POST, params).then(() => notifSaved());
 
     // UPDATE USER
     } else if (el.matches('[data-action="update-user"]')) {
@@ -54,9 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ['usergroup', 'validated'].forEach(input => {
         params = Object.assign(params, {[input]: (formGroup.querySelector(`select[name="${input}"]`) as HTMLSelectElement).value});
       });
-      return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, params).then(() => {
-        notif({'res': true, 'msg': 'Saved'});
-      });
+      return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, params).then(() => notifSaved);
 
     // ARCHIVE USER TOGGLE
     } else if (el.matches('[data-action="toggle-archive-user"]')) {
@@ -64,15 +60,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and user will not be able to login anymore.')) {
         return;
       }
-      return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'archive'}).then(() => {
-        notif({'res': true, 'msg': 'Saved'});
-        insertParamAndReload('tab', '3');
-      });
+      return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'archive'}).then(() => notifSaved);
 
     // VALIDATE USER
     } else if (el.matches('[data-action="validate-user"]')) {
       return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'validate'}).then(() => {
-        notif({'res': true, 'msg': 'Saved'});
+        notifSaved();
         insertParamAndReload('tab', '3');
       });
 

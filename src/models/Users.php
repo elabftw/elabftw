@@ -300,7 +300,7 @@ class Users implements RestInterface
         $sql = 'UPDATE users SET validated = 1 WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $res = $this->Db->execute($req);
+        $this->Db->execute($req);
         $Notifications = new Notifications($this);
         $Notifications->create(new CreateNotificationParams(Notifications::SELF_IS_VALIDATED));
         return $this->readOne();

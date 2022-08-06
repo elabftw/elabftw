@@ -12,6 +12,7 @@ import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
+import { Api } from './Apiv2.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/sysconfig.php') {
@@ -20,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const TabMenu = new Tab();
   const AjaxC = new Ajax();
+  const ApiC = new Api();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
   // GET the latest version information
@@ -182,6 +184,41 @@ document.addEventListener('DOMContentLoaded', () => {
         parseInt(el.dataset.teamid, 10),
         parseInt(el.dataset.userid, 10),
       );
+    // PATCH ANNOUNCEMENT - save or clear
+    } else if (el.matches('[data-action="patch-announcement"]')) {
+      const input = (document.getElementById(el.dataset.inputid) as HTMLInputElement);
+      if (el.dataset.operation === 'clear') {
+        input.value = '';
+      }
+      const params = {};
+      params[input.name] = input.value;
+      ApiC.send('config', Method.PATCH, params);
+    } else if (el.matches('[data-action="clear-password"]')) {
+      const key = `${el.dataset.target}_password`;
+      const params = {};
+      params[key] = null;
+      ApiC.send('config', Method.PATCH, params).then(() => {
+        reloadElement(el.dataset.reload);
+      });
+    // PATCH POLICY - save or clear
+    } else if (el.matches('[data-action="patch-policy"]')) {
+      let content = tinymce.get('privacyPolicyInput').getContent();
+      if (el.dataset.operation === 'clear') {
+        content = '';
+      }
+      ApiC.send('config', Method.PATCH, {'privacy_policy': content});
+    } else if (el.matches('[data-action="patch-storage"]')) {
+      const formGroup = (el.closest('div.form-group') as HTMLElement);
+      let params = {};
+      // text inputs
+      ['s3_bucket_name', 's3_region', 's3_endpoint', 's3_path_prefix'].forEach(input => {
+        params = Object.assign(params, {[input]: (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value});
+      });
+      // select inputs
+      ['uploads_storage'].forEach(input => {
+        params = Object.assign(params, {[input]: (formGroup.querySelector(`select[name="${input}"]`) as HTMLSelectElement).value});
+      });
+      return ApiC.send('config', Method.PATCH, params);
     }
   });
 

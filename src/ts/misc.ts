@@ -15,6 +15,7 @@ import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import { Payload, Method, Model, Action, Target } from './interfaces';
 import { Ajax } from './Ajax.class';
+import i18next from 'i18next';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -74,7 +75,13 @@ export function getEntity(): Entity {
     id: entityId,
   };
 }
+export function notifError(e): void {
+  return notif({'res': false, 'msg': e.name + ': ' + e.message});
+}
 
+export function notifSaved(): void {
+  return notif({'res': true, 'msg': i18next.t('saved')});
+}
 
 // PUT A NOTIFICATION IN TOP LEFT WINDOW CORNER
 export function notif(info: ResponseMsg): void {

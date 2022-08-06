@@ -50,7 +50,6 @@ $destroySession = function () use ($App, $Request) {
     if (!$Request->query->get('keep_redirect')) {
         setcookie('elab_redirect', '', $cookieOptions);
     }
-    setcookie('pdf_sig', '', $cookieOptions);
     setcookie('kickreason', '', $cookieOptions);
 };
 

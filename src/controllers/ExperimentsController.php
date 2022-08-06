@@ -38,7 +38,7 @@ class ExperimentsController extends AbstractEntityController
     {
         // filter by user if we don't want to show the rest of the team
         if (!$this->Entity->Users->userData['show_team']) {
-            $this->Entity->addFilter('entity.userid', $this->App->Users->userData['userid']);
+            $this->Entity->addFilter('entity.userid', (string) $this->App->Users->userData['userid']);
         }
 
         $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);

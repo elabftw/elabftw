@@ -20,7 +20,6 @@ use Elabftw\Services\Filter;
 use Elabftw\Services\LocalAuth;
 use Elabftw\Services\MfaHelper;
 use Exception;
-use function setcookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -38,22 +37,6 @@ try {
         // the csrf is of course not a column that needs patching so remove it
         unset($postData['csrf']);
         $App->Users->patch($postData);
-
-        // special case for pdf_sig that is stored as a cookie for no good reason TODO put it in sql!
-        $cookieValue = '0';
-        $cookieOptions = array(
-            'expires' => time() - 3600,
-            'path' => '/',
-            'domain' => '',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'Strict',
-        );
-        if ($Request->request->get('pdf_sig') === 'on') {
-            $cookieValue = '1';
-            $cookieOptions['expires'] = time() + 2592000;
-        }
-        setcookie('pdf_sig', $cookieValue, $cookieOptions);
     }
     // END TAB 1
 

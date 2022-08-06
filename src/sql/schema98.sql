@@ -5,4 +5,5 @@ ALTER TABLE `users` DROP COLUMN `phone`;
 ALTER TABLE `users` DROP COLUMN `cellphone`;
 ALTER TABLE `users` DROP COLUMN `website`;
 ALTER TABLE `experiments` DROP COLUMN `timestamptoken`;
+ALTER TABLE `users` ADD `pdf_sig` TINYINT UNSIGNED NOT NULL DEFAULT 0;
 UPDATE config SET conf_value = 98 WHERE conf_name = 'schema';

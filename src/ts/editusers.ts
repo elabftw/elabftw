@@ -10,9 +10,7 @@ import { Api } from './Apiv2.class';
 import { Method } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (window.location.pathname !== '/sysconfig.php'
-    && window.location.pathname !== '/admin.php'
-  ) {
+  if (!['/sysconfig.php', '/admin.php'].includes(window.location.pathname)) {
     return;
   }
 
@@ -31,10 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
       // ARCHIVE USER TOGGLE
       } else if (el.matches('[data-action="toggle-archive-user"]')) {
         // show alert
-        if (!confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and user will not be able to login anymore.')) {
-          return;
+        if (confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and user will not be able to login anymore.')) {
+          return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'archive'});
         }
-        return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'archive'});
 
       // VALIDATE USER
       } else if (el.matches('[data-action="validate-user"]')) {
@@ -42,13 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // DESTROY USER
       } else if (el.matches('[data-action="destroy-user"]')) {
-        if (!confirm('Are you sure you want to remove permanently this user and all associated data?')) {
-          return;
+        if (confirm('Are you sure you want to remove permanently this user and all associated data?')) {
+          return ApiC.send(`users/${el.dataset.userid}`, Method.DELETE);
         }
-        return ApiC.send(`users/${el.dataset.userid}`, Method.DELETE);
       }
     };
-
     act(event.target as HTMLElement).then(() => reloadElement('editUsersBox'));
   });
 

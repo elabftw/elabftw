@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 use function basename;
 use function bindtextdomain;
 use function dirname;
+use Elabftw\Enums\Language;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AnonymousUser;
 use Elabftw\Models\AuthenticatedUser;
@@ -151,6 +152,11 @@ class App
         }
         // default lang is the server configured one
         return $this->Config->configArr['lang'];
+    }
+
+    public function getJsLang(): string
+    {
+        return Language::toCalendar(Language::tryFrom($this->getLang()));
     }
 
     /**

@@ -61,8 +61,8 @@
 </div><!-- end real-container -->
 
 <div id='user-prefs'
-  data-lang='{{ App.Session.has('is_auth') ? App.Users.userData.lang : App.Config.configArr.lang }}'
-  data-jslang='{{ (App.Session.has('is_auth') ? App.Users.userData.lang : App.Config.configArr.lang)|jslang }}'
+  data-lang='{{ App.getLang }}'
+  data-jslang='{{ App.getJsLang }}'
   data-isodate='{{ App.Session.has('is_auth') ? App.Users.userData.use_isodate : '0' }}'
   ></div>
 

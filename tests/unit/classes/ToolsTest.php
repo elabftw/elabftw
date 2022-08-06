@@ -46,18 +46,6 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Tools::error(true), 'This section is out of your reach!');
     }
 
-    public function testGetCalendarLang(): void
-    {
-        $this->assertEquals('ca', Tools::getCalendarLang('ca_ES'));
-    }
-
-    public function testgetLangsArr(): void
-    {
-        $langsArr = Tools::getLangsArr();
-        $this->assertTrue(is_array($langsArr));
-        $this->assertEquals('German', $langsArr['de_DE']);
-    }
-
     public function testPrintArr(): void
     {
         $arr = array('Blah' => 42, array('Pwet', 1337));

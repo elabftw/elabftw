@@ -84,7 +84,6 @@ try {
         'teamsStats' => $teamsStats,
         'entityData' => $entityData,
         'templatesArr' => $templatesArr,
-        'calendarLang' => Tools::getCalendarLang($App->Users->userData['lang']),
     );
 
     $Response->setContent($App->render($template, $renderArr));

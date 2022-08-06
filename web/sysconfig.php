@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use function dirname;
+use Elabftw\Enums\Language;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AuthFail;
 use Elabftw\Models\Idps;
@@ -62,8 +63,6 @@ try {
         }
     }
 
-    $langsArr = Tools::getLangsArr();
-
     $phpInfos = array(
         PHP_OS,
         PHP_VERSION,
@@ -86,7 +85,7 @@ try {
         'elabimgVersion' => $elabimgVersion,
         'idpsArr' => $idpsArr,
         'isSearching' => $isSearching,
-        'langsArr' => $langsArr,
+        'langsArr' => Language::getAllHuman(),
         'phpInfos' => $phpInfos,
         'privacyPolicyTemplate' => $privacyPolicyTemplate,
         'Teams' => $Teams,

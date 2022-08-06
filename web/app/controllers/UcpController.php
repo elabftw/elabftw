@@ -16,7 +16,6 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
-use Elabftw\Maps\UserPreferences;
 use Elabftw\Services\Filter;
 use Elabftw\Services\LocalAuth;
 use Elabftw\Services\MfaHelper;
@@ -32,14 +31,15 @@ $tab = 1;
 $Response = new RedirectResponse('../../ucp.php?tab=' . $tab);
 $templateId = '';
 
+$postData = $Request->request->all();
 try {
     // TAB 1 : PREFERENCES
     if ($Request->request->has('lang')) {
-        $Prefs = new UserPreferences($App->Users->userData['userid']);
-        $Prefs->hydrate($Request->request->all());
-        $Prefs->save();
+        // the csrf is of course not a column that needs patching so remove it
+        unset($postData['csrf']);
+        $App->Users->patch($postData);
 
-
+        // special case for pdf_sig that is stored as a cookie for no good reason TODO put it in sql!
         $cookieValue = '0';
         $cookieOptions = array(
             'expires' => time() - 3600,
@@ -60,7 +60,6 @@ try {
     // TAB 2 : ACCOUNT
     if ($Request->request->has('use_mfa')) {
         $tab = '2';
-        $postData = $Request->request->all();
         // if user is authenticated through external service we skip the password verification
         if ($App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
             // check that we got the good password

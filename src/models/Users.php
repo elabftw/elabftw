@@ -232,7 +232,7 @@ class Users implements RestInterface
      */
     public function readOne(): array
     {
-        $userData = $this->userData;
+        $userData = $this->readOneFull();
         unset($userData['password']);
         unset($userData['password_hash']);
         unset($userData['salt']);
@@ -251,8 +251,8 @@ class Users implements RestInterface
 
     public function patch(array $params): array
     {
-        foreach ($params as $key => $value) {
-            $this->update(new UserParams((string) $value, $key));
+        foreach ($params as $target => $content) {
+            $this->update(new UserParams((string) $content, $target));
         }
         return $this->readOne();
     }

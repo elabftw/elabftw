@@ -50,6 +50,15 @@ class Filter
         return $input === 'on' ? 1 : 0;
     }
 
+    public static function firstLetter(string $input): string
+    {
+        $key = $input[0];
+        if (ctype_alpha($key)) {
+            return $key;
+        }
+        throw new ImproperActionException('Incorrect value: must be a letter.');
+    }
+
     /**
      * Make sure the date is correct (YYYY-MM-DD)
      */

@@ -69,7 +69,7 @@ class Apiv1Controller extends AbstractApiController
     {
         // Check if the Authorization Token was sent along
         if (!$this->Request->server->has('HTTP_AUTHORIZATION')) {
-            throw new UnauthorizedException('No access token provided!');
+            throw new ImproperActionException('No access token provided!');
         }
         $this->parseReq();
         try {

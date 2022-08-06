@@ -81,7 +81,7 @@ if [ "${1:-}" != "unit" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip acceptance
 fi
 # now install xdebug in the container so we can do code coverage
-docker exec -it elabtmp bash -c "apk add --update php81-pecl-xdebug && echo 'zend_extension=xdebug.so' >> /etc/php81/php.ini && echo 'xdebug.mode=coverage' >> /etc/php81/php.ini"
+docker exec -it elabtmp bash -c 'apk add --update php81-pecl-xdebug && if [ ! -f "/etc/php81/conf.d/42_xdebug.ini" ]; then printf "zend_extension=xdebug.so\nxdebug.mode=coverage" > /etc/php81/conf.d/42_xdebug.ini; fi'
 # generate the coverage, results will be available in _coverage directory
 docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --skip api --coverage --coverage-html --coverage-xml
 if ($scrutinizer); then

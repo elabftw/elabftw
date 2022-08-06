@@ -19,7 +19,7 @@ class BadRequestsCest
         // for all subsequent requests
         $I->deleteHeader('Authorization');
         $I->sendGET('/experiments/1');
-        $I->seeResponseCodeIs(HttpCode::UNAUTHORIZED); // 401
+        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST); // 400
     }
 
     // Make a request with an invalid key

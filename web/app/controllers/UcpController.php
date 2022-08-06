@@ -35,7 +35,7 @@ $templateId = '';
 try {
     // TAB 1 : PREFERENCES
     if ($Request->request->has('lang')) {
-        $Prefs = new UserPreferences((int) $App->Users->userData['userid']);
+        $Prefs = new UserPreferences($App->Users->userData['userid']);
         $Prefs->hydrate($Request->request->all());
         $Prefs->save();
 
@@ -62,7 +62,7 @@ try {
         $tab = '2';
         $postData = $Request->request->all();
         // if user is authenticated through external service we skip the password verification
-        if ((int) $App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
+        if ($App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
             // check that we got the good password
             $LocalAuth = new LocalAuth($App->Users->userData['email'], $Request->request->get('currpass'));
             try {
@@ -78,12 +78,12 @@ try {
 
         // CHANGE PASSWORD (only for local accounts)
         if (!empty($Request->request->get('newpass')) && (int) $App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
-            $App->Users->updatePassword($postData['newpass']);
+            $App->Users->patch(array('password' => $postData['newpass']));
         }
 
         // TWO FACTOR AUTHENTICATION
         $useMFA = Filter::onToBinary($postData['use_mfa'] ?? '');
-        $MfaHelper = new MfaHelper((int) $App->Users->userData['userid']);
+        $MfaHelper = new MfaHelper($App->Users->userData['userid']);
 
         if ($useMFA && !$App->Users->userData['mfa_secret']) {
             // Need to request verification code to confirm user got secret and can authenticate in the future by MFA

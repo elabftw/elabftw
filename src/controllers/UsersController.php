@@ -113,7 +113,9 @@ class UsersController
             throw new ImproperActionException('Only a sysadmin can promote another user to sysadmin.');
         }
         // a non sysadmin cannot demote a sysadmin
-        if ($this->target->userData['is_sysadmin'] && $usergroup !== 1 && $this->requester->userData['is_sysadmin'] !== 1) {
+        if (isset($this->target->userData['is_sysadmin']) && $this->target->userData['is_sysadmin'] === 1 &&
+            $usergroup !== 1 &&
+            $this->requester->userData['is_sysadmin'] !== 1) {
             throw new ImproperActionException('Only a sysadmin can demote another sysadmin.');
         }
         return $usergroup;

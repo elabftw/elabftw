@@ -54,7 +54,7 @@ class Csrf
         // get requests are not checked, same for api requests or the reset password page
         if ($this->Request->server->get('REQUEST_METHOD') === 'GET' ||
             $this->Request->server->get('SCRIPT_NAME') === '/app/controllers/ResetPasswordController.php' ||
-            ($this->Request->server->get('SCRIPT_NAME') === '/app/controllers/ApiController.php' && (str_contains($this->Request->server->get('QUERY_STRING'), 'api/v1')))) {
+            $this->Request->server->get('SCRIPT_NAME') === '/app/controllers/ApiController.php') {
             return;
         }
 

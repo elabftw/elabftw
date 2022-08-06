@@ -40,6 +40,10 @@ class Apiv2Controller extends AbstractApiController
     public function getResponse(): Response
     {
         try {
+            // only accept json content-type unless it's GET (also prevents csrf!)
+            if ($this->Request->server->get('REQUEST_METHOD') !== Request::METHOD_GET && $this->Request->headers->get('content-type') !== 'application/json') {
+                throw new ImproperActionException('Incorrect content-type header.');
+            }
             $this->parseReq();
 
             return match ($this->Request->server->get('REQUEST_METHOD')) {

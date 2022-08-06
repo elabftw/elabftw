@@ -43,7 +43,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       <hr>
       <p>{{ 'Teams'|trans }}: {{ teamsStats.totteams }} - {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}</p>
       <hr>
-      <a href='make.php?what=report' class='button btn btn-primary'>{{ 'Generate report'|trans }}</a>
+      <a href='make.php?format=report' class='button btn btn-primary'>{{ 'Generate report'|trans }}</a>
     </div>
 
     <div class='box'>

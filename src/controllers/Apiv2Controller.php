@@ -11,11 +11,13 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\EntityFactory;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
@@ -25,6 +27,7 @@ use const SITE_URL;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use ValueError;
 
 /**
  * For API V2 requests
@@ -37,6 +40,8 @@ class Apiv2Controller extends AbstractApiController
 
     private array $reqBody = array();
 
+    private ExportFormat $format = ExportFormat::Json;
+
     public function getResponse(): Response
     {
         try {
@@ -47,7 +52,7 @@ class Apiv2Controller extends AbstractApiController
             $this->parseReq();
 
             return match ($this->Request->server->get('REQUEST_METHOD')) {
-                Request::METHOD_GET => new JsonResponse($this->handleGet(), Response::HTTP_OK),
+                Request::METHOD_GET => $this->handleGet(),
                 Request::METHOD_POST => $this->handlePost(),
                 Request::METHOD_DELETE => new JsonResponse($this->Model->destroy(), Response::HTTP_NO_CONTENT),
                 Request::METHOD_PATCH => new JsonResponse($this->handlePatch(), Response::HTTP_OK),
@@ -89,6 +94,16 @@ class Apiv2Controller extends AbstractApiController
         parent::parseReq();
         // load Model
         $this->Model = $this->getModel();
+
+        if ($this->Request->query->has('format') && $this->Model instanceof AbstractConcreteEntity) {
+            try {
+                $this->format = ExportFormat::from((string) $this->Request->query->get('format'));
+            } catch (ValueError $e) {
+                throw new ImproperActionException('Incorrect format value.');
+            }
+            $this->Request->query->set('type', $this->Model->type);
+            $this->Request->query->set('id', $this->id);
+        }
         if ($this->Request->getContent()) {
             try {
                 $this->reqBody = json_decode((string) $this->Request->getContent(), true, 512, JSON_THROW_ON_ERROR);
@@ -118,13 +133,24 @@ class Apiv2Controller extends AbstractApiController
         return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', SITE_URL, $this->Model->getViewPage(), $id)));
     }
 
-    private function handleGet(): array
+    private function getArray(): array
     {
-        // TODO note that we could have a read() that checks for presence of id!
         if ($this->id !== null) {
             return $this->Model->readOne();
         }
         return $this->Model->readAll();
+    }
+
+    private function handleGet(): Response
+    {
+        return match ($this->format) {
+            ExportFormat::Csv,
+            ExportFormat::Eln,
+            ExportFormat::Pdf,
+            ExportFormat::PdfA,
+            ExportFormat::Zip => (new MakeController($this->Users, $this->Request))->getResponse(),
+            default => new JsonResponse($this->getArray(), Response::HTTP_OK),
+        };
     }
 
     private function handlePatch(): array

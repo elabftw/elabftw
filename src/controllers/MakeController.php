@@ -10,7 +10,6 @@
 namespace Elabftw\Controllers;
 
 use function count;
-use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Factories\EntityFactory;
 use Elabftw\Interfaces\ControllerInterface;
@@ -21,6 +20,7 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Items;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
+use Elabftw\Models\Users;
 use Elabftw\Services\MakeCsv;
 use Elabftw\Services\MakeEln;
 use Elabftw\Services\MakeJson;
@@ -31,6 +31,7 @@ use Elabftw\Services\MakeReport;
 use Elabftw\Services\MakeSchedulerReport;
 use Elabftw\Services\MakeStreamZip;
 use Elabftw\Services\MpdfProvider;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -47,13 +48,17 @@ class MakeController implements ControllerInterface
     // an array of id to process
     private array $idArr = array();
 
-    public function __construct(private App $App)
+    private bool $pdfa;
+
+    public function __construct(private Users $Users, private Request $Request)
     {
+        // default pdfa setting is the user set value
+        $this->pdfa = (bool) $this->Users->userData['pdfa'];
     }
 
     public function getResponse(): Response
     {
-        switch ($this->App->Request->query->get('what')) {
+        switch ($this->Request->query->get('format')) {
             case 'csv':
                 $this->populateIdArr();
                 return $this->makeCsv();
@@ -66,6 +71,9 @@ class MakeController implements ControllerInterface
                 $this->populateIdArr();
                 return $this->makeJson();
 
+            case 'pdfa':
+                $this->pdfa = true;
+                // no break
             case 'pdf':
                 $this->populateIdArr();
                 return $this->makePdf();
@@ -82,13 +90,13 @@ class MakeController implements ControllerInterface
                 return $this->makeQrPdf();
 
             case 'report':
-                if (!$this->App->Session->get('is_sysadmin')) {
+                if (!$this->Users->userData['is_sysadmin']) {
                     throw new IllegalActionException('Non sysadmin user tried to generate report.');
                 }
                 return $this->makeReport();
 
             case 'schedulerReport':
-                if (!$this->App->Session->get('is_admin')) {
+                if (!$this->Users->userData['is_admin']) {
                     throw new IllegalActionException('Non admin user tried to generate scheduler report.');
                 }
                 return $this->makeSchedulerReport();
@@ -98,30 +106,30 @@ class MakeController implements ControllerInterface
                 return $this->makeZip();
 
             default:
-                throw new IllegalActionException('Bad make what value');
+                throw new IllegalActionException('Bad make format value');
         }
     }
 
     private function populateIdArr(): void
     {
-        $this->Entity = (new EntityFactory($this->App->Users, (string) $this->App->Request->query->get('type')))->getEntity();
+        $this->Entity = (new EntityFactory($this->Users, (string) $this->Request->query->get('type')))->getEntity();
         // generate the id array
-        if ($this->App->Request->query->has('category')) {
-            $this->idArr = $this->Entity->getIdFromCategory((int) $this->App->Request->query->get('category'));
-        } elseif ($this->App->Request->query->has('user')) {
+        if ($this->Request->query->has('category')) {
+            $this->idArr = $this->Entity->getIdFromCategory((int) $this->Request->query->get('category'));
+        } elseif ($this->Request->query->has('user')) {
             // only admin can export a user, or it is ourself
-            if (!$this->App->Users->userData['is_admin'] && $this->App->Request->query->get('user') !== $this->App->Users->userData['userid']) {
+            if (!$this->Users->userData['is_admin'] && $this->Request->query->get('user') !== $this->Users->userData['userid']) {
                 throw new IllegalActionException('User tried to export another user but is not admin.');
             }
             // being admin is good, but we also need to be in the same team as the requested user
-            $Teams = new Teams($this->App->Users);
-            $targetUserid = (int) $this->App->Request->query->get('user');
-            if (!$Teams->hasCommonTeamWithCurrent($targetUserid, $this->App->Users->userData['team'])) {
+            $Teams = new Teams($this->Users);
+            $targetUserid = (int) $this->Request->query->get('user');
+            if (!$Teams->hasCommonTeamWithCurrent($targetUserid, $this->Users->userData['team'])) {
                 throw new IllegalActionException('User tried to export another user but is not in same team.');
             }
             $this->idArr = $this->Entity->getIdFromUser($targetUserid);
-        } elseif ($this->App->Request->query->has('id')) {
-            $this->idArr = explode(' ', (string) $this->App->Request->query->get('id'));
+        } elseif ($this->Request->query->has('id')) {
+            $this->idArr = explode(' ', (string) $this->Request->query->get('id'));
         }
     }
 
@@ -150,7 +158,7 @@ class MakeController implements ControllerInterface
 
     private function makePdf(): Response
     {
-        $this->Entity->setId((int) $this->App->Request->query->get('id'));
+        $this->Entity->setId((int) $this->Request->query->get('id'));
         $this->Entity->canOrExplode('read');
         return $this->getFileResponse(new MakePdf($this->getMpdfProvider(), $this->Entity));
     }
@@ -167,15 +175,15 @@ class MakeController implements ControllerInterface
 
     private function makeReport(): Response
     {
-        return $this->getFileResponse(new MakeReport(new Teams($this->App->Users)));
+        return $this->getFileResponse(new MakeReport(new Teams($this->Users)));
     }
 
     private function makeSchedulerReport(): Response
     {
         return $this->getFileResponse(new MakeSchedulerReport(
-            new Scheduler(new Items($this->App->Users)),
-            (string) $this->App->Request->query->get('from'),
-            (string) $this->App->Request->query->get('to'),
+            new Scheduler(new Items($this->Users)),
+            (string) $this->Request->query->get('from'),
+            (string) $this->Request->query->get('to'),
         ));
     }
 
@@ -200,11 +208,11 @@ class MakeController implements ControllerInterface
 
     private function getMpdfProvider(): MpdfProviderInterface
     {
-        $userData = $this->App->Users->userData;
+        $userData = $this->Users->userData;
         return new MpdfProvider(
             $userData['fullname'],
             $userData['pdf_format'],
-            (bool) $userData['pdfa'],
+            $this->pdfa,
         );
     }
 

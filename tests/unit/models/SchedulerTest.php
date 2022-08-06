@@ -88,7 +88,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     public function testCanWriteAndWeAreAdmin(): void
     {
         $Users = new Users(2, 1);
-        $Items = new Items($Users, 1);
+        $Items = new Items($Users, 3);
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('tomorrow');
         $start = $d->format('c');

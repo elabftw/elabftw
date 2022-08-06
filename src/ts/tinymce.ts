@@ -160,7 +160,7 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'Ruby', value: 'ruby'},
     ],
     codesample_global_prismjs: true,
-    language: $('#user-prefs').data('lang'),
+    language: document.getElementById('user-prefs').dataset.lang,
     charmap_append: [
       [0x2640, 'female sign'],
       [0x2642, 'male sign'],

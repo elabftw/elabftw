@@ -95,8 +95,8 @@
                     </label>
                     <!-- add empty input to prevent FF from putting password in field because autocomplete doesn't work. from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox -->
                     <!-- chrome will continue to behave badly. See crbug.com/468153 and crbug.com/587466 -->
-                    <input type='text' hidden>
-                    <input type='password' hidden>
+                    <input type='text' data-ignore='1' hidden>
+                    <input type='password' data-ignore='1' hidden>
                     {% set pattern = '.{' ~ minPasswordLength() ~ ',}' %}
                     <div class='input-group'>
                       <input autocomplete='new-password' class='form-control' id='usersUpdatePassword_{{ user.userid }}' type='password' pattern='{{ pattern }}' value='' name='password' />
@@ -145,18 +145,12 @@
 {% endif %}
 
 {% if App.Config.configArr.admins_create_users or App.Users.userData.is_sysadmin %}
+<!-- CREATE USER ACCOUNT -->
 <div class='box'>
   <h3>{{ 'Add account'|trans }}</h3>
   <p>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
   <div class='form-group'>
-    {{ App.Session.get('csrf')|csrf }}
-    {# because the select will be disabled, the team won't be sent, so add it as hidden for admin page #}
-    {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
-      <input type='hidden' name='team' value='{{ App.Users.userData.team }}' />
-    {% endif %}
-    <input type='hidden' name='frompage' value='{{ App.Request.getScriptName|split('/')|last }}' />
-    <div class='row'>
-
+    <div class='row form-group'>
       <!-- TEAM -->
       <div class='col-md-2'>
         <label for='create-user-team'>{{ 'Team'|trans }}</label>

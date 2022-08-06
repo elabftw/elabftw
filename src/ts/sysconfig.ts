@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, reloadElement } from './misc';
+import { collectForm, notif, reloadElement } from './misc';
 import { Action, Method, Payload, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
@@ -208,17 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       ApiC.send('config', Method.PATCH, {'privacy_policy': content});
     } else if (el.matches('[data-action="patch-storage"]')) {
-      const formGroup = (el.closest('div.form-group') as HTMLElement);
-      let params = {};
-      // text inputs
-      ['s3_bucket_name', 's3_region', 's3_endpoint', 's3_path_prefix'].forEach(input => {
-        params = Object.assign(params, {[input]: (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value});
-      });
-      // select inputs
-      ['uploads_storage'].forEach(input => {
-        params = Object.assign(params, {[input]: (formGroup.querySelector(`select[name="${input}"]`) as HTMLSelectElement).value});
-      });
-      return ApiC.send('config', Method.PATCH, params);
+      return ApiC.send('config', Method.PATCH, collectForm((el.closest('div.form-group') as HTMLElement)));
     }
   });
 

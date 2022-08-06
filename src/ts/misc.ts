@@ -46,6 +46,35 @@ export function relativeMoment(): void {
   });
 }
 
+/**
+ * Loop over all the input and select elements of an element and collect their value
+ * Returns an object with name => value
+ */
+export function collectForm(form: HTMLElement): object {
+  let params = {};
+  ['input', 'select'].forEach(inp => {
+    form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
+      const el = input as HTMLInputElement;
+      console.log(el);
+      if (el.reportValidity() === false) {
+        throw new Error('Invalid input found! Aborting.');
+      }
+      if (el.name === 'password') {
+        // clear a password field once collected
+        el.value = '';
+      }
+      if (el.dataset.ignore !== '1') {
+        params = Object.assign(params, {[input.name]: input.value});
+      }
+    });
+  });
+  // don't send an empty password
+  if (params['password'] === '') {
+    delete params['password'];
+  }
+  return params;
+}
+
 // for view or edit mode, get type and id from the page to construct the entity object
 export function getEntity(): Entity {
   if (!document.getElementById('info')) {

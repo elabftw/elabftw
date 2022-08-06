@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, notifSaved, insertParamAndReload } from './misc';
+import { collectForm, reloadElement } from './misc';
 import { Api } from './Apiv2.class';
 import { Method } from './interfaces';
 
@@ -20,39 +20,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
+    // CREATE USER
     if (el.matches('[data-action="create-user"]')) {
-      const formGroup = (el.closest('div.row') as HTMLElement);
-      let params = {};
-      // text inputs
-      ['firstname', 'lastname', 'email'].forEach(input => {
-        params = Object.assign(params, {[input]: (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value});
-      });
-      // select inputs
-      ['team', 'usergroup'].forEach(input => {
-        params = Object.assign(params, {[input]: (formGroup.querySelector(`select[name="${input}"]`) as HTMLSelectElement).value});
-      });
-      return ApiC.send('users', Method.POST, params).then(() => notifSaved());
+      return ApiC.send('users', Method.POST, collectForm(el.closest('div.form-group')));
 
     // UPDATE USER
     } else if (el.matches('[data-action="update-user"]')) {
-      const formGroup = (el.closest('div.form-group') as HTMLElement);
-      let params = {};
-      // text inputs
-      ['firstname', 'lastname', 'email', 'password'].forEach(input => {
-        params = Object.assign(params, {[input]: (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value});
-        if (input === 'password') {
-          // clear the password field once collected
-          (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value = '';
-        }
-      });
-      if (params['password'] === '') {
-        delete params['password'];
-      }
-      // select inputs
-      ['usergroup', 'validated'].forEach(input => {
-        params = Object.assign(params, {[input]: (formGroup.querySelector(`select[name="${input}"]`) as HTMLSelectElement).value});
-      });
-      return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, params).then(() => notifSaved);
+      return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, collectForm(el.closest('div.form-group'))).then(() => reloadElement('editUsersBox'));
 
     // ARCHIVE USER TOGGLE
     } else if (el.matches('[data-action="toggle-archive-user"]')) {
@@ -60,24 +34,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and user will not be able to login anymore.')) {
         return;
       }
-      return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'archive'}).then(() => notifSaved);
+      return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'archive'}).then(() => reloadElement('editUsersBox'));
 
     // VALIDATE USER
     } else if (el.matches('[data-action="validate-user"]')) {
-      return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'validate'}).then(() => {
-        notifSaved();
-        insertParamAndReload('tab', '3');
-      });
+      return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'validate'}).then(() => reloadElement('editUsersBox'));
 
     // DESTROY USER
     } else if (el.matches('[data-action="destroy-user"]')) {
       if (!confirm('Are you sure you want to remove permanently this user and all associated data?')) {
         return;
       }
-      return ApiC.send(`users/${el.dataset.userid}`, Method.DELETE).then(() => {
-        notif({'res': true, 'msg': 'User deleted'});
-        el.closest('li.list-group-item').remove();
-      });
+      return ApiC.send(`users/${el.dataset.userid}`, Method.DELETE).then(() => el.closest('li.list-group-item').remove());
     }
   });
 

@@ -146,6 +146,7 @@ class Apiv2Controller extends AbstractApiController
         return match ($this->format) {
             ExportFormat::Csv,
             ExportFormat::Eln,
+            ExportFormat::QrPdf,
             ExportFormat::Pdf,
             ExportFormat::PdfA,
             ExportFormat::Zip => (new MakeController($this->Users, $this->Request))->getResponse(),

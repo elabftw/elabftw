@@ -14,6 +14,7 @@ enum ExportFormat: string
     case Csv = 'csv';
     case Eln = 'eln';
     case Json = 'json';
+    case QrPdf = 'qrpdf';
     case Pdf = 'pdf';
     case PdfA = 'pdfa';
     case Zip = 'zip';

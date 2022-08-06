@@ -78,14 +78,14 @@ class MakeController implements ControllerInterface
                 $this->populateIdArr();
                 return $this->makePdf();
 
-            case 'multiPdf':
+            case 'multipdf':
                 $this->populateIdArr();
                 if (count($this->idArr) === 1) {
                     return $this->makePdf();
                 }
                 return $this->makeMultiPdf();
 
-            case 'qrPdf':
+            case 'qrpdf':
                 $this->populateIdArr();
                 return $this->makeQrPdf();
 

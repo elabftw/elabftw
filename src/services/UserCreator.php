@@ -7,17 +7,15 @@
  * @package elabftw
  */
 
-namespace Elabftw\Controllers;
+namespace Elabftw\Services;
 
 use Elabftw\Elabftw\UserParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
-use Elabftw\Services\Check;
 
-class UsersController
+class UserCreator
 {
     // the user doing the request
     private Users $requester;
@@ -25,16 +23,8 @@ class UsersController
     public function __construct(private Users $target, private array $reqBody)
     {
         $this->requester = $target->requester;
-        // a normal user can only access their own user
-        // you need to be at least admin to access another user
-        // TODO when we implement the @firstname autocompletion for notification, normal users will need to access a stripped down version of user list
-        // maybe it'll be a custom function instead of normal get filtered
-        if ($this->requester->userData['is_admin'] !== 1 && $this->target->userid !== $this->target->userData['userid']) {
-            throw new IllegalActionException('This endpoint requires admin privileges to access other users.');
-        }
-        // check we edit user of our team, unless we are sysadmin and we can access it
-        if ($this->target->userid !== null && !$this->requester->isAdminOf($this->target->userid)) {
-            throw new IllegalActionException('User tried to access user from other team.');
+        if ($this->requester->userData['is_admin'] !== 1) {
+            throw new IllegalActionException('User creation is limited to Admins and Sysadmins only.');
         }
     }
 
@@ -47,24 +37,13 @@ class UsersController
         $team = $this->reqBody['team'];
         $teams = array('id' => $team);
 
-        if ($this->requester->userData['is_sysadmin'] !== 1) {
+        if ($this->requester->userData['is_sysadmin'] === 0) {
             $Config = Config::getConfig();
             // check for instance setting allowing/disallowing creation of users by admins
             if ($Config->configArr['admins_create_users'] === '0') {
                 throw new IllegalActionException('Admin tried to create user but user creation is disabled for admins.');
             }
-            // check if we are admin of the correct team
-            $Teams = new Teams($this->requester);
-            if ($Teams->hasCommonTeamWithCurrent($this->requester->userid, $team) === false) {
-                throw new IllegalActionException('Admin tried to create user in a team where they are not admin.');
-            }
-        }
-        // check if we are admin the team is ours
-        // a sysadmin is free to use any team
-        if ($this->requester->userData['is_sysadmin'] === 0) {
-            // note: from REST API call the team is not set!! TODO FIXME
-            // force using our own team
-            // make a isAdminOfTeam()
+            // force using the team in which we are logged in if we are not sysadmin
             $teams = array('id' => $this->requester->userData['team']);
         }
         return $this->target->createOne(

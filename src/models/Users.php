@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use function array_filter;
-use Elabftw\Controllers\UsersController;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
@@ -25,6 +24,7 @@ use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UserArchiver;
+use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
 use function filter_var;
 use function hash;
@@ -251,8 +251,8 @@ class Users implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
-        $Controller = new UsersController($this, $reqBody);
-        return $Controller->create();
+        $Creator = new UserCreator($this, $reqBody);
+        return $Creator->create();
     }
 
     public function patchAction(Action $action): array

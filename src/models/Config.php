@@ -12,7 +12,6 @@ namespace Elabftw\Models;
 use function array_map;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
@@ -46,7 +45,7 @@ final class Config implements RestInterface
         $this->configArr = $this->readAll();
         // this should only run once: just after a fresh install
         if (empty($this->configArr)) {
-            $this->create(new ContentParams());
+            $this->create();
             $this->configArr = $this->readAll();
         }
     }
@@ -71,7 +70,7 @@ final class Config implements RestInterface
      * Insert the default values in the sql config table
      * Only run once of first ever page load
      */
-    public function create(ContentParamsInterface $params): int
+    public function create(): int
     {
         $schema = Update::getRequiredSchema();
 
@@ -269,6 +268,6 @@ final class Config implements RestInterface
         $sql = 'DELETE FROM config';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
-        return (bool) $this->create(new ContentParams());
+        return (bool) $this->create();
     }
 }

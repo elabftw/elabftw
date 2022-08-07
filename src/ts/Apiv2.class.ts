@@ -9,7 +9,23 @@ import { Method } from './interfaces';
 import { notifSaved, notifError } from './misc';
 
 export class Api {
-  send(query: string, method: Method, params = {}): Promise<Response>
+  patch(query: string, params = {}): Promise<Response>
+  {
+    return this.send(Method.PATCH, query, params);
+  }
+
+  post(query: string, params = {}): Promise<Response>
+  {
+    return this.send(Method.POST, query, params);
+  }
+
+  delete(query: string): Promise<Response>
+  {
+    return this.send(Method.DELETE, query);
+  }
+
+  // private method: use patch/post/delete instead
+  send(method: Method, query: string, params = {}): Promise<Response>
   {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     return fetch(`api/v2/${query}`, {
@@ -48,4 +64,5 @@ export class Api {
       return 200;
     }
   }
+
 }

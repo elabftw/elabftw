@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
       );
     // DESTROY ts_password
     } else if (el.matches('[data-action="destroy-ts-password"]')) {
-      ApiC.send('config', Method.PATCH, {'ts_password': ''}).then(() => reloadElement('ts_loginpass'));
+      ApiC.patch('config', {'ts_password': ''}).then(() => reloadElement('ts_loginpass'));
     // PATCH ANNOUNCEMENT - save or clear
     } else if (el.matches('[data-action="patch-announcement"]')) {
       const input = (document.getElementById(el.dataset.inputid) as HTMLInputElement);
@@ -195,12 +195,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const params = {};
       params[input.name] = input.value;
-      ApiC.send('config', Method.PATCH, params);
+      ApiC.patch('config', params);
     } else if (el.matches('[data-action="clear-password"]')) {
       const key = `${el.dataset.target}_password`;
       const params = {};
       params[key] = null;
-      ApiC.send('config', Method.PATCH, params).then(() => {
+      ApiC.patch('config', params).then(() => {
         reloadElement(el.dataset.reload);
       });
     // PATCH POLICY - save or clear
@@ -209,9 +209,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (el.dataset.operation === 'clear') {
         content = '';
       }
-      ApiC.send('config', Method.PATCH, {'privacy_policy': content});
+      ApiC.patch('config', {'privacy_policy': content});
     } else if (el.matches('[data-action="patch-storage"]')) {
-      return ApiC.send('config', Method.PATCH, collectForm((el.closest('div.form-group') as HTMLElement)));
+      return ApiC.patch('config', collectForm((el.closest('div.form-group') as HTMLElement)));
     }
   });
 

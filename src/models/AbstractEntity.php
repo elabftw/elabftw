@@ -413,6 +413,11 @@ abstract class AbstractEntity implements RestInterface
             case 'category':
                 $content = $params->getInt();
                 break;
+            case 'canread':
+            case 'canwrite':
+                $content = $params->getVisibility();
+                $this->checkTeamPermissionsEnforced($params->getTarget());
+                break;
             case 'content_type':
                 $content = $params->getInt();
                 break;
@@ -458,38 +463,6 @@ abstract class AbstractEntity implements RestInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Update read or write permissions for an entity
-     *
-     * @param string $rw read or write
-     */
-    public function updatePermissions(string $rw, string $value): void
-    {
-        $this->canOrExplode('write');
-        Check::visibility($value);
-        Check::rw($rw);
-        // check if the permissions are enforced
-        $Team = new Team((int) $this->Users->userData['team']);
-        if ($rw === 'read') {
-            if ($Team->getDoForceCanread() === 1 && !$this->Users->userData['is_admin']) {
-                throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
-            }
-            $column = 'canread';
-        } else {
-            if ($Team->getDoForceCanwrite() === 1 && !$this->Users->userData['is_admin']) {
-                throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
-            }
-            $column = 'canwrite';
-        }
-
-        $sql = 'UPDATE ' . $this->type . ' SET ' . $column . ' = :value WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':value', $value);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        $this->Db->execute($req);
     }
 
     /**
@@ -745,6 +718,27 @@ abstract class AbstractEntity implements RestInterface
         $req->bindValue(':value', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    /**
+     * Update read or write permissions for an entity
+     *
+     * @param string $rw read or write
+     */
+    private function checkTeamPermissionsEnforced(string $rw): void
+    {
+        // check if the permissions are enforced
+        // TODO from rest API this won't work because team is not set
+        $Team = new Team($this->Users->userData['team']);
+        if ($rw === 'canread') {
+            if ($Team->getDoForceCanread() === 1 && !$this->Users->userData['is_admin']) {
+                throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
+            }
+        } else {
+            if ($Team->getDoForceCanwrite() === 1 && !$this->Users->userData['is_admin']) {
+                throw new ImproperActionException(_('Write permissions enforced by admin. Aborting change.'));
+            }
+        }
     }
 
     /**

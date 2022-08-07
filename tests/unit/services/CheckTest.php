@@ -72,14 +72,6 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         Check::visibility('pwet');
     }
 
-    public function testRw(): void
-    {
-        $this->assertEquals('read', Check::rw('read'));
-        $this->assertEquals('write', Check::rw('write'));
-        $this->expectException(IllegalActionException::class);
-        Check::rw('blah');
-    }
-
     public function testToken(): void
     {
         $token = hash('sha256', bin2hex(random_bytes(16)));

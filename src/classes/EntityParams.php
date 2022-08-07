@@ -10,6 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Interfaces\EntityParamsInterface;
+use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use function in_array;
 use const JSON_HEX_APOS;
@@ -55,6 +56,11 @@ class EntityParams extends ContentParams implements EntityParamsInterface
     public function getField(): string
     {
         return json_encode($this->extra['jsonField'] ?? '', JSON_HEX_APOS | JSON_THROW_ON_ERROR);
+    }
+
+    public function getVisibility(): string
+    {
+        return Check::Visibility($this->content);
     }
 
     public function getState(): int

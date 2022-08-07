@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Method, EntityType, Action, Target } from './interfaces';
+import { EntityType, Action, Target } from './interfaces';
 import { Api } from './Apiv2.class';
 
 export default class Entity {
@@ -20,28 +20,28 @@ export default class Entity {
   // content can be a template id (for experiments), an itemtype id (for items) or a template title
   create(content: string, tags: Array<string>): Promise<Response> {
     const params = {'category_id': content, 'tags': tags};
-    return this.api.send(`${this.model}`, Method.POST, params);
+    return this.api.post(`${this.model}`, params);
   }
 
   update(id: number, target: Target, content: string): Promise<Response> {
     const params = {};
     params[target] = content;
-    return this.api.send(`${this.model}/${id}`, Method.PATCH, params);
+    return this.api.patch(`${this.model}/${id}`, params);
   }
 
   lock(id: number): Promise<Response> {
-    return this.api.send(`${this.model}/${id}`, Method.PATCH, {'action': Action.Lock});
+    return this.api.patch(`${this.model}/${id}`, {'action': Action.Lock});
   }
 
   pin(id: number): Promise<Response> {
-    return this.api.send(`${this.model}/${id}`, Method.PATCH, {'action': Action.Pin});
+    return this.api.patch(`${this.model}/${id}`, {'action': Action.Pin});
   }
 
   duplicate(id: number): Promise<Response> {
-    return this.api.send(`${this.model}/${id}`, Method.POST, {'action': Action.Duplicate});
+    return this.api.post(`${this.model}/${id}`, {'action': Action.Duplicate});
   }
 
   destroy(id: number): Promise<Response> {
-    return this.api.send(`${this.model}/${id}`, Method.DELETE);
+    return this.api.delete(`${this.model}/${id}`);
   }
 }

@@ -100,11 +100,6 @@ try {
         ));
     }
 
-    // UPDATE VISIBILITY
-    if ($Request->request->has('updatePermissions')) {
-        $Entity->updatePermissions($Request->request->get('rw'), $Request->request->get('value'));
-    }
-
     // CREATE UPLOAD
     if ($Request->request->has('upload')) {
         $realName = $Request->files->get('file')->getClientOriginalName();

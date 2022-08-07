@@ -73,11 +73,10 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     public function testUpdateVisibility(): void
     {
         $this->Experiments->setId(1);
-        $this->Experiments->canOrExplode('write');
-        $this->Experiments->updatePermissions('read', 'public');
-        $this->Experiments->updatePermissions('read', 'organization');
-        $this->Experiments->updatePermissions('write', 'team');
-        $this->Experiments->updatePermissions('write', 'public');
+        $this->assertIsArray($this->Experiments->patch(array('canread' => 'public')));
+        $this->assertIsArray($this->Experiments->patch(array('canread' => 'organization')));
+        $this->assertIsArray($this->Experiments->patch(array('canwrite' => 'team')));
+        $this->assertIsArray($this->Experiments->patch(array('canwrite' => 'public')));
     }
 
     public function testUpdateCategory(): void

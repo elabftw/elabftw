@@ -189,23 +189,6 @@ class Check
     }
 
     /**
-     * Check if we have a correct value for read/write
-     */
-    public static function rw(string $rw): string
-    {
-        $validArr = array(
-            'read',
-            'write',
-        );
-
-        if (!in_array($rw, $validArr, true)) {
-            throw new IllegalActionException('The read/write parameter is wrong.');
-        }
-
-        return $rw;
-    }
-
-    /**
      * Check the cookie token
      */
     public static function token(string $token): string

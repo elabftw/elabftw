@@ -84,8 +84,8 @@ class Populate
 
             // change the visibility
             if ($this->faker->randomDigit() > 8) {
-                $Entity->updatePermissions('read', $this->faker->randomElement(array('organization', 'public', 'user')));
-                $Entity->updatePermissions('write', $this->faker->randomElement(array('organization', 'public', 'user')));
+                $Entity->patch(array('canread' => $this->faker->randomElement(array('organization', 'public', 'user'))));
+                $Entity->patch(array('canwrite' => $this->faker->randomElement(array('organization', 'public', 'user'))));
             }
 
             // change the category (status/item type)

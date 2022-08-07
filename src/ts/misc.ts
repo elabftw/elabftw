@@ -316,7 +316,7 @@ export function addAutocompleteToTagInputs(): void {
 
 export function updateCategory(entity: Entity, value: string): string {
   const ApiC = new Api();
-  ApiC.send(`${entity.type}/${entity.id}`, Method.PATCH, {'category': value}).then(resp => {
+  ApiC.patch(`${entity.type}/${entity.id}`, {'category': value}).then(resp => {
     resp.json().then(json => {
       // change the color of the item border
       // we first remove any status class

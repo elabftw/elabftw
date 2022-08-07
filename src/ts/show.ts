@@ -7,7 +7,6 @@
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement } from './misc';
-import { Method } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
@@ -123,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // loop on it and update the status/item type
       checked.forEach(chk => {
-        ajaxs.push(ApiC.send(`${about.type}/${chk.id}`, Method.PATCH, {'category': el.value}));
+        ajaxs.push(ApiC.patch(`${about.type}/${chk.id}`, {'category': el.value}));
       });
       // reload the page once it's done
       // a simple reload would not work here
@@ -145,13 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // loop on it and update the status/item type
       checked.forEach(chk => {
-        ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
-          updatePermissions : true,
-          rw: 'read',
-          id: chk.id,
-          value: el.value,
-          type : about.type,
-        }));
+        ajaxs.push(ApiC.patch(`${about.type}/${chk.id}`, {'canread': el.value}));
       });
       // reload the page once it's done
       // a simple reload would not work here

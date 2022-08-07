@@ -27,4 +27,6 @@ interface EntityParamsInterface extends ContentParamsInterface
     public function getField(): string;
 
     public function getState(): int;
+
+    public function getVisibility(): string;
 }

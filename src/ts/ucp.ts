@@ -124,22 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // CAN READ/WRITE SELECT PERMISSION
-  $(document).on('change', '.permissionSelectTpl', function() {
-    const value = $(this).val();
-    const rw = $(this).data('rw');
-    const id = $(this).data('id');
-    $.post('app/controllers/EntityAjaxController.php', {
-      updatePermissions: true,
-      rw: rw,
-      id: id,
-      type: 'experiments_templates',
-      value: value,
-    }).done(function(json) {
-      notif(json);
-    });
-  });
-
   // input to upload an ELN archive
   document.getElementById('import_tpl').addEventListener('change', (event) => {
     const el = (event.target as HTMLInputElement);

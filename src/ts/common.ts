@@ -7,9 +7,10 @@
  */
 import $ from 'jquery';
 import { Ajax } from './Ajax.class';
+import { Api } from './Apiv2.class';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { notif, makeSortableGreatAgain, reloadElement, adjustHiddenState } from './misc';
+import { notif, makeSortableGreatAgain, reloadElement, adjustHiddenState, getEntity } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { PartialEntity, EntityType, Payload, Target, Method, Model, Action } from './interfaces';
@@ -59,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const AjaxC = new Ajax();
+  const ApiC = new Api();
 
   // set the language for js translated strings
   i18next.changeLanguage(document.getElementById('user-prefs').dataset.lang);
@@ -154,6 +156,17 @@ document.addEventListener('DOMContentLoaded', () => {
       iconEl.classList.remove('fa-chevron-circle-right');
     }
   });
+
+  // CAN READ/WRITE SELECT
+  $(document).on('change', '.permissionSelect', function() {
+    const value = $(this).val();
+    const rw = $(this).data('rw');
+    const params = {};
+    params[rw] = value;
+    const entity = getEntity();
+    return ApiC.patch(`${entity.type}/${entity.id}`, params);
+  });
+
 
   /**
    * MAIN click event listener bound to container

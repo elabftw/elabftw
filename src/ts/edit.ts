@@ -296,21 +296,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // CAN READ/WRITE SELECT
-  $(document).on('change', '.permissionSelect', function() {
-    const value = $(this).val();
-    const rw = $(this).data('rw');
-    $.post('app/controllers/EntityAjaxController.php', {
-      updatePermissions: true,
-      rw: rw,
-      id: entity.id,
-      type: entity.type,
-      value: value,
-    }).done(function(json) {
-      notif(json);
-    });
-  });
-
   // TRANSFER OWNERSHIP
   document.getElementById('new_owner').addEventListener('change', () => {
     const value = (document.getElementById('new_owner') as HTMLInputElement).value;

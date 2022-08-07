@@ -7,7 +7,6 @@
  */
 import { collectForm, reloadElement } from './misc';
 import { Api } from './Apiv2.class';
-import { Method } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!['/sysconfig.php', '/admin.php'].includes(window.location.pathname)) {
@@ -20,27 +19,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const act = (el: HTMLElement) => {
       // CREATE USER
       if (el.matches('[data-action="create-user"]')) {
-        return ApiC.send('users', Method.POST, collectForm(el.closest('div.form-group')));
+        return ApiC.post('users', collectForm(el.closest('div.form-group')));
 
       // UPDATE USER
       } else if (el.matches('[data-action="update-user"]')) {
-        return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, collectForm(el.closest('div.form-group')));
+        return ApiC.patch(`users/${el.dataset.userid}`, collectForm(el.closest('div.form-group')));
 
       // ARCHIVE USER TOGGLE
       } else if (el.matches('[data-action="toggle-archive-user"]')) {
         // show alert
         if (confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and user will not be able to login anymore.')) {
-          return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'archive'});
+          return ApiC.patch(`users/${el.dataset.userid}`, {'action': 'archive'});
         }
 
       // VALIDATE USER
       } else if (el.matches('[data-action="validate-user"]')) {
-        return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'validate'}).then(() => reloadElement('unvalidatedUsersBox'));
+        return ApiC.patch(`users/${el.dataset.userid}`, {'action': 'validate'}).then(() => reloadElement('unvalidatedUsersBox'));
 
       // DESTROY USER
       } else if (el.matches('[data-action="destroy-user"]')) {
         if (confirm('Are you sure you want to remove permanently this user and all associated data?')) {
-          return ApiC.send(`users/${el.dataset.userid}`, Method.DELETE);
+          return ApiC.delete(`users/${el.dataset.userid}`);
         }
       }
     };

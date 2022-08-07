@@ -29,7 +29,7 @@
         <div class='form-group'>
           <i class='fas fa-eye' title='Visibility'></i>
           <label for='canread_select'>{{ 'Visibility'|trans }}</label>
-          <select id='canread_select' class='permissionSelectTpl form-control' data-rw='read' data-id='{{ App.Request.query.get('templateid') }}'>
+          <select id='canread_select' class='permissionSelect form-control' data-rw='canread'>
             {% for key, value in visibilityArr %}
             <option value='{{ key }}'>{{ value|trans }}</option>
             {% endfor %}
@@ -37,7 +37,7 @@
           <!-- CAN WRITE -->
           <i class='fas fa-pencil-alt' title='Can write'></i>
           <label for='canwrite_select'>{{ 'Can write'|trans }}</label>
-          <select id='canwrite_select' class='permissionSelectTpl form-control' data-rw='write' data-id='{{ App.Request.query.get('templateid') }}'>
+          <select id='canwrite_select' class='permissionSelect form-control' data-rw='canwrite'>
             {% for key, value in visibilityArr %}
             <option value='{{ key }}'>{{ value|trans }}</option>
             {% endfor %}

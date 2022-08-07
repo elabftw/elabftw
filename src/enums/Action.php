@@ -11,6 +11,7 @@ namespace Elabftw\Enums;
 
 enum Action: string
 {
+    case Archive = 'archive';
     case Create = 'create';
     case Duplicate = 'duplicate';
     case Lock = 'lock';

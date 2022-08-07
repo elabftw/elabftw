@@ -109,7 +109,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateTooShortPassword(): void
     {
-        $Users = new Users(4);
+        $Users = new Users(4, 2, new Users(4, 2));
         $this->expectException(ImproperActionException::class);
         $Users->patch(array('password' => 'short'));
     }
@@ -127,8 +127,9 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     public function testToggleArchive(): void
     {
-        $Users = new Users(4);
-        $this->assertIsArray($Users->toggleArchive());
+        $Admin = new Users(4, 2);
+        $Users = new Users(5, 2, $Admin);
+        $this->assertIsArray($Users->patchAction(Action::Lock));
     }
 
     /*
@@ -151,18 +152,21 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testUnArchiveButAnotherUserExists(): void
     {
         // this user is archived already
-        $Users = new Users(4);
+        $Admin = new Users(4, 2);
+        $Users = new Users(5, 2, $Admin);
         // create another active user with the same email
         $NewUser = ExistingUser::fromScratch($Users->userData['email'], array('Alpha'), 'f', 'l', 4, false, false);
         // try to unarchive
         $this->expectException(ImproperActionException::class);
-        $Users->toggleArchive();
+        $Users->patchAction(Action::Lock);
     }
 
     public function testDestroy(): void
     {
-        $Users = ExistingUser::fromScratch('osef@example.com', array('Alpha'), 'f', 'l', 4, false, false);
-        $this->assertTrue($Users->destroy());
+        $Admin = new Users(4, 2);
+        $id = $Admin->createOne('testdestroy@a.fr', array('Bravo'), 'Life', 'isShort', 'yololololol', 4, false, false);
+        $Target = new Users($id, 2, $Admin);
+        $this->assertTrue($Target->destroy());
     }
 
     public function testDestroyWithExperiments(): void

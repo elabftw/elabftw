@@ -13,6 +13,7 @@ use function array_filter;
 use Elabftw\Controllers\UsersController;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
@@ -24,6 +25,7 @@ use Elabftw\Services\Check;
 use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
+use Elabftw\Services\UserArchiver;
 use Elabftw\Services\UsersHelper;
 use function filter_var;
 use function hash;
@@ -287,8 +289,9 @@ class Users implements RestInterface
 
     public function patchAction(Action $action): array
     {
+        $this->canWriteOrExplode();
         return match ($action) {
-            Action::Lock => $this->toggleArchive(),
+            Action::Lock, Action::Archive => (new UserArchiver($this))->toggleArchive(),
             Action::Validate => $this->validate(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
@@ -309,6 +312,7 @@ class Users implements RestInterface
 
     public function update(ContentParamsInterface $params): bool
     {
+        $this->canWriteOrExplode();
         // special case for password: we invalidate the stored token
         if ($params->getTarget() === 'password') {
             $this->invalidateToken();
@@ -336,16 +340,6 @@ class Users implements RestInterface
         return $this->Db->execute($req);
     }
 
-    /**
-     * Archive/Unarchive a user
-     */
-    public function toggleArchive(): array
-    {
-        $this->userData['archived'] === 0 ? $this->archive() : $this->unarchive();
-        $this->toggleArchiveSql();
-        return $this->readOne();
-    }
-
     public function allowUntrustedLogin(): bool
     {
         $sql = 'SELECT allow_untrusted, auth_lock_time > (NOW() - INTERVAL 1 HOUR) AS currently_locked FROM users WHERE userid = :userid';
@@ -366,6 +360,8 @@ class Users implements RestInterface
      */
     public function destroy(): bool
     {
+        $this->canWriteOrExplode();
+
         $UsersHelper = new UsersHelper($this->userData['userid']);
         if ($UsersHelper->cannotBeDeleted()) {
             throw new ImproperActionException('Cannot delete a user that owns experiments or items!');
@@ -391,16 +387,13 @@ class Users implements RestInterface
     }
 
     /**
-     * Lock all the experiments owned by user
+     * Check if requester can act on this User
      */
-    private function lockExperiments(): bool
+    private function canWriteOrExplode(): void
     {
-        $sql = 'UPDATE experiments
-            SET locked = :locked, lockedby = :userid, lockedwhen = CURRENT_TIMESTAMP WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':locked', 1);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        if (!$this->requester->isAdminOf($this->userid)) {
+            throw new IllegalActionException(Tools::error(true));
+        }
     }
 
     /**
@@ -416,31 +409,6 @@ class Users implements RestInterface
         $Notifications = new Notifications($this);
         $Notifications->create(new CreateNotificationParams(Notifications::SELF_IS_VALIDATED));
         return $this->readOne();
-    }
-
-    private function toggleArchiveSql(): bool
-    {
-        $sql = 'UPDATE users SET archived = IF(archived = 1, 0, 1), token = null WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
-    private function unarchive(): bool
-    {
-        if ($this->getUnarchivedCount() > 0) {
-            throw new ImproperActionException('Cannot unarchive this user because they have another active account with the same email!');
-        }
-        return true;
-    }
-
-    private function archive(): bool
-    {
-        if ($this->userData['validated'] === 0) {
-            throw new ImproperActionException('You are trying to archive an unvalidated user. Maybe you want to delete the account?');
-        }
-        // if we are archiving a user, also lock all experiments
-        return $this->lockExperiments();
     }
 
     /**
@@ -476,15 +444,5 @@ class Users implements RestInterface
             $Notifications = new Notifications(new self((int) $admin));
             $Notifications->create(new CreateNotificationParams($notifCat, $body));
         }
-    }
-
-    // if the user is already archived, make sure there is no other account with the same email
-    private function getUnarchivedCount(): int
-    {
-        $sql = 'SELECT COUNT(email) FROM users WHERE email = :email AND archived = 0';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $this->userData['email']);
-        $this->Db->execute($req);
-        return (int) $req->fetchColumn();
     }
 }

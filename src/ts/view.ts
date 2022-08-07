@@ -58,11 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // DUPLICATE
     if (el.matches('[data-action="duplicate-entity"]')) {
-      EntityC.duplicate(entity.id).then((json) => {
-        if (json.res) {
-          window.location.href = `?mode=edit&id=${json.value}`;
-        }
-      });
+      EntityC.duplicate(entity.id).then(resp => window.location.href = resp.headers.get('location'));
 
     // EDIT
     } else if (el.matches('[data-action="edit"]')) {
@@ -71,11 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE LOCK
     } else if (el.matches('[data-action="lock-entity"]')) {
       // reload the page to change the icon and make the edit button disappear (#1897)
-      EntityC.lock(entity.id).then((json) => {
-        if (json.res) {
-          window.location.href = `?mode=view&id=${entity.id}`;
-        }
-      });
+      EntityC.lock(entity.id).then(() => window.location.href = `?mode=view&id=${entity.id}`);
 
     // SEE EVENTS
     } else if (el.matches('[data-action="see-events"]')) {

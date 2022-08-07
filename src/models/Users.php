@@ -13,6 +13,7 @@ use function array_filter;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\UserParams;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\ParamsInterface;
@@ -249,6 +250,15 @@ class Users implements RestInterface
         return (int) $req->fetchColumn();
     }
 
+    public function patchAction(Action $action): array
+    {
+        return match ($action) {
+            Action::Lock => $this->toggleArchive(),
+            Action::Validate => $this->validate(),
+            default => throw new ImproperActionException('Invalid action parameter.'),
+        };
+    }
+
     public function patch(array $params): array
     {
         foreach ($params as $target => $content) {
@@ -292,35 +302,13 @@ class Users implements RestInterface
     }
 
     /**
-     * Validate current user instance
-     * Note: this could also be PATCHed?
-     */
-    public function validate(): array
-    {
-        $sql = 'UPDATE users SET validated = 1 WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $Notifications = new Notifications($this);
-        $Notifications->create(new CreateNotificationParams(Notifications::SELF_IS_VALIDATED));
-        return $this->readOne();
-    }
-
-    /**
      * Archive/Unarchive a user
      */
-    public function toggleArchive(): bool
+    public function toggleArchive(): array
     {
-        if ($this->userData['archived']) {
-            if ($this->getUnarchivedCount() > 0) {
-                throw new ImproperActionException('Cannot unarchive this user because they have another active account with the same email!');
-            }
-        }
-
-        $sql = 'UPDATE users SET archived = IF(archived = 1, 0, 1), token = null WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $this->userData['archived'] === 0 ? $this->archive() : $this->unarchive();
+        $this->toggleArchiveSql();
+        return $this->readOne();
     }
 
     /**
@@ -378,6 +366,46 @@ class Users implements RestInterface
         }
         $TeamsHelper = new TeamsHelper($this->userData['team']);
         return $TeamsHelper->isUserInTeam($userid) && $this->userData['is_admin'] === 1;
+    }
+
+    /**
+     * Validate current user instance
+     * Note: this could also be PATCHed?
+     */
+    private function validate(): array
+    {
+        $sql = 'UPDATE users SET validated = 1 WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $Notifications = new Notifications($this);
+        $Notifications->create(new CreateNotificationParams(Notifications::SELF_IS_VALIDATED));
+        return $this->readOne();
+    }
+
+    private function toggleArchiveSql(): bool
+    {
+        $sql = 'UPDATE users SET archived = IF(archived = 1, 0, 1), token = null WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    private function unarchive(): bool
+    {
+        if ($this->getUnarchivedCount() > 0) {
+            throw new ImproperActionException('Cannot unarchive this user because they have another active account with the same email!');
+        }
+        return true;
+    }
+
+    private function archive(): bool
+    {
+        if ($this->userData['validated'] === 0) {
+            throw new ImproperActionException('You are trying to archive an unvalidated user. Maybe you want to delete the account?');
+        }
+        // if we are archiving a user, also lock all experiments
+        return $this->lockExperiments();
     }
 
     /**

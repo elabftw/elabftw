@@ -42,9 +42,10 @@ class Pins
     /**
      * Add/remove current entity as pinned for current user
      */
-    public function togglePin(): bool
+    public function togglePin(): array
     {
-        return $this->isPinned() ? $this->rmFromPinned() : $this->addToPinned();
+        $this->isPinned() ? $this->rmFromPinned() : $this->addToPinned();
+        return $this->Entity->readOne();
     }
 
     /**

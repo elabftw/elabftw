@@ -15,6 +15,7 @@ use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -170,7 +171,7 @@ abstract class AbstractEntity implements RestInterface
     /**
      * Lock/unlock
      */
-    public function toggleLock(): bool
+    public function toggleLock(): array
     {
         $this->getPermissions();
         if (!$this->Users->userData['is_admin'] && $this->entityData['userid'] !== $this->Users->userData['userid']) {
@@ -198,7 +199,8 @@ abstract class AbstractEntity implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':lockedby', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $this->Db->execute($req);
+        return $this->readOne();
     }
 
     public function readAll(): array
@@ -371,6 +373,15 @@ abstract class AbstractEntity implements RestInterface
         return $allTags;
     }
 
+    public function patchAction(Action $action): array
+    {
+        return match ($action) {
+            Action::Lock => $this->toggleLock(),
+            Action::Pin => $this->Pins->togglePin(),
+            default => throw new ImproperActionException('Invalid action parameter.'),
+        };
+    }
+
     public function patch(array $params): array
     {
         foreach ($params as $key => $value) {
@@ -417,7 +428,7 @@ abstract class AbstractEntity implements RestInterface
                 $content = $params->getState();
                 break;
             default:
-                throw new ImproperActionException('Invalid update target: ' . $params->getTarget());
+                throw new ImproperActionException('Invalid update target.');
         }
 
         // save a revision for body target

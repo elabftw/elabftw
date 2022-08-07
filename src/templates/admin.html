@@ -2,6 +2,7 @@
 
 {% block body %}
 <!-- UNVALIDATED USERS BLOCK -->
+<div id='unvalidatedUsersBox'>
 {% if unvalidatedUsersArr %}
   <div class='box'>
     {{ 'There are users waiting for validation of their account:'|trans|msg('warning', false) }}
@@ -14,6 +15,7 @@
     </ul>
   </div>
 {% endif %}
+</div>
 
 <!-- ADMIN PANEL MAIN MENU -->
 <ul class='tabbed-menu'>

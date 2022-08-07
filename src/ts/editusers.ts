@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // VALIDATE USER
       } else if (el.matches('[data-action="validate-user"]')) {
-        return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'validate'});
+        return ApiC.send(`users/${el.dataset.userid}`, Method.PATCH, {'action': 'validate'}).then(() => reloadElement('unvalidatedUsersBox'));
 
       // DESTROY USER
       } else if (el.matches('[data-action="destroy-user"]')) {

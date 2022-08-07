@@ -303,13 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tplid = el.dataset.tplid;
         const urlParams = new URLSearchParams(document.location.search);
         const tags = urlParams.getAll('tags[]');
-        (new EntityClass(EntityType.Experiment)).create(tplid, tags).then(json => {
-          if (json.res) {
-            window.location.replace(`experiments.php?mode=edit&id=${json.value}`);
-          } else {
-            notif(json);
-          }
-        });
+        (new EntityClass(EntityType.Experiment)).create(tplid, tags).then(resp => window.location.href = resp.headers.get('location'));
       } else {
         // for database items, show a selection modal
         // modal plugin requires jquery

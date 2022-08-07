@@ -30,18 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // CREATE EXPERIMENT or DATABASE item with shortcut
   key(document.getElementById('shortcuts').dataset.create, function() {
-    if (about.type === 'experiments' && window.location.pathname !== '/search.php') {
+    if (about.type === 'experiments') {
       const el = document.querySelector('[data-action="create-entity"]') as HTMLButtonElement;
       const tplid = el.dataset.tplid;
       const urlParams = new URLSearchParams(document.location.search);
       const tags = urlParams.getAll('tags[]');
-      EntityC.create(tplid, tags).then(json => {
-        if (json.res) {
-          window.location.replace(`?mode=edit&id=${json.value}`);
-        } else {
-          notif(json);
-        }
-      });
+      EntityC.create(tplid, tags).then(resp => window.location.href = resp.headers.get('location'));
     } else {
       // for database items, show a selection modal
       // modal plugin requires jquery
@@ -364,14 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       // loop on it and delete stuff
-      checked.forEach(chk => {
-        EntityC.destroy(chk.id).then(json => {
-          if (json.res) {
-            $('#parent_' + chk.randomid).hide(200);
-          }
-        });
-      });
-
+      checked.forEach(chk => EntityC.destroy(chk.id).then(() => $('#parent_' + chk.randomid).hide(200)));
     }
   });
 

@@ -171,8 +171,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Shared function to UPDATE ENTITY BODY via save shortcut and/or save button
   function updateEntityBody(el?: HTMLElement): void {
-    EntityC.update(entity.id, Target.Body, editor.getContent()).then(json => {
-      if (json.res && editor.type === 'tiny') {
+    EntityC.update(entity.id, Target.Body, editor.getContent()).then(() => {
+      if (editor.type === 'tiny') {
         // set the editor as non dirty so we can navigate out without a warning to clear
         tinymce.activeEditor.setDirty(false);
       }
@@ -273,11 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="destroy"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
         const path = window.location.pathname;
-        EntityC.destroy(entity.id).then(json => {
-          if (json.res) {
-            window.location.replace(path.split('/').pop());
-          }
-        });
+        EntityC.destroy(entity.id).then(() => window.location.replace(path.split('/').pop()));
       }
 
     // SHOW CONTENT OF PLAIN TEXT FILES
@@ -318,11 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // TRANSFER OWNERSHIP
   document.getElementById('new_owner').addEventListener('change', () => {
     const value = (document.getElementById('new_owner') as HTMLInputElement).value;
-    EntityC.update(entity.id, Target.UserId, value).then(json => {
-      if (json.res) {
-        window.location.reload();
-      }
-    });
+    EntityC.update(entity.id, Target.UserId, value).then(() => window.location.reload());
   });
 
   // STATUS SELECT

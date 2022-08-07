@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const TemplateC = new EntityClass(EntityType.Template);
     // IMPORT TPL
     if (el.matches('[data-action="import-template"]')) {
-      TemplateC.duplicate(parseInt(el.dataset.id)).then(json => notif(json));
+      TemplateC.duplicate(parseInt(el.dataset.id));
 
     // DESTROY TEMPLATE
     } else if (el.matches('[data-action="destroy-template"]')) {

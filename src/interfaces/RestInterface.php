@@ -9,12 +9,16 @@
 
 namespace Elabftw\Interfaces;
 
+use Elabftw\Enums\Action;
+
 /**
  * For models that are Crud + other stuff needed by api
  */
 interface RestInterface extends CrudInterface
 {
     public function patch(array $params): array;
+
+    public function patchAction(Action $action): array;
 
     public function getViewPage(): string;
 }

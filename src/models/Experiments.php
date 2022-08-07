@@ -177,6 +177,19 @@ class Experiments extends AbstractConcreteEntity
         if ($this->entityData['timestamped'] === 1) {
             throw new IllegalActionException('User tried to delete an experiment that was timestamped.');
         }
+        // FIXME: with external api calls we don't know the team of the user, so we cannot check for this setting
+        // either remove the setting because it's a soft delete anyway, or find another way
+        // for the moment disallow this action
+        if (empty($this->Users->userData['team'])) {
+            throw new ImproperActionException('DELETE action of experiments through API is not supported.');
+        }
+        $Teams = new Teams($this->Users);
+        $teamConfigArr = $Teams->readOne();
+        $Config = Config::getConfig();
+        if ((!$teamConfigArr['deletable_xp'] && !$this->Users->userData['is_admin'])
+            || $Config->configArr['deletable_xp'] === 0) {
+            throw new ImproperActionException('You cannot delete experiments!');
+        }
         // delete from pinned too
         return parent::destroy() && $this->Pins->cleanup();
     }

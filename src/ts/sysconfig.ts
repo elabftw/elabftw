@@ -184,6 +184,9 @@ document.addEventListener('DOMContentLoaded', () => {
         parseInt(el.dataset.teamid, 10),
         parseInt(el.dataset.userid, 10),
       );
+    // DESTROY ts_password
+    } else if (el.matches('[data-action="destroy-ts-password"]')) {
+      ApiC.send('config', Method.PATCH, {'ts_password': ''}).then(() => reloadElement('ts_loginpass'));
     // PATCH ANNOUNCEMENT - save or clear
     } else if (el.matches('[data-action="patch-announcement"]')) {
       const input = (document.getElementById(el.dataset.inputid) as HTMLInputElement);

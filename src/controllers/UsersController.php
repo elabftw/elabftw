@@ -35,19 +35,6 @@ class UsersController
     }
 
     /**
-     * Handle an action
-     */
-    public function handleAction(): array
-    {
-        return match ($this->reqBody['action']) {
-            'archive' => $this->archive(),
-            'validate' => $this->target->validate(),
-            // if no specific action is set, create a user
-            default => throw new ImproperActionException('Invalid action provided to user controller.'),
-        };
-    }
-
-    /**
      * Create a user from admin/sysadmin panels
      */
     public function create(): int
@@ -89,21 +76,6 @@ class UsersController
             // don't alert admin
             false,
         );
-    }
-
-    private function archive(): array
-    {
-        if ($this->target->userData['validated'] === 0) {
-            throw new ImproperActionException('You are trying to archive an unvalidated user. Maybe you want to delete the account?');
-        }
-
-        $this->target->toggleArchive();
-
-        // if we are archiving a user, also lock all experiments
-        if ($this->target->userData['archived'] === 0) {
-            $this->target->lockExperiments();
-        }
-        return $this->target->readOne();
     }
 
     private function checkUsergroup(): int

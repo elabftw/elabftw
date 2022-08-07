@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 
@@ -120,13 +121,13 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testValidate(): void
     {
         // current user is already validated but that's ok
-        $this->assertIsArray($this->Users->validate());
+        $this->assertIsArray($this->Users->patchAction(Action::Validate));
     }
 
     public function testToggleArchive(): void
     {
         $Users = new Users(4);
-        $this->assertTrue($Users->toggleArchive());
+        $this->assertIsArray($Users->toggleArchive());
     }
 
     /*

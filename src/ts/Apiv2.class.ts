@@ -22,7 +22,8 @@ export class Api {
       body: JSON.stringify(params),
     }).then(response => {
       if (response.status !== this.getOkStatusFromMethod(method)) {
-        throw new Error('An unexpected error occurred!');
+        // if there is an error we will get the message in the reply body
+        return response.json().then(json => { throw new Error(json.description); });
       }
       return response;
     }).then(response => {

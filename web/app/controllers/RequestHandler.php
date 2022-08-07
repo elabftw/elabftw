@@ -17,7 +17,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Factories\ProcessorFactory;
-use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
@@ -25,7 +24,6 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
 use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
-use Elabftw\Models\Teams;
 use Elabftw\Models\Users2Teams;
 use Elabftw\Services\MakeBloxberg;
 use Elabftw\Services\MakeCustomTimestamp;
@@ -96,28 +94,14 @@ try {
         $res = $Model->replace($Params);
     } elseif ($action === 'destroy') {
         if ($Model instanceof Experiments) {
-            $Teams = new Teams($App->Users);
-            $teamConfigArr = $Teams->readOne();
-            if ((!$teamConfigArr['deletable_xp'] && !$App->Session->get('is_admin'))
-                || $App->Config->configArr['deletable_xp'] === '0') {
-                throw new ImproperActionException('You cannot delete experiments!');
-            }
             $res = $Model->destroy();
         } elseif ($Model instanceof Users2Teams) {
             $res = $Model->destroy($Params);
         } else {
             $res = $Model->destroy();
         }
-    } elseif ($action === 'destroystamppass' && $Model instanceof Config) {
-        $res = $Model->destroyStamppass();
-    } elseif ($action === 'duplicate' && $Model instanceof AbstractEntity) {
-        $res = $Model->duplicate();
     } elseif ($action === 'deduplicate' && $Model instanceof Tags) {
         $res = $Model->deduplicate();
-    } elseif ($action === 'lock' && $Model instanceof AbstractEntity) {
-        $res = $Model->toggleLock();
-    } elseif ($action === 'pin' && $Model instanceof AbstractEntity) {
-        $res = $Model->Pins->togglePin();
     } elseif ($action === 'importlinks' && $Model instanceof Links) {
         $res = $Model->import();
     // TIMESTAMP

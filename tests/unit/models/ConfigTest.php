@@ -48,11 +48,6 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $this->Config->patch($post);
     }
 
-    public function testDestroyStamppass(): void
-    {
-        $this->Config->destroyStamppass();
-    }
-
     public function testRestoreDefaults(): void
     {
         $this->Config->destroy();

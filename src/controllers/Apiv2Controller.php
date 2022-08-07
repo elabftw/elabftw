@@ -11,6 +11,7 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Action;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -41,6 +42,8 @@ class Apiv2Controller extends AbstractApiController
     private array $reqBody = array();
 
     private ExportFormat $format = ExportFormat::Json;
+
+    private Action $action = Action::Create;
 
     public function getResponse(): Response
     {
@@ -95,9 +98,10 @@ class Apiv2Controller extends AbstractApiController
         // load Model
         $this->Model = $this->getModel();
 
+        // FORMAT
         if ($this->Request->query->has('format') && $this->Model instanceof AbstractConcreteEntity) {
             try {
-                $this->format = ExportFormat::from((string) $this->Request->query->get('format'));
+                $this->format = ExportFormat::from($this->Request->query->getAlpha('format'));
             } catch (ValueError $e) {
                 throw new ImproperActionException('Incorrect format value.');
             }
@@ -106,9 +110,14 @@ class Apiv2Controller extends AbstractApiController
         }
         if ($this->Request->getContent()) {
             try {
+                // SET REQBODY
                 $this->reqBody = json_decode((string) $this->Request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+                // SET ACTION
+                $this->action = Action::tryFrom((string) $this->reqBody['action']) ?? $this->action;
             } catch (JsonException $e) {
                 throw new ImproperActionException('Error decoding json payload.');
+            } catch (ValueError $e) {
+                throw new ImproperActionException('Incorrect action value.');
             }
         }
     }
@@ -117,11 +126,18 @@ class Apiv2Controller extends AbstractApiController
     {
         $id = 0;
         if ($this->Model instanceof AbstractEntity) {
-            // todo make it so we don't need to cast to string!!
-            // idea: just send the reqBody to the create function
-            $params = new EntityParams((string) ($this->reqBody['category_id'] ?? -1));
-            // @phpstan-ignore-next-line
-            $id = $this->Model->create($params);
+            switch ($this->action) {
+                case Action::Create:
+                    // todo make it so we don't need to cast to string!!
+                    // idea: just send the reqBody to the create function
+                    $params = new EntityParams((string) ($this->reqBody['category_id'] ?? -1), '', array('tags' => $this->reqBody['tags']));
+                    // @phpstan-ignore-next-line
+                    $id = $this->Model->create($params);
+                    break;
+                case Action::Duplicate:
+                    $id = $this->Model->duplicate();
+                    break;
+            }
         } elseif ($this->Model instanceof Users) {
             // Users model is special because we don't know who is the requester in the object, so there is a need for special checks
             // and this is done in UsersController
@@ -156,9 +172,9 @@ class Apiv2Controller extends AbstractApiController
 
     private function handlePatch(): array
     {
-        if ($this->Model instanceof Users && !empty($this->reqBody['action'])) {
-            $Controller = new UsersController($this->Users, $this->Model, $this->reqBody);
-            return $Controller->handleAction();
+        // Create is the default action but there are no create patch actions, they are POST
+        if ($this->action !== Action::Create) {
+            return $this->Model->patchAction($this->action);
         }
         return $this->Model->patch($this->reqBody);
     }

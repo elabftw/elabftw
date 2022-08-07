@@ -311,19 +311,6 @@ class Users implements RestInterface
         return $this->readOne();
     }
 
-    /**
-     * Lock all the experiments owned by user
-     */
-    public function lockExperiments(): bool
-    {
-        $sql = 'UPDATE experiments
-            SET locked = :locked, lockedby = :userid, lockedwhen = CURRENT_TIMESTAMP WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':locked', 1);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
     public function allowUntrustedLogin(): bool
     {
         $sql = 'SELECT allow_untrusted, auth_lock_time > (NOW() - INTERVAL 1 HOUR) AS currently_locked FROM users WHERE userid = :userid';
@@ -366,6 +353,19 @@ class Users implements RestInterface
         }
         $TeamsHelper = new TeamsHelper($this->userData['team']);
         return $TeamsHelper->isUserInTeam($userid) && $this->userData['is_admin'] === 1;
+    }
+
+    /**
+     * Lock all the experiments owned by user
+     */
+    private function lockExperiments(): bool
+    {
+        $sql = 'UPDATE experiments
+            SET locked = :locked, lockedby = :userid, lockedwhen = CURRENT_TIMESTAMP WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':locked', 1);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     /**

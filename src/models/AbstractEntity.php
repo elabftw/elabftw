@@ -410,11 +410,14 @@ abstract class AbstractEntity implements RestInterface
             case 'bodyappend':
                 $content = $this->readOne()['body'] . $params->getBody();
                 break;
+            case 'category':
+                $content = $params->getInt();
+                break;
             case 'content_type':
-                $content = $params->getState();
+                $content = $params->getInt();
                 break;
             case 'rating':
-                $content = $params->getRating();
+                $content = $params->getInt();
                 break;
             case 'metadata':
                 $content = $params->getMetadata();
@@ -422,10 +425,10 @@ abstract class AbstractEntity implements RestInterface
             case 'metadatafield':
                 return $this->updateJsonField($params);
             case 'userid':
-                $content = $params->getUserId();
+                $content = $params->getInt();
                 break;
             case 'state':
-                $content = $params->getState();
+                $content = $params->getInt();
                 break;
             default:
                 throw new ImproperActionException('Invalid update target.');
@@ -573,22 +576,6 @@ abstract class AbstractEntity implements RestInterface
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-    }
-
-    /**
-     * Update the category for an entity
-     *
-     * @param int $category id of the category (status or items types)
-     */
-    public function updateCategory(int $category): bool
-    {
-        $this->canOrExplode('write');
-
-        $sql = 'UPDATE ' . $this->type . ' SET category = :category WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':category', $category, PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
     }
 
     /**

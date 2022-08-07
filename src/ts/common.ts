@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const tplid = el.dataset.tplid;
       const urlParams = new URLSearchParams(document.location.search);
       const tags = urlParams.getAll('tags[]');
-      (new EntityClass(EntityType.Item)).create(tplid, tags).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
+      (new EntityClass(EntityType.Item)).create(tplid, tags).then(resp => window.location.href = resp.headers.get('location'));
 
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;

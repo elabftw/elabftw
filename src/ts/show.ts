@@ -7,10 +7,12 @@
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement } from './misc';
+import { Method } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import FavTag from './FavTag.class';
+import { Api } from './Apiv2.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -27,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const limit = parseInt(about.limit, 10);
   const EntityC = new EntityClass(entity.type);
   const FavTagC = new FavTag();
+  const ApiC = new Api();
 
   // CREATE EXPERIMENT or DATABASE item with shortcut
   key(document.getElementById('shortcuts').dataset.create, function() {
@@ -120,12 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // loop on it and update the status/item type
       checked.forEach(chk => {
-        ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
-          updateCategory : true,
-          id: chk.id,
-          categoryId : el.value,
-          type : about.type,
-        }));
+        ajaxs.push(ApiC.send(`${about.type}/${chk.id}`, Method.PATCH, {'category': el.value}));
       });
       // reload the page once it's done
       // a simple reload would not work here

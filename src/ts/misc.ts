@@ -16,6 +16,7 @@ declare const MathJax: MathJaxObject;
 import { Payload, Method, Model, Action, Target } from './interfaces';
 import { Ajax } from './Ajax.class';
 import i18next from 'i18next';
+import { Api } from './Apiv2.class';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -314,14 +315,9 @@ export function addAutocompleteToTagInputs(): void {
 }
 
 export function updateCategory(entity: Entity, value: string): string {
-  $.post('app/controllers/EntityAjaxController.php', {
-    updateCategory: true,
-    id: entity.id,
-    type: entity.type,
-    categoryId : value,
-  }).done(function(json) {
-    notif(json);
-    if (json.res) {
+  const ApiC = new Api();
+  ApiC.send(`${entity.type}/${entity.id}`, Method.PATCH, {'category': value}).then(resp => {
+    resp.json().then(json => {
       // change the color of the item border
       // we first remove any status class
       $('#main_section').css('border', null);
@@ -329,7 +325,7 @@ export function updateCategory(entity: Entity, value: string): string {
       // first : get what is the color of the new status
       const css = '6px solid #' + json.color;
       $('#main_section').css('border-left', css);
-    }
+    });
   });
   return value;
 }

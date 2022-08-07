@@ -48,7 +48,7 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     protected ?int $id = null;
 
-    protected CrudInterface | Users | Config | Users2Teams $Model;
+    protected CrudInterface | Users2Teams $Model;
 
     protected array $extra = array();
 
@@ -57,7 +57,7 @@ abstract class AbstractProcessor implements ProcessorInterface
         $this->process($request);
     }
 
-    public function getModel(): CrudInterface | Users | Config | Users2Teams
+    public function getModel(): CrudInterface | Users2Teams
     {
         return $this->Model;
     }
@@ -88,13 +88,11 @@ abstract class AbstractProcessor implements ProcessorInterface
         $this->target = Check::target($target);
     }
 
-    protected function buildModel(string $model): CrudInterface | Users | Config | Users2Teams
+    protected function buildModel(string $model): CrudInterface | Users2Teams
     {
         switch ($model) {
             case 'apikey':
                 return new ApiKeys($this->Users, $this->id);
-            case 'config':
-                return Config::getConfig();
             case 'status':
                 return new Status($this->Users->team, $this->id);
             case 'comment':
@@ -126,8 +124,6 @@ abstract class AbstractProcessor implements ProcessorInterface
                 return $this->Entity;
             case 'todolist':
                 return new Todolist((int) $this->Users->userData['userid'], $this->id);
-            case 'user':
-                return $this->Users;
             case 'user2team':
                 return new Users2Teams();
             default:

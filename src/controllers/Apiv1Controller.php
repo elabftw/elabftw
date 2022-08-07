@@ -987,7 +987,7 @@ class Apiv1Controller extends AbstractApiController
      */
     private function updateCategory(): Response
     {
-        $this->Entity->updateCategory((int) $this->Request->request->get('category'));
+        $this->Entity->patch(array('category' => (int) $this->Request->request->get('category')));
         return new JsonResponse(array('result' => 'success'));
     }
 

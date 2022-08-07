@@ -39,8 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const title = prompt(i18next.t('template-title'));
       if (title) {
         // no body on template creation
-        EntityC.create(title, []).then(json => {
-          window.location.replace(`ucp.php?tab=3&templateid=${json.value}`);
+        EntityC.create(title, []).then(resp => {
+          resp.json().then(json => {
+            window.location.replace(`ucp.php?tab=3&templateid=${json.value}`);
+          });
         });
       }
     // LOCK TEMPLATE

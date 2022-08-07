@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
     EntityC.update(entity.id, Target.UserId, value).then(() => window.location.reload());
   });
 
-  // STATUS SELECT
+  // CATEGORY SELECT
   $(document).on('change', '#category_select', function() {
     updateCategory(entity, String($(this).val()));
   });

@@ -22,13 +22,9 @@ interface EntityParamsInterface extends ContentParamsInterface
 
     public function getExtraBody(): string;
 
-    public function getRating(): int;
-
     public function getMetadata(): string;
 
     public function getField(): string;
-
-    public function getUserId(): int;
 
     public function getState(): int;
 }

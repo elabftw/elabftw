@@ -15,6 +15,8 @@ interface ContentParamsInterface
 
     public function getTarget(): string;
 
+    public function getInt(): int;
+
     public function getColumn(): string;
 
     public function getBody(): string;

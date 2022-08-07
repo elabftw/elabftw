@@ -12,7 +12,6 @@ namespace Elabftw\Elabftw;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
@@ -23,7 +22,6 @@ use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
-use Elabftw\Models\Users;
 use Elabftw\Models\Users2Teams;
 
 /**
@@ -32,7 +30,7 @@ use Elabftw\Models\Users2Teams;
 class ParamsBuilder
 {
     public function __construct(
-        private CrudInterface | Users | Config | Users2Teams $model,
+        private CrudInterface | Users2Teams $model,
         private string $content = '',
         private string $target = '',
         private array $extra = array(),

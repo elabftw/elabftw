@@ -90,7 +90,7 @@ class Populate
 
             // change the category (status/item type)
             $category = $this->faker->randomElement($categoryArr);
-            $Entity->updateCategory((int) $category['category_id']);
+            $Entity->patch(array('category' => (int) $category['category_id']));
 
             // maybe upload a file but not on the first one
             if ($this->faker->randomDigit() > 7 && $id !== 1) {

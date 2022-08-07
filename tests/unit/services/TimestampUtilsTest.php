@@ -59,8 +59,6 @@ class TimestampUtilsTest extends \PHPUnit\Framework\TestCase
         $Entity = new Experiments(new Users(1, 1));
         // create a new experiment for timestamping tests
         $Entity->setId($Entity->create(new EntityParams('ts test')));
-        // set it to a status that is timestampable
-        $Entity->updateCategory(2);
         return $Entity;
     }
 }

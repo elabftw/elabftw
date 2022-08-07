@@ -18,8 +18,6 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Factories\EntityFactory;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Status;
 use Elabftw\Services\ListBuilder;
 use Exception;
 use function mb_convert_encoding;
@@ -112,24 +110,6 @@ try {
         $realName = $Request->files->get('file')->getClientOriginalName();
         $filePath = $Request->files->get('file')->getPathname();
         $Entity->Uploads->create(new CreateUpload($realName, $filePath));
-    }
-
-    // UPDATE CATEGORY (item type or status)
-    if ($Request->request->has('updateCategory')) {
-        $id = (int) $Request->request->get('categoryId');
-        $Entity->updateCategory($id);
-        // get the color of the status/item type for updating the css
-        if ($Entity instanceof Experiments) {
-            $Category = new Status($App->Users->team, $id);
-        } else {
-            $Category = new ItemsTypes($App->Users, $id);
-        }
-        $category = $Category->readOne();
-        $Response->setData(array(
-            'res' => true,
-            'msg' => _('Saved'),
-            'color' => $category['color'],
-        ));
     }
 } catch (ImproperActionException | UnauthorizedException | PDOException $e) {
     $Response->setData(array(

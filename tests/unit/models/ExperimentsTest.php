@@ -83,8 +83,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     public function testUpdateCategory(): void
     {
         $this->Experiments->setId(1);
-        $this->Experiments->canOrExplode('write');
-        $this->Experiments->updateCategory(3);
+        $this->assertIsArray($this->Experiments->patch(array('category' => 3)));
     }
 
     public function testDuplicate(): void

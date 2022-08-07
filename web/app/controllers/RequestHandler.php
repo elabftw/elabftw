@@ -70,18 +70,16 @@ try {
         throw new IllegalActionException('Non admin user tried to edit status or items types.');
     }
     // only sysadmins can update the config
-    if ((($action === 'update' && $Model instanceof Config)
-        || (($action === 'create' || $action === 'destroy') && $Model instanceof Users2Teams)) && !$App->Users->userData['is_sysadmin']) {
+    if (((($action === 'create' || $action === 'destroy') && $Model instanceof Users2Teams)) && !$App->Users->userData['is_sysadmin']) {
         throw new IllegalActionException('Non sysadmin user tried to update instance config or edit users2teams.');
     }
 
-
-    if ($action === 'create' && !$Model instanceof Config) {
+    if ($action === 'create') {
         $res = $Model->create($Params);
         if ($Model instanceof ApiKeys) {
             $res = $Params->getKey();
         }
-    } elseif ($action === 'read' && !$Model instanceof Config) {
+    } elseif ($action === 'read') {
         $res = $Model->read($Params);
     } elseif ($action === 'update') {
         // TODO should not exist, but it's here for now

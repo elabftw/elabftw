@@ -47,11 +47,6 @@ class EntityParams extends ContentParams implements EntityParamsInterface
         return Filter::body($this->extra['body'] ?? '');
     }
 
-    public function getRating(): int
-    {
-        return (int) $this->content;
-    }
-
     public function getMetadata(): string
     {
         return $this->content;
@@ -60,11 +55,6 @@ class EntityParams extends ContentParams implements EntityParamsInterface
     public function getField(): string
     {
         return json_encode($this->extra['jsonField'] ?? '', JSON_HEX_APOS | JSON_THROW_ON_ERROR);
-    }
-
-    public function getUserId(): int
-    {
-        return (int) $this->content;
     }
 
     public function getState(): int

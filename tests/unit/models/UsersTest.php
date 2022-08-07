@@ -161,7 +161,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testLockExperiments(): void
     {
         $Users = new Users(4);
-        $this->assertTrue($this->Users->lockExperiments());
+        $this->assertTrue($this->Users->patchAction(Action::Lock));
     }
 
     public function testDestroy(): void

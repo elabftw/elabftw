@@ -16,7 +16,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use PDO;
 use const SECRET_KEY;
@@ -196,18 +195,6 @@ final class Config implements RestInterface
         return array_map(function ($v) {
             return $v[0];
         }, $config);
-    }
-
-    public function update(ContentParamsInterface $params): bool
-    {
-        $column = $params->getTarget();
-        $content = $params->getContent();
-
-        $sql = 'UPDATE config SET conf_value = :value WHERE conf_name = :name';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':value', $content);
-        $req->bindParam(':name', $column);
-        return $this->Db->execute($req);
     }
 
     public function patchAction(Action $action): array

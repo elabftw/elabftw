@@ -373,6 +373,18 @@ abstract class AbstractEntity implements RestInterface
         return $allTags;
     }
 
+    public function postAction(Action $action, array $reqBody): int
+    {
+        return match ($action) {
+            // todo make it so we don't need to cast to string!!
+            // idea: just send the reqBody to the create function
+            // @phpstan-ignore-next-line
+            Action::Create => $this->create(new EntityParams((string) ($reqBody['category_id'] ?? -1), '', array('tags' => $reqBody['tags']))),
+            Action::Duplicate => $this->duplicate(),
+            default => throw new ImproperActionException('Invalid action parameter.'),
+        };
+    }
+
     public function patchAction(Action $action): array
     {
         return match ($action) {
@@ -385,7 +397,7 @@ abstract class AbstractEntity implements RestInterface
     public function patch(array $params): array
     {
         foreach ($params as $key => $value) {
-            $this->update(new EntityParams($value, $key));
+            $this->update(new EntityParams((string) $value, $key));
         }
         return $this->readOne();
     }

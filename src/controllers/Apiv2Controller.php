@@ -9,7 +9,6 @@
 
 namespace Elabftw\Controllers;
 
-use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ExportFormat;
@@ -19,7 +18,6 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\EntityFactory;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\AbstractConcreteEntity;
-use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use function implode;
@@ -124,29 +122,7 @@ class Apiv2Controller extends AbstractApiController
 
     private function handlePost(): Response
     {
-        $id = 0;
-        if ($this->Model instanceof AbstractEntity) {
-            // TODO this moves in postAction in models
-            switch ($this->action) {
-                case Action::Create:
-                    // todo make it so we don't need to cast to string!!
-                    // idea: just send the reqBody to the create function
-                    $params = new EntityParams((string) ($this->reqBody['category_id'] ?? -1), '', array('tags' => $this->reqBody['tags']));
-                    // @phpstan-ignore-next-line
-                    $id = $this->Model->create($params);
-                    break;
-                case Action::Duplicate:
-                    $id = $this->Model->duplicate();
-                    break;
-            }
-        } elseif ($this->Model instanceof Users) {
-            // Users model is special because we don't know who is the requester in the object, so there is a need for special checks
-            // and this is done in UsersController
-            $Controller = new UsersController($this->Users, $this->Model, $this->reqBody);
-            $id = $Controller->create();
-        } elseif ($this->Model instanceof Config) {
-            throw new ImproperActionException('No POST action for Config endpoint.');
-        }
+        $id = $this->Model->postAction($this->action, $this->reqBody);
         return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', SITE_URL, $this->Model->getViewPage(), $id)));
     }
 
@@ -195,8 +171,7 @@ class Apiv2Controller extends AbstractApiController
             case 'items_types':
                 return (new EntityFactory($this->Users, $this->endpoint, $this->id))->getEntity();
             case 'users':
-                // how to separate the readallfromteam here? admins should only read the ones in their team, and sysadmin can read in team or all
-                return new Users($this->id);
+                return new Users($this->id, null, $this->Users);
             default:
                 throw new ImproperActionException('Invalid endpoint.');
         }

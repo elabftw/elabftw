@@ -18,6 +18,8 @@ interface RestInterface extends CrudInterface
 {
     public function patch(array $params): array;
 
+    public function postAction(Action $action, array $reqBody): int;
+
     public function patchAction(Action $action): array;
 
     public function getViewPage(): string;

@@ -16,6 +16,7 @@ use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use PDO;
@@ -253,6 +254,11 @@ final class Config implements RestInterface
     public function getViewPage(): string
     {
         return 'sysconfig.php';
+    }
+
+    public function postAction(Action $action, array $reqBody): int
+    {
+        throw new ImproperActionException('No POST action for Config endpoint.');
     }
 
     /**

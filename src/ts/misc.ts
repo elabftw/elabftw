@@ -56,16 +56,15 @@ export function collectForm(form: HTMLElement): object {
   ['input', 'select'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
       const el = input as HTMLInputElement;
-      console.log(el);
       if (el.reportValidity() === false) {
         throw new Error('Invalid input found! Aborting.');
+      }
+      if (el.dataset.ignore !== '1') {
+        params = Object.assign(params, {[input.name]: input.value});
       }
       if (el.name === 'password') {
         // clear a password field once collected
         el.value = '';
-      }
-      if (el.dataset.ignore !== '1') {
-        params = Object.assign(params, {[input.name]: input.value});
       }
     });
   });

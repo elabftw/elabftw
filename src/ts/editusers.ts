@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const ApiC = new Api();
 
+  // TODO act undefined on click??
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const act = (el: HTMLElement) => {
       // CREATE USER

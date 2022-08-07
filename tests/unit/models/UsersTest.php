@@ -20,7 +20,8 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Users= new Users(1, 1);
+        $requester = new Users(1, 1);
+        $this->Users= new Users(1, 1, $requester);
     }
 
     public function testPopulate(): void
@@ -56,7 +57,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'orcid' => '0000-0002-7494-5555',
             'password' => 'new super password',
         );
-        $result = (new Users(4))->patch($params);
+        $result = (new Users(4, 2, new Users(4, 2)))->patch($params);
         $this->assertEquals('tatabis@yopmail.com', $result['email']);
         $this->assertEquals('Yep', $result['lastname']);
     }
@@ -156,12 +157,6 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         // try to unarchive
         $this->expectException(ImproperActionException::class);
         $Users->toggleArchive();
-    }
-
-    public function testLockExperiments(): void
-    {
-        $Users = new Users(4);
-        $this->assertTrue($this->Users->patchAction(Action::Lock));
     }
 
     public function testDestroy(): void

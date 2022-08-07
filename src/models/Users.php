@@ -10,10 +10,12 @@
 namespace Elabftw\Models;
 
 use function array_filter;
+use Elabftw\Controllers\UsersController;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\ParamsInterface;
@@ -42,7 +44,7 @@ class Users implements RestInterface
 
     protected Db $Db;
 
-    public function __construct(public ?int $userid = null, ?int $team = null)
+    public function __construct(public ?int $userid = null, ?int $team = null, public ?self $requester = null)
     {
         $this->Db = Db::getConnection();
         if ($team !== null) {
@@ -219,13 +221,24 @@ class Users implements RestInterface
      */
     public function readAllFromTeam(): array
     {
+        /*
+        if ($this->userData['is_admin'] !== 1) {
+            throw new IllegalActionException('Only admin can read all users from a team.');
+        }
+         */
+        // TODO use requester?
         return $this->readFromQuery('', $this->userData['team']);
     }
 
     public function readAll(): array
     {
-        // TODO only sysadmin should be able to call this
-        return $this->readFromQuery('');
+        if ($this->requester->userData['is_sysadmin'] === 1) {
+            return $this->readFromQuery('');
+        }
+        if ($this->requester->userData['is_admin'] === 1) {
+            return $this->readFromQuery('', $this->requester->userData['team']);
+        }
+        throw new IllegalActionException('Normal users cannot read other users.');
     }
 
     /**
@@ -233,6 +246,7 @@ class Users implements RestInterface
      */
     public function readOne(): array
     {
+        $this->canReadOrExplode();
         $userData = $this->readOneFull();
         unset($userData['password']);
         unset($userData['password_hash']);
@@ -242,12 +256,33 @@ class Users implements RestInterface
         return $userData;
     }
 
+    public function canReadOrExplode(): void
+    {
+        if ($this->requester === null) {
+            // it's ourself
+            return;
+        }
+        if ($this->requester->userData['is_admin'] !== 1 && $this->userid !== $this->userData['userid']) {
+            throw new IllegalActionException('This endpoint requires admin privileges to access other users.');
+        }
+        // check we edit user of our team, unless we are sysadmin and we can access it
+        if ($this->userid !== null && !$this->requester->isAdminOf($this->userid)) {
+            throw new IllegalActionException('User tried to access user from other team.');
+        }
+    }
+
     public function getLockedUsersCount(): int
     {
         $sql = 'SELECT COUNT(userid) FROM users WHERE allow_untrusted = 0';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
+    }
+
+    public function postAction(Action $action, array $reqBody): int
+    {
+        $Controller = new UsersController($this, $reqBody);
+        return $Controller->create();
     }
 
     public function patchAction(Action $action): array

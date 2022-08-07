@@ -19,13 +19,17 @@ use Elabftw\Services\Check;
 
 class UsersController
 {
-    public function __construct(private Users $requester, private Users $target, private array $reqBody)
+    // the user doing the request
+    private Users $requester;
+
+    public function __construct(private Users $target, private array $reqBody)
     {
+        $this->requester = $target->requester;
         // a normal user can only access their own user
         // you need to be at least admin to access another user
         // TODO when we implement the @firstname autocompletion for notification, normal users will need to access a stripped down version of user list
         // maybe it'll be a custom function instead of normal get filtered
-        if ($requester->userData['is_admin'] !== 1 && $this->target->userid !== $this->target->userData['userid']) {
+        if ($this->requester->userData['is_admin'] !== 1 && $this->target->userid !== $this->target->userData['userid']) {
             throw new IllegalActionException('This endpoint requires admin privileges to access other users.');
         }
         // check we edit user of our team, unless we are sysadmin and we can access it

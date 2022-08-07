@@ -64,17 +64,17 @@
       </a>
     {% endif %}
 
-    <a class='elab-tooltip mr-1' href='make.php?format=pdf&id={{ Entity.id }}&type={{ Entity.type }}'>
+    <a class='elab-tooltip mr-1' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdf'>
       <span>{{ 'Make a PDF'|trans }}</span>
       <i title='{{ 'Make a PDF'|trans }}' class='fas fa-file-pdf fa-2x mr-2'></i>
     </a>
 
-    <a class='elab-tooltip mr-1' href='make.php?format=zip&id={{ Entity.id }}&type={{ Entity.type }}'>
+    <a class='elab-tooltip mr-1' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=zip'>
       <span>{{ 'Make a ZIP'|trans }}</span>
       <i title='{{ 'Make a ZIP'|trans }}' class='fas fa-file-archive fa-2x mr-2'></i>
     </a>
 
-    <a class='elab-tooltip mr-1' href='make.php?format=eln&id={{ Entity.id }}&type={{ Entity.type }}'>
+    <a class='elab-tooltip mr-1' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=eln'>
       <span>{{ 'Make an ELN'|trans }}</span>
       <i title='{{ 'Make an ELN'|trans }}' class='fas fa-box-archive fa-2x mr-2'></i>
     </a>

@@ -126,6 +126,7 @@ class Apiv2Controller extends AbstractApiController
     {
         $id = 0;
         if ($this->Model instanceof AbstractEntity) {
+            // TODO this moves in postAction in models
             switch ($this->action) {
                 case Action::Create:
                     // todo make it so we don't need to cast to string!!

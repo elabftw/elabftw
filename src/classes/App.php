@@ -156,7 +156,7 @@ class App
 
     public function getJsLang(): string
     {
-        return Language::toCalendar(Language::tryFrom($this->getLang()));
+        return Language::toCalendar(Language::tryFrom($this->getLang()) ?? Language::English);
     }
 
     /**

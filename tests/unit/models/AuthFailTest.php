@@ -19,6 +19,11 @@ class AuthFailTest extends \PHPUnit\Framework\TestCase
         $AuthFail->register();
     }
 
+    public function testGetLockedUsersCount(): void
+    {
+        $this->assertIsInt((new AuthFail())->getLockedUsersCount());
+    }
+
     public function testRegisterWithDeviceToken(): void
     {
         $DeviceToken = new DeviceToken();

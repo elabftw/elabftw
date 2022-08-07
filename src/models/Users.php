@@ -19,7 +19,6 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\ParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\EmailValidator;
@@ -55,14 +54,6 @@ class Users implements RestInterface
         if ($userid !== null) {
             $this->readOneFull();
         }
-    }
-
-    /**
-     * this is here because of creatableinterface, until the createOne function can be modified
-     */
-    public function create(ParamsInterface $params): int
-    {
-        return 0;
     }
 
     /**
@@ -258,29 +249,6 @@ class Users implements RestInterface
         return $userData;
     }
 
-    public function canReadOrExplode(): void
-    {
-        if ($this->requester === null) {
-            // it's ourself
-            return;
-        }
-        if ($this->requester->userData['is_admin'] !== 1 && $this->userid !== $this->userData['userid']) {
-            throw new IllegalActionException('This endpoint requires admin privileges to access other users.');
-        }
-        // check we edit user of our team, unless we are sysadmin and we can access it
-        if ($this->userid !== null && !$this->requester->isAdminOf($this->userid)) {
-            throw new IllegalActionException('User tried to access user from other team.');
-        }
-    }
-
-    public function getLockedUsersCount(): int
-    {
-        $sql = 'SELECT COUNT(userid) FROM users WHERE allow_untrusted = 0';
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-        return (int) $req->fetchColumn();
-    }
-
     public function postAction(Action $action, array $reqBody): int
     {
         $Controller = new UsersController($this, $reqBody);
@@ -299,6 +267,7 @@ class Users implements RestInterface
 
     public function patch(array $params): array
     {
+        $this->canWriteOrExplode();
         foreach ($params as $target => $content) {
             $this->update(new UserParams((string) $content, $target));
         }
@@ -308,25 +277,6 @@ class Users implements RestInterface
     public function getViewPage(): string
     {
         return 'api/v2/users/';
-    }
-
-    public function update(ContentParamsInterface $params): bool
-    {
-        $this->canWriteOrExplode();
-        // special case for password: we invalidate the stored token
-        if ($params->getTarget() === 'password') {
-            $this->invalidateToken();
-        }
-        // email is filtered here because otherwise the check for existing email will throw exception
-        if ($params->getTarget() === 'email' && $params->getContent() !== $this->userData['email']) {
-            Filter::email($params->getContent());
-        }
-
-        $sql = 'UPDATE users SET ' . $params->getColumn() . ' = :content WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent());
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
     }
 
     /**
@@ -384,6 +334,39 @@ class Users implements RestInterface
         }
         $TeamsHelper = new TeamsHelper($this->userData['team']);
         return $TeamsHelper->isUserInTeam($userid) && $this->userData['is_admin'] === 1;
+    }
+
+    private function canReadOrExplode(): void
+    {
+        if ($this->requester->userid === $this->userid) {
+            // it's ourself
+            return;
+        }
+        if ($this->requester->userData['is_admin'] !== 1 && $this->userid !== $this->userData['userid']) {
+            throw new IllegalActionException('This endpoint requires admin privileges to access other users.');
+        }
+        // check we edit user of our team, unless we are sysadmin and we can access it
+        if ($this->userid !== null && !$this->requester->isAdminOf($this->userid)) {
+            throw new IllegalActionException('User tried to access user from other team.');
+        }
+    }
+
+    private function update(UserParams $params): bool
+    {
+        // special case for password: we invalidate the stored token
+        if ($params->getTarget() === 'password') {
+            $this->invalidateToken();
+        }
+        // email is filtered here because otherwise the check for existing email will throw exception
+        if ($params->getTarget() === 'email' && $params->getContent() !== $this->userData['email']) {
+            Filter::email($params->getContent());
+        }
+
+        $sql = 'UPDATE users SET ' . $params->getColumn() . ' = :content WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $params->getContent());
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     /**

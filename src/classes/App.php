@@ -73,7 +73,6 @@ class App
         }
 
         $this->Log->pushHandler(new ErrorLogHandler());
-        $this->Users = new Users();
         // UPDATE SQL SCHEMA if necessary or show error message if version mismatch
         $Update = new Update((int) $this->Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql'))));
         $Update->checkSchema();

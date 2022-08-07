@@ -11,7 +11,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
-use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\Items;
@@ -43,15 +42,11 @@ class ParamsBuilderTest extends \PHPUnit\Framework\TestCase
         $Experiments = new Experiments($this->Users, 1);
         $builder = new ParamsBuilder(new Comments($Experiments));
         $this->assertInstanceOf(ContentParams::class, $builder->getParams());
-        $builder = new ParamsBuilder(Config::getConfig());
-        $this->assertInstanceOf(ContentParams::class, $builder->getParams());
         $builder = new ParamsBuilder(new Todolist(1));
         $this->assertInstanceOf(ContentParams::class, $builder->getParams());
         $builder = new ParamsBuilder(new Links($Experiments));
         $this->assertInstanceOf(ContentParams::class, $builder->getParams());
         $builder = new ParamsBuilder(new FavTags($this->Users));
-        $this->assertInstanceOf(ContentParams::class, $builder->getParams());
-        $builder = new ParamsBuilder($this->Users);
         $this->assertInstanceOf(ContentParams::class, $builder->getParams());
         $builder = new ParamsBuilder(new Teams($this->Users));
         $this->assertInstanceOf(ContentParams::class, $builder->getParams());

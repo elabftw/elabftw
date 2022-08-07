@@ -20,6 +20,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Interfaces\ItemTypeParamsInterface;
 use Elabftw\Interfaces\RestInterface;
@@ -39,7 +40,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * The mother class of Experiments, Items, Templates and ItemsTypes
  */
-abstract class AbstractEntity implements RestInterface
+abstract class AbstractEntity implements RestInterface, CrudInterface
 {
     use EntityTrait;
 
@@ -337,18 +338,6 @@ abstract class AbstractEntity implements RestInterface
             return array('sharelink' => SITE_URL . '/' . $this->page . '.php?mode=view&id=' . $this->id . '&elabid=' . $this->readOne()['elabid']);
         }
         return $this->readOne();
-    }
-
-    public function getTeamFromElabid(string $elabid): int
-    {
-        $elabid = Filter::sanitize($elabid);
-        $sql = 'SELECT users2teams.teams_id FROM ' . $this->type . ' AS entity
-            CROSS JOIN users2teams ON (users2teams.users_id = entity.userid)
-            WHERE entity.elabid = :elabid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':elabid', $elabid, PDO::PARAM_STR);
-        $this->Db->execute($req);
-        return (int) $req->fetchColumn();
     }
 
     /**

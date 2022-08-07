@@ -97,11 +97,6 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($tata->isAdminOf(2));
     }
 
-    public function testGetLockedUsersCount(): void
-    {
-        $this->assertIsInt($this->Users->getLockedUsersCount());
-    }
-
     public function testGetViewPage(): void
     {
         $this->assertEquals('api/v2/users/', $this->Users->getViewPage());

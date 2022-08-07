@@ -80,7 +80,7 @@ try {
     $template = 'sysconfig.html';
     $renderArr = array(
         'Request' => $Request,
-        'nologinUsersCount' => $App->Users->getLockedUsersCount(),
+        'nologinUsersCount' => $AuthFail->getLockedUsersCount(),
         'lockoutDevicesCount' => $AuthFail->getLockoutDevicesCount(),
         'elabimgVersion' => $elabimgVersion,
         'idpsArr' => $idpsArr,

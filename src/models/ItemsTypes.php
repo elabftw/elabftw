@@ -11,7 +11,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\ItemTypeParamsInterface;
 use Elabftw\Traits\CategoryTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -39,11 +38,11 @@ class ItemsTypes extends AbstractTemplateEntity
         }
     }
 
-    public function create(ItemTypeParamsInterface $params): int
+    public function create(string $title): int
     {
         $sql = 'INSERT INTO items_types(name, team) VALUES(:content, :team)';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getTitle(), PDO::PARAM_STR);
+        $req->bindValue(':content', $title, PDO::PARAM_STR);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $this->Db->execute($req);
 
@@ -93,30 +92,6 @@ class ItemsTypes extends AbstractTemplateEntity
     public function duplicate(): int
     {
         return 1;
-    }
-
-    public function updateAll(ItemTypeParamsInterface $params): bool
-    {
-        $sql = 'UPDATE items_types SET
-            name = :name,
-            team = :team,
-            color = :color,
-            bookable = :bookable,
-            body = :body,
-            canread = :canread,
-            canwrite = :canwrite
-            WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':name', $params->getContent(), PDO::PARAM_STR);
-        $req->bindValue(':color', $params->getColor(), PDO::PARAM_STR);
-        $req->bindValue(':bookable', $params->getIsBookable(), PDO::PARAM_INT);
-        $req->bindValue(':body', $params->getBody(), PDO::PARAM_STR);
-        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
-        $req->bindValue(':canread', $params->getCanread(), PDO::PARAM_STR);
-        $req->bindValue(':canwrite', $params->getCanwriteS(), PDO::PARAM_STR);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        return $this->Db->execute($req);
     }
 
     /**

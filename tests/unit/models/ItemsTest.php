@@ -25,7 +25,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAndDestroy(): void
     {
-        $new = $this->Items->create(new EntityParams('1'));
+        $new = $this->Items->create(1);
         $this->assertTrue((bool) Check::id($new));
         $this->Items->setId($new);
         $this->Items->destroy();
@@ -33,7 +33,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead(): void
     {
-        $new = $this->Items->create(new EntityParams('1'));
+        $new = $this->Items->create(1);
         $this->Items->setId($new);
         $this->Items->canOrExplode('read');
         $this->assertTrue(is_array($this->Items->entityData));
@@ -43,7 +43,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate(): void
     {
-        $new = $this->Items->create(new EntityParams('1'));
+        $new = $this->Items->create(1);
         $this->Items->setId($new);
         $this->Items->update(new EntityParams('Items item 1', 'title'));
         $this->Items->update(new EntityParams('20160729', 'date'));
@@ -65,7 +65,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testToggleLock(): void
     {
-        $new = $this->Items->create(new EntityParams('1'));
+        $new = $this->Items->create(1, array('locked'));
         $this->Items->setId($new);
 
         // lock

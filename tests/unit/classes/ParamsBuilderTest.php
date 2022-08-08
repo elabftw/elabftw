@@ -13,15 +13,12 @@ use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\FavTags;
-use Elabftw\Models\Items;
-use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
@@ -50,16 +47,6 @@ class ParamsBuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(ContentParams::class, $builder->getParams());
         $builder = new ParamsBuilder(new Teams($this->Users));
         $this->assertInstanceOf(ContentParams::class, $builder->getParams());
-        // EntityParams
-        $builder = new ParamsBuilder($Experiments);
-        $this->assertInstanceOf(EntityParams::class, $builder->getParams());
-        $builder = new ParamsBuilder(new Items($this->Users));
-        $this->assertInstanceOf(EntityParams::class, $builder->getParams());
-        $builder = new ParamsBuilder(new Templates($this->Users));
-        $this->assertInstanceOf(EntityParams::class, $builder->getParams());
-        // ItemTypeParams
-        $builder = new ParamsBuilder(new ItemsTypes($this->Users));
-        $this->assertInstanceOf(ItemTypeParams::class, $builder->getParams());
         // UnfinishedSteps
         $builder = new ParamsBuilder(new UnfinishedSteps($Experiments));
         $this->assertInstanceOf(UnfinishedStepsParams::class, $builder->getParams());

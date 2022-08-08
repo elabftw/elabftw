@@ -81,15 +81,15 @@ class ImportEln extends AbstractImportZip
 
     private function importRootDataset(array $dataset): void
     {
-        $createTarget = (string) $this->targetNumber;
+        $createTarget = $this->targetNumber;
         if ($this->Entity instanceof Experiments) {
             // no template
-            $createTarget = '-1';
+            $createTarget = -1;
         }
         // I believe this is a bug in phpstan. Using directly new Experiements() is ok but not the factory for some reason.
         // Might also be a bug in elab, not sure where it is FIXME
         // @phpstan-ignore-next-line
-        $id = $this->Entity->create(new EntityParams($createTarget));
+        $id = $this->Entity->create($createTarget);
         $this->Entity->setId($id);
         $this->Entity->update(new EntityParams($dataset['name'] ?? _('Untitled'), 'title'));
         $this->Entity->update(new EntityParams($dataset['text'] ?? '', 'bodyappend'));

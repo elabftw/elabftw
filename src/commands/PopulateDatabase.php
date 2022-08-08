@@ -13,7 +13,6 @@ namespace Elabftw\Commands;
 use const DB_NAME;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ItemTypeParams;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
@@ -97,7 +96,7 @@ class PopulateDatabase extends Command
 
 
         // drop database
-        $output->writeln('Dropping current database and loading structure');
+        $output->writeln('Dropping current database and loading structure...');
         $this->dropAndInitDb();
 
         // adjust global config
@@ -129,14 +128,16 @@ class PopulateDatabase extends Command
             $user = new Users();
             $user->team = (int) $items_types['team'];
             $ItemsTypes = new ItemsTypes($user);
-            $extra = array(
+            $ItemsTypes->setId($ItemsTypes->create($items_types['name']));
+            $ItemsTypes->bypassWritePermission = true;
+            $patch = array(
                 'color' => $items_types['color'],
                 'body' => $items_types['template'],
                 'canread' => 'team',
                 'canwrite' => 'team',
-                'isBookable' => $items_types['bookable'],
+                'bookable' => $items_types['bookable'],
             );
-            $ItemsTypes->create(new ItemTypeParams($items_types['name'], 'all', $extra));
+            $ItemsTypes->patch($patch);
         }
 
 

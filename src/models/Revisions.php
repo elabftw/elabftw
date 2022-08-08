@@ -39,6 +39,9 @@ class Revisions implements DestroyableInterface
      */
     public function create(string $body): bool
     {
+        if ($this->Entity instanceof ItemsTypes) {
+            return false;
+        }
         $this->Entity->canOrExplode('write');
 
         if (!$this->satisfyDeltaConstraint($body) && !$this->satisfyTimeConstraint()) {

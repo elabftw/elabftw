@@ -13,7 +13,6 @@ namespace Elabftw\Models;
 use function array_diff;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ItemTypeParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
@@ -110,14 +109,17 @@ class Teams implements CrudInterface
         $user = new Users();
         $user->team = $newId;
         $ItemsTypes = new ItemsTypes($user);
+        $ItemsTypes->setId($ItemsTypes->create('Edit me'));
+        // we can't patch something that is not in our team!
+        $ItemsTypes->bypassWritePermission = true;
         $extra = array(
             'color' => '#32a100',
-            'body' => '<p>Go to the admin panel to edit/add more items types!</p>',
+            'body' => '<p>This is the default text of the default category.</p><p>Head to the <a href="admin.php?tab=5">Admin Panel</a> to edit/add more categories for your database!</p>',
             'canread' => 'team',
             'canwrite' => 'team',
             'bookable' => '0',
         );
-        $ItemsTypes->create(new ItemTypeParams('Edit me', 'all', $extra));
+        $ItemsTypes->patch($extra);
 
         return $newId;
     }

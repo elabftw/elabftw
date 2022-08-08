@@ -20,9 +20,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\EntityParamsInterface;
-use Elabftw\Interfaces\ItemTypeParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
@@ -40,7 +38,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * The mother class of Experiments, Items, Templates and ItemsTypes
  */
-abstract class AbstractEntity implements RestInterface, CrudInterface
+abstract class AbstractEntity implements RestInterface
 {
     use EntityTrait;
 
@@ -368,7 +366,7 @@ abstract class AbstractEntity implements RestInterface, CrudInterface
             // todo make it so we don't need to cast to string!!
             // idea: just send the reqBody to the create function
             // @phpstan-ignore-next-line
-            Action::Create => $this->create(new EntityParams((string) ($reqBody['category_id'] ?? -1), '', array('tags' => $reqBody['tags']))),
+            Action::Create => $this->create((int) ($reqBody['category_id'] ?? -1), $reqBody['tags']),
             Action::Duplicate => $this->duplicate(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
@@ -394,7 +392,7 @@ abstract class AbstractEntity implements RestInterface, CrudInterface
     /**
      * Update an entity. The revision is saved before so it can easily compare old and new body.
      */
-    public function update(EntityParamsInterface | ItemTypeParamsInterface $params): bool
+    public function update(EntityParamsInterface $params): bool
     {
         $this->canOrExplode('write');
 
@@ -411,13 +409,21 @@ abstract class AbstractEntity implements RestInterface, CrudInterface
             case 'bodyappend':
                 $content = $this->readOne()['body'] . $params->getBody();
                 break;
+            case 'bookable':
+                $content = $params->getInt();
+                break;
             case 'category':
                 $content = $params->getInt();
                 break;
             case 'canread':
             case 'canwrite':
                 $content = $params->getVisibility();
-                $this->checkTeamPermissionsEnforced($params->getTarget());
+                if ($this->bypassWritePermission === false) {
+                    $this->checkTeamPermissionsEnforced($params->getTarget());
+                }
+                break;
+            case 'color':
+                $content = $params->getColor();
                 break;
             case 'content_type':
                 $content = $params->getInt();

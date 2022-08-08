@@ -374,6 +374,9 @@ class Users implements RestInterface
      */
     private function canWriteOrExplode(): void
     {
+        if ($this->requester === null) {
+            return;
+        }
         if (!$this->requester->isAdminOf($this->userid)) {
             throw new IllegalActionException(Tools::error(true));
         }

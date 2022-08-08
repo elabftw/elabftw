@@ -61,7 +61,7 @@ class Populate
 
         printf("Generating %s \n", $Entity->type);
         for ($i = 0; $i <= $this->iter; $i++) {
-            $id = $Entity->create(new EntityParams((string) $tpl));
+            $id = $Entity->create($tpl);
             $Entity->setId($id);
             // variable tag number
             $Tags = new Tags($Entity);

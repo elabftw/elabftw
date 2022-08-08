@@ -12,7 +12,6 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
@@ -31,10 +30,10 @@ class Experiments extends AbstractConcreteEntity
         parent::__construct($users, $id);
     }
 
-    public function create(EntityParamsInterface $params): int
+    public function create(int $templateId = -1, array $tags = array()): int
     {
         $Templates = new Templates($this->Users);
-        $Team = new Team((int) $this->Users->userData['team']);
+        $Team = new Team($this->Users->userData['team']);
 
         // defaults
         $title = _('Untitled');
@@ -43,20 +42,19 @@ class Experiments extends AbstractConcreteEntity
         $canwrite = 'user';
         $metadata = null;
 
-        $tpl = (int) $params->getContent();
         // do we want template ?
-        // $tpl can be template id, or 0: common template, or -1: null body
-        if ($tpl > 0) {
-            $Templates->setId($tpl);
+        // $templateId can be a template id, or 0: common template, or -1: null body
+        if ($templateId > 0) {
+            $Templates->setId($templateId);
             $templateArr = $Templates->readOne();
-            $metadata = $templateArr['metadata'];
             $title = $templateArr['title'];
             $body = $templateArr['body'];
             $canread = $templateArr['canread'];
             $canwrite = $templateArr['canwrite'];
+            $metadata = $templateArr['metadata'];
         }
 
-        if ($tpl === 0) {
+        if ($templateId === 0) {
             // no template, make sure admin didn't disallow it
             if ($Team->getForceExpTpl() === 1) {
                 throw new ImproperActionException(_('Experiments must use a template!'));
@@ -96,14 +94,14 @@ class Experiments extends AbstractConcreteEntity
         $newId = $this->Db->lastInsertId();
 
         // insert the tags from the template
-        if ($tpl > 0) {
-            $this->Links->duplicate($tpl, $newId, true);
-            $this->Steps->duplicate($tpl, $newId, true);
+        if ($templateId > 0) {
+            $this->Links->duplicate($templateId, $newId, true);
+            $this->Steps->duplicate($templateId, $newId, true);
             $Tags = new Tags($Templates);
             $Tags->copyTags($newId, true);
         }
 
-        $this->insertTags($params->getTags(), $newId);
+        $this->insertTags($tags, $newId);
 
         return $newId;
     }

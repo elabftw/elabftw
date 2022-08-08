@@ -48,6 +48,11 @@ class EntityParams extends ContentParams implements EntityParamsInterface
         return Filter::body($this->extra['body'] ?? '');
     }
 
+    public function getColor(): string
+    {
+        return Check::color($this->content);
+    }
+
     public function getMetadata(): string
     {
         return $this->content;

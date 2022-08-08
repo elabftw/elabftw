@@ -20,6 +20,8 @@ interface EntityParamsInterface extends ContentParamsInterface
 
     public function getBody(): string;
 
+    public function getColor(): string;
+
     public function getExtraBody(): string;
 
     public function getMetadata(): string;

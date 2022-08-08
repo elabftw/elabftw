@@ -82,12 +82,7 @@ try {
     } elseif ($action === 'read') {
         $res = $Model->read($Params);
     } elseif ($action === 'update') {
-        // TODO should not exist, but it's here for now
-        if ($Model instanceof ItemsTypes && ($target !== 'metadata')) {
-            $res = $Model->updateAll($Params);
-        } else {
-            $res = $Model->update($Params);
-        }
+        $res = $Model->update($Params);
     } elseif ($action === 'replace') {
         $res = $Model->replace($Params);
     } elseif ($action === 'destroy') {

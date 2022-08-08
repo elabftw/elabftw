@@ -9,7 +9,6 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\EntityParams;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
@@ -19,7 +18,7 @@ class ElabidFinderTest extends \PHPUnit\Framework\TestCase
     public function testFindInExperiments(): void
     {
         $Entity = new Experiments(new Users(1, 1));
-        $id = $Entity->create(new EntityParams('-1'));
+        $id = $Entity->create(-1);
         $Entity->setId($id);
         $elabid = $Entity->entityData['elabid'];
         $finder = new ElabidFinder('/experiments.php', $elabid);
@@ -29,7 +28,7 @@ class ElabidFinderTest extends \PHPUnit\Framework\TestCase
     public function testFindInItems(): void
     {
         $Entity = new Items(new Users(1, 1));
-        $id = $Entity->create(new EntityParams('1'));
+        $id = $Entity->create(1);
         $Entity->setId($id);
         $elabid = $Entity->entityData['elabid'];
         $finder = new ElabidFinder('/database.php', $elabid);

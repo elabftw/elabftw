@@ -117,11 +117,6 @@ abstract class AbstractProcessor implements ProcessorInterface
                 return new TeamGroups($this->Users, $this->id);
             case 'tag':
                 return new Tags($this->Entity, $this->id);
-            case AbstractEntity::TYPE_EXPERIMENTS:
-            case AbstractEntity::TYPE_ITEMS:
-            case AbstractEntity::TYPE_TEMPLATES:
-            case AbstractEntity::TYPE_ITEMS_TYPES:
-                return $this->Entity;
             case 'todolist':
                 return new Todolist((int) $this->Users->userData['userid'], $this->id);
             case 'user2team':

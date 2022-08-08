@@ -12,7 +12,6 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
@@ -31,9 +30,8 @@ class Items extends AbstractConcreteEntity
         parent::__construct($users, $id);
     }
 
-    public function create(EntityParamsInterface $params): int
+    public function create(int $category, array $tags = array()): int
     {
-        $category = (int) $params->getContent();
         $ItemsTypes = new ItemsTypes($this->Users, $category);
         $itemTemplate = $ItemsTypes->readOne();
 
@@ -52,7 +50,7 @@ class Items extends AbstractConcreteEntity
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
-        $this->insertTags($params->getTags(), $newId);
+        $this->insertTags($tags, $newId);
         $this->Links->duplicate((int) $itemTemplate['id'], $newId, true);
         $this->Steps->duplicate((int) $itemTemplate['id'], $newId, true);
 

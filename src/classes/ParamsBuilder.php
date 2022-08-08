@@ -11,15 +11,12 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
-use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Templates;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users2Teams;
@@ -39,11 +36,8 @@ class ParamsBuilder
 
     public function getParams(): ContentParamsInterface
     {
-        if ($this->model instanceof Experiments || $this->model instanceof Items || $this->model instanceof Templates) {
+        if ($this->model instanceof AbstractEntity) {
             return new EntityParams($this->content, $this->target, $this->extra);
-        }
-        if ($this->model instanceof ItemsTypes) {
-            return new ItemTypeParams($this->content, $this->target, $this->extra);
         }
         if ($this->model instanceof UnfinishedSteps) {
             return new UnfinishedStepsParams($this->extra);

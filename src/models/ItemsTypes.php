@@ -38,6 +38,11 @@ class ItemsTypes extends AbstractTemplateEntity
         }
     }
 
+    public function getViewPage(): string
+    {
+        return 'admin.php?tab=5&templateid=';
+    }
+
     public function create(string $title): int
     {
         $sql = 'INSERT INTO items_types(name, team) VALUES(:content, :team)';

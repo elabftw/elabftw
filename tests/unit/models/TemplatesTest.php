@@ -23,7 +23,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
-        $this->Templates->create(new EntityParams('Test tpl', '', array('body' => 'pwet')));
+        $this->Templates->create('Test tpl');
     }
 
     public function testRead(): void

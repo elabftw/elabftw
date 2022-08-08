@@ -360,18 +360,6 @@ abstract class AbstractEntity implements RestInterface
         return $allTags;
     }
 
-    public function postAction(Action $action, array $reqBody): int
-    {
-        return match ($action) {
-            // todo make it so we don't need to cast to string!!
-            // idea: just send the reqBody to the create function
-            // @phpstan-ignore-next-line
-            Action::Create => $this->create((int) ($reqBody['category_id'] ?? -1), $reqBody['tags']),
-            Action::Duplicate => $this->duplicate(),
-            default => throw new ImproperActionException('Invalid action parameter.'),
-        };
-    }
-
     public function patchAction(Action $action): array
     {
         return match ($action) {

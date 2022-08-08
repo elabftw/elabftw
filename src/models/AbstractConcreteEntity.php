@@ -9,9 +9,21 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\CreateFromTemplateInterface;
+
 /**
  * An entity like Experiments or Items. Concrete as opposed to TemplateEntity for experiments templates or items types
  */
-abstract class AbstractConcreteEntity extends AbstractEntity
+abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFromTemplateInterface
 {
+    public function postAction(Action $action, array $reqBody): int
+    {
+        return match ($action) {
+            Action::Create => $this->create((int) ($reqBody['category_id'] ?? -1), $reqBody['tags']),
+            Action::Duplicate => $this->duplicate(),
+            default => throw new ImproperActionException('Invalid action parameter.'),
+        };
+    }
 }

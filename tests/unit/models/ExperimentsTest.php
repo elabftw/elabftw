@@ -35,7 +35,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->toggleLock();
         $this->Experiments->destroy();
         $Templates = new Templates($this->Users);
-        $Templates->create(new EntityParams('my template', '', array('body' => 'is so cool')));
+        $Templates->create('my template');
         $new = $this->Experiments->create(1);
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments = new Experiments($this->Users, $new);

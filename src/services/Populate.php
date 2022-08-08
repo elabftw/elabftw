@@ -139,11 +139,7 @@ class Populate
         if ($user['create_templates'] ?? false) {
             $Templates = new Templates($Users);
             for ($i = 0; $i < $this->iter; $i++) {
-                $Templates->create(new EntityParams(
-                    $this->faker->sentence(),
-                    '',
-                    array('body' => $this->faker->realText(1000)),
-                ));
+                $Templates->create($this->faker->sentence());
             }
         }
     }

@@ -11,7 +11,7 @@ import { getTinymceBaseConfig } from './tinymce';
 import Apikey from './Apikey.class';
 import i18next from 'i18next';
 import { EntityType, Target } from './interfaces';
-import EntityClass from './Entity.class';
+import Templates from './Templates.class';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const ApikeyC = new Apikey();
-  const EntityC = new EntityClass(EntityType.Template);
+  const EntityC = new Templates(EntityType.Template);
 
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
@@ -39,11 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const title = prompt(i18next.t('template-title'));
       if (title) {
         // no body on template creation
-        EntityC.create(title, []).then(resp => {
-          resp.json().then(json => {
-            window.location.replace(`ucp.php?tab=3&templateid=${json.value}`);
-          });
-        });
+        EntityC.create(title).then(resp => window.location.href = resp.headers.get('location'));
       }
     // LOCK TEMPLATE
     } else if (el.matches('[data-action="toggle-lock"]')) {

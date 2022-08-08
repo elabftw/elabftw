@@ -12,9 +12,9 @@ import { Malle } from '@deltablot/malle';
 import TeamGroup from './TeamGroup.class';
 import Status from './Status.class';
 import i18next from 'i18next';
-import ItemType from './ItemType.class';
+import ItemsTypes from './ItemsTypes.class';
 import { Ajax } from './Ajax.class';
-import { Payload, Method, Model, Action, Target } from './interfaces';
+import { Payload, Method, Model, Action, Target, EntityType } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // END STATUS
 
   // ITEMS TYPES
-  const ItemTypeC = new ItemType();
+  const ItemTypeC = new ItemsTypes();
 
   // UPDATE
   function itemsTypesUpdate(id: number): void {
@@ -186,21 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const canread = (document.getElementById('itemsTypesCanread') as HTMLSelectElement).value;
     const canwrite = (document.getElementById('itemsTypesCanwrite') as HTMLSelectElement).value;
     const template = tinymce.get('itemsTypesBody').getContent();
-    ItemTypeC.update(id, name, color, bookable, template, canread, canwrite);
+    // TODO ItemTypeC.update(id, name, color, bookable, template, canread, canwrite);
   }
-
-  // DESTROY
-  $(document).on('click', '.itemsTypesDestroy', function() {
-    if (confirm(i18next.t('generic-delete-warning'))) {
-      const id = $(this).data('id');
-      ItemTypeC.destroy(id).then(json => {
-        if (json.res) {
-          $('#itemstypes_' + id).hide();
-          $('#itemstypesOrder_' + id).hide();
-        }
-      });
-    }
-  });
   // END ITEMS TYPES
 
   // randomize the input of the color picker so even if user doesn't change the color it's a different one!
@@ -215,21 +202,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const title = prompt(i18next.t('template-title'));
       if (title) {
         // no body on template creation
-        ItemTypeC.create(title).then(json => {
-          window.location.replace(`admin.php?tab=5&templateid=${json.value}`);
-        });
+        ItemTypeC.create(title).then(resp => window.location.href = resp.headers.get('location'));
       }
     // UPDATE ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-update"]')) {
       itemsTypesUpdate(parseInt(el.dataset.id, 10));
     // DESTROY ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-destroy"]')) {
-      ItemTypeC.destroy(parseInt(el.dataset.id, 10)).then(json => {
-        notif(json);
-        if (json.res) {
-          window.location.href = '?tab=5';
-        }
-      });
+      ItemTypeC.destroy(parseInt(el.dataset.id, 10)).then(() => window.location.href = '?tab=5');
     } else if (el.matches('[data-action="export-category"]')) {
       const source = (document.getElementById('categoryExport') as HTMLSelectElement).value;
       const format = (document.getElementById('categoryExportFormat') as HTMLSelectElement).value;

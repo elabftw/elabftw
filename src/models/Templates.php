@@ -11,7 +11,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -36,7 +35,12 @@ class Templates extends AbstractTemplateEntity
         parent::__construct($users, $id);
     }
 
-    public function create(EntityParamsInterface $params): int
+    public function getViewPage(): string
+    {
+        return 'ucp.php?tab=3&templateid=';
+    }
+
+    public function create(string $title): int
     {
         $canread = 'team';
         $canwrite = 'user';
@@ -48,12 +52,11 @@ class Templates extends AbstractTemplateEntity
             $canwrite = $this->Users->userData['default_write'];
         }
 
-        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, canread, canwrite)
-            VALUES(:team, :title, :body, :userid, :canread, :canwrite)';
+        $sql = 'INSERT INTO experiments_templates(team, title, userid, canread, canwrite)
+            VALUES(:team, :title, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindValue(':title', $params->getContent());
-        $req->bindValue(':body', $params->getExtraBody());
+        $req->bindValue(':title', Filter::title($title));
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);

@@ -476,9 +476,24 @@ abstract class AbstractEntity implements CrudInterface
         // if it's a number, then lookup the name of the team group
         if (Check::id((int) $permission) !== false) {
             $this->TeamGroups->setId((int) $permission);
-            return ucfirst($this->TeamGroups->readOne()['name']);
+            return $this->TeamGroups->readOne()['name'];
         }
         return Transform::permission($permission);
+    }
+
+    /**
+     * Get a fontawesome icon-name representing the visibility/can write permissions
+     *
+     * @param string $permission raw value (public, organization, team, user, useronly)
+     * @return string fontawesome icon name without 'fa-' prefix
+     */
+    public function getCanIcon(string $permission): string
+    {
+        // if it's a number, it is a team group -> team icon
+        if (Check::id((int) $permission) !== false) {
+            $permission = 'team';
+        }
+        return Transform::permissionIcon($permission);
     }
 
     /**

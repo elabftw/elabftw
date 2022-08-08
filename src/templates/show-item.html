@@ -37,8 +37,12 @@
               <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;vertical-align:0.5px;' />
               <!-- edit icon -->
               {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
-                <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}' title='{{ 'Edit'|trans }}'><i class='fas fa-pencil-alt link-like'></i></a>
-              {% endif %}
+                <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}' title='{{ 'Edit'|trans }}'><i class='fas fa-pencil-alt link-like'></i></a>:
+              {%- else -%}
+                <span title='{{ 'Edit'|trans }}'><i class='fas fa-pencil-alt'></i>:</span>
+              {%- endif -%}
+              <span title='{{ 'Edit'|trans ~ ': ' ~ Entity.getCan(item.canwrite) }}'><i class='fas fa-{{ Entity.getCanIcon(item.canwrite) }}'></i></span>
+              <span title='{{ 'Visibility'|trans }}'><i class='fas fa-eye'></i></span>:<span title='{{ 'Visibility'|trans ~ ': ' ~ Entity.getCan(item.canread) }}'><i class='fas fa-{{ Entity.getCanIcon(item.canread) }}'></i></span>
               <!-- toggle body -->
               <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
                 <i class='fas fa-plus-circle'></i>

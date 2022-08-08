@@ -39,6 +39,25 @@ class Transform
     }
 
     /**
+     * Transform the raw permission value into something human readable
+     *
+     * @param string $permission raw value (public, organization, team, user, useronly)
+     * @return string capitalized and translated permission level
+     */
+    public static function permissionIcon(string $permission): string
+    {
+        $res = match ($permission) {
+            'public' => 'globe',
+            'organization' => 'building',
+            'team' => 'users',
+            'user' => 'user-plus',
+            'useronly' => 'user',
+            default => 'circle-question',
+        };
+        return $res;
+    }
+
+    /**
      * Create a hidden input element for injecting CSRF token
      */
     public static function csrf(string $token): string

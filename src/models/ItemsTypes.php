@@ -23,19 +23,14 @@ class ItemsTypes extends AbstractTemplateEntity
     use SortableTrait;
     use CategoryTrait;
 
-    private int $team;
-
     public function __construct(public Users $Users, ?int $id = null)
     {
         $this->type = parent::TYPE_ITEMS_TYPES;
         $this->Db = Db::getConnection();
-        $this->team = $this->Users->team;
         $this->Links = new Links($this);
         $this->countableTable = 'items';
         $this->Steps = new Steps($this);
-        if ($id !== null) {
-            $this->setId($id);
-        }
+        $this->setId($id);
     }
 
     public function getPage(): string
@@ -48,7 +43,7 @@ class ItemsTypes extends AbstractTemplateEntity
         $sql = 'INSERT INTO items_types(title, team) VALUES(:content, :team)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $title, PDO::PARAM_STR);
-        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
@@ -69,7 +64,7 @@ class ItemsTypes extends AbstractTemplateEntity
             items_types.canwrite
             FROM items_types WHERE team = :team AND state = :state ORDER BY ordering ASC';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindValue(':state', self::STATE_NORMAL, PDO::PARAM_INT);
         $this->Db->execute($req);
 
@@ -82,7 +77,7 @@ class ItemsTypes extends AbstractTemplateEntity
             FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $this->entityData = $this->Db->fetch($req);
@@ -108,7 +103,6 @@ class ItemsTypes extends AbstractTemplateEntity
         if ($this->countEntities() > 0) {
             throw new ImproperActionException(_('Remove all database items with this type before deleting this type.'));
         }
-
         return parent::destroy();
     }
 }

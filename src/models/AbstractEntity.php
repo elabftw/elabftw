@@ -130,10 +130,7 @@ abstract class AbstractEntity implements RestInterface
         $this->Comments = new Comments($this);
         $this->TeamGroups = new TeamGroups($this->Users);
         $this->Pins = new Pins($this);
-
-        if ($id !== null) {
-            $this->setId($id);
-        }
+        $this->setId($id);
     }
 
     /**

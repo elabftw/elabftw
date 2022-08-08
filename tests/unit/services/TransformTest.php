@@ -20,8 +20,19 @@ class TransformTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Team', Transform::permission('team'));
         $this->assertEquals('Owner + Admin(s)', Transform::permission('user'));
         $this->assertEquals('Owner only', Transform::permission('useronly'));
-        $this->assertEquals('An error occurred!', Transform::permission('user2'));
+        $this->assertEquals('An error occurred!', Transform::permission('unknown'));
     }
+
+    public function testPermissionIcon(): void
+    {
+        $this->assertEquals('globe', Transform::permissionIcon('public'));
+        $this->assertEquals('building', Transform::permissionIcon('organization'));
+        $this->assertEquals('users', Transform::permissionIcon('team'));
+        $this->assertEquals('user-plus', Transform::permissionIcon('user'));
+        $this->assertEquals('user', Transform::permissionIcon('useronly'));
+        $this->assertEquals('circle-question', Transform::permissionIcon('unknown'));
+    }
+
 
     public function testCsrf(): void
     {

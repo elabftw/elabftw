@@ -119,4 +119,17 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(0, $this->Experiments->getTimestampLastMonth());
     }
+
+    public function testGetCan(): void
+    {
+        $this->assertEquals('Public', $this->Experiments->getCan('public'));
+        $this->assertEquals('An error occurred!', $this->Experiments->getCan('unknown'));
+    }
+
+    public function testGetCanIcon(): void
+    {
+        $this->assertEquals('globe', $this->Experiments->getCanIcon('public'));
+        $this->assertEquals('users', $this->Experiments->getCanIcon('1'));
+        $this->assertEquals('circle-question', $this->Experiments->getCanIcon('unknown'));
+    }
 }

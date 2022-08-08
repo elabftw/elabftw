@@ -59,14 +59,14 @@ class Links implements CrudInterface
         $sql = 'SELECT items.id AS itemid,
             items.title,
             items.elabid,
-            category.name,
+            category.title,
             category.bookable,
             category.color
             FROM ' . $this->Entity->type . '_links
             LEFT JOIN items ON (' . $this->Entity->type . '_links.link_id = items.id)
             LEFT JOIN items_types AS category ON (items.category = category.id)
             WHERE ' . $this->Entity->type . '_links.item_id = :id
-            ORDER by category.name ASC, items.date ASC, items.title ASC';
+            ORDER by category.title ASC, items.date ASC, items.title ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -93,7 +93,7 @@ class Links implements CrudInterface
             $sql = 'SELECT entity.id AS entityid, entity.title';
 
             if ($type === 'items') {
-                $sql .= ', category.name, category.bookable, category.color';
+                $sql .= ', category.title, category.bookable, category.color';
             }
 
             $sql .= ' FROM %1$s_links as entity_links
@@ -125,7 +125,7 @@ class Links implements CrudInterface
             $sql .= ') AND entity.state = ' . $this->Entity::STATE_NORMAL . ' ORDER by';
 
             if ($type === 'items') {
-                $sql .= ' category.name ASC,';
+                $sql .= ' category.title ASC,';
             }
 
             $sql .= ' entity.title ASC';

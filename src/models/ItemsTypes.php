@@ -38,14 +38,14 @@ class ItemsTypes extends AbstractTemplateEntity
         }
     }
 
-    public function getViewPage(): string
+    public function getPage(): string
     {
         return 'admin.php?tab=5&templateid=';
     }
 
     public function create(string $title): int
     {
-        $sql = 'INSERT INTO items_types(name, team) VALUES(:content, :team)';
+        $sql = 'INSERT INTO items_types(title, team) VALUES(:content, :team)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $title, PDO::PARAM_STR);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
@@ -60,7 +60,7 @@ class ItemsTypes extends AbstractTemplateEntity
     public function readAll(): array
     {
         $sql = 'SELECT items_types.id AS category_id,
-            items_types.name AS category,
+            items_types.title AS category,
             items_types.color,
             items_types.bookable,
             items_types.body,
@@ -78,7 +78,7 @@ class ItemsTypes extends AbstractTemplateEntity
 
     public function readOne(): array
     {
-        $sql = 'SELECT id, team, color, bookable, name, body, canread, canwrite, metadata, state
+        $sql = 'SELECT id, team, color, bookable, title, body, canread, canwrite, metadata, state
             FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

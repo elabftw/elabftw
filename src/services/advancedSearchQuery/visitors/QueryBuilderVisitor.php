@@ -247,7 +247,7 @@ class QueryBuilderVisitor implements Visitor
     private function visitFieldCategory(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
         return $this->getWhereCollector(
-            'categoryt.name LIKE ',
+            'categoryt.title LIKE ',
             $affix . $searchTerm . $affix,
             PDO::PARAM_STR,
         );
@@ -307,7 +307,7 @@ class QueryBuilderVisitor implements Visitor
     private function visitFieldStatus(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
         return $this->getWhereCollector(
-            'categoryt.name LIKE ',
+            'categoryt.title LIKE ',
             $affix . $searchTerm . $affix,
             PDO::PARAM_STR,
         );

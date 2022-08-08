@@ -274,7 +274,7 @@ class Users implements RestInterface
         return $this->readOne();
     }
 
-    public function getViewPage(): string
+    public function getPage(): string
     {
         return 'api/v2/users/';
     }

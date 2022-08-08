@@ -143,9 +143,9 @@ abstract class AbstractEntity implements RestInterface
      */
     abstract public function duplicate(): int;
 
-    public function getViewPage(): string
+    public function getPage(): string
     {
-        return sprintf('%s.php?mode=view&id=', $this->page);
+        return sprintf('%s.php?mode=edit&id=', $this->page);
     }
 
     /**
@@ -772,7 +772,7 @@ abstract class AbstractEntity implements RestInterface
         $select .= "uploads.up_item_id, uploads.has_attachment,
             SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step ORDER BY steps_ordering, steps_id SEPARATOR '|'), '|', 1) AS next_step,
             categoryt.id AS category_id,
-            categoryt.name AS category,
+            categoryt.title AS category,
             categoryt.color,
             users.firstname, users.lastname, users.orcid,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,

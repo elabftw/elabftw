@@ -42,10 +42,10 @@ class Status extends AbstractCategory
 
     public function create(StatusParamsInterface $params): int
     {
-        $sql = 'INSERT INTO status(name, color, team, is_default)
-            VALUES(:name, :color, :team, :is_default)';
+        $sql = 'INSERT INTO status(title, color, team, is_default)
+            VALUES(:title, :color, :team, :is_default)';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':name', $params->getContent(), PDO::PARAM_STR);
+        $req->bindValue(':title', $params->getContent(), PDO::PARAM_STR);
         $req->bindValue(':color', $params->getColor(), PDO::PARAM_STR);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->bindValue(':is_default', $params->getIsDefault(), PDO::PARAM_INT);
@@ -83,7 +83,7 @@ class Status extends AbstractCategory
      */
     public function readOne(): array
     {
-        $sql = 'SELECT id as category_id, name as category, color, is_default
+        $sql = 'SELECT id as category_id, title as category, color, is_default
             FROM status WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
@@ -98,7 +98,7 @@ class Status extends AbstractCategory
     public function readAll(): array
     {
         $sql = 'SELECT status.id AS category_id,
-            status.name AS category,
+            status.title AS category,
             status.color,
             status.is_default
             FROM status WHERE team = :team ORDER BY ordering ASC';
@@ -127,13 +127,13 @@ class Status extends AbstractCategory
         }
 
         $sql = 'UPDATE status SET
-            name = :name,
+            title = :title,
             color = :color,
             is_default = :is_default
             WHERE id = :id AND team = :team';
 
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':name', $params->getContent(), PDO::PARAM_STR);
+        $req->bindValue(':title', $params->getContent(), PDO::PARAM_STR);
         $req->bindValue(':color', $params->getColor(), PDO::PARAM_STR);
         $req->bindValue(':is_default', $params->getIsDefault(), PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

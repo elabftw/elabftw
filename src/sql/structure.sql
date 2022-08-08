@@ -426,7 +426,7 @@ CREATE TABLE `items_revisions` (
 CREATE TABLE `items_types` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `color` varchar(6) DEFAULT '29aeb9',
   `body` text NULL DEFAULT NULL,
@@ -544,7 +544,7 @@ CREATE TABLE `pin_items2users` (
 CREATE TABLE `status` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
-  `name` text NOT NULL,
+  `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
   `is_default` tinyint UNSIGNED DEFAULT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL,

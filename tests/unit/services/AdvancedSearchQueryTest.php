@@ -73,7 +73,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
             $this->groups,
         ));
         $whereClause = $advancedSearchQuery->getWhereClause();
-        $this->assertStringStartsWith(' AND (categoryt.name LIKE :', $whereClause['where']);
+        $this->assertStringStartsWith(' AND (categoryt.title LIKE :', $whereClause['where']);
         $this->assertStringEndsWith(')', $whereClause['where']);
     }
 

@@ -35,7 +35,7 @@ class Templates extends AbstractTemplateEntity
         parent::__construct($users, $id);
     }
 
-    public function getViewPage(): string
+    public function getPage(): string
     {
         return 'ucp.php?tab=3&templateid=';
     }

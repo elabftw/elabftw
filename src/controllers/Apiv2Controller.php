@@ -123,7 +123,7 @@ class Apiv2Controller extends AbstractApiController
     private function handlePost(): Response
     {
         $id = $this->Model->postAction($this->action, $this->reqBody);
-        return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', SITE_URL, $this->Model->getViewPage(), $id)));
+        return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', SITE_URL, $this->Model->getPage(), $id)));
     }
 
     private function getArray(): array

@@ -19,4 +19,9 @@ export default class ItemsTypes extends Entity {
     const params = {'title': title};
     return this.api.post(`${this.model}`, params);
   }
+
+  updateAll(id: number, title: string, color: string, bookable: number, body: string, canread: string, canwrite: string): Promise<Response> {
+    const params = {'title': title, 'color': color, 'bookable': bookable, 'body': body, 'canread': canread, 'canwrite': canwrite};
+    return this.api.patch(`${this.model}/${id}`, params);
+  }
 }

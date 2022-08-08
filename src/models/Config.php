@@ -237,7 +237,7 @@ final class Config implements RestInterface
         return $this->readAll();
     }
 
-    public function getViewPage(): string
+    public function getPage(): string
     {
         return 'sysconfig.php';
     }

@@ -14,7 +14,7 @@ import Status from './Status.class';
 import i18next from 'i18next';
 import ItemsTypes from './ItemsTypes.class';
 import { Ajax } from './Ajax.class';
-import { Payload, Method, Model, Action, Target, EntityType } from './interfaces';
+import { Payload, Method, Model, Action, Target } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const canread = (document.getElementById('itemsTypesCanread') as HTMLSelectElement).value;
     const canwrite = (document.getElementById('itemsTypesCanwrite') as HTMLSelectElement).value;
     const template = tinymce.get('itemsTypesBody').getContent();
-    // TODO ItemTypeC.update(id, name, color, bookable, template, canread, canwrite);
+    ItemTypeC.updateAll(id, name, color, bookable, template, canread, canwrite);
   }
   // END ITEMS TYPES
 

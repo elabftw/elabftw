@@ -29,7 +29,7 @@ interface RestInterface
 
     public function patchAction(Action $action): array;
 
-    public function getViewPage(): string;
+    public function getPage(): string;
 
     public function destroy(): bool;
 }

@@ -97,9 +97,9 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($tata->isAdminOf(2));
     }
 
-    public function testGetViewPage(): void
+    public function testGetPage(): void
     {
-        $this->assertEquals('api/v2/users/', $this->Users->getViewPage());
+        $this->assertEquals('api/v2/users/', $this->Users->getPage());
     }
 
     public function testUpdateTooShortPassword(): void

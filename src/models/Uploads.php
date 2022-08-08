@@ -234,9 +234,9 @@ class Uploads implements CrudInterface
         return $this->readOne();
     }
 
-    public function getViewPage(): string
+    public function getPage(): string
     {
-        return $this->Entity->getViewPage();
+        return $this->Entity->getPage();
     }
 
     public function update(UploadParamsInterface $params): bool

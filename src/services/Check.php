@@ -163,7 +163,6 @@ class Check
             'privacypolicy',
             'rating',
             'real_name',
-            'sharelink',
             'state',
             'title',
             'ts_authority',

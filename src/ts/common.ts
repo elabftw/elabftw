@@ -13,7 +13,7 @@ import 'bootstrap/js/src/modal.js';
 import { notif, makeSortableGreatAgain, reloadElement, adjustHiddenState, getEntity } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
-import { PartialEntity, EntityType, Payload, Target, Method, Model, Action } from './interfaces';
+import { EntityType, Payload, Target, Method, Model, Action } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
@@ -353,19 +353,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // prepare the get request
       const entityType = el.dataset.type === 'experiments' ? EntityType.Experiment : EntityType.Item;
-      const payload: Payload = {
-        method: Method.GET,
-        action: Action.Read,
-        model: entityType,
-        entity: {
-          type: entityType,
-          id: parseInt(el.dataset.id, 10),
-        },
-        target: Target.Body,
-      };
-      (new Ajax()).send(payload).then(json => {
+      (new EntityClass(entityType)).read(parseInt(el.dataset.id, 10)).then(resp => resp.json()).then(json => {
         // add html content and adjust the width of the children
-        bodyDiv.innerHTML = (json.value as PartialEntity).body;
+        bodyDiv.innerHTML = json.body_html;
         // get the width of the parent. The -30 is to make it smaller than parent even with the margins
         const width = document.getElementById('parent_' + randId).clientWidth - 30;
         bodyDiv.style.width = String(width);

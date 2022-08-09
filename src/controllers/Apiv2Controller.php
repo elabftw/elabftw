@@ -56,7 +56,7 @@ class Apiv2Controller extends AbstractApiController
                 Request::METHOD_GET => $this->handleGet(),
                 Request::METHOD_POST => $this->handlePost(),
                 Request::METHOD_DELETE => new JsonResponse($this->Model->destroy(), Response::HTTP_NO_CONTENT),
-                Request::METHOD_PATCH => new JsonResponse($this->handlePatch(), Response::HTTP_OK),
+                Request::METHOD_PATCH => new JsonResponse($this->handlePatch()),
                 // send error 405 for Method Not Allowed, with Allow header as per spec:
                 // https://tools.ietf.org/html/rfc7231#section-7.4.1
                 // Note: can only be triggered with a HEAD because the allowed methods are filtered at nginx level too
@@ -143,7 +143,7 @@ class Apiv2Controller extends AbstractApiController
             ExportFormat::Pdf,
             ExportFormat::PdfA,
             ExportFormat::Zip => (new MakeController($this->Users, $this->Request))->getResponse(),
-            default => new JsonResponse($this->getArray(), Response::HTTP_OK),
+            default => new JsonResponse($this->getArray()),
         };
     }
 

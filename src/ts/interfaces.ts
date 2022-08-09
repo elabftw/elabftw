@@ -10,13 +10,7 @@ interface ResponseMsg {
   res: boolean;
   msg: string;
   color?: string;
-  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedEntities> | Array<Upload> | Array<Categories> | object | PartialEntity;
-}
-
-interface PartialEntity {
-  body: string;
-  metadata: string;
-  sharelink: string;
+  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedEntities> | Array<Upload> | Array<Categories> | object;
 }
 
 interface Categories {
@@ -121,7 +115,6 @@ enum Target {
   PrivacyPolicy = 'privacypolicy',
   Rating = 'rating',
   RealName = 'real_name',
-  ShareLink = 'sharelink',
   Title = 'title',
   TsBloxberg = 'ts_bloxberg',
   TsClassic = 'ts_classic',
@@ -162,7 +155,6 @@ export {
   EntityType,
   Method,
   Model,
-  PartialEntity,
   Payload,
   ResponseMsg,
   Target,

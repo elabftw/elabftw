@@ -9,6 +9,11 @@ import { Method } from './interfaces';
 import { notifSaved, notifError } from './misc';
 
 export class Api {
+  get(query: string): Promise<Response>
+  {
+    return this.send(Method.GET, query);
+  }
+
   patch(query: string, params = {}): Promise<Response>
   {
     return this.send(Method.PATCH, query, params);
@@ -28,22 +33,27 @@ export class Api {
   send(method: Method, query: string, params = {}): Promise<Response>
   {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    return fetch(`api/v2/${query}`, {
+    const options = {
       method: method,
       headers: {
         'Content-Type': 'application/json',
         'X-CSRF-Token': csrfToken,
         'X-Requested-With': 'XMLHttpRequest',
       },
-      body: JSON.stringify(params),
-    }).then(response => {
+    };
+    if ([Method.POST, Method.PATCH].includes(method)) {
+      options['body'] = JSON.stringify(params);
+    }
+    return fetch(`api/v2/${query}`, options).then(response => {
       if (response.status !== this.getOkStatusFromMethod(method)) {
         // if there is an error we will get the message in the reply body
         return response.json().then(json => { throw new Error(json.description); });
       }
       return response;
     }).then(response => {
-      notifSaved();
+      if (method !== Method.GET) {
+        notifSaved();
+      }
       return response;
     }).catch(error => {
       notifError(error);

@@ -34,12 +34,12 @@ export default class JsonEditorHelper {
     // JSONEditor has several modes, in edit mode we want more modes than in view mode
     let modes = ['view'];
     if (editable) {
-      modes = modes.concat(['tree', 'code', 'form', 'text']);
+      modes = modes.concat(['tree', 'code', 'form']);
     }
     const options = {
       modes: modes,
       onModeChange: (newMode): void => {
-        if (newMode === 'code' || newMode === 'text') {
+        if (newMode === 'code') {
           (this.editorDiv.firstChild as HTMLDivElement).style.height = '500px';
         }
       },
@@ -99,6 +99,7 @@ export default class JsonEditorHelper {
   loadMetadata(): void {
     // set the title
     this.editorTitle.innerText = i18next.t('editing-metadata');
+    // Note: metadata is read two times one for the editor, one to display, a get to the entity should ideally only be made once
     this.MetadataC.read().then(metadata => this.editor.set(metadata));
     this.editorDiv.dataset.what = 'metadata';
     // disable the load metadata button
@@ -114,8 +115,9 @@ export default class JsonEditorHelper {
   }
 
   saveMetadata(): void {
+    const MetadataC = new Metadata(this.entity);
     try {
-      this.MetadataC.update(JSON.stringify(this.editor.get()));
+      MetadataC.update(this.editor.get());
     } catch (error) {
       notif({res: false, msg: 'Error parsing the JSON! Error logged in console.'});
       console.error(error);
@@ -130,11 +132,11 @@ export default class JsonEditorHelper {
   // save a file or metadata depending on what was loaded
   save(): void {
     if (this.editorDiv.dataset.what === 'file') {
-      return this.saveFile();
+      this.saveFile();
     }
 
     if (this.editorDiv.dataset.what === 'metadata') {
-      return this.saveMetadata();
+      this.saveMetadata();
     }
 
     // toggle save menu so user can select what to save: file or metadata

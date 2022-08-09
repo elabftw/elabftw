@@ -311,26 +311,11 @@ abstract class AbstractEntity implements RestInterface
         return $req->fetchAll();
     }
 
+    // @deprecated: once boundevent is out of the way it'll just be readOne()
     public function read(ContentParamsInterface $params): array
     {
         if ($params->getTarget() === 'boundevent' && $this instanceof Experiments) {
             return $this->getBoundEvents();
-        }
-        if ($params->getTarget() === 'metadata') {
-            return array('metadata' => $this->readOne()['metadata']);
-        }
-        if ($params->getTarget() === 'body') {
-            $body = $this->readOne()['body'] ?? '';
-            if ((int) $this->entityData['content_type'] === self::CONTENT_MD) {
-                $body = Tools::md2html($body);
-            }
-            return array('body' => $body);
-        }
-        if ($params->getTarget() === 'sharelink') {
-            if (!$this instanceof AbstractConcreteEntity) {
-                throw new ImproperActionException('Can only share experiments or items.');
-            }
-            return array('sharelink' => SITE_URL . '/' . $this->page . '.php?mode=view&id=' . $this->id . '&elabid=' . $this->readOne()['elabid']);
         }
         return $this->readOne();
     }
@@ -693,7 +678,15 @@ abstract class AbstractEntity implements RestInterface
         $this->entityData['links'] = $this->Links->readAll();
         $this->entityData['uploads'] = $this->Uploads->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
-
+        // add a share link
+        $this->entityData['sharelink'] = SITE_URL . '/' . $this->page . '.php?mode=view&id=' . $this->id . '&elabid=' . $this->entityData['elabid'];
+        // add the body as html
+        $this->entityData['body_html'] = $this->entityData['body'];
+        // convert from markdown only if necessary
+        if ($this->entityData['content_type'] === self::CONTENT_MD) {
+            $this->entityData['body_html'] = Tools::md2html($this->entityData['body']);
+        }
+        ksort($this->entityData);
         return $this->entityData;
     }
 

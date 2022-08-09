@@ -23,6 +23,10 @@ export default class Entity {
     return this.api.post(`${this.model}`, params);
   }
 
+  read(id: number): Promise<Response> {
+    return this.api.get(`${this.model}/${id}`);
+  }
+
   update(id: number, target: Target, content: string): Promise<Response> {
     const params = {};
     params[target] = content;

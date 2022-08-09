@@ -10,7 +10,7 @@ import { InputType, Malle, SelectOptions } from '@deltablot/malle';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
 import { getEntity, updateCategory, relativeMoment, reloadElement, showContentPlainText } from './misc';
-import { BoundEvent, EntityType, Payload, Method, Action, Target, Model, PartialEntity } from './interfaces';
+import { BoundEvent, EntityType, Payload, Method, Action, Target, Model } from './interfaces';
 import { DateTime } from 'luxon';
 import EntityClass from './Entity.class';
 import Comment from './Comment.class';
@@ -94,16 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // SHARE
     } else if (el.matches('[data-action="share"]')) {
-      const payload: Payload = {
-        method: Method.GET,
-        action: Action.Read,
-        entity: entity,
-        model: entity.type,
-        target: Target.ShareLink,
-      };
-      AjaxC.send(payload).then(json => {
+      EntityC.read(entity.id).then(resp => resp.json()).then(json => {
         const link = (document.getElementById('shareLinkInput') as HTMLInputElement);
-        link.value = (json.value as PartialEntity).sharelink;
+        link.value = json.sharelink;
         link.hidden = false;
         link.focus();
         link.select();

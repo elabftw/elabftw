@@ -33,7 +33,6 @@ class TransformTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('circle-question', Transform::permissionIcon('unknown'));
     }
 
-
     public function testCsrf(): void
     {
         $token = 'fake-token';

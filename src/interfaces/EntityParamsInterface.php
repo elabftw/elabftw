@@ -16,15 +16,11 @@ interface EntityParamsInterface extends ContentParamsInterface
 
     public function getTags(): array;
 
-    public function getDate(): string;
-
     public function getBody(): string;
 
     public function getColor(): string;
 
     public function getExtraBody(): string;
-
-    public function getMetadata(): string;
 
     public function getField(): string;
 

@@ -11,6 +11,8 @@ namespace Elabftw\Interfaces;
 
 interface ContentParamsInterface
 {
+    public function getUnfilteredContent(): string;
+
     public function getContent(): string;
 
     public function getTarget(): string;

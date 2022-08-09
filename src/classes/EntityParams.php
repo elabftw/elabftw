@@ -18,9 +18,12 @@ use const JSON_THROW_ON_ERROR;
 
 class EntityParams extends ContentParams implements EntityParamsInterface
 {
-    public function __construct(string $content, string $target = '', ?array $extra = null)
+    public function getColumn(): string
     {
-        parent::__construct($content, $target, $extra);
+        if ($this->target === 'bodyappend') {
+            return 'body';
+        }
+        return parent::getColumn();
     }
 
     public function getTitle(): string
@@ -33,16 +36,6 @@ class EntityParams extends ContentParams implements EntityParamsInterface
         return $this->extra['tags'] ?? array();
     }
 
-    public function getDate(): string
-    {
-        return $this->content;
-    }
-
-    public function getBody(): string
-    {
-        return Filter::body($this->content);
-    }
-
     public function getExtraBody(): string
     {
         return Filter::body($this->extra['body'] ?? '');
@@ -51,11 +44,6 @@ class EntityParams extends ContentParams implements EntityParamsInterface
     public function getColor(): string
     {
         return Check::color($this->content);
-    }
-
-    public function getMetadata(): string
-    {
-        return $this->content;
     }
 
     public function getField(): string

@@ -345,6 +345,7 @@ abstract class AbstractEntity implements RestInterface
 
     public function patchAction(Action $action): array
     {
+        $this->canOrExplode('write');
         return match ($action) {
             Action::Lock => $this->toggleLock(),
             Action::Pin => $this->Pins->togglePin(),
@@ -354,6 +355,7 @@ abstract class AbstractEntity implements RestInterface
 
     public function patch(array $params): array
     {
+        $this->canOrExplode('write');
         foreach ($params as $key => $value) {
             $this->update(new EntityParams((string) $value, $key));
         }
@@ -613,14 +615,13 @@ abstract class AbstractEntity implements RestInterface
      */
     protected function update(EntityParamsInterface $params): bool
     {
-        $this->canOrExplode('write');
-
         switch ($params->getTarget()) {
             case 'title':
                 $content = $params->getTitle();
                 break;
             case 'date':
-                $content = $params->getDate();
+            case 'metadata':
+                $content = $params->getUnfilteredContent();
                 break;
             case 'body':
                 $content = $params->getBody();
@@ -646,9 +647,6 @@ abstract class AbstractEntity implements RestInterface
             case 'state':
                 $content = $params->getInt();
                 break;
-            case 'metadata':
-                $content = $params->getMetadata();
-                break;
             case 'metadatafield':
                 return $this->updateJsonField($params);
             default:
@@ -667,13 +665,8 @@ abstract class AbstractEntity implements RestInterface
             $Revisions->create((string) $content);
         }
 
-        $column = $params->getTarget();
-        // special case for bodyappend that is a column + mode
-        if ($column === 'bodyappend') {
-            $column = 'body';
-        }
-
-        $sql = 'UPDATE ' . $this->type . ' SET ' . $column . ' = :content, lastchangeby = :userid WHERE id = :id';
+        // getColumn cannot be malicious here because of the previous switch
+        $sql = 'UPDATE ' . $this->type . ' SET ' . $params->getColumn() . ' = :content, lastchangeby = :userid WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $content);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

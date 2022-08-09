@@ -328,15 +328,7 @@ class Apiv1Controller extends AbstractApiController
 
             return new JsonResponse($this->Entity->readShow($DisplayParams, false));
         }
-        $this->Entity->canOrExplode('read');
-        // add the uploaded files
-        $this->Entity->entityData['uploads'] = $this->Entity->Uploads->readAll();
-        // add the linked items
-        $this->Entity->entityData['links'] = $this->Entity->Links->readAll();
-        // add the steps
-        $this->Entity->entityData['steps'] = $this->Entity->Steps->readAll();
-
-        return new JsonResponse($this->Entity->entityData);
+        return new JsonResponse($this->Entity->readOne());
     }
 
     /**
@@ -573,6 +565,7 @@ class Apiv1Controller extends AbstractApiController
         } catch (IllegalActionException) {
             return new Response('You do not have permission to access this resource.', 403);
         }
+        // TODO use download controller for s3 storage
         $filePath = dirname(__DIR__, 2) . '/uploads/' . $Uploads->uploadData['long_name'];
         return new BinaryFileResponse($filePath);
     }

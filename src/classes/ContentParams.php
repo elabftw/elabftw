@@ -26,6 +26,11 @@ class ContentParams implements ContentParamsInterface
     {
     }
 
+    public function getUnfilteredContent(): string
+    {
+        return $this->content;
+    }
+
     public function getTarget(): string
     {
         return Check::target($this->target);

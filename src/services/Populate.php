@@ -77,8 +77,8 @@ class Populate
                 $Entity->toggleLock();
             }
 
-            // change the visibility
-            if ($this->faker->randomDigit() > 8) {
+            // change the visibility, but not the first ones as they are often used in tests and this could cause permissions issues
+            if ($this->faker->randomDigit() > 8 && $i > 10) {
                 $Entity->patch(array('canread' => $this->faker->randomElement(array('organization', 'public', 'user'))));
                 $Entity->patch(array('canwrite' => $this->faker->randomElement(array('organization', 'public', 'user'))));
             }

@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="export-scheduler"]')) {
       const from = (document.getElementById('schedulerDateFrom') as HTMLSelectElement).value;
       const to = (document.getElementById('schedulerDateTo') as HTMLSelectElement).value;
-      window.location.href = `make.php?what=schedulerReport&from=${from}&to=${to}`;
+      window.location.href = `make.php?format=schedulerReport&start=${from}&end=${to}`;
     }
   });
 });

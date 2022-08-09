@@ -180,10 +180,15 @@ class MakeController implements ControllerInterface
 
     private function makeSchedulerReport(): Response
     {
+        $defaultStart = '2018-12-23T00:00:00+01:00';
+        $defaultEnd = '2119-12-23T00:00:00+01:00';
         return $this->getFileResponse(new MakeSchedulerReport(
-            new Scheduler(new Items($this->Users)),
-            (string) $this->Request->query->get('from'),
-            (string) $this->Request->query->get('to'),
+            new Scheduler(
+                new Items($this->Users),
+                null,
+                (string) $this->Request->query->get('start', $defaultStart),
+                (string) $this->Request->query->get('end', $defaultEnd),
+            ),
         ));
     }
 

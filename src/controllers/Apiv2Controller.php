@@ -19,6 +19,8 @@ use Elabftw\Factories\EntityFactory;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\Config;
+use Elabftw\Models\Items;
+use Elabftw\Models\Scheduler;
 use Elabftw\Models\Users;
 use function implode;
 use JsonException;
@@ -170,6 +172,19 @@ class Apiv2Controller extends AbstractApiController
             case 'experiments_templates':
             case 'items_types':
                 return (new EntityFactory($this->Users, $this->endpoint, $this->id))->getEntity();
+                // for a single event, the id is the id of the event
+            case 'event':
+                return new Scheduler(new Items($this->Users), $this->id);
+                // otherwise it's the id of the item
+            case 'events':
+                $defaultStart = '2018-12-23T00:00:00+01:00';
+                $defaultEnd = '2119-12-23T00:00:00+01:00';
+                return new Scheduler(
+                    new Items($this->Users, $this->id),
+                    null,
+                    (string) $this->Request->query->get('start', $defaultStart),
+                    (string) $this->Request->query->get('end', $defaultEnd),
+                );
             case 'users':
                 return new Users($this->id, null, $this->Users);
             default:

@@ -17,6 +17,7 @@ use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\TagParams;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -188,7 +189,14 @@ class Apiv1Controller extends AbstractApiController
                 break;
             case 'events':
                 $this->Entity = new Items($this->Users, $this->id);
-                $this->Scheduler = new Scheduler($this->Entity);
+                $defaultStart = '2018-12-23T00:00:00+01:00';
+                $defaultEnd = '2119-12-23T00:00:00+01:00';
+                $this->Scheduler = new Scheduler(
+                    $this->Entity,
+                    null,
+                    (string) $this->Request->query->get('start', $defaultStart),
+                    (string) $this->Request->query->get('end', $defaultEnd),
+                );
                 break;
             default:
                 throw new ImproperActionException('Invalid endpoint.');
@@ -512,8 +520,7 @@ class Apiv1Controller extends AbstractApiController
     {
         // return all events if there is no id
         if ($this->id === null) {
-            // TODO allow filtering of this through sent data
-            return new JsonResponse($this->Scheduler->readAllFromTeam('2018-12-23T00:00:00 01:00', '2119-12-23T00:00:00 01:00'));
+            return new JsonResponse($this->Scheduler->readAll());
         }
         $this->Scheduler->setId($this->id);
         return new JsonResponse($this->Scheduler->readOne());
@@ -849,11 +856,11 @@ class Apiv1Controller extends AbstractApiController
             throw new ImproperActionException('Item id missing!');
         }
         $this->Entity->setId($this->id);
-        $id = $this->Scheduler->create(
-            (string) $this->Request->request->get('start'),
-            (string) $this->Request->request->get('end'),
-            (string) $this->Request->request->get('title'),
-        );
+        $id = $this->Scheduler->postAction(Action::Create, array(
+            'start' => (string) $this->Request->request->get('start'),
+            'end' => (string) $this->Request->request->get('end'),
+            'title' => (string) $this->Request->request->get('title'),
+        ));
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
 

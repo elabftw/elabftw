@@ -11,23 +11,29 @@ namespace Elabftw\Models;
 
 use DateInterval;
 use DateTime;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Enums\Action;
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 
 class SchedulerTest extends \PHPUnit\Framework\TestCase
 {
     private Scheduler $Scheduler;
 
-    private int $id;
-
     private array $delta;
+
+    private string $start;
+
+    private string $end;
 
     protected function setUp(): void
     {
         $Users = new Users(1, 1);
         $Items = new Items($Users, 1);
-        $this->Scheduler = new Scheduler($Items);
-        $this->id = 1;
+        $d = new DateTime('now');
+        $this->start = $d->format('c');
+        $d->add(new DateInterval('PT2H'));
+        $this->end = $d->format('c');
+        $this->Scheduler = new Scheduler($Items, null, $this->start, $this->end);
         $this->delta = array(
             'years' => '0',
             'months' => '0',
@@ -36,66 +42,83 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testGetPage(): void
+    {
+        $this->assertEquals('api/v2/event/', $this->Scheduler->getPage());
+    }
+
     public function testCreate(): int
     {
-        $d = new DateTime('now');
-        $start = $d->format('c');
-        $d->add(new DateInterval('PT2H'));
-        $end = $d->format('c');
-        $this->id = $this->Scheduler->create($start, $end, 'Yep');
-        return $this->id;
+        return $this->Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => 'Yep'));
     }
 
-    public function testReadAllFromTeam(): void
+    public function testFailure(): void
     {
-        $d = new DateTime('now');
-        $start = $d->format('c');
-        $d->add(new DateInterval('P6D'));
-        $end = $d->format('c');
-        $this->assertIsArray($this->Scheduler->readAllFromTeam($start, $end));
+        $Users = new Users(1, 1);
+        $Items = new Items($Users);
+        $Scheduler = new Scheduler($Items, null, $this->start, $this->end);
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->postAction(Action::Create, array());
     }
 
-    public function testRead(): void
+    public function testReadFromAnItem(): void
     {
-        $d = new DateTime('now');
-        $start = $d->format('c');
-        $d->add(new DateInterval('P6D'));
-        $end = $d->format('c');
-        $this->assertIsArray($this->Scheduler->read($start, $end));
+        $this->assertIsArray($this->Scheduler->readAll());
+        $Items = new Items(new Users(1, 1), 1);
+        $this->Scheduler = new Scheduler($Items, null, $this->start, $this->end);
+        $this->assertIsArray($this->Scheduler->readOne());
+    }
+
+    public function testPatchEpoch(): void
+    {
+        $Items = new Items(new Users(1, 1), 1);
+        $Scheduler = new Scheduler($Items, 1, $this->start, $this->end);
+        $this->assertIsArray($Scheduler->patch(array('target' => 'start_epoch', 'epoch' => date('U'))));
+        $this->assertIsArray($Scheduler->patch(array('target' => 'end_epoch', 'epoch' => date('U'))));
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->patch(array('target' => 'oops', 'epoch' => date('U')));
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->patch(array('target' => 'end_epoch', 'epoch' => ''));
+    }
+
+    public function testPatchAction(): void
+    {
+        $this->assertIsArray($this->Scheduler->patchAction(Action::Duplicate));
     }
 
     public function testBind(): void
     {
         $this->Scheduler->setId($this->testCreate());
-        $this->assertTrue($this->Scheduler->bind(3, 'experiment'));
-        $this->assertTrue($this->Scheduler->bind(3, 'item_link'));
+        $this->assertIsArray($this->Scheduler->patch(array('target' => 'experiment', 'id' => 3)));
+        $this->assertIsArray($this->Scheduler->patch(array('target' => 'item_link', 'id' => 3)));
     }
 
     public function testBindIncorrect(): void
     {
         $this->Scheduler->setId($this->testCreate());
-        $this->expectException(IllegalActionException::class);
-        $this->Scheduler->bind(3, 'blah');
+        $this->expectException(DatabaseErrorException::class);
+        $this->Scheduler->patch(array('target' => 'experiment', 'id' => -12));
     }
 
     public function testUnbind(): void
     {
         $this->Scheduler->setId($this->testCreate());
-        $this->assertTrue($this->Scheduler->unbind('experiment'));
-        $this->assertTrue($this->Scheduler->unbind('item_link'));
+        $this->assertIsArray($this->Scheduler->patch(array('target' => 'experiment', 'id' => null)));
+        $this->assertIsArray($this->Scheduler->patch(array('target' => 'item_link', 'id' => null)));
     }
 
     public function testCanWriteAndWeAreAdmin(): void
     {
         $Users = new Users(2, 1);
         $Items = new Items($Users, 3);
-        $Scheduler = new Scheduler($Items);
-        $d = new DateTime('tomorrow');
-        $start = $d->format('c');
+        $Scheduler = new Scheduler($Items, null, $this->start, $this->end);
+        // create with user, make sure it's in the future!
+        $d = new DateTime('now');
         $d->add(new DateInterval('PT2H'));
+        $start = $d->format('c');
+        $d->add(new DateInterval('PT4H'));
         $end = $d->format('c');
-        // create with user
-        $id = $Scheduler->create($start, $end, 'Yep');
+        $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'Yep'));
         // write with admin
         $this->Scheduler->setId($id);
         $this->assertTrue($this->Scheduler->destroy());
@@ -105,42 +128,47 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     {
         $Users = new Users(2, 1);
         $Items = new Items($Users, 1);
-        $Scheduler = new Scheduler($Items);
+        $d = new DateTime('now');
+        $d->add(new DateInterval('PT2H'));
+        $start = $d->format('c');
+        $d->add(new DateInterval('PT4H'));
+        $end = $d->format('c');
+        $Scheduler = new Scheduler($Items, null, $start, $end);
         $Scheduler->setId($this->testCreate());
         // try write event created by admin as user
         $this->expectException(ImproperActionException::class);
-        $Scheduler->bind(3, 'experiment');
+        $Scheduler->patch(array('target' => 'experiment', 'id' => 3));
     }
 
     public function testUpdateStart(): void
     {
         $this->Scheduler->setId($this->testCreate());
-        $this->Scheduler->updateStart($this->delta);
+        $this->Scheduler->patch(array('target' => 'start', 'delta' => $this->delta));
         $delta = array(
             'years' => '0',
             'months' => '0',
             'days' => '1',
             'milliseconds' => '1111',
         );
-        $this->Scheduler->updateStart($delta);
+        $this->Scheduler->patch(array('target' => 'start', 'delta' => $delta));
     }
 
     public function testUpdateEnd(): void
     {
         $this->Scheduler->setId($this->testCreate());
-        $this->Scheduler->updateEnd($this->delta);
+        $this->Scheduler->patch(array('target' => 'end', 'delta' => $this->delta));
         $delta = array(
             'years' => '0',
             'months' => '0',
             'days' => '1',
             'milliseconds' => '1111',
         );
-        $this->Scheduler->updateEnd($delta);
+        $this->Scheduler->patch(array('target' => 'end', 'delta' => $delta));
     }
 
     public function testDestroy(): void
     {
-        $id = $this->Scheduler->create('2016-07-22T19:42:00+02:00', '2016-07-23T19:42:00+02:00', 'Yep');
+        $id = $this->Scheduler->postAction(Action::Create, array('start' => '2016-07-22T19:42:00+02:00', 'end' => '2016-07-23T19:42:00+02:00', 'title' => 'Yep'));
         $this->Scheduler->setId($id);
         $this->Scheduler->destroy();
     }

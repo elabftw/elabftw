@@ -173,7 +173,7 @@ abstract class AbstractEntity implements RestInterface
         if (!$this->Users->userData['is_admin'] && $this->entityData['userid'] !== $this->Users->userData['userid']) {
             throw new ImproperActionException(_("You don't have the rights to lock/unlock this."));
         }
-        $locked = (int) $this->entityData['locked'];
+        $locked = $this->entityData['locked'];
 
         // if we try to unlock something we didn't lock
         if ($locked === 1 && !$this->Users->userData['is_admin'] && ($this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
@@ -610,6 +610,7 @@ abstract class AbstractEntity implements RestInterface
                 break;
             case 'date':
             case 'metadata':
+                // MySQL with throw an error if this param is incorrect
                 $content = $params->getUnfilteredContent();
                 break;
             case 'body':
@@ -666,7 +667,7 @@ abstract class AbstractEntity implements RestInterface
     /**
      * Update only one field in the metadata json
      */
-    protected function updateJsonField(EntityParamsInterface $params): bool
+    private function updateJsonField(EntityParamsInterface $params): bool
     {
         // build field
         $field = '$.extra_fields.' . $params->getField() . '.value';

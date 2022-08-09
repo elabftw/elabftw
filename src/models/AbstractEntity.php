@@ -312,6 +312,7 @@ abstract class AbstractEntity implements RestInterface
     }
 
     // @deprecated: once boundevent is out of the way it'll just be readOne()
+    // maybe it'll be /experiments/:id/events ?
     public function read(ContentParamsInterface $params): array
     {
         if ($params->getTarget() === 'boundevent' && $this instanceof Experiments) {

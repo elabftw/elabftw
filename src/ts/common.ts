@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // prepare the get request
       const entityType = el.dataset.type === 'experiments' ? EntityType.Experiment : EntityType.Item;
-      (new EntityClass(entityType)).read(parseInt(el.dataset.id, 10)).then(resp => resp.json()).then(json => {
+      (new EntityClass(entityType)).read(parseInt(el.dataset.id, 10)).then(json => {
         // add html content and adjust the width of the children
         bodyDiv.innerHTML = json.body_html;
         // get the width of the parent. The -30 is to make it smaller than parent even with the margins

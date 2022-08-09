@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // SHARE
     } else if (el.matches('[data-action="share"]')) {
-      EntityC.read(entity.id).then(resp => resp.json()).then(json => {
+      EntityC.read(entity.id).then(json => {
         const link = (document.getElementById('shareLinkInput') as HTMLInputElement);
         link.value = json.sharelink;
         link.hidden = false;

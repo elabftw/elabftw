@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="import-link-body"]')) {
       // this is in this file and not in steps-links-edit because here `editor`
       // exists and is reachable
-      (new EntityClass(EntityType.Item)).read(parseInt(el.dataset.target, 10)).then(resp => resp.json()).then(json => {
+      (new EntityClass(EntityType.Item)).read(parseInt(el.dataset.target, 10)).then(json => {
         editor.setContent(json.body);
       });
 

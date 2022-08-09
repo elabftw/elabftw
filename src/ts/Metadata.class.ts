@@ -36,7 +36,7 @@ export class Metadata {
    * Get the json from the metadata column
    */
   read(): Promise<Record<string, unknown>> {
-    return this.api.get(`${this.entity.type}/${this.entity.id}`).then(resp => resp.json()).then(json => {
+    return this.api.getJson(`${this.entity.type}/${this.entity.id}`).then(json => {
       // if there are no metadata.json file available, return an empty object
       if (typeof json.metadata === 'undefined' || !json.metadata) {
         return {};

@@ -50,12 +50,6 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('<p>Body</p>', $entityData['body']);
     }
 
-    public function testUpdateRating(): void
-    {
-        $this->Items->setId(1);
-        $this->Items->updateRating(1);
-    }
-
     public function testDuplicate(): void
     {
         $this->Items->setId(1);

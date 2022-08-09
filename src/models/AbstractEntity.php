@@ -437,17 +437,6 @@ abstract class AbstractEntity implements RestInterface
         return array('read' => false, 'write' => false);
     }
 
-    public function updateRating(int $rating): void
-    {
-        $this->canOrExplode('write');
-
-        $sql = 'UPDATE ' . $this->type . ' SET rating = :rating WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':rating', $rating, PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-    }
-
     /**
      * Add a filter to the query
      * Second param is nullable because it can come from a request param
@@ -697,7 +686,6 @@ abstract class AbstractEntity implements RestInterface
     private function checkTeamPermissionsEnforced(string $rw): void
     {
         // check if the permissions are enforced
-        // TODO from rest API this won't work because team is not set
         $Team = new Team($this->Users->userData['team']);
         if ($rw === 'canread') {
             if ($Team->getDoForceCanread() === 1 && !$this->Users->userData['is_admin']) {

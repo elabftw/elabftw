@@ -361,89 +361,6 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
-     * Update an entity. The revision is saved before so it can easily compare old and new body.
-     */
-    public function update(EntityParamsInterface $params): bool
-    {
-        $this->canOrExplode('write');
-
-        switch ($params->getTarget()) {
-            case 'title':
-                $content = $params->getTitle();
-                break;
-            case 'date':
-                $content = $params->getDate();
-                break;
-            case 'body':
-                $content = $params->getBody();
-                break;
-            case 'bodyappend':
-                $content = $this->readOne()['body'] . $params->getBody();
-                break;
-            case 'bookable':
-                $content = $params->getInt();
-                break;
-            case 'category':
-                $content = $params->getInt();
-                break;
-            case 'canread':
-            case 'canwrite':
-                $content = $params->getVisibility();
-                if ($this->bypassWritePermission === false) {
-                    $this->checkTeamPermissionsEnforced($params->getTarget());
-                }
-                break;
-            case 'color':
-                $content = $params->getColor();
-                break;
-            case 'content_type':
-                $content = $params->getInt();
-                break;
-            case 'rating':
-                $content = $params->getInt();
-                break;
-            case 'metadata':
-                $content = $params->getMetadata();
-                break;
-            case 'metadatafield':
-                return $this->updateJsonField($params);
-            case 'userid':
-                $content = $params->getInt();
-                break;
-            case 'state':
-                $content = $params->getInt();
-                break;
-            default:
-                throw new ImproperActionException('Invalid update target.');
-        }
-
-        // save a revision for body target
-        if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
-            $Config = Config::getConfig();
-            $Revisions = new Revisions(
-                $this,
-                (int) $Config->configArr['max_revisions'],
-                (int) $Config->configArr['min_delta_revisions'],
-                (int) $Config->configArr['min_days_revisions'],
-            );
-            $Revisions->create((string) $content);
-        }
-
-        $column = $params->getTarget();
-        // special case for bodyappend that is a column + mode
-        if ($column === 'bodyappend') {
-            $column = 'body';
-        }
-
-        $sql = 'UPDATE ' . $this->type . ' SET ' . $column . ' = :content, lastchangeby = :userid WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $content);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
-    /**
      * Get a list of visibility/team groups to display
      *
      * @param string $permission raw value (public, organization, team, user, useronly)
@@ -689,6 +606,79 @@ abstract class AbstractEntity implements RestInterface
         }
         ksort($this->entityData);
         return $this->entityData;
+    }
+
+    /**
+     * Update an entity. The revision is saved before so it can easily compare old and new body.
+     */
+    protected function update(EntityParamsInterface $params): bool
+    {
+        $this->canOrExplode('write');
+
+        switch ($params->getTarget()) {
+            case 'title':
+                $content = $params->getTitle();
+                break;
+            case 'date':
+                $content = $params->getDate();
+                break;
+            case 'body':
+                $content = $params->getBody();
+                break;
+            case 'bodyappend':
+                $content = $this->readOne()['body'] . $params->getBody();
+                break;
+            case 'canread':
+            case 'canwrite':
+                $content = $params->getVisibility();
+                if ($this->bypassWritePermission === false) {
+                    $this->checkTeamPermissionsEnforced($params->getTarget());
+                }
+                break;
+            case 'color':
+                $content = $params->getColor();
+                break;
+            case 'category':
+            case 'bookable':
+            case 'content_type':
+            case 'rating':
+            case 'userid':
+            case 'state':
+                $content = $params->getInt();
+                break;
+            case 'metadata':
+                $content = $params->getMetadata();
+                break;
+            case 'metadatafield':
+                return $this->updateJsonField($params);
+            default:
+                throw new ImproperActionException('Invalid update target.');
+        }
+
+        // save a revision for body target
+        if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
+            $Config = Config::getConfig();
+            $Revisions = new Revisions(
+                $this,
+                (int) $Config->configArr['max_revisions'],
+                (int) $Config->configArr['min_delta_revisions'],
+                (int) $Config->configArr['min_days_revisions'],
+            );
+            $Revisions->create((string) $content);
+        }
+
+        $column = $params->getTarget();
+        // special case for bodyappend that is a column + mode
+        if ($column === 'bodyappend') {
+            $column = 'body';
+        }
+
+        $sql = 'UPDATE ' . $this->type . ' SET ' . $column . ' = :content, lastchangeby = :userid WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $content);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     /**

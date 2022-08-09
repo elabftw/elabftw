@@ -59,7 +59,7 @@ class Links implements CrudInterface
         $sql = 'SELECT items.id AS itemid,
             items.title,
             items.elabid,
-            category.title,
+            category.title AS category,
             category.bookable,
             category.color
             FROM ' . $this->Entity->type . '_links

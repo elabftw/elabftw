@@ -9,7 +9,6 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\StepParams;
 use Elabftw\Elabftw\TagParams;
 use Elabftw\Enums\FileFromString;
@@ -69,13 +68,9 @@ class Populate
             for ($j = 0; $j <= $tagNb; $j++) {
                 $Tags->create(new TagParams($this->faker->word() . $this->faker->word()));
             }
-            $params = new EntityParams($this->faker->sentence(), 'title');
-            $Entity->update($params);
             // random date in the past 5 years
-            $params = new EntityParams($this->faker->dateTimeBetween('-5 years')->format('Ymd'), 'date');
-            $Entity->update($params);
-            $params = new EntityParams($this->faker->realText(1000), 'body');
-            $Entity->update($params);
+            $date = $this->faker->dateTimeBetween('-5 years')->format('Ymd');
+            $Entity->patch(array('title' => $this->faker->sentence(), 'date' => $date, 'body' => $this->faker->realText(1000)));
 
             // lock 10% of experiments (but not the first one because it is used in tests)
             if ($this->faker->randomDigit() > 8 && $i > 1) {

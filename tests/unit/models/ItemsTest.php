@@ -11,7 +11,6 @@ namespace Elabftw\Models;
 
 use function date;
 use Elabftw\Elabftw\ContentParams;
-use Elabftw\Elabftw\EntityParams;
 use Elabftw\Services\Check;
 
 class ItemsTest extends \PHPUnit\Framework\TestCase
@@ -45,9 +44,10 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     {
         $new = $this->Items->create(1);
         $this->Items->setId($new);
-        $this->Items->update(new EntityParams('Items item 1', 'title'));
-        $this->Items->update(new EntityParams('20160729', 'date'));
-        $this->Items->update(new EntityParams('pwet', 'body'));
+        $entityData = $this->Items->patch(array('title' => 'Untitled', 'date' => '20160729', 'body' => '<p>Body</p>'));
+        $this->assertEquals('Untitled', $entityData['title']);
+        $this->assertEquals('2016-07-29', $entityData['date']);
+        $this->assertEquals('<p>Body</p>', $entityData['body']);
     }
 
     public function testUpdateRating(): void

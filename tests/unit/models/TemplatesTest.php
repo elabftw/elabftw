@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
-use Elabftw\Elabftw\EntityParams;
 
 class TemplatesTest extends \PHPUnit\Framework\TestCase
 {
@@ -53,8 +52,9 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
     public function testUpdate(): void
     {
         $this->Templates->setId(1);
-        $this->Templates->update(new EntityParams('Database item 1', 'title'));
-        $this->Templates->update(new EntityParams('pwet', 'body'));
+        $entityData = $this->Templates->patch(array('title' => 'Untitled', 'body' => '<p>Body</p>'));
+        $this->assertEquals('Untitled', $entityData['title']);
+        $this->assertEquals('<p>Body</p>', $entityData['body']);
     }
 
     public function testDestroy(): void

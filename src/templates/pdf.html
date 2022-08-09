@@ -56,7 +56,7 @@
 
     {% for link in entityData.links %}
       <p class='pdf-ul'>
-        <span style='color:#{{ link.color }}'>{{ link.name }}</span> - <a href='{{ linkBaseUrl }}?mode=view&id={{ link.itemid }}'>{{ link.title }}</a>
+        <span style='color:#{{ link.color }}'>{{ link.category }}</span> - <a href='{{ linkBaseUrl }}?mode=view&id={{ link.itemid }}'>{{ link.title }}</a>
       </p>
     {% endfor %}
   </section>

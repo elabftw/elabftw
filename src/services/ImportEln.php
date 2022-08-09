@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 use function basename;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateUpload;
-use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TagParams;
 use Elabftw\Exceptions\ImproperActionException;
@@ -111,7 +110,7 @@ class ImportEln extends AbstractImportZip
                 $linkHtml .= sprintf("<li><a href='%s'>%s</a></li>", $link['@id'], $link['name']);
             }
             $linkHtml .= '</ul>';
-            $this->Entity->update(new EntityParams($linkHtml, 'bodyappend'));
+            $this->Entity->patch(array('bodyappend' => $linkHtml));
         }
 
         // COMMENTS
@@ -144,7 +143,7 @@ class ImportEln extends AbstractImportZip
 
         switch ($part['@type']) {
             case 'Dataset':
-                $this->Entity->update(new EntityParams($this->part2html($part), 'bodyappend'));
+                $this->Entity->patch(array('bodyappend' => $this->part2html($part)));
                 // TODO here handle sub datasets as linked entries
                 foreach ($part['hasPart'] as $subpart) {
                     if ($subpart['@type'] === 'File') {
@@ -176,9 +175,9 @@ class ImportEln extends AbstractImportZip
         if (basename($filepath) === 'export-elabftw.json') {
             $fs = FsTools::getFs(dirname($filepath));
             $json = json_decode($fs->read(basename($filepath)), true, 512, JSON_THROW_ON_ERROR)[0];
-            $this->Entity->update(new EntityParams($json['rating'] ?? '', 'rating'));
+            $this->Entity->patch(array('rating' => $json['rating'] ?? ''));
             if ($json['metadata'] !== null) {
-                $this->Entity->update(new EntityParams(json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512), 'metadata'));
+                $this->Entity->patch(array('metadata' => json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512)));
             }
             // add steps
             if (!empty($json['steps'])) {

@@ -29,7 +29,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
         $getJsonRequest = Request::create(
             '/',
             'GET',
-            array('p' => '{"method":"GET","action":"read","model":"todolist"}'),
+            array('p' => '{"method":"GET","action":"read","model":"apikey"}'),
         );
         $this->assertInstanceOf(GetJsonProcessor::class, $factory->getProcessor($this->Users, $getJsonRequest));
 
@@ -43,7 +43,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
             array(),
             // server
             array('CONTENT_TYPE' => 'application/json'),
-            '{"method":"POST","action":"destroy","model":"todolist","id":2}',
+            '{"method":"POST","action":"destroy","model":"apikey","id":2}',
         );
         $this->assertInstanceOf(PostJsonProcessor::class, $factory->getProcessor($this->Users, $postJsonRequest));
 

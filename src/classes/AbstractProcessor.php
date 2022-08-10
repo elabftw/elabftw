@@ -25,7 +25,6 @@ use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
@@ -117,8 +116,6 @@ abstract class AbstractProcessor implements ProcessorInterface
                 return new TeamGroups($this->Users, $this->id);
             case 'tag':
                 return new Tags($this->Entity, $this->id);
-            case 'todolist':
-                return new Todolist((int) $this->Users->userData['userid'], $this->id);
             case 'user2team':
                 return new Users2Teams();
             default:

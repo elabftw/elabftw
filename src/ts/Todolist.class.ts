@@ -5,42 +5,38 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedEntities, ResponseMsg } from './interfaces';
+import { Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedEntities } from './interfaces';
 import SidePanel from './SidePanel.class';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
 import FavTag from './FavTag.class';
 import i18next from 'i18next';
+import { Api } from './Apiv2.class';
 
 export default class Todolist extends SidePanel {
 
   unfinishedStepsScope: string;
   initialLoad = true;
+  api: Api;
 
   constructor() {
     super(Model.Todolist);
     this.panelId = 'todolistPanel';
     this.unfinishedStepsScope = 'user';
+    this.api = new Api();
   }
 
-  create(content: string): Promise<ResponseMsg> {
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Create,
-      model: this.model,
-      content: content,
-    };
-    return this.sender.send(payload);
+  create(content: string): Promise<Response> {
+    return this.api.post(`${this.model}`, {'content': content});
   }
 
-  read(): Promise<void> {
-    const payload: Payload = {
-      method: Method.GET,
-      action: Action.Read,
-      model: this.model,
-    };
-    return this.sender.send(payload).then(json => {
+  readAll(): Record<string, any> {
+    return this.api.getJson(`${this.model}`);
+  }
+
+  display(): Promise<void> {
+    return this.readAll().then(json => {
       let html = '';
-      for (const entry of json.value as Array<Todoitem>) {
+      for (const entry of json as Array<Todoitem>) {
         html += `<li data-todoitemid=${entry.id} id='todoItem_${entry.id}'>
         <a class='float-right mr-2' data-action='destroy-todoitem' data-todoitemid='${entry.id}' title='` + i18next.t('generic-delete-warning') + `'>
           <i class='fas fa-trash-alt'></i>
@@ -55,18 +51,11 @@ export default class Todolist extends SidePanel {
     });
   }
 
-  update(id: number, content: string): Promise<ResponseMsg> {
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Update,
-      model: this.model,
-      id : id,
-      content: content,
-    };
-    return this.sender.send(payload);
+  update(id: number, content: string): Promise<Response> {
+    return this.api.patch(`${this.model}/${id}`, {'content': content});
   }
 
-  toogleUnfinishedStepsScope(): void {
+  toggleUnfinishedStepsScope(): void {
     localStorage.setItem(this.model + 'StepsShowTeam', (localStorage.getItem(this.model + 'StepsShowTeam') === '1' ? '0' : '1'));
     this.unfinishedStepsScope = (this.unfinishedStepsScope === 'user' ? 'team' : 'user');
     this.loadUnfinishedStep();
@@ -118,19 +107,13 @@ export default class Todolist extends SidePanel {
     super.toggle();
     // lazy load content only once
     if (!document.getElementById(this.panelId).hasAttribute('hidden') && this.initialLoad) {
-      this.read();
+      this.display();
       this.loadUnfinishedStep();
       this.initialLoad = false;
     }
   }
 
-  destroy(id: number): Promise<ResponseMsg> {
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Destroy,
-      model: this.model,
-      id : id,
-    };
-    return this.sender.send(payload);
+  destroy(id: number): Promise<Response> {
+    return this.api.delete(`${this.model}/${id}`);
   }
 }

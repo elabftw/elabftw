@@ -21,6 +21,7 @@ use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Items;
 use Elabftw\Models\Scheduler;
+use Elabftw\Models\Todolist;
 use Elabftw\Models\Users;
 use function implode;
 use JsonException;
@@ -185,6 +186,8 @@ class Apiv2Controller extends AbstractApiController
                     (string) $this->Request->query->get('start', $defaultStart),
                     (string) $this->Request->query->get('end', $defaultEnd),
                 );
+            case 'todolist':
+                return new Todolist($this->Users->userData['userid'], $this->id);
             case 'users':
                 return new Users($this->id, null, $this->Users);
             default:

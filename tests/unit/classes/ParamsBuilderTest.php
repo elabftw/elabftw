@@ -19,7 +19,6 @@ use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
@@ -38,8 +37,6 @@ class ParamsBuilderTest extends \PHPUnit\Framework\TestCase
         // ContentParams
         $Experiments = new Experiments($this->Users, 1);
         $builder = new ParamsBuilder(new Comments($Experiments));
-        $this->assertInstanceOf(ContentParams::class, $builder->getParams());
-        $builder = new ParamsBuilder(new Todolist(1));
         $this->assertInstanceOf(ContentParams::class, $builder->getParams());
         $builder = new ParamsBuilder(new Links($Experiments));
         $this->assertInstanceOf(ContentParams::class, $builder->getParams());

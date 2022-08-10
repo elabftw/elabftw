@@ -33,14 +33,24 @@ class Scheduler implements RestInterface
 {
     use EntityTrait;
 
+    private string $start = '2012-31-12T00:00:00+00:00';
+
+    private string $end = '2037-31-12T00:00:00+00:00';
+
     public function __construct(
         public Items $Items,
         ?int $id = null,
-        private ?string $start = '2012-31-12T00:00:00+00:00',
-        private ?string $end = '2037-31-12T00:00:00+00:00',
+        ?string $start = null,
+        ?string $end = null,
     ) {
         $this->Db = Db::getConnection();
         $this->setId($id);
+        if ($start !== null) {
+            $this->start = $start;
+        }
+        if ($end !== null) {
+            $this->end = $end;
+        }
     }
 
     public function getPage(): string
@@ -196,8 +206,8 @@ class Scheduler implements RestInterface
             AND team_events.start > :start AND team_events.end <= :end";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
-        $req->bindParam(':start', $this->start);
-        $req->bindParam(':end', $this->end);
+        $req->bindParam(':start', $start);
+        $req->bindParam(':end', $end);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -237,7 +247,7 @@ class Scheduler implements RestInterface
      *
      * @param array<string, string> $delta timedelta
      */
-    private function updateStart(array $delta): void
+    private function updateStart(array $delta): bool
     {
         $event = $this->readOne();
         $oldStart = DateTime::createFromFormat(DateTime::ISO8601, $event['start']);
@@ -257,7 +267,7 @@ class Scheduler implements RestInterface
         $req->bindValue(':end', $newEnd->format('c'));
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**
@@ -265,7 +275,7 @@ class Scheduler implements RestInterface
      *
      * @param array<string, string> $delta timedelta
      */
-    private function updateEnd(array $delta): void
+    private function updateEnd(array $delta): bool
     {
         $event = $this->readOne();
         $oldEnd = DateTime::createFromFormat(DateTime::ISO8601, $event['end']);
@@ -281,7 +291,7 @@ class Scheduler implements RestInterface
         $req->bindValue(':end', $newEnd->format('c'));
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**

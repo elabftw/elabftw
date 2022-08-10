@@ -18,7 +18,6 @@ use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Teams;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
@@ -41,8 +40,6 @@ class ParamsBuilderTest extends \PHPUnit\Framework\TestCase
         $builder = new ParamsBuilder(new Links($Experiments));
         $this->assertInstanceOf(ContentParams::class, $builder->getParams());
         $builder = new ParamsBuilder(new FavTags($this->Users));
-        $this->assertInstanceOf(ContentParams::class, $builder->getParams());
-        $builder = new ParamsBuilder(new Teams($this->Users));
         $this->assertInstanceOf(ContentParams::class, $builder->getParams());
         // UnfinishedSteps
         $builder = new ParamsBuilder(new UnfinishedSteps($Experiments));

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,14 +6,13 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
 use const DB_NAME;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
@@ -109,8 +108,10 @@ class PopulateDatabase extends Command
         // create teams
         $Users = new Users();
         $Teams = new Teams($Users);
+        $Teams->bypassReadPermission = true;
+        $Teams->bypassWritePermission = true;
         foreach ($yaml['teams'] as $team) {
-            $Teams->create(new ContentParams($team));
+            $Teams->postAction(Action::Create, array('name' => $team));
         }
 
         $iterations = $yaml['iterations'] ?? self::DEFAULT_ITERATIONS;

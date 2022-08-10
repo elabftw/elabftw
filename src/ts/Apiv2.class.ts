@@ -9,34 +9,28 @@ import { Method } from './interfaces';
 import { notifSaved, notifError } from './misc';
 
 export class Api {
-  get(query: string): Promise<Response>
-  {
+  get(query: string): Promise<Response> {
     return this.send(Method.GET, query);
   }
 
-  getJson(query: string): Record<string, any>
-  {
+  getJson(query: string): Record<string, any> {
     return this.get(query).then(resp => resp.json());
   }
 
-  patch(query: string, params = {}): Promise<Response>
-  {
+  patch(query: string, params = {}): Promise<Response> {
     return this.send(Method.PATCH, query, params);
   }
 
-  post(query: string, params = {}): Promise<Response>
-  {
+  post(query: string, params = {}): Promise<Response> {
     return this.send(Method.POST, query, params);
   }
 
-  delete(query: string): Promise<Response>
-  {
+  delete(query: string): Promise<Response> {
     return this.send(Method.DELETE, query);
   }
 
   // private method: use patch/post/delete instead
-  send(method: Method, query: string, params = {}): Promise<Response>
-  {
+  send(method: Method, query: string, params = {}): Promise<Response> {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const options = {
       method: method,

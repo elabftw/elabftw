@@ -182,7 +182,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <h3>{{ 'Add a New Team'|trans }}</h3>
             <hr>
             <input class='form-control custom-control-inline col-md-4' required type='text' placeholder='Pasteur lab' id='teamsName' />
-            <button id='teamsCreateButton' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+            <button data-action='create-team' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
         </div>
 
         <!-- DISPLAY TEAMS -->
@@ -207,12 +207,12 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
                   <li class='list-inline-item mb-2'>
                     {% if count.totusers == 0 and team.id != App.Users.userData.team %}
-                    <button data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' class='button btn btn-danger teamsDestroyButton'>
+                    <button data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' data-action='destroy-team' class='button btn btn-danger'>
                         {{ 'Delete'|trans }}
                     </button>
                     {% else %}
-                    <button data-id='{{ team.id }}' id='teamsArchiveButton_{{ team.id }}' class='button btn btn-neutral teamsArchiveButton'>
-                        {{ 'Archive'|trans }}
+                    <button data-id='{{ team.id }}' data-action='archive-team' class='button btn btn-neutral'>
+                      {{ 'Archive'|trans }}
                     </button>
                   </li>
 
@@ -227,8 +227,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                   </li>
 
                   <li class='list-inline-item mb-2'>
-                    <button data-id='{{ team.id }}' id='teamsUpdateButton_{{ team.id }}' class='button btn btn-primary teamsUpdateButton'>
-                        {{ 'Save'|trans }}
+                    <button data-id='{{ team.id }}' data-action='patch-team-sysadmin' class='button btn btn-primary'>
+                      {{ 'Save'|trans }}
                     </button>
                   </li>
 

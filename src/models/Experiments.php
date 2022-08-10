@@ -12,7 +12,6 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Maps\Team;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 
@@ -33,7 +32,8 @@ class Experiments extends AbstractConcreteEntity
     public function create(int $templateId = -1, array $tags = array()): int
     {
         $Templates = new Templates($this->Users);
-        $Team = new Team($this->Users->userData['team']);
+        $Teams = new Teams($this->Users);
+        $teamConfigArr = $Teams->readOne();
 
         // defaults
         $title = _('Untitled');
@@ -56,10 +56,10 @@ class Experiments extends AbstractConcreteEntity
 
         if ($templateId === 0) {
             // no template, make sure admin didn't disallow it
-            if ($Team->getForceExpTpl() === 1) {
+            if ($teamConfigArr['force_exp_tpl'] === 1) {
                 throw new ImproperActionException(_('Experiments must use a template!'));
             }
-            $body = $Team->getCommonTemplate();
+            $body = $teamConfigArr['common_template'];
             if ($this->Users->userData['default_read'] !== null) {
                 $canread = $this->Users->userData['default_read'];
             }
@@ -74,8 +74,8 @@ class Experiments extends AbstractConcreteEntity
         }
 
         // enforce the permissions if the admin has set them
-        $canread = $Team->getDoForceCanread() === 1 ? $Team->getForceCanread() : $canread;
-        $canwrite = $Team->getDoForceCanwrite() === 1 ? $Team->getForceCanwrite() : $canwrite;
+        $canread = $teamConfigArr['do_force_canread'] === 1 ? $teamConfigArr['force_canread'] : $canread;
+        $canwrite = $teamConfigArr['do_force_canwrite'] === 1 ? $teamConfigArr['force_canwrite'] : $canwrite;
 
         // SQL for create experiments
         $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, metadata, userid, content_type)

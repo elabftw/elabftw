@@ -344,3 +344,12 @@ export function escapeRegExp(string: string): string {
   // $& means the whole matched string
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
+
+export function removeEmpty(params: object): object {
+  for (const [key, value] of Object.entries(params)) {
+    if (value === '') {
+      delete params[key];
+    }
+  }
+  return params;
+}

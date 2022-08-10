@@ -24,7 +24,6 @@ use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Teams;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
@@ -110,8 +109,6 @@ abstract class AbstractProcessor implements ProcessorInterface
                 return new Uploads($this->Entity, $this->id);
             case 'privacypolicy':
                 return new PrivacyPolicy(Config::getConfig());
-            case 'team':
-                return new Teams($this->Users, $this->Users->team);
             case 'teamgroup':
                 return new TeamGroups($this->Users, $this->id);
             case 'tag':

@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, reloadElement } from './misc';
+import { notif, reloadElement, collectForm } from './misc';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
@@ -14,6 +14,7 @@ import Status from './Status.class';
 import i18next from 'i18next';
 import ItemsTypes from './ItemsTypes.class';
 import { Ajax } from './Ajax.class';
+import { Api } from './Apiv2.class';
 import { Payload, Method, Model, Action, Target } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
   const AjaxC = new Ajax();
+  const ApiC = new Api();
 
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
@@ -215,6 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const format = (document.getElementById('categoryExportFormat') as HTMLSelectElement).value;
       window.location.href = `make.php?what=${format}&category=${source}&type=items`;
 
+    } else if (el.matches('[data-action="patch-team-admin"]')) {
+      ApiC.patch(`${Model.Team}/${el.dataset.id}`, collectForm(((el.closest('div.form-group') as HTMLElement))));
     } else if (el.matches('[data-action="export-scheduler"]')) {
       const from = (document.getElementById('schedulerDateFrom') as HTMLSelectElement).value;
       const to = (document.getElementById('schedulerDateTo') as HTMLSelectElement).value;

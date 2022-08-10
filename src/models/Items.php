@@ -12,7 +12,6 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Maps\Team;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 
@@ -91,8 +90,9 @@ class Items extends AbstractConcreteEntity
     public function destroy(): bool
     {
         // check if we can actually delete items (for non-admins)
-        $Team = new Team($this->Users->team);
-        if ($Team->getDeletableItem() === 0 && $this->Users->userData['is_admin'] === 0) {
+        $Teams = new Teams($this->Users);
+        $teamConfigArr = $Teams->readOne();
+        if ($teamConfigArr['deletable_item'] === 0 && $this->Users->userData['is_admin'] === 0) {
             throw new ImproperActionException(_('Users cannot delete items.'));
         }
 

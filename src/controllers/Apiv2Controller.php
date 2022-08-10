@@ -21,6 +21,7 @@ use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Items;
 use Elabftw\Models\Scheduler;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\Users;
 use function implode;
@@ -54,6 +55,8 @@ class Apiv2Controller extends AbstractApiController
                 throw new ImproperActionException('Incorrect content-type header.');
             }
             $this->parseReq();
+
+            $this->applyRestrictions();
 
             return match ($this->Request->server->get('REQUEST_METHOD')) {
                 Request::METHOD_GET => $this->handleGet(),
@@ -163,10 +166,6 @@ class Apiv2Controller extends AbstractApiController
     {
         switch ($this->endpoint) {
             case 'config':
-                // restrict Config to sysadmin users
-                if ($this->Users->userData['is_sysadmin'] !== 1) {
-                    throw new IllegalActionException('Non sysadmin user tried to use the config api endpoint.');
-                }
                 return Config::getConfig();
             case 'experiments':
             case 'items':
@@ -186,12 +185,21 @@ class Apiv2Controller extends AbstractApiController
                     (string) $this->Request->query->get('start', $defaultStart),
                     (string) $this->Request->query->get('end', $defaultEnd),
                 );
+            case 'teams':
+                return new Teams($this->Users, $this->id);
             case 'todolist':
                 return new Todolist($this->Users->userData['userid'], $this->id);
             case 'users':
                 return new Users($this->id, null, $this->Users);
             default:
                 throw new ImproperActionException('Invalid endpoint.');
+        }
+    }
+
+    private function applyRestrictions(): void
+    {
+        if ($this->Model instanceof Config && $this->Users->userData['is_sysadmin'] !== 1) {
+            throw new IllegalActionException('Non sysadmin user tried to use a restricted api endpoint.');
         }
     }
 }

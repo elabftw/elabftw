@@ -81,7 +81,7 @@ enum Model {
   Status = 'status',
   Step = 'step',
   Tag = 'tag',
-  Team = 'team',
+  Team = 'teams',
   TeamGroup = 'teamgroup',
   Todolist = 'todolist',
   UnfinishedSteps = 'unfinishedsteps',

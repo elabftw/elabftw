@@ -35,94 +35,90 @@
 
 <!-- TAB 1 TEAM CONFIG -->
 <div data-tabcontent='1' hidden>
-  <div class='box'>
+  <div class='box form-group'>
     <h3>{{ 'Configure your Team'|trans }}</h3>
     <hr>
-    <form class='form-group' method='post' action='app/controllers/AdminController.php' autocomplete='off'>
-      <input type='hidden' value='true' name='teamsUpdateFull' />
-      {{ App.Session.get('csrf')|csrf }}
-      <label for='deletable_xp'>{{ 'Users can delete experiments:'|trans }}</label>
-      <select class='form-control col-md-4' name='deletable_xp' id='deletable_xp'>
-        <option value='1'{{ teamConfigArr.deletable_xp ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-        <option value='0'{{ not teamConfigArr.deletable_xp ? " selected='selected'" }}>{{ 'No'|trans }}</option>
-      </select>
-      <span class='smallgray'>{{ 'An admin account will always be able to delete experiments.'|trans }}</span>
+    <label for='deletable_xp'>{{ 'Users can delete experiments:'|trans }}</label>
+    <select class='form-control col-md-4' name='deletable_xp' id='deletable_xp'>
+      <option value='1'{{ teamConfigArr.deletable_xp ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+      <option value='0'{{ not teamConfigArr.deletable_xp ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+    </select>
+    <span class='smallgray'>{{ 'An admin account will always be able to delete experiments.'|trans }}</span>
 
-      <label for='deletable_item'>{{ 'Users can delete items:'|trans }}</label>
-      <select class='form-control col-md-4' name='deletable_item' id='deletable_item'>
-        <option value='1'{{ teamConfigArr.deletable_item ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-        <option value='0'{{ not teamConfigArr.deletable_item ? " selected='selected'" }}>{{ 'No'|trans }}</option>
-      </select>
-      <span class='smallgray'>{{ 'An admin account will always be able to delete items.'|trans }}</span>
+    <label for='deletable_item'>{{ 'Users can delete items:'|trans }}</label>
+    <select class='form-control col-md-4' name='deletable_item' id='deletable_item'>
+      <option value='1'{{ teamConfigArr.deletable_item ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+      <option value='0'{{ not teamConfigArr.deletable_item ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+    </select>
+    <span class='smallgray'>{{ 'An admin account will always be able to delete items.'|trans }}</span>
 
-      <label for='user_create_tag'>{{ 'Users can create tags:'|trans }}</label>
-      <select class='form-control col-md-4' name='user_create_tag' id='user_create_tag'>
-        <option value='1'{{ teamConfigArr.user_create_tag ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-        <option value='0'{{ not teamConfigArr.user_create_tag ? " selected='selected'" }}>{{ 'No'|trans }}</option>
-      </select>
-      <span class='smallgray'>{{ 'An admin account will always be able to create tags.'|trans }}</span>
+    <label for='user_create_tag'>{{ 'Users can create tags:'|trans }}</label>
+    <select class='form-control col-md-4' name='user_create_tag' id='user_create_tag'>
+      <option value='1'{{ teamConfigArr.user_create_tag ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+      <option value='0'{{ not teamConfigArr.user_create_tag ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+    </select>
+    <span class='smallgray'>{{ 'An admin account will always be able to create tags.'|trans }}</span>
 
-      <label for='force_exp_tpl'>{{ 'Force experiment template use:'|trans }}</label>
-      <select class='form-control col-md-4' name='force_exp_tpl' id='force_exp_tpl'>
-        <option value='1'{{ teamConfigArr.force_exp_tpl ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-        <option value='0'{{ not teamConfigArr.force_exp_tpl ? " selected='selected'" }}>{{ 'No'|trans }}</option>
-      </select>
+    <label for='force_exp_tpl'>{{ 'Force experiment template use:'|trans }}</label>
+    <select class='form-control col-md-4' name='force_exp_tpl' id='force_exp_tpl'>
+      <option value='1'{{ teamConfigArr.force_exp_tpl ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+      <option value='0'{{ not teamConfigArr.force_exp_tpl ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+    </select>
 
-      <label for='public_db'>{{ 'Anonymous visitors can see database items:'|trans }}</label>
-      <select class='form-control col-md-4' name='public_db' id='public_db'>
-        <option value='1'{{ teamConfigArr.public_db ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-        <option value='0'{{ not teamConfigArr.public_db ? " selected='selected'" }}>{{ 'No'|trans }}</option>
-      </select>
+    <label for='public_db'>{{ 'Anonymous visitors can see database items:'|trans }}</label>
+    <select class='form-control col-md-4' name='public_db' id='public_db'>
+      <option value='1'{{ teamConfigArr.public_db ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+      <option value='0'{{ not teamConfigArr.public_db ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+    </select>
 
-      <label for='link_name'>{{ 'Name of the link in the top menu:'|trans }}</label>
-      <input class='form-control col-md-4' type='text' value='{{ teamConfigArr.link_name }}' name='link_name' id='link_name' />
+    <label for='link_name'>{{ 'Name of the link in the top menu:'|trans }}</label>
+    <input class='form-control col-md-4' type='text' value='{{ teamConfigArr.link_name }}' name='link_name' id='link_name' />
 
-      <label for='link_href'>{{ 'Address where this link should point:'|trans }}</label>
-      <input class='mb-4 form-control col-md-4' type='text' value='{{ teamConfigArr.link_href }}' name='link_href' id='link_href' />
+    <label for='link_href'>{{ 'Address where this link should point:'|trans }}</label>
+    <input class='mb-4 form-control col-md-4' type='text' value='{{ teamConfigArr.link_href }}' name='link_href' id='link_href' />
 
-      <label for='do_force_canread'>{{ 'Enforce read permissions?'|trans }}</label>
-      <select class='form-control col-md-4' name='do_force_canread' id='do_force_canread'>
-        <option value='1'{{ teamConfigArr.do_force_canread ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-        <option value='0'{{ not teamConfigArr.do_force_canread ? " selected='selected'" }}>{{ 'No'|trans }}</option>
-      </select>
-      <span class='smallgray'>{{ 'Select if you want to enforce read permissions on experiments'|trans }}</span>
+    <label for='do_force_canread'>{{ 'Enforce read permissions?'|trans }}</label>
+    <select class='form-control col-md-4' name='do_force_canread' id='do_force_canread'>
+      <option value='1'{{ teamConfigArr.do_force_canread ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+      <option value='0'{{ not teamConfigArr.do_force_canread ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+    </select>
+    <span class='smallgray'>{{ 'Select if you want to enforce read permissions on experiments'|trans }}</span>
 
-      <label for='force_canread'>{{ 'Enforced read permissions on experiments'|trans }}</label>
-      <select class='form-control col-md-4' name='force_canread' id='force_canread'>
-        <option value='public'{{ teamConfigArr.force_canread == 'public' ? " selected='selected'" }}>{{ 'Public'|trans }}</option>
-        <option value='organization'{{ teamConfigArr.force_canread == 'organization' ? " selected='selected'" }}>{{ 'Organization'|trans }}</option>
-        <option value='team'{{ teamConfigArr.force_canread == 'team' ? " selected='selected'" }}>{{ 'Team'|trans }}</option>
-        <option value='user'{{ teamConfigArr.force_canread == 'user' ? " selected='selected'" }}>{{ 'User'|trans }}</option>
-      </select>
-      <span class='smallgray'>{{ 'Enforce the read permission for all experiments of users in this team.'|trans }}</span>
+    <label for='force_canread'>{{ 'Enforced read permissions on experiments'|trans }}</label>
+    <select class='form-control col-md-4' name='force_canread' id='force_canread'>
+      <option value='public'{{ teamConfigArr.force_canread == 'public' ? " selected='selected'" }}>{{ 'Public'|trans }}</option>
+      <option value='organization'{{ teamConfigArr.force_canread == 'organization' ? " selected='selected'" }}>{{ 'Organization'|trans }}</option>
+      <option value='team'{{ teamConfigArr.force_canread == 'team' ? " selected='selected'" }}>{{ 'Team'|trans }}</option>
+      <option value='user'{{ teamConfigArr.force_canread == 'user' ? " selected='selected'" }}>{{ 'User'|trans }}</option>
+    </select>
+    <span class='smallgray'>{{ 'Enforce the read permission for all experiments of users in this team.'|trans }}</span>
 
-      <label for='do_force_canwrite'>{{ 'Enforce write permissions?'|trans }}</label>
-      <select class='form-control col-md-4' name='do_force_canwrite' id='do_force_canwrite'>
-        <option value='1'{{ teamConfigArr.do_force_canwrite ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-        <option value='0'{{ not teamConfigArr.do_force_canwrite ? " selected='selected'" }}>{{ 'No'|trans }}</option>
-      </select>
-      <span class='smallgray'>{{ 'Select if you want to enforce write permissions on experiments'|trans }}</span>
+    <label for='do_force_canwrite'>{{ 'Enforce write permissions?'|trans }}</label>
+    <select class='form-control col-md-4' name='do_force_canwrite' id='do_force_canwrite'>
+      <option value='1'{{ teamConfigArr.do_force_canwrite ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+      <option value='0'{{ not teamConfigArr.do_force_canwrite ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+    </select>
+    <span class='smallgray'>{{ 'Select if you want to enforce write permissions on experiments'|trans }}</span>
 
-      <label for='force_canwrite'>{{ 'Enforced write permissions on experiments'|trans }}</label>
-      <select class='form-control col-md-4' name='force_canwrite' id='force_canwrite'>
-        <option value='public'{{ teamConfigArr.force_canwrite == 'public' ? " selected='selected'" }}>{{ 'Public'|trans }}</option>
-        <option value='organization'{{ teamConfigArr.force_canwrite == 'organization' ? " selected='selected'" }}>{{ 'Organization'|trans }}</option>
-        <option value='team'{{ teamConfigArr.force_canwrite == 'team' ? " selected='selected'" }}>{{ 'Team'|trans }}</option>
-        <option value='user'{{ teamConfigArr.force_canwrite == 'user' ? " selected='selected'" }}>{{ 'User'|trans }}</option>
-      </select>
-      <span class='smallgray'>{{ 'Enforce the write permission for all experiments of users in this team.'|trans }}</span>
+    <label for='force_canwrite'>{{ 'Enforced write permissions on experiments'|trans }}</label>
+    <select class='form-control col-md-4' name='force_canwrite' id='force_canwrite'>
+      <option value='public'{{ teamConfigArr.force_canwrite == 'public' ? " selected='selected'" }}>{{ 'Public'|trans }}</option>
+      <option value='organization'{{ teamConfigArr.force_canwrite == 'organization' ? " selected='selected'" }}>{{ 'Organization'|trans }}</option>
+      <option value='team'{{ teamConfigArr.force_canwrite == 'team' ? " selected='selected'" }}>{{ 'Team'|trans }}</option>
+      <option value='user'{{ teamConfigArr.force_canwrite == 'user' ? " selected='selected'" }}>{{ 'User'|trans }}</option>
+    </select>
+    <span class='smallgray'>{{ 'Enforce the write permission for all experiments of users in this team.'|trans }}</span>
 
-      <br>
-      <label for="common_template">{{ 'Common Experiment Template'|trans }}</label>
-      <textarea style='height:400px' class='mceditable' name="common_template" id='common_template'>
-          {{ teamConfigArr.common_template|raw }}
-      </textarea>
-      <span class='smallgray'>{{ 'This is the default text when someone creates an experiment.'|trans }}</span>
+    <br>
+    <label for="common_template">{{ 'Common Experiment Template'|trans }}</label>
+    <textarea style='height:400px' class='mceditable' name="common_template" id='common_template'>
+        {{ teamConfigArr.common_template|raw }}
+    </textarea>
+    <span class='smallgray'>{{ 'This is the default text when someone creates an experiment.'|trans }}</span>
 
-      <div class='mt-4 text-center'>
-        <button type='submit' class='button btn btn-primary'>Save</button>
-      </div>
-    </form>
+    <div class='mt-4 text-center'>
+      <button data-action='patch-team-admin' data-id='{{ teamConfigArr.id }}' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+    </div>
   </div>
 </div>
 

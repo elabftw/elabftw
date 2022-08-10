@@ -22,7 +22,6 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Interfaces\RestInterface;
-use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Elabftw\Services\Transform;
@@ -687,13 +686,14 @@ abstract class AbstractEntity implements RestInterface
     private function checkTeamPermissionsEnforced(string $rw): void
     {
         // check if the permissions are enforced
-        $Team = new Team($this->Users->userData['team']);
+        $Teams = new Teams($this->Users);
+        $teamConfigArr = $Teams->readOne();
         if ($rw === 'canread') {
-            if ($Team->getDoForceCanread() === 1 && !$this->Users->userData['is_admin']) {
+            if ($teamConfigArr['do_force_canread'] === 1 && !$this->Users->userData['is_admin']) {
                 throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
             }
         } else {
-            if ($Team->getDoForceCanwrite() === 1 && !$this->Users->userData['is_admin']) {
+            if ($teamConfigArr['do_force_canwrite'] === 1 && !$this->Users->userData['is_admin']) {
                 throw new ImproperActionException(_('Write permissions enforced by admin. Aborting change.'));
             }
         }

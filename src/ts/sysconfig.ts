@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { collectForm, notif, reloadElement } from './misc';
+import { collectForm, notif, reloadElement, removeEmpty } from './misc';
 import { Action, Method, Payload, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
@@ -100,58 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
           reloadElement('editUsersBox');
         });
     },
-    create: function(): void {
-      const name = (document.getElementById('teamsName') as HTMLInputElement).value;
-      $.post(this.controller, {
-        teamsCreate: true,
-        teamsName: name,
-      }).done(function(data) {
-        Teams.destructor(data);
-      });
-    },
-    update: function(id): void {
-      const name = $('#teamName_' + id).val();
-      const orgid = $('#teamOrgid_' + id).val();
-      const visible = $('#teamVisible_' + id).val();
-      $.post(this.controller, {
-        teamsUpdate: true,
-        id : id,
-        name : name,
-        orgid : orgid,
-        visible : visible,
-      }).done(function(data) {
-        Teams.destructor(data);
-      });
-    },
-    destroy: function(id): void {
-      (document.getElementById('teamsDestroyButton_' + id) as HTMLButtonElement).disabled = true;
-      $.post(this.controller, {
-        teamsDestroy: true,
-        teamsDestroyId: id,
-      }).done(function(data) {
-        Teams.destructor(data);
-      });
-    },
-    destructor: function(json): void {
-      notif(json);
-      if (json.res) {
-        reloadElement('teamsDiv');
-      }
-    },
   };
-
-  $(document).on('click', '#teamsCreateButton', function() {
-    Teams.create();
-  });
-  $(document).on('click', '.teamsUpdateButton', function() {
-    Teams.update($(this).data('id'));
-  });
-  $(document).on('click', '.teamsDestroyButton', function() {
-    Teams.destroy($(this).data('id'));
-  });
-  $(document).on('click', '.teamsArchiveButton', function() {
-    notif({'msg': 'Feature not yet implemented :)', 'res': true});
-  });
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
@@ -166,6 +115,25 @@ document.addEventListener('DOMContentLoaded', () => {
           notif(json);
         }));
 
+    // CREATE TEAM
+    } else if (el.matches('[data-action="create-team"]')) {
+      const name = (document.getElementById('teamsName') as HTMLInputElement).value;
+      ApiC.post(Model.Team, {'name': name}).then(() => reloadElement('teamsDiv'));
+    // UPDATE TEAM
+    } else if (el.matches('[data-action="patch-team-sysadmin"]')) {
+      const id = el.dataset.id;
+      const params = {
+        'name': (document.getElementById('teamName_' + id) as HTMLInputElement).value,
+        'orgid': (document.getElementById('teamOrgid_' + id) as HTMLInputElement).value,
+        'visible': (document.getElementById('teamVisible_' + id) as HTMLSelectElement).value,
+      };
+      ApiC.patch(`${Model.Team}/${id}`, removeEmpty(params));
+    // ARCHIVE TEAM
+    } else if (el.matches('[data-action="archive-team"]')) {
+      ApiC.patch(`${Model.Team}/${el.dataset.id}`, {'action': 'archive'});
+    // DESTROY TEAM
+    } else if (el.matches('[data-action="destroy-team"]')) {
+      ApiC.delete(`${Model.Team}/${el.dataset.id}`).then(() => reloadElement('teamsDiv'));
     // ADD USER TO TEAM
     } else if (el.matches('[data-action="create-user2team"]')) {
       const selectEl = (el.previousElementSibling as HTMLSelectElement);

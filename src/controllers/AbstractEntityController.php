@@ -14,13 +14,13 @@ use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
-use Elabftw\Maps\Team;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
 use Elabftw\Services\AdvancedSearchQuery;
@@ -274,8 +274,8 @@ abstract class AbstractEntityController implements ControllerInterface
     private function getDeletableXp(): bool
     {
         // get the config option from team setting
-        $Team = new Team($this->App->Users->team);
-        $deletableXp = (bool) $Team->getDeletableXp();
+        $Teams = new Teams($this->App->Users);
+        $deletableXp = (bool) $Teams->readOne()['deletable_xp'];
         // general config will override the team config only if it's more restrictive
         if ($this->App->Config->configArr['deletable_xp'] === '0') {
             $deletableXp = false;

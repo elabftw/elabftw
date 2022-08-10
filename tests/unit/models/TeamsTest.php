@@ -1,8 +1,15 @@
 <?php declare(strict_types=1);
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2021 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 
 class TeamsTest extends \PHPUnit\Framework\TestCase
@@ -16,7 +23,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
-        $this->assertIsInt($this->Teams->create(new ContentParams('Test team')));
+        $this->assertIsInt($this->Teams->postAction(Action::Create, array('name' => 'Test team')));
     }
 
     public function testRead(): void
@@ -27,9 +34,9 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy(): void
     {
-        $id = $this->Teams->create(new ContentParams('Destroy me'));
+        $id = $this->Teams->postAction(Action::Create, array('name' => 'Destroy me'));
         $this->Teams->setId($id);
-        $this->Teams->destroy();
+        $this->assertTrue($this->Teams->destroy());
         // try to destroy a team with data
         $this->Teams->setId(1);
         $this->expectException(ImproperActionException::class);

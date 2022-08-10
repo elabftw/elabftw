@@ -74,4 +74,18 @@ class ContentParams implements ContentParamsInterface
     {
         return (int) $this->content;
     }
+
+    public function getUrl(): string
+    {
+        if (filter_var($this->content, FILTER_VALIDATE_URL) === false) {
+            throw new ImproperActionException('Invalid URL format.');
+        }
+        return $this->content;
+    }
+
+    public function getPermissions(): string
+    {
+        Check::visibility($this->content);
+        return $this->content;
+    }
 }

@@ -19,7 +19,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Maps\Team;
 use Elabftw\Traits\SetIdTrait;
 use function implode;
 use PDO;
@@ -59,8 +58,9 @@ class Tags implements CrudInterface
         // tag doesn't exist already
         if ($req->rowCount() === 0) {
             // check if we can actually create tags (for non-admins)
-            $Team = new Team($this->Entity->Users->team);
-            if ($Team->getUserCreateTag() === 0 && $this->Entity->Users->userData['is_admin'] === 0) {
+            $Teams = new Teams($this->Entity->Users, (int) $this->Entity->Users->userData['team']);
+            $teamConfigArr = $Teams->readOne();
+            if ($teamConfigArr['user_create_tag'] === 0 && $this->Entity->Users->userData['is_admin'] === 0) {
                 throw new ImproperActionException(_('Users cannot create tags.'));
             }
 

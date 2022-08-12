@@ -8,12 +8,12 @@
 import { notif, reloadElement, addAutocompleteToTagInputs } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
-import Apikey from './Apikey.class';
 import i18next from 'i18next';
-import { Target } from './interfaces';
+import { Model, Target } from './interfaces';
 import Templates from './Templates.class';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
+import { Api } from './Apiv2.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/ucp.php') {
@@ -25,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     $('.sortableHandle').toggle();
   });
 
-  const ApikeyC = new Apikey();
   const EntityC = new Templates();
+  const ApiC = new Api();
 
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
@@ -78,8 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
         nameInput.style.borderColor = 'red';
         return;
       }
-      const canwrite = parseInt((document.getElementById('apikeyCanwrite') as HTMLInputElement).value);
-      ApikeyC.create(content, canwrite).then(json => {
+      const canwrite = parseInt((document.getElementById('apikeyCanwrite') as HTMLInputElement).value, 10);
+      return ApiC.post(`${Model.Apikey}`, {'name': content, 'canwrite': canwrite}).then(resp => {
+        const location = resp.headers.get('location').split('/');
         reloadElement('apiTable');
         const warningDiv = document.createElement('div');
         warningDiv.classList.add('alert', 'alert-warning');
@@ -88,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         warningDiv.appendChild(chevron);
 
         const newkey = document.createElement('p');
-        newkey.innerText = json.value as string;
+        newkey.innerText = location[location.length -1];
         const warningTextSpan = document.createElement('span');
 
         warningTextSpan.innerText = i18next.t('new-apikey-warning');
@@ -102,10 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // DESTROY API KEY
     } else if (el.matches('[data-action="destroy-apikey"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        ApikeyC.destroy(parseInt(el.dataset.apikeyid)).then(() => {
-          // only reload children of apiTable
-          reloadElement('apiTable');
-        });
+        const id = parseInt(el.dataset.apikeyid, 10);
+        return ApiC.delete(`${Model.Apikey}/${id}`).then(() => reloadElement('apiTable'));
       }
     } else if (el.matches('[data-action="show-import-tpl"]')) {
       document.getElementById('import_tpl').toggleAttribute('hidden');

@@ -12,13 +12,10 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\ProcessorInterface;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
 use Elabftw\Models\FavTags;
-use Elabftw\Models\Links;
 use Elabftw\Models\Notifications;
 use Elabftw\Models\PrivacyPolicy;
-use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\UnfinishedSteps;
@@ -88,16 +85,10 @@ abstract class AbstractProcessor implements ProcessorInterface
     protected function buildModel(string $model)
     {
         switch ($model) {
-            case 'apikey':
-                return new ApiKeys($this->Users, $this->id);
-            case 'link':
-                return new Links($this->Entity, $this->id);
             case 'favtag':
                 return new FavTags($this->Users, $this->id);
             case 'notification':
                 return new Notifications($this->Users, $this->id);
-            case 'step':
-                return new Steps($this->Entity, $this->id);
             case 'unfinishedsteps':
                 return new UnfinishedSteps($this->Entity);
             case 'upload':

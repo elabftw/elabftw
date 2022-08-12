@@ -9,46 +9,53 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ApikeyParam;
+use function bin2hex;
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\RestInterface;
+use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use function password_hash;
 use function password_verify;
 use PDO;
+use function random_bytes;
 
 /**
  * Api keys CRUD class
  */
-class ApiKeys
+class ApiKeys implements RestInterface
 {
     use SetIdTrait;
 
     private Db $Db;
 
+    private string $key = '';
+
     public function __construct(private Users $Users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->id = $id;
+        $this->setId($id);
     }
 
-    /**
-     * Create a new key for current user
-     */
-    public function create(ApikeyParam $params): int
+    public function postAction(Action $action, array $reqBody): int
     {
-        $hash = password_hash($params->getKey(), PASSWORD_BCRYPT);
+        return $this->create($reqBody['name'] ?? 'RTFM', $reqBody['canwrite'] ?? 0);
+    }
 
-        $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':name', $params->getContent());
-        $req->bindParam(':hash', $hash);
-        $req->bindParam(':can_write', $params->canwrite, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
+    public function patch(array $params): array
+    {
+        throw new ImproperActionException('No patch action for apikeys.');
+    }
 
-        return $this->Db->lastInsertId();
+    public function patchAction(Action $action): array
+    {
+        throw new ImproperActionException('No patch action for apikeys.');
+    }
+
+    public function getPage(): string
+    {
+        return $this->key;
     }
 
     /**
@@ -106,11 +113,37 @@ class ApiKeys
 
     public function destroy(): bool
     {
-        $sql = 'DELETE FROM api_keys WHERE id = :id AND userid = :userid';
+        $sql = 'DELETE FROM api_keys WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
 
         return $this->Db->execute($req);
+    }
+
+    private function generateKey(): string
+    {
+        // keep it in the object so we can display it to the user after
+        $this->key = bin2hex(random_bytes(42));
+        return $this->key;
+    }
+
+    /**
+     * Create a new key for current user
+     */
+    private function create(string $name, int $canwrite): int
+    {
+        $name = Filter::title($name);
+        $hash = password_hash($this->generateKey(), PASSWORD_BCRYPT);
+
+        $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':name', $name);
+        $req->bindParam(':hash', $hash);
+        $req->bindParam(':can_write', $canwrite, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $this->Db->lastInsertId();
     }
 }

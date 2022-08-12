@@ -71,7 +71,7 @@ enum Action {
 }
 
 enum Model {
-  Apikey = 'apikey',
+  Apikey = 'apikeys',
   Comment = 'comments',
   Config = 'config',
   FavTag = 'favtag',

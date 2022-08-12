@@ -19,6 +19,7 @@ use Elabftw\Factories\EntityFactory;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
 use Elabftw\Models\Items;
@@ -182,6 +183,8 @@ class Apiv2Controller extends AbstractApiController
     private function getModel(): RestInterface
     {
         switch ($this->endpoint) {
+            case 'apikeys':
+                return new ApiKeys($this->Users, $this->id);
             case 'config':
                 return Config::getConfig();
             case 'experiments':

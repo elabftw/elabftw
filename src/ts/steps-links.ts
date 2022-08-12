@@ -65,14 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.which === 13 || e.type === 'focusout') {
       const content = e.currentTarget.value;
       if (content.length > 0) {
-        StepC.create(content).then(json => {
+        StepC.create(content).then(() => {
           reloadElement('stepsDiv');
           // clear input field
           e.currentTarget.value = '';
-
-          if (document.getElementById('stepsDiv').hidden && json.res) {
-            notif(json);
-          }
         });
       }
     }

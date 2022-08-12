@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Filter;
 
 /**
@@ -21,11 +20,6 @@ class PrivacyPolicy
 {
     public function __construct(private Config $Config)
     {
-    }
-
-    public function create(ContentParamsInterface $params): int
-    {
-        return 0;
     }
 
     public function readAll(): array

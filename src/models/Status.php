@@ -127,7 +127,7 @@ class Status extends AbstractCategory
     {
         $title = Filter::title($title);
         $color = Check::color($color);
-        $default = Filter::toBinary($isDefault);
+        $isDefault = Filter::toBinary($isDefault);
 
         $sql = 'INSERT INTO status(title, color, team, is_default)
             VALUES(:title, :color, :team, :is_default)';

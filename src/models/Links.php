@@ -10,15 +10,15 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Enums\Action;
+use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
 /**
  * All about the experiments links
  */
-class Links implements CrudInterface
+class Links implements RestInterface
 {
     use SetIdTrait;
 
@@ -31,12 +31,21 @@ class Links implements CrudInterface
         $this->id = $id;
     }
 
+    public function getPage(): string
+    {
+        return $this->Entity->getPage();
+    }
+
+    public function patch(array $params): array
+    {
+        return array();
+    }
+
     /**
      * Add a link to an experiment
      */
-    public function create(ContentParamsInterface $params): int
+    public function create(int $link): int
     {
-        $link = (int) $params->getContent();
         $Items = new Items($this->Entity->Users, $link);
         $Items->canOrExplode('read');
         $this->Entity->canOrExplode('write');
@@ -166,6 +175,16 @@ class Links implements CrudInterface
         return $this->Db->execute($req);
     }
 
+    public function patchAction(Action $action): array
+    {
+        return array();
+    }
+
+    public function postAction(Action $action, array $reqBody): int
+    {
+        return 1;
+    }
+
     /**
      * Copy the links of an item into our entity
      */
@@ -179,11 +198,6 @@ class Links implements CrudInterface
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    public function update(ContentParamsInterface $params): bool
-    {
-        return false;
     }
 
     public function destroy(): bool

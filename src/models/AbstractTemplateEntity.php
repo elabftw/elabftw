@@ -21,7 +21,7 @@ abstract class AbstractTemplateEntity extends AbstractEntity implements CreateFr
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {
-            Action::Create => $this->create($reqBody['title']),
+            Action::Create => $this->create($reqBody['title'] ?? _('Untitled')),
             Action::Duplicate => $this->duplicate(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };

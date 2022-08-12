@@ -9,8 +9,8 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\StepParams;
-use Elabftw\Elabftw\TagParams;
+use Elabftw\Elabftw\TagParam;
+use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Experiments;
@@ -49,7 +49,7 @@ class Populate
     public function generate(Experiments | Items $Entity): void
     {
         if ($Entity instanceof Experiments) {
-            $Category = new Status($Entity->Users->team);
+            $Category = new Status(new Teams($Entity->Users, $Entity->Users->team));
             $tpl = 0;
         } else {
             $Category = new ItemsTypes($Entity->Users);
@@ -66,7 +66,7 @@ class Populate
             $Tags = new Tags($Entity);
             $tagNb = $this->faker->numberBetween(0, 5);
             for ($j = 0; $j <= $tagNb; $j++) {
-                $Tags->create(new TagParams($this->faker->word() . $this->faker->word()));
+                $Tags->create(new TagParam($this->faker->word() . $this->faker->word()));
             }
             // random date in the past 5 years
             $date = $this->faker->dateTimeBetween('-5 years')->format('Ymd');
@@ -95,8 +95,8 @@ class Populate
             // maybe add a few steps
             if ($this->faker->randomDigit() > 8) {
                 // put two words so it's long enough
-                $Entity->Steps->create(new StepParams($this->faker->word() . $this->faker->word()));
-                $Entity->Steps->create(new StepParams($this->faker->word() . $this->faker->word()));
+                $Entity->Steps->postAction(Action::Create, array('body' => $this->faker->word() . $this->faker->word()));
+                $Entity->Steps->postAction(Action::Create, array('body' => $this->faker->word() . $this->faker->word()));
             }
         }
         printf("Generated %d %s \n", $this->iter, $Entity->type);

@@ -9,9 +9,6 @@
 
 namespace Elabftw\Interfaces;
 
-/**
- * For templates/itemstypes
- */
 interface CreateFromTitleInterface
 {
     public function create(string $title): int;

@@ -12,9 +12,13 @@ namespace Elabftw\Enums;
 enum Action: string
 {
     case Archive = 'archive';
+    case Bloxberg = 'bloxberg';
     case Create = 'create';
     case Duplicate = 'duplicate';
     case Lock = 'lock';
+    case Finish = 'finish';
+    case Notif = 'notif';
     case Pin = 'pin';
+    case Timestamp = 'timestamp';
     case Validate = 'validate';
 }

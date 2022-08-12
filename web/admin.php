@@ -43,10 +43,10 @@ try {
     }
 
     $ItemsTypes = new ItemsTypes($App->Users);
-    $Status = new Status($App->Users->team);
+    $Teams = new Teams($App->Users, $App->Users->userData['team']);
+    $Status = new Status($Teams);
     $Tags = new Tags(new Experiments($App->Users));
     $TeamGroups = new TeamGroups($App->Users);
-    $Teams = new Teams($App->Users);
 
     $itemsCategoryArr = $ItemsTypes->readAll();
     if ($Request->query->has('templateid')) {

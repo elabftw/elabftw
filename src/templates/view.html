@@ -239,7 +239,7 @@
                 ({{ 'edited'|trans }} <span title='{{ comment.modified_at }}' class='relative-moment'></span>)
               {% endif %}
               {% if comment.userid == Entity.Users.userData.userid %}
-                <a class='float-right' data-action='destroy-comment' data-target='{{ comment.id }}' title='{{ 'Delete'|trans }}'>
+                <a class='float-right' data-action='destroy-comment' data-id='{{ comment.id }}' title='{{ 'Delete'|trans }}'>
                     <i class='fas fa-trash-alt fa-lg'></i>
                 </a>
               {% endif %}
@@ -270,6 +270,7 @@
     data-page='view'
     data-type='{{ Entity.type }}'
     data-id='{{ Entity.id }}'
+    data-team='{{ App.Users.userData.team }}'
     data-scedit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
 <div id='shortcuts'

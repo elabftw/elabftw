@@ -12,12 +12,12 @@ namespace Elabftw\Models;
 
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Services\Filter;
 
 /**
  * Privacy policy CRUD class
  */
-class PrivacyPolicy implements CrudInterface
+class PrivacyPolicy
 {
     public function __construct(private Config $Config)
     {
@@ -39,9 +39,9 @@ class PrivacyPolicy implements CrudInterface
         return $this->readAll();
     }
 
-    public function update(ContentParamsInterface $params): bool
+    public function update(string $body): bool
     {
-        $this->Config->patch(array('privacy_policy' => $params->getBody()));
+        $this->Config->patch(array('privacy_policy' => Filter::body($body)));
         return true;
     }
 

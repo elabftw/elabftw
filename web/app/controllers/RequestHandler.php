@@ -18,24 +18,11 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Factories\ProcessorFactory;
 use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links;
-use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Users2Teams;
-use Elabftw\Services\MakeBloxberg;
-use Elabftw\Services\MakeCustomTimestamp;
-use Elabftw\Services\MakeDfnTimestamp;
-use Elabftw\Services\MakeDigicertTimestamp;
-use Elabftw\Services\MakeGlobalSignTimestamp;
-use Elabftw\Services\MakeSectigoTimestamp;
-use Elabftw\Services\MakeUniversignTimestamp;
-use Elabftw\Services\MakeUniversignTimestampDev;
-use Elabftw\Services\TimestampUtils;
 use Exception;
-use GuzzleHttp\Client;
 use PDOException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -62,18 +49,6 @@ try {
     $target = $Processor->getTarget();
 
 
-    // all non read actions for status and items types are limited to admins
-    if ($action !== 'read' &&
-        ($Model instanceof Status || $Model instanceof ItemsTypes) &&
-        !$App->Session->get('is_admin')
-    ) {
-        throw new IllegalActionException('Non admin user tried to edit status or items types.');
-    }
-    // only sysadmins can update the config
-    if (((($action === 'create' || $action === 'destroy') && $Model instanceof Users2Teams)) && !$App->Users->userData['is_sysadmin']) {
-        throw new IllegalActionException('Non sysadmin user tried to update instance config or edit users2teams.');
-    }
-
     if ($action === 'create') {
         $res = $Model->create($Params);
         if ($Model instanceof ApiKeys) {
@@ -88,8 +63,10 @@ try {
     } elseif ($action === 'destroy') {
         if ($Model instanceof Experiments) {
             $res = $Model->destroy();
-        } elseif ($Model instanceof Users2Teams) {
+            /*
+            } elseif ($Model instanceof Users2Teams) {
             $res = $Model->destroy($Params);
+             */
         } else {
             $res = $Model->destroy();
         }
@@ -97,47 +74,6 @@ try {
         $res = $Model->deduplicate();
     } elseif ($action === 'importlinks' && $Model instanceof Links) {
         $res = $Model->import();
-    // TIMESTAMP
-    } elseif ($action === 'timestamp' && $Model instanceof Experiments) {
-        $config = $App->Config->configArr;
-        // CLASSIC
-        if ($target === 'ts_classic') {
-            if ($config['ts_authority'] === 'dfn') {
-                $Maker = new MakeDfnTimestamp($config, $Model);
-            } elseif ($config['ts_authority'] === 'universign') {
-                if ($config['debug']) {
-                    // this will use the sandbox endpoint
-                    $Maker = new MakeUniversignTimestampDev($config, $Model);
-                } else {
-                    $Maker = new MakeUniversignTimestamp($config, $Model);
-                }
-            } elseif ($config['ts_authority'] === 'digicert') {
-                $Maker = new MakeDigicertTimestamp($config, $Model);
-            } elseif ($config['ts_authority'] === 'sectigo') {
-                $Maker = new MakeSectigoTimestamp($config, $Model);
-            } elseif ($config['ts_authority'] === 'globalsign') {
-                $Maker = new MakeGlobalSignTimestamp($config, $Model);
-            } else {
-                $Maker = new MakeCustomTimestamp($config, $Model);
-            }
-
-            $pdfBlob = $Maker->generatePdf();
-            $TimestampUtils = new TimestampUtils(
-                new Client(),
-                $pdfBlob,
-                $Maker->getTimestampParameters(),
-                new TimestampResponse(),
-            );
-            $tsResponse = $TimestampUtils->timestamp();
-            $res = $Maker->saveTimestamp($TimestampUtils->getDataPath(), $tsResponse);
-        // BLOXBERG
-        } elseif ($target === 'ts_bloxberg') {
-            if ($config['blox_enabled'] !== '1') {
-                throw new ImproperActionException('Bloxberg timestamping is disabled on this instance.');
-            }
-            $Make = new MakeBloxberg(new Client(), $Model);
-            $res = $Make->timestamp();
-        }
     }
 
     // special case for uploading an edited json file back: it's a POSTed async form
@@ -155,12 +91,14 @@ try {
         'value' => $res,
     ));
 } catch (ImproperActionException | UnauthorizedException | ResourceNotFoundException | PDOException $e) {
+    // @phpstan-ignore-next-line
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),
     ));
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
+    // @phpstan-ignore-next-line
     $Response->setData(array(
         'res' => false,
         'msg' => Tools::error(true),

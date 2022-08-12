@@ -1,33 +1,27 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Interfaces\StatusParamsInterface;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
+use Elabftw\Services\Filter;
 
-final class StatusParams extends ContentParams implements StatusParamsInterface
+final class StatusParams extends ContentParams
 {
-    public function __construct(string $content, private string $color, private bool $isDefault = false)
+    public function getContent(): mixed
     {
-        parent::__construct($content);
-        $this->content = $content;
-    }
-
-    public function getColor(): string
-    {
-        return Check::color($this->color);
-    }
-
-    public function getIsDefault(): int
-    {
-        return (int) $this->isDefault;
+        return match ($this->target) {
+            'color' => Check::color($this->content),
+            'is_default' => Filter::toBinary($this->content),
+            'title' => parent::getContent(),
+            default => throw new ImproperActionException('Incorrect parameter for status.'),
+        };
     }
 }

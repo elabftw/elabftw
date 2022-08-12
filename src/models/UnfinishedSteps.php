@@ -9,25 +9,18 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
-use Elabftw\Interfaces\ContentParamsInterface;
 use PDO;
 
 /**
  * Read the unfinished steps of items or experiments to display in to-do list.
  * By default the unfinished steps of a user are returned.
- * extraParams['scope'] provides a switch to return unfinished steps of the entire team.
+ * $teamScoped provides a switch to return unfinished steps of the entire team.
  */
 class UnfinishedSteps extends Steps
 {
-    public function __construct(AbstractEntity $Entity)
+    public function __construct(AbstractEntity $Entity, private bool $teamScoped = false)
     {
         parent::__construct($Entity);
-    }
-
-    public function readAll(): array
-    {
-        return $this->read(new ContentParams());
     }
 
     public function readOne(): array
@@ -36,7 +29,7 @@ class UnfinishedSteps extends Steps
         return array();
     }
 
-    public function read(ContentParamsInterface $params): array
+    public function readAll(): array
     {
         $sql = 'SELECT entity.id, entity.title, stepst.finished, stepst.steps_body, stepst.steps_id
             FROM ' . $this->Entity->type . " as entity
@@ -48,18 +41,17 @@ class UnfinishedSteps extends Steps
                 WHERE finished = 0 GROUP BY item_id
             ) AS stepst ON (stepst.item_id = entity.id)';
 
-        if ($this->Entity instanceof Experiments
-            && $params->getExtra('scope') === 'team') {
+        if ($this->Entity instanceof Experiments && $this->teamScoped) {
             $sql .= ' JOIN users2teams ON (users2teams.users_id = entity.userid AND users2teams.teams_id = :teamid)';
         }
 
-        $sql .= $params->getExtra('scope') === 'team' ? $this->getTeamWhereClause() : ' WHERE entity.userid = :userid';
+        $sql .= $this->teamScoped ? $this->getTeamWhereClause() : ' WHERE entity.userid = :userid';
 
         $sql .= ' AND entity.state = ' . $this->Entity::STATE_NORMAL . ' GROUP BY entity.id ORDER BY entity.id DESC';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        if ($params->getExtra('scope') === 'team') {
+        if ($this->teamScoped) {
             $req->bindParam(':teamid', $this->Entity->Users->team, PDO::PARAM_INT);
         }
         $this->Db->execute($req);

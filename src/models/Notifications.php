@@ -9,17 +9,15 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CreateNotificationParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
 use function json_decode;
 use PDO;
 
 /**
  * Notification system
  */
-class Notifications implements CrudInterface
+class Notifications
 {
     public const COMMENT_CREATED = 10;
 
@@ -62,7 +60,7 @@ class Notifications implements CrudInterface
         $this->userid = $this->users->userData['userid'];
     }
 
-    public function create(CreateNotificationParamsInterface $params): int
+    public function create(CreateNotificationParams $params): int
     {
         $category = $params->getCategory();
 
@@ -86,7 +84,7 @@ class Notifications implements CrudInterface
         return $this->Db->lastInsertId();
     }
 
-    public function createIfNotExists(CreateNotificationParamsInterface $params): int
+    public function createIfNotExists(CreateNotificationParams $params): int
     {
         $body = json_decode($params->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
@@ -108,7 +106,7 @@ class Notifications implements CrudInterface
         return $this->create($params);
     }
 
-    public function createMultiUsers(CreateNotificationParamsInterface $params, array $useridArr, int $currentUserid): int
+    public function createMultiUsers(CreateNotificationParams $params, array $useridArr, int $currentUserid): int
     {
         foreach ($useridArr as $userid) {
             $userid = (int) $userid;
@@ -151,7 +149,7 @@ class Notifications implements CrudInterface
         return $this->readAll();
     }
 
-    public function update(ContentParamsInterface $params): bool
+    public function update(): bool
     {
         // currently the only update action is to ack it, so no need to check for anything else
         // permission is checked with the userid AND

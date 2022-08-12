@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use function date;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Services\Check;
 
 class ItemsTest extends \PHPUnit\Framework\TestCase
@@ -63,12 +62,10 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->Items->setId($new);
 
         // lock
-        $this->Items->toggleLock();
-        $item = $this->Items->read(new ContentParams());
+        $item =$this->Items->toggleLock();
         $this->assertTrue((bool) $item['locked']);
         // unlock
-        $this->Items->toggleLock();
-        $item = $this->Items->read(new ContentParams());
+        $item = $this->Items->toggleLock();
         $this->assertFalse((bool) $item['locked']);
     }
 }

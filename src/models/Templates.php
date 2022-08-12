@@ -9,8 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
-use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -42,6 +40,7 @@ class Templates extends AbstractTemplateEntity
 
     public function create(string $title): int
     {
+        $title = Filter::title($title);
         $canread = 'team';
         $canwrite = 'user';
 
@@ -69,7 +68,7 @@ class Templates extends AbstractTemplateEntity
      */
     public function duplicate(): int
     {
-        $template = $this->read(new ContentParams());
+        $template = $this->readOne();
 
         $sql = 'INSERT INTO experiments_templates(team, title, body, userid, canread, canwrite, metadata)
             VALUES(:team, :title, :body, :userid, :canread, :canwrite, :metadata)';
@@ -95,17 +94,6 @@ class Templates extends AbstractTemplateEntity
         $Steps->duplicate((int) $template['id'], $newId, true);
 
         return $newId;
-    }
-
-    /**
-     * Read a template
-     */
-    public function read(ContentParamsInterface $params): array
-    {
-        if ($params->getTarget() === 'list') {
-            return $this->getList();
-        }
-        return $this->readOne();
     }
 
     public function readOne(): array
@@ -220,7 +208,7 @@ class Templates extends AbstractTemplateEntity
     /**
      * Build a list for tinymce Insert template... menu
      */
-    private function getList(): array
+    public function getList(): array
     {
         $templates = $this->readForUser();
         $res = array();

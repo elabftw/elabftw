@@ -10,7 +10,7 @@ import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { notif, makeSortableGreatAgain, reloadElement, adjustHiddenState, getEntity } from './misc';
+import { makeSortableGreatAgain, reloadElement, adjustHiddenState, getEntity } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { EntityType, Payload, Target, Method, Model, Action } from './interfaces';
@@ -118,24 +118,16 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         // for a checkbox element, look at the checked attribute, not the value
         const value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
-        const payload: Payload = {
-          method: Method.POST,
-          action: el.dataset.action as Action ?? Action.Update,
-          model: el.dataset.model as Model,
-          target: el.dataset.target as Target,
-          content: value,
-          notif: true,
-        };
-        AjaxC.send(payload)
-          .then(json => notif(json))
-          .then(() => {
-            if (el.dataset.reload) {
-              reloadElement(el.dataset.reload).then(() => {
-                // make sure we listen to the new element too
-                listenTrigger();
-              });
-            }
-          });
+        const params = {};
+        params[el.dataset.target] = value;
+        ApiC.patch(`${el.dataset.model}`, params).then(() => {
+          if (el.dataset.reload) {
+            reloadElement(el.dataset.reload).then(() => {
+              // make sure we listen to the new element too
+              listenTrigger();
+            });
+          }
+        });
       });
     });
   }

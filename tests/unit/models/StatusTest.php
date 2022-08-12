@@ -9,10 +9,8 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
-use Elabftw\Elabftw\StatusParams;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Services\Check;
 
 class StatusTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,38 +18,36 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Status = new Status(1, 1);
+        $this->Status = new Status(new Teams(new Users(1, 1), 1), 1);
     }
 
     public function testCreate(): void
     {
-        $new = $this->Status->create(new StatusParams('New status', '#29AEB9', true));
-        $this->assertTrue((bool) Check::id($new));
+        $new = $this->Status->postAction(Action::Create, array('title' => 'New status', 'color' => '#29AEB9', 'is_default' => 1));
+        $this->assertIsInt($new);
     }
 
     public function testRead(): void
     {
-        $this->assertIsArray($this->Status->read(new ContentParams()));
+        $this->assertIsArray($this->Status->readOne());
     }
 
     public function testUpdate(): void
     {
-        $id = $this->Status->create(new StatusParams('Yep', '#29AEB9'));
-        $Status = new Status(1, $id);
-        $Status->update(new StatusParams('Updated', '#121212'));
-        $status = $Status->readOne();
+        $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
+        $Status = new Status(new Teams(new Users(1, 1), 1), $id);
+        $status = $Status->patch(array('title' => 'Updated', 'color' => '#121212'));
         $this->assertEquals('Updated', $status['category']);
         $this->assertEquals('121212', $status['color']);
-        $this->assertFalse((bool) $status['is_default']);
-        $Status->update(new StatusParams('Updated', '#121212', true));
-        $status = $Status->readOne();
-        $this->assertTrue((bool) $status['is_default']);
+        $this->assertEquals(0, $status['is_default']);
+        $status = $Status->patch(array('title' => 'Updated', 'color' => '#121212', 'is_default' => 1));
+        $this->assertEquals(1, $status['is_default']);
     }
 
     public function testDestroy(): void
     {
-        $id = $this->Status->create(new StatusParams('Yep1', '#29AEB9'));
-        $Status = new Status(1, $id);
+        $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
+        $Status = new Status(new Teams(new Users(1, 1), 1), $id);
         $this->assertTrue($Status->destroy());
         $this->expectException(ImproperActionException::class);
         $this->Status->destroy();

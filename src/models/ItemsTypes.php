@@ -11,12 +11,14 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\Filter;
 use Elabftw\Traits\CategoryTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
 /**
  * The kind of items you can have in the database for a team
+ * TODO permissions check
  */
 class ItemsTypes extends AbstractTemplateEntity
 {
@@ -40,6 +42,7 @@ class ItemsTypes extends AbstractTemplateEntity
 
     public function create(string $title): int
     {
+        $title = Filter::title($title);
         $sql = 'INSERT INTO items_types(title, team) VALUES(:content, :team)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $title, PDO::PARAM_STR);

@@ -18,13 +18,18 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\EntityFactory;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\AbstractConcreteEntity;
+use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
 use Elabftw\Models\Items;
+use Elabftw\Models\Links;
 use Elabftw\Models\Scheduler;
+use Elabftw\Models\Status;
+use Elabftw\Models\Steps;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Todolist;
+use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
-use function implode;
 use JsonException;
 use const SITE_URL;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -40,6 +45,10 @@ class Apiv2Controller extends AbstractApiController
     private array $allowedMethods = array('GET', 'POST', 'DELETE', 'PATCH', 'PUT');
 
     private RestInterface $Model;
+
+    private ?int $subId = null;
+
+    private bool $hasSubmodel = false;
 
     private array $reqBody = array();
 
@@ -96,11 +105,18 @@ class Apiv2Controller extends AbstractApiController
     /**
      * Set the id and endpoints fields
      */
-    protected function parseReq(): void
+    protected function parseReq(): array
     {
-        parent::parseReq();
+        $req = parent::parseReq();
         // load Model
         $this->Model = $this->getModel();
+        // load submodel
+        if (!empty($req[5])) {
+            $subId = (int) $req[6];
+            $this->subId = $subId > 0 ? $subId : null;
+            $this->Model = $this->getSubModel($req[5] ?? '');
+            $this->hasSubmodel = true;
+        }
 
         // FORMAT
         if ($this->Request->query->has('format') && $this->Model instanceof AbstractConcreteEntity) {
@@ -124,6 +140,7 @@ class Apiv2Controller extends AbstractApiController
                 throw new ImproperActionException('Incorrect action value.');
             }
         }
+        return $req;
     }
 
     private function handlePost(): Response
@@ -134,7 +151,7 @@ class Apiv2Controller extends AbstractApiController
 
     private function getArray(): array
     {
-        if ($this->id !== null) {
+        if (($this->id !== null && !$this->hasSubmodel) || ($this->subId !== null && $this->hasSubmodel)) {
             return $this->Model->readOne();
         }
         return $this->Model->readAll();
@@ -194,6 +211,26 @@ class Apiv2Controller extends AbstractApiController
             default:
                 throw new ImproperActionException('Invalid endpoint.');
         }
+    }
+
+    private function getSubModel(string $submodel): RestInterface
+    {
+        if ($this->Model instanceof AbstractEntity) {
+            return match ($submodel) {
+                'comments' => new Comments($this->Model, $this->subId),
+                'links' => new Links($this->Model, $this->subId),
+                'steps' => new Steps($this->Model, $this->subId),
+                'uploads' => new Uploads($this->Model, $this->subId),
+                default => throw new ImproperActionException('Incorrect submodel.'),
+            };
+        }
+        if ($this->Model instanceof Teams) {
+            return match ($submodel) {
+                'status' => new Status($this->Model, $this->subId),
+                default => throw new ImproperActionException('Incorrect submodel.'),
+            };
+        }
+        throw new ImproperActionException('Incorrect endpoint.');
     }
 
     private function applyRestrictions(): void

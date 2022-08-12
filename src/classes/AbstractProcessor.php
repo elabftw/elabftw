@@ -10,17 +10,14 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Interfaces\ProcessorInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\Links;
 use Elabftw\Models\Notifications;
 use Elabftw\Models\PrivacyPolicy;
-use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
@@ -46,7 +43,8 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     protected ?int $id = null;
 
-    protected CrudInterface | Users2Teams $Model;
+    // @phpstan-ignore-next-line
+    protected $Model;
 
     protected array $extra = array();
 
@@ -55,7 +53,8 @@ abstract class AbstractProcessor implements ProcessorInterface
         $this->process($request);
     }
 
-    public function getModel(): CrudInterface | Users2Teams
+    // @phpstan-ignore-next-line
+    public function getModel()
     {
         return $this->Model;
     }
@@ -74,8 +73,7 @@ abstract class AbstractProcessor implements ProcessorInterface
     public function getParams()
     {
         if ($this->action === 'create' || $this->action === 'read' || $this->action === 'update' || $this->action === 'destroy') {
-            $ParamsBuilder = new ParamsBuilder($this->Model, $this->content, $this->target, $this->extra);
-            return $ParamsBuilder->getParams();
+            return new ContentParams($this->target, $this->content);
         }
     }
 
@@ -83,18 +81,15 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     protected function setTarget(string $target): void
     {
-        $this->target = Check::target($target);
+        $this->target = $target;
     }
 
-    protected function buildModel(string $model): CrudInterface | Users2Teams
+    // @phpstan-ignore-next-line
+    protected function buildModel(string $model)
     {
         switch ($model) {
             case 'apikey':
                 return new ApiKeys($this->Users, $this->id);
-            case 'status':
-                return new Status($this->Users->team, $this->id);
-            case 'comment':
-                return new Comments($this->Entity, $this->id);
             case 'link':
                 return new Links($this->Entity, $this->id);
             case 'favtag':

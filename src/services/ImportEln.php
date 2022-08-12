@@ -10,10 +10,10 @@
 namespace Elabftw\Services;
 
 use function basename;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Elabftw\TagParams;
+use Elabftw\Elabftw\TagParam;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractTemplateEntity;
@@ -99,7 +99,7 @@ class ImportEln extends AbstractImportZip
         // TAGS
         if (isset($dataset['keywords'])) {
             foreach ($dataset['keywords'] as $tag) {
-                $this->Entity->Tags->create(new TagParams($tag));
+                $this->Entity->Tags->create(new TagParam($tag));
             }
         }
 
@@ -123,7 +123,7 @@ class ImportEln extends AbstractImportZip
                     $comment['dateCreated'],
                     $comment['text'],
                 );
-                $this->Entity->Comments->create(new ContentParams($content));
+                $this->Entity->Comments->postAction(Action::Create, array('comment' => $content));
             }
         }
 

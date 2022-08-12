@@ -79,6 +79,7 @@ class Check
     {
         $color = filter_var(substr($color, 1, 7), FILTER_SANITIZE_STRING);
         if ($color === false || mb_strlen($color) !== 6) {
+            debug_print_backtrace();
             throw new ImproperActionException('Bad color');
         }
         return $color;
@@ -118,73 +119,6 @@ class Check
         }
 
         return $visibility;
-    }
-
-    /**
-     * A target is like a subpart of a model
-     * example: update the comment of an upload
-     * todo: this will disappear in favor of better params classes handling the columns for each model
-     */
-    public static function target(string $target): string
-    {
-        $allowed = array(
-            'all',
-            'action',
-            'blox_anon',
-            'blox_enabled',
-            'body',
-            'bodyappend',
-            'boundevent',
-            'comment',
-            'content_type',
-            'date',
-            'email',
-            'deadline',
-            'deadline_notif',
-            'file',
-            'finished',
-            'finished_time',
-            'firstname',
-            'lastname',
-            'list',
-            'member',
-            'metadata',
-            'metadatafield',
-            'notif_comment_created',
-            'notif_comment_created_email',
-            'notif_event_deleted',
-            'notif_event_deleted_email',
-            'notif_step_deadline',
-            'notif_step_deadline_email',
-            'notif_user_created',
-            'notif_user_created_email',
-            'notif_user_need_validation',
-            'notif_user_need_validation_email',
-            'privacypolicy',
-            'rating',
-            'real_name',
-            'state',
-            'title',
-            'ts_authority',
-            'ts_cert',
-            'ts_bloxberg',
-            'ts_classic',
-            'ts_limit',
-            'ts_login',
-            'ts_password',
-            'ts_url',
-            'unreference',
-            'uploadid',
-            'userid',
-            'validated',
-            // no target is also valid
-            '',
-        );
-        if (!in_array($target, $allowed, true)) {
-            // TODO
-            //throw new ImproperActionException('Invalid target!');
-        }
-        return $target;
     }
 
     /**

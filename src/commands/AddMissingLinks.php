@@ -9,7 +9,6 @@
 
 namespace Elabftw\Commands;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Experiments;
@@ -98,7 +97,7 @@ class AddMissingLinks extends Command
 
                                 $out = $Db->lastInsertId();
                             } else {
-                                $out = (new Links($entity))->create(new ContentParams($match));
+                                $out = (new Links($entity))->create((int) $match);
                             }
                             if ((int) $out !== 0) {
                                 $count++;

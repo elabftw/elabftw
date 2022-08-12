@@ -10,7 +10,6 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import TeamGroup from './TeamGroup.class';
-import Status from './Status.class';
 import i18next from 'i18next';
 import ItemsTypes from './ItemsTypes.class';
 import { Ajax } from './Ajax.class';
@@ -130,41 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
     malleableGroupname.listen();
   }).observe(document.getElementById('team_groups_div'), {childList: true});
 
-  // STATUS
-  const StatusC = new Status();
-
-  document.querySelector('[data-action="create-status"]').addEventListener('click', () => {
-    const content = (document.getElementById('statusName') as HTMLInputElement).value;
-    const color = (document.getElementById('statusColor') as HTMLInputElement).value;
-    if (content.length > 1) {
-      StatusC.create(content, color).then(() => window.location.replace('admin.php?tab=4'));
-    }
-  });
-
-  document.querySelectorAll('[data-action="update-status"]').forEach(el => {
-    el.addEventListener('click', ev => {
-      const statusId = parseInt((ev.target as HTMLElement).dataset.statusid);
-      const content = (document.getElementById('statusName_' + statusId) as HTMLInputElement).value;
-      const color = (document.getElementById('statusColor_' + statusId) as HTMLInputElement).value;
-      const isDefault = (document.getElementById('statusDefault_' + statusId) as HTMLInputElement).checked;
-      StatusC.update(statusId, content, color, isDefault);
-    });
-  });
-
-  document.querySelectorAll('[data-action="destroy-status"]').forEach(el => {
-    el.addEventListener('click', ev => {
-      const statusId = parseInt((ev.target as HTMLElement).dataset.statusid);
-      if (confirm(i18next.t('generic-delete-warning'))) {
-        StatusC.destroy(statusId).then((json) => {
-          if (json.res) {
-            document.getElementById('status_' + statusId).remove();
-          }
-        });
-      }
-    });
-  });
-  // END STATUS
-
   // ITEMS TYPES
   const ItemTypeC = new ItemsTypes();
 
@@ -212,6 +176,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // DESTROY ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-destroy"]')) {
       ItemTypeC.destroy(parseInt(el.dataset.id, 10)).then(() => window.location.href = '?tab=5');
+    // CREATE STATUS
+    } else if (el.matches('[data-action="create-status"]')) {
+      const content = (document.getElementById('statusName') as HTMLInputElement).value;
+      const color = (document.getElementById('statusColor') as HTMLInputElement).value;
+      return ApiC.post(`${Model.Team}/${el.dataset.teamid}/${Model.Status}`, {'name': content, 'color': color}).then(() => reloadElement('statusBox'));
+    // UPDATE STATUS
+    } else if (el.matches('[data-action="update-status"]')) {
+      const id = el.dataset.id;
+      const title = (document.getElementById('statusName_' + id) as HTMLInputElement).value;
+      const color = (document.getElementById('statusColor_' + id) as HTMLInputElement).value;
+      const isDefault = (document.getElementById('statusDefault_' + id) as HTMLInputElement).checked;
+      const params = {'title': title, 'color': color, 'is_default': Boolean(isDefault)};
+      return ApiC.patch(`${Model.Team}/${el.dataset.teamid}/${Model.Status}/${id}`, params);
+    // DESTROY STATUS
+    } else if (el.matches('[data-action="destroy-status"]')) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        return ApiC.delete(`${Model.Team}/${el.dataset.teamid}/${Model.Status}/${el.dataset.id}`).then(() => reloadElement('statusBox'));
+      }
+    // EXPORT CATEGORY
     } else if (el.matches('[data-action="export-category"]')) {
       const source = (document.getElementById('categoryExport') as HTMLSelectElement).value;
       const format = (document.getElementById('categoryExportFormat') as HTMLSelectElement).value;

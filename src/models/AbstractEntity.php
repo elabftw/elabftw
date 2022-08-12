@@ -356,7 +356,7 @@ abstract class AbstractEntity implements RestInterface
     {
         $this->canOrExplode('write');
         foreach ($params as $key => $value) {
-            $this->update(new EntityParams((string) $value, $key));
+            $this->update(new EntityParams($key, (string) $value));
         }
         return $this->readOne();
     }
@@ -559,7 +559,7 @@ abstract class AbstractEntity implements RestInterface
             $this->Db->execute($req);
         }
         // set state to deleted
-        return $this->update(new EntityParams((string) self::STATE_DELETED, 'state'));
+        return $this->update(new EntityParams('state', (string) self::STATE_DELETED));
     }
 
     /**
@@ -603,43 +603,19 @@ abstract class AbstractEntity implements RestInterface
      */
     protected function update(EntityParamsInterface $params): bool
     {
+        $content = $params->getContent();
         switch ($params->getTarget()) {
-            case 'title':
-                $content = $params->getTitle();
-                break;
-            case 'date':
-            case 'metadata':
-                // MySQL with throw an error if this param is incorrect
-                $content = $params->getUnfilteredContent();
-                break;
-            case 'body':
-                $content = $params->getBody();
-                break;
+            case 'metadatafield':
+                return $this->updateJsonField($params);
             case 'bodyappend':
-                $content = $this->readOne()['body'] . $params->getBody();
-                break;
+                $content = $this->readOne()['body'] . $content;
+                // no break
             case 'canread':
             case 'canwrite':
-                $content = $params->getVisibility();
                 if ($this->bypassWritePermission === false) {
                     $this->checkTeamPermissionsEnforced($params->getTarget());
                 }
                 break;
-            case 'color':
-                $content = $params->getColor();
-                break;
-            case 'category':
-            case 'bookable':
-            case 'content_type':
-            case 'rating':
-            case 'userid':
-            case 'state':
-                $content = $params->getInt();
-                break;
-            case 'metadatafield':
-                return $this->updateJsonField($params);
-            default:
-                throw new ImproperActionException('Invalid update target.');
         }
 
         // save a revision for body target

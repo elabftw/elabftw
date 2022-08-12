@@ -1,31 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
 use function bin2hex;
-use Elabftw\Interfaces\CreateApikeyParamsInterface;
 use function random_bytes;
 
-final class CreateApikey extends ContentParams implements CreateApikeyParamsInterface
+final class ApikeyParam extends ContentParams
 {
     private string $key = '';
 
-    public function __construct(string $content, string $target, private int $canwrite)
+    public function __construct(protected string $content, public int $canwrite = 0)
     {
-        parent::__construct($content, $target);
-    }
-
-    public function getCanwrite(): int
-    {
-        return $this->canwrite;
+        parent::__construct('', $content);
     }
 
     public function getKey(): string

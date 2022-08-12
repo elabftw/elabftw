@@ -59,7 +59,7 @@ try {
             $selectedItem = $Request->query->get('item');
             $allItems = false;
             // itemData is to display the name/category of the selected item
-            $itemData = $Scheduler->Items->read(new ContentParams());
+            $itemData = $Scheduler->Items->readOne();
         }
     }
 

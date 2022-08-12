@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,15 +6,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ApikeyParam;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CreateApikeyParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Interfaces\ParamsInterface;
 use Elabftw\Traits\SetIdTrait;
 use function password_hash;
 use function password_verify;
@@ -23,7 +20,7 @@ use PDO;
 /**
  * Api keys CRUD class
  */
-class ApiKeys implements CrudInterface
+class ApiKeys
 {
     use SetIdTrait;
 
@@ -38,7 +35,7 @@ class ApiKeys implements CrudInterface
     /**
      * Create a new key for current user
      */
-    public function create(CreateApikeyParamsInterface $params): int
+    public function create(ApikeyParam $params): int
     {
         $hash = password_hash($params->getKey(), PASSWORD_BCRYPT);
 
@@ -46,7 +43,7 @@ class ApiKeys implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindValue(':name', $params->getContent());
         $req->bindParam(':hash', $hash);
-        $req->bindValue(':can_write', $params->getCanwrite(), PDO::PARAM_INT);
+        $req->bindParam(':can_write', $params->canwrite, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -105,11 +102,6 @@ class ApiKeys implements CrudInterface
             }
         }
         throw new ImproperActionException('No corresponding API key found!');
-    }
-
-    public function update(ParamsInterface $params): bool
-    {
-        return false;
     }
 
     public function destroy(): bool

@@ -10,12 +10,11 @@
 namespace Elabftw\Controllers;
 
 use function dirname;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
-use Elabftw\Elabftw\TagParams;
+use Elabftw\Elabftw\TagParam;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -31,6 +30,7 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Status;
 use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
@@ -161,9 +161,9 @@ class Apiv1Controller extends AbstractApiController
     /**
      * Set the id and endpoints fields
      */
-    protected function parseReq(): void
+    protected function parseReq(): array
     {
-        parent::parseReq();
+        $req = parent::parseReq();
 
         // load Entity
         // if endpoint is uploads we don't actually care about the entity type
@@ -185,7 +185,7 @@ class Apiv1Controller extends AbstractApiController
                 $this->Category = new ItemsTypes($this->Users);
                 break;
             case 'status':
-                $this->Category = new Status($this->Users->team);
+                $this->Category = new Status(new Teams($this->Users, $this->Users->team));
                 break;
             case 'events':
                 $this->Entity = new Items($this->Users, $this->id);
@@ -201,6 +201,7 @@ class Apiv1Controller extends AbstractApiController
             default:
                 throw new ImproperActionException('Invalid endpoint.');
         }
+        return $req;
     }
 
     /**
@@ -379,13 +380,7 @@ class Apiv1Controller extends AbstractApiController
         if ($this->id === null && $this->Entity instanceof Templates) {
             return new JsonResponse($this->Entity->readAll());
         }
-        $this->Entity->read(new ContentParams());
-        $permissions = $this->Entity->getPermissions($this->Entity->entityData);
-        if ($permissions['read'] === false) {
-            throw new IllegalActionException('User tried to access a template without read permissions');
-        }
-
-        return new JsonResponse($this->Entity->entityData);
+        return new JsonResponse($this->Entity->readOne());
     }
 
     /**
@@ -684,7 +679,7 @@ class Apiv1Controller extends AbstractApiController
      */
     private function createExperiment(): Response
     {
-        $id = $this->Entity->create(new EntityParams('0'));
+        $id = $this->Entity->create(0);
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
 
@@ -712,8 +707,7 @@ class Apiv1Controller extends AbstractApiController
      */
     private function createTemplate(): Response
     {
-        $params = new EntityParams('created from api');
-        $id = $this->Entity->create($params);
+        $id = $this->Entity->create('created from api');
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
 
@@ -751,7 +745,7 @@ class Apiv1Controller extends AbstractApiController
             return new Response('Cannot create an item with an item type id not in your team!', 403);
         }
 
-        $id = $this->Entity->create(new EntityParams((string) $this->id));
+        $id = $this->Entity->create($this->id);
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
 
@@ -780,7 +774,7 @@ class Apiv1Controller extends AbstractApiController
      */
     private function createLink(): Response
     {
-        $this->Entity->Links->create(new EntityParams($this->Request->request->getDigits('link')));
+        $this->Entity->Links->create($this->Request->request->getInt('link'));
         return new JsonResponse(array('result' => 'success'));
     }
 
@@ -814,7 +808,7 @@ class Apiv1Controller extends AbstractApiController
      */
     private function createTag(): Response
     {
-        $this->Entity->Tags->create(new TagParams((string) $this->Request->request->get('tag')));
+        $this->Entity->Tags->create(new TagParam((string) $this->Request->request->get('tag')));
         return new JsonResponse(array('result' => 'success'));
     }
 

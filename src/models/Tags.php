@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,19 +6,17 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
 use function array_column;
 use function count;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\TagParam;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Traits\SetIdTrait;
 use function implode;
 use PDO;
@@ -26,7 +24,7 @@ use PDO;
 /**
  * All about the tag
  */
-class Tags implements CrudInterface
+class Tags
 {
     use SetIdTrait;
 
@@ -41,7 +39,7 @@ class Tags implements CrudInterface
     /**
      * Create a tag
      */
-    public function create(ContentParamsInterface $params): int
+    public function create(TagParam $params): int
     {
         $this->Entity->canOrExplode('write');
 
@@ -155,16 +153,13 @@ class Tags implements CrudInterface
     public function patch(array $params): array
     {
         foreach ($params as $key => $value) {
-            $this->update(new ContentParams($value, $key));
+            $this->update(new TagParam($value));
         }
         return $this->readOne();
     }
 
-    public function update(ContentParamsInterface $params): bool
+    public function update(TagParam $params): bool
     {
-        if ($params->getTarget() === 'unreference') {
-            return $this->unreference();
-        }
         if ($this->Entity->Users->userData['is_admin'] !== 1) {
             throw new IllegalActionException('Only an admin can update a tag!');
         }
@@ -284,7 +279,7 @@ class Tags implements CrudInterface
     /**
      * Unreference a tag from an entity
      */
-    private function unreference(): bool
+    public function unreference(): bool
     {
         $this->Entity->canOrExplode('write');
 
@@ -312,7 +307,7 @@ class Tags implements CrudInterface
      *
      * @return array the tag list filtered by the term for autocomplete
      */
-    private function getList(string $term): array
+    public function getList(string $term): array
     {
         $tagListArr = array();
         // limit to 20 entries

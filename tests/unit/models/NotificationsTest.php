@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateNotificationParams;
 
 class NotificationsTest extends \PHPUnit\Framework\TestCase
@@ -40,7 +39,7 @@ class NotificationsTest extends \PHPUnit\Framework\TestCase
     public function testUpdate(): void
     {
         $Notifications = new Notifications(new Users(1, 1), 1);
-        $this->assertTrue($Notifications->update(new ContentParams()));
+        $this->assertTrue($Notifications->update());
     }
 
     public function testDestroy(): void

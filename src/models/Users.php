@@ -269,7 +269,7 @@ class Users implements RestInterface
     {
         $this->canWriteOrExplode();
         foreach ($params as $target => $content) {
-            $this->update(new UserParams((string) $content, $target));
+            $this->update(new UserParams($target, (string) $content));
         }
         return $this->readOne();
     }

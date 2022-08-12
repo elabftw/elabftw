@@ -10,12 +10,11 @@
 namespace Elabftw\Models;
 
 use function array_diff;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\TeamParam;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
@@ -133,7 +132,7 @@ class Teams implements RestInterface
         $this->canWriteOrExplode();
 
         foreach ($params as $key => $value) {
-            $this->update(new ContentParams($value, $key));
+            $this->update(new TeamParam($key, $value));
         }
         return $this->readOne();
     }
@@ -219,6 +218,17 @@ class Teams implements RestInterface
         return in_array($team, $teams, true);
     }
 
+    public function canWriteOrExplode(): void
+    {
+        if ($this->bypassWritePermission) {
+            return;
+        }
+        if ($this->Users->userData['is_sysadmin'] || ($this->Users->userData['is_admin'] && $this->hasCommonTeamWithCurrent($this->Users->userData['userid'], $this->id))) {
+            return;
+        }
+        throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
+    }
+
     private function create(string $name): int
     {
         $name = Filter::title($name);
@@ -233,12 +243,12 @@ class Teams implements RestInterface
         // grab the team ID
         $newId = $this->Db->lastInsertId();
 
+        $user = new Users();
         // create default status
-        $Status = new Status($newId);
+        $Status = new Status(new self($user, $newId));
         $Status->createDefault();
 
         // create default item type
-        $user = new Users();
         $user->team = $newId;
         $ItemsTypes = new ItemsTypes($user);
         $ItemsTypes->setId($ItemsTypes->create('Edit me'));
@@ -256,65 +266,24 @@ class Teams implements RestInterface
         return $newId;
     }
 
-    private function update(ContentParamsInterface $params): bool
+    private function update(TeamParam $params): bool
     {
-        switch ($params->getTarget()) {
-            case 'common_template':
-                $content = $params->getBody();
-                break;
-            case 'orgid':
-            case 'link_name':
-            case 'name':
-                $content = $params->getContent();
-                break;
-            case 'deletable_xp':
-            case 'deletable_item':
-            case 'user_create_tag':
-            case 'force_exp_tpl':
-            case 'public_db':
-            case 'do_force_canread':
-            case 'do_force_canwrite':
-            case 'visible':
-                $content = $params->getInt();
-                break;
-            case 'link_href':
-                $content = $params->getUrl();
-                break;
-            case 'force_canread':
-            case 'force_canwrite':
-                $content = $params->getPermissions();
-                break;
-            default:
-                throw new ImproperActionException('Invalid update parameter.');
-        }
-
         $sql = 'UPDATE teams SET ' . $params->getColumn() . ' = :content WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':content', $content);
+        $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
     private function canReadOrExplode(): void
     {
-        if ($this->bypassReadPermission) {
+        if ($this->bypassReadPermission || $this->Users->userData['is_sysadmin']) {
             return;
         }
         if ($this->hasCommonTeamWithCurrent((int) $this->Users->userData['userid'], $this->id)) {
             return;
         }
         throw new IllegalActionException('User tried to read a team setting but they are not part of that team.');
-    }
-
-    private function canWriteOrExplode(): void
-    {
-        if ($this->bypassWritePermission) {
-            return;
-        }
-        if ($this->Users->userData['is_sysadmin'] || ($this->Users->userData['is_admin'] && $this->hasCommonTeamWithCurrent($this->Users->userData['userid'], $this->id))) {
-            return;
-        }
-        throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
     }
 
     private function createTeamIfAllowed(string $name): int

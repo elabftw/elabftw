@@ -9,7 +9,8 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\CommentParam;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 
@@ -28,7 +29,7 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
-        $this->assertIsInt($this->Comments->create(new ContentParams('Ohai')));
+        $this->assertIsInt($this->Comments->postAction(Action::Create, array('comment' => 'Ohai')));
     }
 
     public function testRead(): void
@@ -39,10 +40,10 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
     public function testUpdate(): void
     {
         $this->Comments->setId(1);
-        $this->Comments->Update(new ContentParams('Updated'));
+        $this->Comments->Update(new CommentParam('Updated'));
         // too short comment
         $this->expectException(ImproperActionException::class);
-        $this->Comments->Update(new ContentParams(''));
+        $this->Comments->Update(new CommentParam(''));
     }
 
     public function testDestroy(): void

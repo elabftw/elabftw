@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
@@ -18,6 +19,22 @@ use const JSON_THROW_ON_ERROR;
 
 class EntityParams extends ContentParams implements EntityParamsInterface
 {
+    public function getContent(): mixed
+    {
+        return match ($this->target) {
+            'title' => Filter::title($this->content),
+            // MySQL with throw an error if this param is incorrect
+            'date', 'metadata' => $this->getUnfilteredContent(),
+            'body', 'bodyappend' => $this->getBody(),
+            //'bodyappend', $this->readOne()['body'] . $params->getBody();
+            'canread', 'canwrite' => Check::Visibility($this->content),
+            'color' => Check::color($this->content),
+            'category', 'bookable', 'content_type', 'rating', 'userid', 'state' => $this->getInt(),
+            //'metadatafield' => $this->updateJsonField($params);
+            default => throw new ImproperActionException('Invalid update target.'),
+        };
+    }
+
     public function getColumn(): string
     {
         if ($this->target === 'bodyappend') {
@@ -26,34 +43,16 @@ class EntityParams extends ContentParams implements EntityParamsInterface
         return parent::getColumn();
     }
 
-    public function getTitle(): string
-    {
-        return Filter::title($this->content);
-    }
-
+    /*
     public function getTags(): array
     {
         return $this->extra['tags'] ?? array();
     }
-
-    public function getExtraBody(): string
-    {
-        return Filter::body($this->extra['body'] ?? '');
-    }
-
-    public function getColor(): string
-    {
-        return Check::color($this->content);
-    }
+     */
 
     public function getField(): string
     {
         return json_encode($this->extra['jsonField'] ?? '', JSON_HEX_APOS | JSON_THROW_ON_ERROR);
-    }
-
-    public function getVisibility(): string
-    {
-        return Check::Visibility($this->content);
     }
 
     public function getState(): int

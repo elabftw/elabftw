@@ -9,8 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
-
 class TemplatesTest extends \PHPUnit\Framework\TestCase
 {
     private Templates $Templates;
@@ -28,9 +26,8 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
     public function testRead(): void
     {
         $this->Templates->setId(1);
-        $this->assertIsArray($this->Templates->read(new ContentParams()));
         $this->assertIsArray($this->Templates->readOne());
-        $this->assertIsArray($this->Templates->read(new ContentParams('', 'list')));
+        $this->assertIsArray($this->Templates->getList());
     }
 
     public function testGetWriteableTemplatesList(): void

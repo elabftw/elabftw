@@ -37,7 +37,7 @@ abstract class AbstractApiController implements ControllerInterface
     {
     }
 
-    protected function parseReq(): void
+    protected function parseReq(): array
     {
         if ($this->canWrite === false && $this->Request->server->get('REQUEST_METHOD') !== Request::METHOD_GET) {
             throw new ImproperActionException('You are using a read-only key to execute a write action.');
@@ -73,17 +73,18 @@ abstract class AbstractApiController implements ControllerInterface
             $this->search = trim((string) $this->Request->query->get('search'));
         }
 
-        // assign the id if there is one
-        if (Check::id((int) end($req)) !== false) {
-            $this->id = (int) end($req);
-        }
-
         // assign the endpoint (experiments, items, uploads, items_types, status)
         // 0 is "", 1 is "api", 2 is "v1"
         $this->endpoint = $req[3];
 
+        // assign the id if there is one
+        if (Check::id((int) $req[4]) !== false) {
+            $this->id = (int) $req[4];
+        }
+
         // used by backup zip only for now
         // TODO remove with apiv1
         $this->param = $req[4] ?? '';
+        return $req;
     }
 }

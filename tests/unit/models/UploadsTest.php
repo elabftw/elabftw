@@ -102,7 +102,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $id = $this->Entity->Uploads->create(new CreateImmutableUpload('some-immutable.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
         $this->Entity->Uploads->setId($id);
         $this->expectException(IllegalActionException::class);
-        $this->Entity->Uploads->update(new UploadParams('new', 'real_name'));
+        $this->Entity->Uploads->patch(array('real_name' => 'new'));
     }
 
     public function testGetStorageFromLongname(): void
@@ -128,7 +128,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $Uploads->setId($id);
         $upArrBefore = $Uploads->uploadData;
 
-        $upArrNew = $Uploads->replace(new UploadParams('', 'file', new UploadedFile(dirname(__DIR__, 2) . '/_data/example.png', 'example.png')));
+        $upArrNew = $Uploads->replace(new UploadParams('file', '', new UploadedFile(dirname(__DIR__, 2) . '/_data/example.png', 'example.png')));
         $this->assertIsArray($upArrNew);
         $this->assertEquals($upArrBefore['comment'], $upArrNew['comment']);
 

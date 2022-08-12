@@ -9,7 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateApikey;
+use Elabftw\Elabftw\ApikeyParam;
 use function mb_strlen;
 
 class ApiKeysTest extends \PHPUnit\Framework\TestCase
@@ -23,7 +23,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
-        $params = new CreateApikey('test key', '', 1);
+        $params = new ApikeyParam('test key', 1);
         $this->ApiKeys->create($params);
         $this->assertTrue(mb_strlen($params->getKey()) === 84);
     }
@@ -38,7 +38,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
 
     public function testReadFromApiKey(): void
     {
-        $params = new CreateApikey('my key', '', 0);
+        $params = new ApikeyParam('my key');
         $this->ApiKeys->create($params);
         $res = $this->ApiKeys->readFromApiKey($params->getKey());
         $this->assertTrue($res['userid'] === 1);

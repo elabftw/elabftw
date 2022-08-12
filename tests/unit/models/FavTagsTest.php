@@ -9,7 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
+use Elabftw\Elabftw\TagParam;
 
 class FavTagsTest extends \PHPUnit\Framework\TestCase
 {
@@ -23,7 +23,7 @@ class FavTagsTest extends \PHPUnit\Framework\TestCase
     public function testCreate(): void
     {
         $Tags = new Tags(new Experiments(new Users(1, 1), 1));
-        $param = new ContentParams('test-tag');
+        $param = new TagParam('test-tag');
         $Tags->create($param);
         $this->assertEquals(1, $this->FavTags->create($param));
         $this->assertEquals(0, $this->FavTags->create($param));
@@ -32,11 +32,6 @@ class FavTagsTest extends \PHPUnit\Framework\TestCase
     public function testRead(): void
     {
         $this->assertIsArray($this->FavTags->readAll());
-    }
-
-    public function testUpdate(): void
-    {
-        $this->assertTrue($this->FavTags->update(new ContentParams()));
     }
 
     public function testDestroy(): void

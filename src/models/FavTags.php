@@ -10,15 +10,14 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Elabftw\TagParam;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
 /**
  * The favorite tags of a user
  */
-class FavTags implements CrudInterface
+class FavTags
 {
     use SetIdTrait;
 
@@ -30,7 +29,7 @@ class FavTags implements CrudInterface
         $this->Db = Db::getConnection();
     }
 
-    public function create(ContentParamsInterface $params): int
+    public function create(TagParam $params): int
     {
         $tag = $params->getContent();
         // get the tag id
@@ -68,11 +67,6 @@ class FavTags implements CrudInterface
     public function readOne(): array
     {
         return $this->readAll();
-    }
-
-    public function update(ContentParamsInterface $params): bool
-    {
-        return true;
     }
 
     public function destroy(): bool

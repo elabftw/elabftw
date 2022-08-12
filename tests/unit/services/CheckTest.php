@@ -80,14 +80,6 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         Check::token('blah');
     }
 
-    /*
-    public function testInvalidTarget(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        Check::target('Grogu');
-    }
-     */
-
     public function testOrcid(): void
     {
         Check::orcid('0000-0123-4346-1337');

@@ -6,14 +6,14 @@
  * @package elabftw
  */
 import i18next from 'i18next';
-import { InputType, Malle, SelectOptions } from '@deltablot/malle';
+import { InputType, Malle } from '@deltablot/malle';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
+import { Api } from './Apiv2.class';
 import { getEntity, updateCategory, relativeMoment, reloadElement, showContentPlainText } from './misc';
 import { BoundEvent, EntityType, Payload, Method, Action, Target, Model } from './interfaces';
 import { DateTime } from 'luxon';
 import EntityClass from './Entity.class';
-import Comment from './Comment.class';
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -34,8 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
-  const CommentC = new Comment(entity);
   const AjaxC = new Ajax();
+  const ApiC = new Api();
 
   // add extra fields elements from metadata json
   const MetadataC = new Metadata(entity);
@@ -156,12 +156,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // CREATE COMMENT
     if (el.matches('[data-action="create-comment"]')) {
       const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
-      CommentC.create(content).then(() => reloadElement('commentsDiv'));
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Comment}`, {'comment': content}).then(() => reloadElement('commentsDiv'));
 
     // DESTROY COMMENT
     } else if (el.matches('[data-action="destroy-comment"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        CommentC.destroy(parseInt(el.dataset.target, 10)).then(() => reloadElement('commentsDiv'));
+        ApiC.delete(`${entity.type}/${entity.id}/${Model.Comment}/${el.dataset.id}`).then(() => reloadElement('commentsDiv'));
       }
     }
   });
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],
     fun: (value, original) => {
-      CommentC.update(parseInt(original.dataset.id, 10), value);
+      ApiC.patch(`${entity.type}/${entity.id}/${Model.Comment}/${original.dataset.id}`, {'comment': value}).then(() => reloadElement('commentsDiv'));
       return value;
     },
     inputType: InputType.Textarea,
@@ -183,6 +183,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // UPDATE MALLEABLE CATEGORY
+  let category;
+  // TODO make it so it calls only on trigger!
+  if (entity.type === EntityType.Experiment) {
+    category = ApiC.getJson(`${Model.Team}/${about.team}/status`).then(json => Array.from(json as Iterable<any>));
+  } else {
+    category = ApiC.getJson(`${EntityType.ItemType}`).then(json => Array.from(json as Iterable<any>));
+  }
   new Malle({
     cancel : i18next.t('cancel'),
     cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2', 'ml-1'],
@@ -191,15 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
     inputType: InputType.Select,
     selectOptionsValueKey: 'category_id',
     selectOptionsTextKey: 'category',
-    selectOptions: AjaxC.send({
-      method: Method.GET,
-      action: Action.Read,
-      // problem here is that status is a subtype of experiments, and itemstypes is an abstractentity itself
-      // so processor will read model for experiments and return entity for itemstypes
-      // even if model is defined as itemstypes, it will return the entity, so fill entity key with itemstype and no id
-      entity: {type: EntityType.ItemType, id: null},
-      model: entity.type === EntityType.Experiment ? Model.Status : EntityType.ItemType,
-    }).then(json => (json.value as Array<SelectOptions>)),
+    selectOptions: category.then(categoryArr => categoryArr),
     listenOn: '.malleableCategory',
     submit : i18next.t('save'),
     submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],

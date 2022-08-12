@@ -177,12 +177,12 @@
       </div>
 
       <div class='col-auto mt-4'>
-        <button class='button btn btn-primary' data-action='create-status'>{{ 'Save'|trans }}</button>
+        <button class='button btn btn-primary' data-teamid='{{ App.Users.userData.team }}' data-action='create-status'>{{ 'Save'|trans }}</button>
       </div>
     </div>
   </div>
 
-  <div class='box'>
+  <div class='box' id='statusBox'>
     <h3>{{ 'Edit an Existing Status'|trans }}</h3>
     <hr>
     <ul class='list-group sortable' data-axis='y' data-table='status'>
@@ -206,11 +206,11 @@
             </li>
 
             <li class='list-inline-item'>
-              <button data-statusid='{{ status.category_id }}' class='button btn btn-primary' data-action='update-status'>{{ 'Save'|trans }}</button>
+              <button data-id='{{ status.category_id }}' class='button btn btn-primary' data-teamid='{{ App.Users.userData.team }}' data-action='update-status'>{{ 'Save'|trans }}</button>
             </li>
 
             <li class='list-inline-item'>
-              <button data-statusid='{{ status.category_id }}' data-action='destroy-status' class='button btn btn-danger' >{{ 'Delete'|trans }}</button>
+              <button data-id='{{ status.category_id }}' data-teamid='{{ App.Users.userData.team }}' data-action='destroy-status' class='button btn btn-danger' >{{ 'Delete'|trans }}</button>
             </li>
             <li class='list-inline-item'>
               <span class='draggable sortableHandle float-right'>

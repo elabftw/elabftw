@@ -40,9 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     // TOGGLE DEADLINE NOTIFICATIONS ON STEP
     } else if (el.matches('[data-action="step-toggle-deadline-notif"]')) {
-      StepC.update(parseInt(el.dataset.stepid, 10), null, Target.DeadlineNotif).then(() => {
-        reloadElement('stepsDiv');
-      });
+      StepC.notif(parseInt(el.dataset.stepid, 10)).then(() => reloadElement('stepsDiv'));
 
     // DESTROY DEADLINE ON STEP
     } else if (el.matches('[data-action="step-destroy-deadline"]')) {

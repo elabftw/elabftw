@@ -10,20 +10,19 @@
 namespace Elabftw\Models;
 
 use function copy;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UploadParams;
+use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\StorageFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Interfaces\UploadParamsInterface;
+use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\MakeThumbnail;
 use Elabftw\Traits\UploadTrait;
@@ -35,7 +34,7 @@ use RuntimeException;
 /**
  * All about the file uploads
  */
-class Uploads implements CrudInterface
+class Uploads implements RestInterface
 {
     use UploadTrait;
 
@@ -228,10 +227,21 @@ class Uploads implements CrudInterface
 
     public function patch(array $params): array
     {
+        $this->canWriteOrExplode();
         foreach ($params as $key => $value) {
-            $this->update(new UploadParams($value, $key));
+            $this->update(new UploadParams($key, $value));
         }
         return $this->readOne();
+    }
+
+    public function patchAction(Action $action): array
+    {
+        return array();
+    }
+
+    public function postAction(Action $action, array $reqBody): int
+    {
+        return 1;
     }
 
     public function getPage(): string
@@ -239,10 +249,9 @@ class Uploads implements CrudInterface
         return $this->Entity->getPage();
     }
 
-    public function update(UploadParamsInterface $params): bool
+    public function update(UploadParams $params): bool
     {
-        $this->canWriteOrExplode();
-        $sql = 'UPDATE uploads SET ' . $params->getTarget() . ' = :content WHERE id = :id';
+        $sql = 'UPDATE uploads SET ' . $params->getColumn() . ' = :content WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -308,14 +317,14 @@ class Uploads implements CrudInterface
      * Attached files are immutable (change history is kept), so the current
      * file gets its state changed to "archived" and a new one is added
      */
-    public function replace(UploadParamsInterface $params): array
+    public function replace(UploadParams $params): array
     {
         $this->canWriteOrExplode();
         // read the current one to get the comment
-        $upload = $this->read(new ContentParams());
-        $this->update(new UploadParams((string) self::STATE_ARCHIVED, 'state'));
+        $upload = $this->readOne();
+        $this->update(new UploadParams('state', (string) self::STATE_ARCHIVED));
 
-        $file = $params->getFile();
+        $file = $params->getContent();
         $newID = $this->create(new CreateUpload($file->getClientOriginalName(), $file->getPathname(), $upload['comment']));
         $this->setId($newID);
 
@@ -350,7 +359,7 @@ class Uploads implements CrudInterface
     private function nuke(): bool
     {
         if ($this->uploadData['immutable'] === 0) {
-            return $this->update(new UploadParams((string) self::STATE_DELETED, 'state'));
+            return $this->update(new UploadParams('state', (string) self::STATE_DELETED));
         }
         return false;
     }

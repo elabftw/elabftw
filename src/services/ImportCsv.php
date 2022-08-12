@@ -9,7 +9,7 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\TagParams;
+use Elabftw\Elabftw\TagParam;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
@@ -137,7 +137,7 @@ class ImportCsv extends AbstractImport
         foreach ($tagsArr as $tag) {
             // maybe it's empty for this row
             if ($tag) {
-                $Entity->Tags->create(new TagParams($tag));
+                $Entity->Tags->create(new TagParam($tag));
             }
         }
     }

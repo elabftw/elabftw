@@ -9,7 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Check;
 
@@ -52,7 +52,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $new = $this->Experiments->create(0);
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('read');
-        $experiment = $this->Experiments->read(new ContentParams());
+        $experiment = $this->Experiments->readOne();
         $this->assertTrue(is_array($experiment));
         $this->assertEquals('Untitled', $experiment['title']);
         //$this->assertEquals('20160729', $experiment['date']);
@@ -90,8 +90,8 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->setId(1);
         $this->Experiments->canOrExplode('read');
         // add some steps and links in there, too
-        $this->Experiments->Steps->create(new ContentParams('some step'));
-        $this->Experiments->Links->create(new ContentParams('3'));
+        $this->Experiments->Steps->postAction(Action::Create, array('body' => 'some step'));
+        $this->Experiments->Links->create(3);
         $this->assertIsInt($this->Experiments->duplicate());
     }
 

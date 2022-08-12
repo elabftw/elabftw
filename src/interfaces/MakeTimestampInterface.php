@@ -9,7 +9,16 @@
 
 namespace Elabftw\Interfaces;
 
-interface StepParamsInterface extends ContentParamsInterface
+/**
+ * Interface for timestamp makers
+ */
+interface MakeTimestampInterface
 {
-    public function getDatetime(): ?string;
+    public function getTimestampParameters(): array;
+
+    public function getFileName(): string;
+
+    public function saveTimestamp(string $pdfPath, TimestampResponseInterface $tsResponse): int;
+
+    public function generatePdf(): string;
 }

@@ -9,10 +9,21 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\MakeTimestampInterface;
+use Elabftw\Services\MakeBloxberg;
+use Elabftw\Services\MakeDfnTimestamp;
+use Elabftw\Services\MakeDigicertTimestamp;
+use Elabftw\Services\MakeGlobalSignTimestamp;
+use Elabftw\Services\MakeSectigoTimestamp;
+use Elabftw\Services\MakeUniversignTimestampDev;
+use Elabftw\Services\TimestampUtils;
 use Elabftw\Traits\InsertTagsTrait;
+use GuzzleHttp\Client;
 use PDO;
 
 /**
@@ -192,6 +203,16 @@ class Experiments extends AbstractConcreteEntity
         return parent::destroy() && $this->Pins->cleanup();
     }
 
+    public function patchAction(Action $action): array
+    {
+        $this->canOrExplode('write');
+        return match ($action) {
+            Action::Bloxberg => $this->bloxberg(),
+            Action::Timestamp => $this->timestamp(),
+            default => parent::patchAction($action),
+        };
+    }
+
     protected function getBoundEvents(): array
     {
         $sql = 'SELECT team_events.* from team_events WHERE experiment = :id';
@@ -200,6 +221,45 @@ class Experiments extends AbstractConcreteEntity
         $this->Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    private function bloxberg(): array
+    {
+        $Config = Config::getConfig();
+        $config = $Config->configArr;
+        if ($config['blox_enabled'] !== '1') {
+            throw new ImproperActionException('Bloxberg timestamping is disabled on this instance.');
+        }
+        (new MakeBloxberg(new Client(), $this))->timestamp();
+        return $this->readOne();
+    }
+
+    private function getTimestampMaker(array $config): MakeTimestampInterface
+    {
+        return match ($config['ts_authority']) {
+            'dfn' => new MakeDfnTimestamp($config, $this),
+            'universign' => $config['debug'] ? new MakeUniversignTimestampDev($config, $this) : new MakeUniversignTimestampDev($config, $this),
+            'digicert' => new MakeDigicertTimestamp($config, $this),
+            'sectigo' => new MakeSectigoTimestamp($config, $this),
+            'globalsign' => new MakeGlobalSignTimestamp($config, $this),
+            default => throw new ImproperActionException('Incorrect timestamp authority configuration.'),
+        };
+    }
+
+    private function timestamp(): array
+    {
+        $Config = Config::getConfig();
+        $Maker = $this->getTimestampMaker($Config->configArr);
+        $pdfBlob = $Maker->generatePdf();
+        $TimestampUtils = new TimestampUtils(
+            new Client(),
+            $pdfBlob,
+            $Maker->getTimestampParameters(),
+            new TimestampResponse(),
+        );
+        $tsResponse = $TimestampUtils->timestamp();
+        $Maker->saveTimestamp($TimestampUtils->getDataPath(), $tsResponse);
+        return $this->readOne();
     }
 
     /**

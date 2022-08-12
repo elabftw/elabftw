@@ -16,13 +16,12 @@ use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use const SECRET_KEY;
-use function str_contains;
 
 class ContentParams implements ContentParamsInterface
 {
     protected const MIN_CONTENT_SIZE = 1;
 
-    public function __construct(protected string $content = '', protected string $target = '', protected ?array $extra = null)
+    public function __construct(protected string $target, protected string $content)
     {
     }
 
@@ -31,26 +30,13 @@ class ContentParams implements ContentParamsInterface
         return $this->content;
     }
 
-    public function getTarget(): string
+    // maybe rename to something else, so we have getContent to get filtered content and this would be get nonemptystring
+    public function getContent(): mixed
     {
-        return Check::target($this->target);
-    }
-
-    public function getContent(): string
-    {
-        // if we're dealing with a password, return the encrypted content
-        if (str_contains($this->target, '_password')) {
-            return Crypto::encrypt($this->content, Key::loadFromAsciiSafeString(SECRET_KEY));
-        }
-
-        if (str_contains($this->target, 'notif_')) {
-            return (string) Filter::toBinary($this->content);
-        }
-
         // check for length
         $c = Filter::sanitize($this->content);
         if (mb_strlen($c) < self::MIN_CONTENT_SIZE) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
+            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), self::MIN_CONTENT_SIZE));
         }
         return $c;
     }
@@ -60,32 +46,51 @@ class ContentParams implements ContentParamsInterface
         return $this->getTarget();
     }
 
-    public function getBody(): string
+    public function getTarget(): string
+    {
+        return $this->target;
+    }
+
+    protected function getBody(): string
     {
         return Filter::body($this->content);
     }
 
-    public function getExtra(string $key): string
+    protected function getBinary(): int
     {
-        return Filter::sanitize((string) $this->extra[$key]);
+        return Filter::toBinary($this->content);
     }
 
-    public function getInt(): int
+    /*
+    protected function filter(): mixed
+    {
+        return match ($this->target) {
+            // simple strings
+            'orgid', 'link_name', 'name', 'comment' => $this->getContent(),
+            // from tinymce/html
+            'common_template', 'body' => Filter::body($this->content),
+            'deletable_xp', 'deletable_item', 'user_create_tag', 'force_exp_tpl', 'public_db', 'do_force_canread', 'do_force_canwrite', 'visible', 'notif_comment_created', 'notif_comment_created_email', 'notif_user_created', 'notif_user_created_email', 'notif_user_need_validation', 'notif_user_need_validation_email', 'notif_step_deadline', 'notif_step_deadline_email', 'notif_event_deleted', 'notif_event_deleted_email' => $this->getInt(),
+            'link_href' => $this->getUrl(),
+            'force_canread', 'force_canwrite' => Check::visibility($this->content),
+            // if we're dealing with a password, return the encrypted content
+            'smtp_password', 'ts_password', 'ldap_password' => Crypto::encrypt($this->content, Key::loadFromAsciiSafeString(SECRET_KEY)),
+            'query' => $this->getContent(),
+            'category' => (int) $this->getUnfilteredContent(),
+            default => throw new ImproperActionException('Invalid parameter sent.'),
+        };
+    }
+     */
+
+    protected function getInt(): int
     {
         return (int) $this->content;
     }
 
-    public function getUrl(): string
+    protected function getUrl(): string
     {
         if (filter_var($this->content, FILTER_VALIDATE_URL) === false) {
             throw new ImproperActionException('Invalid URL format.');
         }
-        return $this->content;
-    }
-
-    public function getPermissions(): string
-    {
-        Check::visibility($this->content);
         return $this->content;
     }
 }

@@ -37,7 +37,7 @@ class Filter
      */
     private const MAX_BODY_SIZE = 4120000;
 
-    public static function toBinary(string $input): int
+    public static function toBinary(string|bool|int $input): int
     {
         return $input ? 1 : 0;
     }
@@ -162,25 +162,5 @@ class Filter
 
         $purifier = new HTMLPurifier($config);
         return $purifier->purify($input);
-    }
-
-    /**
-     * Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
-     * also remove | because we use this as separator for tags in SQL
-     *
-     * @param string $tag the tag to sanitize
-     */
-    public static function tag(string $tag): string
-    {
-        $tag = filter_var($tag, FILTER_SANITIZE_STRING);
-        if ($tag === false) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
-        }
-        $tag = trim(str_replace(array('\\', '|'), array('', ' '), $tag));
-        // empty tags are disallowed
-        if ($tag === '') {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
-        }
-        return $tag;
     }
 }

@@ -127,13 +127,6 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($Users->patchAction(Action::Lock));
     }
 
-    /*
-    public function testCreate(): void
-    {
-        $this->assertEquals(0, $this->Users->create(new UserParams('', '')));
-    }
-     */
-
     public function testCreateUser(): void
     {
         // force admin validation so we can run all code paths
@@ -150,7 +143,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Admin = new Users(4, 2);
         $Users = new Users(5, 2, $Admin);
         // create another active user with the same email
-        $NewUser = ExistingUser::fromScratch($Users->userData['email'], array('Alpha'), 'f', 'l', 4, false, false);
+        ExistingUser::fromScratch($Users->userData['email'], array('Alpha'), 'f', 'l', 4, false, false);
         // try to unarchive
         $this->expectException(ImproperActionException::class);
         $Users->patchAction(Action::Lock);

@@ -55,11 +55,6 @@ class ImportCsv extends AbstractImport
         $csv->setHeaderOffset(0);
         $rows = $csv->getRecords();
 
-        $createTarget = (string) $this->targetNumber;
-        if ($this->Entity instanceof Experiments) {
-            // no template
-            $createTarget = '-1';
-        }
         // SQL for importing
         $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, canwrite, elabid, metadata)
             VALUES(:team, :title, CURDATE(), :body, :userid, :category, :canread, :canwrite, :elabid, :metadata)';

@@ -20,6 +20,7 @@ use Elabftw\Services\MakeDfnTimestamp;
 use Elabftw\Services\MakeDigicertTimestamp;
 use Elabftw\Services\MakeGlobalSignTimestamp;
 use Elabftw\Services\MakeSectigoTimestamp;
+use Elabftw\Services\MakeUniversignTimestamp;
 use Elabftw\Services\MakeUniversignTimestampDev;
 use Elabftw\Services\TimestampUtils;
 use Elabftw\Traits\InsertTagsTrait;
@@ -238,7 +239,7 @@ class Experiments extends AbstractConcreteEntity
     {
         return match ($config['ts_authority']) {
             'dfn' => new MakeDfnTimestamp($config, $this),
-            'universign' => $config['debug'] ? new MakeUniversignTimestampDev($config, $this) : new MakeUniversignTimestampDev($config, $this),
+            'universign' => $config['debug'] ? new MakeUniversignTimestampDev($config, $this) : new MakeUniversignTimestamp($config, $this),
             'digicert' => new MakeDigicertTimestamp($config, $this),
             'sectigo' => new MakeSectigoTimestamp($config, $this),
             'globalsign' => new MakeGlobalSignTimestamp($config, $this),

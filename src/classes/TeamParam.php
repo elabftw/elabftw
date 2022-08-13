@@ -10,6 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\Check;
 
 final class TeamParam extends ContentParams
 {
@@ -20,7 +21,8 @@ final class TeamParam extends ContentParams
             'common_template' => $this->getBody(),
             'deletable_xp', 'deletable_item', 'user_create_tag', 'force_exp_tpl', 'public_db', 'do_force_canread', 'do_force_canwrite', 'visible' => parent::getBinary(),
             'link_href' => $this->getUrl(),
-            default => throw new ImproperActionException('Incorrect parameter for team.'),
+            'force_canread', 'force_canwrite' => Check::visibility($this->content),
+            default => throw new ImproperActionException('Incorrect parameter for team.' . $this->target),
         };
     }
 }

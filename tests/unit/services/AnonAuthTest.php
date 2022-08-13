@@ -37,7 +37,7 @@ class AnonAuthTest extends \PHPUnit\Framework\TestCase
 
         // now try anon login but it's disabled by sysadmin
         $this->expectException(IllegalActionException::class);
-        $AnonAuth = new AnonAuth(
+        new AnonAuth(
             array('anon_users' => '0'),
             1,
         );

@@ -11,16 +11,5 @@ namespace Elabftw\Interfaces;
 
 interface EntityParamsInterface extends ContentParamsInterface
 {
-//    public function getTitle(): string;
-
-    //public function getTags(): array;
-
-    // public function getColor(): string;
     public function getField(): string;
-
-    /*
-    public function getState(): int;
-
-    public function getVisibility(): string;
-     */
 }

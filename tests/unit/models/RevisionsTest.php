@@ -49,9 +49,6 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
         $this->Revisions = new Revisions($Experiment, 10, 100, 10);
         $this->Revisions->create('Ohai');
         $this->Revisions->restore($new);
-        //$this->Experiments->toggleLock();
-        //$this->expectException(\Exception::class);
-        //$this->Revisions->restore(2);
     }
 
     public function testDestroy(): void

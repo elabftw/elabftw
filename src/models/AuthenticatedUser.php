@@ -14,8 +14,4 @@ namespace Elabftw\Models;
  */
 final class AuthenticatedUser extends ExistingUser
 {
-    public function __construct(public ?int $userid, public int $team)
-    {
-        parent::__construct($userid, $team);
-    }
 }

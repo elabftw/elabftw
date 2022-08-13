@@ -26,11 +26,10 @@ class EntityParams extends ContentParams implements EntityParamsInterface
             // MySQL with throw an error if this param is incorrect
             'date', 'metadata' => $this->getUnfilteredContent(),
             'body', 'bodyappend' => $this->getBody(),
-            //'bodyappend', $this->readOne()['body'] . $params->getBody();
             'canread', 'canwrite' => Check::Visibility($this->content),
             'color' => Check::color($this->content),
             'category', 'bookable', 'content_type', 'rating', 'userid', 'state' => $this->getInt(),
-            //'metadatafield' => $this->updateJsonField($params);
+            // TODO 'metadatafield' => $this->updateJsonField($params);
             default => throw new ImproperActionException('Invalid update target.'),
         };
     }
@@ -42,13 +41,6 @@ class EntityParams extends ContentParams implements EntityParamsInterface
         }
         return parent::getColumn();
     }
-
-    /*
-    public function getTags(): array
-    {
-        return $this->extra['tags'] ?? array();
-    }
-     */
 
     public function getField(): string
     {

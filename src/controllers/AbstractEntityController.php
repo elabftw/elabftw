@@ -93,7 +93,7 @@ abstract class AbstractEntityController implements ControllerInterface
             $tagsFromGet = array_map(function ($t) {
                 return (string) $t;
             }, $tagsFromGet);
-            $ids = $this->Entity->Tags->getIdFromTags($tagsFromGet, (int) $this->App->Users->userData['team']);
+            $ids = $this->Entity->Tags->getIdFromTags($tagsFromGet);
             $trimmedFilter = Tools::getIdFilterSql($ids);
             // don't add it if it's empty (for instance we search in items for a tag that only exists on experiments)
             if ($trimmedFilter === ' AND ()') {
@@ -243,9 +243,6 @@ abstract class AbstractEntityController implements ControllerInterface
             (int) $this->App->Config->configArr['min_delta_revisions'],
             (int) $this->App->Config->configArr['min_days_revisions'],
         );
-
-        // VISIBILITY ARR
-        $TeamGroups = new TeamGroups($this->Entity->Users);
 
         $renderArr = array(
             'allTeamUsersArr' => $this->allTeamUsersArr,

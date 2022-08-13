@@ -55,7 +55,6 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $experiment = $this->Experiments->readOne();
         $this->assertTrue(is_array($experiment));
         $this->assertEquals('Untitled', $experiment['title']);
-        //$this->assertEquals('20160729', $experiment['date']);
     }
 
     public function testUpdate(): void

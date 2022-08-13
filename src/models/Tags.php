@@ -152,8 +152,8 @@ class Tags
 
     public function patch(array $params): array
     {
-        foreach ($params as $key => $value) {
-            $this->update(new TagParam($value));
+        foreach ($params as $tag) {
+            $this->update(new TagParam($tag));
         }
         return $this->readOne();
     }
@@ -241,9 +241,8 @@ class Tags
      * Get a list of entity id filtered by tags
      *
      * @param array<array-key, string> $tags tags from the query string
-     * @param int $team current logged in team
      */
-    public function getIdFromTags(array $tags, int $team): array
+    public function getIdFromTags(array $tags): array
     {
         $results = array();
         $sql = 'SELECT id FROM tags WHERE tag = :tag';

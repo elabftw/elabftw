@@ -17,8 +17,6 @@ use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\TagParam;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -153,7 +151,7 @@ class Apiv1Controller extends AbstractApiController
             return new Response($e->getMessage(), 400);
         } catch (IllegalActionException $e) {
             return new Response(Tools::error(true), 403);
-        } catch (Exception | DatabaseErrorException | FilesystemErrorException $e) {
+        } catch (Exception $e) {
             return new Response(Tools::error(), 500);
         }
     }

@@ -21,12 +21,12 @@ class InvalidSchemaException extends Exception
     /**
      * The message will always be the same here
      */
-    public function __construct(string $message = null, int $code = 0, Exception $previous = null)
+    public function __construct()
     {
-        $message = file_get_contents(dirname(__DIR__) . '/templates/invalid-schema.html');
-        if ($message === false) {
-            $message = 'Run the bin/console db:update command to finish the update!';
+        $htmlPage = file_get_contents(dirname(__DIR__) . '/templates/invalid-schema.html');
+        if ($htmlPage === false) {
+            $htmlPage = 'Run the bin/console db:update command to finish the update!';
         }
-        parent::__construct($message, $code, $previous);
+        parent::__construct($htmlPage);
     }
 }

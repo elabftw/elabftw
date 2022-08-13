@@ -201,7 +201,10 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = `make.php?what=${format}&category=${source}&type=items`;
 
     } else if (el.matches('[data-action="patch-team-admin"]')) {
-      ApiC.patch(`${Model.Team}/${el.dataset.id}`, collectForm(((el.closest('div.form-group') as HTMLElement))));
+      const params = collectForm(el.closest('div.form-group'));
+      // the tinymce won't get collected
+      params['common_template'] = tinymce.get('common_template').getContent();
+      ApiC.patch(`${Model.Team}/${el.dataset.id}`, params);
     } else if (el.matches('[data-action="export-scheduler"]')) {
       const from = (document.getElementById('schedulerDateFrom') as HTMLSelectElement).value;
       const to = (document.getElementById('schedulerDateTo') as HTMLSelectElement).value;

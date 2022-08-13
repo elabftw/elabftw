@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     },
   };
-  const dropZoneInstance = new Dropzone(dropZoneElement, dropZoneOptions);
+  new Dropzone(dropZoneElement, dropZoneOptions);
 
   ////////////////
   // DATA RECOVERY

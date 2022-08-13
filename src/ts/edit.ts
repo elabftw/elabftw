@@ -56,16 +56,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // UPLOAD FORM
   const dropZoneElement = '#elabftw-dropzone';
-  new Dropzone(dropZoneElement, {
+  const dropZoneOptions = {
     // i18n message to user
     dictDefaultMessage: i18next.t('dropzone-upload-area'),
-    maxFilesize: $('#info').data('maxsize'), // MB
+    maxFilesize: parseInt(document.getElementById('info').dataset.maxsize, 10), // MB
     timeout: 900000,
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
     },
     init: function(): void {
-
       // add additional parameters (id and type)
       this.on('sending', function(file: string, xhr: string, formData: FormData) {
         formData.append('upload', '1');
@@ -98,7 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     },
-  });
+  };
+  const dropZoneInstance = new Dropzone(dropZoneElement, dropZoneOptions);
 
   ////////////////
   // DATA RECOVERY

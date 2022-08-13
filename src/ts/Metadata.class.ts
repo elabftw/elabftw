@@ -170,7 +170,6 @@ export class Metadata {
       break;
     case 'radio':
       return this.buildRadio(name, description);
-      break;
     case 'url':
       element = document.createElement('input');
       element.type = 'url';

@@ -109,7 +109,7 @@
         </div>
       {% elseif App.Users.userData.display_mode == 'tb' %}
       <div id='itemList'>
-        <table class='item-table' role='presentation'>
+        <table class='item-table' aria-describedby='pageTitle'>
           <tr>
             <th>
               {{ 'Date'|trans }} <a href='#' data-action='reorder-entities' data-orderby='date'><i class='fas fa-sort'></i></a>

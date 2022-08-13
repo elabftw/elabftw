@@ -18,10 +18,8 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Factories\ProcessorFactory;
 use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\Links;
 use Elabftw\Models\Tags;
-use Elabftw\Models\Users2Teams;
 use Exception;
 use PDOException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -61,15 +59,7 @@ try {
     } elseif ($action === 'replace') {
         $res = $Model->replace($Params);
     } elseif ($action === 'destroy') {
-        if ($Model instanceof Experiments) {
-            $res = $Model->destroy();
-            /*
-            } elseif ($Model instanceof Users2Teams) {
-            $res = $Model->destroy($Params);
-             */
-        } else {
-            $res = $Model->destroy();
-        }
+        $res = $Model->destroy();
     } elseif ($action === 'deduplicate' && $Model instanceof Tags) {
         $res = $Model->deduplicate();
     } elseif ($action === 'importlinks' && $Model instanceof Links) {

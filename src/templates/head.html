@@ -216,7 +216,7 @@
 {% endif %}
 <!-- TITLE -->
 <!-- login and register pages will have this title hidden -->
-<h1 {% if hideTitle %}hidden{%endif%}>{% block title %}{{ App.pageTitle }}{% endblock %}</h1>
+<h1 id='pageTitle' {% if hideTitle %}hidden{%endif%}>{% block title %}{{ App.pageTitle }}{% endblock %}</h1>
 
 <!-- INFO BOX (FLASH MESSAGES) -->
 {% for ok in App.ok %}

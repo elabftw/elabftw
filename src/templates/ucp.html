@@ -124,9 +124,9 @@
     </section>
 
     <section class='box'>
-        <h3>{{ 'Keyboard Shortcuts'|trans }}</h3>
+        <h3 id='keyboardShortcuts'>{{ 'Keyboard Shortcuts'|trans }}</h3>
         <p>{{ 'Only lowercase letters are allowed.'|trans }}</p>
-            <table>
+            <table aria-describedby='keyboardShortcuts'>
             <tr><th>{{ 'Action'|trans }}</th>
                 <th>{{ 'Shortcut'|trans }}</th></tr>
 
@@ -349,8 +349,8 @@
     <button class='button btn btn-primary mb-2' type='submit' data-action='create-apikey'>{{ 'Generate an API Key'|trans }}</button>
   </div>
 
-  <h5>{{ 'Existing keys'|trans }}</h5>
-  <table id='apiTable' class='table'>
+  <h5 id='existingKeys'>{{ 'Existing keys'|trans }}</h5>
+  <table id='apiTable' class='table' aria-describedby='existingKeys'>
     <thead>
       <tr>
         <th scope='col'>#</th>
@@ -376,8 +376,8 @@
 
 <!-- TAB 5 - NOTIFICATIONS SETTINGS -->
 <div class='box' data-tabcontent='5' hidden>
-  <h3>{{ 'Notifications settings'|trans }}</h3>
-  <table class='mt-4'>
+  <h3 id='notificationsSettings'>{{ 'Notifications settings'|trans }}</h3>
+  <table class='mt-4' aria-describedby='notificationsSettings'>
     <tr>
       <th>{{ 'Notification category'|trans }}</th>
       <th>{{ 'Web'|trans }}</th>

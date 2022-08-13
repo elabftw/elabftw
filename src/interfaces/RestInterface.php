@@ -16,8 +16,6 @@ use Elabftw\Enums\Action;
  */
 interface RestInterface
 {
-    // TODO public function createOne(UserParamsCollection $params): int
-
     // TODO have only one read() and if id is set, readOne, else readAll
     public function readOne(): array;
 

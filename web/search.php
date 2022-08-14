@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -18,6 +17,7 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Teams;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Check;
@@ -37,7 +37,7 @@ $Tags = new Tags($Experiments);
 $tagsArr = $Tags->readAll();
 
 $itemsTypesArr = (new ItemsTypes($App->Users))->readAll();
-$categoryArr = $statusArr = (new Status($App->Users->team))->readAll();
+$categoryArr = $statusArr = (new Status(new Teams($App->Users, $App->Users->team)))->readAll();
 if ($Request->query->get('type') !== 'experiments') {
     $categoryArr = $itemsTypesArr;
 }

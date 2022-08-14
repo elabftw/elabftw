@@ -10,7 +10,6 @@ import JSONEditor from 'jsoneditor';
 import i18next from 'i18next';
 import { notif, reloadElement } from './misc';
 import { Action, Entity, Model } from './interfaces';
-import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
 
 // This class is named helper because the jsoneditor lib already exports JSONEditor
@@ -20,6 +19,7 @@ export default class JsonEditorHelper {
   MetadataC: Metadata;
   editor: JSONEditor;
   currentUploadId: string;
+  currentFilename: string;
   editorTitle: HTMLElement;
   api: Api;
 
@@ -95,6 +95,7 @@ export default class JsonEditorHelper {
     // add the filename as a title
     this.editorTitle.innerText = `${i18next.t('filename')}: ${name}`;
     this.currentUploadId = uploadid;
+    this.currentFilename = name;
     this.editorDiv.dataset.what = 'file';
     document.getElementById('jsonEditorMetadataLoadButton').removeAttribute('disabled');
   }
@@ -177,17 +178,15 @@ export default class JsonEditorHelper {
 
   // edit an existing file
   saveFile(): void {
-    const AjaxC = new Ajax();
-    AjaxC.postForm('app/controllers/RequestHandler.php', {
-      action: 'update',
-      target: 'file',
-      entity_id: this.entity.id.toString(),
-      entity_type: this.entity.type,
-      id: this.currentUploadId,
-      model: 'upload',
-      extraParam: 'jsoneditor',
-      content: new Blob([JSON.stringify(this.editor.get())], { type: 'application/json' }),
-    }).then(res => res.json().then(json => notif(json)));
+    const formData = new FormData();
+    formData.set('file', new Blob([JSON.stringify(this.editor.get())], { type: 'application/json' }), this.currentFilename);
+    // prevent the browser from redirecting us
+    formData.set('extraParam', 'noRedirect');
+    // because the upload id is set this will replace the file directly
+    fetch(`api/v2/${this.entity.type}/${this.entity.id}/${Model.Upload}/${this.currentUploadId}`, {
+      method: 'POST',
+      body: formData,
+    });
   }
 
   clear(): void {

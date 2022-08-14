@@ -14,18 +14,12 @@ use Elabftw\Services\Filter;
 
 final class UploadParams extends ContentParams
 {
-    public function __construct(string $target, string $content, private ?\Symfony\Component\HttpFoundation\File\UploadedFile $file = null)
-    {
-        parent::__construct($target, $content);
-    }
-
     public function getContent(): mixed
     {
         return match ($this->target) {
             'real_name' => $this->getRealName(),
             'comment' => Filter::title($this->content),
             'state' => $this->getInt(),
-            'file' => $this->file,
             default => throw new ImproperActionException('Incorrect upload parameter.'),
         };
     }

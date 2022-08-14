@@ -9,7 +9,6 @@
 
 namespace Elabftw\Factories;
 
-use Elabftw\Elabftw\FormProcessor;
 use Elabftw\Elabftw\GetJsonProcessor;
 use Elabftw\Elabftw\PostJsonProcessor;
 use Elabftw\Interfaces\ProcessorInterface;
@@ -24,11 +23,7 @@ class ProcessorFactory
     public function getProcessor(Users $users, Request $request): ProcessorInterface
     {
         if ($request->getMethod() === 'POST') {
-            if ($request->headers->get('Content-Type') === 'application/json') {
-                return new PostJsonProcessor($users, $request);
-            }
-            // for file uploads, json is not used
-            return new FormProcessor($users, $request);
+            return new PostJsonProcessor($users, $request);
         }
         return new GetJsonProcessor($users, $request);
     }

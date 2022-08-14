@@ -22,7 +22,6 @@ use Elabftw\Models\Tags;
 use Exception;
 use PDOException;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * This is the main endpoint for requests. It can deal with json requests or classical forms.
@@ -60,14 +59,6 @@ try {
         $res = $Model->import();
     }
 
-    // special case for uploading an edited json file back: it's a POSTed async form
-    // for the rest of the cases, we redirect to the entity page edit mode because IIRC only the attached file update feature will use this
-    if ($Processor instanceof FormProcessor && !($Request->request->get('extraParam') === 'jsoneditor' || $Request->request->get('extraParam') === 'noRedirect')) {
-        $Response = new RedirectResponse('../../' . $Processor->Entity->page . '.php?mode=edit&id=' . $Processor->Entity->id);
-        $Response->send();
-        exit;
-    }
-
     // the value param can hold a value used in the page
     $Response->setData(array(
         'res' => true,
@@ -75,14 +66,12 @@ try {
         'value' => $res,
     ));
 } catch (ImproperActionException | UnauthorizedException | ResourceNotFoundException | PDOException $e) {
-    // @phpstan-ignore-next-line
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),
     ));
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
-    // @phpstan-ignore-next-line
     $Response->setData(array(
         'res' => false,
         'msg' => Tools::error(true),

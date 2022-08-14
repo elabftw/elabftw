@@ -15,7 +15,14 @@
 
   {% if count == 0 and searchType != '' %}
     <div class='row display-flex' id='itemList'>
+      {% set otherPage = Entity.type == 'experiments' ? 'database' : 'experiments' %}
+      {% set otherCategory = Entity.type == 'experiments' ? 'items' : 'experiments' %}
       {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
+    </div>
+    <div class='row d-flex'>
+      <a href='{{ otherPage }}.php?q={{ App.Request.query.get('q') }}'>
+        <button class='button btn btn-primary'>{{ 'Search in %s'|trans|format(otherCategory) }}</button>
+      </a>
     </div>
   {% elseif count == 0 and searchType == '' and not App.Session.get('is_anon') and not App.Request.query.get('offset') %}
     <div class='row display-flex' id='itemList'>

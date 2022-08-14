@@ -39,7 +39,7 @@ abstract class AbstractApiController implements ControllerInterface
 
     protected function parseReq(): array
     {
-        if ($this->canWrite === false && $this->Request->server->get('REQUEST_METHOD') !== Request::METHOD_GET) {
+        if ($this->canWrite === false && $this->Request->getMethod() !== Request::METHOD_GET) {
             throw new ImproperActionException('You are using a read-only key to execute a write action.');
         }
         /**

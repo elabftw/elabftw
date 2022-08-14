@@ -73,7 +73,7 @@ class Apiv1Controller extends AbstractApiController
         $this->parseReq();
         try {
             // GET ENTITY/CATEGORY
-            switch ($this->Request->server->get('REQUEST_METHOD')) {
+            switch ($this->Request->getMethod()) {
 
                 // GET REQUEST
                 case Request::METHOD_GET:

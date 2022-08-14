@@ -64,7 +64,7 @@ class Apiv2Controller extends AbstractApiController
 
             $this->applyRestrictions();
 
-            return match ($this->Request->server->get('REQUEST_METHOD')) {
+            return match ($this->Request->getMethod()) {
                 Request::METHOD_GET => $this->handleGet(),
                 Request::METHOD_POST => $this->handlePost(),
                 Request::METHOD_DELETE => new JsonResponse($this->Model->destroy(), Response::HTTP_NO_CONTENT),
@@ -245,11 +245,11 @@ class Apiv2Controller extends AbstractApiController
         // allow multipart/form-data for the POST/uploads endpoint only, use str_starts_with because the actual header will also contain the boundary
         if (str_starts_with($this->Request->headers->get('content-type'), 'multipart/form-data') &&
             $this->Model instanceof Uploads &&
-            $this->Request->server->get('REQUEST_METHOD') === Request::METHOD_POST) {
+            $this->Request->getMethod() === Request::METHOD_POST) {
             return;
         }
         // only accept json content-type unless it's GET (also prevents csrf!)
-        if ($this->Request->server->get('REQUEST_METHOD') !== Request::METHOD_GET && $this->Request->headers->get('content-type') !== 'application/json') {
+        if ($this->Request->getMethod() !== Request::METHOD_GET && $this->Request->headers->get('content-type') !== 'application/json') {
             throw new ImproperActionException('Incorrect content-type header.');
         }
     }

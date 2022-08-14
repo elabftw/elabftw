@@ -337,29 +337,30 @@ document.addEventListener('DOMContentLoaded', () => {
         // Check if it was selected. This is set by an event hook below
         if (tinymceEditImage.selected === true) {
           // Note: confirm will trigger the SelectionChange event hook below again
-          // Note: the new filename (long_name) is returned from RequestHandler.php
           if (confirm(i18next.t('replace-edited-file'))) {
-            // Replace the file on the server
-            AjaxC.postForm('app/controllers/RequestHandler.php', {
-              action: Action.Replace,
-              target: 'file',
-              id: String(tinymceEditImage.uploadId),
-              entity_id: String(entity.id),
-              entity_type: entity.type,
-              model: Model.Upload,
-              content: new File(
-                [blobInfo.blob()],
-                tinymceEditImage.filename,
-                { lastModified: new Date().getTime(), type: blobInfo.blob().type },
-              ),
-              extraParam: 'noRedirect',
-            }).then(response => {
-              return response.json();
-            }).then(json => {
-              success(`app/download.php?f=${json.value.long_name}&storage=${json.value.storage}`);
-              // save here because using the old real_name will not return anything from the db (status is archived now)
-              updateEntityBody();
-              reloadElement('filesdiv');
+            const formData = new FormData();
+            const newfilecontent = new File(
+              [blobInfo.blob()],
+              tinymceEditImage.filename,
+              { lastModified: new Date().getTime(), type: blobInfo.blob().type },
+            );
+            formData.set('file', newfilecontent);
+            // prevent the browser from redirecting us
+            formData.set('extraParam', 'noRedirect');
+            // because the upload id is set this will replace the file directly
+            fetch(`api/v2/${entity.type}/${entity.id}/${Model.Upload}/${tinymceEditImage.uploadId}`, {
+              method: 'POST',
+              body: formData,
+            }).then(resp => {
+              const location = resp.headers.get('location').split('/');
+              const newId = location[location.length -1];
+              // fetch info about the newly created upload
+              ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`).then(json => {
+                success(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
+                // save here because using the old real_name will not return anything from the db (status is archived now)
+                updateEntityBody();
+                reloadElement('filesdiv');
+              });
             });
           } else {
             // Revert changes if confirm is cancelled
@@ -414,23 +415,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Save all the details needed for replacing upload
         // Then check for and get those details when you are handling file uploads
         const selectedImage = (tinymce.activeEditor.selection.getNode() as HTMLImageElement);
-        // Get id and filename (real_name) from uploads table
-        // this allows us to know which corresponding upload is selected so we can replace it if needed (after a crop for instance)
         const searchParams = new URL(selectedImage.src).searchParams;
-        const payload: Payload = {
-          method: Method.GET,
-          action: Action.Read,
-          model: Model.Upload,
-          entity: {
-            type: entity.type,
-            id: entity.id,
-          },
-          content: searchParams.get('f'),
-          target: Target.UploadId,
-        };
-        AjaxC.send(payload).then(json => {
-          const upload = json.value as Upload;
+        // Get all the uploads from that entity
+        ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}`).then(json => {
+          // Now find the one corresponding to the image selected in the body
+          const upload = json.find(upload => upload.long_name === searchParams.get('f'));
           tinymceEditImage.selected = true;
+          // Get id and filename (real_name) from this
+          // this allows us to know which corresponding upload is selected so we can replace it if needed (after a crop for instance)
           tinymceEditImage.uploadId = upload.id;
           tinymceEditImage.filename = upload.real_name;
         });

@@ -121,7 +121,6 @@ enum Target {
   TsClassic = 'ts_classic',
   TsAuthority = 'ts_authority',
   Unreference = 'unreference',
-  UploadId = 'uploadid',
   UserId = 'userid',
 }
 

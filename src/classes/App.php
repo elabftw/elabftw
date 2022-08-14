@@ -107,7 +107,6 @@ class App
                 'index.php',
                 'logout.php',
                 'make.php',
-                'RequestHandler.php',
                 'search.php',
             );
             if (!in_array(basename($this->Request->getScriptName()), $allowedPages, true)) {

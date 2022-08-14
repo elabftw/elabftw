@@ -141,7 +141,7 @@ abstract class AbstractEntity implements RestInterface
 
     public function getPage(): string
     {
-        return sprintf('%s.php?mode=edit&id=', $this->page);
+        return sprintf('api/v2/%s/', $this->page);
     }
 
     /**

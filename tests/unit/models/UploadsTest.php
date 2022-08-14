@@ -11,13 +11,12 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateImmutableUpload;
 use Elabftw\Elabftw\CreateUpload;
-use Elabftw\Elabftw\UploadParams;
+use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\StorageFactory;
 use RuntimeException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadsTest extends \PHPUnit\Framework\TestCase
 {
@@ -72,11 +71,11 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     public function testCreatePngFromString(): void
     {
         $dataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TpSIVByuIKGSoThZERcRJq1CECqFWaNXB5NIPoUlDkuLiKLgWHPxYrDq4OOvq4CoIgh8gjk5Oii5S4v+SQosYD4778e7e4+4dINRKTLPaRgFNt81UIi5msiti6BUhDKIX0wjJzDJmJSkJ3/F1jwBf72I8y//cn6NLzVkMCIjEM8wwbeJ14slN2+C8TxxhRVklPiceMemCxI9cVzx+41xwWeCZETOdmiOOEIuFFlZamBVNjXiCOKpqOuULGY9VzluctVKFNe7JXxjO6ctLXKc5gAQWsAgJIhRUsIESbMRo1UmxkKL9uI+/3/VL5FLItQFGjnmUoUF2/eB/8LtbKz8+5iWF40D7i+N8DAGhXaBedZzvY8epnwDBZ+BKb/rLNWDqk/RqU4seAd3bwMV1U1P2gMsdoO/JkE3ZlYI0hXweeD+jb8oCPbdA56rXW2Mfpw9AmrpK3gAHh8BwgbLXfN7d0drbv2ca/f0AoG1yuTjmrdUAAAAGYktHRAD/AP8A/6C9p5MAAAAJcEhZcwAALiMAAC4jAXilP3YAAAAHdElNRQfmCAEBGRl6rBV0AAAAD3RFWHRDb21tZW50AGVMYWJGVFfEIDydAAAAG0lEQVQI12NkYGD4X1tby8Cwf//+/8+ePfsPAD1lCWVCgcPRAAAAAElFTkSuQmCC';
-        $id = $this->Entity->Uploads->createFromString(
-            FileFromString::Png,
-            'some.png',
-            $dataUrl,
-        );
+        $id = $this->Entity->Uploads->postAction(Action::CreateFromString, array(
+            'file_type' => FileFromString::Png->value,
+            'real_name' => 'some.png',
+            'content' => $dataUrl,
+        ));
         $this->assertIsInt($id);
     }
 
@@ -84,11 +83,11 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     {
         $dataUrl = 'data:';
         $this->expectException(RuntimeException::class);
-        $this->Entity->Uploads->createFromString(
-            FileFromString::Png,
-            'invalid.png',
-            $dataUrl,
-        );
+        $this->Entity->Uploads->postAction(Action::CreateFromString, array(
+            'file_type' => FileFromString::Png->value,
+            'real_name' => 'invalid.png',
+            'content' => $dataUrl,
+        ));
     }
 
     public function testUploadingPhpFile(): void
@@ -124,19 +123,17 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     public function testReplace(): void
     {
         $Uploads = new Uploads($this->Entity);
-        $id = $Uploads->create(new CreateUpload('example.png', dirname(__DIR__, 2) . '/_data/example.png'));
+        $id = $Uploads->create(new CreateUpload('example.png', dirname(__DIR__, 2) . '/_data/example.png', 'some super duper comment'));
         $Uploads->setId($id);
         $upArrBefore = $Uploads->uploadData;
 
-        $upArrNew = $Uploads->replace(new UploadParams('file', '', new UploadedFile(dirname(__DIR__, 2) . '/_data/example.png', 'example.png')));
-        $this->assertIsArray($upArrNew);
-        $this->assertEquals($upArrBefore['comment'], $upArrNew['comment']);
-
+        $id = $Uploads->postAction(Action::Create, array('real_name' => 'example.png', 'filePath' => dirname(__DIR__, 2) . '/_data/example.png'));
+        $this->assertIsInt($id);
+        // make sure the old one is archived
+        $this->assertEquals($Uploads->readOne()['state'], $Uploads::STATE_ARCHIVED);
         $Uploads->setId($id);
-        $upArrAfter = $Uploads->uploadData;
-
-        // access the updated entry in the nested array
-        $this->assertEquals((int) $upArrAfter['state'], $Uploads::STATE_ARCHIVED);
+        // make sure the comment is the same
+        $this->assertEquals($upArrBefore['comment'], $Uploads->uploadData['comment']);
     }
 
     public function testInvalidId(): void

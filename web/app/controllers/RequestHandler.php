@@ -17,7 +17,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Factories\ProcessorFactory;
-use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Links;
 use Elabftw\Models\Tags;
 use Exception;
@@ -49,15 +48,10 @@ try {
 
     if ($action === 'create') {
         $res = $Model->create($Params);
-        if ($Model instanceof ApiKeys) {
-            $res = $Params->getKey();
-        }
     } elseif ($action === 'read') {
         $res = $Model->read($Params);
     } elseif ($action === 'update') {
         $res = $Model->update($Params);
-    } elseif ($action === 'replace') {
-        $res = $Model->replace($Params);
     } elseif ($action === 'destroy') {
         $res = $Model->destroy();
     } elseif ($action === 'deduplicate' && $Model instanceof Tags) {

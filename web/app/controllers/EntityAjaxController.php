@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use function dirname;
-use Elabftw\Enums\FileFromString;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -79,32 +78,6 @@ try {
         // see #2404
         $responseArr = $ListBuilder->getAutocomplete($Request->query->get('term'));
         $Response->setData(mb_convert_encoding($responseArr, 'UTF-8', 'UTF-8'));
-    }
-
-    /**
-     * POST REQUESTS
-     *
-     */
-
-    // CREATE FILE ATTACHMENT FROM STRING
-    if ($Request->request->has('addFromString')) {
-        $uploadId = $Entity->Uploads->createFromString(
-            FileFromString::from($Request->request->get('fileType')),
-            $Request->request->get('realName'),
-            $Request->request->get('content'),
-        );
-        $Response->setData(array(
-            'res' => true,
-            'msg' => _('File uploaded successfully'),
-            'uploadId' => $uploadId,
-        ));
-    }
-
-    // CREATE UPLOAD
-    if ($Request->request->has('upload')) {
-        $realName = $Request->files->get('file')->getClientOriginalName();
-        $filePath = $Request->files->get('file')->getPathname();
-        $Entity->Uploads->create(new CreateUpload($realName, $filePath));
     }
 } catch (ImproperActionException | UnauthorizedException | PDOException $e) {
     $Response->setData(array(

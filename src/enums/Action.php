@@ -14,11 +14,13 @@ enum Action: string
     case Archive = 'archive';
     case Bloxberg = 'bloxberg';
     case Create = 'create';
+    case CreateFromString = 'createfromstring';
     case Duplicate = 'duplicate';
     case Lock = 'lock';
     case Finish = 'finish';
     case Notif = 'notif';
     case Pin = 'pin';
+    case Replace = 'replace';
     case Timestamp = 'timestamp';
     case Validate = 'validate';
 }

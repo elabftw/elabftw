@@ -19,8 +19,8 @@ import type { DropzoneFile } from 'dropzone';
 import i18next from 'i18next';
 import { Metadata } from './Metadata.class';
 import { Ajax } from './Ajax.class';
-import UploadClass from './Upload.class';
 import EntityClass from './Entity.class';
+import { Api } from './Apiv2.class';
 
 class CustomDropzone extends Dropzone {
   tinyImageSuccess: null | undefined | ((url: string) => void);
@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
   const AjaxC = new Ajax();
+  const ApiC = new Api();
 
   // add extra fields elements from metadata json
   const MetadataC = new Metadata(entity);
@@ -65,18 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
     },
     init: function(): void {
-      // add additional parameters (id and type)
-      this.on('sending', function(file: string, xhr: string, formData: FormData) {
-        formData.append('upload', '1');
-        formData.append('type', entity.type);
-        formData.append('id', String(entity.id));
-      });
-
       // once it is done
-      this.on('complete', function(answer: DropzoneFile) {
-        // check the answer we get back from the controller
-        const json = JSON.parse(answer.xhr.responseText);
-        notif(json);
+      this.on('complete', function() {
         // reload the #filesdiv once the file is uploaded
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
           reloadElement('filesdiv').then(() => {
@@ -132,8 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // GET MOL FILES
   function getListFromMolFiles(): void {
     const mols = [];
-    const UploadC = new UploadClass(entity);
-    UploadC.read().then(json => {
+    ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}`).then(json => {
       for (const upload of json.value as Array<Upload>) {
         const extension = upload.real_name.split('.').pop();
         if (['mol', 'chemjson'].includes(extension)) {
@@ -216,19 +206,12 @@ document.addEventListener('DOMContentLoaded', () => {
         : (document.getElementById('sketcher') as HTMLCanvasElement).toDataURL();
 
       const params = {
-        'addFromString': 'true',
-        'fileType': el.dataset.filetype,
-        'realName': realName,
+        'action': Action.CreateFromString,
+        'file_type': el.dataset.filetype,
+        'real_name': realName,
         'content': content,
-        'id': String(entity.id),
-        'type': entity.type,
       };
-
-      AjaxC.postForm('app/controllers/EntityAjaxController.php', params)
-        .then(res => res.json().then(json => {
-          reloadElement('filesdiv');
-          notif(json);
-        }));
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElement('filesdiv'));
 
     // ANNOTATE IMAGE
     } else if (el.matches('[data-action="annotate-image"]')) {
@@ -490,41 +473,42 @@ document.addEventListener('DOMContentLoaded', () => {
       const searchPrefixMd = '![image](app/download.php?f=';
       const formElement = el as HTMLFormElement;
       const editorCurrentContent = editor.getContent();
-
-      // submit form if longName is not found in body
-      if ((editorCurrentContent.indexOf(searchPrefixSrc + formElement.dataset.longName) === -1)
-        && (editorCurrentContent.indexOf(searchPrefixMd + formElement.dataset.longName) === -1)
-      ) {
-        formElement.submit();
-        return true;
-      }
-
       const formData = new FormData(formElement);
+      // prevent the browser from redirecting us
       formData.set('extraParam', 'noRedirect');
-      fetch('app/controllers/RequestHandler.php', {
+      fetch(`api/v2/${entity.type}/${entity.id}/${Model.Upload}/${el.dataset.uploadid}`, {
         method: 'POST',
         body: formData,
-      }).then(response => {
-        return response.json();
-      }).then(json => {
-        // use regExp in replace to find all occurrence
-        // images are identified by 'src="app/download.php?f=' (html) and '![image](app/download.php?f=' (md)
-        // '.', '?', '[' and '(' need to be escaped in js regex
-        const editorNewContent = editorCurrentContent.replace(
-          new RegExp(escapeRegExp(searchPrefixSrc + formElement.dataset.longName), 'g'),
-          searchPrefixSrc + json.value.long_name,
-        ).replace(
-          new RegExp(escapeRegExp(searchPrefixMd + formElement.dataset.longName), 'g'),
-          searchPrefixMd + json.value.long_name,
-        );
-        editor.replaceContent(editorNewContent);
-
-        // status of previous file is archived now
-        // save because using the old file will not return an id from the db
-        updateEntityBody();
+      }).then(resp => {
         reloadElement('filesdiv');
+        // return early if longName is not found in body
+        if ((editorCurrentContent.indexOf(searchPrefixSrc + formElement.dataset.longName) === -1)
+          && (editorCurrentContent.indexOf(searchPrefixMd + formElement.dataset.longName) === -1)
+        ) {
+          return true;
+        }
+        // now replace all occurrence of the old file in the body with the long_name of the new file
+        const location = resp.headers.get('location').split('/');
+        const newId = location[location.length -1];
+        // fetch info about the newly created upload
+        ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`).then(json => {
+          // use regExp in replace to find all occurrence
+          // images are identified by 'src="app/download.php?f=' (html) and '![image](app/download.php?f=' (md)
+          // '.', '?', '[' and '(' need to be escaped in js regex
+          const editorNewContent = editorCurrentContent.replace(
+            new RegExp(escapeRegExp(searchPrefixSrc + formElement.dataset.longName), 'g'),
+            searchPrefixSrc + json.long_name,
+          ).replace(
+            new RegExp(escapeRegExp(searchPrefixMd + formElement.dataset.longName), 'g'),
+            searchPrefixMd + json.long_name,
+          );
+          editor.replaceContent(editorNewContent);
+
+          // status of previous file is archived now
+          // save because using the old file will not return an id from the db
+          updateEntityBody();
+        });
       });
-      return false;
     }
   });
 });

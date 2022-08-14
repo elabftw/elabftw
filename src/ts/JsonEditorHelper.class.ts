@@ -9,8 +9,9 @@ import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import i18next from 'i18next';
 import { notif, reloadElement } from './misc';
-import { Entity } from './interfaces';
+import { Action, Entity, Model } from './interfaces';
 import { Ajax } from './Ajax.class';
+import { Api } from './Apiv2.class';
 
 // This class is named helper because the jsoneditor lib already exports JSONEditor
 export default class JsonEditorHelper {
@@ -20,6 +21,7 @@ export default class JsonEditorHelper {
   editor: JSONEditor;
   currentUploadId: string;
   editorTitle: HTMLElement;
+  api: Api;
 
   constructor(entity: Entity) {
     this.entity = entity;
@@ -27,6 +29,7 @@ export default class JsonEditorHelper {
     this.editorDiv = document.getElementById('jsonEditorContainer') as HTMLDivElement;
     this.MetadataC = new Metadata(entity);
     this.editorTitle = document.getElementById('jsonEditorTitle');
+    this.api = new Api();
   }
 
   // INIT
@@ -159,17 +162,16 @@ export default class JsonEditorHelper {
     }
     // add the new name for the file as a title
     this.editorTitle.innerText = i18next.t('filename') + ': ' + realName + '.json';
-    $.post('app/controllers/EntityAjaxController.php', {
-      addFromString: true,
-      fileType: 'json',
-      type: this.entity.type,
-      id: this.entity.id,
-      realName: realName + '.json',
-      content: JSON.stringify(this.editor.get()),
-    }).done(json => {
+    const params = {
+      'action': Action.CreateFromString,
+      'file_type': 'json',
+      'real_name': realName + '.json',
+      'content': JSON.stringify(this.editor.get()),
+    };
+    this.api.post(`${this.entity.type}/${this.entity.id}/${Model.Upload}`, params).then(resp => {
+      const location = resp.headers.get('location').split('/');
       reloadElement('filesdiv');
-      this.currentUploadId = String(json.uploadId);
-      notif(json);
+      this.currentUploadId = String(location[location.length - 1]);
     });
   }
 

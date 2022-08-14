@@ -57,6 +57,7 @@ enum Method {
 
 enum Action {
   Create = 'create',
+  CreateFromString = 'createfromstring',
   Read = 'read',
   Update = 'update',
   Destroy = 'destroy',
@@ -85,7 +86,7 @@ enum Model {
   TeamGroup = 'teamgroup',
   Todolist = 'todolist',
   UnfinishedSteps = 'unfinishedsteps',
-  Upload = 'upload',
+  Upload = 'uploads',
   User = 'user',
   User2Team = 'user2team',
 }

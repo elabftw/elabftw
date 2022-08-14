@@ -60,10 +60,6 @@ class Apiv2Controller extends AbstractApiController
     public function getResponse(): Response
     {
         try {
-            // only accept json content-type unless it's GET (also prevents csrf!)
-            if ($this->Request->server->get('REQUEST_METHOD') !== Request::METHOD_GET && $this->Request->headers->get('content-type') !== 'application/json') {
-                throw new ImproperActionException('Incorrect content-type header.');
-            }
             $this->parseReq();
 
             $this->applyRestrictions();
@@ -146,6 +142,11 @@ class Apiv2Controller extends AbstractApiController
 
     private function handlePost(): Response
     {
+        // special case for POST/uploads where we get the information from the "files" attribute
+        if ($this->Model instanceof Uploads && $this->action === Action::Create) {
+            $this->reqBody['real_name'] = $this->Request->files->get('file')->getClientOriginalName();
+            $this->reqBody['filePath'] = $this->Request->files->get('file')->getPathname();
+        }
         $id = $this->Model->postAction($this->action, $this->reqBody);
         return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', SITE_URL, $this->Model->getPage(), $id)));
     }
@@ -240,6 +241,16 @@ class Apiv2Controller extends AbstractApiController
     {
         if ($this->Model instanceof Config && $this->Users->userData['is_sysadmin'] !== 1) {
             throw new IllegalActionException('Non sysadmin user tried to use a restricted api endpoint.');
+        }
+        // allow multipart/form-data for the POST/uploads endpoint only, use str_starts_with because the actual header will also contain the boundary
+        if (str_starts_with($this->Request->headers->get('content-type'), 'multipart/form-data') &&
+            $this->Model instanceof Uploads &&
+            $this->Request->server->get('REQUEST_METHOD') === Request::METHOD_POST) {
+            return;
+        }
+        // only accept json content-type unless it's GET (also prevents csrf!)
+        if ($this->Request->server->get('REQUEST_METHOD') !== Request::METHOD_GET && $this->Request->headers->get('content-type') !== 'application/json') {
+            throw new ImproperActionException('Incorrect content-type header.');
         }
     }
 }

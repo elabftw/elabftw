@@ -308,7 +308,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const tplid = el.dataset.tplid;
         const urlParams = new URLSearchParams(document.location.search);
         const tags = urlParams.getAll('tags[]');
-        (new EntityClass(EntityType.Experiment)).create(tplid, tags).then(resp => window.location.href = resp.headers.get('location'));
+        (new EntityClass(EntityType.Experiment)).create(tplid, tags).then(resp => {
+          const location = resp.headers.get('location').split('/');
+          const newId = location[location.length -1];
+          window.location.href = `experiments.php?mode=edit&id=${newId}`;
+        });
       } else {
         // for database items, show a selection modal
         // modal plugin requires jquery
@@ -320,8 +324,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const tplid = el.dataset.tplid;
       const urlParams = new URLSearchParams(document.location.search);
       const tags = urlParams.getAll('tags[]');
-      (new EntityClass(EntityType.Item)).create(tplid, tags).then(resp => window.location.href = resp.headers.get('location'));
-
+      (new EntityClass(EntityType.Item)).create(tplid, tags).then(resp => {
+        const location = resp.headers.get('location').split('/');
+        const newId = location[location.length -1];
+        window.location.href = `database.php?mode=edit&id=${newId}`;
+      });
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;
       const plusMinusIcon = el.querySelector('.fas');

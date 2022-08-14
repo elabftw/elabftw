@@ -218,7 +218,7 @@ class Uploads implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
-        if ($this->id) {
+        if ($this->id !== null) {
             $action = Action::Replace;
         }
         return match ($action) {

@@ -33,6 +33,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
     {
         // create a link in a db item
         $Items = new Items(new Users(1, 1), 1);
+        $Items->Links->setId(1);
         $Items->Links->postAction(Action::Create, array());
         // now import this in our experiment like if we click the import links button
         $Links = new Links($this->Experiments, $Items->id);

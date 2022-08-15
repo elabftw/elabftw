@@ -101,7 +101,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $id = $this->Entity->Uploads->create(new CreateImmutableUpload('some-immutable.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
         $this->Entity->Uploads->setId($id);
         $this->expectException(IllegalActionException::class);
-        $this->Entity->Uploads->patch(array('real_name' => 'new'));
+        $this->Entity->Uploads->patch(Action::Update, array('real_name' => 'new'));
     }
 
     public function testGetStorageFromLongname(): void

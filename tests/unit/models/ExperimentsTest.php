@@ -63,7 +63,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->setId($new);
         $this->assertEquals($new, $this->Experiments->id);
         $this->assertEquals(1, $this->Experiments->Users->userData['userid']);
-        $entityData = $this->Experiments->patch(array('title' => 'Untitled', 'date' => '20160729', 'body' => '<p>Body</p>'));
+        $entityData = $this->Experiments->patch(Action::Update, array('title' => 'Untitled', 'date' => '20160729', 'body' => '<p>Body</p>'));
         $this->assertEquals('Untitled', $entityData['title']);
         $this->assertEquals('2016-07-29', $entityData['date']);
         $this->assertEquals('<p>Body</p>', $entityData['body']);
@@ -72,21 +72,22 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     public function testUpdateVisibility(): void
     {
         $this->Experiments->setId(1);
-        $this->assertIsArray($this->Experiments->patch(array('canread' => 'public')));
-        $this->assertIsArray($this->Experiments->patch(array('canread' => 'organization')));
-        $this->assertIsArray($this->Experiments->patch(array('canwrite' => 'team')));
-        $this->assertIsArray($this->Experiments->patch(array('canwrite' => 'public')));
+        $this->assertIsArray($this->Experiments->patch(Action::Update, array('canread' => 'public')));
+        $this->assertIsArray($this->Experiments->patch(Action::Update, array('canread' => 'organization')));
+        $this->assertIsArray($this->Experiments->patch(Action::Update, array('canwrite' => 'team')));
+        $this->assertIsArray($this->Experiments->patch(Action::Update, array('canwrite' => 'public')));
     }
 
     public function testUpdateCategory(): void
     {
         $this->Experiments->setId(1);
-        $this->assertIsArray($this->Experiments->patch(array('category' => '3')));
+        $this->assertIsArray($this->Experiments->patch(Action::Update, array('category' => '3')));
     }
 
     public function testDuplicate(): void
     {
         $this->Experiments->setId(1);
+        $this->Experiments->Links->setId(1);
         $this->Experiments->canOrExplode('read');
         // add some steps and links in there, too
         $this->Experiments->Steps->postAction(Action::Create, array('body' => 'some step'));

@@ -73,38 +73,33 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     {
         $Items = new Items(new Users(1, 1), 1);
         $Scheduler = new Scheduler($Items, 1, $this->start, $this->end);
-        $this->assertIsArray($Scheduler->patch(array('target' => 'start_epoch', 'epoch' => date('U'))));
-        $this->assertIsArray($Scheduler->patch(array('target' => 'end_epoch', 'epoch' => date('U'))));
+        $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'start_epoch', 'epoch' => date('U'))));
+        $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'end_epoch', 'epoch' => date('U'))));
         $this->expectException(ImproperActionException::class);
-        $Scheduler->patch(array('target' => 'oops', 'epoch' => date('U')));
+        $Scheduler->patch(Action::Update, array('target' => 'oops', 'epoch' => date('U')));
         $this->expectException(ImproperActionException::class);
-        $Scheduler->patch(array('target' => 'end_epoch', 'epoch' => ''));
-    }
-
-    public function testPatchAction(): void
-    {
-        $this->assertIsArray($this->Scheduler->patchAction(Action::Duplicate));
+        $Scheduler->patch(Action::Update, array('target' => 'end_epoch', 'epoch' => ''));
     }
 
     public function testBind(): void
     {
         $this->Scheduler->setId($this->testCreate());
-        $this->assertIsArray($this->Scheduler->patch(array('target' => 'experiment', 'id' => 3)));
-        $this->assertIsArray($this->Scheduler->patch(array('target' => 'item_link', 'id' => 3)));
+        $this->assertIsArray($this->Scheduler->patch(Action::Update, array('target' => 'experiment', 'id' => 3)));
+        $this->assertIsArray($this->Scheduler->patch(Action::Update, array('target' => 'item_link', 'id' => 3)));
     }
 
     public function testBindIncorrect(): void
     {
         $this->Scheduler->setId($this->testCreate());
         $this->expectException(DatabaseErrorException::class);
-        $this->Scheduler->patch(array('target' => 'experiment', 'id' => -12));
+        $this->Scheduler->patch(Action::Update, array('target' => 'experiment', 'id' => -12));
     }
 
     public function testUnbind(): void
     {
         $this->Scheduler->setId($this->testCreate());
-        $this->assertIsArray($this->Scheduler->patch(array('target' => 'experiment', 'id' => null)));
-        $this->assertIsArray($this->Scheduler->patch(array('target' => 'item_link', 'id' => null)));
+        $this->assertIsArray($this->Scheduler->patch(Action::Update, array('target' => 'experiment', 'id' => null)));
+        $this->assertIsArray($this->Scheduler->patch(Action::Update, array('target' => 'item_link', 'id' => null)));
     }
 
     public function testCanWriteAndWeAreAdmin(): void
@@ -137,33 +132,33 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Scheduler->setId($this->testCreate());
         // try write event created by admin as user
         $this->expectException(ImproperActionException::class);
-        $Scheduler->patch(array('target' => 'experiment', 'id' => 3));
+        $Scheduler->patch(Action::Update, array('target' => 'experiment', 'id' => 3));
     }
 
     public function testUpdateStart(): void
     {
         $this->Scheduler->setId($this->testCreate());
-        $this->Scheduler->patch(array('target' => 'start', 'delta' => $this->delta));
+        $this->Scheduler->patch(Action::Update, array('target' => 'start', 'delta' => $this->delta));
         $delta = array(
             'years' => '0',
             'months' => '0',
             'days' => '1',
             'milliseconds' => '1111',
         );
-        $this->Scheduler->patch(array('target' => 'start', 'delta' => $delta));
+        $this->Scheduler->patch(Action::Update, array('target' => 'start', 'delta' => $delta));
     }
 
     public function testUpdateEnd(): void
     {
         $this->Scheduler->setId($this->testCreate());
-        $this->Scheduler->patch(array('target' => 'end', 'delta' => $this->delta));
+        $this->Scheduler->patch(Action::Update, array('target' => 'end', 'delta' => $this->delta));
         $delta = array(
             'years' => '0',
             'months' => '0',
             'days' => '1',
             'milliseconds' => '1111',
         );
-        $this->Scheduler->patch(array('target' => 'end', 'delta' => $delta));
+        $this->Scheduler->patch(Action::Update, array('target' => 'end', 'delta' => $delta));
     }
 
     public function testDestroy(): void

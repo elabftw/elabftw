@@ -9,12 +9,10 @@ import { notif, reloadElement, collectForm } from './misc';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
-import TeamGroup from './TeamGroup.class';
 import i18next from 'i18next';
 import ItemsTypes from './ItemsTypes.class';
-import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
-import { Payload, Method, Model, Action, Target } from './interfaces';
+import { Model, Action } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
@@ -23,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/admin.php') {
     return;
   }
-  const AjaxC = new Ajax();
   const ApiC = new Api();
 
   const TabMenu = new Tab();
@@ -33,50 +30,33 @@ document.addEventListener('DOMContentLoaded', () => {
   tinymce.init(getTinymceBaseConfig('admin'));
 
   // AUTOCOMPLETE user list for team groups
-  const cache = {};
   $(document).on('focus', '.addUserToGroup', function() {
     if (!$(this).data('autocomplete')) {
       $(this).autocomplete({
-        source: function(request, response): void {
-          const term = request.term;
-
-          if (term in cache) {
-            response(cache[term]);
-            return;
-          }
-          const payload: Payload = {
-            method: Method.GET,
-            action: Action.Read,
-            model: Model.User,
-            target: Target.List,
-            content: term,
-          };
-          AjaxC.send(payload).then(json => {
-            cache[term] = json.value;
-            response(json.value);
+        source: function(request: Record<string, string>, response: (data) => void): void {
+          ApiC.getJson(`${Model.User}/?q=${request.term}`).then(json => {
+            const res = [];
+            json.forEach(user=> {
+              res.push(`${user.userid} - ${user.fullname} (${user.email})`);
+            });
+            response(res);
           });
         },
       });
     }
   });
 
-  // TEAM GROUPS
-  const TeamGroupC = new TeamGroup();
-
   $('#teamGroupCreateBtn').on('click', function() {
-    const content = $('#teamGroupCreate').val() as string;
-    TeamGroupC.create(content).then(json => {
-      if (json.res) {
-        reloadElement('team_groups_div');
-        (document.getElementById('teamGroupCreate') as HTMLInputElement).value = '';
-      }
+    const input = (document.getElementById('teamGroupCreate') as HTMLInputElement);
+    ApiC.post(`${Model.Team}/${input.dataset.teamid}/${Model.TeamGroup}`, {'name': input.value}).then(() => {
+      reloadElement('team_groups_div');
+      input.value = '';
     });
   });
+
   $('#team_groups_div').on('click', '.teamGroupDelete', function() {
     if (confirm(i18next.t('generic-delete-warning'))) {
-      TeamGroupC.destroy($(this).data('id')).then(() => {
-        reloadElement('team_groups_div');
-      });
+      ApiC.delete(`${Model.Team}/${$(this).data('teamid')}/${Model.TeamGroup}/${$(this).data('id')}`).then(() => reloadElement('team_groups_div'));
     }
   });
 
@@ -86,18 +66,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const user = parseInt($(this).val() as string, 10);
       const group = $(this).data('group');
       if (e.target.value !== e.target.defaultValue) {
-        TeamGroupC.update(user, group, 'add').then(() => {
-          reloadElement('team_groups_div');
-        });
+        ApiC.patch(`${Model.Team}/${$(this).data('teamid')}/${Model.TeamGroup}/${group}`, {'how': Action.Add, 'userid': user}).then(() => reloadElement('team_groups_div'));
       }
     }
   });
   $('#team_groups_div').on('click', '.rmUserFromGroup', function() {
     const user = $(this).data('user');
     const group = $(this).data('group');
-    TeamGroupC.update(user, group, 'rm').then(() => {
-      reloadElement('team_groups_div');
-    });
+    ApiC.patch(`${Model.Team}/${$(this).data('teamid')}/${Model.TeamGroup}/${group}`, {'how': Action.Unreference, 'userid': user}).then(() => reloadElement('team_groups_div'));
   });
 
   // edit the team group name
@@ -107,15 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     inputClasses: ['form-control'],
     formClasses: ['mb-3'],
     fun: (value, original) => {
-      const payload: Payload = {
-        method: Method.POST,
-        action: Action.Update,
-        model: Model.TeamGroup,
-        content: value,
-        id: parseInt(original.dataset.id, 10),
-        notif: true,
-      };
-      AjaxC.send(payload);
+      ApiC.patch(`${Model.Team}/${$(this).data('teamid')}/${Model.TeamGroup}/${original.dataset.id}`, {'name': value}).then(() => reloadElement('team_groups_div'));
       return value;
     },
     listenOn: '.teamgroup_name.editable',

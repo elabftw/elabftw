@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,10 +6,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Services\Filter;
 
@@ -35,13 +35,13 @@ class PrivacyPolicy
 
     public function update(string $body): bool
     {
-        $this->Config->patch(array('privacy_policy' => Filter::body($body)));
+        $this->Config->patch(Action::Update, array('privacy_policy' => Filter::body($body)));
         return true;
     }
 
     public function destroy(): bool
     {
-        $this->Config->patch(array('privacy_policy' => null));
+        $this->Config->patch(Action::Update, array('privacy_policy' => null));
         return true;
     }
 }

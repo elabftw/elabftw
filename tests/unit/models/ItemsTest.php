@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use function date;
+use Elabftw\Enums\Action;
 use Elabftw\Services\Check;
 
 class ItemsTest extends \PHPUnit\Framework\TestCase
@@ -43,7 +44,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     {
         $new = $this->Items->create(1);
         $this->Items->setId($new);
-        $entityData = $this->Items->patch(array('title' => 'Untitled', 'date' => '20160729', 'body' => '<p>Body</p>'));
+        $entityData = $this->Items->patch(Action::Update, array('title' => 'Untitled', 'date' => '20160729', 'body' => '<p>Body</p>'));
         $this->assertEquals('Untitled', $entityData['title']);
         $this->assertEquals('2016-07-29', $entityData['date']);
         $this->assertEquals('<p>Body</p>', $entityData['body']);

@@ -28,7 +28,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
         $id = $this->Steps->postAction(Action::Create, array('body' => 'do this'));
         $this->assertIsInt($id);
         $this->Steps->setId($id);
-        $step = $this->Steps->patchAction(Action::Finish);
+        $step = $this->Steps->patch(Action::Finish, array());
         $this->assertEquals(1, $step['finished']);
     }
 
@@ -41,13 +41,13 @@ class StepsTest extends \PHPUnit\Framework\TestCase
     {
         $id = $this->Steps->postAction(Action::Create, array('body' => 'some step'));
         $Steps = new Steps($this->Experiments, $id);
-        $step = $Steps->patch(array('body' => 'updated step body'));
+        $step = $Steps->patch(Action::Update, array('body' => 'updated step body'));
         $this->assertEquals($step['body'], 'updated step body');
         // update deadline
-        $Steps->patch(array('deadline' => '2022-03-23 13:37:00'));
-        $Steps->patchAction(Action::Notif);
+        $Steps->patch(Action::Update, array('deadline' => '2022-03-23 13:37:00'));
+        $Steps->patch(Action::Notif, array());
         // update finish time_time
-        $Steps->patch(array('finished_time' => '2022-03-23 13:37:00'));
+        $Steps->patch(Action::Update, array('finished_time' => '2022-03-23 13:37:00'));
     }
 
     public function testDestroy(): void

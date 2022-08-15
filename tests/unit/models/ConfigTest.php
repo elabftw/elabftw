@@ -9,6 +9,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\Action;
+
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     private Config $Config;
@@ -39,7 +41,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'ts_authority' => 'custom',
         );
 
-        $configArr = $this->Config->patch($post);
+        $configArr = $this->Config->patch(Action::Update, $post);
         $this->assertEquals('/path/to/cert.pem', $configArr['ts_cert']);
         $this->assertEquals('custom', $configArr['ts_authority']);
     }

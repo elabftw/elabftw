@@ -111,21 +111,19 @@ class Steps implements RestInterface
         }
     }
 
-    public function patch(array $params): array
-    {
-        $this->Entity->canOrExplode('write');
-        foreach ($params as $key => $value) {
-            $this->update(new StepParams($key, $value));
-        }
-        return $this->readOne();
-    }
-
-    public function patchAction(Action $action): array
+    public function patch(Action $action, array $params): array
     {
         $this->Entity->canOrExplode('write');
         match ($action) {
             Action::Finish => $this->toggleFinished(),
             Action::Notif => $this->toggleNotif(),
+            Action::Update => (
+                function () use ($params) {
+                    foreach ($params as $key => $value) {
+                        $this->update(new StepParams($key, $value));
+                    }
+                }
+            )(),
             default => throw new ImproperActionException('Invalid action for steps.'),
         };
         return $this->readOne();

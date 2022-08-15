@@ -13,10 +13,12 @@ use function array_column;
 use function count;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TagParam;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
 use function implode;
 use PDO;
@@ -24,7 +26,7 @@ use PDO;
 /**
  * All about the tag
  */
-class Tags
+class Tags implements RestInterface
 {
     use SetIdTrait;
 
@@ -33,7 +35,17 @@ class Tags
     public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->id = $id;
+        $this->setId($id);
+    }
+
+    public function getPage(): string
+    {
+        return $this->Entity->getPage();
+    }
+
+    public function postAction(Action $action, array $reqBody): int
+    {
+        return $this->create(new TagParam($reqBody['tag']));
     }
 
     /**
@@ -150,56 +162,13 @@ class Tags
         }
     }
 
-    public function patch(array $params): array
+    public function patch(Action $action, array $params): array
     {
-        foreach ($params as $tag) {
-            $this->update(new TagParam($tag));
-        }
+        match ($action) {
+            Action::Unreference => $this->unreference(),
+            default => throw new ImproperActionException('Invalid action for tags.'),
+        };
         return $this->readOne();
-    }
-
-    public function update(TagParam $params): bool
-    {
-        if ($this->Entity->Users->userData['is_admin'] !== 1) {
-            throw new IllegalActionException('Only an admin can update a tag!');
-        }
-
-        // use the team in the query to prevent one admin from editing tags from another team
-        $sql = 'UPDATE tags SET tag = :tag WHERE id = :id AND team = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindValue(':tag', $params->getContent(), PDO::PARAM_STR);
-        $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
-
-        return $this->Db->execute($req);
-    }
-
-    /**
-     * If we have the same tag (after correcting a typo),
-     * remove the tags that are the same and reference only one
-     *
-     * @return int the number of duplicates removed
-     */
-    public function deduplicate(): int
-    {
-        if ($this->Entity->Users->userData['is_admin'] !== 1) {
-            throw new IllegalActionException('Only an admin can deduplicate!');
-        }
-        // first get the ids of all the tags that are duplicated in the team
-        $sql = 'SELECT GROUP_CONCAT(id) AS id_list FROM tags WHERE tag in (
-            SELECT tag FROM tags WHERE team = :team GROUP BY tag HAVING COUNT(*) > 1
-        ) GROUP BY tag;';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $idsToDelete = $req->fetchAll();
-        // loop on each tag that needs to be deduplicated and do the work
-        foreach ($idsToDelete as $idsList) {
-            $this->deduplicateFromIdsList($idsList['id_list']);
-        }
-
-        return count($idsToDelete);
     }
 
     /**
@@ -278,7 +247,7 @@ class Tags
     /**
      * Unreference a tag from an entity
      */
-    public function unreference(): bool
+    public function unreference(): array
     {
         $this->Entity->canOrExplode('write');
 
@@ -298,7 +267,7 @@ class Tags
         if (empty($tags)) {
             $this->destroy();
         }
-        return true;
+        return $this->Entity->readOne();
     }
 
     /**
@@ -316,34 +285,5 @@ class Tags
             $tagListArr[] = $tag['tag'];
         }
         return $tagListArr;
-    }
-
-    /**
-     * Take a list of tags id and deduplicate them
-     * Update the references and delete the tags from the tags table
-     *
-     * @param string $idsList example: 23,42,1337
-     */
-    private function deduplicateFromIdsList(string $idsList): void
-    {
-        // convert the string list into an array
-        $idsArr = explode(',', $idsList);
-        // pop one out and keep this one
-        $idToKeep = array_pop($idsArr);
-
-        // now update the references with the id that we keep
-        foreach ($idsArr as $id) {
-            $sql = 'UPDATE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':target_tag_id', $idToKeep, PDO::PARAM_INT);
-            $req->bindParam(':tag_id', $id, PDO::PARAM_INT);
-            $this->Db->execute($req);
-
-            // and delete that id from the tags table
-            $sql = 'DELETE FROM tags WHERE id = :id';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':id', $id, PDO::PARAM_INT);
-            $this->Db->execute($req);
-        }
     }
 }

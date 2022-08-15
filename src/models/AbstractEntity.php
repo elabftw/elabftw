@@ -346,22 +346,21 @@ abstract class AbstractEntity implements RestInterface
         return $allTags;
     }
 
-    public function patchAction(Action $action): array
+    public function patch(Action $action, array $params): array
     {
         $this->canOrExplode('write');
-        return match ($action) {
+        match ($action) {
             Action::Lock => $this->toggleLock(),
             Action::Pin => $this->Pins->togglePin(),
+            Action::Update => (
+                function () use ($params) {
+                    foreach ($params as $key => $value) {
+                        $this->update(new EntityParams($key, (string) $value));
+                    }
+                }
+            )(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
-    }
-
-    public function patch(array $params): array
-    {
-        $this->canOrExplode('write');
-        foreach ($params as $key => $value) {
-            $this->update(new EntityParams($key, (string) $value));
-        }
         return $this->readOne();
     }
 

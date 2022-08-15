@@ -30,6 +30,7 @@ use function filter_var;
 use function hash;
 use function password_hash;
 use PDO;
+use Symfony\Component\HttpFoundation\Request;
 use function time;
 
 /**
@@ -225,11 +226,12 @@ class Users implements RestInterface
 
     public function readAll(): array
     {
+        $Request = Request::createFromGlobals();
         if ($this->requester->userData['is_sysadmin'] === 1) {
-            return $this->readFromQuery('');
+            return $this->readFromQuery($Request->query->getAlnum('q'));
         }
         if ($this->requester->userData['is_admin'] === 1) {
-            return $this->readFromQuery('', $this->requester->userData['team']);
+            return $this->readFromQuery($Request->query->getAlnum('q'), $this->requester->userData['team']);
         }
         throw new IllegalActionException('Normal users cannot read other users.');
     }
@@ -255,22 +257,21 @@ class Users implements RestInterface
         return $Creator->create();
     }
 
-    public function patchAction(Action $action): array
+    public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
-        return match ($action) {
+        match ($action) {
             Action::Lock, Action::Archive => (new UserArchiver($this))->toggleArchive(),
+            Action::Update => (
+                function () use ($params) {
+                    foreach ($params as $target => $content) {
+                        $this->update(new UserParams($target, (string) $content));
+                    }
+                }
+            )(),
             Action::Validate => $this->validate(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
-    }
-
-    public function patch(array $params): array
-    {
-        $this->canWriteOrExplode();
-        foreach ($params as $target => $content) {
-            $this->update(new UserParams($target, (string) $content));
-        }
         return $this->readOne();
     }
 

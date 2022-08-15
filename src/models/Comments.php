@@ -67,17 +67,12 @@ class Comments implements RestInterface
         return $req->fetchAll();
     }
 
-    public function patch(array $params): array
+    public function patch(Action $action, array $params): array
     {
         foreach ($params as $comment) {
             $this->update(new CommentParam($comment));
         }
         return $this->readOne();
-    }
-
-    public function patchAction(Action $action): array
-    {
-        return array();
     }
 
     public function postAction(Action $action, array $reqBody): int

@@ -11,10 +11,12 @@ namespace Elabftw\Enums;
 
 enum Action: string
 {
+    case Add = 'add';
     case Archive = 'archive';
     case Bloxberg = 'bloxberg';
     case Create = 'create';
     case CreateFromString = 'createfromstring';
+    case Deduplicate = 'deduplicate';
     case Duplicate = 'duplicate';
     case Lock = 'lock';
     case Finish = 'finish';
@@ -22,5 +24,8 @@ enum Action: string
     case Pin = 'pin';
     case Replace = 'replace';
     case Timestamp = 'timestamp';
+    case Update = 'update';
+    case UpdateTag = 'updatetag';
+    case Unreference = 'unreference';
     case Validate = 'validate';
 }

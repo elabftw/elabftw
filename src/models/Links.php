@@ -37,7 +37,7 @@ class Links implements RestInterface
         return $this->Entity->getPage();
     }
 
-    public function patch(array $params): array
+    public function patch(Action $action, array $params): array
     {
         return array();
     }
@@ -155,11 +155,6 @@ class Links implements RestInterface
         $req->bindParam(':new_id', $newId, PDO::PARAM_INT);
         $req->bindParam(':old_id', $id, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    public function patchAction(Action $action): array
-    {
-        return array();
     }
 
     public function postAction(Action $action, array $reqBody): int

@@ -94,7 +94,7 @@ class ImportEln extends AbstractImportZip
         } elseif ($this->Entity instanceof AbstractTemplateEntity) {
             $this->Entity->setId($this->Entity->create($title));
         }
-        $this->Entity->patch(array('title' => $title, 'bodyappend' => $dataset['text'] ?? ''));
+        $this->Entity->patch(Action::Update, array('title' => $title, 'bodyappend' => $dataset['text'] ?? ''));
 
         // TAGS
         if (isset($dataset['keywords'])) {
@@ -110,7 +110,7 @@ class ImportEln extends AbstractImportZip
                 $linkHtml .= sprintf("<li><a href='%s'>%s</a></li>", $link['@id'], $link['name']);
             }
             $linkHtml .= '</ul>';
-            $this->Entity->patch(array('bodyappend' => $linkHtml));
+            $this->Entity->patch(Action::Update, array('bodyappend' => $linkHtml));
         }
 
         // COMMENTS
@@ -143,7 +143,7 @@ class ImportEln extends AbstractImportZip
 
         switch ($part['@type']) {
             case 'Dataset':
-                $this->Entity->patch(array('bodyappend' => $this->part2html($part)));
+                $this->Entity->patch(Action::Update, array('bodyappend' => $this->part2html($part)));
                 // TODO here handle sub datasets as linked entries
                 foreach ($part['hasPart'] as $subpart) {
                     if ($subpart['@type'] === 'File') {
@@ -175,9 +175,9 @@ class ImportEln extends AbstractImportZip
         if (basename($filepath) === 'export-elabftw.json') {
             $fs = FsTools::getFs(dirname($filepath));
             $json = json_decode($fs->read(basename($filepath)), true, 512, JSON_THROW_ON_ERROR)[0];
-            $this->Entity->patch(array('rating' => $json['rating'] ?? ''));
+            $this->Entity->patch(Action::Update, array('rating' => $json['rating'] ?? ''));
             if ($json['metadata'] !== null) {
-                $this->Entity->patch(array('metadata' => json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512)));
+                $this->Entity->patch(Action::Update, array('metadata' => json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512)));
             }
             // add steps
             if (!empty($json['steps'])) {

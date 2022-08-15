@@ -9,6 +9,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\Action;
+
 class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 {
     private ItemsTypes $ItemsTypes;
@@ -28,7 +30,7 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
             'bookable' => '0',
         );
         $this->ItemsTypes->setId($this->ItemsTypes->create('new'));
-        $this->ItemsTypes->patch($extra);
+        $this->ItemsTypes->patch(Action::Update, $extra);
         $this->assertTrue($this->ItemsTypes->destroy());
     }
 }

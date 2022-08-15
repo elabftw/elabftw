@@ -57,7 +57,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'orcid' => '0000-0002-7494-5555',
             'password' => 'new super password',
         );
-        $result = (new Users(4, 2, new Users(4, 2)))->patch($params);
+        $result = (new Users(4, 2, new Users(4, 2)))->patch(Action::Update, $params);
         $this->assertEquals('tatabis@yopmail.com', $result['email']);
         $this->assertEquals('Yep', $result['lastname']);
     }
@@ -79,7 +79,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'sort' => 'date',
             'orderby' => 'desc',
         );
-        $result = $this->Users->patch($prefsArr);
+        $result = $this->Users->patch(Action::Update, $prefsArr);
         $this->assertEquals(12, $result['limit_nb']);
     }
 
@@ -106,7 +106,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     {
         $Users = new Users(4, 2, new Users(4, 2));
         $this->expectException(ImproperActionException::class);
-        $Users->patch(array('password' => 'short'));
+        $Users->patch(Action::Update, array('password' => 'short'));
     }
 
     public function testInvalidateToken(): void
@@ -117,23 +117,23 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testValidate(): void
     {
         // current user is already validated but that's ok
-        $this->assertIsArray($this->Users->patchAction(Action::Validate));
+        $this->assertIsArray($this->Users->patch(Action::Validate, array()));
     }
 
     public function testToggleArchive(): void
     {
         $Admin = new Users(4, 2);
         $Users = new Users(5, 2, $Admin);
-        $this->assertIsArray($Users->patchAction(Action::Lock));
+        $this->assertIsArray($Users->patch(Action::Lock, array()));
     }
 
     public function testCreateUser(): void
     {
         // force admin validation so we can run all code paths
         $Config = Config::getConfig();
-        $Config->patch(array('admin_validate' => 1));
+        $Config->patch(Action::Update, array('admin_validate' => 1));
         $this->assertIsInt($this->Users->createOne('blahblah@yop.fr', array('Bravo'), 'blah', 'yop', 'somePassword!', 2, false, false));
-        $Config->patch(array('admin_validate' => 0));
+        $Config->patch(Action::Update, array('admin_validate' => 0));
         $this->assertIsInt($this->Users->createOne('blahblah2@yop.fr', array('Bravo'), 'blah2', 'yop', 'somePassword!', 2, true, false));
     }
 
@@ -146,7 +146,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         ExistingUser::fromScratch($Users->userData['email'], array('Alpha'), 'f', 'l', 4, false, false);
         // try to unarchive
         $this->expectException(ImproperActionException::class);
-        $Users->patchAction(Action::Lock);
+        $Users->patch(Action::Lock, array());
     }
 
     public function testDestroy(): void

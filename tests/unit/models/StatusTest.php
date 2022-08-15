@@ -36,11 +36,11 @@ class StatusTest extends \PHPUnit\Framework\TestCase
     {
         $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
         $Status = new Status(new Teams(new Users(1, 1), 1), $id);
-        $status = $Status->patch(array('title' => 'Updated', 'color' => '#121212'));
+        $status = $Status->patch(Action::Update, array('title' => 'Updated', 'color' => '#121212'));
         $this->assertEquals('Updated', $status['category']);
         $this->assertEquals('121212', $status['color']);
         $this->assertEquals(0, $status['is_default']);
-        $status = $Status->patch(array('title' => 'Updated', 'color' => '#121212', 'is_default' => 1));
+        $status = $Status->patch(Action::Update, array('title' => 'Updated', 'color' => '#121212', 'is_default' => 1));
         $this->assertEquals(1, $status['is_default']);
     }
 

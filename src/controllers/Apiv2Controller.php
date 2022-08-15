@@ -27,6 +27,8 @@ use Elabftw\Models\Links;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
+use Elabftw\Models\Tags;
+use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\Uploads;
@@ -175,10 +177,11 @@ class Apiv2Controller extends AbstractApiController
     private function handlePatch(): array
     {
         // Create is the default action but there are no create patch actions, they are POST
-        if ($this->action !== Action::Create) {
-            return $this->Model->patchAction($this->action);
+        if ($this->action === Action::Create) {
+            // set default action for patch
+            $this->action = Action::Update;
         }
-        return $this->Model->patch($this->reqBody);
+        return $this->Model->patch($this->action, $this->reqBody);
     }
 
     private function getModel(): RestInterface
@@ -224,6 +227,7 @@ class Apiv2Controller extends AbstractApiController
                 'comments' => new Comments($this->Model, $this->subId),
                 'links' => new Links($this->Model, $this->subId),
                 'steps' => new Steps($this->Model, $this->subId),
+                'tags' => new Tags($this->Model, $this->subId),
                 'uploads' => new Uploads($this->Model, $this->subId),
                 default => throw new ImproperActionException('Incorrect submodel.'),
             };
@@ -231,6 +235,7 @@ class Apiv2Controller extends AbstractApiController
         if ($this->Model instanceof Teams) {
             return match ($submodel) {
                 'status' => new Status($this->Model, $this->subId),
+                'teamgroups' => new TeamGroups($this->Users, $this->subId),
                 default => throw new ImproperActionException('Incorrect submodel.'),
             };
         }

@@ -197,12 +197,6 @@ final class Config implements RestInterface
         }, $config);
     }
 
-    public function patchAction(Action $action): array
-    {
-        // no actions for Config for now
-        return array();
-    }
-
     /**
      * Used in sysconfig.php to update config values
      * NOTE: it is unlikely that someone with sysadmin level tries and edit requests to input incorrect values
@@ -211,7 +205,7 @@ final class Config implements RestInterface
      * @param array<string, mixed> $post (conf_name => conf_value)
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    public function patch(array $post): array
+    public function patch(Action $action, array $post): array
     {
         $passwords = array('smtp_password', 'ldap_password');
 

@@ -70,7 +70,7 @@ class Populate
             }
             // random date in the past 5 years
             $date = $this->faker->dateTimeBetween('-5 years')->format('Ymd');
-            $Entity->patch(array('title' => $this->faker->sentence(), 'date' => $date, 'body' => $this->faker->realText(1000)));
+            $Entity->patch(Action::Update, array('title' => $this->faker->sentence(), 'date' => $date, 'body' => $this->faker->realText(1000)));
 
             // lock 10% of experiments (but not the first one because it is used in tests)
             if ($this->faker->randomDigit() > 8 && $i > 1) {
@@ -79,13 +79,13 @@ class Populate
 
             // change the visibility, but not the first ones as they are often used in tests and this could cause permissions issues
             if ($this->faker->randomDigit() > 8 && $i > 10) {
-                $Entity->patch(array('canread' => $this->faker->randomElement(array('organization', 'public', 'user'))));
-                $Entity->patch(array('canwrite' => $this->faker->randomElement(array('organization', 'public', 'user'))));
+                $Entity->patch(Action::Update, array('canread' => $this->faker->randomElement(array('organization', 'public', 'user'))));
+                $Entity->patch(Action::Update, array('canwrite' => $this->faker->randomElement(array('organization', 'public', 'user'))));
             }
 
             // change the category (status/item type)
             $category = $this->faker->randomElement($categoryArr);
-            $Entity->patch(array('category' => (string) $category['category_id']));
+            $Entity->patch(Action::Update, array('category' => (string) $category['category_id']));
 
             // maybe upload a file but not on the first one
             if ($this->faker->randomDigit() > 7 && $id !== 1) {

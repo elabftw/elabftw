@@ -62,12 +62,15 @@ enum Action {
   Update = 'update',
   Destroy = 'destroy',
 
+  Add = 'add',
   Deduplicate = 'deduplicate',
   Duplicate = 'duplicate',
   Lock = 'lock',
   Pin = 'pin',
-  Timestamp = 'timestamp',
   Replace = 'replace',
+  Timestamp = 'timestamp',
+  UpdateTag = 'updatetag',
+  Unreference = 'unreference',
 }
 
 enum Model {
@@ -80,13 +83,13 @@ enum Model {
   PrivacyPolicy = 'privacypolicy',
   Status = 'status',
   Step = 'steps',
-  Tag = 'tag',
+  Tag = 'tags',
   Team = 'teams',
-  TeamGroup = 'teamgroup',
+  TeamGroup = 'teamgroups',
   Todolist = 'todolist',
   UnfinishedSteps = 'unfinishedsteps',
   Upload = 'uploads',
-  User = 'user',
+  User = 'users',
   User2Team = 'user2team',
 }
 
@@ -119,7 +122,6 @@ enum Target {
   TsBloxberg = 'ts_bloxberg',
   TsClassic = 'ts_classic',
   TsAuthority = 'ts_authority',
-  Unreference = 'unreference',
   UserId = 'userid',
 }
 

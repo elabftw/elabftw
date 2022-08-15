@@ -77,17 +77,12 @@ class Todolist implements RestInterface
         return $this->Db->fetch($req);
     }
 
-    public function patch(array $params): array
+    public function patch(Action $action, array $params): array
     {
         foreach ($params as $key => $value) {
             $this->update(new ContentParams($value, $key));
         }
         return $this->readOne();
-    }
-
-    public function patchAction(Action $action): array
-    {
-        return array();
     }
 
     public function destroy(): bool

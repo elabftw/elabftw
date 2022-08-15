@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -6,7 +6,6 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -17,6 +16,7 @@ use Elabftw\Elabftw\TeamGroupParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
@@ -41,11 +41,6 @@ class TeamGroups implements RestInterface
     public function postAction(Action $action, array $reqBody): int
     {
         return $this->create($reqBody['name'] ?? _('Untitled'));
-    }
-
-    public function patchAction(Action $action): array
-    {
-        return array();
     }
 
     public function getPage(): string
@@ -140,16 +135,22 @@ class TeamGroups implements RestInterface
         return $this->Db->fetch($req);
     }
 
-    public function patch(array $params): array
+    public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
-        // TODO use patchAction with Add or Remove (action: add in js)
-        if (!empty($params['how'])) {
-            return $this->updateMember($params);
-        }
-        foreach ($params as $key => $value) {
-            $this->update(new TeamGroupParams($key, (string) $value));
-        }
+        match ($action) {
+            Action::Update => (
+                function () use ($params) {
+                    if (!empty($params['how'])) {
+                        return $this->updateMember($params);
+                    }
+                    foreach ($params as $key => $value) {
+                        $this->update(new TeamGroupParams($key, (string) $value));
+                    }
+                }
+            )(),
+            default => throw new ImproperActionException('Invalid action for teamgroup'),
+        };
         return $this->readOne();
     }
 
@@ -286,9 +287,9 @@ class TeamGroups implements RestInterface
      */
     private function updateMember(array $params): array
     {
-        if ($params['how'] === 'add') {
+        if ($params['how'] === Action::Add->value) {
             $sql = 'INSERT INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)';
-        } elseif ($params['how'] === 'rm') {
+        } elseif ($params['how'] === Action::Unreference->value) {
             $sql = 'DELETE FROM users2team_groups WHERE userid = :userid AND groupid = :groupid';
         } else {
             throw new IllegalActionException('Bad action keyword');

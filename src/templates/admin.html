@@ -131,7 +131,7 @@
     <!-- CREATE A GROUP -->
     <label for='teamGroupCreate'>{{ 'Create a group'|trans }}</label>
     <input class='form-control col-md-4 custom-control-inline' id='teamGroupCreate' type='text' />
-    <button type='submit' data-action='create-teamgroup' id='teamGroupCreateBtn' class='button btn btn-primary'>{{ 'Create'|trans }}</button>
+    <button type='submit' data-action='create-teamgroup' data-teamid='{{ App.Users.userData.team }}' id='teamGroupCreateBtn' class='button btn btn-primary'>{{ 'Create'|trans }}</button>
     <!-- END CREATE GROUP -->
 
     <!-- SHOW EXISTING GROUPS -->
@@ -143,11 +143,11 @@
           <a class='clickable teamGroupDelete float-right' data-id='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>
             <i class='fas fa-trash-alt'></i>
           </a>
-          <h3 class='editable mb-2 teamgroup_name' data-id='{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
+          <h3 class='editable mb-2 teamgroup_name' data-teamid='{{ App.Users.userData.team }}' data-id='{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
           {% for user in teamGroup.users %}
-            <span class='user-badge clickable rmUserFromGroup hover-danger' data-user='{{ user.userid }}' data-group='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>{{ user.fullname|raw }}</span>
+            <span class='user-badge clickable rmUserFromGroup hover-danger' data-user='{{ user.userid }}' data-teamid='{{ App.Users.userData.team }}' data-group='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>{{ user.fullname|raw }}</span>
           {% endfor %}
-          <input aria-label='{{ 'Add user'|trans }}' class='form-control col-md-4 addUserToGroup d-block mt-2' autocomplete='off' data-group={{ teamGroup.id }} placeholder='{{ 'Add user'|trans }}' type='text' />
+          <input aria-label='{{ 'Add user'|trans }}' class='form-control col-md-4 addUserToGroup d-block mt-2' data-teamid='{{ App.Users.userData.team }}' autocomplete='off' data-group={{ teamGroup.id }} placeholder='{{ 'Add user'|trans }}' type='text' />
         </div>
       {% endfor %}
     </div>

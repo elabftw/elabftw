@@ -47,6 +47,7 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($Tags->readAll()));
     }
 
+    /*
     public function testUpdate(): void
     {
         $Tags = new Tags($this->Experiments, 1);
@@ -63,6 +64,7 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $Tags->update(new TagParam('correcttag'));
         $this->assertEquals(1, $Tags->deduplicate());
     }
+     */
 
     public function testUnreference(): void
     {

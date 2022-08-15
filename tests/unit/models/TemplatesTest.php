@@ -9,6 +9,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\Action;
+
 class TemplatesTest extends \PHPUnit\Framework\TestCase
 {
     private Templates $Templates;
@@ -49,7 +51,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
     public function testUpdate(): void
     {
         $this->Templates->setId(1);
-        $entityData = $this->Templates->patch(array('title' => 'Untitled', 'body' => '<p>Body</p>'));
+        $entityData = $this->Templates->patch(Action::Update, array('title' => 'Untitled', 'body' => '<p>Body</p>'));
         $this->assertEquals('Untitled', $entityData['title']);
         $this->assertEquals('<p>Body</p>', $entityData['body']);
     }

@@ -30,7 +30,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $this->TeamGroups = new TeamGroups(new Users(1, 1));
         $this->groupId = $this->TeamGroups->postAction(Action::Create, array('name' => 'Group Name'));
         $this->TeamGroups->setId($this->groupId);
-        $this->TeamGroups->patch(array('member', 'yep', 'userid' => 1, 'how' => 'add'));
+        $this->TeamGroups->patch(Action::Update, array('userid' => 1, 'how' => Action::Add->value));
 
         $this->visibilityList = $this->TeamGroups->getVisibilityList();
         $this->groups = $this->TeamGroups->readGroupsWithUsersFromUser();
@@ -38,7 +38,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 
     protected function tearDown(): void
     {
-        $this->TeamGroups->patch(array('member' => 'yep', 'userid' => 1, 'how' => 'rm'));
+        $this->TeamGroups->patch(Action::Update, array('userid' => 1, 'how' => Action::Unreference->value));
         $this->TeamGroups->destroy();
     }
 

@@ -103,7 +103,7 @@ class PopulateDatabase extends Command
         $configArr['smtp_password'] = $input->getOption('smtppass') ?? 'afakepassword';
         $configArr['smtp_username'] = $input->getOption('smtpuser') ?? 'somesmtpuser';
         $Config = Config::getConfig();
-        $Config->patch($configArr);
+        $Config->patch(Action::Update, $configArr);
 
         // create teams
         $Users = new Users();
@@ -138,7 +138,7 @@ class PopulateDatabase extends Command
                 'canwrite' => 'team',
                 'bookable' => $items_types['bookable'],
             );
-            $ItemsTypes->patch($patch);
+            $ItemsTypes->patch(Action::Update, $patch);
         }
 
 

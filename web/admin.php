@@ -27,7 +27,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Administration panel of a team
- *
  */
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Admin panel'); // @phan-suppress PhanTypeExepectedObjectPropAccessButGotNull
@@ -50,7 +49,7 @@ try {
 
     $itemsCategoryArr = $ItemsTypes->readAll();
     if ($Request->query->has('templateid')) {
-        $ItemsTypes->setId((int) $App->Request->query->get('templateid'));
+        $ItemsTypes->setId($App->Request->query->getInt('templateid'));
     }
     $statusArr = $Status->readAll();
     $teamConfigArr = $Teams->readOne();

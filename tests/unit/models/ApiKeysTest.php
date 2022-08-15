@@ -29,15 +29,9 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
     public function testPatch(): void
     {
         $this->expectException(ImproperActionException::class);
-        $this->ApiKeys->patch(array());
+        $this->ApiKeys->patch(Action::Update, array());
         $this->expectException(ImproperActionException::class);
-        $this->ApiKeys->patchAction(Action::Archive);
-    }
-
-    public function testPatchAction(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->ApiKeys->patchAction(Action::Archive);
+        $this->ApiKeys->patch(Action::Archive, array());
     }
 
     public function testReadOne(): void

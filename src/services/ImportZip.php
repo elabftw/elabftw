@@ -13,6 +13,7 @@ use function basename;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\TagParam;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -115,7 +116,7 @@ class ImportZip extends AbstractImportZip
             foreach ($item['links'] as $link) {
                 $linkText .= sprintf('<li>[%s] %s</li>', $link['name'], $link['title']);
             }
-            $this->Entity->patch(array('title' => $item['title'], 'date' => $item['date'], 'bodyappend' => $header . $linkText . $end));
+            $this->Entity->patch(Action::Update, array('title' => $item['title'], 'date' => $item['date'], 'bodyappend' => $header . $linkText . $end));
         }
         // add steps
         if (!empty($item['steps'])) {

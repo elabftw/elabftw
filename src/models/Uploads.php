@@ -202,18 +202,13 @@ class Uploads implements RestInterface
         return $req->fetchAll();
     }
 
-    public function patch(array $params): array
+    public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
         foreach ($params as $key => $value) {
             $this->update(new UploadParams($key, $value));
         }
         return $this->readOne();
-    }
-
-    public function patchAction(Action $action): array
-    {
-        return array();
     }
 
     public function postAction(Action $action, array $reqBody): int

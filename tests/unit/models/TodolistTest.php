@@ -35,7 +35,7 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
     public function testUpdate(): void
     {
         $this->Todolist->setId(1);
-        $this->assertIsArray($this->Todolist->patch(array('content' => 'write way more tests')));
+        $this->assertIsArray($this->Todolist->patch(Action::Update, array('content' => 'write way more tests')));
     }
 
     public function testUpdateOrdering(): void

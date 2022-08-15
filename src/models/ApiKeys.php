@@ -43,12 +43,7 @@ class ApiKeys implements RestInterface
         return $this->create($reqBody['name'] ?? 'RTFM', $reqBody['canwrite'] ?? 0);
     }
 
-    public function patch(array $params): array
-    {
-        throw new ImproperActionException('No patch action for apikeys.');
-    }
-
-    public function patchAction(Action $action): array
+    public function patch(Action $action, array $params): array
     {
         throw new ImproperActionException('No patch action for apikeys.');
     }

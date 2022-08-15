@@ -140,7 +140,7 @@ class Scheduler implements RestInterface
         return $req->fetchAll();
     }
 
-    public function patch(array $params): array
+    public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
 
@@ -154,11 +154,6 @@ class Scheduler implements RestInterface
             default => throw new ImproperActionException('Incorrect target parameter.'),
         };
         return $this->readOne();
-    }
-
-    public function patchAction(Action $action): array
-    {
-        return array();
     }
 
     /**

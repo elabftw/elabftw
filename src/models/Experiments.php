@@ -204,13 +204,13 @@ class Experiments extends AbstractConcreteEntity
         return parent::destroy() && $this->Pins->cleanup();
     }
 
-    public function patchAction(Action $action): array
+    public function patch(Action $action, array $params): array
     {
         $this->canOrExplode('write');
         return match ($action) {
             Action::Bloxberg => $this->bloxberg(),
             Action::Timestamp => $this->timestamp(),
-            default => parent::patchAction($action),
+            default => parent::patch($action, $params),
         };
     }
 

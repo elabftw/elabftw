@@ -23,9 +23,7 @@ interface RestInterface
 
     public function postAction(Action $action, array $reqBody): int;
 
-    public function patch(array $params): array;
-
-    public function patchAction(Action $action): array;
+    public function patch(Action $action, array $params): array;
 
     public function getPage(): string;
 

@@ -93,18 +93,13 @@ class Status extends AbstractCategory
         return $req->fetchAll();
     }
 
-    public function patch(array $params): array
+    public function patch(Action $action, array $params): array
     {
         $this->Teams->canWriteOrExplode();
         foreach ($params as $key => $value) {
             $this->update(new StatusParams($key, (string) $value));
         }
         return $this->readOne();
-    }
-
-    public function patchAction(Action $action): array
-    {
-        return array();
     }
 
     public function destroy(): bool

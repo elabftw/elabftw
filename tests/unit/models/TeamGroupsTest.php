@@ -36,18 +36,18 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
     public function testUpdate(): void
     {
         $this->TeamGroups->setId(1);
-        $this->assertIsArray($this->TeamGroups->patch(array('name' => 'New Name')));
+        $this->assertIsArray($this->TeamGroups->patch(Action::Update, array('name' => 'New Name')));
     }
 
     public function testUpdateMember(): void
     {
         $this->TeamGroups->setId(1);
-        $this->TeamGroups->patch(array('userid' => 1, 'how' => 'add'));
+        $this->TeamGroups->patch(Action::Update, array('userid' => 1, 'how' => Action::Add->value));
         $this->assertTrue($this->TeamGroups->isInTeamGroup(1, 1));
-        $this->TeamGroups->patch(array('userid' => 1, 'how' => 'rm'));
+        $this->TeamGroups->patch(Action::Update, array('userid' => 1, 'how' => Action::Unreference->value));
         $this->assertFalse($this->TeamGroups->isInTeamGroup(1, 1));
         $this->expectException(IllegalActionException::class);
-        $this->TeamGroups->patch(array('userid' => 1, 'how' => 'invalidhow'));
+        $this->TeamGroups->patch(Action::Update, array('userid' => 1, 'how' => 'invalidhow'));
     }
 
     public function testRead(): void

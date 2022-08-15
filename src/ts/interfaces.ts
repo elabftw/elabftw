@@ -64,7 +64,6 @@ enum Action {
 
   Deduplicate = 'deduplicate',
   Duplicate = 'duplicate',
-  ImportLinks = 'importlinks',
   Lock = 'lock',
   Pin = 'pin',
   Timestamp = 'timestamp',
@@ -76,7 +75,7 @@ enum Model {
   Comment = 'comments',
   Config = 'config',
   FavTag = 'favtag',
-  Link = 'link',
+  Link = 'links',
   Notification = 'notification',
   PrivacyPolicy = 'privacypolicy',
   Status = 'status',

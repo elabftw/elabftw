@@ -261,25 +261,17 @@ export function adjustHiddenState(): void {
 
 // AUTOCOMPLETE
 export function addAutocompleteToLinkInputs(): void {
-  let cache = {};
   // this is the select category filter on add link input
   const catFilterEl = (document.getElementById('addLinkCatFilter') as HTMLInputElement);
   if (catFilterEl) {
-    // when we change the category filter, reset the cache
-    catFilterEl.addEventListener('change', () => {
-      cache = {};
-    });
     ($('[data-autocomplete="links"]') as JQuery<HTMLInputElement>).autocomplete({
       source: function(request: Record<string, string>, response: (data) => void): void {
-        const term = request.term;
-        if (term in cache) {
-          response(cache[term]);
-          return;
-        }
-        // TODO use AjaxC as for tags below
-        $.getJSON(`app/controllers/EntityAjaxController.php?type=items&filter=${catFilterEl.value}`, request, function(data) {
-          cache[term] = data;
-          response(data);
+        (new Api()).getJson(`${EntityType.Item}/?cat=${catFilterEl.value}&q=${request.term}`).then(json => {
+          const res = [];
+          json.forEach(entity => {
+            res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+          });
+          response(res);
         });
       },
     });

@@ -9,6 +9,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\Action;
+
 class LinksTest extends \PHPUnit\Framework\TestCase
 {
     private Experiments $Experiments;
@@ -16,11 +18,12 @@ class LinksTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Experiments = new Experiments(new Users(1, 1), 3);
+        $this->Experiments->Links->setId(3);
     }
 
     public function testCreateReadDestroy(): void
     {
-        $this->Experiments->Links->create(1);
+        $this->Experiments->Links->postAction(Action::Create, array());
         $this->assertIsArray($this->Experiments->Links->readAll());
         $this->Experiments->Links->setId(1);
         $this->Experiments->Links->destroy();
@@ -30,9 +33,9 @@ class LinksTest extends \PHPUnit\Framework\TestCase
     {
         // create a link in a db item
         $Items = new Items(new Users(1, 1), 1);
-        $Items->Links->create(1);
+        $Items->Links->postAction(Action::Create, array());
         // now import this in our experiment like if we click the import links button
         $Links = new Links($this->Experiments, $Items->id);
-        $this->assertTrue($Links->import());
+        $this->assertIsInt($Links->postAction(Action::Duplicate, array()));
     }
 }

@@ -276,6 +276,10 @@ abstract class AbstractEntity implements RestInterface
             $metadataHaving = 'HAVING ' . implode(' AND ', $this->metadataHaving);
         }
 
+        if (!empty($displayParams->query)) {
+            $this->addToExtendedFilter(" AND (entity.title LIKE '%$displayParams->query%' OR entity.body LIKE '%$displayParams->query%' OR entity.date LIKE '%$displayParams->query%' OR entity.elabid LIKE '%$displayParams->query%')");
+        }
+
         $sqlArr = array(
             $this->extendedFilter,
             $this->idFilter,
@@ -586,6 +590,7 @@ abstract class AbstractEntity implements RestInterface
         $this->entityData['links'] = $this->Links->readAll();
         $this->entityData['uploads'] = $this->Uploads->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
+        $this->entityData['page'] = $this->page;
         // add a share link
         $this->entityData['sharelink'] = SITE_URL . '/' . $this->page . '.php?mode=view&id=' . $this->id . '&elabid=' . $this->entityData['elabid'];
         // add the body as html
@@ -685,11 +690,13 @@ abstract class AbstractEntity implements RestInterface
     private function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false): string
     {
         if ($fullSelect) {
-            // get all the columns of entity table
+            // get all the columns of entity table, we add a literal string for the page that can be used by the mention tinymce plugin code
             $select = 'SELECT DISTINCT entity.*,
                 GROUP_CONCAT(DISTINCT team_events.experiment IS NOT NULL) AS is_bound,
                 GROUP_CONCAT(DISTINCT team_events.item) AS events_item_id,
-                GROUP_CONCAT(DISTINCT team_events.id) AS events_id,';
+                GROUP_CONCAT(DISTINCT team_events.id) AS events_id,
+                "' . $this->page .'" AS page,
+                "' . $this->type.'" AS type,';
         } else {
             // only get the columns interesting for show mode
             $select = 'SELECT DISTINCT entity.id,

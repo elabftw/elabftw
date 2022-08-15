@@ -51,10 +51,11 @@ import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-plugins/mention/plugin.js';
 import EntityClass from './Entity.class';
-import Link from './Link.class';
-import { Target } from './interfaces';
+import { EntityType, Target, Model } from './interfaces';
 import { getEntity, reloadElement } from './misc';
+import { Api } from './Apiv2.class';
 
+const ApiC = new Api();
 // AUTOSAVE
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
 
@@ -171,25 +172,19 @@ export function getTinymceBaseConfig(page: string): object {
       delimiter: '#',
       // get the source from json with get request
       source: function(query: string, process: (data) => void): void {
-        const url = 'app/controllers/EntityAjaxController.php';
-        $.getJSON(url, {
-          mention: 1,
-          term: query,
-          type: entity.type,
-        }).done(function(data) {
-          process(data);
+        // grab experiments and items
+        const expjson = ApiC.getJson(`${EntityType.Experiment}?limit=100?q=${query}`);
+        const itemjson = ApiC.getJson(`${EntityType.Item}?limit=100?q=${query}`);
+        // and merge them into one
+        Promise.all([expjson, itemjson]).then(values => {
+          process(values[0].concat(values[1]));
         });
       },
-      insert: function(data): string {
-        if (data.type === 'items') {
-          const LinkC = new Link(entity);
-          LinkC.create(parseInt(data.id)).then((json) => {
-            if (json.res === true) {
-              reloadElement('links_div_' + entity.id);
-            }
-          });
+      insert: function(selected): string {
+        if (selected.page === 'database') {
+          ApiC.post(`${entity.type}/${entity.id}/${Model.Link}/${selected.id}`).then(() => reloadElement('linksDiv'));
         }
-        return `<span><a href='${data.page}.php?mode=view&id=${data.id}'>${data.name}</a></span>`;
+        return `<a href='${selected.page}.php?mode=view&id=${selected.id}'>${selected.category} - ${selected.title}</a> `;
       },
     },
     mobile: {

@@ -326,14 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // loop on it and timestamp it
       checked.forEach(chk => {
-        $.post('app/controllers/EntityAjaxController.php', {
-          timestamp: true,
-          type: 'experiments',
-          id: chk.id,
-        }).done(function(json) {
-          notif(json);
-          reloadEntitiesShow();
-        });
+        EntityC.timestamp(chk.id).then(() => reloadEntitiesShow());
       });
 
     // THE DELETE BUTTON FOR CHECKED BOXES

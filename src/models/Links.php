@@ -11,6 +11,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
@@ -39,25 +40,6 @@ class Links implements RestInterface
     public function patch(array $params): array
     {
         return array();
-    }
-
-    /**
-     * Add a link to an experiment
-     */
-    public function create(int $link): int
-    {
-        $Items = new Items($this->Entity->Users, $link);
-        $Items->canOrExplode('read');
-        $this->Entity->canOrExplode('write');
-
-        // use IGNORE to avoid failure due to a key constraint violations
-        $sql = 'INSERT IGNORE INTO ' . $this->Entity->type . '_links (item_id, link_id) VALUES(:item_id, :link_id)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $link, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $this->Db->lastInsertId();
     }
 
     /**
@@ -182,22 +164,11 @@ class Links implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
-        return 1;
-    }
-
-    /**
-     * Copy the links of an item into our entity
-     */
-    public function import(): bool
-    {
-        $this->Entity->canOrExplode('write');
-
-        // the :item_id of the SELECT will be the same for all rows: our current entity id
-        $sql = 'INSERT INTO ' . $this->Entity->type . '_links (item_id, link_id) SELECT :item_id, link_id FROM items_links WHERE item_id = :link_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        return match ($action) {
+            Action::Create => $this->create($this->id),
+            Action::Duplicate => $this->import(),
+            default => throw new ImproperActionException('Invalid action for links create.'),
+        };
     }
 
     public function destroy(): bool
@@ -209,5 +180,40 @@ class Links implements RestInterface
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    /**
+     * Add a link to an experiment
+     */
+    private function create(int $link): int
+    {
+        $Items = new Items($this->Entity->Users, $link);
+        $Items->canOrExplode('read');
+        $this->Entity->canOrExplode('write');
+
+        // use IGNORE to avoid failure due to a key constraint violations
+        $sql = 'INSERT IGNORE INTO ' . $this->Entity->type . '_links (item_id, link_id) VALUES(:item_id, :link_id)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':link_id', $link, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $this->Db->lastInsertId();
+    }
+
+    /**
+     * Copy the links of an item into our entity
+     */
+    private function import(): int
+    {
+        $this->Entity->canOrExplode('write');
+
+        // the :item_id of the SELECT will be the same for all rows: our current entity id
+        $sql = 'INSERT IGNORE INTO ' . $this->Entity->type . '_links (item_id, link_id) SELECT :item_id, link_id FROM items_links WHERE item_id = :link_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $this->Db->lastInsertId();
     }
 }

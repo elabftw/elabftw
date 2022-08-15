@@ -17,7 +17,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Factories\ProcessorFactory;
-use Elabftw\Models\Links;
 use Elabftw\Models\Tags;
 use Exception;
 use PDOException;
@@ -55,8 +54,6 @@ try {
         $res = $Model->destroy();
     } elseif ($action === 'deduplicate' && $Model instanceof Tags) {
         $res = $Model->deduplicate();
-    } elseif ($action === 'importlinks' && $Model instanceof Links) {
-        $res = $Model->import();
     }
 
     // the value param can hold a value used in the page

@@ -45,6 +45,11 @@ export default class Entity {
     return this.api.post(`${this.model}/${id}`, {'action': Action.Duplicate});
   }
 
+  timestamp(id: number): Promise<Response> {
+    return this.api.patch(`${this.model}/${id}`, {'action': Action.Timestamp});
+  }
+
+
   destroy(id: number): Promise<Response> {
     return this.api.delete(`${this.model}/${id}`);
   }

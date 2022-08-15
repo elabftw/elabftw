@@ -203,33 +203,27 @@ document.addEventListener('DOMContentLoaded', () => {
       // TODO refactor this
       // NOTE: previously the input div had ui-front jquery ui class to make the autocomplete list show properly, but with the new item input below
       // it didn't work well, so now the automplete uses appendTo option
-      const cacheExp = {};
       $('#bindexpinput').autocomplete({
         appendTo: '#binddivexp',
         source: function(request: Record<string, string>, response: (data) => void): void {
-          const term = request.term;
-          if (term in cacheExp) {
-            response(cacheExp[term]);
-            return;
-          }
-          $.getJSON('app/controllers/EntityAjaxController.php?type=experiments', request, function(data) {
-            cacheExp[term] = data;
-            response(data);
+          ApiC.getJson(`${EntityType.Experiment}/&q=${request.term}`).then(json => {
+            const res = [];
+            json.forEach(entity => {
+              res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+            });
+            response(res);
           });
         },
       });
-      const cacheDb = {};
       $('#binddbinput').autocomplete({
         appendTo: '#binddivdb',
         source: function(request: Record<string, string>, response: (data) => void): void {
-          const term = request.term;
-          if (term in cacheDb) {
-            response(cacheDb[term]);
-            return;
-          }
-          $.getJSON('app/controllers/EntityAjaxController.php?type=items', request, function(data) {
-            cacheDb[term] = data;
-            response(data);
+          ApiC.getJson(`${EntityType.Item}/&q=${request.term}`).then(json => {
+            const res = [];
+            json.forEach(entity => {
+              res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+            });
+            response(res);
           });
         },
       });

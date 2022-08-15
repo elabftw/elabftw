@@ -204,17 +204,4 @@ class Templates extends AbstractTemplateEntity
         // delete from pinned too
         return parent::destroy() && $this->Pins->cleanup();
     }
-
-    /**
-     * Build a list for tinymce Insert template... menu
-     */
-    public function getList(): array
-    {
-        $templates = $this->readForUser();
-        $res = array();
-        foreach ($templates as $template) {
-            $res[] = array('title' => $template['title'], 'description' => '', 'content' => $template['body']);
-        }
-        return $res;
-    }
 }

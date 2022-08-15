@@ -110,14 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="timestamp"]')) {
       // prevent double click
       (event.target as HTMLButtonElement).disabled = true;
-      const payload: Payload = {
-        method: Method.POST,
-        action: Action.Timestamp,
-        entity: entity,
-        model: entity.type,
-        target: Target.TsClassic,
-      };
-      AjaxC.send(payload).then(() => window.location.replace(`experiments.php?mode=view&id=${entity.id}`));
+      EntityC.timestamp(entity.id).then(() => window.location.replace(`experiments.php?mode=view&id=${entity.id}`));
 
     // BLOXBERG
     } else if (el.matches('[data-action="bloxberg"]')) {
@@ -135,14 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
       loading.appendChild(ring);
       overlay.appendChild(loading);
       document.getElementById('container').append(overlay);
-      const payload: Payload = {
-        method: Method.POST,
-        action: Action.Timestamp,
-        entity: entity,
-        model: entity.type,
-        target: Target.TsBloxberg,
-      };
-      AjaxC.send(payload).then(() => window.location.replace(`?mode=view&id=${entity.id}`));
+      ApiC.patch(`${EntityType.Experiment}/${entity.id}`, {'action': Action.Bloxberg}).then(() => window.location.replace(`?mode=view&id=${entity.id}`));
 
     // SHOW CONTENT OF PLAIN TEXT FILES
     } else if (el.matches('[data-action="show-plain-text"]')) {

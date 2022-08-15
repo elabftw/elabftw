@@ -63,6 +63,7 @@ enum Action {
   Destroy = 'destroy',
 
   Add = 'add',
+  Bloxberg = 'bloxberg',
   Deduplicate = 'deduplicate',
   Duplicate = 'duplicate',
   Lock = 'lock',
@@ -119,9 +120,6 @@ enum Target {
   Rating = 'rating',
   RealName = 'real_name',
   Title = 'title',
-  TsBloxberg = 'ts_bloxberg',
-  TsClassic = 'ts_classic',
-  TsAuthority = 'ts_authority',
   UserId = 'userid',
 }
 

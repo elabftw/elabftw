@@ -18,7 +18,6 @@ import Dropzone from 'dropzone';
 import type { DropzoneFile } from 'dropzone';
 import i18next from 'i18next';
 import { Metadata } from './Metadata.class';
-import { Ajax } from './Ajax.class';
 import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
 
@@ -44,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
-  const AjaxC = new Ajax();
   const ApiC = new Api();
 
   // add extra fields elements from metadata json
@@ -386,17 +384,13 @@ document.addEventListener('DOMContentLoaded', () => {
       // use undocumented callback function to asynchronously get the templates
       // see https://github.com/tinymce/tinymce/issues/5637#issuecomment-624982699
       templates: (callback): void => {
-        const payload: Payload = {
-          method: Method.GET,
-          action: Action.Read,
-          model: EntityType.Template,
-          entity: {
-            type: EntityType.Template,
-            id: null,
-          },
-          target: Target.List,
-        };
-        AjaxC.send(payload).then(json => callback(json.value));
+        ApiC.getJson(`${EntityType.Template}`).then(json => {
+          const res = [];
+          json.forEach(tpl => {
+            res.push({'title': tpl.title, 'description': '', 'content': tpl.body});
+          });
+          callback(res);
+        });
       },
       // use a custom function for the save button in toolbar
       save_onsavecallback: (): void => quickSave(),

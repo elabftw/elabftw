@@ -13,7 +13,7 @@ import 'bootstrap/js/src/modal.js';
 import { makeSortableGreatAgain, reloadElement, adjustHiddenState, getEntity } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
-import { EntityType, Payload, Target, Method, Model, Action } from './interfaces';
+import { EntityType, Payload, Method, Model, Action } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
@@ -258,17 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ACK NOTIF
     } else if (el.matches('[data-action="ack-notif"]')) {
-      const payload: Payload = {
-        method: Method.POST,
-        action: Action.Update,
-        model: Model.Notification,
-        // use the finished target of steps for changing is_ack
-        // so we don't need to add another target
-        target: Target.Finished,
-        id: parseInt(el.dataset.id, 10),
-      };
       if (el.parentElement.dataset.ack === '0') {
-        AjaxC.send(payload).then(() => {
+        ApiC.patch(`${Model.User}/${el.dataset.userid}/${Model.Notification}/${el.dataset.id}`).then(() => {
           if (el.dataset.href) {
             window.location.href = el.dataset.href;
           } else {
@@ -283,15 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // DESTROY (clear all) NOTIF
     } else if (el.matches('[data-action="destroy-notif"]')) {
-      const payload: Payload = {
-        method: Method.POST,
-        action: Action.Destroy,
-        model: Model.Notification,
-      };
-      AjaxC.send(payload).then(() => {
-        document.querySelectorAll('.notification').forEach(el => el.remove());
-        reloadElement('navbarNotifDiv');
-      });
+      ApiC.delete(`${Model.User}/${el.dataset.userid}/${Model.Notification}`).then(() => reloadElement('navbarNotifDiv'));
 
     } else if (el.matches('[data-action="export-user"]')) {
       const source = (document.getElementById('userExport') as HTMLSelectElement).value;

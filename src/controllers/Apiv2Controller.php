@@ -24,6 +24,7 @@ use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
 use Elabftw\Models\Items;
 use Elabftw\Models\Links;
+use Elabftw\Models\Notifications;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
@@ -236,6 +237,12 @@ class Apiv2Controller extends AbstractApiController
             return match ($submodel) {
                 'status' => new Status($this->Model, $this->subId),
                 'teamgroups' => new TeamGroups($this->Users, $this->subId),
+                default => throw new ImproperActionException('Incorrect submodel.'),
+            };
+        }
+        if ($this->Model instanceof Users) {
+            return match ($submodel) {
+                'notifications' => new Notifications($this->Users, $this->subId),
                 default => throw new ImproperActionException('Incorrect submodel.'),
             };
         }

@@ -12,11 +12,10 @@ namespace Elabftw\Interfaces;
 use Elabftw\Enums\Action;
 
 /**
- * For models that are call by api v2
+ * For models that are called by api v2
  */
 interface RestInterface
 {
-    // TODO have only one read() and if id is set, readOne, else readAll
     public function readOne(): array;
 
     public function readAll(): array;

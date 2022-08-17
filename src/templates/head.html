@@ -95,7 +95,7 @@
                 <div class='notification p-3' data-ack='{{ notif.is_ack }}'>{{ notif|notifWeb|raw }}</div>
               {% endfor %}
               <div class='dropdown-divider'></div>
-              <a class='dropdown-item hover-danger' href='#' data-action='destroy-notif'><i class='fas fa-trash-alt fa-fw' title='{{ 'Clear all'|trans }}'></i> {{ 'Clear all'|trans }}</a>
+              <a class='dropdown-item hover-danger' href='#' data-userid='{{ App.Users.userData.userid }}' data-action='destroy-notif'><i class='fas fa-trash-alt fa-fw' title='{{ 'Clear all'|trans }}'></i> {{ 'Clear all'|trans }}</a>
             {% else %}
               <div class='notification p-3'>{{ 'No new notifications to show.'|trans }}</div>
               <div class='dropdown-divider'></div>

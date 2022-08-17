@@ -11,14 +11,19 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\Action;
+use Elabftw\Interfaces\RestInterface;
+use Elabftw\Traits\SetIdTrait;
 use function json_decode;
 use PDO;
 
 /**
  * Notification system
  */
-class Notifications
+class Notifications implements RestInterface
 {
+    use SetIdTrait;
+
     public const COMMENT_CREATED = 10;
 
     public const USER_CREATED = 11;
@@ -54,10 +59,11 @@ class Notifications
 
     private int $userid;
 
-    public function __construct(private Users $users, private ?int $id = null)
+    public function __construct(private Users $users, public ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->userid = $this->users->userData['userid'];
+        $this->setId($id);
     }
 
     public function create(CreateNotificationParams $params): int
@@ -123,7 +129,7 @@ class Notifications
     public function readAll(): array
     {
         // for step deadline only select notifications where deadline is in the next hour
-        $sql = 'SELECT id, category, body, is_ack, created_at FROM notifications WHERE userid = :userid AND (
+        $sql = 'SELECT id, category, body, is_ack, created_at, userid FROM notifications WHERE userid = :userid AND (
                 category != :deadline OR
                 (category = :deadline and JSON_UNQUOTE(JSON_EXTRACT(body, :deadline_json_path)) > (NOW() - INTERVAL 1 HOUR))
             ) ORDER BY created_at DESC LIMIT 10';
@@ -146,10 +152,21 @@ class Notifications
 
     public function readOne(): array
     {
-        return $this->readAll();
+        $sql = 'SELECT * FROM notifications WHERE userid = :userid AND id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $this->Db->fetch($req);
     }
 
-    public function update(): bool
+    public function postAction(Action $action, array $reqBody): int
+    {
+        return 1;
+    }
+
+    public function patch(Action $action, array $params): array
     {
         // currently the only update action is to ack it, so no need to check for anything else
         // permission is checked with the userid AND
@@ -157,7 +174,13 @@ class Notifications
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $this->Db->execute($req);
+        return $this->readOne();
+    }
+
+    public function getPage(): string
+    {
+        return sprintf('users/%d/notifications/', $this->userid);
     }
 
     /**

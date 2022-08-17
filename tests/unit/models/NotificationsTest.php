@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateNotificationParams;
+use Elabftw\Enums\Action;
 
 class NotificationsTest extends \PHPUnit\Framework\TestCase
 {
@@ -39,7 +40,7 @@ class NotificationsTest extends \PHPUnit\Framework\TestCase
     public function testUpdate(): void
     {
         $Notifications = new Notifications(new Users(1, 1), 1);
-        $this->assertTrue($Notifications->update());
+        $this->assertIsArray($Notifications->patch(Action::Update, array()));
     }
 
     public function testDestroy(): void

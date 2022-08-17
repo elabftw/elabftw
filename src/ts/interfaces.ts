@@ -80,7 +80,7 @@ enum Model {
   Config = 'config',
   FavTag = 'favtag',
   Link = 'links',
-  Notification = 'notification',
+  Notification = 'notifications',
   PrivacyPolicy = 'privacypolicy',
   Status = 'status',
   Step = 'steps',

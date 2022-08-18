@@ -90,7 +90,6 @@ class Auth implements AuthInterface
                 // no break
             default:
                 throw new UnauthorizedException();
-
         }
     }
 }

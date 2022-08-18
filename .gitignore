@@ -9,6 +9,7 @@ _srcdoc/
 _coverage/
 build
 cache
+c3.php
 config.php*
 *.min.css
 *.css.map

@@ -68,7 +68,6 @@ class Apiv1Controller extends AbstractApiController
         try {
             // GET ENTITY/CATEGORY
             switch ($this->Request->getMethod()) {
-
                 // GET REQUEST
                 case Request::METHOD_GET:
                     return match ($this->endpoint) {

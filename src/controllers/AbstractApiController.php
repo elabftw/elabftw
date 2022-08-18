@@ -39,6 +39,10 @@ abstract class AbstractApiController implements ControllerInterface
 
     protected function parseReq(): array
     {
+        // Check if the Authorization Token was sent along
+        if (!$this->Request->server->has('HTTP_AUTHORIZATION')) {
+            throw new ImproperActionException('No access token provided!');
+        }
         if ($this->canWrite === false && $this->Request->getMethod() !== Request::METHOD_GET) {
             throw new ImproperActionException('You are using a read-only key to execute a write action.');
         }
@@ -78,7 +82,7 @@ abstract class AbstractApiController implements ControllerInterface
         $this->endpoint = $req[3];
 
         // assign the id if there is one
-        if (Check::id((int) $req[4]) !== false) {
+        if (Check::id((int) ($req[4] ?? 0)) !== false) {
             $this->id = (int) $req[4];
         }
 

@@ -72,7 +72,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     public function testPatchEpoch(): void
     {
         $Items = new Items(new Users(1, 1), 1);
-        $Scheduler = new Scheduler($Items, 1, $this->start, $this->end);
+        $id = $this->testCreate();
+        $Scheduler = new Scheduler($Items, $id, $this->start, $this->end);
         $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'start_epoch', 'epoch' => date('U'))));
         $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'end_epoch', 'epoch' => date('U'))));
         $this->expectException(ImproperActionException::class);

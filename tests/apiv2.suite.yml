@@ -1,0 +1,16 @@
+actor: Apiv2Tester
+coverage:
+    enabled: true
+    whitelist:
+        include:
+            - src/models/*
+            - src/classes/*
+            - src/services/*
+            - src/traits/*
+            - src/controllers/*
+modules:
+  enabled:
+        - \Helper\Api
+        - REST:
+            url: https://elabtmp/api/v2/
+            depends: PhpBrowser

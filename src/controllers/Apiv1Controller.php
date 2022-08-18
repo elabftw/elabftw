@@ -13,8 +13,6 @@ use function dirname;
 use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\DisplayParams;
-use Elabftw\Elabftw\EntityParams;
-use Elabftw\Elabftw\TagParam;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
@@ -66,10 +64,6 @@ class Apiv1Controller extends AbstractApiController
 
     public function getResponse(): Response
     {
-        // Check if the Authorization Token was sent along
-        if (!$this->Request->server->has('HTTP_AUTHORIZATION')) {
-            throw new ImproperActionException('No access token provided!');
-        }
         $this->parseReq();
         try {
             // GET ENTITY/CATEGORY
@@ -772,7 +766,8 @@ class Apiv1Controller extends AbstractApiController
      */
     private function createLink(): Response
     {
-        $this->Entity->Links->create($this->Request->request->getInt('link'));
+        $this->Entity->Links->setId($this->Request->request->getInt('link'));
+        $this->Entity->Links->postAction(Action::Create, array());
         return new JsonResponse(array('result' => 'success'));
     }
 
@@ -806,7 +801,7 @@ class Apiv1Controller extends AbstractApiController
      */
     private function createTag(): Response
     {
-        $this->Entity->Tags->create(new TagParam((string) $this->Request->request->get('tag')));
+        $this->Entity->Tags->postAction(Action::Create, array('tag' => (string) $this->Request->request->get('tag')));
         return new JsonResponse(array('result' => 'success'));
     }
 
@@ -932,19 +927,19 @@ class Apiv1Controller extends AbstractApiController
             return new Response('Cannot update a locked entry!', 403);
         }
         if ($this->Request->request->has('title')) {
-            $this->Entity->update(new EntityParams((string) $this->Request->request->get('title'), 'title'));
+            $this->Entity->patch(Action::Update, array('title' => (string) $this->Request->request->get('title')));
         }
         if ($this->Request->request->has('date')) {
-            $this->Entity->update(new EntityParams($this->Request->request->getDigits('date'), 'date'));
+            $this->Entity->patch(Action::Update, array('date' => (string) $this->Request->request->get('date')));
         }
         if ($this->Request->request->has('body')) {
-            $this->Entity->update(new EntityParams((string) $this->Request->request->get('body'), 'body'));
+            $this->Entity->patch(Action::Update, array('body' => (string) $this->Request->request->get('body')));
         }
         if ($this->Request->request->has('bodyappend')) {
-            $this->Entity->update(new EntityParams((string) $this->Request->request->get('bodyappend'), 'bodyappend'));
+            $this->Entity->patch(Action::Update, array('bodyappend' => (string) $this->Request->request->get('bodyappend')));
         }
         if ($this->Request->request->has('metadata')) {
-            $this->Entity->update(new EntityParams((string) $this->Request->request->get('metadata'), 'metadata'));
+            $this->Entity->patch(Action::Update, array('metadata' => (string) $this->Request->request->get('metadata')));
         }
         return new JsonResponse(array('result' => 'success'));
     }

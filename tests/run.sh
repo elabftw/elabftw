@@ -73,17 +73,17 @@ if ($scrutinizer); then
 fi
 # populate the database
 docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
-# run tests
-# the tests are split in two parts, api and acceptance, and later unit with coverage
-# this is because for some weird reason, when xdebug is enabled, there is an ssl verification error
-# during the acceptance/api tests
-if [ "${1:-}" != "unit" ]; then
-    docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip acceptance
-fi
-# now install xdebug in the container so we can do code coverage
+# RUN TESTS
+# install xdebug in the container so we can do code coverage
 docker exec -it elabtmp bash -c 'apk add --update php81-pecl-xdebug && if [ ! -f "/etc/php81/conf.d/42_xdebug.ini" ]; then printf "zend_extension=xdebug.so\nxdebug.mode=coverage" > /etc/php81/conf.d/42_xdebug.ini; fi'
-# generate the coverage, results will be available in _coverage directory
-docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --skip api --coverage --coverage-html --coverage-xml
+# when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead
+if [ "${1:-}" = "unit" ]; then
+    docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --skip api --skip apiv2 --coverage --coverage-html --coverage-xml
+else
+    docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --coverage --coverage-html --coverage-xml
+fi
+
+# in scrutinizer we copy the coverage in current directory
 if ($scrutinizer); then
     docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
 fi

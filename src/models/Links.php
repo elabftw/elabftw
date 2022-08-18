@@ -160,7 +160,7 @@ class Links implements RestInterface
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {
-            Action::Create => $this->create($this->id),
+            Action::Create => $this->create(),
             Action::Duplicate => $this->import(),
             default => throw new ImproperActionException('Invalid action for links create.'),
         };
@@ -180,9 +180,9 @@ class Links implements RestInterface
     /**
      * Add a link to an experiment
      */
-    private function create(int $link): int
+    private function create(): int
     {
-        $Items = new Items($this->Entity->Users, $link);
+        $Items = new Items($this->Entity->Users, $this->id);
         $Items->canOrExplode('read');
         $this->Entity->canOrExplode('write');
 
@@ -190,7 +190,7 @@ class Links implements RestInterface
         $sql = 'INSERT IGNORE INTO ' . $this->Entity->type . '_links (item_id, link_id) VALUES(:item_id, :link_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $link, PDO::PARAM_INT);
+        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();

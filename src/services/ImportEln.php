@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 use function basename;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractConcreteEntity;
@@ -99,7 +98,7 @@ class ImportEln extends AbstractImportZip
         // TAGS
         if (isset($dataset['keywords'])) {
             foreach ($dataset['keywords'] as $tag) {
-                $this->Entity->Tags->create(new TagParam($tag));
+                $this->Entity->Tags->postAction(Action::Create, array('tag' => $tag));
             }
         }
 

@@ -14,12 +14,11 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
-use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
+use Elabftw\Models\TeamTags;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use function filter_var;
@@ -44,7 +43,7 @@ try {
     $ItemsTypes = new ItemsTypes($App->Users);
     $Teams = new Teams($App->Users, $App->Users->userData['team']);
     $Status = new Status($Teams);
-    $Tags = new Tags(new Experiments($App->Users));
+    $Tags = new TeamTags($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
 
     $itemsCategoryArr = $ItemsTypes->readAll();

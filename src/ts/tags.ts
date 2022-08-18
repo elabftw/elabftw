@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
-      ApiC.post(`${this.entity.type}/${this.entity.id}/${Model.Tag}`, {'tag': $(this).val()}).then(() => {
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Tag}`, {'tag': $(this).val()}).then(() => {
         reloadElement('tags_div_' + entity.id);
         $(this).val('');
       });
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const results = [];
       checked.forEach(checkBox => {
         const tag = (document.getElementById('createTagInputMultiple') as HTMLInputElement).value;
-        results.push(ApiC.post(`${this.entity.type}/${checkBox['id']}/${Model.Tag}`, {'tag': tag}));
+        results.push(ApiC.post(`${entity.type}/${checkBox['id']}/${Model.Tag}`, {'tag': tag}));
       });
 
       Promise.all(results).then(() => {
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     inputClasses: ['form-control'],
     formClasses: ['d-inline-flex'],
     fun: (value, original) => {
-      ApiC.patch(`${Model.Team}`, {'action': Action.UpdateTag, 'id': original.dataset.id, 'content': value});
+      ApiC.patch(`${Model.TeamTags}/${original.dataset.id}`, {'action': Action.UpdateTag, 'tag': value});
       return value;
     },
     listenOn: '.tag.editable',
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // DEDUPLICATE (from admin panel/tag manager)
     if (el.matches('[data-action="deduplicate-tag"]')) {
-      ApiC.patch(`${Model.Team}`, {'action': Action.Deduplicate}).then(() => reloadElement('tagMgrDiv'));
+      ApiC.patch(`${Model.TeamTags}`, {'action': Action.Deduplicate}).then(() => reloadElement('tagMgrDiv'));
     // UNREFERENCE (remove link between tag and entity)
     } else if (el.matches('[data-action="unreference-tag"]')) {
       if (confirm(i18next.t('tag-delete-warning'))) {

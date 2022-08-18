@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\TagParam;
+use Elabftw\Enums\Action;
 
 class FavTagsTest extends \PHPUnit\Framework\TestCase
 {
@@ -23,8 +24,8 @@ class FavTagsTest extends \PHPUnit\Framework\TestCase
     public function testCreate(): void
     {
         $Tags = new Tags(new Experiments(new Users(1, 1), 1));
+        $Tags->postAction(Action::Create, array('tag' => 'test-tag'));
         $param = new TagParam('test-tag');
-        $Tags->create($param);
         $this->assertEquals(1, $this->FavTags->create($param));
         $this->assertEquals(0, $this->FavTags->create($param));
     }

@@ -11,7 +11,6 @@ namespace Elabftw\Models;
 
 use function array_diff;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\TagParam;
 use Elabftw\Elabftw\TeamParam;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
@@ -134,15 +133,13 @@ class Teams implements RestInterface
 
         match ($action) {
             Action::Archive => throw new ImproperActionException('Feature not implemented.'),
-            Action::Deduplicate => $this->deduplicate(),
             Action::Update => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
-                        $this->update(new TeamParam($key, $value));
+                        $this->update(new TeamParam($key, (string) $value));
                     }
                 }
             )(),
-            Action::UpdateTag => $this->updateTag(new TagParam($params['content']), (int) $params['id']),
             default => throw new ImproperActionException('Incorrect action for teams.'),
         };
         return $this->readOne();
@@ -296,77 +293,5 @@ class Teams implements RestInterface
             return $this->postAction(Action::Create, array('name' => $name));
         }
         throw new ImproperActionException('The administrator disabled team creation on login. Contact your administrator for creating the team beforehand.');
-    }
-
-    /**
-     * If we have the same tag (after correcting a typo),
-     * remove the tags that are the same and reference only one
-     */
-    private function deduplicate(): array
-    {
-        if ($this->Users->userData['is_admin'] !== 1) {
-            throw new IllegalActionException('Only an admin can deduplicate!');
-        }
-        // first get the ids of all the tags that are duplicated in the team
-        $sql = 'SELECT GROUP_CONCAT(id) AS id_list FROM tags WHERE tag in (
-            SELECT tag FROM tags WHERE team = :team GROUP BY tag HAVING COUNT(*) > 1
-        ) GROUP BY tag;';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $idsToDelete = $req->fetchAll();
-        // loop on each tag that needs to be deduplicated and do the work
-        foreach ($idsToDelete as $idsList) {
-            $this->deduplicateFromIdsList($idsList['id_list']);
-        }
-
-        return $this->readOne();
-    }
-
-    /**
-     * Take a list of tags id and deduplicate them
-     * Update the references and delete the tags from the tags table
-     *
-     * @param string $idsList example: 23,42,1337
-     */
-    private function deduplicateFromIdsList(string $idsList): void
-    {
-        // convert the string list into an array
-        $idsArr = explode(',', $idsList);
-        // pop one out and keep this one
-        $idToKeep = array_pop($idsArr);
-
-        // now update the references with the id that we keep
-        foreach ($idsArr as $id) {
-            $sql = 'UPDATE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':target_tag_id', $idToKeep, PDO::PARAM_INT);
-            $req->bindParam(':tag_id', $id, PDO::PARAM_INT);
-            $this->Db->execute($req);
-
-            // and delete that id from the tags table
-            $sql = 'DELETE FROM tags WHERE id = :id';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':id', $id, PDO::PARAM_INT);
-            $this->Db->execute($req);
-        }
-    }
-
-    private function updateTag(TagParam $params, int $tagId): array
-    {
-        if ($this->Users->userData['is_admin'] !== 1) {
-            throw new IllegalActionException('Only an admin can update a tag!');
-        }
-
-        // use the team in the query to prevent one admin from editing tags from another team
-        $sql = 'UPDATE tags SET tag = :tag WHERE id = :id AND team = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $tagId, PDO::PARAM_INT);
-        $req->bindValue(':tag', $params->getContent(), PDO::PARAM_STR);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-
-        $this->Db->execute($req);
-        return $this->readOne();
     }
 }

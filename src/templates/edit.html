@@ -179,7 +179,7 @@
             {%- endfor -%}
           {% endif %}
         </div>
-        <input type='text' id='createTagInput' data-autocomplete='tags' class='createTagInput form-control' placeholder='{{ 'Add a tag'|trans }}' />
+        <input type='text' id='createTagInput' data-teamid='{{ App.Users.userData.team }}' data-autocomplete='tags' class='createTagInput form-control' placeholder='{{ 'Add a tag'|trans }}' />
       </div>
     </div>
   </div>

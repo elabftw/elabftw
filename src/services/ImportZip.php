@@ -11,7 +11,6 @@ namespace Elabftw\Services;
 
 use function basename;
 use Elabftw\Elabftw\CreateUpload;
-use Elabftw\Elabftw\TagParam;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
@@ -135,7 +134,7 @@ class ImportZip extends AbstractImportZip
     {
         $tagsArr = explode(self::TAGS_SEPARATOR, $tags);
         foreach ($tagsArr as $tag) {
-            $this->Entity->Tags->create(new TagParam($tag));
+            $this->Entity->Tags->postAction(Action::Create, array('tag' => $tag));
         }
     }
 

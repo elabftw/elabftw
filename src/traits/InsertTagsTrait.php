@@ -9,7 +9,7 @@
 
 namespace Elabftw\Traits;
 
-use Elabftw\Elabftw\TagParam;
+use Elabftw\Enums\Action;
 
 /**
  * For inserting tags during creation
@@ -21,7 +21,7 @@ trait InsertTagsTrait
     {
         $newEntity = new self($this->Users, $id);
         foreach ($tags as $tag) {
-            $newEntity->Tags->create(new TagParam($tag));
+            $newEntity->Tags->postAction(Action::Create, array('tag' => $tag));
         }
     }
 }

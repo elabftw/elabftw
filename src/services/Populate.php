@@ -9,7 +9,6 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Models\ApiKeys;
@@ -66,7 +65,7 @@ class Populate
             $Tags = new Tags($Entity);
             $tagNb = $this->faker->numberBetween(0, 5);
             for ($j = 0; $j <= $tagNb; $j++) {
-                $Tags->create(new TagParam($this->faker->word() . $this->faker->word()));
+                $Tags->postAction(Action::Create, array('tag' => $this->faker->word() . $this->faker->word()));
             }
             // random date in the past 5 years
             $date = $this->faker->dateTimeBetween('-5 years')->format('Ymd');

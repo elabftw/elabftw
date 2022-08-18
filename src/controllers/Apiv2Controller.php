@@ -31,6 +31,7 @@ use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
+use Elabftw\Models\TeamTags;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
@@ -210,6 +211,8 @@ class Apiv2Controller extends AbstractApiController
                     (string) $this->Request->query->get('start', $defaultStart),
                     (string) $this->Request->query->get('end', $defaultEnd),
                 );
+            case 'team_tags':
+                return new TeamTags($this->Users, $this->id);
             case 'teams':
                 return new Teams($this->Users, $this->id);
             case 'todolist':

@@ -21,9 +21,20 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         $this->Teams= new Teams(new Users(1, 1));
     }
 
+    public function testGetPage(): void
+    {
+        $this->assertEquals('api/v2/teams/', $this->Teams->getPage());
+    }
+
     public function testCreate(): void
     {
         $this->assertIsInt($this->Teams->postAction(Action::Create, array('name' => 'Test team')));
+    }
+
+    public function testImproperAction(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->Teams->patch(Action::Timestamp, array());
     }
 
     public function testRead(): void

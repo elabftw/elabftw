@@ -9,8 +9,8 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\TagParam;
-use Elabftw\Services\Check;
+use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ImproperActionException;
 
 class TagsTest extends \PHPUnit\Framework\TestCase
 {
@@ -24,64 +24,69 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments = new Experiments($this->Users, 1);
     }
 
+    public function testGetPage(): void
+    {
+        $this->assertEquals('api/v2/experiments/', $this->Experiments->Tags->getPage());
+    }
+
     public function testCreate(): void
     {
-        $this->Experiments->Tags->create(new TagParam('my tag'));
-        $id = $this->Experiments->Tags->create(new TagParam('new tag'));
-        $this->assertTrue((bool) Check::id($id));
+        $this->Experiments->Tags->postAction(Action::Create, array('tag' => 'my tag'));
+        $id = $this->Experiments->Tags->postAction(Action::Create, array('tag' => 'new tag'));
+        $this->assertIsInt($id);
 
-        $Items = new Items($this->Users, 1);
+        // no admin user
+        $Users = new Users(2, 1);
+        $Items = new Items($Users, 1);
         $Tags = new Tags($Items);
-        $id =$Tags->create(new TagParam('tag2222'));
-        $this->assertTrue((bool) Check::id($id));
+        $id = $Tags->postAction(Action::Create, array('tag' => 'tag2222'));
+        $this->assertIsInt($id);
+        // now with no rights
+        $Teams = new Teams($this->Users, (int) $this->Users->userData['team']);
+        $Teams->patch(Action::Update, array('user_create_tag' => 0));
+        $this->expectException(ImproperActionException::class);
+        $Tags->postAction(Action::Create, array('tag' => 'tag2i222'));
+        // bring back config
+        $Teams->patch(Action::Update, array('user_create_tag' => 1));
     }
 
     public function testReadAll(): void
     {
-        $this->assertTrue(is_array($this->Experiments->Tags->readAll()));
+        $this->assertIsArray($this->Experiments->Tags->readAll());
+        $this->Experiments->Tags->setId(1);
+        $this->assertIsArray($this->Experiments->Tags->readOne());
+        /* TODO test with query
         $res = $this->Experiments->Tags->readAll('my');
         $this->assertEquals('my tag', $res[0]['tag']);
+         */
 
         $Items = new Items($this->Users, 1);
         $Tags = new Tags($Items);
-        $this->assertTrue(is_array($Tags->readAll()));
+        $this->assertIsArray($Tags->readAll());
     }
 
-    /*
-    public function testUpdate(): void
+    public function testGetIdFromTags(): void
     {
-        $Tags = new Tags($this->Experiments, 1);
-        $this->assertTrue($Tags->update(new TagParam('new super tag')));
+        $this->assertContains(1, $this->Experiments->Tags->getIdFromTags(array('my tag')));
+        $this->assertEmpty($this->Experiments->Tags->getIdFromTags(array('oOoOoOoOoO')));
     }
 
-    public function testDeduplicate(): void
+    public function testCopyTags(): void
     {
-        $Tags = new Tags($this->Experiments, 1);
-        $this->assertEquals(0, $Tags->deduplicate());
-        $this->Experiments->Tags->create(new TagParam('correcttag'));
-        $id = $this->Experiments->Tags->create(new TagParam('typotag'));
-        $Tags = new Tags($this->Experiments, $id);
-        $Tags->update(new TagParam('correcttag'));
-        $this->assertEquals(1, $Tags->deduplicate());
+        $this->Experiments->Tags->copyTags(2, true);
     }
-     */
 
     public function testUnreference(): void
     {
-        $Tags = new Tags($this->Experiments, 1);
-        $Tags->unreference();
-    }
-
-    public function testGetList(): void
-    {
-        $res = $this->Experiments->Tags->getList('tag2');
-        $this->assertEquals('tag2222', $res[0]);
+        $id = $this->Experiments->Tags->postAction(Action::Create, array('tag' => 'blahblahblah'));
+        $Tags = new Tags($this->Experiments, $id);
+        $Tags->patch(Action::Unreference, array());
+        $this->expectException(ImproperActionException::class);
+        $Tags->patch(Action::Timestamp, array());
     }
 
     public function testDestroy(): void
     {
-        $id = $this->Experiments->Tags->create(new TagParam('destroy me'));
-        $Tags = new Tags($this->Experiments, $id);
-        $Tags->destroy();
+        $this->Experiments->Tags->destroy();
     }
 }

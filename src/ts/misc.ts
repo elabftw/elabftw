@@ -13,10 +13,11 @@ import { DateTime } from 'luxon';
 import { EntityType, Entity } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
-import { Payload, Method, Model, Action, Target } from './interfaces';
-import { Ajax } from './Ajax.class';
+import { Model } from './interfaces';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
+
+const ApiC = new Api();
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -266,7 +267,7 @@ export function addAutocompleteToLinkInputs(): void {
   if (catFilterEl) {
     ($('[data-autocomplete="links"]') as JQuery<HTMLInputElement>).autocomplete({
       source: function(request: Record<string, string>, response: (data) => void): void {
-        (new Api()).getJson(`${EntityType.Item}/?cat=${catFilterEl.value}&q=${request.term}`).then(json => {
+        ApiC.getJson(`${EntityType.Item}/?cat=${catFilterEl.value}&q=${request.term}`).then(json => {
           const res = [];
           json.forEach(entity => {
             res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
@@ -279,27 +280,14 @@ export function addAutocompleteToLinkInputs(): void {
 }
 
 export function addAutocompleteToTagInputs(): void {
-  const cache = {};
-  const AjaxC = new Ajax();
-  const entity = getEntity();
   ($('[data-autocomplete="tags"]') as JQuery<HTMLInputElement>).autocomplete({
     source: function(request: Record<string, string>, response: (data) => void): void {
-      const term  = request.term;
-      if (term in cache) {
-        response(cache[term]);
-        return;
-      }
-      const payload: Payload = {
-        method: Method.GET,
-        action: Action.Read,
-        model: Model.Tag,
-        entity: entity,
-        target: Target.List,
-        content: term,
-      };
-      AjaxC.send(payload).then(json => {
-        cache[term] = json.value;
-        response(json.value);
+      ApiC.getJson(`${Model.TeamTags}/?q=${request.term}`).then(json => {
+        const res = [];
+        json.forEach(tag => {
+          res.push(tag.tag);
+        });
+        response(res);
       });
     },
   });

@@ -21,7 +21,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {
-            Action::Create => $this->create((int) ($reqBody['category_id'] ?? -1), $reqBody['tags']),
+            Action::Create => $this->create((int) ($reqBody['category_id'] ?? -1), $reqBody['tags'] ?? array()),
             Action::Duplicate => $this->duplicate(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };

@@ -70,7 +70,7 @@ class TeamTags implements RestInterface
         $sql = 'SELECT tag, id FROM tags WHERE team = :team AND tags.tag LIKE :query ORDER BY tag ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindValue(':query', '%' . $query. '%', PDO::PARAM_STR);
+        $req->bindValue(':query', '%' . $query . '%', PDO::PARAM_STR);
         $this->Db->execute($req);
 
         return $req->fetchAll();

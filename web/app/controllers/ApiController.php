@@ -13,6 +13,7 @@ use function dirname;
 use Elabftw\Controllers\Apiv1Controller;
 use Elabftw\Controllers\Apiv2Controller;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,6 +33,10 @@ try {
         // replace the Users in App
         $App->Users = new Users($keyArr['userid'], $keyArr['team']);
         $canWrite = (bool) $keyArr['canWrite'];
+    } else {
+        if ($App->Session->get('is_auth') !== 1) {
+            throw new UnauthorizedException();
+        }
     }
 
     if (str_contains($App->Request->server->get('QUERY_STRING'), 'api/v2')) {
@@ -42,4 +47,6 @@ try {
     $Controller->getResponse()->send();
 } catch (ImproperActionException $e) {
     (new Response($e->getMessage(), 400))->send();
+} catch (UnauthorizedException $e) {
+    (new Response($e->getMessage(), 401))->send();
 }

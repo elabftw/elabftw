@@ -88,6 +88,7 @@ try {
     // pages where you don't need to be logged in
     // only the script name, not the path because we use basename() on it
     $nologinArr = array(
+        // the api can be access with session or token (or only token for v1) so we skip auth here to do it later with custom logic
         'ApiController.php',
         'change-pass.php',
         'index.php',

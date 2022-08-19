@@ -1,4 +1,6 @@
 actor: Apiv2Tester
+coverage:
+  enabled: false # disabled until the c3 stuff can be figured out
 modules:
   enabled:
         - \Helper\Api

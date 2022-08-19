@@ -1,5 +1,7 @@
 coverage:
     enabled: true
+    show_uncovered: true
+    show_only_summary: true
     whitelist:
         include:
             - src/models/*

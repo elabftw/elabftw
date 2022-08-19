@@ -6,7 +6,6 @@
 *.bak
 apidoc/html
 _srcdoc/
-_coverage/
 build
 cache
 c3.php

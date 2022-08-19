@@ -11,17 +11,6 @@ use \Codeception\Util\HttpCode;
 
 class BadRequests2Cest
 {
-    // Make a request without an authorization header
-    public function noTokenTest(ApiTester $I)
-    {
-        $I->wantTo('Send a request without a token');
-        // we need to delete it because it is set by other tests and codeception will keep it
-        // for all subsequent requests
-        $I->deleteHeader('Authorization');
-        $I->sendGET('/experiments/1');
-        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST); // 400
-    }
-
     // Make a request with an invalid key
     public function badTokenTest(ApiTester $I)
     {

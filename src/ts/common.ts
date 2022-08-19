@@ -303,6 +303,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else if (el.matches('[data-action="import-file"]')) {
       ($('#importModal') as JQuery).modal('toggle');
+    } else if (el.matches('[data-action="report-bug"]')) {
+      event.preventDefault();
+      el.querySelector('i').classList.add('moving-bug');
+      setTimeout(() => window.location.assign('https://github.com/elabftw/elabftw/issues/new/choose'), 3000);
+
     } else if (el.matches('[data-action="create-item"]')) {
       const tplid = el.dataset.tplid;
       const urlParams = new URLSearchParams(document.location.search);

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,11 +6,11 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
 use PDO;
 
 /**
@@ -49,6 +49,22 @@ class Pins
     }
 
     /**
+     * Only read id and title to show in the create-new menu
+     */
+    public function readAllSimple(): array
+    {
+        $sql = sprintf(
+            'SELECT %1$s.title, %1$s.id FROM pin_%1$s2users LEFT JOIN %1$s ON (entity_id = %1$s.id) WHERE users_id = :users_id',
+            $this->Entity->type
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
+
+        $this->Db->execute($req);
+        return $req->fetchAll();
+    }
+
+    /**
      * Get the items pinned by current users to display in show mode
      */
     public function readAll(): array
@@ -60,13 +76,8 @@ class Pins
         $this->Db->execute($req);
 
         $entity = clone $this->Entity;
-
-        $pinArr = array();
-        foreach ($req->fetchAll() as $id) {
-            $entity->setId((int) $id['entity_id']);
-            $pinArr[] = $entity->readOne();
-        }
-        return $pinArr;
+        $entity->idFilter = Tools::getIdFilterSql(array_column($req->fetchAll(), 'entity_id'));
+        return $entity->readAll();
     }
 
     /**

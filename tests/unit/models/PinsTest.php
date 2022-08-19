@@ -32,6 +32,7 @@ class PinsTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $this->Experiments->Pins->readAll());
         $this->Experiments->Pins->togglePin();
         $this->assertCount(0, $this->Experiments->Pins->readAll());
+        $this->assertCount(0, $this->Experiments->Pins->readAllSimple());
 
         $this->Items->Pins->togglePin();
         $this->assertTrue($this->Items->Pins->isPinned());

@@ -176,6 +176,8 @@ class Templates extends AbstractTemplateEntity
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
 
+        $sql .= str_replace('entity', 'experiments_templates', $this->idFilter) . ' ';
+
         $sql .= 'GROUP BY id ORDER BY fullname DESC, is_pinned DESC, experiments_templates.ordering ASC';
 
         $req = $this->Db->prepare($sql);

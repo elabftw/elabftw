@@ -34,36 +34,34 @@ use function trim;
  */
 abstract class AbstractEntityController implements ControllerInterface
 {
-    protected Templates $Templates;
-
     protected array $categoryArr = array();
 
     protected array $visibilityArr = array();
+
+    protected array $templatesArr = array();
 
     // all the users from the current team
     protected array $allTeamUsersArr = array();
 
     public function __construct(protected App $App, protected AbstractEntity $Entity)
     {
-        $this->Templates = new Templates($this->Entity->Users);
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $this->visibilityArr = $TeamGroups->getVisibilityList();
         $this->allTeamUsersArr = $this->App->Users->readAllFromTeam();
+        // items don't need to show the templates in create new menu, so save a sql call here
+        if ($this->Entity instanceof Experiments) {
+            $Templates = new Templates($this->Entity->Users);
+            $this->templatesArr = $Templates->Pins->readAllSimple();
+        }
     }
 
-    /**
-     * Get the Response object from the Request
-     */
     public function getResponse(): Response
     {
-        switch ($this->App->Request->query->get('mode')) {
-            case 'view':
-                return $this->view();
-            case 'edit':
-                return $this->edit();
-            default:
-                return $this->show();
-        }
+        return match ($this->App->Request->query->getAlpha('mode')) {
+            'view' => $this->view(),
+            'edit' => $this->edit(),
+            default => $this->show(),
+        };
     }
 
     /**
@@ -94,13 +92,7 @@ abstract class AbstractEntityController implements ControllerInterface
                 return (string) $t;
             }, $tagsFromGet);
             $ids = $this->Entity->Tags->getIdFromTags($tagsFromGet);
-            $trimmedFilter = Tools::getIdFilterSql($ids);
-            // don't add it if it's empty (for instance we search in items for a tag that only exists on experiments)
-            if ($trimmedFilter === ' AND ()') {
-                $this->Entity->idFilter = ' AND entity.id = 0';
-            } else {
-                $this->Entity->idFilter = $trimmedFilter;
-            }
+            $this->Entity->idFilter = Tools::getIdFilterSql($ids);
             $DisplayParams->searchType = 'tags';
         }
 
@@ -150,7 +142,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'searchType' => $isSearchPage ? 'something' : $DisplayParams->searchType,
             'tagsArr' => $tagsArr,
             'tagsArrForSelect' => $tagsArrForSelect,
-            'templatesArr' => $this->Templates->Pins->readAll(),
+            'templatesArr' => $this->templatesArr,
             'visibilityArr' => $this->visibilityArr,
             'extendedError' => $extendedError,
         );
@@ -171,7 +163,7 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     protected function view(): Response
     {
-        $this->Entity->setId((int) $this->App->Request->query->get('id'));
+        $this->Entity->setId($this->App->Request->query->getInt('id'));
 
         // REVISIONS
         $Revisions = new Revisions(
@@ -193,7 +185,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
             'revNum' => $Revisions->readCount(),
-            'templatesArr' => $this->Templates->Pins->readAll(),
+            'templatesArr' => $this->templatesArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -255,7 +247,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',
             'revNum' => $Revisions->readCount(),
-            'templatesArr' => $this->Templates->Pins->readAll(),
+            'templatesArr' => $this->templatesArr,
             'visibilityArr' => $this->visibilityArr,
         );
 

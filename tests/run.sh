@@ -39,7 +39,6 @@ if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
         # first backslash enables different delimiter than slash
         sed -i '\#volumes:#D' tests/docker-compose.yml
         sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
-        sed -i '\#/elabftw/tests/_output/coverage#D' tests/docker-compose.yml
         # Use the freshly built elabtmp image
         sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
         export DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain COMPOSE_DOCKER_CLI_BUILD=1

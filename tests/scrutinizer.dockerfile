@@ -28,6 +28,7 @@ COPY ./.eslintrc.js /elabftw
 COPY ./.php-cs-fixer.dist.php /elabftw
 COPY ./.stylelintrc.json /elabftw
 COPY ./builder.js /elabftw
+COPY ./c3.php /elabftw
 COPY ./codeception.yml /elabftw
 COPY ./composer.json /elabftw
 COPY ./composer.lock /elabftw

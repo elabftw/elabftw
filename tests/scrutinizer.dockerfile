@@ -13,25 +13,9 @@ ADD --chmod=755 https://github.com/phpstan/phpstan/releases/download/$PHPSTAN_VE
 # Psalm
 ADD --chmod=755 https://github.com/vimeo/psalm/releases/download/$PSALM_VERSION/psalm.phar /usr/bin/psalm
 
-#Phan
+# Phan
 ADD --chmod=755 https://github.com/phan/phan/releases/download/$PHAN_VERSION/phan.phar /usr/bin/phan
 
-# Remove all stuff in /elabftw/ to avoid carry over from hypernext branch
-RUN rm -rf /elabftw/*
-
-# Add files
-COPY ./bin /elabftw/bin
-COPY ./src /elabftw/src
-COPY ./tests /elabftw/tests
-COPY ./web /elabftw/web
-COPY ./.eslintrc.js /elabftw
-COPY ./.php-cs-fixer.dist.php /elabftw
-COPY ./.stylelintrc.json /elabftw
-COPY ./builder.js /elabftw
-COPY ./codeception.yml /elabftw
-COPY ./composer.json /elabftw
-COPY ./composer.lock /elabftw
-COPY ./cypress.json /elabftw
-COPY ./node-builder.js /elabftw
-COPY ./package.json /elabftw
-COPY ./yarn.lock /elabftw
+# Install xdebug for coverage
+RUN apk add --update php81-pecl-xdebug
+RUN printf "zend_extension=xdebug.so\nxdebug.mode=coverage" > /etc/php81/conf.d/42_xdebug.ini

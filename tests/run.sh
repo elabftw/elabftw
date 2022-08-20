@@ -35,10 +35,6 @@ fi
 # launch a fresh environment if needed
 if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
     if ($scrutinizer); then
-        # Don't bind mount here, files are copied. See scrutinizer.dockerfile
-        # first backslash enables different delimiter than slash
-        sed -i '\#volumes:#D' tests/docker-compose.yml
-        sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
         # Use the freshly built elabtmp image
         sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
         export DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain COMPOSE_DOCKER_CLI_BUILD=1
@@ -57,6 +53,8 @@ if ($scrutinizer); then
     docker exec -it elabtmp yarn buildall:dev
     docker exec -it elabtmp composer install --no-progress -q
     docker exec -it elabtmp yarn phpcs-dry
+    # fix permissions on test output folder
+    sudo chmod -R 777 tests/_output
     # allow tmpfile, used by phpstan
     docker exec -it elabtmp sed -i 's/tmpfile, //' /etc/php81/php.ini
     # extend open_basedir

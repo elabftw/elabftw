@@ -76,6 +76,7 @@ docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
 docker exec -it elabtmp bash -c 'apk add --update php81-pecl-xdebug && if [ ! -f "/etc/php81/conf.d/42_xdebug.ini" ]; then printf "zend_extension=xdebug.so\nxdebug.mode=coverage" > /etc/php81/conf.d/42_xdebug.ini; fi'
 if ($scrutinizer); then
     # fix permissions on test output and cache folders
+    mkdir -p cache/purifier
     sudo chmod -R 777 cache
     sudo chmod -R 777 tests/_output
     sudo chmod -R 777 uploads

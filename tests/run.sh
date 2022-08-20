@@ -53,7 +53,8 @@ if ($scrutinizer); then
     docker exec -it elabtmp yarn buildall:dev
     docker exec -it elabtmp composer install --no-progress -q
     docker exec -it elabtmp yarn phpcs-dry
-    # fix permissions on test output folder
+    # fix permissions on test output and cache folders
+    sudo chmod -R 777 cache
     sudo chmod -R 777 tests/_output
     # allow tmpfile, used by phpstan
     docker exec -it elabtmp sed -i 's/tmpfile, //' /etc/php81/php.ini

@@ -30,6 +30,9 @@ cp -v tests/config-home.php config.php
 # if there are no custom env_file, touch one, as this will trigger an error
 if [ ! -f tests/elabftw-user.env ]; then
     touch tests/elabftw-user.env
+    if ($scrutinizer); then
+        printf "ELABFTW_USER=scrutinizer\nELABFTW_GROUP=scrutinizer\nELABFTW_USERID=1000\nELABFTW_GROUPID=1000\n" > tests/elabftw-user.env
+    fi
 fi
 
 # launch a fresh environment if needed
@@ -53,9 +56,6 @@ if ($scrutinizer); then
     docker exec -it elabtmp yarn buildall:dev
     docker exec -it elabtmp composer install --no-progress -q
     docker exec -it elabtmp yarn phpcs-dry
-    # fix permissions on test output and cache folders
-    sudo chmod -R 777 cache
-    sudo chmod -R 777 tests/_output
     # allow tmpfile, used by phpstan
     docker exec -it elabtmp sed -i 's/tmpfile, //' /etc/php81/php.ini
     # extend open_basedir
@@ -74,6 +74,11 @@ docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
 # RUN TESTS
 # install xdebug in the container so we can do code coverage
 docker exec -it elabtmp bash -c 'apk add --update php81-pecl-xdebug && if [ ! -f "/etc/php81/conf.d/42_xdebug.ini" ]; then printf "zend_extension=xdebug.so\nxdebug.mode=coverage" > /etc/php81/conf.d/42_xdebug.ini; fi'
+if ($scrutinizer); then
+    # fix permissions on test output and cache folders
+    sudo chmod -R 777 cache
+    sudo chmod -R 777 tests/_output
+fi
 # when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead
 if [ "${1:-}" = "unit" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip apiv2 --coverage --coverage-html --coverage-xml

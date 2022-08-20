@@ -78,9 +78,9 @@ docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
 docker exec -it elabtmp bash -c 'apk add --update php81-pecl-xdebug && if [ ! -f "/etc/php81/conf.d/42_xdebug.ini" ]; then printf "zend_extension=xdebug.so\nxdebug.mode=coverage" > /etc/php81/conf.d/42_xdebug.ini; fi'
 # when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead
 if [ "${1:-}" = "unit" ]; then
-    docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --skip api --skip apiv2 --coverage --coverage-html --coverage-xml
+    docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip apiv2 --coverage --coverage-html --coverage-xml
 else
-    docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --coverage --coverage-html --coverage-xml
+    docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-html --coverage-xml
 fi
 
 # in scrutinizer we copy the coverage in current directory

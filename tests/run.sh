@@ -76,11 +76,12 @@ docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
 docker exec -it elabtmp bash -c 'apk add --update php81-pecl-xdebug && if [ ! -f "/etc/php81/conf.d/42_xdebug.ini" ]; then printf "zend_extension=xdebug.so\nxdebug.mode=coverage" > /etc/php81/conf.d/42_xdebug.ini; fi'
 if ($scrutinizer); then
     # fix permissions on test output and cache folders
-    mkdir -p cache/purifier
+    mkdir -p cache/purifier/{HTML,CSS,URI}
+    sudo chown -R scrutinizer:scrutinizer cache
     sudo chmod -R 777 cache
     sudo chmod -R 777 tests/_output
-    sudo chmod -R 777 uploads
     sudo chown -R scrutinizer:scrutinizer uploads
+    sudo chmod -R 777 uploads
 fi
 # when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead
 if [ "${1:-}" = "unit" ]; then

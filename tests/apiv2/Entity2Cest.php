@@ -83,11 +83,40 @@ class Entity2Cest
         $I->seeResponseCodeIs(HttpCode::CREATED); // 201
     }
 
+    public function duplicateExpTest(ApiTester $I)
+    {
+        $I->wantTo('Duplicate an experiment');
+        $I->sendPOST('/experiments/1', array('action' => 'duplicate'));
+        $I->seeResponseCodeIs(HttpCode::CREATED); // 201
+    }
+
+    public function duplicateItemTest(ApiTester $I)
+    {
+        $I->wantTo('Duplicate an item');
+        $I->sendPOST('/items/1', array('action' => 'duplicate'));
+        $I->seeResponseCodeIs(HttpCode::CREATED); // 201
+    }
+
     public function createItemTest(ApiTester $I)
     {
         $I->wantTo('Create an item');
         $I->sendPOST('/items', array('category_id' => 1));
         $I->seeResponseCodeIs(HttpCode::CREATED); // 201
+    }
+
+    public function improperAction(ApiTester $I)
+    {
+        $I->wantTo('Send an improper request');
+        // this should normally be a patch request
+        $I->sendPOST('/experiments/1', array('action' => 'bloxberg'));
+        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
+    }
+
+    public function deleteItemTest(ApiTester $I)
+    {
+        $I->wantTo('Delete an item');
+        $I->sendDELETE('/items/4');
+        $I->seeResponseCodeIs(HttpCode::NO_CONTENT);
     }
 
     public function resourceNotFoundTest(ApiTester $I)

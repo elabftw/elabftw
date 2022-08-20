@@ -39,6 +39,10 @@ use Symfony\Component\HttpFoundation\Session\Session;
  * It is the entrypoint of the app.
  */
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+// only used for tests in dev mode
+if (file_exists(dirname(__DIR__, 2) . '/c3.php')) {
+    require_once dirname(__DIR__, 2) . '/c3.php';
+}
 
 $Request = Request::createFromGlobals();
 $Session = new Session();

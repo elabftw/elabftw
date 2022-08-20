@@ -1,7 +1,6 @@
 actor: ApiTester
 coverage:
-  enabled: false # disabled until the c3 stuff can be figured out
-  remote: true
+  enabled: true
   c3_url: 'https://elabtmp'
   remote_context_options:
     ssl:

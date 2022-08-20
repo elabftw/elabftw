@@ -31,7 +31,7 @@ cp -v tests/config-home.php config.php
 if [ ! -f tests/elabftw-user.env ]; then
     touch tests/elabftw-user.env
     if ($scrutinizer); then
-        printf "ELABFTW_USER=scrutinizer\nELABFTW_GROUP=scrutinizer\nELABFTW_USERID=1000\nELABFTW_GROUPID=1000\n" > tests/elabftw-user.env
+        printf "ELABFTW_USER=scrutinizer\nELABFTW_GROUP=scrutinizer\nELABFTW_USERID=1001\nELABFTW_GROUPID=1001\n" > tests/elabftw-user.env
     fi
 fi
 
@@ -78,6 +78,8 @@ if ($scrutinizer); then
     # fix permissions on test output and cache folders
     sudo chmod -R 777 cache
     sudo chmod -R 777 tests/_output
+    sudo chmod -R 777 uploads
+    sudo chown -R scrutinizer:scrutinizer uploads
 fi
 # when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead
 if [ "${1:-}" = "unit" ]; then

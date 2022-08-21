@@ -29,6 +29,9 @@ use function unlink;
 
 /**
  * Process HTML and transform tex into svg
+ *
+ * Note: this shouldn't be needed with psalm running inside the container!
+ * @psalm-suppress UndefinedClass
  */
 class Tex2Svg
 {

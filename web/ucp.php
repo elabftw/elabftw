@@ -28,8 +28,9 @@ use Symfony\Component\HttpFoundation\Response;
 require_once 'app/init.inc.php';
 $App->pageTitle = _('User Control Panel');
 
+/** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
-$Response->prepare($Request);
+$Response->prepare($App->Request);
 
 try {
     $ApiKeys = new ApiKeys($App->Users);
@@ -41,8 +42,8 @@ try {
     $Templates = new Templates($App->Users);
     $templatesArr = $Templates->getWriteableTemplatesList();
     $entityData = array();
-    if ($Request->query->has('templateid')) {
-        $Templates->setId((int) $Request->query->get('templateid'));
+    if ($App->Request->query->has('templateid')) {
+        $Templates->setId((int) $App->Request->query->get('templateid'));
         $entityData = $Templates->readOne();
         $Revisions = new Revisions(
             $Templates,

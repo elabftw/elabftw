@@ -27,6 +27,7 @@ use PDO;
 use function random_bytes;
 use function ucfirst;
 
+/** @psalm-suppress UnusedParam */
 class QueryBuilderVisitor implements Visitor
 {
     public function buildWhere(Visitable $parsedQuery, VisitorParameters $parameters): WhereCollector

@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <psalm
-    totallyTyped="false"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
@@ -9,14 +8,27 @@
     checkForThrowsInGlobalScope="true"
     ignoreInternalFunctionFalseReturn="true"
     ignoreInternalFunctionNullReturn="false"
-    reportMixedIssues="false"
-    errorLevel="1"
+    reportMixedIssues="true"
+    errorLevel="8"
     findUnusedVariablesAndParams="true"
-    runTaintAnalysis="true"
 >
     <projectFiles>
+        <directory name="../../bin" />
         <directory name="../../src" />
+        <directory name="../../tests" />
+        <directory name="../../web" />
+        <ignoreFiles>
+            <directory name="../../cache" />
+            <directory name="../../uploads" />
+            <directory name="../../vendor" />
+            <directory name="../../tests" />
+            <file name="../../c3.php" />
+            <file name="rector.php" />
+        </ignoreFiles>
     </projectFiles>
+    <globals>
+          <var name="App" type="Elabftw\Elabftw\App" />
+    </globals>
 
     <issueHandlers>
         <LessSpecificReturnType errorLevel="info" />
@@ -46,5 +58,7 @@
         <UnresolvableInclude errorLevel="info" />
 
         <RawObjectIteration errorLevel="info" />
+        <UndefinedGlobalVariable errorLevel="info" />
+        <UncaughtThrowInGlobalScope errorLevel="info" />
     </issueHandlers>
 </psalm>

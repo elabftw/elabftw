@@ -30,8 +30,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 require_once 'app/init.inc.php';
 $App->pageTitle = _('eLabFTW Configuration');
+/** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
-$Response->prepare($Request);
+$Response->prepare($App->Request);
 
 $template = 'error.html';
 $renderArr = array();
@@ -51,11 +52,11 @@ try {
     // Users search
     $isSearching = false;
     $usersArr = array();
-    if ($Request->query->has('q')) {
+    if ($App->Request->query->has('q')) {
         $isSearching = true;
         $usersArr = $App->Users->readFromQuery(
-            filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING),
-            (int) filter_var($Request->query->get('teamFilter'), FILTER_SANITIZE_NUMBER_INT)
+            filter_var($App->Request->query->get('q'), FILTER_SANITIZE_STRING),
+            (int) filter_var($App->Request->query->get('teamFilter'), FILTER_SANITIZE_NUMBER_INT)
         );
         foreach ($usersArr as &$user) {
             $UsersHelper = new UsersHelper((int) $user['userid']);
@@ -79,7 +80,7 @@ try {
 
     $template = 'sysconfig.html';
     $renderArr = array(
-        'Request' => $Request,
+        'Request' => $App->Request,
         'nologinUsersCount' => $AuthFail->getLockedUsersCount(),
         'lockoutDevicesCount' => $AuthFail->getLockoutDevicesCount(),
         'elabimgVersion' => $elabimgVersion,

@@ -224,6 +224,7 @@ abstract class AbstractEntity implements RestInterface
      *     \______(_______;;; __;;;
      *
      *          Here be dragons!
+     *  @psalm-suppress UnusedForeachValue
      */
     public function readShow(DisplayParams $displayParams, bool $extended = false): array
     {

@@ -176,6 +176,7 @@ class App
 
     /**
      * Configure gettext domain
+     * @psalm-suppress UnusedFunctionCall
      */
     private function initi18n(): void
     {

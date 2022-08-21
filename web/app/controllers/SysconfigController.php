@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use function dirname;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -56,7 +57,7 @@ try {
             $tab = '10';
         }
 
-        $App->Config->patch($Request->request->all());
+        $App->Config->patch(Action::Update, $Request->request->all());
     }
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));

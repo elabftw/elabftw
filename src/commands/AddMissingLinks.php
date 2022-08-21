@@ -71,11 +71,9 @@ class AddMissingLinks extends Command
                         case 'experiments_templates':
                             $entity = new Templates(new Users((int) $data['userid']), (int) $data['id']);
                             break;
-                        case 'items':
-                            $entity = new Items(new Users((int) $data['userid']), (int) $data['id']);
-                            break;
+                            // items
                         default:
-                            continue 2;
+                            $entity = new Items(new Users((int) $data['userid']), (int) $data['id']);
                     }
 
                     // make sure we can access all entries with write access

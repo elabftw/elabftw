@@ -25,7 +25,7 @@ require_once 'init.inc.php';
 
 $redirectUrl = '../login.php';
 
-$destroySession = function () use ($App, $Request) {
+$destroySession = function () use ($App) {
     if ($App->Users instanceof AuthenticatedUser) {
         $App->Users->invalidateToken();
     }
@@ -47,7 +47,7 @@ $destroySession = function () use ($App, $Request) {
     setcookie('icanhazcookies', '', $cookieOptions);
     // if we get redirected by init.inc.php we want to keep this cookie
     // if the user requested logout, remove it
-    if (!$Request->query->get('keep_redirect')) {
+    if (!$App->Request->query->get('keep_redirect')) {
         setcookie('elab_redirect', '', $cookieOptions);
     }
     setcookie('kickreason', '', $cookieOptions);

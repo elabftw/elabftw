@@ -24,8 +24,9 @@ use Symfony\Component\HttpFoundation\Response;
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Register');
 
+/** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
-$Response->prepare($Request);
+$Response->prepare($App->Request);
 
 $template = 'error.html';
 $renderArr = array();

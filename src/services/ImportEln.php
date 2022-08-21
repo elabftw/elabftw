@@ -202,6 +202,7 @@ class ImportEln extends AbstractImportZip
         foreach ($part['hasPart'] as $subpart) {
             $html .= '<li>' . basename($subpart['@id']) . ' ' . ($subpart['description'] ?? '') . '</li>';
         }
-        return $html .= '</ul>';
+        $html .= '</ul>';
+        return $html;
     }
 }

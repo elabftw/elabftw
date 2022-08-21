@@ -11,6 +11,7 @@ namespace Elabftw\Elabftw;
 
 use function dirname;
 use Elabftw\Controllers\LoginController;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -36,7 +37,7 @@ try {
     if ($Request->request->has('lang')) {
         // the csrf is of course not a column that needs patching so remove it
         unset($postData['csrf']);
-        $App->Users->patch($postData);
+        $App->Users->patch(Action::Update, $postData);
     }
     // END TAB 1
 
@@ -48,19 +49,19 @@ try {
             // check that we got the good password
             $LocalAuth = new LocalAuth($App->Users->userData['email'], $Request->request->get('currpass'));
             try {
-                $AuthResponse = $LocalAuth->tryAuth();
+                $LocalAuth->tryAuth();
             } catch (InvalidCredentialsException $e) {
                 throw new ImproperActionException('The current password is not valid!');
             }
             // update the email if necessary
             if (isset($params['email']) && ($params['email'] !== $App->Users->userData['email'])) {
-                $App->Users->patch(array('email' => $params['email']));
+                $App->Users->patch(Action::Update, array('email' => $params['email']));
             }
         }
 
         // CHANGE PASSWORD (only for local accounts)
         if (!empty($Request->request->get('newpass')) && (int) $App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
-            $App->Users->patch(array('password' => $postData['newpass']));
+            $App->Users->patch(Action::Update, array('password' => $postData['newpass']));
         }
 
         // TWO FACTOR AUTHENTICATION

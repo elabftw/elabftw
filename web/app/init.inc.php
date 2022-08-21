@@ -18,6 +18,7 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
 use Elabftw\Services\LoginHelper;
 use Exception;
+use function file_exists;
 use function header;
 use function in_array;
 use Monolog\Logger;

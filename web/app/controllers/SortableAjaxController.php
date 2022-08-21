@@ -24,6 +24,7 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
 use Exception;
+use function json_decode;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**

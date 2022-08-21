@@ -13,7 +13,7 @@ export class Api {
     return this.send(Method.GET, query);
   }
 
-  getJson(query: string): Record<string, any> {
+  getJson(query: string) {
     return this.get(query).then(resp => resp.json());
   }
 

@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (entity.type === EntityType.Experiment) {
     category = ApiC.getJson(`${Model.Team}/${about.team}/status`).then(json => Array.from(json));
   } else {
-    category = ApiC.getJson(`${EntityType.ItemType}`).then(json => Array.from(json as Iterable<any>));
+    category = ApiC.getJson(`${EntityType.ItemType}`).then(json => Array.from(json));
   }
   const malleableCategory = new Malle({
     cancel : i18next.t('cancel'),

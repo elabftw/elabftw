@@ -29,7 +29,7 @@ export default class Todolist extends SidePanel {
     return this.api.post(`${this.model}`, {'content': content});
   }
 
-  readAll(): Record<string, any> {
+  readAll() {
     return this.api.getJson(`${this.model}`);
   }
 

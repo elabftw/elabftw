@@ -23,7 +23,7 @@ export default class Entity {
     return this.api.post(`${this.model}`, params);
   }
 
-  read(id: number): Record<string, any> {
+  read(id: number) {
     return this.api.getJson(`${this.model}/${id}`);
   }
 

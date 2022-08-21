@@ -192,11 +192,16 @@ export function makeSortableGreatAgain(): void {
     // do ajax request to update db with new order
     update: function() {
       // send the order as an array
-      const ordering = $(this).sortable('toArray');
-      $.post('app/controllers/SortableAjaxController.php', {
-        table: $(this).data('table'),
-        ordering: ordering,
-      }).done(function(json) {
+      const params = {'table': $(this).data('table'), 'ordering': $(this).sortable('toArray')};
+      fetch('app/controllers/SortableAjaxController.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        },
+        body: JSON.stringify(params),
+      }).then(resp => resp.json()).then(json => {
         notif(json);
       });
     },
@@ -304,7 +309,7 @@ export function updateCategory(entity: Entity, value: string): string {
       // first : get what is the color of the new status
       const css = '6px solid #' + json.color;
       $('#main_section').css('border-left', css);
-      reloadElement('main_section');
+      // TODO only in view mode reloadElement('main_section');
     });
   });
   return value;

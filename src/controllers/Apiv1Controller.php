@@ -64,12 +64,8 @@ class Apiv1Controller extends AbstractApiController
 
     public function getResponse(): Response
     {
-        // Check if the Authorization Token was sent along
-        if (!$this->Request->server->has('HTTP_AUTHORIZATION')) {
-            throw new ImproperActionException('No access token provided!');
-        }
-        $this->parseReq();
         try {
+            $this->parseReq();
             // GET ENTITY/CATEGORY
             switch ($this->Request->getMethod()) {
                 // GET REQUEST
@@ -977,7 +973,7 @@ class Apiv1Controller extends AbstractApiController
      */
     private function updateCategory(): Response
     {
-        $this->Entity->patch(array('category' => (int) $this->Request->request->get('category')));
+        $this->Entity->patch(Action::Update, array('category' => (int) $this->Request->request->get('category')));
         return new JsonResponse(array('result' => 'success'));
     }
 

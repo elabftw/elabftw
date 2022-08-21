@@ -41,6 +41,55 @@ class Entity2Cest
         $I->seeResponseIsJson();
     }
 
+    public function improperFormatTest(ApiTester $I)
+    {
+        $I->wantTo('Send an improper format');
+        $I->sendGET('/experiments/1?format=docx');
+        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
+    }
+
+    public function getCsvTest(ApiTester $I)
+    {
+        $I->wantTo('Get the first experiment as csv');
+        $I->sendGET('/experiments/1?format=csv');
+        $I->seeResponseCodeIs(HttpCode::OK); // 200
+    }
+
+    public function getElnTest(ApiTester $I)
+    {
+        $I->wantTo('Get the first experiment as eln');
+        $I->sendGET('/experiments/1?format=eln');
+        $I->seeResponseCodeIs(HttpCode::OK); // 200
+    }
+
+    public function getQrPdfTest(ApiTester $I)
+    {
+        $I->wantTo('Get the first experiment as qrpdf');
+        $I->sendGET('/experiments/1?format=qrpdf');
+        $I->seeResponseCodeIs(HttpCode::OK); // 200
+    }
+
+    public function getPdfTest(ApiTester $I)
+    {
+        $I->wantTo('Get the first experiment as PDF');
+        $I->sendGET('/experiments/1?format=pdf');
+        $I->seeResponseCodeIs(HttpCode::OK); // 200
+    }
+
+    public function getPdfATest(ApiTester $I)
+    {
+        $I->wantTo('Get the first experiment as PDF/A');
+        $I->sendGET('/experiments/1?format=pdfa');
+        $I->seeResponseCodeIs(HttpCode::OK); // 200
+    }
+
+    public function getZipTest(ApiTester $I)
+    {
+        $I->wantTo('Get the first experiment as ZIP');
+        $I->sendGET('/experiments/1?format=zip');
+        $I->seeResponseCodeIs(HttpCode::OK); // 200
+    }
+
     public function getOneItemTest(ApiTester $I)
     {
         $I->wantTo('Get the first item');
@@ -121,7 +170,7 @@ class Entity2Cest
 
     public function resourceNotFoundTest(ApiTester $I)
     {
-        $I->wantTo('Find a non existing resource');
+        $I->wantTo('Find a non existing item');
         $I->sendGET('/items/9001');
         $I->seeResponseCodeIs(HttpCode::NOT_FOUND);
     }

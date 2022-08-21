@@ -86,6 +86,8 @@ fi
 # when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead
 if [ "${1:-}" = "unit" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip apiv2 --coverage --coverage-html --coverage-xml
+elif [ "${1:-}" = "api" ]; then
+    docker exec -it elabtmp php vendor/bin/codecept run --skip unit --coverage --coverage-html --coverage-xml
 else
     docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-html --coverage-xml
 fi

@@ -68,6 +68,7 @@
   },
   "scripts": {
     "analyzejs": "webpack-bundle-analyzer stats.json web/app/js",
+    "api": "tests/run.sh api",
     "apidoc": "apidoc -c apidoc/apidoc.json -o apidoc/html -i src/controllers",
     "brotli": "brotli -vf web/assets/*.css web/assets/*.js web/assets/*.svg web/assets/ove/*.css web/assets/ove/*.js",
     "zopfli": "zopfli -i1000 web/assets/*.css web/assets/*.js web/assets/*.svg web/assets/ove/*.css web/assets/ove/*.js",

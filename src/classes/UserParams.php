@@ -56,7 +56,7 @@ final class UserParams extends ContentParams implements ContentParamsInterface
 
     private function filterOrcid(): string
     {
-        if (preg_match('/[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}/', $this->content) === 1) {
+        if (preg_match('/\d{4}-\d{4}-\d{4}-\d{4}/', $this->content) === 1) {
             return $this->content;
         }
         // note: the input field should prevent any incorrect value from being submitted in the first place

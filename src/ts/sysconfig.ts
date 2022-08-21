@@ -253,13 +253,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // we need to add this otherwise the button will stay disabled with the browser's cache (Firefox)
-  const inputList = document.getElementsByTagName('input');
-  for (let i=0; i < inputList.length; i++) {
-    const input = inputList[i];
-    input.disabled = false;
-  }
-
   $(document).on('click', '.idpsDestroy', function() {
     const elem = $(this);
     if (confirm(i18next.t('generic-delete-warning'))) {

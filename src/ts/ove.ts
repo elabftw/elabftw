@@ -229,7 +229,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
       };
 
       // Change layout for linear sequences
-      if (parsedSequence.circular == false) {
+      if (!parsedSequence.circular) {
         editorState.panelsShown[0][1].active = true;
         editorState.panelsShown[0].shift();
       }

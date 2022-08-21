@@ -13,7 +13,6 @@ use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
-use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
 use Elabftw\Services\LoginHelper;
@@ -153,7 +152,7 @@ try {
         header('Location: ' . $url);
     }
     exit;
-} catch (ImproperActionException | InvalidSchemaException | Exception $e) {
+} catch (Exception $e) {
     // if something went wrong here it should stop whatever is after
     die($e->getMessage());
 }

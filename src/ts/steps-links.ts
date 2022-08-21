@@ -10,8 +10,7 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import Step from './Step.class';
 import i18next from 'i18next';
-import { relativeMoment, makeSortableGreatAgain, reloadElement } from './misc';
-import { addAutocompleteToLinkInputs, getCheckedBoxes, notif, getEntity, adjustHiddenState } from './misc';
+import { relativeMoment, makeSortableGreatAgain, reloadElement, addAutocompleteToLinkInputs, getCheckedBoxes, notif, getEntity, adjustHiddenState } from './misc';
 import { Action, Target, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 

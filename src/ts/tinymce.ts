@@ -72,7 +72,6 @@ export function quickSave(): void {
     localStorage.setItem('date', new Date().toLocaleString());
     // reload the page so user gets redirected to the login page
     location.reload();
-    return;
   }).then(() => {
     // remove dirty state of editor
     tinymce.activeEditor.setDirty(false);

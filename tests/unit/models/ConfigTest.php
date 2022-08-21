@@ -48,6 +48,6 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     public function testRestoreDefaults(): void
     {
-        $this->Config->destroy();
+        $this->assertTrue($this->Config->destroy());
     }
 }

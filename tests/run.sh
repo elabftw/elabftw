@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 #
 # @author Nicolas CARPi <nico-git@deltablot.email>
 # @copyright 2012 Nicolas CARPi
@@ -96,6 +96,10 @@ fi
 if ($scrutinizer); then
     docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
 fi
+
+# make a copy with adjusted path for local sonar scanner
+ROOT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && cd .. && pwd )
+sed -e "s:/elabftw/:$ROOT_DIR/:g" tests/_output/coverage.xml > tests/_output/coverage-sonar.xml
 # all tests succeeded, display a koala
 cat << WALAEND
 

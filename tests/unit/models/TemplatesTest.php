@@ -22,7 +22,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
-        $this->Templates->create('Test tpl');
+        $this->assertIsInt($this->Templates->create('Test tpl'));
     }
 
     public function testRead(): void
@@ -58,6 +58,6 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
     public function testDestroy(): void
     {
         $this->Templates->setId(1);
-        $this->Templates->destroy();
+        $this->assertTrue($this->Templates->destroy());
     }
 }

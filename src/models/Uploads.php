@@ -266,7 +266,7 @@ class Uploads implements RestInterface
     /**
      * Delete all uploaded files for an entity
      */
-    public function destroyAll(): void
+    public function destroyAll(): bool
     {
         // this will include the archived/deleted ones
         $uploadArr = $this->readAll();
@@ -275,6 +275,7 @@ class Uploads implements RestInterface
             $this->setId($upload['id']);
             $this->nuke();
         }
+        return true;
     }
 
     public function getStorageFromLongname(string $longname): int

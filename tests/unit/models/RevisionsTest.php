@@ -26,7 +26,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
-        $this->Revisions->create('Ohaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii');
+        $this->assertFalse($this->Revisions->create('Ohaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'));
     }
 
     public function testReadAll(): void
@@ -48,12 +48,12 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
         $Experiment->setId($new);
         $this->Revisions = new Revisions($Experiment, 10, 100, 10);
         $this->Revisions->create('Ohai');
-        $this->Revisions->restore($new);
+        $this->assertTrue($this->Revisions->restore($new));
     }
 
     public function testDestroy(): void
     {
         $this->Revisions->setId(1);
-        $this->Revisions->destroy();
+        $this->assertTrue($this->Revisions->destroy());
     }
 }

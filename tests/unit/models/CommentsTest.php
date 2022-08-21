@@ -49,7 +49,7 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
     public function testDestroy(): void
     {
         $this->Comments->setId(1);
-        $this->Comments->destroy();
+        $this->assertTrue($this->Comments->destroy());
     }
 
     public function testSetWrongId(): void

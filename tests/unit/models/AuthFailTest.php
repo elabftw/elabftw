@@ -16,7 +16,7 @@ class AuthFailTest extends \PHPUnit\Framework\TestCase
     public function testRegisterWithoutDeviceToken(): void
     {
         $AuthFail = new AuthFail(10, 1);
-        $AuthFail->register();
+        $this->assertFalse($AuthFail->register());
     }
 
     public function testGetLockedUsersCount(): void
@@ -29,7 +29,7 @@ class AuthFailTest extends \PHPUnit\Framework\TestCase
         $DeviceToken = new DeviceToken();
         $deviceToken = $DeviceToken->getToken(1);
         $AuthFail = new AuthFail(10, 1, $deviceToken);
-        $AuthFail->register();
+        $this->assertFalse($AuthFail->register());
     }
 
     public function testLockDevice(): void
@@ -37,12 +37,12 @@ class AuthFailTest extends \PHPUnit\Framework\TestCase
         $DeviceToken = new DeviceToken();
         $deviceToken = $DeviceToken->getToken(1);
         $AuthFail = new AuthFail(0, 1, $deviceToken);
-        $AuthFail->register();
+        $this->assertTrue($AuthFail->register());
     }
 
     public function testLockUser(): void
     {
         $AuthFail = new AuthFail(0, 1);
-        $AuthFail->register();
+        $this->assertTrue($AuthFail->register());
     }
 }

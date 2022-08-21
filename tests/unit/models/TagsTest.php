@@ -73,7 +73,10 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testCopyTags(): void
     {
-        $this->Experiments->Tags->copyTags(2, true);
+        $id = $this->Experiments->postAction(Action::Create, array());
+        $this->Experiments->Tags->copyTags($id, true);
+        $newExperiments = new Experiments($this->Users, $id);
+        $this->assertEquals($this->Experiments->readOne()['tags'], $newExperiments->entityData['tags']);
     }
 
     public function testUnreference(): void
@@ -87,6 +90,6 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy(): void
     {
-        $this->Experiments->Tags->destroy();
+        $this->assertTrue($this->Experiments->Tags->destroy());
     }
 }

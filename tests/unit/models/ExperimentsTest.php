@@ -97,7 +97,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testInsertTags(): void
     {
-        $this->Experiments->create(0, array('tag-bbbtbtbt', 'tag-auristearuiset'));
+        $this->assertIsInt($this->Experiments->create(0, array('tag-bbbtbtbt', 'tag-auristearuiset')));
     }
 
     public function testGetTags(): void

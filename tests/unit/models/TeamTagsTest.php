@@ -81,6 +81,6 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy(): void
     {
-        $this->TeamTags->destroy();
+        $this->assertTrue($this->TeamTags->destroy());
     }
 }

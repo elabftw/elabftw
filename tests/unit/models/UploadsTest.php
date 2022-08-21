@@ -144,6 +144,6 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroyAll(): void
     {
-        $this->Entity->Uploads->destroyAll();
+        $this->assertTrue($this->Entity->Uploads->destroyAll());
     }
 }

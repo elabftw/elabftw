@@ -49,7 +49,9 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): int
     {
-        return $this->Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => 'Yep'));
+        $id = $this->Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => 'Yep'));
+        $this->assertIsInt($id);
+        return $id;
     }
 
     public function testFailure(): void
@@ -166,6 +168,6 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     {
         $id = $this->Scheduler->postAction(Action::Create, array('start' => '2016-07-22T19:42:00+02:00', 'end' => '2016-07-23T19:42:00+02:00', 'title' => 'Yep'));
         $this->Scheduler->setId($id);
-        $this->Scheduler->destroy();
+        $this->assertTrue($this->Scheduler->destroy());
     }
 }

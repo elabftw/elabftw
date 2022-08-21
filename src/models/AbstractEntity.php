@@ -19,7 +19,6 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Check;
@@ -313,16 +312,6 @@ abstract class AbstractEntity implements RestInterface
         $this->Db->execute($req);
 
         return $req->fetchAll();
-    }
-
-    // @deprecated: once boundevent is out of the way it'll just be readOne()
-    // maybe it'll be /experiments/:id/events ?
-    public function read(ContentParamsInterface $params): array
-    {
-        if ($params->getTarget() === 'boundevent' && $this instanceof Experiments) {
-            return $this->getBoundEvents();
-        }
-        return $this->readOne();
     }
 
     /**

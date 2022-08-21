@@ -17,8 +17,6 @@ import { Model } from './interfaces';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 
-const ApiC = new Api();
-
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
   const url = new URL(window.location.href);
@@ -262,6 +260,7 @@ export function adjustHiddenState(): void {
 
 // AUTOCOMPLETE
 export function addAutocompleteToLinkInputs(): void {
+  const ApiC = new Api();
   // this is the select category filter on add link input
   const catFilterEl = (document.getElementById('addLinkCatFilter') as HTMLInputElement);
   if (catFilterEl) {
@@ -280,6 +279,7 @@ export function addAutocompleteToLinkInputs(): void {
 }
 
 export function addAutocompleteToTagInputs(): void {
+  const ApiC = new Api();
   ($('[data-autocomplete="tags"]') as JQuery<HTMLInputElement>).autocomplete({
     source: function(request: Record<string, string>, response: (data) => void): void {
       ApiC.getJson(`${Model.TeamTags}/?q=${request.term}`).then(json => {

@@ -8,10 +8,9 @@
 import i18next from 'i18next';
 import { InputType, Malle } from '@deltablot/malle';
 import { Metadata } from './Metadata.class';
-import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
 import { getEntity, updateCategory, relativeMoment, reloadElement, showContentPlainText } from './misc';
-import { BoundEvent, EntityType, Payload, Method, Action, Target, Model } from './interfaces';
+import { EntityType, Action, Model } from './interfaces';
 import { DateTime } from 'luxon';
 import EntityClass from './Entity.class';
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -34,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
-  const AjaxC = new Ajax();
   const ApiC = new Api();
 
   // add extra fields elements from metadata json
@@ -71,25 +69,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // SEE EVENTS
     } else if (el.matches('[data-action="see-events"]')) {
-      const payload: Payload = {
-        method: Method.GET,
-        action: Action.Read,
-        entity: entity,
-        model: entity.type,
-        target: Target.BoundEvent,
-      };
-      AjaxC.send(payload).then(json => {
-        const bookingsDiv = document.getElementById('boundBookings');
-        for (const msg of (json.value as Array<BoundEvent>)) {
+      EntityC.read(entity.id).then(json => {
+        const eventId = json.events_id;
+        // now read the event info
+        ApiC.getJson(`event/${eventId}`).then(json => {
+          const bookingsDiv = document.getElementById('boundBookings');
           const el = document.createElement('a');
-          el.href = `team.php?item=${msg.item}&start=${encodeURIComponent(msg.start)}`;
+          el.href = `team.php?item=${json.item}&start=${encodeURIComponent(json.start)}`;
           const button = document.createElement('button');
           button.classList.add('mr-2', 'btn', 'btn-neutral', 'relative-moment');
           const locale = document.getElementById('user-prefs').dataset.jslang;
-          button.innerText = DateTime.fromISO(msg.start, {'locale': locale}).toRelative();
+          button.innerText = DateTime.fromISO(json.start, {'locale': locale}).toRelative();
           el.appendChild(button);
           bookingsDiv.append(el);
-        }
+        });
       });
 
     // SHARE

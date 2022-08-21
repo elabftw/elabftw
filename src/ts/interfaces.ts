@@ -10,7 +10,7 @@ interface ResponseMsg {
   res: boolean;
   msg: string;
   color?: string;
-  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedEntities> | Array<Upload> | Array<Categories> | object;
+  value?: string | Array<Todoitem> | Array<UnfinishedEntities> | Array<Upload> | Array<Categories> | object;
 }
 
 interface Categories {
@@ -37,11 +37,6 @@ interface UnfinishedEntities {
   steps: Array<string>;
 }
 
-interface BoundEvent {
-  item: string;
-  start: string;
-}
-
 interface CheckableItem {
   id: number;
   randomid: number;
@@ -52,7 +47,6 @@ enum Method {
   POST = 'POST',
   PATCH = 'PATCH',
   DELETE = 'DELETE',
-  UNAUTHGET = 'UNAUTHGET',
 }
 
 enum Action {
@@ -106,7 +100,6 @@ enum EntityType {
 enum Target {
   All = 'all',
   Body = 'body',
-  BoundEvent = 'boundevent',
   Comment = 'comments',
   ContentType = 'content_type',
   Date = 'date',
@@ -148,7 +141,6 @@ interface Payload {
 
 export {
   Action,
-  BoundEvent,
   Categories,
   CheckableItem,
   Entity,

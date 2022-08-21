@@ -6,14 +6,13 @@
  * @package elabftw
  */
 import $ from 'jquery';
-import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
 import { makeSortableGreatAgain, reloadElement, adjustHiddenState, getEntity } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
-import { EntityType, Payload, Method, Model, Action } from './interfaces';
+import { EntityType, Model } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
@@ -59,7 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   });
 
-  const AjaxC = new Ajax();
   const ApiC = new Api();
 
   // set the language for js translated strings
@@ -169,13 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // SHOW PRIVACY POLICY
     if (el.matches('[data-action="show-privacy-policy"]')) {
-      const payload: Payload = {
-        method: Method.UNAUTHGET,
-        action: Action.Read,
-        model: Model.PrivacyPolicy,
-      };
-      AjaxC.send(payload).then(json => {
-        let policy = json.value as string;
+      fetch('app/controllers/UnauthRequestHandler.php').then(resp => resp.json()).then(json => {
+        let policy = json.privacy_policy;
         if (!policy) {
           policy = 'No privacy policy is set.';
         }

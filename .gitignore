@@ -1,7 +1,6 @@
 *~
 *.br
-.php_cs.cache
-.php_cs
+.php-cs-fixer.cache
 .scannerwork
 *.bak
 apidoc/html

@@ -165,11 +165,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let category;
   // TODO make it so it calls only on trigger!
   if (entity.type === EntityType.Experiment) {
-    category = ApiC.getJson(`${Model.Team}/${about.team}/status`).then(json => Array.from(json as Iterable<any>));
+    category = ApiC.getJson(`${Model.Team}/${about.team}/status`).then(json => Array.from(json));
   } else {
     category = ApiC.getJson(`${EntityType.ItemType}`).then(json => Array.from(json as Iterable<any>));
   }
-  new Malle({
+  const malleableCategory = new Malle({
     cancel : i18next.t('cancel'),
     cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],
@@ -182,10 +182,15 @@ document.addEventListener('DOMContentLoaded', () => {
     submit : i18next.t('save'),
     submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
-  }).listen();
+  });
 
   // listen on existing comments
   malleableComments.listen();
+  malleableCategory.listen();
+
+  new MutationObserver(() => {
+    malleableCategory.listen();
+  }).observe(document.getElementById('main_section'), {childList: true});
 
   // add an observer so new comments will get an event handler too
   new MutationObserver(() => {

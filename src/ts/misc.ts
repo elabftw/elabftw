@@ -304,6 +304,7 @@ export function updateCategory(entity: Entity, value: string): string {
       // first : get what is the color of the new status
       const css = '6px solid #' + json.color;
       $('#main_section').css('border-left', css);
+      reloadElement('main_section');
     });
   });
   return value;

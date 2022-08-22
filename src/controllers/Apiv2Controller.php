@@ -220,7 +220,7 @@ class Apiv2Controller extends AbstractApiController
             case 'users':
                 return new Users($this->id, null, $this->Users);
             default:
-                throw new ImproperActionException('Invalid endpoint.');
+                throw new ImproperActionException('Invalid endpoint: available endpoints: apikeys, config, experiments, items, experiments_templates, items_types, event, events, team_tags, teams, todolist, users.');
         }
     }
 
@@ -233,20 +233,20 @@ class Apiv2Controller extends AbstractApiController
                 'steps' => new Steps($this->Model, $this->subId),
                 'tags' => new Tags($this->Model, $this->subId),
                 'uploads' => new Uploads($this->Model, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel.'),
+                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->page . ': available models are: comments, links, steps, tags, uploads.'),
             };
         }
         if ($this->Model instanceof Teams) {
             return match ($submodel) {
                 'status' => new Status($this->Model, $this->subId),
                 'teamgroups' => new TeamGroups($this->Users, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel.'),
+                default => throw new ImproperActionException('Incorrect submodel for teams: available models are: status, teamgroups.'),
             };
         }
         if ($this->Model instanceof Users) {
             return match ($submodel) {
                 'notifications' => new Notifications($this->Users, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel.'),
+                default => throw new ImproperActionException('Incorrect submodel for users: available models are: notifications.'),
             };
         }
         throw new ImproperActionException('Incorrect endpoint.');

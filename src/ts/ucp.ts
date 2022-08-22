@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, reloadElement, addAutocompleteToTagInputs } from './misc';
+import { notif, reloadElement, addAutocompleteToTagInputs, collectForm } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
@@ -67,6 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
           .catch((e) => notif({'res': false, 'msg': e.message}));
       }
 
+    } else if (el.matches('[data-action="patch-account"]')) {
+      const params = collectForm(document.getElementById('ucp-account-form'));
+      if (params['orcid'] === '') {
+        delete params['orcid'];
+      }
+      ApiC.patch(`${Model.User}/${el.dataset.userid}`, params);
     // CREATE API KEY
     } else if (el.matches('[data-action="create-apikey"]')) {
       // clear any previous new key message

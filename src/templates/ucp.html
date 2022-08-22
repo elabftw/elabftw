@@ -299,33 +299,38 @@
               <option value='off'{{ not App.Users.userData.mfa_secret ? ' selected' }}>{{ 'No'|trans }}</option>
             </select>
           </div>
-        </div>
-
-        <hr><br>
-        <h4>{{ 'Modify your identity'|trans }}</h4>
-
-        <div class='row'>
-          <div class='col-md-6'>
-            <label for='firstname'>{{ 'Firstname'|trans }}</label>
-            <input class='form-control' id='firstname' name='firstname' value='{{ App.Users.userData.firstname|raw }}' />
+          <div class='mt-4 text-center'>
+            <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
           </div>
-
-          <div class='col-md-6'>
-            <label for='lastname'>{{ 'Lastname'|trans }}</label>
-            <input class='form-control' id='lastname' name='lastname' value='{{ App.Users.userData.lastname|raw }}' />
-          </div>
-        </div>
-        <div class='row'>
-            <div class='col-md-6'>
-                <label for='orcid'>ORCID</label>
-                <input class='form-control' placeholder='0000-0002-1234-1111' title='0000-1111-2222-3333' pattern='[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}' id='orcid' name='orcid' value='{{ App.Users.userData.orcid }}' />
-            </div>
-        </div>
-
-        <div class='mt-4 text-center'>
-            <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Update profile'|trans }}</button>
         </div>
     </form>
+
+  <hr><br>
+  <h4>{{ 'Modify your identity'|trans }}</h4>
+
+  <div id='ucp-account-form'>
+    <div class='row'>
+      <div class='col-md-6'>
+        <label for='firstname'>{{ 'Firstname'|trans }}</label>
+        <input class='form-control' id='firstname' name='firstname' value='{{ App.Users.userData.firstname|raw }}' />
+      </div>
+
+      <div class='col-md-6'>
+        <label for='lastname'>{{ 'Lastname'|trans }}</label>
+        <input class='form-control' id='lastname' name='lastname' value='{{ App.Users.userData.lastname|raw }}' />
+      </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-6'>
+            <label for='orcid'>ORCID</label>
+            <input class='form-control' placeholder='0000-0002-1234-1111' title='0000-1111-2222-3333' pattern='[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}' id='orcid' name='orcid' value='{{ App.Users.userData.orcid }}' />
+        </div>
+    </div>
+
+    <div class='mt-4 text-center'>
+      <button data-action='patch-account' data-userid='{{ App.Users.userData.userid }}' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+    </div>
+  </div>
 </div>
 
 <!-- TAB 3 - USER TEMPLATES -->

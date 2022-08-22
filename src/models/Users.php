@@ -339,7 +339,7 @@ class Users implements RestInterface
 
     private function canReadOrExplode(): void
     {
-        if ($this->requester->userid === $this->userid) {
+        if ($this->requester === null || $this->requester->userid === $this->userid) {
             // it's ourself
             return;
         }

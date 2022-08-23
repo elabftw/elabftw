@@ -261,6 +261,8 @@ class Users implements RestInterface
     {
         $this->canWriteOrExplode();
         match ($action) {
+            Action::Add => (new Users2Teams())->create($this->userData['userid'], (int) $params['team']),
+            Action::Unreference => (new Users2Teams())->destroy($this->userData['userid'], (int) $params['team']),
             Action::Lock, Action::Archive => (new UserArchiver($this))->toggleArchive(),
             Action::Update => (
                 function () use ($params) {

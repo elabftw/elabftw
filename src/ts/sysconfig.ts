@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import { collectForm, notif, reloadElement, removeEmpty } from './misc';
-import { Action, Method, Payload, Model } from './interfaces';
+import { Action, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
@@ -79,29 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }).catch(error => latestVersionDiv.append(error));
 
-
-  // TEAMS
-  const Teams = {
-    controller: 'app/controllers/SysconfigAjaxController.php',
-    editUser2Team(action: Action, teamid: number, userid: number): void {
-      const payload: Payload = {
-        method: Method.POST,
-        action: action,
-        model: Model.User2Team,
-        notif: true,
-        extraParams: {
-          teamid: teamid,
-          userid: userid,
-        },
-      };
-      AjaxC.send(payload)
-        .then(json => {
-          notif(json);
-          reloadElement('editUsersBox');
-        });
-    },
-  };
-
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
@@ -137,21 +114,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // ADD USER TO TEAM
     } else if (el.matches('[data-action="create-user2team"]')) {
       const selectEl = (el.previousElementSibling as HTMLSelectElement);
-      Teams.editUser2Team(
-        Action.Create,
-        parseInt(selectEl.options[selectEl.selectedIndex].value, 10),
-        parseInt(el.dataset.userid, 10),
-      );
+      const team = parseInt(selectEl.options[selectEl.selectedIndex].value, 10);
+      const userid = parseInt(el.dataset.userid, 10);
+      ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Add, 'team': team}).then(() => reloadElement('editUsersBox'));
     // REMOVE USER FROM TEAM
     } else if (el.matches('[data-action="destroy-user2team"]')) {
-      if (!confirm(i18next.t('generic-delete-warning'))) {
-        return;
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        const userid = parseInt(el.dataset.userid, 10);
+        const team = parseInt(el.dataset.teamid, 10);
+        ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Unreference, 'team': team}).then(() => reloadElement('editUsersBox'));
       }
-      Teams.editUser2Team(
-        Action.Destroy,
-        parseInt(el.dataset.teamid, 10),
-        parseInt(el.dataset.userid, 10),
-      );
     // DESTROY ts_password
     } else if (el.matches('[data-action="destroy-ts-password"]')) {
       ApiC.patch('config', {'ts_password': ''}).then(() => reloadElement('ts_loginpass'));

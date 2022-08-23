@@ -178,10 +178,43 @@ document.addEventListener('DOMContentLoaded', () => {
         content = '';
       }
       ApiC.patch('config', {'privacy_policy': content});
+    // PATCH STORAGE
     } else if (el.matches('[data-action="patch-storage"]')) {
       return ApiC.patch('config', collectForm((el.closest('div.form-group') as HTMLElement)));
+    // TEST MAIL
+    } else if (el.matches('[data-action="send-test-email"]')) {
+      const button = (el as HTMLButtonElement);
+      button.disabled = true;
+      button.innerText = 'Sending…';
+      const email = (document.getElementById('testemailEmail') as HTMLInputElement).value;
+      AjaxC.postForm(
+        'app/controllers/SysconfigAjaxController.php',
+        { 'testemailSend': '1', 'email': email }).then(resp => handleEmailResponse(resp, button));
+    // MASS MAIL
+    } else if (el.matches('[data-action="send-mass-email"]')) {
+      const button = (el as HTMLButtonElement);
+      button.disabled = true;
+      button.innerText = 'Sending…';
+      const subject = (document.getElementById('massSubject') as HTMLInputElement).value;
+      const body = (document.getElementById('massBody') as HTMLInputElement).value;
+      AjaxC.postForm(
+        'app/controllers/SysconfigAjaxController.php',
+        { 'massEmail': '1', 'subject': subject, 'body': body }).then(resp => handleEmailResponse(resp, button));
     }
   });
+
+  function handleEmailResponse(resp: Response, button: HTMLButtonElement): void {
+    resp.json().then(json => {
+      notif(json);
+      if (json.res) {
+        button.innerText = 'Sent!';
+        button.disabled = false;
+      } else {
+        button.innerText ='Error';
+        button.style.backgroundColor = '#e6614c';
+      }
+    });
+  }
 
   /**
    * Timestamp provider select
@@ -212,46 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('ts_urldiv').removeAttribute('hidden');
     }
   }
-
-  // MASS MAIL
-  $(document).on('click', '#massSend', function() {
-    $('#massSend').prop('disabled', true);
-    $('#massSend').text('Sending…');
-    $.post('app/controllers/SysconfigAjaxController.php', {
-      massEmail: true,
-      subject: $('#massSubject').val(),
-      body: $('#massBody').val(),
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        $('#massSend').text('Sent!');
-      } else {
-        $('#massSend').prop('disabled', false);
-        $('#massSend').css('background-color', '#e6614c');
-        $('#massSend').text('Error');
-      }
-    });
-  });
-
-  // TEST EMAIL
-  $(document).on('click', '#testemailButton', function() {
-    const email = $('#testemailEmail').val();
-    (document.getElementById('testemailButton') as HTMLButtonElement).disabled = true;
-    $('#testemailButton').text('Sending…');
-    $.post('app/controllers/SysconfigAjaxController.php', {
-      testemailSend: true,
-      testemailEmail: email,
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        $('#massSend').text('Sent!');
-        (document.getElementById('testemailButton') as HTMLButtonElement).disabled = false;
-      } else {
-        $('#testemailButton').text('Error');
-        $('#testemailButton').css('background-color', '#e6614c');
-      }
-    });
-  });
 
   $(document).on('click', '.idpsDestroy', function() {
     const elem = $(this);

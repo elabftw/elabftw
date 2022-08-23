@@ -374,7 +374,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     <label for='testemailEmail'>{{ 'Send a test email'|trans }}</label>
     <input class='form-control col-md-4' type='email' value='{{ App.Users.userData.email }}' id='testemailEmail' />
     <div class='mt-4 text-center'>
-      <button id='testemailButton' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
+      <button data-action='send-test-email' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
     </div>
   </div>
 
@@ -388,7 +388,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     <label for='massBody'>{{ 'Email Body'|trans }}</label>
     <textarea class='form-control col-md-4' id='massBody'></textarea>
     <div class='mt-4 text-center'>
-      <button id='massSend' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
+      <button data-action='send-mass-email' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
     </div>
   </div>
 

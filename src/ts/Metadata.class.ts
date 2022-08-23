@@ -240,7 +240,6 @@ export class Metadata {
       }
       // if there was an issue fetching metadata, log the error
       console.error(e);
-      return;
     });
   }
 

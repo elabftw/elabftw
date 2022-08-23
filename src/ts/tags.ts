@@ -15,11 +15,6 @@ import { Action, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 
 document.addEventListener('DOMContentLoaded', () => {
-  let type = $('#info').data('type');
-  if (type === undefined) {
-    type = 'experiments_templates';
-  }
-
   const entity = getEntity();
   const ApiC = new Api();
 
@@ -28,8 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if ($(this).val() === '') {
       return;
     }
-    // Enter is ascii code 13
-    if (e.which === 13 || e.type === 'focusout') {
+    if (e.key === 'Enter' || e.type === 'focusout') {
       ApiC.post(`${entity.type}/${entity.id}/${Model.Tag}`, {'tag': $(this).val()}).then(() => {
         reloadElement('tags_div_' + entity.id);
         $(this).val('');
@@ -42,8 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if ($(this).val() === '') {
       return;
     }
-    // Enter is ascii code 13
-    if (e.which === 13 || e.type === 'focusout') {
+    if (e.key === 'Enter' || e.type === 'focusout') {
       // get the ids of selected entities
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
@@ -76,8 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if ($(this).val() === '') {
       return;
     }
-    // Enter is ascii code 13
-    if (e.which === 13 || e.type === 'focusout') {
+    if (e.key === 'Enter' || e.type === 'focusout') {
       FavTagC.create($(this).val() as string).then(json => {
         if (json.res === false) {
           notif(json);

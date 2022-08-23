@@ -144,12 +144,12 @@ document.addEventListener('DOMContentLoaded', () => {
     eventClick: function(info): void {
       if (!editable) { return; }
       $('[data-action="scheduler-rm-bind"]').hide();
-      ($('#eventModal') as JQuery).modal('toggle');
+      $('#eventModal').modal('toggle');
       // delete button in modal
       $('#deleteEvent').on('click', function(): void {
         ApiC.delete(`event/${info.event.id}`).then(() => {
           info.event.remove();
-          ($('#eventModal') as JQuery).modal('toggle');
+          $('#eventModal').modal('toggle');
         });
       });
       // FILL THE BOUND DIV
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (entityid > 0) {
           ApiC.patch(`event/${info.event.id}`, {'target': $(this).data('type'), 'id': entityid}).then(() => {
             $('#bindinput').val('');
-            ($('#eventModal') as JQuery).modal('toggle');
+            $('#eventModal').modal('toggle');
             window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
           });
         }
@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // remove the binding
       $('[data-action="scheduler-rm-bind"]').on('click', function(): void {
         ApiC.patch(`event/${info.event.id}`, {'target': $(this).data('type'), 'id': null}).then(() => {
-          ($('#eventModal') as JQuery).modal('toggle');
+          $('#eventModal').modal('toggle');
           window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
         });
       });

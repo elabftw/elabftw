@@ -117,7 +117,7 @@ export function notif(info: ResponseMsg): void {
   }
 
   const p = document.createElement('p');
-  p.innerText = (info.msg as string);
+  p.innerText = info.msg;
   const result = info.res ? 'ok' : 'ko';
   const overlay = document.createElement('div');
   overlay.setAttribute('id','overlay');

@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // GET the latest version information
   const updateUrl = 'https://get.elabftw.net/updates.json';
-  const currentVersionDiv = document.getElementById('currentVersion') as HTMLElement;
+  const currentVersionDiv = document.getElementById('currentVersion');
   const latestVersionDiv = document.getElementById('latestVersion');
   const currentVersion = currentVersionDiv.innerText;
   // Note: this doesn't work on Chrome
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch('config', {'privacy_policy': content});
     // PATCH STORAGE
     } else if (el.matches('[data-action="patch-storage"]')) {
-      return ApiC.patch('config', collectForm((el.closest('div.form-group') as HTMLElement)));
+      return ApiC.patch('config', collectForm(el.closest('div.form-group')));
     // TEST MAIL
     } else if (el.matches('[data-action="send-test-email"]')) {
       const button = (el as HTMLButtonElement);

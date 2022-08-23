@@ -14,10 +14,8 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\Users;
 use League\Csv\Info as CsvInfo;
 use League\Csv\Reader;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Import entries from a csv file.
@@ -31,11 +29,6 @@ class ImportCsv extends AbstractImport
         'text/csv',
         'text/tsv',
     );
-
-    public function __construct(Users $users, string $target, string $canread, string $canwrite, UploadedFile $uploadedFile)
-    {
-        parent::__construct($users, $target, $canread, $canwrite, $uploadedFile);
-    }
 
     /**
      * Do the work

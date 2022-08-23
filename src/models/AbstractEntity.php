@@ -148,7 +148,6 @@ abstract class AbstractEntity implements RestInterface
      */
     public function updateTimestamp(string $responseTime): void
     {
-        return;
     }
 
     /**

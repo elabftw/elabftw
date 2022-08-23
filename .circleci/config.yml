@@ -84,12 +84,6 @@ jobs:
             - ./node_modules
             - ./yarn.cache
       - run:
-          name: Run SCSS linter
-          command: docker exec -it elabtmp yarn csslint
-      - run:
-          name: Run Javascript linter
-          command: docker exec -it elabtmp yarn jslint-ci
-      - run:
           name: Build all
           command: docker exec -it elabtmp yarn buildall:dev
       - run:
@@ -98,6 +92,12 @@ jobs:
       - run:
           name: Run PHP-CS-Fixer
           command: docker exec -it elabtmp yarn phpcs-dry
+      - run:
+          name: Run SCSS linter
+          command: docker exec -it elabtmp yarn csslint
+      - run:
+          name: Run Javascript linter
+          command: docker exec -it elabtmp yarn jslint-ci
       - run:
           name: Prepare php.ini
           # allow tmpfile, used by phpstan

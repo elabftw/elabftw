@@ -42,8 +42,8 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
 
     public function testError(): void
     {
-        $this->assertEquals(Tools::error(), 'An error occurred!');
-        $this->assertEquals(Tools::error(true), 'This section is out of your reach!');
+        $this->assertEquals('An error occurred!', Tools::error());
+        $this->assertEquals('This section is out of your reach!', Tools::error(true));
     }
 
     public function testPrintArr(): void

@@ -65,17 +65,17 @@ class MfaHelper
         return $this->TwoFactorAuth->createSecret(self::SECRET_BITS);
     }
 
-    public function saveSecret(): void
+    public function saveSecret(): bool
     {
         if ($this->secret === null) {
             throw new RuntimeException('No secret to save!');
         }
-        $this->toggleSecret($this->secret);
+        return $this->toggleSecret($this->secret);
     }
 
-    public function removeSecret(): void
+    public function removeSecret(): bool
     {
-        $this->toggleSecret();
+        return $this->toggleSecret();
     }
 
     public function verifyCode(string $code): bool
@@ -90,12 +90,12 @@ class MfaHelper
         return $this->TwoFactorAuth->getCode($this->secret);
     }
 
-    private function toggleSecret(?string $secret = null): void
+    private function toggleSecret(?string $secret = null): bool
     {
         $sql = 'UPDATE users SET mfa_secret = :secret WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':secret', $secret);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 }

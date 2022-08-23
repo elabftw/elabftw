@@ -42,7 +42,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
         $id = $this->Steps->postAction(Action::Create, array('body' => 'some step'));
         $Steps = new Steps($this->Experiments, $id);
         $step = $Steps->patch(Action::Update, array('body' => 'updated step body'));
-        $this->assertEquals($step['body'], 'updated step body');
+        $this->assertEquals('updated step body', $step['body']);
         // update deadline
         $Steps->patch(Action::Update, array('deadline' => '2022-03-23 13:37:00'));
         $Steps->patch(Action::Notif, array());

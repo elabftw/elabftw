@@ -56,8 +56,8 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
     {
         $res = $this->ApiKeys->readAll();
         $this->assertIsArray($res);
-        $this->assertSame($res[1]['name'], 'test key');
-        $this->assertSame($res[1]['can_write'], 1);
+        $this->assertSame('test key', $res[1]['name']);
+        $this->assertSame(1, $res[1]['can_write']);
     }
 
     public function testDestroy(): void

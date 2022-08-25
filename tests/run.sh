@@ -10,19 +10,25 @@
 
 # stop on failure
 set -eu
-# detect if we are in scrutinizer ci (https://scrutinizer-ci.com/g/elabftw/elabftw/)
-scrutinizer=${SCRUTINIZER:-false}
+
+# the behavior between local dev and ci pipeline is slightly different
+# use env vars set in ci to guess where we run
+# https://scrutinizer-ci.com/g/elabftw/elabftw
+# https://scrutinizer-ci.com/docs/build/environment-variables
+# https://circleci.com/docs/variables
+# the both define a CI bool, so let's use that
+ci=${CI:-false}
 
 # when the script stops (or is stopped), replace the test config with the dev config
 cleanup() {
-    if (! $scrutinizer); then
+    if (! $ci); then
         cp -v config.php.dev config.php
     fi
 }
 trap cleanup EXIT
 
 # make a backup of the current (dev) config
-if (! $scrutinizer); then
+if (! $ci); then
     cp -v config.php config.php.dev
 fi
 cp -v tests/config-home.php config.php
@@ -30,14 +36,14 @@ cp -v tests/config-home.php config.php
 # if there are no custom env_file, touch one, as this will trigger an error
 if [ ! -f tests/elabftw-user.env ]; then
     touch tests/elabftw-user.env
-    if ($scrutinizer); then
+    if (${SCRUTINIZER:-false}); then
         printf "ELABFTW_USER=scrutinizer\nELABFTW_GROUP=scrutinizer\nELABFTW_USERID=1001\nELABFTW_GROUPID=1001\n" > tests/elabftw-user.env
     fi
 fi
 
 # launch a fresh environment if needed
 if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
-    if ($scrutinizer); then
+    if ($ci); then
         # Use the freshly built elabtmp image
         sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
         export DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain COMPOSE_DOCKER_CLI_BUILD=1
@@ -46,9 +52,9 @@ if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
     docker-compose -f tests/docker-compose.yml up -d --quiet-pull
     # give some time for containers to start
     echo -n "Waiting for containers to start..."
-    while [ "`docker inspect -f {{.State.Health.Status}} elabtmp`" != "healthy" ]; do echo -n .; sleep 2; done; echo
+    while [ "$(docker inspect -f {{.State.Health.Status}} elabtmp)" != "healthy" ]; do echo -n .; sleep 2; done; echo
 fi
-if ($scrutinizer); then
+if ($ci); then
     # install and initial tests
     docker exec -it elabtmp yarn install --silent --non-interactive --frozen-lockfile
     docker exec -it elabtmp yarn csslint
@@ -66,7 +72,7 @@ fi
 # install the database
 echo "Initializing the database..."
 docker exec -it elabtmp bin/install start -r -q
-if ($scrutinizer); then
+if ($ci); then
     docker exec -it elabtmp yarn static
 fi
 # populate the database
@@ -74,7 +80,7 @@ docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
 # RUN TESTS
 # install xdebug in the container so we can do code coverage
 docker exec -it elabtmp bash -c 'apk add --update php81-pecl-xdebug && if [ ! -f "/etc/php81/conf.d/42_xdebug.ini" ]; then printf "zend_extension=xdebug.so\nxdebug.mode=coverage" > /etc/php81/conf.d/42_xdebug.ini; fi'
-if ($scrutinizer); then
+if ($ci); then
     # fix permissions on test output and cache folders
     sudo mkdir -p cache/purifier/{HTML,CSS,URI}
     sudo chown -R scrutinizer:scrutinizer cache
@@ -93,7 +99,7 @@ else
 fi
 
 # in scrutinizer we copy the coverage in current directory
-if ($scrutinizer); then
+if ($ci); then
     docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
 fi
 

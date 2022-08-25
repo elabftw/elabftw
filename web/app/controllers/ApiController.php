@@ -16,6 +16,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Users;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -48,5 +49,10 @@ try {
 } catch (ImproperActionException $e) {
     (new Response($e->getMessage(), 400))->send();
 } catch (UnauthorizedException $e) {
-    (new Response($e->getMessage(), 401))->send();
+    $error = array(
+        'code' => 401,
+        'message' => 'Unauthorized',
+        'description' => $e->getMessage(),
+    );
+    (new JsonResponse($error, $error['code']))->send();
 }

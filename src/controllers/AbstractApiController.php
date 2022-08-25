@@ -75,7 +75,7 @@ abstract class AbstractApiController implements ControllerInterface
 
         // assign the endpoint (experiments, items, uploads, items_types, status)
         // 0 is "", 1 is "api", 2 is "v1"
-        $this->endpoint = $req[3];
+        $this->endpoint = $req[3] ?? 'invalid_endpoint';
 
         // assign the id if there is one
         if (Check::id((int) ($req[4] ?? 0)) !== false) {

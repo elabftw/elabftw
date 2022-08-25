@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Model, Action, Todoitem, EntityType, UnfinishedEntities } from './interfaces';
+import { Model, Todoitem, EntityType, UnfinishedEntities } from './interfaces';
 import SidePanel from './SidePanel.class';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
 import FavTag from './FavTag.class';
@@ -67,33 +67,19 @@ export default class Todolist extends SidePanel {
   }
 
   getUnfinishedStep(type: EntityType): Promise<void> {
-    const payload: Payload = {
-      method: Method.GET,
-      action: Action.Read,
-      model: Model.UnfinishedSteps,
-      entity: {
-        type: type,
-        id: null,
-      },
-      extraParams: {
-        scope: this.unfinishedStepsScope,
-      },
-    };
-    return this.sender.send(payload).then(json => {
-      if (json.res) {
-        let html = '';
-        for (const entity of json.value as Array<UnfinishedEntities>) {
-          html += `<li><p><a href='${type === EntityType.Item ? 'database' : 'experiments'}.php?mode=view&id=${entity.id}'>${entity.title}</a></p>`;
-          for (const stepsData of Object.entries(entity.steps)) {
-            const stepId = stepsData[1][0];
-            const stepBody = stepsData[1][1];
-            html += `<div><input type='checkbox' class='stepbox mr-2' id='todo_step_${stepId}' data-id='${entity.id}' data-type='${type}' data-stepid='${stepId}' />${stepBody}</div>`;
-          }
-          html += '</li>';
+    return this.api.getJson(`unfinished_steps?scope=${this.unfinishedStepsScope}`).then(json => {
+      let html = '';
+      for (const entity of json[type] as Array<UnfinishedEntities>) {
+        html += `<li><p><a href='${type === EntityType.Item ? 'database' : 'experiments'}.php?mode=view&id=${entity.id}'>${entity.title}</a></p>`;
+        for (const stepsData of Object.entries(entity.steps)) {
+          const stepId = stepsData[1][0];
+          const stepBody = stepsData[1][1];
+          html += `<div><input type='checkbox' class='stepbox mr-2' id='todo_step_${stepId}' data-id='${entity.id}' data-type='${type}' data-stepid='${stepId}' />${stepBody}</div>`;
         }
-        const typeIdName = 'todoSteps' + type.charAt(0).toUpperCase() + type.slice(1);
-        document.getElementById(typeIdName).innerHTML = html;
+        html += '</li>';
       }
+      const typeIdName = 'todoSteps' + type.charAt(0).toUpperCase() + type.slice(1);
+      document.getElementById(typeIdName).innerHTML = html;
     });
   }
 

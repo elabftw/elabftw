@@ -11,33 +11,20 @@ namespace Elabftw\Models;
 
 class UnfinishedStepsTest extends \PHPUnit\Framework\TestCase
 {
-    private Experiments $Experiments;
-
-    private Items $Items;
+    private Users $Users;
 
     protected function setUp(): void
     {
-        $this->Experiments = new Experiments(new Users(1, 1), 1);
-        $this->Items = new Items(new Users(1, 1), 1);
+        $this->Users = new Users(1, 1);
     }
 
-    public function testReadExperimetsStepsUser(): void
+    public function testReadStepsUser(): void
     {
-        $this->assertIsArray((new UnfinishedSteps($this->Experiments))->readAll());
+        $this->assertIsArray((new UnfinishedSteps($this->Users))->readAll());
     }
 
-    public function testReadExperimetsStepsTeam(): void
+    public function testReadStepsTeam(): void
     {
-        $this->assertIsArray((new UnfinishedSteps($this->Experiments, true))->readAll());
-    }
-
-    public function testReadItemsStepsUser(): void
-    {
-        $this->assertIsArray((new UnfinishedSteps($this->Items))->readAll());
-    }
-
-    public function testReadItemsStepsTeam(): void
-    {
-        $this->assertIsArray((new UnfinishedSteps($this->Items, true))->readAll());
+        $this->assertIsArray((new UnfinishedSteps($this->Users, true))->readAll());
     }
 }

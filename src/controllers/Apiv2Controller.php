@@ -33,6 +33,7 @@ use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Todolist;
+use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use JsonException;
@@ -217,10 +218,12 @@ class Apiv2Controller extends AbstractApiController
                 return new Teams($this->Users, $this->id);
             case 'todolist':
                 return new Todolist($this->Users->userData['userid'], $this->id);
+            case 'unfinished_steps':
+                return new UnfinishedSteps($this->Users, $this->Request->query->get('scope') === 'team');
             case 'users':
                 return new Users($this->id, null, $this->Users);
             default:
-                throw new ImproperActionException('Invalid endpoint: available endpoints: apikeys, config, experiments, items, experiments_templates, items_types, event, events, team_tags, teams, todolist, users.');
+                throw new ImproperActionException('Invalid endpoint: available endpoints: apikeys, config, experiments, items, experiments_templates, items_types, event, events, team_tags, teams, todolist, unfinished_steps, users.');
         }
     }
 

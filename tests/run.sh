@@ -45,8 +45,9 @@ fi
 if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
     if ($ci); then
         # Use the freshly built elabtmp image
-        export BUILDKIT_PROGRESS=plain COMPOSE_DOCKER_CLI_BUILD=1
-        docker buildx build -q -t elabtmp -f tests/elabtmp.Dockerfile .
+        # use DOCKER_BUILDKIT env instead of calling "docker buildx" or it fails in scrutinizer
+        export DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain COMPOSE_DOCKER_CLI_BUILD=1
+        docker build -q -t elabtmp -f tests/elabtmp.Dockerfile .
     fi
     docker-compose -f tests/docker-compose.yml up -d --quiet-pull
     # give some time for containers to start

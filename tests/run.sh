@@ -45,9 +45,8 @@ fi
 if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
     if ($ci); then
         # Use the freshly built elabtmp image
-        sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
-        export DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain COMPOSE_DOCKER_CLI_BUILD=1
-        docker build -q -t elabtmp -f tests/scrutinizer.dockerfile .
+        export BUILDKIT_PROGRESS=plain COMPOSE_DOCKER_CLI_BUILD=1
+        docker buildx build -q -t elabtmp -f tests/elabtmp.Dockerfile .
     fi
     docker-compose -f tests/docker-compose.yml up -d --quiet-pull
     # give some time for containers to start
@@ -62,12 +61,6 @@ if ($ci); then
     docker exec -it elabtmp yarn buildall:dev
     docker exec -it elabtmp composer install --no-progress -q
     docker exec -it elabtmp yarn phpcs-dry
-    # allow tmpfile, used by phpstan
-    docker exec -it elabtmp sed -i 's/tmpfile, //' /etc/php81/php.ini
-    # extend open_basedir
-    # /usr/bin/psalm, //autoload.php, /root/.cache/ are for psalm
-    # /usr/bin/phpstan, /proc/cpuinfo is for phpstan, https://github.com/phpstan/phpstan/issues/4427 https://github.com/phpstan/phpstan/issues/2965
-    docker exec -it elabtmp sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/usr/bin/phpstan:/proc/cpuinfo|' /etc/php81/php.ini
 fi
 # install the database
 echo "Initializing the database..."
@@ -78,8 +71,6 @@ fi
 # populate the database
 docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
 # RUN TESTS
-# install xdebug in the container so we can do code coverage
-docker exec -it elabtmp bash -c 'apk add --update php81-pecl-xdebug && if [ ! -f "/etc/php81/conf.d/42_xdebug.ini" ]; then printf "zend_extension=xdebug.so\nxdebug.mode=coverage" > /etc/php81/conf.d/42_xdebug.ini; fi'
 if ($ci); then
     # fix permissions on test output and cache folders
     sudo mkdir -p cache/purifier/{HTML,CSS,URI}
@@ -98,7 +89,7 @@ else
     docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-html --coverage-xml
 fi
 
-# in scrutinizer we copy the coverage in current directory
+# in ci we copy the coverage output file in current directory
 if ($ci); then
     docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
 fi

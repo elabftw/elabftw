@@ -51,7 +51,7 @@ jobs:
       - restore_cache:
           keys:
             # This branch if available
-            - v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
             # Default branch if not
             - v1-yarn-dep-master-
             # Any branch if there are none on the default branch

@@ -22,6 +22,7 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
+use Elabftw\Models\FavTags;
 use Elabftw\Models\Items;
 use Elabftw\Models\Links;
 use Elabftw\Models\Notifications;
@@ -212,6 +213,8 @@ class Apiv2Controller extends AbstractApiController
                     (string) $this->Request->query->get('start', $defaultStart),
                     (string) $this->Request->query->get('end', $defaultEnd),
                 );
+            case 'favtags':
+                return new FavTags($this->Users, $this->id);
             case 'team_tags':
                 return new TeamTags($this->Users, $this->id);
             case 'teams':

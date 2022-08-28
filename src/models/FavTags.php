@@ -11,13 +11,15 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TagParam;
+use Elabftw\Enums\Action;
+use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
 /**
  * The favorite tags of a user
  */
-class FavTags
+class FavTags implements RestInterface
 {
     use SetIdTrait;
 
@@ -29,27 +31,19 @@ class FavTags
         $this->Db = Db::getConnection();
     }
 
-    public function create(TagParam $params): int
+    public function getPage(): string
     {
-        $tag = $params->getContent();
-        // get the tag id
-        $sql = 'SELECT id FROM tags WHERE team = :team AND tag = :tag';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $req->bindParam(':tag', $tag, PDO::PARAM_STR);
-        $this->Db->execute($req);
-        $tagId = (int) $req->fetchColumn();
+        return '/favtags';
+    }
 
-        if ($this->isFavorite($tagId)) {
-            return 0;
-        }
+    public function postAction(Action $action, array $reqBody): int
+    {
+        return $this->create(new TagParam($reqBody['tag']));
+    }
 
-        // now add it as favorite
-        $sql = 'INSERT INTO favtags2users (users_id, tags_id) VALUES (:userid, :tagId)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':tagId', $tagId, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        return (int) $this->Db->execute($req);
+    public function patch(Action $action, array $params): array
+    {
+        return array();
     }
 
     public function readAll(): array
@@ -76,6 +70,29 @@ class FavTags
         $req->bindParam(':tagId', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    private function create(TagParam $params): int
+    {
+        $tag = $params->getContent();
+        // get the tag id
+        $sql = 'SELECT id FROM tags WHERE team = :team AND tag = :tag';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
+        $req->bindParam(':tag', $tag, PDO::PARAM_STR);
+        $this->Db->execute($req);
+        $tagId = (int) $req->fetchColumn();
+
+        if ($this->isFavorite($tagId)) {
+            return 0;
+        }
+
+        // now add it as favorite
+        $sql = 'INSERT INTO favtags2users (users_id, tags_id) VALUES (:userid, :tagId)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':tagId', $tagId, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        return (int) $this->Db->execute($req);
     }
 
     // check if a tag is not already favorite for the user

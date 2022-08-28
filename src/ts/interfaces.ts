@@ -72,7 +72,7 @@ enum Model {
   Apikey = 'apikeys',
   Comment = 'comments',
   Config = 'config',
-  FavTag = 'favtag',
+  FavTag = 'favtags',
   Link = 'links',
   Notification = 'notifications',
   PrivacyPolicy = 'privacypolicy',

@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Model, Action, ResponseMsg } from './interfaces';
+import { Model } from './interfaces';
 import SidePanel from './SidePanel.class';
 import TodoList from './Todolist.class';
 
@@ -17,26 +17,13 @@ export default class FavTag extends SidePanel {
   }
 
   // ADD A TAG AS FAVORITE
-  create(content: string): Promise<ResponseMsg> {
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Create,
-      model: this.model,
-      content: content,
-      id: null,
-    };
-    return this.sender.send(payload);
+  create(content: string): Promise<Response> {
+    return this.api.post(Model.FavTag, {'tag': content });
   }
 
   // REMOVE A FAVORITE TAG
-  destroy(id: number): Promise<ResponseMsg> {
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Destroy,
-      model: this.model,
-      id: id,
-    };
-    return this.sender.send(payload);
+  destroy(id: number): Promise<Response> {
+    return this.api.delete(`${Model.FavTag}/${id}`);
   }
 
   toggle(): void {

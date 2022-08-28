@@ -70,10 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     if (e.key === 'Enter' || e.type === 'focusout') {
-      FavTagC.create($(this).val() as string).then(json => {
-        if (json.res === false) {
-          notif(json);
-        }
+      FavTagC.create($(this).val() as string).then(() => {
         reloadElement('favtagsPanel');
         $(this).val('');
       });

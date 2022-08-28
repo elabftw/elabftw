@@ -77,15 +77,15 @@ jobs:
               docker cp elabtmp:/elabftw/node_modules/ ./node_modules
               docker cp elabtmp:/usr/local/share/.cache/yarn/ ./yarn.cache
             fi
-      # Save dependency cache
-      - save_cache:
-          key: v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}
-          paths:
-            - ./node_modules
-            - ./yarn.cache
       - run:
           name: Build all
           command: docker exec -it elabtmp yarn buildall:dev
+      # Save dependency cache
+      - save_cache:
+          key: v1-yarn-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - ./node_modules
+            - ./yarn.cache
       - run:
           name: Run SCSS linter
           command: docker exec -it elabtmp yarn csslint

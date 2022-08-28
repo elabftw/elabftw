@@ -84,14 +84,14 @@ jobs:
             - ./node_modules
             - ./yarn.cache
       - run:
+          name: Build all
+          command: docker exec -it elabtmp yarn buildall:dev
+      - run:
           name: Run SCSS linter
           command: docker exec -it elabtmp yarn csslint
       - run:
           name: Run Javascript linter
           command: docker exec -it elabtmp yarn jslint-ci
-      - run:
-          name: Build all
-          command: docker exec -it elabtmp yarn buildall:dev
       - run:
           name: Composer install
           command: docker exec -it elabtmp composer install --no-progress -q

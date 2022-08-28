@@ -75,6 +75,7 @@ docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
 if ($ci); then
     # fix permissions on test output and cache folders
     sudo mkdir -p cache/purifier/{HTML,CSS,URI}
+    sudo mkdir -p cache/elab
     sudo chown -R scrutinizer:scrutinizer cache
     sudo chmod -R 777 cache
     sudo chmod -R 777 tests/_output

@@ -9,7 +9,6 @@
 
 namespace Elabftw\Controllers;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\IllegalActionException;

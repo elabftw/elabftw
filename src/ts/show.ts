@@ -355,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // FAVTAGS PANEL
-  if (localStorage.getItem('isfavtagOpen') === '1') {
+  if (localStorage.getItem('isfavtagsOpen') === '1') {
     FavTagC.toggle();
   }
 });

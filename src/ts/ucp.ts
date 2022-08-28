@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (params['orcid'] === '') {
         delete params['orcid'];
       }
-      ApiC.patch(`${Model.User}/${el.dataset.userid}`, params);
+      ApiC.patch(`${Model.User}/me`, params);
     // CREATE API KEY
     } else if (el.matches('[data-action="create-apikey"]')) {
       // clear any previous new key message

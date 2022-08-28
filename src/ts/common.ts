@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ACK NOTIF
     } else if (el.matches('[data-action="ack-notif"]')) {
       if (el.parentElement.dataset.ack === '0') {
-        ApiC.patch(`${Model.User}/${el.dataset.userid}/${Model.Notification}/${el.dataset.id}`).then(() => {
+        ApiC.patch(`${Model.User}/me/${Model.Notification}/${el.dataset.id}`).then(() => {
           if (el.dataset.href) {
             window.location.href = el.dataset.href;
           } else {
@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // DESTROY (clear all) NOTIF
     } else if (el.matches('[data-action="destroy-notif"]')) {
-      ApiC.delete(`${Model.User}/${el.dataset.userid}/${Model.Notification}`).then(() => reloadElement('navbarNotifDiv'));
+      ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElement('navbarNotifDiv'));
 
     } else if (el.matches('[data-action="export-user"]')) {
       const source = (document.getElementById('userExport') as HTMLSelectElement).value;

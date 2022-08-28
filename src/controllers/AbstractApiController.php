@@ -81,6 +81,10 @@ abstract class AbstractApiController implements ControllerInterface
         if (Check::id((int) ($req[4] ?? 0)) !== false) {
             $this->id = (int) $req[4];
         }
+        // allow using "me" to refer to the current logged in user
+        if (($req[4] ?? '') === 'me') {
+            $this->id = $this->Users->userData['userid'];
+        }
 
         // used by backup zip only for now
         // TODO remove with apiv1

@@ -51,7 +51,7 @@ jobs:
       - restore_cache:
           keys:
             # This branch if available
-            - v1-yarn-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}
             # Default branch if not
             - v1-yarn-dep-master-
             # Any branch if there are none on the default branch
@@ -70,22 +70,22 @@ jobs:
       - run:
           name: Install JS dependencies
           command: docker exec -it elabtmp yarn install --silent --non-interactive --frozen-lockfile
-      - run:
-          name: Extract dependency cache from container
-          command: |
-            if [ "${HAS_CACHE}" == "false" ]; then
-              docker cp elabtmp:/elabftw/node_modules/ ./node_modules
-              docker cp elabtmp:/usr/local/share/.cache/yarn/ ./yarn.cache
-            fi
-      - run:
-          name: Build all
-          command: docker exec -it elabtmp yarn buildall:dev
+          #- run:
+          #    name: Extract dependency cache from container
+          #    command: |
+          #      if [ "${HAS_CACHE}" == "false" ]; then
+          #        docker cp elabtmp:/elabftw/node_modules/ ./node_modules
+          #        docker cp elabtmp:/usr/local/share/.cache/yarn/ ./yarn.cache
+          #      fi
       # Save dependency cache
       - save_cache:
-          key: v1-yarn-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          key: v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
             - ./node_modules
             - ./yarn.cache
+      - run:
+          name: Build all
+          command: docker exec -it elabtmp yarn buildall:dev
       - run:
           name: Run SCSS linter
           command: docker exec -it elabtmp yarn csslint

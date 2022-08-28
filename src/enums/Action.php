@@ -26,6 +26,7 @@ enum Action: string
     case Timestamp = 'timestamp';
     case Update = 'update';
     case UpdateTag = 'updatetag';
+    case UpdateMetadataField = 'updatemetadatafield';
     case Unreference = 'unreference';
     case Validate = 'validate';
 }

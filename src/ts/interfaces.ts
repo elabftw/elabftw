@@ -65,6 +65,7 @@ enum Action {
   Replace = 'replace',
   Timestamp = 'timestamp',
   UpdateTag = 'updatetag',
+  UpdateMetadataField = 'updatemetadatafield',
   Unreference = 'unreference',
 }
 
@@ -122,23 +123,6 @@ interface Entity {
   id: number;
 }
 
-
-interface Payload {
-  method: Method;
-  action: Action;
-  model: Model | EntityType;
-  entity?: {
-    type: Entity['type'];
-    id: Entity['id'];
-  };
-  content?: string;
-  target?: Target;
-  id?: number;
-  // no notif key means no notif wanted
-  notif?: boolean;
-  extraParams?: Record<string, unknown>;
-}
-
 export {
   Action,
   Categories,
@@ -147,7 +131,6 @@ export {
   EntityType,
   Method,
   Model,
-  Payload,
   ResponseMsg,
   Target,
   Todoitem,

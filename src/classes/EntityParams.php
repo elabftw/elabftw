@@ -10,14 +10,12 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\EntityParamsInterface;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use function in_array;
-use const JSON_HEX_APOS;
-use const JSON_THROW_ON_ERROR;
 
-class EntityParams extends ContentParams implements EntityParamsInterface
+class EntityParams extends ContentParams implements ContentParamsInterface
 {
     public function getContent(): mixed
     {
@@ -29,7 +27,6 @@ class EntityParams extends ContentParams implements EntityParamsInterface
             'canread', 'canwrite' => Check::Visibility($this->content),
             'color' => Check::color($this->content),
             'category', 'bookable', 'content_type', 'rating', 'userid', 'state' => $this->getInt(),
-            // TODO 'metadatafield' => $this->updateJsonField($params);
             default => throw new ImproperActionException('Invalid update target.'),
         };
     }
@@ -40,11 +37,6 @@ class EntityParams extends ContentParams implements EntityParamsInterface
             return 'body';
         }
         return parent::getColumn();
-    }
-
-    public function getField(): string
-    {
-        return json_encode($this->content ?? '', JSON_HEX_APOS | JSON_THROW_ON_ERROR);
     }
 
     public function getState(): int

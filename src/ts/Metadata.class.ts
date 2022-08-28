@@ -5,8 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Action, Entity, EntityType, Target, ResponseMsg } from './interfaces';
-import { Ajax } from './Ajax.class';
+import { Action, Entity, EntityType } from './interfaces';
 import { Api } from './Apiv2.class';
 import i18next from 'i18next';
 
@@ -19,14 +18,12 @@ export function ResourceNotFoundException(message: string): void {
 export class Metadata {
   entity: Entity;
   model: EntityType;
-  sender: Ajax;
   api: Api;
   metadataDiv: Element;
 
   constructor(entity: Entity) {
     this.entity = entity;
     this.model = entity.type,
-    this.sender = new Ajax();
     this.api = new Api();
     // this is the div that will hold all the generated fields from metadata json
     this.metadataDiv = document.getElementById('metadataDiv');
@@ -48,25 +45,16 @@ export class Metadata {
   /**
    * Only save a single field value after a change
    */
-  handleEvent(event): Promise<ResponseMsg> {
+  handleEvent(event): Promise<Response> {
     let value = event.target.value;
     // special case for checkboxes
     if (event.target.type === 'checkbox') {
       value = event.target.checked ? 'on': 'off';
     }
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Update,
-      model: this.model,
-      entity: this.entity,
-      target: Target.MetadataField,
-      content: value,
-      extraParams: {
-        jsonField: event.target.dataset.field,
-      },
-      notif: true,
-    };
-    return this.sender.send(payload);
+    const params = {};
+    params['action'] = Action.UpdateMetadataField;
+    params[event.target.dataset.field] = value;
+    return this.api.patch(`${this.entity.type}/${this.entity.id}`, params);
   }
 
   /**

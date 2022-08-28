@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use function array_column;
+
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
@@ -19,7 +20,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Interfaces\EntityParamsInterface;
+use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
@@ -28,6 +29,8 @@ use Elabftw\Traits\EntityTrait;
 use function explode;
 use function implode;
 use function is_bool;
+use const JSON_HEX_APOS;
+use const JSON_THROW_ON_ERROR;
 use PDO;
 use PDOStatement;
 use const SITE_URL;
@@ -341,6 +344,13 @@ abstract class AbstractEntity implements RestInterface
         match ($action) {
             Action::Lock => $this->toggleLock(),
             Action::Pin => $this->Pins->togglePin(),
+            Action::UpdateMetadataField => (
+                function () use ($params) {
+                    foreach ($params as $key => $value) {
+                        $this->updateJsonField((string) $key, (string) $value);
+                    }
+                }
+            )(),
             Action::Update => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
@@ -594,12 +604,10 @@ abstract class AbstractEntity implements RestInterface
     /**
      * Update an entity. The revision is saved before so it can easily compare old and new body.
      */
-    protected function update(EntityParamsInterface $params): bool
+    protected function update(ContentParamsInterface $params): bool
     {
         $content = $params->getContent();
         switch ($params->getTarget()) {
-            case 'metadatafield':
-                return $this->updateJsonField($params);
             case 'bodyappend':
                 $content = $this->readOne()['body'] . $content;
                 // no break
@@ -635,14 +643,15 @@ abstract class AbstractEntity implements RestInterface
     /**
      * Update only one field in the metadata json
      */
-    private function updateJsonField(EntityParamsInterface $params): bool
+    private function updateJsonField(string $key, string $value): bool
     {
         // build field
-        $field = '$.extra_fields.' . $params->getField() . '.value';
+        $field = json_encode($key, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
+        $field = '$.extra_fields.' . $field . '.value';
         $sql = 'UPDATE ' . $this->type . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':field', $field);
-        $req->bindValue(':value', $params->getContent());
+        $req->bindValue(':value', $value);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

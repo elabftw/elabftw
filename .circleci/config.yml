@@ -71,6 +71,15 @@ jobs:
       - run:
           name: Install JS dependencies
           command: docker exec -it elabtmp yarn install --silent --non-interactive --frozen-lockfile
+      - run:
+          name: Fix permissions
+          command: |
+            docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
+            docker exec -it elabtmp chown -R nginx:nginx cache
+            docker exec -it elabtmp chmod -R 777 cache
+            docker exec -it elabtmp chmod -R 777 tests/_output
+            docker exec -it elabtmp chown -R nginx:nginx uploads
+            docker exec -it elabtmp chmod -R 777 uploads
           #- run:
           #    name: Extract dependency cache from container
           #    command: |

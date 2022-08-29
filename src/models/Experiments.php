@@ -41,7 +41,7 @@ class Experiments extends AbstractConcreteEntity
         parent::__construct($users, $id);
     }
 
-    public function create(int $templateId = -1, array $tags = array()): int
+    public function create(int $template = -1, array $tags = array()): int
     {
         $Templates = new Templates($this->Users);
         $Teams = new Teams($this->Users);
@@ -56,8 +56,8 @@ class Experiments extends AbstractConcreteEntity
 
         // do we want template ?
         // $templateId can be a template id, or 0: common template, or -1: null body
-        if ($templateId > 0) {
-            $Templates->setId($templateId);
+        if ($template > 0) {
+            $Templates->setId($template);
             $templateArr = $Templates->readOne();
             $title = $templateArr['title'];
             $body = $templateArr['body'];
@@ -66,7 +66,7 @@ class Experiments extends AbstractConcreteEntity
             $metadata = $templateArr['metadata'];
         }
 
-        if ($templateId === 0) {
+        if ($template === 0) {
             // no template, make sure admin didn't disallow it
             if ($teamConfigArr['force_exp_tpl'] === 1) {
                 throw new ImproperActionException(_('Experiments must use a template!'));
@@ -106,9 +106,9 @@ class Experiments extends AbstractConcreteEntity
         $newId = $this->Db->lastInsertId();
 
         // insert the tags from the template
-        if ($templateId > 0) {
-            $this->Links->duplicate($templateId, $newId, true);
-            $this->Steps->duplicate($templateId, $newId, true);
+        if ($template > 0) {
+            $this->Links->duplicate($template, $newId, true);
+            $this->Steps->duplicate($template, $newId, true);
             $Tags = new Tags($Templates);
             $Tags->copyTags($newId, true);
         }

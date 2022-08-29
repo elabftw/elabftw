@@ -125,7 +125,7 @@ jobs:
             docker exec -it elabtmp chmod -R 777 uploads
       - run:
           name: Run unit tests
-          command: docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-xml
+          command: docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-xml --coverage-html
       - run:
           name: Extract coverage report
           command: docker cp elabtmp:/elabftw/tests/_output/coverage.xml .

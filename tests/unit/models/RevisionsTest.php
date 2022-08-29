@@ -20,18 +20,18 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Users = new Users(1, 1);
-        $this->Experiments = new Experiments($this->Users, 1);
+        $this->Experiments = new Experiments($this->Users, 7);
         $this->Revisions = new Revisions($this->Experiments, 10, 100, 10);
     }
 
     public function testCreate(): void
     {
-        $this->assertFalse($this->Revisions->create('Ohaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'));
+        $this->assertTrue($this->Revisions->create('Ohaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'));
     }
 
     public function testReadAll(): void
     {
-        $this->assertTrue(is_array($this->Revisions->readAll()));
+        $this->assertIsArray($this->Revisions->readAll());
     }
 
     public function testReadCount(): void

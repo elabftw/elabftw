@@ -202,24 +202,24 @@ final class Config implements RestInterface
      * NOTE: it is unlikely that someone with sysadmin level tries and edit requests to input incorrect values
      * so there is no real need for ensuring the values make sense, client side validation is enough this time
      *
-     * @param array<string, mixed> $post (conf_name => conf_value)
+     * @param array<string, mixed> $params (conf_name => conf_value)
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    public function patch(Action $action, array $post): array
+    public function patch(Action $action, array $params): array
     {
         $passwords = array('smtp_password', 'ldap_password');
 
         foreach ($passwords as $password) {
-            if (isset($post[$password]) && !empty($post[$password])) {
-                $post[$password] = Crypto::encrypt($post[$password], Key::loadFromAsciiSafeString(SECRET_KEY));
+            if (isset($params[$password]) && !empty($params[$password])) {
+                $params[$password] = Crypto::encrypt($params[$password], Key::loadFromAsciiSafeString(SECRET_KEY));
             // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one
-            } elseif (isset($post[$password])) {
-                unset($post[$password]);
+            } elseif (isset($params[$password])) {
+                unset($params[$password]);
             }
         }
 
         // loop the array and update config
-        foreach ($post as $name => $value) {
+        foreach ($params as $name => $value) {
             $sql = 'UPDATE config SET conf_value = :value WHERE conf_name = :name';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':value', $value);
@@ -233,7 +233,7 @@ final class Config implements RestInterface
 
     public function getPage(): string
     {
-        return 'sysconfig.php';
+        return 'api/v2/config/';
     }
 
     public function postAction(Action $action, array $reqBody): int

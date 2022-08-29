@@ -26,6 +26,11 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('sha256', $this->Config->configArr['ts_hash']);
     }
 
+    public function testGetPage(): void
+    {
+        $this->assertSame('api/v2/config/', $this->Config->getPage());
+    }
+
     public function testPatch(): void
     {
         $post = array(

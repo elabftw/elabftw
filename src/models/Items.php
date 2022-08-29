@@ -29,9 +29,9 @@ class Items extends AbstractConcreteEntity
         parent::__construct($users, $id);
     }
 
-    public function create(int $category, array $tags = array()): int
+    public function create(int $template, array $tags = array()): int
     {
-        $ItemsTypes = new ItemsTypes($this->Users, $category);
+        $ItemsTypes = new ItemsTypes($this->Users, $template);
         $itemTemplate = $ItemsTypes->readOne();
 
         $sql = 'INSERT INTO items(team, title, date, body, userid, category, elabid, canread, canwrite, metadata)
@@ -40,7 +40,7 @@ class Items extends AbstractConcreteEntity
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':title', _('Untitled'), PDO::PARAM_STR);
         $req->bindParam(':body', $itemTemplate['body'], PDO::PARAM_STR);
-        $req->bindParam(':category', $category, PDO::PARAM_INT);
+        $req->bindParam(':category', $template, PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
         $req->bindParam(':canread', $itemTemplate['canread'], PDO::PARAM_STR);
         $req->bindParam(':canwrite', $itemTemplate['canwrite'], PDO::PARAM_STR);

@@ -33,7 +33,7 @@ class UnfinishedSteps implements RestInterface
         return 'unfinished_steps';
     }
 
-    public function postAction(Action $action, array $params): int
+    public function postAction(Action $action, array $reqBody): int
     {
         return 0;
     }

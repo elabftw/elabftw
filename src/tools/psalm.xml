@@ -9,7 +9,7 @@
     ignoreInternalFunctionFalseReturn="true"
     ignoreInternalFunctionNullReturn="false"
     reportMixedIssues="true"
-    errorLevel="8"
+    errorLevel="7"
     findUnusedVariablesAndParams="true"
 >
     <projectFiles>
@@ -34,12 +34,6 @@
         <LessSpecificReturnType errorLevel="info" />
 
         <!-- level 3 issues - slightly lazy code writing, but provably low false-negatives -->
-
-        <DeprecatedMethod errorLevel="info" />
-        <DeprecatedProperty errorLevel="info" />
-        <DeprecatedClass errorLevel="info" />
-        <DeprecatedInterface errorLevel="info" />
-
         <MissingClosureReturnType errorLevel="info" />
         <MissingReturnType errorLevel="info" />
         <MissingPropertyType errorLevel="info" />

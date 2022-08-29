@@ -22,13 +22,18 @@ use Elabftw\Services\Filter;
 
 final class UserParams extends ContentParams implements ContentParamsInterface
 {
+    public function __construct(string $target, string $content, private int $isSysadmin = 0)
+    {
+        parent::__construct($target, $content);
+    }
+
     public function getContent(): string
     {
         return match ($this->target) {
             // checked in update
             'email' => $this->content,
             'firstname', 'lastname' => Filter::sanitize($this->content),
-            'usergroup' => (string) Check::usergroup((int) $this->content),
+            'usergroup' => (string) $this->checkUserGroup((int) $this->content),
             // return the hash of the password
             'password' => password_hash(Check::passwordLength($this->content), PASSWORD_DEFAULT),
             'orcid' => $this->filterOrcid(),
@@ -52,6 +57,19 @@ final class UserParams extends ContentParams implements ContentParamsInterface
             'password' => 'password_hash',
             default => $this->target,
         };
+    }
+
+    private function checkUserGroup(int $usergroup): int
+    {
+        $usergroup = Check::usergroup($usergroup);
+        if ($usergroup === 1 && $this->isSysadmin !== 1) {
+            throw new ImproperActionException('Only a sysadmin can promote another user to sysadmin.');
+        }
+        // a non sysadmin cannot demote a sysadmin
+        if ($usergroup !== 1 && $this->isSysadmin !== 1) {
+            throw new ImproperActionException('Only a sysadmin can demote another sysadmin.');
+        }
+        return $usergroup;
     }
 
     private function filterOrcid(): string

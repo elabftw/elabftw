@@ -266,7 +266,7 @@ class Users implements RestInterface
             Action::Update => (
                 function () use ($params) {
                     foreach ($params as $target => $content) {
-                        $this->update(new UserParams($target, (string) $content));
+                        $this->update(new UserParams($target, (string) $content, $this->requester->userData['is_sysadmin']));
                     }
                 }
             )(),
@@ -353,19 +353,6 @@ class Users implements RestInterface
         }
     }
 
-    private function checkUserGroup(string $input): string
-    {
-        $usergroup = Check::usergroup((int) $input);
-        if ($usergroup === 1 && $this->requester->userData['is_sysadmin'] !== 1) {
-            throw new ImproperActionException('Only a sysadmin can promote another user to sysadmin.');
-        }
-        // a non sysadmin cannot demote a sysadmin
-        if ($usergroup !== 1 && $this->requester->userData['is_sysadmin'] !== 1) {
-            throw new ImproperActionException('Only a sysadmin can demote another sysadmin.');
-        }
-        return (string) $usergroup;
-    }
-
     private function update(UserParams $params): bool
     {
         // special case for password: we invalidate the stored token
@@ -375,9 +362,6 @@ class Users implements RestInterface
         // email is filtered here because otherwise the check for existing email will throw exception
         if ($params->getTarget() === 'email' && $params->getContent() !== $this->userData['email']) {
             Filter::email($params->getContent());
-        }
-        if ($params->getTarget() === 'usergroup') {
-            $this->checkUserGroup($params->getContent());
         }
 
         $sql = 'UPDATE users SET ' . $params->getColumn() . ' = :content WHERE userid = :userid';

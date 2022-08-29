@@ -69,6 +69,12 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Yep', $result['lastname']);
     }
 
+    public function testUpdateWrongOrcid(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        (new Users(4, 2, new Users(4, 2)))->patch(Action::Update, array('orcid' => 'blah'));
+    }
+
     public function testUpdateUsergroupToSysadmin(): void
     {
         $params = array(

@@ -43,12 +43,11 @@ try {
 
     // Create user
     $App->Users->createOne(
-        (new UserParams($Request->request->get('email'), 'email'))->getContent(),
+        (new UserParams('email', $Request->request->get('email')))->getContent(),
         array($Request->request->get('team')),
-        (new UserParams($Request->request->get('firstname'), 'firstname'))->getContent(),
-        (new UserParams($Request->request->get('lastname'), 'lastname'))->getContent(),
-        (new UserParams($Request->request->get('password') ?? '', 'password'))->getContent(),
-        (new UserParams($Request->request->get('usergroup'), 'usergroup'))->getContent(),
+        (new UserParams('firstname', $Request->request->get('firstname')))->getContent(),
+        (new UserParams('lastname', $Request->request->get('lastname')))->getContent(),
+        (new UserParams('password', $Request->request->get('password') ?? ''))->getContent(),
     );
 
     if ($App->Users->needValidation) {

@@ -11,6 +11,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 
@@ -22,6 +23,12 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     {
         $requester = new Users(1, 1);
         $this->Users= new Users(1, 1, $requester);
+    }
+
+    protected function tearDown(): void
+    {
+        // make titi user again
+        (new Users(2, 1, new Users(1, 1)))->patch(Action::Update, array('usergroup' => '4'));
     }
 
     public function testPopulate(): void
@@ -60,6 +67,33 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $result = (new Users(4, 2, new Users(4, 2)))->patch(Action::Update, $params);
         $this->assertEquals('tatabis@yopmail.com', $result['email']);
         $this->assertEquals('Yep', $result['lastname']);
+    }
+
+    public function testUpdateUsergroupToSysadmin(): void
+    {
+        $params = array(
+            'usergroup' => '1',
+        );
+        $this->expectException(ImproperActionException::class);
+        (new Users(4, 2, new Users(4, 2)))->patch(Action::Update, $params);
+    }
+
+    public function testPatchFromOtherTeam(): void
+    {
+        $params = array(
+            'usergroup' => '2',
+        );
+        $this->expectException(IllegalActionException::class);
+        (new Users(2, 1, new Users(4, 2)))->patch(Action::Update, $params);
+    }
+
+    public function testDemoteSysadmin(): void
+    {
+        // first make titi admin so we can use it to try and demote toto
+        (new Users(2, 1, new Users(1, 1)))->patch(Action::Update, array('usergroup' => '2'));
+        // now use titi to try and demote toto
+        $this->expectException(ImproperActionException::class);
+        (new Users(1, 1, new Users(2, 1)))->patch(Action::Update, array('usergroup' => '2'));
     }
 
     public function testUpdatePreferences(): void

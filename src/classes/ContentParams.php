@@ -11,7 +11,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 
 class ContentParams implements ContentParamsInterface

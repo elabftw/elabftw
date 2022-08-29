@@ -69,9 +69,7 @@ class Comments implements RestInterface
 
     public function patch(Action $action, array $params): array
     {
-        foreach ($params as $comment) {
-            $this->update(new CommentParam($comment));
-        }
+        $this->update(new CommentParam($params['comment']));
         return $this->readOne();
     }
 

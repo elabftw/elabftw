@@ -27,6 +27,11 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
         $this->Comments = new Comments($this->Entity);
     }
 
+    public function testGetPage(): void
+    {
+        $this->assertSame('api/v2/experiments/1/comments/', $this->Comments->getPage());
+    }
+
     public function testCreate(): void
     {
         $this->assertIsInt($this->Comments->postAction(Action::Create, array('comment' => 'Ohai')));
@@ -35,12 +40,14 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
     public function testRead(): void
     {
         $this->assertIsArray($this->Comments->readAll());
+        $this->Comments->setId(1);
+        $this->assertIsArray($this->Comments->readOne());
     }
 
     public function testUpdate(): void
     {
         $this->Comments->setId(1);
-        $this->Comments->Update(new CommentParam('Updated'));
+        $this->Comments->patch(Action::Update, array('comment' => 'Updated'));
         // too short comment
         $this->expectException(ImproperActionException::class);
         $this->Comments->Update(new CommentParam(''));

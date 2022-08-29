@@ -47,10 +47,10 @@ class UserCreator
             $teams = array('id' => $this->requester->userData['team']);
         }
         return $this->target->createOne(
-            (new UserParams($this->reqBody['email'], 'email'))->getContent(),
+            (new UserParams('email', $this->reqBody['email']))->getContent(),
             $teams,
-            (new UserParams($this->reqBody['firstname'], 'firstname'))->getContent(),
-            (new UserParams($this->reqBody['lastname'], 'lastname'))->getContent(),
+            (new UserParams('firstname', $this->reqBody['firstname']))->getContent(),
+            (new UserParams('lastname', $this->reqBody['lastname']))->getContent(),
             // password is never set by admin/sysadmin
             '',
             $this->checkUsergroup(),
@@ -61,17 +61,14 @@ class UserCreator
         );
     }
 
+    /**
+     * Check to prevent a non sysadmin to create a sysadmin user
+     */
     private function checkUsergroup(): int
     {
         $usergroup = Check::usergroup((int) $this->reqBody['usergroup']);
         if ($usergroup === 1 && $this->requester->userData['is_sysadmin'] !== 1) {
             throw new ImproperActionException('Only a sysadmin can promote another user to sysadmin.');
-        }
-        // a non sysadmin cannot demote a sysadmin
-        if (isset($this->target->userData['is_sysadmin']) && $this->target->userData['is_sysadmin'] === 1 &&
-            $usergroup !== 1 &&
-            $this->requester->userData['is_sysadmin'] !== 1) {
-            throw new ImproperActionException('Only a sysadmin can demote another sysadmin.');
         }
         return $usergroup;
     }

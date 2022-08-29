@@ -39,4 +39,19 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $Links = new Links($this->Experiments, $Items->id);
         $this->assertIsInt($Links->postAction(Action::Duplicate, array()));
     }
+
+    public function testPatch(): void
+    {
+        $this->assertIsArray($this->Experiments->Links->patch(Action::Duplicate, array()));
+    }
+
+    public function testReadOne(): void
+    {
+        $this->assertIsArray($this->Experiments->Links->readOne());
+    }
+
+    public function testReadRelated(): void
+    {
+        $this->assertIsArray($this->Experiments->Links->readRelated());
+    }
 }

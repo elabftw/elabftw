@@ -22,7 +22,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
-        $this->assertIsInt($this->Templates->create('Test tpl'));
+        $this->assertIsInt($this->Templates->postAction(Action::Create, array('title' => 'Test tpl')));
     }
 
     public function testRead(): void
@@ -39,7 +39,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
     public function testDuplicate(): void
     {
         $this->Templates->setId(1);
-        $this->assertIsInt($this->Templates->duplicate());
+        $this->assertIsInt($this->Templates->postAction(Action::Duplicate, array()));
     }
 
     public function testReadForUser(): void

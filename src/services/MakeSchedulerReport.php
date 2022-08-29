@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 use function date;
 use Elabftw\Elabftw\Db;
 use Elabftw\Models\Scheduler;
-use Elabftw\Models\Users;
 use Elabftw\Traits\UploadTrait;
 use function implode;
 

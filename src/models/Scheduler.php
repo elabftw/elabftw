@@ -24,7 +24,6 @@ use PDO;
 use function preg_replace;
 use function strlen;
 use function substr;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * All about the team's scheduler
@@ -350,8 +349,6 @@ class Scheduler implements RestInterface
     private function canWrite(): bool
     {
         $event = $this->readOne();
-        // make sure we are not modifying something in the past if we're not admin
-        $this->isFutureOrExplode(DateTime::createFromFormat(DateTime::ISO8601, $event['start']));
         // if it's our event (and it's not in the past) we can write to it for sure
         if ($event['userid'] === $this->Items->Users->userData['userid']) {
             return true;

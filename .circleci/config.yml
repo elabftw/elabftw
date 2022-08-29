@@ -80,11 +80,11 @@ jobs:
           #        docker cp elabtmp:/usr/local/share/.cache/yarn/ ./yarn.cache
           #      fi
       # Save dependency cache
-      - save_cache:
-          key: v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}
-          paths:
-            - ./node_modules
-            - ./yarn.cache
+      #- save_cache:
+      #    key: v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}
+      #    paths:
+      #      - ./node_modules
+      #      - ./yarn.cache
       - run:
           name: Build all
           command: docker exec -it circleci yarn buildall:dev

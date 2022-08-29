@@ -129,6 +129,12 @@ jobs:
       - run:
           name: Extract coverage report
           command: docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
+      - run:
+          name: Extract coverage HTML report
+          command: docker cp elabtmp:/elabftw/tests/_output/coverage coverage-html
+      - store_artifacts:
+          path: coverage-html
+          destination: coverage-html
       - codecov/upload:
           file: coverage.xml
 workflows:

@@ -37,6 +37,26 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         $this->Teams->patch(Action::Timestamp, array());
     }
 
+    public function testUpdate(): void
+    {
+        $params = array(
+            'link_href' => 'https://example.com',
+            'link_name' => 'Example',
+            'name' => 'Another name',
+        );
+        $this->Teams->setId(4);
+        $this->assertIsArray($this->Teams->patch(Action::Update, $params));
+    }
+
+    public function testUpdateInvalidUrl(): void
+    {
+        $params = array(
+            'link_href' => 'blah',
+        );
+        $this->expectException(ImproperActionException::class);
+        $this->Teams->patch(Action::Update, $params);
+    }
+
     public function testRead(): void
     {
         $this->assertIsArray($this->Teams->readOne());

@@ -42,12 +42,11 @@ jobs:
             sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
             sed -i '\#env_file:#D' tests/docker-compose.yml
             sed -i '\#- elabftw-user\.env#D' tests/docker-compose.yml
-            sed -i 's#elabtmp#circleci#' tests/docker-compose.yml
       - run:
           name: Build elabtmp image and start containers
           command: |
             docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
-            docker build -q --no-cache -t circleci -f tests/circleci.Dockerfile .
+            docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       # Restore dependency cache
       #- restore_cache:
@@ -71,7 +70,7 @@ jobs:
       #      fi
       - run:
           name: Install JS dependencies
-          command: docker exec -it circleci yarn install --silent --non-interactive --frozen-lockfile
+          command: docker exec -it elabtmp yarn install --silent --non-interactive --frozen-lockfile
           #- run:
           #    name: Extract dependency cache from container
           #    command: |
@@ -87,19 +86,19 @@ jobs:
       #      - ./yarn.cache
       - run:
           name: Build all
-          command: docker exec -it circleci yarn buildall:dev
+          command: docker exec -it elabtmp yarn buildall:dev
       - run:
           name: Run SCSS linter
-          command: docker exec -it circleci yarn csslint
+          command: docker exec -it elabtmp yarn csslint
       - run:
           name: Run Javascript linter
-          command: docker exec -it circleci yarn jslint-ci
+          command: docker exec -it elabtmp yarn jslint-ci
       - run:
           name: Composer install
-          command: docker exec -it circleci composer install --no-progress -q
+          command: docker exec -it elabtmp composer install --no-progress -q
       - run:
           name: Run PHP-CS-Fixer
-          command: docker exec -it circleci yarn phpcs-dry
+          command: docker exec -it elabtmp yarn phpcs-dry
       - run:
           name: Prepare php.ini
           # allow tmpfile, used by phpstan
@@ -107,23 +106,22 @@ jobs:
           # /usr/bin/psalm, //autoload.php, /root/.cache/ are for psalm
           # /usr/bin/phpstan, /proc/cpuinfo is for phpstan, https://github.com/phpstan/phpstan/issues/4427 https://github.com/phpstan/phpstan/issues/2965
           command: |
-            docker exec -it circleci sed -i 's/tmpfile, //' /etc/php81/php.ini
-            docker exec -it circleci sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/usr/bin/phpstan:/proc/cpuinfo|' /etc/php81/php.ini
+            docker exec -it elabtmp sed -i 's/tmpfile, //' /etc/php81/php.ini
       - run:
-          name: "PHP static analysis: psalm + phpsatn"
-          command: docker exec -it circleci yarn static
+          name: "PHP static analysis: psalm + phpstan"
+          command: docker exec -it elabtmp yarn static
       - run:
           name: Install the database
-          command: docker exec -it circleci bin/install start -r
+          command: docker exec -it elabtmp bin/install start -r
       - run:
           name: Populate the database
-          command: docker exec -it circleci bin/console dev:populate tests/populate-config.yml
+          command: docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
       - run:
           name: Run unit tests
-          command: docker exec -it circleci php vendor/bin/codecept run --coverage --coverage-xml
+          command: docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-xml
       - run:
           name: Extract coverage report
-          command: docker cp circleci:/elabftw/tests/_output/coverage.xml .
+          command: docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
       - codecov/upload:
           file: coverage.xml
 workflows:

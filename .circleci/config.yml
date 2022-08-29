@@ -32,21 +32,19 @@ jobs:
           # docker_layer_caching is behind a paywall
       - run:
           name: Prepare docker-compose.yml
-          # Don't bind mount here, files are copied. See scrutinizer.dockerfile
+          # Don't bind mount here, files are copied. See circleci.Dockerfile
           # It is NOT possible to bind mount with the docker container in circleci!
           # See: https://circleci.com/docs/building-docker-images#mounting-folders
           # first backslash enables different delimiter than slash
-          # remove env_file section
           command: |
             sed -i '\#volumes:#D' tests/docker-compose.yml
             sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
-            sed -i '\#env_file:#D' tests/docker-compose.yml
-            sed -i '\#- elabftw-user\.env#D' tests/docker-compose.yml
       - run:
           name: Build elabtmp image and start containers
           command: |
             docker build -q -t elabtmp -f tests/elabtmp.Dockerfile .
             docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
+            printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       # Restore dependency cache
       #- restore_cache:

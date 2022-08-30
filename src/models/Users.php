@@ -265,8 +265,12 @@ class Users implements RestInterface
             Action::Lock, Action::Archive => (new UserArchiver($this))->toggleArchive(),
             Action::Update => (
                 function () use ($params) {
+                    $isSysadmin = 0;
+                    if ($this->requester instanceof self) {
+                        $isSysadmin = $this->requester->userData['is_sysadmin'];
+                    }
                     foreach ($params as $target => $content) {
-                        $this->update(new UserParams($target, (string) $content, $this->requester->userData['is_sysadmin']));
+                        $this->update(new UserParams($target, (string) $content, $isSysadmin));
                     }
                 }
             )(),

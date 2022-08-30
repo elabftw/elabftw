@@ -36,12 +36,10 @@ try {
 
     // validate the key to show error if the key is expired
     $ResetPasswordKey = new ResetPasswordKey(time(), SECRET_KEY);
-    $ResetPasswordKey->validate($Request->query->get('key'));
+    $ResetPasswordKey->validate($Request->query->getAlnum('key'));
 
     $template = 'change-pass.html';
-    $renderArr = array(
-        'key' => $Request->query->filter('key', null, FILTER_SANITIZE_STRING),
-    );
+    $renderArr = array('key' => $Request->query->getAlnum('key'));
 } catch (Exception $e) {
     $renderArr['error'] = $e->getMessage();
 } finally {

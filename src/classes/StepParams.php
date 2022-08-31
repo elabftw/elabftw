@@ -16,7 +16,7 @@ use function str_replace;
 
 class StepParams extends ContentParams
 {
-    public function getContent(): string
+    public function getContent(): ?string
     {
         return match ($this->target) {
             'body' => $this->getStep(),

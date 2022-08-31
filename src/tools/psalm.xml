@@ -9,7 +9,7 @@
     ignoreInternalFunctionFalseReturn="true"
     ignoreInternalFunctionNullReturn="false"
     reportMixedIssues="true"
-    errorLevel="6"
+    errorLevel="5"
     findUnusedVariablesAndParams="true"
 >
     <projectFiles>
@@ -31,6 +31,9 @@
     </globals>
 
     <issueHandlers>
+        <!-- TODO once we get to symfony 6.2 we can use FlashBagAwareSessionInterface
+        see https://github.com/symfony/symfony/pull/46491 -->
+        <UndefinedInterfaceMethod errorLevel="info" />
         <!-- level 3 issues - slightly lazy code writing, but provably low false-negatives -->
         <PropertyNotSetInConstructor errorLevel="info" />
         <MissingConstructor errorLevel="info" />

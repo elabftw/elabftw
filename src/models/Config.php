@@ -202,7 +202,6 @@ final class Config implements RestInterface
      * NOTE: it is unlikely that someone with sysadmin level tries and edit requests to input incorrect values
      * so there is no real need for ensuring the values make sense, client side validation is enough this time
      *
-     * @param array<string, mixed> $params (conf_name => conf_value)
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
     public function patch(Action $action, array $params): array

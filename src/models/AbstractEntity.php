@@ -244,7 +244,7 @@ abstract class AbstractEntity implements RestInterface
 
         // experiments related to something?
         if ($displayParams->searchType === 'related') {
-            $sql .= ' AND linkst.link_id = ' . $displayParams->related;
+            $sql .= sprintf(' AND linkst.link_id = %d', $displayParams->related);
         }
 
         // teamFilter is to restrict to the team for items only
@@ -304,9 +304,9 @@ abstract class AbstractEntity implements RestInterface
         $req->bindValue(':state', self::STATE_NORMAL, PDO::PARAM_INT);
         if ($this->isMetadataSearch) {
             foreach ($this->metadataKey as $i => $v) {
-                $req->bindParam(':metadata_key_' . $i, $this->metadataKey[$i]);
-                $req->bindParam(':metadata_value_path_' . $i, $this->metadataValuePath[$i]);
-                $req->bindParam(':metadata_value_' . $i, $this->metadataValue[$i]);
+                $req->bindParam(sprintf(':metadata_key_%d', $i), $this->metadataKey[$i]);
+                $req->bindParam(sprintf(':metadata_value_path_%d', $i), $this->metadataValuePath[$i]);
+                $req->bindParam(sprintf(':metadata_value_%d', $i), $this->metadataValue[$i]);
             }
         }
 
@@ -464,8 +464,8 @@ abstract class AbstractEntity implements RestInterface
         $this->metadataKey[] = $key;
         $this->metadataValuePath[] = $key . '.value';
         $this->metadataValue[] = Filter::sanitize($value);
-        $this->metadataFilter[] = " AND JSON_CONTAINS_PATH(entity.metadata, 'one', :metadata_key_" . $i . ') ';
-        $this->metadataHaving[] = ' JSON_UNQUOTE(JSON_EXTRACT(entity.metadata, :metadata_value_path_' . $i . ')) LIKE :metadata_value_' . $i;
+        $this->metadataFilter[] = sprintf(" AND JSON_CONTAINS_PATH(entity.metadata, 'one', :metadata_key_%d) ", $i);
+        $this->metadataHaving[] = sprintf(' JSON_UNQUOTE(JSON_EXTRACT(entity.metadata, :metadata_value_path_%d)) LIKE :metadata_value_%d', $i, $i);
     }
 
     /**
@@ -590,7 +590,7 @@ abstract class AbstractEntity implements RestInterface
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = $this->page;
         // add a share link
-        $this->entityData['sharelink'] = SITE_URL . '/' . $this->page . '.php?mode=view&id=' . $this->id . '&elabid=' . $this->entityData['elabid'];
+        $this->entityData['sharelink'] = sprintf('%s/%s.php?mode=view&id=%d&elabid=%s', SITE_URL, $this->page, $this->id, $this->entityData['elabid']);
         // add the body as html
         $this->entityData['body_html'] = $this->entityData['body'];
         // convert from markdown only if necessary

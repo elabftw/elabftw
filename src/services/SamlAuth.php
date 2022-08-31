@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,20 +6,17 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
 use DateTimeImmutable;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\AuthResponse;
-use Elabftw\Elabftw\Saml;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Models\Config;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
@@ -100,7 +97,7 @@ class SamlAuth implements AuthInterface
             $conf->validator()->assert($parsedToken, ...$conf->validationConstraints());
 
             return array($parsedToken->claims()->get('sid'), $parsedToken->claims()->get('idp_id'));
-        } catch (CannotDecodeContent | InvalidTokenStructure | RequiredConstraintsViolated $e) {
+        } catch (CannotDecodeContent | InvalidTokenStructure | RequiredConstraintsViolated) {
             throw new UnauthorizedException('Decoding JWT Token failed');
         }
     }

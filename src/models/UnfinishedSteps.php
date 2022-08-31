@@ -78,7 +78,7 @@ class UnfinishedSteps implements RestInterface
         }
         $sql .= $this->teamScoped ? $this->getTeamWhereClause($model) : ' WHERE entity.userid = :userid';
 
-        $sql .= ' AND entity.state = ' . AbstractEntity::STATE_NORMAL . ' GROUP BY entity.id ORDER BY entity.id DESC';
+        $sql .= sprintf(' AND entity.state = %d GROUP BY entity.id ORDER BY entity.id DESC', AbstractEntity::STATE_NORMAL);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         if ($this->teamScoped) {

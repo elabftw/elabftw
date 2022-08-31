@@ -85,9 +85,9 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         // TAG FILTER
-        if (!empty(((array) $this->App->Request->query->all('tags'))[0])) {
+        if (!empty(($this->App->Request->query->all('tags'))[0])) {
             // get all the ids with that tag
-            $tagsFromGet = (array) $this->App->Request->query->all('tags');
+            $tagsFromGet = $this->App->Request->query->all('tags');
             $tagsFromGet = array_map(function ($t) {
                 return (string) $t;
             }, $tagsFromGet);

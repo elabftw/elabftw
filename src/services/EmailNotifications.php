@@ -66,7 +66,7 @@ class EmailNotifications
      */
     private function setLang(int $userid): void
     {
-        $targetUser = new Users((int) $userid);
+        $targetUser = new Users($userid);
         $locale = $targetUser->userData['lang'] . '.utf8';
         // configure gettext
         $domain = 'messages';

@@ -85,7 +85,7 @@ class ImportCsv extends AbstractImport
 
             // insert tags from the tags column
             if (isset($row['tags'])) {
-                $this->insertTags($row['tags'], (int) $itemId);
+                $this->insertTags($row['tags'], $itemId);
             }
 
             $this->inserted++;

@@ -84,10 +84,10 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
     $Saml = new Saml($App->Config, new Idps());
     $tmpSettings = $Saml->getSettings(); // get temporary settings to decode message
     if ($App->Request->query->has('SAMLRequest')) {
-        $req = new SamlLogoutRequest(new SamlSettings($tmpSettings), $App->Request->query->get('SAMLRequest'));
+        $req = new SamlLogoutRequest(new SamlSettings($tmpSettings), (string) $App->Request->query->get('SAMLRequest'));
         $entId = SamlLogoutRequest::getIssuer($req->getXML());
     } else {// if ($App->Request->query->has('SAMLResponse'))
-        $resp = new SamlLogoutResponse(new SamlSettings($tmpSettings), $App->Request->query->get('SAMLResponse'));
+        $resp = new SamlLogoutResponse(new SamlSettings($tmpSettings), (string) $App->Request->query->get('SAMLResponse'));
         $entId = $resp->getIssuer();
     }
 

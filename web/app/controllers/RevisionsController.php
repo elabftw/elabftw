@@ -50,9 +50,9 @@ try {
     }
 
     if ($Entity instanceof Templates) {
-        $Response = new RedirectResponse('../../ucp.php?tab=3&templateid=' . $Entity->id);
+        $Response = new RedirectResponse(sprintf('../../ucp.php?tab=3&templateid=%d', $Entity->id));
     } else {
-        $Response = new RedirectResponse('../../' . $Entity->page . '.php?mode=view&id=' . $Entity->id);
+        $Response = new RedirectResponse(sprintf('../../%s.php?mode=view&id=%d', $Entity->page, $Entity->id));
     }
 } catch (ImproperActionException $e) {
     // show message to user

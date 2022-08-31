@@ -60,8 +60,8 @@ try {
     } catch (DatabaseErrorException | PDOException $e) {
         throw new ImproperActionException('The database structure is not loaded! Did you run the installer?');
     }
-    // @phpstan-ignore-next-line
-    if (SITE_URL === '') {
+    /** @psalm-suppress TypeDoesNotContainType */
+    if (SITE_URL === '') { // @phpstan-ignore-line
         throw new ImproperActionException('<h1>Could not find mandatory <code>SITE_URL</code> variable! Please <a href="https://doc.elabftw.net/changelog.html#version-4-3-0">have a look at the changelog</a>.</h1>');
     }
 

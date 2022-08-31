@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Marcel Bolten <marcel.bolten@msl.ubc.ca>
  * @author Nicolas CARPi <nico-git@deltablot.email>
@@ -7,13 +7,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
 use Elabftw\Services\MfaHelper;
-use InvalidArgumentException;
-use function is_array;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -54,14 +51,11 @@ class MfaCode extends Command
         // remove spaces from input so we don't have to do it manually
         $secret = str_replace(' ', '', $input->getArgument('secret'));
 
-        if (is_array($secret)) {
-            throw new InvalidArgumentException();
-        }
         $MfaHelper = new MfaHelper(0, $secret);
         $code = $MfaHelper->getCode();
 
         $output->writeln(array(
-            'Secret: ' . (string) $secret,
+            'Secret: ' . $secret,
             '2FA code: ' . $code,
         ));
 

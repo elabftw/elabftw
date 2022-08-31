@@ -99,7 +99,7 @@ class AddMissingLinks extends Command
                                 $Links = new Links($entity, (int) $match);
                                 $out = $Links->postAction(Action::Create, array());
                             }
-                            if ((int) $out !== 0) {
+                            if ($out !== 0) {
                                 $count++;
                             }
                         } catch (IllegalActionException $e) {

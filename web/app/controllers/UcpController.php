@@ -28,7 +28,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once dirname(__DIR__) . '/init.inc.php';
 $tab = 1;
-$Response = new RedirectResponse('../../ucp.php?tab=' . $tab);
+$Response = new RedirectResponse(sprintf('../../ucp.php?tab=%d', $tab));
 $templateId = '';
 
 $postData = $Request->request->all();

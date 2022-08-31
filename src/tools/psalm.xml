@@ -9,7 +9,7 @@
     ignoreInternalFunctionFalseReturn="true"
     ignoreInternalFunctionNullReturn="false"
     reportMixedIssues="true"
-    errorLevel="5"
+    errorLevel="4"
     findUnusedVariablesAndParams="true"
 >
     <projectFiles>

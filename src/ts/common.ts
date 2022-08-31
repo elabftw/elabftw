@@ -50,14 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, heartRate);
   }
 
-  // DEPRECATED, this can go away once all $.post disappeared and everyone uses custom Ajax class
-  // TODO
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
-    },
-  });
-
   const ApiC = new Api();
 
   // set the language for js translated strings

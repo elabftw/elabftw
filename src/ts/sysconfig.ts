@@ -172,6 +172,14 @@ document.addEventListener('DOMContentLoaded', () => {
       AjaxC.postForm(
         'app/controllers/SysconfigAjaxController.php',
         { 'massEmail': '1', 'subject': subject, 'body': body }).then(resp => handleEmailResponse(resp, button));
+    } else if (el.matches('[data-action="destroy-idp"]')) {
+      event.preventDefault();
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        AjaxC.postForm('app/controllers/SysconfigAjaxController.php', {
+          idpsDestroy: '1',
+          id: el.dataset.id,
+        }).then(() => reloadElement('idpsDiv'));
+      }
     }
   });
 
@@ -217,21 +225,5 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('ts_urldiv').removeAttribute('hidden');
     }
   }
-
-  $(document).on('click', '.idpsDestroy', function() {
-    const elem = $(this);
-    if (confirm(i18next.t('generic-delete-warning'))) {
-      $.post('app/controllers/SysconfigAjaxController.php', {
-        idpsDestroy: true,
-        id: $(this).data('id'),
-      }).done(function(json) {
-        notif(json);
-        if (json.res) {
-          elem.closest('div').hide(600);
-        }
-      });
-    }
-  });
-
   tinymce.init(getTinymceBaseConfig('sysconfig'));
 });

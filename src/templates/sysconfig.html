@@ -567,14 +567,14 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         </form>
     </div>
 
-    <div class='box'>
+    <div class='box' id='idpsDiv'>
         <h3>Identity Providers Configuration</h3>
 
         {% if idpsArr|length > 0 %}
             <h4>Existing Identity Providers</h4>
             {% for idp in idpsArr %}
               <div class='box'>
-                  <a class='clickable idpsDestroy float-right' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
+                  <a class='float-right' href='#' data-action='destroy-idp' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
                       <i class='fas fa-trash-alt fa-2x'></i>
                   </a>
                   <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>

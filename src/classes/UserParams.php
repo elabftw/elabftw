@@ -43,7 +43,7 @@ final class UserParams extends ContentParams implements ContentParamsInterface
             'sort' => (Sort::tryFrom($this->content) ?? Sort::Desc)->value,
             'orderby' => (Orderby::tryFrom($this->content) ?? Orderby::Date)->value,
             'sc_create', 'sc_submit', 'sc_todo', 'sc_edit' => Filter::firstLetter($this->content),
-            'show_team', 'show_team_templates', 'show_public', 'single_column_layout', 'uploads_layout', 'cjk_fonts', 'pdfa', 'pdf_sig', 'use_markdown', 'use_isodate', 'inc_files_pdf', 'append_pdfs', 'validated' => (string) Filter::toBinary($this->content),
+            'show_team', 'show_team_templates', 'show_public', 'single_column_layout', 'uploads_layout', 'cjk_fonts', 'pdfa', 'pdf_sig', 'use_markdown', 'use_isodate', 'inc_files_pdf', 'append_pdfs', 'validated', 'notif_comment_created', 'notif_comment_created_email', 'notif_step_deadline', 'notif_step_deadline_email', 'notif_user_created', 'notif_user_created_email', 'notif_user_need_validation', 'notif_user_need_validation_email', 'notif_event_deleted', 'notif_event_deleted_email' => (string) Filter::toBinary($this->content),
             'lang' => (Language::tryFrom($this->content) ?? Language::English)->value,
             'default_read', 'default_write' => Check::visibility($this->content),
             'pdf_format' => (PdfFormat::tryFrom($this->content) ?? PdfFormat::A4)->value,

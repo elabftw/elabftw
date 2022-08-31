@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
 use function json_decode;
@@ -70,7 +71,7 @@ class Notifications implements RestInterface
     {
         $category = $params->getCategory();
 
-        $sendEmail = $this->getPref($category, true);
+        $sendEmail = $this->getPref($category, '_email');
         $webNotif = $this->getPref($category);
 
         $isAck = 1;
@@ -194,26 +195,22 @@ class Notifications implements RestInterface
         return $this->Db->execute($req);
     }
 
-    private function getPref(int $category, bool $email = false): int
+    private function getPref(int $category, string $suffix = ''): int
     {
         // only categories inferior to 20 have a user setting for email/web notif
         if ($category >= 20) {
             return 1;
         }
 
-        $map = array(
+        $pref = match ($category) {
             self::COMMENT_CREATED => 'notif_comment_created',
             self::USER_CREATED => 'notif_user_created',
             self::USER_NEED_VALIDATION => 'notif_user_need_validation',
             self::STEP_DEADLINE => 'notif_step_deadline',
             self::EVENT_DELETED => 'notif_event_deleted',
-        );
+            default => throw new ImproperActionException('Invalid category for preferences.'),
+        };
 
-        $suffix = '';
-        if ($email) {
-            $suffix = '_email';
-        }
-
-        return $this->users->userData[$map[$category] . $suffix];
+        return $this->users->userData[$pref . $suffix];
     }
 }

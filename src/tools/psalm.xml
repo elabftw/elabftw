@@ -9,7 +9,7 @@
     ignoreInternalFunctionFalseReturn="true"
     ignoreInternalFunctionNullReturn="false"
     reportMixedIssues="true"
-    errorLevel="7"
+    errorLevel="6"
     findUnusedVariablesAndParams="true"
 >
     <projectFiles>
@@ -31,14 +31,7 @@
     </globals>
 
     <issueHandlers>
-        <LessSpecificReturnType errorLevel="info" />
-
         <!-- level 3 issues - slightly lazy code writing, but provably low false-negatives -->
-        <MissingClosureReturnType errorLevel="info" />
-        <MissingReturnType errorLevel="info" />
-        <MissingPropertyType errorLevel="info" />
-        <InvalidDocblock errorLevel="info" />
-
         <PropertyNotSetInConstructor errorLevel="info" />
         <MissingConstructor errorLevel="info" />
         <MissingClosureParamType errorLevel="info" />

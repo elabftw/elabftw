@@ -64,7 +64,7 @@ if ((int) ($App->Users->userData['auth_service'] ?? 0) === \Elabftw\Controllers\
 // Try decoding saml information, if available
 if ($App->Request->cookies->has('saml_token')) {
     try {
-        [$sessionIndex, $idpId] = SamlAuth::decodeToken($App->Request->cookies->get('saml_token'));
+        [$sessionIndex, $idpId] = SamlAuth::decodeToken($App->Request->cookies->getAlnum('saml_token'));
     } catch (Exception $e) {
         // log error and show general error message
         $destroySession();  // destroy session anyway

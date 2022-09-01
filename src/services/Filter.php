@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -102,7 +101,7 @@ class Filter
      */
     public static function title(string $input): string
     {
-        $title = filter_var($input, FILTER_SANITIZE_STRING);
+        $title = self::sanitize($input);
         if (empty($title)) {
             return _('Untitled');
         }

@@ -26,7 +26,6 @@ use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UserArchiver;
 use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
-use function filter_var;
 use function password_hash;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,9 +42,11 @@ class Users implements RestInterface
 
     public int $team = 0;
 
+    public self $requester;
+
     protected Db $Db;
 
-    public function __construct(public ?int $userid = null, ?int $team = null, public ?self $requester = null)
+    public function __construct(public ?int $userid = null, ?int $team = null, ?self $requester = null)
     {
         $this->Db = Db::getConnection();
         if ($team !== null) {
@@ -54,6 +55,7 @@ class Users implements RestInterface
         if ($userid !== null) {
             $this->readOneFull();
         }
+        $this->requester = $requester === null ? $this : $requester;
     }
 
     /**
@@ -84,8 +86,8 @@ class Users implements RestInterface
             Check::passwordLength($password);
         }
 
-        $firstname = filter_var($firstname, FILTER_SANITIZE_STRING);
-        $lastname = filter_var($lastname, FILTER_SANITIZE_STRING);
+        $firstname = Filter::sanitize($firstname);
+        $lastname = Filter::sanitize($lastname);
 
         // Create password hash
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
@@ -211,9 +213,6 @@ class Users implements RestInterface
 
     /**
      * Read all users from the team
-     * @psalm-suppress PossiblyNullArgument
-     * @psalm-suppress PossiblyNullArrayAccess
-     * @psalm-suppress PossiblyNullPropertyFetch
      */
     public function readAllFromTeam(): array
     {
@@ -223,9 +222,6 @@ class Users implements RestInterface
         return $this->readFromQuery('', $this->userData['team']);
     }
 
-    /** @psalm-suppress PossiblyNullArgument
-        @psalm-suppress PossiblyNullArrayAccess
-        @psalm-suppress PossiblyNullPropertyFetch */
     public function readAll(): array
     {
         $Request = Request::createFromGlobals();
@@ -255,7 +251,6 @@ class Users implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
-        /** @psalm-suppress PossiblyNullArgument */
         $Creator = new UserCreator($this->requester, $reqBody);
         return $Creator->create();
     }
@@ -348,7 +343,7 @@ class Users implements RestInterface
 
     private function canReadOrExplode(): void
     {
-        if ($this->requester === null || $this->requester->userid === $this->userid) {
+        if ($this->requester->userid === $this->userid) {
             // it's ourself
             return;
         }
@@ -384,9 +379,6 @@ class Users implements RestInterface
      */
     private function canWriteOrExplode(): void
     {
-        if ($this->requester === null) {
-            return;
-        }
         if (!$this->requester->isAdminOf($this->userData['userid'])) {
             throw new IllegalActionException(Tools::error(true));
         }

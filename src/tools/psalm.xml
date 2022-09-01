@@ -9,7 +9,7 @@
     ignoreInternalFunctionFalseReturn="true"
     ignoreInternalFunctionNullReturn="false"
     reportMixedIssues="true"
-    errorLevel="4"
+    errorLevel="3"
     findUnusedVariablesAndParams="true"
 >
     <projectFiles>
@@ -35,11 +35,6 @@
         see https://github.com/symfony/symfony/pull/46491 -->
         <UndefinedInterfaceMethod errorLevel="info" />
         <!-- level 3 issues - slightly lazy code writing, but provably low false-negatives -->
-        <PropertyNotSetInConstructor errorLevel="info" />
-        <MissingConstructor errorLevel="info" />
-        <MissingClosureParamType errorLevel="info" />
-        <MissingParamType errorLevel="info" />
-
         <RedundantCondition errorLevel="info" />
 
         <DocblockTypeContradiction errorLevel="info" />

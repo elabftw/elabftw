@@ -29,7 +29,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 require_once dirname(__DIR__) . '/init.inc.php';
 $tab = 1;
 $Response = new RedirectResponse(sprintf('../../ucp.php?tab=%d', $tab));
-$templateId = '';
 
 $postData = $Request->request->all();
 try {
@@ -43,7 +42,7 @@ try {
 
     // TAB 2 : ACCOUNT
     if ($Request->request->has('use_mfa')) {
-        $tab = '2';
+        $tab = 2;
         // if user is authenticated through external service we skip the password verification
         if ($App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
             // check that we got the good password
@@ -91,7 +90,7 @@ try {
     // END TAB 2
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));
-    $Response = new RedirectResponse('../../ucp.php?tab=' . $tab . $templateId);
+    $Response = new RedirectResponse(sprintf('../../ucp.php?tab=%d', $tab));
 } catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());

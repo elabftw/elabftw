@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
       EntityC.update(parseInt(id), Target.Body, body);
     // DOWNLOAD TEMPLATE
     } else if (el.matches('[data-action="download-template"]')) {
-      window.location.href = `make.php?what=eln&type=experiments_templates&id=${el.dataset.id}`;
+      window.location.href = `make.php?format=eln&type=experiments_templates&id=${el.dataset.id}`;
     // DESTROY TEMPLATE
     } else if (el.matches('[data-action="destroy-template"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {

@@ -21,7 +21,7 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->UserCreator = new UserCreator(new Users(1, 1, new Users(1, 1)), array(
+        $this->UserCreator = new UserCreator(new Users(1, 1), array(
             'team' => 1,
             'email' => 'livelongandprosper@vulcan.gov.vn',
             'firstname' => 'Leonard',
@@ -44,12 +44,12 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
     public function testCreateWithNonAdminUser(): void
     {
         $this->expectException(IllegalActionException::class);
-        new UserCreator(new Users(null, null, new Users(2, 1)), array());
+        new UserCreator(new Users(2, 1), array());
     }
 
     public function testCreateFromAdminUser(): void
     {
-        $UserCreator = new UserCreator(new Users(null, null, new Users(4, 2)), array(
+        $UserCreator = new UserCreator(new Users(4, 2), array(
             'team' => 2,
             'email' => 'praisetheprophets@staff.ds9.bjr',
             'firstname' => 'Kira',
@@ -61,7 +61,7 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateSysadminFromAdminUser(): void
     {
-        $UserCreator = new UserCreator(new Users(null, null, new Users(4, 2)), array(
+        $UserCreator = new UserCreator(new Users(4, 2), array(
             'team' => 2,
             'email' => 'vic@holodeck.ds9.bjr',
             'firstname' => 'Vic',
@@ -76,7 +76,7 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
     {
         $Config = Config::getConfig();
         $Config->patch(Action::Update, array('admins_create_users' => '0'));
-        $UserCreator = new UserCreator(new Users(null, null, new Users(4, 2)), array(
+        $UserCreator = new UserCreator(new Users(4, 2), array(
             'team' => 2,
             'email' => 'vic@holodeck.ds9.bjr',
             'firstname' => 'Vic',

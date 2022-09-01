@@ -243,7 +243,7 @@ abstract class AbstractEntity implements RestInterface
         $sql .= implode(' ', $this->metadataFilter);
 
         // experiments related to something?
-        if ($displayParams->searchType === 'related') {
+        if ($displayParams->related !== null) {
             $sql .= sprintf(' AND linkst.link_id = %d', $displayParams->related);
         }
 

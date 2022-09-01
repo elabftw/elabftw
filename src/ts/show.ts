@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         notif(nothingSelectedError);
         return;
       }
-      window.location.href = `make.php?what=${el.value}&type=${about.type}&id=${checked.map(value => value.id).join('+')}`;
+      window.location.href = `make.php?format=${el.value}&type=${about.type}&id=${checked.map(value => value.id).join('+')}`;
 
     // UPDATE CATEGORY
     } else if (el.matches('[data-action="update-category-selected-entities"]')) {

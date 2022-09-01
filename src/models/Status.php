@@ -44,7 +44,7 @@ class Status extends AbstractCategory
 
     public function getPage(): string
     {
-        return sprintf('api/v2/teams/%d/status/', $this->Teams->id);
+        return sprintf('api/v2/teams/%d/status/', $this->Teams->id ?? 0);
     }
 
     public function postAction(Action $action, array $reqBody): int

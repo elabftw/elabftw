@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 use RobThree\Auth\TwoFactorAuth;
 use RuntimeException;
@@ -57,6 +58,9 @@ class MfaHelper
 
     public function getQRCodeImageAsDataUri(string $email): string
     {
+        if ($this->secret === null) {
+            throw new ImproperActionException('Secret is null!');
+        }
         return $this->TwoFactorAuth->getQRCodeImageAsDataUri($email, $this->secret);
     }
 
@@ -65,11 +69,9 @@ class MfaHelper
         return $this->TwoFactorAuth->createSecret(self::SECRET_BITS);
     }
 
+    /** @psalm-suppress PossiblyNullArgument */
     public function saveSecret(): bool
     {
-        if ($this->secret === null) {
-            throw new RuntimeException('No secret to save!');
-        }
         return $this->toggleSecret($this->secret);
     }
 
@@ -78,13 +80,20 @@ class MfaHelper
         return $this->toggleSecret();
     }
 
+    /** @psalm-suppress PossiblyNullArgument */
     public function verifyCode(string $code): bool
     {
+        if ($this->secret === null) {
+            throw new RuntimeException('No secret to verify!');
+        }
         $code = Filter::sanitize($code);
         return $this->TwoFactorAuth->verifyCode($this->secret, $code, self::DISCREPANCY);
     }
 
-    // only used to emulate the phone app (in MfaCode)
+    /**
+     * only used to emulate the phone app (in MfaCode)
+     * @psalm-suppress PossiblyNullArgument
+     */
     public function getCode(): string
     {
         return $this->TwoFactorAuth->getCode($this->secret);

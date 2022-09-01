@@ -25,7 +25,7 @@ class DisplayParams
 
     public int $offset = 0;
 
-    public ?int $related;
+    public ?int $related = null;
 
     public Orderby $orderby = Orderby::Date;
 

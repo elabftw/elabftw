@@ -263,7 +263,7 @@ class Apiv2Controller extends AbstractApiController
             throw new IllegalActionException('Non sysadmin user tried to use a restricted api endpoint.');
         }
         // allow multipart/form-data for the POST/uploads endpoint only, use str_starts_with because the actual header will also contain the boundary
-        if (str_starts_with($this->Request->headers->get('content-type'), 'multipart/form-data') &&
+        if (str_starts_with($this->Request->headers->get('content-type') ?? '', 'multipart/form-data') &&
             $this->Model instanceof Uploads &&
             $this->Request->getMethod() === Request::METHOD_POST) {
             return;

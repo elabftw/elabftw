@@ -211,18 +211,21 @@ class Users implements RestInterface
 
     /**
      * Read all users from the team
+     * @psalm-suppress PossiblyNullArgument
+     * @psalm-suppress PossiblyNullArrayAccess
+     * @psalm-suppress PossiblyNullPropertyFetch
      */
     public function readAllFromTeam(): array
     {
-        /*
-        if ($this->userData['is_admin'] !== 1) {
+        if ($this->requester->userData['is_admin'] !== 1) {
             throw new IllegalActionException('Only admin can read all users from a team.');
         }
-         */
-        // TODO use requester?
         return $this->readFromQuery('', $this->userData['team']);
     }
 
+    /** @psalm-suppress PossiblyNullArgument
+        @psalm-suppress PossiblyNullArrayAccess
+        @psalm-suppress PossiblyNullPropertyFetch */
     public function readAll(): array
     {
         $Request = Request::createFromGlobals();
@@ -252,7 +255,8 @@ class Users implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
-        $Creator = new UserCreator($this, $reqBody);
+        /** @psalm-suppress PossiblyNullArgument */
+        $Creator = new UserCreator($this->requester, $reqBody);
         return $Creator->create();
     }
 
@@ -383,7 +387,7 @@ class Users implements RestInterface
         if ($this->requester === null) {
             return;
         }
-        if (!$this->requester->isAdminOf($this->userid)) {
+        if (!$this->requester->isAdminOf($this->userData['userid'])) {
             throw new IllegalActionException(Tools::error(true));
         }
     }

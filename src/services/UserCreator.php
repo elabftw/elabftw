@@ -17,12 +17,8 @@ use Elabftw\Models\Users;
 
 class UserCreator
 {
-    // the user doing the request
-    private Users $requester;
-
-    public function __construct(private Users $target, private array $reqBody)
+    public function __construct(private Users $requester, private array $reqBody)
     {
-        $this->requester = $target->requester;
         if ($this->requester->userData['is_admin'] !== 1) {
             throw new IllegalActionException('User creation is limited to Admins and Sysadmins only.');
         }
@@ -46,7 +42,7 @@ class UserCreator
             // force using the team in which we are logged in if we are not sysadmin
             $teams = array('id' => $this->requester->userData['team']);
         }
-        return $this->target->createOne(
+        return (new Users())->createOne(
             (new UserParams('email', $this->reqBody['email']))->getContent(),
             $teams,
             (new UserParams('firstname', $this->reqBody['firstname']))->getContent(),

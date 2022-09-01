@@ -35,7 +35,7 @@ class Comments implements RestInterface
 
     public function getPage(): string
     {
-        return sprintf('api/v2/%s/%d/comments/', $this->Entity->page, $this->Entity->id);
+        return sprintf('api/v2/%s/%d/comments/', $this->Entity->page, $this->Entity->id ?? 0);
     }
 
     public function readOne(): array

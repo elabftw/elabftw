@@ -151,7 +151,7 @@ class Teams implements RestInterface
     public function destroy(): bool
     {
         // check for stats, should be 0
-        $count = $this->getStats($this->id);
+        $count = $this->getStats($this->id ?? 0);
 
         if ($count['totxp'] !== 0 || $count['totdb'] !== 0 || $count['totusers'] !== 0) {
             throw new ImproperActionException('The team is not empty! Aborting deletion!');

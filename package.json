@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "3dmol": "^1.4.0",
-    "@deltablot/chemdoodle-web-mini": "^9.2.1",
+    "@deltablot/chemdoodle-web-mini": "^9.2.6",
     "@deltablot/malle": "^0.7.0",
     "@deltablot/open-vector-editor-umd": "^18.0.0",
     "@fancyapps/fancybox": "3.5.*",

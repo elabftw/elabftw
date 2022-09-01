@@ -13,7 +13,7 @@
     "@fancyapps/fancybox": "3.5.*",
     "@fullcalendar/bootstrap": "^5.1.0",
     "@fullcalendar/core": "^5.1.0",
-    "@fullcalendar/daygrid": "^5.1.0",
+    "@fullcalendar/daygrid": "^5.11.3",
     "@fullcalendar/interaction": "^5.1.0",
     "@fullcalendar/list": "^5.1.0",
     "@fullcalendar/timegrid": "^5.1.0",

@@ -64,7 +64,7 @@
     "postcss-scss": "^4.0.3",
     "stylelint": "^14.0.1",
     "stylelint-config-sass-guidelines": "^9.0.1",
-    "webpack-bundle-analyzer": "^4.1.0"
+    "webpack-bundle-analyzer": "^4.6.1"
   },
   "scripts": {
     "analyzejs": "webpack-bundle-analyzer stats.json web/app/js",

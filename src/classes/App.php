@@ -20,7 +20,6 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Notifications;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
-use Elabftw\Services\Check;
 use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
 use function in_array;
@@ -44,7 +43,7 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '4.3.10';
+    public const INSTALLED_VERSION = '4.4.0-alpha';
 
     public Users $Users;
 

@@ -10,20 +10,19 @@
 namespace Elabftw\Models;
 
 use function copy;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UploadParams;
+use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\StorageFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Interfaces\UploadParamsInterface;
+use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\MakeThumbnail;
 use Elabftw\Traits\UploadTrait;
@@ -35,7 +34,7 @@ use RuntimeException;
 /**
  * All about the file uploads
  */
-class Uploads implements CrudInterface
+class Uploads implements RestInterface
 {
     use UploadTrait;
 
@@ -64,6 +63,7 @@ class Uploads implements CrudInterface
 
     /**
      * Main method for normal file upload
+     * @psalm-suppress UndefinedClass
      */
     public function create(CreateUploadParamsInterface $params): int
     {
@@ -162,29 +162,6 @@ class Uploads implements CrudInterface
         return $this->Db->lastInsertId();
     }
 
-    /**
-     * Create an upload from a string (binary png data or json string or mol file)
-     * For mol file the code is actually in chemdoodle-uis-unpacked.js from chemdoodle-web-mini repository
-     */
-    public function createFromString(FileFromString $fileType, string $realName, string $content): int
-    {
-        // a png file will be received as dataurl, so we need to convert it to binary before saving it
-        if ($fileType === FileFromString::Png) {
-            $content = $this->pngDataUrlToBinary($content);
-        }
-
-        // add file extension if it wasn't provided
-        if (Tools::getExt($realName) === 'unknown') {
-            $realName .= '.' . $fileType->value;
-        }
-        // create a temporary file so we can upload it using create()
-        $tmpFilePath = FsTools::getCacheFile();
-        $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
-        $tmpFilePathFs->write(basename($tmpFilePath), $content);
-
-        return $this->create(new CreateUpload($realName, $tmpFilePath));
-    }
-
     public function read(ContentParamsInterface $params): array
     {
         if ($params->getTarget() === 'all') {
@@ -226,14 +203,40 @@ class Uploads implements CrudInterface
         return $req->fetchAll();
     }
 
-    public function update(UploadParamsInterface $params): bool
+    public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
-        $sql = 'UPDATE uploads SET ' . $params->getTarget() . ' = :content WHERE id = :id AND item_id = :item_id';
+        foreach ($params as $key => $value) {
+            $this->update(new UploadParams($key, $value));
+        }
+        return $this->readOne();
+    }
+
+    public function postAction(Action $action, array $reqBody): int
+    {
+        if ($this->id !== null) {
+            $action = Action::Replace;
+        }
+        return match ($action) {
+            // Note: it is not possible to create an upload with a comment because we can't send at the same time json and a file
+            Action::Create => $this->create(new CreateUpload($reqBody['real_name'], $reqBody['filePath'])),
+            Action::CreateFromString => $this->createFromString(FileFromString::from($reqBody['file_type']), $reqBody['real_name'], $reqBody['content']),
+            Action::Replace => $this->replace(new CreateUpload($reqBody['real_name'], $reqBody['filePath'])),
+            default => throw new ImproperActionException('Invalid action for upload creation.'),
+        };
+    }
+
+    public function getPage(): string
+    {
+        return $this->Entity->getPage();
+    }
+
+    public function update(UploadParams $params): bool
+    {
+        $sql = 'UPDATE uploads SET ' . $params->getColumn() . ' = :content WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
@@ -263,7 +266,7 @@ class Uploads implements CrudInterface
     /**
      * Delete all uploaded files for an entity
      */
-    public function destroyAll(): void
+    public function destroyAll(): bool
     {
         // this will include the archived/deleted ones
         $uploadArr = $this->readAll();
@@ -272,6 +275,7 @@ class Uploads implements CrudInterface
             $this->setId($upload['id']);
             $this->nuke();
         }
+        return true;
     }
 
     public function getStorageFromLongname(string $longname): int
@@ -296,18 +300,37 @@ class Uploads implements CrudInterface
      * Attached files are immutable (change history is kept), so the current
      * file gets its state changed to "archived" and a new one is added
      */
-    public function replace(UploadParamsInterface $params): array
+    private function replace(CreateUpload $params): int
     {
         $this->canWriteOrExplode();
         // read the current one to get the comment
-        $upload = $this->read(new ContentParams());
-        $this->update(new UploadParams((string) self::STATE_ARCHIVED, 'state'));
+        $upload = $this->readOne();
+        $this->update(new UploadParams('state', (string) self::STATE_ARCHIVED));
 
-        $file = $params->getFile();
-        $newID = $this->create(new CreateUpload($file->getClientOriginalName(), $file->getPathname(), $upload['comment']));
-        $this->setId($newID);
+        return $this->create(new CreateUpload($params->getFilename(), $params->getFilePath(), $upload['comment']));
+    }
 
-        return $this->uploadData;
+    /**
+     * Create an upload from a string (binary png data or json string or mol file)
+     * For mol file the code is actually in chemdoodle-uis-unpacked.js from chemdoodle-web-mini repository
+     */
+    private function createFromString(FileFromString $fileType, string $realName, string $content): int
+    {
+        // a png file will be received as dataurl, so we need to convert it to binary before saving it
+        if ($fileType === FileFromString::Png) {
+            $content = $this->pngDataUrlToBinary($content);
+        }
+
+        // add file extension if it wasn't provided
+        if (Tools::getExt($realName) === 'unknown') {
+            $realName .= '.' . $fileType->value;
+        }
+        // create a temporary file so we can upload it using create()
+        $tmpFilePath = FsTools::getCacheFile();
+        $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
+        $tmpFilePathFs->write(basename($tmpFilePath), $content);
+
+        return $this->create(new CreateUpload($realName, $tmpFilePath));
     }
 
     /**
@@ -338,7 +361,7 @@ class Uploads implements CrudInterface
     private function nuke(): bool
     {
         if ($this->uploadData['immutable'] === 0) {
-            return $this->update(new UploadParams((string) self::STATE_DELETED, 'state'));
+            return $this->update(new UploadParams('state', (string) self::STATE_DELETED));
         }
         return false;
     }

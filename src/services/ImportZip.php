@@ -11,9 +11,8 @@ namespace Elabftw\Services;
 
 use function basename;
 use Elabftw\Elabftw\CreateUpload;
-use Elabftw\Elabftw\EntityParams;
-use Elabftw\Elabftw\TagParams;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -116,12 +115,7 @@ class ImportZip extends AbstractImportZip
             foreach ($item['links'] as $link) {
                 $linkText .= sprintf('<li>[%s] %s</li>', $link['name'], $link['title']);
             }
-            $params = new EntityParams($item['title'], 'title');
-            $this->Entity->update($params);
-            $params = new EntityParams($item['date'], 'date');
-            $this->Entity->update($params);
-            $params = new EntityParams($item['body'] . $header . $linkText . $end, 'body');
-            $this->Entity->update($params);
+            $this->Entity->patch(Action::Update, array('title' => $item['title'], 'date' => $item['date'], 'bodyappend' => $header . $linkText . $end));
         }
         // add steps
         if (!empty($item['steps'])) {
@@ -140,7 +134,7 @@ class ImportZip extends AbstractImportZip
     {
         $tagsArr = explode(self::TAGS_SEPARATOR, $tags);
         foreach ($tagsArr as $tag) {
-            $this->Entity->Tags->create(new TagParams($tag));
+            $this->Entity->Tags->postAction(Action::Create, array('tag' => $tag));
         }
     }
 

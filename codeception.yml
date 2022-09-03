@@ -1,12 +1,13 @@
 coverage:
     enabled: true
+    show_uncovered: true
+    show_only_summary: true
     whitelist:
         include:
             - src/models/*
             - src/classes/*
             - src/services/*
             - src/traits/*
-            - src/maps/*
             - src/controllers/*
 actor: Tester
 paths:
@@ -15,6 +16,7 @@ paths:
     data: tests/_data
     support: tests/_support
     envs: tests/_envs
+    output: tests/_output
 bootstrap: _bootstrap.php
 settings:
     colors: true

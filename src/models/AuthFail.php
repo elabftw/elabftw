@@ -37,6 +37,14 @@ class AuthFail
         return $this->countAndLockDevice();
     }
 
+    public function getLockedUsersCount(): int
+    {
+        $sql = 'SELECT COUNT(userid) FROM users WHERE allow_untrusted = 0';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
     public function getLockoutDevicesCount(): int
     {
         $sql = 'SELECT COUNT(id) FROM lockout_devices WHERE locked_at > (NOW() - INTERVAL 1 HOUR)';

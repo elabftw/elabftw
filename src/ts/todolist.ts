@@ -9,7 +9,7 @@ import Todolist from './Todolist.class';
 import { Malle } from '@deltablot/malle';
 import i18next from 'i18next';
 import { Model } from './interfaces';
-declare let key: any;
+declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -59,9 +59,23 @@ document.addEventListener('DOMContentLoaded', () => {
   scopeSwitch = document.getElementById(TodolistC.model + 'StepsShowTeam') as HTMLInputElement;
   scopeSwitch.addEventListener('change', () => {
     if (!document.getElementById(TodolistC.panelId).hasAttribute('hidden')){
-      TodolistC.toogleUnfinishedStepsScope();
+      TodolistC.toggleUnfinishedStepsScope();
     }
   });
+
+  // to avoid duplicating code between listeners (keydown and click on add)
+  function createTodoitem(): void {
+    const todoInput = (document.getElementById('todo') as HTMLInputElement);
+    const content = todoInput.value;
+    if (!content) { return; }
+
+    TodolistC.create(content).then(() => {
+      // reload the todolist
+      TodolistC.display();
+      // and clear the input
+      todoInput.value = '';
+    });
+  }
 
   // UPDATE TODOITEM
   const malleableTodoitem = new Malle({
@@ -74,30 +88,14 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
-  // add an observer so new comments will get an event handler too
+  // add an observer so new todo items will get an event handler too
   new MutationObserver(() => {
     malleableTodoitem.listen();
   }).observe(document.getElementById('todoItems'), {childList: true});
 
-  // to avoid duplicating code between listeners (keydown and click on add)
-  function createTodoitem(): void {
-    const todoInput = (document.getElementById('todo') as HTMLInputElement);
-    const content = todoInput.value;
-    if (!content) { return; }
-
-    TodolistC.create(content).then(json => {
-      if (json.res) {
-        // reload the todolist
-        TodolistC.read();
-        // and clear the input
-        todoInput.value = '';
-      }
-    });
-  }
-
   // save todo on enter
   document.getElementById('todo').addEventListener('keydown', (event: KeyboardEvent) => {
-    if (event.keyCode === 13) {
+    if (event.key === 'Enter') {
       createTodoitem();
     }
   });
@@ -113,11 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="destroy-todoitem"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
         const todoitemId = parseInt(el.dataset.todoitemid);
-        TodolistC.destroy(todoitemId).then(json => {
-          if (json.res) {
-            // hide item
-            $('#todoItem_' + todoitemId).css('background', '#29AEB9').toggle('blind');
-          }
+        TodolistC.destroy(todoitemId).then(() => {
+          // hide item
+          $('#todoItem_' + todoitemId).css('background', '#29AEB9').toggle('blind');
         });
       }
 

@@ -7,7 +7,7 @@
  */
 import EntityClass from './Entity.class';
 import { EntityType } from './interfaces';
-import { Ajax } from './Ajax.class';
+import { Api } from './Apiv2.class';
 import { notif } from './misc';
 import { DateTime } from 'luxon';
 import i18next from 'i18next';
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const info = document.getElementById('info').dataset;
 
-  const AjaxC = new Ajax();
+  const ApiC = new Api();
 
   // transform a Date object into something we can put as a value of an input of type datetime-local
   function toDateTimeInputValueNumber(datetime: Date): number {
@@ -104,10 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // load the events as JSON
     eventSources: [
       {
-        url: 'app/controllers/SchedulerController.php',
-        extraParams: {
-          item: info.item,
-        },
+        url: `api/v2/events/${info.item}`,
       },
     ],
     // first day is monday
@@ -132,36 +129,27 @@ document.addEventListener('DOMContentLoaded', () => {
         calendar.unselect();
         return;
       }
-      $.post('app/controllers/SchedulerController.php', {
-        create: true,
-        start: info.startStr,
-        end: info.endStr,
-        title: title,
-        item: itemid,
-      }).done(function(json) {
-        notif(json);
-        if (json.res) {
-          // FIXME: it would be best to just properly render the event instead of reloading the whole page
-          window.location.replace(`team.php?tab=1&item=${itemid}&start=${encodeURIComponent(info.startStr)}`);
-        }
+
+      const postParams = {
+        'start': info.startStr,
+        'end': info.endStr,
+        'title': title,
+      };
+      ApiC.post(`events/${itemid}`, postParams).then(() => {
+        // FIXME: it would be best to just properly render the event instead of reloading the whole page
+        window.location.replace(`team.php?tab=1&item=${itemid}&start=${encodeURIComponent(info.startStr)}`);
       });
     },
     // on click activate modal window
     eventClick: function(info): void {
       if (!editable) { return; }
       $('[data-action="scheduler-rm-bind"]').hide();
-      ($('#eventModal') as JQuery).modal('toggle');
+      $('#eventModal').modal('toggle');
       // delete button in modal
       $('#deleteEvent').on('click', function(): void {
-        $.post('app/controllers/SchedulerController.php', {
-          destroy: true,
-          id: info.event.id,
-        }).done(function(json) {
-          notif(json);
-          if (json.res) {
-            info.event.remove();
-            ($('#eventModal') as JQuery).modal('toggle');
-          }
+        ApiC.delete(`event/${info.event.id}`).then(() => {
+          info.event.remove();
+          $('#eventModal').modal('toggle');
         });
       });
       // FILL THE BOUND DIV
@@ -179,15 +167,9 @@ document.addEventListener('DOMContentLoaded', () => {
         input.addEventListener('change', event => {
           const input = (event.currentTarget as HTMLInputElement);
           const dt = DateTime.fromJSDate(input.valueAsDate);
-          AjaxC.postForm('app/controllers/SchedulerController.php', {
-            updateDirect: 'true',
-            what: input.dataset.what,
-            datetime: String(dt.toUnixInteger()),
-            id: info.event.id,
-          }).then(res => res.json().then(json => {
-            notif(json);
+          ApiC.patch(`event/${info.event.id}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())}).then(() => {
             calendar.refetchEvents();
-          }));
+          });
         });
       });
 
@@ -199,34 +181,21 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#eventBoundDb').html('Event is bound to an <a href="database.php?mode=view&id=' + info.event.extendedProps.item_link + '">item</a>.');
         $('[data-action="scheduler-rm-bind"][data-type="item_link"]').show();
       }
-      // bind an experiment to the event
+      // BIND AN ENTITY TO THE EVENT
       $('[data-action="scheduler-bind-entity"]').on('click', function(): void {
         const entityid = parseInt(($('#' + $(this).data('input')).val() as string), 10);
         if (entityid > 0) {
-          $.post('app/controllers/SchedulerController.php', {
-            bind: true,
-            id: info.event.id,
-            entityid: entityid,
-            type: $(this).data('type'),
-          }).done(function(json) {
-            notif(json);
-            if (json.res) {
-              $('#bindinput').val('');
-              ($('#eventModal') as JQuery).modal('toggle');
-              window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
-            }
+          ApiC.patch(`event/${info.event.id}`, {'target': $(this).data('type'), 'id': entityid}).then(() => {
+            $('#bindinput').val('');
+            $('#eventModal').modal('toggle');
+            window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
           });
         }
       });
       // remove the binding
       $('[data-action="scheduler-rm-bind"]').on('click', function(): void {
-        $.post('app/controllers/SchedulerController.php', {
-          unbind: true,
-          id: info.event.id,
-          type: $(this).data('type'),
-        }).done(function(json) {
-          ($('#eventModal') as JQuery).modal('toggle');
-          notif(json);
+        ApiC.patch(`event/${info.event.id}`, {'target': $(this).data('type'), 'id': null}).then(() => {
+          $('#eventModal').modal('toggle');
           window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
         });
       });
@@ -234,33 +203,27 @@ document.addEventListener('DOMContentLoaded', () => {
       // TODO refactor this
       // NOTE: previously the input div had ui-front jquery ui class to make the autocomplete list show properly, but with the new item input below
       // it didn't work well, so now the automplete uses appendTo option
-      const cacheExp = {};
       $('#bindexpinput').autocomplete({
         appendTo: '#binddivexp',
         source: function(request: Record<string, string>, response: (data) => void): void {
-          const term = request.term;
-          if (term in cacheExp) {
-            response(cacheExp[term]);
-            return;
-          }
-          $.getJSON('app/controllers/EntityAjaxController.php?type=experiments', request, function(data) {
-            cacheExp[term] = data;
-            response(data);
+          ApiC.getJson(`${EntityType.Experiment}/&q=${request.term}`).then(json => {
+            const res = [];
+            json.forEach(entity => {
+              res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+            });
+            response(res);
           });
         },
       });
-      const cacheDb = {};
       $('#binddbinput').autocomplete({
         appendTo: '#binddivdb',
         source: function(request: Record<string, string>, response: (data) => void): void {
-          const term = request.term;
-          if (term in cacheDb) {
-            response(cacheDb[term]);
-            return;
-          }
-          $.getJSON('app/controllers/EntityAjaxController.php?type=items', request, function(data) {
-            cacheDb[term] = data;
-            response(data);
+          ApiC.getJson(`${EntityType.Item}/&q=${request.term}`).then(json => {
+            const res = [];
+            json.forEach(entity => {
+              res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+            });
+            response(res);
           });
         },
       });
@@ -280,30 +243,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // a drop means we change start date
     eventDrop: function(info): void {
       if (!editable) { return; }
-      $.post('app/controllers/SchedulerController.php', {
-        updateStart: true,
-        delta: info.delta,
-        id: info.event.id,
-      }).done(function(json) {
-        if (!json.res) {
-          info.revert();
-        }
-        notif(json);
-      });
+      // TODO catch error and use info.revert();
+      ApiC.patch(`event/${info.event.id}`, {'target': 'start', 'delta': info.delta});
     },
     // a resize means we change end date
     eventResize: function(info): void {
       if (!editable) { return; }
-      $.post('app/controllers/SchedulerController.php', {
-        updateEnd: true,
-        end: info.endDelta,
-        id: info.event.id,
-      }).done(function(json) {
-        if (!json.res) {
-          info.revert();
-        }
-        notif(json);
-      });
+      // TODO catch error and use info.revert();
+      ApiC.patch(`event/${info.event.id}`, {'target': 'end', 'delta': info.endDelta});
     },
   });
 
@@ -319,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const TemplateC = new EntityClass(EntityType.Template);
     // IMPORT TPL
     if (el.matches('[data-action="import-template"]')) {
-      TemplateC.duplicate(parseInt(el.dataset.id)).then(json => notif(json));
+      TemplateC.duplicate(parseInt(el.dataset.id));
 
     // DESTROY TEMPLATE
     } else if (el.matches('[data-action="destroy-template"]')) {

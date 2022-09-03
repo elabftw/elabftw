@@ -6,13 +6,13 @@
  * @package elabftw
  */
 import $ from 'jquery';
-import { Ajax } from './Ajax.class';
+import { Api } from './Apiv2.class';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { notif, makeSortableGreatAgain, reloadElement, adjustHiddenState } from './misc';
+import { makeSortableGreatAgain, reloadElement, adjustHiddenState, getEntity } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
-import { PartialEntity, EntityType, Payload, Target, Method, Model, Action } from './interfaces';
+import { EntityType, Model } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
@@ -50,15 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, heartRate);
   }
 
-  // DEPRECATED, this can go away once all $.post disappeared and everyone uses custom Ajax class
-  // TODO
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
-    },
-  });
-
-  const AjaxC = new Ajax();
+  const ApiC = new Api();
 
   // set the language for js translated strings
   i18next.changeLanguage(document.getElementById('user-prefs').dataset.lang);
@@ -116,24 +108,16 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         // for a checkbox element, look at the checked attribute, not the value
         const value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
-        const payload: Payload = {
-          method: Method.POST,
-          action: el.dataset.action as Action ?? Action.Update,
-          model: el.dataset.model as Model,
-          target: el.dataset.target as Target,
-          content: value,
-          notif: true,
-        };
-        AjaxC.send(payload)
-          .then(json => notif(json))
-          .then(() => {
-            if (el.dataset.reload) {
-              reloadElement(el.dataset.reload).then(() => {
-                // make sure we listen to the new element too
-                listenTrigger();
-              });
-            }
-          });
+        const params = {};
+        params[el.dataset.target] = value;
+        ApiC.patch(`${el.dataset.model}`, params).then(() => {
+          if (el.dataset.reload) {
+            reloadElement(el.dataset.reload).then(() => {
+              // make sure we listen to the new element too
+              listenTrigger();
+            });
+          }
+        });
       });
     });
   }
@@ -155,6 +139,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // CAN READ/WRITE SELECT
+  $(document).on('change', '.permissionSelect', function() {
+    const value = $(this).val();
+    const rw = $(this).data('rw');
+    const params = {};
+    params[rw] = value;
+    const entity = getEntity();
+    return ApiC.patch(`${entity.type}/${entity.id}`, params);
+  });
+
+
   /**
    * MAIN click event listener bound to container
    * this will listen for click events on the container and if the element
@@ -164,13 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // SHOW PRIVACY POLICY
     if (el.matches('[data-action="show-privacy-policy"]')) {
-      const payload: Payload = {
-        method: Method.UNAUTHGET,
-        action: Action.Read,
-        model: Model.PrivacyPolicy,
-      };
-      AjaxC.send(payload).then(json => {
-        let policy = json.value as string;
+      fetch('app/controllers/UnauthRequestHandler.php').then(resp => resp.json()).then(json => {
+        let policy = json.privacy_policy;
         if (!policy) {
           policy = 'No privacy policy is set.';
         }
@@ -253,17 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ACK NOTIF
     } else if (el.matches('[data-action="ack-notif"]')) {
-      const payload: Payload = {
-        method: Method.POST,
-        action: Action.Update,
-        model: Model.Notification,
-        // use the finished target of steps for changing is_ack
-        // so we don't need to add another target
-        target: Target.Finished,
-        id: parseInt(el.dataset.id, 10),
-      };
       if (el.parentElement.dataset.ack === '0') {
-        AjaxC.send(payload).then(() => {
+        ApiC.patch(`${Model.User}/me/${Model.Notification}/${el.dataset.id}`).then(() => {
           if (el.dataset.href) {
             window.location.href = el.dataset.href;
           } else {
@@ -278,20 +259,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // DESTROY (clear all) NOTIF
     } else if (el.matches('[data-action="destroy-notif"]')) {
-      const payload: Payload = {
-        method: Method.POST,
-        action: Action.Destroy,
-        model: Model.Notification,
-      };
-      AjaxC.send(payload).then(() => {
-        document.querySelectorAll('.notification').forEach(el => el.remove());
-        reloadElement('navbarNotifDiv');
-      });
+      ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElement('navbarNotifDiv'));
 
     } else if (el.matches('[data-action="export-user"]')) {
       const source = (document.getElementById('userExport') as HTMLSelectElement).value;
       const format = (document.getElementById('userExportFormat') as HTMLSelectElement).value;
-      window.location.href = `make.php?what=${format}&user=${source}&type=experiments`;
+      window.location.href = `make.php?format=${format}&user=${source}&type=experiments`;
 
 
     // CREATE EXPERIMENT or DATABASE item: main create button in top right
@@ -303,12 +276,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const tplid = el.dataset.tplid;
         const urlParams = new URLSearchParams(document.location.search);
         const tags = urlParams.getAll('tags[]');
-        (new EntityClass(EntityType.Experiment)).create(tplid, tags).then(json => {
-          if (json.res) {
-            window.location.replace(`experiments.php?mode=edit&id=${json.value}`);
-          } else {
-            notif(json);
-          }
+        (new EntityClass(EntityType.Experiment)).create(tplid, tags).then(resp => {
+          const location = resp.headers.get('location').split('/');
+          const newId = location[location.length -1];
+          window.location.href = `experiments.php?mode=edit&id=${newId}`;
         });
       } else {
         // for database items, show a selection modal
@@ -317,12 +288,20 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else if (el.matches('[data-action="import-file"]')) {
       ($('#importModal') as JQuery).modal('toggle');
+    } else if (el.matches('[data-action="report-bug"]')) {
+      event.preventDefault();
+      el.querySelector('i').classList.add('moving-bug');
+      setTimeout(() => window.location.assign('https://github.com/elabftw/elabftw/issues/new/choose'), 3000);
+
     } else if (el.matches('[data-action="create-item"]')) {
       const tplid = el.dataset.tplid;
       const urlParams = new URLSearchParams(document.location.search);
       const tags = urlParams.getAll('tags[]');
-      (new EntityClass(EntityType.Item)).create(tplid, tags).then(json => window.location.replace(`?mode=edit&id=${json.value}`));
-
+      (new EntityClass(EntityType.Item)).create(tplid, tags).then(resp => {
+        const location = resp.headers.get('location').split('/');
+        const newId = location[location.length -1];
+        window.location.href = `database.php?mode=edit&id=${newId}`;
+      });
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;
       const plusMinusIcon = el.querySelector('.fas');
@@ -346,19 +325,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // prepare the get request
       const entityType = el.dataset.type === 'experiments' ? EntityType.Experiment : EntityType.Item;
-      const payload: Payload = {
-        method: Method.GET,
-        action: Action.Read,
-        model: entityType,
-        entity: {
-          type: entityType,
-          id: parseInt(el.dataset.id, 10),
-        },
-        target: Target.Body,
-      };
-      (new Ajax()).send(payload).then(json => {
+      (new EntityClass(entityType)).read(parseInt(el.dataset.id, 10)).then(json => {
         // add html content and adjust the width of the children
-        bodyDiv.innerHTML = (json.value as PartialEntity).body;
+        bodyDiv.innerHTML = json.body_html;
         // get the width of the parent. The -30 is to make it smaller than parent even with the margins
         const width = document.getElementById('parent_' + randId).clientWidth - 30;
         bodyDiv.style.width = String(width);

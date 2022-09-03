@@ -41,7 +41,7 @@
               <i class='fas fa-plus-circle'></i>
             </span>
             {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
-            <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
+            <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
                 {{ link.title|raw }}</a>
             <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
             <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
@@ -70,7 +70,7 @@
             <li class='list-group-item'>
               <i class='fas fa-link mr-1'></i>
               {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
-              <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.entityid }}'>
+              <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</span> - <a href='database.php?mode=view&id={{ link.entityid }}'>
                   {{ link.title|raw }}</a>
             </li>
           {% endfor %}

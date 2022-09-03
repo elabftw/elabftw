@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 use RobThree\Auth\TwoFactorAuth;
 use RuntimeException;
@@ -57,6 +58,9 @@ class MfaHelper
 
     public function getQRCodeImageAsDataUri(string $email): string
     {
+        if ($this->secret === null) {
+            throw new ImproperActionException('Secret is null!');
+        }
         return $this->TwoFactorAuth->getQRCodeImageAsDataUri($email, $this->secret);
     }
 
@@ -65,37 +69,42 @@ class MfaHelper
         return $this->TwoFactorAuth->createSecret(self::SECRET_BITS);
     }
 
-    public function saveSecret(): void
+    /** @psalm-suppress PossiblyNullArgument */
+    public function saveSecret(): bool
     {
-        if ($this->secret === null) {
-            throw new RuntimeException('No secret to save!');
-        }
-        $this->toggleSecret($this->secret);
+        return $this->toggleSecret($this->secret);
     }
 
-    public function removeSecret(): void
+    public function removeSecret(): bool
     {
-        $this->toggleSecret();
+        return $this->toggleSecret();
     }
 
+    /** @psalm-suppress PossiblyNullArgument */
     public function verifyCode(string $code): bool
     {
+        if ($this->secret === null) {
+            throw new RuntimeException('No secret to verify!');
+        }
         $code = Filter::sanitize($code);
         return $this->TwoFactorAuth->verifyCode($this->secret, $code, self::DISCREPANCY);
     }
 
-    // only used to emulate the phone app (in MfaCode)
+    /**
+     * only used to emulate the phone app (in MfaCode)
+     * @psalm-suppress PossiblyNullArgument
+     */
     public function getCode(): string
     {
         return $this->TwoFactorAuth->getCode($this->secret);
     }
 
-    private function toggleSecret(?string $secret = null): void
+    private function toggleSecret(?string $secret = null): bool
     {
         $sql = 'UPDATE users SET mfa_secret = :secret WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':secret', $secret);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 }

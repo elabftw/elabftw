@@ -46,10 +46,10 @@ class MakeCsv extends AbstractMakeCsv
     {
         $rows = array();
         foreach ($this->idArr as $id) {
-            $this->Entity->setId((int) $id);
             try {
+                $this->Entity->setId((int) $id);
                 $permissions = $this->Entity->getPermissions();
-            } catch (IllegalActionException $e) {
+            } catch (IllegalActionException) {
                 continue;
             }
             if ($permissions['read']) {
@@ -60,7 +60,7 @@ class MakeCsv extends AbstractMakeCsv
                     html_entity_decode(strip_tags(htmlspecialchars_decode((string) $this->Entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
                     htmlspecialchars_decode((string) $this->Entity->entityData['category'], ENT_QUOTES | ENT_COMPAT),
                     $this->Entity->entityData['elabid'] ?? '',
-                    $row[] = $this->Entity->entityData['rating'],
+                    $this->Entity->entityData['rating'],
                     $this->getUrl(),
                     $this->Entity->entityData['metadata'] ?? '',
                 );

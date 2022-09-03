@@ -8,24 +8,22 @@
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
-import Link from './Link.class';
 import Step from './Step.class';
 import i18next from 'i18next';
-import { relativeMoment, makeSortableGreatAgain, reloadElement } from './misc';
-import { addAutocompleteToLinkInputs, getCheckedBoxes, notif, getEntity, adjustHiddenState } from './misc';
-import { Entity, Target } from './interfaces';
+import { relativeMoment, makeSortableGreatAgain, reloadElement, addAutocompleteToLinkInputs, getCheckedBoxes, notif, getEntity, adjustHiddenState } from './misc';
+import { Action, Target, Model } from './interfaces';
+import { Api } from './Apiv2.class';
+
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
     return;
   }
   const entity = getEntity();
+  const ApiC = new Api();
 
   // STEPS
   const StepC = new Step(entity);
-
-  // LINKS
-  const LinkC = new Link(entity);
 
   relativeMoment();
 
@@ -40,9 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     // TOGGLE DEADLINE NOTIFICATIONS ON STEP
     } else if (el.matches('[data-action="step-toggle-deadline-notif"]')) {
-      StepC.update(parseInt(el.dataset.stepid, 10), null, Target.DeadlineNotif).then(() => {
-        reloadElement('stepsDiv');
-      });
+      StepC.notif(parseInt(el.dataset.stepid, 10)).then(() => reloadElement('stepsDiv'));
 
     // DESTROY DEADLINE ON STEP
     } else if (el.matches('[data-action="step-destroy-deadline"]')) {
@@ -51,11 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     // IMPORT LINK(S) OF LINK
     } else if (el.matches('[data-action="import-links"]')) {
-      LinkC.importLinks(parseInt(el.dataset.target, 10)).then(() => reloadElement('linksDiv'));
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Link}/${el.dataset.target}`, {'action': Action.Duplicate}).then(() => reloadElement('linksDiv'));
     // DESTROY LINK
     } else if (el.matches('[data-action="destroy-link"]')) {
       if (confirm(i18next.t('link-delete-warning'))) {
-        LinkC.destroy(parseInt(el.dataset.target, 10)).then(() => reloadElement('linksDiv'));
+        ApiC.delete(`${entity.type}/${entity.id}/${Model.Link}/${el.dataset.target}`).then(() => reloadElement('linksDiv'));
       }
     }
   });
@@ -67,14 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.which === 13 || e.type === 'focusout') {
       const content = e.currentTarget.value;
       if (content.length > 0) {
-        StepC.create(content).then(json => {
+        StepC.create(content).then(() => {
           reloadElement('stepsDiv');
           // clear input field
           e.currentTarget.value = '';
-
-          if (document.getElementById('stepsDiv').hidden && json.res) {
-            notif(json);
-          }
         });
       }
     }
@@ -166,18 +158,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (Number.isNaN(target)) {
         return;
       }
-      LinkC.create(target).then(json => {
-        // only reload children of links_div_id
-        reloadElement('links_div_' + entity.id).then(() => {
-          // clear input field
-          (document.getElementById('linkinput') as HTMLInputElement).value = '';
-        });
-
-        if (document.getElementById('linksDiv').hidden && json.res) {
-          notif(json);
-        }
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Link}/${target}`).then(() => {
+        reloadElement('linksDiv');
+        // clear input field
+        (document.getElementById('linkinput') as HTMLInputElement).value = '';
       });
-      $(this).val('');
     }
   });
 
@@ -199,12 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       $.each(checked, function(index) {
-        const tmpEntity: Entity = {
-          type: entity.type,
-          id: checked[index]['id'],
-        };
-        const TmpLinkC = new Link(tmpEntity);
-        TmpLinkC.create(parseInt($('#linkInputMultiple').val() as string));
+        ApiC.post(`${entity.type}/${checked[index]['id']}/${Model.Link}/${parseInt($('#linkInputMultiple').val() as string)}`);
       });
       $(this).val('');
     }

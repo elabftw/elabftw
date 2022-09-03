@@ -128,7 +128,7 @@
                     </a>
                   </div>
                 {% endif %}
-                            {% elseif ext == 'mol' and App.Users.userData.chem_editor %}
+                            {% elseif ext == 'mol' %}
                             <div class='text-center'>
                               <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'></canvas>
                             </div>
@@ -242,15 +242,9 @@
                   {% if mode == 'edit' %}
                     <!-- replace upload form -->
                     <div id='replaceUploadForm_{{ upload.id }}' class='mt-1' hidden>
-                      <form enctype='multipart/form-data' action='app/controllers/RequestHandler.php' method='POST' class='form-inline' data-action='replace-uploaded-file' data-long-name='{{ upload.long_name }}'>
-                        <input type='hidden' name='action' value='replace' />
-                        <input type='hidden' name='target' value='file' />
-                        <input type='hidden' name='entity_id' value='{{ upload.item_id }}' />
-                        <input type='hidden' name='entity_type' value='{{ upload.type }}' />
-                        <input type='hidden' name='id' value='{{ upload.id }}' />
-                        <input type='hidden' name='model' value='upload' />
+                      <form enctype='multipart/form-data' action='api/v2/{{ upload.type }}/{{ upload.item_id }}/uploads/{{ upload.id }}' method='POST' class='form-inline' data-action='replace-uploaded-file' data-long-name='{{ upload.long_name }}' data-uploadid='{{ upload.id }}'>
                         {{ App.Session.get('csrf')|csrf }}
-                        <input type='file' class='form-control mr-1 mt-1' name='content' required />
+                        <input type='file' class='form-control mr-1 mt-1' name='file' required />
                         <button type='submit' class='button btn btn-primary mt-1'>{{ 'OK'|trans }}</button>
                       </form>
                     </div>

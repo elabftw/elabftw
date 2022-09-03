@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,13 +6,15 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\Action;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\RestInterface;
+use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -20,7 +22,7 @@ use PDO;
 /**
  * All about the todolist
  */
-class Todolist implements CrudInterface
+class Todolist implements RestInterface
 {
     use SetIdTrait;
     use SortableTrait;
@@ -33,20 +35,22 @@ class Todolist implements CrudInterface
         $this->id = $id;
     }
 
-    public function create(ContentParamsInterface $params): int
+    public function getPage(): string
     {
+        return 'api/v2/todolist/';
+    }
+
+    public function postAction(Action $action, array $reqBody): int
+    {
+        $content = Filter::sanitize($reqBody['content'] ?? '');
+        // no other actions than create
         $sql = 'INSERT INTO todolist(body, userid) VALUES(:content, :userid)';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent());
+        $req->bindValue(':content', $content);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
-    }
-
-    public function read(): array
-    {
-        return $this->readAll();
     }
 
     /**
@@ -54,7 +58,7 @@ class Todolist implements CrudInterface
      */
     public function readAll(): array
     {
-        $sql = 'SELECT id, body, creation_time FROM todolist WHERE userid = :userid ORDER BY ordering ASC, creation_time DESC';
+        $sql = 'SELECT * FROM todolist WHERE userid = :userid ORDER BY ordering ASC, creation_time DESC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -64,23 +68,21 @@ class Todolist implements CrudInterface
 
     public function readOne(): array
     {
-        $sql = 'SELECT * FROM todolist WHERE id = :id';
+        $sql = 'SELECT * FROM todolist WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);
     }
 
-    public function update(ContentParamsInterface $params): bool
+    public function patch(Action $action, array $params): array
     {
-        $sql = 'UPDATE todolist SET body = :content WHERE id = :id AND userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindValue(':content', $params->getContent());
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-
-        return $this->Db->execute($req);
+        foreach ($params as $key => $value) {
+            $this->update(new ContentParams($value, $key));
+        }
+        return $this->readOne();
     }
 
     public function destroy(): bool
@@ -100,6 +102,17 @@ class Todolist implements CrudInterface
     {
         $sql = 'DELETE FROM todolist WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+
+        return $this->Db->execute($req);
+    }
+
+    private function update(ContentParamsInterface $params): bool
+    {
+        $sql = 'UPDATE todolist SET body = :content WHERE id = :id AND userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindValue(':content', $params->getContent());
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
 
         return $this->Db->execute($req);

@@ -86,10 +86,6 @@ class MakeEln extends MakeStreamZip
             $currentDatasetFolder = $this->getBaseFileName();
             $this->folder = $this->root . '/' . $currentDatasetFolder;
             $rootParts[] = array('@id' => './' . $currentDatasetFolder);
-            $orcid = '';
-            if ($e['orcid'] !== null) {
-                $orcid = 'https://orcid.org/' . $e['orcid'];
-            }
 
             // LINKS
             $mentions = array();
@@ -97,7 +93,7 @@ class MakeEln extends MakeStreamZip
                 $mentions[] = array(
                     '@id' => SITE_URL . '/database.php?mode=view&id=' . $link['itemid'],
                     '@type' => 'Dataset',
-                    'name' => $link['name'] . ' - ' . $link['title'],
+                    'name' => $link['category'] . ' - ' . $link['title'],
                     'identifier' => $link['elabid'],
                 );
             }

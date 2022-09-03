@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 use function date;
 use Elabftw\Elabftw\Db;
 use Elabftw\Models\Scheduler;
-use Elabftw\Models\Users;
 use Elabftw\Traits\UploadTrait;
 use function implode;
 
@@ -25,7 +24,7 @@ class MakeSchedulerReport extends AbstractMakeCsv
 
     protected Db $Db;
 
-    public function __construct(private Scheduler $scheduler, private string $from, private string $to)
+    public function __construct(private Scheduler $scheduler)
     {
         $this->Db = Db::getConnection();
     }
@@ -62,7 +61,7 @@ class MakeSchedulerReport extends AbstractMakeCsv
     protected function getRows(): array
     {
         // read all booking entries from that time period
-        $entries = $this->scheduler->readAllFromTeam($this->from, $this->to);
+        $entries = $this->scheduler->readAll();
         foreach ($entries as $key => $entry) {
             // append the team(s) of user
             $UsersHelper = new UsersHelper((int) $entry['userid']);

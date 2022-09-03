@@ -9,7 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
+use Elabftw\Enums\Action;
 
 class LinksTest extends \PHPUnit\Framework\TestCase
 {
@@ -18,28 +18,40 @@ class LinksTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Experiments = new Experiments(new Users(1, 1), 3);
+        $this->Experiments->Links->setId(3);
     }
 
     public function testCreateReadDestroy(): void
     {
-        $id = $this->Experiments->Links->create(new ContentParams('1'));
+        $this->Experiments->Links->postAction(Action::Create, array());
         $this->assertIsArray($this->Experiments->Links->readAll());
         $this->Experiments->Links->setId(1);
         $this->Experiments->Links->destroy();
-    }
-
-    public function testUpdate(): void
-    {
-        $this->assertFalse($this->Experiments->Links->update(new ContentParams('blah')));
     }
 
     public function testImport(): void
     {
         // create a link in a db item
         $Items = new Items(new Users(1, 1), 1);
-        $Items->Links->create(new ContentParams('1'));
+        $Items->Links->setId(1);
+        $Items->Links->postAction(Action::Create, array());
         // now import this in our experiment like if we click the import links button
         $Links = new Links($this->Experiments, $Items->id);
-        $this->assertTrue($Links->import());
+        $this->assertIsInt($Links->postAction(Action::Duplicate, array()));
+    }
+
+    public function testPatch(): void
+    {
+        $this->assertIsArray($this->Experiments->Links->patch(Action::Duplicate, array()));
+    }
+
+    public function testReadOne(): void
+    {
+        $this->assertIsArray($this->Experiments->Links->readOne());
+    }
+
+    public function testReadRelated(): void
+    {
+        $this->assertIsArray($this->Experiments->Links->readRelated());
     }
 }

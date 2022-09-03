@@ -43,35 +43,29 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       <hr>
       <p>{{ 'Teams'|trans }}: {{ teamsStats.totteams }} - {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}</p>
       <hr>
-      <a href='make.php?what=report' class='button btn btn-primary'>{{ 'Generate report'|trans }}</a>
+      <a href='make.php?format=report' class='button btn btn-primary'>{{ 'Generate report'|trans }}</a>
     </div>
 
     <div class='box'>
       <h3>{{ 'Announcement'|trans }}</h3>
       <hr>
       <p>{{ "The following text will be displayed to all users on all pages while it's active."|trans }}</p>
-      <form method='post' action='app/controllers/SysconfigController.php'>
-        {{ App.Session.get('csrf')|csrf }}
-        <input class='form-control' type='text' name='announcement' value='{{ App.Config.configArr.announcement }}' />
-        <div class='mt-4 text-center'>
-          <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-          <button type='submit' name='clear_announcement' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
-        </div>
-      </form>
+      <input class='form-control' type='text' id='announcementInput' name='announcement' value='{{ App.Config.configArr.announcement }}' />
+      <div class='mt-4 text-center'>
+        <button data-action='patch-announcement' data-operation='save' data-inputid='announcementInput' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button data-action='patch-announcement' data-operation='clear' data-inputid='announcementInput' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
+      </div>
     </div>
 
     <div class='box'>
       <h3>{{ 'Login page announcement'|trans }}</h3>
       <hr>
       <p>{{ 'The following text will be displayed only on the login page.'|trans }}</p>
-      <form method='post' action='app/controllers/SysconfigController.php'>
-        {{ App.Session.get('csrf')|csrf }}
-        <input class='form-control' type='text' name='login_announcement' value='{{ App.Config.configArr.login_announcement }}' />
-        <div class='mt-4 text-center'>
-          <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-          <button type='submit' name='clear_login_announcement' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
-        </div>
-      </form>
+      <input class='form-control' type='text' id='loginAnnouncementInput' name='login_announcement' value='{{ App.Config.configArr.login_announcement }}' />
+      <div class='mt-4 text-center'>
+        <button data-action='patch-announcement' data-operation='save' data-inputid='loginAnnouncementInput' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button data-action='patch-announcement' data-operation='clear' data-inputid='loginAnnouncementInput' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
+      </div>
     </div>
 
     <form class='box' method='post' action='app/controllers/SysconfigController.php'>
@@ -188,7 +182,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <h3>{{ 'Add a New Team'|trans }}</h3>
             <hr>
             <input class='form-control custom-control-inline col-md-4' required type='text' placeholder='Pasteur lab' id='teamsName' />
-            <button id='teamsCreateButton' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+            <button data-action='create-team' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
         </div>
 
         <!-- DISPLAY TEAMS -->
@@ -213,12 +207,12 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
                   <li class='list-inline-item mb-2'>
                     {% if count.totusers == 0 and team.id != App.Users.userData.team %}
-                    <button data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' class='button btn btn-danger teamsDestroyButton'>
+                    <button data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' data-action='destroy-team' class='button btn btn-danger'>
                         {{ 'Delete'|trans }}
                     </button>
                     {% else %}
-                    <button data-id='{{ team.id }}' id='teamsArchiveButton_{{ team.id }}' class='button btn btn-neutral teamsArchiveButton'>
-                        {{ 'Archive'|trans }}
+                    <button data-id='{{ team.id }}' data-action='archive-team' class='button btn btn-neutral'>
+                      {{ 'Archive'|trans }}
                     </button>
                   </li>
 
@@ -233,8 +227,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                   </li>
 
                   <li class='list-inline-item mb-2'>
-                    <button data-id='{{ team.id }}' id='teamsUpdateButton_{{ team.id }}' class='button btn btn-primary teamsUpdateButton'>
-                        {{ 'Save'|trans }}
+                    <button data-id='{{ team.id }}' data-action='patch-team-sysadmin' class='button btn btn-primary'>
+                      {{ 'Save'|trans }}
                     </button>
                   </li>
 
@@ -334,7 +328,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
 <!-- TAB 6 EMAIL -->
 <div data-tabcontent='6' hidden>
-  <div class='box'>
+  <div class='box' id='emailSettings'>
     <h3>{{ 'E-mail Settings'|trans }}</h3>
     <hr>
     <form class='form-group' method='post' action='app/controllers/SysconfigController.php'>
@@ -361,8 +355,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           <p>
             {{ 'A password is already set.'|trans }}
             {{ '%sClear it%s or change it below:'|trans|format("
-                <a href='app/controllers/SysconfigController.php?clearSmtppass=1'>",
-                "</a>"
+                <span class='link-like' data-action='clear-password' data-target='smtp' data-reload='emailSettings'>",
+                "</span>"
             )|raw }}
             <span data-action='toggle-next' class='button btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
             <input class='form-control col-md-4' type='password' name='smtp_password' hidden autocomplete='off' id='hidden_smtp_password' />
@@ -380,7 +374,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     <label for='testemailEmail'>{{ 'Send a test email'|trans }}</label>
     <input class='form-control col-md-4' type='email' value='{{ App.Users.userData.email }}' id='testemailEmail' />
     <div class='mt-4 text-center'>
-      <button id='testemailButton' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
+      <button data-action='send-test-email' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
     </div>
   </div>
 
@@ -394,7 +388,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     <label for='massBody'>{{ 'Email Body'|trans }}</label>
     <textarea class='form-control col-md-4' id='massBody'></textarea>
     <div class='mt-4 text-center'>
-      <button id='massSend' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
+      <button data-action='send-mass-email' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
     </div>
   </div>
 
@@ -573,14 +567,14 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         </form>
     </div>
 
-    <div class='box'>
+    <div class='box' id='idpsDiv'>
         <h3>Identity Providers Configuration</h3>
 
         {% if idpsArr|length > 0 %}
             <h4>Existing Identity Providers</h4>
             {% for idp in idpsArr %}
               <div class='box'>
-                  <a class='clickable idpsDestroy float-right' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
+                  <a class='float-right' href='#' data-action='destroy-idp' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
                       <i class='fas fa-trash-alt fa-2x'></i>
                   </a>
                   <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>
@@ -716,16 +710,13 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
   {% endif %}
 
-  <form method='post' action='app/controllers/SysconfigController.php'>
-    {{ App.Session.get('csrf')|csrf }}
-    <textarea name='privacy_policy' class='mceditable'>
-      {{ App.Config.configArr.privacy_policy|default(privacyPolicyTemplate)|raw }}
-    </textarea>
-    <div class='mt-4 text-center'>
-      <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-      <button class='button btn btn-danger' type='submit' name='clear_policy'>{{ 'Clear'|trans }}</button>
-    </div>
-  </form>
+  <textarea id='privacyPolicyInput' class='mceditable'>
+    {{ App.Config.configArr.privacy_policy|default(privacyPolicyTemplate)|raw }}
+  </textarea>
+  <div class='mt-4 text-center'>
+    <button data-action='patch-policy' data-operation='save' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+    <button data-action='patch-policy' data-operation='clear' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
+  </div>
 </div>
 
 <!-- TAB 9 EXTERNAL AUTH -->
@@ -787,7 +778,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 </div>
 
 <!-- TAB 10 LDAP -->
-<div class='box' data-tabcontent='10' hidden>
+<div class='box' data-tabcontent='10' id='ldapSettings' hidden>
     <form method='post' action='app/controllers/SysconfigController.php'>
       {{ App.Session.get('csrf')|csrf }}
       <div class='form-group'>
@@ -824,8 +815,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           <p>
             {{ 'A password is already set.'|trans }}
             {{ '%sClear it%s or change it below:'|trans|format("
-                <a href='app/controllers/SysconfigController.php?clearLdappass=1'>",
-                "</a>"
+                <span class='link-like' data-action='clear-password' data-target='ldap' data-reload='ldapSettings'>",
+                "</span>"
             )|raw }}
             <span data-action='toggle-next' class='button btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
             <input class='form-control col-md-4' type='password' name='ldap_password' hidden autocomplete='off' id='hidden_ldap_password' />
@@ -879,34 +870,29 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
 <!-- TAB 11 Uploads -->
 <div data-tabcontent='11' hidden>
-  <div class='box'>
-    <form method='post' action='app/controllers/SysconfigController.php'>
-      <input type='hidden' name='updateConfig' value='true' />
-      {{ App.Session.get('csrf')|csrf }}
-      <label for='uploads_storage'>{{ 'Where user uploaded files are stored:'|trans }}</label>
-      <select id='uploads_storage' name='uploads_storage' class='form-control col-md-4'>
-          <option {{ App.Config.configArr.uploads_storage == '1' ? ' selected' }} value='1'>{{ 'Local filesystem'|trans }}</option>
-          <option {{ App.Config.configArr.uploads_storage == '2' ? ' selected' }} value='2'>{{ 'S3 bucket'|trans }}</option>
-      </select>
-      <p class='smallgray'>{{ 'You can select where uploaded files will be stored. The default is local storage but you can configure any S3 compatible object storage.'|trans }}</p>
+  <div class='box form-group'>
+    <label for='uploads_storage'>{{ 'Where user uploaded files are stored:'|trans }}</label>
+    <select id='uploads_storage' name='uploads_storage' class='form-control col-md-4'>
+        <option {{ App.Config.configArr.uploads_storage == '1' ? ' selected' }} value='1'>{{ 'Local filesystem'|trans }}</option>
+        <option {{ App.Config.configArr.uploads_storage == '2' ? ' selected' }} value='2'>{{ 'S3 bucket'|trans }}</option>
+    </select>
+    <p class='smallgray'>{{ 'You can select where uploaded files will be stored. The default is local storage but you can configure any S3 compatible object storage.'|trans }}</p>
 
-      <label for='s3_bucket_name'>S3 bucket name</label>
-      <input class='form-control col-md-4' type='text' id='s3_bucket_name' placeholder='some-bucket-name' name='s3_bucket_name' value='{{ App.Config.configArr.s3_bucket_name }}' />
+    <label for='s3_bucket_name'>S3 bucket name</label>
+    <input class='form-control col-md-4' type='text' id='s3_bucket_name' placeholder='some-bucket-name' name='s3_bucket_name' value='{{ App.Config.configArr.s3_bucket_name }}' />
 
-      <label for='s3_region'>S3 region</label>
-      <input class='form-control col-md-4' type='text' id='s3_region' placeholder='uploads' name='s3_region' value='{{ App.Config.configArr.s3_region }}' />
+    <label for='s3_region'>S3 region</label>
+    <input class='form-control col-md-4' type='text' id='s3_region' placeholder='uploads' name='s3_region' value='{{ App.Config.configArr.s3_region }}' />
 
-      <label for='s3_region'>S3 endpoint</label>
-      <input class='form-control col-md-4' type='url' id='s3_endpoint' placeholder='uploads' name='s3_endpoint' value='{{ App.Config.configArr.s3_endpoint }}' />
+    <label for='s3_endpoint'>S3 endpoint</label>
+    <input class='form-control col-md-4' type='url' id='s3_endpoint' placeholder='uploads' name='s3_endpoint' value='{{ App.Config.configArr.s3_endpoint }}' />
 
-      <label for='s3_path_prefix'>S3 path prefix (optional)</label>
-      <input class='form-control col-md-4' type='text' id='s3_path_prefix' placeholder='uploads' name='s3_path_prefix' value='{{ App.Config.configArr.s3_path_prefix }}' />
+    <label for='s3_path_prefix'>S3 path prefix (optional)</label>
+    <input class='form-control col-md-4' type='text' id='s3_path_prefix' placeholder='uploads' name='s3_path_prefix' value='{{ App.Config.configArr.s3_path_prefix }}' />
 
-
-      <div class='mt-4 text-center'>
-        <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-      </div>
-    </form>
+    <div class='mt-4 text-center'>
+      <button data-action='patch-storage' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+    </div>
   </div>
 </div>
 

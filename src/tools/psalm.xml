@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <psalm
-    totallyTyped="false"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
@@ -9,35 +8,33 @@
     checkForThrowsInGlobalScope="true"
     ignoreInternalFunctionFalseReturn="true"
     ignoreInternalFunctionNullReturn="false"
-    reportMixedIssues="false"
-    errorLevel="1"
+    reportMixedIssues="true"
+    errorLevel="3"
     findUnusedVariablesAndParams="true"
-    runTaintAnalysis="true"
 >
     <projectFiles>
+        <directory name="../../bin" />
         <directory name="../../src" />
+        <directory name="../../tests" />
+        <directory name="../../web" />
+        <ignoreFiles>
+            <directory name="../../cache" />
+            <directory name="../../uploads" />
+            <directory name="../../vendor" />
+            <directory name="../../tests" />
+            <file name="../../c3.php" />
+            <file name="rector.php" />
+        </ignoreFiles>
     </projectFiles>
+    <globals>
+          <var name="App" type="Elabftw\Elabftw\App" />
+    </globals>
 
     <issueHandlers>
-        <LessSpecificReturnType errorLevel="info" />
-
+        <!-- TODO once we get to symfony 6.2 we can use FlashBagAwareSessionInterface
+        see https://github.com/symfony/symfony/pull/46491 -->
+        <UndefinedInterfaceMethod errorLevel="info" />
         <!-- level 3 issues - slightly lazy code writing, but provably low false-negatives -->
-
-        <DeprecatedMethod errorLevel="info" />
-        <DeprecatedProperty errorLevel="info" />
-        <DeprecatedClass errorLevel="info" />
-        <DeprecatedInterface errorLevel="info" />
-
-        <MissingClosureReturnType errorLevel="info" />
-        <MissingReturnType errorLevel="info" />
-        <MissingPropertyType errorLevel="info" />
-        <InvalidDocblock errorLevel="info" />
-
-        <PropertyNotSetInConstructor errorLevel="info" />
-        <MissingConstructor errorLevel="info" />
-        <MissingClosureParamType errorLevel="info" />
-        <MissingParamType errorLevel="info" />
-
         <RedundantCondition errorLevel="info" />
 
         <DocblockTypeContradiction errorLevel="info" />
@@ -46,5 +43,7 @@
         <UnresolvableInclude errorLevel="info" />
 
         <RawObjectIteration errorLevel="info" />
+        <UndefinedGlobalVariable errorLevel="info" />
+        <UncaughtThrowInGlobalScope errorLevel="info" />
     </issueHandlers>
 </psalm>

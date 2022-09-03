@@ -9,8 +9,8 @@
 
 namespace Elabftw\Commands;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -71,11 +71,9 @@ class AddMissingLinks extends Command
                         case 'experiments_templates':
                             $entity = new Templates(new Users((int) $data['userid']), (int) $data['id']);
                             break;
-                        case 'items':
-                            $entity = new Items(new Users((int) $data['userid']), (int) $data['id']);
-                            break;
+                            // items
                         default:
-                            continue 2;
+                            $entity = new Items(new Users((int) $data['userid']), (int) $data['id']);
                     }
 
                     // make sure we can access all entries with write access
@@ -98,9 +96,10 @@ class AddMissingLinks extends Command
 
                                 $out = $Db->lastInsertId();
                             } else {
-                                $out = (new Links($entity))->create(new ContentParams($match));
+                                $Links = new Links($entity, (int) $match);
+                                $out = $Links->postAction(Action::Create, array());
                             }
-                            if ((int) $out !== 0) {
+                            if ($out !== 0) {
                                 $count++;
                             }
                         } catch (IllegalActionException $e) {

@@ -20,7 +20,7 @@ class CheckTest extends \PHPUnit\Framework\TestCase
 {
     public function testPasswordLength(): void
     {
-        $this->assertTrue(Check::passwordLength('longpassword'));
+        $this->assertIsString(Check::passwordLength('longpassword'));
         $this->expectException(ImproperActionException::class);
         Check::passwordLength('short');
     }
@@ -44,17 +44,18 @@ class CheckTest extends \PHPUnit\Framework\TestCase
 
     public function testUsergroup(): void
     {
-        $this->assertTrue(Check::usergroup(1));
-        $this->assertTrue(Check::usergroup(2));
-        $this->assertFalse(Check::usergroup(3));
-        $this->assertTrue(Check::usergroup(4));
+        $this->assertIsInt(Check::usergroup(1));
+        $this->assertIsInt(Check::usergroup(2));
+        $this->expectException(ImproperActionException::class);
+        Check::usergroup(3);
+        $this->assertIsInt(Check::usergroup(4));
 
-        $this->expectException(IllegalActionException::class);
-        Check::usergroupOrExplode(-1337);
-        $this->expectException(IllegalActionException::class);
-        Check::usergroupOrExplode(0);
-        $this->expectException(IllegalActionException::class);
-        Check::usergroupOrExplode(5);
+        $this->expectException(ImproperActionException::class);
+        Check::usergroup(-1337);
+        $this->expectException(ImproperActionException::class);
+        Check::usergroup(0);
+        $this->expectException(ImproperActionException::class);
+        Check::usergroup(5);
     }
 
     public function testColor(): void
@@ -71,55 +72,12 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         Check::visibility('pwet');
     }
 
-    public function testDisplaySize(): void
-    {
-        $this->assertEquals('lg', Check::displaySize('blah'));
-        $this->assertEquals('xs', Check::displaySize('xs'));
-        $this->assertEquals('md', Check::displaySize('md'));
-    }
-
-    public function testDisplayMode(): void
-    {
-        $this->assertEquals('it', Check::displayMode('blah'));
-        $this->assertEquals('it', Check::displayMode('it'));
-        $this->assertEquals('tb', Check::displayMode('tb'));
-    }
-
-    public function testOrderby(): void
-    {
-        $this->assertEquals('date', Check::orderby('date'));
-        $this->expectException(ImproperActionException::class);
-        Check::orderby('blah');
-    }
-
-    public function testSort(): void
-    {
-        $this->assertEquals('asc', Check::sort('asc'));
-        $this->assertEquals('desc', Check::sort('desc'));
-        $this->expectException(ImproperActionException::class);
-        Check::sort('blah');
-    }
-
-    public function testRw(): void
-    {
-        $this->assertEquals('read', Check::rw('read'));
-        $this->assertEquals('write', Check::rw('write'));
-        $this->expectException(IllegalActionException::class);
-        Check::rw('blah');
-    }
-
     public function testToken(): void
     {
         $token = hash('sha256', bin2hex(random_bytes(16)));
         $this->assertEquals($token, Check::token($token));
         $this->expectException(IllegalActionException::class);
         Check::token('blah');
-    }
-
-    public function testInvalidTarget(): void
-    {
-        $this->expectException(IllegalActionException::class);
-        Check::target('Grogu');
     }
 
     public function testOrcid(): void

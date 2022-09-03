@@ -10,8 +10,8 @@
 
 $finder = PhpCsFixer\Finder::create()
     ->name('/\.php|\.php.dist$/')
-    ->exclude('tests/_output')
-    ->exclude('tests/_support')
+    ->exclude('_output')
+    ->exclude('_support')
     ->in(['bin', 'src', 'tests', 'web'])
 ;
 

@@ -28,7 +28,7 @@ class EmailValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testDuplicateEmail(): void
     {
-        $EmailValidator = new EmailValidator('phpunit@example.com');
+        $EmailValidator = new EmailValidator('tatabis@yopmail.com');
         $this->expectException(ImproperActionException::class);
         $EmailValidator->validate();
     }

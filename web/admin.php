@@ -14,12 +14,11 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
-use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
+use Elabftw\Models\TeamTags;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use function filter_var;
@@ -27,7 +26,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Administration panel of a team
- *
  */
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Admin panel'); // @phan-suppress PhanTypeExepectedObjectPropAccessButGotNull
@@ -43,14 +41,14 @@ try {
     }
 
     $ItemsTypes = new ItemsTypes($App->Users);
-    $Status = new Status($App->Users->team);
-    $Tags = new Tags(new Experiments($App->Users));
+    $Teams = new Teams($App->Users, $App->Users->userData['team']);
+    $Status = new Status($Teams);
+    $Tags = new TeamTags($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
-    $Teams = new Teams($App->Users);
 
     $itemsCategoryArr = $ItemsTypes->readAll();
     if ($Request->query->has('templateid')) {
-        $ItemsTypes->setId((int) $App->Request->query->get('templateid'));
+        $ItemsTypes->setId($App->Request->query->getInt('templateid'));
     }
     $statusArr = $Status->readAll();
     $teamConfigArr = $Teams->readOne();
@@ -59,7 +57,7 @@ try {
     $allTeamUsersArr = $App->Users->readAllFromTeam();
     // only the unvalidated ones
     $unvalidatedUsersArr = array_filter($allTeamUsersArr, function ($u) {
-        return $u['validated'] === '0';
+        return $u['validated'] === 0;
     });
     // Users search
     $isSearching = false;

@@ -31,11 +31,12 @@ class Sql
     /**
      * Read a SQL file from a folder and execute the contents
      */
-    public function execFile(string $filename): void
+    public function execFile(string $filename): int
     {
         $lines = $this->getLines($filename);
         // temporary variable, used to store current query
         $queryline = '';
+        $lineCount = 0;
         // loop through each line
         foreach ($lines as $line) {
             // Add this line to the current segment
@@ -50,8 +51,10 @@ class Sql
                 $this->Db->q($queryline);
                 // Reset temp variable to empty
                 $queryline = '';
+                $lineCount++;
             }
         }
+        return $lineCount;
     }
 
     /**

@@ -8,13 +8,12 @@
 declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import 'jquery-ui/ui/widgets/sortable';
 import * as $3Dmol from '3dmol/build/3Dmol-nojquery.js';
-import { CheckableItem, ResponseMsg } from './interfaces';
+import { CheckableItem, ResponseMsg, EntityType, Entity, Model } from './interfaces';
 import { DateTime } from 'luxon';
-import { EntityType, Entity } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
-import { Payload, Method, Model, Action, Target } from './interfaces';
-import { Ajax } from './Ajax.class';
+import i18next from 'i18next';
+import { Api } from './Apiv2.class';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -43,6 +42,34 @@ export function relativeMoment(): void {
     }
     span.innerText = DateTime.fromFormat(span.title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale}).toRelative();
   });
+}
+
+/**
+ * Loop over all the input and select elements of an element and collect their value
+ * Returns an object with name => value
+ */
+export function collectForm(form: HTMLElement): object {
+  let params = {};
+  ['input', 'select'].forEach(inp => {
+    form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
+      const el = input as HTMLInputElement;
+      if (el.reportValidity() === false) {
+        throw new Error('Invalid input found! Aborting.');
+      }
+      if (el.dataset.ignore !== '1') {
+        params = Object.assign(params, {[input.name]: input.value});
+      }
+      if (el.name === 'password') {
+        // clear a password field once collected
+        el.value = '';
+      }
+    });
+  });
+  // don't send an empty password
+  if (params['password'] === '') {
+    delete params['password'];
+  }
+  return params;
 }
 
 // for view or edit mode, get type and id from the page to construct the entity object
@@ -74,7 +101,13 @@ export function getEntity(): Entity {
     id: entityId,
   };
 }
+export function notifError(e): void {
+  return notif({'res': false, 'msg': e.name + ': ' + e.message});
+}
 
+export function notifSaved(): void {
+  return notif({'res': true, 'msg': i18next.t('saved')});
+}
 
 // PUT A NOTIFICATION IN TOP LEFT WINDOW CORNER
 export function notif(info: ResponseMsg): void {
@@ -84,7 +117,7 @@ export function notif(info: ResponseMsg): void {
   }
 
   const p = document.createElement('p');
-  p.innerText = (info.msg as string);
+  p.innerText = info.msg;
   const result = info.res ? 'ok' : 'ko';
   const overlay = document.createElement('div');
   overlay.setAttribute('id','overlay');
@@ -157,11 +190,16 @@ export function makeSortableGreatAgain(): void {
     // do ajax request to update db with new order
     update: function() {
       // send the order as an array
-      const ordering = $(this).sortable('toArray');
-      $.post('app/controllers/SortableAjaxController.php', {
-        table: $(this).data('table'),
-        ordering: ordering,
-      }).done(function(json) {
+      const params = {'table': $(this).data('table'), 'ordering': $(this).sortable('toArray')};
+      fetch('app/controllers/SortableAjaxController.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        },
+        body: JSON.stringify(params),
+      }).then(resp => resp.json()).then(json => {
         notif(json);
       });
     },
@@ -225,25 +263,18 @@ export function adjustHiddenState(): void {
 
 // AUTOCOMPLETE
 export function addAutocompleteToLinkInputs(): void {
-  let cache = {};
+  const ApiC = new Api();
   // this is the select category filter on add link input
   const catFilterEl = (document.getElementById('addLinkCatFilter') as HTMLInputElement);
   if (catFilterEl) {
-    // when we change the category filter, reset the cache
-    catFilterEl.addEventListener('change', () => {
-      cache = {};
-    });
     ($('[data-autocomplete="links"]') as JQuery<HTMLInputElement>).autocomplete({
       source: function(request: Record<string, string>, response: (data) => void): void {
-        const term = request.term;
-        if (term in cache) {
-          response(cache[term]);
-          return;
-        }
-        // TODO use AjaxC as for tags below
-        $.getJSON(`app/controllers/EntityAjaxController.php?type=items&filter=${catFilterEl.value}`, request, function(data) {
-          cache[term] = data;
-          response(data);
+        ApiC.getJson(`${EntityType.Item}/?cat=${catFilterEl.value}&q=${request.term}`).then(json => {
+          const res = [];
+          json.forEach(entity => {
+            res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+          });
+          response(res);
         });
       },
     });
@@ -251,41 +282,24 @@ export function addAutocompleteToLinkInputs(): void {
 }
 
 export function addAutocompleteToTagInputs(): void {
-  const cache = {};
-  const AjaxC = new Ajax();
-  const entity = getEntity();
+  const ApiC = new Api();
   ($('[data-autocomplete="tags"]') as JQuery<HTMLInputElement>).autocomplete({
     source: function(request: Record<string, string>, response: (data) => void): void {
-      const term  = request.term;
-      if (term in cache) {
-        response(cache[term]);
-        return;
-      }
-      const payload: Payload = {
-        method: Method.GET,
-        action: Action.Read,
-        model: Model.Tag,
-        entity: entity,
-        target: Target.List,
-        content: term,
-      };
-      AjaxC.send(payload).then(json => {
-        cache[term] = json.value;
-        response(json.value);
+      ApiC.getJson(`${Model.TeamTags}/?q=${request.term}`).then(json => {
+        const res = [];
+        json.forEach(tag => {
+          res.push(tag.tag);
+        });
+        response(res);
       });
     },
   });
 }
 
 export function updateCategory(entity: Entity, value: string): string {
-  $.post('app/controllers/EntityAjaxController.php', {
-    updateCategory: true,
-    id: entity.id,
-    type: entity.type,
-    categoryId : value,
-  }).done(function(json) {
-    notif(json);
-    if (json.res) {
+  const ApiC = new Api();
+  ApiC.patch(`${entity.type}/${entity.id}`, {'category': value}).then(resp => {
+    resp.json().then(json => {
       // change the color of the item border
       // we first remove any status class
       $('#main_section').css('border', null);
@@ -293,7 +307,8 @@ export function updateCategory(entity: Entity, value: string): string {
       // first : get what is the color of the new status
       const css = '6px solid #' + json.color;
       $('#main_section').css('border-left', css);
-    }
+      // TODO only in view mode reloadElement('main_section');
+    });
   });
   return value;
 }
@@ -312,4 +327,13 @@ export function showContentPlainText(el: HTMLElement): void {
 export function escapeRegExp(string: string): string {
   // $& means the whole matched string
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+export function removeEmpty(params: object): object {
+  for (const [key, value] of Object.entries(params)) {
+    if (value === '') {
+      delete params[key];
+    }
+  }
+  return params;
 }

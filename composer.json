@@ -48,15 +48,16 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
-    "codeception/codeception": "^4.1.24",
+    "codeception/codeception": "^5.0.1",
     "pyrech/composer-changelogs": "^1.8.0",
     "friendsofphp/php-cs-fixer": "^3.0.0",
-    "codeception/module-db": "^1.0.0",
-    "codeception/module-asserts": "^1.0.0",
-    "codeception/module-rest": "^1.0",
+    "codeception/module-db": "^3.0.0",
+    "codeception/module-asserts": "^3.0.0",
+    "codeception/module-rest": "^3.2.0",
     "codeception/module-phpbrowser": "^2.0",
     "symfony/yaml": "^5.0",
-    "fakerphp/faker": "^1.13"
+    "fakerphp/faker": "^1.13",
+    "codeception/c3": "^2.6"
   },
   "autoload": {
     "psr-4": {
@@ -80,9 +81,6 @@
       ],
       "Elabftw\\Interfaces\\": [
         "src/interfaces"
-      ],
-      "Elabftw\\Maps\\": [
-        "src/maps"
       ],
       "Elabftw\\Models\\": [
         "src/models"
@@ -114,7 +112,8 @@
   "license": "AGPL-3.0-or-later",
   "config": {
     "allow-plugins": {
-      "pyrech/composer-changelogs": true
+      "pyrech/composer-changelogs": true,
+      "codeception/c3": true
     }
   }
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 #
 # @author Nicolas CARPi <nico-git@deltablot.email>
 # @copyright 2012 Nicolas CARPi
@@ -10,19 +10,25 @@
 
 # stop on failure
 set -eu
-# detect if we are in scrutinizer ci (https://scrutinizer-ci.com/g/elabftw/elabftw/)
-scrutinizer=${SCRUTINIZER:-false}
+
+# the behavior between local dev and ci pipeline is slightly different
+# use env vars set in ci to guess where we run
+# https://scrutinizer-ci.com/g/elabftw/elabftw
+# https://scrutinizer-ci.com/docs/build/environment-variables
+# https://circleci.com/docs/variables
+# the both define a CI bool, so let's use that
+ci=${CI:-false}
 
 # when the script stops (or is stopped), replace the test config with the dev config
 cleanup() {
-    if (! $scrutinizer); then
+    if (! $ci); then
         cp -v config.php.dev config.php
     fi
 }
 trap cleanup EXIT
 
 # make a backup of the current (dev) config
-if (! $scrutinizer); then
+if (! $ci); then
     cp -v config.php config.php.dev
 fi
 cp -v tests/config-home.php config.php
@@ -30,27 +36,25 @@ cp -v tests/config-home.php config.php
 # if there are no custom env_file, touch one, as this will trigger an error
 if [ ! -f tests/elabftw-user.env ]; then
     touch tests/elabftw-user.env
+    if (${SCRUTINIZER:-false}); then
+        printf "ELABFTW_USER=scrutinizer\nELABFTW_GROUP=scrutinizer\nELABFTW_USERID=1001\nELABFTW_GROUPID=1001\n" > tests/elabftw-user.env
+    fi
 fi
 
 # launch a fresh environment if needed
 if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
-    if ($scrutinizer); then
-        # Don't bind mount here, files are copied. See scrutinizer.dockerfile
-        # first backslash enables different delimiter than slash
-        sed -i '\#volumes:#D' tests/docker-compose.yml
-        sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
-        sed -i '\#/elabftw/tests/_output/coverage#D' tests/docker-compose.yml
+    if ($ci); then
         # Use the freshly built elabtmp image
-        sed -i 's#elabftw/elabimg:hypernext#elabtmp#' tests/docker-compose.yml
+        # use DOCKER_BUILDKIT env instead of calling "docker buildx" or it fails in scrutinizer
         export DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain COMPOSE_DOCKER_CLI_BUILD=1
-        docker build -q -t elabtmp -f tests/scrutinizer.dockerfile .
+        docker build -q -t elabtmp -f tests/elabtmp.Dockerfile .
     fi
     docker-compose -f tests/docker-compose.yml up -d --quiet-pull
     # give some time for containers to start
     echo -n "Waiting for containers to start..."
-    while [ "`docker inspect -f {{.State.Health.Status}} elabtmp`" != "healthy" ]; do echo -n .; sleep 2; done; echo
+    while [ "$(docker inspect -f {{.State.Health.Status}} elabtmp)" != "healthy" ]; do echo -n .; sleep 2; done; echo
 fi
-if ($scrutinizer); then
+if ($ci); then
     # install and initial tests
     docker exec -it elabtmp yarn install --silent --non-interactive --frozen-lockfile
     docker exec -it elabtmp yarn csslint
@@ -58,35 +62,42 @@ if ($scrutinizer); then
     docker exec -it elabtmp yarn buildall:dev
     docker exec -it elabtmp composer install --no-progress -q
     docker exec -it elabtmp yarn phpcs-dry
-    # allow tmpfile, used by phpstan
-    docker exec -it elabtmp sed -i 's/tmpfile, //' /etc/php81/php.ini
-    # extend open_basedir
-    # /usr/bin/psalm, //autoload.php, /root/.cache/ are for psalm
-    # /usr/bin/phpstan, /proc/cpuinfo is for phpstan, https://github.com/phpstan/phpstan/issues/4427 https://github.com/phpstan/phpstan/issues/2965
-    docker exec -it elabtmp sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/usr/bin/phpstan:/proc/cpuinfo|' /etc/php81/php.ini
 fi
 # install the database
 echo "Initializing the database..."
 docker exec -it elabtmp bin/install start -r -q
-if ($scrutinizer); then
+if ($ci); then
     docker exec -it elabtmp yarn static
 fi
 # populate the database
 docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
-# run tests
-# the tests are split in two parts, api and acceptance, and later unit with coverage
-# this is because for some weird reason, when xdebug is enabled, there is an ssl verification error
-# during the acceptance/api tests
-if [ "${1:-}" != "unit" ]; then
-    docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip acceptance
+# RUN TESTS
+if ($ci); then
+    # fix permissions on test output and cache folders
+    sudo mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
+    sudo chown -R scrutinizer:scrutinizer cache
+    sudo chmod -R 777 cache
+    sudo chmod -R 777 tests/_output
+    sudo chown -R scrutinizer:scrutinizer uploads
+    sudo chmod -R 777 uploads
 fi
-# now install xdebug in the container so we can do code coverage
-docker exec -it elabtmp bash -c "apk add --update php81-pecl-xdebug && echo 'zend_extension=xdebug.so' >> /etc/php81/php.ini && echo 'xdebug.mode=coverage' >> /etc/php81/php.ini"
-# generate the coverage, results will be available in _coverage directory
-docker exec -it elabtmp php vendor/bin/codecept run --skip acceptance --skip api --coverage --coverage-html --coverage-xml
-if ($scrutinizer); then
+# when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead
+if [ "${1:-}" = "unit" ]; then
+    docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip apiv2 --coverage --coverage-html --coverage-xml
+elif [ "${1:-}" = "api" ]; then
+    docker exec -it elabtmp php vendor/bin/codecept run --skip unit --coverage --coverage-html --coverage-xml
+else
+    docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-html --coverage-xml
+fi
+
+# in ci we copy the coverage output file in current directory
+if ($ci); then
     docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
 fi
+
+# make a copy with adjusted path for local sonar scanner
+ROOT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && cd .. && pwd )
+sed -e "s:/elabftw/:$ROOT_DIR/:g" tests/_output/coverage.xml > tests/_output/coverage-sonar.xml
 # all tests succeeded, display a koala
 cat << WALAEND
 

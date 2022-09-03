@@ -29,6 +29,6 @@ class UploadsCest
         $I->wantTo('Get an uploaded file');
         $I->sendGET('/uploads/1');
         $I->seeResponseCodeIs(HttpCode::OK); // 200
-        $I->seeBinaryResponseEquals('f528056fad5fc8f63b71ef6e1572d003');
+        $I->seeBinaryResponseEquals('f6828fb4359de672a3ff6b41388139ccf23e31fe');
     }
 }

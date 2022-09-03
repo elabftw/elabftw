@@ -9,15 +9,13 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\TagParams;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\Users;
 use League\Csv\Info as CsvInfo;
 use League\Csv\Reader;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Import entries from a csv file.
@@ -31,11 +29,6 @@ class ImportCsv extends AbstractImport
         'text/csv',
         'text/tsv',
     );
-
-    public function __construct(Users $users, string $target, string $canread, string $canwrite, UploadedFile $uploadedFile)
-    {
-        parent::__construct($users, $target, $canread, $canwrite, $uploadedFile);
-    }
 
     /**
      * Do the work
@@ -55,11 +48,6 @@ class ImportCsv extends AbstractImport
         $csv->setHeaderOffset(0);
         $rows = $csv->getRecords();
 
-        $createTarget = (string) $this->targetNumber;
-        if ($this->Entity instanceof Experiments) {
-            // no template
-            $createTarget = '-1';
-        }
         // SQL for importing
         $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, canwrite, elabid, metadata)
             VALUES(:team, :title, CURDATE(), :body, :userid, :category, :canread, :canwrite, :elabid, :metadata)';
@@ -137,7 +125,7 @@ class ImportCsv extends AbstractImport
         foreach ($tagsArr as $tag) {
             // maybe it's empty for this row
             if ($tag) {
-                $Entity->Tags->create(new TagParams($tag));
+                $Entity->Tags->postAction(Action::Create, array('tag' => $tag));
             }
         }
     }

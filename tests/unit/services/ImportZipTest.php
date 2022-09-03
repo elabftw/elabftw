@@ -39,7 +39,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->expectException(ImproperActionException::class);
-        $Import = new ImportZip(
+        new ImportZip(
             new Users(1, 1),
             'items:1',
             'team',
@@ -59,7 +59,7 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
             true,
         );
         $this->expectException(ImproperActionException::class);
-        $Import = new ImportZip(
+        new ImportZip(
             new Users(1, 1),
             'items:1',
             'team',

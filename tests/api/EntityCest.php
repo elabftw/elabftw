@@ -22,6 +22,10 @@ class EntityCest
         $I->sendGET('/experiments');
         $I->seeResponseCodeIs(HttpCode::OK); // 200
         $I->seeResponseIsJson();
+        // now with search query
+        $I->sendGET('/experiments/?search=a');
+        $I->seeResponseCodeIs(HttpCode::OK); // 200
+        $I->seeResponseIsJson();
     }
 
     public function getAllItemsTest(ApiTester $I)
@@ -91,5 +95,28 @@ class EntityCest
         $I->seeResponseCodeIs(HttpCode::OK); // 200
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson(array('result' => 'success'));
+    }
+
+    public function createItemWrongCategoryTest(ApiTester $I)
+    {
+        $I->wantTo('Create an item with wrong category');
+        $I->sendPOST('/items/2');
+        $I->seeResponseCodeIs(HttpCode::FORBIDDEN);
+    }
+
+    public function updateItemTest(ApiTester $I)
+    {
+        $I->wantTo('Update an item');
+        $I->sendPOST('/items/1', array('category' => 2));
+        $I->seeResponseCodeIs(HttpCode::OK); // 200
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson(array('result' => 'success'));
+    }
+
+    public function notFoundTest(ApiTester $I)
+    {
+        $I->wantTo('Find a non existing resource');
+        $I->sendGET('/items/9001');
+        $I->seeResponseCodeIs(HttpCode::NOT_FOUND);
     }
 }

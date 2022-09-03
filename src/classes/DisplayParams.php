@@ -1,21 +1,23 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2012, 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\Orderby;
+use Elabftw\Enums\Sort;
+use Elabftw\Models\Users;
 use Elabftw\Services\Check;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * This class holds the values for limit, offset, order and sort
- * A new instance will contain the default values
- *
+ * It is based on user preferences, overriden by request parameters
  */
 class DisplayParams
 {
@@ -23,11 +25,11 @@ class DisplayParams
 
     public int $offset = 0;
 
-    public ?int $related;
+    public ?int $related = null;
 
-    public string $order = 'date';
+    public Orderby $orderby = Orderby::Date;
 
-    public string $sort = 'desc';
+    public Sort $sort = Sort::Desc;
 
     // the search from the top right search bar on experiments/database
     public string $query = '';
@@ -35,100 +37,42 @@ class DisplayParams
     // if this variable is not empty the error message shown will be different if there are no results
     public string $searchType = '';
 
-    /**
-     * Use the user preferences and request to adjust parameters
-     */
-    public function adjust(App $app): void
+    public function __construct(Users $Users, private Request $Request)
     {
-        $this->setLimit($app);
-        $this->setOffset($app);
-        $this->setQuery($app);
-        $this->setSort($app);
-        $this->setOrder($app);
-        // RELATED FILTER
-        if (Check::id((int) $app->Request->query->get('related')) !== false) {
-            $this->searchType = 'related';
-            $this->setRelated($app);
-        }
-        // CATEGORY FILTER
-        if ((Check::id((int) $app->Request->query->get('cat')) !== false) || !empty(((array) $app->Request->query->all('tags'))[0])) {
-            $this->searchType = 'something';
-        }
+        // load user's preferences first
+        $this->limit = $Users->userData['limit_nb'];
+        $this->orderby = Orderby::tryFrom($Users->userData['orderby']) ?? $this->orderby;
+        $this->sort = Sort::tryFrom($Users->userData['sort']) ?? $this->sort;
+        $this->adjust();
     }
 
     /**
-     * Order by in sql
+     * Adjust the settings based on the Request
      */
-    public function getOrderSql(): string
+    private function adjust(): void
     {
-        switch ($this->order) {
-            case 'cat':
-                return 'categoryt.id';
-            case 'rating':
-                return 'entity.rating';
-            case 'title':
-                return 'entity.title';
-            case 'id':
-                return 'entity.id';
-            case 'lastchange':
-                return 'entity.modified_at';
-            case 'comment':
-                return 'commentst.recent_comment';
-            case 'user':
-                return 'entity.userid';
-            case 'rating':
-                return 'entity.rating';
-            default:
-                return 'date';
+        if ($this->Request->query->has('limit')) {
+            $this->limit = Check::limit($this->Request->query->getInt('limit'));
         }
-    }
-
-    private function setLimit(App $app): void
-    {
-        $limit = (int) ($app->Users->userData['limit_nb'] ?? 15);
-        if ($app->Request->query->has('limit')) {
-            $limit = Check::limit((int) $app->Request->query->get('limit'));
+        if ($this->Request->query->has('offset') && Check::id($this->Request->query->getInt('offset')) !== false) {
+            $this->offset = $this->Request->query->getInt('offset');
         }
-        $this->limit = $limit;
-    }
-
-    private function setOffset(App $app): void
-    {
-        if ($app->Request->query->has('offset') && Check::id((int) $app->Request->query->get('offset')) !== false) {
-            $this->offset = (int) $app->Request->query->get('offset');
-        }
-    }
-
-    private function setQuery(App $app): void
-    {
-        if (!empty($app->Request->query->get('q'))) {
-            $this->query = $app->Request->query->filter('q', null, FILTER_SANITIZE_STRING);
+        if (!empty($this->Request->query->get('q'))) {
+            $this->query = $this->Request->query->filter('q', null, FILTER_SANITIZE_STRING);
             $this->searchType = 'query';
         }
-    }
-
-    private function setOrder(App $app): void
-    {
-        // load the pref from the user
-        $this->order = $app->Users->userData['orderby'] ?? $this->order;
-
         // now get pref from the filter-order-sort menu
-        $this->order = $app->Request->query->get('order') ?? $this->order;
-    }
+        $this->sort = Sort::tryFrom($this->Request->query->getAlpha('sort')) ?? $this->sort;
+        $this->orderby = Orderby::tryFrom($this->Request->query->getAlpha('order')) ?? $this->orderby;
 
-    private function setRelated(App $app): void
-    {
-        $this->related = (int) ($app->Request->query->get('related') ?? $this->related);
-    }
-
-    private function setSort(App $app): void
-    {
-        // load the pref from the user
-        $this->sort = $app->Users->userData['sort'] ?? $this->sort;
-
-        // now get pref from the filter-order-sort menu
-        if (!empty($app->Request->query->get('sort'))) {
-            $this->sort = Check::sort($app->Request->query->getAlpha('sort'));
+        // RELATED FILTER
+        if (Check::id((int) $this->Request->query->get('related')) !== false) {
+            $this->searchType = 'related';
+            $this->related = $this->Request->query->getInt('related');
+        }
+        // CATEGORY FILTER
+        if ((Check::id((int) $this->Request->query->get('cat')) !== false) || !empty(($this->Request->query->all('tags'))[0])) {
+            $this->searchType = 'something';
         }
     }
 }

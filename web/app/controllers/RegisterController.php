@@ -42,12 +42,12 @@ try {
     }
 
     // Create user
-    $App->Users->create(
-        $Request->request->get('email'),
+    $App->Users->createOne(
+        (new UserParams('email', $Request->request->get('email')))->getContent(),
         array($Request->request->get('team')),
-        $Request->request->get('firstname'),
-        $Request->request->get('lastname'),
-        $Request->request->get('password') ?? '',
+        (new UserParams('firstname', $Request->request->get('firstname')))->getContent(),
+        (new UserParams('lastname', $Request->request->get('lastname')))->getContent(),
+        (new UserParams('password', $Request->request->get('password') ?? ''))->getContent(),
     );
 
     if ($App->Users->needValidation) {
@@ -59,7 +59,7 @@ try {
     $App->Session->set('email', $Request->request->get('email'));
 
     // log user creation
-    $App->Log->info('New user created');
+    $App->Log->info('New user created from register page.');
 } catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());

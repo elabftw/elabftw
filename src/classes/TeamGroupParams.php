@@ -9,27 +9,16 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Interfaces\TeamGroupParamsInterface;
+use Elabftw\Exceptions\ImproperActionException;
 
-final class TeamGroupParams extends ContentParams implements TeamGroupParamsInterface
+final class TeamGroupParams extends ContentParams
 {
-    public function __construct(string $content, string $target = '', ?array $extra = null)
+    // TODO remove this as it's same as parent?
+    public function getContent(): string|int
     {
-        parent::__construct($content, $target, $extra);
-    }
-
-    public function getUserid(): int
-    {
-        return (int) $this->extra['userid'];
-    }
-
-    public function getGroup(): int
-    {
-        return (int) $this->extra['group'];
-    }
-
-    public function getHow(): string
-    {
-        return $this->extra['how'];
+        return match ($this->target) {
+            'name' => parent::getContent(),
+            default => throw new ImproperActionException('Incorrect parameter for teamgroup.'),
+        };
     }
 }

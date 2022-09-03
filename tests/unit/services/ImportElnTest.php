@@ -39,7 +39,7 @@ class ImportElnTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->expectException(ImproperActionException::class);
-        $Import = new ImportEln(
+        new ImportEln(
             new Users(1, 1),
             'items:1',
             'team',
@@ -59,7 +59,7 @@ class ImportElnTest extends \PHPUnit\Framework\TestCase
             true,
         );
         $this->expectException(ImproperActionException::class);
-        $Import = new ImportEln(
+        new ImportEln(
             new Users(1, 1),
             'items:1',
             'team',

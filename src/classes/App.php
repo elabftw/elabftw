@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 use function basename;
 use function bindtextdomain;
 use function dirname;
+use Elabftw\Enums\Language;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AnonymousUser;
 use Elabftw\Models\AuthenticatedUser;
@@ -106,7 +107,6 @@ class App
                 'index.php',
                 'logout.php',
                 'make.php',
-                'RequestHandler.php',
                 'search.php',
             );
             if (!in_array(basename($this->Request->getScriptName()), $allowedPages, true)) {
@@ -153,6 +153,11 @@ class App
         return $this->Config->configArr['lang'];
     }
 
+    public function getJsLang(): string
+    {
+        return Language::toCalendar(Language::tryFrom($this->getLang()) ?? Language::English);
+    }
+
     /**
      * Load a user object in our user field
      */
@@ -171,6 +176,7 @@ class App
 
     /**
      * Configure gettext domain
+     * @psalm-suppress UnusedFunctionCall
      */
     private function initi18n(): void
     {

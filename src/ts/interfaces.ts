@@ -10,13 +10,7 @@ interface ResponseMsg {
   res: boolean;
   msg: string;
   color?: string;
-  value?: string | Array<Todoitem> | Array<BoundEvent> | Array<UnfinishedEntities> | Array<Upload> | Array<Categories> | object | PartialEntity;
-}
-
-interface PartialEntity {
-  body: string;
-  metadata: string;
-  sharelink: string;
+  value?: string | Array<Todoitem> | Array<UnfinishedEntities> | Array<Upload> | Array<Categories> | object;
 }
 
 interface Categories {
@@ -43,11 +37,6 @@ interface UnfinishedEntities {
   steps: Array<string>;
 }
 
-interface BoundEvent {
-  item: string;
-  start: string;
-}
-
 interface CheckableItem {
   id: number;
   randomid: number;
@@ -56,42 +45,48 @@ interface CheckableItem {
 enum Method {
   GET = 'GET',
   POST = 'POST',
-  UNAUTHGET = 'UNAUTHGET',
+  PATCH = 'PATCH',
+  DELETE = 'DELETE',
 }
 
 enum Action {
   Create = 'create',
+  CreateFromString = 'createfromstring',
   Read = 'read',
   Update = 'update',
   Destroy = 'destroy',
 
+  Add = 'add',
+  Bloxberg = 'bloxberg',
   Deduplicate = 'deduplicate',
-  DestroyStamppass = 'destroystamppass',
   Duplicate = 'duplicate',
-  ImportLinks = 'importlinks',
   Lock = 'lock',
   Pin = 'pin',
-  Timestamp = 'timestamp',
   Replace = 'replace',
+  Timestamp = 'timestamp',
+  UpdateTag = 'updatetag',
+  UpdateMetadataField = 'updatemetadatafield',
+  Unreference = 'unreference',
 }
 
 enum Model {
-  Apikey = 'apikey',
-  Comment = 'comment',
+  Apikey = 'apikeys',
+  Comment = 'comments',
   Config = 'config',
-  FavTag = 'favtag',
-  Link = 'link',
-  Notification = 'notification',
+  FavTag = 'favtags',
+  Link = 'links',
+  Notification = 'notifications',
   PrivacyPolicy = 'privacypolicy',
   Status = 'status',
-  Step = 'step',
-  Tag = 'tag',
-  Team = 'team',
-  TeamGroup = 'teamgroup',
+  Step = 'steps',
+  Tag = 'tags',
+  Team = 'teams',
+  TeamTags = 'team_tags',
+  TeamGroup = 'teamgroups',
   Todolist = 'todolist',
   UnfinishedSteps = 'unfinishedsteps',
-  Upload = 'upload',
-  User = 'user',
+  Upload = 'uploads',
+  User = 'users',
   User2Team = 'user2team',
 }
 
@@ -106,8 +101,7 @@ enum EntityType {
 enum Target {
   All = 'all',
   Body = 'body',
-  BoundEvent = 'boundevent',
-  Comment = 'comment',
+  Comment = 'comments',
   ContentType = 'content_type',
   Date = 'date',
   Deadline = 'deadline',
@@ -120,13 +114,7 @@ enum Target {
   PrivacyPolicy = 'privacypolicy',
   Rating = 'rating',
   RealName = 'real_name',
-  ShareLink = 'sharelink',
   Title = 'title',
-  TsBloxberg = 'ts_bloxberg',
-  TsClassic = 'ts_classic',
-  TsAuthority = 'ts_authority',
-  Unreference = 'unreference',
-  UploadId = 'uploadid',
   UserId = 'userid',
 }
 
@@ -135,34 +123,14 @@ interface Entity {
   id: number;
 }
 
-
-interface Payload {
-  method: Method;
-  action: Action;
-  model: Model | EntityType;
-  entity?: {
-    type: Entity['type'];
-    id: Entity['id'];
-  };
-  content?: string;
-  target?: Target;
-  id?: number;
-  // no notif key means no notif wanted
-  notif?: boolean;
-  extraParams?: Record<string, unknown>;
-}
-
 export {
   Action,
-  BoundEvent,
   Categories,
   CheckableItem,
   Entity,
   EntityType,
   Method,
   Model,
-  PartialEntity,
-  Payload,
   ResponseMsg,
   Target,
   Todoitem,

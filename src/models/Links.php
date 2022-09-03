@@ -10,15 +10,16 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
 /**
  * All about the experiments links
  */
-class Links implements CrudInterface
+class Links implements RestInterface
 {
     use SetIdTrait;
 
@@ -31,24 +32,14 @@ class Links implements CrudInterface
         $this->id = $id;
     }
 
-    /**
-     * Add a link to an experiment
-     */
-    public function create(ContentParamsInterface $params): int
+    public function getPage(): string
     {
-        $link = (int) $params->getContent();
-        $Items = new Items($this->Entity->Users, $link);
-        $Items->canOrExplode('read');
-        $this->Entity->canOrExplode('write');
+        return $this->Entity->getPage();
+    }
 
-        // use IGNORE to avoid failure due to a key constraint violations
-        $sql = 'INSERT IGNORE INTO ' . $this->Entity->type . '_links (item_id, link_id) VALUES(:item_id, :link_id)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $link, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $this->Db->lastInsertId();
+    public function patch(Action $action, array $params): array
+    {
+        return array();
     }
 
     /**
@@ -59,14 +50,14 @@ class Links implements CrudInterface
         $sql = 'SELECT items.id AS itemid,
             items.title,
             items.elabid,
-            category.name,
+            category.title AS category,
             category.bookable,
             category.color
             FROM ' . $this->Entity->type . '_links
             LEFT JOIN items ON (' . $this->Entity->type . '_links.link_id = items.id)
             LEFT JOIN items_types AS category ON (items.category = category.id)
             WHERE ' . $this->Entity->type . '_links.item_id = :id
-            ORDER by category.name ASC, items.date ASC, items.title ASC';
+            ORDER by category.title ASC, items.date ASC, items.title ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -93,7 +84,7 @@ class Links implements CrudInterface
             $sql = 'SELECT entity.id AS entityid, entity.title';
 
             if ($type === 'items') {
-                $sql .= ', category.name, category.bookable, category.color';
+                $sql .= ', category.title, category.bookable, category.color';
             }
 
             $sql .= ' FROM %1$s_links as entity_links
@@ -125,7 +116,7 @@ class Links implements CrudInterface
             $sql .= ') AND entity.state = ' . $this->Entity::STATE_NORMAL . ' ORDER by';
 
             if ($type === 'items') {
-                $sql .= ' category.name ASC,';
+                $sql .= ' category.title ASC,';
             }
 
             $sql .= ' entity.title ASC';
@@ -166,24 +157,13 @@ class Links implements CrudInterface
         return $this->Db->execute($req);
     }
 
-    /**
-     * Copy the links of an item into our entity
-     */
-    public function import(): bool
+    public function postAction(Action $action, array $reqBody): int
     {
-        $this->Entity->canOrExplode('write');
-
-        // the :item_id of the SELECT will be the same for all rows: our current entity id
-        $sql = 'INSERT INTO ' . $this->Entity->type . '_links (item_id, link_id) SELECT :item_id, link_id FROM items_links WHERE item_id = :link_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
-    public function update(ContentParamsInterface $params): bool
-    {
-        return false;
+        return match ($action) {
+            Action::Create => $this->create(),
+            Action::Duplicate => $this->import(),
+            default => throw new ImproperActionException('Invalid action for links create.'),
+        };
     }
 
     public function destroy(): bool
@@ -195,5 +175,40 @@ class Links implements CrudInterface
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    /**
+     * Add a link to an experiment
+     */
+    private function create(): int
+    {
+        $Items = new Items($this->Entity->Users, $this->id);
+        $Items->canOrExplode('read');
+        $this->Entity->canOrExplode('write');
+
+        // use IGNORE to avoid failure due to a key constraint violations
+        $sql = 'INSERT IGNORE INTO ' . $this->Entity->type . '_links (item_id, link_id) VALUES(:item_id, :link_id)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $this->Db->lastInsertId();
+    }
+
+    /**
+     * Copy the links of an item into our entity
+     */
+    private function import(): int
+    {
+        $this->Entity->canOrExplode('write');
+
+        // the :item_id of the SELECT will be the same for all rows: our current entity id
+        $sql = 'INSERT IGNORE INTO ' . $this->Entity->type . '_links (item_id, link_id) SELECT :item_id, link_id FROM items_links WHERE item_id = :link_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $this->Db->lastInsertId();
     }
 }

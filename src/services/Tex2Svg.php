@@ -29,6 +29,9 @@ use function unlink;
 
 /**
  * Process HTML and transform tex into svg
+ *
+ * Note: this shouldn't be needed with psalm running inside the container!
+ * @psalm-suppress UndefinedClass
  */
 class Tex2Svg
 {
@@ -37,7 +40,7 @@ class Tex2Svg
 
     public bool $mathJaxFailed = false;
 
-    private string $contentWithMathJaxSVG;
+    private string $contentWithMathJaxSVG = '';
 
     public function __construct(private Mpdf $mpdf, private string $source)
     {
@@ -66,7 +69,7 @@ class Tex2Svg
         $this->scaleSVGs();
 
         // add 'mathjax-svg' class to all mathjax SVGs
-        $this->contentWithMathJaxSVG = preg_replace('/(<mjx-container[^>]*><svg)/', '\1 class="mathjax-svg"', $this->contentWithMathJaxSVG);
+        $this->contentWithMathJaxSVG = (string) preg_replace('/(<mjx-container[^>]*><svg)/', '\1 class="mathjax-svg"', $this->contentWithMathJaxSVG);
 
         // fill to black for all SVGs
         return str_replace('fill="currentColor"', 'fill="#000"', $this->contentWithMathJaxSVG);

@@ -10,7 +10,7 @@
     {{ App.Session.get('csrf')|csrf }}
     {% if App.Session.has('enable_mfa') %}
       <p>{{ 'Open your authenticator application and scan the QR code.'|trans }}</p>
-      <p><img src='{{ mfaQRCodeImageDataUri|raw }}'></p>
+      <p><img alt='mfa-qrcode' src='{{ mfaQRCodeImageDataUri|raw }}' /></p>
 
       <div class='text-center col-md-5 mx-auto'>
         <label for='mfa_secret'>{{ 'Secret for manual setup'|trans }}</label>

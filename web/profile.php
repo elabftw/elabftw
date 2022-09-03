@@ -21,11 +21,12 @@ use Symfony\Component\HttpFoundation\Response;
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Profile');
 
+/** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
-$Response->prepare($Request);
+$Response->prepare($App->Request);
 
 try {
-    $UsersHelper = new UsersHelper((int) $App->Users->userData['userid']);
+    $UsersHelper = new UsersHelper($App->Users->userData['userid']);
     // get total number of experiments
     $count = $UsersHelper->countExperiments();
 

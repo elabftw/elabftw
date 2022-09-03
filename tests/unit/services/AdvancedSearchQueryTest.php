@@ -10,15 +10,14 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\ContentParams;
-use Elabftw\Elabftw\TeamGroupParams;
+use Elabftw\Enums\Action;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 {
-    private int $groupID;
+    private int $groupId;
 
     private TeamGroups $TeamGroups;
 
@@ -29,9 +28,9 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->TeamGroups = new TeamGroups(new Users(1, 1));
-        $this->groupID = $this->TeamGroups->create(new ContentParams('Group Name'));
-        $this->TeamGroups->id = $this->groupID;
-        $this->TeamGroups->update(new TeamGroupParams('', 'member', array('how' => 'add', 'group' => $this->groupID, 'userid' => 1)));
+        $this->groupId = $this->TeamGroups->postAction(Action::Create, array('name' => 'Group Name'));
+        $this->TeamGroups->setId($this->groupId);
+        $this->TeamGroups->patch(Action::Update, array('userid' => 1, 'how' => Action::Add->value));
 
         $this->visibilityList = $this->TeamGroups->getVisibilityList();
         $this->groups = $this->TeamGroups->readGroupsWithUsersFromUser();
@@ -39,7 +38,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 
     protected function tearDown(): void
     {
-        $this->TeamGroups->update(new TeamGroupParams('', 'member', array('how' => 'rm', 'group' => $this->groupID, 'userid' => 1)));
+        $this->TeamGroups->patch(Action::Update, array('userid' => 1, 'how' => Action::Unreference->value));
         $this->TeamGroups->destroy();
     }
 
@@ -73,7 +72,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
             $this->groups,
         ));
         $whereClause = $advancedSearchQuery->getWhereClause();
-        $this->assertStringStartsWith(' AND (categoryt.name LIKE :', $whereClause['where']);
+        $this->assertStringStartsWith(' AND (categoryt.title LIKE :', $whereClause['where']);
         $this->assertStringEndsWith(')', $whereClause['where']);
     }
 

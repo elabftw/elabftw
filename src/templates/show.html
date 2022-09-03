@@ -29,16 +29,6 @@
       {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
     </div>
   {% else %}
-      {% if pinnedArr and not searchPage %}
-        <div id='pinned-entities' class='row display-flex'>
-          {% set isPinned = true %}
-          {% for item in pinnedArr|slice(0, DisplayParams.limit) %}
-            {% include 'show-item.html' %}
-          {% endfor %}
-          {% set isPinned = false %}
-        </div>
-        <hr>
-      {% endif %}
       <p class='smallgray d-inline'>
         <a href='#' data-action='expand-all-entities' data-status='closed' data-expand='{{ 'Expand all'|trans }}' data-collapse='{{ 'Collapse all'|trans }}'>{{ 'Expand all'|trans }}</a>
         - <a href='#' data-action='select-all-entities'>{{ 'Select all'|trans }}</a>
@@ -108,6 +98,19 @@
           <button data-action='destroy-selected-entities' class='button btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
         {% endif %}
       </div>
+
+      <!-- PINNED ENTITIES -->
+      {% if pinnedArr and not searchPage %}
+        <div id='pinned-entities' class='row display-flex'>
+          {% set isPinned = true %}
+          {% for item in pinnedArr|slice(0, DisplayParams.limit) %}
+            {% include 'show-item.html' %}
+          {% endfor %}
+          {% set isPinned = false %}
+        </div>
+        <hr>
+      {% endif %}
+
       {% if App.Users.userData.display_mode == 'it' %}
         <div class='row display-flex' id='itemList'>
         {% for item in itemsArr|slice(0, DisplayParams.limit) %}

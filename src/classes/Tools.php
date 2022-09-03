@@ -263,6 +263,10 @@ class Tools
                 foreach ($value as $tag) {
                     $res .= '&tags[]=' . $tag;
                 }
+            } elseif ($key === 'metavalue') {
+                foreach ($value as $metavalue) {
+                    $res .= '&metavalue[]=' . $metavalue;
+                }
             } else {
                 $res .= '&' . (string) $key . '=' . $value;
             }

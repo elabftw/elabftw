@@ -6,9 +6,9 @@
  * @package elabftw
  */
 import $ from 'jquery';
-import { Action, Malle } from '@deltablot/malle';
+import { Action as MalleAction, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
-import { Model } from './interfaces';
+import { Action, Model } from './interfaces';
 import { displayMolFiles, display3DMolecules, getEntity, reloadElement } from './misc';
 import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     inputClasses: ['form-control'],
     listenOn: '.file-comment.editable',
-    onBlur: Action.Submit,
+    onBlur: MalleAction.Submit,
     onEdit: (original, event, input) => {
       // remove the default text
       // we use a data-isempty attribute so "Click to add comment" can be translated

@@ -8,4 +8,6 @@ ALTER TABLE `experiments` DROP COLUMN `timestamptoken`;
 ALTER TABLE `users` ADD `pdf_sig` TINYINT UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `items_types` CHANGE `name` `title` VARCHAR(255) NOT NULL;
 ALTER TABLE `status` CHANGE `name` `title` VARCHAR(255) NOT NULL;
+ALTER TABLE `teams` CHANGE `link_name` `link_name` VARCHAR(255) NOT NULL;
+ALTER TABLE `teams` CHANGE `link_href` `link_href` VARCHAR(255) NOT NULL;
 UPDATE config SET conf_value = 98 WHERE conf_name = 'schema';

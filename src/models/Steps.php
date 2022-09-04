@@ -176,7 +176,7 @@ class Steps implements RestInterface
     private function toggleFinished(): bool
     {
         $sql = 'UPDATE ' . $this->Entity->type . '_steps SET finished = !finished,
-            finished_time = NOW() WHERE id = :id AND item_id = :item_id';
+            finished_time = NOW(), deadline = null, deadline_notif = 0 WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);

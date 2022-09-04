@@ -3,7 +3,7 @@
 .php-cs-fixer.cache
 .scannerwork
 *.bak
-apidoc/html
+apidoc/*/html
 _srcdoc/
 build
 cache

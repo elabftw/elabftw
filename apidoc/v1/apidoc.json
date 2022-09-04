@@ -1,13 +1,13 @@
 {
-  "name": "eLabFTW API",
+  "name": "eLabFTW API v1",
   "version": "1.0.0",
-  "description": "Documentation for elab's API",
+  "description": "Documentation for eLabFTW REST API version 1",
   "sampleUrl": null,
   "template": {
     "withCompare": false
   },
   "header": {
     "title": "Getting started",
-    "filename": "apidoc/header.md"
+    "filename": "apidoc/v1/header.md"
   }
 }

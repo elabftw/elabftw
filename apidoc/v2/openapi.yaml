@@ -1,0 +1,492 @@
+openapi: 3.0.0
+info:
+  title: eLabFTW REST API v2 Documentation
+  description: Some description of the api.
+  version: 2.0.0
+servers:
+  - url: https://eln.example.org/api/v2
+    description: Example base URL
+components:
+  securitySchemes:
+    token:
+      type: apiKey
+      name: Authorization
+      in: header
+  schemas:
+    apikey:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        created_at:
+          type: string
+        hash:
+          type: string
+        can_write:
+          type: number
+    comment:
+      type: object
+      properties:
+        id:
+          type: integer
+        created_at:
+          type: string
+        item_id:
+          type: integer
+        comment:
+          type: string
+        userid:
+          type: integer
+        modified_at:
+          type: string
+        fullname:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+        orcid:
+          type: string
+    config:
+      type: object
+      properties:
+        todo:
+          type: string
+    entity:
+      type: object
+      properties:
+        body:
+          type: string
+        body_html:
+          type: string
+        canread:
+          type: string
+        canwrite:
+          type: string
+        category:
+          type: string
+        category_id:
+          type: integer
+        color:
+          type: string
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/comment'
+        content_type:
+          type: number
+        created_at:
+          type: string
+        date:
+          type: string
+        elabid:
+          type: string
+        events_id:
+          type: string
+        events_item_id:
+          type: string
+        firtname:
+          type: string
+        fullname:
+          type: string
+        has_attachement:
+          type: integer
+        has_comment:
+          type: integer
+        id:
+          type: number
+        is_bound:
+          type: string
+        lastchangeby:
+          type: integer
+        lastname:
+          type: string
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+        locked:
+          type: integer
+        lockedby:
+          type: integer
+        lockedwhen:
+          type: string
+        metadata:
+          type: string
+        modified_at:
+          type: string
+        next_step:
+          type: string
+        orcid:
+          type: string
+        page:
+          type: string
+        rating:
+          type: integer
+        recent_comment:
+          type: string
+        sharelink:
+          type: string
+        state:
+          type: integer
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/step'
+        tags:
+          type: string
+        tags_id:
+          type: string
+        timestamped:
+          type: integer
+        timestampedby:
+          type: integer
+        timestampedwhen:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        up_item_id:
+          type: integer
+        uploads:
+          type: array
+          items:
+            $ref: '#/components/schemas/upload'
+        userid:
+          type: integer
+    experiment:
+      allOf:
+        - $ref: '#/components/schemas/entity'
+    item:
+      allOf:
+        - $ref: '#/components/schemas/entity'
+    link:
+      type: object
+      properties:
+        itemid:
+          type: integer
+        title:
+          type: string
+        elabid:
+          type: string
+        category:
+          type: string
+        bookable:
+          type: integer
+        color:
+          type: string
+    step:
+      type: object
+      properties:
+        id:
+          type: integer
+        item_id:
+          type: integer
+        body:
+          type: string
+        ordering:
+          type: integer
+        finished:
+          type: integer
+        finished_time:
+          type: string
+        deadline:
+          type: string
+        deadline_notif:
+          type: integer
+    upload:
+      type: object
+      properties:
+        id:
+          type: integer
+        real_name:
+          type: string
+        long_name:
+          type: string
+        comment:
+          type: string
+        item_id:
+          type: integer
+        userid:
+          type: string
+        type:
+          type: string
+        created_at:
+          type: string
+        hash:
+          type: string
+        hash_algorithm:
+          type: string
+        storage:
+          type: integer
+        filesize:
+          type: integer
+        state:
+          type: integer
+        immutable:
+          type: integer
+        fullname:
+          type: string
+
+security:
+  - token:
+      - token
+paths:
+  /apikeys:
+    summary: Manage API keys
+    description: Handle operations on API keys.
+    post:
+      summary: Create an API key
+      description: >-
+        Create an API key. The cleartext key is sent back in the location
+        header.
+      operationId: post-apikeys
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: A name for the API key.
+                  default: RTFM
+                canwrite:
+                  type: integer
+                  description: Set to 1 to allow the key to do write actions.
+                  default: 0
+      responses:
+        '201':
+          description: The key has been created.
+          headers:
+            location:
+              description: A fake URL that contains the API key in cleartext
+              schema:
+                type: string
+    get:
+      summary: Read API keys
+      description: Get list of API keys for currently logged in user.
+      operationId: get-apikeys
+      responses:
+        '200':
+          description: List API keys for user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/apikey'
+  /apikeys/{id}:
+    summary: Actions on an api key
+    delete:
+      summary: Delete an API key.
+      description: Delete an API key
+      operationId: delete-apikey
+      parameters:
+        - name: id
+          in: path
+          description: ID of the API key
+          required: true
+          schema:
+            type: number
+      responses:
+        '204':
+          description: The key was deleted
+  /config:
+    summary: The general instance configuration settings
+    get:
+      summary: Read the config
+      operationId: get-config
+      responses:
+        '200':
+          description: The config settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/config'
+    patch:
+      summary: Modify the config
+      operationId: patch-config
+      requestBody:
+        description: The config values to change.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/config'
+      responses:
+        '200':
+          description: The config was modified.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/config'
+    delete:
+      summary: Reset the config to default values
+      operationId: delete-config
+      responses:
+        '204':
+          description: The config was reset.
+  /experiments:
+    summary: Actions on experiments
+    post:
+      summary: Create an experiment
+      operationId: post-experiment
+      requestBody:
+        description: Parameters for creating an experiment
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category_id:
+                  type: integer
+                  description: >-
+                    The template id to use, or 0 to use the common team
+                    template, or -1 to have an empty body.
+                  default: -1
+                tags:
+                  type: array
+                  description: >-
+                    An array of tags to assign to the created entry.
+                  items:
+                    type: string
+                  default: []
+
+      responses:
+        '201':
+          description: The experiment has been created.
+          headers:
+            location:
+              description: An URL to the experiment that was created.
+              schema:
+                type: string
+    get:
+      summary: Read all experiments that are accessible
+      operationId: read-experiments
+      responses:
+        '200':
+          description: A list of experiments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/experiment'
+  /experiments/{id}:
+    summary: Actions on an experiment
+    parameters:
+      - name: id
+        in: path
+        description: ID of the experiment
+        required: true
+        schema:
+          type: number
+    get:
+      summary: Read an experiment
+      operationId: get-experiment
+      responses:
+        '200':
+          description: An experiment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/experiment'
+    patch:
+      summary: Modify an experiment
+      operationId: patch-experiment
+      responses:
+        '200':
+          description: The patched experiment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/experiment'
+    delete:
+      summary: Delete an experiment.
+      description: The experiment gets soft-deleted.
+      operationId: delete-experiment
+      responses:
+        '204':
+          description: The key was deleted
+  /items:
+    summary: Actions on items
+    post:
+      summary: Create an item
+      operationId: post-item
+      requestBody:
+        description: Parameters for creating an item
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category_id:
+                  type: integer
+                  description: >-
+                    The template id to use, or 0 to use the common team
+                    template, or -1 to have an empty body.
+                  default: -1
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  default: []
+
+      responses:
+        '201':
+          description: The item has been created.
+          headers:
+            location:
+              description: An URL to the item that was created.
+              schema:
+                type: string
+    get:
+      summary: Read all items that are accessible
+      operationId: read-items
+      responses:
+        '200':
+          description: A list of items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/item'
+  /items/{id}:
+    summary: Actions on an item
+    parameters:
+      - name: id
+        in: path
+        description: ID of the item
+        required: true
+        schema:
+          type: number
+    get:
+      summary: Read an item
+      operationId: get-item
+      responses:
+        '200':
+          description: An item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/item'
+    patch:
+      summary: Modify an item
+      operationId: patch-item
+      responses:
+        '200':
+          description: The patched item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/item'
+    delete:
+      summary: Delete an item.
+      description: The item gets soft-deleted.
+      operationId: delete-item
+      responses:
+        '204':
+          description: The key was deleted

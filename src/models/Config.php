@@ -105,7 +105,7 @@ final class Config implements RestInterface
             ('saml_x509_new', NULL),
             ('saml_privatekey', NULL),
             ('saml_team_create', '1'),
-            ('saml_team_default', NULL),
+            ('saml_team_default', '-1'),
             ('saml_user_default', '1'),
             ('local_login', '1'),
             ('local_register', '1'),

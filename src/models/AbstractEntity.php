@@ -279,7 +279,10 @@ abstract class AbstractEntity implements RestInterface
         }
 
         if (!empty($displayParams->query)) {
-            $this->addToExtendedFilter(" AND (entity.title LIKE '%$displayParams->query%' OR entity.body LIKE '%$displayParams->query%' OR entity.date LIKE '%$displayParams->query%' OR entity.elabid LIKE '%$displayParams->query%')");
+            $this->addToExtendedFilter(
+                ' AND (entity.title LIKE :query OR entity.body LIKE :query OR entity.date LIKE :query OR entity.elabid LIKE :query)',
+                array(array('param' => ':query', 'value' => '%' . $displayParams->query . '%', 'type' => PDO::PARAM_STR)),
+            );
         }
 
         $sqlArr = array(

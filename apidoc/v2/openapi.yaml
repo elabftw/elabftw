@@ -159,12 +159,83 @@ components:
             $ref: '#/components/schemas/upload'
         userid:
           type: integer
+    event:
+      type: object
+      properties:
+        title:
+          type: string
+        id:
+          type: integer
+        start:
+          type: string
+        end:
+          type: string
+        userid:
+          type: integer
+        item_title:
+          type: string
+        color:
+          type: string
+        fullname:
+          type: string
     experiment:
       allOf:
         - $ref: '#/components/schemas/entity'
+    experiment_template:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        body:
+          type: string
+        userid:
+          type: integer
+        canread:
+          type: string
+        canwrite:
+          type: string
+        locked:
+          type: integer
+        lockedby:
+          type: integer
+        lockedwhen:
+          type: string
+        fullname:
+          type: string
+        metadata:
+          type: string
+        teams_id:
+          type: integer
+        is_pinned:
+          type: integer
+        tags:
+          type: string
+        tags_id:
+          type: string
     item:
       allOf:
         - $ref: '#/components/schemas/entity'
+    items_type:
+      type: object
+      properties:
+        category_id:
+          type: integer
+        category:
+          type: string
+        color:
+          type: string
+        bookable:
+          type: integer
+        body:
+          type: string
+        ordering:
+          type: integer
+        canread:
+          type: string
+        canwrite:
+          type: string
     link:
       type: object
       properties:
@@ -198,6 +269,43 @@ components:
         deadline:
           type: string
         deadline_notif:
+          type: integer
+    team:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        common_template:
+          type: string
+        deletable_xp:
+          type: integer
+        deletable_item:
+          type: integer
+        user_create_tag:
+          type: integer
+        force_exp_tpl:
+          type: integer
+        link_name:
+          type: string
+        link_href:
+          type: string
+        created_at:
+          type: string
+        orgid:
+          type: string
+        public_db:
+          type: integer
+        force_canread:
+          type: string
+        force_canwrite:
+          type: string
+        do_force_canread:
+          type: integer
+        do_force_canwrite:
+          type: integer
+        visible:
           type: integer
     upload:
       type: object
@@ -408,6 +516,18 @@ paths:
       tags: ['Experiments']
       summary: Modify an experiment
       operationId: patch-experiment
+      requestBody:
+        description: Parameters for patching an item
+        content:
+          application/json:
+            schema:
+              anyOf:
+                - type: object
+                  properties:
+                    action:
+                      type: string
+                      enum: ['lock', 'pin', 'updatemetadatafield', 'update', 'bloxberg', 'timestamp']
+                - $ref: '#/components/schemas/experiment'
       responses:
         '200':
           description: The patched experiment
@@ -508,3 +628,501 @@ paths:
       responses:
         '204':
           description: The key was deleted
+
+  # EXPERIMENTS_TEMPLATES
+  /experiments_templates:
+    summary: Actions on experiments_templates
+    post:
+      tags: ['Experiments templates']
+      summary: Create an experiment template
+      operationId: post-experiment_template
+      requestBody:
+        description: Parameters for creating an experiment template
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: A title for the template.
+                  default: Untitled
+      responses:
+        '201':
+          description: The experiment template has been created.
+          headers:
+            location:
+              description: An URL to the experiment template that was created.
+              schema:
+                type: string
+    get:
+      tags: ['Experiments templates']
+      summary: Read all experiments_templates that are accessible
+      operationId: read-experiments_templates
+      responses:
+        '200':
+          description: A list of experiments_templates
+          content:
+            application/json:
+              schema:
+                type: array
+                experiments_templates:
+                  $ref: '#/components/schemas/experiment_template'
+  /experiments_templates/{id}:
+    summary: Actions on an experiment template
+    parameters:
+      - name: id
+        in: path
+        description: ID of the experiment template
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Experiments templates']
+      summary: Read an experiment template
+      operationId: get-experiment_template
+      responses:
+        '200':
+          description: An experiment template
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/experiment_template'
+    patch:
+      tags: ['Experiments templates']
+      summary: Modify an experiment template
+      operationId: patch-experiment_template
+      responses:
+        '200':
+          description: The patched experiment template
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/experiment_template'
+    delete:
+      tags: ['Experiments templates']
+      summary: Delete an experiment template.
+      description: The experiment template gets soft-deleted.
+      operationId: delete-experiment_template
+      responses:
+        '204':
+          description: The key was deleted
+
+  # ITEMS_TYPES
+  /items_types:
+    summary: Actions on items_types
+    post:
+      tags: ['Items types']
+      summary: Create an item
+      operationId: post-items_types
+      requestBody:
+        description: Parameters for creating an item
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: A name for this items type.
+                  default: Untitled
+      responses:
+        '201':
+          description: The items type has been created.
+          headers:
+            location:
+              description: An URL to the items type that was created.
+              schema:
+                type: string
+    get:
+      tags: ['Items types']
+      summary: Read all items_types that are accessible.
+      operationId: read-items_types
+      responses:
+        '200':
+          description: A list of items_types.
+          content:
+            application/json:
+              schema:
+                type: array
+                items_types:
+                  $ref: '#/components/schemas/item'
+  /items_types/{id}:
+    summary: Actions on an items type.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the items type.
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Items types']
+      summary: Read an items type
+      operationId: get-items_type
+      responses:
+        '200':
+          description: An items type.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/items_type'
+    patch:
+      tags: ['Items types']
+      summary: Modify an item type
+      operationId: patch-items_type
+      responses:
+        '200':
+          description: The patched items type.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/items_type'
+    delete:
+      tags: ['Items types']
+      summary: Delete an item type.
+      description: The item gets soft-deleted.
+      operationId: delete-item
+      responses:
+        '204':
+          description: The item type was deleted.
+
+  # EVENTS
+  /events:
+    summary: For scheduler booking.
+    get:
+      tags: ['Events']
+      summary: Read all events in the team.
+      operationId: read-events
+      responses:
+        '200':
+          description: A list of booked slots.
+          content:
+            application/json:
+              schema:
+                type: array
+                items_types:
+                  $ref: '#/components/schemas/event'
+
+  /events/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the item to book.
+        required: true
+        schema:
+          type: number
+    post:
+      tags: ['Events']
+      summary: Create an event for the item specified as id.
+      operationId: post-events
+      requestBody:
+        description: Parameters for creating an event.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: A name for this booking slot.
+                  default: Untitled
+                start:
+                  type: string
+                  description: A starting date-time in ISO 8601 format.
+                end:
+                  type: string
+                  description: An end date-time in ISO 8601 format.
+      responses:
+        '201':
+          description: The booking slot has been created.
+          headers:
+            location:
+              description: An URL to the booking slot that was created.
+              schema:
+                type: string
+    patch:
+      tags: ['Events']
+      summary: |
+        Modify a booking slot. Warning: only one value (target) can be edited at a time.
+      operationId: patch-items_type
+      requestBody:
+        description: Parameters for modifying an event.
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  properties:
+                    target:
+                      type: string
+                      enum: ['start_epoch', 'end_epoch']
+                    epoch:
+                      type: string
+                      description: Date-time in UNIX epoch format.
+                - type: object
+                  properties:
+                    target:
+                      type: string
+                      enum: ['experiment', 'item_link']
+                    id:
+                      type: integer
+                      description: Entity id.
+                - type: object
+                  properties:
+                    target:
+                      type: string
+                      enum: ['start', 'end']
+                    delta:
+                      type: object
+                      description: The difference (delta) of time with the previous value.
+                      properties:
+                        days:
+                          type: integer
+                        milliseconds:
+                          type: integer
+                        months:
+                          type: integer
+                        years:
+                          type: integer
+      responses:
+        '200':
+          description: The patched items type.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/items_type'
+
+  # EVENT
+  /event/{id}:
+    summary: For scheduler booking.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the event to modify.
+        required: true
+        schema:
+          type: number
+    delete:
+      tags: ['Events']
+      summary: Delete a booking slot.
+      operationId: delete-event
+      responses:
+        '204':
+          description: The event was deleted.
+  # FAVTAGS
+  /favtags:
+    summary: Favorite tags for the logged-in user.
+    get:
+      tags: ['Favorite tags']
+      summary: Read all favorite tags for the user.
+      operationId: read-favtags
+      responses:
+        '200':
+          description: A list of favorite tags.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users_id:
+                    type: integer
+                  tags_id:
+                    type: integer
+                  tag:
+                    type: string
+    post:
+      tags: ['Favorite tags']
+      summary: Add a tag as favorite.
+      operationId: post-favtags
+      requestBody:
+        description: Parameters for adding a favorite tag.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tag:
+                  type: string
+                  description: An existing tag
+  /favtags/{id}:
+    summary: A particular favorite tag.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the tag.
+        required: true
+        schema:
+          type: number
+    delete:
+      tags: ['Favorite tags']
+      summary: Unfavorite a tag.
+      operationId: delete-favtag
+      responses:
+        '204':
+          description: The favorite tag was removed.
+
+  # TEAM TAGS
+  /team_tags:
+    summary: Manage tags at the team level.
+    get:
+      tags: ['Team tags']
+      summary: Read all tags for the team.
+      operationId: read-tags
+      responses:
+        '200':
+          description: A list of tags.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tag:
+                    type: string
+                  id:
+                    type: integer
+    patch:
+      tags: ['Team tags']
+      summary: |
+        Actions on tags.
+      operationId: patch-tags
+      requestBody:
+        description: Parameters for modifying team tags.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['deduplicate']
+              description: Find all duplicate tags and deduplicate them.
+  /team_tags/{id}:
+    summary: Retrieve a tag from its id.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the tag.
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Team tags']
+      summary: Read a tag.
+      operationId: read-tag
+      responses:
+        '200':
+          description: A tag.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tag:
+                    type: string
+                  id:
+                    type: integer
+    patch:
+      tags: ['Team tags']
+      summary: |
+        Actions on a tag.
+      operationId: patch-tag
+      requestBody:
+        description: Parameters for modifying a tag.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['updatetag']
+                tag:
+                  type: string
+                  description: The content of the tag.
+              description: Update the tag. Requires Admin permissions.
+    delete:
+      tags: ['Team tags']
+      summary: Delete a tag.
+      operationId: delete-tag
+      responses:
+        '204':
+          description: The tag was removed.
+
+  # TEAMS
+  /teams:
+    summary: Manage teams.
+    get:
+      tags: ['Teams']
+      summary: Read all teams. Requires Sysadmin permissions.
+      operationId: read-teams
+      responses:
+        '200':
+          description: A list of teams.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/team'
+    post:
+      tags: ['Teams']
+      summary: Create a new team.
+      operationId: post-teams
+      requestBody:
+        description: Parameters for creating a new team.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Team name.
+                  default: New team name
+      responses:
+        '201':
+          description: The team has been created.
+          headers:
+            location:
+              description: An URL to the team that was created.
+              schema:
+                type: string
+  /teams/{id}:
+    summary: Manage a team.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Teams']
+      summary: Read a team. Requires Admin permissions.
+      operationId: read-team
+      responses:
+        '200':
+          description: A team.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team'
+    patch:
+      tags: ['Teams']
+      summary: |
+        Actions on a team.
+      operationId: patch-team
+      requestBody:
+        description: Parameters for modifying a team.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/team'
+      responses:
+        '200':
+          description: The updated team.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team'

@@ -307,6 +307,41 @@ components:
           type: integer
         visible:
           type: integer
+    todoitem:
+      type: object
+      properties:
+        id:
+          type: integer
+        body:
+          type: string
+        creation_time:
+          type: string
+        ordering:
+          type: integer
+        userid:
+          type: integer
+    unfinished_step:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        steps:
+          type: array
+          items:
+            type: string
+    unfinished_steps:
+      type: object
+      properties:
+        experiments:
+          type: array
+          items:
+            $ref: '#/components/schemas/unfinished_step'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/unfinished_step'
     upload:
       type: object
       properties:
@@ -543,6 +578,173 @@ paths:
       responses:
         '204':
           description: The experiment was deleted
+
+  # EXPERIMENTS COMMENTS
+  /experiments/{id}/comments:
+    summary: Actions on comments of an experiment
+    parameters:
+      - name: id
+        in: path
+        description: ID of the experiment
+        required: true
+        schema:
+          type: number
+    post:
+      tags: ['Experiments comments']
+      summary: Create a comment.
+      operationId: post-experiment-comments
+      requestBody:
+        description: Parameters for creating a comment
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+                  required: true
+      responses:
+        '201':
+          description: The comment has been created.
+          headers:
+            location:
+              description: An URL to the comment that was created.
+              schema:
+                type: string
+    get:
+      tags: ['Experiments comments']
+      summary: Read all comments of that experiment.
+      operationId: read-experiment-comments
+      responses:
+        '200':
+          description: A list of comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/comment'
+  /experiments/{id}/comments/{subid}:
+    summary: Actions on comment of an experiment
+    parameters:
+      - name: id
+        in: path
+        description: ID of the experiment
+        required: true
+        schema:
+          type: number
+      - name: subid
+        in: path
+        description: ID of the comment
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Experiments comments']
+      summary: Read all comments of that experiment.
+      operationId: read-experiment-comments
+      responses:
+        '200':
+          description: A comment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comment'
+    patch:
+      tags: ['Experiments comments']
+      summary: Modify an experiment comment.
+      operationId: patch-experiment-comment
+      requestBody:
+        description: Parameters for patching an experiment comment.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/comment'
+      responses:
+        '200':
+          description: The patched comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comment'
+    delete:
+      tags: ['Experiments comments']
+      summary: Delete an experiment comment.
+      description: The comment gets deleted.
+      operationId: delete-experiment-comment
+      responses:
+        '204':
+          description: The comment was deleted
+  # EXPERIMENTS LINKS
+  /experiments/{id}/links:
+    summary: Actions on links of an experiment
+    parameters:
+      - name: id
+        in: path
+        description: ID of the experiment
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Experiments links']
+      summary: Read all links of that experiment.
+      operationId: read-experiment-links
+      responses:
+        '200':
+          description: A list of links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/link'
+  /experiments/{id}/links/{subid}:
+    summary: Actions on link of an experiment
+    parameters:
+      - name: id
+        in: path
+        description: ID of the experiment
+        required: true
+        schema:
+          type: number
+      - name: subid
+        in: path
+        description: ID of the item (link)
+        required: true
+        schema:
+          type: number
+    post:
+      tags: ['Experiments links']
+      summary: Create or import a link.
+      operationId: post-experiment-links
+      requestBody:
+        description: Parameters for creating or importing a link.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['create', 'duplicate']
+                  description: |
+                    The `duplicate` action will import the links of that link (inception).
+      responses:
+        '201':
+          description: The link has been created.
+          headers:
+            location:
+              description: An URL to the link that was created.
+              schema:
+                type: string
+    delete:
+      tags: ['Experiments links']
+      summary: Delete an experiment link.
+      description: The link gets deleted.
+      operationId: delete-experiment-link
+      responses:
+        '204':
+          description: The link was deleted
   /items:
     summary: Actions on items
     post:
@@ -628,6 +830,172 @@ paths:
       responses:
         '204':
           description: The key was deleted
+  # ITEMS COMMENTS
+  /items/{id}/comments:
+    summary: Actions on comments of an item
+    parameters:
+      - name: id
+        in: path
+        description: ID of the item
+        required: true
+        schema:
+          type: number
+    post:
+      tags: ['Items comments']
+      summary: Create a comment.
+      operationId: post-item-comments
+      requestBody:
+        description: Parameters for creating a comment
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+                  required: true
+      responses:
+        '201':
+          description: The comment has been created.
+          headers:
+            location:
+              description: An URL to the comment that was created.
+              schema:
+                type: string
+    get:
+      tags: ['Items comments']
+      summary: Read all comments of that item.
+      operationId: read-item-comments
+      responses:
+        '200':
+          description: A list of comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/comment'
+  /items/{id}/comments/{subid}:
+    summary: Actions on comment of an item
+    parameters:
+      - name: id
+        in: path
+        description: ID of the item
+        required: true
+        schema:
+          type: number
+      - name: subid
+        in: path
+        description: ID of the comment
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Items comments']
+      summary: Read all comments of that item.
+      operationId: read-item-comments
+      responses:
+        '200':
+          description: A comment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comment'
+    patch:
+      tags: ['Items comments']
+      summary: Modify an item comment.
+      operationId: patch-item-comment
+      requestBody:
+        description: Parameters for patching an item comment.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/comment'
+      responses:
+        '200':
+          description: The patched comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comment'
+    delete:
+      tags: ['Items comments']
+      summary: Delete an item comment.
+      description: The comment gets deleted.
+      operationId: delete-item-comment
+      responses:
+        '204':
+          description: The comment was deleted
+  # ITEMS LINKS
+  /items/{id}/links:
+    summary: Actions on links of an item
+    parameters:
+      - name: id
+        in: path
+        description: ID of the item
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Items links']
+      summary: Read all links of that item.
+      operationId: read-item-links
+      responses:
+        '200':
+          description: A list of links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/link'
+  /items/{id}/links/{subid}:
+    summary: Actions on link of an item
+    parameters:
+      - name: id
+        in: path
+        description: ID of the item
+        required: true
+        schema:
+          type: number
+      - name: subid
+        in: path
+        description: ID of the item (link)
+        required: true
+        schema:
+          type: number
+    post:
+      tags: ['Items links']
+      summary: Create or import a link.
+      operationId: post-item-links
+      requestBody:
+        description: Parameters for creating or importing a link.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['create', 'duplicate']
+                  description: |
+                    The `duplicate` action will import the links of that link (inception).
+      responses:
+        '201':
+          description: The link has been created.
+          headers:
+            location:
+              description: An URL to the link that was created.
+              schema:
+                type: string
+    delete:
+      tags: ['Items links']
+      summary: Delete an item link.
+      description: The link gets deleted.
+      operationId: delete-item-link
+      responses:
+        '204':
+          description: The link was deleted
 
   # EXPERIMENTS_TEMPLATES
   /experiments_templates:
@@ -1126,3 +1494,109 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/team'
+  /todolist:
+    summary: Todolist for current user.
+    get:
+      tags: ['Todolist']
+      summary: Read all todoitems.
+      operationId: read-todolist
+      responses:
+        '200':
+          description: A list of things to do.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/todoitem'
+    post:
+      tags: ['Todolist']
+      summary: Create a todo item
+      operationId: post-todolist
+      requestBody:
+        description: Parameters for creating a todoitem.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  description: What to do
+      responses:
+        '201':
+          description: The todo entry has been created.
+          headers:
+            location:
+              description: An URL to the todo item that was created.
+              schema:
+                type: string
+  /todolist/{id}:
+    summary: Manage a todo entry.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the todoitem.
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Todolist']
+      summary: Read a todo entry.
+      operationId: read-todoitem
+      responses:
+        '200':
+          description: A todoitem.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/todoitem'
+    patch:
+      tags: ['Todolist']
+      summary: |
+        Actions on a todoitem.
+      operationId: patch-todoitem
+      requestBody:
+        description: Parameters for modifying a todoitem.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+                  required: true
+      responses:
+        '200':
+          description: The updated todoitem.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/todoitem'
+    delete:
+      tags: ['Todolist']
+      summary: Delete a todoitem.
+      operationId: delete-todoitem
+      responses:
+        '204':
+          description: The todoitem was removed.
+  /unfinished_steps:
+    summary: Unfinished steps from the user or the team, in experiments or items.
+    parameters:
+        - name: scope
+          in: query
+          description: |
+            Set to "team" to extend the list to other members.
+    get:
+      tags: ['Unfinished steps']
+      summary: Read all unfinished steps.
+      operationId: read-unfinished-steps
+      responses:
+        '200':
+          description: A list of unfinished steps
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/unfinished_steps'

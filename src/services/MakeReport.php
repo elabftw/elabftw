@@ -79,10 +79,7 @@ class MakeReport extends AbstractMakeCsv
             // these columns can be null
             $unusedColumns = array(
                 'mfa_secret',
-                'phone',
-                'cellphone',
                 'orcid',
-                'website',
                 'token',
                 'auth_lock_time',
             );

@@ -15,5 +15,6 @@ class CacheGeneratorTest extends \PHPUnit\Framework\TestCase
     {
         $CacheGenerator = new CacheGenerator();
         $CacheGenerator->generate();
+        $this->assertDirectoryExists(dirname(__DIR__, 3) . '/cache/twig');
     }
 }

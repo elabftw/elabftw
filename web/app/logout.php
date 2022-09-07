@@ -25,7 +25,7 @@ require_once 'init.inc.php';
 
 $redirectUrl = '../login.php';
 
-$destroySession = function () use ($App, $Request) {
+$destroySession = function () use ($App) {
     if ($App->Users instanceof AuthenticatedUser) {
         $App->Users->invalidateToken();
     }
@@ -47,10 +47,9 @@ $destroySession = function () use ($App, $Request) {
     setcookie('icanhazcookies', '', $cookieOptions);
     // if we get redirected by init.inc.php we want to keep this cookie
     // if the user requested logout, remove it
-    if (!$Request->query->get('keep_redirect')) {
+    if (!$App->Request->query->get('keep_redirect')) {
         setcookie('elab_redirect', '', $cookieOptions);
     }
-    setcookie('pdf_sig', '', $cookieOptions);
     setcookie('kickreason', '', $cookieOptions);
 };
 
@@ -65,7 +64,7 @@ if ((int) ($App->Users->userData['auth_service'] ?? 0) === \Elabftw\Controllers\
 // Try decoding saml information, if available
 if ($App->Request->cookies->has('saml_token')) {
     try {
-        [$sessionIndex, $idpId] = SamlAuth::decodeToken($App->Request->cookies->get('saml_token'));
+        [$sessionIndex, $idpId] = SamlAuth::decodeToken($App->Request->cookies->getAlnum('saml_token'));
     } catch (Exception $e) {
         // log error and show general error message
         $destroySession();  // destroy session anyway
@@ -85,10 +84,10 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
     $Saml = new Saml($App->Config, new Idps());
     $tmpSettings = $Saml->getSettings(); // get temporary settings to decode message
     if ($App->Request->query->has('SAMLRequest')) {
-        $req = new SamlLogoutRequest(new SamlSettings($tmpSettings), $App->Request->query->get('SAMLRequest'));
+        $req = new SamlLogoutRequest(new SamlSettings($tmpSettings), (string) $App->Request->query->get('SAMLRequest'));
         $entId = SamlLogoutRequest::getIssuer($req->getXML());
     } else {// if ($App->Request->query->has('SAMLResponse'))
-        $resp = new SamlLogoutResponse(new SamlSettings($tmpSettings), $App->Request->query->get('SAMLResponse'));
+        $resp = new SamlLogoutResponse(new SamlSettings($tmpSettings), (string) $App->Request->query->get('SAMLResponse'));
         $entId = $resp->getIssuer();
     }
 

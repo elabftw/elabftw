@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,15 +6,13 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
 use const DB_NAME;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ItemTypeParams;
 use Elabftw\Elabftw\Sql;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
@@ -97,7 +95,7 @@ class PopulateDatabase extends Command
 
 
         // drop database
-        $output->writeln('Dropping current database and loading structure');
+        $output->writeln('Dropping current database and loading structure...');
         $this->dropAndInitDb();
 
         // adjust global config
@@ -105,13 +103,15 @@ class PopulateDatabase extends Command
         $configArr['smtp_password'] = $input->getOption('smtppass') ?? 'afakepassword';
         $configArr['smtp_username'] = $input->getOption('smtpuser') ?? 'somesmtpuser';
         $Config = Config::getConfig();
-        $Config->updateAll($configArr);
+        $Config->patch(Action::Update, $configArr);
 
         // create teams
         $Users = new Users();
         $Teams = new Teams($Users);
+        $Teams->bypassReadPermission = true;
+        $Teams->bypassWritePermission = true;
         foreach ($yaml['teams'] as $team) {
-            $Teams->create(new ContentParams($team));
+            $Teams->postAction(Action::Create, array('name' => $team));
         }
 
         $iterations = $yaml['iterations'] ?? self::DEFAULT_ITERATIONS;
@@ -129,14 +129,16 @@ class PopulateDatabase extends Command
             $user = new Users();
             $user->team = (int) $items_types['team'];
             $ItemsTypes = new ItemsTypes($user);
-            $extra = array(
+            $ItemsTypes->setId($ItemsTypes->create($items_types['name']));
+            $ItemsTypes->bypassWritePermission = true;
+            $patch = array(
                 'color' => $items_types['color'],
                 'body' => $items_types['template'],
                 'canread' => 'team',
                 'canwrite' => 'team',
-                'isBookable' => $items_types['bookable'],
+                'bookable' => $items_types['bookable'],
             );
-            $ItemsTypes->create(new ItemTypeParams($items_types['name'], 'all', $extra));
+            $ItemsTypes->patch(Action::Update, $patch);
         }
 
 

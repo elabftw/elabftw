@@ -13,11 +13,11 @@ use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
-use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
 use Elabftw\Services\LoginHelper;
 use Exception;
+use function file_exists;
 use function header;
 use function in_array;
 use Monolog\Logger;
@@ -39,6 +39,10 @@ use Symfony\Component\HttpFoundation\Session\Session;
  * It is the entrypoint of the app.
  */
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+// only used for tests in dev mode
+if (file_exists(dirname(__DIR__, 2) . '/c3.php')) {
+    require_once dirname(__DIR__, 2) . '/c3.php';
+}
 
 $Request = Request::createFromGlobals();
 $Session = new Session();
@@ -56,8 +60,8 @@ try {
     } catch (DatabaseErrorException | PDOException $e) {
         throw new ImproperActionException('The database structure is not loaded! Did you run the installer?');
     }
-    // @phpstan-ignore-next-line
-    if (SITE_URL === '') {
+    /** @psalm-suppress TypeDoesNotContainType */
+    if (SITE_URL === '') { // @phpstan-ignore-line
         throw new ImproperActionException('<h1>Could not find mandatory <code>SITE_URL</code> variable! Please <a href="https://doc.elabftw.net/changelog.html#version-4-3-0">have a look at the changelog</a>.</h1>');
     }
 
@@ -88,6 +92,7 @@ try {
     // pages where you don't need to be logged in
     // only the script name, not the path because we use basename() on it
     $nologinArr = array(
+        // the api can be access with session or token (or only token for v1) so we skip auth here to do it later with custom logic
         'ApiController.php',
         'change-pass.php',
         'index.php',
@@ -147,7 +152,7 @@ try {
         header('Location: ' . $url);
     }
     exit;
-} catch (ImproperActionException | InvalidSchemaException | Exception $e) {
+} catch (Exception $e) {
     // if something went wrong here it should stop whatever is after
     die($e->getMessage());
 }

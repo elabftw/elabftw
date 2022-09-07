@@ -74,7 +74,7 @@ abstract class AbstractMake
             '%s/%s.php?mode=view&id=%d',
             SITE_URL,
             $this->Entity->page,
-            $entityId ?? $this->Entity->id,
+            $entityId ?? $this->Entity->id ?? 0,
         );
     }
 }

@@ -9,30 +9,22 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import FavTag from './FavTag.class';
-import Tag from './Tag.class';
 import i18next from 'i18next';
 import { addAutocompleteToTagInputs, getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement } from './misc';
+import { Action, Model } from './interfaces';
+import { Api } from './Apiv2.class';
 
 document.addEventListener('DOMContentLoaded', () => {
-  let type = $('#info').data('type');
-  if (type === undefined) {
-    type = 'experiments_templates';
-  }
-
   const entity = getEntity();
-  const TagC = new Tag(entity);
+  const ApiC = new Api();
 
   // CREATE TAG
   $(document).on('keypress blur', '.createTagInput', function(e) {
     if ($(this).val() === '') {
       return;
     }
-    // Enter is ascii code 13
-    if (e.which === 13 || e.type === 'focusout') {
-      TagC.create($(this).val() as string).then(json => {
-        if (json.res === false) {
-          notif(json);
-        }
+    if (e.key === 'Enter' || e.type === 'focusout') {
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Tag}`, {'tag': $(this).val()}).then(() => {
         reloadElement('tags_div_' + entity.id);
         $(this).val('');
       });
@@ -44,8 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if ($(this).val() === '') {
       return;
     }
-    // Enter is ascii code 13
-    if (e.which === 13 || e.type === 'focusout') {
+    if (e.key === 'Enter' || e.type === 'focusout') {
       // get the ids of selected entities
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
@@ -60,7 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // loop over it and add tags
       const results = [];
       checked.forEach(checkBox => {
-        results.push(TagC.create((document.getElementById('createTagInputMultiple') as HTMLInputElement).value as string, checkBox['id']));
+        const tag = (document.getElementById('createTagInputMultiple') as HTMLInputElement).value;
+        results.push(ApiC.post(`${entity.type}/${checkBox['id']}/${Model.Tag}`, {'tag': tag}));
       });
 
       Promise.all(results).then(() => {
@@ -77,12 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if ($(this).val() === '') {
       return;
     }
-    // Enter is ascii code 13
-    if (e.which === 13 || e.type === 'focusout') {
-      FavTagC.create($(this).val() as string).then(json => {
-        if (json.res === false) {
-          notif(json);
-        }
+    if (e.key === 'Enter' || e.type === 'focusout') {
+      FavTagC.create($(this).val() as string).then(() => {
         reloadElement('favtagsPanel');
         $(this).val('');
       });
@@ -104,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     inputClasses: ['form-control'],
     formClasses: ['d-inline-flex'],
     fun: (value, original) => {
-      TagC.update(value, parseInt(original.dataset.tagid, 10));
+      ApiC.patch(`${Model.TeamTags}/${original.dataset.id}`, {'action': Action.UpdateTag, 'tag': value});
       return value;
     },
     listenOn: '.tag.editable',
@@ -124,22 +112,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // DEDUPLICATE (from admin panel/tag manager)
     if (el.matches('[data-action="deduplicate-tag"]')) {
-      TagC.deduplicate().then(json => {
-        notif({
-          'res': true,
-          'msg': `Deduplicated ${json.value} tags`,
-        });
-        reloadElement('tagMgrDiv');
-      });
+      ApiC.patch(`${Model.TeamTags}`, {'action': Action.Deduplicate}).then(() => reloadElement('tagMgrDiv'));
     // UNREFERENCE (remove link between tag and entity)
     } else if (el.matches('[data-action="unreference-tag"]')) {
       if (confirm(i18next.t('tag-delete-warning'))) {
-        TagC.unreference(parseInt(el.dataset.tagid, 10)).then(() => reloadElement(`tags_div_${entity.id}`));
+        ApiC.patch(`${entity.type}/${entity.id}/${Model.Tag}/${el.dataset.tagid}`, {'action': Action.Unreference}).then(() => reloadElement(`tags_div_${entity.id}`));
       }
     // DESTROY (from admin panel/tag manager)
     } else if (el.matches('[data-action="destroy-tag"]')) {
       if (confirm(i18next.t('tag-delete-warning'))) {
-        TagC.destroy(parseInt(el.dataset.tagid, 10)).then(() => reloadElement('tagMgrDiv'));
+        ApiC.delete(`${entity.type}/${entity.id}/${Model.Tag}/${el.dataset.tagid}`).then(() => reloadElement('tagMgrDiv'));
       }
     }
   });

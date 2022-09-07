@@ -9,43 +9,22 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\UnfinishedStepsParams;
-
 class UnfinishedStepsTest extends \PHPUnit\Framework\TestCase
 {
-    private Experiments $Experiments;
-
-    private Items $Items;
-
-    private UnfinishedStepsParams $StepsParamsUser;
-
-    private UnfinishedStepsParams $StepsParamsTeam;
+    private Users $Users;
 
     protected function setUp(): void
     {
-        $this->Experiments = new Experiments(new Users(1, 1), 1);
-        $this->Items = new Items(new Users(1, 1), 1);
-        $this->StepsParamsUser = new UnfinishedStepsParams(array('scope' => 'user'));
-        $this->StepsParamsTeam = new UnfinishedStepsParams(array('scope' => 'team'));
+        $this->Users = new Users(1, 1);
     }
 
-    public function testReadExperimetsStepsUser(): void
+    public function testReadStepsUser(): void
     {
-        $this->assertIsArray((new UnfinishedSteps($this->Experiments))->read($this->StepsParamsUser));
+        $this->assertIsArray((new UnfinishedSteps($this->Users))->readAll());
     }
 
-    public function testReadExperimetsStepsTeam(): void
+    public function testReadStepsTeam(): void
     {
-        $this->assertIsArray((new UnfinishedSteps($this->Experiments))->read($this->StepsParamsTeam));
-    }
-
-    public function testReadItemsStepsUser(): void
-    {
-        $this->assertIsArray((new UnfinishedSteps($this->Items))->read($this->StepsParamsUser));
-    }
-
-    public function testReadItemsStepsTeam(): void
-    {
-        $this->assertIsArray((new UnfinishedSteps($this->Items))->read($this->StepsParamsTeam));
+        $this->assertIsArray((new UnfinishedSteps($this->Users, true))->readAll());
     }
 }

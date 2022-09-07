@@ -5,65 +5,39 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Model, Target, Entity, Action, ResponseMsg } from './interfaces';
-import { Ajax } from './Ajax.class';
+import { Model, Target, Entity } from './interfaces';
+import { Api } from './Apiv2.class';
 
 export default class Step {
   entity: Entity;
   model: Model;
-  sender: Ajax;
+  api: Api;
 
   constructor(entity: Entity) {
     this.entity = entity;
     this.model = Model.Step,
-    this.sender = new Ajax();
+    this.api = new Api();
   }
 
-  create(content: string): Promise<ResponseMsg> {
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Create,
-      model: this.model,
-      entity: this.entity,
-      content: content,
-    };
-    return this.sender.send(payload);
+  create(content: string): Promise<Response> {
+    return this.api.post(`${this.entity.type}/${this.entity.id}/${this.model}`, {'body': content});
   }
 
-  update(id: number, content: string|null, target = Target.Body): Promise<ResponseMsg> {
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Update,
-      model: this.model,
-      target: target,
-      entity: this.entity,
-      content: content,
-      id : id,
-      notif: true,
-    };
-    return this.sender.send(payload);
+  update(id: number, content: string|null, target = Target.Body): Promise<Response> {
+    const params = {};
+    params[target] = content;
+    return this.api.patch(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`, params);
   }
 
-  finish(id: number): Promise<ResponseMsg> {
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Update,
-      model: this.model,
-      target: Target.Finished,
-      entity: this.entity,
-      id : id,
-    };
-    return this.sender.send(payload);
+  finish(id: number): Promise<Response> {
+    return this.api.patch(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`, {'action': 'finish'});
   }
 
-  destroy(id: number): Promise<ResponseMsg> {
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Destroy,
-      model: this.model,
-      entity: this.entity,
-      id : id,
-    };
-    return this.sender.send(payload);
+  notif(id: number): Promise<Response> {
+    return this.api.patch(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`, {'action': 'notif'});
+  }
+
+  destroy(id: number): Promise<Response> {
+    return this.api.delete(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`);
   }
 }

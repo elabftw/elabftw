@@ -39,6 +39,9 @@ class Revisions implements DestroyableInterface
      */
     public function create(string $body): bool
     {
+        if ($this->Entity instanceof ItemsTypes) {
+            return false;
+        }
         $this->Entity->canOrExplode('write');
 
         if (!$this->satisfyDeltaConstraint($body) && !$this->satisfyTimeConstraint()) {
@@ -94,7 +97,7 @@ class Revisions implements DestroyableInterface
     /**
      * Restore a revision from revision id
      */
-    public function restore(int $revId): void
+    public function restore(int $revId): bool
     {
         // check for lock
         if ($this->Entity->entityData['locked']) {
@@ -107,7 +110,7 @@ class Revisions implements DestroyableInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':body', $body);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     public function destroy(): bool

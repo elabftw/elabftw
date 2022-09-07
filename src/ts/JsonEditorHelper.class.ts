@@ -9,8 +9,8 @@ import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import i18next from 'i18next';
 import { notif, reloadElement } from './misc';
-import { Entity } from './interfaces';
-import { Ajax } from './Ajax.class';
+import { Action, Entity, Model } from './interfaces';
+import { Api } from './Apiv2.class';
 
 // This class is named helper because the jsoneditor lib already exports JSONEditor
 export default class JsonEditorHelper {
@@ -19,7 +19,9 @@ export default class JsonEditorHelper {
   MetadataC: Metadata;
   editor: JSONEditor;
   currentUploadId: string;
+  currentFilename: string;
   editorTitle: HTMLElement;
+  api: Api;
 
   constructor(entity: Entity) {
     this.entity = entity;
@@ -27,6 +29,7 @@ export default class JsonEditorHelper {
     this.editorDiv = document.getElementById('jsonEditorContainer') as HTMLDivElement;
     this.MetadataC = new Metadata(entity);
     this.editorTitle = document.getElementById('jsonEditorTitle');
+    this.api = new Api();
   }
 
   // INIT
@@ -34,12 +37,12 @@ export default class JsonEditorHelper {
     // JSONEditor has several modes, in edit mode we want more modes than in view mode
     let modes = ['view'];
     if (editable) {
-      modes = modes.concat(['tree', 'code', 'form', 'text']);
+      modes = modes.concat(['tree', 'code', 'form']);
     }
     const options = {
       modes: modes,
       onModeChange: (newMode): void => {
-        if (newMode === 'code' || newMode === 'text') {
+        if (newMode === 'code') {
           (this.editorDiv.firstChild as HTMLDivElement).style.height = '500px';
         }
       },
@@ -92,6 +95,7 @@ export default class JsonEditorHelper {
     // add the filename as a title
     this.editorTitle.innerText = `${i18next.t('filename')}: ${name}`;
     this.currentUploadId = uploadid;
+    this.currentFilename = name;
     this.editorDiv.dataset.what = 'file';
     document.getElementById('jsonEditorMetadataLoadButton').removeAttribute('disabled');
   }
@@ -99,6 +103,7 @@ export default class JsonEditorHelper {
   loadMetadata(): void {
     // set the title
     this.editorTitle.innerText = i18next.t('editing-metadata');
+    // Note: metadata is read two times one for the editor, one to display, a get to the entity should ideally only be made once
     this.MetadataC.read().then(metadata => this.editor.set(metadata));
     this.editorDiv.dataset.what = 'metadata';
     // disable the load metadata button
@@ -114,8 +119,9 @@ export default class JsonEditorHelper {
   }
 
   saveMetadata(): void {
+    const MetadataC = new Metadata(this.entity);
     try {
-      this.MetadataC.update(JSON.stringify(this.editor.get()));
+      MetadataC.update(this.editor.get());
     } catch (error) {
       notif({res: false, msg: 'Error parsing the JSON! Error logged in console.'});
       console.error(error);
@@ -130,11 +136,11 @@ export default class JsonEditorHelper {
   // save a file or metadata depending on what was loaded
   save(): void {
     if (this.editorDiv.dataset.what === 'file') {
-      return this.saveFile();
+      this.saveFile();
     }
 
     if (this.editorDiv.dataset.what === 'metadata') {
-      return this.saveMetadata();
+      this.saveMetadata();
     }
 
     // toggle save menu so user can select what to save: file or metadata
@@ -157,33 +163,30 @@ export default class JsonEditorHelper {
     }
     // add the new name for the file as a title
     this.editorTitle.innerText = i18next.t('filename') + ': ' + realName + '.json';
-    $.post('app/controllers/EntityAjaxController.php', {
-      addFromString: true,
-      fileType: 'json',
-      type: this.entity.type,
-      id: this.entity.id,
-      realName: realName + '.json',
-      content: JSON.stringify(this.editor.get()),
-    }).done(json => {
+    const params = {
+      'action': Action.CreateFromString,
+      'file_type': 'json',
+      'real_name': realName + '.json',
+      'content': JSON.stringify(this.editor.get()),
+    };
+    this.api.post(`${this.entity.type}/${this.entity.id}/${Model.Upload}`, params).then(resp => {
+      const location = resp.headers.get('location').split('/');
       reloadElement('filesdiv');
-      this.currentUploadId = String(json.uploadId);
-      notif(json);
+      this.currentUploadId = String(location[location.length - 1]);
     });
   }
 
   // edit an existing file
   saveFile(): void {
-    const AjaxC = new Ajax();
-    AjaxC.postForm('app/controllers/RequestHandler.php', {
-      action: 'update',
-      target: 'file',
-      entity_id: this.entity.id.toString(),
-      entity_type: this.entity.type,
-      id: this.currentUploadId,
-      model: 'upload',
-      extraParam: 'jsoneditor',
-      content: new Blob([JSON.stringify(this.editor.get())], { type: 'application/json' }),
-    }).then(res => res.json().then(json => notif(json)));
+    const formData = new FormData();
+    formData.set('file', new Blob([JSON.stringify(this.editor.get())], { type: 'application/json' }), this.currentFilename);
+    // prevent the browser from redirecting us
+    formData.set('extraParam', 'noRedirect');
+    // because the upload id is set this will replace the file directly
+    fetch(`api/v2/${this.entity.type}/${this.entity.id}/${Model.Upload}/${this.currentUploadId}`, {
+      method: 'POST',
+      body: formData,
+    });
   }
 
   clear(): void {

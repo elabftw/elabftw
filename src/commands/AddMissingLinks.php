@@ -9,9 +9,8 @@
 
 namespace Elabftw\Commands;
 
-use function count;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\EntityFactory;
@@ -113,7 +112,7 @@ class AddMissingLinks extends Command
                     foreach ($matches as $match) {
                         try {
                             $targetEntity = $match['target'] === 'experiments' ? 'experiments' : 'items';
-                            if ($links->create(new ContentParams($match['id'], extra: array('targetEntity' => $targetEntity)))) {
+                            if ($links->postAction(Action::Create, array('target_entity' => $targetEntity))) {
                                 $count++;
                             }
                         } catch (IllegalActionException | ImproperActionException $e) {

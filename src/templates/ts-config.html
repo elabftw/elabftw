@@ -18,7 +18,7 @@
   <label for='ts_password'>{{ 'Password for external timestamping service:'|trans }}</label>
   {% if App.Config.configArr.ts_password %}
     <p>A password is already set.
-    <a href='#' data-trigger='click' data-model='config' data-target='ts_password' data-action='destroystamppass' data-reload='ts_loginpass'>Clear it</a> or change it below:</p>
+    <span class='link-like' data-action='destroy-ts-password'>Clear it</span> or change it below:</p>
   {% endif %}
   <!-- note: if autocomplete is set to 'off' here it will trigger infinite save bug in chrome -->
   <input class='form-control col-md-4' data-trigger='blur' data-model='config' data-target='ts_password' data-reload='ts_loginpass' autocomplete='new-password' maxlength='200' type='password' id='ts_password' />

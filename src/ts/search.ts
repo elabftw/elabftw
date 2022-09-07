@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Submit form with ctrl+enter from within textarea
   extendedArea.addEventListener('keydown', event => {
-    if ((event.keyCode == 10 || event.keyCode == 13) && (event.ctrlKey || event.metaKey)) {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
       (document.getElementById('searchButton') as HTMLButtonElement).click();
     }
   });

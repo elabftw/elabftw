@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\ResourceNotFoundException;
 
 class PrivacyPolicyTest extends \PHPUnit\Framework\TestCase
@@ -30,7 +29,7 @@ class PrivacyPolicyTest extends \PHPUnit\Framework\TestCase
     public function testUpdate(): void
     {
         $txt = 'Some privacy policy';
-        $this->PrivacyPolicy->update(new ContentParams($txt));
+        $this->PrivacyPolicy->update($txt);
         $this->setUp();
         $this->assertEquals($txt, $this->PrivacyPolicy->readAll()[0]);
     }

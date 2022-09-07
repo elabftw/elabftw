@@ -18,6 +18,7 @@ const t = {
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",
     "request-filename": "Enter name of the file",
     "save": "Save",
+    "saved": "Saved",
     "saving": "Saving...",
     "step-delete-warning": "Delete this step?",
     "step-unfinish-warning": "Are you sure you want to undo this step?",

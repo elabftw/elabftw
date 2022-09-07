@@ -115,6 +115,6 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
             $this->log,
         );
         $this->expectException(ImproperActionException::class);
-        $authResponse = $ExternalAuth->tryAuth();
+        $ExternalAuth->tryAuth();
     }
 }

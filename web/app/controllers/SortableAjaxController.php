@@ -20,9 +20,11 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
 use Exception;
+use function json_decode;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -36,8 +38,9 @@ $Response->setData(array(
     'msg' => _('Saved'),
 ));
 
+$reqBody = json_decode((string) $App->Request->getContent(), true, 512, JSON_THROW_ON_ERROR);
 try {
-    switch ($Request->request->get('table')) {
+    switch ($reqBody['table']) {
         case 'items_types':
             if (!$App->Session->get('is_admin')) {
                 throw new IllegalActionException('Non admin user tried to access admin controller.');
@@ -48,7 +51,7 @@ try {
             if (!$App->Session->get('is_admin')) {
                 throw new IllegalActionException('Non admin user tried to access admin controller.');
             }
-            $Entity = new Status($App->Users->team);
+            $Entity = new Status(new Teams($App->Users));
             break;
         case 'experiments_steps':
             $model = new Experiments($App->Users);
@@ -75,7 +78,7 @@ try {
         default:
             throw new IllegalActionException('Bad table for updateOrdering.');
     }
-    $OrderingParams = new OrderingParams($Request->request->get('table'), $Request->request->all()['ordering']);
+    $OrderingParams = new OrderingParams($reqBody['table'], $reqBody['ordering']);
     $Entity->updateOrdering($OrderingParams);
 } catch (ImproperActionException | UnauthorizedException $e) {
     $Response->setData(array(

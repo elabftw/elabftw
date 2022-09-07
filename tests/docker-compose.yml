@@ -6,7 +6,10 @@ version: '3'
 services:
 # our first container is nginx + php-fpm + elabftw
     web:
-        image: elabftw/elabimg:hypernext
+        image: elabtmp
+        build:
+          context: .
+          dockerfile: ./elabtmp.Dockerfile
         container_name: elabtmp
         # drop some capabilities
         cap_drop:
@@ -52,7 +55,6 @@ services:
             retries: 3
         volumes:
             - ..:/elabftw
-            - ../_coverage:/elabftw/tests/_output/coverage
         networks:
             - elabftw-net
         depends_on:

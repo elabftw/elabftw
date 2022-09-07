@@ -5,8 +5,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, Action, Entity, EntityType, Target, ResponseMsg, PartialEntity } from './interfaces';
-import { Ajax } from './Ajax.class';
+import { Action, Entity, EntityType } from './interfaces';
+import { Api } from './Apiv2.class';
 import i18next from 'i18next';
 
 
@@ -18,13 +18,13 @@ export function ResourceNotFoundException(message: string): void {
 export class Metadata {
   entity: Entity;
   model: EntityType;
-  sender: Ajax;
+  api: Api;
   metadataDiv: Element;
 
   constructor(entity: Entity) {
     this.entity = entity;
     this.model = entity.type,
-    this.sender = new Ajax();
+    this.api = new Api();
     // this is the div that will hold all the generated fields from metadata json
     this.metadataDiv = document.getElementById('metadataDiv');
   }
@@ -33,63 +33,36 @@ export class Metadata {
    * Get the json from the metadata column
    */
   read(): Promise<Record<string, unknown>> {
-    const payload: Payload = {
-      method: Method.GET,
-      action: Action.Read,
-      model: this.model,
-      entity: this.entity,
-      target: Target.Metadata,
-    };
-    return this.sender.send(payload).then(json => {
+    return this.api.getJson(`${this.entity.type}/${this.entity.id}`).then(json => {
       // if there are no metadata.json file available, return an empty object
-      const fulljson = (json.value as PartialEntity);
-      if (typeof fulljson === 'undefined' || !fulljson.metadata) {
+      if (typeof json.metadata === 'undefined' || !json.metadata) {
         return {};
       }
-      return JSON.parse(fulljson.metadata);
+      return JSON.parse(json.metadata);
     });
   }
 
   /**
    * Only save a single field value after a change
    */
-  handleEvent(event): Promise<ResponseMsg> {
+  handleEvent(event): Promise<Response> {
     let value = event.target.value;
     // special case for checkboxes
     if (event.target.type === 'checkbox') {
       value = event.target.checked ? 'on': 'off';
     }
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Update,
-      model: this.model,
-      entity: this.entity,
-      target: Target.MetadataField,
-      content: value,
-      extraParams: {
-        jsonField: event.target.dataset.field,
-      },
-      notif: true,
-    };
-    return this.sender.send(payload);
+    const params = {};
+    params['action'] = Action.UpdateMetadataField;
+    params[event.target.dataset.field] = value;
+    return this.api.patch(`${this.entity.type}/${this.entity.id}`, params);
   }
 
   /**
    * Save the whole json at once, coming from json editor save button
    */
-  update(metadata): Promise<ResponseMsg> {
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Update,
-      model: this.model,
-      entity: this.entity,
-      target: Target.Metadata,
-      content: metadata,
-      notif: true,
-    };
-    return this.sender.send(payload);
+  update(metadata): Promise<void> {
+    return this.api.patch(`${this.entity.type}/${this.entity.id}`, {'metadata': JSON.stringify(metadata)}).then(() => this.display('edit'));
   }
-
 
   /**
    * For radio we need a special build workflow
@@ -185,7 +158,6 @@ export class Metadata {
       break;
     case 'radio':
       return this.buildRadio(name, description);
-      break;
     case 'url':
       element = document.createElement('input');
       element.type = 'url';
@@ -256,7 +228,6 @@ export class Metadata {
       }
       // if there was an issue fetching metadata, log the error
       console.error(e);
-      return;
     });
   }
 

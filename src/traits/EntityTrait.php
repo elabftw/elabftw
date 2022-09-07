@@ -32,12 +32,15 @@ trait EntityTrait
     /**
      * Check and set id; populate the data object
      */
-    public function setId(int $id): void
+    public function setId(?int $id): void
     {
+        $this->id = $id;
+        if ($id === null) {
+            return;
+        }
         if (Check::id($id) === false) {
             throw new IllegalActionException('The id parameter is not valid!');
         }
-        $this->id = $id;
         // this will load it in entityData
         $this->readOne();
         // clear out filters

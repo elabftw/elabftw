@@ -9,7 +9,7 @@ declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { notif, reloadElement, updateCategory, showContentPlainText, escapeRegExp, getLinkTargetEntityType } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
-import { EntityType, Target, Upload, Model, Payload, Method, Action, PartialEntity } from './interfaces';
+import { EntityType, Target, Upload, Model, Action } from './interfaces';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
@@ -18,9 +18,8 @@ import Dropzone from 'dropzone';
 import type { DropzoneFile } from 'dropzone';
 import i18next from 'i18next';
 import { Metadata } from './Metadata.class';
-import { Ajax } from './Ajax.class';
-import UploadClass from './Upload.class';
 import EntityClass from './Entity.class';
+import { Api } from './Apiv2.class';
 
 class CustomDropzone extends Dropzone {
   tinyImageSuccess: null | undefined | ((url: string) => void);
@@ -44,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
-  const AjaxC = new Ajax();
+  const ApiC = new Api();
 
   // add extra fields elements from metadata json
   const MetadataC = new Metadata(entity);
@@ -56,28 +55,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // UPLOAD FORM
   const dropZoneElement = '#elabftw-dropzone';
-  new Dropzone(dropZoneElement, {
+  const dropZoneOptions = {
     // i18n message to user
     dictDefaultMessage: i18next.t('dropzone-upload-area'),
-    maxFilesize: $('#info').data('maxsize'), // MB
+    maxFilesize: parseInt(document.getElementById('info').dataset.maxsize, 10), // MB
     timeout: 900000,
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
     },
     init: function(): void {
-
-      // add additional parameters (id and type)
-      this.on('sending', function(file: string, xhr: string, formData: FormData) {
-        formData.append('upload', '1');
-        formData.append('type', entity.type);
-        formData.append('id', String(entity.id));
-      });
-
       // once it is done
-      this.on('complete', function(answer: DropzoneFile) {
-        // check the answer we get back from the controller
-        const json = JSON.parse(answer.xhr.responseText);
-        notif(json);
+      this.on('complete', function() {
         // reload the #filesdiv once the file is uploaded
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
           reloadElement('filesdiv').then(() => {
@@ -98,7 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     },
-  });
+  };
+  new Dropzone(dropZoneElement, dropZoneOptions);
 
   ////////////////
   // DATA RECOVERY
@@ -132,8 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // GET MOL FILES
   function getListFromMolFiles(): void {
     const mols = [];
-    const UploadC = new UploadClass(entity);
-    UploadC.read().then(json => {
+    ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}`).then(json => {
       for (const upload of json.value as Array<Upload>) {
         const extension = upload.real_name.split('.').pop();
         if (['mol', 'chemjson'].includes(extension)) {
@@ -171,8 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Shared function to UPDATE ENTITY BODY via save shortcut and/or save button
   function updateEntityBody(el?: HTMLElement): void {
-    EntityC.update(entity.id, Target.Body, editor.getContent()).then(json => {
-      if (json.res && editor.type === 'tiny') {
+    EntityC.update(entity.id, Target.Body, editor.getContent()).then(() => {
+      if (editor.type === 'tiny') {
         // set the editor as non dirty so we can navigate out without a warning to clear
         tinymce.activeEditor.setDirty(false);
       }
@@ -216,19 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
         : (document.getElementById('sketcher') as HTMLCanvasElement).toDataURL();
 
       const params = {
-        'addFromString': 'true',
-        'fileType': el.dataset.filetype,
-        'realName': realName,
+        'action': Action.CreateFromString,
+        'file_type': el.dataset.filetype,
+        'real_name': realName,
         'content': content,
-        'id': String(entity.id),
-        'type': entity.type,
       };
-
-      AjaxC.postForm('app/controllers/EntityAjaxController.php', params)
-        .then(res => res.json().then(json => {
-          reloadElement('filesdiv');
-          notif(json);
-        }));
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElement('filesdiv'));
 
     // ANNOTATE IMAGE
     } else if (el.matches('[data-action="annotate-image"]')) {
@@ -258,27 +239,15 @@ document.addEventListener('DOMContentLoaded', () => {
       // this is in this file and not in steps-links-edit because here `editor`
       // exists and is reachable
       const type = getLinkTargetEntityType(el);
-      const payload: Payload = {
-        method: Method.GET,
-        action: Action.Read,
-        model: type,
-        entity: {
-          type: type,
-          id: parseInt(el.dataset.target, 10),
-        },
-        target: Target.Body,
-      };
-      AjaxC.send(payload).then(json => editor.setContent((json.value as PartialEntity).body));
+      ApiC.getJson(`${type}/${el.dataset.target}`).then(json => {
+        editor.setContent(json.body);
+      });
 
     // DESTROY ENTITY
     } else if (el.matches('[data-action="destroy"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
         const path = window.location.pathname;
-        EntityC.destroy(entity.id).then(json => {
-          if (json.res) {
-            window.location.replace(path.split('/').pop());
-          }
-        });
+        EntityC.destroy(entity.id).then(() => window.location.replace(path.split('/').pop()));
       }
 
     // SHOW CONTENT OF PLAIN TEXT FILES
@@ -301,32 +270,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // CAN READ/WRITE SELECT
-  $(document).on('change', '.permissionSelect', function() {
-    const value = $(this).val();
-    const rw = $(this).data('rw');
-    $.post('app/controllers/EntityAjaxController.php', {
-      updatePermissions: true,
-      rw: rw,
-      id: entity.id,
-      type: entity.type,
-      value: value,
-    }).done(function(json) {
-      notif(json);
-    });
-  });
-
   // TRANSFER OWNERSHIP
   document.getElementById('new_owner').addEventListener('change', () => {
     const value = (document.getElementById('new_owner') as HTMLInputElement).value;
-    EntityC.update(entity.id, Target.UserId, value).then(json => {
-      if (json.res) {
-        window.location.reload();
-      }
-    });
+    EntityC.update(entity.id, Target.UserId, value).then(() => window.location.reload());
   });
 
-  // STATUS SELECT
+  // CATEGORY SELECT
   $(document).on('change', '#category_select', function() {
     updateCategory(entity, String($(this).val()));
   });
@@ -386,29 +336,30 @@ document.addEventListener('DOMContentLoaded', () => {
         // Check if it was selected. This is set by an event hook below
         if (tinymceEditImage.selected === true) {
           // Note: confirm will trigger the SelectionChange event hook below again
-          // Note: the new filename (long_name) is returned from RequestHandler.php
           if (confirm(i18next.t('replace-edited-file'))) {
-            // Replace the file on the server
-            AjaxC.postForm('app/controllers/RequestHandler.php', {
-              action: Action.Replace,
-              target: 'file',
-              id: String(tinymceEditImage.uploadId),
-              entity_id: String(entity.id),
-              entity_type: entity.type,
-              model: Model.Upload,
-              content: new File(
-                [blobInfo.blob()],
-                tinymceEditImage.filename,
-                { lastModified: new Date().getTime(), type: blobInfo.blob().type },
-              ),
-              extraParam: 'noRedirect',
-            }).then(response => {
-              return response.json();
-            }).then(json => {
-              success(`app/download.php?f=${json.value.long_name}&storage=${json.value.storage}`);
-              // save here because using the old real_name will not return anything from the db (status is archived now)
-              updateEntityBody();
-              reloadElement('filesdiv');
+            const formData = new FormData();
+            const newfilecontent = new File(
+              [blobInfo.blob()],
+              tinymceEditImage.filename,
+              { lastModified: new Date().getTime(), type: blobInfo.blob().type },
+            );
+            formData.set('file', newfilecontent);
+            // prevent the browser from redirecting us
+            formData.set('extraParam', 'noRedirect');
+            // because the upload id is set this will replace the file directly
+            fetch(`api/v2/${entity.type}/${entity.id}/${Model.Upload}/${tinymceEditImage.uploadId}`, {
+              method: 'POST',
+              body: formData,
+            }).then(resp => {
+              const location = resp.headers.get('location').split('/');
+              const newId = location[location.length -1];
+              // fetch info about the newly created upload
+              ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`).then(json => {
+                success(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
+                // save here because using the old real_name will not return anything from the db (status is archived now)
+                updateEntityBody();
+                reloadElement('filesdiv');
+              });
             });
           } else {
             // Revert changes if confirm is cancelled
@@ -434,17 +385,13 @@ document.addEventListener('DOMContentLoaded', () => {
       // use undocumented callback function to asynchronously get the templates
       // see https://github.com/tinymce/tinymce/issues/5637#issuecomment-624982699
       templates: (callback): void => {
-        const payload: Payload = {
-          method: Method.GET,
-          action: Action.Read,
-          model: EntityType.Template,
-          entity: {
-            type: EntityType.Template,
-            id: null,
-          },
-          target: Target.List,
-        };
-        AjaxC.send(payload).then(json => callback(json.value));
+        ApiC.getJson(`${EntityType.Template}`).then(json => {
+          const res = [];
+          json.forEach(tpl => {
+            res.push({'title': tpl.title, 'description': '', 'content': tpl.body});
+          });
+          callback(res);
+        });
       },
       // use a custom function for the save button in toolbar
       save_onsavecallback: (): void => quickSave(),
@@ -463,23 +410,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Save all the details needed for replacing upload
         // Then check for and get those details when you are handling file uploads
         const selectedImage = (tinymce.activeEditor.selection.getNode() as HTMLImageElement);
-        // Get id and filename (real_name) from uploads table
-        // this allows us to know which corresponding upload is selected so we can replace it if needed (after a crop for instance)
         const searchParams = new URL(selectedImage.src).searchParams;
-        const payload: Payload = {
-          method: Method.GET,
-          action: Action.Read,
-          model: Model.Upload,
-          entity: {
-            type: entity.type,
-            id: entity.id,
-          },
-          content: searchParams.get('f'),
-          target: Target.UploadId,
-        };
-        AjaxC.send(payload).then(json => {
-          const upload = json.value as Upload;
+        // Get all the uploads from that entity
+        ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}`).then(json => {
+          // Now find the one corresponding to the image selected in the body
+          const upload = json.find(upload => upload.long_name === searchParams.get('f'));
           tinymceEditImage.selected = true;
+          // Get id and filename (real_name) from this
+          // this allows us to know which corresponding upload is selected so we can replace it if needed (after a crop for instance)
           tinymceEditImage.uploadId = upload.id;
           tinymceEditImage.filename = upload.real_name;
         });
@@ -522,41 +460,42 @@ document.addEventListener('DOMContentLoaded', () => {
       const searchPrefixMd = '![image](app/download.php?f=';
       const formElement = el as HTMLFormElement;
       const editorCurrentContent = editor.getContent();
-
-      // submit form if longName is not found in body
-      if ((editorCurrentContent.indexOf(searchPrefixSrc + formElement.dataset.longName) === -1)
-        && (editorCurrentContent.indexOf(searchPrefixMd + formElement.dataset.longName) === -1)
-      ) {
-        formElement.submit();
-        return true;
-      }
-
       const formData = new FormData(formElement);
+      // prevent the browser from redirecting us
       formData.set('extraParam', 'noRedirect');
-      fetch('app/controllers/RequestHandler.php', {
+      fetch(`api/v2/${entity.type}/${entity.id}/${Model.Upload}/${el.dataset.uploadid}`, {
         method: 'POST',
         body: formData,
-      }).then(response => {
-        return response.json();
-      }).then(json => {
-        // use regExp in replace to find all occurrence
-        // images are identified by 'src="app/download.php?f=' (html) and '![image](app/download.php?f=' (md)
-        // '.', '?', '[' and '(' need to be escaped in js regex
-        const editorNewContent = editorCurrentContent.replace(
-          new RegExp(escapeRegExp(searchPrefixSrc + formElement.dataset.longName), 'g'),
-          searchPrefixSrc + json.value.long_name,
-        ).replace(
-          new RegExp(escapeRegExp(searchPrefixMd + formElement.dataset.longName), 'g'),
-          searchPrefixMd + json.value.long_name,
-        );
-        editor.replaceContent(editorNewContent);
-
-        // status of previous file is archived now
-        // save because using the old file will not return an id from the db
-        updateEntityBody();
+      }).then(resp => {
         reloadElement('filesdiv');
+        // return early if longName is not found in body
+        if ((editorCurrentContent.indexOf(searchPrefixSrc + formElement.dataset.longName) === -1)
+          && (editorCurrentContent.indexOf(searchPrefixMd + formElement.dataset.longName) === -1)
+        ) {
+          return true;
+        }
+        // now replace all occurrence of the old file in the body with the long_name of the new file
+        const location = resp.headers.get('location').split('/');
+        const newId = location[location.length -1];
+        // fetch info about the newly created upload
+        ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`).then(json => {
+          // use regExp in replace to find all occurrence
+          // images are identified by 'src="app/download.php?f=' (html) and '![image](app/download.php?f=' (md)
+          // '.', '?', '[' and '(' need to be escaped in js regex
+          const editorNewContent = editorCurrentContent.replace(
+            new RegExp(escapeRegExp(searchPrefixSrc + formElement.dataset.longName), 'g'),
+            searchPrefixSrc + json.long_name,
+          ).replace(
+            new RegExp(escapeRegExp(searchPrefixMd + formElement.dataset.longName), 'g'),
+            searchPrefixMd + json.long_name,
+          );
+          editor.replaceContent(editorNewContent);
+
+          // status of previous file is archived now
+          // save because using the old file will not return an id from the db
+          updateEntityBody();
+        });
       });
-      return false;
     }
   });
 });

@@ -28,9 +28,9 @@
         <!-- START AND END TIMES -->
         <div class='mt-2'>
           <label for='schedulerEventModalStart'>{{ 'Start time'|trans }}</label>
-          <input id='schedulerEventModalStart' class='form-control' type='datetime-local' data-what='start' value='' />
+          <input id='schedulerEventModalStart' class='form-control' type='datetime-local' data-what='start_epoch' value='' />
           <label for='schedulerEventModalEnd'>{{ 'End time'|trans }}</label>
-          <input id='schedulerEventModalEnd' class='form-control' type='datetime-local' data-what='end' value='' />
+          <input id='schedulerEventModalEnd' class='form-control' type='datetime-local' data-what='end_epoch' value='' />
         </div>
 
         <!-- BIND EXPERIMENT -->
@@ -119,13 +119,10 @@
 
 <section class='box'>
     <h5><i class='fas fa-users'></i> {{ 'Members'|trans }}</h5>
-    <table id='teamtable' class='table'>
+    <table id='teamtable' class='table' aria-describedby='pageTitle'>
         <tr>
             <th>{{ 'Name'|trans }}</th>
             <th>{{ 'Email'|trans }}</th>
-            <th>{{ 'Phone'|trans }}</th>
-            <th>{{ 'Mobile'|trans }}</th>
-            <th>{{ 'Website'|trans }}</th>
             <th>ORCID</th>
         </tr>
         <!-- archived users are hidden on this page -->
@@ -142,9 +139,6 @@
             </a>
           </td>
           <td><a href='mailto:{{ user.email }}'>{{ user.email }}</a></td>
-          <td>{{ user.phone }}</td>
-          <td>{{ user.cellphone }}</td>
-          <td><a href='{{ user.website }}'>{{ user.website }}</a></td>
           <td>{{ user.orcid }}</td>
         </tr>
         {% endfor %}
@@ -182,7 +176,7 @@
 </div>
 
 <div id='info'
-    data-calendarlang="{{ calendarLang }}"
+    data-calendarlang="{{ App.getJsLang }}"
     data-item="{{ selectedItem }}"
     data-all="{{ allItems }}"></div>
 {% endblock body %}

@@ -34,7 +34,7 @@ try {
     $Response = $Controller->getResponse();
 } catch (QuantumException | InvalidCredentialsException $e) {
     $loginTries = (int) $App->Config->configArr['login_tries'];
-    $AuthFail = new AuthFail($loginTries, $e->getCode(), $App->Request->cookies->get('devicetoken'));
+    $AuthFail = new AuthFail($loginTries, $e->getCode(), $App->Request->cookies->getAlnum('devicetoken'));
     $AuthFail->register();
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (ImproperActionException | InvalidDeviceTokenException $e) {

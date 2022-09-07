@@ -42,6 +42,6 @@ class LdapAuthTest extends \PHPUnit\Framework\TestCase
     public function testTryAuth(): void
     {
         $this->expectException(LdapRecordException::class);
-        $authResponse = $this->AuthService->tryAuth();
+        $this->AuthService->tryAuth();
     }
 }

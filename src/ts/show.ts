@@ -11,6 +11,7 @@ import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import FavTag from './FavTag.class';
+import { Api } from './Apiv2.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -27,25 +28,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const limit = parseInt(about.limit, 10);
   const EntityC = new EntityClass(entity.type);
   const FavTagC = new FavTag();
+  const ApiC = new Api();
 
   // CREATE EXPERIMENT or DATABASE item with shortcut
   key(document.getElementById('shortcuts').dataset.create, function() {
-    if (about.type === 'experiments' && window.location.pathname !== '/search.php') {
+    if (about.type === 'experiments') {
       const el = document.querySelector('[data-action="create-entity"]') as HTMLButtonElement;
       const tplid = el.dataset.tplid;
       const urlParams = new URLSearchParams(document.location.search);
       const tags = urlParams.getAll('tags[]');
-      EntityC.create(tplid, tags).then(json => {
-        if (json.res) {
-          window.location.replace(`?mode=edit&id=${json.value}`);
-        } else {
-          notif(json);
-        }
-      });
+      EntityC.create(tplid, tags).then(resp => window.location.href = resp.headers.get('location'));
     } else {
       // for database items, show a selection modal
       // modal plugin requires jquery
-      ($('#createModal') as JQuery).modal('toggle');
+      $('#createModal').modal('toggle');
     }
   });
 
@@ -113,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         notif(nothingSelectedError);
         return;
       }
-      window.location.href = `make.php?what=${el.value}&type=${about.type}&id=${checked.map(value => value.id).join('+')}`;
+      window.location.href = `make.php?format=${el.value}&type=${about.type}&id=${checked.map(value => value.id).join('+')}`;
 
     // UPDATE CATEGORY
     } else if (el.matches('[data-action="update-category-selected-entities"]')) {
@@ -126,12 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // loop on it and update the status/item type
       checked.forEach(chk => {
-        ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
-          updateCategory : true,
-          id: chk.id,
-          categoryId : el.value,
-          type : about.type,
-        }));
+        ajaxs.push(ApiC.patch(`${about.type}/${chk.id}`, {'category': el.value}));
       });
       // reload the page once it's done
       // a simple reload would not work here
@@ -153,13 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // loop on it and update the status/item type
       checked.forEach(chk => {
-        ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
-          updatePermissions : true,
-          rw: 'read',
-          id: chk.id,
-          value: el.value,
-          type : about.type,
-        }));
+        ajaxs.push(ApiC.patch(`${about.type}/${chk.id}`, {'canread': el.value}));
       });
       // reload the page once it's done
       // a simple reload would not work here
@@ -341,14 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // loop on it and timestamp it
       checked.forEach(chk => {
-        $.post('app/controllers/EntityAjaxController.php', {
-          timestamp: true,
-          type: 'experiments',
-          id: chk.id,
-        }).done(function(json) {
-          notif(json);
-          reloadEntitiesShow();
-        });
+        EntityC.timestamp(chk.id).then(() => reloadEntitiesShow());
       });
 
     // THE DELETE BUTTON FOR CHECKED BOXES
@@ -364,14 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       // loop on it and delete stuff
-      checked.forEach(chk => {
-        EntityC.destroy(chk.id).then(json => {
-          if (json.res) {
-            $('#parent_' + chk.randomid).hide(200);
-          }
-        });
-      });
-
+      checked.forEach(chk => EntityC.destroy(chk.id).then(() => $('#parent_' + chk.randomid).hide(200)));
     }
   });
 
@@ -384,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // FAVTAGS PANEL
-  if (localStorage.getItem('isfavtagOpen') === '1') {
+  if (localStorage.getItem('isfavtagsOpen') === '1') {
     FavTagC.toggle();
   }
 });

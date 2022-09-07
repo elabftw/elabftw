@@ -11,45 +11,34 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Interfaces\StepParamsInterface;
+use Elabftw\Elabftw\StepParams;
+use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\RestInterface;
+use Elabftw\Services\Filter;
+use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
 /**
  * All about the steps
  */
-class Steps implements CrudInterface
+class Steps implements RestInterface
 {
     use SortableTrait;
+    use SetIdTrait;
 
     protected Db $Db;
 
-    public function __construct(public AbstractEntity $Entity, private ?int $id = null)
+    public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
         $this->Db = Db::getConnection();
+        $this->setId($id);
     }
 
-    /**
-     * Add a step
-     *
-     */
-    public function create(ContentParamsInterface $params): int
+    public function getPage(): string
     {
-        $this->Entity->canOrExplode('write');
-        // make sure the newly added step is at the bottom
-        // count the number of steps and add 1 to be sure we're last
-        $ordering = count($this->readAll()) + 1;
-
-        $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :content, :ordering)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindValue(':content', $params->getContent());
-        $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $this->Db->lastInsertId();
+        return $this->Entity->getPage();
     }
 
     /**
@@ -122,27 +111,27 @@ class Steps implements CrudInterface
         }
     }
 
-    public function update(StepParamsInterface $params): bool
+    public function patch(Action $action, array $params): array
     {
         $this->Entity->canOrExplode('write');
-        $target = $params->getTarget();
-        if ($target === 'finished') {
-            return $this->toggleFinished();
-        }
-        if ($target === 'deadline_notif') {
-            return $this->toggleNotif();
-        }
-        if ($target === 'body') {
-            $content = $params->getContent();
-        } else {
-            $content = $params->getDatetime();
-        }
-        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET ' . $params->getTarget() . ' = :content WHERE id = :id AND item_id = :item_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':content', $content, PDO::PARAM_STR);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        match ($action) {
+            Action::Finish => $this->toggleFinished(),
+            Action::Notif => $this->toggleNotif(),
+            Action::Update => (
+                function () use ($params) {
+                    foreach ($params as $key => $value) {
+                        $this->update(new StepParams($key, $value));
+                    }
+                }
+            )(),
+            default => throw new ImproperActionException('Invalid action for steps.'),
+        };
+        return $this->readOne();
+    }
+
+    public function postAction(Action $action, array $reqBody): int
+    {
+        return $this->create($reqBody['body'] ?? 'RTFM');
     }
 
     public function destroy(): bool
@@ -156,10 +145,38 @@ class Steps implements CrudInterface
         return $this->Db->execute($req);
     }
 
+    private function update(StepParams $params): bool
+    {
+        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET ' . $params->getColumn() . ' = :content WHERE id = :id AND item_id = :item_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $params->getContent(), PDO::PARAM_STR);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    private function create(string $body): int
+    {
+        $this->Entity->canOrExplode('write');
+        $body = Filter::title($body);
+        // make sure the newly added step is at the bottom
+        // count the number of steps and add 1 to be sure we're last
+        $ordering = count($this->readAll()) + 1;
+
+        $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :body, :ordering)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':body', $body);
+        $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $this->Db->lastInsertId();
+    }
+
     private function toggleFinished(): bool
     {
         $sql = 'UPDATE ' . $this->Entity->type . '_steps SET finished = !finished,
-            finished_time = NOW() WHERE id = :id AND item_id = :item_id';
+            finished_time = NOW(), deadline = null, deadline_notif = 0 WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);

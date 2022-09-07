@@ -5,13 +5,17 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, reloadElement } from './misc';
+import { reloadElement } from './misc';
 import i18next from 'i18next';
+import { Action, Model } from './interfaces';
+import { Api } from './Apiv2.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('info')?.dataset?.page !== 'edit') {
     return;
   }
+
+  const ApiC = new Api();
 
   // store the clicks
   let clickX = [];
@@ -77,17 +81,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (realName === null || realName === '') {
       return;
     }
-    $.post('app/controllers/EntityAjaxController.php', {
-      addFromString: true,
-      fileType: 'png',
-      realName: realName,
-      content: image,
-      id: elDataset.id,
-      type: elDataset.type,
-    }).done(function(json) {
-      reloadElement('filesdiv');
-      notif(json);
-    });
+    const params = {
+      'action': Action.CreateFromString,
+      'file_type': 'png',
+      'real_name': realName,
+      'content': image,
+    };
+    ApiC.post(`${elDataset.type}/${elDataset.id}/${Model.Upload}`, params).then(() => reloadElement('filesdiv'));
   });
 
 

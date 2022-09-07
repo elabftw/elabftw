@@ -1,9 +1,16 @@
 <?php declare(strict_types=1);
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2022 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\OrderingParams;
+use Elabftw\Enums\Action;
 
 class TodolistTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,7 +24,7 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
     public function testCreate(): void
     {
         $content = 'write more tests';
-        $this->assertIsInt($this->Todolist->create(new ContentParams($content)));
+        $this->assertIsInt($this->Todolist->postAction(Action::Create, array('content' => $content)));
     }
 
     public function testRead(): void
@@ -28,14 +35,15 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
     public function testUpdate(): void
     {
         $this->Todolist->setId(1);
-        $this->assertTrue($this->Todolist->update(new ContentParams('write way more tests')));
+        $this->assertIsArray($this->Todolist->patch(Action::Update, array('content' => 'write way more tests')));
     }
 
     public function testUpdateOrdering(): void
     {
         $content = 'write more tests';
-        $this->Todolist->create(new ContentParams($content));
-        $this->Todolist->create(new ContentParams($content));
+        $this->Todolist->postAction(Action::Create, array('content' => $content));
+        $this->Todolist->postAction(Action::Create, array('content' => $content));
+        $this->Todolist->postAction(Action::Create, array('content' => $content));
         $ordering = array('todoItem_3', 'todoItem_2', 'todoItem_4');
         $OrderingParams = new OrderingParams('todolist', $ordering);
         $this->Todolist->updateOrdering($OrderingParams);
@@ -43,7 +51,6 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy(): void
     {
-        $this->Todolist->setId(1);
         $this->assertTrue($this->Todolist->destroy());
     }
 }

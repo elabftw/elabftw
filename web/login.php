@@ -83,6 +83,7 @@ try {
     $idpsArr = $Idps->readAll();
 
     $Teams = new Teams($App->Users);
+    $Teams->bypassReadPermission = true;
     $teamsArr = $Teams->readAll();
 
     if ($Request->cookies->has('kickreason')) {

@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
  * See https://owasp.org/www-community/attacks/csrf
  *
  * A token is generated and stored in the session. It will be the same during all user session.
- * When a POST request is made, the sent token (in 'csrf' field or as header for Ajax requests) is checked against
+ * When a POST/PATCH request is made, the sent token (in 'csrf' field or as header for Ajax requests) is checked against
  * the stored one and an exception is thrown if they don't match, preventing the request to go through.
  */
 class Csrf
@@ -52,9 +52,9 @@ class Csrf
     public function validate(): void
     {
         // get requests are not checked, same for api requests or the reset password page
-        if (($this->Request->server->get('REQUEST_METHOD') === 'GET') ||
-            ($this->Request->server->get('SCRIPT_NAME') === '/app/controllers/ResetPasswordController.php') ||
-            ($this->Request->server->get('SCRIPT_NAME') === '/app/controllers/ApiController.php')) {
+        if ($this->Request->getMethod() === 'GET' ||
+            $this->Request->server->get('SCRIPT_NAME') === '/app/controllers/ResetPasswordController.php' ||
+            $this->Request->server->get('SCRIPT_NAME') === '/app/controllers/ApiController.php') {
             return;
         }
 

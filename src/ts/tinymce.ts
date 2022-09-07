@@ -51,10 +51,11 @@ import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-plugins/mention/plugin.js';
 import EntityClass from './Entity.class';
-import Link from './Link.class';
-import { Target, EntityType } from './interfaces';
+import { EntityType, Target, Model } from './interfaces';
 import { getEntity, reloadElement } from './misc';
+import { Api } from './Apiv2.class';
 
+const ApiC = new Api();
 // AUTOSAVE
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
 
@@ -71,7 +72,6 @@ export function quickSave(): void {
     localStorage.setItem('date', new Date().toLocaleString());
     // reload the page so user gets redirected to the login page
     location.reload();
-    return;
   }).then(() => {
     // remove dirty state of editor
     tinymce.activeEditor.setDirty(false);
@@ -160,7 +160,7 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'Ruby', value: 'ruby'},
     ],
     codesample_global_prismjs: true,
-    language: $('#user-prefs').data('lang'),
+    language: document.getElementById('user-prefs').dataset.lang,
     charmap_append: [
       [0x2640, 'female sign'],
       [0x2642, 'male sign'],
@@ -171,33 +171,22 @@ export function getTinymceBaseConfig(page: string): object {
       delimiter: '#',
       // get the source from json with get request
       source: function(query: string, process: (data) => void): void {
-        const url = 'app/controllers/EntityAjaxController.php';
-        $.getJSON(url, {
-          mention: 1,
-          term: query,
-          type: entity.type,
-        }).done(function(data) {
-          process(data);
+        // grab experiments and items
+        const expjson = ApiC.getJson(`${EntityType.Experiment}?limit=100?q=${query}`);
+        const itemjson = ApiC.getJson(`${EntityType.Item}?limit=100?q=${query}`);
+        // and merge them into one
+        Promise.all([expjson, itemjson]).then(values => {
+          process(values[0].concat(values[1]));
         });
       },
-      insert: function(data): string {
-        if (data.type === 'items') {
-          const LinkC = new Link(entity);
-          LinkC.create(parseInt(data.id), EntityType.Item).then(json => {
-            if (json.res === true) {
-              reloadElement('links_div_' + entity.id);
-            }
-          });
+      insert: function(selected): string {
+        if (selected.type === 'items') {
+          ApiC.post(`${entity.type}/${entity.id}/${Model.Link}/${selected.id}`).then(() => reloadElement('linksDiv'));
         }
-        if (data.type === 'experiments' && (entity.type === EntityType.Experiment || entity.type === EntityType.Item)) {
-          const LinkC = new Link(entity);
-          LinkC.create(parseInt(data.id), EntityType.Experiment).then(json => {
-            if (json.res === true) {
-              reloadElement('links_exp_div_' + entity.id);
-            }
-          });
+        if (selected.type === 'experiments' && (entity.type === EntityType.Experiment || entity.type === EntityType.Item)) {
+          ApiC.post(`${entity.type}/${entity.id}/${Model.Link}/${selected.id}`).then(() => reloadElement('linksDiv'));
         }
-        return `<span><a href='${data.page}.php?mode=view&id=${data.id}'>${data.name}</a></span>`;
+        return `<span><a href='${selected.page}.php?mode=view&id=${selected.id}'>${selected.category} - ${selected.title}</a></span>`;
       },
     },
     mobile: {

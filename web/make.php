@@ -33,7 +33,7 @@ $template = 'error.html';
 $renderArr = array('error' => Tools::error());
 
 try {
-    $Controller = new MakeController($App);
+    $Controller = new MakeController($App->Users, $App->Request);
     $Response = $Controller->getResponse();
 } catch (ImproperActionException $e) {
     // show message to user

@@ -11,7 +11,6 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\EntityParams;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
@@ -41,7 +40,7 @@ class MakeBackupZipTest extends \PHPUnit\Framework\TestCase
     public function testGetZipExp(): void
     {
         $Experiments = new Experiments(new Users(1, 1));
-        $id = $Experiments->create(new EntityParams('0'));
+        $id = $Experiments->create();
         // there are no public method to set last change, so do it manually
         // it has to be in the past because it's a timestamp
         $Db = Db::getConnection();

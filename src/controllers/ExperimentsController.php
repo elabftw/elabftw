@@ -14,6 +14,7 @@ use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Status;
+use Elabftw\Models\Teams;
 
 /**
  * For experiments.php
@@ -27,7 +28,7 @@ class ExperimentsController extends AbstractEntityController
     {
         parent::__construct($app, $entity);
 
-        $Category = new Status($this->App->Users->team);
+        $Category = new Status(new Teams($this->App->Users, $this->App->Users->team));
         $this->categoryArr = $Category->readAll();
     }
 
@@ -38,11 +39,10 @@ class ExperimentsController extends AbstractEntityController
     {
         // filter by user if we don't want to show the rest of the team
         if (!$this->Entity->Users->userData['show_team']) {
-            $this->Entity->addFilter('entity.userid', $this->App->Users->userData['userid']);
+            $this->Entity->addFilter('entity.userid', (string) $this->App->Users->userData['userid']);
         }
 
-        $DisplayParams = new DisplayParams();
-        $DisplayParams->adjust($this->App);
+        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);
         return $this->Entity->readShow($DisplayParams);
     }
 }

@@ -13,6 +13,7 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\CreateImmutableUpload;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Interfaces\TimestampResponseInterface;
 use Elabftw\Models\Experiments;
 use ZipArchive;
@@ -22,7 +23,7 @@ use ZipArchive;
  * Based on:
  * http://www.d-mueller.de/blog/dealing-with-trusted-timestamps-in-php-rfc-3161
  */
-abstract class AbstractMakeTimestamp extends AbstractMake
+abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimestampInterface
 {
     public string $pdfPath = '';
 

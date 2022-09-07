@@ -51,7 +51,6 @@ trait TwigTrait
         $bytesFilter = new TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
         $extFilter = new TwigFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
         $qFilter = new TwigFilter('qFilter', '\Elabftw\Elabftw\Tools::qFilter', $filterOptions);
-        $langFilter = new TwigFilter('jslang', '\Elabftw\Elabftw\Tools::getCalendarLang', $filterOptions);
         $metadataFilter = new TwigFilter('formatMetadata', '\Elabftw\Elabftw\Tools::formatMetadata', $filterOptions);
         $csrfFilter = new TwigFilter('csrf', '\Elabftw\Services\Transform::csrf', $filterOptions);
         $notifWebFilter = new TwigFilter('notifWeb', '\Elabftw\Services\Transform::notif', $filterOptions);
@@ -90,7 +89,6 @@ trait TwigTrait
         $TwigEnvironment->addFilter($bytesFilter);
         $TwigEnvironment->addFilter($extFilter);
         $TwigEnvironment->addFilter($qFilter);
-        $TwigEnvironment->addFilter($langFilter);
         $TwigEnvironment->addFilter($metadataFilter);
         $TwigEnvironment->addFilter($csrfFilter);
         $TwigEnvironment->addFilter($notifWebFilter);

@@ -9,14 +9,12 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Interfaces\CreateNotificationParamsInterface;
 use function json_encode;
 
-final class CreateNotificationParams extends ContentParams implements CreateNotificationParamsInterface
+final class CreateNotificationParams
 {
     public function __construct(private int $category, private ?array $body = null)
     {
-        parent::__construct();
     }
 
     public function getCategory(): int

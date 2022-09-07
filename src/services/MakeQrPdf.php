@@ -15,6 +15,7 @@ use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Traits\TwigTrait;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Make a PDF from several experiments or db items showing only minimal info with QR codes
@@ -52,7 +53,7 @@ class MakeQrPdf extends AbstractMakePdf
      */
     private function readAll(): array
     {
-        $DisplayParams = new DisplayParams();
+        $DisplayParams = new DisplayParams($this->Entity->Users, Request::createFromGlobals());
         $DisplayParams->limit = 9001;
         $this->Entity->idFilter = Tools::getIdFilterSql($this->idArr);
         $entityArr = $this->Entity->readShow($DisplayParams, true);

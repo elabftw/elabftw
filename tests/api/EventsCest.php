@@ -16,7 +16,7 @@ class EventsCest
         $I->haveHttpHeader('Authorization', 'apiKey4Test');
     }
 
-    public function createAndDeleteEvent(ApiTester $I)
+    public function createAndDeleteEventTest(ApiTester $I)
     {
         $I->wantTo('Create an event');
         $I->sendPOST('/events/2', array(
@@ -27,7 +27,34 @@ class EventsCest
         $I->seeResponseCodeIs(HttpCode::OK); // 200
         $I->seeResponseIsJson();
         $id = $I->grabDataFromResponseByJsonPath('$.id');
+        $I->sendGET('/events/' . $id[0]);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson(array(
+            'start' => '2022-03-05T12:00:00+01:00',
+            'end' => '2022-03-05T14:00:00+01:00',
+            'title' => 'Booked from API',
+        ));
         $I->wantTo('Delete an event');
         $I->sendDELETE('/events/' . $id[0]);
+    }
+
+    public function createEventWithNoIdTest(ApiTester $I)
+    {
+        $I->wantTo('Create an event but I forgot the item id');
+        $I->sendPOST('/events/', array());
+        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
+    }
+
+    public function destroyEventWithNoIdTest(ApiTester $I)
+    {
+        $I->wantTo('Destroy an event but I forgot the event id');
+        $I->sendPOST('/events/', array());
+        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
+    }
+
+    public function testGetBookableTest(ApiTester $I)
+    {
+        $I->sendGET('/bookable/');
+        $I->seeResponseIsJson();
     }
 }

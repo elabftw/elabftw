@@ -9,8 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\EntityParams;
-
 class RevisionsTest extends \PHPUnit\Framework\TestCase
 {
     private Users $Users;
@@ -22,18 +20,18 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Users = new Users(1, 1);
-        $this->Experiments = new Experiments($this->Users, 1);
+        $this->Experiments = new Experiments($this->Users, 7);
         $this->Revisions = new Revisions($this->Experiments, 10, 100, 10);
     }
 
     public function testCreate(): void
     {
-        $this->Revisions->create('Ohaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii');
+        $this->assertTrue($this->Revisions->create('Ohaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'));
     }
 
     public function testReadAll(): void
     {
-        $this->assertTrue(is_array($this->Revisions->readAll()));
+        $this->assertIsArray($this->Revisions->readAll());
     }
 
     public function testReadCount(): void
@@ -46,19 +44,16 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
     public function testRestore(): void
     {
         $Experiment = new Experiments($this->Users, 1);
-        $new = $Experiment->create(new EntityParams('0'));
+        $new = $Experiment->create(0);
         $Experiment->setId($new);
         $this->Revisions = new Revisions($Experiment, 10, 100, 10);
         $this->Revisions->create('Ohai');
-        $this->Revisions->restore($new);
-        //$this->Experiments->toggleLock();
-        //$this->expectException(\Exception::class);
-        //$this->Revisions->restore(2);
+        $this->assertTrue($this->Revisions->restore($new));
     }
 
     public function testDestroy(): void
     {
         $this->Revisions->setId(1);
-        $this->Revisions->destroy();
+        $this->assertTrue($this->Revisions->destroy());
     }
 }

@@ -6,13 +6,13 @@
  * @package elabftw
  */
 import $ from 'jquery';
-import { Action, Malle } from '@deltablot/malle';
+import { Action as MalleAction, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
-import { Target } from './interfaces';
-import { notif, displayMolFiles, display3DMolecules, getEntity, reloadElement } from './misc';
+import { Action, Model } from './interfaces';
+import { displayMolFiles, display3DMolecules, getEntity, reloadElement } from './misc';
 import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
-import Upload from './Upload.class';
+import { Api } from './Apiv2.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   // holds info about the page through data attributes
@@ -30,18 +30,19 @@ document.addEventListener('DOMContentLoaded', () => {
   display3DMolecules();
   displayPlasmidViewer(about);
   const entity = getEntity();
-  const UploadC = new Upload(entity);
+  const ApiC = new Api();
 
   // make file comments editable
   const malleableFilecomment = new Malle({
     formClasses: ['d-inline-flex'],
     fun: (value, original) => {
-      UploadC.update(value, parseInt(original.dataset.id, 10), Target.Comment);
+      const uploadid = parseInt(original.dataset.id, 10);
+      ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {'comment': value});
       return value;
     },
     inputClasses: ['form-control'],
     listenOn: '.file-comment.editable',
-    onBlur: Action.Submit,
+    onBlur: MalleAction.Submit,
     onEdit: (original, event, input) => {
       // remove the default text
       // we use a data-isempty attribute so "Click to add comment" can be translated
@@ -58,10 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
     if (event.key === 'Enter' || event.type === 'blur') {
       const newFilename = (event.target as HTMLInputElement).value;
-      UploadC.update(newFilename, event.target.dataset.id, Target.RealName).then(json => {
+      ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${event.target.dataset.id}`, {'real_name': newFilename}).then(() => {
         event.target.remove();
         // change the link text with the new one
-        original.textContent = json.res ? newFilename : original.textContent;
+        original.textContent = newFilename;
         parent.prepend(original);
       });
     }
@@ -96,32 +97,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // SAVE MOL AS PNG
     } else if (el.matches('[data-action="save-mol-as-png"]')) {
-      const molCanvasId = el.dataset.canvasid;
-      const pngDataUrl = (document.getElementById(molCanvasId) as HTMLCanvasElement).toDataURL();
-      $.post('app/controllers/EntityAjaxController.php', {
-        addFromString: true,
-        fileType: 'png',
-        realName: el.dataset.name + '.png',
-        content: pngDataUrl,
-        id: about.id,
-        type: about.type,
-      }).done(function(json) {
-        notif(json);
-        if (json.res) {
-          reloadElement('filesdiv');
-        }
-      });
+      const params = {
+        'action': Action.CreateFromString,
+        'file_type': 'png',
+        'real_name': el.dataset.name + '.png',
+        'content': (document.getElementById(el.dataset.canvasid) as HTMLCanvasElement).toDataURL(),
+      };
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElement('filesdiv'));
 
     // DESTROY UPLOAD
     } else if (el.matches('[data-action="destroy-upload"]')) {
-      const uploadId = parseInt(el.dataset.uploadid);
+      const uploadid = parseInt(el.dataset.uploadid, 10);
       if (confirm(i18next.t('generic-delete-warning'))) {
-        UploadC.destroy(uploadId).then(json => {
-          notif(json);
-          if (json.res) {
-            reloadElement('filesdiv');
-          }
-        });
+        ApiC.delete(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`).then(() => reloadElement('filesdiv'));
       }
     }
   });

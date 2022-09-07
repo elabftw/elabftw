@@ -10,15 +10,16 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Elabftw\TagParam;
+use Elabftw\Enums\Action;
+use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
 /**
  * The favorite tags of a user
  */
-class FavTags implements CrudInterface
+class FavTags implements RestInterface
 {
     use SetIdTrait;
 
@@ -30,7 +31,48 @@ class FavTags implements CrudInterface
         $this->Db = Db::getConnection();
     }
 
-    public function create(ContentParamsInterface $params): int
+    public function getPage(): string
+    {
+        return '/favtags';
+    }
+
+    public function postAction(Action $action, array $reqBody): int
+    {
+        return $this->create(new TagParam($reqBody['tag']));
+    }
+
+    public function patch(Action $action, array $params): array
+    {
+        return array();
+    }
+
+    public function readAll(): array
+    {
+        $sql = 'SELECT users_id, tags_id, tag FROM favtags2users
+           LEFT JOIN tags ON (tags.id = favtags2users.tags_id) WHERE users_id = :userid
+           ORDER BY tags.tag';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+    }
+
+    public function readOne(): array
+    {
+        return $this->readAll();
+    }
+
+    public function destroy(): bool
+    {
+        $sql = 'DELETE FROM favtags2users WHERE users_id = :userid AND tags_id = :tagId';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':tagId', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    private function create(TagParam $params): int
     {
         $tag = $params->getContent();
         // get the tag id
@@ -51,37 +93,6 @@ class FavTags implements CrudInterface
         $req->bindParam(':tagId', $tagId, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         return (int) $this->Db->execute($req);
-    }
-
-    public function readAll(): array
-    {
-        $sql = 'SELECT users_id, tags_id, tag FROM favtags2users
-           LEFT JOIN tags ON (tags.id = favtags2users.tags_id) WHERE users_id = :userid
-           ORDER BY tags.tag';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $req->fetchAll();
-    }
-
-    public function readOne(): array
-    {
-        return $this->readAll();
-    }
-
-    public function update(ContentParamsInterface $params): bool
-    {
-        return true;
-    }
-
-    public function destroy(): bool
-    {
-        $sql = 'DELETE FROM favtags2users WHERE users_id = :userid AND tags_id = :tagId';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':tagId', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
     }
 
     // check if a tag is not already favorite for the user

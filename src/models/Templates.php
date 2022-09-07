@@ -9,9 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
-use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\EntityParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -36,8 +33,14 @@ class Templates extends AbstractTemplateEntity
         parent::__construct($users, $id);
     }
 
-    public function create(EntityParamsInterface $params): int
+    public function getPage(): string
     {
+        return 'ucp.php?tab=3&templateid=';
+    }
+
+    public function create(string $title): int
+    {
+        $title = Filter::title($title);
         $canread = 'team';
         $canwrite = 'user';
 
@@ -48,12 +51,11 @@ class Templates extends AbstractTemplateEntity
             $canwrite = $this->Users->userData['default_write'];
         }
 
-        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, canread, canwrite)
-            VALUES(:team, :title, :body, :userid, :canread, :canwrite)';
+        $sql = 'INSERT INTO experiments_templates(team, title, userid, canread, canwrite)
+            VALUES(:team, :title, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindValue(':title', $params->getContent());
-        $req->bindValue(':body', $params->getExtraBody());
+        $req->bindValue(':title', Filter::title($title));
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
@@ -66,7 +68,7 @@ class Templates extends AbstractTemplateEntity
      */
     public function duplicate(): int
     {
-        $template = $this->read(new ContentParams());
+        $template = $this->readOne();
 
         $sql = 'INSERT INTO experiments_templates(team, title, body, userid, canread, canwrite, metadata)
             VALUES(:team, :title, :body, :userid, :canread, :canwrite, :metadata)';
@@ -92,17 +94,6 @@ class Templates extends AbstractTemplateEntity
         $Steps->duplicate((int) $template['id'], $newId, true);
 
         return $newId;
-    }
-
-    /**
-     * Read a template
-     */
-    public function read(ContentParamsInterface $params): array
-    {
-        if ($params->getTarget() === 'list') {
-            return $this->getList();
-        }
-        return $this->readOne();
     }
 
     public function readOne(): array
@@ -185,6 +176,8 @@ class Templates extends AbstractTemplateEntity
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
 
+        $sql .= str_replace('entity', 'experiments_templates', $this->idFilter) . ' ';
+
         $sql .= 'GROUP BY id ORDER BY fullname DESC, is_pinned DESC, experiments_templates.ordering ASC';
 
         $req = $this->Db->prepare($sql);
@@ -202,8 +195,8 @@ class Templates extends AbstractTemplateEntity
      */
     public function readForUser(): array
     {
-        if ($this->Users->userData['show_team_templates'] === '0') {
-            $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
+        if ($this->Users->userData['show_team_templates'] === 0) {
+            $this->addFilter('experiments_templates.userid', (string) $this->Users->userData['userid']);
         }
         return $this->readAll();
     }
@@ -212,18 +205,5 @@ class Templates extends AbstractTemplateEntity
     {
         // delete from pinned too
         return parent::destroy() && $this->Pins->cleanup();
-    }
-
-    /**
-     * Build a list for tinymce Insert template... menu
-     */
-    private function getList(): array
-    {
-        $templates = $this->readForUser();
-        $res = array();
-        foreach ($templates as $template) {
-            $res[] = array('title' => $template['title'], 'description' => '', 'content' => $template['body']);
-        }
-        return $res;
     }
 }

@@ -5,73 +5,42 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, insertParamAndReload } from './misc';
-import { Ajax } from './Ajax.class';
+import { collectForm, reloadElement } from './misc';
+import { Api } from './Apiv2.class';
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (window.location.pathname !== '/sysconfig.php'
-    && window.location.pathname !== '/admin.php'
-  ) {
+  if (!['/sysconfig.php', '/admin.php'].includes(window.location.pathname)) {
     return;
   }
 
-  const AjaxC = new Ajax();
-  const controller = 'app/controllers/UsersAjaxController.php';
+  const ApiC = new Api();
 
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
-    if (el.matches('[data-action="update-user"]')) {
-      const formGroup = (el.closest('div.form-group') as HTMLElement);
-      let params = {
-        'usersUpdate': '1',
-        'userid': formGroup.dataset.userid,
-      };
-      // text inputs
-      ['firstname', 'lastname', 'email', 'password'].forEach(input => {
-        params = Object.assign(params, {[input]: (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value});
-        if (input === 'password') {
-          (formGroup.querySelector(`input[name="${input}"]`) as HTMLInputElement).value = '';
-        }
-      });
-      // clear the password field once collected
-      // select inputs
-      ['usergroup', 'validated'].forEach(input => {
-        params = Object.assign(params, {[input]: (formGroup.querySelector(`select[name="${input}"]`) as HTMLSelectElement).value});
-      });
-      // now doing POST request
-      AjaxC.postForm(controller, params)
-        .then(res => res.json().then(json => notif(json)));
+    // CREATE USER
+    if (el.matches('[data-action="create-user"]')) {
+      return ApiC.post('users', collectForm(el.closest('div.form-group'))).then(() => reloadElement('editUsersBox'));
+
+    // UPDATE USER
+    } else if (el.matches('[data-action="update-user"]')) {
+      return ApiC.patch(`users/${el.dataset.userid}`, collectForm(el.closest('div.form-group'))).then(() => reloadElement('editUsersBox'));
 
     // ARCHIVE USER TOGGLE
     } else if (el.matches('[data-action="toggle-archive-user"]')) {
       // show alert
-      if (!confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and user will not be able to login anymore.')) {
-        return;
+      if (confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and user will not be able to login anymore.')) {
+        return ApiC.patch(`users/${el.dataset.userid}`, {'action': 'archive'}).then(() => reloadElement('editUsersBox'));
       }
-      AjaxC.postForm(controller, {
-        toggleArchiveUser: '1',
-        userid: el.dataset.userid,
-      }).then(res => res.json().then(json => {
-        notif(json);
-        if (json.res) {
-          insertParamAndReload('tab', '3');
-        }
-      }));
+
+    // VALIDATE USER
+    } else if (el.matches('[data-action="validate-user"]')) {
+      return ApiC.patch(`users/${el.dataset.userid}`, {'action': 'validate'}).then(() => reloadElement('unvalidatedUsersBox')).then(() => reloadElement('editUsersBox'));
 
     // DESTROY USER
     } else if (el.matches('[data-action="destroy-user"]')) {
-      if (!confirm('Are you sure you want to remove permanently this user and all associated data?')) {
-        return;
+      if (confirm('Are you sure you want to remove permanently this user and all associated data?')) {
+        return ApiC.delete(`users/${el.dataset.userid}`).then(() => reloadElement('editUsersBox'));
       }
-      AjaxC.postForm(controller, {
-        destroyUser: '1',
-        userid: el.dataset.userid,
-      }).then(res => res.json().then(json => {
-        notif(json);
-        if (json.res) {
-          el.closest('li.list-group-item').remove();
-        }
-      }));
     }
   });
 

@@ -14,7 +14,6 @@ use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
-use Elabftw\Maps\Team;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
@@ -22,6 +21,7 @@ use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
 use Elabftw\Services\AdvancedSearchQuery;
@@ -35,36 +35,34 @@ use function trim;
  */
 abstract class AbstractEntityController implements ControllerInterface
 {
-    protected Templates $Templates;
-
     protected array $categoryArr = array();
 
     protected array $visibilityArr = array();
+
+    protected array $templatesArr = array();
 
     // all the users from the current team
     protected array $allTeamUsersArr = array();
 
     public function __construct(protected App $App, protected AbstractEntity $Entity)
     {
-        $this->Templates = new Templates($this->Entity->Users);
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $this->visibilityArr = $TeamGroups->getVisibilityList();
         $this->allTeamUsersArr = $this->App->Users->readAllFromTeam();
+        // items don't need to show the templates in create new menu, so save a sql call here
+        if ($this->Entity instanceof Experiments) {
+            $Templates = new Templates($this->Entity->Users);
+            $this->templatesArr = $Templates->Pins->readAllSimple();
+        }
     }
 
-    /**
-     * Get the Response object from the Request
-     */
     public function getResponse(): Response
     {
-        switch ($this->App->Request->query->get('mode')) {
-            case 'view':
-                return $this->view();
-            case 'edit':
-                return $this->edit();
-            default:
-                return $this->show();
-        }
+        return match ($this->App->Request->query->getAlpha('mode')) {
+            'view' => $this->view(),
+            'edit' => $this->edit(),
+            default => $this->show(),
+        };
     }
 
     /**
@@ -73,8 +71,7 @@ abstract class AbstractEntityController implements ControllerInterface
     public function show(bool $isSearchPage = false): Response
     {
         // create the DisplayParams object from the query
-        $DisplayParams = new DisplayParams();
-        $DisplayParams->adjust($this->App);
+        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);
 
         // CATEGORY FILTER
         if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {
@@ -89,20 +86,14 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         // TAG FILTER
-        if (!empty(((array) $this->App->Request->query->all('tags'))[0])) {
+        if (!empty(($this->App->Request->query->all('tags'))[0])) {
             // get all the ids with that tag
-            $tagsFromGet = (array) $this->App->Request->query->all('tags');
+            $tagsFromGet = $this->App->Request->query->all('tags');
             $tagsFromGet = array_map(function ($t) {
                 return (string) $t;
             }, $tagsFromGet);
-            $ids = $this->Entity->Tags->getIdFromTags($tagsFromGet, (int) $this->App->Users->userData['team']);
-            $trimmedFilter = Tools::getIdFilterSql($ids);
-            // don't add it if it's empty (for instance we search in items for a tag that only exists on experiments)
-            if ($trimmedFilter === ' AND ()') {
-                $this->Entity->idFilter = ' AND entity.id = 0';
-            } else {
-                $this->Entity->idFilter = $trimmedFilter;
-            }
+            $ids = $this->Entity->Tags->getIdFromTags($tagsFromGet);
+            $this->Entity->idFilter = Tools::getIdFilterSql($ids);
             $DisplayParams->searchType = 'tags';
         }
 
@@ -152,7 +143,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'searchType' => $isSearchPage ? 'something' : $DisplayParams->searchType,
             'tagsArr' => $tagsArr,
             'tagsArrForSelect' => $tagsArrForSelect,
-            'templatesArr' => $this->Templates->Pins->readAll(),
+            'templatesArr' => $this->templatesArr,
             'visibilityArr' => $this->visibilityArr,
             'extendedError' => $extendedError,
         );
@@ -173,7 +164,7 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     protected function view(): Response
     {
-        $this->Entity->setId((int) $this->App->Request->query->get('id'));
+        $this->Entity->setId($this->App->Request->query->getInt('id'));
 
         // REVISIONS
         $Revisions = new Revisions(
@@ -195,7 +186,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
             'revNum' => $Revisions->readCount(),
-            'templatesArr' => $this->Templates->Pins->readAll(),
+            'templatesArr' => $this->templatesArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -246,9 +237,6 @@ abstract class AbstractEntityController implements ControllerInterface
             (int) $this->App->Config->configArr['min_days_revisions'],
         );
 
-        // VISIBILITY ARR
-        $TeamGroups = new TeamGroups($this->Entity->Users);
-
         $renderArr = array(
             'allTeamUsersArr' => $this->allTeamUsersArr,
             'Entity' => $this->Entity,
@@ -256,12 +244,11 @@ abstract class AbstractEntityController implements ControllerInterface
             'categoryArr' => $this->categoryArr,
             'deletableXp' => $this->getDeletableXp(),
             'itemsCategoryArr' => $itemsCategoryArr,
-            'lang' => Tools::getCalendarLang($this->App->Users->userData['lang'] ?? 'en_GB'),
             'lastModifierFullname' => $lastModifierFullname,
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',
             'revNum' => $Revisions->readCount(),
-            'templatesArr' => $this->Templates->Pins->readAll(),
+            'templatesArr' => $this->templatesArr,
             'visibilityArr' => $this->visibilityArr,
         );
 
@@ -277,8 +264,8 @@ abstract class AbstractEntityController implements ControllerInterface
     private function getDeletableXp(): bool
     {
         // get the config option from team setting
-        $Team = new Team($this->App->Users->team);
-        $deletableXp = (bool) $Team->getDeletableXp();
+        $Teams = new Teams($this->App->Users);
+        $deletableXp = (bool) $Teams->readOne()['deletable_xp'];
         // general config will override the team config only if it's more restrictive
         if ($this->App->Config->configArr['deletable_xp'] === '0') {
             $deletableXp = false;

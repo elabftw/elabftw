@@ -9,54 +9,64 @@
 
 namespace Elabftw\Elabftw;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
-use const SECRET_KEY;
-use function str_contains;
 
 class ContentParams implements ContentParamsInterface
 {
     protected const MIN_CONTENT_SIZE = 1;
 
-    public function __construct(protected string $content = '', protected string $target = '', protected ?array $extra = null)
+    public function __construct(protected string $target, protected string $content)
     {
     }
 
-    public function getTarget(): string
+    public function getUnfilteredContent(): string
     {
-        return Check::target($this->target);
+        return $this->content;
     }
 
-    public function getContent(): string
+    // maybe rename to something else, so we have getContent to get filtered content and this would be get nonemptystring
+    public function getContent(): mixed
     {
-        // if we're dealing with a password, return the encrypted content
-        if (str_contains($this->target, '_password')) {
-            return Crypto::encrypt($this->content, Key::loadFromAsciiSafeString(SECRET_KEY));
-        }
-
-        if (str_contains($this->target, 'notif_')) {
-            return (string) Filter::toBinary($this->content);
-        }
-
         // check for length
         $c = Filter::sanitize($this->content);
         if (mb_strlen($c) < self::MIN_CONTENT_SIZE) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
+            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), self::MIN_CONTENT_SIZE));
         }
         return $c;
     }
 
-    public function getBody(): string
+    public function getColumn(): string
+    {
+        return $this->getTarget();
+    }
+
+    public function getTarget(): string
+    {
+        return $this->target;
+    }
+
+    protected function getBody(): string
     {
         return Filter::body($this->content);
     }
 
-    public function getExtra(string $key): string
+    protected function getBinary(): int
     {
-        return Filter::sanitize((string) $this->extra[$key]);
+        return Filter::toBinary($this->content);
+    }
+
+    protected function getInt(): int
+    {
+        return (int) $this->content;
+    }
+
+    protected function getUrl(): string
+    {
+        if (filter_var($this->content, FILTER_VALIDATE_URL) === false) {
+            throw new ImproperActionException('Invalid URL format.');
+        }
+        return $this->content;
     }
 }

@@ -9,20 +9,18 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
+//use Elabftw\Factories\EntityFactory;
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Factories\EntityFactory;
-use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Services\Check;
+use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
 /**
  * All about Links
  */
-class Links implements CrudInterface
+class Links implements RestInterface
 {
     use SetIdTrait;
 
@@ -42,33 +40,14 @@ class Links implements CrudInterface
         );
     }
 
-    /**
-     * Add a link to an entity
-     * Links to Items are possible from all entities
-     * Links to Experiments are only allowed from other Experiments and Items
-     */
-    public function create(ContentParamsInterface $params): int
+    public function getPage(): string
     {
-        $targetEntityType = $params->getExtra('targetEntity');
-        if (!($this->Entity instanceof AbstractConcreteEntity)) {
-            throw new ImproperActionException('Links can only be created to experiments and database items.');
-        }
-        if ($this->canNotLinkToExp($targetEntityType)) {
-            throw new ImproperActionException('Links to experiments can only be added to other experiments and database items.');
-        }
+        return $this->Entity->getPage();
+    }
 
-        $link = Check::idOrExplode((int) $params->getContent());
-        $targetEntity = (new EntityFactory($this->Entity->Users, $targetEntityType, $link))->getEntity();
-        $targetEntity->canOrExplode('read');
-        $this->Entity->canOrExplode('write');
-
-        // use IGNORE to avoid failure due to a key constraint violations
-        $sql = 'INSERT IGNORE INTO ' . $this->getTableName($targetEntityType) . ' (item_id, link_id) VALUES(:item_id, :link_id)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $link, PDO::PARAM_INT);
-
-        return (int) $this->Db->execute($req);
+    public function patch(Action $action, array $params): array
+    {
+        return array();
     }
 
     /**
@@ -136,7 +115,7 @@ class Links implements CrudInterface
             $sql = 'SELECT entity.id AS entityid, entity.title';
 
             if ($targetEntityType === $this->Entity::TYPE_ITEMS) {
-                $sql .= ', category.name, category.bookable, category.color';
+                $sql .= ', category.title, category.bookable, category.color';
             }
 
             $sql .= ' FROM ' . $this->getTableNameRelated($targetEntityType) . ' as entity_links
@@ -170,7 +149,7 @@ class Links implements CrudInterface
             $sql .= ') AND entity.state = ' . $this->Entity::STATE_NORMAL . ' ORDER by';
 
             if ($targetEntityType === $this->Entity::TYPE_ITEMS) {
-                $sql .= ' category.name ASC,';
+                $sql .= ' category.title ASC,';
             }
 
             $sql .= ' entity.title ASC';
@@ -197,7 +176,7 @@ class Links implements CrudInterface
      * @param int $newId The id of the new entity that will receive the links
      * @param bool $fromTpl do we duplicate from template?
      */
-    public function duplicate(int $id, int $newId, $fromTpl = false): bool
+    public function duplicate(int $id, int $newId, $fromTpl = false): int
     {
         $res = array(
             $this->Entity::TYPE_ITEMS => true,
@@ -221,57 +200,39 @@ class Links implements CrudInterface
             $res[$targetEntityType] = $this->Db->execute($req);
         }
 
-        return $res[$this->Entity::TYPE_ITEMS] && $res[$this->Entity::TYPE_EXPERIMENTS];
+        //return $res[$this->Entity::TYPE_ITEMS] && $res[$this->Entity::TYPE_EXPERIMENTS];
+        // TODO
+        return 0;
     }
 
-    /**
-     * Copy the links of an item into our entity
-     * Also copy links of an experiment into our entity unless it is a template
-     */
-    public function import(string $targetEntityType): bool
-    {
-        $this->Entity->canOrExplode('write');
-
-        $res = array(
-            $this->Entity::TYPE_ITEMS => true,
-            $this->Entity::TYPE_EXPERIMENTS => true,
-        );
-
-        foreach (array_map('strval', array_keys($res)) as $entityType) {
-            // Don't try to get links to experiments for templates
-            if ($this->canNotLinkToExp($entityType)) {
-                continue;
-            }
-            // the :item_id of the SELECT will be the same for all rows: our current entity id
-            // use IGNORE to avoid failure due to a key constraint violations
-            $sql = 'INSERT IGNORE INTO ' . $this->getTableName($entityType) . ' (item_id, link_id)
-                SELECT :item_id, link_id
-                FROM ' . $this->getTableName($entityType, $targetEntityType) . '
-                WHERE item_id = :link_id';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-            $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
-
-            $res[$entityType] = $this->Db->execute($req);
-        }
-
-        return $res[$this->Entity::TYPE_ITEMS] && $res[$this->Entity::TYPE_EXPERIMENTS];
-    }
-
-    public function update(ContentParamsInterface $params): bool
+    public function update(): bool
     {
         return false;
     }
 
+    public function postAction(Action $action, array $reqBody): int
+    {
+        return match ($action) {
+            Action::Create => $this->create($reqBody['targetEntityType']),
+            Action::Duplicate => $this->import($reqBody['targetEntityType']),
+            default => throw new ImproperActionException('Invalid action for links create.'),
+        };
+    }
+
     // make params parameter optional so we don't break the interface
-    public function destroy(ContentParamsInterface $params = null): bool
+    public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');
+        /*
         if ($params === null) {
             $params = new ContentParams(extra: array('targetEntity' => 'links'));
         }
+         */
 
-        $sql = 'DELETE FROM ' . $this->getTableName($params->getExtra('targetEntity')) . ' WHERE link_id = :link_id AND item_id = :item_id';
+        // TODO FIXME
+        $table = 'experiments_links';
+        //$sql = 'DELETE FROM ' . $this->getTableName($params->getExtra('targetEntity')) . ' WHERE link_id = :link_id AND item_id = :item_id';
+        $sql = 'DELETE FROM ' . $table . ' WHERE link_id = :link_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
@@ -309,5 +270,64 @@ class Links implements CrudInterface
         }
 
         return $targetEntityType . '_links';
+    }
+
+    /**
+     * Add a link to an entity
+     * Links to Items are possible from all entities
+     * Links to Experiments are only allowed from other Experiments and Items
+     */
+    private function create(string $targetEntityType): int
+    {
+        if (!($this->Entity instanceof AbstractConcreteEntity)) {
+            throw new ImproperActionException('Links can only be created to experiments and database items.');
+        }
+        if ($this->canNotLinkToExp($targetEntityType)) {
+            throw new ImproperActionException('Links to experiments can only be added to other experiments and database items.');
+        }
+
+        // use IGNORE to avoid failure due to a key constraint violations
+        $sql = 'INSERT IGNORE INTO ' . $this->getTableName($targetEntityType) . ' (item_id, link_id) VALUES(:item_id, :link_id)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':link_id', $link, PDO::PARAM_INT);
+
+        return (int) $this->Db->execute($req);
+    }
+
+    /**
+     * Copy the links of an item into our entity
+     * Also copy links of an experiment into our entity unless it is a template
+     */
+    private function import(string $targetEntityType): int
+    {
+        $this->Entity->canOrExplode('write');
+
+        $res = array(
+            $this->Entity::TYPE_ITEMS => true,
+            $this->Entity::TYPE_EXPERIMENTS => true,
+        );
+
+        foreach (array_map('strval', array_keys($res)) as $entityType) {
+            // Don't try to get links to experiments for templates
+            if ($this->canNotLinkToExp($entityType)) {
+                continue;
+            }
+            // the :item_id of the SELECT will be the same for all rows: our current entity id
+            // use IGNORE to avoid failure due to a key constraint violations
+            $sql = 'INSERT IGNORE INTO ' . $this->getTableName($entityType) . ' (item_id, link_id)
+                SELECT :item_id, link_id
+                FROM ' . $this->getTableName($entityType, $targetEntityType) . '
+                WHERE item_id = :link_id';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+            $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
+
+            $res[$entityType] = $this->Db->execute($req);
+        }
+
+        // TODO
+        //return $res[$this->Entity::TYPE_ITEMS] && $res[$this->Entity::TYPE_EXPERIMENTS];
+        return 0;
     }
 }

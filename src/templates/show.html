@@ -15,23 +15,20 @@
 
   {% if count == 0 and searchType != '' %}
     <div class='row display-flex' id='itemList'>
+      {% set otherPage = Entity.type == 'experiments' ? 'database' : 'experiments' %}
+      {% set otherCategory = Entity.type == 'experiments' ? 'items' : 'experiments' %}
       {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
+    </div>
+    <div class='row d-flex'>
+      <a href='{{ otherPage }}.php?q={{ App.Request.query.get('q') }}'>
+        <button class='button btn btn-primary'>{{ 'Search in %s'|trans|format(otherCategory) }}</button>
+      </a>
     </div>
   {% elseif count == 0 and searchType == '' and not App.Session.get('is_anon') and not App.Request.query.get('offset') %}
     <div class='row display-flex' id='itemList'>
       {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
     </div>
   {% else %}
-      {% if pinnedArr and not searchPage %}
-        <div id='pinned-entities' class='row display-flex'>
-          {% set isPinned = true %}
-          {% for item in pinnedArr|slice(0, DisplayParams.limit) %}
-            {% include 'show-item.html' %}
-          {% endfor %}
-          {% set isPinned = false %}
-        </div>
-        <hr>
-      {% endif %}
       <p class='smallgray d-inline'>
         <a href='#' data-action='expand-all-entities' data-status='closed' data-expand='{{ 'Expand all'|trans }}' data-collapse='{{ 'Collapse all'|trans }}'>{{ 'Expand all'|trans }}</a>
         - <a href='#' data-action='select-all-entities'>{{ 'Select all'|trans }}</a>
@@ -72,8 +69,8 @@
           <option value='eln'>{{ 'Make ELN'|trans }}</option>
           <option value='zip'>{{ 'Make Zip'|trans }}</option>
           <option value='csv'>{{ 'Make Csv'|trans }}</option>
-          <option value='multiPdf'>{{ 'Make PDF'|trans }}</option>
-          <option value='qrPdf'>{{ 'Make QR codes PDF'|trans }}</option>
+          <option value='multipdf'>{{ 'Make PDF'|trans }}</option>
+          <option value='qrpdf'>{{ 'Make QR codes PDF'|trans }}</option>
           <option value='json'>{{ 'Make JSON'|trans }}</option>
         </select>
 
@@ -101,6 +98,19 @@
           <button data-action='destroy-selected-entities' class='button btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
         {% endif %}
       </div>
+
+      <!-- PINNED ENTITIES -->
+      {% if pinnedArr and not searchPage %}
+        <div id='pinned-entities' class='row display-flex'>
+          {% set isPinned = true %}
+          {% for item in pinnedArr|slice(0, DisplayParams.limit) %}
+            {% include 'show-item.html' %}
+          {% endfor %}
+          {% set isPinned = false %}
+        </div>
+        <hr>
+      {% endif %}
+
       {% if App.Users.userData.display_mode == 'it' %}
         <div class='row display-flex' id='itemList'>
         {% for item in itemsArr|slice(0, DisplayParams.limit) %}
@@ -109,7 +119,7 @@
         </div>
       {% elseif App.Users.userData.display_mode == 'tb' %}
       <div id='itemList'>
-        <table class='item-table'>
+        <table class='item-table' aria-describedby='pageTitle'>
           <tr>
             <th>
               {{ 'Date'|trans }} <a href='#' data-action='reorder-entities' data-orderby='date'><i class='fas fa-sort'></i></a>

@@ -287,7 +287,6 @@
             </div>
           </div>
         </div>
-        <hr><br>
       {% endif %}
 
         <h4>{{ 'Two Factor Authentication'|trans }}</h4>
@@ -299,9 +298,9 @@
               <option value='off'{{ not App.Users.userData.mfa_secret ? ' selected' }}>{{ 'No'|trans }}</option>
             </select>
           </div>
-          <div class='mt-4 text-center'>
-            <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-          </div>
+        </div>
+        <div class='mt-4 text-center'>
+          <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
         </div>
     </form>
 

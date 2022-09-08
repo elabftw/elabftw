@@ -65,7 +65,7 @@ class DownloadController implements ControllerInterface
             }
             try {
                 $fileStream = $this->fs->readStream($this->getFilePath());
-            } catch (UnableToReadFile $e) {
+            } catch (UnableToReadFile) {
                 // display a thumbnail if the real thumbnail cannot be found
                 $fileStream = fopen(dirname(__DIR__, 2) . '/web/app/img/fallback-thumb.png', 'rb');
                 if ($fileStream === false) {
@@ -93,13 +93,16 @@ class DownloadController implements ControllerInterface
             $this->forceDownload = true;
         }
 
+        $disposition = HeaderUtils::DISPOSITION_INLINE;
+        // change the diposition to attachment
         if ($this->forceDownload) {
-            $disposition = HeaderUtils::makeDisposition(
-                HeaderUtils::DISPOSITION_ATTACHMENT,
-                $this->realName,
-            );
-            $Response->headers->set('Content-Disposition', $disposition);
+            $disposition = HeaderUtils::DISPOSITION_ATTACHMENT;
         }
+        $dispositionHeader = HeaderUtils::makeDisposition(
+            $disposition,
+            $this->realName,
+        );
+        $Response->headers->set('Content-Disposition', $dispositionHeader);
 
         return $Response;
     }
@@ -111,7 +114,7 @@ class DownloadController implements ControllerInterface
     {
         try {
             return $this->fs->mimeType($this->getFilePath());
-        } catch (UnableToRetrieveMetadata $e) {
+        } catch (UnableToRetrieveMetadata) {
             return 'application/force-download';
         }
     }

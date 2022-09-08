@@ -190,11 +190,13 @@ class Scheduler implements RestInterface
         // the color is used by fullcalendar for the bg color of the event
         $sql = "SELECT team_events.*,
             CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ') ', COALESCE(experiments.title, '')) AS title,
-            CONCAT('#', items_types.color) AS color
+            CONCAT('#', items_types.color) AS color,
+            experiments.title AS experiment_title,
+            items.title AS item_link_title
             FROM team_events
-            LEFT JOIN items ON team_events.item = items.id
+            LEFT JOIN items ON (team_events.item = items.id)
             LEFT JOIN experiments ON (experiments.id = team_events.experiment)
-            LEFT JOIN items_types ON items.category = items_types.id
+            LEFT JOIN items_types ON (items.category = items_types.id)
             LEFT JOIN users AS u ON team_events.userid = u.userid
             WHERE team_events.item = :item
             AND team_events.start > :start AND team_events.end <= :end";
@@ -229,7 +231,10 @@ class Scheduler implements RestInterface
 
     private function readOneEvent(): array
     {
-        $sql = 'SELECT * from team_events WHERE id = :id';
+        $sql = 'SELECT team_events.id, team_events.team, team_events.item, team_events.start, team_events.end, team_events.title, team_events.userid, team_events.experiment, team_events.item_link, experiments.title AS experiment_title, items.title AS item_link_title from team_events
+            LEFT JOIN experiments ON (experiments.id = team_events.experiment)
+            LEFT JOIN items ON (items.id = team_events.item_link)
+            WHERE team_events.id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);

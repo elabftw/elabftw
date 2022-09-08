@@ -178,6 +178,14 @@ components:
           type: string
         fullname:
           type: string
+        item_link:
+          type: integer
+        item_link_title:
+          type: string
+        experiment:
+          type: integer
+        experiment_title:
+          type: string
     experiment:
       allOf:
         - $ref: '#/components/schemas/entity'
@@ -1255,11 +1263,11 @@ paths:
                           type: integer
       responses:
         '200':
-          description: The patched items type.
+          description: The patched event.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/items_type'
+                $ref: '#/components/schemas/event'
 
   # EVENT
   /event/{id}:

@@ -127,6 +127,9 @@ class Filter
         return trim($input ?? 'file', '.-_');
     }
 
+    /**
+     * This exists because: The filename fallback must only contain ASCII characters. at /elabftw/vendor/symfony/http-foundation/HeaderUtils.php:173
+     */
     public static function toAscii(string $input): string
     {
         // mb_convert_encoding will replace invalid characters with ?, but we want _ instead

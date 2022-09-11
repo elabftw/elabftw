@@ -30,6 +30,9 @@ class DownloadController implements ControllerInterface
     // the human-friendly name that we will give to the downloaded file */
     private string $realName = 'unnamed_file';
 
+    // ascii only
+    private string $realNameFallback = 'unnamed_file';
+
     private string $filePath;
 
     private string $longName;
@@ -40,7 +43,8 @@ class DownloadController implements ControllerInterface
         $this->longName = Filter::forFilesystem(basename($longName));
         // get the first two letters to get the folder
         $this->filePath = substr($this->longName, 0, 2) . '/' . $this->longName;
-        $this->realName = Filter::toAscii($realName ?? '');
+        $this->realName = $realName ?? $this->realName;
+        $this->realNameFallback = Filter::toAscii($realName ?? '');
         if (empty($this->realName)) {
             $this->realName = 'unnamed_file';
         }
@@ -101,6 +105,7 @@ class DownloadController implements ControllerInterface
         $dispositionHeader = HeaderUtils::makeDisposition(
             $disposition,
             $this->realName,
+            $this->realNameFallback,
         );
         $Response->headers->set('Content-Disposition', $dispositionHeader);
 

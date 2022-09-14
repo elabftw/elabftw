@@ -13,6 +13,7 @@ import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
+import { SemverCompare } from './SemverCompare.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/sysconfig.php') {
@@ -45,16 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return response.json();
   }).then(data => {
     latestVersionDiv.append(data.version);
-    // get versions as number only so we can compare properly
-    const numOnlyLatest = data.version.replace(/\D/g, '');
-    const numOnlyCurrent = currentVersion.replace(/\D/g, '');
-    if ((data.version === currentVersion) || (numOnlyCurrent > numOnlyLatest)) {
-      // show a little green check if we have latest version
-      const successIcon = document.createElement('i');
-      successIcon.style.color = 'green';
-      successIcon.classList.add('fas', 'fa-check', 'fa-lg', 'ml-1');
-      latestVersionDiv.appendChild(successIcon);
-    } else {
+    const SemverCompareC = new SemverCompare(currentVersion, data.version);
+    if (SemverCompareC.isOld()) {
       currentVersionDiv.style.color = 'red';
       const warningDiv = document.createElement('div');
       warningDiv.classList.add('alert', 'alert-warning');
@@ -76,6 +69,12 @@ document.addEventListener('DOMContentLoaded', () => {
       warningDiv.appendChild(updateLink);
       warningDiv.appendChild(changelogLink);
       document.getElementById('versionNotifZone').appendChild(warningDiv);
+    } else {
+      // show a little green check if we have latest version
+      const successIcon = document.createElement('i');
+      successIcon.style.color = 'green';
+      successIcon.classList.add('fas', 'fa-check', 'fa-lg', 'ml-1');
+      latestVersionDiv.appendChild(successIcon);
     }
   }).catch(error => latestVersionDiv.append(error));
 

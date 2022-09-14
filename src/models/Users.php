@@ -216,9 +216,11 @@ class Users implements RestInterface
      */
     public function readAllFromTeam(): array
     {
+        /* if this is uncommented it breaks everything for normal users
         if ($this->requester->userData['is_admin'] !== 1) {
             throw new IllegalActionException('Only admin can read all users from a team.');
         }
+         */
         return $this->readFromQuery('', $this->userData['team']);
     }
 

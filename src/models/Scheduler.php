@@ -180,7 +180,7 @@ class Scheduler implements RestInterface
                 array('event' => $this->readOne(), 'actor' => $this->Items->Users->userData['fullname']),
             ),
             $TeamsHelper->getAllAdminsUserid(),
-            (int) $this->Items->Users->userData['userid'],
+            $this->Items->Users->userData['userid'],
         );
         return $this->Db->execute($req);
     }

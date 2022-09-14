@@ -211,6 +211,7 @@ class Notifications implements RestInterface
             default => throw new ImproperActionException('Invalid category for preferences.'),
         };
 
-        return $this->users->userData[$pref . $suffix];
+        // use a new Users() here because userid might have changed (see multiuser create)
+        return (new Users($this->userid))->userData[$pref . $suffix];
     }
 }

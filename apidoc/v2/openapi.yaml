@@ -526,6 +526,41 @@ paths:
       tags: ['Experiments']
       summary: Read all experiments that are accessible
       operationId: read-experiments
+      # Note: this has to be repeated manually for now
+      # See https://github.com/OAI/OpenAPI-Specification/issues/445
+      parameters:
+        - name: related
+          in: query
+          schema:
+            type: integer
+          description: |
+            Look only for entries linked to this item id.
+          examples:
+            first:
+              summary: Look for entries linked to item with id 42.
+              value: 42
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          default: 15
+          description: |
+            Limit the number of results.
+          examples:
+            first:
+              summary: Limit number of results to 5.
+              value: 5
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          default: 0
+          description: |
+            Skip a number of results. Use with limit to work the pagination.
+          examples:
+            first:
+              summary: Skip 3 first results.
+              value: 3
       responses:
         '200':
           description: A list of experiments
@@ -790,6 +825,31 @@ paths:
       tags: ['Items']
       summary: Read all items that are accessible
       operationId: read-items
+      # start duplicate from GET /experiments (except related)
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          default: 15
+          description: |
+            Limit the number of results.
+          examples:
+            first:
+              summary: Limit number of results to 5.
+              value: 5
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          default: 0
+          description: |
+            Skip a number of results. Use with limit to work the pagination.
+          examples:
+            first:
+              summary: Skip 3 first results.
+              value: 3
+      # end duplicate from GET /experiments
       responses:
         '200':
           description: A list of items

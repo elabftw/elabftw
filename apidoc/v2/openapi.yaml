@@ -178,6 +178,14 @@ components:
           type: string
         fullname:
           type: string
+        item_link:
+          type: integer
+        item_link_title:
+          type: string
+        experiment:
+          type: integer
+        experiment_title:
+          type: string
     experiment:
       allOf:
         - $ref: '#/components/schemas/entity'
@@ -375,6 +383,32 @@ components:
           type: integer
         fullname:
           type: string
+    users:
+      type: object
+      properties:
+        userid:
+          type: integer
+        firstname:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string
+        validated:
+          type: integer
+        usergroup:
+          type: integer
+        archived:
+          type: integer
+        last_login:
+          type: string
+        fullname:
+          type: string
+        orcid:
+          type: string
+        auth_service:
+          type: integer
+
 
 security:
   - token:
@@ -518,6 +552,41 @@ paths:
       tags: ['Experiments']
       summary: Read all experiments that are accessible
       operationId: read-experiments
+      # Note: this has to be repeated manually for now
+      # See https://github.com/OAI/OpenAPI-Specification/issues/445
+      parameters:
+        - name: related
+          in: query
+          schema:
+            type: integer
+          description: |
+            Look only for entries linked to this item id.
+          examples:
+            first:
+              summary: Look for entries linked to item with id 42.
+              value: 42
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          default: 15
+          description: |
+            Limit the number of results.
+          examples:
+            first:
+              summary: Limit number of results to 5.
+              value: 5
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          default: 0
+          description: |
+            Skip a number of results. Use with limit to work the pagination.
+          examples:
+            first:
+              summary: Skip 3 first results.
+              value: 3
       responses:
         '200':
           description: A list of experiments
@@ -782,6 +851,31 @@ paths:
       tags: ['Items']
       summary: Read all items that are accessible
       operationId: read-items
+      # start duplicate from GET /experiments (except related)
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          default: 15
+          description: |
+            Limit the number of results.
+          examples:
+            first:
+              summary: Limit number of results to 5.
+              value: 5
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          default: 0
+          description: |
+            Skip a number of results. Use with limit to work the pagination.
+          examples:
+            first:
+              summary: Skip 3 first results.
+              value: 3
+      # end duplicate from GET /experiments
       responses:
         '200':
           description: A list of items
@@ -1255,11 +1349,11 @@ paths:
                           type: integer
       responses:
         '200':
-          description: The patched items type.
+          description: The patched event.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/items_type'
+                $ref: '#/components/schemas/event'
 
   # EVENT
   /event/{id}:
@@ -1600,3 +1694,52 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/unfinished_steps'
+  # USERS
+  /users:
+    summary: Display information about users on the instance.
+    get:
+      tags: ['Users']
+      summary: Read users from instance.
+      description: If Sysadmin all users will be shown. If Admin only the users from the team. Normal users will be shown an error.
+      operationId: read-users
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/users'
+  /users/{id}:
+    summary: Display information about a particular user.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the user or `me`.
+        required: true
+        schema:
+          oneOf:
+            - type: number
+            - type: string
+              enum: ['me']
+        examples:
+          first:
+            summary: Access our own user.
+            value: 'me'
+          second:
+            summary: Access user with ID 42.
+            value: 42
+    get:
+      tags: ['Users']
+      summary: Read information of a user.
+      description: |
+        Note: it is possible to use "me" instead of the userid to access the user of the API key.
+      operationId: read-user
+      responses:
+        '200':
+          description: Public properties of a user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/users'

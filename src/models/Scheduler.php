@@ -119,15 +119,21 @@ class Scheduler implements RestInterface
         $end = $this->normalizeDate($this->end, true);
 
         // the title of the event is title + Firstname Lastname of the user who booked it
-        $sql = "SELECT team_events.title, team_events.id, team_events.start, team_events.end, team_events.userid,
+        $sql = "SELECT team_events.id, team_events.title AS title_only, team_events.start, team_events.end, team_events.userid,
+            CONCAT(u.firstname, ' ', u.lastname) AS fullname,
             CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
             items.title AS item_title,
             CONCAT('#', items_types.color) AS color,
-            CONCAT(u.firstname, ' ', u.lastname) AS fullname
+            team_events.experiment,
+            experiments.title AS experiment_title,
+            team_events.item_link,
+            items_linkt.title AS item_link_title
             FROM team_events
-            LEFT JOIN items ON team_events.item = items.id
-            LEFT JOIN items_types ON items.category = items_types.id
-            LEFT JOIN users AS u ON team_events.userid = u.userid
+            LEFT JOIN experiments ON (team_events.experiment = experiments.id)
+            LEFT JOIN items ON (team_events.item = items.id)
+            LEFT JOIN items AS items_linkt ON (team_events.item_link = items_linkt.id)
+            LEFT JOIN items_types ON (items.category = items_types.id)
+            LEFT JOIN users AS u ON (team_events.userid = u.userid)
             WHERE (team_events.team = :team OR items.team = :team)
             AND team_events.start > :start AND team_events.end <= :end";
         $req = $this->Db->prepare($sql);
@@ -174,7 +180,7 @@ class Scheduler implements RestInterface
                 array('event' => $this->readOne(), 'actor' => $this->Items->Users->userData['fullname']),
             ),
             $TeamsHelper->getAllAdminsUserid(),
-            (int) $this->Items->Users->userData['userid'],
+            $this->Items->Users->userData['userid'],
         );
         return $this->Db->execute($req);
     }
@@ -190,11 +196,16 @@ class Scheduler implements RestInterface
         // the color is used by fullcalendar for the bg color of the event
         $sql = "SELECT team_events.*,
             CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ') ', COALESCE(experiments.title, '')) AS title,
-            CONCAT('#', items_types.color) AS color
+            team_events.title AS title_only,
+            CONCAT('#', items_types.color) AS color,
+            experiments.title AS experiment_title,
+            items_linkt.title AS item_link_title,
+            items.title AS item_title
             FROM team_events
-            LEFT JOIN items ON team_events.item = items.id
+            LEFT JOIN items ON (team_events.item = items.id)
+            LEFT JOIN items AS items_linkt ON (team_events.item_link = items_linkt.id)
             LEFT JOIN experiments ON (experiments.id = team_events.experiment)
-            LEFT JOIN items_types ON items.category = items_types.id
+            LEFT JOIN items_types ON (items.category = items_types.id)
             LEFT JOIN users AS u ON team_events.userid = u.userid
             WHERE team_events.item = :item
             AND team_events.start > :start AND team_events.end <= :end";
@@ -229,7 +240,15 @@ class Scheduler implements RestInterface
 
     private function readOneEvent(): array
     {
-        $sql = 'SELECT * from team_events WHERE id = :id';
+        $sql = 'SELECT team_events.id, team_events.team, team_events.item, team_events.start, team_events.end, team_events.title, team_events.userid, team_events.experiment, team_events.item_link,
+            team_events.title AS title_only,
+            experiments.title AS experiment_title,
+            items_linkt.title AS item_link_title
+            FROM team_events
+            LEFT JOIN items ON (team_events.item = items.id)
+            LEFT JOIN experiments ON (experiments.id = team_events.experiment)
+            LEFT JOIN items AS items_linkt ON (team_events.item_link = items_linkt.id)
+            WHERE team_events.id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);

@@ -151,7 +151,7 @@ class SamlAuth implements AuthInterface
             return $this->AuthResponse;
         }
 
-        $userid = (int) $Users->userData['userid'];
+        $userid = $Users->userData['userid'];
 
         $this->AuthResponse->userid = $userid;
         $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];

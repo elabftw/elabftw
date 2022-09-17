@@ -216,20 +216,20 @@ class Users implements RestInterface
      */
     public function readAllFromTeam(): array
     {
-        if ($this->requester->userData['is_admin'] !== 1) {
-            throw new IllegalActionException('Only admin can read all users from a team.');
-        }
         return $this->readFromQuery('', $this->userData['team']);
     }
 
+    /**
+     * This can be called from api and only contains "safe" values
+     */
     public function readAll(): array
     {
         $Request = Request::createFromGlobals();
         if ($this->requester->userData['is_sysadmin'] === 1) {
-            return $this->readFromQuery($Request->query->getAlnum('q'));
+            return $this->readFromQuerySafe($Request->query->getAlnum('q'), 0);
         }
         if ($this->requester->userData['is_admin'] === 1) {
-            return $this->readFromQuery($Request->query->getAlnum('q'), $this->requester->userData['team']);
+            return $this->readFromQuerySafe($Request->query->getAlnum('q'), $this->requester->userData['team']);
         }
         throw new IllegalActionException('Normal users cannot read other users.');
     }
@@ -339,6 +339,18 @@ class Users implements RestInterface
         }
         $TeamsHelper = new TeamsHelper($this->userData['team']);
         return $TeamsHelper->isUserInTeam($userid) && $this->userData['is_admin'] === 1;
+    }
+
+    /**
+     * Remove sensitives values from readFromQuery()
+     */
+    private function readFromQuerySafe(string $query, int $team): array
+    {
+        $users = $this->readFromQuery($query, $team);
+        foreach ($users as &$user) {
+            unset($user['mfa_secret']);
+        }
+        return $users;
     }
 
     private function canReadOrExplode(): void

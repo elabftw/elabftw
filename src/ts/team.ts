@@ -174,11 +174,11 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       if (info.event.extendedProps.experiment != null) {
-        $('#eventBoundExp').html('Event is bound to an <a href="experiments.php?mode=view&id=' + info.event.extendedProps.experiment + '">experiment</a>.');
+        $('#eventBoundExp').html(`Event is bound to an experiment: <a href="experiments.php?mode=view&id=${info.event.extendedProps.experiment}">${info.event.extendedProps.experiment_title}</a>.`);
         $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
       }
       if (info.event.extendedProps.item_link != null) {
-        $('#eventBoundDb').html('Event is bound to an <a href="database.php?mode=view&id=' + info.event.extendedProps.item_link + '">item</a>.');
+        $('#eventBoundDb').html(`Event is bound to an item: <a href="database.php?mode=view&id=${info.event.extendedProps.item_link}">${info.event.extendedProps.item_link_title}</a>.`);
         $('[data-action="scheduler-rm-bind"][data-type="item_link"]').show();
       }
       // BIND AN ENTITY TO THE EVENT

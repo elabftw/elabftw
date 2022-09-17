@@ -71,14 +71,14 @@ class Links implements RestInterface
             $sql = 'SELECT entity.id AS itemid,
                 entity.title,
                 entity.elabid,
-                category.name,
+                category.title AS category,
                 ' . ($targetEntityType === $this->Entity::TYPE_EXPERIMENTS ? '' : 'category.bookable,') . '
                 category.color
                 FROM ' . $this->getTableName($targetEntityType) . '
                 LEFT JOIN ' . $targetEntityType . ' AS entity ON (' . $this->getTableName($targetEntityType) . '.link_id = entity.id)
                 LEFT JOIN ' . $this->categoryTables[$targetEntityType] . ' AS category ON (entity.category = category.id)
                 WHERE ' . $this->getTableName($targetEntityType) . '.item_id = :id
-                ORDER by category.name ASC, entity.date ASC, entity.title ASC';
+                ORDER by category.title ASC, entity.date ASC, entity.title ASC';
 
             $req = $this->Db->prepare($sql);
             $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
@@ -290,7 +290,7 @@ class Links implements RestInterface
         $sql = 'INSERT IGNORE INTO ' . $this->getTableName($targetEntityType) . ' (item_id, link_id) VALUES(:item_id, :link_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $link, PDO::PARAM_INT);
+        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
 
         return (int) $this->Db->execute($req);
     }

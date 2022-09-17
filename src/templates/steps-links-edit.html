@@ -1,4 +1,4 @@
-<div class='row mt-4'>
+<div class='row mt-4' id='stepsLinksDiv'>
     <!-- STEPS -->
     <section class='col-md-6'>
       <h4 data-action='toggle-next' data-toggle-next-n='2' data-icon='stepsDivIcon' class='d-inline'><i id='stepsDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-check-square'></i> {{ 'Steps'|trans }}</h4>
@@ -81,7 +81,9 @@
         </div>
       </div>
     </section>
+    <!-- empty half-column because steps have no counterpart -->
     <div class='col-md-6'></div>
+
     <!-- LINKS -->
     <!-- Links to database items -->
     <section class='col-md-6'>
@@ -91,7 +93,7 @@
             <div class='input-group-prepend'>
                 <span class='input-group-text'>{{ 'Add a link'|trans }}</span>
             </div>
-            <input aria-label='{{ 'Add a link'|trans }}' type='text' id='linkinput' class='form-control' data-id='{{ Entity.id }}' placeholder='{{ 'from the database'|trans }}' />
+            <input aria-label='{{ 'Add a link'|trans }}' type='text' data-linktargettype='items' id='addLinkItemsInput'  class='form-control linkinput' data-id='{{ Entity.id }}' placeholder='{{ 'from the database'|trans }}' />
             <div class='input-group-append' style='max-width:33%;'>
               <select id='addLinkCatFilter' class='brl-none form-control'>
                 <option selected value=''>{{ 'Any category'|trans }}</option>
@@ -101,7 +103,7 @@
               </select>
             </div>
         </div>
-        <div id='linksDiv' class='mt-2' data-save-hidden='linksDiv'>
+        <div class='mt-2' data-save-hidden='linksDiv'>
           <div id='links_div_{{ Entity.id }}'>
               {% if Entity.entityData.links.items %}
               <ul class='list-group'>
@@ -147,7 +149,7 @@
             <div class='input-group-prepend'>
                 <span class='input-group-text'>{{ 'Add a link'|trans }}</span>
             </div>
-            <input aria-label='{{ 'Add a link'|trans }}' type='text' id='linkExpInput' class='form-control' data-id='{{ Entity.id }}' placeholder='{{ 'to an experiment'|trans }}' />
+            <input aria-label='{{ 'Add a link'|trans }}' type='text' data-linktargettype='experiments' id='addLinkExpInput' class='form-control linkinput' data-id='{{ Entity.id }}' placeholder='{{ 'to an experiment'|trans }}' />
             <div class='input-group-append' style='max-width:33%;'>
               <select id='addLinkExpCatFilter' class='brl-none form-control'>
                 <option selected value=''>{{ 'Any author'|trans }}</option>
@@ -157,7 +159,7 @@
               </select>
             </div>
         </div>
-        <div id='linksExpDiv' class='mt-2' data-save-hidden='linksExpDiv'>
+        <div class='mt-2' data-save-hidden='linksExpDiv'>
           <div id='links_exp_div_{{ Entity.id }}'>
               {% if Entity.entityData.links.experiments %}
               <ul class='list-group'>
@@ -183,7 +185,7 @@
                         </a>
                       </div>
                       <i class='fas fa-link mr-1'></i>
-                      <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='experiments.php?mode=view&id={{ link.itemid }}'>
+                      <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</span> - <a href='experiments.php?mode=view&id={{ link.itemid }}'>
                       {{ link.title|raw }}</a>
                       <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
                       <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->

@@ -272,11 +272,11 @@ export function addAutocompleteToLinkInputs(): void {
   [{
     selectElid: 'addLinkCatFilter',
     itemType: EntityType.Item,
-    inputElId: 'linkinput',
+    inputElId: 'addLinkItemsInput',
   }, {
     selectElid: 'addLinkExpCatFilter',
     itemType: EntityType.Experiment,
-    inputElId: 'linkExpInput',
+    inputElId: 'addLinkExpInput',
   }, {
     selectElid: 'addLinkCatFilter',
     itemType: EntityType.Item,
@@ -296,30 +296,17 @@ export function addAutocompleteToLinkInputs(): void {
             response(cache[object.selectElid][term]);
             return;
           }
-          /*
-          const payload: Payload = {
-            method: Method.GET,
-            action: Action.Read,
-            model: object.itemType,
-            entity: {
-              type: object.itemType,
-              id: 0,
-            },
-            target: Target.List,
-            content: term,
-            extraParams: {
-              'filterValue' : filterEl.value,
-            },
-          };
-         */
-          ApiC.getJson(`${EntityType.Item}/?cat=${filterEl.value}&q=${request.term}`).then(json => {
+          ApiC.getJson(`${object.itemType}/?cat=${filterEl.value}&q=${request.term}`).then(json => {
             cache[object.selectElid][term] = json.value;
-            response(json.value);
+            const res = [];
+            json.forEach(entity => {
+              res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+            });
+            response(res);
           });
         },
         select: function(event: Event, ui): boolean {
           const inputEl = event.target as HTMLInputElement;
-          inputEl.dataset.targetId = ui.item.value;
           inputEl.value = ui.item.label;
           // don't let autocomplete change value of input element
           return false;

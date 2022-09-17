@@ -149,43 +149,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // END STEPS
 
-  // CREATE
+  // CREATE LINK
   // listen keypress, add link when it's enter or on blur
-  $(document).on('keypress blur', '#linkinput', function(e) {
+  $(document).on('keypress blur', '.linkinput', function(e) {
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
-      // grab the id from the target
-      const target = parseInt($(this).data('targetId') as string);
-      // only send request if there is a targetId
+      // grab the id from the value of the input, but only before the first space, which is the ID
+      const target = parseInt(($(this).val() as string).split(' ')[0], 10);
+      // only send request if target is a number
       if (Number.isNaN(target)) {
         return;
       }
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Link}/${target}`, {'targetEntityType': EntityType.Item}).then(() => {
-        reloadElement('linksDiv');
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Link}/${target}`, {'targetEntityType': $(this).data('linktargettype')}).then(() => {
+        reloadElement('stepsLinksDiv');
         // clear input field
-        (document.getElementById('linkinput') as HTMLInputElement).value = '';
+        $(this).val('');
       });
-      $(this).val('');
-      $(this).removeData('targetId');
-    }
-  });
-  // listen keypress, add link when it's enter or on blur
-  $(document).on('keypress blur', '#linkExpInput', function(e) {
-    // Enter is ascii code 13
-    if (e.which === 13 || e.type === 'focusout') {
-      // grab the id from the target
-      const target = parseInt($(this).data('targetId') as string);
-      // only send request if there is a targetId
-      if (Number.isNaN(target)) {
-        return;
-      }
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Link}/${target}`, {'targetEntityType': EntityType.Experiment}).then(() => {
-        reloadElement('linksDiv');
-        // clear input field
-        (document.getElementById('linkinput') as HTMLInputElement).value = '';
-      });
-      $(this).val('');
-      $(this).removeData('targetId');
     }
   });
   // CREATE FOR MULTIPLE ENTITIES

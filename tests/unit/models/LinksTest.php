@@ -23,7 +23,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateReadDestroy(): void
     {
-        $this->Experiments->Links->postAction(Action::Create, array());
+        $this->Experiments->Links->postAction(Action::Create, array('targetEntityType' => 'items'));
         $this->assertIsArray($this->Experiments->Links->readAll());
         $this->assertIsArray($this->Experiments->Links->readOne());
         $this->Experiments->Links->setId(1);
@@ -37,10 +37,10 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         // create a link in a db item
         $Items = new Items(new Users(1, 1), 1);
         $Items->Links->setId(1);
-        $Items->Links->postAction(Action::Create, array());
+        $Items->Links->postAction(Action::Create, array('targetEntityType' => 'items'));
         // now import this in our experiment like if we click the import links button
         $Links = new Links($this->Experiments, $Items->id);
-        $this->assertIsInt($Links->postAction(Action::Duplicate, array()));
+        $this->assertIsInt($Links->postAction(Action::Duplicate, array('targetEntityType' => 'items')));
     }
 
     public function testPatch(): void

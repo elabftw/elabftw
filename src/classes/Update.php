@@ -12,7 +12,6 @@ namespace Elabftw\Elabftw;
 use function bin2hex;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
-use Elabftw\Models\Config;
 use PDO;
 use function random_bytes;
 use function sha1;

@@ -383,6 +383,32 @@ components:
           type: integer
         fullname:
           type: string
+    users:
+      type: object
+      properties:
+        userid:
+          type: integer
+        firstname:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string
+        validated:
+          type: integer
+        usergroup:
+          type: integer
+        archived:
+          type: integer
+        last_login:
+          type: string
+        fullname:
+          type: string
+        orcid:
+          type: string
+        auth_service:
+          type: integer
+
 
 security:
   - token:
@@ -1668,3 +1694,52 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/unfinished_steps'
+  # USERS
+  /users:
+    summary: Display information about users on the instance.
+    get:
+      tags: ['Users']
+      summary: Read users from instance.
+      description: If Sysadmin all users will be shown. If Admin only the users from the team. Normal users will be shown an error.
+      operationId: read-users
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/users'
+  /users/{id}:
+    summary: Display information about a particular user.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the user or `me`.
+        required: true
+        schema:
+          oneOf:
+            - type: number
+            - type: string
+              enum: ['me']
+        examples:
+          first:
+            summary: Access our own user.
+            value: 'me'
+          second:
+            summary: Access user with ID 42.
+            value: 42
+    get:
+      tags: ['Users']
+      summary: Read information of a user.
+      description: |
+        Note: it is possible to use "me" instead of the userid to access the user of the API key.
+      operationId: read-user
+      responses:
+        '200':
+          description: Public properties of a user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/users'

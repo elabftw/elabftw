@@ -21,9 +21,10 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
+use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\Items;
-use Elabftw\Models\Links;
+use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\Notifications;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Status;
@@ -234,7 +235,8 @@ class Apiv2Controller extends AbstractApiController
         if ($this->Model instanceof AbstractEntity) {
             return match ($submodel) {
                 'comments' => new Comments($this->Model, $this->subId),
-                'links' => new Links($this->Model, $this->subId),
+                'experiments_links' => new ExperimentsLinks($this->Model, $this->subId),
+                'items_links' => new ItemsLinks($this->Model, $this->subId),
                 'steps' => new Steps($this->Model, $this->subId),
                 'tags' => new Tags($this->Model, $this->subId),
                 'uploads' => new Uploads($this->Model, $this->subId),

@@ -105,12 +105,12 @@ class Experiments extends AbstractConcreteEntity
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
-        // insert the tags from the template
+        // insert the tags, steps and links from the template
         if ($template > 0) {
-            $this->Links->duplicate($template, $newId, true);
-            $this->Steps->duplicate($template, $newId, true);
             $Tags = new Tags($Templates);
             $Tags->copyTags($newId, true);
+            $this->Steps->duplicate($template, $newId, true);
+            $this->ItemsLinks->duplicate($template, $newId, true);
         }
 
         $this->insertTags($tags, $newId);
@@ -172,7 +172,8 @@ class Experiments extends AbstractConcreteEntity
         if ($this->id === null) {
             throw new IllegalActionException('Try to duplicate without an id.');
         }
-        $this->Links->duplicate($this->id, $newId);
+        $this->ExperimentsLinks->duplicate($this->id, $newId);
+        $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
 

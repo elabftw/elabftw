@@ -63,7 +63,9 @@ abstract class AbstractEntity implements RestInterface
 
     public Comments $Comments;
 
-    public Links $Links;
+    public ExperimentsLinks $ExperimentsLinks;
+
+    public ItemsLinks $ItemsLinks;
 
     public Steps $Steps;
 
@@ -124,7 +126,8 @@ abstract class AbstractEntity implements RestInterface
     {
         $this->Db = Db::getConnection();
 
-        $this->Links = new Links($this);
+        $this->ExperimentsLinks = new ExperimentsLinks($this);
+        $this->ItemsLinks = new ItemsLinks($this);
         $this->Steps = new Steps($this);
         $this->Tags = new Tags($this);
         $this->Uploads = new Uploads($this);
@@ -588,7 +591,8 @@ abstract class AbstractEntity implements RestInterface
         }
         $this->canOrExplode('read');
         $this->entityData['steps'] = $this->Steps->readAll();
-        $this->entityData['links'] = $this->Links->readAll();
+        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
+        $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['uploads'] = $this->Uploads->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = $this->page;

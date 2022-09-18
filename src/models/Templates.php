@@ -88,9 +88,9 @@ class Templates extends AbstractTemplateEntity
         $Tags->copyTags($newId);
 
         // copy links and steps too
-        $Links = new Links($this);
+        $ItemsLinks = new ItemsLinks($this);
+        $ItemsLinks->duplicate((int) $template['id'], $newId, true);
         $Steps = new Steps($this);
-        $Links->duplicate((int) $template['id'], $newId, true);
         $Steps->duplicate((int) $template['id'], $newId, true);
 
         return $newId;
@@ -117,7 +117,7 @@ class Templates extends AbstractTemplateEntity
         $this->canOrExplode('read');
         // add steps and links in there too
         $this->entityData['steps'] = $this->Steps->readAll();
-        $this->entityData['links'] = $this->Links->readAll();
+        $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         return $this->entityData;
     }
 

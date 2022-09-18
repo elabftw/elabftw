@@ -10,7 +10,7 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import Step from './Step.class';
 import i18next from 'i18next';
-import { relativeMoment, makeSortableGreatAgain, reloadElement, reloadElements, addAutocompleteToLinkInputs, getCheckedBoxes, notif, getEntity, adjustHiddenState, getLinkTargetEntityType } from './misc';
+import { relativeMoment, makeSortableGreatAgain, reloadElement, addAutocompleteToLinkInputs, getCheckedBoxes, notif, getEntity, adjustHiddenState } from './misc';
 import { EntityType, Action, Target, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 
@@ -48,12 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     // IMPORT LINK(S) OF LINK
     } else if (el.matches('[data-action="import-links"]')) {
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Link}/${el.dataset.target}`, {'action': Action.Duplicate, 'targetEntityType': getLinkTargetEntityType(el)}).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+      ApiC.post(`${entity.type}/${entity.id}/${el.dataset.endpoint}/${el.dataset.target}`, {'action': Action.Duplicate}).then(() => reloadElement('stepsLinksDiv'));
     // DESTROY LINK
     } else if (el.matches('[data-action="destroy-link"]')) {
       if (confirm(i18next.t('link-delete-warning'))) {
-        // TODO the Model.Link should be Model.ExperimentLink or Model.ItemLink, this would remove the need for targetEntityType stuff
-        ApiC.delete(`${entity.type}/${entity.id}/${Model.Link}/${el.dataset.target}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+        ApiC.delete(`${entity.type}/${entity.id}/${el.dataset.endpoint}/${el.dataset.target}`).then(() => reloadElement('stepsLinksDiv'));
       }
     }
   });
@@ -160,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (Number.isNaN(target)) {
         return;
       }
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Link}/${target}`, {'targetEntityType': $(this).data('linktargettype')}).then(() => {
+      ApiC.post(`${entity.type}/${entity.id}/${$(this).data('endpoint')}/${target}`).then(() => {
         reloadElement('stepsLinksDiv');
         // clear input field
         $(this).val('');

@@ -121,7 +121,7 @@ class Entity2Cest
     public function addLinkTest(ApiTester $I)
     {
         $I->wantTo('Add a link to an experiment');
-        $I->sendPOST('/experiments/1/links/1', array('targetEntityType' => 'items'));
+        $I->sendPOST('/experiments/1/items_links/1', array());
         $I->seeResponseCodeIs(HttpCode::CREATED); // 201
     }
 

@@ -18,43 +18,45 @@ class LinksTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Experiments = new Experiments(new Users(1, 1), 3);
-        $this->Experiments->Links->setId(3);
+        $this->Experiments->ExperimentsLinks->setId(3);
     }
 
     public function testCreateReadDestroy(): void
     {
-        $this->Experiments->Links->postAction(Action::Create, array('targetEntityType' => 'items'));
-        $this->assertIsArray($this->Experiments->Links->readAll());
-        $this->assertIsArray($this->Experiments->Links->readOne());
-        $this->Experiments->Links->setId(1);
-        //$this->Experiments->Links->destroy(new ContentParams(extra: array('targetEntity' => 'items')));
-        $this->Experiments->Links->setId(2);
-        //$this->Experiments->Links->destroy(new ContentParams(extra: array('targetEntity' => 'experiments')));
+        $this->Experiments->ItemsLinks->postAction(Action::Create, array());
+        $this->Experiments->ItemsLinks->setId(1);
+        $this->Experiments->ItemsLinks->destroy();
+
+        $this->Experiments->ExperimentsLinks->setId(3);
+        $this->Experiments->ExperimentsLinks->postAction(Action::Create, array());
+        $this->Experiments->ExperimentsLinks->destroy();
     }
 
     public function testImport(): void
     {
         // create a link in a db item
         $Items = new Items(new Users(1, 1), 1);
-        $Items->Links->setId(1);
-        $Items->Links->postAction(Action::Create, array('targetEntityType' => 'items'));
+        $Items->ItemsLinks->setId(1);
+        $Items->ItemsLinks->postAction(Action::Create, array('targetEntityType' => 'items'));
         // now import this in our experiment like if we click the import links button
-        $Links = new Links($this->Experiments, $Items->id);
-        $this->assertIsInt($Links->postAction(Action::Duplicate, array('targetEntityType' => 'items')));
+        $Links = new ItemsLinks($this->Experiments, $Items->id);
+        $this->assertIsInt($Links->postAction(Action::Duplicate, array()));
     }
 
     public function testPatch(): void
     {
-        $this->assertIsArray($this->Experiments->Links->patch(Action::Duplicate, array()));
+        $this->assertIsArray($this->Experiments->ItemsLinks->patch(Action::Duplicate, array()));
     }
 
     public function testReadOne(): void
     {
-        $this->assertIsArray($this->Experiments->Links->readOne());
+        $this->assertIsArray($this->Experiments->ItemsLinks->readOne());
+        $this->assertIsArray($this->Experiments->ExperimentsLinks->readOne());
     }
 
     public function testReadRelated(): void
     {
-        $this->assertIsArray($this->Experiments->Links->readRelated());
+        $this->assertIsArray($this->Experiments->ItemsLinks->readRelated());
+        $this->assertIsArray($this->Experiments->ExperimentsLinks->readRelated());
     }
 }

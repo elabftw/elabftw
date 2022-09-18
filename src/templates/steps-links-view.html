@@ -27,12 +27,12 @@
 </div>
 
 <!-- LINKS -->
-{% if Entity.entityData.links.items %}
+{% if Entity.entityData.items_links %}
   <div class='box'>
     <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedItemsIcon' class='d-inline'><i id='linkedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Linked items'|trans }}</h3>
     <div class='row mt-2' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
       <ul class='list-group ml-3'>
-        {% for link in Entity.entityData.links.items %}
+        {% for link in Entity.entityData.items_links %}
           {% set randomId = random() %}
           <li class='list-group-item' id='parent_{{ randomId }}'>
             <i class='fas fa-link mr-1'></i>
@@ -53,12 +53,12 @@
   </div>
 {% endif %}
 
-{% if Entity.entityData.links.experiments %}
+{% if Entity.entityData.experiments_links %}
   <div class='box'>
     <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedExperimentsIcon' class='d-inline'><i id='linkedExperimentsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Linked experiments'|trans }}</h3>
     <div class='row mt-2' id='linkedExperimentsDiv' data-save-hidden='linkedExperimentsDiv'>
       <ul class='list-group ml-3'>
-        {% for link in Entity.entityData.links.experiments %}
+        {% for link in Entity.entityData.experiments_links %}
           {% set randomId = random() %}
           <li class='list-group-item' id='parent_{{ randomId }}'>
             <i class='fas fa-link mr-1'></i>

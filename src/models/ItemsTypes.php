@@ -29,7 +29,7 @@ class ItemsTypes extends AbstractTemplateEntity
     {
         $this->type = parent::TYPE_ITEMS_TYPES;
         $this->Db = Db::getConnection();
-        $this->Links = new Links($this);
+        $this->ItemsLinks = new ItemsLinks($this);
         $this->countableTable = 'items';
         $this->Steps = new Steps($this);
         $this->setId($id);
@@ -88,7 +88,7 @@ class ItemsTypes extends AbstractTemplateEntity
         //$this->canOrExplode('read');
         // add steps and links in there too
         $this->entityData['steps'] = $this->Steps->readAll();
-        $this->entityData['links'] = $this->Links->readAll();
+        $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         return $this->entityData;
     }
 

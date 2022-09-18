@@ -50,8 +50,8 @@ class Items extends AbstractConcreteEntity
         $newId = $this->Db->lastInsertId();
 
         $this->insertTags($tags, $newId);
-        $this->Links->duplicate((int) $itemTemplate['id'], $newId, true);
-        $this->Steps->duplicate((int) $itemTemplate['id'], $newId, true);
+        $this->ItemsLinks->duplicate($itemTemplate['id'], $newId, true);
+        $this->Steps->duplicate($itemTemplate['id'], $newId, true);
 
         return $newId;
     }
@@ -80,7 +80,7 @@ class Items extends AbstractConcreteEntity
         if ($this->id === null) {
             throw new IllegalActionException('Try to duplicate without an id.');
         }
-        $this->Links->duplicate($this->id, $newId);
+        $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
 

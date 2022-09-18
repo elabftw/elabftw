@@ -381,14 +381,6 @@ export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-export function getLinkTargetEntityType(el: HTMLElement): EntityType {
-  let type = EntityType.Item;
-  const linksExpDiv = document.getElementById('linksExpDiv');
-  if (linksExpDiv && linksExpDiv.contains(el)) {
-    type = EntityType.Experiment;
-  }
-  return type;
-}
 export function removeEmpty(params: object): object {
   for (const [key, value] of Object.entries(params)) {
     if (value === '') {

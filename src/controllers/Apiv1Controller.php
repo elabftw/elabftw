@@ -773,12 +773,9 @@ class Apiv1Controller extends AbstractApiController
      */
     private function createLink(): Response
     {
-        $targetEntityType = 'items';
-        $this->Entity->Links->setId($this->Request->request->getInt('link'));
-        if ($this->Request->request->getAlpha('targetEntity') === 'experiments') {
-            $targetEntityType = 'experiments';
-        }
-        $this->Entity->Links->postAction(Action::Create, array('targetEntityType' => $targetEntityType));
+        // Note: no possibility to create experiments links with v1
+        $this->Entity->ItemsLinks->setId($this->Request->request->getInt('link'));
+        $this->Entity->ItemsLinks->postAction(Action::Create, array());
         return new JsonResponse(array('result' => 'success'));
     }
 

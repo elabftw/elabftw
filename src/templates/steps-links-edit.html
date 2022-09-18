@@ -85,15 +85,16 @@
     <div class='col-md-6'></div>
 
     <!-- LINKS -->
-    <!-- Links to database items -->
+
+    <!-- ITEMS LINKS -->
     <section class='col-md-6'>
         <h4 data-action='toggle-next' data-toggle-next-n='2' data-icon='linksDivIcon' class='d-inline'><i id='linksDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-link'></i> {{ 'Linked items'|trans }}</h4>
-        <!-- ADD LINK -->
+        <!-- add link -->
         <div class='input-group mt-2'>
             <div class='input-group-prepend'>
                 <span class='input-group-text'>{{ 'Add a link'|trans }}</span>
             </div>
-            <input aria-label='{{ 'Add a link'|trans }}' type='text' data-linktargettype='items' id='addLinkItemsInput'  class='form-control linkinput' data-id='{{ Entity.id }}' placeholder='{{ 'from the database'|trans }}' />
+            <input aria-label='{{ 'Add a link'|trans }}' type='text' data-endpoint='items_links' id='addLinkItemsInput'  class='form-control linkinput' data-id='{{ Entity.id }}' placeholder='{{ 'from the database'|trans }}' />
             <div class='input-group-append' style='max-width:33%;'>
               <select id='addLinkCatFilter' class='brl-none form-control'>
                 <option selected value=''>{{ 'Any category'|trans }}</option>
@@ -103,11 +104,12 @@
               </select>
             </div>
         </div>
+        <!-- display items links -->
         <div class='mt-2' data-save-hidden='linksDiv'>
           <div id='links_div_{{ Entity.id }}'>
-              {% if Entity.entityData.links.items %}
+              {% if Entity.entityData.items_links %}
               <ul class='list-group'>
-                  {% for link in Entity.entityData.links.items %}
+                  {% for link in Entity.entityData.items_links %}
                     {% set randomId = random() %}
                     <li class='list-group-item' id='parent_{{ randomId }}'>
                       <div class='float-right ml-1'>
@@ -116,14 +118,14 @@
                           <i class='fas fa-plus-circle'></i>
                         </span>
                         {% if mode != 'edit-template' %}
-                          <a data-action='import-links' data-target='{{ link.itemid }}' title='{{ 'Import links'|trans }}'>
+                          <a data-action='import-links' data-endpoint='items_links' data-target='{{ link.itemid }}' title='{{ 'Import links'|trans }}'>
                             <i class='fas fa-arrows-down-to-line'></i>
                           </a>
                           <a data-action='import-link-body' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}'>
                             <i class='fas fa-lg fa-file-import'></i>
                           </a>
                         {% endif %}
-                        <a data-action='destroy-link' data-target='{{ link.itemid }}' title='{{ 'Delete'|trans }}'>
+                        <a data-action='destroy-link' data-endpoint='items_links' data-target='{{ link.itemid }}' title='{{ 'Delete'|trans }}'>
                           <i class='fas fa-lg fa-trash-alt'></i>
                         </a>
                       </div>
@@ -141,7 +143,7 @@
         </div>
     </section>
     {% if Entity.type == 'items' or Entity.type == 'experiments' %}
-    <!-- Links to experiments -->
+    <!-- EXPERIMENTS LINKS -->
     <section class='col-md-6'>
         <h4 data-action='toggle-next' data-toggle-next-n='2' data-icon='linksExpDivIcon' class='d-inline'><i id='linksExpDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-link align-baseline'></i> {{ 'Linked experiments'|trans }}</h4>
         <!-- ADD LINK -->
@@ -149,7 +151,7 @@
             <div class='input-group-prepend'>
                 <span class='input-group-text'>{{ 'Add a link'|trans }}</span>
             </div>
-            <input aria-label='{{ 'Add a link'|trans }}' type='text' data-linktargettype='experiments' id='addLinkExpInput' class='form-control linkinput' data-id='{{ Entity.id }}' placeholder='{{ 'to an experiment'|trans }}' />
+            <input aria-label='{{ 'Add a link'|trans }}' type='text' data-endpoint='experiments_links' id='addLinkExpInput' class='form-control linkinput' data-id='{{ Entity.id }}' placeholder='{{ 'to an experiment'|trans }}' />
             <div class='input-group-append' style='max-width:33%;'>
               <select id='addLinkExpCatFilter' class='brl-none form-control'>
                 <option selected value=''>{{ 'Any author'|trans }}</option>
@@ -159,11 +161,12 @@
               </select>
             </div>
         </div>
+        <!-- display experiments links -->
         <div class='mt-2' data-save-hidden='linksExpDiv'>
           <div id='links_exp_div_{{ Entity.id }}'>
-              {% if Entity.entityData.links.experiments %}
+              {% if Entity.entityData.experiments_links %}
               <ul class='list-group'>
-                  {% for link in Entity.entityData.links.experiments %}
+                  {% for link in Entity.entityData.experiments_links %}
                     {% set randomId = random() %}
                     <li class='list-group-item' id='parent_{{ randomId }}'>
                       <div class='float-right ml-1'>
@@ -172,7 +175,7 @@
                           <i class='fas fa-plus-circle'></i>
                         </span>
                         {% if mode != 'edit-template' %}
-                          <a data-action='import-links' data-target='{{ link.itemid }}' title='{{ 'Import links'|trans }}'>
+                          <a data-action='import-links' data-endpoint='experiments_links' data-target='{{ link.itemid }}' title='{{ 'Import links'|trans }}'>
                             <i class='fas fa-arrows-down-to-line'></i>
                           </a>
 
@@ -180,7 +183,7 @@
                             <i class='fas fa-lg fa-file-import'></i>
                           </a>
                         {% endif %}
-                        <a data-action='destroy-link' data-target='{{ link.itemid }}' title='{{ 'Delete'|trans }}'>
+                        <a data-action='destroy-link' data-endpoint='experiments_links' data-target='{{ link.itemid }}' title='{{ 'Delete'|trans }}'>
                           <i class='fas fa-lg fa-trash-alt'></i>
                         </a>
                       </div>

@@ -250,6 +250,14 @@ abstract class AbstractEntity implements RestInterface
             $sql .= sprintf(' AND linkst.link_id = %d', $displayParams->related);
         }
 
+        if ($displayParams->category !== null) {
+            $sql .= sprintf(' AND categoryt.id = %d', $displayParams->category);
+        }
+
+        if ($displayParams->owner !== null) {
+            $sql .= sprintf(' AND entity.userid = %d', $displayParams->owner);
+        }
+
         // teamFilter is to restrict to the team for items only
         // as they have a team column
         $teamFilter = '';
@@ -507,7 +515,7 @@ abstract class AbstractEntity implements RestInterface
         // maybe user was deleted!
         try {
             $timestamper = new Users($this->entityData['timestampedby']);
-        } catch (ResourceNotFoundException $e) {
+        } catch (ResourceNotFoundException) {
             return 'User not found!';
         }
         return $timestamper->userData['fullname'];

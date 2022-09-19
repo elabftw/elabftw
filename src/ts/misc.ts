@@ -272,14 +272,17 @@ export function addAutocompleteToLinkInputs(): void {
   [{
     selectElid: 'addLinkCatFilter',
     itemType: EntityType.Item,
+    filterFamily: 'cat',
     inputElId: 'addLinkItemsInput',
   }, {
     selectElid: 'addLinkExpCatFilter',
     itemType: EntityType.Experiment,
+    filterFamily: 'owner',
     inputElId: 'addLinkExpInput',
   }, {
     selectElid: 'addLinkCatFilter',
     itemType: EntityType.Item,
+    filterFamily: 'cat',
     inputElId: 'linkInputMultiple',
   }].forEach(object => {
     const filterEl = (document.getElementById(object.selectElid) as HTMLInputElement);
@@ -296,7 +299,7 @@ export function addAutocompleteToLinkInputs(): void {
             response(cache[object.selectElid][term]);
             return;
           }
-          ApiC.getJson(`${object.itemType}/?cat=${filterEl.value}&q=${request.term}`).then(json => {
+          ApiC.getJson(`${object.itemType}/?${object.filterFamily}=${filterEl.value}&q=${request.term}`).then(json => {
             cache[object.selectElid][term] = json.value;
             const res = [];
             json.forEach(entity => {
@@ -314,23 +317,6 @@ export function addAutocompleteToLinkInputs(): void {
       });
     }
   });
-  /* original from hypernext
-  // this is the select category filter on add link input
-  const catFilterEl = (document.getElementById('addLinkCatFilter') as HTMLInputElement);
-  if (catFilterEl) {
-    ($('[data-autocomplete="links"]') as JQuery<HTMLInputElement>).autocomplete({
-      source: function(request: Record<string, string>, response: (data) => void): void {
-        ApiC.getJson(`${EntityType.Item}/?cat=${catFilterEl.value}&q=${request.term}`).then(json => {
-          const res = [];
-          json.forEach(entity => {
-            res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
-          });
-          response(res);
-        });
-      },
-    });
-  }
- */
 }
 
 export function addAutocompleteToTagInputs(): void {

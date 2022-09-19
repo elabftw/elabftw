@@ -73,18 +73,6 @@ abstract class AbstractEntityController implements ControllerInterface
         // create the DisplayParams object from the query
         $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);
 
-        // CATEGORY FILTER
-        if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {
-            $this->Entity->addFilter('categoryt.id', $this->App->Request->query->getDigits('cat'));
-            $DisplayParams->searchType = 'category';
-        }
-        // OWNER (USERID) FILTER
-        if ($this->App->Request->query->has('owner') && !$isSearchPage) {
-            $owner = (int) $this->App->Request->query->get('owner');
-            $this->Entity->addFilter('entity.userid', (string) $owner);
-            $DisplayParams->searchType = 'user';
-        }
-
         // TAG FILTER
         if (!empty(($this->App->Request->query->all('tags'))[0])) {
             // get all the ids with that tag

@@ -100,7 +100,7 @@
               <select id='addLinkExpCatFilter' class='brl-none form-control'>
                 <option selected value=''>{{ 'Any author'|trans }}</option>
                 {% for user in allTeamUsersArr %}
-                  <option value='{{ user.fullname }}'>{{ user.fullname }}</option>
+                  <option value='{{ user.userid }}'>{{ user.fullname }}</option>
                 {% endfor %}
               </select>
             </div>

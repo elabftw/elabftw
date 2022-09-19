@@ -27,6 +27,10 @@ class DisplayParams
 
     public ?int $related = null;
 
+    public ?int $category = null;
+
+    public ?int $owner = null;
+
     public Orderby $orderby = Orderby::Date;
 
     public Sort $sort = Sort::Desc;
@@ -71,8 +75,15 @@ class DisplayParams
             $this->related = $this->Request->query->getInt('related');
         }
         // CATEGORY FILTER
-        if ((Check::id((int) $this->Request->query->get('cat')) !== false) || !empty(($this->Request->query->all('tags'))[0])) {
-            $this->searchType = 'something';
+        if ((Check::id($this->Request->query->getInt('cat')) !== false)) {
+            $this->category = $this->Request->query->getInt('cat');
+            $this->searchType = 'category';
+        }
+
+        // OWNER (USERID) FILTER
+        if ((Check::id($this->Request->query->getInt('owner')) !== false)) {
+            $this->owner = $this->Request->query->getInt('owner');
+            $this->searchType = 'owner';
         }
     }
 }

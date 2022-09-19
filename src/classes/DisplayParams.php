@@ -77,13 +77,13 @@ class DisplayParams
             $this->searchType = 'related';
         }
         // CATEGORY FILTER
-        if ((Check::id($this->Request->query->getInt('cat')) !== false)) {
+        if (Check::id($this->Request->query->getInt('cat')) !== false) {
             $this->appendFilterSql(FilterableColumn::Category, $this->Request->query->getInt('cat'));
             $this->searchType = 'category';
         }
 
         // OWNER (USERID) FILTER
-        if ((Check::id($this->Request->query->getInt('owner')) !== false)) {
+        if (Check::id($this->Request->query->getInt('owner')) !== false) {
             $this->appendFilterSql(FilterableColumn::Owner, $this->Request->query->getInt('owner'));
             $this->searchType = 'owner';
         }

@@ -120,8 +120,8 @@ class Filter
     {
         $specialChars = array('?', '[', ']', '/', '\\', '=', '<', '>', ':', ';', ',', "'", '"', '&', '$', '#', '*', '(', ')', '|', '~', '`', '!', '{', '}', '%', '+', chr(0));
         $input = htmlspecialchars_decode($input, ENT_QUOTES);
-        $input = preg_replace("#\x{00a0}#siu", ' ', $input);
-        $input = str_replace($specialChars, '', $input ?? '');
+        $input = str_replace("#\x{00a0}#siu", ' ', $input);
+        $input = str_replace($specialChars, '', $input);
         $input = str_replace(array('%20', '+'), '-', $input);
         $input = preg_replace('/[\r\n\t -]+/', '-', $input);
         return trim($input ?? 'file', '.-_');

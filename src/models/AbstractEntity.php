@@ -270,9 +270,9 @@ abstract class AbstractEntity implements RestInterface
         $sql .= ')';
 
         // build the having clause for metadata
-        $metadataHaving = '';
+        $metadataHavingSql = '';
         if (!empty($this->metadataHaving)) {
-            $metadataHaving = 'HAVING ' . implode(' AND ', $this->metadataHaving);
+            $metadataHavingSql = 'HAVING ' . implode(' AND ', $this->metadataHaving);
         }
 
         if (!empty($displayParams->query)) {
@@ -286,7 +286,7 @@ abstract class AbstractEntity implements RestInterface
             $this->extendedFilter,
             $this->idFilter,
             'GROUP BY id',
-            $metadataHaving,
+            $metadataHavingSql,
             'ORDER BY',
             $displayParams->orderby::toSql($displayParams->orderby),
             $displayParams->sort->value,

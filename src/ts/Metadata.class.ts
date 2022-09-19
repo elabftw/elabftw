@@ -23,7 +23,7 @@ export class Metadata {
 
   constructor(entity: Entity) {
     this.entity = entity;
-    this.model = entity.type,
+    this.model = entity.type;
     this.api = new Api();
     // this is the div that will hold all the generated fields from metadata json
     this.metadataDiv = document.getElementById('metadataDiv');
@@ -104,7 +104,7 @@ export class Metadata {
   }
 
   getRandomId(): string {
-    return Math.random().toString(36).substr(2, 12);
+    return Math.random().toString(36).substring(2, 12);
   }
 
   /**

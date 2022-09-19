@@ -168,6 +168,13 @@ class Entity2Cest
         $I->seeResponseCodeIs(HttpCode::NO_CONTENT);
     }
 
+    public function deleteExperimentTest(ApiTester $I)
+    {
+        $I->wantTo('Delete an experiment');
+        $I->sendDELETE('/experiments/8');
+        $I->seeResponseCodeIs(HttpCode::NO_CONTENT);
+    }
+
     public function resourceNotFoundTest(ApiTester $I)
     {
         $I->wantTo('Find a non existing item');

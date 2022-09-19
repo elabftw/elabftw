@@ -87,9 +87,6 @@ abstract class AbstractEntity implements RestInterface
     // will be defined in children classes
     public string $page = '';
 
-    // an array of arrays with filters for sql query
-    public array $filters = array();
-
     // sql of ids to include
     public string $idFilter = '';
 
@@ -238,9 +235,8 @@ abstract class AbstractEntity implements RestInterface
         // first where is the state
         $sql .= ' WHERE entity.state = :state';
 
-        foreach ($this->filters as $filter) {
-            $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
-        }
+        // add externally added filters
+        $sql .= $this->filterSql;
 
         // add filters like related, owner or category
         $sql .= $displayParams->filterSql;
@@ -274,9 +270,9 @@ abstract class AbstractEntity implements RestInterface
         $sql .= ')';
 
         // build the having clause for metadata
-        $metadataHaving = '';
+        $metadataHavingSql = '';
         if (!empty($this->metadataHaving)) {
-            $metadataHaving = 'HAVING ' . implode(' AND ', $this->metadataHaving);
+            $metadataHavingSql = 'HAVING ' . implode(' AND ', $this->metadataHaving);
         }
 
         if (!empty($displayParams->query)) {
@@ -290,7 +286,7 @@ abstract class AbstractEntity implements RestInterface
             $this->extendedFilter,
             $this->idFilter,
             'GROUP BY id',
-            $metadataHaving,
+            $metadataHavingSql,
             'ORDER BY',
             $displayParams->orderby::toSql($displayParams->orderby),
             $displayParams->sort->value,
@@ -443,11 +439,11 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
-     * Add a filter to the query
+     * Add an arbitrary filter to the query, externally, not through DisplayParams
      */
     public function addFilter(string $column, string|int $value): void
     {
-        $this->filters[] = array('column' => $column, 'value' => $value);
+        $this->filterSql .= sprintf(" AND %s = '%s'", $column, (string) $value);
     }
 
     public function addMetadataFilter(string $key, string $value): void

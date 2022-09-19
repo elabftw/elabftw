@@ -23,9 +23,9 @@ trait EntityTrait
 
     public array $entityData = array();
 
-    public array $filters = array();
-
     protected Db $Db;
+
+    protected string $filterSql = '';
 
     abstract public function readOne(): array;
 
@@ -44,6 +44,6 @@ trait EntityTrait
         // this will load it in entityData
         $this->readOne();
         // clear out filters
-        $this->filters = array();
+        $this->filterSql = '';
     }
 }

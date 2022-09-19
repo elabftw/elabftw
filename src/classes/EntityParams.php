@@ -9,11 +9,11 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
-use function in_array;
 
 class EntityParams extends ContentParams implements ContentParamsInterface
 {
@@ -41,11 +41,7 @@ class EntityParams extends ContentParams implements ContentParamsInterface
 
     public function getState(): int
     {
-        $state = (int) $this->content;
-        // TODO in php 8.1, we will use an enum for this
-        if (!in_array($state, array(1, 2, 3), true)) {
-            return 1;
-        }
-        return $state;
+        $state = State::tryFrom((int) $this->content) ?? State::Normal;
+        return $state->value;
     }
 }

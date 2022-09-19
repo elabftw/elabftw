@@ -7,13 +7,12 @@
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-import { notif, reloadElement, updateCategory, showContentPlainText, escapeRegExp } from './misc';
+import { getEntity, notif, reloadElement, updateCategory, showContentPlainText, escapeRegExp } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Model, Action } from './interfaces';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
-import { getEntity } from './misc';
 import Dropzone from 'dropzone';
 import type { DropzoneFile } from 'dropzone';
 import i18next from 'i18next';

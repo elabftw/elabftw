@@ -15,6 +15,7 @@ use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -455,7 +456,7 @@ class Apiv1Controller extends AbstractApiController
      */
     private function getBookable(): Response
     {
-        $this->Entity->addFilter('bookable', '1');
+        $this->Entity->addFilter(FilterableColumn::Bookable->value, 1);
         return $this->getEntity();
     }
 

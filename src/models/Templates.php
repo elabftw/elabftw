@@ -196,7 +196,7 @@ class Templates extends AbstractTemplateEntity
     public function readForUser(): array
     {
         if ($this->Users->userData['show_team_templates'] === 0) {
-            $this->addFilter('experiments_templates.userid', (string) $this->Users->userData['userid']);
+            $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
         }
         return $this->readAll();
     }

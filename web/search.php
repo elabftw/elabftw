@@ -108,7 +108,7 @@ if ($App->Request->query->count() > 0 && $extendedError === '') {
         if ($App->Request->query->get('type') !== 'experiments') {
             // FILTER ON DATABASE ITEMS TYPES
             if (Check::id($App->Request->query->getInt('type')) !== false) {
-                $Entity->addFilter(FilterableColumn::Category->value, (string) $App->Request->query->getInt('type'));
+                $Entity->addFilter(FilterableColumn::Category->value, $App->Request->query->getInt('type'));
             }
         }
 

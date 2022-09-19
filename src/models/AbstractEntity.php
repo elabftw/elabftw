@@ -444,18 +444,9 @@ abstract class AbstractEntity implements RestInterface
 
     /**
      * Add a filter to the query
-     * Second param is nullable because it can come from a request param
-     *
-     * @param string $column the column on which to filter
-     * @param string|null $value the value to look for
      */
-    public function addFilter(string $column, ?string $value): void
+    public function addFilter(string $column, string|int $value): void
     {
-        if ($value === null) {
-            return;
-        }
-        $column = filter_var($column, FILTER_SANITIZE_STRING);
-        $value = filter_var($value, FILTER_SANITIZE_STRING);
         $this->filters[] = array('column' => $column, 'value' => $value);
     }
 

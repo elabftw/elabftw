@@ -172,9 +172,7 @@ class Templates extends AbstractTemplateEntity
         }
         $sql .= ')';
 
-        foreach ($this->filters as $filter) {
-            $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
-        }
+        $sql .= $this->filterSql;
 
         $sql .= str_replace('entity', 'experiments_templates', $this->idFilter) . ' ';
 

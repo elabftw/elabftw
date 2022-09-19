@@ -94,9 +94,6 @@ abstract class AbstractEntity implements RestInterface
 
     protected TeamGroups $TeamGroups;
 
-    // sql with custom filters for the where clause
-    private string $filterSql = '';
-
     // inserted in sql
     private string $extendedFilter = '';
 

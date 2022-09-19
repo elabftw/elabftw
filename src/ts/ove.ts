@@ -14,10 +14,13 @@ declare global {
 
 import { anyToJson } from 'bio-parsers/umd/bio-parsers';
 import { notif, reloadElement } from './misc';
+import { Action, Model } from './interfaces';
+import { Api } from './Apiv2.class';
 
 // DISPLAY Plasmids FILES
 export function displayPlasmidViewer(about: DOMStringMap): void {
   const editor: any = {};
+  const ApiC = new Api();
   Array.from(document.getElementsByClassName('viewer-ove')).forEach(el => {
     const oveDivDataset = (el as HTMLDivElement).dataset;
     const viewerID = el.id;
@@ -36,16 +39,13 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
       const reader = new FileReader();
       reader.readAsDataURL(opts.pngFile);
       reader.onloadend = function(): void {
-        $.post('app/controllers/EntityAjaxController.php', {
-          addFromString: true,
-          fileType: 'png',
-          realName: realName + '.png',
-          content: reader.result, // the png as data url
-          id: about.id,
-          type: about.type,
-        }).done(function(json) {
-          notif(json);
-        });
+        const params = {
+          'action': Action.CreateFromString,
+          'file_type': 'png',
+          'real_name': realName + '.png',
+          'content': reader.result,
+        };
+        ApiC.post(`${about.type}/${about.id}/${Model.Upload}`, params).then(() => reloadElement('filesdiv'));
       };
     }
 
@@ -229,7 +229,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
       };
 
       // Change layout for linear sequences
-      if (parsedSequence.circular == false) {
+      if (!parsedSequence.circular) {
         editorState.panelsShown[0][1].active = true;
         editorState.panelsShown[0].shift();
       }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,33 +6,22 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\UploadParamsInterface;
 use Elabftw\Services\Filter;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-final class UploadParams extends ContentParams implements UploadParamsInterface
+final class UploadParams extends ContentParams
 {
-    public function __construct(string $content, string $target, private ?\Symfony\Component\HttpFoundation\File\UploadedFile $file = null)
+    public function getContent(): mixed
     {
-        parent::__construct($content, $target);
-    }
-
-    public function getContent(): string
-    {
-        if ($this->target === 'real_name') {
-            return $this->getRealName();
-        }
-        return parent::getContent();
-    }
-
-    public function getFile(): UploadedFile
-    {
-        return $this->file;
+        return match ($this->target) {
+            'real_name' => $this->getRealName(),
+            'comment' => Filter::title($this->content),
+            'state' => $this->getInt(),
+            default => throw new ImproperActionException('Incorrect upload parameter.'),
+        };
     }
 
     private function getRealName(): string

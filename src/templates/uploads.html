@@ -106,7 +106,7 @@
                 {# don't make the thumbnail clickable if it's a tif #}
                 {% if ext matches '/(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
                   <div class='text-center'>
-                    <a class='text-break' href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'
+                    <a class='text-break' href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}'
                        {% if upload.real_name matches '/(jpg|jpeg|png|gif)$/i' %}
                            data-fancybox='group'
                        {% endif %}
@@ -119,7 +119,7 @@
                 {# old timestamp pdf don't have a thumbnail, so don't try to display one for them #}
                 {% if App.Users.userData.uploads_layout %}
                   {% if ext matches '/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
-                    <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ thumb_name }}&storage={{ upload.storage }}' alt='thumbnail' />
+                    <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ thumb_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}' alt='thumbnail' />
                   {% else %}
                     <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block text-center'></i>
                   {% endif %}
@@ -128,9 +128,9 @@
                     </a>
                   </div>
                 {% endif %}
-                            {% elseif ext == 'mol' and App.Users.userData.chem_editor %}
+                            {% elseif ext == 'mol' %}
                             <div class='text-center'>
-                              <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'></canvas>
+                              <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}'></canvas>
                             </div>
                             {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::MOLECULE') %}
                                 <!--  build control dropdown to change the representation style -->
@@ -166,7 +166,7 @@
 
                                 <!-- IMPORTANT: here the data-href has the storage first and the filename last or 3Dmol will get confused with the format -->
                                 <div class='viewer_3Dmoljs file-uploaded'
-                                  data-href='app/download.php?storage={{ upload.storage }}&f={{ upload.long_name }}'
+                                  data-href='app/download.php?storage={{ upload.storage }}&f={{ upload.long_name }}&name={{ upload.real_name }}'
                                   data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick'}}"
                                   data-backgroundcolor='0xffffff'
                                   id='3Dmol_{{ upload.id }}'>
@@ -174,7 +174,7 @@
 
             {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::DNA') %}
               <div class='viewer-ove'
-                data-href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}'
+                data-href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}'
                 data-real-name='{{ upload.real_name }}'
                 id='OVE_{{ upload.id }}'>
               </div>
@@ -242,15 +242,9 @@
                   {% if mode == 'edit' %}
                     <!-- replace upload form -->
                     <div id='replaceUploadForm_{{ upload.id }}' class='mt-1' hidden>
-                      <form enctype='multipart/form-data' action='app/controllers/RequestHandler.php' method='POST' class='form-inline' data-action='replace-uploaded-file' data-long-name='{{ upload.long_name }}'>
-                        <input type='hidden' name='action' value='replace' />
-                        <input type='hidden' name='target' value='file' />
-                        <input type='hidden' name='entity_id' value='{{ upload.item_id }}' />
-                        <input type='hidden' name='entity_type' value='{{ upload.type }}' />
-                        <input type='hidden' name='id' value='{{ upload.id }}' />
-                        <input type='hidden' name='model' value='upload' />
+                      <form enctype='multipart/form-data' action='api/v2/{{ upload.type }}/{{ upload.item_id }}/uploads/{{ upload.id }}' method='POST' class='form-inline' data-action='replace-uploaded-file' data-long-name='{{ upload.long_name }}' data-uploadid='{{ upload.id }}'>
                         {{ App.Session.get('csrf')|csrf }}
-                        <input type='file' class='form-control mr-1 mt-1' name='content' required />
+                        <input type='file' class='form-control mr-1 mt-1' name='file' required />
                         <button type='submit' class='button btn btn-primary mt-1'>{{ 'OK'|trans }}</button>
                       </form>
                     </div>

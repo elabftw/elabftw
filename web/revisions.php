@@ -25,12 +25,13 @@ use Symfony\Component\HttpFoundation\Response;
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Revisions');
 // default response is error page with general error message
+/** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
-$Response->prepare($Request);
+$Response->prepare($App->Request);
 
 try {
-    $Entity = (new EntityFactory($App->Users, (string) $Request->query->get('type')))->getEntity();
-    $Entity->setId((int) $Request->query->get('item_id'));
+    $Entity = (new EntityFactory($App->Users, (string) $App->Request->query->get('type')))->getEntity();
+    $Entity->setId($App->Request->query->getInt('item_id'));
     $Entity->canOrExplode('read');
 
     $Revisions = new Revisions(

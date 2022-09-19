@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,13 +6,13 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
 use function checkdate;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Config;
 use function filter_var;
 use HTMLPurifier;
 use HTMLPurifier_HTML5Config;
@@ -36,7 +36,7 @@ class Filter
      */
     private const MAX_BODY_SIZE = 4120000;
 
-    public static function toBinary(string $input): int
+    public static function toBinary(string|bool|int $input): int
     {
         return $input ? 1 : 0;
     }
@@ -47,6 +47,15 @@ class Filter
     public static function onToBinary(string $input): int
     {
         return $input === 'on' ? 1 : 0;
+    }
+
+    public static function firstLetter(string $input): string
+    {
+        $key = $input[0];
+        if (ctype_alpha($key)) {
+            return $key;
+        }
+        throw new ImproperActionException('Incorrect value: must be a letter.');
     }
 
     /**
@@ -76,6 +85,14 @@ class Filter
         return $output;
     }
 
+    public static function email(string $input): string
+    {
+        // if the sent email is different from the existing one, check it's valid (not duplicate and respects domain constraint)
+        $Config = Config::getConfig();
+        $EmailValidator = new EmailValidator($input, $Config->configArr['email_domain']);
+        return $EmailValidator->validate();
+    }
+
     /**
      * Sanitize title with a filter_var and remove the line breaks.
      *
@@ -84,7 +101,7 @@ class Filter
      */
     public static function title(string $input): string
     {
-        $title = filter_var($input, FILTER_SANITIZE_STRING);
+        $title = self::sanitize($input);
         if (empty($title)) {
             return _('Untitled');
         }
@@ -110,6 +127,9 @@ class Filter
         return trim($input ?? 'file', '.-_');
     }
 
+    /**
+     * This exists because: The filename fallback must only contain ASCII characters. at /elabftw/vendor/symfony/http-foundation/HeaderUtils.php:173
+     */
     public static function toAscii(string $input): string
     {
         // mb_convert_encoding will replace invalid characters with ?, but we want _ instead
@@ -144,25 +164,5 @@ class Filter
 
         $purifier = new HTMLPurifier($config);
         return $purifier->purify($input);
-    }
-
-    /**
-     * Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
-     * also remove | because we use this as separator for tags in SQL
-     *
-     * @param string $tag the tag to sanitize
-     */
-    public static function tag(string $tag): string
-    {
-        $tag = filter_var($tag, FILTER_SANITIZE_STRING);
-        if ($tag === false) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
-        }
-        $tag = trim(str_replace(array('\\', '|'), array('', ' '), $tag));
-        // empty tags are disallowed
-        if ($tag === '') {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
-        }
-        return $tag;
     }
 }

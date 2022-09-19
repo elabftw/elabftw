@@ -34,13 +34,14 @@ class EmailValidator
         $this->Db = Db::getConnection();
     }
 
-    public function validate(): void
+    public function validate(): string
     {
         $this->basicCheck();
         if ($this->isDuplicateEmail()) {
             throw new ImproperActionException(_('Someone is already using that email address!'));
         }
         $this->validateDomain();
+        return $this->email;
     }
 
     private function basicCheck(): void

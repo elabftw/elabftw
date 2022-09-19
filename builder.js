@@ -12,7 +12,6 @@
  * doing autocompletion.
  */
 const path = require('path');
-const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -62,7 +61,6 @@ module.exports = {
       'prismjs/components/prism-ruby.js',
     ],
     jslibs: [
-      './src/js/vendor/cornify.js',
       './src/js/vendor/jquery.rating.js',
       './src/js/vendor/keymaster.js',
     ],

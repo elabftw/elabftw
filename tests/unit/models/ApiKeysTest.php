@@ -9,8 +9,8 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateApikey;
-use function mb_strlen;
+use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ImproperActionException;
 
 class ApiKeysTest extends \PHPUnit\Framework\TestCase
 {
@@ -23,26 +23,41 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
-        $params = new CreateApikey('test key', '', 1);
-        $this->ApiKeys->create($params);
-        $this->assertTrue(mb_strlen($params->getKey()) === 84);
+        $this->assertIsInt($this->ApiKeys->postAction(Action::Create, array('name' => 'test key', 'canwrite' => 1)));
+    }
+
+    public function testPatch(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->ApiKeys->patch(Action::Update, array());
+        $this->expectException(ImproperActionException::class);
+        $this->ApiKeys->patch(Action::Archive, array());
+    }
+
+    public function testReadOne(): void
+    {
+        $this->assertIsArray($this->ApiKeys->readOne());
+    }
+
+    public function testGetPage(): void
+    {
+        $this->assertIsString($this->ApiKeys->getPage());
+    }
+
+    public function testCreateKnown(): void
+    {
+        $this->ApiKeys->createKnown('phpunit');
+        $this->assertIsArray($this->ApiKeys->readFromApiKey('phpunit'));
+        $this->expectException(ImproperActionException::class);
+        $this->ApiKeys->readFromApiKey('unknown key');
     }
 
     public function testReadAll(): void
     {
         $res = $this->ApiKeys->readAll();
         $this->assertIsArray($res);
-        $this->assertTrue($res[1]['name'] === 'test key');
-        $this->assertTrue($res[1]['can_write'] === 1);
-    }
-
-    public function testReadFromApiKey(): void
-    {
-        $params = new CreateApikey('my key', '', 0);
-        $this->ApiKeys->create($params);
-        $res = $this->ApiKeys->readFromApiKey($params->getKey());
-        $this->assertTrue($res['userid'] === 1);
-        $this->assertTrue($res['canWrite'] === 0);
+        $this->assertSame('test key', $res[1]['name']);
+        $this->assertSame(1, $res[1]['can_write']);
     }
 
     public function testDestroy(): void

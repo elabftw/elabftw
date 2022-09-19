@@ -18,6 +18,8 @@ use function strtolower;
 
 /**
  * Create a thumbnail from a file
+ * Note: this shouldn't be needed with psalm running inside the container!
+ * @psalm-suppress UndefinedClass
  */
 final class MakeThumbnail
 {

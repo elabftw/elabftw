@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,11 +6,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Exceptions\InvalidCredentialsException;
+use RuntimeException;
 
 class MfaAuthTest extends \PHPUnit\Framework\TestCase
 {
@@ -18,8 +17,8 @@ class MfaAuthTest extends \PHPUnit\Framework\TestCase
     {
         $MfaHelper = new MfaHelper(1);
         $AuthService = new MfaAuth($MfaHelper, '12');
-        $this->expectException(InvalidCredentialsException::class);
-        $authResponse = $AuthService->tryAuth();
+        $this->expectException(RuntimeException::class);
+        $AuthService->tryAuth();
     }
 
     public function testTryAuthWithValidCode(): void

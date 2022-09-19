@@ -30,12 +30,12 @@ class Check
     /**
      * Check the number of character of a password
      */
-    public static function passwordLength(string $password): bool
+    public static function passwordLength(string $password): string
     {
         if (mb_strlen($password) < self::MIN_PASSWORD_LENGTH) {
             throw new ImproperActionException(sprintf(_('Password must contain at least %d characters.'), self::MIN_PASSWORD_LENGTH));
         }
-        return true;
+        return $password;
     }
 
     /**
@@ -62,27 +62,12 @@ class Check
         return $id;
     }
 
-    /**
-     * Currently a usergroup is 1, 2 or 4
-     */
-    public static function usergroup(int $gid): bool
+    public static function usergroup(int $gid): int
     {
-        switch ($gid) {
-            case 1:
-            case 2:
-            case 4:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    public static function usergroupOrExplode(int $gid): int
-    {
-        if (self::usergroup($gid) === false) {
-            throw new IllegalActionException('Invalid usergroup');
-        }
-        return $gid;
+        return match ($gid) {
+            1, 2, 4 => $gid,
+            default => throw new ImproperActionException('Invalid usergroup value.'),
+        };
     }
 
     /**
@@ -94,6 +79,7 @@ class Check
     {
         $color = filter_var(substr($color, 1, 7), FILTER_SANITIZE_STRING);
         if ($color === false || mb_strlen($color) !== 6) {
+            debug_print_backtrace();
             throw new ImproperActionException('Bad color');
         }
         return $color;
@@ -116,53 +102,6 @@ class Check
     }
 
     /**
-     * Check the display size user setting
-     */
-    public static function displaySize(string $input): string
-    {
-        switch ($input) {
-            case 'xs':
-                return 'xs';
-            case 'md':
-                return 'md';
-            default:
-                return 'lg';
-        }
-    }
-
-    /**
-     * Check the display mode (item or table)
-     */
-    public static function displayMode(string $input): string
-    {
-        return $input === 'tb' ? 'tb' : 'it';
-    }
-
-    /**
-     * Check orderby param
-     */
-    public static function orderby(string $input): string
-    {
-        $allowed = array('cat', 'date', 'title', 'comment', 'lastchange');
-        if (!in_array($input, $allowed, true)) {
-            throw new ImproperActionException('Invalid orderby');
-        }
-        return $input;
-    }
-
-    /**
-     * Check sort (asc/desc) param
-     */
-    public static function sort(string $input): string
-    {
-        $allowed = array('asc', 'desc');
-        if (!in_array($input, $allowed, true)) {
-            throw new ImproperActionException('Invalid sort');
-        }
-        return $input;
-    }
-
-    /**
      * Check if we have a correct value for visibility
      */
     public static function visibility(string $visibility): string
@@ -180,86 +119,6 @@ class Check
         }
 
         return $visibility;
-    }
-
-    /**
-     * A target is like a subpart of a model
-     * example: update the comment of an upload
-     */
-    public static function target(string $target): string
-    {
-        $allowed = array(
-            'all',
-            'blox_anon',
-            'blox_enabled',
-            'body',
-            'bodyappend',
-            'boundevent',
-            'comment',
-            'content_type',
-            'date',
-            'deadline',
-            'deadline_notif',
-            'experiments',
-            'file',
-            'finished',
-            'finished_time',
-            'items',
-            'list',
-            'member',
-            'metadata',
-            'metadatafield',
-            'notif_comment_created',
-            'notif_comment_created_email',
-            'notif_event_deleted',
-            'notif_event_deleted_email',
-            'notif_step_deadline',
-            'notif_step_deadline_email',
-            'notif_user_created',
-            'notif_user_created_email',
-            'notif_user_need_validation',
-            'notif_user_need_validation_email',
-            'privacypolicy',
-            'rating',
-            'real_name',
-            'sharelink',
-            'state',
-            'title',
-            'ts_authority',
-            'ts_cert',
-            'ts_bloxberg',
-            'ts_classic',
-            'ts_limit',
-            'ts_login',
-            'ts_password',
-            'ts_url',
-            'unreference',
-            'uploadid',
-            'userid',
-            // no target is also valid
-            '',
-        );
-        if (!in_array($target, $allowed, true)) {
-            throw new IllegalActionException('Invalid target!');
-        }
-        return $target;
-    }
-
-    /**
-     * Check if we have a correct value for read/write
-     */
-    public static function rw(string $rw): string
-    {
-        $validArr = array(
-            'read',
-            'write',
-        );
-
-        if (!in_array($rw, $validArr, true)) {
-            throw new IllegalActionException('The read/write parameter is wrong.');
-        }
-
-        return $rw;
     }
 
     /**

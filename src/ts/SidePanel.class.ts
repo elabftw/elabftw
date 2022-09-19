@@ -6,16 +6,16 @@
  * @package elabftw
  */
 import { Model } from './interfaces';
-import { Ajax } from './Ajax.class';
+import { Api } from './Apiv2.class';
 
 export default class SidePanel {
   panelId: string;
   model: Model;
-  sender: Ajax;
+  api: Api;
 
   constructor(model: Model) {
     this.model = model,
-    this.sender = new Ajax();
+    this.api = new Api();
   }
 
   hide(): void {

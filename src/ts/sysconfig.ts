@@ -5,13 +5,15 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, reloadElement } from './misc';
-import { Action, Method, Payload, Model } from './interfaces';
+import { collectForm, notif, reloadElement, removeEmpty } from './misc';
+import { Action, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
+import { Api } from './Apiv2.class';
+import { SemverCompare } from './SemverCompare.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/sysconfig.php') {
@@ -20,11 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const TabMenu = new Tab();
   const AjaxC = new Ajax();
+  const ApiC = new Api();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
   // GET the latest version information
   const updateUrl = 'https://get.elabftw.net/updates.json';
-  const currentVersionDiv = document.getElementById('currentVersion') as HTMLElement;
+  const currentVersionDiv = document.getElementById('currentVersion');
   const latestVersionDiv = document.getElementById('latestVersion');
   const currentVersion = currentVersionDiv.innerText;
   // Note: this doesn't work on Chrome
@@ -43,16 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return response.json();
   }).then(data => {
     latestVersionDiv.append(data.version);
-    // get versions as number only so we can compare properly
-    const numOnlyLatest = data.version.replace(/\D/g, '');
-    const numOnlyCurrent = currentVersion.replace(/\D/g, '');
-    if ((data.version === currentVersion) || (numOnlyCurrent > numOnlyLatest)) {
-      // show a little green check if we have latest version
-      const successIcon = document.createElement('i');
-      successIcon.style.color = 'green';
-      successIcon.classList.add('fas', 'fa-check', 'fa-lg', 'ml-1');
-      latestVersionDiv.appendChild(successIcon);
-    } else {
+    const SemverCompareC = new SemverCompare(currentVersion, data.version);
+    if (SemverCompareC.isOld()) {
       currentVersionDiv.style.color = 'red';
       const warningDiv = document.createElement('div');
       warningDiv.classList.add('alert', 'alert-warning');
@@ -74,82 +69,14 @@ document.addEventListener('DOMContentLoaded', () => {
       warningDiv.appendChild(updateLink);
       warningDiv.appendChild(changelogLink);
       document.getElementById('versionNotifZone').appendChild(warningDiv);
+    } else {
+      // show a little green check if we have latest version
+      const successIcon = document.createElement('i');
+      successIcon.style.color = 'green';
+      successIcon.classList.add('fas', 'fa-check', 'fa-lg', 'ml-1');
+      latestVersionDiv.appendChild(successIcon);
     }
   }).catch(error => latestVersionDiv.append(error));
-
-
-  // TEAMS
-  const Teams = {
-    controller: 'app/controllers/SysconfigAjaxController.php',
-    editUser2Team(action: Action, teamid: number, userid: number): void {
-      const payload: Payload = {
-        method: Method.POST,
-        action: action,
-        model: Model.User2Team,
-        notif: true,
-        extraParams: {
-          teamid: teamid,
-          userid: userid,
-        },
-      };
-      AjaxC.send(payload)
-        .then(json => {
-          notif(json);
-          reloadElement('editUsersBox');
-        });
-    },
-    create: function(): void {
-      const name = (document.getElementById('teamsName') as HTMLInputElement).value;
-      $.post(this.controller, {
-        teamsCreate: true,
-        teamsName: name,
-      }).done(function(data) {
-        Teams.destructor(data);
-      });
-    },
-    update: function(id): void {
-      const name = $('#teamName_' + id).val();
-      const orgid = $('#teamOrgid_' + id).val();
-      const visible = $('#teamVisible_' + id).val();
-      $.post(this.controller, {
-        teamsUpdate: true,
-        id : id,
-        name : name,
-        orgid : orgid,
-        visible : visible,
-      }).done(function(data) {
-        Teams.destructor(data);
-      });
-    },
-    destroy: function(id): void {
-      (document.getElementById('teamsDestroyButton_' + id) as HTMLButtonElement).disabled = true;
-      $.post(this.controller, {
-        teamsDestroy: true,
-        teamsDestroyId: id,
-      }).done(function(data) {
-        Teams.destructor(data);
-      });
-    },
-    destructor: function(json): void {
-      notif(json);
-      if (json.res) {
-        reloadElement('teamsDiv');
-      }
-    },
-  };
-
-  $(document).on('click', '#teamsCreateButton', function() {
-    Teams.create();
-  });
-  $(document).on('click', '.teamsUpdateButton', function() {
-    Teams.update($(this).data('id'));
-  });
-  $(document).on('click', '.teamsDestroyButton', function() {
-    Teams.destroy($(this).data('id'));
-  });
-  $(document).on('click', '.teamsArchiveButton', function() {
-    notif({'msg': 'Feature not yet implemented :)', 'res': true});
-  });
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
@@ -164,26 +91,109 @@ document.addEventListener('DOMContentLoaded', () => {
           notif(json);
         }));
 
+    // CREATE TEAM
+    } else if (el.matches('[data-action="create-team"]')) {
+      const name = (document.getElementById('teamsName') as HTMLInputElement).value;
+      ApiC.post(Model.Team, {'name': name}).then(() => reloadElement('teamsDiv'));
+    // UPDATE TEAM
+    } else if (el.matches('[data-action="patch-team-sysadmin"]')) {
+      const id = el.dataset.id;
+      const params = {
+        'name': (document.getElementById('teamName_' + id) as HTMLInputElement).value,
+        'orgid': (document.getElementById('teamOrgid_' + id) as HTMLInputElement).value,
+        'visible': (document.getElementById('teamVisible_' + id) as HTMLSelectElement).value,
+      };
+      ApiC.patch(`${Model.Team}/${id}`, removeEmpty(params));
+    // ARCHIVE TEAM
+    } else if (el.matches('[data-action="archive-team"]')) {
+      ApiC.patch(`${Model.Team}/${el.dataset.id}`, {'action': 'archive'});
+    // DESTROY TEAM
+    } else if (el.matches('[data-action="destroy-team"]')) {
+      ApiC.delete(`${Model.Team}/${el.dataset.id}`).then(() => reloadElement('teamsDiv'));
     // ADD USER TO TEAM
     } else if (el.matches('[data-action="create-user2team"]')) {
       const selectEl = (el.previousElementSibling as HTMLSelectElement);
-      Teams.editUser2Team(
-        Action.Create,
-        parseInt(selectEl.options[selectEl.selectedIndex].value, 10),
-        parseInt(el.dataset.userid, 10),
-      );
+      const team = parseInt(selectEl.options[selectEl.selectedIndex].value, 10);
+      const userid = parseInt(el.dataset.userid, 10);
+      ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Add, 'team': team}).then(() => reloadElement('editUsersBox'));
     // REMOVE USER FROM TEAM
     } else if (el.matches('[data-action="destroy-user2team"]')) {
-      if (!confirm(i18next.t('generic-delete-warning'))) {
-        return;
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        const userid = parseInt(el.dataset.userid, 10);
+        const team = parseInt(el.dataset.teamid, 10);
+        ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Unreference, 'team': team}).then(() => reloadElement('editUsersBox'));
       }
-      Teams.editUser2Team(
-        Action.Destroy,
-        parseInt(el.dataset.teamid, 10),
-        parseInt(el.dataset.userid, 10),
-      );
+    // DESTROY ts_password
+    } else if (el.matches('[data-action="destroy-ts-password"]')) {
+      ApiC.patch('config', {'ts_password': ''}).then(() => reloadElement('ts_loginpass'));
+    // PATCH ANNOUNCEMENT - save or clear
+    } else if (el.matches('[data-action="patch-announcement"]')) {
+      const input = (document.getElementById(el.dataset.inputid) as HTMLInputElement);
+      if (el.dataset.operation === 'clear') {
+        input.value = '';
+      }
+      const params = {};
+      params[input.name] = input.value;
+      ApiC.patch('config', params);
+    } else if (el.matches('[data-action="clear-password"]')) {
+      const key = `${el.dataset.target}_password`;
+      const params = {};
+      params[key] = null;
+      ApiC.patch('config', params).then(() => {
+        reloadElement(el.dataset.reload);
+      });
+    // PATCH POLICY - save or clear
+    } else if (el.matches('[data-action="patch-policy"]')) {
+      let content = tinymce.get('privacyPolicyInput').getContent();
+      if (el.dataset.operation === 'clear') {
+        content = '';
+      }
+      ApiC.patch('config', {'privacy_policy': content});
+    // PATCH STORAGE
+    } else if (el.matches('[data-action="patch-storage"]')) {
+      return ApiC.patch('config', collectForm(el.closest('div.form-group')));
+    // TEST MAIL
+    } else if (el.matches('[data-action="send-test-email"]')) {
+      const button = (el as HTMLButtonElement);
+      button.disabled = true;
+      button.innerText = 'Sending…';
+      const email = (document.getElementById('testemailEmail') as HTMLInputElement).value;
+      AjaxC.postForm(
+        'app/controllers/SysconfigAjaxController.php',
+        { 'testemailSend': '1', 'email': email }).then(resp => handleEmailResponse(resp, button));
+    // MASS MAIL
+    } else if (el.matches('[data-action="send-mass-email"]')) {
+      const button = (el as HTMLButtonElement);
+      button.disabled = true;
+      button.innerText = 'Sending…';
+      const subject = (document.getElementById('massSubject') as HTMLInputElement).value;
+      const body = (document.getElementById('massBody') as HTMLInputElement).value;
+      AjaxC.postForm(
+        'app/controllers/SysconfigAjaxController.php',
+        { 'massEmail': '1', 'subject': subject, 'body': body }).then(resp => handleEmailResponse(resp, button));
+    } else if (el.matches('[data-action="destroy-idp"]')) {
+      event.preventDefault();
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        AjaxC.postForm('app/controllers/SysconfigAjaxController.php', {
+          idpsDestroy: '1',
+          id: el.dataset.id,
+        }).then(() => reloadElement('idpsDiv'));
+      }
     }
   });
+
+  function handleEmailResponse(resp: Response, button: HTMLButtonElement): void {
+    resp.json().then(json => {
+      notif(json);
+      if (json.res) {
+        button.innerText = 'Sent!';
+        button.disabled = false;
+      } else {
+        button.innerText ='Error';
+        button.style.backgroundColor = '#e6614c';
+      }
+    });
+  }
 
   /**
    * Timestamp provider select
@@ -214,68 +224,5 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('ts_urldiv').removeAttribute('hidden');
     }
   }
-
-  // MASS MAIL
-  $(document).on('click', '#massSend', function() {
-    $('#massSend').prop('disabled', true);
-    $('#massSend').text('Sending…');
-    $.post('app/controllers/SysconfigAjaxController.php', {
-      massEmail: true,
-      subject: $('#massSubject').val(),
-      body: $('#massBody').val(),
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        $('#massSend').text('Sent!');
-      } else {
-        $('#massSend').prop('disabled', false);
-        $('#massSend').css('background-color', '#e6614c');
-        $('#massSend').text('Error');
-      }
-    });
-  });
-
-  // TEST EMAIL
-  $(document).on('click', '#testemailButton', function() {
-    const email = $('#testemailEmail').val();
-    (document.getElementById('testemailButton') as HTMLButtonElement).disabled = true;
-    $('#testemailButton').text('Sending…');
-    $.post('app/controllers/SysconfigAjaxController.php', {
-      testemailSend: true,
-      testemailEmail: email,
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        $('#massSend').text('Sent!');
-        (document.getElementById('testemailButton') as HTMLButtonElement).disabled = false;
-      } else {
-        $('#testemailButton').text('Error');
-        $('#testemailButton').css('background-color', '#e6614c');
-      }
-    });
-  });
-
-  // we need to add this otherwise the button will stay disabled with the browser's cache (Firefox)
-  const inputList = document.getElementsByTagName('input');
-  for (let i=0; i < inputList.length; i++) {
-    const input = inputList[i];
-    input.disabled = false;
-  }
-
-  $(document).on('click', '.idpsDestroy', function() {
-    const elem = $(this);
-    if (confirm(i18next.t('generic-delete-warning'))) {
-      $.post('app/controllers/SysconfigAjaxController.php', {
-        idpsDestroy: true,
-        id: $(this).data('id'),
-      }).done(function(json) {
-        notif(json);
-        if (json.res) {
-          elem.closest('div').hide(600);
-        }
-      });
-    }
-  });
-
   tinymce.init(getTinymceBaseConfig('sysconfig'));
 });

@@ -9,7 +9,6 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\AbstractEntity;
@@ -45,7 +44,7 @@ class MakeJson extends AbstractMake implements StringMakerInterface
         foreach ($this->idArr as $id) {
             $this->Entity->setId((int) $id);
             try {
-                $all = $this->Entity->read(new ContentParams());
+                $all = $this->Entity->readOne();
             } catch (IllegalActionException $e) {
                 continue;
             }

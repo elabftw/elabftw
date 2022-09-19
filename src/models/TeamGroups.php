@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -6,18 +6,19 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
 use function array_combine;
 use function array_map;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\TeamGroupParams;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Interfaces\TeamGroupParamsInterface;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\RestInterface;
+use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use function explode;
 use PDO;
@@ -25,7 +26,7 @@ use PDO;
 /**
  * Everything related to the team groups
  */
-class TeamGroups implements CrudInterface
+class TeamGroups implements RestInterface
 {
     use SetIdTrait;
 
@@ -34,22 +35,17 @@ class TeamGroups implements CrudInterface
     public function __construct(private Users $Users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->id = $id;
+        $this->setId($id);
     }
 
-    /**
-     * Create a team group
-     */
-    public function create(ContentParamsInterface $params): int
+    public function postAction(Action $action, array $reqBody): int
     {
-        $this->canWriteOrExplode();
-        $sql = 'INSERT INTO team_groups(name, team) VALUES(:content, :team)';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent());
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->create($reqBody['name'] ?? _('Untitled'));
+    }
 
-        return $this->Db->lastInsertId();
+    public function getPage(): string
+    {
+        return 'api/v2/teamgroups/';
     }
 
     /**
@@ -139,19 +135,23 @@ class TeamGroups implements CrudInterface
         return $this->Db->fetch($req);
     }
 
-    public function update(TeamGroupParamsInterface $params): bool
+    public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
-        if ($params->getTarget() === 'member') {
-            return $this->updateMember($params);
-        }
-        $sql = 'UPDATE team_groups SET name = :name WHERE id = :id AND team = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':name', $params->getContent(), PDO::PARAM_STR);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        return $this->Db->execute($req);
+        match ($action) {
+            Action::Update => (
+                function () use ($params) {
+                    if (!empty($params['how'])) {
+                        return $this->updateMember($params);
+                    }
+                    foreach ($params as $key => $value) {
+                        $this->update(new TeamGroupParams($key, (string) $value));
+                    }
+                }
+            )(),
+            default => throw new ImproperActionException('Invalid action for teamgroup'),
+        };
+        return $this->readOne();
     }
 
     public function destroy(): bool
@@ -255,22 +255,51 @@ class TeamGroups implements CrudInterface
     }
 
     /**
+     * Create a team group
+     */
+    private function create(string $name): int
+    {
+        $this->canWriteOrExplode();
+        $name = Filter::title($name);
+        $sql = 'INSERT INTO team_groups(name, team) VALUES(:content, :team)';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $name);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $this->Db->lastInsertId();
+    }
+
+    private function update(TeamGroupParams $params): bool
+    {
+        $sql = 'UPDATE team_groups SET name = :name WHERE id = :id AND team = :team';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':name', $params->getContent(), PDO::PARAM_STR);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        return $this->Db->execute($req);
+    }
+
+    /**
      * Add or remove a member from a team group
      * How is add or rm
      */
-    private function updateMember(TeamGroupParamsInterface $params): bool
+    private function updateMember(array $params): array
     {
-        if ($params->getHow() === 'add') {
+        if ($params['how'] === Action::Add->value) {
             $sql = 'INSERT INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)';
-        } elseif ($params->getHow() === 'rm') {
+        } elseif ($params['how'] === Action::Unreference->value) {
             $sql = 'DELETE FROM users2team_groups WHERE userid = :userid AND groupid = :groupid';
         } else {
             throw new IllegalActionException('Bad action keyword');
         }
+        $userid = (int) $params['userid'];
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':userid', $params->getUserid(), PDO::PARAM_INT);
-        $req->bindValue(':groupid', $params->getGroup(), PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $req->bindValue(':userid', $userid, PDO::PARAM_INT);
+        $req->bindValue(':groupid', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $this->readOne();
     }
 
     /**

@@ -9,9 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\UsersHelper;
 use PDO;
 
@@ -30,13 +28,13 @@ class Users2Teams
     /**
      * Add one user to one team
      */
-    public function create(ContentParamsInterface $params): bool
+    public function create(int $userid, int $teamid): bool
     {
         // primary key will take care of ensuring there are no duplicate tuples
         $sql = 'INSERT INTO users2teams (`users_id`, `teams_id`) VALUES (:userid, :team);';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':userid', (int) $params->getExtra('userid'), PDO::PARAM_INT);
-        $req->bindValue(':team', (int) $params->getExtra('teamid'), PDO::PARAM_INT);
+        $req->bindValue(':userid', $userid, PDO::PARAM_INT);
+        $req->bindValue(':team', $teamid, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
@@ -48,17 +46,15 @@ class Users2Teams
     public function addUserToTeams(int $userid, array $teamIdArr): void
     {
         foreach ($teamIdArr as $teamId) {
-            $params = new ContentParams('', '', array('userid' => $userid, 'teamid' => (int) $teamId));
-            $this->create($params);
+            $this->create($userid, (int) $teamId);
         }
     }
 
     /**
      * Remove one user from a team
      */
-    public function destroy(ContentParamsInterface $params): bool
+    public function destroy(int $userid, int $teamid): bool
     {
-        $userid = (int) $params->getExtra('userid');
         // make sure that the user is in more than one team before removing the team
         $UsersHelper = new UsersHelper($userid);
         if (count($UsersHelper->getTeamsFromUserid()) === 1) {
@@ -67,7 +63,7 @@ class Users2Teams
         $sql = 'DELETE FROM users2teams WHERE `users_id` = :userid AND `teams_id` = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->bindValue(':team', (int) $params->getExtra('teamid'), PDO::PARAM_INT);
+        $req->bindValue(':team', $teamid, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
@@ -79,8 +75,7 @@ class Users2Teams
     public function rmUserFromTeams(int $userid, array $teamIdArr): void
     {
         foreach ($teamIdArr as $teamId) {
-            $params = new ContentParams('', '', array('userid' => $userid, 'teamid' => (int) $teamId));
-            $this->destroy($params);
+            $this->destroy($userid, (int) $teamId);
         }
     }
 }

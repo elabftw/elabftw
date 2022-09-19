@@ -13,7 +13,7 @@ build:
 
     tests:
         override:
-            - command: tests/run.sh unit
+            - command: tests/run.sh
               idle_timeout: 500
               coverage:
                   file: coverage.xml

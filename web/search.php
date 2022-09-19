@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,11 +6,11 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\SearchController;
+use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -18,15 +18,14 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Teams;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Check;
-use Elabftw\Services\Filter;
 
 /**
  * The search page
  * Here be dragons!
- *
  */
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Search');
@@ -37,8 +36,8 @@ $Tags = new Tags($Experiments);
 $tagsArr = $Tags->readAll();
 
 $itemsTypesArr = (new ItemsTypes($App->Users))->readAll();
-$categoryArr = $statusArr = (new Status($App->Users->team))->readAll();
-if ($Request->query->get('type') !== 'experiments') {
+$categoryArr = $statusArr = (new Status(new Teams($App->Users, $App->Users->team)))->readAll();
+if ($App->Request->query->get('type') !== 'experiments') {
     $categoryArr = $itemsTypesArr;
 }
 
@@ -50,7 +49,7 @@ $visibilityArr = $TeamGroups->getVisibilityList();
 $usersArr = $App->Users->readAllFromTeam();
 
 // WHERE do we search?
-if ($Request->query->get('type') === 'experiments') {
+if ($App->Request->query->get('type') === 'experiments') {
     $Entity = $Experiments;
 } else {
     $Entity = $Database;
@@ -61,8 +60,8 @@ if ($Request->query->get('type') === 'experiments') {
 $extended = 'author:"' . $Entity->Users->userData['fullname'] . '" ';
 $extendedError = '';
 
-if ($Request->query->has('extended') && !empty($Request->query->get('extended'))) {
-    $extended = trim((string) $Request->query->get('extended'));
+if ($App->Request->query->has('extended') && !empty($App->Request->query->get('extended'))) {
+    $extended = trim((string) $App->Request->query->get('extended'));
 
     $advancedQuery = new AdvancedSearchQuery($extended, new VisitorParameters($Entity->type, $visibilityArr, $teamGroupsArr));
     $whereClause = $advancedQuery->getWhereClause();
@@ -75,7 +74,7 @@ if ($Request->query->has('extended') && !empty($Request->query->get('extended'))
 
 // RENDER THE FIRST PART OF THE PAGE (search form)
 $renderArr = array(
-    'Request' => $Request,
+    'Request' => $App->Request,
     'Experiments' => $Experiments,
     'Database' => $Database,
     'categoryArr' => $categoryArr,
@@ -95,21 +94,21 @@ echo $App->render('search.html', $renderArr);
  * Here the search begins
  * If there is a search, there will be get parameters, so this is our main switch
  */
-if ($Request->query->count() > 0 && $extendedError === '') {
+if ($App->Request->query->count() > 0 && $extendedError === '') {
     // PREPARE SQL query
     /////////////////////////////////////////////////////////////////
-    if ($Request->query->has('type')) {
+    if ($App->Request->query->has('type')) {
         // Metadata search
-        foreach ($Request->query->all('metakey') as $i => $metakey) {
+        foreach ($App->Request->query->all('metakey') as $i => $metakey) {
             if (!empty($metakey)) {
-                $Entity->addMetadataFilter($metakey, $Request->query->all('metavalue')[$i]);
+                $Entity->addMetadataFilter($metakey, $App->Request->query->all('metavalue')[$i]);
             }
         }
 
-        if ($Request->query->get('type') !== 'experiments') {
+        if ($App->Request->query->get('type') !== 'experiments') {
             // FILTER ON DATABASE ITEMS TYPES
-            if (Check::id((int) $Request->query->get('type')) !== false) {
-                $Entity->addFilter('categoryt.id', $Request->query->get('type'));
+            if (Check::id($App->Request->query->getInt('type')) !== false) {
+                $Entity->addFilter(FilterableColumn::Category->value, $App->Request->query->getInt('type'));
             }
         }
 

@@ -13,11 +13,9 @@ use function basename;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Config;
-use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
-use Elabftw\Models\Users;
 use Elabftw\Services\AnonAuth;
 use Elabftw\Services\CookieAuth;
+use Elabftw\Services\ElabidFinder;
 use function in_array;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -75,16 +73,9 @@ class Auth implements AuthInterface
                 return new CookieAuth((string) $this->Request->cookies->get('token'), $this->Request->cookies->getDigits('token_team'));
             case 'elabid':
                 // now we need to know in which team we autologin the user
-                // use the page from the request to determine if it's from items or experiments
-                $page = $this->Request->getScriptName();
-                if ($page === '/experiments.php') {
-                    $Entity = new Experiments(new Users(), (int) $this->Request->query->get('id'));
-                } elseif ($page === '/database.php') {
-                    $Entity = new Items(new Users(), (int) $this->Request->query->get('id'));
-                } else {
-                    throw new UnauthorizedException();
-                }
-                $team = $Entity->getTeamFromElabid((string) $this->Request->query->get('elabid'));
+                $ElabidFinder = new ElabidFinder($this->Request->getScriptName(), $this->Request->query->getAlnum('elabid'));
+                $team = $ElabidFinder->findTeam();
+
                 if ($team === 0) {
                     throw new UnauthorizedException();
                 }
@@ -99,7 +90,6 @@ class Auth implements AuthInterface
                 // no break
             default:
                 throw new UnauthorizedException();
-
         }
     }
 }

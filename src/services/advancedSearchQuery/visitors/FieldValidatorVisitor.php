@@ -23,6 +23,7 @@ use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use function sprintf;
 
+/** @psalm-suppress UnusedParam */
 class FieldValidatorVisitor implements Visitor
 {
     public function check(Visitable $parsedQuery, VisitorParameters $parameters): array
@@ -104,7 +105,7 @@ class FieldValidatorVisitor implements Visitor
     {
         $head = $expression->getExpression()->accept($this, $parameters);
         $tail = $this->visitTail($expression->getTail(), $parameters);
-        
+
         return $this->mergeHeadTail($head, $tail);
     }
 

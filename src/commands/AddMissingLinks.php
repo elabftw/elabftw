@@ -9,13 +9,12 @@
 
 namespace Elabftw\Commands;
 
-use function count;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\EntityFactory;
-use Elabftw\Models\Links;
+use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\Users;
 use Elabftw\Services\TeamsHelper;
 use function preg_match_all;
@@ -105,7 +104,7 @@ class AddMissingLinks extends Command
                     // make sure we can access all entries with write access
                     $entity->bypassWritePermission = true;
                     $entity->setId($data['id']);
-                    $links = new Links($entity);
+                    $links = new ItemsLinks($entity);
 
                     // look for links to items and experiments in the body and create links
                     // for Templates and ItemsTypes links to experiments will not be added
@@ -113,7 +112,7 @@ class AddMissingLinks extends Command
                     foreach ($matches as $match) {
                         try {
                             $targetEntity = $match['target'] === 'experiments' ? 'experiments' : 'items';
-                            if ($links->create(new ContentParams($match['id'], extra: array('targetEntity' => $targetEntity)))) {
+                            if ($links->postAction(Action::Create, array('target_entity' => $targetEntity))) {
                                 $count++;
                             }
                         } catch (IllegalActionException | ImproperActionException $e) {

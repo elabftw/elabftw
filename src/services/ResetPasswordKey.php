@@ -18,7 +18,6 @@ use Elabftw\Models\Users;
 use function explode;
 use function implode;
 use function sprintf;
-use function time;
 
 /**
  * Generator and validator for key in reset password feature

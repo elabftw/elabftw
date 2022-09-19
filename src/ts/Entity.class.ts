@@ -5,104 +5,51 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Payload, Method, EntityType, Action, Target, ResponseMsg } from './interfaces';
-import { Ajax } from './Ajax.class';
+import { EntityType, Action, Target } from './interfaces';
+import { Api } from './Apiv2.class';
 
 export default class Entity {
   model: EntityType;
-  sender: Ajax;
+  api: Api;
 
   constructor(model: EntityType) {
     this.model = model;
-    this.sender = new Ajax();
+    this.api = new Api();
   }
 
   // content can be a template id (for experiments), an itemtype id (for items) or a template title
-  create(content: string, tags: Array<string>): Promise<ResponseMsg> {
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Create,
-      model: this.model,
-      // this id is the experiment template or item type id
-      content: content,
-      entity: {
-        type: this.model,
-        id: null,
-      },
-      extraParams: {
-        tags: tags,
-      },
-    };
-    return this.sender.send(payload);
+  create(content: string, tags: Array<string>): Promise<Response> {
+    const params = {'category_id': content, 'tags': tags};
+    return this.api.post(`${this.model}`, params);
   }
 
-  update(id: number, target: Target, content: string): Promise<ResponseMsg> {
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Update,
-      model: this.model,
-      entity: {
-        type: this.model,
-        id: id,
-      },
-      content: content,
-      target: target,
-      notif: true,
-    };
-    return this.sender.send(payload);
+  read(id: number) {
+    return this.api.getJson(`${this.model}/${id}`);
   }
 
-  lock(id: number): Promise<ResponseMsg> {
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Lock,
-      model: this.model,
-      entity: {
-        type: this.model,
-        id: id,
-      },
-      notif: true,
-    };
-    return this.sender.send(payload);
+  update(id: number, target: Target, content: string): Promise<Response> {
+    const params = {};
+    params[target] = content;
+    return this.api.patch(`${this.model}/${id}`, params);
   }
 
-  pin(id: number): Promise<ResponseMsg> {
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Pin,
-      model: this.model,
-      entity: {
-        type: this.model,
-        id: id,
-      },
-      notif: true,
-    };
-    return this.sender.send(payload);
+  lock(id: number): Promise<Response> {
+    return this.api.patch(`${this.model}/${id}`, {'action': Action.Lock});
   }
 
-  duplicate(id: number): Promise<ResponseMsg> {
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Duplicate,
-      model: this.model,
-      entity: {
-        type: this.model,
-        id: id,
-      },
-    };
-    return this.sender.send(payload);
+  pin(id: number): Promise<Response> {
+    return this.api.patch(`${this.model}/${id}`, {'action': Action.Pin});
   }
 
-  destroy(id: number): Promise<ResponseMsg> {
-    const payload: Payload = {
-      method: Method.POST,
-      action: Action.Destroy,
-      model: this.model,
-      entity: {
-        type: this.model,
-        id: id,
-      },
-    };
-    return this.sender.send(payload);
+  duplicate(id: number): Promise<Response> {
+    return this.api.post(`${this.model}/${id}`, {'action': Action.Duplicate});
+  }
+
+  timestamp(id: number): Promise<Response> {
+    return this.api.patch(`${this.model}/${id}`, {'action': Action.Timestamp});
+  }
+
+  destroy(id: number): Promise<Response> {
+    return this.api.delete(`${this.model}/${id}`);
   }
 }

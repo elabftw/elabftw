@@ -16,9 +16,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
-use Elabftw\Maps\Team;
 use Elabftw\Models\Idps;
-use Elabftw\Models\Teams;
 use Elabftw\Services\Email;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,30 +37,11 @@ try {
         throw new IllegalActionException('Non sysadmin user tried to access sysadmin controller.');
     }
 
-    $Teams = new Teams($App->Users);
     $Email = new Email($App->Config, $App->Log);
-
-    // CREATE TEAM
-    if ($Request->request->has('teamsCreate')) {
-        $Teams->create(new ContentParams($Request->request->get('teamsName')));
-    }
-
-    // UPDATE TEAM
-    if ($Request->request->has('teamsUpdate')) {
-        $Team = new Team((int) $Request->request->get('id'));
-        $Team->hydrate($Request->request->all());
-        $Team->save();
-    }
-
-    // DESTROY TEAM
-    if ($Request->request->has('teamsDestroy')) {
-        $Teams->setId((int) $Request->request->get('teamsDestroyId'));
-        $Teams->destroy();
-    }
 
     // SEND TEST EMAIL
     if ($Request->request->has('testemailSend')) {
-        $Email->testemailSend($Request->request->get('testemailEmail'));
+        $Email->testemailSend($Request->request->get('email'));
     }
 
     // SEND MASS EMAIL
@@ -72,7 +51,7 @@ try {
 
     // DESTROY IDP
     if ($Request->request->has('idpsDestroy')) {
-        $Idps = new Idps((int) $Request->request->get('id'));
+        $Idps = new Idps($Request->request->getInt('id'));
         $Idps->destroy();
     }
 

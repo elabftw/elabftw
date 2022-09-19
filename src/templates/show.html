@@ -15,7 +15,14 @@
 
   {% if count == 0 and searchType != '' %}
     <div class='row display-flex' id='itemList'>
+      {% set otherPage = Entity.type == 'experiments' ? 'database' : 'experiments' %}
+      {% set otherCategory = Entity.type == 'experiments' ? 'items' : 'experiments' %}
       {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
+    </div>
+    <div class='row d-flex'>
+      <a href='{{ otherPage }}.php?q={{ App.Request.query.get('q') }}'>
+        <button class='button btn btn-primary'>{{ 'Search in %s'|trans|format(otherCategory) }}</button>
+      </a>
     </div>
   {% elseif count == 0 and searchType == '' and not App.Session.get('is_anon') and not App.Request.query.get('offset') %}
     <div class='row display-flex' id='itemList'>
@@ -62,8 +69,8 @@
           <option value='eln'>{{ 'Make ELN'|trans }}</option>
           <option value='zip'>{{ 'Make Zip'|trans }}</option>
           <option value='csv'>{{ 'Make Csv'|trans }}</option>
-          <option value='multiPdf'>{{ 'Make PDF'|trans }}</option>
-          <option value='qrPdf'>{{ 'Make QR codes PDF'|trans }}</option>
+          <option value='multipdf'>{{ 'Make PDF'|trans }}</option>
+          <option value='qrpdf'>{{ 'Make QR codes PDF'|trans }}</option>
           <option value='json'>{{ 'Make JSON'|trans }}</option>
         </select>
 
@@ -112,7 +119,7 @@
         </div>
       {% elseif App.Users.userData.display_mode == 'tb' %}
       <div id='itemList'>
-        <table class='item-table'>
+        <table class='item-table' aria-describedby='pageTitle'>
           <tr>
             <th>
               {{ 'Date'|trans }} <a href='#' data-action='reorder-entities' data-orderby='date'><i class='fas fa-sort'></i></a>

@@ -64,17 +64,17 @@
       </a>
     {% endif %}
 
-    <a class='elab-tooltip mr-1' href='make.php?what=pdf&id={{ Entity.id }}&type={{ Entity.type }}'>
+    <a class='elab-tooltip mr-1' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdf'>
       <span>{{ 'Make a PDF'|trans }}</span>
       <i title='{{ 'Make a PDF'|trans }}' class='fas fa-file-pdf fa-2x mr-2'></i>
     </a>
 
-    <a class='elab-tooltip mr-1' href='make.php?what=zip&id={{ Entity.id }}&type={{ Entity.type }}'>
+    <a class='elab-tooltip mr-1' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=zip'>
       <span>{{ 'Make a ZIP'|trans }}</span>
       <i title='{{ 'Make a ZIP'|trans }}' class='fas fa-file-archive fa-2x mr-2'></i>
     </a>
 
-    <a class='elab-tooltip mr-1' href='make.php?what=eln&id={{ Entity.id }}&type={{ Entity.type }}'>
+    <a class='elab-tooltip mr-1' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=eln'>
       <span>{{ 'Make an ELN'|trans }}</span>
       <i title='{{ 'Make an ELN'|trans }}' class='fas fa-box-archive fa-2x mr-2'></i>
     </a>
@@ -239,7 +239,7 @@
                 ({{ 'edited'|trans }} <span title='{{ comment.modified_at }}' class='relative-moment'></span>)
               {% endif %}
               {% if comment.userid == Entity.Users.userData.userid %}
-                <a class='float-right' data-action='destroy-comment' data-target='{{ comment.id }}' title='{{ 'Delete'|trans }}'>
+                <a class='float-right' data-action='destroy-comment' data-id='{{ comment.id }}' title='{{ 'Delete'|trans }}'>
                     <i class='fas fa-trash-alt fa-lg'></i>
                 </a>
               {% endif %}
@@ -270,6 +270,7 @@
     data-page='view'
     data-type='{{ Entity.type }}'
     data-id='{{ Entity.id }}'
+    data-team='{{ App.Users.userData.team }}'
     data-scedit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
 <div id='shortcuts'

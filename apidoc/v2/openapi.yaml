@@ -1,0 +1,1745 @@
+openapi: 3.0.3
+info:
+  title: eLabFTW REST API v2 Documentation
+  description: Some description of the api.
+  version: 2.0.0
+servers:
+  - url: https://eln.example.org/api/v2
+    description: Example base URL
+  - url: https://elab.local:3148/api/v2
+    description: Local dev server
+components:
+  securitySchemes:
+    token:
+      type: apiKey
+      name: Authorization
+      in: header
+  schemas:
+    apikey:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        created_at:
+          type: string
+        hash:
+          type: string
+        can_write:
+          type: number
+    comment:
+      type: object
+      properties:
+        id:
+          type: integer
+        created_at:
+          type: string
+        item_id:
+          type: integer
+        comment:
+          type: string
+        userid:
+          type: integer
+        modified_at:
+          type: string
+        fullname:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+        orcid:
+          type: string
+    config:
+      type: object
+      properties:
+        todo:
+          type: string
+    entity:
+      type: object
+      properties:
+        body:
+          type: string
+        body_html:
+          type: string
+        canread:
+          type: string
+        canwrite:
+          type: string
+        category:
+          type: string
+        category_id:
+          type: integer
+        color:
+          type: string
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/comment'
+        content_type:
+          type: number
+        created_at:
+          type: string
+        date:
+          type: string
+        elabid:
+          type: string
+        events_id:
+          type: string
+        events_item_id:
+          type: string
+        firtname:
+          type: string
+        fullname:
+          type: string
+        has_attachement:
+          type: integer
+        has_comment:
+          type: integer
+        id:
+          type: number
+        is_bound:
+          type: string
+        lastchangeby:
+          type: integer
+        lastname:
+          type: string
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+        locked:
+          type: integer
+        lockedby:
+          type: integer
+        lockedwhen:
+          type: string
+        metadata:
+          type: string
+        modified_at:
+          type: string
+        next_step:
+          type: string
+        orcid:
+          type: string
+        page:
+          type: string
+        rating:
+          type: integer
+        recent_comment:
+          type: string
+        sharelink:
+          type: string
+        state:
+          type: integer
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/step'
+        tags:
+          type: string
+        tags_id:
+          type: string
+        timestamped:
+          type: integer
+        timestampedby:
+          type: integer
+        timestampedwhen:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        up_item_id:
+          type: integer
+        uploads:
+          type: array
+          items:
+            $ref: '#/components/schemas/upload'
+        userid:
+          type: integer
+    event:
+      type: object
+      properties:
+        title:
+          type: string
+        id:
+          type: integer
+        start:
+          type: string
+        end:
+          type: string
+        userid:
+          type: integer
+        item_title:
+          type: string
+        color:
+          type: string
+        fullname:
+          type: string
+        item_link:
+          type: integer
+        item_link_title:
+          type: string
+        experiment:
+          type: integer
+        experiment_title:
+          type: string
+    experiment:
+      allOf:
+        - $ref: '#/components/schemas/entity'
+    experiment_template:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        body:
+          type: string
+        userid:
+          type: integer
+        canread:
+          type: string
+        canwrite:
+          type: string
+        locked:
+          type: integer
+        lockedby:
+          type: integer
+        lockedwhen:
+          type: string
+        fullname:
+          type: string
+        metadata:
+          type: string
+        teams_id:
+          type: integer
+        is_pinned:
+          type: integer
+        tags:
+          type: string
+        tags_id:
+          type: string
+    item:
+      allOf:
+        - $ref: '#/components/schemas/entity'
+    items_type:
+      type: object
+      properties:
+        category_id:
+          type: integer
+        category:
+          type: string
+        color:
+          type: string
+        bookable:
+          type: integer
+        body:
+          type: string
+        ordering:
+          type: integer
+        canread:
+          type: string
+        canwrite:
+          type: string
+    link:
+      type: object
+      properties:
+        itemid:
+          type: integer
+        title:
+          type: string
+        elabid:
+          type: string
+        category:
+          type: string
+        bookable:
+          type: integer
+        color:
+          type: string
+    step:
+      type: object
+      properties:
+        id:
+          type: integer
+        item_id:
+          type: integer
+        body:
+          type: string
+        ordering:
+          type: integer
+        finished:
+          type: integer
+        finished_time:
+          type: string
+        deadline:
+          type: string
+        deadline_notif:
+          type: integer
+    team:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        common_template:
+          type: string
+        deletable_xp:
+          type: integer
+        deletable_item:
+          type: integer
+        user_create_tag:
+          type: integer
+        force_exp_tpl:
+          type: integer
+        link_name:
+          type: string
+        link_href:
+          type: string
+        created_at:
+          type: string
+        orgid:
+          type: string
+        public_db:
+          type: integer
+        force_canread:
+          type: string
+        force_canwrite:
+          type: string
+        do_force_canread:
+          type: integer
+        do_force_canwrite:
+          type: integer
+        visible:
+          type: integer
+    todoitem:
+      type: object
+      properties:
+        id:
+          type: integer
+        body:
+          type: string
+        creation_time:
+          type: string
+        ordering:
+          type: integer
+        userid:
+          type: integer
+    unfinished_step:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        steps:
+          type: array
+          items:
+            type: string
+    unfinished_steps:
+      type: object
+      properties:
+        experiments:
+          type: array
+          items:
+            $ref: '#/components/schemas/unfinished_step'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/unfinished_step'
+    upload:
+      type: object
+      properties:
+        id:
+          type: integer
+        real_name:
+          type: string
+        long_name:
+          type: string
+        comment:
+          type: string
+        item_id:
+          type: integer
+        userid:
+          type: string
+        type:
+          type: string
+        created_at:
+          type: string
+        hash:
+          type: string
+        hash_algorithm:
+          type: string
+        storage:
+          type: integer
+        filesize:
+          type: integer
+        state:
+          type: integer
+        immutable:
+          type: integer
+        fullname:
+          type: string
+    users:
+      type: object
+      properties:
+        userid:
+          type: integer
+        firstname:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string
+        validated:
+          type: integer
+        usergroup:
+          type: integer
+        archived:
+          type: integer
+        last_login:
+          type: string
+        fullname:
+          type: string
+        orcid:
+          type: string
+        auth_service:
+          type: integer
+
+
+security:
+  - token:
+      - token
+paths:
+  /apikeys:
+    summary: Manage API keys
+    description: Handle operations on API keys.
+    post:
+      tags: ['Api keys']
+      summary: Create an API key
+      description: >-
+        Create an API key. The cleartext key is sent back in the location
+        header.
+      operationId: post-apikeys
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: A name for the API key.
+                  default: RTFM
+                canwrite:
+                  type: integer
+                  description: Set to 1 to allow the key to do write actions.
+                  default: 0
+      responses:
+        '201':
+          description: The key has been created.
+          headers:
+            location:
+              description: A fake URL that contains the API key in cleartext
+              schema:
+                type: string
+    get:
+      tags: ['Api keys']
+      summary: Read API keys
+      description: Get list of API keys for currently logged in user.
+      operationId: get-apikeys
+      responses:
+        '200':
+          description: List API keys for user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/apikey'
+  /apikeys/{id}:
+    summary: Actions on an api key
+    delete:
+      tags: ['Api keys']
+      summary: Delete an API key.
+      description: Delete an API key
+      operationId: delete-apikey
+      parameters:
+        - name: id
+          in: path
+          description: ID of the API key
+          required: true
+          schema:
+            type: number
+      responses:
+        '204':
+          description: The key was deleted
+  /config:
+    summary: The general instance configuration settings
+    get:
+      tags: ['Config']
+      summary: Read the config
+      operationId: get-config
+      responses:
+        '200':
+          description: The config settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/config'
+    patch:
+      tags: ['Config']
+      summary: Modify the config
+      operationId: patch-config
+      requestBody:
+        description: The config values to change.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/config'
+      responses:
+        '200':
+          description: The config was modified.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/config'
+    delete:
+      tags: ['Config']
+      summary: Reset the config to default values
+      operationId: delete-config
+      responses:
+        '204':
+          description: The config was reset.
+  /experiments:
+    summary: Actions on experiments
+    post:
+      tags: ['Experiments']
+      summary: Create an experiment
+      operationId: post-experiment
+      requestBody:
+        description: Parameters for creating an experiment
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category_id:
+                  type: integer
+                  description: >-
+                    The template id to use, or 0 to use the common team
+                    template, or -1 to have an empty body.
+                  default: -1
+                tags:
+                  type: array
+                  description: >-
+                    An array of tags to assign to the created entry.
+                  items:
+                    type: string
+                  default: []
+
+      responses:
+        '201':
+          description: The experiment has been created.
+          headers:
+            location:
+              description: An URL to the experiment that was created.
+              schema:
+                type: string
+    get:
+      tags: ['Experiments']
+      summary: Read all experiments that are accessible
+      operationId: read-experiments
+      # Note: this has to be repeated manually for now
+      # See https://github.com/OAI/OpenAPI-Specification/issues/445
+      parameters:
+        - name: related
+          in: query
+          schema:
+            type: integer
+          description: |
+            Look only for entries linked to this item id.
+          examples:
+            first:
+              summary: Look for entries linked to item with id 42.
+              value: 42
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          default: 15
+          description: |
+            Limit the number of results.
+          examples:
+            first:
+              summary: Limit number of results to 5.
+              value: 5
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          default: 0
+          description: |
+            Skip a number of results. Use with limit to work the pagination.
+          examples:
+            first:
+              summary: Skip 3 first results.
+              value: 3
+      responses:
+        '200':
+          description: A list of experiments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/experiment'
+  /experiments/{id}:
+    summary: Actions on an experiment
+    parameters:
+      - name: id
+        in: path
+        description: ID of the experiment
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Experiments']
+      summary: Read an experiment
+      operationId: get-experiment
+      responses:
+        '200':
+          description: An experiment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/experiment'
+    patch:
+      tags: ['Experiments']
+      summary: Modify an experiment
+      operationId: patch-experiment
+      requestBody:
+        description: Parameters for patching an item
+        content:
+          application/json:
+            schema:
+              anyOf:
+                - type: object
+                  properties:
+                    action:
+                      type: string
+                      enum: ['lock', 'pin', 'updatemetadatafield', 'update', 'bloxberg', 'timestamp']
+                - $ref: '#/components/schemas/experiment'
+      responses:
+        '200':
+          description: The patched experiment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/experiment'
+    delete:
+      tags: ['Experiments']
+      summary: Delete an experiment.
+      description: The experiment gets soft-deleted.
+      operationId: delete-experiment
+      responses:
+        '204':
+          description: The experiment was deleted
+
+  # EXPERIMENTS COMMENTS
+  /experiments/{id}/comments:
+    summary: Actions on comments of an experiment
+    parameters:
+      - name: id
+        in: path
+        description: ID of the experiment
+        required: true
+        schema:
+          type: number
+    post:
+      tags: ['Experiments comments']
+      summary: Create a comment.
+      operationId: post-experiment-comments
+      requestBody:
+        description: Parameters for creating a comment
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+                  required: true
+      responses:
+        '201':
+          description: The comment has been created.
+          headers:
+            location:
+              description: An URL to the comment that was created.
+              schema:
+                type: string
+    get:
+      tags: ['Experiments comments']
+      summary: Read all comments of that experiment.
+      operationId: read-experiment-comments
+      responses:
+        '200':
+          description: A list of comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/comment'
+  /experiments/{id}/comments/{subid}:
+    summary: Actions on comment of an experiment
+    parameters:
+      - name: id
+        in: path
+        description: ID of the experiment
+        required: true
+        schema:
+          type: number
+      - name: subid
+        in: path
+        description: ID of the comment
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Experiments comments']
+      summary: Read all comments of that experiment.
+      operationId: read-experiment-comments
+      responses:
+        '200':
+          description: A comment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comment'
+    patch:
+      tags: ['Experiments comments']
+      summary: Modify an experiment comment.
+      operationId: patch-experiment-comment
+      requestBody:
+        description: Parameters for patching an experiment comment.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/comment'
+      responses:
+        '200':
+          description: The patched comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comment'
+    delete:
+      tags: ['Experiments comments']
+      summary: Delete an experiment comment.
+      description: The comment gets deleted.
+      operationId: delete-experiment-comment
+      responses:
+        '204':
+          description: The comment was deleted
+  # EXPERIMENTS LINKS
+  /experiments/{id}/links:
+    summary: Actions on links of an experiment
+    parameters:
+      - name: id
+        in: path
+        description: ID of the experiment
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Experiments links']
+      summary: Read all links of that experiment.
+      operationId: read-experiment-links
+      responses:
+        '200':
+          description: A list of links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/link'
+  /experiments/{id}/links/{subid}:
+    summary: Actions on link of an experiment
+    parameters:
+      - name: id
+        in: path
+        description: ID of the experiment
+        required: true
+        schema:
+          type: number
+      - name: subid
+        in: path
+        description: ID of the item (link)
+        required: true
+        schema:
+          type: number
+    post:
+      tags: ['Experiments links']
+      summary: Create or import a link.
+      operationId: post-experiment-links
+      requestBody:
+        description: Parameters for creating or importing a link.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['create', 'duplicate']
+                  description: |
+                    The `duplicate` action will import the links of that link (inception).
+      responses:
+        '201':
+          description: The link has been created.
+          headers:
+            location:
+              description: An URL to the link that was created.
+              schema:
+                type: string
+    delete:
+      tags: ['Experiments links']
+      summary: Delete an experiment link.
+      description: The link gets deleted.
+      operationId: delete-experiment-link
+      responses:
+        '204':
+          description: The link was deleted
+  /items:
+    summary: Actions on items
+    post:
+      tags: ['Items']
+      summary: Create an item
+      operationId: post-item
+      requestBody:
+        description: Parameters for creating an item
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category_id:
+                  type: integer
+                  description: >-
+                    The template id to use, or 0 to use the common team
+                    template, or -1 to have an empty body.
+                  default: -1
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  default: []
+
+      responses:
+        '201':
+          description: The item has been created.
+          headers:
+            location:
+              description: An URL to the item that was created.
+              schema:
+                type: string
+    get:
+      tags: ['Items']
+      summary: Read all items that are accessible
+      operationId: read-items
+      # start duplicate from GET /experiments (except related)
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          default: 15
+          description: |
+            Limit the number of results.
+          examples:
+            first:
+              summary: Limit number of results to 5.
+              value: 5
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          default: 0
+          description: |
+            Skip a number of results. Use with limit to work the pagination.
+          examples:
+            first:
+              summary: Skip 3 first results.
+              value: 3
+      # end duplicate from GET /experiments
+      responses:
+        '200':
+          description: A list of items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/item'
+  /items/{id}:
+    summary: Actions on an item
+    parameters:
+      - name: id
+        in: path
+        description: ID of the item
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Items']
+      summary: Read an item
+      operationId: get-item
+      responses:
+        '200':
+          description: An item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/item'
+    patch:
+      tags: ['Items']
+      summary: Modify an item
+      operationId: patch-item
+      responses:
+        '200':
+          description: The patched item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/item'
+    delete:
+      tags: ['Items']
+      summary: Delete an item.
+      description: The item gets soft-deleted.
+      operationId: delete-item
+      responses:
+        '204':
+          description: The key was deleted
+  # ITEMS COMMENTS
+  /items/{id}/comments:
+    summary: Actions on comments of an item
+    parameters:
+      - name: id
+        in: path
+        description: ID of the item
+        required: true
+        schema:
+          type: number
+    post:
+      tags: ['Items comments']
+      summary: Create a comment.
+      operationId: post-item-comments
+      requestBody:
+        description: Parameters for creating a comment
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+                  required: true
+      responses:
+        '201':
+          description: The comment has been created.
+          headers:
+            location:
+              description: An URL to the comment that was created.
+              schema:
+                type: string
+    get:
+      tags: ['Items comments']
+      summary: Read all comments of that item.
+      operationId: read-item-comments
+      responses:
+        '200':
+          description: A list of comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/comment'
+  /items/{id}/comments/{subid}:
+    summary: Actions on comment of an item
+    parameters:
+      - name: id
+        in: path
+        description: ID of the item
+        required: true
+        schema:
+          type: number
+      - name: subid
+        in: path
+        description: ID of the comment
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Items comments']
+      summary: Read all comments of that item.
+      operationId: read-item-comments
+      responses:
+        '200':
+          description: A comment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comment'
+    patch:
+      tags: ['Items comments']
+      summary: Modify an item comment.
+      operationId: patch-item-comment
+      requestBody:
+        description: Parameters for patching an item comment.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/comment'
+      responses:
+        '200':
+          description: The patched comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comment'
+    delete:
+      tags: ['Items comments']
+      summary: Delete an item comment.
+      description: The comment gets deleted.
+      operationId: delete-item-comment
+      responses:
+        '204':
+          description: The comment was deleted
+  # ITEMS LINKS
+  /items/{id}/links:
+    summary: Actions on links of an item
+    parameters:
+      - name: id
+        in: path
+        description: ID of the item
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Items links']
+      summary: Read all links of that item.
+      operationId: read-item-links
+      responses:
+        '200':
+          description: A list of links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/link'
+  /items/{id}/links/{subid}:
+    summary: Actions on link of an item
+    parameters:
+      - name: id
+        in: path
+        description: ID of the item
+        required: true
+        schema:
+          type: number
+      - name: subid
+        in: path
+        description: ID of the item (link)
+        required: true
+        schema:
+          type: number
+    post:
+      tags: ['Items links']
+      summary: Create or import a link.
+      operationId: post-item-links
+      requestBody:
+        description: Parameters for creating or importing a link.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['create', 'duplicate']
+                  description: |
+                    The `duplicate` action will import the links of that link (inception).
+      responses:
+        '201':
+          description: The link has been created.
+          headers:
+            location:
+              description: An URL to the link that was created.
+              schema:
+                type: string
+    delete:
+      tags: ['Items links']
+      summary: Delete an item link.
+      description: The link gets deleted.
+      operationId: delete-item-link
+      responses:
+        '204':
+          description: The link was deleted
+
+  # EXPERIMENTS_TEMPLATES
+  /experiments_templates:
+    summary: Actions on experiments_templates
+    post:
+      tags: ['Experiments templates']
+      summary: Create an experiment template
+      operationId: post-experiment_template
+      requestBody:
+        description: Parameters for creating an experiment template
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: A title for the template.
+                  default: Untitled
+      responses:
+        '201':
+          description: The experiment template has been created.
+          headers:
+            location:
+              description: An URL to the experiment template that was created.
+              schema:
+                type: string
+    get:
+      tags: ['Experiments templates']
+      summary: Read all experiments_templates that are accessible
+      operationId: read-experiments_templates
+      responses:
+        '200':
+          description: A list of experiments_templates
+          content:
+            application/json:
+              schema:
+                type: array
+                experiments_templates:
+                  $ref: '#/components/schemas/experiment_template'
+  /experiments_templates/{id}:
+    summary: Actions on an experiment template
+    parameters:
+      - name: id
+        in: path
+        description: ID of the experiment template
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Experiments templates']
+      summary: Read an experiment template
+      operationId: get-experiment_template
+      responses:
+        '200':
+          description: An experiment template
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/experiment_template'
+    patch:
+      tags: ['Experiments templates']
+      summary: Modify an experiment template
+      operationId: patch-experiment_template
+      responses:
+        '200':
+          description: The patched experiment template
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/experiment_template'
+    delete:
+      tags: ['Experiments templates']
+      summary: Delete an experiment template.
+      description: The experiment template gets soft-deleted.
+      operationId: delete-experiment_template
+      responses:
+        '204':
+          description: The key was deleted
+
+  # ITEMS_TYPES
+  /items_types:
+    summary: Actions on items_types
+    post:
+      tags: ['Items types']
+      summary: Create an item
+      operationId: post-items_types
+      requestBody:
+        description: Parameters for creating an item
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: A name for this items type.
+                  default: Untitled
+      responses:
+        '201':
+          description: The items type has been created.
+          headers:
+            location:
+              description: An URL to the items type that was created.
+              schema:
+                type: string
+    get:
+      tags: ['Items types']
+      summary: Read all items_types that are accessible.
+      operationId: read-items_types
+      responses:
+        '200':
+          description: A list of items_types.
+          content:
+            application/json:
+              schema:
+                type: array
+                items_types:
+                  $ref: '#/components/schemas/item'
+  /items_types/{id}:
+    summary: Actions on an items type.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the items type.
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Items types']
+      summary: Read an items type
+      operationId: get-items_type
+      responses:
+        '200':
+          description: An items type.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/items_type'
+    patch:
+      tags: ['Items types']
+      summary: Modify an item type
+      operationId: patch-items_type
+      responses:
+        '200':
+          description: The patched items type.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/items_type'
+    delete:
+      tags: ['Items types']
+      summary: Delete an item type.
+      description: The item gets soft-deleted.
+      operationId: delete-item
+      responses:
+        '204':
+          description: The item type was deleted.
+
+  # EVENTS
+  /events:
+    summary: For scheduler booking.
+    get:
+      tags: ['Events']
+      summary: Read all events in the team.
+      operationId: read-events
+      responses:
+        '200':
+          description: A list of booked slots.
+          content:
+            application/json:
+              schema:
+                type: array
+                items_types:
+                  $ref: '#/components/schemas/event'
+
+  /events/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the item to book.
+        required: true
+        schema:
+          type: number
+    post:
+      tags: ['Events']
+      summary: Create an event for the item specified as id.
+      operationId: post-events
+      requestBody:
+        description: Parameters for creating an event.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: A name for this booking slot.
+                  default: Untitled
+                start:
+                  type: string
+                  description: A starting date-time in ISO 8601 format.
+                end:
+                  type: string
+                  description: An end date-time in ISO 8601 format.
+      responses:
+        '201':
+          description: The booking slot has been created.
+          headers:
+            location:
+              description: An URL to the booking slot that was created.
+              schema:
+                type: string
+    patch:
+      tags: ['Events']
+      summary: |
+        Modify a booking slot. Warning: only one value (target) can be edited at a time.
+      operationId: patch-items_type
+      requestBody:
+        description: Parameters for modifying an event.
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  properties:
+                    target:
+                      type: string
+                      enum: ['start_epoch', 'end_epoch']
+                    epoch:
+                      type: string
+                      description: Date-time in UNIX epoch format.
+                - type: object
+                  properties:
+                    target:
+                      type: string
+                      enum: ['experiment', 'item_link']
+                    id:
+                      type: integer
+                      description: Entity id.
+                - type: object
+                  properties:
+                    target:
+                      type: string
+                      enum: ['start', 'end']
+                    delta:
+                      type: object
+                      description: The difference (delta) of time with the previous value.
+                      properties:
+                        days:
+                          type: integer
+                        milliseconds:
+                          type: integer
+                        months:
+                          type: integer
+                        years:
+                          type: integer
+      responses:
+        '200':
+          description: The patched event.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event'
+
+  # EVENT
+  /event/{id}:
+    summary: For scheduler booking.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the event to modify.
+        required: true
+        schema:
+          type: number
+    delete:
+      tags: ['Events']
+      summary: Delete a booking slot.
+      operationId: delete-event
+      responses:
+        '204':
+          description: The event was deleted.
+  # FAVTAGS
+  /favtags:
+    summary: Favorite tags for the logged-in user.
+    get:
+      tags: ['Favorite tags']
+      summary: Read all favorite tags for the user.
+      operationId: read-favtags
+      responses:
+        '200':
+          description: A list of favorite tags.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users_id:
+                    type: integer
+                  tags_id:
+                    type: integer
+                  tag:
+                    type: string
+    post:
+      tags: ['Favorite tags']
+      summary: Add a tag as favorite.
+      operationId: post-favtags
+      requestBody:
+        description: Parameters for adding a favorite tag.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tag:
+                  type: string
+                  description: An existing tag
+  /favtags/{id}:
+    summary: A particular favorite tag.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the tag.
+        required: true
+        schema:
+          type: number
+    delete:
+      tags: ['Favorite tags']
+      summary: Unfavorite a tag.
+      operationId: delete-favtag
+      responses:
+        '204':
+          description: The favorite tag was removed.
+
+  # TEAM TAGS
+  /team_tags:
+    summary: Manage tags at the team level.
+    get:
+      tags: ['Team tags']
+      summary: Read all tags for the team.
+      operationId: read-tags
+      responses:
+        '200':
+          description: A list of tags.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tag:
+                    type: string
+                  id:
+                    type: integer
+    patch:
+      tags: ['Team tags']
+      summary: |
+        Actions on tags.
+      operationId: patch-tags
+      requestBody:
+        description: Parameters for modifying team tags.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['deduplicate']
+              description: Find all duplicate tags and deduplicate them.
+  /team_tags/{id}:
+    summary: Retrieve a tag from its id.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the tag.
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Team tags']
+      summary: Read a tag.
+      operationId: read-tag
+      responses:
+        '200':
+          description: A tag.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tag:
+                    type: string
+                  id:
+                    type: integer
+    patch:
+      tags: ['Team tags']
+      summary: |
+        Actions on a tag.
+      operationId: patch-tag
+      requestBody:
+        description: Parameters for modifying a tag.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['updatetag']
+                tag:
+                  type: string
+                  description: The content of the tag.
+              description: Update the tag. Requires Admin permissions.
+    delete:
+      tags: ['Team tags']
+      summary: Delete a tag.
+      operationId: delete-tag
+      responses:
+        '204':
+          description: The tag was removed.
+
+  # TEAMS
+  /teams:
+    summary: Manage teams.
+    get:
+      tags: ['Teams']
+      summary: Read all teams. Requires Sysadmin permissions.
+      operationId: read-teams
+      responses:
+        '200':
+          description: A list of teams.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/team'
+    post:
+      tags: ['Teams']
+      summary: Create a new team.
+      operationId: post-teams
+      requestBody:
+        description: Parameters for creating a new team.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Team name.
+                  default: New team name
+      responses:
+        '201':
+          description: The team has been created.
+          headers:
+            location:
+              description: An URL to the team that was created.
+              schema:
+                type: string
+  /teams/{id}:
+    summary: Manage a team.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Teams']
+      summary: Read a team. Requires Admin permissions.
+      operationId: read-team
+      responses:
+        '200':
+          description: A team.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team'
+    patch:
+      tags: ['Teams']
+      summary: |
+        Actions on a team.
+      operationId: patch-team
+      requestBody:
+        description: Parameters for modifying a team.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/team'
+      responses:
+        '200':
+          description: The updated team.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/team'
+  /todolist:
+    summary: Todolist for current user.
+    get:
+      tags: ['Todolist']
+      summary: Read all todoitems.
+      operationId: read-todolist
+      responses:
+        '200':
+          description: A list of things to do.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/todoitem'
+    post:
+      tags: ['Todolist']
+      summary: Create a todo item
+      operationId: post-todolist
+      requestBody:
+        description: Parameters for creating a todoitem.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  description: What to do
+      responses:
+        '201':
+          description: The todo entry has been created.
+          headers:
+            location:
+              description: An URL to the todo item that was created.
+              schema:
+                type: string
+  /todolist/{id}:
+    summary: Manage a todo entry.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the todoitem.
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Todolist']
+      summary: Read a todo entry.
+      operationId: read-todoitem
+      responses:
+        '200':
+          description: A todoitem.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/todoitem'
+    patch:
+      tags: ['Todolist']
+      summary: |
+        Actions on a todoitem.
+      operationId: patch-todoitem
+      requestBody:
+        description: Parameters for modifying a todoitem.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+                  required: true
+      responses:
+        '200':
+          description: The updated todoitem.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/todoitem'
+    delete:
+      tags: ['Todolist']
+      summary: Delete a todoitem.
+      operationId: delete-todoitem
+      responses:
+        '204':
+          description: The todoitem was removed.
+  /unfinished_steps:
+    summary: Unfinished steps from the user or the team, in experiments or items.
+    parameters:
+        - name: scope
+          in: query
+          description: |
+            Set to "team" to extend the list to other members.
+    get:
+      tags: ['Unfinished steps']
+      summary: Read all unfinished steps.
+      operationId: read-unfinished-steps
+      responses:
+        '200':
+          description: A list of unfinished steps
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/unfinished_steps'
+  # USERS
+  /users:
+    summary: Display information about users on the instance.
+    get:
+      tags: ['Users']
+      summary: Read users from instance.
+      description: If Sysadmin all users will be shown. If Admin only the users from the team. Normal users will be shown an error.
+      operationId: read-users
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/users'
+  /users/{id}:
+    summary: Display information about a particular user.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the user or `me`.
+        required: true
+        schema:
+          oneOf:
+            - type: number
+            - type: string
+              enum: ['me']
+        examples:
+          first:
+            summary: Access our own user.
+            value: 'me'
+          second:
+            summary: Access user with ID 42.
+            value: 42
+    get:
+      tags: ['Users']
+      summary: Read information of a user.
+      description: |
+        Note: it is possible to use "me" instead of the userid to access the user of the API key.
+      operationId: read-user
+      responses:
+        '200':
+          description: Public properties of a user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/users'

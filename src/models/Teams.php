@@ -1,23 +1,22 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2012, 2022 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Models;
 
 use function array_diff;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ItemTypeParams;
+use Elabftw\Elabftw\TeamParam;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\RestInterface;
+use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
@@ -25,16 +24,20 @@ use PDO;
 /**
  * All about the teams
  */
-class Teams implements CrudInterface
+class Teams implements RestInterface
 {
     use SetIdTrait;
+
+    public bool $bypassWritePermission = false;
+
+    public bool $bypassReadPermission = false;
 
     protected Db $Db;
 
     public function __construct(public Users $Users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
-        $this->id = $id;
+        $this->setId($id);
     }
 
     /**
@@ -84,42 +87,17 @@ class Teams implements CrudInterface
         $Users2Teams->rmUserFromTeams($userid, $rmFromTeams);
     }
 
-    /**
-     * Add a new team
-     */
-    public function create(ContentParamsInterface $params): int
+    public function getPage(): string
     {
-        $name = $params->getContent();
+        return 'api/v2/teams/';
+    }
 
-        // add to the teams table
-        $sql = 'INSERT INTO teams (name, common_template, link_name, link_href) VALUES (:name, :common_template, :link_name, :link_href)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':name', $name);
-        $req->bindValue(':common_template', Templates::defaultBody);
-        $req->bindValue(':link_name', 'Documentation');
-        $req->bindValue(':link_href', 'https://doc.elabftw.net');
-        $this->Db->execute($req);
-        // grab the team ID
-        $newId = $this->Db->lastInsertId();
-
-        // create default status
-        $Status = new Status($newId);
-        $Status->createDefault();
-
-        // create default item type
-        $user = new Users();
-        $user->team = $newId;
-        $ItemsTypes = new ItemsTypes($user);
-        $extra = array(
-            'color' => '#32a100',
-            'body' => '<p>Go to the admin panel to edit/add more items types!</p>',
-            'canread' => 'team',
-            'canwrite' => 'team',
-            'bookable' => '0',
-        );
-        $ItemsTypes->create(new ItemTypeParams('Edit me', 'all', $extra));
-
-        return $newId;
+    public function postAction(Action $action, array $reqBody): int
+    {
+        return match ($action) {
+            Action::Create => $this->create($reqBody['name'] ?? 'New team name'),
+            default => throw new ImproperActionException('Incorrect action for teams.'),
+        };
     }
 
     /**
@@ -127,6 +105,7 @@ class Teams implements CrudInterface
      */
     public function readOne(): array
     {
+        $this->canReadOrExplode();
         $sql = 'SELECT * FROM `teams` WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Users->userData['team'], PDO::PARAM_INT);
@@ -140,6 +119,7 @@ class Teams implements CrudInterface
      */
     public function readAll(): array
     {
+        $this->canReadOrExplode();
         $sql = 'SELECT * FROM teams ORDER BY name ASC';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
@@ -147,29 +127,22 @@ class Teams implements CrudInterface
         return $req->fetchAll();
     }
 
-    public function update(ContentParamsInterface $params): bool
+    public function patch(Action $action, array $params): array
     {
-        if (!$this->Users->userData['is_admin']) {
-            throw new IllegalActionException('Non admin user tried to update a team setting.');
-        }
+        $this->canWriteOrExplode();
 
-        $column = $params->getTarget();
-        try {
-            $content = $params->getContent();
-            // allow ts_login to be empty
-        } catch (ImproperActionException $e) {
-            if ($column === 'ts_login') {
-                $content = null;
-            } else {
-                throw new ImproperActionException('Input is too short!', 400, $e);
-            }
-        }
-
-        $sql = 'UPDATE teams SET ' . $column . ' = :content WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':content', $content);
-        $req->bindParam(':id', $this->Users->userData['team'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        match ($action) {
+            Action::Archive => throw new ImproperActionException('Feature not implemented.'),
+            Action::Update => (
+                function () use ($params) {
+                    foreach ($params as $key => $value) {
+                        $this->update(new TeamParam($key, (string) $value));
+                    }
+                }
+            )(),
+            default => throw new ImproperActionException('Incorrect action for teams.'),
+        };
+        return $this->readOne();
     }
 
     /**
@@ -178,7 +151,7 @@ class Teams implements CrudInterface
     public function destroy(): bool
     {
         // check for stats, should be 0
-        $count = $this->getStats($this->id);
+        $count = $this->getStats($this->id ?? 0);
 
         if ($count['totxp'] !== 0 || $count['totdb'] !== 0 || $count['totusers'] !== 0) {
             throw new ImproperActionException('The team is not empty! Aborting deletion!');
@@ -188,18 +161,6 @@ class Teams implements CrudInterface
         $sql = 'DELETE FROM teams WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
-    /**
-     * Clear the timestamp password
-     */
-    public function destroyStamppass(): bool
-    {
-        $sql = 'UPDATE teams SET ts_password = NULL WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Users->userData['team'], PDO::PARAM_INT);
-
         return $this->Db->execute($req);
     }
 
@@ -247,18 +208,89 @@ class Teams implements CrudInterface
         return $res;
     }
 
-    public function hasCommonTeamWithCurrent(int $userid, int $team): bool
+    public function hasCommonTeamWithCurrent(int $userid, ?int $team = null): bool
     {
+        if ($team === null) {
+            $team = $this->Users->userData['team'];
+        }
         $UsersHelper = new UsersHelper($userid);
         $teams = $UsersHelper->getTeamsIdFromUserid();
         return in_array($team, $teams, true);
+    }
+
+    public function canWriteOrExplode(): void
+    {
+        if ($this->bypassWritePermission) {
+            return;
+        }
+        if ($this->Users->userData['is_sysadmin'] || ($this->Users->userData['is_admin'] && $this->hasCommonTeamWithCurrent($this->Users->userData['userid'], $this->id))) {
+            return;
+        }
+        throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
+    }
+
+    private function create(string $name): int
+    {
+        $name = Filter::title($name);
+
+        $sql = 'INSERT INTO teams (name, common_template, link_name, link_href) VALUES (:name, :common_template, :link_name, :link_href)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':name', $name);
+        $req->bindValue(':common_template', Templates::defaultBody);
+        $req->bindValue(':link_name', 'Documentation');
+        $req->bindValue(':link_href', 'https://doc.elabftw.net');
+        $this->Db->execute($req);
+        // grab the team ID
+        $newId = $this->Db->lastInsertId();
+
+        $user = new Users();
+        // create default status
+        $Status = new Status(new self($user, $newId));
+        $Status->createDefault();
+
+        // create default item type
+        $user->team = $newId;
+        $ItemsTypes = new ItemsTypes($user);
+        $ItemsTypes->setId($ItemsTypes->create('Edit me'));
+        // we can't patch something that is not in our team!
+        $ItemsTypes->bypassWritePermission = true;
+        $extra = array(
+            'color' => '#32a100',
+            'body' => '<p>This is the default text of the default category.</p><p>Head to the <a href="admin.php?tab=5">Admin Panel</a> to edit/add more categories for your database!</p>',
+            'canread' => 'team',
+            'canwrite' => 'team',
+            'bookable' => '0',
+        );
+        $ItemsTypes->patch(Action::Update, $extra);
+
+        return $newId;
+    }
+
+    private function update(TeamParam $params): bool
+    {
+        $sql = 'UPDATE teams SET ' . $params->getColumn() . ' = :content WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $params->getContent());
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    private function canReadOrExplode(): void
+    {
+        if ($this->bypassReadPermission || $this->Users->userData['is_sysadmin']) {
+            return;
+        }
+        if ($this->hasCommonTeamWithCurrent((int) $this->Users->userData['userid'], $this->id)) {
+            return;
+        }
+        throw new IllegalActionException('User tried to read a team setting but they are not part of that team.');
     }
 
     private function createTeamIfAllowed(string $name): int
     {
         $Config = Config::getConfig();
         if ($Config->configArr['saml_team_create']) {
-            return $this->create(new ContentParams($name));
+            return $this->postAction(Action::Create, array('name' => $name));
         }
         throw new ImproperActionException('The administrator disabled team creation on login. Contact your administrator for creating the team beforehand.');
     }

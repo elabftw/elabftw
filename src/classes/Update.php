@@ -12,7 +12,6 @@ namespace Elabftw\Elabftw;
 use function bin2hex;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
-use Elabftw\Models\Config;
 use PDO;
 use function random_bytes;
 use function sha1;
@@ -29,7 +28,7 @@ use function sha1;
 class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    private const REQUIRED_SCHEMA = 98;
+    private const REQUIRED_SCHEMA = 99;
 
     private Db $Db;
 

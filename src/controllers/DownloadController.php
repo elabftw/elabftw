@@ -30,6 +30,9 @@ class DownloadController implements ControllerInterface
     // the human-friendly name that we will give to the downloaded file */
     private string $realName = 'unnamed_file';
 
+    // ascii only
+    private string $realNameFallback = 'unnamed_file';
+
     private string $filePath;
 
     private string $longName;
@@ -40,7 +43,8 @@ class DownloadController implements ControllerInterface
         $this->longName = Filter::forFilesystem(basename($longName));
         // get the first two letters to get the folder
         $this->filePath = substr($this->longName, 0, 2) . '/' . $this->longName;
-        $this->realName = Filter::toAscii($realName ?? '');
+        $this->realName = $realName ?? $this->realName;
+        $this->realNameFallback = Filter::toAscii($realName ?? '');
         if (empty($this->realName)) {
             $this->realName = 'unnamed_file';
         }
@@ -65,7 +69,7 @@ class DownloadController implements ControllerInterface
             }
             try {
                 $fileStream = $this->fs->readStream($this->getFilePath());
-            } catch (UnableToReadFile $e) {
+            } catch (UnableToReadFile) {
                 // display a thumbnail if the real thumbnail cannot be found
                 $fileStream = fopen(dirname(__DIR__, 2) . '/web/app/img/fallback-thumb.png', 'rb');
                 if ($fileStream === false) {
@@ -93,13 +97,17 @@ class DownloadController implements ControllerInterface
             $this->forceDownload = true;
         }
 
+        $disposition = HeaderUtils::DISPOSITION_INLINE;
+        // change the diposition to attachment
         if ($this->forceDownload) {
-            $disposition = HeaderUtils::makeDisposition(
-                HeaderUtils::DISPOSITION_ATTACHMENT,
-                $this->realName,
-            );
-            $Response->headers->set('Content-Disposition', $disposition);
+            $disposition = HeaderUtils::DISPOSITION_ATTACHMENT;
         }
+        $dispositionHeader = HeaderUtils::makeDisposition(
+            $disposition,
+            $this->realName,
+            $this->realNameFallback,
+        );
+        $Response->headers->set('Content-Disposition', $dispositionHeader);
 
         return $Response;
     }
@@ -111,7 +119,7 @@ class DownloadController implements ControllerInterface
     {
         try {
             return $this->fs->mimeType($this->getFilePath());
-        } catch (UnableToRetrieveMetadata $e) {
+        } catch (UnableToRetrieveMetadata) {
             return 'application/force-download';
         }
     }

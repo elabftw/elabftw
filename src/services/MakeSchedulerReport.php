@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 use function date;
 use Elabftw\Elabftw\Db;
 use Elabftw\Models\Scheduler;
-use Elabftw\Models\Users;
 use Elabftw\Traits\UploadTrait;
 use function implode;
 
@@ -25,9 +24,12 @@ class MakeSchedulerReport extends AbstractMakeCsv
 
     protected Db $Db;
 
-    public function __construct(private Scheduler $scheduler, private string $from, private string $to)
+    protected array $rows;
+
+    public function __construct(private Scheduler $scheduler)
     {
         $this->Db = Db::getConnection();
+        $this->rows = $this->scheduler->readAll();
     }
 
     /**
@@ -43,17 +45,9 @@ class MakeSchedulerReport extends AbstractMakeCsv
      */
     protected function getHeader(): array
     {
-        return array(
-            'title',
-            'id',
-            'start',
-            'end',
-            'userid',
-            'item_title',
-            'color',
-            'fullname',
-            'team(s)',
-        );
+        $header = array_keys($this->rows[0]);
+        $header[] = 'team(s)';
+        return $header;
     }
 
     /**
@@ -61,14 +55,12 @@ class MakeSchedulerReport extends AbstractMakeCsv
      */
     protected function getRows(): array
     {
-        // read all booking entries from that time period
-        $entries = $this->scheduler->readAllFromTeam($this->from, $this->to);
-        foreach ($entries as $key => $entry) {
+        foreach ($this->rows as $key => $entry) {
             // append the team(s) of user
-            $UsersHelper = new UsersHelper((int) $entry['userid']);
+            $UsersHelper = new UsersHelper($entry['userid']);
             $teams = implode(',', $UsersHelper->getTeamsNameFromUserid());
-            $entries[$key]['team(s)'] = $teams;
+            $this->rows[$key]['team(s)'] = $teams;
         }
-        return $entries;
+        return $this->rows;
     }
 }

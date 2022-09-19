@@ -12,8 +12,6 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\EntityParamsInterface;
-use Elabftw\Maps\Team;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 
@@ -31,10 +29,9 @@ class Items extends AbstractConcreteEntity
         parent::__construct($users, $id);
     }
 
-    public function create(EntityParamsInterface $params): int
+    public function create(int $template, array $tags = array()): int
     {
-        $category = (int) $params->getContent();
-        $ItemsTypes = new ItemsTypes($this->Users, $category);
+        $ItemsTypes = new ItemsTypes($this->Users, $template);
         $itemTemplate = $ItemsTypes->readOne();
 
         $sql = 'INSERT INTO items(team, title, date, body, userid, category, elabid, canread, canwrite, metadata)
@@ -43,7 +40,7 @@ class Items extends AbstractConcreteEntity
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':title', _('Untitled'), PDO::PARAM_STR);
         $req->bindParam(':body', $itemTemplate['body'], PDO::PARAM_STR);
-        $req->bindParam(':category', $category, PDO::PARAM_INT);
+        $req->bindParam(':category', $template, PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
         $req->bindParam(':canread', $itemTemplate['canread'], PDO::PARAM_STR);
         $req->bindParam(':canwrite', $itemTemplate['canwrite'], PDO::PARAM_STR);
@@ -52,9 +49,9 @@ class Items extends AbstractConcreteEntity
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
-        $this->insertTags($params->getTags(), $newId);
-        $this->Links->duplicate((int) $itemTemplate['id'], $newId, true);
-        $this->Steps->duplicate((int) $itemTemplate['id'], $newId, true);
+        $this->insertTags($tags, $newId);
+        $this->ItemsLinks->duplicate($itemTemplate['id'], $newId, true);
+        $this->Steps->duplicate($itemTemplate['id'], $newId, true);
 
         return $newId;
     }
@@ -83,7 +80,7 @@ class Items extends AbstractConcreteEntity
         if ($this->id === null) {
             throw new IllegalActionException('Try to duplicate without an id.');
         }
-        $this->Links->duplicate($this->id, $newId);
+        $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
 
@@ -93,8 +90,9 @@ class Items extends AbstractConcreteEntity
     public function destroy(): bool
     {
         // check if we can actually delete items (for non-admins)
-        $Team = new Team($this->Users->team);
-        if ($Team->getDeletableItem() === 0 && $this->Users->userData['is_admin'] === 0) {
+        $Teams = new Teams($this->Users);
+        $teamConfigArr = $Teams->readOne();
+        if ($teamConfigArr['deletable_item'] === 0 && $this->Users->userData['is_admin'] === 0) {
             throw new ImproperActionException(_('Users cannot delete items.'));
         }
 

@@ -1,4 +1,12 @@
 actor: ApiTester
+coverage:
+  enabled: true
+  c3_url: 'https://elabtmp'
+  remote_context_options:
+    ssl:
+      verify_peer: false
+      verify_peer_name: false
+      allow_self_signed: true
 modules:
     enabled:
         - \Helper\Api

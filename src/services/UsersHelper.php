@@ -13,6 +13,7 @@ namespace Elabftw\Services;
 use function array_column;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users;
 use PDO;
 
 /**
@@ -27,23 +28,9 @@ class UsersHelper
         $this->Db = Db::getConnection();
     }
 
-    /**
-     * Check if a user owns experiments
-     * This is used to prevent changing the team of a user with experiments
-     */
-    public function hasExperiments(): bool
+    public function cannotBeDeleted(): bool
     {
-        return $this->countExperiments() > 0;
-    }
-
-    public function hasItems(): bool
-    {
-        return $this->countItems() > 0;
-    }
-
-    public function hasStuff(): bool
-    {
-        return $this->hasExperiments() || $this->hasItems();
+        return $this->hasExperiments() || $this->hasItems() || $this->isSysadmin();
     }
 
     /**
@@ -114,5 +101,21 @@ class UsersHelper
     public function getTeamsNameFromUserid(): array
     {
         return array_column($this->getTeamsFromUserid(), 'name');
+    }
+
+    private function hasExperiments(): bool
+    {
+        return $this->countExperiments() > 0;
+    }
+
+    private function hasItems(): bool
+    {
+        return $this->countItems() > 0;
+    }
+
+    private function isSysadmin(): bool
+    {
+        $Users = new Users($this->userid);
+        return $Users->userData['is_sysadmin'] === 1;
     }
 }

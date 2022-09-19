@@ -30,7 +30,6 @@ use setasign\Fpdi\FpdiException;
 use const SITE_URL;
 use function str_replace;
 use function strtolower;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Create a pdf from an Entity
@@ -239,9 +238,6 @@ class MakePdf extends AbstractMakePdf
             }
         }
 
-        // used for pdf_sig
-        $Request = Request::createFromGlobals();
-
         $renderArr = array(
             'body' => $this->getBody(),
             'css' => $this->getCss(),
@@ -251,7 +247,7 @@ class MakePdf extends AbstractMakePdf
             'locked' => $locked,
             'lockDate' => $lockDate,
             'lockerName' => $lockerName,
-            'pdfSig' => $Request->cookies->get('pdf_sig'),
+            'pdfSig' => $this->Entity->Users->userData['pdf_sig'],
             'url' => $this->getURL(),
             'linkBaseUrl' => array(
                 'items' => SITE_URL . '/database.php',

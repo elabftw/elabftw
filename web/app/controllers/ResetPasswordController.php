@@ -10,6 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use function dirname;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -17,7 +18,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\ExistingUser;
-use Elabftw\Models\Users;
 use Elabftw\Services\Email;
 use Elabftw\Services\ResetPasswordKey;
 use Exception;
@@ -102,7 +102,7 @@ try {
         // we get the Users object from the email encrypted in the key
         $Users = $ResetPasswordKey->validate($Request->request->get('key'));
         // Replace new password in database
-        $Users->updatePassword($Request->request->get('password'));
+        $Users->patch(Action::Update, array('password' => $Request->request->get('password')));
         $App->Log->info('Password was changed for this user', array('userid' => $Users->userData['userid']));
         $App->Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
     }

@@ -40,7 +40,7 @@
         <div class='form-group'>
         <i class='fas fa-fw fa-eye' title='Visibility'></i>
         <label for='canread_select'>{{ 'Visibility'|trans }}</label>
-        <select id='canread_select' class='permissionSelect form-control' data-rw='read'>
+        <select id='canread_select' class='permissionSelect form-control' data-rw='canread'>
           {% for key, value in visibilityArr %}
             <option value='{{ key }}'
             {{ Entity.entityData.canread == key ? ' selected' }}
@@ -50,7 +50,7 @@
         <!-- CAN WRITE -->
         <i class='fas fa-fw fa-pencil-alt' title='Can write'></i>
         <label for='canwrite_select'>{{ 'Can write'|trans }}</label>
-        <select id='canwrite_select' class='permissionSelect form-control' data-rw='write'>
+        <select id='canwrite_select' class='permissionSelect form-control' data-rw='canwrite'>
           {% for key, value in visibilityArr %}
             <option value='{{ key }}'
             {{ Entity.entityData.canwrite == key ? ' selected' }}
@@ -179,14 +179,14 @@
             {%- endfor -%}
           {% endif %}
         </div>
-        <input type='text' id='createTagInput' data-autocomplete='tags' class='createTagInput form-control' placeholder='{{ 'Add a tag'|trans }}' />
+        <input type='text' id='createTagInput' data-teamid='{{ App.Users.userData.team }}' data-autocomplete='tags' class='createTagInput form-control' placeholder='{{ 'Add a tag'|trans }}' />
       </div>
     </div>
   </div>
 
   <!-- BODY -->
   {% if editor == 'md' %}
-  <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ lang }}' name='body'>{{ Entity.entityData.body }}</textarea>
+  <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
   {% else %}
   <div><!-- << this div is added around the textarea to fix an issue on mobile editor. See #3107 -->
     <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body' rows='15' cols='80'>{{ Entity.entityData.body }}</textarea>
@@ -206,7 +206,7 @@
 <!-- UPLOAD FORM -->
 <section class='box'>
   <h3 class='d-inline'><i class='fas fa-fw fa-paperclip'></i> {{ 'Attach a file'|trans }}</h3>
-  <form action='app/controllers/EntityAjaxController.php' class='dropzone mt-2' id='elabftw-dropzone'></form>
+  <form action='api/v2/{{ Entity.page }}/{{ Entity.id }}/uploads' class='dropzone mt-2' id='elabftw-dropzone'></form>
 </section>
 
 {% include 'uploads.html' %}
@@ -248,18 +248,16 @@
 </section>
 
 <!-- CHEM EDITOR -->
-{% if Entity.Users.userData.chem_editor %}
-  <div class='box chemdoodle'>
-    <h3 data-action='toggle-next' data-icon='chemDivIcon' class='d-inline'><i id='chemDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-dna'></i> {{ 'Molecule drawer'|trans }}</h3>
-    <div class='text-center'>
+<div class='box chemdoodle'>
+  <h3 data-action='toggle-next' data-icon='chemDivIcon' class='d-inline'><i id='chemDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-dna'></i> {{ 'Molecule drawer'|trans }}</h3>
+  <div id='chemDiv' hidden data-save-hidden='chemDiv' class='mt-2 text-center'>
+    <div class='text-center mb-2'>
       <button class='btn btn-primary' data-filetype='chemjson' data-action='save-chem-as-file'>{{ 'Save as JSON'|trans }}</button>
       <button class='btn btn-primary' data-filetype='png' data-action='save-chem-as-file'>{{ 'Save as image'|trans }}</button>
     </div>
-    <div id='chemDiv' hidden data-save-hidden='chemDiv' class='mt-2 text-center'>
-      <canvas id='sketcher'></canvas>
-    </div>
+    <canvas id='sketcher'></canvas>
   </div>
-{% endif %}
+</div>
 
 <div id='info'
     data-page='edit'

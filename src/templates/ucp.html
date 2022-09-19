@@ -29,7 +29,7 @@
         <div class='form-group'>
           <i class='fas fa-eye' title='Visibility'></i>
           <label for='canread_select'>{{ 'Visibility'|trans }}</label>
-          <select id='canread_select' class='permissionSelectTpl form-control' data-rw='read' data-id='{{ App.Request.query.get('templateid') }}'>
+          <select id='canread_select' class='permissionSelect form-control' data-rw='canread'>
             {% for key, value in visibilityArr %}
             <option value='{{ key }}'>{{ value|trans }}</option>
             {% endfor %}
@@ -37,7 +37,7 @@
           <!-- CAN WRITE -->
           <i class='fas fa-pencil-alt' title='Can write'></i>
           <label for='canwrite_select'>{{ 'Can write'|trans }}</label>
-          <select id='canwrite_select' class='permissionSelectTpl form-control' data-rw='write' data-id='{{ App.Request.query.get('templateid') }}'>
+          <select id='canwrite_select' class='permissionSelect form-control' data-rw='canwrite'>
             {% for key, value in visibilityArr %}
             <option value='{{ key }}'>{{ value|trans }}</option>
             {% endfor %}
@@ -53,6 +53,7 @@
 
 <!-- TAB 1 - USER PREFERENCES -->
 <div data-tabcontent='1' hidden>
+  <!-- The checkbox inputs are duplicated with a 0 value hidden input above because otherwise it is not sent to the controller -->
   <form class='form-group' action='app/controllers/UcpController.php' method='post'>
     {{ App.Session.get('csrf')|csrf }}
     <!-- LANGUAGE -->
@@ -106,24 +107,26 @@
       </select>
 
       <div>
+      <input type='hidden' value='' name='single_column_layout'/>
       <input id='layout' class='mt-2' type='checkbox' name='single_column_layout'
-          {{ App.Users.userData.single_column_layout == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.single_column_layout == 1 ? " checked='checked'" }}
       />
       <label for='layout'>{{ 'Use single column layout'|trans }}</label>
       </div>
 
       <div>
+      <input type='hidden' value='' name='uploads_layout'/>
       <input id='uploads_layout' class='mt-2' type='checkbox' name='uploads_layout'
-          {{ App.Users.userData.uploads_layout == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.uploads_layout == 1 ? " checked='checked'" }}
       />
       <label for='uploads_layout'>{{ 'Display attached files with thumbnails'|trans }}</label>
       </div>
     </section>
 
     <section class='box'>
-        <h3>{{ 'Keyboard Shortcuts'|trans }}</h3>
+        <h3 id='keyboardShortcuts'>{{ 'Keyboard Shortcuts'|trans }}</h3>
         <p>{{ 'Only lowercase letters are allowed.'|trans }}</p>
-            <table>
+            <table aria-describedby='keyboardShortcuts'>
             <tr><th>{{ 'Action'|trans }}</th>
                 <th>{{ 'Shortcut'|trans }}</th></tr>
 
@@ -158,30 +161,35 @@
         </select>
         <br>
 
+        <input type='hidden' value='' name='cjk_fonts'/>
         <input id='cjk_fonts' type='checkbox' name='cjk_fonts'
-          {{ App.Users.userData.cjk_fonts == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.cjk_fonts == 1 ? " checked='checked'" }}
         />
         <label for='cjk_fonts'>{{ 'Enable Chinese, Japanese and Korean fonts in PDF generation (WARNING: this will dramatically increase the file size unless you disable PDF/A)'|trans }}</label>
         <br>
+        <input type='hidden' value='0' name='pdfa'/>
         <input id='pdfa' type='checkbox' name='pdfa'
-          {{ App.Users.userData.pdfa == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.pdfa == 1 ? " checked='checked'" }}
         />
         <label for='pdfa'>{{ 'Generate PDF/A compliant pdfs (will embed the fonts and make the file bigger)'|trans }}</label>
         <br>
+        <input type='hidden' value='0' name='inc_files_pdf'/>
         <input id='inc_files_pdf' type='checkbox' name='inc_files_pdf'
-          {{ App.Users.userData.inc_files_pdf == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.inc_files_pdf == 1 ? " checked='checked'" }}
         />
         <label for='inc_files_pdf'>{{ 'Add attached files summary to the pdf'|trans }}</label>
         <br>
+        <input type='hidden' value='0' name='append_pdfs'/>
         <input id='append_pdfs' type='checkbox' name='append_pdfs'
-          {{ App.Users.userData.append_pdfs == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.append_pdfs == 1 ? " checked='checked'" }}
         />
         <label for='append_pdfs'>{{ 'Append attached PDFs to exported pdf'|trans }}</label>
         <br>
+        <input type='hidden' value='0' name='pdf_sig'/>
         <input id='pdf_sig' type='checkbox' name='pdf_sig'
-          {{ App.Request.cookies.get('pdf_sig') == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.pdf_sig == 1 ? " checked='checked'" }}
         />
-        <label for='pdf_sig'>{{ 'Enable french style signature block in pdf export (setting is only set for this browser)'|trans }}</label>
+        <label for='pdf_sig'>{{ 'Enable french style signature block in pdf export'|trans }}</label>
 
         </p>
     </section>
@@ -191,33 +199,33 @@
     <section class='box'>
         <h3>{{ 'Miscellaneous'|trans }}</h3>
         <p>
+        <input type='hidden' value='0' name='show_team'/>
         <input id='show_team' type='checkbox' name='show_team'
-          {{ App.Users.userData.show_team == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.show_team == 1 ? " checked='checked'" }}
         />
         <label for='show_team'>{{ 'Show experiments from the team on the Experiments page'|trans }}</label>
         <br>
+        <input type='hidden' value='0' name='show_team_templates'/>
         <input id='show_team_templates' type='checkbox' name='show_team_templates'
-               {{ App.Users.userData.show_team_templates == '1' ? " checked='checked'" }}
+               {{ App.Users.userData.show_team_templates == 1 ? " checked='checked'" }}
         />
         <label for='show_team_templates'>{{ 'Show templates from the team on the Templates page and in the menus'|trans }}</label>
         <br>
+        <input type='hidden' value='0' name='show_public'/>
         <input id='show_public' type='checkbox' name='show_public'
-               {{ App.Users.userData.show_public == '1' ? " checked='checked'" }}
+               {{ App.Users.userData.show_public == 1 ? " checked='checked'" }}
         />
         <label for='show_public'>{{ 'Show experiments/database items from outside the team'|trans }}</label>
         <br>
-        <input id='chem_editor' type='checkbox' name='chem_editor'
-          {{ App.Users.userData.chem_editor == '1' ? " checked='checked'" }}
-        />
-        <label for='chem_editor'>{{ 'Display the molecule editor in edit mode'|trans }}</label>
-        <br>
+        <input type='hidden' value='0' name='use_markdown'/>
         <input id='use_markdown' type='checkbox' name='use_markdown'
-          {{ App.Users.userData.use_markdown == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.use_markdown == 1 ? " checked='checked'" }}
         />
         <label for='use_markdown'>{{ 'Disable the rich text editor and write Markdown directly'|trans }}</label>
         <br>
+        <input type='hidden' value='0' name='use_isodate'/>
         <input id='use_isodate' type='checkbox' name='use_isodate'
-          {{ App.Users.userData.use_isodate == '1' ? " checked='checked'" }}
+          {{ App.Users.userData.use_isodate == 1 ? " checked='checked'" }}
         />
         <label for='use_isodate'>{{ 'Use ISO datetime in the text editor instead of localized one'|trans }}</label>
         </p>
@@ -242,7 +250,7 @@
     </section>
 
     <div class='text-center mt-3'>
-        <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
 
   </form>
@@ -279,7 +287,6 @@
             </div>
           </div>
         </div>
-        <hr><br>
       {% endif %}
 
         <h4>{{ 'Two Factor Authentication'|trans }}</h4>
@@ -292,49 +299,37 @@
             </select>
           </div>
         </div>
-
-        <hr><br>
-        <h4>{{ 'Modify your identity'|trans }}</h4>
-
-        <div class='row'>
-          <div class='col-md-6'>
-            <label for='firstname'>{{ 'Firstname'|trans }}</label>
-            <input class='form-control' id='firstname' name='firstname' value='{{ App.Users.userData.firstname|raw }}' />
-          </div>
-
-          <div class='col-md-6'>
-            <label for='lastname'>{{ 'Lastname'|trans }}</label>
-            <input class='form-control' id='lastname' name='lastname' value='{{ App.Users.userData.lastname|raw }}' />
-          </div>
-        </div>
-
-        <hr><br>
-        <h4>{{ 'Modify your contact information'|trans }}</h4>
-        <div class='row'>
-            <div class='col-md-6'>
-                <label for='phone'>{{ 'Phone'|trans }} </label>
-                <input class='form-control' id='phone' name='phone' value='{{ App.Users.userData.phone }}' />
-            </div>
-            <div class='col-md-6'>
-                <label for='cellphone'>{{ 'Mobile'|trans }}</label>
-                <input class='form-control' id='cellphone' name='cellphone' value='{{ App.Users.userData.cellphone }}' />
-            </div>
-        </div>
-        <div class='row'>
-            <div class='col-md-6'>
-                <label for='orcid'>ORCID</label>
-                <input class='form-control' placeholder='0000-0002-1234-1111' title='0000-1111-2222-3333' pattern='[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}' id='orcid' name='orcid' value='{{ App.Users.userData.orcid }}' />
-            </div>
-            <div class='col-md-6'>
-                <label for='website'>{{ 'Website'|trans }}</label>
-                <input class='form-control' id='website' name='website' type='url' value='{{ App.Users.userData.website }}' autocomplete='url' />
-            </div>
-        </div>
-
         <div class='mt-4 text-center'>
-            <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Update profile'|trans }}</button>
+          <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
         </div>
     </form>
+
+  <hr><br>
+  <h4>{{ 'Modify your identity'|trans }}</h4>
+
+  <div id='ucp-account-form'>
+    <div class='row'>
+      <div class='col-md-6'>
+        <label for='firstname'>{{ 'Firstname'|trans }}</label>
+        <input class='form-control' id='firstname' name='firstname' value='{{ App.Users.userData.firstname|raw }}' />
+      </div>
+
+      <div class='col-md-6'>
+        <label for='lastname'>{{ 'Lastname'|trans }}</label>
+        <input class='form-control' id='lastname' name='lastname' value='{{ App.Users.userData.lastname|raw }}' />
+      </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-6'>
+            <label for='orcid'>ORCID</label>
+            <input class='form-control' placeholder='0000-0002-1234-1111' title='0000-1111-2222-3333' pattern='[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}' id='orcid' name='orcid' value='{{ App.Users.userData.orcid }}' />
+        </div>
+    </div>
+
+    <div class='mt-4 text-center'>
+      <button data-action='patch-account' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+    </div>
+  </div>
 </div>
 
 <!-- TAB 3 - USER TEMPLATES -->
@@ -358,8 +353,8 @@
     <button class='button btn btn-primary mb-2' type='submit' data-action='create-apikey'>{{ 'Generate an API Key'|trans }}</button>
   </div>
 
-  <h5>{{ 'Existing keys'|trans }}</h5>
-  <table id='apiTable' class='table'>
+  <h5 id='existingKeys'>{{ 'Existing keys'|trans }}</h5>
+  <table id='apiTable' class='table' aria-describedby='existingKeys'>
     <thead>
       <tr>
         <th scope='col'>#</th>
@@ -385,8 +380,8 @@
 
 <!-- TAB 5 - NOTIFICATIONS SETTINGS -->
 <div class='box' data-tabcontent='5' hidden>
-  <h3>{{ 'Notifications settings'|trans }}</h3>
-  <table class='mt-4'>
+  <h3 id='notificationsSettings'>{{ 'Notifications settings'|trans }}</h3>
+  <table class='mt-4' aria-describedby='notificationsSettings'>
     <tr>
       <th>{{ 'Notification category'|trans }}</th>
       <th>{{ 'Web'|trans }}</th>
@@ -396,10 +391,10 @@
       <tr>
         <td>{{ notif.designation }}</td>
         <td>
-          <input type='checkbox' data-trigger='change' data-model='user' data-target='{{ notif.setting }}' {{ App.Users.userData[notif.setting] == '1' ? " checked='checked'" }} />
+          <input type='checkbox' data-trigger='change' data-model='users/me' data-target='{{ notif.setting }}' {{ App.Users.userData[notif.setting] == 1 ? " checked='checked'" }} />
         </td>
         <td>
-          <input type='checkbox' data-trigger='change' data-model='user' data-target='{{ notif.setting }}_email' {{ App.Users.userData[notif.setting ~ '_email'] == '1' ? " checked='checked'" }}/>
+          <input type='checkbox' data-trigger='change' data-model='users/me' data-target='{{ notif.setting }}_email' {{ App.Users.userData[notif.setting ~ '_email'] == 1 ? " checked='checked'" }}/>
         </td>
       </tr>
     {% endfor %}

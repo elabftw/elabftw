@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -27,8 +28,9 @@ use Symfony\Component\HttpFoundation\Response;
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Team');
 // default response is error page with general error message
+/** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
-$Response->prepare($Request);
+$Response->prepare($App->Request);
 
 try {
     $Teams = new Teams($App->Users);
@@ -39,12 +41,11 @@ try {
     $teamGroupsArr = $TeamGroups->readAll();
 
     $Database = new Items($App->Users);
-    // we only want the bookable type of items
-    $Database->addFilter('categoryt.bookable', '1');
     $Scheduler = new Scheduler($Database);
 
-    $DisplayParams = new DisplayParams();
-    $DisplayParams->adjust($App);
+    $DisplayParams = new DisplayParams($App->Users, $App->Request);
+    // we only want the bookable type of items
+    $DisplayParams->appendFilterSql(FilterableColumn::Bookable, 1);
     // make limit very big because we want to see ALL the bookable items here
     $DisplayParams->limit = 900000;
     $itemsArr = $Database->readShow($DisplayParams);
@@ -52,23 +53,23 @@ try {
 
     $allItems = true;
     $selectedItem = null;
-    if ($Request->query->get('item')) {
-        if ($Request->query->get('item') === 'all'
-            || !$Request->query->has('item')) {
+    if ($App->Request->query->get('item')) {
+        if ($App->Request->query->get('item') === 'all'
+            || !$App->Request->query->has('item')) {
         } else {
-            $Scheduler->Items->setId((int) $Request->query->get('item'));
-            $selectedItem = $Request->query->get('item');
+            $Scheduler->Items->setId($App->Request->query->getInt('item'));
+            $selectedItem = $App->Request->query->get('item');
             $allItems = false;
             // itemData is to display the name/category of the selected item
-            $itemData = $Scheduler->Items->read(new ContentParams());
+            $itemData = $Scheduler->Items->readOne();
         }
     }
 
     $Templates = new Templates($App->Users);
     $templatesArr = $Templates->readAll();
     $entityData = array();
-    if ($Request->query->has('templateid')) {
-        $Templates->setId((int) $Request->query->get('templateid'));
+    if ($App->Request->query->has('templateid')) {
+        $Templates->setId($App->Request->query->getInt('templateid'));
         $entityData = $Templates->readOne();
     }
 
@@ -85,7 +86,6 @@ try {
         'teamsStats' => $teamsStats,
         'entityData' => $entityData,
         'templatesArr' => $templatesArr,
-        'calendarLang' => Tools::getCalendarLang($App->Users->userData['lang']),
     );
 
     $Response->setContent($App->render($template, $renderArr));

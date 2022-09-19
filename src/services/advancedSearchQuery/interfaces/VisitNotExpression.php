@@ -17,5 +17,5 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 interface VisitNotExpression
 {
-    public function visitNotExpression(NotExpression $not_expression, VisitorParameters $parameters): InvalidFieldCollector | WhereCollector | int;
+    public function visitNotExpression(NotExpression $notExpression, VisitorParameters $parameters): InvalidFieldCollector | WhereCollector | int;
 }

@@ -11,17 +11,16 @@ namespace Elabftw\Elabftw;
 
 use function dirname;
 use Elabftw\Controllers\LoginController;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
-use Elabftw\Maps\UserPreferences;
 use Elabftw\Services\Filter;
 use Elabftw\Services\LocalAuth;
 use Elabftw\Services\MfaHelper;
 use Exception;
-use function setcookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -29,62 +28,44 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once dirname(__DIR__) . '/init.inc.php';
 $tab = 1;
-$Response = new RedirectResponse('../../ucp.php?tab=' . $tab);
-$templateId = '';
+$Response = new RedirectResponse(sprintf('../../ucp.php?tab=%d', $tab));
 
+$postData = $Request->request->all();
 try {
     // TAB 1 : PREFERENCES
     if ($Request->request->has('lang')) {
-        $Prefs = new UserPreferences((int) $App->Users->userData['userid']);
-        $Prefs->hydrate($Request->request->all());
-        $Prefs->save();
-
-
-        $cookieValue = '0';
-        $cookieOptions = array(
-            'expires' => time() - 3600,
-            'path' => '/',
-            'domain' => '',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'Strict',
-        );
-        if ($Request->request->get('pdf_sig') === 'on') {
-            $cookieValue = '1';
-            $cookieOptions['expires'] = time() + 2592000;
-        }
-        setcookie('pdf_sig', $cookieValue, $cookieOptions);
+        // the csrf is of course not a column that needs patching so remove it
+        unset($postData['csrf']);
+        $App->Users->patch(Action::Update, $postData);
     }
     // END TAB 1
 
     // TAB 2 : ACCOUNT
     if ($Request->request->has('use_mfa')) {
-        $tab = '2';
-        $postData = $Request->request->all();
+        $tab = 2;
         // if user is authenticated through external service we skip the password verification
-        if ((int) $App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
+        if ($App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
             // check that we got the good password
             $LocalAuth = new LocalAuth($App->Users->userData['email'], $Request->request->get('currpass'));
             try {
-                $AuthResponse = $LocalAuth->tryAuth();
+                $LocalAuth->tryAuth();
             } catch (InvalidCredentialsException $e) {
                 throw new ImproperActionException('The current password is not valid!');
             }
             // update the email if necessary
             if (isset($params['email']) && ($params['email'] !== $App->Users->userData['email'])) {
-                $App->Users->updateEmail($params['email']);
+                $App->Users->patch(Action::Update, array('email' => $params['email']));
             }
         }
-        $App->Users->updateAccount($postData);
 
         // CHANGE PASSWORD (only for local accounts)
         if (!empty($Request->request->get('newpass')) && (int) $App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
-            $App->Users->updatePassword($postData['newpass']);
+            $App->Users->patch(Action::Update, array('password' => $postData['newpass']));
         }
 
         // TWO FACTOR AUTHENTICATION
         $useMFA = Filter::onToBinary($postData['use_mfa'] ?? '');
-        $MfaHelper = new MfaHelper((int) $App->Users->userData['userid']);
+        $MfaHelper = new MfaHelper($App->Users->userData['userid']);
 
         if ($useMFA && !$App->Users->userData['mfa_secret']) {
             // Need to request verification code to confirm user got secret and can authenticate in the future by MFA
@@ -109,7 +90,7 @@ try {
     // END TAB 2
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));
-    $Response = new RedirectResponse('../../ucp.php?tab=' . $tab . $templateId);
+    $Response = new RedirectResponse(sprintf('../../ucp.php?tab=%d', $tab));
 } catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());

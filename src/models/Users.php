@@ -12,24 +12,29 @@ namespace Elabftw\Models;
 use function array_filter;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
+use Elabftw\Elabftw\UserParams;
+use Elabftw\Enums\Action;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
+use Elabftw\Services\UserArchiver;
+use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
-use function filter_var;
-use function hash;
-use function mb_strlen;
 use function password_hash;
 use PDO;
+use Symfony\Component\HttpFoundation\Request;
 use function time;
 
 /**
  * Users
  */
-class Users
+class Users implements RestInterface
 {
     public bool $needValidation = false;
 
@@ -37,33 +42,26 @@ class Users
 
     public int $team = 0;
 
+    public self $requester;
+
     protected Db $Db;
 
-    public function __construct(?int $userid = null, ?int $team = null)
+    public function __construct(public ?int $userid = null, ?int $team = null, ?self $requester = null)
     {
         $this->Db = Db::getConnection();
         if ($team !== null) {
             $this->team = $team;
         }
         if ($userid !== null) {
-            $this->populate($userid);
+            $this->readOneFull();
         }
-    }
-
-    /**
-     * Populate userData property
-     */
-    public function populate(int $userid): void
-    {
-        Check::idOrExplode($userid);
-        $this->userData = $this->getUserData($userid);
-        $this->userData['team'] = $this->team;
+        $this->requester = $requester === null ? $this : $requester;
     }
 
     /**
      * Create a new user
      */
-    public function create(
+    public function createOne(
         string $email,
         array $teams,
         string $firstname = '',
@@ -88,8 +86,8 @@ class Users
             Check::passwordLength($password);
         }
 
-        $firstname = filter_var($firstname, FILTER_SANITIZE_STRING);
-        $lastname = filter_var($lastname, FILTER_SANITIZE_STRING);
+        $firstname = Filter::sanitize($firstname);
+        $lastname = Filter::sanitize($lastname);
 
         // Create password hash
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
@@ -198,7 +196,7 @@ class Users
             users.firstname, users.lastname, users.email, users.mfa_secret,
             users.validated, users.usergroup, users.archived, users.last_login,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            users.cellphone, users.phone, users.website, users.orcid, users.auth_service
+            users.orcid, users.auth_service
             FROM users
             CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . ')
             WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
@@ -221,139 +219,69 @@ class Users
         return $this->readFromQuery('', $this->userData['team']);
     }
 
-    public function getLockedUsersCount(): int
-    {
-        $sql = 'SELECT COUNT(userid) FROM users WHERE allow_untrusted = 0';
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-        return (int) $req->fetchColumn();
-    }
-
-    public function update(ContentParamsInterface $params): bool
-    {
-        $sql = 'UPDATE users SET ' . $params->getTarget() . ' = :content WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent());
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
     /**
-     * Update user from the editusers template
-     *
-     * @param array<string, mixed> $params POST
+     * This can be called from api and only contains "safe" values
      */
-    public function updateUser(array $params): bool
+    public function readAll(): array
     {
-        $this->checkEmail($params['email']);
-
-        $firstname = Filter::sanitize($params['firstname']);
-        $lastname = Filter::sanitize($params['lastname']);
-
-        // (Sys)admins can only disable 2FA
-        // input is disabled if there is no mfa active so no need for an else case
-        $mfaSql = '';
-        if (isset($params['use_mfa']) && $params['use_mfa'] === 'off') {
-            $mfaSql = ', mfa_secret = null';
+        $Request = Request::createFromGlobals();
+        if ($this->requester->userData['is_sysadmin'] === 1) {
+            return $this->readFromQuerySafe($Request->query->getAlnum('q'), 0);
         }
-
-        $validated = 0;
-        if ($params['validated'] === '1') {
-            $validated = 1;
+        if ($this->requester->userData['is_admin'] === 1) {
+            return $this->readFromQuerySafe($Request->query->getAlnum('q'), $this->requester->userData['team']);
         }
-
-        $usergroup = Check::id((int) $params['usergroup']);
-
-        if (mb_strlen($params['password']) > 1) {
-            $this->updatePassword($params['password']);
-        }
-
-        $sql = 'UPDATE users SET
-            firstname = :firstname,
-            lastname = :lastname,
-            email = :email,
-            usergroup = :usergroup,
-            validated = :validated';
-        $sql .= $mfaSql;
-        $sql .= ' WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':firstname', $firstname);
-        $req->bindParam(':lastname', $lastname);
-        $req->bindParam(':email', $params['email']);
-        $req->bindParam(':usergroup', $usergroup);
-        $req->bindParam(':validated', $validated);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        throw new IllegalActionException('Normal users cannot read other users.');
     }
 
     /**
-     * Update the user's email
-     * Note: should only be done if auth method is local!
+     * This can be called from api and only contains "safe" values
      */
-    public function updateEmail(string $email): bool
+    public function readOne(): array
     {
-        $this->checkEmail($email);
-        $sql = 'UPDATE users SET email = :email WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $email, PDO::PARAM_STR);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $this->canReadOrExplode();
+        $userData = $this->readOneFull();
+        unset($userData['password']);
+        unset($userData['password_hash']);
+        unset($userData['salt']);
+        unset($userData['mfa_secret']);
+        unset($userData['token']);
+        return $userData;
     }
 
-    /**
-     * Update things from UCP
-     *
-     * @param array<string, mixed> $params
-     */
-    public function updateAccount(array $params): bool
+    public function postAction(Action $action, array $reqBody): int
     {
-        $params['firstname'] = Filter::sanitize($params['firstname']);
-        $params['lastname'] = Filter::sanitize($params['lastname']);
-
-        // Check phone
-        $params['phone'] = filter_var($params['phone'], FILTER_SANITIZE_STRING);
-        // Check cellphone
-        $params['cellphone'] = filter_var($params['cellphone'], FILTER_SANITIZE_STRING);
-        // Check orcid
-        $params['orcid'] = Check::orcid($params['orcid']);
-
-        // Check website
-        $params['website'] = filter_var($params['website'], FILTER_VALIDATE_URL);
-
-        $sql = 'UPDATE users SET
-            firstname = :firstname,
-            lastname = :lastname,
-            phone = :phone,
-            cellphone = :cellphone,
-            orcid = :orcid,
-            website = :website
-            WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-
-        $req->bindParam(':firstname', $params['firstname']);
-        $req->bindParam(':lastname', $params['lastname']);
-        $req->bindParam(':phone', $params['phone']);
-        $req->bindParam(':cellphone', $params['cellphone']);
-        $req->bindParam(':orcid', $params['orcid']);
-        $req->bindParam(':website', $params['website']);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $Creator = new UserCreator($this->requester, $reqBody);
+        return $Creator->create();
     }
 
-    /**
-     * Update the password for the user
-     */
-    public function updatePassword(string $password): bool
+    public function patch(Action $action, array $params): array
     {
-        Check::passwordLength($password);
+        $this->canWriteOrExplode();
+        match ($action) {
+            Action::Add => (new Users2Teams())->create($this->userData['userid'], (int) $params['team']),
+            Action::Unreference => (new Users2Teams())->destroy($this->userData['userid'], (int) $params['team']),
+            Action::Lock, Action::Archive => (new UserArchiver($this))->toggleArchive(),
+            Action::Update => (
+                function () use ($params) {
+                    $isSysadmin = 0;
+                    if ($this->requester instanceof self) {
+                        $isSysadmin = $this->requester->userData['is_sysadmin'];
+                    }
+                    foreach ($params as $target => $content) {
+                        $this->update(new UserParams($target, (string) $content, $isSysadmin));
+                    }
+                }
+            )(),
+            Action::Validate => $this->validate(),
+            default => throw new ImproperActionException('Invalid action parameter.'),
+        };
+        return $this->readOne();
+    }
 
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-
-        $sql = 'UPDATE users SET password_hash = :password_hash, token = null WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':password_hash', $passwordHash);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+    public function getPage(): string
+    {
+        return 'api/v2/users/';
     }
 
     /**
@@ -363,50 +291,6 @@ class Users
     {
         $sql = 'UPDATE users SET token = null WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
-    /**
-     * Validate current user instance
-     */
-    public function validate(): bool
-    {
-        $sql = 'UPDATE users SET validated = 1 WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $res = $this->Db->execute($req);
-        $Notifications = new Notifications($this);
-        $Notifications->create(new CreateNotificationParams(Notifications::SELF_IS_VALIDATED));
-        return $res;
-    }
-
-    /**
-     * Archive/Unarchive a user
-     */
-    public function toggleArchive(): bool
-    {
-        if ($this->userData['archived']) {
-            if ($this->getUnarchivedCount() > 0) {
-                throw new ImproperActionException('Cannot unarchive this user because they have another active account with the same email!');
-            }
-        }
-
-        $sql = 'UPDATE users SET archived = IF(archived = 1, 0, 1), token = null WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
-    /**
-     * Lock all the experiments owned by user
-     */
-    public function lockExperiments(): bool
-    {
-        $sql = 'UPDATE experiments
-            SET locked = :locked, lockedby = :userid, lockedwhen = CURRENT_TIMESTAMP WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':locked', 1);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
@@ -431,8 +315,10 @@ class Users
      */
     public function destroy(): bool
     {
-        $UsersHelper = new UsersHelper((int) $this->userData['userid']);
-        if ($UsersHelper->hasStuff()) {
+        $this->canWriteOrExplode();
+
+        $UsersHelper = new UsersHelper($this->userData['userid']);
+        if ($UsersHelper->cannotBeDeleted()) {
             throw new ImproperActionException('Cannot delete a user that owns experiments or items!');
         }
         $sql = 'DELETE FROM users WHERE userid = :userid';
@@ -446,8 +332,103 @@ class Users
      */
     public function isAdminOf(int $userid): bool
     {
+        // consider that we are admin of ourselves
+        // consider that a sysadmin is admin of all users
+        if ($this->userid === $userid || $this->userData['is_sysadmin'] === 1) {
+            return true;
+        }
         $TeamsHelper = new TeamsHelper($this->userData['team']);
         return $TeamsHelper->isUserInTeam($userid) && $this->userData['is_admin'] === 1;
+    }
+
+    /**
+     * Remove sensitives values from readFromQuery()
+     */
+    private function readFromQuerySafe(string $query, int $team): array
+    {
+        $users = $this->readFromQuery($query, $team);
+        foreach ($users as &$user) {
+            unset($user['mfa_secret']);
+        }
+        return $users;
+    }
+
+    private function canReadOrExplode(): void
+    {
+        if ($this->requester->userid === $this->userid) {
+            // it's ourself
+            return;
+        }
+        if ($this->requester->userData['is_admin'] !== 1 && $this->userid !== $this->userData['userid']) {
+            throw new IllegalActionException('This endpoint requires admin privileges to access other users.');
+        }
+        // check we edit user of our team, unless we are sysadmin and we can access it
+        if ($this->userid !== null && !$this->requester->isAdminOf($this->userid)) {
+            throw new IllegalActionException('User tried to access user from other team.');
+        }
+    }
+
+    private function update(UserParams $params): bool
+    {
+        // special case for password: we invalidate the stored token
+        if ($params->getTarget() === 'password') {
+            $this->invalidateToken();
+        }
+        // email is filtered here because otherwise the check for existing email will throw exception
+        if ($params->getTarget() === 'email' && $params->getContent() !== $this->userData['email']) {
+            Filter::email($params->getContent());
+        }
+
+        $sql = 'UPDATE users SET ' . $params->getColumn() . ' = :content WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $params->getContent());
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    /**
+     * Check if requester can act on this User
+     */
+    private function canWriteOrExplode(): void
+    {
+        if (!$this->requester->isAdminOf($this->userData['userid'])) {
+            throw new IllegalActionException(Tools::error(true));
+        }
+    }
+
+    /**
+     * Validate current user instance
+     * Note: this could also be PATCHed?
+     */
+    private function validate(): array
+    {
+        $sql = 'UPDATE users SET validated = 1 WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $Notifications = new Notifications($this);
+        $Notifications->create(new CreateNotificationParams(Notifications::SELF_IS_VALIDATED));
+        return $this->readOne();
+    }
+
+    /**
+     * Read all the columns (including sensitive ones) of the current user
+     */
+    private function readOneFull(): array
+    {
+        $sql = "SELECT users.*,
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            groups.is_admin, groups.is_sysadmin
+            FROM users
+            LEFT JOIN `groups` ON groups.id = users.usergroup
+            WHERE users.userid = :userid";
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':userid', $this->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $this->userData = $this->Db->fetch($req);
+        $this->userData['team'] = $this->team;
+        return $this->userData;
     }
 
     private function notifyAdmins(array $admins, int $userid, int $validated): void
@@ -463,42 +444,5 @@ class Users
             $Notifications = new Notifications(new self((int) $admin));
             $Notifications->create(new CreateNotificationParams($notifCat, $body));
         }
-    }
-
-    // if the user is already archived, make sure there is no other account with the same email
-    private function getUnarchivedCount(): int
-    {
-        $sql = 'SELECT COUNT(email) FROM users WHERE email = :email AND archived = 0';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $this->userData['email']);
-        $this->Db->execute($req);
-        return (int) $req->fetchColumn();
-    }
-
-    /**
-     * Get info about a user
-     */
-    private function getUserData(int $userid): array
-    {
-        $sql = "SELECT users.*, CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            groups.is_admin, groups.is_sysadmin FROM users
-            LEFT JOIN `groups` ON groups.id = users.usergroup
-            WHERE users.userid = :userid";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $this->Db->fetch($req);
-    }
-
-    private function checkEmail(string $email): void
-    {
-        // do nothing if the email sent is the same as the existing one
-        if ($email === $this->userData['email']) {
-            return;
-        }
-        // if the sent email is different from the existing one, check it's valid (not duplicate and respects domain constraint)
-        $Config = Config::getConfig();
-        $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);
-        $EmailValidator->validate();
     }
 }

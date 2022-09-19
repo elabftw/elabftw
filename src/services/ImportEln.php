@@ -10,12 +10,12 @@
 namespace Elabftw\Services;
 
 use function basename;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\CreateUpload;
-use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Elabftw\TagParams;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\AbstractConcreteEntity;
+use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use function hash_file;
@@ -81,23 +81,24 @@ class ImportEln extends AbstractImportZip
 
     private function importRootDataset(array $dataset): void
     {
-        $createTarget = (string) $this->targetNumber;
-        if ($this->Entity instanceof Experiments) {
-            // no template
-            $createTarget = '-1';
+        $createTarget = $this->targetNumber;
+        $title = $dataset['name'] ?? _('Untitled');
+
+        if ($this->Entity instanceof AbstractConcreteEntity) {
+            if ($this->Entity instanceof Experiments) {
+                // no template
+                $createTarget = -1;
+            }
+            $this->Entity->setId($this->Entity->create($createTarget, array()));
+        } elseif ($this->Entity instanceof AbstractTemplateEntity) {
+            $this->Entity->setId($this->Entity->create($title));
         }
-        // I believe this is a bug in phpstan. Using directly new Experiements() is ok but not the factory for some reason.
-        // Might also be a bug in elab, not sure where it is FIXME
-        // @phpstan-ignore-next-line
-        $id = $this->Entity->create(new EntityParams($createTarget));
-        $this->Entity->setId($id);
-        $this->Entity->update(new EntityParams($dataset['name'] ?? _('Untitled'), 'title'));
-        $this->Entity->update(new EntityParams($dataset['text'] ?? '', 'bodyappend'));
+        $this->Entity->patch(Action::Update, array('title' => $title, 'bodyappend' => $dataset['text'] ?? ''));
 
         // TAGS
         if (isset($dataset['keywords'])) {
             foreach ($dataset['keywords'] as $tag) {
-                $this->Entity->Tags->create(new TagParams($tag));
+                $this->Entity->Tags->postAction(Action::Create, array('tag' => $tag));
             }
         }
 
@@ -108,7 +109,7 @@ class ImportEln extends AbstractImportZip
                 $linkHtml .= sprintf("<li><a href='%s'>%s</a></li>", $link['@id'], $link['name']);
             }
             $linkHtml .= '</ul>';
-            $this->Entity->update(new EntityParams($linkHtml, 'bodyappend'));
+            $this->Entity->patch(Action::Update, array('bodyappend' => $linkHtml));
         }
 
         // COMMENTS
@@ -121,7 +122,7 @@ class ImportEln extends AbstractImportZip
                     $comment['dateCreated'],
                     $comment['text'],
                 );
-                $this->Entity->Comments->create(new ContentParams($content));
+                $this->Entity->Comments->postAction(Action::Create, array('comment' => $content));
             }
         }
 
@@ -141,7 +142,7 @@ class ImportEln extends AbstractImportZip
 
         switch ($part['@type']) {
             case 'Dataset':
-                $this->Entity->update(new EntityParams($this->part2html($part), 'bodyappend'));
+                $this->Entity->patch(Action::Update, array('bodyappend' => $this->part2html($part)));
                 // TODO here handle sub datasets as linked entries
                 foreach ($part['hasPart'] as $subpart) {
                     if ($subpart['@type'] === 'File') {
@@ -173,9 +174,9 @@ class ImportEln extends AbstractImportZip
         if (basename($filepath) === 'export-elabftw.json') {
             $fs = FsTools::getFs(dirname($filepath));
             $json = json_decode($fs->read(basename($filepath)), true, 512, JSON_THROW_ON_ERROR)[0];
-            $this->Entity->update(new EntityParams($json['rating'] ?? '', 'rating'));
+            $this->Entity->patch(Action::Update, array('rating' => $json['rating'] ?? ''));
             if ($json['metadata'] !== null) {
-                $this->Entity->update(new EntityParams(json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512), 'metadata'));
+                $this->Entity->patch(Action::Update, array('metadata' => json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512)));
             }
             // add steps
             if (!empty($json['steps'])) {
@@ -201,6 +202,7 @@ class ImportEln extends AbstractImportZip
         foreach ($part['hasPart'] as $subpart) {
             $html .= '<li>' . basename($subpart['@id']) . ' ' . ($subpart['description'] ?? '') . '</li>';
         }
-        return $html .= '</ul>';
+        $html .= '</ul>';
+        return $html;
     }
 }

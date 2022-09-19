@@ -23,9 +23,7 @@ $Response = new JsonResponse();
 try {
     $PrivacyPolicy = new PrivacyPolicy($App->Config);
     $Response->setData(array(
-        'res' => true,
-        'msg' => _('Saved'),
-        'value' => $PrivacyPolicy->readAll()[0],
+        'privacy_policy' => $PrivacyPolicy->readAll()[0],
     ));
 } catch (ResourceNotFoundException $e) {
     $Response->setData(array(

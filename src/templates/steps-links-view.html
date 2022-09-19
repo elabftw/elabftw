@@ -26,39 +26,13 @@
 {% endif %}
 </div>
 
-<!-- LINKS -->
-{% if Entity.entityData.links.items %}
-  <div class='box'>
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedItemsIcon' class='d-inline'><i id='linkedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Linked items'|trans }}</h3>
-    <div class='row mt-2' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
-      <ul class='list-group ml-3'>
-        {% for link in Entity.entityData.links.items %}
-          {% set randomId = random() %}
-          <li class='list-group-item' id='parent_{{ randomId }}'>
-            <i class='fas fa-link mr-1'></i>
-            <!-- toggle body -->
-            <span data-type='items' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
-              <i class='fas fa-plus-circle'></i>
-            </span>
-            {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
-            <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
-                {{ link.title|raw }}</a>
-            <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
-            <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
-            <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
-{% endif %}
-
-{% if Entity.entityData.links.experiments %}
+<!-- EXPERIMENTS LINKS -->
+{% if Entity.entityData.experiments_links %}
   <div class='box'>
     <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedExperimentsIcon' class='d-inline'><i id='linkedExperimentsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Linked experiments'|trans }}</h3>
     <div class='row mt-2' id='linkedExperimentsDiv' data-save-hidden='linkedExperimentsDiv'>
       <ul class='list-group ml-3'>
-        {% for link in Entity.entityData.links.experiments %}
+        {% for link in Entity.entityData.experiments_links %}
           {% set randomId = random() %}
           <li class='list-group-item' id='parent_{{ randomId }}'>
             <i class='fas fa-link mr-1'></i>
@@ -78,6 +52,34 @@
   </div>
 {% endif %}
 
+<!-- ITEMS LINKS -->
+{% if Entity.entityData.items_links %}
+  <div class='box'>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedItemsIcon' class='d-inline'><i id='linkedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Linked items'|trans }}</h3>
+    <div class='row mt-2' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
+      <ul class='list-group ml-3'>
+        {% for link in Entity.entityData.items_links %}
+          {% set randomId = random() %}
+          <li class='list-group-item' id='parent_{{ randomId }}'>
+            <i class='fas fa-link mr-1'></i>
+            <!-- toggle body -->
+            <span data-type='items' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
+              <i class='fas fa-plus-circle'></i>
+            </span>
+            {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
+            <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
+                {{ link.title|raw }}</a>
+            <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
+            <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
+            <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
+
+
 <!-- RELATED ITEMS/EXPERIMENTS -->
 {% if Entity.type == 'items' or Entity.type == 'experiments' %}
   {% if relatedItemsArr %}
@@ -95,7 +97,7 @@
             <li class='list-group-item'>
               <i class='fas fa-link mr-1'></i>
               {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
-              <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.entityid }}'>
+              <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</span> - <a href='database.php?mode=view&id={{ link.entityid }}'>
                   {{ link.title|raw }}</a>
             </li>
           {% endfor %}

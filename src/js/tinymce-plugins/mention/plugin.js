@@ -36,7 +36,7 @@
         this.options = $.extend({}, {
             source: [],
             delay: 500,
-            queryBy: 'name',
+            queryBy: 'title',
             items: 10
         }, options);
 
@@ -283,7 +283,7 @@
 
         render: function (item) {
             return '<li>'
-                + '<a href="javascript:;"><span>' + item[this.options.queryBy] + '</span></a>'
+                + '<a href="javascript:;"><span>' + item.category + ' - ' + item[this.options.queryBy] + '</span></a>'
                 + '</li>';
         },
 
@@ -315,11 +315,12 @@
             this.editor.focus();
             var selection = this.editor.dom.select('span#autocomplete')[0];
             this.editor.dom.remove(selection);
-            this.editor.execCommand('mceInsertContent', false, this.insert(item));
+            this.editor.insertContent(this.insert(item));
         },
 
+        // Note: not used, overriden in options
         insert: function (item) {
-            return '<span>' + item[this.options.queryBy] + '</span>&nbsp;';
+            return '<span>' + item.category + ' ' + item[this.options.queryBy] + '</span>&nbsp;';
         },
 
         cleanUp: function (rollback) {

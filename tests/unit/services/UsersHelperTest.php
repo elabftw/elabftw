@@ -20,9 +20,9 @@ class UsersHelperTest extends \PHPUnit\Framework\TestCase
         $this->UsersHelper = new UsersHelper(1);
     }
 
-    public function testHasExperiments(): void
+    public function testCannotBeDeleted(): void
     {
-        $this->assertTrue($this->UsersHelper->hasExperiments());
+        $this->assertTrue($this->UsersHelper->cannotBeDeleted());
     }
 
     public function testCountExperiments(): void

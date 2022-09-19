@@ -15,6 +15,7 @@ use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
+use Elabftw\Models\Teams;
 
 /**
  * For search.php
@@ -27,7 +28,7 @@ class SearchController extends AbstractEntityController
 
         // on search page, the categories can be status or itemstypes depending on where one searches
         if ($this->App->Request->query->get('type') === 'experiments') {
-            $Category = new Status($this->App->Users->team);
+            $Category = new Status(new Teams($this->App->Users, $this->App->Users->team));
         } else {
             $Category = new ItemsTypes($this->App->Users);
         }
@@ -39,8 +40,7 @@ class SearchController extends AbstractEntityController
      */
     protected function getItemsArr(): array
     {
-        $DisplayParams = new DisplayParams();
-        $DisplayParams->adjust($this->App);
+        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);
         return $this->Entity->readShow($DisplayParams);
     }
 }

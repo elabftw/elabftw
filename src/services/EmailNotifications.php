@@ -60,10 +60,13 @@ class EmailNotifications
         return $this->Db->execute($req);
     }
 
-    // set the lang to the one of the target user (see issue #2700)
+    /**
+     * set the lang to the one of the target user (see issue #2700)
+     * @psalm-suppress UnusedFunctionCall
+     */
     private function setLang(int $userid): void
     {
-        $targetUser = new Users((int) $userid);
+        $targetUser = new Users($userid);
         $locale = $targetUser->userData['lang'] . '.utf8';
         // configure gettext
         $domain = 'messages';

@@ -33,7 +33,7 @@ try {
 
         $Saml = new Saml($App->Config, new Idps());
         $tmpSettings = $Saml->getSettings(); // get temporary settings to decode message
-        $resp = new SamlResponse(new SamlSettings($tmpSettings), $App->Request->request->get('SAMLResponse'));
+        $resp = new SamlResponse(new SamlSettings($tmpSettings), (string) $App->Request->request->get('SAMLResponse'));
         $entId = $resp->getIssuers()[0]; // getIssuers returns always one or two entity ids
 
         $settings = $Saml->getSettingsByEntityId($entId);
@@ -58,7 +58,7 @@ try {
             $cookieOptions['expires'] = time() + $sessOptions['lifetime'];
         }
 
-        setcookie('saml_token', (string) $AuthService->encodeToken($idpId), $cookieOptions);
+        setcookie('saml_token', $AuthService->encodeToken($idpId), $cookieOptions);
 
         // no team was found so user must select one
         if ($AuthResponse->initTeamRequired) {

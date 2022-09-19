@@ -7,7 +7,7 @@
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-import { notif, reloadElement, updateCategory, showContentPlainText, escapeRegExp, getLinkTargetEntityType } from './misc';
+import { notif, reloadElement, updateCategory, showContentPlainText, escapeRegExp } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Model, Action } from './interfaces';
 import './doodle';
@@ -238,8 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="import-link-body"]')) {
       // this is in this file and not in steps-links-edit because here `editor`
       // exists and is reachable
-      const type = getLinkTargetEntityType(el);
-      ApiC.getJson(`${type}/${el.dataset.target}`).then(json => {
+      ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.target}`).then(json => {
         editor.setContent(json.body);
       });
 

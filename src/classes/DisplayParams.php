@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
 use Elabftw\Models\Users;
@@ -25,11 +26,7 @@ class DisplayParams
 
     public int $offset = 0;
 
-    public ?int $related = null;
-
-    public ?int $category = null;
-
-    public ?int $owner = null;
+    public string $filterSql = '';
 
     public Orderby $orderby = Orderby::Date;
 
@@ -48,6 +45,11 @@ class DisplayParams
         $this->orderby = Orderby::tryFrom($Users->userData['orderby']) ?? $this->orderby;
         $this->sort = Sort::tryFrom($Users->userData['sort']) ?? $this->sort;
         $this->adjust();
+    }
+
+    public function appendFilterSql(FilterableColumn $column, int $value): void
+    {
+        $this->filterSql .= sprintf(' AND %s = %d', $column->value, $value);
     }
 
     /**
@@ -70,19 +72,19 @@ class DisplayParams
         $this->orderby = Orderby::tryFrom($this->Request->query->getAlpha('order')) ?? $this->orderby;
 
         // RELATED FILTER
-        if (Check::id((int) $this->Request->query->get('related')) !== false) {
+        if (Check::id($this->Request->query->getInt('related')) !== false) {
+            $this->appendFilterSql(FilterableColumn::Related, $this->Request->query->getInt('related'));
             $this->searchType = 'related';
-            $this->related = $this->Request->query->getInt('related');
         }
         // CATEGORY FILTER
         if ((Check::id($this->Request->query->getInt('cat')) !== false)) {
-            $this->category = $this->Request->query->getInt('cat');
+            $this->appendFilterSql(FilterableColumn::Category, $this->Request->query->getInt('cat'));
             $this->searchType = 'category';
         }
 
         // OWNER (USERID) FILTER
         if ((Check::id($this->Request->query->getInt('owner')) !== false)) {
-            $this->owner = $this->Request->query->getInt('owner');
+            $this->appendFilterSql(FilterableColumn::Owner, $this->Request->query->getInt('owner'));
             $this->searchType = 'owner';
         }
     }

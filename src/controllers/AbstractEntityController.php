@@ -12,6 +12,7 @@ namespace Elabftw\Controllers;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
@@ -26,7 +27,6 @@ use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
-use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\Response;
 use function trim;
 
@@ -87,7 +87,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // only show public to anon
         if ($this->App->Session->get('is_anon')) {
-            $this->Entity->addFilter('entity.canread', 'public');
+            $this->Entity->addFilter(FilterableColumn::Canread->value, 'public');
         }
 
         // Quicksearch

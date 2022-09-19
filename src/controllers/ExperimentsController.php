@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,12 +6,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
+use Elabftw\Enums\FilterableColumn;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Status;
 use Elabftw\Models\Teams;
@@ -37,12 +37,13 @@ class ExperimentsController extends AbstractEntityController
      */
     protected function getItemsArr(): array
     {
+        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);
         // filter by user if we don't want to show the rest of the team
         if (!$this->Entity->Users->userData['show_team']) {
-            $this->Entity->addFilter('entity.userid', (string) $this->App->Users->userData['userid']);
+            // Note: the cast to int is necessary here (not sure why)
+            $DisplayParams->appendFilterSql(FilterableColumn::Owner, (int) $this->App->Users->userData['userid']);
         }
 
-        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);
         return $this->Entity->readShow($DisplayParams);
     }
 }

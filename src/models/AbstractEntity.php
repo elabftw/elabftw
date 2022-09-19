@@ -242,21 +242,11 @@ abstract class AbstractEntity implements RestInterface
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
 
+        // add filters like related, owner or category
+        $sql .= $displayParams->filterSql;
+
         // metadata filter (this will just be empty if we're not doing anything metadata related)
         $sql .= implode(' ', $this->metadataFilter);
-
-        // experiments related to something?
-        if ($displayParams->related !== null) {
-            $sql .= sprintf(' AND linkst.link_id = %d', $displayParams->related);
-        }
-
-        if ($displayParams->category !== null) {
-            $sql .= sprintf(' AND categoryt.id = %d', $displayParams->category);
-        }
-
-        if ($displayParams->owner !== null) {
-            $sql .= sprintf(' AND entity.userid = %d', $displayParams->owner);
-        }
 
         // teamFilter is to restrict to the team for items only
         // as they have a team column

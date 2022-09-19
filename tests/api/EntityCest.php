@@ -73,25 +73,13 @@ class EntityCest
     public function addLinkTest(ApiTester $I)
     {
         $I->wantTo('Add a link to an experiment pointing to an item');
-        $I->sendPOST('/experiments/1', array('link' => 1, 'targetEntity' => 'items'));
-        $I->seeResponseCodeIs(HttpCode::OK); // 200
-        $I->seeResponseIsJson();
-        $I->seeResponseContainsJson(array('result' => 'success'));
-
-        $I->wantTo('Add a link to an experiment pointing to an experiment');
-        $I->sendPOST('/experiments/1', array('link' => 1, 'targetEntity' => 'experiments'));
+        $I->sendPOST('/experiments/1', array('link' => 1));
         $I->seeResponseCodeIs(HttpCode::OK); // 200
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson(array('result' => 'success'));
 
         $I->wantTo('Add a link to an item pointing to an item');
-        $I->sendPOST('/items/1', array('link' => 1, 'targetEntity' => 'database'));
-        $I->seeResponseCodeIs(HttpCode::OK); // 200
-        $I->seeResponseIsJson();
-        $I->seeResponseContainsJson(array('result' => 'success'));
-
-        $I->wantTo('Add a link to an item pointing to an experiment');
-        $I->sendPOST('/items/1', array('link' => 1, 'targetEntity' => 'experiments'));
+        $I->sendPOST('/items/1', array('link' => 1));
         $I->seeResponseCodeIs(HttpCode::OK); // 200
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson(array('result' => 'success'));

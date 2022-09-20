@@ -25,6 +25,11 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->ExperimentsLinks->setId(3);
     }
 
+    public function testGetPage(): void
+    {
+        $this->assertIsString($this->Experiments->ExperimentsLinks->getPage());
+    }
+
     public function testCreateReadDestroy(): void
     {
         $this->Experiments->ItemsLinks->postAction(Action::Create, array());

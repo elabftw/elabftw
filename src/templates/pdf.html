@@ -100,8 +100,8 @@
     </h3>
     {% for upload in entityData.uploads %}
       <p class='pdf-ul'>{{ upload.real_name }}
-      {# add a comment? don't add if it's the default text #}
-      {% if upload.comment != 'Click to add a comment' %} ({{ upload.comment }}){% endif %}
+      {# add a comment? don't add if it's the default text or if it's null #}
+      {% if upload.comment and upload.comment != 'Click to add a comment' %} ({{ upload.comment }}){% endif %}
       {# add hash? don't add if we don't have it #}
       {% if upload.hash|length >= 32 %}<br>{{ upload.hash_algorithm }}: {{ upload.hash }}{% endif %}
 

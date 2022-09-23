@@ -15,6 +15,7 @@ use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -455,7 +456,7 @@ class Apiv1Controller extends AbstractApiController
      */
     private function getBookable(): Response
     {
-        $this->Entity->addFilter('bookable', '1');
+        $this->Entity->addFilter(FilterableColumn::Bookable->value, 1);
         return $this->getEntity();
     }
 
@@ -741,21 +742,29 @@ class Apiv1Controller extends AbstractApiController
     }
 
     /**
-     * @api {post} /experiments/:id Add a link
+     * @api {post} /:endpoint/:id Add a link
      * @apiName AddLink
      * @apiGroup Entity
-     * @apiParam {Number} id Experiment id
-     * @apiParam {Number} link Id of the database item to link to
+     * @apiParam {String} endpoint 'experiments' or 'items'
+     * @apiParam {Number} id Experiment or Database item id
+     * @apiParam {Number} link Id of the database item or experiment to link to
+     * @apiParam {String} targetEntity items or experiments
      * @apiExample {python} Python example
      * import elabapy
      * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
      * # link database item 106 to experiment 42
-     * params = { "link": 106 }
+     * params = { "link": 106, "targetEntity": "items" }
      * print(manager.add_link_to_experiment(42, params)
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * # link experiment 56 to experiment 55
+     * params = { "link": 56, "targetEntity": "experiments" }
+     * print(manager.add_link_to_experiment(55, params)
      * @apiExample {shell} Curl example
      * export TOKEN="3148"
      * # link database item 106 to experiment 42
-     * curl -X POST -F "link=106" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments/42
+     * curl -X POST -F "link=106" -F "targetEntity=items" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments/42
      * @apiSuccess {String} result Success or error message
      * @apiSuccessExample {Json} Success-Response:
      *     HTTP/2 200 OK
@@ -765,8 +774,9 @@ class Apiv1Controller extends AbstractApiController
      */
     private function createLink(): Response
     {
-        $this->Entity->Links->setId($this->Request->request->getInt('link'));
-        $this->Entity->Links->postAction(Action::Create, array());
+        // Note: no possibility to create experiments links with v1
+        $this->Entity->ItemsLinks->setId($this->Request->request->getInt('link'));
+        $this->Entity->ItemsLinks->postAction(Action::Create, array());
         return new JsonResponse(array('result' => 'success'));
     }
 

@@ -88,9 +88,9 @@ class Templates extends AbstractTemplateEntity
         $Tags->copyTags($newId);
 
         // copy links and steps too
-        $Links = new Links($this);
+        $ItemsLinks = new ItemsLinks($this);
+        $ItemsLinks->duplicate((int) $template['id'], $newId, true);
         $Steps = new Steps($this);
-        $Links->duplicate((int) $template['id'], $newId, true);
         $Steps->duplicate((int) $template['id'], $newId, true);
 
         return $newId;
@@ -117,7 +117,7 @@ class Templates extends AbstractTemplateEntity
         $this->canOrExplode('read');
         // add steps and links in there too
         $this->entityData['steps'] = $this->Steps->readAll();
-        $this->entityData['links'] = $this->Links->readAll();
+        $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         return $this->entityData;
     }
 
@@ -172,9 +172,7 @@ class Templates extends AbstractTemplateEntity
         }
         $sql .= ')';
 
-        foreach ($this->filters as $filter) {
-            $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
-        }
+        $sql .= $this->filterSql;
 
         $sql .= str_replace('entity', 'experiments_templates', $this->idFilter) . ' ';
 
@@ -196,7 +194,7 @@ class Templates extends AbstractTemplateEntity
     public function readForUser(): array
     {
         if ($this->Users->userData['show_team_templates'] === 0) {
-            $this->addFilter('experiments_templates.userid', (string) $this->Users->userData['userid']);
+            $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
         }
         return $this->readAll();
     }

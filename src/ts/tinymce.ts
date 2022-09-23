@@ -51,7 +51,7 @@ import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-plugins/mention/plugin.js';
 import EntityClass from './Entity.class';
-import { EntityType, Target, Model } from './interfaces';
+import { EntityType, Target } from './interfaces';
 import { getEntity, reloadElement } from './misc';
 import { Api } from './Apiv2.class';
 
@@ -180,10 +180,13 @@ export function getTinymceBaseConfig(page: string): object {
         });
       },
       insert: function(selected): string {
-        if (selected.page === 'database') {
-          ApiC.post(`${entity.type}/${entity.id}/${Model.Link}/${selected.id}`).then(() => reloadElement('linksDiv'));
+        if (selected.type === 'items') {
+          ApiC.post(`${entity.type}/${entity.id}/items_links/${selected.id}`).then(() => reloadElement('linksDiv'));
         }
-        return `<a href='${selected.page}.php?mode=view&id=${selected.id}'>${selected.category} - ${selected.title}</a> `;
+        if (selected.type === 'experiments' && (entity.type === EntityType.Experiment || entity.type === EntityType.Item)) {
+          ApiC.post(`${entity.type}/${entity.id}/experiments_links/${selected.id}`).then(() => reloadElement('linksExpDiv'));
+        }
+        return `<span><a href='${selected.page}.php?mode=view&id=${selected.id}'>${selected.category} - ${selected.title}</a></span>`;
       },
     },
     mobile: {

@@ -7,13 +7,12 @@
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-import { notif, reloadElement, updateCategory, showContentPlainText, escapeRegExp } from './misc';
+import { getEntity, notif, reloadElement, updateCategory, showContentPlainText, escapeRegExp } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Model, Action } from './interfaces';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
-import { getEntity } from './misc';
 import Dropzone from 'dropzone';
 import type { DropzoneFile } from 'dropzone';
 import i18next from 'i18next';
@@ -238,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="import-link-body"]')) {
       // this is in this file and not in steps-links-edit because here `editor`
       // exists and is reachable
-      (new EntityClass(EntityType.Item)).read(parseInt(el.dataset.target, 10)).then(json => {
+      ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.target}`).then(json => {
         editor.setContent(json.body);
       });
 

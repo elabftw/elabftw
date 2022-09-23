@@ -63,7 +63,9 @@ abstract class AbstractEntity implements RestInterface
 
     public Comments $Comments;
 
-    public Links $Links;
+    public ExperimentsLinks $ExperimentsLinks;
+
+    public ItemsLinks $ItemsLinks;
 
     public Steps $Steps;
 
@@ -84,9 +86,6 @@ abstract class AbstractEntity implements RestInterface
 
     // will be defined in children classes
     public string $page = '';
-
-    // an array of arrays with filters for sql query
-    public array $filters = array();
 
     // sql of ids to include
     public string $idFilter = '';
@@ -124,7 +123,8 @@ abstract class AbstractEntity implements RestInterface
     {
         $this->Db = Db::getConnection();
 
-        $this->Links = new Links($this);
+        $this->ExperimentsLinks = new ExperimentsLinks($this);
+        $this->ItemsLinks = new ItemsLinks($this);
         $this->Steps = new Steps($this);
         $this->Tags = new Tags($this);
         $this->Uploads = new Uploads($this);
@@ -235,17 +235,14 @@ abstract class AbstractEntity implements RestInterface
         // first where is the state
         $sql .= ' WHERE entity.state = :state';
 
-        foreach ($this->filters as $filter) {
-            $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
-        }
+        // add externally added filters
+        $sql .= $this->filterSql;
+
+        // add filters like related, owner or category
+        $sql .= $displayParams->filterSql;
 
         // metadata filter (this will just be empty if we're not doing anything metadata related)
         $sql .= implode(' ', $this->metadataFilter);
-
-        // experiments related to something?
-        if ($displayParams->related !== null) {
-            $sql .= sprintf(' AND linkst.link_id = %d', $displayParams->related);
-        }
 
         // teamFilter is to restrict to the team for items only
         // as they have a team column
@@ -273,9 +270,9 @@ abstract class AbstractEntity implements RestInterface
         $sql .= ')';
 
         // build the having clause for metadata
-        $metadataHaving = '';
+        $metadataHavingSql = '';
         if (!empty($this->metadataHaving)) {
-            $metadataHaving = 'HAVING ' . implode(' AND ', $this->metadataHaving);
+            $metadataHavingSql = 'HAVING ' . implode(' AND ', $this->metadataHaving);
         }
 
         if (!empty($displayParams->query)) {
@@ -289,7 +286,7 @@ abstract class AbstractEntity implements RestInterface
             $this->extendedFilter,
             $this->idFilter,
             'GROUP BY id',
-            $metadataHaving,
+            $metadataHavingSql,
             'ORDER BY',
             $displayParams->orderby::toSql($displayParams->orderby),
             $displayParams->sort->value,
@@ -442,20 +439,11 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
-     * Add a filter to the query
-     * Second param is nullable because it can come from a request param
-     *
-     * @param string $column the column on which to filter
-     * @param string|null $value the value to look for
+     * Add an arbitrary filter to the query, externally, not through DisplayParams
      */
-    public function addFilter(string $column, ?string $value): void
+    public function addFilter(string $column, string|int $value): void
     {
-        if ($value === null) {
-            return;
-        }
-        $column = filter_var($column, FILTER_SANITIZE_STRING);
-        $value = filter_var($value, FILTER_SANITIZE_STRING);
-        $this->filters[] = array('column' => $column, 'value' => $value);
+        $this->filterSql .= sprintf(" AND %s = '%s'", $column, (string) $value);
     }
 
     public function addMetadataFilter(string $key, string $value): void
@@ -504,7 +492,7 @@ abstract class AbstractEntity implements RestInterface
         // maybe user was deleted!
         try {
             $timestamper = new Users($this->entityData['timestampedby']);
-        } catch (ResourceNotFoundException $e) {
+        } catch (ResourceNotFoundException) {
             return 'User not found!';
         }
         return $timestamper->userData['fullname'];
@@ -588,7 +576,8 @@ abstract class AbstractEntity implements RestInterface
         }
         $this->canOrExplode('read');
         $this->entityData['steps'] = $this->Steps->readAll();
-        $this->entityData['links'] = $this->Links->readAll();
+        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
+        $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['uploads'] = $this->Uploads->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = $this->page;

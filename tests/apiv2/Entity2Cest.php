@@ -121,7 +121,7 @@ class Entity2Cest
     public function addLinkTest(ApiTester $I)
     {
         $I->wantTo('Add a link to an experiment');
-        $I->sendPOST('/experiments/1/links/1');
+        $I->sendPOST('/experiments/1/items_links/1', array());
         $I->seeResponseCodeIs(HttpCode::CREATED); // 201
     }
 
@@ -165,6 +165,13 @@ class Entity2Cest
     {
         $I->wantTo('Delete an item');
         $I->sendDELETE('/items/4');
+        $I->seeResponseCodeIs(HttpCode::NO_CONTENT);
+    }
+
+    public function deleteExperimentTest(ApiTester $I)
+    {
+        $I->wantTo('Delete an experiment');
+        $I->sendDELETE('/experiments/8');
         $I->seeResponseCodeIs(HttpCode::NO_CONTENT);
     }
 

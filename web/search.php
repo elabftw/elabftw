@@ -10,6 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\SearchController;
+use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -21,12 +22,10 @@ use Elabftw\Models\Teams;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Check;
-use Elabftw\Services\Filter;
 
 /**
  * The search page
  * Here be dragons!
- *
  */
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Search');
@@ -106,11 +105,9 @@ if ($App->Request->query->count() > 0 && $extendedError === '') {
             }
         }
 
-        if ($App->Request->query->get('type') !== 'experiments') {
-            // FILTER ON DATABASE ITEMS TYPES
-            if (Check::id($App->Request->query->getInt('type')) !== false) {
-                $Entity->addFilter('categoryt.id', (string) $App->Request->query->get('type'));
-            }
+        // FILTER ON DATABASE ITEMS TYPES
+        if (Check::id($App->Request->query->getInt('type')) !== false) {
+            $Entity->addFilter(FilterableColumn::Category->value, $App->Request->query->getInt('type'));
         }
 
         try {

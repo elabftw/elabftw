@@ -1,4 +1,4 @@
--- Schema 96
+-- Schema 98
 -- remove chem_editor from users
 ALTER TABLE `users` DROP COLUMN `chem_editor`;
 ALTER TABLE `users` DROP COLUMN `phone`;

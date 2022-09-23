@@ -12,8 +12,10 @@ namespace Elabftw\Controllers;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
+use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\FavTags;
@@ -25,7 +27,6 @@ use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
-use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\Response;
 use function trim;
 
@@ -72,18 +73,6 @@ abstract class AbstractEntityController implements ControllerInterface
         // create the DisplayParams object from the query
         $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);
 
-        // CATEGORY FILTER
-        if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {
-            $this->Entity->addFilter('categoryt.id', $this->App->Request->query->getDigits('cat'));
-            $DisplayParams->searchType = 'category';
-        }
-        // OWNER (USERID) FILTER
-        if ($this->App->Request->query->has('owner') && !$isSearchPage) {
-            $owner = (int) $this->App->Request->query->get('owner');
-            $this->Entity->addFilter('entity.userid', (string) $owner);
-            $DisplayParams->searchType = 'user';
-        }
-
         // TAG FILTER
         if (!empty(($this->App->Request->query->all('tags'))[0])) {
             // get all the ids with that tag
@@ -98,7 +87,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // only show public to anon
         if ($this->App->Session->get('is_anon')) {
-            $this->Entity->addFilter('entity.canread', 'public');
+            $this->Entity->addFilter(FilterableColumn::Canread->value, 'public');
         }
 
         // Quicksearch
@@ -191,10 +180,9 @@ abstract class AbstractEntityController implements ControllerInterface
         );
 
         // RELATED ITEMS AND EXPERIMENTS
-        if ($this->Entity->type === 'items') {
-            ['items' => $renderArr['relatedItemsArr'],
-                'experiments' => $renderArr['relatedExperimentsArr']
-            ] = $this->Entity->Links->readRelated();
+        if ($this->Entity instanceof AbstractConcreteEntity) {
+            $renderArr['relatedItemsArr'] = $this->Entity->ItemsLinks->readRelated();
+            $renderArr['relatedExperimentsArr'] = $this->Entity->ExperimentsLinks->readRelated();
         }
 
         $Response = new Response();

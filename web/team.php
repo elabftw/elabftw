@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -40,11 +41,11 @@ try {
     $teamGroupsArr = $TeamGroups->readAll();
 
     $Database = new Items($App->Users);
-    // we only want the bookable type of items
-    $Database->addFilter('categoryt.bookable', '1');
     $Scheduler = new Scheduler($Database);
 
     $DisplayParams = new DisplayParams($App->Users, $App->Request);
+    // we only want the bookable type of items
+    $DisplayParams->appendFilterSql(FilterableColumn::Bookable, 1);
     // make limit very big because we want to see ALL the bookable items here
     $DisplayParams->limit = 900000;
     $itemsArr = $Database->readShow($DisplayParams);

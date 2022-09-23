@@ -87,11 +87,12 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     public function testDuplicate(): void
     {
         $this->Experiments->setId(1);
-        $this->Experiments->Links->setId(1);
+        $this->Experiments->ItemsLinks->setId(1);
         $this->Experiments->canOrExplode('read');
         // add some steps and links in there, too
         $this->Experiments->Steps->postAction(Action::Create, array('body' => 'some step'));
-        $this->Experiments->Links->postAction(Action::Create, array());
+        $this->Experiments->ItemsLinks->postAction(Action::Create, array());
+        $this->Experiments->ExperimentsLinks->postAction(Action::Create, array());
         $this->assertIsInt($this->Experiments->duplicate());
     }
 

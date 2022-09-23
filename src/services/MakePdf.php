@@ -249,7 +249,10 @@ class MakePdf extends AbstractMakePdf
             'lockerName' => $lockerName,
             'pdfSig' => $this->Entity->Users->userData['pdf_sig'],
             'url' => $this->getURL(),
-            'linkBaseUrl' => SITE_URL . '/database.php',
+            'linkBaseUrl' => array(
+                'items' => SITE_URL . '/database.php',
+                'experiments' => SITE_URL . '/experiments.php',
+            ),
             'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
         );
 

@@ -28,6 +28,9 @@ class DeviceToken
     {
         $now = new DateTimeImmutable();
         $config = self::getConfig();
+        /**
+         * @psalm-suppress PossiblyFalseArgument
+         */
         $token = $config->builder()
                 // Configures the issuer (iss claim)
                 //->issuedBy('https://elab.local:3148')
@@ -40,6 +43,7 @@ class DeviceToken
                 // Configures the time that the token can be used (nbf claim)
                 //->canOnlyBeUsedAfter($now->modify('+1 minute'))
                 // Configures the expiration time of the token (exp claim)
+                // @psalm-suppress PossiblyFalseArgument
                 ->expiresAt($now->modify('+3 months'))
                 // Configures a new claim, called "uid"
                 ->withClaim('userid', $userid)

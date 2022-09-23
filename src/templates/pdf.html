@@ -48,17 +48,32 @@
 </section>
 {% endif %}
 
-{% if entityData.links %}
+{% if entityData.links.items %}
   <section class='no-break'>
     <h3>{% trans %}
       Linked item
-      {% plural links|length %}
+      {% plural links.items|length %}
       Linked items
       {% endtrans %}</h3>
 
-    {% for link in entityData.links %}
+    {% for link in entityData.links.items %}
       <p class='pdf-ul'>
-        <span style='color:#{{ link.color }}'>{{ link.category }}</span> - <a href='{{ linkBaseUrl }}?mode=view&id={{ link.itemid }}'>{{ link.title }}</a>
+        <span style='color:#{{ link.color }}'>{{ link.category }}</span> - <a href='{{ linkBaseUrl.items }}?mode=view&id={{ link.itemid }}'>{{ link.title }}</a>
+      </p>
+    {% endfor %}
+  </section>
+{% endif %}
+{% if entityData.links.experiments %}
+  <section class='no-break'>
+    <h3>{% trans %}
+      Linked experiment
+      {% plural links.experiments|length %}
+      Linked experiments
+      {% endtrans %}</h3>
+
+    {% for link in entityData.links.experiments %}
+      <p class='pdf-ul'>
+        <span style='color:#{{ link.color }}'>{{ link.category }}</span> - <a href='{{ linkBaseUrl.experiments }}?mode=view&id={{ link.itemid }}'>{{ link.title }}</a>
       </p>
     {% endfor %}
   </section>
@@ -85,8 +100,8 @@
     </h3>
     {% for upload in entityData.uploads %}
       <p class='pdf-ul'>{{ upload.real_name }}
-      {# add a comment? don't add if it's the default text #}
-      {% if upload.comment != 'Click to add a comment' %} ({{ upload.comment }}){% endif %}
+      {# add a comment? don't add if it's the default text or if it's null #}
+      {% if upload.comment and upload.comment != 'Click to add a comment' %} ({{ upload.comment }}){% endif %}
       {# add hash? don't add if we don't have it #}
       {% if upload.hash|length >= 32 %}<br>{{ upload.hash_algorithm }}: {{ upload.hash }}{% endif %}
 

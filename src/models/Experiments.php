@@ -105,12 +105,12 @@ class Experiments extends AbstractConcreteEntity
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
-        // insert the tags from the template
+        // insert the tags, steps and links from the template
         if ($template > 0) {
-            $this->Links->duplicate($template, $newId, true);
-            $this->Steps->duplicate($template, $newId, true);
             $Tags = new Tags($Templates);
             $Tags->copyTags($newId, true);
+            $this->Steps->duplicate($template, $newId, true);
+            $this->ItemsLinks->duplicate($template, $newId, true);
         }
 
         $this->insertTags($tags, $newId);
@@ -172,7 +172,8 @@ class Experiments extends AbstractConcreteEntity
         if ($this->id === null) {
             throw new IllegalActionException('Try to duplicate without an id.');
         }
-        $this->Links->duplicate($this->id, $newId);
+        $this->ExperimentsLinks->duplicate($this->id, $newId);
+        $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
 
@@ -186,12 +187,6 @@ class Experiments extends AbstractConcreteEntity
     {
         if ($this->entityData['timestamped'] === 1) {
             throw new IllegalActionException('User tried to delete an experiment that was timestamped.');
-        }
-        // FIXME: with external api calls we don't know the team of the user, so we cannot check for this setting
-        // either remove the setting because it's a soft delete anyway, or find another way
-        // for the moment disallow this action
-        if (empty($this->Users->userData['team'])) {
-            throw new ImproperActionException('DELETE action of experiments through API is not supported.');
         }
         $Teams = new Teams($this->Users);
         $teamConfigArr = $Teams->readOne();

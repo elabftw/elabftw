@@ -14,7 +14,7 @@ export default class SidePanel {
   api: Api;
 
   constructor(model: Model) {
-    this.model = model,
+    this.model = model;
     this.api = new Api();
   }
 

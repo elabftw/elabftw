@@ -236,9 +236,20 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
   addAutocompleteToTagInputs();
 }
 
-export async function reloadElement(elementId): Promise<void> {
+export async function reloadElements(elementIds: string[]): Promise<void> {
+  const html = await fetchCurrentPage();
+  elementIds.forEach(id => {
+    if (!document.getElementById(id)) {
+      console.error(`Could not find element with id ${id} to reload!`);
+      return;
+    }
+    document.getElementById(id).innerHTML = html.getElementById(id).innerHTML;
+  });
+}
+
+export async function reloadElement(elementId: string): Promise<void> {
   if (!document.getElementById(elementId)) {
-    console.error('Could not find element to reload!');
+    console.error(`Could not find element with id ${elementId} to reload!`);
     return;
   }
   const html = await fetchCurrentPage();
@@ -263,22 +274,60 @@ export function adjustHiddenState(): void {
 
 // AUTOCOMPLETE
 export function addAutocompleteToLinkInputs(): void {
+  const cache = {};
   const ApiC = new Api();
-  // this is the select category filter on add link input
-  const catFilterEl = (document.getElementById('addLinkCatFilter') as HTMLInputElement);
-  if (catFilterEl) {
-    ($('[data-autocomplete="links"]') as JQuery<HTMLInputElement>).autocomplete({
-      source: function(request: Record<string, string>, response: (data) => void): void {
-        ApiC.getJson(`${EntityType.Item}/?cat=${catFilterEl.value}&q=${request.term}`).then(json => {
-          const res = [];
-          json.forEach(entity => {
-            res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+  [{
+    selectElid: 'addLinkCatFilter',
+    itemType: EntityType.Item,
+    filterFamily: 'cat',
+    inputElId: 'addLinkItemsInput',
+  }, {
+    selectElid: 'addLinkExpCatFilter',
+    itemType: EntityType.Experiment,
+    filterFamily: 'owner',
+    inputElId: 'addLinkExpInput',
+  }, {
+    selectElid: 'addLinkCatFilter',
+    itemType: EntityType.Item,
+    filterFamily: 'cat',
+    inputElId: 'linkInputMultiple',
+  }].forEach(object => {
+    const filterEl = (document.getElementById(object.selectElid) as HTMLInputElement);
+    if (filterEl) {
+      cache[object.selectElid] = {};
+      // when we change the category filter, reset the cache
+      filterEl.addEventListener('change', () => {
+        cache[object.selectElid] = {};
+      });
+      ($(`#${object.inputElId}`) as JQuery<HTMLInputElement>).autocomplete({
+        source: function(request: Record<string, string>, response: (data) => void): void {
+          const term = request.term;
+          if (term in cache[object.selectElid]) {
+            const res = [];
+            cache[object.selectElid][term].forEach(entity => {
+              res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+            });
+            response(res);
+            return;
+          }
+          ApiC.getJson(`${object.itemType}/?${object.filterFamily}=${filterEl.value}&q=${request.term}`).then(json => {
+            cache[object.selectElid][term] = json;
+            const res = [];
+            json.forEach(entity => {
+              res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+            });
+            response(res);
           });
-          response(res);
-        });
-      },
-    });
-  }
+        },
+        select: function(event: Event, ui): boolean {
+          const inputEl = event.target as HTMLInputElement;
+          inputEl.value = ui.item.label;
+          // don't let autocomplete change value of input element
+          return false;
+        },
+      });
+    }
+  });
 }
 
 export function addAutocompleteToTagInputs(): void {

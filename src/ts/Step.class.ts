@@ -15,7 +15,7 @@ export default class Step {
 
   constructor(entity: Entity) {
     this.entity = entity;
-    this.model = Model.Step,
+    this.model = Model.Step;
     this.api = new Api();
   }
 

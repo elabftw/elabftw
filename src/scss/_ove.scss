@@ -6,6 +6,11 @@
  * @package elabftw
  */
 
+// overwrite ove umd bundle setting
+code {
+    display: inline-block;
+}
+
 .preview-mode-container {
     .bp3-button.bp3-intent-primary {
         background-color: $elabblue !important;

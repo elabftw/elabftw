@@ -51,7 +51,7 @@ import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-plugins/mention/plugin.js';
 import EntityClass from './Entity.class';
-import { EntityType, Target, Model } from './interfaces';
+import { EntityType, Target } from './interfaces';
 import { getEntity, reloadElement } from './misc';
 import { Api } from './Apiv2.class';
 

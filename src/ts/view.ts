@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // DUPLICATE
     if (el.matches('[data-action="duplicate-entity"]')) {
-      EntityC.duplicate(entity.id).then(resp => window.location.href = resp.headers.get('location'));
+      EntityC.duplicate(entity.id).then(resp => window.location.href = `?mode=edit&id=${resp.headers.get('location').split('/').pop()}`);
 
     // EDIT
     } else if (el.matches('[data-action="edit"]')) {

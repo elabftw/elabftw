@@ -161,6 +161,9 @@ class Filter
         $config->set('Cache.SerializerPath', $tmpDir);
         // allow "display" css attribute
         $config->set('CSS.AllowTricky', true);
+        // allow any image size, see #3800
+        $config->set('CSS.MaxImgLength', null);
+        $config->set('HTML.MaxImgLength', null);
 
         $purifier = new HTMLPurifier($config);
         return $purifier->purify($input);

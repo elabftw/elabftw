@@ -21,7 +21,7 @@ ADD --chmod=755 https://github.com/phan/phan/releases/download/$PHAN_VERSION/pha
 # extend open_basedir
 # /usr/bin/psalm, //autoload.php, /root/.cache/ are for psalm
 # /usr/bin/phpstan, /proc/cpuinfo is for phpstan, https://github.com/phpstan/phpstan/issues/4427 https://github.com/phpstan/phpstan/issues/2965
-RUN sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/usr/bin/phpstan:/proc/cpuinfo|' /etc/php81/php.ini
+RUN sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/usr/bin/phpstan:/proc/cpuinfo:/usr/share|' /etc/php81/php.ini
 # Install xdebug for coverage
 RUN apk add --update php81-pecl-xdebug
 RUN printf "zend_extension=xdebug.so\nxdebug.mode=coverage" > /etc/php81/conf.d/42_xdebug.ini

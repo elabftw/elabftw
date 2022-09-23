@@ -48,7 +48,10 @@ abstract class AbstractEntityController implements ControllerInterface
     {
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $this->visibilityArr = $TeamGroups->getVisibilityList();
-        $this->allTeamUsersArr = $this->App->Users->readAllFromTeam();
+        // only take active users
+        $this->allTeamUsersArr = array_filter($this->App->Users->readAllFromTeam(), function ($u) {
+            return $u['archived'] === 0;
+        });
         // items don't need to show the templates in create new menu, so save a sql call here
         if ($this->Entity instanceof Experiments) {
             $Templates = new Templates($this->Entity->Users);

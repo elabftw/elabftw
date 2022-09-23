@@ -20,8 +20,17 @@
           <option value='{{ category.category_id }}'{{ App.Request.query.get('cat') == category.category_id ? ' selected'}}>
           {{ category.category|raw }}</option>
         {% endfor %}
-
       </select>
+
+      <!-- OWNER filter -->
+      <select name='owner' class='autosubmit mr-1 form-control' aria-label='Filter owner'>
+        <option value=''>{{ 'Filter owner'|trans }}</option>
+        {% for user in allTeamUsersArr %}
+          <option value='{{ user.userid }}'{{ App.Request.query.get('owner') == user.userid ? ' selected'}}>
+          {{ user.fullname|raw }}</option>
+        {% endfor %}
+      </select>
+
       <input type='hidden' name='mode' value='show' />
 
       <!-- ORDER -->

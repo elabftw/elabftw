@@ -71,12 +71,16 @@ class SamlAuth implements AuthInterface
     {
         $now = new DateTimeImmutable();
         $config = self::getJWTConfig();
+        /**
+         * @psalm-suppress PossiblyFalseArgument
+         */
         $token = $config->builder()
                 // Configures the audience (aud claim)
                 ->permittedFor('saml-session')
                 // Configures the time that the token was issue (iat claim)
                 ->issuedAt($now)
                 // Configures the expiration time of the token (exp claim)
+                // @psalm-suppress PossiblyFalseArgument
                 ->expiresAt($now->modify('+1 months'))
                 // Configures a new claim, called "uid"
                 ->withClaim('sid', $this->getSessionIndex())

@@ -237,7 +237,14 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
 }
 
 export async function reloadElements(elementIds: string[]): Promise<void> {
-  elementIds.forEach(id => reloadElement(id));
+  const html = await fetchCurrentPage();
+  elementIds.forEach(id => {
+    if (!document.getElementById(id)) {
+      console.error(`Could not find element with id ${id} to reload!`);
+      return;
+    }
+    document.getElementById(id).innerHTML = html.getElementById(id).innerHTML;
+  });
 }
 
 export async function reloadElement(elementId: string): Promise<void> {
@@ -296,11 +303,15 @@ export function addAutocompleteToLinkInputs(): void {
         source: function(request: Record<string, string>, response: (data) => void): void {
           const term = request.term;
           if (term in cache[object.selectElid]) {
-            response(cache[object.selectElid][term]);
+            const res = [];
+            cache[object.selectElid][term].forEach(entity => {
+              res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+            });
+            response(res);
             return;
           }
           ApiC.getJson(`${object.itemType}/?${object.filterFamily}=${filterEl.value}&q=${request.term}`).then(json => {
-            cache[object.selectElid][term] = json.value;
+            cache[object.selectElid][term] = json;
             const res = [];
             json.forEach(entity => {
               res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);

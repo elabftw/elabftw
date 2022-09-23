@@ -40,7 +40,7 @@
             <span data-type='experiments' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
               <i class='fas fa-plus-circle'></i>
             </span>
-            <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='experiments.php?mode=view&id={{ link.itemid }}'>
+            <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</span> - <a href='experiments.php?mode=view&id={{ link.itemid }}'>
                 {{ link.title|raw }}</a>
             <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
             <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->

@@ -10,7 +10,7 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import Step from './Step.class';
 import i18next from 'i18next';
-import { relativeMoment, makeSortableGreatAgain, reloadElement, addAutocompleteToLinkInputs, getCheckedBoxes, notif, getEntity, adjustHiddenState } from './misc';
+import { relativeMoment, makeSortableGreatAgain, reloadElement, reloadElements, addAutocompleteToLinkInputs, getCheckedBoxes, notif, getEntity, adjustHiddenState } from './misc';
 import { EntityType, Action, Target, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 
@@ -48,11 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     // IMPORT LINK(S) OF LINK
     } else if (el.matches('[data-action="import-links"]')) {
-      ApiC.post(`${entity.type}/${entity.id}/${el.dataset.endpoint}/${el.dataset.target}`, {'action': Action.Duplicate}).then(() => reloadElement('stepsLinksDiv'));
+      Promise.allSettled(['items_links', 'experiments_links'].map(endpoint => ApiC.post(`${entity.type}/${entity.id}/${endpoint}/${el.dataset.target}`, {'action': Action.Duplicate}))).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
     // DESTROY LINK
     } else if (el.matches('[data-action="destroy-link"]')) {
       if (confirm(i18next.t('link-delete-warning'))) {
-        ApiC.delete(`${entity.type}/${entity.id}/${el.dataset.endpoint}/${el.dataset.target}`).then(() => reloadElement('stepsLinksDiv'));
+        ApiC.delete(`${entity.type}/${entity.id}/${el.dataset.endpoint}/${el.dataset.target}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
       }
     }
   });
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       ApiC.post(`${entity.type}/${entity.id}/${$(this).data('endpoint')}/${target}`).then(() => {
-        reloadElement('stepsLinksDiv');
+        reloadElements(['linksDiv', 'linksExpDiv']);
         // clear input field
         $(this).val('');
       });

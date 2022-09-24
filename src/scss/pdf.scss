@@ -83,10 +83,6 @@ tr:nth-child(odd) {
     text-align: right;
 }
 
-.tags {
-    border: 2px solid #dcdddc;
-}
-
 .barcode {
     color: #000;
     margin: 0;
@@ -101,6 +97,11 @@ tr:nth-child(odd) {
     max-width: 100%;
 }
 
+/* border-radius or padding not working on non div elements */
+.tag {
+    border: 1px solid #ccc;
+}
+
 .noborder {
     border-style: none;
 }
@@ -110,7 +111,6 @@ tr:nth-child(odd) {
     border: 1px solid #dcdddc;
     border-radius: 5px;
     margin-top: 1em;
-    padding-right: 15px;
     width: 100%;
 }
 

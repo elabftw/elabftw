@@ -89,9 +89,17 @@ class MakeEln extends MakeStreamZip
 
             // LINKS
             $mentions = array();
-            foreach ($e['links'] as $link) {
+            foreach ($e['items_links'] as $link) {
                 $mentions[] = array(
                     '@id' => SITE_URL . '/database.php?mode=view&id=' . $link['itemid'],
+                    '@type' => 'Dataset',
+                    'name' => $link['category'] . ' - ' . $link['title'],
+                    'identifier' => $link['elabid'],
+                );
+            }
+            foreach ($e['experiments_links'] as $link) {
+                $mentions[] = array(
+                    '@id' => SITE_URL . '/experiments.php?mode=view&id=' . $link['itemid'],
                     '@type' => 'Dataset',
                     'name' => $link['category'] . ' - ' . $link['title'],
                     'identifier' => $link['elabid'],

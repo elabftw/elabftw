@@ -9,7 +9,6 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Models\Experiments;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Services\UsersHelper;
 use Exception;

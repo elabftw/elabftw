@@ -40,7 +40,8 @@ class ExperimentsController extends AbstractEntityController
         $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);
         // filter by user if we don't want to show the rest of the team
         // looking for an owner will bypass the user preference
-        if (!$this->Entity->Users->userData['show_team'] && !$this->App->Request->query->has('owner')) {
+        // same with an extended search: we show all
+        if (!$this->Entity->Users->userData['show_team'] && !$this->App->Request->query->has('owner') && !$this->App->Request->query->has('extended')) {
             // Note: the cast to int is necessary here (not sure why)
             $DisplayParams->appendFilterSql(FilterableColumn::Owner, (int) $this->App->Users->userData['userid']);
         }

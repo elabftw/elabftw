@@ -48,8 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // validate the form upon change. fix #451
   // add to the input itself, not the form for more flexibility
   // for instance the tags input allow multiple selection, so we don't want to submit on change
-  $('.autosubmit').on('change', function() {
-    $(this).closest('form').submit();
+  document.querySelectorAll('.autosubmit').forEach(el => {
+    el.addEventListener('change', event => {
+      // look for all the select that have an empty value and ignore them by setting the name to empty string
+      // this is done to avoid the "extended" being repeated with the last one possibly empty taking over the first one
+      document.querySelectorAll('select.autosubmit').forEach((sel: HTMLSelectElement) => {
+        if (sel.options[sel.selectedIndex].value === '') {
+          // using empty name is better than sel.disabled to avoid visual glitch during submit
+          sel.name = '';
+        }
+      });
+      (event.currentTarget as HTMLElement).closest('form').submit();
+    });
   });
 
   // THE CHECKBOXES

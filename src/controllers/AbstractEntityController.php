@@ -41,6 +41,8 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $templatesArr = array();
 
+    protected array $teamGroupsFromUser = array();
+
     // all the users from the current team
     protected array $allTeamUsersArr = array();
 
@@ -48,6 +50,7 @@ abstract class AbstractEntityController implements ControllerInterface
     {
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $this->visibilityArr = $TeamGroups->getVisibilityList();
+        $this->teamGroupsFromUser = $TeamGroups->readGroupsFromUser();
         // only take active users
         $this->allTeamUsersArr = array_filter($this->App->Users->readAllFromTeam(), function ($u) {
             return $u['archived'] === 0;
@@ -97,6 +100,18 @@ abstract class AbstractEntityController implements ControllerInterface
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $extendedError = $this->prepareAdvancedSearchQuery($TeamGroups->readGroupsWithUsersFromUser());
 
+        // Extended search
+        if ($this->App->Request->query->has('extended') && !empty($this->App->Request->query->get('extended'))) {
+            $extended = trim((string) $this->App->Request->query->get('extended'));
+
+            $advancedQuery = new AdvancedSearchQuery($extended, new VisitorParameters($this->Entity->type, $this->visibilityArr, $TeamGroups->readGroupsWithUsersFromUser()));
+            $whereClause = $advancedQuery->getWhereClause();
+            if ($whereClause) {
+                $this->Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
+            }
+            $extendedError = $advancedQuery->getException();
+        }
+
         $itemsArr = $this->getItemsArr();
         // get tags separately
         $tagsArr = array();
@@ -134,6 +149,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'searchType' => $isSearchPage ? 'something' : $DisplayParams->searchType,
             'tagsArr' => $tagsArr,
             'tagsArrForSelect' => $tagsArrForSelect,
+            'teamGroupsFromUser' => $this->teamGroupsFromUser,
             'templatesArr' => $this->templatesArr,
             'visibilityArr' => $this->visibilityArr,
             'extendedError' => $extendedError,

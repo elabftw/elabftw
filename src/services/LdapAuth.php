@@ -41,7 +41,7 @@ class LdapAuth implements AuthInterface
         $query = $this->connection->query()->setDn($this->configArr['ldap_base_dn']);
         try {
             $record = $query->findbyOrFail('mail', $this->email);
-        } catch (ObjectNotFoundException $e) {
+        } catch (ObjectNotFoundException) {
             throw new InvalidCredentialsException(0);
         }
         $dn = $record['distinguishedname'] ?? $record['dn'];

@@ -125,7 +125,7 @@ class Apiv2Controller extends AbstractApiController
         if ($this->Request->query->has('format') && $this->Model instanceof AbstractConcreteEntity) {
             try {
                 $this->format = ExportFormat::from($this->Request->query->getAlpha('format'));
-            } catch (ValueError $e) {
+            } catch (ValueError) {
                 throw new ImproperActionException('Incorrect format value.');
             }
             $this->Request->query->set('type', $this->Model->type);
@@ -137,9 +137,9 @@ class Apiv2Controller extends AbstractApiController
                 $this->reqBody = json_decode((string) $this->Request->getContent(), true, 512, JSON_THROW_ON_ERROR);
                 // SET ACTION
                 $this->action = Action::tryFrom((string) ($this->reqBody['action'] ?? '')) ?? $this->action;
-            } catch (JsonException $e) {
+            } catch (JsonException) {
                 throw new ImproperActionException('Error decoding json payload.');
-            } catch (ValueError $e) {
+            } catch (ValueError) {
                 throw new ImproperActionException('Incorrect action value.');
             }
         }

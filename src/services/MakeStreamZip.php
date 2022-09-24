@@ -50,7 +50,11 @@ class MakeStreamZip extends AbstractMakeZip
     public function getStreamZip(): void
     {
         foreach ($this->idArr as $id) {
-            $this->addToZip((int) $id);
+            try {
+                $this->addToZip((int) $id);
+            } catch (IllegalActionException) {
+                continue;
+            }
         }
 
         // add the (hidden) .elabftw.json file useful for reimport

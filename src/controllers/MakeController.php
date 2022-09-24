@@ -116,14 +116,14 @@ class MakeController implements ControllerInterface
         // generate the id array
         if ($this->Request->query->has('category')) {
             $this->idArr = $this->Entity->getIdFromCategory((int) $this->Request->query->get('category'));
-        } elseif ($this->Request->query->has('user')) {
+        } elseif ($this->Request->query->has('owner')) {
             // only admin can export a user, or it is ourself
-            if (!$this->Users->userData['is_admin'] && $this->Request->query->get('user') !== $this->Users->userData['userid']) {
+            if (!$this->Users->userData['is_admin'] && $this->Request->query->get('owner') !== $this->Users->userData['userid']) {
                 throw new IllegalActionException('User tried to export another user but is not admin.');
             }
             // being admin is good, but we also need to be in the same team as the requested user
             $Teams = new Teams($this->Users);
-            $targetUserid = (int) $this->Request->query->get('user');
+            $targetUserid = (int) $this->Request->query->get('owner');
             if (!$Teams->hasCommonTeamWithCurrent($targetUserid, $this->Users->userData['team'])) {
                 throw new IllegalActionException('User tried to export another user but is not in same team.');
             }

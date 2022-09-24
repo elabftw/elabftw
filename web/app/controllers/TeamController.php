@@ -38,8 +38,6 @@ try {
             $Request->request->get('subject'),
             $Request->request->get('body'),
             $App->Users->userData['team'],
-            $App->Users->userData['email'],
-            $App->Users->userData['fullname'],
         );
         $App->Session->getFlashBag()->add('ok', sprintf(_('Email sent to %d users'), $sent));
     }

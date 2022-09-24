@@ -81,17 +81,14 @@ class Email
     /**
      * Send a mass email to all users
      */
-    public function massEmail(string $subject, string $body, ?int $team = null, ?string $fromEmail = null, ?string $fromName = null): int
+    public function massEmail(string $subject, string $body, ?int $team = null): int
     {
         if (empty($subject)) {
-            $subject = 'No subject';
+            $subject = '[eLabFTW] No subject';
         }
 
         // set from
         $from = $this->from;
-        if ($fromEmail !== null && $fromName !== null) {
-            $from = new Address($fromEmail, $fromName);
-        }
 
         // get all email addresses
         $emails = $this->getAllEmails($team);

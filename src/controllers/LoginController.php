@@ -118,7 +118,7 @@ class LoginController implements ControllerInterface
 
         // INITIAL TEAM SELECTION
         if ($authType === 'teaminit' && $this->App->Session->get('initial_team_selection_required')) {
-            // create an unvalidated user in the requested team
+            // create a user in the requested team
             $newUser = ExistingUser::fromScratch(
                 $this->App->Session->get('teaminit_email'),
                 array((int) $this->App->Request->request->get('team_id')),
@@ -126,18 +126,15 @@ class LoginController implements ControllerInterface
                 (string) $this->App->Request->request->get('teaminit_lastname'),
             );
             $this->App->Session->set('teaminit_done', true);
+            // will display the appropriate message to user
+            $this->App->Session->set('teaminit_done_need_validation', (string) $newUser->needValidation);
             $this->App->Session->remove('initial_team_selection_required');
-            // set a session flag to show correct message
-            if ($newUser->needValidation) {
-                $this->App->Session->set('teaminit_done_need_validation', '1');
-            }
             $location = '../../login.php';
             echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
             exit;
         }
 
-
-        // try to authenticate
+        // TRY TO AUTHENTICATE
         $AuthResponse = $this->getAuthService($authType)->tryAuth();
 
         /////////
@@ -156,7 +153,6 @@ class LoginController implements ControllerInterface
             $this->App->Session->remove('mfa_secret');
         }
 
-
         ////////////////////
         // TEAM SELECTION //
         ////////////////////
@@ -168,6 +164,14 @@ class LoginController implements ControllerInterface
             return new RedirectResponse('../../login.php');
         }
 
+        // no team was found so user must select one
+        if ($AuthResponse->initTeamRequired) {
+            $this->App->Session->set('initial_team_selection_required', true);
+            $this->App->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
+            $this->App->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
+            $this->App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
+            return new RedirectResponse('../../login.php');
+        }
         // All good now we can login the user
         $LoginHelper = new LoginHelper($AuthResponse, $this->App->Session);
         $LoginHelper->login((bool) $icanhazcookies);

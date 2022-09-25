@@ -73,6 +73,17 @@ class LdapAuth implements AuthInterface
                 if ($teamId === 0) {
                     throw new ImproperActionException('Could not find team ID to assign user!');
                 }
+                // this setting is when we want to allow the user to make team selection
+                if ($teamId === -1) {
+                    $this->AuthResponse->userid = 0;
+                    $this->AuthResponse->initTeamRequired = true;
+                    $this->AuthResponse->initTeamUserInfo = array(
+                        'email' => $this->email,
+                        'firstname' => $firstname,
+                        'lastname' => $lastname,
+                    );
+                    return $this->AuthResponse;
+                }
                 $teamFromLdap = array($teamId);
             // it is found and it is a string
             } elseif (is_string($teamFromLdap)) {

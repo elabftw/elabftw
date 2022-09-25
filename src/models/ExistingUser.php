@@ -43,6 +43,9 @@ class ExistingUser extends Users
     ): Users {
         $Users = new self();
         $userid = $Users->createOne($email, $teams, $firstname, $lastname, '', $usergroup, $forceValidation, $alertAdmin);
-        return new self($userid);
+        $fresh = new self($userid);
+        // we need to report the needValidation flag into the new object
+        $fresh->needValidation = $Users->needValidation;
+        return $fresh;
     }
 }

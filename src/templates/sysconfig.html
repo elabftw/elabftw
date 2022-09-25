@@ -844,6 +844,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <option {{ team.id == App.Config.configArr.saml_team_default ? 'selected' }} value='{{ team.id }}'>{{ team.name }}</option>
           {% endfor %}
           <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>Throw error!</option>
+          <option {{ '-1' == App.Config.configArr.saml_team_default ? 'selected' }} value='-1'>Let user select a team</option>
         </select>
 
         <label for='ldap-user-default'>If the user doesn't exist yet, what to do?</label>

@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else if (el.matches('[data-action="show-import-tpl"]')) {
       document.getElementById('import_tpl').toggleAttribute('hidden');
-    } else if (el.matches('[data-action="pin"]')) {
+    } else if (el.matches('[data-action="toggle-pin"]')) {
       EntityC.pin(parseInt(el.dataset.id)).then(() => {
         reloadElement('templatesDiv').then(() => {
           addAutocompleteToTagInputs();

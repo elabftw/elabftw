@@ -123,6 +123,12 @@
       <a class='dropdown-item hover-danger {{ Entity.entityData.timestamped or (not deletableXp and (Entity.type == 'experiments')) ? 'disabled' }}' href='#' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</a>
     </div>
   </div>
+  <p id='toggle-pin-icon-div' class='float-right mr-3 d-inline'>
+    <a class='elab-tooltip ml-2' data-action='toggle-pin' href='#'>
+      <span>{{ 'Toggle pin'|trans }}</span>
+      <i title='{{ 'Toggle pin'|trans }}' id='toggle-pin-icon' class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }} fa-2x'></i>
+    </a>
+  </p>
 
   <!-- DATE -->
   <div class='row mb-2 form-inline'>

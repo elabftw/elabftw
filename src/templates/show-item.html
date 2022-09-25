@@ -1,84 +1,90 @@
-      {# dim the experiment a bit if it's not yours #}
-      {% set randomId = random() %}
-      {% set opacity = '1' %}
-      {% set owner = '' %}
-      {% if (Entity.Users.userData.userid != item.userid) and not App.Session.has('is_anon') %}
-        {% set opacity = '0.7' %}
-        {% set owner = "<a href='?owner=%s'>%s</a>"|format(item.userid, item.fullname) %}
+{# dim the experiment a bit if it's not yours #}
+{% set randomId = random() %}
+{% set opacity = '1' %}
+{% set owner = '' %}
+{% if (Entity.Users.userData.userid != item.userid) and not App.Session.has('is_anon') %}
+  {% set opacity = '0.7' %}
+  {% set owner = "<a href='?owner=%s'>%s</a>"|format(item.userid, item.fullname) %}
+{% endif %}
+{% if Entity.Users.userData.single_column_layout %}
+  <div class='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
+{% else %}
+  <div class='col-xs-12 col-sm-6 col-md-6 col-lg-4'>
+{% endif %}
+
+  <section class='item item-show item-show-{{ App.Users.userData.display_size }} {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='--opacity:{{ opacity }}; --left-color: #{{ item.color }};'>
+    {% if isPinned %}
+      <p class='float-right d-inline'>
+        <a class='elab-tooltip ml-2' data-action='toggle-pin' data-id='{{ item.id }}' href='#'>
+          <span>{{ 'Toggle pin'|trans }}</span>
+          <i class='fas fa-thumbtack'title="{{ 'Pinned'|trans }}"></i>
+        </a>
+      </p>
+    {% endif %}
+
+    <p class='title'>
+      <!-- lock icon -->
+      {% if item.locked %}
+        <i class='fas fa-lock' style='color:#29AEB9'></i>
       {% endif %}
-      {% if Entity.Users.userData.single_column_layout %}
-        <div class='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
-      {% else %}
-        <div class='col-xs-12 col-sm-6 col-md-6 col-lg-4'>
+
+      <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
+    </p>
+    {% if item.next_step|length > 0 %}
+      {% set stepsArr = item.next_step|split('|') %}
+      {% set next = stepsArr|first %}
+      <p class='item-next'>
+        {{ 'Next step'|trans }}: <span class='item-next-step'>{{ next|raw }}</span>
+      </p>
+    {% endif %}
+
+    <p class='item-info'>
+      <!-- checkbox -->
+      <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;vertical-align:0.5px;' />
+      <!-- edit icon -->
+      {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
+        <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}' title='{{ 'Edit'|trans }}'><i class='fas fa-pencil-alt link-like'></i></a>
       {% endif %}
-          <section class='item item-show item-show-{{ App.Users.userData.display_size }} {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='--opacity:{{ opacity }}; --left-color: #{{ item.color }};'>
-              {% if isPinned %}
-                <span class='float-right'><i class='fas fa-thumbtack' title="{{ 'Pinned'|trans }}"></i></span>
-              {% endif %}
+      <!-- toggle body -->
+      <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
+        <i class='fas fa-plus-circle'></i>
+      </span>
+      <!-- category -->
+      <span class='item-category'><a style='color:#{{ item.color }}' href='?cat={{ item.category_id }}'>{{ item.category }}</a></span>
+      <!-- date -->
+      <span class='item-date'><i class='far fa-calendar-alt mr-1'></i>{{ item.date|date('Y-m-d') }}</span>
+      <!-- timestamp icon -->
+      {% if item.timestamped %}
+        <i class='far fa-calendar-check'></i>
+      {% endif %}
 
-            <p class='title'>
-              <!-- lock icon -->
-              {% if item.locked %}
-                <i class='fas fa-lock' style='color:#29AEB9'></i>
-              {% endif %}
+      {# show attached if there is a file attached #}
+      {% if item.has_attachment %}
+        <i class='fas fa-paperclip'></i>
+      {% endif %}
+      {% if item.has_comment %}
+        <i class='fas fa-comments'></i>
+      {% endif %}
 
-              <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
-            </p>
-            {% if item.next_step|length > 0 %}
-              {% set stepsArr = item.next_step|split('|') %}
-              {% set next = stepsArr|first %}
-              <p class='item-next'>
-                {{ 'Next step'|trans }}: <span class='item-next-step'>{{ next|raw }}</span>
-              </p>
-            {% endif %}
+      {% if item.rating > 0 %}
+        {{ item.rating|stars|raw }}
+      {% endif %}
 
-            <p class='item-info'>
-              <!-- checkbox -->
-              <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;vertical-align:0.5px;' />
-              <!-- edit icon -->
-              {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
-                <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}' title='{{ 'Edit'|trans }}'><i class='fas fa-pencil-alt link-like'></i></a>
-              {% endif %}
-              <!-- toggle body -->
-              <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
-                <i class='fas fa-plus-circle'></i>
-              </span>
-              <!-- category -->
-              <span class='item-category'><a style='color:#{{ item.color }}' href='?cat={{ item.category_id }}'>{{ item.category }}</a></span>
-              <!-- date -->
-              <span class='item-date'><i class='far fa-calendar-alt mr-1'></i>{{ item.date|date('Y-m-d') }}</span>
-              <!-- timestamp icon -->
-              {% if item.timestamped %}
-                <i class='far fa-calendar-check'></i>
-              {% endif %}
+      {{ owner|raw }}
 
-              {# show attached if there is a file attached #}
-              {% if item.has_attachment %}
-                <i class='fas fa-paperclip'></i>
-              {% endif %}
-              {% if item.has_comment %}
-                <i class='fas fa-comments'></i>
-              {% endif %}
+      {% set itemtagsArr = tagsArr[item.id] %}
+      {% if itemtagsArr|length > 0 %}
+        <span class='tags'><i class='fas fa-tags mr-1'></i>
+          {% for tag in itemtagsArr %}
+            <a class='tag mathjax-ignore' href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+          {% endfor %}
+        </span>
+      {% endif %}
+    </p>
 
-              {% if item.rating > 0 %}
-                {{ item.rating|stars|raw }}
-              {% endif %}
+    <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
+    <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
+    <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
 
-              {{ owner|raw }}
-
-              {% set itemtagsArr = tagsArr[item.id] %}
-              {% if itemtagsArr|length > 0 %}
-                <span class='tags'><i class='fas fa-tags mr-1'></i>
-                  {% for tag in itemtagsArr %}
-                    <a class='tag mathjax-ignore' href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
-                  {% endfor %}
-                </span>
-              {% endif %}
-            </p>
-
-            <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
-            <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
-            <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
-
-          </section>
-        </div>
+  </section>
+</div>

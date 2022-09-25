@@ -252,6 +252,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="show-plain-text"]')) {
       showContentPlainText(el);
 
+    // TOGGLE PIN
+    } else if (el.matches('[data-action="toggle-pin"]')) {
+      EntityC.pin(entity.id).then(() => reloadElement('toggle-pin-icon-div'));
+
     // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT
     } else if (el.matches('[data-action="insert-plain-text"]')) {
       fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {

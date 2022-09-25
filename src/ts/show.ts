@@ -215,6 +215,10 @@ document.addEventListener('DOMContentLoaded', () => {
         el.removeAttribute('hidden');
       });
 
+    // TOGGLE PIN
+    } else if (el.matches('[data-action="toggle-pin"]')) {
+      EntityC.pin(parseInt(el.dataset.id, 10)).then(() => el.closest('.item').remove());
+
     // toggle visibility of the trash icon for favtags
     } else if (el.matches('[data-action="toggle-favtags-edit"]')) {
       document.querySelectorAll('[data-action="destroy-favtags"]').forEach(el => {

@@ -18,7 +18,7 @@ COPY ../builder.js /elabftw
 COPY ../codeception.yml /elabftw
 COPY ../composer.json /elabftw
 COPY ../composer.lock /elabftw
-COPY ../cypress.json /elabftw
+COPY ../cypress.config.ts /elabftw
 COPY ../node-builder.js /elabftw
 COPY ../package.json /elabftw
 COPY ../yarn.lock /elabftw

@@ -197,12 +197,12 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                   <li class='list-inline-item mb-2'>
                     {% set count = Teams.getStats(team.id) %}
                     <label for='teamName_{{ team.id }}'>{{ 'Team Name'|trans }}</label>
-                    <input data-id='{{ team.id }}' class='form-control custom-control-inline' id='teamName_{{ team.id }}' type='text' value='{{ team.name }}' />
+                    <input autocomplete='off' data-id='{{ team.id }}' class='form-control custom-control-inline' id='teamName_{{ team.id }}' type='text' value='{{ team.name }}' />
                   </li>
 
                   <li class='list-inline-item mb-2'>
                     <label for='teamOrgid_{{ team.id }}'>{{ 'Team Organisation ID'|trans }}</label>
-                    <input data-id='{{ team.id }}' class='form-control custom-control-inline' id='teamOrgid_{{ team.id }}' type='text' value='{{ team.orgid }}' />
+                    <input autocomplete='off' data-id='{{ team.id }}' class='form-control custom-control-inline' id='teamOrgid_{{ team.id }}' type='text' value='{{ team.orgid }}' />
                   </li>
 
                   <li class='list-inline-item mb-2'>

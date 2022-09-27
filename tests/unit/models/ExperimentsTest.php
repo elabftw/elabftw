@@ -93,7 +93,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->Steps->postAction(Action::Create, array('body' => 'some step'));
         $this->Experiments->ItemsLinks->postAction(Action::Create, array());
         $this->Experiments->ExperimentsLinks->postAction(Action::Create, array());
-        $this->assertIsInt($this->Experiments->duplicate());
+        $this->assertIsInt($this->Experiments->postAction(Action::Duplicate, array()));
     }
 
     public function testInsertTags(): void

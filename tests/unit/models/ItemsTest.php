@@ -54,7 +54,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Items->setId(1);
         $this->Items->canOrExplode('read');
-        $this->assertTrue((bool) Check::id($this->Items->duplicate()));
+        $this->assertIsInt($this->Items->postAction(Action::Duplicate, array()));
     }
 
     public function testToggleLock(): void

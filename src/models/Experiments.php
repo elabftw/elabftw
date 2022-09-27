@@ -168,10 +168,8 @@ class Experiments extends AbstractConcreteEntity
         $req->bindParam(':content_type', $this->entityData['content_type'], PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
-
-        if ($this->id === null) {
-            throw new IllegalActionException('Try to duplicate without an id.');
-        }
+        /** @psalm-suppress PossiblyNullArgument
+         * this->id cannot be null here, checked during canOrExplode */
         $this->ExperimentsLinks->duplicate($this->id, $newId);
         $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);

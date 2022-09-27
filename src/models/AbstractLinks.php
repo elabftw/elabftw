@@ -11,6 +11,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
@@ -110,7 +111,7 @@ abstract class AbstractLinks implements RestInterface
             $sql .= ' OR (entity.canread = ' . $teamgroup . ')';
         }
 
-        $sql .= ') AND entity.state = ' . $this->Entity::STATE_NORMAL . ' ORDER by';
+        $sql .= sprintf(') AND entity.state = %d ORDER by', State::Normal->value);
 
         if ($this instanceof ItemsLinks) {
             $sql .= ' category.title ASC,';

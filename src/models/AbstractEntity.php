@@ -17,6 +17,7 @@ use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -42,12 +43,6 @@ use Symfony\Component\HttpFoundation\Request;
 abstract class AbstractEntity implements RestInterface
 {
     use EntityTrait;
-
-    public const STATE_NORMAL = 1;
-
-    public const STATE_ARCHIVED = 2;
-
-    public const STATE_DELETED = 3;
 
     public const TYPE_EXPERIMENTS = 'experiments';
 
@@ -301,7 +296,7 @@ abstract class AbstractEntity implements RestInterface
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindValue(':state', self::STATE_NORMAL, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         if ($this->isMetadataSearch) {
             foreach ($this->metadataKey as $i => $v) {
                 $req->bindParam(sprintf(':metadata_key_%d', $i), $this->metadataKey[$i]);
@@ -422,7 +417,7 @@ abstract class AbstractEntity implements RestInterface
         }
 
         // if it has the deleted state, don't show it.
-        if ($item['state'] === self::STATE_DELETED) {
+        if ($item['state'] === State::Deleted->value) {
             return array('read' => false, 'write' => false);
         }
 
@@ -548,11 +543,11 @@ abstract class AbstractEntity implements RestInterface
             $req = $this->Db->prepare($sql);
             $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
             $req->bindValue(':type', $this->type);
-            $req->bindValue(':state', Uploads::STATE_DELETED, PDO::PARAM_INT);
+            $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
             $this->Db->execute($req);
         }
         // set state to deleted
-        return $this->update(new EntityParams('state', (string) self::STATE_DELETED));
+        return $this->update(new EntityParams('state', (string) State::Deleted->value));
     }
 
     /**

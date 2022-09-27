@@ -13,6 +13,7 @@ use Elabftw\Elabftw\CreateImmutableUpload;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\StorageFactory;
@@ -130,7 +131,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $id = $Uploads->postAction(Action::Create, array('real_name' => 'example.png', 'filePath' => dirname(__DIR__, 2) . '/_data/example.png'));
         $this->assertIsInt($id);
         // make sure the old one is archived
-        $this->assertEquals($Uploads->readOne()['state'], $Uploads::STATE_ARCHIVED);
+        $this->assertEquals($Uploads->readOne()['state'], State::Archived->value);
         $Uploads->setId($id);
         // make sure the comment is the same
         $this->assertEquals($upArrBefore['comment'], $Uploads->uploadData['comment']);

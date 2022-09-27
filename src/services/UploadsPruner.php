@@ -10,9 +10,9 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\State;
 use Elabftw\Factories\StorageFactory;
 use Elabftw\Interfaces\CleanerInterface;
-use Elabftw\Models\Uploads;
 use PDO;
 
 /**
@@ -35,7 +35,7 @@ class UploadsPruner implements CleanerInterface
     {
         $sql = 'SELECT id, long_name, storage FROM uploads WHERE state = :state';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':state', Uploads::STATE_DELETED, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         foreach ($req->fetchAll() as $upload) {
             $storageFs = (new StorageFactory((int) $upload['storage']))->getStorage()->getFs();
@@ -53,7 +53,7 @@ class UploadsPruner implements CleanerInterface
     {
         $sql = 'DELETE FROM uploads WHERE state = :state';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':state', Uploads::STATE_DELETED, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 }

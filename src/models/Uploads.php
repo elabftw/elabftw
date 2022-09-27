@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use function copy;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
@@ -17,6 +16,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UploadParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\StorageFactory;
@@ -38,14 +38,8 @@ class Uploads implements RestInterface
 {
     use UploadTrait;
 
-    public const STATE_DELETED = 3;
-
-    public const STATE_ARCHIVED = 2;
-
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
     private const BIG_FILE_THRESHOLD = 50000000;
-
-    private const STATE_NORMAL = 1;
 
     public array $uploadData = array();
 
@@ -197,7 +191,7 @@ class Uploads implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
-        $req->bindValue(':state', self::STATE_NORMAL, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -305,7 +299,7 @@ class Uploads implements RestInterface
         $this->canWriteOrExplode();
         // read the current one to get the comment
         $upload = $this->readOne();
-        $this->update(new UploadParams('state', (string) self::STATE_ARCHIVED));
+        $this->update(new UploadParams('state', (string) State::Archived->value));
 
         return $this->create(new CreateUpload($params->getFilename(), $params->getFilePath(), $upload['comment']));
     }
@@ -361,7 +355,7 @@ class Uploads implements RestInterface
     private function nuke(): bool
     {
         if ($this->uploadData['immutable'] === 0) {
-            return $this->update(new UploadParams('state', (string) self::STATE_DELETED));
+            return $this->update(new UploadParams('state', (string) State::Deleted->value));
         }
         return false;
     }

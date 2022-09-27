@@ -10,9 +10,8 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\State;
 use Elabftw\Interfaces\CleanerInterface;
-use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Uploads;
 use PDO;
 
 /**
@@ -35,7 +34,7 @@ class ItemsPruner implements CleanerInterface
     {
         $sql = 'SELECT id FROM items WHERE state = :state';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':state', AbstractEntity::STATE_DELETED, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         foreach ($req->fetchAll() as $item) {
             $sql = 'DELETE FROM experiments_links WHERE link_id = :link_id';
@@ -56,7 +55,7 @@ class ItemsPruner implements CleanerInterface
             $req4 = $this->Db->prepare($sql);
             $req4->bindParam(':entity_id', $item['id'], PDO::PARAM_INT);
             $req4->bindValue(':type', 'items');
-            $req4->bindValue(':state', Uploads::STATE_DELETED, PDO::PARAM_INT);
+            $req4->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
             $this->Db->execute($req4);
         }
         $this->deleteFromDb();
@@ -70,7 +69,7 @@ class ItemsPruner implements CleanerInterface
     {
         $sql = 'DELETE FROM items WHERE state = :state';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':state', AbstractEntity::STATE_DELETED, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 }

@@ -74,7 +74,7 @@
 
             <a class='nav-item nav-link {{ App.Request.getScriptName|split('/')|last == 'search.php' ? 'active' }}'
                 href='search.php'>{{ 'Search'|trans }}</a>
-            <a class='nav-item nav-link' href='{{ App.linkHref }}' target='_blank' rel='noopener'>{{ App.linkName }}</a>
+            <a class='nav-item nav-link' href='{{ App.teamArr.link_href }}' target='_blank' rel='noopener'>{{ App.teamArr.link_name }}</a>
 
         </div>
 
@@ -123,7 +123,9 @@
         <!-- User dropdown -->
         <div class='nav-item dropdown'>
           <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown' role='button' aria-label='{{ 'User menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-user fa-2x'></i></a>
-          <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdown'><h6 class='dropdown-header'>{{ 'Logged in as'|trans }} {{ App.Users.userData.firstname|default('Anonymous')|raw }}</h6>
+          <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdown'><h6 class='dropdown-header'>{{ 'Logged in as %s in:'|trans|format(App.Users.userData.firstname|default('Anonymous')|raw) }}</h6>
+            <div class='dropdown-header'>{{ App.teamArr.name|raw }}</div>
+            <div class='dropdown-divider'></div>
             {% if App.Session.has('is_auth') and not App.Session.has('is_anon') %}
               <a class='dropdown-item' href='ucp.php'><i class='fas fa-cogs fa-fw'></i> {{ 'User panel'|trans }}</a>
               <a class='dropdown-item' href='ucp.php?tab=3'><i class='fas fa-layer-group fa-fw'></i> {{ 'My templates'|trans }}</a>

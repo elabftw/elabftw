@@ -34,21 +34,16 @@ $Response->prepare($App->Request);
 
 try {
     $Teams = new Teams($App->Users);
-    $teamArr = $Teams->readOne();
-    $teamsStats = $Teams->getStats((int) $App->Users->userData['team']);
-
     $TeamGroups = new TeamGroups($App->Users);
-    $teamGroupsArr = $TeamGroups->readAll();
-
-    $Database = new Items($App->Users);
-    $Scheduler = new Scheduler($Database);
+    $Items = new Items($App->Users);
+    $Scheduler = new Scheduler($Items);
+    $Templates = new Templates($App->Users);
 
     $DisplayParams = new DisplayParams($App->Users, $App->Request);
     // we only want the bookable type of items
     $DisplayParams->appendFilterSql(FilterableColumn::Bookable, 1);
     // make limit very big because we want to see ALL the bookable items here
     $DisplayParams->limit = 900000;
-    $itemsArr = $Database->readShow($DisplayParams);
     $itemData = null;
 
     $allItems = true;
@@ -65,8 +60,6 @@ try {
         }
     }
 
-    $Templates = new Templates($App->Users);
-    $templatesArr = $Templates->readAll();
     $entityData = array();
     if ($App->Request->query->has('templateid')) {
         $Templates->setId($App->Request->query->getInt('templateid'));
@@ -78,14 +71,14 @@ try {
         'Entity' => $Templates,
         'Scheduler' => $Scheduler,
         'allItems' => $allItems,
-        'itemsArr' => $itemsArr,
+        'itemsArr' => $Items->readShow($DisplayParams),
         'itemData' => $itemData,
         'selectedItem' => $selectedItem,
-        'teamArr' => $teamArr,
-        'teamGroupsArr' => $teamGroupsArr,
-        'teamsStats' => $teamsStats,
+        'teamArr' => $Teams->readOne(),
+        'teamGroupsArr' => $TeamGroups->readAll(),
+        'teamsStats' => $Teams->getStats((int) $App->Users->userData['team']),
         'entityData' => $entityData,
-        'templatesArr' => $templatesArr,
+        'templatesArr' => $Templates->readAll(),
     );
 
     $Response->setContent($App->render($template, $renderArr));

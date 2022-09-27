@@ -42,7 +42,7 @@
                   <span data-action='destroy-user2team' data-teamid='{{ team.id }}' data-userid='{{ user.userid }}' class='btn btn-secondary {{ App.Request.getScriptName|split('/')|last == 'sysconfig.php' ? 'hover-danger' }}'>{{ team.name }}</span>
                   {% endfor %}
                   {% if App.Session.get('is_sysadmin') and (App.Request.getScriptName|split('/')|last == 'sysconfig.php') %}
-                    {% set addableToTeams = teamsArr|filter(v => v.visible == 1)|filter(v => v.id not in user.teams|column('id')) %}
+                    {% set addableToTeams = teamsArr|filter(v => v.id not in user.teams|column('id')) %}
                     {% if addableToTeams %}
                       <span class='btn btn-primary' data-action='toggle-next'><i class='color-white fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
                       <span class='form-group form-inline mt-2' hidden>

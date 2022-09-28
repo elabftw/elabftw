@@ -19,14 +19,12 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\RestInterface;
-use Elabftw\Services\Check;
 use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UserArchiver;
 use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
-use function password_hash;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use function time;
@@ -66,7 +64,7 @@ class Users implements RestInterface
         array $teams,
         string $firstname = '',
         string $lastname = '',
-        string $password = '',
+        string $passwordHash = '',
         ?int $group = null,
         bool $forceValidation = false,
         bool $alertAdmin = true,
@@ -82,15 +80,8 @@ class Users implements RestInterface
         $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);
         $EmailValidator->validate();
 
-        if ($password !== '') {
-            Check::passwordLength($password);
-        }
-
         $firstname = Filter::sanitize($firstname);
         $lastname = Filter::sanitize($lastname);
-
-        // Create password hash
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
         // Registration date is stored in epoch
         $registerDate = time();
@@ -138,10 +129,12 @@ class Users implements RestInterface
         $this->Db->execute($req);
         $userid = $this->Db->lastInsertId();
 
+        // check if the team is empty before adding the user to the team
+        $isFirstUser = $TeamsHelper->isFirstUserInTeam();
         // now add the user to the team
         $Users2Teams = new Users2Teams();
         $Users2Teams->addUserToTeams($userid, array_column($teams, 'id'));
-        if ($alertAdmin && !$TeamsHelper->isFirstUserInTeam()) {
+        if ($alertAdmin && !$isFirstUser) {
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $validated);
         }
         if ($validated === 0) {

@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Models\ApiKeys;
@@ -110,10 +111,10 @@ class Populate
     {
         $firstname = $user['firstname'] ?? $this->faker->firstName();
         $lastname = $user['lastname'] ?? $this->faker->lastName();
-        $password = $user['password'] ?? self::DEFAULT_PASSWORD;
+        $passwordHash = (new UserParams('password', $user['password'] ?? self::DEFAULT_PASSWORD))->getContent();
         $email = $user['email'] ?? $this->faker->safeEmail();
 
-        $userid = $Teams->Users->createOne($email, array($user['team']), $firstname, $lastname, $password, null, true, false);
+        $userid = $Teams->Users->createOne($email, array($user['team']), $firstname, $lastname, $passwordHash, null, true, false);
         $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));
         $Users = new Users($userid, (int) $team[0]['id']);
 

@@ -28,7 +28,7 @@
     "i18next": "^21.0.2",
     "jquery": "^3.5.1",
     "jquery-ui": "^1.13.0",
-    "jsoneditor": "^9.0.3",
+    "jsoneditor": "^9.9.2",
     "luxon": "^3.0.1",
     "marked": "^4.0.10",
     "mathjax-full": "^3.2.0",

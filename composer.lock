@@ -291,16 +291,16 @@
         },
         {
             "name": "directorytree/ldaprecord",
-            "version": "v2.17.0",
+            "version": "v2.17.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DirectoryTree/LdapRecord.git",
-                "reference": "d679be5b8b7fefa2bd3c002240fed055ec88ff34"
+                "reference": "e0ee9d87b4d5a343f7d88bf56a26a1274c87203b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/d679be5b8b7fefa2bd3c002240fed055ec88ff34",
-                "reference": "d679be5b8b7fefa2bd3c002240fed055ec88ff34",
+                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/e0ee9d87b4d5a343f7d88bf56a26a1274c87203b",
+                "reference": "e0ee9d87b4d5a343f7d88bf56a26a1274c87203b",
                 "shasum": ""
             },
             "require": {
@@ -361,7 +361,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-09-01T13:01:57+00:00"
+            "time": "2022-09-30T19:39:02+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -891,16 +891,16 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v9.27.0",
+            "version": "v9.33.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "0d1dd1a7e947072319f2e641cc50081219606502"
+                "reference": "d57130115694b4f6a98d064bea31cdb09d7784f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/0d1dd1a7e947072319f2e641cc50081219606502",
-                "reference": "0d1dd1a7e947072319f2e641cc50081219606502",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/d57130115694b4f6a98d064bea31cdb09d7784f8",
+                "reference": "d57130115694b4f6a98d064bea31cdb09d7784f8",
                 "shasum": ""
             },
             "require": {
@@ -935,7 +935,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2022-08-18T14:18:13+00:00"
+            "time": "2022-09-15T13:31:42+00:00"
         },
         {
             "name": "jblond/twig-trans",
@@ -4909,16 +4909,16 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v6.1.3",
+            "version": "v6.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "d5a5e44a2260c5eb5e746bf4f1fbd12ee6ceb427"
+                "reference": "d0833493fb2413a86f522fb54a1896a7718e98ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/d5a5e44a2260c5eb5e746bf4f1fbd12ee6ceb427",
-                "reference": "d5a5e44a2260c5eb5e746bf4f1fbd12ee6ceb427",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/d0833493fb2413a86f522fb54a1896a7718e98ec",
+                "reference": "d0833493fb2413a86f522fb54a1896a7718e98ec",
                 "shasum": ""
             },
             "require": {
@@ -4977,7 +4977,7 @@
                 "dump"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-dumper/tree/v6.1.3"
+                "source": "https://github.com/symfony/var-dumper/tree/v6.1.5"
             },
             "funding": [
                 {
@@ -4993,20 +4993,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-07-20T13:46:29+00:00"
+            "time": "2022-09-08T09:34:40+00:00"
         },
         {
             "name": "tightenco/collect",
-            "version": "v8.83.23",
+            "version": "v8.83.25",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tighten/collect.git",
-                "reference": "a4423c6ace6b54ba4f86c0ac9de588c57bc94d79"
+                "reference": "7d2a6fc5e97c5f7209a780bea98f35042c1fd0ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tighten/collect/zipball/a4423c6ace6b54ba4f86c0ac9de588c57bc94d79",
-                "reference": "a4423c6ace6b54ba4f86c0ac9de588c57bc94d79",
+                "url": "https://api.github.com/repos/tighten/collect/zipball/7d2a6fc5e97c5f7209a780bea98f35042c1fd0ea",
+                "reference": "7d2a6fc5e97c5f7209a780bea98f35042c1fd0ea",
                 "shasum": ""
             },
             "require": {
@@ -5045,9 +5045,9 @@
             ],
             "support": {
                 "issues": "https://github.com/tighten/collect/issues",
-                "source": "https://github.com/tighten/collect/tree/v8.83.23"
+                "source": "https://github.com/tighten/collect/tree/v8.83.25"
             },
-            "time": "2022-08-22T17:50:04+00:00"
+            "time": "2022-08-22T17:55:07+00:00"
         },
         {
             "name": "twig/intl-extra",

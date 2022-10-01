@@ -259,6 +259,36 @@ components:
           type: integer
         color:
           type: string
+  notification:
+    type: object
+    properties:
+      id:
+        type: integer
+      category:
+        type: integer
+      is_ack:
+        type: integer
+      created_at:
+        type: string
+      userid:
+        type: integer
+      send_email:
+        type: integer
+      email_sent_at:
+        type: string
+      body:
+        type: string
+    status:
+      type: object
+      properties:
+        category_id:
+          type: integer
+        category:
+          type: string
+        color:
+          type: string
+        is_default:
+          type: integer
     step:
       type: object
       properties:
@@ -278,6 +308,13 @@ components:
           type: string
         deadline_notif:
           type: integer
+    tag:
+      type: object
+      properties:
+        id:
+          type: integer
+        tag:
+          type: string
     team:
       type: object
       properties:
@@ -315,6 +352,20 @@ components:
           type: integer
         visible:
           type: integer
+    teamgroup:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        users:
+          type: array
+          items:
+            userid:
+              type: integer
+            fullname:
+              type: string
     todoitem:
       type: object
       properties:
@@ -1020,20 +1071,20 @@ paths:
       responses:
         '204':
           description: The comment was deleted
-  # ITEMS LINKS
-  /items/{id}/links:
-    summary: Actions on links of an item
+  # EXPERIMENTS <-> ITEMS LINKS
+  /experiments/{id}/items_links:
+    summary: Links from experiments to items.
     parameters:
       - name: id
         in: path
-        description: ID of the item
+        description: ID of the experiment
         required: true
         schema:
           type: number
     get:
-      tags: ['Items links']
-      summary: Read all links of that item.
-      operationId: read-item-links
+      tags: ['Experiments to items links']
+      summary: Read all items links of that experiment.
+      operationId: read-experiment-items-links
       responses:
         '200':
           description: A list of links
@@ -1043,12 +1094,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/link'
-  /items/{id}/links/{subid}:
-    summary: Actions on link of an item
+  /experiments/{id}/items_links/{subid}:
+    summary: Actions on items link of an experiment
     parameters:
       - name: id
         in: path
-        description: ID of the item
+        description: ID of the experiment
         required: true
         schema:
           type: number
@@ -1059,9 +1110,9 @@ paths:
         schema:
           type: number
     post:
-      tags: ['Items links']
+      tags: ['Experiments to items links']
       summary: Create or import a link.
-      operationId: post-item-links
+      operationId: post-experiment-items-links
       requestBody:
         description: Parameters for creating or importing a link.
         content:
@@ -1083,13 +1134,226 @@ paths:
               schema:
                 type: string
     delete:
-      tags: ['Items links']
+      tags: ['Experiments to items links']
       summary: Delete an item link.
       description: The link gets deleted.
-      operationId: delete-item-link
+      operationId: delete-item-items-link
       responses:
         '204':
-          description: The link was deleted
+          description: The link was deleted.
+
+  # EXPERIMENTS <-> EXPERIMENTS LINKS
+  /experiments/{id}/experiments_links:
+    summary: Links from experiments to experiments.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the experiment
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Experiments to experiments links']
+      summary: Read all experiments links of that experiment.
+      operationId: read-experiment-experiments-links
+      responses:
+        '200':
+          description: A list of links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/link'
+  /experiments/{id}/experiments_links/{subid}:
+    summary: Actions on experiments link of an experiment
+    parameters:
+      - name: id
+        in: path
+        description: ID of the experiment
+        required: true
+        schema:
+          type: number
+      - name: subid
+        in: path
+        description: ID of the experiment linked
+        required: true
+        schema:
+          type: number
+    post:
+      tags: ['Experiments to experiments links']
+      summary: Create or import a link.
+      operationId: post-experiment-experiments-links
+      requestBody:
+        description: Parameters for creating or importing a link.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['create', 'duplicate']
+                  description: |
+                    The `duplicate` action will import the links of that link (inception).
+      responses:
+        '201':
+          description: The link has been created.
+          headers:
+            location:
+              description: An URL to the link that was created.
+              schema:
+                type: string
+    delete:
+      tags: ['Experiments to experiments links']
+      summary: Delete an experiment link.
+      description: The link gets deleted.
+      operationId: delete-experiment-experiments-link
+      responses:
+        '204':
+          description: The link was deleted.
+
+  # ITEMS <-> ITEMS LINKS
+  /items/{id}/items_links:
+    summary: Links from items to items.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the item
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Items to items links']
+      summary: Read all items links of that item.
+      operationId: read-item-items-links
+      responses:
+        '200':
+          description: A list of links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/link'
+  /items/{id}/items_links/{subid}:
+    summary: Actions on items link of an item
+    parameters:
+      - name: id
+        in: path
+        description: ID of the item
+        required: true
+        schema:
+          type: number
+      - name: subid
+        in: path
+        description: ID of the item (link)
+        required: true
+        schema:
+          type: number
+    post:
+      tags: ['Items to items links']
+      summary: Create or import a link.
+      operationId: post-item-items-links
+      requestBody:
+        description: Parameters for creating or importing a link.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['create', 'duplicate']
+                  description: |
+                    The `duplicate` action will import the links of that link (inception).
+      responses:
+        '201':
+          description: The link has been created.
+          headers:
+            location:
+              description: An URL to the link that was created.
+              schema:
+                type: string
+    delete:
+      tags: ['Items to items links']
+      summary: Delete an item link.
+      description: The link gets deleted.
+      operationId: delete-item-items-link
+      responses:
+        '204':
+          description: The link was deleted.
+
+  # ITEMS <-> EXPERIMENTS LINKS
+  /items/{id}/experiments_links:
+    summary: Links from items to experiments.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the item.
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Items to experiments links']
+      summary: Read all experiments links of that item.
+      operationId: read-item-experiments-links
+      responses:
+        '200':
+          description: A list of links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/link'
+  /items/{id}/experiments_links/{subid}:
+    summary: Actions on experiments link of an item
+    parameters:
+      - name: id
+        in: path
+        description: ID of the item
+        required: true
+        schema:
+          type: number
+      - name: subid
+        in: path
+        description: ID of the experiment linked
+        required: true
+        schema:
+          type: number
+    post:
+      tags: ['Items to experiments links']
+      summary: Create or import a link.
+      operationId: post-item-experiments-links
+      requestBody:
+        description: Parameters for creating or importing a link.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['create', 'duplicate']
+                  description: |
+                    The `duplicate` action will import the links of that link (inception).
+      responses:
+        '201':
+          description: The link has been created.
+          headers:
+            location:
+              description: An URL to the link that was created.
+              schema:
+                type: string
+    delete:
+      tags: ['Items to experiments links']
+      summary: Delete an item link.
+      description: The link gets deleted.
+      operationId: delete-item-experiments-link
+      responses:
+        '204':
+          description: The link was deleted.
 
   # EXPERIMENTS_TEMPLATES
   /experiments_templates:
@@ -1588,6 +1852,221 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/team'
+
+  # STATUS
+  /teams/{id}/status:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Status']
+      summary: Read status of a team.
+      operationId: read-team-status
+      responses:
+        '200':
+          description: A list of status for the team.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/status'
+    post:
+      tags: ['Status']
+      operationId: post-team-one-status
+      summary: Create a new status.
+      requestBody:
+        description: Parameters for creating a status.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Status name
+                color:
+                  type: string
+                  description: |
+                    Hex color without leading \#.
+                default:
+                  type: integer
+                  description: Is it the default status for the team?
+      responses:
+        '201':
+          description: Create a status.
+          headers:
+            location:
+              description: An URL to the status that was created.
+              schema:
+                type: string
+  /teams/{id}/status/{subid}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: number
+      - name: subid
+        in: path
+        description: ID of the status
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Status']
+      operationId: read-team-one-status
+      summary: Read a status.
+      responses:
+        '200':
+          description: Read a status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+    patch:
+      tags: ['Status']
+      operationId: patch-status
+      summary: Modify a status.
+      requestBody:
+        description: Parameters for modifying a status.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/status'
+      responses:
+        '200':
+          description: The updated status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+    delete:
+      tags: ['Status']
+      summary: Delete a status.
+      operationId: delete-status
+      responses:
+        '204':
+          description: The status was removed.
+
+  # TEAMGROUPS
+  /teams/{id}/teamgroups:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Teamgroups']
+      summary: Read teamgroups of a team.
+      operationId: read-team-teamgroups
+      responses:
+        '200':
+          description: A list of teamgroups for the team.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/teamgroup'
+    post:
+      tags: ['Teamgroups']
+      operationId: post-teamgroups
+      summary: Create a new teamgroup.
+      requestBody:
+        description: Parameters for creating a teamgroup.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Teamgroup name
+      responses:
+        '201':
+          description: New teamgroup.
+          headers:
+            location:
+              description: An URL to the teamgroup that was created.
+              schema:
+                type: string
+  /teams/{id}/teamgroups/{subid}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: number
+      - name: subid
+        in: path
+        description: ID of the teamgroup.
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Teamgroups']
+      operationId: read-teamgroup
+      summary: Read a teamgroup.
+      responses:
+        '200':
+          description: A teamgroup.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  team:
+                    type: integer
+    patch:
+      tags: ['Teamgroups']
+      operationId: patch-teamgroup
+      summary: Modify a teamgroup.
+      requestBody:
+        description: Parameters for modifying a teamgroup.
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  properties:
+                    how:
+                      type: string
+                      enum: ['unreference', 'add']
+                    userid:
+                      type: integer
+                - type: object
+                  properties:
+                    name:
+                      type: string
+      responses:
+        '200':
+          description: The updated teamgroup.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/teamgroup'
+    delete:
+      tags: ['Teamgroup']
+      summary: Delete a teamgroup.
+      operationId: delete-teamgroup
+      responses:
+        '204':
+          description: The teamgroup was removed.
+
+  # TODOLIST
   /todolist:
     summary: Todolist for current user.
     get:
@@ -1743,3 +2222,421 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/users'
+
+  # NOTIFICATIONS
+  /users/{id}/notifications:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the user or `me`.
+        required: true
+        schema:
+          oneOf:
+            - type: number
+            - type: string
+              enum: ['me']
+        examples:
+          first:
+            summary: Access our own user.
+            value: 'me'
+          second:
+            summary: Access user with ID 42.
+            value: 42
+    get:
+      tags: ['Notifications']
+      summary: Read notifications of a user.
+      operationId: read-notifications
+      responses:
+        '200':
+          description: Notifications of a user.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  category:
+                    type: integer
+                  body:
+                    type: object
+                  is_ack:
+                    type: integer
+                  created_at:
+                    type: string
+                  userid:
+                    type: integer
+    delete:
+      tags: ['Notifications']
+      summary: Delete all notifications of the user.
+      description: All notifications for the user are deleted.
+      operationId: delete-notifications
+      responses:
+        '204':
+          description: The notifications were deleted.
+  /users/{id}/notifications/{subid}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the user or `me`.
+        required: true
+        schema:
+          oneOf:
+            - type: number
+            - type: string
+              enum: ['me']
+        examples:
+          first:
+            summary: Access our own user.
+            value: 'me'
+          second:
+            summary: Access user with ID 42.
+            value: 42
+      - name: subid
+        in: path
+        description: ID of the notification.
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Notifications']
+      summary: Read a notification.
+      operationId: read-notification
+      responses:
+        '200':
+          description: A notification.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notification'
+    patch:
+      tags: ['Notifications']
+      summary: |
+        Actions on a notification. Only changing `is_ack` column is possible.
+      operationId: patch-notification
+      responses:
+        '200':
+          description: The updated notification.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notification'
+
+  # STEPS
+  /{entity_type}/{id}/steps:
+    summary: Show steps for this entity.
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Steps']
+      summary: Read all steps of that entity.
+      operationId: read-steps
+      responses:
+        '200':
+          description: A list of steps
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/step'
+  /{entity_type}/{id}/steps/{subid}:
+    summary: Actions on step of an entity
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: number
+      - name: subid
+        in: path
+        description: ID of the step
+        required: true
+        schema:
+          type: number
+    patch:
+      tags: ['Steps']
+      summary: |
+        Actions on a step.
+      operationId: patch-step
+      requestBody:
+        description: Parameters for modifying a step
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  required: true
+                  enum: ['finish', 'notif', 'update']
+      responses:
+        '200':
+          description: The updated step.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/step'
+    post:
+      tags: ['Steps']
+      summary: Create a step.
+      operationId: post-step
+      requestBody:
+        description: Parameters for creating a step.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+                  description: |
+                    The text content of the step.
+      responses:
+        '201':
+          description: The step has been created.
+          headers:
+            location:
+              description: An URL to the step that was created.
+              schema:
+                type: string
+    delete:
+      tags: ['Steps']
+      summary: Delete a step.
+      description: The step gets deleted.
+      operationId: delete-step
+      responses:
+        '204':
+          description: The step was deleted.
+
+  # TAGS
+  /{entity_type}/{id}/tags:
+    summary: Show tags for this entity.
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Tags']
+      summary: Read all tags of that entity.
+      operationId: read-tags
+      responses:
+        '200':
+          description: A list of tags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/tag'
+    post:
+      tags: ['Tags']
+      summary: Create a tag.
+      operationId: post-tag
+      requestBody:
+        description: Parameters for creating a tag.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+                  description: |
+                    The text content of the tag.
+      responses:
+        '201':
+          description: The tag has been created.
+          headers:
+            location:
+              description: An URL to the tag that was created.
+              schema:
+                type: string
+  /{entity_type}/{id}/tags/{subid}:
+    summary: Actions on tag of an entity
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: number
+      - name: subid
+        in: path
+        description: ID of the tag
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Tags']
+      summary: Read a tag.
+      operationId: read-tag
+      responses:
+        '200':
+          description: A tag.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tag'
+    patch:
+      tags: ['Tags']
+      summary: |
+        Actions on a tag.
+      operationId: patch-tag
+      requestBody:
+        description: Parameters for modifying a tag
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  required: true
+                  enum: ['unreference']
+      responses:
+        '200':
+          description: The updated tag.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tag'
+    delete:
+      tags: ['Tags']
+      summary: Delete a tag.
+      description: The tag gets deleted.
+      operationId: delete-tag
+      responses:
+        '204':
+          description: The tag was deleted.
+
+
+  # UPLOADS
+  /{entity_type}/{id}/uploads:
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Uploads']
+      summary: Read attached files of that entity.
+      operationId: read-uploads
+      responses:
+        '200':
+          description: A list of uploads.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/upload'
+  /{entity_type}/{id}/uploads/{subid}:
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: number
+      - name: subid
+        in: path
+        description: ID of the upload
+        required: true
+        schema:
+          type: number
+    get:
+      tags: ['Uploads']
+      summary: Read an upload.
+      operationId: read-upload
+      responses:
+        '200':
+          description: An upload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/upload'
+    patch:
+      tags: ['Uploads']
+      summary: |
+        Actions on an upload.
+      operationId: patch-upload
+      requestBody:
+        description: Parameters for modifying an upload.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  required: true
+                  enum: ['update']
+      responses:
+        '200':
+          description: The updated upload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/upload'
+    delete:
+      tags: ['Uploads']
+      summary: Delete an upload.
+      description: The upload gets deleted.
+      operationId: delete-upload
+      responses:
+        '204':
+          description: The upload was deleted.

@@ -240,7 +240,7 @@ class Apiv2Controller extends AbstractApiController
                 'steps' => new Steps($this->Model, $this->subId),
                 'tags' => new Tags($this->Model, $this->subId),
                 'uploads' => new Uploads($this->Model, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->page . ': available models are: comments, links, steps, tags, uploads.'),
+                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->page . ': available models are: comments, experiments_links, items_links, steps, tags, uploads.'),
             };
         }
         if ($this->Model instanceof Teams) {

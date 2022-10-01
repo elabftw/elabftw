@@ -53,7 +53,8 @@ class Tags implements RestInterface
 
     public function readAll(): array
     {
-        $sql = 'SELECT tag_id FROM tags2entity WHERE item_id = :item_id AND item_type = :item_type';
+        $sql = 'SELECT tag, tags2entity.tag_id FROM tags2entity LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
+            WHERE item_id = :item_id AND item_type = :item_type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':item_type', $this->Entity->type);

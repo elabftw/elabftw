@@ -16,6 +16,7 @@ use function dirname;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AuthFail;
+use Elabftw\Models\Experiments;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Elabftw\Services\UsersHelper;
@@ -48,6 +49,7 @@ try {
     $Teams = new Teams($App->Users);
     $teamsArr = $Teams->readAll();
     $teamsStats = $Teams->getAllStats();
+    $Experiments = new Experiments($App->Users);
 
     // Users search
     $isSearching = false;
@@ -63,6 +65,7 @@ try {
             $user['teams'] = $UsersHelper->getTeamsFromUserid();
         }
     }
+
 
     $phpInfos = array(
         PHP_OS,
@@ -92,6 +95,7 @@ try {
         'Teams' => $Teams,
         'teamsArr' => $teamsArr,
         'teamsStats' => $teamsStats,
+        'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
         'usersArr' => $usersArr,
     );
 } catch (IllegalActionException $e) {

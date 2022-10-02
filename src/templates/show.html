@@ -106,12 +106,25 @@
 
         <!-- Add a link -->
         <div class='input-group mb-2 mr-2'>
-          <input type='text' id='linkInputMultiple' class='form-control' placeholder='{{ 'Add a link'|trans }}' />
+          <input type='text' id='addLinkItemsInput' data-endpoint='items_links' class='form-control linkInputMultiple' placeholder='{{ 'Add a link'|trans }}' />
           <div class='input-group-append'>
             <select id='addLinkCatFilter' class='brl-none form-control'>
               <option selected value=''>{{ 'Any category'|trans }}</option>
               {% for cat in itemsCategoryArr %}
                 <option value='{{ cat.category_id }}'>{{ cat.category }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <!-- Add an experiment link -->
+        <div class='input-group mb-2 mr-2'>
+          <input type='text' id='addLinkExpInput' data-endpoint='experiments_links' class='form-control linkInputMultiple' placeholder='{{ 'Link to an experiment'|trans }}' />
+          <div class='input-group-append'>
+            <select id='addLinkOwnerFilter' class='brl-none form-control'>
+              <option selected value=''>{{ 'Any author'|trans }}</option>
+              {% for user in allTeamUsersArr %}
+                <option value='{{ user.userid }}'>{{ user.fullname }}</option>
               {% endfor %}
             </select>
           </div>

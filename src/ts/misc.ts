@@ -290,7 +290,12 @@ export function addAutocompleteToLinkInputs(): void {
     selectElid: 'addLinkCatFilter',
     itemType: EntityType.Item,
     filterFamily: 'cat',
-    inputElId: 'linkInputMultiple',
+    inputElId: 'addLinkItemsInput',
+  }, {
+    selectElid: 'addLinkOwnerFilter',
+    itemType: EntityType.Experiment,
+    filterFamily: 'owner',
+    inputElId: 'addLinkExpInput',
   }].forEach(object => {
     const filterEl = (document.getElementById(object.selectElid) as HTMLInputElement);
     if (filterEl) {

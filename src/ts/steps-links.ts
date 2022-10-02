@@ -167,10 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   // CREATE FOR MULTIPLE ENTITIES
-  $(document).on('keypress blur', '#linkInputMultiple', function(e) {
+  $(document).on('keypress blur', '.linkInputMultiple', function(e) {
     if ($(this).val() === '') {
       return;
     }
+    const el = $(this);
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
       // get the ids of selected entities
@@ -184,10 +185,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       $.each(checked, function(index) {
-        ApiC.post(`${entity.type}/${checked[index]['id']}/${Model.Link}/${parseInt($('#linkInputMultiple').val() as string)}`, {'targetEntityType': EntityType.Item});
+        ApiC.post(`${entity.type}/${checked[index]['id']}/${el.data('endpoint')}/${parseInt(el.val() as string)}`);
       });
       $(this).val('');
-      $(this).removeData('targetId');
     }
   });
 

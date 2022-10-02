@@ -275,7 +275,7 @@ abstract class AbstractEntityController implements ControllerInterface
     {
         $searchException = '';
         if ($this->App->Request->query->has('extended') && !empty($this->App->Request->query->get('extended'))) {
-            $query = trim((string) $this->App->Request->query->get('q'));
+            $query = trim((string) $this->App->Request->query->get('extended'));
 
             $advancedQuery = new AdvancedSearchQuery($query, new VisitorParameters($this->Entity->type, $this->visibilityArr, $teamGroups));
             $whereClause = $advancedQuery->getWhereClause();

@@ -30,7 +30,7 @@ enum Orderby: string
             Orderby::Lastchange => 'entity.modified_at',
             Orderby::Rating => 'entity.rating',
             Orderby::Title => 'entity.title',
-            Orderby::User => 'entity.userid',
+            Orderby::User => 'users.lastname',
         };
     }
 }

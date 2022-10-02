@@ -266,9 +266,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const format = (document.getElementById('userExportFormat') as HTMLSelectElement).value;
       window.location.href = `make.php?format=${format}&owner=${source}&type=experiments`;
 
-    } else if (el.matches('[data-action="append-query"]')) {
+    } else if (el.matches('[data-query]')) {
       const url = new URL(window.location.href);
-      url.searchParams.set(el.dataset.key, el.dataset.value);
+      // query format: order-sort
+      const query = el.dataset.query.split('-');
+      url.searchParams.set('order', query[0]);
+      url.searchParams.set('sort', query[1]);
       window.location.href = url.href;
 
     // CREATE EXPERIMENT or DATABASE item: main create button in top right

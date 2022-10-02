@@ -100,18 +100,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $extendedError = $this->prepareAdvancedSearchQuery($TeamGroups->readGroupsWithUsersFromUser());
 
-        // Extended search
-        if ($this->App->Request->query->has('extended') && !empty($this->App->Request->query->get('extended'))) {
-            $extended = trim((string) $this->App->Request->query->get('extended'));
-
-            $advancedQuery = new AdvancedSearchQuery($extended, new VisitorParameters($this->Entity->type, $this->visibilityArr, $TeamGroups->readGroupsWithUsersFromUser()));
-            $whereClause = $advancedQuery->getWhereClause();
-            if ($whereClause) {
-                $this->Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
-            }
-            $extendedError = $advancedQuery->getException();
-        }
-
         $itemsArr = $this->getItemsArr();
         // get tags separately
         $tagsArr = array();
@@ -286,7 +274,7 @@ abstract class AbstractEntityController implements ControllerInterface
     private function prepareAdvancedSearchQuery(array $teamGroups): string
     {
         $searchException = '';
-        if ($this->App->Request->query->has('q') && !empty($this->App->Request->query->get('q'))) {
+        if ($this->App->Request->query->has('extended') && !empty($this->App->Request->query->get('extended'))) {
             $query = trim((string) $this->App->Request->query->get('q'));
 
             $advancedQuery = new AdvancedSearchQuery($query, new VisitorParameters($this->Entity->type, $this->visibilityArr, $teamGroups));

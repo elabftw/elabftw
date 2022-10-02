@@ -65,78 +65,80 @@
     </div>
   {% else %}
 
-      <div id='withSelected' class='row mx-0 form-inline d-none'>
-        <p class='mr-1 mb-2'>{{ 'With selected:'|trans }}</p>
-        <!-- Change category -->
-        <select data-action='update-category-selected-entities' autocomplete='off' class='mr-1 mb-2 form-control'>
-            <option selected disabled>
-            {% if Entity.type == 'experiments' %}
-                {{ 'Change status'|trans }}
-            {% else %}
-                {{ 'Change item type'|trans }}
-            {% endif %}
-            </option>
+      <div id='withSelected' class='d-none'>
+        <div class='row mx-0'><p>{{ 'With selected:'|trans }}</p></div>
+        <div class='row mx-0 form-inline'>
+          <!-- Change category -->
+          <select data-action='update-category-selected-entities' autocomplete='off' class='mr-1 mb-2 form-control'>
+              <option selected disabled>
+              {% if Entity.type == 'experiments' %}
+                  {{ 'Change status'|trans }}
+              {% else %}
+                  {{ 'Change item type'|trans }}
+              {% endif %}
+              </option>
 
-            {% for category in categoryArr %}
-                <option value='{{ category.category_id }}'>{{ category.category }}</option>
+              {% for category in categoryArr %}
+                  <option value='{{ category.category_id }}'>{{ category.category }}</option>
+              {% endfor %}
+          </select>
+
+          <!-- Change visibility -->
+          <select data-action='update-visibility-selected-entities' autocomplete='off' class='mr-1 mb-2 form-control'>
+            <option selected disabled>{{ 'Change visibility'|trans }}</option>
+            {% for key, value in visibilityArr %}
+              <option value='{{ key }}'>{{ value }}</option>
             {% endfor %}
-        </select>
+          </select>
 
-        <!-- Change visibility -->
-        <select data-action='update-visibility-selected-entities' autocomplete='off' class='mr-1 mb-2 form-control'>
-          <option selected disabled>{{ 'Change visibility'|trans }}</option>
-          {% for key, value in visibilityArr %}
-            <option value='{{ key }}'>{{ value }}</option>
-          {% endfor %}
-        </select>
+          <!-- Export -->
+          <select data-action='export-selected-entities' autocomplete='off' class='mr-1 mb-2 form-control'>
+            <option selected disabled>{{ 'Export'|trans }}</option>
+            <option value='eln'>{{ 'ELN Archive'|trans }}</option>
+            <option value='zip'>{{ 'ZIP Archive'|trans }}</option>
+            <option value='csv'>{{ 'CSV File'|trans }}</option>
+            <option value='multipdf'>{{ 'PDF File'|trans }}</option>
+            <option value='qrpdf'>{{ 'QR codes PDF'|trans }}</option>
+            <option value='json'>{{ 'JSON'|trans }}</option>
+          </select>
 
-        <!-- Export -->
-        <select data-action='export-selected-entities' autocomplete='off' class='mr-1 mb-2 form-control'>
-          <option selected disabled>{{ 'Export'|trans }}</option>
-          <option value='eln'>{{ 'Make ELN'|trans }}</option>
-          <option value='zip'>{{ 'Make Zip'|trans }}</option>
-          <option value='csv'>{{ 'Make Csv'|trans }}</option>
-          <option value='multipdf'>{{ 'Make PDF'|trans }}</option>
-          <option value='qrpdf'>{{ 'Make QR codes PDF'|trans }}</option>
-          <option value='json'>{{ 'Make JSON'|trans }}</option>
-        </select>
+          <!-- Add a tag -->
+          <input type='text' id='createTagInputMultiple' class='createTagInputMultiple mr-1 mb-2 form-control' data-autocomplete='tags' placeholder='{{ 'Add a tag'|trans }}' />
 
-        <!-- Add a tag -->
-        <input type='text' id='createTagInputMultiple' class='createTagInputMultiple mr-1 mb-2 form-control' data-autocomplete='tags' placeholder='{{ 'Add a tag'|trans }}' />
-
-        <!-- Add a link -->
-        <div class='input-group mb-2 mr-2'>
-          <input type='text' id='addLinkItemsInput' data-endpoint='items_links' class='form-control linkInputMultiple' placeholder='{{ 'Add a link'|trans }}' />
-          <div class='input-group-append'>
-            <select id='addLinkCatFilter' class='brl-none form-control'>
-              <option selected value=''>{{ 'Any category'|trans }}</option>
-              {% for cat in itemsCategoryArr %}
-                <option value='{{ cat.category_id }}'>{{ cat.category }}</option>
-              {% endfor %}
-            </select>
+          <!-- Add a link -->
+          <div class='input-group mb-2 mr-2'>
+            <input type='text' id='addLinkItemsInput' data-endpoint='items_links' class='form-control linkInputMultiple' placeholder='{{ 'Add a link'|trans }}' />
+            <div class='input-group-append'>
+              <select id='addLinkCatFilter' class='brl-none form-control'>
+                <option selected value=''>{{ 'Any category'|trans }}</option>
+                {% for cat in itemsCategoryArr %}
+                  <option value='{{ cat.category_id }}'>{{ cat.category }}</option>
+                {% endfor %}
+              </select>
+            </div>
           </div>
-        </div>
 
-        <!-- Add an experiment link -->
-        <div class='input-group mb-2 mr-2'>
-          <input type='text' id='addLinkExpInput' data-endpoint='experiments_links' class='form-control linkInputMultiple' placeholder='{{ 'Link to an experiment'|trans }}' />
-          <div class='input-group-append'>
-            <select id='addLinkOwnerFilter' class='brl-none form-control'>
-              <option selected value=''>{{ 'Any author'|trans }}</option>
-              {% for user in allTeamUsersArr %}
-                <option value='{{ user.userid }}'>{{ user.fullname }}</option>
-              {% endfor %}
-            </select>
+          <!-- Add an experiment link -->
+          <div class='input-group mb-2 mr-2'>
+            <input type='text' id='addLinkExpInput' data-endpoint='experiments_links' class='form-control linkInputMultiple' placeholder='{{ 'Link to an experiment'|trans }}' />
+            <div class='input-group-append'>
+              <select id='addLinkOwnerFilter' class='brl-none form-control'>
+                <option selected value=''>{{ 'Any author'|trans }}</option>
+                {% for user in allTeamUsersArr %}
+                  <option value='{{ user.userid }}'>{{ user.fullname }}</option>
+                {% endfor %}
+              </select>
+            </div>
           </div>
-        </div>
 
-        <button data-action='lock-selected-entities' class='button btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
-        {% if Entity.type == 'experiments' %}
-          <button data-action='timestamp-selected-entities' class='button btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
-        {% endif %}
-        {% if (deletableXp and (Entity.type == 'experiments')) or Entity.type == 'items' %}
-          <button data-action='destroy-selected-entities' class='button btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
-        {% endif %}
+          <button data-action='lock-selected-entities' class='button btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
+          {% if Entity.type == 'experiments' %}
+            <button data-action='timestamp-selected-entities' class='button btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
+          {% endif %}
+          {% if (deletableXp and (Entity.type == 'experiments')) or Entity.type == 'items' %}
+            <button data-action='destroy-selected-entities' class='button btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
+          {% endif %}
+        </div>
       </div>
 
       <!-- PINNED ENTITIES -->

@@ -16,9 +16,9 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
-use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
+use Elabftw\Models\TeamTags;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Check;
@@ -32,8 +32,7 @@ $App->pageTitle = _('Search');
 
 $Experiments = new Experiments($App->Users);
 $Database = new Items($App->Users);
-$Tags = new Tags($Experiments);
-$tagsArr = $Tags->readAll();
+$Tags = new TeamTags($App->Users, $App->Users->userData['team']);
 
 $itemsTypesArr = (new ItemsTypes($App->Users))->readAll();
 $categoryArr = $statusArr = (new Status(new Teams($App->Users, $App->Users->team)))->readAll();
@@ -79,7 +78,7 @@ $renderArr = array(
     'Database' => $Database,
     'categoryArr' => $categoryArr,
     'itemsTypesArr' => $itemsTypesArr,
-    'tagsArr' => $tagsArr,
+    'tagsArr' => $Tags->readAll(),
     'statusArr' => $statusArr,
     'usersArr' => $usersArr,
     'visibilityArr' => $visibilityArr,

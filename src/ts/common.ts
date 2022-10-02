@@ -266,6 +266,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const format = (document.getElementById('userExportFormat') as HTMLSelectElement).value;
       window.location.href = `make.php?format=${format}&owner=${source}&type=experiments`;
 
+    } else if (el.matches('[data-action="append-query"]')) {
+      const url = new URL(window.location.href);
+      url.searchParams.set(el.dataset.key, el.dataset.value);
+      window.location.href = url.href;
 
     // CREATE EXPERIMENT or DATABASE item: main create button in top right
     } else if (el.matches('[data-action="create-entity"]')) {

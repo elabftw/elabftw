@@ -50,30 +50,6 @@
 
       <input type='hidden' name='mode' value='show' />
 
-      <!-- ORDER -->
-      <select name='order' class='autosubmit mr-1 form-control select-order' aria-label='Order by'>
-        <option value=''>{{ 'Order by'|trans }}</option>
-        <option value='cat'{{ App.Request.query.get('order') == 'cat' ? ' selected' }}>{{ 'Category'|trans }}</option>
-        <option value='id'{{ App.Request.query.get('order') == 'id' ? ' selected' }}>{{ 'Id'|trans }}</option>
-        <option value='date'{{ App.Request.query.get('order') == 'date' ? ' selected' }}>{{ 'Date'|trans }}</option>
-        <option value='lastchange'{{ App.Request.query.get('order') == 'lastchange' ? ' selected' }}>{{ 'Last modified'|trans }}</option>
-        {% if Entity.type == 'items' %}
-            <option value='rating'{{ App.Request.query.get('order') == 'rating' ? ' selected' }}>{{ 'Rating'|trans }}</option>
-        {% else %}
-            <option value='comment'{{ App.Request.query.get('order') == 'comment' ? ' selected' }}>{% trans %}Comment{% plural 1 %}Comments{% endtrans %}</option>
-        {% endif %}
-        <option value='title'{{ App.Request.query.get('order') == 'title' ? ' selected' }}>{{ 'Title'|trans }}</option>
-        <option value='user'{{ App.Request.query.get('order') == 'user' ? ' selected' }}>{{ 'User'|trans }}</option>
-        <option value='rating'{{ App.Request.query.get('order') == 'rating' ? ' selected' }}>{{ 'Rating'|trans }}</option>
-      </select>
-
-      <!-- SORT -->
-      <select name='sort' class='autosubmit mr-1 form-control select-sort' aria-label='Sort by'>
-        <option value=''>{{ 'Sort'|trans }}</option>
-        <option value='desc'{{ App.Request.query.get('sort') == 'desc' ? ' selected' }}>{{ 'DESC'|trans }}</option>
-        <option value='asc'{{ App.Request.query.get('sort') == 'asc' ? ' selected' }}>{{ 'ASC'|trans }}</option>
-      </select>
-
       <!-- LIMIT if there is nothing in the query params, take the user configured one -->
       {% set thelimit = App.Request.query.get('limit') %}
       {% if thelimit is empty %}

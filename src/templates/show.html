@@ -8,6 +8,43 @@
   {% include 'filter-order-sort.html' %}
 
   <hr>
+  <div class='d-flex'>
+    <p class='smallgray mr-auto'>
+      <a href='#' data-action='expand-all-entities' data-status='closed' data-expand='{{ 'Expand all'|trans }}' data-collapse='{{ 'Collapse all'|trans }}'>{{ 'Expand all'|trans }}</a>
+      - <a href='#' data-action='select-all-entities'>{{ 'Select all'|trans }}</a>
+      <span id='advancedSelectOptions' class='d-none'>
+        - <a href='#' data-action='unselect-all-entities'>{{ 'Clear selection'|trans }}</a>
+        - <a href='#' data-action='invert-entities-selection'>{{ 'Invert selection'|trans }}</a>
+      </span>
+    </p>
+
+    <!-- ORDER -->
+    <div class='form-group'>
+      <div class='btn-group'>
+        <button class='btn btn-secondary btn-sm dropdown-toggle' data-toggle="dropdown" aria-haspopup='true' aria-expanded='false' aria-label='Order by'>{{ 'Order by'|trans }}</button>
+        <div class='dropdown-menu'>
+          <a class='dropdown-item {{ App.Request.query.get('order') == 'cat' ? 'active' }}' data-action='append-query' data-key='order' data-value='cat' href='#'>{{ 'Category'|trans }}</a>
+          <a class='dropdown-item {{ App.Request.query.get('order') == 'id' ? 'active' }}' data-action='append-query' data-key='order' data-value='id' href='#'>{{ 'Id'|trans }}</a>
+          <a class='dropdown-item {{ App.Request.query.get('order') == 'date' ? 'active' }}' data-action='append-query' data-key='order' data-value='date' href='#'>{{ 'Date'|trans }}</a>
+          <a class='dropdown-item {{ App.Request.query.get('order') == 'lastchange' ? 'active' }}' data-action='append-query' data-key='order' data-value='lastchange' href='#'>{{ 'Last modified'|trans }}</a>
+          <a class='dropdown-item {{ App.Request.query.get('order') == 'comment' ? 'active' }}' data-action='append-query' data-key='order' data-value='comment' href='#'>{{ 'Comment'|trans }}</a>
+          <a class='dropdown-item {{ App.Request.query.get('order') == 'title' ? 'active' }}' data-action='append-query' data-key='order' data-value='title' href='#'>{{ 'Title'|trans }}</a>
+          <a class='dropdown-item {{ App.Request.query.get('order') == 'user' ? 'active' }}' data-action='append-query' data-key='order' data-value='user' href='#'>{{ 'User'|trans }}</a>
+          <a class='dropdown-item {{ App.Request.query.get('order') == 'rating' ? 'active' }}' data-action='append-query' data-key='order' data-value='rating' href='#'>{{ 'Rating'|trans }}</a>
+        </div>
+      </div>
+
+      <div class='btn-group'>
+        <!-- SORT -->
+        <button class='btn btn-secondary btn-sm dropdown-toggle' data-toggle="dropdown" aria-haspopup='true' aria-expanded='false' aria-label={{ 'Sort'|trans }}>{{ 'Sort'|trans }}</button>
+        <div class='dropdown-menu'>
+          <a class='dropdown-item {{ App.Request.query.get('sort') == 'desc' ? 'active' }}' href='#' data-action='append-query' data-key='sort' data-value='desc'>{{ 'DESC'|trans }}</a>
+          <a class='dropdown-item {{ App.Request.query.get('sort') == 'asc' ? 'active' }}' href='#' data-action='append-query' data-key='sort' data-value='asc'>{{ 'ASC'|trans }}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   {% set count = itemsArr|length %}
 
@@ -29,14 +66,6 @@
       {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
     </div>
   {% else %}
-      <p class='smallgray d-inline'>
-        <a href='#' data-action='expand-all-entities' data-status='closed' data-expand='{{ 'Expand all'|trans }}' data-collapse='{{ 'Collapse all'|trans }}'>{{ 'Expand all'|trans }}</a>
-        - <a href='#' data-action='select-all-entities'>{{ 'Select all'|trans }}</a>
-        <span id='advancedSelectOptions' class='d-none'>
-          - <a href='#' data-action='unselect-all-entities'>{{ 'Clear selection'|trans }}</a>
-          - <a href='#' data-action='invert-entities-selection'>{{ 'Invert selection'|trans }}</a>
-        </span>
-      </p>
 
       <div id='withSelected' class='row mx-0 form-inline d-none'>
         <p class='mr-1 mb-2'>{{ 'With selected:'|trans }}</p>

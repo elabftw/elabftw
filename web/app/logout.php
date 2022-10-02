@@ -25,6 +25,9 @@ require_once 'init.inc.php';
 
 $redirectUrl = '../login.php';
 
+// add log line when user logs out
+$App->Log->info('User is logging out', array('userid' => $App->Users->userData['userid'] ?? 0));
+
 $destroySession = function () use ($App) {
     if ($App->Users instanceof AuthenticatedUser) {
         $App->Users->invalidateToken();

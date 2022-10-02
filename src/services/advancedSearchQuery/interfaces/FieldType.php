@@ -10,7 +10,9 @@
 
 namespace Elabftw\Services\AdvancedSearchQuery\Interfaces;
 
+use Elabftw\Services\AdvancedSearchQuery\Enums\Fields;
+
 interface FieldType
 {
-    public function getFieldType(): string;
+    public function getFieldType(): Fields;
 }

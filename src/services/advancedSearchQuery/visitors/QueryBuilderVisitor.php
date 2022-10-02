@@ -101,8 +101,8 @@ class QueryBuilderVisitor implements Visitor
         // Tag and Metadata not implemented!
 
         // Call class methods dynamically to avoid many if statements.
-        // This works here because the parser defines the list of fields.
-        $method = 'visitField' . ucfirst($field->getFieldType());
+        // This works because the parser and the Fields enum define the list of fields.
+        $method = 'visitField' . ucfirst($field->getFieldType()->value);
         return $this->$method($field->getValue(), $field->getAffix(), $parameters);
     }
 

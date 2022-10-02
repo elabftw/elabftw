@@ -10,13 +10,12 @@
 
 namespace Elabftw\Services\AdvancedSearchQuery\Grammar;
 
+use Elabftw\Services\AdvancedSearchQuery\Enums\Fields;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\FieldType;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Term;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
-use function filter_var;
-use function strtolower;
 
 class Field implements Term, Visitable, FieldType
 {
@@ -34,9 +33,9 @@ class Field implements Term, Visitable, FieldType
         return $this->valueWrapper->getValue();
     }
 
-    public function getFieldType(): string
+    public function getFieldType(): Fields
     {
-        return filter_var(strtolower($this->field), FILTER_SANITIZE_STRING) ?: '';
+        return Fields::from($this->field);
     }
 
     public function getAffix(): string

@@ -72,7 +72,7 @@ Fields
 Field
   = field:('author'i / 'body'i / 'category'i / 'elabid'i / 'group'i / 'status'i / 'title'i / 'visibility'i) ':' strict:('s:' {return true;})? term:(List / LiteralInField)
   {
-    return new Field($field, $term, $strict);
+    return new Field(strtolower($field), $term, $strict);
   }
 
 FieldDate
@@ -131,7 +131,7 @@ DD
 FieldBoolean
   = field:('locked'i / 'timestamped'i) ':' term:Boolean
   {
-    return new Field($field, new SimpleValueWrapper($term));
+    return new Field(strtolower($field), new SimpleValueWrapper($term));
   }
 
 // return strings because SimpleValueWrapper() takes strings

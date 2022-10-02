@@ -22,6 +22,7 @@ use Elabftw\Services\AdvancedSearchQuery\Grammar\SimpleValueWrapper;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use function sprintf;
+use function ucfirst;
 
 /** @psalm-suppress UnusedParam */
 class FieldValidatorVisitor implements Visitor
@@ -54,7 +55,7 @@ class FieldValidatorVisitor implements Visitor
     {
         // Call class methods dynamically to avoid many if statements.
         // This works here because the parser defines the list of fields.
-        $method = 'visitField' . ucfirst($field->getFieldType());
+        $method = 'visitField' . ucfirst($field->getFieldType()->value);
         return $this->$method($field->getValue(), $field->getAffix(), $parameters);
     }
 

@@ -91,6 +91,9 @@
       "Elabftw\\Services\\AdvancedSearchQuery\\Collectors\\": [
         "src/services/advancedSearchQuery/collectors"
       ],
+      "Elabftw\\Services\\AdvancedSearchQuery\\Enums\\": [
+        "src/services/advancedSearchQuery/enums"
+      ],
       "Elabftw\\Services\\AdvancedSearchQuery\\Exceptions\\": [
         "src/services/advancedSearchQuery/exceptions"
       ],

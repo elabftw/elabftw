@@ -11,7 +11,7 @@ import { Malle } from '@deltablot/malle';
 import Step from './Step.class';
 import i18next from 'i18next';
 import { relativeMoment, makeSortableGreatAgain, reloadElement, reloadElements, addAutocompleteToLinkInputs, getCheckedBoxes, notif, getEntity, adjustHiddenState } from './misc';
-import { EntityType, Action, Target, Model } from './interfaces';
+import { Action, Target } from './interfaces';
 import { Api } from './Apiv2.class';
 
 

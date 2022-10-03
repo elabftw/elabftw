@@ -23,6 +23,7 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
+use Elabftw\Models\TeamTags;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
 use Elabftw\Services\AdvancedSearchQuery;
@@ -78,6 +79,8 @@ abstract class AbstractEntityController implements ControllerInterface
     {
         // create the DisplayParams object from the query
         $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);
+        // used to get all tags for top page tag filter
+        $TeamTags = new TeamTags($this->App->Users, $this->App->Users->userData['team']);
 
         // TAG FILTER
         if (!empty(($this->App->Request->query->all('tags'))[0])) {
@@ -106,8 +109,6 @@ abstract class AbstractEntityController implements ControllerInterface
         if (!empty($itemsArr)) {
             $tagsArr = $this->Entity->getTags($itemsArr);
         }
-        // get all the tags for the top search bar
-        $tagsArrForSelect = $this->Entity->Tags->readAll();
 
         // store the query parameters in the Session
         $this->App->Session->set('lastquery', $this->App->Request->query->all());
@@ -136,7 +137,8 @@ abstract class AbstractEntityController implements ControllerInterface
             'searchPage' => $isSearchPage,
             'searchType' => $isSearchPage ? 'something' : $DisplayParams->searchType,
             'tagsArr' => $tagsArr,
-            'tagsArrForSelect' => $tagsArrForSelect,
+            // get all the tags for the top search bar
+            'tagsArrForSelect' => $TeamTags->readAll(),
             'teamGroupsFromUser' => $this->teamGroupsFromUser,
             'templatesArr' => $this->templatesArr,
             'visibilityArr' => $this->visibilityArr,

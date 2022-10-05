@@ -782,6 +782,7 @@ CREATE TABLE `users` (
   `notif_event_deleted_email` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `auth_lock_time` datetime DEFAULT NULL,
   `auth_service` tinyint UNSIGNED NULL DEFAULT NULL,
+  `valid_until` date NULL DEFAULT NULL,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 

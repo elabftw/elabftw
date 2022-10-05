@@ -68,6 +68,7 @@ class Users implements RestInterface
         ?int $group = null,
         bool $forceValidation = false,
         bool $alertAdmin = true,
+        ?string $validUntil = null,
     ): int {
         $Config = Config::getConfig();
         $Teams = new Teams($this);
@@ -106,7 +107,8 @@ class Users implements RestInterface
             `usergroup`,
             `register_date`,
             `validated`,
-            `lang`
+            `lang`,
+            `valid_until`
         ) VALUES (
             :email,
             :password_hash,
@@ -115,7 +117,8 @@ class Users implements RestInterface
             :usergroup,
             :register_date,
             :validated,
-            :lang);';
+            :lang,
+            :valid_until);';
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $email);
@@ -126,6 +129,7 @@ class Users implements RestInterface
         $req->bindParam(':validated', $validated, PDO::PARAM_INT);
         $req->bindParam(':usergroup', $group, PDO::PARAM_INT);
         $req->bindValue(':lang', $Config->configArr['lang']);
+        $req->bindValue(':valid_until', $validUntil);
         $this->Db->execute($req);
         $userid = $this->Db->lastInsertId();
 
@@ -187,7 +191,7 @@ class Users implements RestInterface
         // Side effect: User is shown in team with lowest id
         $sql = "SELECT users.userid,
             users.firstname, users.lastname, users.email, users.mfa_secret,
-            users.validated, users.usergroup, users.archived, users.last_login,
+            users.validated, users.usergroup, users.archived, users.last_login, users.valid_until,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.orcid, users.auth_service
             FROM users

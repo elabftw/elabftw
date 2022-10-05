@@ -30,7 +30,7 @@ class UserCreator
     public function create(): int
     {
         // only support creation of user in one team for now
-        $team = $this->reqBody['team'];
+        $team = $this->reqBody['team'] ?? $this->requester->userData['team'];
         $teams = array('id' => $team);
 
         if ($this->requester->userData['is_sysadmin'] === 0) {
@@ -42,6 +42,7 @@ class UserCreator
             // force using the team in which we are logged in if we are not sysadmin
             $teams = array('id' => $this->requester->userData['team']);
         }
+        $validUntil = $this->reqBody['valid_until'] ?? null;
         return (new Users())->createOne(
             (new UserParams('email', $this->reqBody['email']))->getContent(),
             $teams,
@@ -54,6 +55,7 @@ class UserCreator
             true,
             // don't alert admin
             false,
+            $validUntil,
         );
     }
 
@@ -62,7 +64,7 @@ class UserCreator
      */
     private function checkUsergroup(): int
     {
-        $usergroup = Check::usergroup((int) $this->reqBody['usergroup']);
+        $usergroup = Check::usergroup((int) ($this->reqBody['usergroup'] ?? 4));
         if ($usergroup === 1 && $this->requester->userData['is_sysadmin'] !== 1) {
             throw new ImproperActionException('Only a sysadmin can promote another user to sysadmin.');
         }

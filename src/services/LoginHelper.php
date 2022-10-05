@@ -13,6 +13,7 @@ namespace Elabftw\Services;
 use function bin2hex;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use function hash;
 use PDO;
@@ -37,6 +38,7 @@ class LoginHelper
      */
     public function login(bool $setCookie): void
     {
+        $this->checkAccountValidity();
         $this->populateSession();
         if ($setCookie) {
             $this->setToken();
@@ -70,6 +72,21 @@ class LoginHelper
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->AuthResponse->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
+    }
+
+    /**
+     * Verify account validity date
+     */
+    private function checkAccountValidity(): void
+    {
+        $sql = 'SELECT IFNULL(valid_until, "3000-01-01") > NOW() FROM users WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->AuthResponse->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $res = (bool) $req->fetchColumn();
+        if ($res === false) {
+            throw new ImproperActionException(_('Your account has expired. Contact your team Admin to extend its validity.'));
+        }
     }
 
     private function setDeviceToken(): void

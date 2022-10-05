@@ -2203,23 +2203,29 @@ paths:
             schema:
               type: object
               properties:
-                team:
-                  type: integer
-                  description: The team id.
                 firstname:
                   type: string
+                  required: true
                   description: User's first name.
                 lastname:
                   type: string
+                  required: true
                   description: User's last name.
                 email:
                   type: string
+                  required: true
                   description: User's email address.
                 usergroup:
                   type: string
                   enum: ['1', '2', '4']
                   description: |
                     1: Sysadmin, 2: Admin, 4: regular user.
+                team:
+                  type: integer
+                  description: The team id.
+                valid_until:
+                  type: string
+                  description: Date in the YYYY-MM-DD format for account expiration date.
       responses:
         '201':
           description: The user has been created.

@@ -115,6 +115,12 @@
                     </select>
                   </li>
 
+                  <!-- VALID UNTIL -->
+                  <li class='list-inline-item'>
+                    <label for='usersUpdateValidUntil_{{ user.userid }}'>{{ 'Valid until'|trans }}</label>
+                    <input autocomplete='off' value='{{ user.valid_until ? user.valid_until|date('Y-m-d') }}' type='date' class='form-control custom-control-inline' name='valid_until' id='usersUpdateValidUntil_{{ user.userid }}'>
+                  </li>
+
                   <!-- SAVE -->
                   <li class='list-inline-item'>
                     <button data-action='update-user' data-userid='{{ user.userid }}' class='button btn btn-primary'>{{ 'Save'|trans }}</button>

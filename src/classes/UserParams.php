@@ -33,6 +33,15 @@ final class UserParams extends ContentParams implements ContentParamsInterface
             // checked in update
             'email' => $this->content,
             'firstname', 'lastname' => Filter::sanitize($this->content),
+            'valid_until' => (
+                function () {
+                    // clicking the little cross on the input will send an empty string, so set a date far in the future instead
+                    if (empty($this->content)) {
+                        return '3000-01-01';
+                    }
+                    return Filter::sanitize($this->content);
+                }
+            )(),
             'usergroup' => (string) $this->checkUserGroup((int) $this->content),
             // return the hash of the password
             'password' => password_hash(Check::passwordLength($this->content), PASSWORD_DEFAULT),

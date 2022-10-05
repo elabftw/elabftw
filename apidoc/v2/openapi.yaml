@@ -2190,6 +2190,46 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/users'
+    post:
+      tags: ['Users']
+      summary: Create a new user.
+      description: |
+        An Admin can create a user in its own team only. A sysadmin can specify the team.
+      operationId: post-user
+      requestBody:
+        description: Parameters for creating a user.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                team:
+                  type: integer
+                  description: The team id.
+                firstname:
+                  type: string
+                  description: User's first name.
+                lastname:
+                  type: string
+                  description: User's last name.
+                email:
+                  type: string
+                  description: User's email address.
+                usergroup:
+                  type: string
+                  enum: ['1', '2', '4']
+                  description: |
+                    1: Sysadmin, 2: Admin, 4: regular user.
+      responses:
+        '201':
+          description: The user has been created.
+          headers:
+            location:
+              description: An URL to the user that was created.
+              schema:
+                type: string
+
+
   /users/{id}:
     summary: Display information about a particular user.
     parameters:

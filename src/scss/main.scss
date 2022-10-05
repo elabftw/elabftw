@@ -823,6 +823,10 @@ the form-control fails to do that so we do the border ourselves */
     background-color: rgba(41, 174, 185, 0.5);
 }
 
+.hl-hover-gray:hover {
+    background-color: $verylightgray;
+}
+
 #commentsCreateArea {
     border-radius: 5px;
     margin: 10px 0;

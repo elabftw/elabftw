@@ -87,6 +87,13 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       filenameLink.replaceWith(filenameInput);
 
+    // TOGGLE DISPLAY
+    } else if (el.matches('[data-action="toggle-uploads-layout"]')) {
+      ApiC.notifOnSaved = false;
+      ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout}).then(() => {
+        reloadElement('filesdiv');
+      });
+
     // REPLACE UPLOAD
     } else if (el.matches('[data-action="replace-upload"]')) {
       document.getElementById('replaceUploadForm_' + el.dataset.uploadid).hidden = false;

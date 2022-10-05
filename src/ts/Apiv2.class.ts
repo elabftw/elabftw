@@ -9,6 +9,9 @@ import { Method } from './interfaces';
 import { notifSaved, notifError } from './misc';
 
 export class Api {
+  // set this to false to prevent the "Saved" notification from showing up
+  notifOnSaved = true;
+
   get(query: string): Promise<Response> {
     return this.send(Method.GET, query);
   }
@@ -50,7 +53,7 @@ export class Api {
       }
       return response;
     }).then(response => {
-      if (method !== Method.GET) {
+      if (method !== Method.GET && this.notifOnSaved) {
         notifSaved();
       }
       return response;

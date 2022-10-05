@@ -1,0 +1,7 @@
+<i class='fas fa-fw fa-comments mr-1'></i>
+<p class='file-comment {% if not upload.immutable %}editable hl-hover {% endif %}d-inline'
+  data-type='{{ upload.type }}'
+  data-itemid='{{ upload.item_id }}'
+  data-isempty='{{ upload.comment is null ? '1' : '0' }}'
+  data-id='{{ upload.id }}'>{% if upload.comment is null %}{{ 'Click to add a comment'|trans }}{% else %}{{ upload.comment|raw }}{% endif %}
+</p>

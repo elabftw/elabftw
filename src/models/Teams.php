@@ -210,6 +210,9 @@ class Teams implements RestInterface
 
     public function hasCommonTeamWithCurrent(int $userid, ?int $team = null): bool
     {
+        if ($userid === 0) {
+            return true;
+        }
         if ($team === null) {
             $team = $this->Users->userData['team'];
         }

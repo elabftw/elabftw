@@ -66,7 +66,6 @@
           <i title='{{ 'Duplicate'|trans }}' class='far fa-copy fa-2x'></i>
         </a>
       </div>
-    {% endif %}
 
     <div class='hl-hover-gray d-inline p-2 rounded'>
       <a class='elab-tooltip' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdf'>
@@ -113,6 +112,7 @@
           <i title='{{ alt }}' class='fas {{lockIcon}} fa-2x'></i>
       </a>
     </div>
+    {% endif %}
 
     {% if not App.Session.has('is_anon') and App.Config.configArr.anon_users %}
       <div class='hl-hover-gray d-inline p-2 rounded'>

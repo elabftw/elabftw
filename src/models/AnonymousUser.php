@@ -10,7 +10,8 @@
 namespace Elabftw\Models;
 
 /**
- * An anonymous user is "logged in" in a team but doesn't have a userid
+ * An anonymous user is "logged in" in a team and has default settings
+ * With a userid of 0
  */
 final class AnonymousUser extends Users
 {
@@ -43,5 +44,6 @@ final class AnonymousUser extends Users
         $this->userData['uploads_layout'] = '1';
         $this->userData['inc_files_pdf'] = '1';
         $this->userData['pdf_format'] = 'A4';
+        $this->userData['userid'] = 0;
     }
 }

@@ -425,6 +425,8 @@ class Users implements RestInterface
 
         $this->userData = $this->Db->fetch($req);
         $this->userData['team'] = $this->team;
+        $UsersHelper = new UsersHelper($this->userData['userid']);
+        $this->userData['teams'] = $UsersHelper->getTeamsFromUserid();
         return $this->userData;
     }
 

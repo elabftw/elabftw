@@ -65,6 +65,14 @@ try {
         exit;
     }
 
+    if ($Request->query->get('switch_team') === '1') {
+        $App->Session->set('team_selection_required', true);
+        $App->Session->set('team_selection', $App->Users->userData['teams']);
+        $App->Session->set('auth_userid', $App->Users->userData['userid']);
+        $App->Session->remove('is_auth');
+    }
+
+
     // Check if already logged in
     if ($App->Session->has('is_auth')) {
         $Response = new RedirectResponse('experiments.php');

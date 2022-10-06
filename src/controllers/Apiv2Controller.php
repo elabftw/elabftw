@@ -224,7 +224,7 @@ class Apiv2Controller extends AbstractApiController
             case 'unfinished_steps':
                 return new UnfinishedSteps($this->Users, $this->Request->query->get('scope') === 'team');
             case 'users':
-                return new Users($this->id, null, $this->Users);
+                return new Users($this->id, $this->Users->team, $this->Users);
             default:
                 throw new ImproperActionException('Invalid endpoint: available endpoints: apikeys, config, experiments, items, experiments_templates, items_types, event, events, team_tags, teams, todolist, unfinished_steps, users.');
         }

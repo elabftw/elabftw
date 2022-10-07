@@ -29,7 +29,11 @@
 <!-- EXPERIMENTS LINKS -->
 {% if Entity.entityData.experiments_links %}
   <div class='box'>
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedExperimentsIcon' class='d-inline'><i id='linkedExperimentsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Linked experiments'|trans }}</h3>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedExperimentsIcon' class='d-inline'><i id='linkedExperimentsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {% trans %}
+      Linked experiment
+      {% plural 2 %}
+      Linked experiments
+      {% endtrans %}</h3>
     <div class='row mt-2' id='linkedExperimentsDiv' data-save-hidden='linkedExperimentsDiv'>
       <ul class='list-group ml-3'>
         {% for link in Entity.entityData.experiments_links %}

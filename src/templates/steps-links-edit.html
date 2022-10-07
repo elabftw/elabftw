@@ -89,7 +89,11 @@
     {% if Entity.type == 'items' or Entity.type == 'experiments' %}
     <!-- EXPERIMENTS LINKS -->
     <section class='col-md-6'>
-        <h4 data-action='toggle-next' data-toggle-next-n='2' data-icon='linksExpDivIcon' class='d-inline'><i id='linksExpDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-link align-baseline'></i> {{ 'Linked experiments'|trans }}</h4>
+        <h4 data-action='toggle-next' data-toggle-next-n='2' data-icon='linksExpDivIcon' class='d-inline'><i id='linksExpDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-link align-baseline'></i> {% trans %}
+      Linked experiment
+      {% plural 2 %}
+      Linked experiments
+      {% endtrans %}</h4>
         <!-- ADD LINK -->
         <div class='input-group mt-2'>
             <div class='input-group-prepend'>

@@ -676,7 +676,7 @@ abstract class AbstractEntity implements RestInterface
         if ($fullSelect) {
             // get all the columns of entity table, we add a literal string for the page that can be used by the mention tinymce plugin code
             $select = 'SELECT DISTINCT entity.*,
-                GROUP_CONCAT(DISTINCT team_events.experiment IS NOT NULL) AS is_bound,
+                GROUP_CONCAT(DISTINCT (team_events.experiment IS NOT NULL OR team_events.item_link IS NOT NULL)) AS is_bound,
                 GROUP_CONCAT(DISTINCT team_events.item) AS events_item_id,
                 GROUP_CONCAT(DISTINCT team_events.id) AS events_id,
                 "' . $this->page .'" AS page,
@@ -769,7 +769,7 @@ abstract class AbstractEntity implements RestInterface
             $eventsColumn = 'experiment';
         } elseif ($this instanceof Items) {
             $select .= ', categoryt.bookable';
-            $eventsColumn = 'item';
+            $eventsColumn = 'item_link';
         } else {
             throw new IllegalActionException('Nope.');
         }

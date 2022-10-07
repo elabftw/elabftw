@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const locale = document.getElementById('user-prefs').dataset.jslang;
           button.innerText = DateTime.fromISO(json.start, {'locale': locale}).toRelative();
           el.appendChild(button);
-          bookingsDiv.append(el);
+          bookingsDiv.replaceChildren(el);
         });
       });
 

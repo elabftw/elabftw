@@ -188,14 +188,10 @@
   </h1>
 
   <!-- SHOW EVENTS -->
-  {% if Entity.entityData.events_id and Entity.type == 'items' %}<i class='far fa-calendar-alt'></i>
-    {{ '%s%d%sSee bookings%s'|trans|format("<a href='team.php?item=", Entity.entityData.id, "'>", "</a>")|raw }}
+  {% if Entity.entityData.is_bound %}<i class='far fa-calendar-alt'></i>
+    <a href='#' data-action='see-events'>{{ 'See bookings'|trans }}</a>
   {% endif %}
-  {% if Entity.entityData.is_bound and Entity.type == 'experiments' %}<i class='far fa-calendar-alt'></i>
-    {{ '%s%d%sSee bookings%s'|trans|format("<a href='#' data-action='see-events'", 0, "'>", "</a>")|raw }}
-    <div id='boundBookings'></div>
-
-  {% endif %}
+  <div id='boundBookings'></div>
 
   <!-- SHOW NEXT STEP -->
   {% set next_step = Entity.entityData.next_step %}

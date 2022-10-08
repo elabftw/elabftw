@@ -2623,6 +2623,25 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/upload'
+    post:
+      tags: ['Uploads']
+      summary: Create an upload.
+      operationId: post-upload
+      requestBody:
+        description: Parameters for creating an upload.
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '201':
+          description: The file has been uploaded.
+          headers:
+            location:
+              description: An URL to the uploaded file that was created.
+              schema:
+                type: string
   /{entity_type}/{id}/uploads/{subid}:
     parameters:
       - name: entity_type
@@ -2655,6 +2674,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/upload'
+    post:
+      tags: ['Uploads']
+      summary: Replace an existing uploaded file. The existing file will be archived and the new one will be added.
+      operationId: post-upload-replace
+      requestBody:
+        description: Parameters for replacing an upload.
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '201':
+          description: The file has been uploaded.
+          headers:
+            location:
+              description: An URL to the uploaded file that was created.
+              schema:
+                type: string
     patch:
       tags: ['Uploads']
       summary: |

@@ -116,7 +116,7 @@ class Transform
                     (int) $notif['id'],
                     $notif['body']['entity_page'],
                     (int) $notif['body']['entity_id'],
-                    _('A step dealine is approaching.'),
+                    _('A step deadline is approaching.'),
                     $notif['created_at'],
                 );
             default:

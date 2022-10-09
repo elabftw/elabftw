@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-08 00:18+0200\n"
+"POT-Creation-Date: 2022-10-09 14:35+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi\n"
 "Language-Team: \n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.1.1\n"
 "X-Poedit-Mapping: php=gettext:PHP;html=twig\n"
 "X-Poedit-Basepath: ../../../..\n"
 "X-Poedit-SearchPath-0: src\n"
@@ -426,7 +426,7 @@ msgid "Some attached PDFs could not be appended."
 msgstr "Certains PDFs n'ont pas pu être annexés."
 
 #: src/services/Transform.php:119
-msgid "A step dealine is approaching."
+msgid "A step deadline is approaching."
 msgstr "La dernière limite d'une étape est proche."
 
 #: src/services/advancedSearchQuery/exceptions/LimitDepthIsExceededException.php:19
@@ -3235,6 +3235,9 @@ msgstr "édité"
 #: src/templates/view.html:269
 msgid "Add a comment"
 msgstr "Ajouter un commentaire"
+
+#~ msgid "A step dealine is approaching."
+#~ msgstr "La dernière limite d'une étape est proche."
 
 #, fuzzy
 #~| msgid "Bind an experiment"

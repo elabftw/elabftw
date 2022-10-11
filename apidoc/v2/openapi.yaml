@@ -2630,10 +2630,17 @@ paths:
       requestBody:
         description: Parameters for creating an upload.
         content:
-          application/octet-stream:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The file to upload.
+                comment:
+                  type: string
+                  description: Optional file comment.
       responses:
         '201':
           description: The file has been uploaded.

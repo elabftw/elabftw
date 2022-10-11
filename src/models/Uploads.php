@@ -212,8 +212,7 @@ class Uploads implements RestInterface
             $action = Action::Replace;
         }
         return match ($action) {
-            // Note: it is not possible to create an upload with a comment because we can't send at the same time json and a file
-            Action::Create => $this->create(new CreateUpload($reqBody['real_name'], $reqBody['filePath'])),
+            Action::Create => $this->create(new CreateUpload($reqBody['real_name'], $reqBody['filePath'], $reqBody['comment'])),
             Action::CreateFromString => $this->createFromString(FileFromString::from($reqBody['file_type']), $reqBody['real_name'], $reqBody['content']),
             Action::Replace => $this->replace(new CreateUpload($reqBody['real_name'], $reqBody['filePath'])),
             default => throw new ImproperActionException('Invalid action for upload creation.'),

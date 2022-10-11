@@ -152,6 +152,7 @@ class Apiv2Controller extends AbstractApiController
         if ($this->Model instanceof Uploads && $this->action === Action::Create) {
             $this->reqBody['real_name'] = $this->Request->files->get('file')->getClientOriginalName();
             $this->reqBody['filePath'] = $this->Request->files->get('file')->getPathname();
+            $this->reqBody['comment'] = $this->Request->request->get('comment');
         }
         $id = $this->Model->postAction($this->action, $this->reqBody);
         return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', SITE_URL, $this->Model->getPage(), $id)));

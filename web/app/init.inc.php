@@ -124,7 +124,7 @@ try {
         'domain' => '',
         'secure' => true,
         'httponly' => true,
-        'samesite' => 'Strict',
+        'samesite' => 'Lax',
     );
     // 1 is unauth or session expired, this is here to show a friendly message of the login page after an invalid request
     setcookie('kickreason', '1', $cookieOptions);
@@ -139,7 +139,7 @@ try {
             'domain' => '',
             'secure' => true,
             'httponly' => true,
-            'samesite' => 'Strict',
+            'samesite' => 'Lax',
         );
         setcookie('elab_redirect', $Request->getRequestUri(), $cookieOptions);
     }

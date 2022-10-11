@@ -42,7 +42,7 @@ $destroySession = function () use ($App) {
         'domain' => '',
         'secure' => true,
         'httponly' => true,
-        'samesite' => 'Strict',
+        'samesite' => 'Lax',
     );
     setcookie('token', '', $cookieOptions);
     setcookie('token_team', '', $cookieOptions);

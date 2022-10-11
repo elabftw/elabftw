@@ -106,7 +106,7 @@ class LoginHelper
             'domain' => '',
             'secure' => true,
             'httponly' => true,
-            'samesite' => 'Strict',
+            'samesite' => 'Lax',
         );
 
         setcookie('devicetoken', DeviceToken::getToken($this->AuthResponse->userid), $cookieOptions);
@@ -157,7 +157,7 @@ class LoginHelper
             'domain' => '',
             'secure' => true,
             'httponly' => true,
-            'samesite' => 'Strict',
+            'samesite' => 'Lax',
         );
         setcookie('token', $token, $cookieOptions);
         setcookie('token_team', (string) $this->AuthResponse->selectedTeam, $cookieOptions);

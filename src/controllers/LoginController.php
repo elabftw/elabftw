@@ -112,7 +112,7 @@ class LoginController implements ControllerInterface
             'domain' => '',
             'secure' => true,
             'httponly' => true,
-            'samesite' => 'Strict',
+            'samesite' => 'Lax',
         );
         setcookie('icanhazcookies', $icanhazcookies, $cookieOptions);
 

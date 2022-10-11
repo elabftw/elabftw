@@ -71,14 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // background color for selected entities
   const bgColor = '#c4f9ff';
 
-  // change sort-icon based on sort value: asc or desc
-  document.querySelectorAll('[data-action="reorder-entities"]').forEach(el => {
-    if ($('select[name="order"]').val() === (el as HTMLElement).dataset.orderby) {
-      el.children[0].classList.remove('fa-sort');
-      el.children[0].classList.add($('select[name="sort"]').val() === 'asc' ? 'fa-sort-up': 'fa-sort-down');
-    }
-  });
-
   document.getElementById('favtagsPanel').addEventListener('keyup', event => {
     const el = (event.target as HTMLInputElement);
     const query = el.value;
@@ -231,24 +223,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // SORT COLUMN IN TABULAR MODE
     } else if (el.matches('[data-action="reorder-entities"]')) {
-      // The attribute data-orderby of the anchor element next to the title contains the value of the corresponding
-      // option of the select field <select name='order'> that will be selected in the form.
-      // For example: <a data-action='reorder-entities' data-orderby='title'>...</a>, will select the option 'title'
-      // in the <select name='order'>
-      const targetSort = el.dataset.orderby;
-      const selectOrder = $('select[name="order"]');
-      const selectSort = $('select[name="sort"]');
-
-      // I guess the default expectation is sort ascending, but if the user clicks twice, the
-      // order should invert. For this, we check whether the select value is already set
-      // to targetSort
-      if (selectOrder.val() == targetSort) {
-        selectSort.val(selectSort.val() == 'desc' ? 'asc': 'desc' );
-      } else {
-        $('select[name="sort"]').val('asc');
+      const params = new URLSearchParams(document.location.search);
+      let sort = 'desc';
+      if (params.get('sort') === 'desc') {
+        sort = 'asc';
       }
-      selectOrder.val(targetSort);
-      selectOrder.closest('form').trigger('submit');
+      window.location.href = `?order=${el.dataset.orderby}&sort=${sort}`;
 
     // CHECK AN ENTITY BOX
     } else if (el.matches('[data-action="checkbox-entity"]')) {

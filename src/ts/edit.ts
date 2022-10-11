@@ -241,6 +241,12 @@ document.addEventListener('DOMContentLoaded', () => {
         editor.setContent(json.body);
       });
 
+    // IMPORT STEP INTO BODY
+    } else if (el.matches('[data-action="import-step-body"]')) {
+      ApiC.getJson(`${entity.type}/${entity.id}/${Model.Step}/${el.dataset.stepid}`).then(json => {
+        editor.setContent(json.body);
+      });
+
     // DESTROY ENTITY
     } else if (el.matches('[data-action="destroy"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {

@@ -213,6 +213,7 @@ class Apiv2Controller extends AbstractApiController
                     null,
                     (string) $this->Request->query->get('start', $defaultStart),
                     (string) $this->Request->query->get('end', $defaultEnd),
+                    $this->Request->query->getInt('cat'),
                 );
             case 'favtags':
                 return new FavTags($this->Users, $this->id);

@@ -15,6 +15,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Items;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
@@ -38,6 +39,7 @@ try {
     $Items = new Items($App->Users);
     $Scheduler = new Scheduler($Items);
     $Templates = new Templates($App->Users);
+    $ItemsTypes = new ItemsTypes($App->Users);
 
     $DisplayParams = new DisplayParams($App->Users, $App->Request);
     // we only want the bookable type of items
@@ -66,11 +68,17 @@ try {
         $entityData = $Templates->readOne();
     }
 
+    // only the bookable categories
+    $bookableCategoryArr = array_filter($ItemsTypes->readAll(), function ($c) {
+        return $c['bookable'] === 1;
+    });
+
     $template = 'team.html';
     $renderArr = array(
         'Entity' => $Templates,
         'Scheduler' => $Scheduler,
         'allItems' => $allItems,
+        'bookableCategoryArr' => $bookableCategoryArr,
         'itemsArr' => $Items->readShow($DisplayParams),
         'itemData' => $itemData,
         'selectedItem' => $selectedItem,

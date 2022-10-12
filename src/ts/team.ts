@@ -74,6 +74,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // bind to the element #scheduler
   const calendarEl: HTMLElement = document.getElementById('scheduler');
 
+  // allow filtering the category of items in events
+  let queryString = '?';
+  if (params.get('cat')) {
+    queryString += 'cat=' + params.get('cat');
+  }
+
   // SCHEDULER
   const calendar = new Calendar(calendarEl, {
     plugins: [ dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin ],
@@ -104,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // load the events as JSON
     eventSources: [
       {
-        url: `api/v2/events/${info.item}`,
+        url: `api/v2/events/${info.item}${queryString}`,
       },
     ],
     // first day is monday

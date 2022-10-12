@@ -12,7 +12,7 @@
 
 
       <!-- CATEGORY -->
-      <select name='cat' class='autosubmit mr-1 form-control select-filter-status' aria-label='Filter category'>
+      <select name='cat' class='autosubmit mr-1 form-control' aria-label='Filter category'>
         <option value=''>{{ Entity.type == 'experiments' ? 'Filter status'|trans : 'Filter by type'|trans }}</option>
         {% for category in categoryArr %}
           <option value='{{ category.category_id }}'{{ App.Request.query.get('cat') == category.category_id ? ' selected'}}>

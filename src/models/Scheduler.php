@@ -41,6 +41,7 @@ class Scheduler implements RestInterface
         ?int $id = null,
         ?string $start = null,
         ?string $end = null,
+        private ?int $category = null,
     ) {
         $this->Db = Db::getConnection();
         $this->setId($id);
@@ -118,6 +119,10 @@ class Scheduler implements RestInterface
         $start = $this->normalizeDate($this->start);
         $end = $this->normalizeDate($this->end, true);
 
+        $categoryFilter = '';
+        if ($this->category > 0) {
+            $categoryFilter = ' AND items.category = :category';
+        }
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = "SELECT team_events.id, team_events.title AS title_only, team_events.start, team_events.end, team_events.userid,
             CONCAT(u.firstname, ' ', u.lastname) AS fullname,
@@ -125,6 +130,7 @@ class Scheduler implements RestInterface
             items.title AS item_title,
             CONCAT('#', items_types.color) AS color,
             team_events.experiment,
+            items.category AS items_category,
             experiments.title AS experiment_title,
             team_events.item_link,
             items_linkt.title AS item_link_title
@@ -135,13 +141,15 @@ class Scheduler implements RestInterface
             LEFT JOIN items_types ON (items.category = items_types.id)
             LEFT JOIN users AS u ON (team_events.userid = u.userid)
             WHERE (team_events.team = :team OR items.team = :team)
-            AND team_events.start > :start AND team_events.end <= :end";
+            AND team_events.start > :start AND team_events.end <= :end " . $categoryFilter;
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':start', $start);
         $req->bindParam(':end', $end);
+        if ($this->category > 0) {
+            $req->bindParam(':category', $this->category);
+        }
         $this->Db->execute($req);
-
         return $req->fetchAll();
     }
 

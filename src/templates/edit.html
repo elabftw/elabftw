@@ -212,7 +212,7 @@
 <!-- UPLOAD FORM -->
 <section class='box'>
   <h3 class='d-inline'><i class='fas fa-fw fa-paperclip'></i> {{ 'Attach a file'|trans }}</h3>
-  <form action='api/v2/{{ Entity.page }}/{{ Entity.id }}/uploads' class='dropzone mt-2' id='elabftw-dropzone'></form>
+  <form action='api/v2/{{ Entity.type }}/{{ Entity.id }}/uploads' class='dropzone mt-2' id='elabftw-dropzone'></form>
 </section>
 
 {% include 'uploads.html' %}

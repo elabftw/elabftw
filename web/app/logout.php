@@ -73,12 +73,9 @@ if ($App->Request->cookies->has('saml_token')) {
         $destroySession();  // destroy session anyway
 
         $App->Log->error('', array('Exception' => $e));
-        $template = 'error.html';
-        $renderArr = array('error' => Tools::error());
-        $Response = new Response();
-        $Response->prepare($Request);
-        $Response->setContent($App->render($template, $renderArr));
+        $Response = new RedirectResponse('../../login.php');
         $Response->send();
+        exit;
     }
 }
 

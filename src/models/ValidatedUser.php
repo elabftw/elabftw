@@ -9,8 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
-
 /**
  * A user that exists in the db, so we have a userid but not necessarily a team
  */

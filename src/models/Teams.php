@@ -57,7 +57,7 @@ class Teams implements RestInterface
             $team = $req->fetch();
             if ($team === false) {
                 $id = $this->createTeamIfAllowed($query);
-                $team = $this->getTeamsFromIdOrNameOrOrgidArray(array($id));
+                $team = $this->getTeamsFromIdOrNameOrOrgidArray(array($id))[0];
             }
             $res[] = $team;
         }

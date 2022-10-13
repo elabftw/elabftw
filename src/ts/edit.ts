@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function getListFromMolFiles(): void {
     const mols = [];
     ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}`).then(json => {
-      for (const upload of json.value as Array<Upload>) {
+      for (const upload of json as Array<Upload>) {
         const extension = upload.real_name.split('.').pop();
         if (['mol', 'chemjson'].includes(extension)) {
           mols.push([upload.real_name, upload.long_name]);

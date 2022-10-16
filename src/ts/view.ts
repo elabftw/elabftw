@@ -129,6 +129,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // sort tables in entity bodies
+  // primarily from https://stackoverflow.com/a/49041392
+  const getCellValue = (tr, idx) => {
+    return tr.children[idx].innerText || tr.children[idx].textContent;
+  };
+
+  const comparer = (idx, asc) => (a, b) => ((value1, value2) => {
+    const diff = Number(value1) - Number(value2);
+    return Number.isNaN(diff)
+      ? value1.toString().localeCompare(value2, undefined, {numeric: true})
+      : diff;
+  })(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+  let prevSortIcon;
+  document.getElementById('body_view').querySelectorAll('th').forEach((th: HTMLTableCellElement) => {
+    // add sort button
+    // need span because .fas has pointer-events:none
+    th.innerHTML = '<span role="button"><i class="fas fa-sort"></i></span> ' + th.innerHTML;
+    th.firstChild.addEventListener('click', (event => {
+      const icon = (event.target as HTMLElement).firstChild as HTMLElement;
+      // reset previous icon
+      if (prevSortIcon && prevSortIcon != icon) {
+        prevSortIcon.classList.remove('fa-sort-up', 'fa-sort-down');
+        prevSortIcon.classList.add('fa-sort');
+        prevSortIcon.closest('th').removeAttribute('data-order');
+      }
+
+      // update current icon
+      if (!th.dataset.order || th.dataset.order === 'desc') {
+        th.dataset.order = 'asc';
+        icon.classList.remove('fa-sort', 'fa-sort-down');
+        icon.classList.add('fa-sort-up');
+      } else {
+        th.dataset.order = 'desc';
+        icon.classList.replace('fa-sort-up', 'fa-sort-down');
+      }
+
+      // sort table
+      const table = th.closest('table');
+      Array.from(table.querySelectorAll(':scope > tbody > tr:nth-child(n+2)'))
+        .sort(comparer(Array.from(th.parentNode.children).indexOf(th), th.dataset.order === 'asc'))
+        .forEach(tr => table.firstElementChild.appendChild(tr));
+      prevSortIcon = icon;
+    }));
+  });
+
   // COMMENTS
   document.getElementById('commentsDiv').addEventListener('click', event => {
     const el = (event.target as HTMLElement);

@@ -132,6 +132,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // sort tables in entity bodies
   // primarily from https://stackoverflow.com/a/49041392
   const getCellValue = (tr, idx) => {
+    // handle colspans
+    const cells = tr.querySelectorAll(':scope > th, :scope > td');
+    let idxMax = 0;
+    let idxMin = 0;
+    for (const cell of cells) {
+      idxMax += cell.colSpan;
+      idxMin = idxMax - cell.colSpan;
+      if (idxMin <= idx && idx <= idxMax-1) {
+        idx = cell.cellIndex;
+        break;
+      }
+    }
     return tr.children[idx].innerText || tr.children[idx].textContent;
   };
 
@@ -143,36 +155,52 @@ document.addEventListener('DOMContentLoaded', () => {
   })(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
 
   let prevSortIcon;
-  document.getElementById('body_view').querySelectorAll('th').forEach((th: HTMLTableCellElement) => {
-    // add sort button
-    // need span because .fas has pointer-events:none
-    th.innerHTML = '<span role="button"><i class="fas fa-sort"></i></span> ' + th.innerHTML;
-    th.firstChild.addEventListener('click', (event => {
-      const icon = (event.target as HTMLElement).firstChild as HTMLElement;
-      // reset previous icon
-      if (prevSortIcon && prevSortIcon != icon) {
-        prevSortIcon.classList.remove('fa-sort-up', 'fa-sort-down');
-        prevSortIcon.classList.add('fa-sort');
-        prevSortIcon.closest('th').removeAttribute('data-order');
-      }
+  Array.from(document.getElementById('body_view').querySelectorAll('table')).filter(table => {
+    // tables with rowspan cannot be sorted, cells might be rearranged across rows and columns
+    const hasRowspan = table.querySelectorAll('th[rowspan], td[rowspan]').length !== 0;
+    if (hasRowspan) {
+      console.info('Table with merged cells along rows (rowspan) detected. Table sorting disabled.');
+    }
 
-      // update current icon
-      if (!th.dataset.order || th.dataset.order === 'desc') {
-        th.dataset.order = 'asc';
-        icon.classList.remove('fa-sort', 'fa-sort-down');
-        icon.classList.add('fa-sort-up');
-      } else {
-        th.dataset.order = 'desc';
-        icon.classList.replace('fa-sort-up', 'fa-sort-down');
-      }
+    // tables with colspan in top row (header) cannot be sorted, wrong column would be referenced
+    const hasHeaderColspan = table.querySelectorAll(':scope > tbody > tr:first-of-type > th[colspan], :scope > tbody > tr:first-of-type > td[colspan]').length !== 0;
+    if (hasHeaderColspan) {
+      console.info('Table with merged cells along columns (colspan) in top row detected. Table sorting disabled.');
+    }
+    
+    return !hasRowspan && !hasHeaderColspan;
+  }).forEach(table => {
+    table.querySelectorAll(':scope > tbody > tr:first-of-type > th').forEach((th: HTMLTableCellElement) => {
+      // add sort button
+      // need span because .fas has pointer-events:none
+      th.innerHTML = '<span role="button"><i class="fas fa-sort"></i></span> ' + th.innerHTML;
+      th.firstChild.addEventListener('click', (event => {
+        const icon = (event.target as HTMLElement).firstChild as HTMLElement;
+        // reset previous icon
+        if (prevSortIcon && prevSortIcon != icon) {
+          prevSortIcon.classList.remove('fa-sort-up', 'fa-sort-down');
+          prevSortIcon.classList.add('fa-sort');
+          prevSortIcon.closest('th').removeAttribute('data-order');
+        }
 
-      // sort table
-      const table = th.closest('table');
-      Array.from(table.querySelectorAll(':scope > tbody > tr:nth-child(n+2)'))
-        .sort(comparer(Array.from(th.parentNode.children).indexOf(th), th.dataset.order === 'asc'))
-        .forEach(tr => table.firstElementChild.appendChild(tr));
-      prevSortIcon = icon;
-    }));
+        // update current icon
+        if (!th.dataset.order || th.dataset.order === 'desc') {
+          th.dataset.order = 'asc';
+          icon.classList.remove('fa-sort', 'fa-sort-down');
+          icon.classList.add('fa-sort-up');
+        } else {
+          th.dataset.order = 'desc';
+          icon.classList.replace('fa-sort-up', 'fa-sort-down');
+        }
+
+        // sort table
+        const table = th.closest('table');
+        Array.from(table.querySelectorAll(':scope > tbody > tr:nth-child(n+2)'))
+          .sort(comparer(Array.from(th.parentNode.children).indexOf(th), th.dataset.order === 'asc'))
+          .forEach(tr => table.firstElementChild.appendChild(tr));
+        prevSortIcon = icon;
+      }));
+    });
   });
 
   // COMMENTS

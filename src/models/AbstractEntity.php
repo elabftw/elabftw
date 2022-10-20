@@ -582,7 +582,7 @@ abstract class AbstractEntity implements RestInterface
         $this->entityData['body_html'] = $this->entityData['body'];
         // convert from markdown only if necessary
         if ($this->entityData['content_type'] === self::CONTENT_MD) {
-            $this->entityData['body_html'] = Tools::md2html($this->entityData['body']);
+            $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
         }
         ksort($this->entityData);
         return $this->entityData;

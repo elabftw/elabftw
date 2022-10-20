@@ -48,7 +48,7 @@ class TinyEditor extends Editor implements EditorInterface {
   }
 }
 
-class MdEditor extends Editor implements EditorInterface {
+export class MdEditor extends Editor implements EditorInterface {
   constructor() {
     super();
     this.type = 'md';

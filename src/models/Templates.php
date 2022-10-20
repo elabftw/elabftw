@@ -28,6 +28,8 @@ class Templates extends AbstractTemplateEntity
     <h1><span style='font-size: 14pt;'>Results :<br /></span></h1>
     <p>&nbsp;</p>";
 
+    public const defaultBodyMd = "# Goal\n\n# Procedure\n\n# Results\n\n";
+
     public function __construct(Users $users, ?int $id = null)
     {
         $this->type = parent::TYPE_TEMPLATES;

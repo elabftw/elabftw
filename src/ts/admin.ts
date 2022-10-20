@@ -10,6 +10,7 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import i18next from 'i18next';
+import { MdEditor } from './Editor.class';
 import ItemsTypes from './ItemsTypes.class';
 import { Api } from './Apiv2.class';
 import { Model, Action } from './interfaces';
@@ -28,6 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // activate editor for common template
   tinymce.init(getTinymceBaseConfig('admin'));
+  // and for md
+  (new MdEditor()).init();
 
   // AUTOCOMPLETE user list for team groups
   $(document).on('focus', '.addUserToGroup', function() {
@@ -172,6 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const params = collectForm(el.closest('div.form-group'));
       // the tinymce won't get collected
       params['common_template'] = tinymce.get('common_template').getContent();
+      params['common_template_md'] = (document.getElementById('common_template_md') as HTMLTextAreaElement).value;
       ApiC.patch(`${Model.Team}/${el.dataset.id}`, params);
     } else if (el.matches('[data-action="export-scheduler"]')) {
       const from = (document.getElementById('schedulerDateFrom') as HTMLSelectElement).value;

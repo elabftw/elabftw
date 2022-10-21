@@ -27,11 +27,15 @@
 <input id='title_input' class='form-control' data-id='{{ Entity.id }}' value='{{ Entity.entityData.title|raw }}' />
 {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
 <label for='e{{ Entity.entityData.id }}'>{{ 'Template content'|trans }}</label>
-<div>
-  <textarea id='e{{ Entity.entityData.id }}' class='mceditable' style='height:500px;'>{{ Entity.entityData.body }}</textarea>
-</div>
+{% if editor == 'md' %}
+  <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' style='height:500px;' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
+{% else %}
+  <div><!-- << this div is added around the textarea to fix an issue on mobile editor. See #3107 -->
+    <textarea id='e{{ Entity.entityData.id }}' class='mceditable' style='height:500px;'>{{ Entity.entityData.body }}</textarea>
+  </div>
+{% endif %}
 <div class='text-center mt-4'>
-  <button data-action='update-template' data-id='{{ Entity.entityData.id }}' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+  <button data-action='update-template' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
 </div>
 {% set mode = 'edit-template' %}
 {% include 'steps-links-edit.html' %}

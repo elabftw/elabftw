@@ -73,6 +73,8 @@
         <a href='#' class='dropdown-item' data-action='download-template' data-id='{{ Entity.id }}'>
           <i class='fas fa-download fa-fw mr-1'></i>{{ 'Download template'|trans }}
         </a>
+        <!-- SWITCH EDITOR the data-editor is here to indicate which is the current editor -->
+        <a class='dropdown-item' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</a>
         <!-- REVISIONS -->
         {% if revNum > 0 %}
         <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ revNum }} {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>

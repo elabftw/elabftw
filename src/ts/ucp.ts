@@ -5,12 +5,13 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, reloadElement, addAutocompleteToTagInputs, collectForm } from './misc';
+import { getEntity, notif, reloadElement, addAutocompleteToTagInputs, collectForm } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
 import { Model, Target } from './interfaces';
 import Templates from './Templates.class';
+import { getEditor } from './Editor.class';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
@@ -28,8 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const EntityC = new Templates();
   const ApiC = new Api();
 
+  const entity = getEntity();
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
+
+  // Which editor are we using? md or tiny
+  const editor = getEditor();
+  editor.init();
 
   // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {
@@ -52,13 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     // UPDATE TEMPLATE
     } else if (el.matches('[data-action="update-template"]')) {
-      const id = el.dataset.id;
-      const body = tinymce.activeEditor.getContent();
-      tinymce.activeEditor.setDirty(false);
-      EntityC.update(parseInt(id), Target.Body, body);
+      EntityC.update(entity.id, Target.Body, editor.getContent());
     // DOWNLOAD TEMPLATE
     } else if (el.matches('[data-action="download-template"]')) {
       window.location.href = `make.php?format=eln&type=experiments_templates&id=${el.dataset.id}`;
+    // SWITCH EDITOR TODO duplicated code from edit.ts
+    } else if (el.matches('[data-action="switch-editor"]')) {
+      EntityC.update(entity.id, Target.ContentType, editor.switch() === 'tiny' ? '1' : '2');
+
     // DESTROY TEMPLATE
     } else if (el.matches('[data-action="destroy-template"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {

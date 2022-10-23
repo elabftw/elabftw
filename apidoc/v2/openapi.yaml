@@ -2518,7 +2518,7 @@ paths:
             schema:
               type: object
               properties:
-                body:
+                tag:
                   type: string
                   description: |
                     The text content of the tag.

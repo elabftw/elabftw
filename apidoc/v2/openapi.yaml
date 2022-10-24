@@ -866,7 +866,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/comment'
   /{entity_type}/{id}/comments/{subid}:
-    summary: Actions on comment of an entitiy
+    summary: Actions on comment of an entity
     parameters:
       - name: entity_type
         in: path
@@ -903,7 +903,7 @@ paths:
       summary: Modify an entity comment.
       operationId: patch-entity-comment
       requestBody:
-        description: Parameters for patching an experiment comment.
+        description: Parameters for patching an entity comment.
         content:
           application/json:
             schema:

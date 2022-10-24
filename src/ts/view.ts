@@ -137,8 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let idxMax = 0;
     let idxMin = 0;
     for (const cell of cells) {
+      idxMin = idxMax;
       idxMax += cell.colSpan;
-      idxMin = idxMax - cell.colSpan;
       if (idxMin <= idx && idx <= idxMax-1) {
         idx = cell.cellIndex;
         break;

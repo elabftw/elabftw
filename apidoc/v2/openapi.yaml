@@ -2135,6 +2135,29 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/step'
+    post:
+      tags: ['Steps']
+      summary: Create a step.
+      operationId: post-step
+      requestBody:
+        description: Parameters for creating a step.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+                  description: |
+                    The text content of the step.
+      responses:
+        '201':
+          description: The step has been created.
+          headers:
+            location:
+              description: An URL to the step that was created.
+              schema:
+                type: string
   /{entity_type}/{id}/steps/{subid}:
     summary: Actions on step of an entity
     parameters:
@@ -2180,29 +2203,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/step'
-    post:
-      tags: ['Steps']
-      summary: Create a step.
-      operationId: post-step
-      requestBody:
-        description: Parameters for creating a step.
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                body:
-                  type: string
-                  description: |
-                    The text content of the step.
-      responses:
-        '201':
-          description: The step has been created.
-          headers:
-            location:
-              description: An URL to the step that was created.
-              schema:
-                type: string
     delete:
       tags: ['Steps']
       summary: Delete a step.

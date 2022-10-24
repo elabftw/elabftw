@@ -11,6 +11,7 @@ namespace Elabftw\Enums;
 
 enum ExportFormat: string
 {
+    case Binary = 'binary';
     case Csv = 'csv';
     case Eln = 'eln';
     case Json = 'json';

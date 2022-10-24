@@ -259,25 +259,25 @@ components:
           type: integer
         color:
           type: string
-  notification:
-    type: object
-    properties:
-      id:
-        type: integer
-      category:
-        type: integer
-      is_ack:
-        type: integer
-      created_at:
-        type: string
-      userid:
-        type: integer
-      send_email:
-        type: integer
-      email_sent_at:
-        type: string
-      body:
-        type: string
+    notification:
+      type: object
+      properties:
+        id:
+          type: integer
+        category:
+          type: integer
+        is_ack:
+          type: integer
+        created_at:
+          type: string
+        userid:
+          type: integer
+        send_email:
+          type: integer
+        email_sent_at:
+          type: string
+        body:
+          type: string
     status:
       type: object
       properties:
@@ -662,6 +662,19 @@ paths:
       tags: ['Experiments']
       summary: Read an experiment
       operationId: get-experiment
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: ['csv', 'eln', 'json', 'qrpdf', 'pdf', 'pdfa', 'zip']
+          default: json
+          description: |
+            Get the entity in a different format like csv, pdf, eln or zip. "pdfa" means archive pdf (PDF/A).
+          examples:
+            first:
+              summary: Generate a pdf
+              value: pdf
       responses:
         '200':
           description: An experiment
@@ -2411,13 +2424,31 @@ paths:
       tags: ['Uploads']
       summary: Read an upload.
       operationId: read-upload
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: ['binary', 'json']
+          default: json
+          description: |
+            To download the file itself, use `binary` format parameter.
+          examples:
+            first:
+              summary: Get the attached file
+              value: binary
       responses:
         '200':
-          description: An upload.
+          description: |
+            An upload. Note: with binary output, Content-Type header will vary depending of the file type being sent.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/upload'
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
     post:
       tags: ['Uploads']
       summary: Replace an existing uploaded file. The existing file will be archived and the new one will be added.

@@ -701,102 +701,6 @@ paths:
         '204':
           description: The experiment was deleted
 
-  # EXPERIMENTS COMMENTS
-  /experiments/{id}/comments:
-    summary: Actions on comments of an experiment
-    parameters:
-      - name: id
-        in: path
-        description: ID of the experiment
-        required: true
-        schema:
-          type: number
-    post:
-      tags: ['Experiments comments']
-      summary: Create a comment.
-      operationId: post-experiment-comments
-      requestBody:
-        description: Parameters for creating a comment
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                comment:
-                  type: string
-                  required: true
-      responses:
-        '201':
-          description: The comment has been created.
-          headers:
-            location:
-              description: An URL to the comment that was created.
-              schema:
-                type: string
-    get:
-      tags: ['Experiments comments']
-      summary: Read all comments of that experiment.
-      operationId: read-experiment-comments
-      responses:
-        '200':
-          description: A list of comments
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/comment'
-  /experiments/{id}/comments/{subid}:
-    summary: Actions on comment of an experiment
-    parameters:
-      - name: id
-        in: path
-        description: ID of the experiment
-        required: true
-        schema:
-          type: number
-      - name: subid
-        in: path
-        description: ID of the comment
-        required: true
-        schema:
-          type: number
-    get:
-      tags: ['Experiments comments']
-      summary: Read all comments of that experiment.
-      operationId: read-experiment-comments
-      responses:
-        '200':
-          description: A comment.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/comment'
-    patch:
-      tags: ['Experiments comments']
-      summary: Modify an experiment comment.
-      operationId: patch-experiment-comment
-      requestBody:
-        description: Parameters for patching an experiment comment.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/comment'
-      responses:
-        '200':
-          description: The patched comment
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/comment'
-    delete:
-      tags: ['Experiments comments']
-      summary: Delete an experiment comment.
-      description: The comment gets deleted.
-      operationId: delete-experiment-comment
-      responses:
-        '204':
-          description: The comment was deleted
   # EXPERIMENTS LINKS
   /experiments/{id}/links:
     summary: Actions on links of an experiment
@@ -867,6 +771,8 @@ paths:
       responses:
         '204':
           description: The link was deleted
+
+  # Items
   /items:
     summary: Actions on items
     post:
@@ -977,20 +883,28 @@ paths:
       responses:
         '204':
           description: The key was deleted
-  # ITEMS COMMENTS
-  /items/{id}/comments:
-    summary: Actions on comments of an item
+
+  # COMMENTS
+  /{entity_type}/{id}/comments:
+    summary: Actions on comments of an entity
     parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items']
       - name: id
         in: path
-        description: ID of the item
+        description: ID of the entity
         required: true
         schema:
           type: number
     post:
-      tags: ['Items comments']
+      tags: ['Comments']
       summary: Create a comment.
-      operationId: post-item-comments
+      operationId: post-entity-comments
       requestBody:
         description: Parameters for creating a comment
         content:
@@ -1010,9 +924,9 @@ paths:
               schema:
                 type: string
     get:
-      tags: ['Items comments']
-      summary: Read all comments of that item.
-      operationId: read-item-comments
+      tags: ['Comments']
+      summary: Read all comments of that entity.
+      operationId: read-entity-comments
       responses:
         '200':
           description: A list of comments
@@ -1022,12 +936,19 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/comment'
-  /items/{id}/comments/{subid}:
-    summary: Actions on comment of an item
+  /{entity_type}/{id}/comments/{subid}:
+    summary: Actions on comment of an entitiy
     parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items']
       - name: id
         in: path
-        description: ID of the item
+        description: ID of the entity
         required: true
         schema:
           type: number
@@ -1038,9 +959,9 @@ paths:
         schema:
           type: number
     get:
-      tags: ['Items comments']
-      summary: Read all comments of that item.
-      operationId: read-item-comments
+      tags: ['Comments']
+      summary: Read a comment of that entity.
+      operationId: read-entity-comment
       responses:
         '200':
           description: A comment.
@@ -1049,11 +970,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/comment'
     patch:
-      tags: ['Items comments']
-      summary: Modify an item comment.
-      operationId: patch-item-comment
+      tags: ['Comments']
+      summary: Modify an entity comment.
+      operationId: patch-entity-comment
       requestBody:
-        description: Parameters for patching an item comment.
+        description: Parameters for patching an experiment comment.
         content:
           application/json:
             schema:
@@ -1066,27 +987,35 @@ paths:
               schema:
                 $ref: '#/components/schemas/comment'
     delete:
-      tags: ['Items comments']
-      summary: Delete an item comment.
+      tags: ['Comments']
+      summary: Delete an entity comment.
       description: The comment gets deleted.
-      operationId: delete-item-comment
+      operationId: delete-entity-comment
       responses:
         '204':
           description: The comment was deleted
-  # EXPERIMENTS <-> ITEMS LINKS
-  /experiments/{id}/items_links:
-    summary: Links from experiments to items.
+
+  # ITEMS LINKS
+  /{entity_type/{id}/items_links:
+    summary: Links from entity to items.
     parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items']
       - name: id
         in: path
-        description: ID of the experiment
+        description: ID of the entity
         required: true
         schema:
           type: number
     get:
-      tags: ['Experiments to items links']
-      summary: Read all items links of that experiment.
-      operationId: read-experiment-items-links
+      tags: ['Links to items']
+      summary: Read all items links of that entity.
+      operationId: read-entity-items-links
       responses:
         '200':
           description: A list of links
@@ -1096,12 +1025,19 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/link'
-  /experiments/{id}/items_links/{subid}:
-    summary: Actions on items link of an experiment
+  /{entity_type}/{id}/items_links/{subid}:
+    summary: Actions on items link of an entity
     parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items']
       - name: id
         in: path
-        description: ID of the experiment
+        description: ID of the entity
         required: true
         schema:
           type: number
@@ -1112,9 +1048,9 @@ paths:
         schema:
           type: number
     post:
-      tags: ['Experiments to items links']
+      tags: ['Links to items']
       summary: Create or import a link.
-      operationId: post-experiment-items-links
+      operationId: post-entity-items-links
       requestBody:
         description: Parameters for creating or importing a link.
         content:
@@ -1136,28 +1072,35 @@ paths:
               schema:
                 type: string
     delete:
-      tags: ['Experiments to items links']
+      tags: ['Links to items']
       summary: Delete an item link.
       description: The link gets deleted.
-      operationId: delete-item-items-link
+      operationId: delete-entitiy-items-link
       responses:
         '204':
           description: The link was deleted.
 
-  # EXPERIMENTS <-> EXPERIMENTS LINKS
-  /experiments/{id}/experiments_links:
-    summary: Links from experiments to experiments.
+  # EXPERIMENTS LINKS
+  /{entity_type}/{id}/experiments_links:
+    summary: Links from entity to experiments.
     parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items']
       - name: id
         in: path
-        description: ID of the experiment
+        description: ID of the entity
         required: true
         schema:
           type: number
     get:
-      tags: ['Experiments to experiments links']
-      summary: Read all experiments links of that experiment.
-      operationId: read-experiment-experiments-links
+      tags: ['Links to experiments']
+      summary: Read all experiments links of that entity.
+      operationId: read-entity-experiments-links
       responses:
         '200':
           description: A list of links
@@ -1167,12 +1110,19 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/link'
-  /experiments/{id}/experiments_links/{subid}:
-    summary: Actions on experiments link of an experiment
+  /{entity_type}/{id}/experiments_links/{subid}:
+    summary: Actions on experiments link of an entity
     parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items']
       - name: id
         in: path
-        description: ID of the experiment
+        description: ID of the entity
         required: true
         schema:
           type: number
@@ -1183,9 +1133,9 @@ paths:
         schema:
           type: number
     post:
-      tags: ['Experiments to experiments links']
+      tags: ['Links to experiments']
       summary: Create or import a link.
-      operationId: post-experiment-experiments-links
+      operationId: post-entity-experiments-links
       requestBody:
         description: Parameters for creating or importing a link.
         content:
@@ -1207,152 +1157,10 @@ paths:
               schema:
                 type: string
     delete:
-      tags: ['Experiments to experiments links']
+      tags: ['Links to experiments']
       summary: Delete an experiment link.
       description: The link gets deleted.
-      operationId: delete-experiment-experiments-link
-      responses:
-        '204':
-          description: The link was deleted.
-
-  # ITEMS <-> ITEMS LINKS
-  /items/{id}/items_links:
-    summary: Links from items to items.
-    parameters:
-      - name: id
-        in: path
-        description: ID of the item
-        required: true
-        schema:
-          type: number
-    get:
-      tags: ['Items to items links']
-      summary: Read all items links of that item.
-      operationId: read-item-items-links
-      responses:
-        '200':
-          description: A list of links
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/link'
-  /items/{id}/items_links/{subid}:
-    summary: Actions on items link of an item
-    parameters:
-      - name: id
-        in: path
-        description: ID of the item
-        required: true
-        schema:
-          type: number
-      - name: subid
-        in: path
-        description: ID of the item (link)
-        required: true
-        schema:
-          type: number
-    post:
-      tags: ['Items to items links']
-      summary: Create or import a link.
-      operationId: post-item-items-links
-      requestBody:
-        description: Parameters for creating or importing a link.
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum: ['create', 'duplicate']
-                  description: |
-                    The `duplicate` action will import the links of that link (inception).
-      responses:
-        '201':
-          description: The link has been created.
-          headers:
-            location:
-              description: An URL to the link that was created.
-              schema:
-                type: string
-    delete:
-      tags: ['Items to items links']
-      summary: Delete an item link.
-      description: The link gets deleted.
-      operationId: delete-item-items-link
-      responses:
-        '204':
-          description: The link was deleted.
-
-  # ITEMS <-> EXPERIMENTS LINKS
-  /items/{id}/experiments_links:
-    summary: Links from items to experiments.
-    parameters:
-      - name: id
-        in: path
-        description: ID of the item.
-        required: true
-        schema:
-          type: number
-    get:
-      tags: ['Items to experiments links']
-      summary: Read all experiments links of that item.
-      operationId: read-item-experiments-links
-      responses:
-        '200':
-          description: A list of links
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/link'
-  /items/{id}/experiments_links/{subid}:
-    summary: Actions on experiments link of an item
-    parameters:
-      - name: id
-        in: path
-        description: ID of the item
-        required: true
-        schema:
-          type: number
-      - name: subid
-        in: path
-        description: ID of the experiment linked
-        required: true
-        schema:
-          type: number
-    post:
-      tags: ['Items to experiments links']
-      summary: Create or import a link.
-      operationId: post-item-experiments-links
-      requestBody:
-        description: Parameters for creating or importing a link.
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum: ['create', 'duplicate']
-                  description: |
-                    The `duplicate` action will import the links of that link (inception).
-      responses:
-        '201':
-          description: The link has been created.
-          headers:
-            location:
-              description: An URL to the link that was created.
-              schema:
-                type: string
-    delete:
-      tags: ['Items to experiments links']
-      summary: Delete an item link.
-      description: The link gets deleted.
-      operationId: delete-item-experiments-link
+      operationId: delete-entity-experiments-link
       responses:
         '204':
           description: The link was deleted.
@@ -2061,7 +1869,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/teamgroup'
     delete:
-      tags: ['Teamgroup']
+      tags: ['Teamgroups']
       summary: Delete a teamgroup.
       operationId: delete-teamgroup
       responses:
@@ -2236,8 +2044,6 @@ paths:
               description: An URL to the user that was created.
               schema:
                 type: string
-
-
   /users/{id}:
     summary: Display information about a particular user.
     parameters:

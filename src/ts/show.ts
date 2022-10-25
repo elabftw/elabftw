@@ -211,7 +211,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (params.get('sort') === 'desc') {
         sort = 'asc';
       }
-      window.location.href = `?order=${el.dataset.orderby}&sort=${sort}`;
+      params.set('sort', sort);
+      params.set('order', el.dataset.orderby);
+      window.location.href = `?${params.toString()}`;
 
     // CHECK AN ENTITY BOX
     } else if (el.matches('[data-action="checkbox-entity"]')) {

@@ -326,9 +326,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // we don't want the favtags opener on search page
   // when a search is done, about.page will be show
   // so check for the type param in url that will be present on search page
-  const params = new URLSearchParams(document.location.search.slice(1));
+  const params = new URLSearchParams(document.location.search);
   if (!params.get('type')) {
     document.getElementById('favtags-opener').removeAttribute('hidden');
+  }
+
+  // item table asc/desc icons
+  const orderBy = ['date', 'title', 'cat', 'rating', 'user'].includes(params.get('order')) ? params.get('order') : false;
+  if (orderBy) {
+    const iconEl = document.getElementById('itemList').querySelector(`:scope th > a[data-orderby="${orderBy}"] > i`) as HTMLElement;
+    iconEl.classList.replace('fa-sort', params.get('sort') === 'desc' ? 'fa-sort-down' : 'fa-sort-up');
   }
 
   // FAVTAGS PANEL

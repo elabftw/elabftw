@@ -608,6 +608,16 @@ paths:
       # Note: this has to be repeated manually for now
       # See https://github.com/OAI/OpenAPI-Specification/issues/445
       parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+          description: |
+            Search for a term in title, body or elabid.
+          examples:
+            first:
+              summary: Search for all experiments with the word "test".
+              value: test
         - name: related
           in: query
           schema:
@@ -754,6 +764,16 @@ paths:
       operationId: read-items
       # start duplicate from GET /experiments (except related)
       parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+          description: |
+            Search for a term in title, body or elabid.
+          examples:
+            first:
+              summary: Search for all items with the word "test".
+              value: test
         - name: limit
           in: query
           schema:

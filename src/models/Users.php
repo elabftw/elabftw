@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use function array_filter;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
@@ -17,7 +16,6 @@ use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
@@ -151,21 +149,6 @@ class Users implements RestInterface
     }
 
     /**
-     * Get users matching a search term for consumption in autocomplete
-     */
-    public function read(ContentParamsInterface $params): array
-    {
-        $usersArr = array_filter($this->readFromQuery($params->getContent()), function ($u) {
-            return ((int) $u['archived']) === 0;
-        });
-        $res = array();
-        foreach ($usersArr as $user) {
-            $res[] = $user['userid'] . ' - ' . $user['fullname'] . ' - ' . $user['email'];
-        }
-        return $res;
-    }
-
-    /**
      * Search users based on query. It searches in email, firstname, lastname
      *
      * @param string $query the searched term
@@ -222,11 +205,9 @@ class Users implements RestInterface
     public function readAll(): array
     {
         $Request = Request::createFromGlobals();
-        if ($this->requester->userData['is_sysadmin'] === 1) {
+        // allow admins to query users from other teams so they can be added to team groups
+        if ($this->requester->userData['is_sysadmin'] === 1 || $this->requester->userData['is_admin'] === 1) {
             return $this->readFromQuerySafe($Request->query->getAlnum('q'), 0);
-        }
-        if ($this->requester->userData['is_admin'] === 1) {
-            return $this->readFromQuerySafe($Request->query->getAlnum('q'), $this->requester->userData['team']);
         }
         throw new IllegalActionException('Normal users cannot read other users.');
     }

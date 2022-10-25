@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, reloadElement, collectForm } from './misc';
+import { notif, notifError, reloadElement, collectForm } from './misc';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
@@ -67,6 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
       const user = parseInt($(this).val() as string, 10);
+      if (isNaN(user)) {
+        notifError(new Error('Use the autocompletion menu to add users.'));
+        return;
+      }
       const group = $(this).data('group');
       if (e.target.value !== e.target.defaultValue) {
         ApiC.patch(`${Model.Team}/${$(this).data('teamid')}/${Model.TeamGroup}/${group}`, {'how': Action.Add, 'userid': user}).then(() => reloadElement('team_groups_div'));

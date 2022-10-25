@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -42,12 +41,6 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertFalse($this->Users->allowUntrustedLogin());
         $this->assertTrue((new Users(2, 1))->allowUntrustedLogin());
-    }
-
-    public function testRead(): void
-    {
-        $res = $this->Users->read(new ContentParams('query', 'php'));
-        $this->assertEquals('1 - Phpunit TestUser - phpunit@example.com', $res[0]);
     }
 
     public function testReadAllFromTeam(): void

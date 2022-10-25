@@ -83,5 +83,8 @@ export class MdEditor extends Editor implements EditorInterface {
 }
 
 export function getEditor(): EditorInterface {
-  return document.getElementById('iHazEditor').dataset.editor === 'md' ? new MdEditor() : new TinyEditor();
+  if (document.getElementById('iHazEditor')) {
+    return document.getElementById('iHazEditor').dataset.editor === 'md' ? new MdEditor() : new TinyEditor();
+  }
+  return new MdEditor();
 }

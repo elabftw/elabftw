@@ -208,7 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="reorder-entities"]')) {
       const params = new URLSearchParams(document.location.search);
       let sort = 'desc';
-      if (params.get('sort') === 'desc') {
+      if (params.get('order') === el.dataset.orderby
+        && params.get('sort') === 'desc'
+      ) {
         sort = 'asc';
       }
       params.set('sort', sort);

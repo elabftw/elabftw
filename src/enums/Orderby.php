@@ -23,14 +23,14 @@ enum Orderby: string
     public static function toSql(self $value): string
     {
         return match ($value) {
-            Orderby::Category => 'categoryt.id',
+            Orderby::Category => 'categoryt.title',
             Orderby::Comment => 'commentst.recent_comment',
             Orderby::Date => 'date',
             Orderby::Id => 'entity.id',
             Orderby::Lastchange => 'entity.modified_at',
             Orderby::Rating => 'entity.rating',
             Orderby::Title => 'entity.title',
-            Orderby::User => 'users.lastname',
+            Orderby::User => 'CONCAT(users.firstname, " ", users.lastname)',
         };
     }
 }

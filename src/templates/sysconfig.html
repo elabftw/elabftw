@@ -559,6 +559,12 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                   <option value='0'{{ App.Config.configArr.saml_lowercaseurlencoding == '0' ? ' selected' }}>No</option>
               </select>
 
+              <label for='saml-allowrepeatattributename'>Allow attribute elements with name duplicated</label>
+              <select class='form-control col-md-6' id='saml-allowrepeatattributename' name='saml_allowrepeatattributename'>
+                  <option value='1'{{ App.Config.configArr.saml_allowrepeatattributename == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_allowrepeatattributename == '0' ? ' selected' }}>No</option>
+              </select>
+
               <div class='mt-4 text-center'>
                   <button type="submit" name="Submit" class='button btn btn-primary'>{{ 'Save'|trans }}</button>
               </div>

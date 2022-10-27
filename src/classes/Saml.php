@@ -234,6 +234,10 @@ class Saml
                 // attribute will not be rejected for this fact.
                 'relaxDestinationValidation' => (bool) $this->Config->configArr['saml_relaxdestinationvalidation'],
 
+                // If true, the toolkit will not raise an error when the Statement Element
+                // contains attribute elements with name duplicated
+                'allowRepeatAttributeName' => (bool) $this->Config->configArr['saml_allowrepeatattributename'],
+
                 // Algorithm that the toolkit will use on signing process. Options:
                 //    'http://www.w3.org/2000/09/xmldsig#rsa-sha1'
                 //    'http://www.w3.org/2000/09/xmldsig#dsa-sha1'

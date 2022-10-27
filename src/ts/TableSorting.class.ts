@@ -10,10 +10,10 @@
 export default class TableSorting {
   table: HTMLTableElement;
   prevSortIcon: HTMLElement;
-  usesThead: boolean;
+  hasThead: boolean;
 
-  constructor(table: HTMLTableElement, usesThead = false) {
-    this.usesThead = usesThead;
+  constructor(table: HTMLTableElement) {
+    this.hasThead = table.tHead ? true : false;
     this.makeSortable(table);
   }
 
@@ -68,7 +68,7 @@ export default class TableSorting {
       return;
     }
 
-    const headSelector = ':scope > ' + (this.usesThead ? 'thead' : 'tbody') + ' > tr:first-of-type > th';
+    const headSelector = ':scope > ' + (this.hasThead ? 'thead' : 'tbody') + ' > tr:first-of-type > th';
     table.querySelectorAll(headSelector).forEach((th: HTMLTableCellElement) => {
       // add sort button
       // need span because .fas has pointer-events:none
@@ -95,7 +95,7 @@ export default class TableSorting {
         }
 
         // sort data
-        const rowSelector = ':scope > tbody > ' + (this.usesThead ? 'tr' : 'tr:nth-child(n+2)');
+        const rowSelector = ':scope > tbody > ' + (this.hasThead ? 'tr' : 'tr:nth-child(n+2)');
         Array.from(table.querySelectorAll(rowSelector))
           .sort(this.comparer(Array.from(th.parentNode.children).indexOf(th), th.dataset.order === 'asc').bind(this))
           .forEach(tr => table.querySelector('tbody').appendChild(tr));
@@ -113,7 +113,7 @@ export default class TableSorting {
     }
 
     // tables with colspan in top row (header) cannot be sorted, wrong column would be referenced
-    const head = this.usesThead ? 'thead' : 'tbody';
+    const head = this.hasThead ? 'thead' : 'tbody';
     const selector = `:scope > ${head} > tr:first-of-type > th[colspan], :scope > ${head} > tr:first-of-type > td[colspan]`;
     const hasHeaderColspan = table.querySelectorAll(selector).length !== 0;
     if (hasHeaderColspan) {

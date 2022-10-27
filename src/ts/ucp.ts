@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const editor = getEditor();
   editor.init();
 
-  new TableSorting(document.getElementById('apiTable') as HTMLTableElement, true);
+  new TableSorting(document.getElementById('apiTable') as HTMLTableElement);
 
   // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {

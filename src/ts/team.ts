@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const ApiC = new Api();
 
-  new TableSorting(document.getElementById('teamtable') as HTMLTableElement, true);
+  new TableSorting(document.getElementById('teamtable') as HTMLTableElement);
 
   // transform a Date object into something we can put as a value of an input of type datetime-local
   function toDateTimeInputValueNumber(datetime: Date): number {

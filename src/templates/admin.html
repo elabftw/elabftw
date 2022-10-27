@@ -116,6 +116,11 @@
     </textarea>
     <span class='smallgray'>{{ 'This is the default text when someone creates an experiment.'|trans }}</span>
 
+    <br>
+    <label for="common_template_md">{{ 'Common Experiment Template'|trans }} (Markdown)</label>
+    <textarea style='height:400px' class='markdown-textarea' name="common_template_md" id='common_template_md'>{{ teamConfigArr.common_template_md|raw }}</textarea>
+    <span class='smallgray'>{{ 'This is the default text when someone creates an experiment.'|trans }}</span>
+
     <div class='mt-4 text-center'>
       <button data-action='patch-team-admin' data-id='{{ teamConfigArr.id }}' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>

@@ -18,7 +18,7 @@ final class TeamParam extends ContentParams
     {
         return match ($this->target) {
             'name', 'orgid', 'link_name' => parent::getContent(),
-            'common_template' => $this->getBody(),
+            'common_template', 'common_template_md' => $this->getBody(),
             'deletable_xp', 'deletable_item', 'user_create_tag', 'force_exp_tpl', 'public_db', 'do_force_canread', 'do_force_canwrite', 'visible' => parent::getBinary(),
             'link_href' => $this->getUrl(),
             'force_canread', 'force_canwrite' => Check::visibility($this->content),

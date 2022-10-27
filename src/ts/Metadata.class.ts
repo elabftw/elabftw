@@ -112,12 +112,23 @@ export class Metadata {
    */
   generateElement(name: string, description: Record<string, any>): Element {
     const element = document.createElement('div');
-    const valueEl = document.createElement('span');
-    valueEl.innerText = description.value;
-    // the link is generated with javascript so we can still use innerText and
-    // not innerHTML with manual "<a href...>" which implicates security considerations
-    if (description.type === 'url') {
-      valueEl.dataset.genLink = 'true';
+    let valueEl: HTMLElement;
+    // checkbox is special case
+    if (description.type === 'checkbox') {
+      valueEl = document.createElement('input');
+      valueEl.setAttribute('type', 'checkbox');
+      (valueEl as HTMLInputElement).disabled = true;
+      if (description.value === 'on') {
+        (valueEl as HTMLInputElement).checked = true;
+      }
+    } else {
+      valueEl = document.createElement('span');
+      valueEl.innerText = description.value;
+      // the link is generated with javascript so we can still use innerText and
+      // not innerHTML with manual "<a href...>" which implicates security considerations
+      if (description.type === 'url') {
+        valueEl.dataset.genLink = 'true';
+      }
     }
     element.innerText = name + ': ';
     element.append(valueEl);
@@ -291,6 +302,8 @@ export class Metadata {
         label.innerText = element.name as string;
         if (element.element.type === 'checkbox') {
           label.classList.add('form-check-label');
+          // fix the checkbox text being all constrained
+          label.classList.add('d-inline');
         }
         // for checkboxes the label comes second
         if (element.element.type === 'checkbox') {

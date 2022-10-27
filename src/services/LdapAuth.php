@@ -95,6 +95,8 @@ class LdapAuth implements AuthInterface
                     $teamFromLdap = $teamFromLdap[0];
                 }
             }
+            // ldap might return a "count" key, so we remove it or it will be interpreted as a team ID
+            unset($teamFromLdap['count']);
             // CREATE USER (and force validation of user)
             $Users = ValidatedUser::fromExternal($this->email, $teamFromLdap, $firstname, $lastname);
         }

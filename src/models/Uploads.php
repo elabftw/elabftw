@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Controllers\DownloadController;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
@@ -30,6 +31,7 @@ use ImagickException;
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * All about the file uploads
@@ -101,7 +103,7 @@ class Uploads implements RestInterface
                         $storageFs->write($MakeThumbnail->thumbFilename, $thumbnailContent);
                     }
                 }
-            } catch (UnableToRetrieveMetadata | ImagickException $e) {
+            } catch (UnableToRetrieveMetadata | ImagickException) {
                 // if mime type could not be read just ignore it and continue
                 // if imagick/imagemagick causes problems ignore it and upload file without thumbnail
             }
@@ -179,6 +181,22 @@ class Uploads implements RestInterface
         $this->Db->execute($req);
         $this->uploadData = $this->Db->fetch($req);
         return $this->uploadData;
+    }
+
+    /**
+     * Read an upload in binary format, so the actual file uploaded
+     */
+    public function readBinary(): Response
+    {
+        $storageFs = (new StorageFactory($this->uploadData['storage']))->getStorage()->getFs();
+
+        $DownloadController = new DownloadController(
+            $storageFs,
+            $this->uploadData['long_name'],
+            $this->uploadData['real_name'],
+            true,
+        );
+        return $DownloadController->getResponse();
     }
 
     /**

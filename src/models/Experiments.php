@@ -71,7 +71,12 @@ class Experiments extends AbstractConcreteEntity
             if ($teamConfigArr['force_exp_tpl'] === 1) {
                 throw new ImproperActionException(_('Experiments must use a template!'));
             }
-            $body = $teamConfigArr['common_template'];
+            $commonTemplateKey = 'common_template';
+            // use the markdown template if the user prefers markdown
+            if ($this->Users->userData['use_markdown']) {
+                $commonTemplateKey .= '_md';
+            }
+            $body = $teamConfigArr[$commonTemplateKey];
             if ($this->Users->userData['default_read'] !== null) {
                 $canread = $this->Users->userData['default_read'];
             }

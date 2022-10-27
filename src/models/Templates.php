@@ -28,6 +28,8 @@ class Templates extends AbstractTemplateEntity
     <h1><span style='font-size: 14pt;'>Results :<br /></span></h1>
     <p>&nbsp;</p>";
 
+    public const defaultBodyMd = "# Goal\n\n# Procedure\n\n# Results\n\n";
+
     public function __construct(Users $users, ?int $id = null)
     {
         $this->type = parent::TYPE_TEMPLATES;
@@ -153,12 +155,13 @@ class Templates extends AbstractTemplateEntity
                 experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
                 experiments_templates.locked, experiments_templates.lockedby, experiments_templates.lockedwhen,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata,
-                users2teams.teams_id,
+                users2teams.teams_id, teams.name AS team_name,
                 (pin_experiments_templates2users.entity_id IS NOT NULL) AS is_pinned,
                 GROUP_CONCAT(tags.tag SEPARATOR '|') AS tags, GROUP_CONCAT(tags.id) AS tags_id
                 FROM experiments_templates
                 LEFT JOIN users ON (experiments_templates.userid = users.userid)
                 LEFT JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
+                LEFT JOIN teams ON (teams.id = experiments_templates.team)
                 LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
                 LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
                 LEFT JOIN pin_experiments_templates2users ON (experiments_templates.id = pin_experiments_templates2users.entity_id)

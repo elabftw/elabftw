@@ -236,10 +236,11 @@ class Teams implements RestInterface
     {
         $name = Filter::title($name);
 
-        $sql = 'INSERT INTO teams (name, common_template, link_name, link_href) VALUES (:name, :common_template, :link_name, :link_href)';
+        $sql = 'INSERT INTO teams (name, common_template, common_template_md, link_name, link_href) VALUES (:name, :common_template, :common_template_md, :link_name, :link_href)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindValue(':common_template', Templates::defaultBody);
+        $req->bindValue(':common_template_md', Templates::defaultBodyMd);
         $req->bindValue(':link_name', 'Documentation');
         $req->bindValue(':link_href', 'https://doc.elabftw.net');
         $this->Db->execute($req);

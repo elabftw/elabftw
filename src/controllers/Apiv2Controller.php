@@ -122,14 +122,17 @@ class Apiv2Controller extends AbstractApiController
         }
 
         // FORMAT
-        if ($this->Request->query->has('format') && $this->Model instanceof AbstractConcreteEntity) {
+        if ($this->Request->query->has('format')) {
             try {
                 $this->format = ExportFormat::from($this->Request->query->getAlpha('format'));
             } catch (ValueError) {
                 throw new ImproperActionException('Incorrect format value.');
             }
-            $this->Request->query->set('type', $this->Model->type);
-            $this->Request->query->set('id', $this->id);
+            // fit the request with what makecontroller expects
+            if ($this->Model instanceof AbstractConcreteEntity) {
+                $this->Request->query->set('type', $this->Model->type);
+                $this->Request->query->set('id', $this->id);
+            }
         }
         if ($this->Request->getContent()) {
             try {
@@ -169,6 +172,14 @@ class Apiv2Controller extends AbstractApiController
     private function handleGet(): Response
     {
         return match ($this->format) {
+            ExportFormat::Binary => (
+                function () {
+                    if ($this->Model instanceof Uploads) {
+                        return $this->Model->readBinary();
+                    }
+                    throw new ImproperActionException('Incorrect format (binary): only available for uploads endpoint.');
+                }
+            )(),
             ExportFormat::Csv,
             ExportFormat::Eln,
             ExportFormat::QrPdf,
@@ -266,12 +277,14 @@ class Apiv2Controller extends AbstractApiController
         if ($this->Model instanceof Config && $this->Users->userData['is_sysadmin'] !== 1) {
             throw new IllegalActionException('Non sysadmin user tried to use a restricted api endpoint.');
         }
+
         // allow multipart/form-data for the POST/uploads endpoint only, use str_starts_with because the actual header will also contain the boundary
         if (str_starts_with($this->Request->headers->get('content-type') ?? '', 'multipart/form-data') &&
             $this->Model instanceof Uploads &&
             $this->Request->getMethod() === Request::METHOD_POST) {
             return;
         }
+
         // only accept json content-type unless it's GET (also prevents csrf!)
         if ($this->Request->getMethod() !== Request::METHOD_GET && $this->Request->headers->get('content-type') !== 'application/json') {
             throw new ImproperActionException('Incorrect content-type header.');

@@ -37,6 +37,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import Tab from './Tab.class';
+import TableSorting from './TableSorting.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/team.php') {
@@ -49,6 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const info = document.getElementById('info').dataset;
 
   const ApiC = new Api();
+
+  new TableSorting(document.getElementById('teamtable') as HTMLTableElement, true);
 
   // transform a Date object into something we can put as a value of an input of type datetime-local
   function toDateTimeInputValueNumber(datetime: Date): number {

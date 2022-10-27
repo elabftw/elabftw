@@ -14,6 +14,7 @@ import Templates from './Templates.class';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
+import TableSorting from './TableSorting.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/ucp.php') {
@@ -30,6 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
+
+  new TableSorting(document.getElementById('apiTable') as HTMLTableElement, true);
 
   // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {

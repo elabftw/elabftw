@@ -13,7 +13,6 @@ import { getEntity, updateCategory, relativeMoment, reloadElement, showContentPl
 import { EntityType, Action, Model } from './interfaces';
 import { DateTime } from 'luxon';
 import EntityClass from './Entity.class';
-import TableSorting from './TableSorting.class';
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -47,10 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
       link.text = url;
       el.replaceWith(link);
     });
-  });
-
-  Array.from(document.getElementById('body_view').querySelectorAll('table')).forEach(table => {
-    new TableSorting(table as HTMLTableElement);
   });
 
   // EDIT SHORTCUT

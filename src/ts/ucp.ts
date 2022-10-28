@@ -15,7 +15,6 @@ import { getEditor } from './Editor.class';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
-import TableSorting from './TableSorting.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/ucp.php') {
@@ -37,8 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Which editor are we using? md or tiny
   const editor = getEditor();
   editor.init();
-
-  new TableSorting(document.getElementById('apiTable') as HTMLTableElement);
 
   // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {

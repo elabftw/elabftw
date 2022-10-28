@@ -160,8 +160,7 @@
         {% endfor %}
         </div>
       {% elseif App.Users.userData.display_mode == 'tb' %}
-      <div id='itemList'>
-        <table class='item-table' aria-describedby='pageTitle'>
+        <table id='itemList' class='item-table' aria-describedby='pageTitle'>
           <tr>
             <th>
               {{ 'Date'|trans }} <a href='#' data-action='reorder-entities' data-orderby='date'><i class='fas fa-sort'></i></a>
@@ -192,7 +191,6 @@
           {% include 'show-item-table.html' %}
         {% endfor %}
         </table>
-      </div> <!-- end itemList -->
       {% endif %}
 
       <!-- PREVIOUS/NEXT PAGE buttons -->

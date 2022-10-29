@@ -53,6 +53,12 @@
         <i class='fas fa-fw fa-eye mr-1'></i>{{ 'Show content of file'|trans }}</a>
     {% endif %}
 
+    <!-- Load in NMRium -->
+    {% if ext matches '/jdx$/i' %}
+    <a class='dropdown-item' href='#' data-uploadid='{{ upload.id }}' data-action='open-in-nmrium'>
+        <i class='fas fa-fw fa-square-poll-vertical mr-1'></i>{{ 'Open in NMRium'|trans }}</a>
+    {% endif %}
+
     <!-- More info -->
     <a class='dropdown-item' data-action='more-info-upload' data-uploadid='{{ upload.id }}'>
       <i class='fas fa-fw fa-info-circle mr-1'></i>{{ 'More information'|trans }}</a>

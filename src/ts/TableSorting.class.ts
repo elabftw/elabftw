@@ -7,6 +7,8 @@
  * @package elabftw
  */
 
+type getComparerReturnType = (a: HTMLElement, b: HTMLElement) => number;
+
 export default class TableSorting {
 
   public init(): void {
@@ -105,30 +107,35 @@ export default class TableSorting {
   }
 
   /**
-   * Returns a function responsible for sorting a specific column index
-   * idx = columnIndex, asc = ascending order?
+   * Creates a compare function used by array.sort() to sort rows in a table based on
+   * a specific column index in asc or desc order
+   *
+   * @param idx column index
+   * @param asc ascending order
+   *
+   * @returns compare function
    */
-  protected getComparer(idx: number, asc: boolean) {
-
-    // This is used by the array.sort() function...
-    return function(a: HTMLElement, b: HTMLElement) {
-
-      // This is a transient function, that is called straight away.
-      // It allows passing in different order of args, based on
-      // the ascending/descending order.
-      return function(value1: string, value2: string) {
-        const diff = Number(value1) - Number(value2);
-        // sort based on a numeric or localeCompare, based on type...
-        return Number.isNaN(diff)
-          ? value1.toString().localeCompare(value2, undefined, {numeric: true})
-          : diff;
-      }(this.getCellValue(asc ? a : b, idx), this.getCellValue(asc ? b : a, idx));
+  protected getComparer(idx: number, asc: boolean): getComparerReturnType {
+    return function(a: HTMLElement, b: HTMLElement): number {
+      return this.comparerCore(this.getCellValue(asc ? a : b, idx), this.getCellValue(asc ? b : a, idx));
     };
   }
 
   /**
-   * Get the table cell value based of on the header cell id
-   * Will take into account cells spanning along a row (colspan)
+   * Actual compare function will sort numerical and string data
+   * natural sorting is used for strings, i.e. 'a2' < 'a10'
+   */
+  protected comparerCore(value1: string, value2: string): number {
+    const diff = Number(value1) - Number(value2);
+
+    return Number.isNaN(diff)
+      ? value1.localeCompare(value2, undefined, {numeric: true})
+      : diff;
+  }
+
+  /**
+   * Get the table cell value based on the header cell id
+   * merged cells along a row (colspan) is taken into account
    */
   protected getCellValue(tr: HTMLElement, idx: number): string {
     // handle colspans

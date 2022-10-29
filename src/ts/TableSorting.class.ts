@@ -150,6 +150,8 @@ export default class TableSorting {
         break;
       }
     }
-    return (tr.children[idx] as HTMLTableCellElement).innerText || (tr.children[idx] as HTMLTableCellElement).textContent;
+
+    const cell = tr.children[idx] as HTMLTableCellElement;
+    return cell.innerText || cell.textContent;
   }
 }

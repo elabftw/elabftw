@@ -71,7 +71,7 @@ export default class TableSorting {
   }
 
   /**
-   * Find tables that shall get sorting
+   * Find tables that shall be sortable
    */
   protected getTables(): HTMLTableElement[] {
     // ToDo: Find a way to add data-table-sort attribute to tables created by tinyMCE
@@ -99,7 +99,7 @@ export default class TableSorting {
     const selector = `:scope > ${head} > tr:first-of-type > th[colspan], :scope > ${head} > tr:first-of-type > td[colspan]`;
     const hasHeaderColspan = table.querySelectorAll(selector).length !== 0;
     if (hasHeaderColspan) {
-      console.info('Table with merged cells top row (colspan) detected. Table sorting disabled.', table);
+      console.info('Table with merged cells in top (header) row (colspan) detected. Table sorting disabled.', table);
       return false;
     }
 

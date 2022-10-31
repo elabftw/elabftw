@@ -67,6 +67,9 @@ class DisplayParams
             $this->query = $this->Request->query->filter('q', null, FILTER_SANITIZE_STRING);
             $this->searchType = 'query';
         }
+        if (!empty($this->Request->query->get('extended'))) {
+            $this->searchType = 'extended';
+        }
         // now get pref from the filter-order-sort menu
         $this->sort = Sort::tryFrom($this->Request->query->getAlpha('sort')) ?? $this->sort;
         $this->orderby = Orderby::tryFrom($this->Request->query->getAlpha('order')) ?? $this->orderby;

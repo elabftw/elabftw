@@ -54,6 +54,7 @@ import EntityClass from './Entity.class';
 import { EntityType, Target } from './interfaces';
 import { getEntity, reloadElement } from './misc';
 import { Api } from './Apiv2.class';
+import { isSortable } from './TableSorting.class';
 
 const ApiC = new Api();
 // AUTOSAVE
@@ -128,7 +129,7 @@ export function getTinymceBaseConfig(page: string): object {
     skin_url: 'app/css/tinymce',
     plugins: plugins,
     pagebreak_separator: '<div class="page-break"></div>',
-    toolbar1: 'undo redo | styleselect fontsizeselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | save',
+    toolbar1: 'undo redo | styleselect fontsizeselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | sort-table | save',
     removed_menuitems: 'newdocument, image',
     image_caption: true,
     images_reuse_filename: false, // if set to true the src url gets a date appended
@@ -221,6 +222,65 @@ export function getTinymceBaseConfig(page: string): object {
           typingTimer = setTimeout(doneTyping, doneTypingInterval);
         });
       }
+
+      // add Font Awesome icon sort-amount-down-alt-solid for table sorting
+      editor.ui.registry.addIcon('sort-amount-down-alt', '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="-50 -50 662 562"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M240 96h64a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16h-64a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16zm0 128h128a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16H240a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16zm256 192H240a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h256a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm-256-64h192a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16H240a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16zm-64 0h-48V48a16 16 0 0 0-16-16H80a16 16 0 0 0-16 16v304H16c-14.19 0-21.37 17.24-11.29 27.31l80 96a16 16 0 0 0 22.62 0l80-96C197.35 369.26 190.22 352 176 352z"/></svg>');
+      // add toggle button for table sorting
+      editor.ui.registry.addToggleButton('sort-table', {
+        icon: 'sort-amount-down-alt',
+        tooltip: 'sortable table',
+        onAction: api => {
+          const table = editor.selection.getNode().closest('table');
+          if (table) {
+            if (api.isActive()) {
+              // unset sortable
+              delete table.dataset.tableSort;
+              api.setActive(false);
+            } else {
+              // show alert if table is not sortable
+              if (!isSortable(table, true)) {
+                editor.focus();
+                return;
+              }
+              // set sortable
+              table.dataset.tableSort = 'true';
+              // here the top row could be reformatted automatically td -> th
+              api.setActive(true);
+            }
+            editor.undoManager.add();
+          }
+          editor.focus();
+        },
+        onSetup: api => {
+          // button is enabled only if table is selected
+          // button is active (highlighted) only if table is set sortable
+          api.setDisabled(true);
+
+          const callback = event => {
+            const table = event.element.closest('table');
+            if (!table) {
+              api.setDisabled(true);
+              api.setActive(false);
+              return;
+            }
+
+            // table is selected, enable button
+            api.setDisabled(false);
+            if (table.dataset.tableSort === 'true') {
+              // table is set sortable, highlight button
+              api.setActive(true);
+              return;
+            }
+            api.setActive(false);
+          };
+
+          editor.on('NodeChange', callback);
+
+          return () => {
+            editor.off('NodeChange', callback);
+          };
+        },
+      });
     },
     style_formats_merge: true,
     style_formats: [

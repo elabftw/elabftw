@@ -7,12 +7,47 @@
  * @package elabftw
  */
 
-type getComparerReturnType = (a: HTMLElement, b: HTMLElement) => number;
+type decoratedRow = {row: HTMLTableRowElement, value: string};
+type getComparerReturnType = (a: decoratedRow, b: decoratedRow) => number;
+
+/**
+ * Check if table qualifies for sorting
+ * any rowspan will not work
+ * colspan is not allowed in rows where the sort icons are added
+ * function is also used in ./tinymce.ts
+ */
+export function isSortable(table: HTMLTableElement, showAlert = false): boolean {
+  // tables with rowspan cannot be sorted, cells might be rearranged across rows and columns
+  const hasRowspan = table.querySelectorAll('th[rowspan], td[rowspan]').length !== 0;
+  if (hasRowspan) {
+    const msg = 'Table with merged cells along columns (rowspan) detected. Table sorting disabled.';
+    console.info(msg, table);
+    if (showAlert) {
+      alert(msg);
+    }
+    return false;
+  }
+
+  // tables with colspan in top row (header) cannot be sorted, wrong column would be referenced
+  const head = table.tHead ? 'thead' : 'tbody';
+  const selector = `:scope > ${head} > tr:first-of-type > th[colspan], :scope > ${head} > tr:first-of-type > td[colspan]`;
+  const hasHeaderColspan = table.querySelectorAll(selector).length !== 0;
+  if (hasHeaderColspan) {
+    const msg = 'Table with merged cells in top (header) row (colspan) detected. Table sorting disabled.';
+    console.info(msg, table);
+    if (showAlert) {
+      alert(msg);
+    }
+    return false;
+  }
+
+  return true;
+}
 
 export default class TableSorting {
 
   public init(): void {
-    Array.from(this.getTables()).forEach(table => {
+    (Array.from(document.querySelectorAll('table[data-table-sort="true"]')) as HTMLTableElement[]).forEach(table => {
       this.makeSortable(table);
     });
   }
@@ -27,7 +62,7 @@ export default class TableSorting {
       return;
     }
 
-    if (!this.isSortable(table)) {
+    if (!isSortable(table)) {
       return;
     }
 
@@ -58,66 +93,30 @@ export default class TableSorting {
           th.dataset.order = 'desc';
           icon.classList.replace('fa-sort-up', 'fa-sort-down');
         }
-
-        // sort data
-        const rowSelector = ':scope > tbody > ' + (hasThead ? 'tr' : 'tr:nth-child(n+2)');
-        Array.from(table.querySelectorAll(rowSelector))
-          .sort(this.getComparer(Array.from(th.parentNode.children).indexOf(th), th.dataset.order === 'asc').bind(this))
-          .forEach(tr => table.querySelector('tbody').appendChild(tr));
         prevSortIcon = icon;
+
+        const columnId = Array.from(th.parentNode.children).indexOf(th);
+        const rowSelector = ':scope > tbody > ' + (hasThead ? 'tr' : 'tr:nth-child(n+2)');
+        const rows = Array.from(table.querySelectorAll(rowSelector)) as HTMLTableRowElement[];
+        // Schwartzian transform (decorate)
+        const decoratedRows: decoratedRow[] = rows.map(tr => {
+          return {row:tr, value:this.getCellValue(tr, columnId)};
+        });
+        decoratedRows.sort(this.getComparer(th.dataset.order === 'asc').bind(this))
+          // rebuild table, undecorate
+          .forEach(row => table.querySelector('tbody').appendChild(row['row']));
       }));
     });
     table.dataset.sortingActivated = 'true';
   }
 
   /**
-   * Find tables that shall be sortable
+   * Creates a compare function used by array.sort() to sort rows in a table
+   * in ascending or descending order
    */
-  protected getTables(): HTMLTableElement[] {
-    // ToDo: Find a way to add data-table-sort attribute to tables created by tinyMCE
-    const viewMode: HTMLTableElement[] = Array.from(document.querySelectorAll('div[id="body_view"] table'));
-    const showMode: HTMLTableElement[] = Array.from(document.querySelectorAll('[id="itemList"] table'));
-    const dataAtt: HTMLTableElement[] = Array.from(document.querySelectorAll('table[data-table-sort="true"]'));
-    return [...viewMode, ...showMode, ...dataAtt];
-  }
-
-  /**
-   * Check if table qualifies for sorting
-   * any rowspan will not work
-   * colspan is not allowed in rows where the sort icons are added
-   */
-  protected isSortable(table: HTMLTableElement): boolean {
-    // tables with rowspan cannot be sorted, cells might be rearranged across rows and columns
-    const hasRowspan = table.querySelectorAll('th[rowspan], td[rowspan]').length !== 0;
-    if (hasRowspan) {
-      console.info('Table with merged cells along columns (rowspan) detected. Table sorting disabled.', table);
-      return false;
-    }
-
-    // tables with colspan in top row (header) cannot be sorted, wrong column would be referenced
-    const head = table.tHead ? 'thead' : 'tbody';
-    const selector = `:scope > ${head} > tr:first-of-type > th[colspan], :scope > ${head} > tr:first-of-type > td[colspan]`;
-    const hasHeaderColspan = table.querySelectorAll(selector).length !== 0;
-    if (hasHeaderColspan) {
-      console.info('Table with merged cells in top (header) row (colspan) detected. Table sorting disabled.', table);
-      return false;
-    }
-
-    return true;
-  }
-
-  /**
-   * Creates a compare function used by array.sort() to sort rows in a table based on
-   * a specific column index in asc or desc order
-   *
-   * @param idx column index
-   * @param asc ascending order
-   *
-   * @returns compare function
-   */
-  protected getComparer(idx: number, asc: boolean): getComparerReturnType {
-    return function(a: HTMLElement, b: HTMLElement): number {
-      return this.comparerCore(this.getCellValue(asc ? a : b, idx), this.getCellValue(asc ? b : a, idx));
+  protected getComparer(asc: boolean): getComparerReturnType {
+    return function(a: decoratedRow, b: decoratedRow): number {
+      return this.comparerCore(asc ? a['value'] : b['value'], asc ? b['value'] : a['value']);
     };
   }
 
@@ -125,11 +124,11 @@ export default class TableSorting {
    * Actual compare function will sort numerical and string data
    * natural sorting is used for strings, i.e. 'a2' < 'a10'
    */
-  protected comparerCore(value1: string, value2: string): number {
-    const diff = Number(value1) - Number(value2);
+  protected comparerCore(a: string, b: string): number {
+    const diff = Number(a) - Number(b);
 
     return Number.isNaN(diff)
-      ? value1.localeCompare(value2, undefined, {numeric: true})
+      ? a.localeCompare(b, undefined, {numeric: true})
       : diff;
   }
 
@@ -137,7 +136,7 @@ export default class TableSorting {
    * Get the table cell value based on the header cell id
    * merged cells along a row (colspan) is taken into account
    */
-  protected getCellValue(tr: HTMLElement, idx: number): string {
+  protected getCellValue(tr: HTMLTableRowElement, idx: number): string {
     // handle colspans
     const cells: HTMLTableCellElement[] = Array.from(tr.querySelectorAll(':scope > th, :scope > td'));
     let idxMax = 0;

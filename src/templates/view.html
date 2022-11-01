@@ -67,27 +67,6 @@
         </a>
       </div>
 
-    <div class='hl-hover-gray d-inline p-2 rounded'>
-      <a class='elab-tooltip' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdf'>
-        <span>{{ 'Make a PDF'|trans }}</span>
-        <i title='{{ 'Make a PDF'|trans }}' class='fas fa-file-pdf fa-2x'></i>
-      </a>
-    </div>
-
-    <div class='hl-hover-gray d-inline p-2 rounded'>
-      <a class='elab-tooltip' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=zip'>
-        <span>{{ 'Make a ZIP'|trans }}</span>
-        <i title='{{ 'Make a ZIP'|trans }}' class='fas fa-file-archive fa-2x'></i>
-      </a>
-    </div>
-
-    <div class='hl-hover-gray d-inline p-2 rounded'>
-      <a class='elab-tooltip' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=eln'>
-        <span>{{ 'Make an ELN'|trans }}</span>
-        <i title='{{ 'Make an ELN'|trans }}' class='fas fa-box-archive fa-2x'></i>
-      </a>
-    </div>
-
     {% if Entity.type == 'items' %}
       {% if Entity.entityData.bookable %}
         <div class='hl-hover-gray d-inline p-2 rounded'>
@@ -143,6 +122,23 @@
         </a>
       </div>
     {% endif %}
+
+    <!-- Download / Export menu -->
+    <div class='hl-hover-gray d-inline p-2 rounded'>
+      <div class='dropdown d-inline'>
+        <a data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'Export'|trans }}' aria-label='{{ 'Export'|trans }}' role='button'>
+          <i class='fas fa-download fa-2x'></i>
+        </a>
+        <div class='dropdown-menu' aria-label='{{ 'Export'|trans }}'>
+          <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdf'><i class='fas fa-file-pdf fa-fw'></i> {{ 'PDF File'|trans }}</a>
+          <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdfa'><i class='fas fa-file-pdf fa-fw'></i> {{ 'Archive PDF File'|trans }}</a>
+          <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=zip'><i class='fas fa-file-archive fa-fw'></i> {{ 'ZIP Archive'|trans }}</a>
+          <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=eln'><i class='fas fa-box-archive fa-fw'></i> {{ 'ELN Archive'|trans }}</a>
+          <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=csv'><i class='fas fa-file-csv fa-fw'></i> {{ 'CSV File'|trans }}</a>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- build the tag array -->

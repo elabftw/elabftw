@@ -228,15 +228,12 @@
             id='extendedArea'
             name='extended'
             rows='10'
-            class='form-control {{- extendedError ? ' is-invalid' }}'
+            class='form-control'
             placeholder='author:"{{ App.Users.userData.fullname|raw }}" status:"Running"'
             spellcheck='false'
-            aria-describedby='extendedFeedback'
           >{{ extended }}</textarea>
           <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
 
-          {# this is where the errors will be displayed #}
-          <div id='extendedFeedback' class='invalid-feedback'>{{ extendedError|raw }}</div>
         </div>
         <small class='form-text text-muted'>
           Press <kbd><kbd>ctrl</kbd> + <kbd>enter</kbd></kbd> or <kbd><kbd>⌘</kbd> + <kbd>enter</kbd></kbd> to submit search.

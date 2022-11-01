@@ -10,7 +10,6 @@
 namespace Elabftw\Controllers;
 
 use function dirname;
-use Elabftw\Elabftw\CreateTemplate;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Tools;
@@ -26,14 +25,9 @@ use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Status;
-use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Uploads;
-use Elabftw\Models\Users;
-use Elabftw\Services\AdvancedSearchQuery;
-use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
-use Elabftw\Services\Check;
 use Elabftw\Services\MakeBackupZip;
 use Exception;
 use function implode;
@@ -303,29 +297,8 @@ class Apiv1Controller extends AbstractApiController
         if ($this->id === null) {
             $DisplayParams = new DisplayParams($this->Users, $this->Request);
 
-            // use our limit/offset
             // remove 1 to limit as there is 1 added in the sql query
             $DisplayParams->limit = $this->limit - 1;
-            $DisplayParams->offset = $this->offset;
-            if ($this->search) {
-                $TeamGroups = new TeamGroups($this->Users);
-                $advancedQuery = new AdvancedSearchQuery(
-                    $this->search,
-                    new VisitorParameters(
-                        $this->Entity->type,
-                        $TeamGroups->getVisibilityList(),
-                        $TeamGroups->readGroupsWithUsersFromUser(),
-                    ),
-                );
-                $whereClause = $advancedQuery->getWhereClause();
-                if ($whereClause) {
-                    $this->Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
-                }
-                $error = $advancedQuery->getException();
-                if ($error) {
-                    return new JsonResponse(array('result' => 'error', 'message' => $error));
-                }
-            }
 
             return new JsonResponse($this->Entity->readShow($DisplayParams, false));
         }

@@ -23,6 +23,8 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Services\AdvancedSearchQuery;
+use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Elabftw\Services\Transform;
@@ -235,6 +237,20 @@ abstract class AbstractEntity implements RestInterface
 
         // add filters like related, owner or category
         $sql .= $displayParams->filterSql;
+
+        // extended search
+        if ($displayParams->searchType === 'extended') {
+            $advancedQuery = new AdvancedSearchQuery($displayParams->extendedQuery, new VisitorParameters($this->type, $this->TeamGroups->getVisibilityList(), $this->TeamGroups->readGroupsWithUsersFromUser()));
+            $whereClause = $advancedQuery->getWhereClause();
+            if ($whereClause) {
+                $this->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
+            }
+            $searchError = $advancedQuery->getException();
+            if (!empty($searchError)) {
+                throw new ImproperActionException('Error with extended search: ' . $searchError);
+            }
+        }
+
 
         // metadata filter (this will just be empty if we're not doing anything metadata related)
         $sql .= implode(' ', $this->metadataFilter);

@@ -185,6 +185,7 @@ class Apiv2Controller extends AbstractApiController
             ExportFormat::QrPdf,
             ExportFormat::Pdf,
             ExportFormat::PdfA,
+            ExportFormat::ZipA,
             ExportFormat::Zip => (new MakeController($this->Users, $this->Request))->getResponse(),
             default => new JsonResponse($this->getArray()),
         };

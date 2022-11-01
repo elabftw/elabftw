@@ -106,7 +106,7 @@ class MakeBloxberg extends AbstractMake
         $MpdfProvider = new MpdfProvider(
             $userData['fullname'],
             $userData['pdf_format'],
-            (bool) $userData['pdfa'],
+            true, // PDF/A always for timestamp pdf
         );
         $MakePdf = new MakePdf($MpdfProvider, $this->Entity);
         return $MakePdf->getFileContent();

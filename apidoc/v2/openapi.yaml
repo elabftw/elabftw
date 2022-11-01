@@ -687,10 +687,10 @@ paths:
           in: query
           schema:
             type: string
-            enum: ['csv', 'eln', 'json', 'qrpdf', 'pdf', 'pdfa', 'zip']
+            enum: ['csv', 'eln', 'json', 'qrpdf', 'pdf', 'pdfa', 'zip', 'zipa']
           default: json
           description: |
-            Get the entity in a different format like csv, pdf, eln or zip. "pdfa" means archive pdf (PDF/A).
+            Get the entity in a different format like csv, pdf, eln or zip. "pdfa" means archive pdf (PDF/A), same with "zipa".
           examples:
             first:
               summary: Generate a pdf

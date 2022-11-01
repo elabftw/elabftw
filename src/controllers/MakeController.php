@@ -48,12 +48,10 @@ class MakeController implements ControllerInterface
     // an array of id to process
     private array $idArr = array();
 
-    private bool $pdfa;
+    private bool $pdfa = false;
 
     public function __construct(private Users $Users, private Request $Request)
     {
-        // default pdfa setting is the user set value
-        $this->pdfa = (bool) $this->Users->userData['pdfa'];
     }
 
     public function getResponse(): Response
@@ -101,6 +99,9 @@ class MakeController implements ControllerInterface
                 }
                 return $this->makeSchedulerReport();
 
+            case 'zipa':
+                $this->pdfa = true;
+                // no break
             case 'zip':
                 $this->populateIdArr();
                 return $this->makeZip();
@@ -194,7 +195,7 @@ class MakeController implements ControllerInterface
 
     private function makeZip(): Response
     {
-        return $this->makeStreamZip(new MakeStreamZip($this->getZipStreamLib(), $this->Entity, $this->idArr));
+        return $this->makeStreamZip(new MakeStreamZip($this->getZipStreamLib(), $this->Entity, $this->idArr, $this->pdfa));
     }
 
     private function makeStreamZip(ZipMakerInterface $Maker): Response

@@ -168,12 +168,6 @@
         />
         <label for='cjk_fonts'>{{ 'Enable Chinese, Japanese and Korean fonts in PDF generation (WARNING: this will dramatically increase the file size unless you disable PDF/A)'|trans }}</label>
         <br>
-        <input type='hidden' value='0' name='pdfa'/>
-        <input id='pdfa' type='checkbox' name='pdfa'
-          {{ App.Users.userData.pdfa == 1 ? " checked='checked'" }}
-        />
-        <label for='pdfa'>{{ 'Generate PDF/A compliant pdfs (will embed the fonts and make the file bigger)'|trans }}</label>
-        <br>
         <input type='hidden' value='0' name='inc_files_pdf'/>
         <input id='inc_files_pdf' type='checkbox' name='inc_files_pdf'
           {{ App.Users.userData.inc_files_pdf == 1 ? " checked='checked'" }}

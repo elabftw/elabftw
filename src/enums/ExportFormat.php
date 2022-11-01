@@ -19,4 +19,5 @@ enum ExportFormat: string
     case Pdf = 'pdf';
     case PdfA = 'pdfa';
     case Zip = 'zip';
+    case ZipA = 'zipa';
 }

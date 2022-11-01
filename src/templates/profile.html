@@ -3,7 +3,7 @@
 {% block body %}
 <!-- USER INFOS -->
 <section class='box'>
-    <i class='fas fa-user fa-lg mr-1 align-top'></i><h5 class='d-inline'>{{ 'Info'|trans }}</h5>
+    <h5 class='d-inline'><i class='fas fa-user mr-1'></i>{{ 'Info'|trans }}</h5>
     <hr>
     <div>
       <h4>{{ App.Users.userData.fullname|raw }} ({{ App.Users.userData.email }})</h4>
@@ -35,7 +35,7 @@
     {% if count == 0 %}
       {{ 'No statistics available yet.'|trans }}
     {% else %}
-      <i class='fas fa-chart-pie fa-lg mr-1'></i><h5 class='d-inline'>{{ 'Statistics'|trans }}</h5>
+      <h5 class='d-inline'><i class='fas fa-chart-pie mr-1'></i>{{ 'Statistics'|trans }}</h5>
       <hr>
       <h4>{% trans %}
             Experiment

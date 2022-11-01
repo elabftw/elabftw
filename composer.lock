@@ -1414,16 +1414,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "3.5.2",
+            "version": "3.10.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "c73c4eb31f2e883b3897ab5591aa2dbc48112433"
+                "reference": "b9bd194b016114d6ff6765c09d40c7d427e4e3f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/c73c4eb31f2e883b3897ab5591aa2dbc48112433",
-                "reference": "c73c4eb31f2e883b3897ab5591aa2dbc48112433",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/b9bd194b016114d6ff6765c09d40c7d427e4e3f6",
+                "reference": "b9bd194b016114d6ff6765c09d40c7d427e4e3f6",
                 "shasum": ""
             },
             "require": {
@@ -1439,7 +1439,7 @@
             },
             "require-dev": {
                 "async-aws/s3": "^1.5",
-                "async-aws/simple-s3": "^1.0",
+                "async-aws/simple-s3": "^1.1",
                 "aws/aws-sdk-php": "^3.198.1",
                 "composer/semver": "^3.0",
                 "ext-fileinfo": "*",
@@ -1485,7 +1485,7 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/3.5.2"
+                "source": "https://github.com/thephpleague/flysystem/tree/3.10.2"
             },
             "funding": [
                 {
@@ -1501,7 +1501,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-09-23T18:59:16+00:00"
+            "time": "2022-10-25T07:01:47+00:00"
         },
         {
             "name": "league/flysystem-aws-s3-v3",

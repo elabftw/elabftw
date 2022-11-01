@@ -10,35 +10,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2.1\n"
 
-#: src/templates/admin.html:43 src/templates/admin.html:50
-#: src/templates/admin.html:57 src/templates/admin.html:64
-#: src/templates/admin.html:70 src/templates/admin.html:82
-#: src/templates/admin.html:98 src/templates/editusers.html:113
-#: src/templates/search.html:323 src/templates/search.html:334
-#: src/templates/sysconfig.html:91 src/templates/sysconfig.html:112
-#: src/templates/sysconfig.html:119 src/templates/sysconfig.html:134
-#: src/templates/sysconfig.html:140 src/templates/sysconfig.html:146
-#: src/templates/sysconfig.html:224 src/templates/sysconfig.html:267
-#: src/templates/sysconfig.html:273 src/templates/sysconfig.html:288
-#: src/templates/sysconfig.html:627 src/templates/sysconfig.html:691
-#: src/templates/sysconfig.html:828 src/templates/ucp.html:290
+#: src/templates/admin.html:43 src/templates/admin.html:50 src/templates/admin.html:57 src/templates/admin.html:64 src/templates/admin.html:70 src/templates/admin.html:82 src/templates/admin.html:98
+#: src/templates/editusers.html:113 src/templates/search.html:323 src/templates/search.html:334 src/templates/sysconfig.html:91 src/templates/sysconfig.html:112 src/templates/sysconfig.html:119
+#: src/templates/sysconfig.html:134 src/templates/sysconfig.html:140 src/templates/sysconfig.html:146 src/templates/sysconfig.html:224 src/templates/sysconfig.html:267 src/templates/sysconfig.html:273
+#: src/templates/sysconfig.html:288 src/templates/sysconfig.html:627 src/templates/sysconfig.html:691 src/templates/sysconfig.html:828 src/templates/ucp.html:290
 msgid "Yes"
 msgstr "Ya"
 
-#: src/templates/admin.html:44 src/templates/admin.html:51
-#: src/templates/admin.html:58 src/templates/admin.html:65
-#: src/templates/admin.html:71 src/templates/admin.html:83
-#: src/templates/admin.html:99 src/templates/editusers.html:114
-#: src/templates/search.html:324 src/templates/search.html:335
-#: src/templates/sysconfig.html:92 src/templates/sysconfig.html:113
-#: src/templates/sysconfig.html:120 src/templates/sysconfig.html:135
-#: src/templates/sysconfig.html:141 src/templates/sysconfig.html:147
-#: src/templates/sysconfig.html:225 src/templates/sysconfig.html:268
-#: src/templates/sysconfig.html:274 src/templates/sysconfig.html:289
-#: src/templates/sysconfig.html:628 src/templates/sysconfig.html:692
-#: src/templates/sysconfig.html:829 src/templates/ucp.html:291
+#: src/templates/admin.html:44 src/templates/admin.html:51 src/templates/admin.html:58 src/templates/admin.html:65 src/templates/admin.html:71 src/templates/admin.html:83 src/templates/admin.html:99
+#: src/templates/editusers.html:114 src/templates/search.html:324 src/templates/search.html:335 src/templates/sysconfig.html:92 src/templates/sysconfig.html:113 src/templates/sysconfig.html:120
+#: src/templates/sysconfig.html:135 src/templates/sysconfig.html:141 src/templates/sysconfig.html:147 src/templates/sysconfig.html:225 src/templates/sysconfig.html:268 src/templates/sysconfig.html:274
+#: src/templates/sysconfig.html:289 src/templates/sysconfig.html:628 src/templates/sysconfig.html:692 src/templates/sysconfig.html:829 src/templates/ucp.html:291
 msgid "No"
 msgstr "Tidak"
 
@@ -46,34 +30,24 @@ msgstr "Tidak"
 msgid "A mandatory field is missing!"
 msgstr "Ada kolom wajib diisi yang masih kosong!"
 
-#: src/templates/login.html:110 src/templates/register.html:64
-#: src/templates/sysconfig.html:811
+#: src/templates/login.html:110 src/templates/register.html:64 src/templates/sysconfig.html:811
 msgid "Password"
 msgstr "Kata sandi"
 
-#: src/templates/editusers.html:65 src/templates/editusers.html:178
-#: src/templates/login.html:58 src/templates/register.html:75
-#: src/templates/sysconfig.html:736 src/templates/ucp.html:306
+#: src/templates/editusers.html:65 src/templates/editusers.html:178 src/templates/login.html:58 src/templates/register.html:75 src/templates/sysconfig.html:736 src/templates/ucp.html:306
 msgid "Firstname"
 msgstr "Nama depan"
 
-#: src/templates/editusers.html:71 src/templates/editusers.html:184
-#: src/templates/login.html:61 src/templates/register.html:81
-#: src/templates/sysconfig.html:739 src/templates/ucp.html:311
+#: src/templates/editusers.html:71 src/templates/editusers.html:184 src/templates/login.html:61 src/templates/register.html:81 src/templates/sysconfig.html:739 src/templates/ucp.html:311
 msgid "Lastname"
 msgstr "Nama belakang"
 
-#: src/templates/editusers.html:77 src/templates/editusers.html:172
-#: src/templates/login.html:108 src/templates/register.html:53
-#: src/templates/sysconfig.html:25 src/templates/sysconfig.html:742
-#: src/templates/team.html:8 src/templates/team.html:125
-#: src/templates/ucp.html:269 src/templates/ucp.html:381
+#: src/templates/editusers.html:77 src/templates/editusers.html:172 src/templates/login.html:108 src/templates/register.html:53 src/templates/sysconfig.html:25 src/templates/sysconfig.html:742
+#: src/templates/team.html:8 src/templates/team.html:125 src/templates/ucp.html:269 src/templates/ucp.html:381
 msgid "Email"
 msgstr "Surel"
 
-#: web/experiments.php:25 src/templates/head.html:66
-#: src/templates/profile.html:41 src/templates/search.html:197
-#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:238
+#: web/experiments.php:25 src/templates/head.html:66 src/templates/profile.html:41 src/templates/search.html:197 src/templates/sysconfig.html:44 src/templates/sysconfig.html:238
 #: src/templates/team.html:117 src/templates/todolist-panel.html:42
 msgid "Experiment"
 msgid_plural "Experiments"
@@ -83,25 +57,20 @@ msgstr[0] "Eksperimen"
 msgid "Database"
 msgstr "Basis data"
 
-#: src/services/Transform.php:33 web/team.php:29 src/templates/admin.html:22
-#: src/templates/admin.html:91 src/templates/admin.html:107
-#: src/templates/editusers.html:162 src/templates/head.html:72
+#: src/services/Transform.php:33 web/team.php:29 src/templates/admin.html:22 src/templates/admin.html:91 src/templates/admin.html:107 src/templates/editusers.html:162 src/templates/head.html:72
 #: src/templates/register.html:42 src/templates/todolist-panel.html:36
 msgid "Team"
 msgstr "Tim"
 
-#: src/templates/pdf.html:14 src/templates/show.html:167
-#: src/templates/ucp.html:96
+#: src/templates/pdf.html:14 src/templates/show.html:167 src/templates/ucp.html:96
 msgid "Date"
 msgstr "Tanggal"
 
-#: src/templates/edit.html:170 src/templates/show.html:170
-#: src/templates/templates-edit.html:26 src/templates/ucp.html:97
+#: src/templates/edit.html:170 src/templates/show.html:170 src/templates/templates-edit.html:26 src/templates/ucp.html:97
 msgid "Title"
 msgstr "Judul"
 
-#: src/templates/admin.html:276 src/templates/edit.html:42
-#: src/templates/ucp.html:31 src/templates/view.html:170
+#: src/templates/admin.html:276 src/templates/edit.html:42 src/templates/ucp.html:31 src/templates/view.html:170
 msgid "Visibility"
 msgstr "Tampilan"
 
@@ -110,41 +79,25 @@ msgid "Status"
 msgid_plural "Status"
 msgstr[0] "Status"
 
-#: src/templates/show-item.html:46 src/templates/sysconfig.html:361
-#: src/templates/sysconfig.html:821 src/templates/ucp.html:130
-#: src/templates/view.html:56 src/templates/view.html:57
+#: src/templates/show-item.html:46 src/templates/sysconfig.html:361 src/templates/sysconfig.html:821 src/templates/ucp.html:130 src/templates/view.html:56 src/templates/view.html:57
 #: src/templates/view.html:171
 msgid "Edit"
 msgstr "Sunting"
 
-#: src/templates/admin.html:120 src/templates/admin.html:180
-#: src/templates/admin.html:209 src/templates/admin.html:308
-#: src/templates/edit.html:203 src/templates/edit.html:248
-#: src/templates/editusers.html:126 src/templates/json-editor.html:13
-#: src/templates/steps-links-edit.html:72 src/templates/sysconfig.html:55
-#: src/templates/sysconfig.html:66 src/templates/sysconfig.html:155
-#: src/templates/sysconfig.html:185 src/templates/sysconfig.html:231
-#: src/templates/sysconfig.html:308 src/templates/sysconfig.html:367
-#: src/templates/sysconfig.html:563 src/templates/sysconfig.html:631
-#: src/templates/sysconfig.html:696 src/templates/sysconfig.html:717
-#: src/templates/sysconfig.html:774 src/templates/sysconfig.html:866
-#: src/templates/sysconfig.html:895 src/templates/templates-edit.html:34
-#: src/templates/ucp.html:246 src/templates/ucp.html:296
-#: src/templates/ucp.html:323 src/templates/view.html:271
+#: src/templates/admin.html:120 src/templates/admin.html:180 src/templates/admin.html:209 src/templates/admin.html:308 src/templates/edit.html:203 src/templates/edit.html:248
+#: src/templates/editusers.html:126 src/templates/json-editor.html:13 src/templates/steps-links-edit.html:72 src/templates/sysconfig.html:55 src/templates/sysconfig.html:66
+#: src/templates/sysconfig.html:155 src/templates/sysconfig.html:185 src/templates/sysconfig.html:231 src/templates/sysconfig.html:308 src/templates/sysconfig.html:367 src/templates/sysconfig.html:563
+#: src/templates/sysconfig.html:631 src/templates/sysconfig.html:696 src/templates/sysconfig.html:717 src/templates/sysconfig.html:774 src/templates/sysconfig.html:866 src/templates/sysconfig.html:895
+#: src/templates/templates-edit.html:34 src/templates/ucp.html:246 src/templates/ucp.html:296 src/templates/ucp.html:323 src/templates/view.html:271
 msgid "Save"
 msgstr "Simpan"
 
-#: web/app/controllers/IdpsController.php:75
-#: web/app/controllers/RevisionsController.php:50
-#: web/app/controllers/SortableAjaxController.php:38
-#: web/app/controllers/SysconfigAjaxController.php:32
-#: web/app/controllers/SysconfigController.php:63
-#: web/app/controllers/UcpController.php:92
+#: web/app/controllers/IdpsController.php:75 web/app/controllers/RevisionsController.php:50 web/app/controllers/SortableAjaxController.php:38 web/app/controllers/SysconfigAjaxController.php:32
+#: web/app/controllers/SysconfigController.php:63 web/app/controllers/UcpController.php:92
 msgid "Saved"
 msgstr "Tersimpan"
 
-#: src/templates/mfa.html:32 src/templates/team.html:72
-#: src/templates/view.html:22
+#: src/templates/mfa.html:32 src/templates/team.html:72 src/templates/view.html:22
 msgid "Cancel"
 msgstr "Batal"
 
@@ -156,9 +109,7 @@ msgstr "Tindakan"
 msgid "Shortcut"
 msgstr "Pintasan"
 
-#: src/templates/admin.html:134 src/templates/admin.html:236
-#: src/templates/create-new.html:38 src/templates/show-templates-edit.html:21
-#: src/templates/ucp.html:126
+#: src/templates/admin.html:134 src/templates/admin.html:236 src/templates/create-new.html:38 src/templates/show-templates-edit.html:21 src/templates/ucp.html:126
 msgid "Create"
 msgstr "Membuat"
 
@@ -170,9 +121,7 @@ msgstr "Kirim"
 msgid "TODO list"
 msgstr "Daftar tugas"
 
-#: src/templates/admin.html:170 src/templates/admin.html:194
-#: src/templates/admin.html:261 src/templates/team.html:124
-#: src/templates/ucp.html:339 src/templates/ucp.html:354
+#: src/templates/admin.html:170 src/templates/admin.html:194 src/templates/admin.html:261 src/templates/team.html:124 src/templates/ucp.html:339 src/templates/ucp.html:354
 msgid "Name"
 msgstr "Nama"
 
@@ -180,8 +129,7 @@ msgstr "Nama"
 msgid "There are users waiting for validation of their account:"
 msgstr "Ada pengguna yang menunggu validasi akunnya:"
 
-#: src/templates/admin.html:24 src/templates/search.html:278
-#: src/templates/sysconfig.html:22
+#: src/templates/admin.html:24 src/templates/search.html:278 src/templates/sysconfig.html:22
 msgid "Users"
 msgstr "Pengguna"
 
@@ -226,11 +174,8 @@ msgstr "Ini adalah teks awal ketika seseorang membuat eksperimen."
 msgid "Save new password"
 msgstr "Simpan kata sandi baru"
 
-#: src/langs/js-strings.php:15 src/models/AbstractTemplateEntity.php:24
-#: src/models/Experiments.php:51 src/models/Items.php:41
-#: src/models/Scheduler.php:75 src/models/Status.php:53
-#: src/models/TeamGroups.php:43 src/services/Filter.php:106
-#: src/services/ImportEln.php:85
+#: src/langs/js-strings.php:15 src/models/AbstractTemplateEntity.php:24 src/models/Experiments.php:51 src/models/Items.php:41 src/models/Scheduler.php:75 src/models/Status.php:53
+#: src/models/TeamGroups.php:43 src/services/Filter.php:106 src/services/ImportEln.php:85
 msgid "Untitled"
 msgstr "Tanpa Judul"
 
@@ -238,8 +183,7 @@ msgstr "Tanpa Judul"
 msgid "You don't have the rights to lock/unlock this."
 msgstr "Anda tidak memiliki hak untuk mengunci/membuka kunci ini."
 
-#: web/login.php:31 src/templates/login.html:87 src/templates/login.html:146
-#: src/templates/login.html:177 src/templates/login.html:201
+#: web/login.php:31 src/templates/login.html:87 src/templates/login.html:146 src/templates/login.html:177 src/templates/login.html:201
 msgid "Login"
 msgstr "Masuk"
 
@@ -275,8 +219,7 @@ msgstr "buat"
 msgid "Restore"
 msgstr "Pulihkan"
 
-#: web/search.php:31 src/templates/editusers.html:16 src/templates/head.html:76
-#: src/templates/team.html:43 src/templates/team.html:58
+#: web/search.php:31 src/templates/editusers.html:16 src/templates/head.html:76 src/templates/team.html:43 src/templates/team.html:58
 msgid "Search"
 msgstr "Cari"
 
@@ -308,8 +251,7 @@ msgstr "Maaf. Saya tidak dapat menemukan apa-apa :("
 msgid "Server"
 msgstr "Peladen"
 
-#: src/templates/show.html:136 src/templates/sysconfig.html:23
-#: src/templates/view.html:23
+#: src/templates/show.html:136 src/templates/sysconfig.html:23 src/templates/view.html:23
 msgid "Timestamp"
 msgstr "Stempel waktu"
 
@@ -317,13 +259,11 @@ msgstr "Stempel waktu"
 msgid "Security"
 msgstr "Keamanan"
 
-#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:236
-#: src/templates/team.html:117 src/templates/team.html:121
+#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:236 src/templates/team.html:117 src/templates/team.html:121
 msgid "Members"
 msgstr "Anggota"
 
-#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:242
-#: src/templates/team.html:117 src/templates/todolist-panel.html:49
+#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:242 src/templates/team.html:117 src/templates/todolist-panel.html:49
 msgid "Items"
 msgstr "Komponen"
 
@@ -463,14 +403,11 @@ msgstr "Belum ada statistik tersedia."
 msgid "Filter status"
 msgstr "Saring status"
 
-#: src/templates/edit.html:176 src/templates/filter-order-sort.html:66
-#: src/templates/pdf.html:17 src/templates/show.html:179
-#: src/templates/templates-edit.html:6
+#: src/templates/edit.html:176 src/templates/filter-order-sort.html:66 src/templates/pdf.html:17 src/templates/show.html:179 src/templates/templates-edit.html:6
 msgid "Tags"
 msgstr "Label"
 
-#: src/templates/edit.html:188 src/templates/show.html:106
-#: src/templates/templates-edit.html:21
+#: src/templates/edit.html:188 src/templates/show.html:106 src/templates/templates-edit.html:21
 msgid "Add a tag"
 msgstr "Tambahkan label"
 
@@ -478,15 +415,11 @@ msgstr "Tambahkan label"
 msgid "Only me"
 msgstr "Hanya saya"
 
-#: src/templates/steps-links-edit.html:155
-#: src/templates/steps-links-view.html:62
+#: src/templates/steps-links-edit.html:155 src/templates/steps-links-view.html:62
 msgid "Linked items"
 msgstr "Komponen terkait"
 
-#: src/templates/show.html:110 src/templates/steps-links-edit.html:100
-#: src/templates/steps-links-edit.html:102
-#: src/templates/steps-links-edit.html:159
-#: src/templates/steps-links-edit.html:161
+#: src/templates/show.html:110 src/templates/steps-links-edit.html:100 src/templates/steps-links-edit.html:102 src/templates/steps-links-edit.html:159 src/templates/steps-links-edit.html:161
 msgid "Add a link"
 msgstr "Tambahkan tautan"
 
@@ -530,8 +463,7 @@ msgstr "Jika anda menekan Ctrl Shift D di editor, tanggal akan muncul di bawah k
 msgid "Go to user control panel"
 msgstr "Menuju panel kontrol pengguna"
 
-#: src/templates/sysconfig.html:21 src/templates/sysconfig.html:44
-#: src/templates/sysconfig.html:745
+#: src/templates/sysconfig.html:21 src/templates/sysconfig.html:44 src/templates/sysconfig.html:745
 msgid "Teams"
 msgstr "Tim"
 
@@ -613,8 +545,7 @@ msgstr "Kunci/Buka komponen"
 msgid "Send a test email"
 msgstr "Kirim surel percobaan"
 
-#: src/templates/sysconfig.html:377 src/templates/sysconfig.html:391
-#: src/templates/team.html:171
+#: src/templates/sysconfig.html:377 src/templates/sysconfig.html:391 src/templates/team.html:171
 msgid "Send"
 msgstr "Kirim"
 
@@ -622,13 +553,11 @@ msgstr "Kirim"
 msgid "Filter by type"
 msgstr "Saring berdasarkan jenis"
 
-#: src/templates/edit.html:148 src/templates/show.html:30
-#: src/templates/show.html:176 src/templates/ucp.html:95
+#: src/templates/edit.html:148 src/templates/show.html:30 src/templates/show.html:176 src/templates/ucp.html:95
 msgid "Category"
 msgstr "Kategori"
 
-#: src/templates/edit.html:161 src/templates/edit.html:163
-#: src/templates/show.html:185
+#: src/templates/edit.html:161 src/templates/edit.html:163 src/templates/show.html:185
 msgid "Rating"
 msgstr "Peringkat"
 
@@ -644,8 +573,7 @@ msgstr "Naik"
 msgid "Add a New Status"
 msgstr "Tambahkan Status Baru"
 
-#: src/templates/admin.html:175 src/templates/admin.html:199
-#: src/templates/admin.html:266 src/templates/edit.html:238
+#: src/templates/admin.html:175 src/templates/admin.html:199 src/templates/admin.html:266 src/templates/edit.html:238
 msgid "Color"
 msgstr "Warna"
 
@@ -653,14 +581,9 @@ msgstr "Warna"
 msgid "Edit an Existing Status"
 msgstr "Sunting Status yang Ada"
 
-#: src/templates/admin.html:143 src/templates/admin.html:148
-#: src/templates/admin.html:213 src/templates/admin.html:309
-#: src/templates/admin.html:407 src/templates/edit.html:123
-#: src/templates/show.html:139 src/templates/steps-links-edit.html:134
-#: src/templates/steps-links-edit.html:192 src/templates/sysconfig.html:211
-#: src/templates/sysconfig.html:577 src/templates/team.html:69
-#: src/templates/ucp.html:367 src/templates/upload-dropdown-menu.html:64
-#: src/templates/view.html:258
+#: src/templates/admin.html:143 src/templates/admin.html:148 src/templates/admin.html:213 src/templates/admin.html:309 src/templates/admin.html:407 src/templates/edit.html:123 src/templates/show.html:139
+#: src/templates/steps-links-edit.html:134 src/templates/steps-links-edit.html:192 src/templates/sysconfig.html:211 src/templates/sysconfig.html:577 src/templates/team.html:69 src/templates/ucp.html:367
+#: src/templates/upload-dropdown-menu.html:64 src/templates/view.html:258
 msgid "Delete"
 msgstr "Hapus"
 
@@ -736,8 +659,7 @@ msgstr "Tampilan"
 msgid "Keyboard Shortcuts"
 msgstr "Pintasan Papan Ketik"
 
-#: src/templates/show-templates-edit.html:4
-#: src/templates/show-templates-view.html:2
+#: src/templates/show-templates-edit.html:4 src/templates/show-templates-view.html:2
 msgid "Experiments Templates"
 msgstr "Templat Eksperimen"
 
@@ -745,8 +667,7 @@ msgstr "Templat Eksperimen"
 msgid "Validate"
 msgstr "Validasi"
 
-#: src/templates/admin.html:23 src/templates/profile.html:17
-#: src/templates/search.html:283
+#: src/templates/admin.html:23 src/templates/profile.html:17 src/templates/search.html:283
 msgid "Groups"
 msgstr "Grup"
 
@@ -782,8 +703,7 @@ msgstr "Kelola Grup Pengguna"
 msgid "Create a group"
 msgstr "Buat Grup"
 
-#: src/templates/todolist-panel.html:10 src/templates/todolist-panel.html:12
-#: src/templates/todolist-panel.html:13
+#: src/templates/todolist-panel.html:10 src/templates/todolist-panel.html:12 src/templates/todolist-panel.html:13
 msgid "Add"
 msgstr "Tambah"
 
@@ -835,8 +755,7 @@ msgstr "Pengaturan Surel"
 msgid "Sender address:"
 msgstr "Alamat pengirim:"
 
-#: src/templates/head.html:113 src/templates/head.html:144
-#: src/templates/head.html:170
+#: src/templates/head.html:113 src/templates/head.html:144 src/templates/head.html:170
 msgid "Help"
 msgstr "Bantuan"
 
@@ -852,8 +771,7 @@ msgstr "Dan tampilannya:"
 msgid "Select visibility"
 msgstr "Pilih tampilan"
 
-#: src/services/Transform.php:32 src/templates/admin.html:90
-#: src/templates/admin.html:106
+#: src/services/Transform.php:32 src/templates/admin.html:90 src/templates/admin.html:106
 msgid "Organization"
 msgstr "Organisasi"
 
@@ -885,18 +803,15 @@ msgstr "Buat PDF"
 msgid "Make a ZIP"
 msgstr "Buat ZIP"
 
-#: src/templates/steps-links-view.html:119
-#: src/templates/steps-links-view.html:121
+#: src/templates/steps-links-view.html:119 src/templates/steps-links-view.html:121
 msgid "Show related"
 msgstr "Tampilkan terkait"
 
-#: src/templates/view.html:10 src/templates/view.html:131
-#: src/templates/view.html:132
+#: src/templates/view.html:10 src/templates/view.html:131 src/templates/view.html:132
 msgid "Timestamp Experiment"
 msgstr "Audit Eksperimen"
 
-#: src/templates/show-item.html:37 src/templates/show.html:173
-#: src/templates/view.html:202
+#: src/templates/show-item.html:37 src/templates/show.html:173 src/templates/view.html:202
 msgid "Next step"
 msgstr "Langkah berikutnya"
 
@@ -908,9 +823,7 @@ msgstr "Tambahkan langkah"
 msgid "Draw something"
 msgstr "Gambar sesuatu"
 
-#: src/templates/edit.html:247 src/templates/json-editor.html:6
-#: src/templates/json-editor.html:29 src/templates/sysconfig.html:56
-#: src/templates/sysconfig.html:67 src/templates/sysconfig.html:317
+#: src/templates/edit.html:247 src/templates/json-editor.html:6 src/templates/json-editor.html:29 src/templates/sysconfig.html:56 src/templates/sysconfig.html:67 src/templates/sysconfig.html:317
 #: src/templates/sysconfig.html:323 src/templates/sysconfig.html:718
 msgid "Clear"
 msgstr "Bersihkan"
@@ -952,8 +865,7 @@ msgstr "Matikan penyunting teks kaya dan tulis penanda secara langsung"
 msgid "Default visibility for new experiments"
 msgstr "Tampilan awal untuk eksperimen baru"
 
-#: src/templates/admin.html:92 src/templates/admin.html:108
-#: src/templates/todolist-panel.html:29
+#: src/templates/admin.html:92 src/templates/admin.html:108 src/templates/todolist-panel.html:29
 msgid "User"
 msgstr "Pengguna"
 
@@ -1033,8 +945,7 @@ msgstr "Buat CSV"
 msgid "Please make sure to remove any reference to this file in the body!"
 msgstr "Pastikan pada isi tidak ada lagi referensi ke berkas ini!"
 
-#: src/templates/upload-dropdown-menu.html:13
-#: src/templates/upload-dropdown-menu.html:19
+#: src/templates/upload-dropdown-menu.html:13 src/templates/upload-dropdown-menu.html:19
 msgid "Insert in text at cursor position"
 msgstr "Sisipkan teks pada posisi kursor"
 
@@ -1126,14 +1037,12 @@ msgstr "Zona waktu"
 msgid "Information"
 msgstr "Informasi"
 
-#: src/templates/edit.html:119 src/templates/show-templates-edit.html:78
-#: src/templates/view.html:281
+#: src/templates/edit.html:119 src/templates/show-templates-edit.html:78 src/templates/view.html:281
 msgid "revision available"
 msgid_plural "revisions available"
 msgstr[0] "revisi tersedia"
 
-#: src/templates/steps-links-edit.html:39
-#: src/templates/steps-links-view.html:13
+#: src/templates/steps-links-edit.html:39 src/templates/steps-links-view.html:13
 msgid "completed"
 msgstr "selesai"
 
@@ -1141,12 +1050,8 @@ msgstr "selesai"
 msgid "commented"
 msgstr "dikomentari"
 
-#: src/templates/edit.html:63 src/templates/edit.html:91
-#: src/templates/favtags-panel.html:3 src/templates/footer.html:87
-#: src/templates/head.html:210 src/templates/login.html:24
-#: src/templates/register.html:22 src/templates/search.html:182
-#: src/templates/todolist-panel.html:2 src/templates/ucp.html:48
-#: src/templates/uploads.html:16
+#: src/templates/edit.html:63 src/templates/edit.html:91 src/templates/favtags-panel.html:3 src/templates/footer.html:87 src/templates/head.html:210 src/templates/login.html:24
+#: src/templates/register.html:22 src/templates/search.html:182 src/templates/todolist-panel.html:2 src/templates/ucp.html:48 src/templates/uploads.html:16
 msgid "Close"
 msgstr "Tutup"
 
@@ -1158,8 +1063,7 @@ msgstr "Daftar Tugas"
 msgid "Enable Chinese, Japanese and Korean fonts in PDF generation (WARNING: this will dramatically increase the file size unless you disable PDF/A)"
 msgstr "Sediakan huruf Mandarin, Jepang, dan Korea di pembuatan PDF (PERINGATAN: ini akan memperbesar ukuran berkas kecuali anda menonaktifkan PDF/A)"
 
-#: src/templates/show-view-edit.html:73 src/templates/steps-links-edit.html:130
-#: src/templates/steps-links-edit.html:188
+#: src/templates/show-view-edit.html:73 src/templates/steps-links-edit.html:130 src/templates/steps-links-edit.html:188
 msgid "Import"
 msgstr "Impor"
 
@@ -1187,14 +1091,11 @@ msgstr "Tip: anda bisa gunakan '%' sebagai penebak"
 msgid "You can use a TODOlist by pressing '%s'."
 msgstr "Anda dapat menggunakan DAFTAR TUGAS dengan menekan '%s'."
 
-#: src/templates/login.html:47 src/templates/login.html:50
-#: src/templates/login.html:190 src/templates/login.html:193
-#: src/templates/register.html:44
+#: src/templates/login.html:47 src/templates/login.html:50 src/templates/login.html:190 src/templates/login.html:193 src/templates/register.html:44
 msgid "Select a team"
 msgstr "Pilih tim"
 
-#: src/templates/footer.html:49 src/templates/footer.html:79
-#: src/templates/register.html:13 src/templates/sysconfig.html:27
+#: src/templates/footer.html:49 src/templates/footer.html:79 src/templates/register.html:13 src/templates/sysconfig.html:27
 msgid "Privacy policy"
 msgstr "Kebijakan privasi"
 
@@ -1362,13 +1263,11 @@ msgstr "Halo. Akun Anda untuk eLabFTW telah divalidasi admin. Ikuti tautan ini u
 msgid "This item is locked. You cannot edit it!"
 msgstr "Komponen ini terkunci. Anda tidak dapat menyuntingnya!"
 
-#: src/classes/ContentParams.php:35 src/classes/StepParams.php:42
-#: src/classes/TagParam.php:29 src/classes/TagParam.php:34
+#: src/classes/ContentParams.php:35 src/classes/StepParams.php:42 src/classes/TagParam.php:29 src/classes/TagParam.php:34
 msgid "Input is too short! (minimum: %d)"
 msgstr "Terlalu pendek! (minimal: %d)"
 
-#: src/models/TeamGroups.php:107 src/services/Transform.php:31
-#: src/templates/admin.html:89 src/templates/admin.html:105
+#: src/models/TeamGroups.php:107 src/services/Transform.php:31 src/templates/admin.html:89 src/templates/admin.html:105
 msgid "Public"
 msgstr "Umum"
 
@@ -1396,8 +1295,7 @@ msgstr "Beri anotasi pada gambar ini"
 msgid "Save as image"
 msgstr "Simpan sebagai gambar"
 
-#: src/templates/view.html:120 src/templates/view.html:121
-#: src/templates/view.html:123
+#: src/templates/view.html:120 src/templates/view.html:121 src/templates/view.html:123
 msgid "Share"
 msgstr "Bagikan"
 
@@ -1417,8 +1315,7 @@ msgstr "Admin selalu dapat menghapus eksperimen:"
 msgid "Setting this to «no» will completely remove the ability to delete experiments for everyone."
 msgstr "Menyetel ini ke «tidak» akan sepenuhnya menghapus kemampuan untuk menghapus eksperimen untuk semua orang."
 
-#: src/templates/pdf.html:88 src/templates/steps-links-edit.html:4
-#: src/templates/steps-links-view.html:5
+#: src/templates/pdf.html:88 src/templates/steps-links-edit.html:4 src/templates/steps-links-view.html:5
 msgid "Steps"
 msgstr "Langkah"
 
@@ -1442,8 +1339,7 @@ msgstr "Hapus langkah ini?"
 msgid "Delete this link?"
 msgstr "Hapus tautan ini?"
 
-#: src/templates/admin.html:287 src/templates/edit.html:52
-#: src/templates/ucp.html:39
+#: src/templates/admin.html:287 src/templates/edit.html:52 src/templates/ucp.html:39
 msgid "Can write"
 msgstr "Bisa menulis"
 
@@ -1451,8 +1347,7 @@ msgstr "Bisa menulis"
 msgid "JSON Editor"
 msgstr "Editor JSON"
 
-#: src/templates/show-templates-edit.html:56
-#: src/templates/show-templates-view.html:23
+#: src/templates/show-templates-edit.html:56 src/templates/show-templates-view.html:23
 msgid "Create experiment from template"
 msgstr "Buat eksperimen dari template"
 
@@ -1544,17 +1439,12 @@ msgstr "Kecil"
 msgid "Edit permissions"
 msgstr "Edit izin"
 
-#: src/templates/edit.html:105 src/templates/edit.html:108
-#: src/templates/show-templates-edit.html:50
-#: src/templates/show-templates-edit.html:53
-#: src/templates/show-templates-view.html:16
-#: src/templates/upload-dropdown-menu.html:3
-#: src/templates/upload-dropdown-menu.html:7
+#: src/templates/edit.html:105 src/templates/edit.html:108 src/templates/show-templates-edit.html:50 src/templates/show-templates-edit.html:53 src/templates/show-templates-view.html:16
+#: src/templates/upload-dropdown-menu.html:3 src/templates/upload-dropdown-menu.html:7
 msgid "More options"
 msgstr "Lebih banyak pilihan"
 
-#: src/templates/edit.html:110 src/templates/edit.html:113
-#: src/templates/show-templates-edit.html:61
+#: src/templates/edit.html:110 src/templates/edit.html:113 src/templates/show-templates-edit.html:61
 msgid "Manage Permissions"
 msgstr "Kelola Izin"
 
@@ -1594,8 +1484,7 @@ msgstr "Dari sini Anda dapat mengedit atau menghapus tag untuk tim Anda. Klik ta
 msgid "Your account is linked to several teams. Select in which team you want to log in"
 msgstr "Akun Anda ditautkan ke beberapa tim. Pilih di tim mana Anda ingin masuk"
 
-#: src/exceptions/InvalidCredentialsException.php:21
-#: src/services/LocalAuth.php:43 src/services/LocalAuth.php:85
+#: src/exceptions/InvalidCredentialsException.php:21 src/services/LocalAuth.php:43 src/services/LocalAuth.php:85
 msgid "Invalid email/password combination."
 msgstr "Kombinasi email / kata sandi tidak valid."
 
@@ -1639,9 +1528,7 @@ msgstr "Nama tim"
 msgid "Team Organisation ID"
 msgstr "ID Organisasi Tim"
 
-#: web/make.php:27 src/templates/admin.html:27 src/templates/admin.html:351
-#: src/templates/admin.html:374 src/templates/admin.html:385
-#: src/templates/profile.html:76 src/templates/show.html:96
+#: web/make.php:27 src/templates/admin.html:27 src/templates/admin.html:351 src/templates/admin.html:374 src/templates/admin.html:385 src/templates/profile.html:76 src/templates/show.html:96
 msgid "Export"
 msgstr "Ekspor"
 
@@ -1709,10 +1596,7 @@ msgstr "Mode tampilan"
 msgid "Pinned"
 msgstr "Dipasangi pin"
 
-#: src/templates/show-item-table.html:61 src/templates/show-item.html:49
-#: src/templates/steps-links-edit.html:122
-#: src/templates/steps-links-edit.html:181
-#: src/templates/steps-links-view.html:44
+#: src/templates/show-item-table.html:61 src/templates/show-item.html:49 src/templates/steps-links-edit.html:122 src/templates/steps-links-edit.html:181 src/templates/steps-links-view.html:44
 #: src/templates/steps-links-view.html:70
 msgid "Toggle content"
 msgstr "Alihkan konten"
@@ -1749,18 +1633,12 @@ msgstr "Buat PDF"
 msgid "Make JSON"
 msgstr "Buat JSON"
 
-#: src/templates/steps-links-view.html:5 src/templates/steps-links-view.html:32
-#: src/templates/steps-links-view.html:62
-#: src/templates/steps-links-view.html:91
-#: src/templates/steps-links-view.html:115 src/templates/todolist-panel.html:6
-#: src/templates/todolist-panel.html:42 src/templates/todolist-panel.html:49
-#: src/templates/uploads.html:28
+#: src/templates/steps-links-view.html:5 src/templates/steps-links-view.html:32 src/templates/steps-links-view.html:62 src/templates/steps-links-view.html:91 src/templates/steps-links-view.html:115
+#: src/templates/todolist-panel.html:6 src/templates/todolist-panel.html:42 src/templates/todolist-panel.html:49 src/templates/uploads.html:28
 msgid "Toggle visibility"
 msgstr "Alihkan visibilitas"
 
-#: src/templates/edit.html:128 src/templates/edit.html:129
-#: src/templates/show-item.html:19 src/templates/show-templates-edit.html:66
-#: src/templates/view.html:47 src/templates/view.html:48
+#: src/templates/edit.html:128 src/templates/edit.html:129 src/templates/show-item.html:19 src/templates/show-templates-edit.html:66 src/templates/view.html:47 src/templates/view.html:48
 msgid "Toggle pin"
 msgstr "Alihkan pin"
 
@@ -1800,8 +1678,7 @@ msgstr "URL Keluar"
 msgid "Download template"
 msgstr "Unduh template"
 
-#: src/templates/show-templates-edit.html:84
-#: src/templates/show-templates-view.html:27
+#: src/templates/show-templates-edit.html:84 src/templates/show-templates-view.html:27
 msgid "Destroy template"
 msgstr "Hancurkan template"
 
@@ -1837,9 +1714,7 @@ msgstr "Izin menulis yang diberlakukan pada eksperimen"
 msgid "Enforce the write permission for all experiments of users in this team."
 msgstr "Terapkan izin tulis untuk semua eksperimen pengguna di tim ini."
 
-#: src/templates/admin.html:251 src/templates/editusers.html:54
-#: src/templates/filter-order-sort.html:72
-#: src/templates/show-templates-select.html:12
+#: src/templates/admin.html:251 src/templates/editusers.html:54 src/templates/filter-order-sort.html:72 src/templates/show-templates-select.html:12
 msgid "Go"
 msgstr "Pergilah"
 
@@ -1859,8 +1734,7 @@ msgstr "Mohon tunggu…"
 msgid "Toggle create new menu"
 msgstr "Alihkan buat menu baru"
 
-#: src/templates/create-new.html:34 src/templates/show-templates-edit.html:14
-#: src/templates/show-view-edit.html:26
+#: src/templates/create-new.html:34 src/templates/show-templates-edit.html:14 src/templates/show-view-edit.html:26
 msgid "Import from file"
 msgstr "Impor dari file"
 
@@ -1992,8 +1866,7 @@ msgstr "Kunci"
 msgid "Actions"
 msgstr "Aksi"
 
-#: src/services/EmailNotifications.php:122
-#: src/services/EmailNotifications.php:131
+#: src/services/EmailNotifications.php:122 src/services/EmailNotifications.php:131
 msgid "Hi. A new user registered an account on eLabFTW: %s (%s)."
 msgstr "Hai. Seorang pengguna baru mendaftarkan akun di eLabFTW: %s (%s)."
 
@@ -2114,8 +1987,7 @@ msgstr "Pengguna dapat membuat tag:"
 msgid "An admin account will always be able to create tags."
 msgstr "Akun admin akan selalu dapat membuat tag."
 
-#: src/templates/upload-dropdown-menu.html:25
-#: src/templates/upload-dropdown-menu.html:26
+#: src/templates/upload-dropdown-menu.html:25 src/templates/upload-dropdown-menu.html:26
 msgid "Edit filename"
 msgstr "Edit nama file"
 
@@ -2163,8 +2035,7 @@ msgstr "Pemilik baru"
 msgid "Main content"
 msgstr "Konten utama"
 
-#: src/templates/steps-links-edit.html:32
-#: src/templates/steps-links-view.html:10
+#: src/templates/steps-links-edit.html:32 src/templates/steps-links-view.html:10
 msgid "Toggle completion"
 msgstr "Alihkan penyelesaian"
 
@@ -2196,8 +2067,7 @@ msgstr "Pemilik"
 msgid "Save and go back"
 msgstr "Simpan dan kembali ke halaman sebelumnya"
 
-#: src/templates/editusers.html:17 src/templates/team.html:96
-#: src/templates/team.html:97
+#: src/templates/editusers.html:17 src/templates/team.html:96 src/templates/team.html:97
 msgid "Show all"
 msgstr "Tunjukkan semua"
 
@@ -2229,8 +2099,7 @@ msgstr "%d perangkat saat ini ditolak autentikasinya."
 msgid "(default)"
 msgstr "(bawaan)"
 
-#: web/app/controllers/ResetPasswordController.php:58
-#: web/app/controllers/ResetPasswordController.php:96
+#: web/app/controllers/ResetPasswordController.php:58 web/app/controllers/ResetPasswordController.php:96
 msgid "If the account exists, an email has been sent."
 msgstr "Jika akun tersebut ada, email telah dikirim."
 
@@ -2286,8 +2155,7 @@ msgstr "Ekspor item basis data"
 msgid "Select what to export:"
 msgstr "Pilih apa yang akan diekspor:"
 
-#: src/templates/admin.html:339 src/templates/admin.html:362
-#: src/templates/profile.html:66
+#: src/templates/admin.html:339 src/templates/admin.html:362 src/templates/profile.html:66
 msgid "Select export format:"
 msgstr "Pilih format ekspor:"
 
@@ -2359,8 +2227,7 @@ msgstr "Uji email"
 msgid "New comment posted"
 msgstr "Komentar baru diposting"
 
-#: src/services/EmailNotifications.php:119
-#: src/services/EmailNotifications.php:128 src/services/Transform.php:77
+#: src/services/EmailNotifications.php:119 src/services/EmailNotifications.php:128 src/services/Transform.php:77
 msgid "New user added to your team"
 msgstr "Pengguna baru ditambahkan ke tim Anda"
 
@@ -2432,8 +2299,7 @@ msgstr "Eksperimen ekspor dari pengguna"
 msgid "Select user:"
 msgstr "Pilih pengguna:"
 
-#: src/templates/head.html:91 src/templates/head.html:92
-#: src/templates/ucp.html:9
+#: src/templates/head.html:91 src/templates/head.html:92 src/templates/ucp.html:9
 msgid "Notifications"
 msgstr "Notifikasi"
 
@@ -2541,8 +2407,7 @@ msgstr "Waktu penyelesaian:"
 msgid "Not finished"
 msgstr "Tidak selesai"
 
-#: src/templates/steps-links-edit.html:54
-#: src/templates/steps-links-view.html:18
+#: src/templates/steps-links-edit.html:54 src/templates/steps-links-view.html:18
 msgid "Deadline:"
 msgstr "Tenggat waktu:"
 
@@ -2574,8 +2439,7 @@ msgstr "+1 hari"
 msgid "+1 week"
 msgstr "+1 minggu"
 
-#: src/templates/steps-links-view.html:95
-#: src/templates/steps-links-view.html:97
+#: src/templates/steps-links-view.html:95 src/templates/steps-links-view.html:97
 msgid "Show linked items"
 msgstr "Tampilkan item tertaut"
 
@@ -2679,8 +2543,7 @@ msgstr "kelompok"
 msgid "author"
 msgstr "penulis"
 
-#: src/templates/steps-links-edit.html:126
-#: src/templates/steps-links-edit.html:185
+#: src/templates/steps-links-edit.html:126 src/templates/steps-links-edit.html:185
 msgid "Import links"
 msgstr "Impor tautan-tautan"
 
@@ -2756,33 +2619,27 @@ msgstr "Tautan-tautan"
 msgid "Your account has expired. Contact your team Admin to extend its validity."
 msgstr "Akun Anda telah kedaluwarsa. Hubungi Admin tim Anda untuk memperpanjang masa berlakunya."
 
-#: src/templates/admin.html:341 src/templates/admin.html:364
-#: src/templates/show.html:97
+#: src/templates/admin.html:341 src/templates/admin.html:364 src/templates/show.html:97
 msgid "ELN Archive"
 msgstr "Arsip ELN"
 
-#: src/templates/admin.html:342 src/templates/admin.html:365
-#: src/templates/show.html:98
+#: src/templates/admin.html:342 src/templates/admin.html:365 src/templates/show.html:98
 msgid "ZIP Archive"
 msgstr "Arsip ZIP"
 
-#: src/templates/admin.html:343 src/templates/admin.html:366
-#: src/templates/show.html:99
+#: src/templates/admin.html:343 src/templates/admin.html:366 src/templates/show.html:99
 msgid "CSV File"
 msgstr "Berkas CSV"
 
-#: src/templates/admin.html:344 src/templates/admin.html:367
-#: src/templates/show.html:100
+#: src/templates/admin.html:344 src/templates/admin.html:367 src/templates/show.html:100
 msgid "PDF File"
 msgstr "Berkas PDF"
 
-#: src/templates/admin.html:345 src/templates/admin.html:368
-#: src/templates/show.html:101
+#: src/templates/admin.html:345 src/templates/admin.html:368 src/templates/show.html:101
 msgid "QR codes PDF"
 msgstr "Kode QR PDF"
 
-#: src/templates/admin.html:346 src/templates/admin.html:369
-#: src/templates/show.html:102
+#: src/templates/admin.html:346 src/templates/admin.html:369 src/templates/show.html:102
 msgid "JSON"
 msgstr "JSON"
 
@@ -2870,8 +2727,7 @@ msgstr "Profil saya"
 msgid "Your account has been created and is now active. Try logging in again."
 msgstr "Akun Anda telah dibuat dan sekarang aktif. Coba masuk lagi."
 
-#: src/templates/pdf.html:73 src/templates/steps-links-edit.html:93
-#: src/templates/steps-links-view.html:33
+#: src/templates/pdf.html:73 src/templates/steps-links-edit.html:93 src/templates/steps-links-view.html:33
 msgid "Linked experiment"
 msgid_plural "Linked experiments"
 msgstr[0] ""
@@ -2882,8 +2738,7 @@ msgstr[0] ""
 msgid "Export all your experiments"
 msgstr "Ekspor semua eksperimen Anda"
 
-#: src/templates/profile.html:68 src/templates/view.html:86
-#: src/templates/view.html:87
+#: src/templates/profile.html:68 src/templates/view.html:86 src/templates/view.html:87
 msgid "Make an ELN"
 msgstr "Membuat ELN"
 
@@ -2893,7 +2748,7 @@ msgstr "(disematkan)"
 
 #: src/templates/show-view-edit.html:32
 msgid "You can import data from a .eln archive, a .zip archive (created by eLabFTW) or a .csv file. %sSee documentation %s%s."
-msgstr "Anda dapat mengimpor data dari arsip .eln, arsip .zip (dibuat oleh eLabFTW) atau file .csv. % Lihat dokumentasi %s%s%s."
+msgstr "Anda dapat mengimpor data dari arsip .eln, arsip .zip (dibuat oleh eLabFTW) atau file .csv. %sLihat dokumentasi %s%s."
 
 #: src/templates/show-view-edit.html:67
 msgid "3. Select a file to import:"

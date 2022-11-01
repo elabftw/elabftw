@@ -618,6 +618,16 @@ paths:
             first:
               summary: Search for all experiments with the word "test".
               value: test
+        - name: extended
+          in: query
+          schema:
+            type: string
+          description: |
+            Extended search (advanced query).
+          examples:
+            first:
+              summary: Search for all items with a rating of 2.
+              value: "rating%3A2"
         - name: related
           in: query
           schema:
@@ -774,6 +784,16 @@ paths:
             first:
               summary: Search for all items with the word "test".
               value: test
+        - name: extended
+          in: query
+          schema:
+            type: string
+          description: |
+            Extended search (advanced query).
+          examples:
+            first:
+              summary: Search for all items with a rating of 2.
+              value: "rating%3A2"
         - name: limit
           in: query
           schema:

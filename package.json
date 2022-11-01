@@ -22,7 +22,7 @@
     "bootstrap-markdown-fa5": "2.10.*",
     "bootstrap-select": "^1.13.18",
     "css-loader": "^6.0.0",
-    "css-minimizer-webpack-plugin": "^4.0.0",
+    "css-minimizer-webpack-plugin": "^4.2.2",
     "dropzone": "^5.8.0",
     "expose-loader": "^4.0.0",
     "i18next": "^21.0.2",

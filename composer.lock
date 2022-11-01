@@ -293,16 +293,16 @@
         },
         {
             "name": "directorytree/ldaprecord",
-            "version": "v2.17.2",
+            "version": "v2.18.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DirectoryTree/LdapRecord.git",
-                "reference": "e0ee9d87b4d5a343f7d88bf56a26a1274c87203b"
+                "reference": "f93da388263689e48e92bcc2a2f11a5ddf655f99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/e0ee9d87b4d5a343f7d88bf56a26a1274c87203b",
-                "reference": "e0ee9d87b4d5a343f7d88bf56a26a1274c87203b",
+                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/f93da388263689e48e92bcc2a2f11a5ddf655f99",
+                "reference": "f93da388263689e48e92bcc2a2f11a5ddf655f99",
                 "shasum": ""
             },
             "require": {
@@ -363,7 +363,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-09-30T19:39:02+00:00"
+            "time": "2022-10-10T13:21:32+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -903,7 +903,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v9.34.0",
+            "version": "v9.37.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -4749,16 +4749,16 @@
         },
         {
             "name": "symfony/translation",
-            "version": "v6.1.4",
+            "version": "v6.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation.git",
-                "reference": "45d0f5bb8df7255651ca91c122fab604e776af03"
+                "reference": "e6cd330e5a072518f88d65148f3f165541807494"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation/zipball/45d0f5bb8df7255651ca91c122fab604e776af03",
-                "reference": "45d0f5bb8df7255651ca91c122fab604e776af03",
+                "url": "https://api.github.com/repos/symfony/translation/zipball/e6cd330e5a072518f88d65148f3f165541807494",
+                "reference": "e6cd330e5a072518f88d65148f3f165541807494",
                 "shasum": ""
             },
             "require": {
@@ -4825,7 +4825,7 @@
             "description": "Provides tools to internationalize your application",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/translation/tree/v6.1.4"
+                "source": "https://github.com/symfony/translation/tree/v6.1.6"
             },
             "funding": [
                 {
@@ -4841,7 +4841,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-08-02T16:17:38+00:00"
+            "time": "2022-10-07T08:04:03+00:00"
         },
         {
             "name": "symfony/translation-contracts",
@@ -4926,16 +4926,16 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v6.1.5",
+            "version": "v6.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "d0833493fb2413a86f522fb54a1896a7718e98ec"
+                "reference": "0f0adde127f24548e23cbde83bcaeadc491c551f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/d0833493fb2413a86f522fb54a1896a7718e98ec",
-                "reference": "d0833493fb2413a86f522fb54a1896a7718e98ec",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/0f0adde127f24548e23cbde83bcaeadc491c551f",
+                "reference": "0f0adde127f24548e23cbde83bcaeadc491c551f",
                 "shasum": ""
             },
             "require": {
@@ -4994,7 +4994,7 @@
                 "dump"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-dumper/tree/v6.1.5"
+                "source": "https://github.com/symfony/var-dumper/tree/v6.1.6"
             },
             "funding": [
                 {
@@ -5010,7 +5010,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-09-08T09:34:40+00:00"
+            "time": "2022-10-07T08:04:03+00:00"
         },
         {
             "name": "tightenco/collect",

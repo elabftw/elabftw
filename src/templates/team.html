@@ -86,7 +86,7 @@
       <!-- CATEGORY -->
       {# Note: option color doesn't show up in firefox #}
       <form>
-        <select name='cat' class='autosubmit mr-1 form-control' aria-label='Filter category'>
+        <select name='cat' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter category'>
           <option value=''>{{ 'Filter by type'|trans }}</option>
           {% for category in bookableCategoryArr %}
             <option style='color:#{{ category.color }}' value='{{ category.category_id }}'{{ App.Request.query.get('cat') == category.category_id ? ' selected'}}>
@@ -99,7 +99,7 @@
     <div class='col-md-3'>
       <!-- ITEM LIST -->
       <form>
-        <select name='item' class='autosubmit mr-1 form-control' aria-label='Filter item'>
+        <select name='item' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter item'>
           <option value=''>{{ 'Select an equipment'|trans }}</option>
           {% for item in itemsArr %}
             <option style='color:#{{ item.color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected'}}>

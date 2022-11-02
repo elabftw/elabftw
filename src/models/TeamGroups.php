@@ -83,7 +83,7 @@ class TeamGroups implements CrudInterface
                 'name' => $group['name'],
                 'users' => isset($group['userids'])
                     ? array_map(
-                        function (string $userid, string $fullname): array {
+                        function (string $userid, ?string $fullname): array {
                             return array(
                                 'userid' => $userid,
                                 'fullname' => $fullname,

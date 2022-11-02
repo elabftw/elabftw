@@ -39,8 +39,13 @@ class QueryBuilderVisitor implements Visitor
     {
         $param = $this->getUniqueID();
 
+        $query = '(entity.body LIKE ' . $param . ' OR entity.title LIKE ' . $param . ')';
+        if ($parameters->isQuickSearch()) {
+            $query = '(entity.title LIKE ' . $param . ' OR entity.body LIKE ' . $param;
+            $query .= ' OR entity.date LIKE ' . $param . ' OR entity.elabid LIKE ' . $param . ')';
+        }
         return new WhereCollector(
-            '(entity.body LIKE ' . $param . ' OR entity.title LIKE ' . $param . ')',
+            $query,
             array(array(
                 'param' => $param,
                 'value' => '%' . $simpleValueWrapper->getValue() . '%',

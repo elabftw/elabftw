@@ -52,14 +52,6 @@ if ($App->Request->query->get('type') === 'experiments') {
     $Entity = $Database;
 }
 
-// EXTENDED SEARCH
-// default input for extendedArea
-$extended = 'author:"' . $Entity->Users->userData['fullname'] . '" ';
-
-if ($App->Request->query->has('extended') && !empty($App->Request->query->get('extended'))) {
-    $extended = trim((string) $App->Request->query->get('extended'));
-}
-
 // RENDER THE FIRST PART OF THE PAGE (search form)
 $renderArr = array(
     'Request' => $App->Request,
@@ -71,7 +63,6 @@ $renderArr = array(
     'statusArr' => $statusArr,
     'usersArr' => $usersArr,
     'visibilityArr' => $visibilityArr,
-    'extended' => $extended,
     'teamGroups' => array_column($teamGroupsArr, 'name'),
 );
 echo $App->render('search.html', $renderArr);

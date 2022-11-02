@@ -73,7 +73,6 @@ $renderArr = array(
     'visibilityArr' => $visibilityArr,
     'extended' => $extended,
     'teamGroups' => array_column($teamGroupsArr, 'name'),
-    'whereClause' => print_r($whereClause ?? '', true), // only for dev
 );
 echo $App->render('search.html', $renderArr);
 

@@ -52,7 +52,7 @@
       </div>
       <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
         <!-- CREATE EXPERIMENT -->
-        <a data-action='create-entity' data-id="{{ Entity.id }}" href='#' class='dropdown-item'>
+        <a data-action='create-entity' data-tplid="{{ Entity.id }}" href='#' class='dropdown-item'>
           <i class='fas fa-circle-plus fa-fw mr-1'></i>{{ 'Create experiment from template'|trans }}
         </a>
         {% if not Entity.entityData.locked %}

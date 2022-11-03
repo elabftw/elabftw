@@ -306,8 +306,8 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="create-entity"]')) {
       const path = window.location.pathname;
       const page = path.split('/').pop();
-      // team.php for "create experiment from this template
-      if (page === 'experiments.php' || page === 'team.php') {
+      // team.php and ucp.php for "create experiment from this template
+      if (page === 'experiments.php' || page === 'team.php' || page === 'ucp.php') {
         const tplid = el.dataset.tplid;
         const urlParams = new URLSearchParams(document.location.search);
         const tags = urlParams.getAll('tags[]');

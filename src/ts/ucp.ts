@@ -45,7 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const title = prompt(i18next.t('template-title'));
       if (title) {
         // no body on template creation
-        EntityC.create(title).then(resp => window.location.href = resp.headers.get('location'));
+        // Note: here we create one and then patch it for the correct content_type but it would probably be better to allow setting the content_type directly on creation
+        EntityC.create(title).then(resp => {
+          const location = resp.headers.get('location').split('/');
+          const newId = parseInt(location[location.length -1], 10);
+          EntityC.update(newId, Target.ContentType, String(editor.typeAsInt)).then(() => {
+            window.location.href = `ucp.php?tab=3&templateid=${newId}`;
+          });
+        });
       }
     // LOCK TEMPLATE
     } else if (el.matches('[data-action="toggle-lock"]')) {

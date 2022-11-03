@@ -13,6 +13,7 @@ declare const MathJax: MathJaxObject;
 
 interface EditorInterface {
   type: string;
+  typeAsInt: number;
   init(): void;
   getContent(): string;
   setContent(content: string): void;
@@ -22,6 +23,7 @@ interface EditorInterface {
 
 class Editor {
   type: string;
+  typeAsInt: number;
   switch(): string {
     const target = this.type === 'tiny' ? 'md' : 'tiny';
     insertParamAndReload('editor', target);
@@ -33,6 +35,7 @@ class TinyEditor extends Editor implements EditorInterface {
   constructor() {
     super();
     this.type = 'tiny';
+    this.typeAsInt = 1;
   }
   init(): void {
     return;
@@ -52,6 +55,7 @@ export class MdEditor extends Editor implements EditorInterface {
   constructor() {
     super();
     this.type = 'md';
+    this.typeAsInt = 2;
   }
   init(): void {
     ($('.markdown-textarea') as any).markdown({

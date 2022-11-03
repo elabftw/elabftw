@@ -38,7 +38,7 @@ class Templates extends AbstractTemplateEntity
 
     public function getPage(): string
     {
-        return 'ucp.php?tab=3&templateid=';
+        return 'api/v2/experiments_templates/';
     }
 
     public function create(string $title): int
@@ -102,7 +102,7 @@ class Templates extends AbstractTemplateEntity
     public function readOne(): array
     {
         $sql = "SELECT experiments_templates.id, experiments_templates.title, experiments_templates.body,
-            experiments_templates.created_at, experiments_templates.modified_at,
+            experiments_templates.created_at, experiments_templates.modified_at, experiments_templates.content_type,
             experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
             experiments_templates.locked, experiments_templates.lockedby, experiments_templates.lockedwhen,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata, experiments_templates.state,
@@ -152,7 +152,7 @@ class Templates extends AbstractTemplateEntity
         $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
 
         $sql = "SELECT DISTINCT experiments_templates.id, experiments_templates.title, experiments_templates.body,
-                experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
+                experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite, experiments_templates.content_type,
                 experiments_templates.locked, experiments_templates.lockedby, experiments_templates.lockedwhen,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata,
                 users2teams.teams_id, teams.name AS team_name,

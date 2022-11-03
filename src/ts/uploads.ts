@@ -86,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         processNewFilename(event, filenameLink, parentSpan);
       });
       filenameLink.replaceWith(filenameInput);
+      filenameInput.focus();
 
     // TOGGLE DISPLAY
     } else if (el.matches('[data-action="toggle-uploads-layout"]')) {

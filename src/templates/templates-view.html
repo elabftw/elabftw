@@ -29,5 +29,5 @@
 {% else %}
   {% set body = Entity.entityData.body %}
 {% endif %}
-<div id='body_view' class='txt'>{{ body|md2html }}</div>
+<div id='body_view'>{{ body|md2html }}</div>
 {% include 'steps-links-view.html' %}

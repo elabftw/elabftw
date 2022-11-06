@@ -126,14 +126,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // SHOW CONTENT OF PLAIN TEXT FILES
     } else if (el.matches('[data-action="show-plain-text"]')) {
       showContentPlainText(el);
-    }
-  });
-
-  // COMMENTS
-  document.getElementById('commentsDiv').addEventListener('click', event => {
-    const el = (event.target as HTMLElement);
     // CREATE COMMENT
-    if (el.matches('[data-action="create-comment"]')) {
+    } else if (el.matches('[data-action="create-comment"]')) {
       const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
       ApiC.post(`${entity.type}/${entity.id}/${Model.Comment}`, {'comment': content}).then(() => reloadElement('commentsDiv'));
 

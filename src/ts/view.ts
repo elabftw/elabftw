@@ -108,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // BLOXBERG
     } else if (el.matches('[data-action="bloxberg"]')) {
       const overlay = document.createElement('div');
+      overlay.id = 'loadingOverlay';
       const loading = document.createElement('p');
       const ring = document.createElement('div');
       ring.classList.add('lds-dual-ring');
@@ -121,7 +122,11 @@ document.addEventListener('DOMContentLoaded', () => {
       loading.appendChild(ring);
       overlay.appendChild(loading);
       document.getElementById('container').append(overlay);
-      ApiC.patch(`${EntityType.Experiment}/${entity.id}`, {'action': Action.Bloxberg}).then(() => window.location.replace(`?mode=view&id=${entity.id}`));
+      ApiC.patch(`${EntityType.Experiment}/${entity.id}`, {'action': Action.Bloxberg})
+        // reload uploaded files on success
+        .then(() => reloadElement('filesdiv'))
+        // remove overlay in all cases
+        .finally(() => document.getElementById('container').removeChild(document.getElementById('loadingOverlay')));
 
     // SHOW CONTENT OF PLAIN TEXT FILES
     } else if (el.matches('[data-action="show-plain-text"]')) {

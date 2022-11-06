@@ -18,6 +18,7 @@ use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\Config;
 use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use function json_decode;
 use function json_encode;
@@ -62,6 +63,8 @@ class MakeBloxberg extends AbstractMake
             $certifyResponse = json_decode($this->certify($pdfHash));
             // now we send the previous response to another endpoint to get the pdf back in a zip archive
             $proofResponse = $this->client->post(self::PROOF_URL, array(
+                // add proxy if there is one
+                'proxy' => Config::getConfig()->configArr['proxy'] ?? '',
                 'headers' => array(
                     'api_key' => $this->apiKey,
                 ),
@@ -93,7 +96,15 @@ class MakeBloxberg extends AbstractMake
 
     private function getApiKey(): string
     {
-        $res = $this->client->get(self::API_KEY_URL);
+        try {
+            $res = $this->client->get(self::API_KEY_URL, array(
+                // add proxy if there is one
+                'proxy' => Config::getConfig()->configArr['proxy'] ?? '',
+                'timeout' => 5,
+            ));
+        } catch (ConnectException) {
+            throw new ImproperActionException('Could not fetch api key. Please try again later.');
+        }
         if ($res->getStatusCode() !== 200) {
             throw new ImproperActionException('Could not fetch api key. Please try again later.');
         }
@@ -125,6 +136,8 @@ class MakeBloxberg extends AbstractMake
             'headers' => array(
                 'api_key' => $this->apiKey,
             ),
+            // add proxy if there is one
+            'proxy' => Config::getConfig()->configArr['proxy'] ?? '',
             'json' => array(
                 'publicKey' => self::PUB_KEY,
                 'crid' => array('0x' . $hash),

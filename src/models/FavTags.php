@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
@@ -82,6 +83,11 @@ class FavTags implements RestInterface
         $req->bindParam(':tag', $tag, PDO::PARAM_STR);
         $this->Db->execute($req);
         $tagId = (int) $req->fetchColumn();
+
+        // if no tag is found, throw an error
+        if ($tagId === 0) {
+            throw new ImproperActionException(_('Could not find tag. Please enter an existing tag.'));
+        }
 
         if ($this->isFavorite($tagId)) {
             return 0;

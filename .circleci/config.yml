@@ -137,7 +137,7 @@ jobs:
           command: docker exec -it elabtmp ./phpdoc -i ./cache -i ./uploads -d ./src/ -t phpdoc-html --setting=graphs.enabled=true
       - run:
           name: Extract the php documentation
-          command: docker cp elabtmp:phpdoc-html phpdoc-html
+          command: docker cp elabtmp:/elabftw/phpdoc-html phpdoc-html
       - store_artifacts:
           path: phpdoc-html
           destination: phpdoc-html

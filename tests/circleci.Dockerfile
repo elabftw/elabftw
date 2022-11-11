@@ -23,7 +23,7 @@ COPY ../node-builder.js /elabftw
 COPY ../package.json /elabftw
 COPY ../yarn.lock /elabftw
 
-# install phpdocumentor
+# install phpDocumentor
 RUN curl -sSL https://phpdoc.org/phpDocumentor.phar -o phpdoc && chmod +x phpdoc
-# install plantuml for generating the svg graph
-RUN apk add --update --no-cache plantuml
+# phpDocumentor requires ext-iconv and plantuml for generating the svg graph
+RUN apk add --update --no-cache plantuml php81-iconv

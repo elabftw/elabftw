@@ -25,5 +25,5 @@ COPY ../yarn.lock /elabftw
 
 # install phpDocumentor
 RUN curl -sSL https://phpdoc.org/phpDocumentor.phar -o phpdoc && chmod +x phpdoc
-# phpDocumentor requires ext-iconv and plantuml for generating the svg graph
-RUN apk add --update --no-cache plantuml php81-iconv
+# phpDocumentor requires ext-iconv and plantuml, graphviz for generating the svg graph
+RUN apk add --update --no-cache plantuml graphviz php81-iconv

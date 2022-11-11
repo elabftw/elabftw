@@ -24,6 +24,6 @@ COPY ../package.json /elabftw
 COPY ../yarn.lock /elabftw
 
 # install phpdocumentor
-RUN curl -sSL https://phpdoc.org/phpDocumentor.phar && chmod +x phpDocumentor.phar
+RUN curl -sSL https://phpdoc.org/phpDocumentor.phar -o phpdoc && chmod +x phpdoc
 # install plantuml for generating the svg graph
 RUN apk add --update --no-cache plantuml

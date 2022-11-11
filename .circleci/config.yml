@@ -134,10 +134,10 @@ jobs:
           command: docker cp elabtmp:/elabftw/tests/_output/coverage coverage-html
       - run:
           name: Generate the php documentation
-          command: docker exec -it elabtmp phpDocumentor.phar -i ./cache -i ./uploads -d ./src/ -t phpdoc --setting=graphs.enabled=true
+          command: docker exec -it elabtmp ./phpdoc -i ./cache -i ./uploads -d ./src/ -t phpdoc-html --setting=graphs.enabled=true
       - run:
           name: Extract the php documentation
-          command: docker cp elabtmp:phpdoc phpdoc-html
+          command: docker cp elabtmp:phpdoc-html phpdoc-html
       - store_artifacts:
           path: phpdoc-html
           destination: phpdoc-html

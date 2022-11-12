@@ -68,10 +68,7 @@ try {
         $key = $ResetPasswordKey->generate($Users->userData['email']);
 
         // build the reset link
-        $resetLink = SITE_URL . '/change-pass.php';
-        // not pretty but gets the job done
-        $resetLink = str_replace('app/controllers/', '', $resetLink);
-        $resetLink .= '?key=' . $key;
+        $resetLink = SITE_URL . '/change-pass.php?key=' . $key;
         $htmlResetLink = '<a href="' . $resetLink . '">' . _('Reset password') . '</a>';
 
         $rawBody = _('Hi. Someone (probably you) requested a new password on eLabFTW.%s Please follow this link to reset your password: %s %sThis link is only valid for %s minutes.');

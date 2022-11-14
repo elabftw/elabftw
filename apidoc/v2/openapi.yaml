@@ -638,6 +638,12 @@ paths:
             first:
               summary: Look for entries linked to item with id 42.
               value: 42
+        - name: cat
+          in: query
+          schema:
+            type: integer
+          description: |
+            The status id of the experiments.
         - name: limit
           in: query
           schema:
@@ -794,6 +800,13 @@ paths:
             first:
               summary: Search for all items with a rating of 2.
               value: "rating%3A2"
+        # This one is not exactly copy paste
+        - name: cat
+          in: query
+          schema:
+            type: integer
+          description: |
+            The category id of the items.
         - name: limit
           in: query
           schema:

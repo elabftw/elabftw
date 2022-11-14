@@ -9,8 +9,6 @@
 
 namespace Elabftw\Models;
 
-use function array_column;
-use function count;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
@@ -116,35 +114,24 @@ class Tags implements RestInterface
      */
     public function getIdFromTags(array $tags): array
     {
-        $results = array();
-        $sql = 'SELECT id FROM tags WHERE tag = :tag';
+        $sql = 'SELECT id FROM tags WHERE tag IN ("' . implode('", "', $tags) . '")';
         $req = $this->Db->prepare($sql);
-        foreach ($tags as $tag) {
-            $req->bindParam(':tag', $tag);
-            $req->execute();
-            $res = $req->fetch();
-            if ($res !== false) {
-                $results[] = $res;
-            }
-        }
-        $tagIds = array_column($results, 'id');
+        $req->execute();
+        $tagIds = $req->fetchAll(PDO::FETCH_COLUMN);
         if (empty($tagIds)) {
             return array();
         }
 
         // look for item ids that have all the tags not only one of them
         // note: you can't have a parameter for the IN clause
-        $itemIds = array();
+        // the HAVING COUNT is necessary to make an AND search between tags
         $sql = 'SELECT item_id FROM `tags2entity` WHERE tag_id IN (' . implode(',', $tagIds) . ')
             AND item_type = :type GROUP BY item_id HAVING COUNT(DISTINCT tag_id) = :count';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':type', $this->Entity->type, PDO::PARAM_STR);
         $req->bindValue(':count', count($tagIds), PDO::PARAM_INT);
         $req->execute();
-        foreach ($req->fetchAll() as $res) {
-            $itemIds[] = (int) $res['item_id'];
-        }
-        return $itemIds;
+        return $req->fetchAll(PDO::FETCH_COLUMN);
     }
 
     /**

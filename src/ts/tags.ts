@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // DESTROY (from admin panel/tag manager)
     } else if (el.matches('[data-action="destroy-tag"]')) {
       if (confirm(i18next.t('tag-delete-warning'))) {
-        ApiC.delete(`${entity.type}/${entity.id}/${Model.Tag}/${el.dataset.tagid}`).then(() => reloadElement('tagMgrDiv'));
+        ApiC.delete(`${Model.TeamTags}/${el.dataset.tagid}`).then(() => reloadElement('tagMgrDiv'));
       }
     }
   });

@@ -164,7 +164,7 @@ class Templates extends AbstractTemplateEntity
                 LEFT JOIN teams ON (teams.id = experiments_templates.team)
                 LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
                 LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
-                LEFT JOIN pin_experiments_templates2users ON (experiments_templates.id = pin_experiments_templates2users.entity_id)
+                LEFT JOIN pin_experiments_templates2users ON (experiments_templates.id = pin_experiments_templates2users.entity_id AND pin_experiments_templates2users.users_id = :userid)
                 WHERE experiments_templates.userid != 0 AND experiments_templates.state = :state AND (
                     experiments_templates.canread = 'public' OR
                     experiments_templates.canread = 'organization' OR

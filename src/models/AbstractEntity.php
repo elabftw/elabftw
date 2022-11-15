@@ -342,7 +342,10 @@ abstract class AbstractEntity implements RestInterface
 
     public function patch(Action $action, array $params): array
     {
-        $this->canOrExplode('write');
+        // the toggle pin action doesn't require write access to the entity
+        if ($action !== Action::Pin) {
+            $this->canOrExplode('write');
+        }
         match ($action) {
             Action::Lock => $this->toggleLock(),
             Action::Pin => $this->Pins->togglePin(),

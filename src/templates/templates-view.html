@@ -24,10 +24,10 @@
   {% endif %}
 </div>
 
-{% if Entity.entityData.content_type == constant('Elabftw\\Models\\AbstractEntity::CONTENT_MD') %}
+{% if (Entity.entityData.content_type == constant('Elabftw\\Models\\AbstractEntity::CONTENT_MD')) and Entity.entityData.body is not null %}
   {% set body = Entity.entityData.body|md2html %}
 {% else %}
   {% set body = Entity.entityData.body %}
 {% endif %}
-<div id='body_view'>{{ body|md2html }}</div>
+<div id='body_view'>{{ body|raw }}</div>
 {% include 'steps-links-view.html' %}

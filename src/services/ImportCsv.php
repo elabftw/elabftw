@@ -65,7 +65,7 @@ class ImportCsv extends AbstractImport
             }
             $body = $this->getBodyFromRow($row);
             $metadata = null;
-            if (isset($row['metadata'])) {
+            if (isset($row['metadata']) && !empty($row['metadata'])) {
                 $metadata = $row['metadata'];
             }
 

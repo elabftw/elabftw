@@ -90,5 +90,5 @@ export function getEditor(): EditorInterface {
   if (document.getElementById('iHazEditor')) {
     return document.getElementById('iHazEditor').dataset.editor === 'md' ? new MdEditor() : new TinyEditor();
   }
-  return new MdEditor();
+  return new TinyEditor();
 }

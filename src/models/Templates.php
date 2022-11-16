@@ -138,7 +138,8 @@ class Templates extends AbstractTemplateEntity
                 ($t['canwrite'] === 'team' && ((int) $t['teams_id'] === $this->Users->userData['team'])) ||
                 ($t['canwrite'] === 'user' && $t['userid'] === $this->Users->userData['userid']) ||
                 ($t['canwrite'] === 'useronly' && $t['userid'] === $this->Users->userData['userid']) ||
-                (in_array($t['canwrite'], $teamgroupsOfUser, true));
+                // cast to int is necessary because canwrite column is a string
+                (in_array((int) $t['canwrite'], $teamgroupsOfUser, true));
         });
     }
 

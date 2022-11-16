@@ -129,7 +129,8 @@ class Tags implements RestInterface
             AND item_type = :type GROUP BY item_id HAVING COUNT(DISTINCT tag_id) = :count';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':type', $this->Entity->type, PDO::PARAM_STR);
-        $req->bindValue(':count', count($tagIds), PDO::PARAM_INT);
+        // note: we count on the number of provided tags, not the result of the first query as the same tag can appear mutiple times (from different teams)
+        $req->bindValue(':count', count($tags), PDO::PARAM_INT);
         $req->execute();
         return $req->fetchAll(PDO::FETCH_COLUMN);
     }

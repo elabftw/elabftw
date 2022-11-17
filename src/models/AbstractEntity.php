@@ -226,6 +226,11 @@ abstract class AbstractEntity implements RestInterface
      */
     public function readShow(DisplayParams $displayParams, bool $extended = false): array
     {
+        // extended search (this block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
+        if ($displayParams->searchType === 'extended') {
+            $this->processExtendedQuery($displayParams->extendedQuery);
+        }
+
         $sql = $this->getReadSqlBeforeWhere($extended, $extended);
         $teamgroupsOfUser = array_column($this->TeamGroups->readGroupsFromUser(), 'id');
 
@@ -237,11 +242,6 @@ abstract class AbstractEntity implements RestInterface
 
         // add filters like related, owner or category
         $sql .= $displayParams->filterSql;
-
-        // extended search
-        if ($displayParams->searchType === 'extended') {
-            $this->processExtendedQuery($displayParams->extendedQuery);
-        }
 
         // metadata filter (this will just be empty if we're not doing anything metadata related)
         $sql .= implode(' ', $this->metadataFilter);
@@ -539,12 +539,6 @@ abstract class AbstractEntity implements RestInterface
         return array_column($req->fetchAll(), 'id');
     }
 
-    public function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void
-    {
-        $this->extendedFilter .= $extendedFilter . ' ';
-        $this->extendedValues = array_merge($this->extendedValues, $extendedValues);
-    }
-
     public function destroy(): bool
     {
         if ($this instanceof AbstractConcreteEntity) {
@@ -635,6 +629,12 @@ abstract class AbstractEntity implements RestInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void
+    {
+        $this->extendedFilter .= $extendedFilter . ' ';
+        $this->extendedValues = array_merge($this->extendedValues, $extendedValues);
     }
 
     /**

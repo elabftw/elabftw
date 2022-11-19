@@ -75,13 +75,6 @@ if ($App->Request->query->count() > 0) {
     // PREPARE SQL query
     /////////////////////////////////////////////////////////////////
     if ($App->Request->query->has('type')) {
-        // Metadata search
-        foreach ($App->Request->query->all('metakey') as $i => $metakey) {
-            if (!empty($metakey)) {
-                $Entity->addMetadataFilter($metakey, $App->Request->query->all('metavalue')[$i]);
-            }
-        }
-
         // FILTER ON DATABASE ITEMS TYPES
         if (Check::id($App->Request->query->getInt('type')) !== false) {
             $Entity->addFilter(FilterableColumn::Category->value, $App->Request->query->getInt('type'));

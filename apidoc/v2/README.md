@@ -2,7 +2,7 @@
 
 ## Description
 
-This folder contains `openapi.yaml` file describing the REST API v2 for eLabFTW.
+This folder contains the `openapi.yaml` file describing the REST API v2 for eLabFTW, using [Openapi v3 specification](https://swagger.io/specification/).
 
 ## Validating
 
@@ -14,10 +14,10 @@ curl --data-binary @apidoc/v2/openapi.yaml -H 'Content-Type:application/yaml' ht
 
 ## Building the documentation
 
-To generate the documentation from the yaml file, we can run `swagger-ui` in a container:
+To generate the documentation from the yaml file, we can run [swagger-ui](https://github.com/swagger-api/swagger-ui) in a container:
 
 ~~~bash
 docker run --restart always --name swagger -e SWAGGER_JSON=/c/openapi.yaml -v $(pwd)/apidoc/v2/:/c -p 8085:8080 -d swaggerapi/swagger-ui
 ~~~
 
-Access it on http://localhost:8085.
+Access it on http://localhost:8085. Reload the page to see recent changes to the file.

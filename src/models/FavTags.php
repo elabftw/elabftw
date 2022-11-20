@@ -34,7 +34,7 @@ class FavTags implements RestInterface
 
     public function getPage(): string
     {
-        return '/favtags';
+        return 'api/v2/favtags/';
     }
 
     public function postAction(Action $action, array $reqBody): int

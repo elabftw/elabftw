@@ -1561,7 +1561,7 @@ paths:
     get:
       tags: ['Team tags']
       summary: Read all tags for the team.
-      operationId: read-tags
+      operationId: read-team_tags
       responses:
         '200':
           description: A list of tags.

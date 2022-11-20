@@ -23,7 +23,7 @@ class FavTagsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPage(): void
     {
-        $this->assertEquals('/favtags', $this->FavTags->getPage());
+        $this->assertEquals('api/v2/favtags/', $this->FavTags->getPage());
     }
 
     public function testCreate(): void

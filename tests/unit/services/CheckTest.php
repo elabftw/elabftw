@@ -36,12 +36,6 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(42, Check::id(42));
     }
 
-    public function testIdOrExplode(): void
-    {
-        $this->expectException(IllegalActionException::class);
-        Check::idOrExplode(-1337);
-    }
-
     public function testUsergroup(): void
     {
         $this->assertIsInt(Check::usergroup(1));

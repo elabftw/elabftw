@@ -182,6 +182,22 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Users->patch(Action::Lock, array());
     }
 
+    public function testUserTryToPromoteToAdmin(): void
+    {
+        $Users = new Users(5, 2);
+        $Target = new Users(5, 2, $Users);
+        $res = $Target->patch(Action::Update, array('usergroup' => '2'));
+        $this->assertEquals(4, $res['usergroup']);
+    }
+
+    public function testUserPatchUsergroup(): void
+    {
+        $Users = new Users(5, 2);
+        $Target = new Users(5, 2, $Users);
+        $res = $Target->patch(Action::Update, array('usergroup' => '4'));
+        $this->assertEquals(4, $res['usergroup']);
+    }
+
     public function testDestroy(): void
     {
         $Admin = new Users(4, 2);

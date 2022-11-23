@@ -22,7 +22,7 @@ use Elabftw\Services\Filter;
 
 final class UserParams extends ContentParams implements ContentParamsInterface
 {
-    public function __construct(string $target, string $content, private int $isSysadmin = 0)
+    public function __construct(string $target, string $content, private int $isSysadmin = 0, private int $isAdmin = 0, private int $targetIsSysadmin = 0)
     {
         parent::__construct($target, $content);
     }
@@ -71,12 +71,21 @@ final class UserParams extends ContentParams implements ContentParamsInterface
     private function checkUserGroup(int $usergroup): int
     {
         $usergroup = Check::usergroup($usergroup);
-        if ($usergroup === 1 && $this->isSysadmin !== 1) {
+        // a sysadmin can do what they want, no need to check further
+        if ($this->isSysadmin === 1) {
+            return $usergroup;
+        }
+        // prevent an admin from promoting a user to sysadmin
+        if ($this->isAdmin === 1 && $usergroup === 1) {
             throw new ImproperActionException('Only a sysadmin can promote another user to sysadmin.');
         }
         // a non sysadmin cannot demote a sysadmin
-        if ($usergroup !== 1 && $this->isSysadmin !== 1) {
+        if ($usergroup !== 1 && $this->targetIsSysadmin) {
             throw new ImproperActionException('Only a sysadmin can demote another sysadmin.');
+        }
+        // if requester is not admin the only valid usergroup is 4 (user)
+        if ($this->isAdmin !== 1) {
+            return 4;
         }
         return $usergroup;
     }

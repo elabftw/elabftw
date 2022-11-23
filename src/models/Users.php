@@ -243,11 +243,15 @@ class Users implements RestInterface
             Action::Update => (
                 function () use ($params) {
                     $isSysadmin = 0;
+                    $isAdmin = 0;
+                    $targetIsSysadmin = 0;
                     if ($this->requester instanceof self) {
                         $isSysadmin = $this->requester->userData['is_sysadmin'];
+                        $isAdmin = $this->requester->userData['is_admin'];
+                        $targetIsSysadmin = $this->userData['is_sysadmin'];
                     }
                     foreach ($params as $target => $content) {
-                        $this->update(new UserParams($target, (string) $content, $isSysadmin));
+                        $this->update(new UserParams($target, (string) $content, $isSysadmin, $isAdmin, $targetIsSysadmin));
                     }
                 }
             )(),

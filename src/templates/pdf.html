@@ -23,7 +23,7 @@
 
   <div id='header'>
     <h1>{{ entityData.title }}</h1>
-    <p style='float:left; width:90%;'>
+    <p>
     {{ entityDate }}
       <strong>{{ 'Date'|trans }}:</strong> {{ date }}<br>
       {% if entityData.tags %}
@@ -33,7 +33,9 @@
           <span class='tag'>{{ tag }}</span>
         {% endfor %}<br>
       {% endif %}
-      <strong>{{ 'Created by'|trans }}:</strong> {{ entityData.fullname }}
+      <strong>{{ 'Created by'|trans }}:</strong> {{ entityData.fullname }}<br>
+      <strong>{{ 'Visibility'|trans }}:</strong> {{ canread }}<br>
+      <strong>{{ 'Can write'|trans }}:</strong> {{ canwrite }}
     </p>
   </div>
 

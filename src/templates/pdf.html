@@ -6,27 +6,6 @@
     {{ useCjk ? '<style>td { font-family:sun-extA; }</style>' }}
   </head>
   <body {{ useCjk ? " style='font-family:sun-extA;'" }}>
-    <htmlpageheader name='header'>
-      <div id='header'>
-        <h1>{{ entityData.title }}</h1>
-        <p style='float:left; width:90%;'>
-        {{ entityDate }}
-          <strong>{{ 'Date'|trans }}:</strong> {{ date }}<br>
-          {% if entityData.tags %}
-            {% set tags = entityData.tags|split('|') %}
-            <strong>{{ 'Tags'|trans }}:</strong>
-            {% for tag in tags %}
-              <span class='tag'>{{ tag }}</span>
-            {% endfor %}<br>
-          {% endif %}
-          <strong>{{ 'Created by'|trans }}:</strong> {{ entityData.fullname }}
-        </p>
-        <p style='float:right; width:10%;'><br><br>
-          {PAGENO} / {nbpg}
-        </p>
-      </div>
-    </htmlpageheader>
-
   <htmlpagefooter name='footer'>
     {% if pdfSig %}
       <div class='footer-block signatures'>
@@ -36,12 +15,27 @@
       </div>
     {% endif %}
     <div class='footer-block footer'>
-      PDF generated with <a href="https://www.elabftw.net">elabftw</a>, a free and open source lab notebook
-      <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:i}</p>
+      <p style="font-size:6pt;">PDF generated with <a href="https://www.elabftw.net">elabftw</a>, a free and open source lab notebook<br>
+      File generated on {DATE d-m-Y} at {DATE H:i}</p>
+      <p>{PAGENO} / {nb}</p>
     </div>
   </htmlpagefooter>
-<sethtmlpageheader name='header' value='on' show-this-page='1' />
-<sethtmlpagefooter name='footer' value='on' />
+
+  <div id='header'>
+    <h1>{{ entityData.title }}</h1>
+    <p style='float:left; width:90%;'>
+    {{ entityDate }}
+      <strong>{{ 'Date'|trans }}:</strong> {{ date }}<br>
+      {% if entityData.tags %}
+        {% set tags = entityData.tags|split('|') %}
+        <strong>{{ 'Tags'|trans }}:</strong>
+        {% for tag in tags %}
+          <span class='tag'>{{ tag }}</span>
+        {% endfor %}<br>
+      {% endif %}
+      <strong>{{ 'Created by'|trans }}:</strong> {{ entityData.fullname }}
+    </p>
+  </div>
 
 {{ body|raw }}
 

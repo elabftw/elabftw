@@ -66,9 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // UPDATE TEMPLATE
     } else if (el.matches('[data-action="update-template"]')) {
       EntityC.update(entity.id, Target.Body, editor.getContent());
-    // DOWNLOAD TEMPLATE
-    } else if (el.matches('[data-action="download-template"]')) {
-      window.location.href = `make.php?format=eln&type=experiments_templates&id=${el.dataset.id}`;
     // SWITCH EDITOR TODO duplicated code from edit.ts
     } else if (el.matches('[data-action="switch-editor"]')) {
       EntityC.update(entity.id, Target.ContentType, editor.switch() === 'tiny' ? '1' : '2');

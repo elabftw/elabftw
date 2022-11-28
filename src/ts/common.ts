@@ -337,6 +337,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const newId = location[location.length -1];
         window.location.href = `database.php?mode=edit&id=${newId}`;
       });
+    // DOWNLOAD TEMPLATE
+    } else if (el.matches('[data-action="download-template"]')) {
+      window.location.href = `make.php?format=eln&type=experiments_templates&id=${el.dataset.id}`;
+    // TOGGLE BODY
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;
       const plusMinusIcon = el.querySelector('.fas');

@@ -46,7 +46,6 @@ class MakeMultiPdf extends AbstractMakePdf
             if ($key !== $idCount - 1) {
                 $this->mpdf->AddPageByArray(array(
                     'sheet-size' => $this->Entity->Users->userData['pdf_format'],
-                    'resetpagenum' => 1,
                 ));
             }
         }
@@ -66,7 +65,7 @@ class MakeMultiPdf extends AbstractMakePdf
         $this->Entity->setId($id);
         try {
             $permissions = $this->Entity->getPermissions();
-        } catch (IllegalActionException $e) {
+        } catch (IllegalActionException) {
             return;
         }
         if ($permissions['read']) {

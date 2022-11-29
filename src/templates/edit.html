@@ -25,47 +25,6 @@
   {% endblock %}
 {% endembed %}
 
-<!-- Modal for edit permissions -->
-<div class='modal fade' id='permModal' tabindex='-1' role='dialog' aria-labelledby='permModalLabel' aria-hidden='true'>
-  <div class='modal-dialog' role='document'>
-    <div class='modal-content'>
-      <div class='modal-header'>
-        <h5 class='modal-title' id='permModalLabel'>{{ 'Edit permissions'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
-          <span aria-hidden='true'>&times;</span>
-        </button>
-      </div>
-      <div class='modal-body'>
-        <!-- CAN READ -->
-        <div class='form-group'>
-        <i class='fas fa-fw fa-eye' title='Visibility'></i>
-        <label for='canread_select'>{{ 'Visibility'|trans }}</label>
-        <select id='canread_select' class='permissionSelect form-control' data-rw='canread'>
-          {% for key, value in visibilityArr %}
-            <option value='{{ key }}'
-            {{ Entity.entityData.canread == key ? ' selected' }}
-            >{{ value|trans }}</option>
-          {% endfor %}
-        </select>
-        <!-- CAN WRITE -->
-        <i class='fas fa-fw fa-pencil-alt' title='Can write'></i>
-        <label for='canwrite_select'>{{ 'Can write'|trans }}</label>
-        <select id='canwrite_select' class='permissionSelect form-control' data-rw='canwrite'>
-          {% for key, value in visibilityArr %}
-            <option value='{{ key }}'
-            {{ Entity.entityData.canwrite == key ? ' selected' }}
-            >{{ value|trans }}</option>
-          {% endfor %}
-        </select>
-        </div>
-      </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Modal for ownership transfer -->
 <div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel' aria-hidden='true'>
   <div class='modal-dialog' role='document'>
@@ -106,8 +65,6 @@
       <i class='fas fa-ellipsis-v fa-2x'></i>
     </a>
     <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
-      <!-- MANAGE PERMISSIONS -->
-      <a class='dropdown-item' data-action='toggle-modal' data-target='permModal'><i class='fas fa-share-alt fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
       <!-- TRANSFER OWNERSHIP -->
       {% if Entity.type == 'items' and (Entity.entityData.userid == App.Users.userData.userid or App.Session.get('is_admin')) %}
         <a class='dropdown-item' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer ownership'|trans }}</a>
@@ -139,7 +96,7 @@
 
   <div class='row align-items-center'>
     <!-- CATEGORIES (status for exp and itemstypes for items) -->
-    <div class='col-md-4 mb-2 form-inline'>
+    <div class='col-md-3 mb-2 form-inline'>
       <i class='fas fa-clipboard-check fa-fw mr-1'></i>
       <label for='category_select'>
       {% if Entity.type == 'experiments' %}
@@ -163,6 +120,31 @@
         <input aria-label='{{ 'Rating'|trans }}' data-rating='{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Entity.entityData.rating == i ? ' checked=checked' }} />
         {% endfor %}
       </fieldset>
+    </div>
+
+    <div class='col-md-3 mb-2 form-inline'>
+      <!-- CAN READ -->
+      <i class='fas fa-fw fa-eye' title='Visibility'></i>
+      <label for='canread_select'>{{ 'Visibility'|trans }}</label>
+      <select id='canread_select' class='permissionSelect form-control' data-rw='canread'>
+        {% for key, value in visibilityArr %}
+          <option value='{{ key }}'
+          {{ Entity.entityData.canread == key ? ' selected' }}
+          >{{ value|trans }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class='col-md-3 mb-2 form-inline'>
+      <!-- CAN WRITE -->
+      <i class='fas fa-fw fa-pencil-alt' title='Can write'></i>
+      <label for='canwrite_select'>{{ 'Can write'|trans }}</label>
+      <select id='canwrite_select' class='permissionSelect form-control' data-rw='canwrite'>
+        {% for key, value in visibilityArr %}
+          <option value='{{ key }}'
+          {{ Entity.entityData.canwrite == key ? ' selected' }}
+          >{{ value|trans }}</option>
+        {% endfor %}
+      </select>
     </div>
   </div>
 

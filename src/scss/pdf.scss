@@ -6,12 +6,11 @@
  * @package elabftw
  */
 
+/* see documentation: https://mpdf.github.io/paging/using-page.html */
 @page {
     /* stylelint-disable-next-line property-no-unknown */
-    footer: footer;
-    /* stylelint-disable-next-line property-no-unknown */
-    header: header;
-    size: auto;
+    footer: html_footer;
+    margin: 1cm;
 }
 
 body {
@@ -119,20 +118,15 @@ tr:nth-child(odd) {
 }
 
 .footer-block {
-    background-color: #e2e2e2;
-    border-radius: 5px;
     border-top: 1px solid #dcdddc;
     font-size: 80%;
-    padding: 10px 0;
-    width: 100%;
+    text-align: right;
 }
 
 .signatures {
+    margin-top: 10px;
     padding-left: 10px;
-}
-
-.footer {
-    text-align: center;
+    text-align: left;
 }
 
 /* caption for tinymce */

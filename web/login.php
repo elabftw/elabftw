@@ -38,7 +38,7 @@ try {
     if (!$Request->isSecure() && !$Request->server->has('HTTP_X_FORWARDED_PROTO')) {
         // get the url to display a link to click
         $url = SITE_URL;
-        $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='" .
+        $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server or ensure X-Forwarded-Proto header is correctly sent by the load balancer. Or follow this link : <a href='" .
             $url . "'>$url</a>";
         throw new ImproperActionException($message);
     }

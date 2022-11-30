@@ -37,9 +37,6 @@ class DisplayParams
     // the search from the top right search bar on experiments/database
     public string $query = '';
 
-    // the extended search query
-    public string $extendedQuery = '';
-
     // if this variable is not empty the error message shown will be different if there are no results
     public string $searchType = '';
 
@@ -108,8 +105,8 @@ class DisplayParams
             $this->searchType = 'query';
         }
         if (!empty($this->Request->query->get('extended'))) {
-            $this->extendedQuery = trim((string) $this->Request->query->get('extended'));
-            $this->searchType = 'extended';
+            $this->query = trim((string) $this->Request->query->get('extended'));
+            $this->searchType = 'query';
         }
         // now get pref from the filter-order-sort menu
         $this->sort = Sort::tryFrom($this->Request->query->getAlpha('sort')) ?? $this->sort;

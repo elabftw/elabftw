@@ -38,12 +38,8 @@ class QueryBuilderVisitor implements Visitor
     public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): WhereCollector
     {
         $param = $this->getUniqueID();
+        $query = sprintf('(entity.title LIKE %1$s OR entity.body LIKE %1$s OR entity.date LIKE %1$s OR entity.elabid LIKE %1$s)', $param);
 
-        $query = '(entity.body LIKE ' . $param . ' OR entity.title LIKE ' . $param . ')';
-        if ($parameters->isQuickSearch()) {
-            $query = '(entity.title LIKE ' . $param . ' OR entity.body LIKE ' . $param;
-            $query .= ' OR entity.date LIKE ' . $param . ' OR entity.elabid LIKE ' . $param . ')';
-        }
         return new WhereCollector(
             $query,
             array(array(

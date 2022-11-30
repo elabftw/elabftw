@@ -65,6 +65,18 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $this->assertStringStartsWith(' AND (((entity.body LIKE :', $whereClause['where']);
         $this->assertStringEndsWith(')))', $whereClause['where']);
 
+        // Quick search
+        $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
+            'experiments',
+            $this->visibilityList,
+            $this->groups,
+            true,
+        ));
+        $whereClause = $advancedSearchQuery->getWhereClause();
+        $this->assertIsArray($whereClause);
+        $this->assertStringStartsWith(' AND (((entity.title LIKE :', $whereClause['where']);
+        $this->assertStringEndsWith(')))', $whereClause['where']);
+        
         $query = 'category:"only meaningful with items but no error"';
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'items',

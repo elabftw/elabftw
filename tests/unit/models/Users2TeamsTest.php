@@ -9,6 +9,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Exceptions\ImproperActionException;
+
 class Users2TeamsTest extends \PHPUnit\Framework\TestCase
 {
     private Users2Teams $Users2Teams;
@@ -20,8 +22,9 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
 
     public function testRmUserFromTeams(): void
     {
-        $this->Users2Teams->rmUserFromTeams(4, array(2));
         $this->Users2Teams->addUserToTeams(4, array(3));
         $this->Users2Teams->rmUserFromTeams(4, array(3));
+        $this->expectException(ImproperActionException::class);
+        $this->Users2Teams->rmUserFromTeams(4, array(2));
     }
 }

@@ -25,6 +25,8 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
 {
     protected ZipStream $Zip;
 
+    protected bool $usePdfa = false;
+
     protected string $folder = '';
 
     protected string $contentType = 'application/zip';
@@ -86,7 +88,7 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
         $MpdfProvider = new MpdfProvider(
             $userData['fullname'],
             $userData['pdf_format'],
-            (bool) $userData['pdfa'],
+            $this->usePdfa,
         );
         return new MakePdf($MpdfProvider, $this->Entity);
     }

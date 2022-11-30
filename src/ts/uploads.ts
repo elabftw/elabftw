@@ -86,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         processNewFilename(event, filenameLink, parentSpan);
       });
       filenameLink.replaceWith(filenameInput);
+      filenameInput.focus();
 
     // TOGGLE DISPLAY
     } else if (el.matches('[data-action="toggle-uploads-layout"]')) {
@@ -101,6 +102,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // MORE INFORMATION
     } else if (el.matches('[data-action="more-info-upload"]')) {
       document.getElementById('moreInfo_' + el.dataset.uploadid).classList.remove('d-none');
+
+    // OPEN IN NMRIUM
+    } else if (el.matches('[data-action="open-in-nmrium"]')) {
+      ApiC.get(`${entity.type}/${entity.id}/${Model.Upload}/${el.dataset.uploadid}?format=binary`).then(response => {
+        response.text().then(content => {
+          window.open(`https://www.nmrium.org/nmrium#?rawJcamp=${encodeURIComponent(content)}`, '_blank');
+        });
+      });
 
     // SAVE MOL AS PNG
     } else if (el.matches('[data-action="save-mol-as-png"]')) {

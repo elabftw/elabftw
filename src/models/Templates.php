@@ -38,7 +38,7 @@ class Templates extends AbstractTemplateEntity
 
     public function getPage(): string
     {
-        return 'ucp.php?tab=3&templateid=';
+        return 'api/v2/experiments_templates/';
     }
 
     public function create(string $title): int
@@ -102,7 +102,7 @@ class Templates extends AbstractTemplateEntity
     public function readOne(): array
     {
         $sql = "SELECT experiments_templates.id, experiments_templates.title, experiments_templates.body,
-            experiments_templates.created_at, experiments_templates.modified_at,
+            experiments_templates.created_at, experiments_templates.modified_at, experiments_templates.content_type,
             experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
             experiments_templates.locked, experiments_templates.lockedby, experiments_templates.lockedwhen,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata, experiments_templates.state,
@@ -138,7 +138,8 @@ class Templates extends AbstractTemplateEntity
                 ($t['canwrite'] === 'team' && ((int) $t['teams_id'] === $this->Users->userData['team'])) ||
                 ($t['canwrite'] === 'user' && $t['userid'] === $this->Users->userData['userid']) ||
                 ($t['canwrite'] === 'useronly' && $t['userid'] === $this->Users->userData['userid']) ||
-                (in_array($t['canwrite'], $teamgroupsOfUser, true));
+                // cast to int is necessary because canwrite column is a string
+                (in_array((int) $t['canwrite'], $teamgroupsOfUser, true));
         });
     }
 
@@ -152,7 +153,7 @@ class Templates extends AbstractTemplateEntity
         $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
 
         $sql = "SELECT DISTINCT experiments_templates.id, experiments_templates.title, experiments_templates.body,
-                experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
+                experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite, experiments_templates.content_type,
                 experiments_templates.locked, experiments_templates.lockedby, experiments_templates.lockedwhen,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata,
                 users2teams.teams_id, teams.name AS team_name,
@@ -164,7 +165,7 @@ class Templates extends AbstractTemplateEntity
                 LEFT JOIN teams ON (teams.id = experiments_templates.team)
                 LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
                 LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
-                LEFT JOIN pin_experiments_templates2users ON (experiments_templates.id = pin_experiments_templates2users.entity_id)
+                LEFT JOIN pin_experiments_templates2users ON (experiments_templates.id = pin_experiments_templates2users.entity_id AND pin_experiments_templates2users.users_id = :userid)
                 WHERE experiments_templates.userid != 0 AND experiments_templates.state = :state AND (
                     experiments_templates.canread = 'public' OR
                     experiments_templates.canread = 'organization' OR

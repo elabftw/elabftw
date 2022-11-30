@@ -23,8 +23,9 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Services\AdvancedSearchQuery;
+use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Check;
-use Elabftw\Services\Filter;
 use Elabftw\Services\Transform;
 use Elabftw\Traits\EntityTrait;
 use function explode;
@@ -94,20 +95,6 @@ abstract class AbstractEntity implements RestInterface
 
     // inserted in sql
     private array $extendedValues = array();
-
-    // start metadata stuff
-    private bool $isMetadataSearch = false;
-
-    private array $metadataFilter = array();
-
-    private array $metadataHaving = array();
-
-    private array $metadataKey = array();
-
-    private array $metadataValuePath = array();
-
-    private array $metadataValue = array();
-    // end metadata stuff
 
     /**
      * Constructor
@@ -224,7 +211,12 @@ abstract class AbstractEntity implements RestInterface
      */
     public function readShow(DisplayParams $displayParams, bool $extended = false): array
     {
-        $sql = $this->getReadSqlBeforeWhere($extended, $extended);
+        // extended search (this block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
+        if ($displayParams->searchType === 'extended') {
+            $this->processExtendedQuery($displayParams->extendedQuery);
+        }
+
+        $sql = $this->getReadSqlBeforeWhere($extended, $extended, $displayParams->hasMetadataSearch);
         $teamgroupsOfUser = array_column($this->TeamGroups->readGroupsFromUser(), 'id');
 
         // first where is the state
@@ -237,7 +229,7 @@ abstract class AbstractEntity implements RestInterface
         $sql .= $displayParams->filterSql;
 
         // metadata filter (this will just be empty if we're not doing anything metadata related)
-        $sql .= implode(' ', $this->metadataFilter);
+        $sql .= implode(' ', $displayParams->metadataFilter);
 
         // teamFilter is to restrict to the team for items only
         // as they have a team column
@@ -264,11 +256,6 @@ abstract class AbstractEntity implements RestInterface
         }
         $sql .= ')';
 
-        // build the having clause for metadata
-        $metadataHavingSql = '';
-        if (!empty($this->metadataHaving)) {
-            $metadataHavingSql = 'HAVING ' . implode(' AND ', $this->metadataHaving);
-        }
 
         if (!empty($displayParams->query)) {
             $this->addToExtendedFilter(
@@ -281,7 +268,8 @@ abstract class AbstractEntity implements RestInterface
             $this->extendedFilter,
             $this->idFilter,
             'GROUP BY id',
-            $metadataHavingSql,
+            // build the having clause for metadata
+            $displayParams->getMetadataHavingSql(),
             'ORDER BY',
             $displayParams->orderby::toSql($displayParams->orderby),
             $displayParams->sort->value,
@@ -297,11 +285,11 @@ abstract class AbstractEntity implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
-        if ($this->isMetadataSearch) {
-            foreach ($this->metadataKey as $i => $v) {
-                $req->bindParam(sprintf(':metadata_key_%d', $i), $this->metadataKey[$i]);
-                $req->bindParam(sprintf(':metadata_value_path_%d', $i), $this->metadataValuePath[$i]);
-                $req->bindParam(sprintf(':metadata_value_%d', $i), $this->metadataValue[$i]);
+        if ($displayParams->hasMetadataSearch) {
+            foreach ($displayParams->metadataKey as $i => $v) {
+                $req->bindParam(sprintf(':metadata_key_%d', $i), $displayParams->metadataKey[$i]);
+                $req->bindParam(sprintf(':metadata_value_path_%d', $i), $displayParams->metadataValuePath[$i]);
+                $req->bindParam(sprintf(':metadata_value_%d', $i), $displayParams->metadataValue[$i]);
             }
         }
 
@@ -335,7 +323,10 @@ abstract class AbstractEntity implements RestInterface
 
     public function patch(Action $action, array $params): array
     {
-        $this->canOrExplode('write');
+        // the toggle pin action doesn't require write access to the entity
+        if ($action !== Action::Pin) {
+            $this->canOrExplode('write');
+        }
         match ($action) {
             Action::Lock => $this->toggleLock(),
             Action::Pin => $this->Pins->togglePin(),
@@ -441,19 +432,6 @@ abstract class AbstractEntity implements RestInterface
         $this->filterSql .= sprintf(" AND %s = '%s'", $column, (string) $value);
     }
 
-    public function addMetadataFilter(string $key, string $value): void
-    {
-        $this->isMetadataSearch = true;
-        $i = count($this->metadataKey);
-        // Note: the key is double quoted so spaces are not an issue
-        $key = '$.extra_fields."' . Filter::sanitize($key) . '"';
-        $this->metadataKey[] = $key;
-        $this->metadataValuePath[] = $key . '.value';
-        $this->metadataValue[] = Filter::sanitize($value);
-        $this->metadataFilter[] = sprintf(" AND JSON_CONTAINS_PATH(entity.metadata, 'one', :metadata_key_%d) ", $i);
-        $this->metadataHaving[] = sprintf(' JSON_UNQUOTE(JSON_EXTRACT(entity.metadata, :metadata_value_path_%d)) LIKE :metadata_value_%d', $i, $i);
-    }
-
     /**
      * Get an array of id changed since the lastchange date supplied
      *
@@ -529,12 +507,6 @@ abstract class AbstractEntity implements RestInterface
         return array_column($req->fetchAll(), 'id');
     }
 
-    public function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void
-    {
-        $this->extendedFilter .= $extendedFilter . ' ';
-        $this->extendedValues = array_merge($this->extendedValues, $extendedValues);
-    }
-
     public function destroy(): bool
     {
         if ($this instanceof AbstractConcreteEntity) {
@@ -558,7 +530,7 @@ abstract class AbstractEntity implements RestInterface
         if ($this->id === null) {
             throw new IllegalActionException('No id was set!');
         }
-        $sql = $this->getReadSqlBeforeWhere(true, true);
+        $sql = $this->getReadSqlBeforeWhere(true, true, true);
 
         $sql .= sprintf(' WHERE entity.id = %d', $this->id);
 
@@ -627,6 +599,12 @@ abstract class AbstractEntity implements RestInterface
         return $this->Db->execute($req);
     }
 
+    private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void
+    {
+        $this->extendedFilter .= $extendedFilter . ' ';
+        $this->extendedValues = array_merge($this->extendedValues, $extendedValues);
+    }
+
     /**
      * Update only one field in the metadata json
      */
@@ -671,7 +649,7 @@ abstract class AbstractEntity implements RestInterface
      * @param bool $fullSelect select all the columns of entity
      * @phan-suppress PhanPluginPrintfVariableFormatString
      */
-    private function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false): string
+    private function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false, bool $includeMetadata = false): string
     {
         if ($fullSelect) {
             // get all the columns of entity table, we add a literal string for the page that can be used by the mention tinymce plugin code
@@ -695,7 +673,7 @@ abstract class AbstractEntity implements RestInterface
                 entity.modified_at,';
             // don't include the metadata column unless we really need it
             // see https://stackoverflow.com/questions/29575835/error-1038-out-of-sort-memory-consider-increasing-sort-buffer-size
-            if ($this->isMetadataSearch) {
+            if ($includeMetadata) {
                 $select .= 'entity.metadata,';
             }
         }
@@ -801,6 +779,19 @@ abstract class AbstractEntity implements RestInterface
     {
         foreach ($this->extendedValues as $bindValue) {
             $req->bindValue($bindValue['param'], $bindValue['value'], $bindValue['type']);
+        }
+    }
+
+    private function processExtendedQuery(string $extendedQuery): void
+    {
+        $advancedQuery = new AdvancedSearchQuery($extendedQuery, new VisitorParameters($this->type, $this->TeamGroups->getVisibilityList(), $this->TeamGroups->readGroupsWithUsersFromUser()));
+        $whereClause = $advancedQuery->getWhereClause();
+        if ($whereClause) {
+            $this->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
+        }
+        $searchError = $advancedQuery->getException();
+        if (!empty($searchError)) {
+            throw new ImproperActionException('Error with extended search: ' . $searchError);
         }
     }
 }

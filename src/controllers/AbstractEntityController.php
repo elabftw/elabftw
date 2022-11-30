@@ -26,10 +26,7 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
-use Elabftw\Services\AdvancedSearchQuery;
-use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Symfony\Component\HttpFoundation\Response;
-use function trim;
 
 /**
  * For displaying an entity in show, view or edit mode
@@ -99,10 +96,6 @@ abstract class AbstractEntityController implements ControllerInterface
             $this->Entity->addFilter(FilterableColumn::Canread->value, 'public');
         }
 
-        // Quicksearch
-        $TeamGroups = new TeamGroups($this->Entity->Users);
-        $extendedError = $this->prepareAdvancedSearchQuery($TeamGroups->readGroupsWithUsersFromUser());
-
         $itemsArr = $this->getItemsArr();
         // get tags separately
         $tagsArr = array();
@@ -142,7 +135,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'teamGroupsFromUser' => $this->teamGroupsFromUser,
             'templatesArr' => $this->templatesArr,
             'visibilityArr' => $this->visibilityArr,
-            'extendedError' => $extendedError,
         );
         $Response = new Response();
         $Response->prepare($this->App->Request);
@@ -271,23 +263,5 @@ abstract class AbstractEntityController implements ControllerInterface
             $deletableXp = true;
         }
         return $deletableXp;
-    }
-
-    private function prepareAdvancedSearchQuery(array $teamGroups): string
-    {
-        $searchException = '';
-        if ($this->App->Request->query->has('extended') && !empty($this->App->Request->query->get('extended'))) {
-            $query = trim((string) $this->App->Request->query->get('extended'));
-
-            $advancedQuery = new AdvancedSearchQuery($query, new VisitorParameters($this->Entity->type, $this->visibilityArr, $teamGroups));
-            $whereClause = $advancedQuery->getWhereClause();
-            if ($whereClause) {
-                $this->Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
-            }
-
-            $searchException = $advancedQuery->getException();
-        }
-
-        return $searchException === '' ? '' : 'Search error: ' . $searchException;
     }
 }

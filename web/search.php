@@ -19,8 +19,6 @@ use Elabftw\Models\Status;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
-use Elabftw\Services\AdvancedSearchQuery;
-use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Check;
 
 /**
@@ -54,23 +52,6 @@ if ($App->Request->query->get('type') === 'experiments') {
     $Entity = $Database;
 }
 
-// EXTENDED SEARCH
-// default input for extendedArea
-$extended = 'author:"' . $Entity->Users->userData['fullname'] . '" ';
-$extendedError = '';
-
-if ($App->Request->query->has('extended') && !empty($App->Request->query->get('extended'))) {
-    $extended = trim((string) $App->Request->query->get('extended'));
-
-    $advancedQuery = new AdvancedSearchQuery($extended, new VisitorParameters($Entity->type, $visibilityArr, $teamGroupsArr));
-    $whereClause = $advancedQuery->getWhereClause();
-    if ($whereClause) {
-        $Entity->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);
-    }
-
-    $extendedError = $advancedQuery->getException();
-}
-
 // RENDER THE FIRST PART OF THE PAGE (search form)
 $renderArr = array(
     'Request' => $App->Request,
@@ -82,10 +63,7 @@ $renderArr = array(
     'statusArr' => $statusArr,
     'usersArr' => $usersArr,
     'visibilityArr' => $visibilityArr,
-    'extended' => $extended,
-    'extendedError' => $extendedError,
     'teamGroups' => array_column($teamGroupsArr, 'name'),
-    'whereClause' => print_r($whereClause ?? '', true), // only for dev
 );
 echo $App->render('search.html', $renderArr);
 
@@ -93,17 +71,10 @@ echo $App->render('search.html', $renderArr);
  * Here the search begins
  * If there is a search, there will be get parameters, so this is our main switch
  */
-if ($App->Request->query->count() > 0 && $extendedError === '') {
+if ($App->Request->query->count() > 0) {
     // PREPARE SQL query
     /////////////////////////////////////////////////////////////////
     if ($App->Request->query->has('type')) {
-        // Metadata search
-        foreach ($App->Request->query->all('metakey') as $i => $metakey) {
-            if (!empty($metakey)) {
-                $Entity->addMetadataFilter($metakey, $App->Request->query->all('metavalue')[$i]);
-            }
-        }
-
         // FILTER ON DATABASE ITEMS TYPES
         if (Check::id($App->Request->query->getInt('type')) !== false) {
             $Entity->addFilter(FilterableColumn::Category->value, $App->Request->query->getInt('type'));

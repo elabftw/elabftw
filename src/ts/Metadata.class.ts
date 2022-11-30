@@ -232,6 +232,8 @@ export class Metadata {
       displayFunction = this.edit;
     }
 
+    // clear previous content
+    this.metadataDiv.textContent = '';
     return displayFunction.call(this).catch(e => {
       if (e instanceof ResourceNotFoundException) {
         // no metadata is associated but it's okay, it's not an error

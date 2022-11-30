@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ImproperActionException;
 
 class FavTagsTest extends \PHPUnit\Framework\TestCase
 {
@@ -18,6 +19,11 @@ class FavTagsTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->FavTags = new FavTags(new Users(1, 1));
+    }
+
+    public function testGetPage(): void
+    {
+        $this->assertEquals('api/v2/favtags/', $this->FavTags->getPage());
     }
 
     public function testCreate(): void
@@ -29,9 +35,25 @@ class FavTagsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(0, $this->FavTags->postAction(Action::Create, array('tag' => 'test-tag')));
     }
 
+    public function testCreateNotExisting(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->FavTags->postAction(Action::Create, array('tag' => 'thistagdoesnotexist.com'));
+    }
+
     public function testRead(): void
     {
         $this->assertIsArray($this->FavTags->readAll());
+    }
+
+    public function testReadOne(): void
+    {
+        $this->assertIsArray($this->FavTags->readOne());
+    }
+
+    public function testPatch(): void
+    {
+        $this->assertIsArray($this->FavTags->patch(Action::Update, array()));
     }
 
     public function testDestroy(): void

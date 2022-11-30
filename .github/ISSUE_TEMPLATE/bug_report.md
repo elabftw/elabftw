@@ -6,11 +6,15 @@ about: If something isn't working as expected.
 ---
 
 # Describe the bug
-<!-- Before reporting an issue please check that you are using the latest eLabFTW version! -->
+<!-- Before reporting an issue please check that you are using the latest eLabFTW version!
 
-<!-- Please describe precisely your problem here. It is better to give more information than not enough! -->
+Please describe precisely your problem here. It is better to give more information than not enough!
 
-<!-- IMPORTANT: wrap your code/logs between `~~~` and write the command executed along with its output
+You can post your configuration file content by displaying it like this:
+
+grep -vE "^[[:blank:]]*#|^[[:blank:]]*$" /etc/elabftw.yml | grep -vE "PASSWORD|SECRET_KEY"
+
+!!! VERY SUPER VERY IMPORTANT!!! => wrap your code/logs between `~~~` and write the command executed along with its output
   Example:
 
   ~~~

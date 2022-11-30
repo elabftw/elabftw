@@ -104,7 +104,7 @@
     "psalmall": "psalm -c=src/tools/psalm.xml --show-info=true",
     "rector": "docker run -v /home/ktr/.dev/elabftw:/project rector/rector:latest process /project/src --config /project/src/tools/rector.php --autoload-file /project/vendor/autoload.php",
     "rector-dry": "docker run -v /home/ktr/.dev/elabftw:/project rector/rector:latest process /project/src --config /project/src/tools/rector.php --autoload-file /project/vendor/autoload.php --dry-run",
-    "srcdoc": "phpDocumentor run --cache-folder /tmp -i ./cache -i ./uploads -d src/classes -d src/controllers -d src/exceptions -d src/interfaces -d src/models -d src/services -d src/traits -d web/app/controllers -t _srcdoc",
+    "srcdoc": "phpDocumentor run --cache-folder /tmp -i ./cache -i ./uploads -d src/classes -d src/controllers -d src/exceptions -d src/interfaces -d src/models -d src/services -d src/traits -d web/app/controllers -t _srcdoc --setting=graphs.enabled=true",
     "static": "yarn psalm && yarn phpstan",
     "test": "tests/run.sh",
     "tinymce": "cp node_modules/tinymce/skins/ui/oxide/fonts/tinymce-mobile.woff web/app/css/tinymce/fonts/tinymce-mobile.woff && cp node_modules/tinymce/skins/ui/oxide/*.min.css web/app/css/tinymce/",

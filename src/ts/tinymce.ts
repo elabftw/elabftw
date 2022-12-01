@@ -164,6 +164,7 @@ export function getTinymceBaseConfig(page: string): object {
     charmap_append: [
       [0x2640, 'female sign'],
       [0x2642, 'male sign'],
+      [0x25A1, 'white square'],
     ],
     height: '500',
     mentions: {
@@ -240,5 +241,6 @@ export function getTinymceBaseConfig(page: string): object {
         },
       },
     ],
+    toolbar_sticky: true,
   };
 }

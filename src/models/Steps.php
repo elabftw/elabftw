@@ -120,7 +120,8 @@ class Steps implements RestInterface
             Action::Update => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
-                        $this->update(new StepParams($key, $value));
+                        // value can be null with deadline removal
+                        $this->update(new StepParams($key, $value ?? ''));
                     }
                 }
             )(),

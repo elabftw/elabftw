@@ -244,7 +244,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // IMPORT STEP INTO BODY
     } else if (el.matches('[data-action="import-step-body"]')) {
       ApiC.getJson(`${entity.type}/${entity.id}/${Model.Step}/${el.dataset.stepid}`).then(json => {
-        editor.setContent(json.body);
+        let content = `<a href='?mode=view&id=${entity.id}&highlightstep=${el.dataset.stepid}#step_view_${el.dataset.stepid}'>${json.body}</a>`;
+        // markdown
+        if (editor.type === 'md') {
+          content = `[${json.body}](?mode=view&id=${entity.id}&highlightstep=${el.dataset.stepid}#step_view_${el.dataset.stepid})`;
+        }
+        return editor.setContent(content);
       });
 
     // DESTROY ENTITY

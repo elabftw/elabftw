@@ -219,9 +219,9 @@
 
 </section>
 
-{% include 'uploads.html' %}
-
 {% include 'steps-links-view.html' %}
+
+{% include 'uploads.html' %}
 
 <!-- only show the json editor if there is at least one file with a .json extension -->
 {% if Entity.entityData.uploads|filter(u => u.real_name|getExt == 'json') %}

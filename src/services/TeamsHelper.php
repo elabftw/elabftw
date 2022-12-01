@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -60,7 +59,7 @@ class TeamsHelper
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        return array_column($req->fetchAll(), 'userid');
+        return $req->fetchAll(PDO::FETCH_COLUMN);
     }
 
     /**

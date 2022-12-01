@@ -73,7 +73,7 @@ class Auth implements AuthInterface
                 return new CookieAuth((string) $this->Request->cookies->get('token'), $this->Request->cookies->getDigits('token_team'));
             case 'elabid':
                 // now we need to know in which team we autologin the user
-                $ElabidFinder = new ElabidFinder($this->Request->getScriptName(), $this->Request->query->getAlnum('elabid'));
+                $ElabidFinder = new ElabidFinder($this->Request->getScriptName(), (string) ($this->Request->query->get('elabid') ?? ''));
                 $team = $ElabidFinder->findTeam();
 
                 if ($team === 0) {

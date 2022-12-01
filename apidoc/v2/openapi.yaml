@@ -54,7 +54,181 @@ components:
     config:
       type: object
       properties:
-        todo:
+        admin_validate:
+          type: string
+        admins_create_users:
+          type: string
+        announcement:
+          type: string
+        anon_users:
+          type: string
+        autologout_time:
+          type: string
+        blox_anon:
+          type: string
+        blox_enabled:
+          type: string
+        debug:
+          type: string
+        deletable_xp:
+          type: string
+        email_domain:
+          type: string
+        extauth_email:
+          type: string
+        extauth_firstname:
+          type: string
+        extauth_lastname:
+          type: string
+        extauth_remote_user:
+          type: string
+        extauth_teams:
+          type: string
+        lang:
+          type: string
+        ldap_base_dn:
+          type: string
+        ldap_email:
+          type: string
+        ldap_firstname:
+          type: string
+        ldap_host:
+          type: string
+        ldap_lastname:
+          type: string
+        ldap_password:
+          type: string
+        ldap_port:
+          type: string
+        ldap_team:
+          type: string
+        ldap_toggle:
+          type: string
+        ldap_use_tls:
+          type: string
+        ldap_username:
+          type: string
+        local_login:
+          type: string
+        local_register:
+          type: string
+        login_announcement:
+          type: string
+        login_tries:
+          type: string
+        logout_url:
+          type: string
+        mail_from:
+          type: string
+        max_revisions:
+          type: string
+        min_days_revisions:
+          type: string
+        min_delta_revisions:
+          type: string
+        open_science:
+          type: string
+        open_team:
+          type: string
+        privacy_policy:
+          type: string
+        proxy:
+          type: string
+        s3_bucket_name:
+          type: string
+        s3_endpoint:
+          type: string
+        s3_path_prefix:
+          type: string
+        s3_region:
+          type: string
+        saml_acs_binding:
+          type: string
+        saml_allowrepeatattributename:
+          type: string
+        saml_authnrequestssigned:
+          type: string
+        saml_baseurl:
+          type: string
+        saml_debug:
+          type: string
+        saml_entityid:
+          type: string
+        saml_logoutrequestsigned:
+          type: string
+        saml_logoutresponsesigned:
+          type: string
+        saml_lowercaseurlencoding:
+          type: string
+        saml_nameidencrypted:
+          type: string
+        saml_nameidformat:
+          type: string
+        saml_privatekey:
+          type: string
+        saml_relaxdestinationvalidation:
+          type: string
+        saml_signmetadata:
+          type: string
+        saml_slo_binding:
+          type: string
+        saml_strict:
+          type: string
+        saml_sync_teams:
+          type: string
+        saml_team_create:
+          type: string
+        saml_team_default:
+          type: string
+        saml_toggle:
+          type: string
+        saml_user_default:
+          type: string
+        saml_wantassertionsencrypted:
+          type: string
+        saml_wantassertionssigned:
+          type: string
+        saml_wantmessagessigned:
+          type: string
+        saml_wantnameid:
+          type: string
+        saml_wantnameidencrypted:
+          type: string
+        saml_wantxmlvalidation:
+          type: string
+        saml_x509:
+          type: string
+        saml_x509_new:
+          type: string
+        schema:
+          type: string
+        smtp_address:
+          type: string
+        smtp_encryption:
+          type: string
+        smtp_password:
+          type: string
+        smtp_port:
+          type: string
+        smtp_username:
+          type: string
+        support_url:
+          type: string
+        ts_authority:
+          type: string
+        ts_cert:
+          type: string
+        ts_hash:
+          type: string
+        ts_limit:
+          type: string
+        ts_login:
+          type: string
+        ts_password:
+          type: string
+        ts_url:
+          type: string
+        uploads_storage:
           type: string
     entity:
       type: object

@@ -241,5 +241,6 @@ export function getTinymceBaseConfig(page: string): object {
         },
       },
     ],
+    toolbar_sticky: true,
   };
 }

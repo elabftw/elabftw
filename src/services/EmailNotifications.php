@@ -146,7 +146,7 @@ class EmailNotifications
                 break;
             case Notifications::STEP_DEADLINE:
                 $subject .= _('A step deadline is approaching');
-                $url = SITE_URL . '/' . $notifBody['entity_page'] . '.php?mode=view&id=' . $notifBody['entity_id'];
+                $url = SITE_URL . '/' . $notifBody['entity_page'] . '.php?mode=view&id=' . $notifBody['entity_id'] . '&highlightstep=' . $notifBody['step_id'];
                 $body = _('Hello. A step deadline is approaching: ') . $url;
                 break;
             default:

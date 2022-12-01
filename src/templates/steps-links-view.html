@@ -6,7 +6,7 @@
     <div class='row mt-2' id='stepsDivContent' data-save-hidden='stepsDivContent'>
       <ul class='list-group ml-3' id='steps_div_{{ Entity.id }}' >
           {% for step in Entity.entityData.steps %}
-          <li class='list-group-item {{ step.finished ? 'finished' }}'>
+          <li class='list-group-item {{ step.finished ? 'finished' }} {{ App.Request.query.get('highlightstep') == step.id ? 'active' }}'>
             <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} {{ Entity.type == 'experiments_templates' ? 'disabled' }} data-id='{{ Entity.id }}' autocomplete='off' data-stepid='{{ step.id }}' class='stepbox mr-1' id='stepCheckbox_{{ step.id }}' />{{ step.body|raw }}
       {% if step.finished %}
       <span class='mr-2 text-muted'>

@@ -29,6 +29,7 @@ import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.ru.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sl.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sv.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.zh.js';
+import TableSorting from './TableSorting.class';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -51,6 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const ApiC = new Api();
+
+  const TableSortingC = new TableSorting();
+  TableSortingC.init();
 
   // set the language for js translated strings
   i18next.changeLanguage(document.getElementById('user-prefs').dataset.lang);
@@ -374,6 +378,8 @@ document.addEventListener('DOMContentLoaded', () => {
         bodyDiv.dataset.bodyLoaded = '1';
         // ask mathjax to reparse the page
         MathJax.typeset();
+
+        TableSortingC.init();
       });
     }
   });

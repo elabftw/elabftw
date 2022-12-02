@@ -126,12 +126,14 @@ export function notif(info: ResponseMsg): void {
   document.body.appendChild(overlay);
   // add text inside
   document.getElementById('overlay').appendChild(p);
+  // error message takes longer to disappear
+  const fadeOutDelay = info.res ? 2733 : 4871;
   // wait a bit and make it disappear
   window.setTimeout(function() {
     $('#overlay').fadeOut(763, function() {
       $(this).remove();
     });
-  }, 2733);
+  }, fadeOutDelay);
 }
 
 // DISPLAY 2D MOL FILES

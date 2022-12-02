@@ -80,7 +80,7 @@ class TwigFunctions
         return (new DateTime())->modify($input)->format('Y-m-d H:i:s');
     }
 
-    public static function getOrderIcon(string $orderBy): string
+    public static function getSortIcon(string $orderBy): string
     {
         $Request = Request::createFromGlobals();
         if (Orderby::tryFrom($orderBy) === Orderby::tryFrom($Request->query->getAlpha('order'))) {

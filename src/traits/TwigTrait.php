@@ -71,7 +71,7 @@ trait TwigTrait
         $numberOfQueries = new TwigFunction('numberOfQueries', '\Elabftw\Elabftw\TwigFunctions::getNumberOfQueries');
         $minPasswordLength = new TwigFunction('minPasswordLength', '\Elabftw\Elabftw\TwigFunctions::getMinPasswordLength');
         $ext2icon = new TwigFunction('ext2icon', '\Elabftw\Elabftw\Extensions::getIconFromExtension');
-        $orderIcon = new TwigFunction('orderIcon', '\Elabftw\Elabftw\TwigFunctions::getOrderIcon');
+        $sortIcon = new TwigFunction('sortIcon', '\Elabftw\Elabftw\TwigFunctions::getSortIcon');
 
 
         // load the i18n extension for using the translation tag for twig
@@ -102,7 +102,7 @@ trait TwigTrait
         $TwigEnvironment->addFunction($numberOfQueries);
         $TwigEnvironment->addFunction($minPasswordLength);
         $TwigEnvironment->addFunction($ext2icon);
-        $TwigEnvironment->addFunction($orderIcon);
+        $TwigEnvironment->addFunction($sortIcon);
 
         // add the version as a global var so we can have it for the ?v=x.x.x for js files
         $TwigEnvironment->addGlobal('v', App::INSTALLED_VERSION);

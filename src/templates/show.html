@@ -164,16 +164,16 @@
         <table class='item-table' aria-describedby='pageTitle'>
           <tr>
             <th>
-              {{ 'Date'|trans }} <a href='#' data-action='reorder-entities' data-orderby='date'><i class='fas {{ orderIcon("date") }}'></i></a>
+              {{ 'Date'|trans }} <a href='#' data-action='reorder-entities' data-orderby='date'><i class='fas {{ sortIcon("date") }}'></i></a>
             </th>
             <th class='title-item-table'>
-              {{ 'Title'|trans }} <a href='#' data-action='reorder-entities' data-orderby='title'><i class='fas {{ orderIcon("title") }}'></i></a>
+              {{ 'Title'|trans }} <a href='#' data-action='reorder-entities' data-orderby='title'><i class='fas {{ sortIcon("title") }}'></i></a>
             </th>
             <th class='step-item-table'>
               {{ 'Next step'|trans }}
             </th>
             <th class='category-item-table'>
-              {{ 'Category'|trans }} <a href='#' data-action='reorder-entities' data-orderby='cat'><i class='fas {{ orderIcon("cat") }}'></i></a>
+              {{ 'Category'|trans }} <a href='#' data-action='reorder-entities' data-orderby='cat'><i class='fas {{ sortIcon("cat") }}'></i></a>
             </th>
             <th class='tags-item-table'>
               {{ 'Tags'|trans }}
@@ -182,10 +182,10 @@
               {{ 'Actions'|trans }}
             </th>
             <th class='actions-item-rating'>
-              {{ 'Rating'|trans }} <a href='#' data-action='reorder-entities' data-orderby='rating'><i class='fas {{ orderIcon("rating") }}'></i></a>
+              {{ 'Rating'|trans }} <a href='#' data-action='reorder-entities' data-orderby='rating'><i class='fas {{ sortIcon("rating") }}'></i></a>
             </th>
             <th class='actions-item-owner'>
-              {{ 'Owner'|trans }} <a href='#' data-action='reorder-entities' data-orderby='user'><i class='fas {{ orderIcon("user") }}'></i></a>
+              {{ 'Owner'|trans }} <a href='#' data-action='reorder-entities' data-orderby='user'><i class='fas {{ sortIcon("user") }}'></i></a>
             </th>
           </tr>
         {% for item in itemsArr|slice(0, DisplayParams.limit) %}

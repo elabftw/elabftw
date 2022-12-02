@@ -43,21 +43,20 @@ abstract class AbstractApiController implements ControllerInterface
             throw new ImproperActionException('You are using a read-only key to execute a write action.');
         }
         /**
-         * so we receive the request already split in two by nginx
-         * first part is "req" and then if there is any query string it ends up in "args"
-         * generate an array with the request that looks like this
-         * for /api/v1/experiments/1:
+         * Nginx rewrite config (https://github.com/elabftw/elabimg/blob/4c9b4c2565323f1aa065d8ce5c87eb3e821895b4/src/nginx/common.conf#L74)
+         * will put the request in 'req' query
+         * example for /api/v2/experiments/42:
          *   array(5) {
          *   [0]=>
          *   string(0) ""
          *   [1]=>
          *   string(3) "api"
          *   [2]=>
-         *   string(2) "v1"
+         *   string(2) "v2"
          *   [3]=>
          *   string(11) "experiments"
          *   [4]=>
-         *   string(1) "1"
+         *   string(1) "42"
          *   }
          */
         $req = explode('/', rtrim((string) $this->Request->query->get('req'), '/'));

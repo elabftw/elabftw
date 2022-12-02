@@ -207,7 +207,7 @@ final class Config implements RestInterface
      */
     public function patch(Action $action, array $params): array
     {
-        $passwords = array('smtp_password', 'ldap_password');
+        $passwords = array('smtp_password', 'ldap_password', 'ts_password');
 
         foreach ($passwords as $password) {
             if (isset($params[$password]) && !empty($params[$password])) {

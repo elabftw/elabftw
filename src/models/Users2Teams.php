@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\UsersHelper;
 use PDO;
 
@@ -58,7 +59,7 @@ class Users2Teams
         // make sure that the user is in more than one team before removing the team
         $UsersHelper = new UsersHelper($userid);
         if (count($UsersHelper->getTeamsFromUserid()) === 1) {
-            return false;
+            throw new ImproperActionException('Cannot remove last team from user: users must belong to at least one team.');
         }
         $sql = 'DELETE FROM users2teams WHERE `users_id` = :userid AND `teams_id` = :team';
         $req = $this->Db->prepare($sql);

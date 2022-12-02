@@ -19,8 +19,14 @@
           <div class='dropdown-menu dropdown-menu-right'>
             <!-- IMPORT -->
             <a href='#' class='dropdown-item' data-action='import-template' data-id='{{ entityData.id }}'><i class='fas fa-file-import fa-fw mr-1'></i>{{ 'Import to your profile'|trans }}</a>
+            <!-- PIN -->
+            <a data-action='toggle-pin' data-id='{{ Entity.entityData.id }}' href='#' class='dropdown-item'>
+              <i class='fas fa-thumbtack fa-fw mr-1'></i>{{ 'Toggle pin (add to create button menu)'|trans }}
+            </a>
             <!-- CREATE EXPERIMENT FROM TPL -->
             <a href='#' data-action='create-entity' data-tplid='{{ entityData.id }}' class='dropdown-item'><i class='fas fa-circle-plus fa-fw mr-1'></i>{{ 'Create experiment from template'|trans }}</a>
+            <!-- DOWNLOAD TEMPLATE -->
+            <a href='#' data-action='download-template' data-id='{{ entityData.id }}' class='dropdown-item'><i class='fas fa-download fa-fw mr-1'></i>{{ 'Download template'|trans }}</a>
             <!-- DESTROY TPL -->
             {% if App.Session.get('is_admin') %}
             <div class='dropdown-divider'></div>

@@ -878,27 +878,20 @@ the form-control fails to do that so we do the border ourselves */
     border: 1px solid $elabblue;
 }
 
-.txt {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    color: #000;
-    font-size: 16px;
-    margin-top: 10px;
-    padding: 5px;
-}
-
 /* title on editXP */
 #title_input {
     margin: 0 0 15px;
     width: 100%;
 }
 
+.maingray {
+    color: $maingray;
+}
+
 /* elabid */
 .elabid {
     color: $maingray;
     overflow-wrap: break-word;
-    text-align: right;
 }
 
 .thumbnail {

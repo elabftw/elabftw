@@ -218,52 +218,7 @@
       <!-- END SEARCH WITH TAG -->
     </div>
 
-    <!-- NEW ROW -->
-    <div class='row'>
-      <div class='col-md-8 mb-2'>
-        <label for='extendedArea'><i class='fas fa-search'></i> {{ 'Search query'|trans }}</label>
-        {# next div is wrapper to position pre below textarea #}
-        <div style='position:relative;'>
-          <textarea
-            id='extendedArea'
-            name='extended'
-            rows='10'
-            class='form-control'
-            placeholder='author:"{{ App.Users.userData.fullname|raw }}" status:"Running"'
-            spellcheck='false'
-          >{{ extended }}</textarea>
-          <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
-
-        </div>
-        <small class='form-text text-muted'>
-          Press <kbd><kbd>ctrl</kbd> + <kbd>enter</kbd></kbd> or <kbd><kbd>⌘</kbd> + <kbd>enter</kbd></kbd> to submit search.
-          {% if App.Config.configArr.debug %}
-            <kbd data-action='toggle-next'>debug</kbd>
-            <pre hidden>{{ whereClause|raw }}</pre>
-          {% endif %}
-        </small>
-      </div>
-      <div class='col-md-4 mb-2'>
-        <p>Allowed Fields (<code><span class='token keyword'>field</span><span class='token punctuation'>:</span><span class='token string'>value</span></code>):</p>
-        <ul class='list-unstyled'>
-          <li><strong>attachment</strong>: yes, no, Simple or Quoted term</li>
-          <li><strong>author</strong>: Simple or Quoted term</li>
-          <li><strong>body</strong>: Simple or Quoted term</li>
-          <li><strong>category</strong>: Simple or Quoted term</li>
-          <li><strong>date</strong>: see date format</li>
-          <li><strong>elabid</strong>: Simple or Quoted term</li>
-          <li><strong>group</strong>: Simple or Quoted term</li>
-          <li><strong>locked</strong>: yes or no</li>
-          <li><strong>rating</strong>: 1, 2, 3, 4, 5, or unrated or 0</li>
-          <li><strong>status</strong>: Simple or Quoted term</li>
-          <li><strong>timestamped</strong>: yes or no</li>
-          <li><strong>title</strong>: Simple or Quoted term</li>
-          <li><strong>visibility</strong>: Simple or Quoted term</li>
-        </ul>
-        <a data-action='toggle-modal' href='#' data-target='advancedSearchModal'>{{ 'Full syntax'|trans }}</a>
-      </div>
-    </div>
-
+    <!-- SEARCH HELPERS -->
     <h4 data-action='toggle-next' data-icon='extendedSearchIcon'><i id='extendedSearchIcon' class='fas fa-chevron-circle-right'></i> {{ 'Search helpers'|trans }}</h4>
     <div hidden class='box mb-1' data-save-hidden='searchHelpersDiv' style='overflow:visible;'>
       <div class='row'>
@@ -424,6 +379,49 @@
       <div data-action='add-extra-fields-search-inputs'><i class='fas fa-plus-circle fa-2x'></i></div>
     </div>
 
+    <!-- MAIN TEXTAREA FOR EXTENDED QUERY -->
+    <div class='row'>
+      <div class='col-md-8 mb-2'>
+        <h5><label for='extendedArea'><i class='fas fa-search'></i> {{ 'Search query'|trans }}</label></h5>
+        {# next div is wrapper to position pre below textarea #}
+        <div style='position:relative;'>
+          <textarea
+            id='extendedArea'
+            name='extended'
+            rows='10'
+            class='form-control'
+            placeholder='author:"{{ App.Users.userData.fullname|raw }}" status:"Running"'
+            spellcheck='false'
+          >{{ App.Request.query.get('extended') ? App.Request.query.get('extended')|trim : 'author:"' ~ App.Users.userData.fullname ~ '" ' }}</textarea>
+          <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
+
+        </div>
+        <small class='form-text text-muted'>
+          Press <kbd><kbd>ctrl</kbd> + <kbd>enter</kbd></kbd> or <kbd><kbd>⌘</kbd> + <kbd>enter</kbd></kbd> to submit search.
+        </small>
+      </div>
+      <div class='col-md-4 mb-2'>
+        <p>Allowed Fields (<code><span class='token keyword'>field</span><span class='token punctuation'>:</span><span class='token string'>value</span></code>):</p>
+        <ul class='list-unstyled'>
+          <li><strong>attachment</strong>: yes, no, Simple or Quoted term</li>
+          <li><strong>author</strong>: Simple or Quoted term</li>
+          <li><strong>body</strong>: Simple or Quoted term</li>
+          <li><strong>category</strong>: Simple or Quoted term</li>
+          <li><strong>date</strong>: see date format</li>
+          <li><strong>elabid</strong>: Simple or Quoted term</li>
+          <li><strong>group</strong>: Simple or Quoted term</li>
+          <li><strong>locked</strong>: yes or no</li>
+          <li><strong>rating</strong>: 1, 2, 3, 4, 5, or unrated or 0</li>
+          <li><strong>status</strong>: Simple or Quoted term</li>
+          <li><strong>timestamped</strong>: yes or no</li>
+          <li><strong>title</strong>: Simple or Quoted term</li>
+          <li><strong>visibility</strong>: Simple or Quoted term</li>
+        </ul>
+        <a data-action='toggle-modal' href='#' data-target='advancedSearchModal'>{{ 'Full syntax'|trans }}</a>
+      </div>
+    </div>
+
+    <!-- Search action buttons -->
     <div style='margin:30px;' class='text-center'>
       <button id='searchButton' class='button btn btn-primary' value='Submit' type='submit'>
         {{ 'Launch search'|trans }}
@@ -432,6 +430,7 @@
         {{ 'Clear all'|trans }}
       </a>
     </div>
+
   </section>
 <!-- if there is no query, end the form here, otherwise let it open so the filter/order/sort menu can be part of it
   it avoids having to repeat the query params -->

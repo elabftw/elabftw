@@ -109,11 +109,6 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($res);
     }
 
-    public function testAddMetadataFilter(): void
-    {
-        $this->Experiments->addMetadataFilter('key', 'value');
-    }
-
     public function testGetTimestampThisMonth(): void
     {
         $this->assertEquals(0, $this->Experiments->getTimestampLastMonth());

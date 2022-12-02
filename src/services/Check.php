@@ -51,17 +51,6 @@ class Check
         return filter_var($id, FILTER_VALIDATE_INT, $filter_options);
     }
 
-    /**
-     * Check id and throw exception if it's wrong
-     */
-    public static function idOrExplode(int $id): int
-    {
-        if (self::id($id) === false) {
-            throw new IllegalActionException('The id parameter is not valid!');
-        }
-        return $id;
-    }
-
     public static function usergroup(int $gid): int
     {
         return match ($gid) {

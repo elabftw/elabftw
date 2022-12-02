@@ -94,7 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
         notif(nothingSelectedError);
         return;
       }
-      window.location.href = `make.php?format=${el.value}&type=${about.type}&id=${checked.map(value => value.id).join('+')}`;
+      const format = el.value;
+      // reset selection so button can be used again with same format
+      el.selectedIndex = 0;
+      window.location.href = `make.php?format=${format}&type=${about.type}&id=${checked.map(value => value.id).join('+')}`;
 
     // UPDATE CATEGORY
     } else if (el.matches('[data-action="update-category-selected-entities"]')) {

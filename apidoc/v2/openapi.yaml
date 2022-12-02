@@ -19,7 +19,7 @@ components:
       type: object
       properties:
         id:
-          type: number
+          type: integer
         name:
           type: string
         created_at:
@@ -27,7 +27,7 @@ components:
         hash:
           type: string
         can_write:
-          type: number
+          type: integer
     comment:
       type: object
       properties:
@@ -54,7 +54,181 @@ components:
     config:
       type: object
       properties:
-        todo:
+        admin_validate:
+          type: string
+        admins_create_users:
+          type: string
+        announcement:
+          type: string
+        anon_users:
+          type: string
+        autologout_time:
+          type: string
+        blox_anon:
+          type: string
+        blox_enabled:
+          type: string
+        debug:
+          type: string
+        deletable_xp:
+          type: string
+        email_domain:
+          type: string
+        extauth_email:
+          type: string
+        extauth_firstname:
+          type: string
+        extauth_lastname:
+          type: string
+        extauth_remote_user:
+          type: string
+        extauth_teams:
+          type: string
+        lang:
+          type: string
+        ldap_base_dn:
+          type: string
+        ldap_email:
+          type: string
+        ldap_firstname:
+          type: string
+        ldap_host:
+          type: string
+        ldap_lastname:
+          type: string
+        ldap_password:
+          type: string
+        ldap_port:
+          type: string
+        ldap_team:
+          type: string
+        ldap_toggle:
+          type: string
+        ldap_use_tls:
+          type: string
+        ldap_username:
+          type: string
+        local_login:
+          type: string
+        local_register:
+          type: string
+        login_announcement:
+          type: string
+        login_tries:
+          type: string
+        logout_url:
+          type: string
+        mail_from:
+          type: string
+        max_revisions:
+          type: string
+        min_days_revisions:
+          type: string
+        min_delta_revisions:
+          type: string
+        open_science:
+          type: string
+        open_team:
+          type: string
+        privacy_policy:
+          type: string
+        proxy:
+          type: string
+        s3_bucket_name:
+          type: string
+        s3_endpoint:
+          type: string
+        s3_path_prefix:
+          type: string
+        s3_region:
+          type: string
+        saml_acs_binding:
+          type: string
+        saml_allowrepeatattributename:
+          type: string
+        saml_authnrequestssigned:
+          type: string
+        saml_baseurl:
+          type: string
+        saml_debug:
+          type: string
+        saml_entityid:
+          type: string
+        saml_logoutrequestsigned:
+          type: string
+        saml_logoutresponsesigned:
+          type: string
+        saml_lowercaseurlencoding:
+          type: string
+        saml_nameidencrypted:
+          type: string
+        saml_nameidformat:
+          type: string
+        saml_privatekey:
+          type: string
+        saml_relaxdestinationvalidation:
+          type: string
+        saml_signmetadata:
+          type: string
+        saml_slo_binding:
+          type: string
+        saml_strict:
+          type: string
+        saml_sync_teams:
+          type: string
+        saml_team_create:
+          type: string
+        saml_team_default:
+          type: string
+        saml_toggle:
+          type: string
+        saml_user_default:
+          type: string
+        saml_wantassertionsencrypted:
+          type: string
+        saml_wantassertionssigned:
+          type: string
+        saml_wantmessagessigned:
+          type: string
+        saml_wantnameid:
+          type: string
+        saml_wantnameidencrypted:
+          type: string
+        saml_wantxmlvalidation:
+          type: string
+        saml_x509:
+          type: string
+        saml_x509_new:
+          type: string
+        schema:
+          type: string
+        smtp_address:
+          type: string
+        smtp_encryption:
+          type: string
+        smtp_password:
+          type: string
+        smtp_port:
+          type: string
+        smtp_username:
+          type: string
+        support_url:
+          type: string
+        ts_authority:
+          type: string
+        ts_cert:
+          type: string
+        ts_hash:
+          type: string
+        ts_limit:
+          type: string
+        ts_login:
+          type: string
+        ts_password:
+          type: string
+        ts_url:
+          type: string
+        uploads_storage:
           type: string
     entity:
       type: object
@@ -78,7 +252,7 @@ components:
           items:
             $ref: '#/components/schemas/comment'
         content_type:
-          type: number
+          type: integer
         created_at:
           type: string
         date:
@@ -98,7 +272,7 @@ components:
         has_comment:
           type: integer
         id:
-          type: number
+          type: integer
         is_bound:
           type: string
         lastchangeby:
@@ -364,10 +538,12 @@ components:
         users:
           type: array
           items:
-            userid:
-              type: integer
-            fullname:
-              type: string
+            type: object
+            properties:
+              userid:
+                type: integer
+              fullname:
+                type: string
     todoitem:
       type: object
       properties:
@@ -525,7 +701,7 @@ paths:
           description: ID of the API key
           required: true
           schema:
-            type: number
+            type: integer
       responses:
         '204':
           description: The key was deleted
@@ -638,11 +814,17 @@ paths:
             first:
               summary: Look for entries linked to item with id 42.
               value: 42
+        - name: cat
+          in: query
+          schema:
+            type: integer
+          description: |
+            The status id of the experiments.
         - name: limit
           in: query
           schema:
             type: integer
-          default: 15
+            default: 15
           description: |
             Limit the number of results.
           examples:
@@ -653,13 +835,37 @@ paths:
           in: query
           schema:
             type: integer
-          default: 0
+            default: 0
           description: |
             Skip a number of results. Use with limit to work the pagination.
           examples:
             first:
               summary: Skip 3 first results.
               value: 3
+        - name: metakey[]
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          description: |
+            Key search in metadata.
+          examples:
+            first:
+              summary: Look for a metadata key of "Magnification".
+              value: Magnification
+        - name: metavalue[]
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          description: |
+            Value search in metadata.
+          examples:
+            first:
+              summary: Look for a value of "20X".
+              value: 20X
       responses:
         '200':
           description: A list of experiments
@@ -677,7 +883,7 @@ paths:
         description: ID of the experiment
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Experiments']
       summary: Read an experiment
@@ -688,13 +894,16 @@ paths:
           schema:
             type: string
             enum: ['csv', 'eln', 'json', 'qrpdf', 'pdf', 'pdfa', 'zip', 'zipa']
-          default: json
+            default: json
           description: |
             Get the entity in a different format like csv, pdf, eln or zip. "pdfa" means archive pdf (PDF/A), same with "zipa".
           examples:
             first:
               summary: Generate a pdf
               value: pdf
+            second:
+              summary: Generate a csv
+              value: csv
       responses:
         '200':
           description: An experiment
@@ -794,11 +1003,18 @@ paths:
             first:
               summary: Search for all items with a rating of 2.
               value: "rating%3A2"
+        # This one is not exactly copy paste
+        - name: cat
+          in: query
+          schema:
+            type: integer
+          description: |
+            The category id of the items.
         - name: limit
           in: query
           schema:
             type: integer
-          default: 15
+            default: 15
           description: |
             Limit the number of results.
           examples:
@@ -809,13 +1025,37 @@ paths:
           in: query
           schema:
             type: integer
-          default: 0
+            default: 0
           description: |
             Skip a number of results. Use with limit to work the pagination.
           examples:
             first:
               summary: Skip 3 first results.
               value: 3
+        - name: metakey[]
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          description: |
+            Key search in metadata.
+          examples:
+            first:
+              summary: Look for a metadata key of "Magnification".
+              value: Magnification
+        - name: metavalue[]
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          description: |
+            Value search in metadata.
+          examples:
+            first:
+              summary: Look for a value of "20X".
+              value: 20X
       # end duplicate from GET /experiments
       responses:
         '200':
@@ -834,7 +1074,7 @@ paths:
         description: ID of the item
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Items']
       summary: Read an item
@@ -882,7 +1122,7 @@ paths:
         description: ID of the entity
         required: true
         schema:
-          type: number
+          type: integer
     post:
       tags: ['Comments']
       summary: Create a comment.
@@ -892,11 +1132,11 @@ paths:
         content:
           application/json:
             schema:
+              required: ['comment']
               type: object
               properties:
                 comment:
                   type: string
-                  required: true
       responses:
         '201':
           description: The comment has been created.
@@ -933,13 +1173,13 @@ paths:
         description: ID of the entity
         required: true
         schema:
-          type: number
+          type: integer
       - name: subid
         in: path
         description: ID of the comment
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Comments']
       summary: Read a comment of that entity.
@@ -978,7 +1218,7 @@ paths:
           description: The comment was deleted
 
   # ITEMS LINKS
-  /{entity_type/{id}/items_links:
+  /{entity_type}/{id}/items_links:
     summary: Links from entity to items.
     parameters:
       - name: entity_type
@@ -993,7 +1233,7 @@ paths:
         description: ID of the entity
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Links to items']
       summary: Read all items links of that entity.
@@ -1022,13 +1262,13 @@ paths:
         description: ID of the entity
         required: true
         schema:
-          type: number
+          type: integer
       - name: subid
         in: path
         description: ID of the item (link)
         required: true
         schema:
-          type: number
+          type: integer
     post:
       tags: ['Links to items']
       summary: Create or import a link.
@@ -1078,7 +1318,7 @@ paths:
         description: ID of the entity
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Links to experiments']
       summary: Read all experiments links of that entity.
@@ -1107,13 +1347,13 @@ paths:
         description: ID of the entity
         required: true
         schema:
-          type: number
+          type: integer
       - name: subid
         in: path
         description: ID of the experiment linked
         required: true
         schema:
-          type: number
+          type: integer
     post:
       tags: ['Links to experiments']
       summary: Create or import a link.
@@ -1184,7 +1424,7 @@ paths:
             application/json:
               schema:
                 type: array
-                experiments_templates:
+                items:
                   $ref: '#/components/schemas/experiment_template'
   /experiments_templates/{id}:
     summary: Actions on an experiment template
@@ -1194,7 +1434,7 @@ paths:
         description: ID of the experiment template
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Experiments templates']
       summary: Read an experiment template
@@ -1263,7 +1503,7 @@ paths:
             application/json:
               schema:
                 type: array
-                items_types:
+                items:
                   $ref: '#/components/schemas/item'
   /items_types/{id}:
     summary: Actions on an items type.
@@ -1273,7 +1513,7 @@ paths:
         description: ID of the items type.
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Items types']
       summary: Read an items type
@@ -1300,7 +1540,7 @@ paths:
       tags: ['Items types']
       summary: Delete an item type.
       description: The item gets soft-deleted.
-      operationId: delete-item
+      operationId: delete-items_type
       responses:
         '204':
           description: The item type was deleted.
@@ -1319,7 +1559,7 @@ paths:
             application/json:
               schema:
                 type: array
-                items_types:
+                items:
                   $ref: '#/components/schemas/event'
 
   /events/{id}:
@@ -1329,7 +1569,7 @@ paths:
         description: ID of the item to book.
         required: true
         schema:
-          type: number
+          type: integer
     post:
       tags: ['Events']
       summary: Create an event for the item specified as id.
@@ -1363,7 +1603,7 @@ paths:
       tags: ['Events']
       summary: |
         Modify a booking slot. Warning: only one value (target) can be edited at a time.
-      operationId: patch-items_type
+      operationId: patch-event
       requestBody:
         description: Parameters for modifying an event.
         content:
@@ -1420,7 +1660,7 @@ paths:
         description: ID of the event to modify.
         required: true
         schema:
-          type: number
+          type: integer
     delete:
       tags: ['Events']
       summary: Delete a booking slot.
@@ -1463,6 +1703,15 @@ paths:
                 tag:
                   type: string
                   description: An existing tag
+      responses:
+        '201':
+          description: The favtag has been created.
+          headers:
+            location:
+              description: |
+                Favorite tags don't have an ID, so the returned URL in Location in invalid.
+              schema:
+                type: string
   /favtags/{id}:
     summary: A particular favorite tag.
     parameters:
@@ -1471,7 +1720,7 @@ paths:
         description: ID of the tag.
         required: true
         schema:
-          type: number
+          type: integer
     delete:
       tags: ['Favorite tags']
       summary: Unfavorite a tag.
@@ -1486,7 +1735,7 @@ paths:
     get:
       tags: ['Team tags']
       summary: Read all tags for the team.
-      operationId: read-tags
+      operationId: read-team_tags
       responses:
         '200':
           description: A list of tags.
@@ -1515,6 +1764,15 @@ paths:
                   type: string
                   enum: ['deduplicate']
               description: Find all duplicate tags and deduplicate them.
+      responses:
+        '200':
+          description: The team tag has been modified.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/tag'
   /team_tags/{id}:
     summary: Retrieve a tag from its id.
     parameters:
@@ -1523,11 +1781,11 @@ paths:
         description: ID of the tag.
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Team tags']
       summary: Read a tag.
-      operationId: read-tag
+      operationId: read-team_tag
       responses:
         '200':
           description: A tag.
@@ -1544,7 +1802,7 @@ paths:
       tags: ['Team tags']
       summary: |
         Actions on a tag.
-      operationId: patch-tag
+      operationId: patch-team_tag
       requestBody:
         description: Parameters for modifying a tag.
         content:
@@ -1559,10 +1817,17 @@ paths:
                   type: string
                   description: The content of the tag.
               description: Update the tag. Requires Admin permissions.
+      responses:
+        '200':
+          description: The team tag has been modified.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tag'
     delete:
       tags: ['Team tags']
       summary: Delete a tag.
-      operationId: delete-tag
+      operationId: delete-team_tag
       responses:
         '204':
           description: The tag was removed.
@@ -1614,7 +1879,7 @@ paths:
         description: ID of the team.
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Teams']
       summary: Read a team. Requires Admin permissions.
@@ -1653,7 +1918,7 @@ paths:
         description: ID of the team.
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Status']
       summary: Read status of a team.
@@ -1703,13 +1968,13 @@ paths:
         description: ID of the team.
         required: true
         schema:
-          type: number
+          type: integer
       - name: subid
         in: path
         description: ID of the status
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Status']
       operationId: read-team-one-status
@@ -1754,7 +2019,7 @@ paths:
         description: ID of the team.
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Teamgroups']
       summary: Read teamgroups of a team.
@@ -1797,13 +2062,13 @@ paths:
         description: ID of the team.
         required: true
         schema:
-          type: number
+          type: integer
       - name: subid
         in: path
         description: ID of the teamgroup.
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Teamgroups']
       operationId: read-teamgroup
@@ -1904,7 +2169,7 @@ paths:
         description: ID of the todoitem.
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Todolist']
       summary: Read a todo entry.
@@ -1926,11 +2191,11 @@ paths:
         content:
           application/json:
             schema:
+              required: ['body']
               type: object
               properties:
                 body:
                   type: string
-                  required: true
       responses:
         '200':
           description: The updated todoitem.
@@ -1948,10 +2213,14 @@ paths:
   /unfinished_steps:
     summary: Unfinished steps from the user or the team, in experiments or items.
     parameters:
-        - name: scope
-          in: query
-          description: |
-            Set to "team" to extend the list to other members.
+      - name: scope
+        in: query
+        description: |
+          Set to "team" to extend the list to other members.
+        schema:
+          type: string
+          default: 'user'
+          enum: ['team', 'user']
     get:
       tags: ['Unfinished steps']
       summary: Read all unfinished steps.
@@ -1993,19 +2262,17 @@ paths:
         content:
           application/json:
             schema:
+              required: ['firstname', 'lastname', 'email']
               type: object
               properties:
                 firstname:
                   type: string
-                  required: true
                   description: User's first name.
                 lastname:
                   type: string
-                  required: true
                   description: User's last name.
                 email:
                   type: string
-                  required: true
                   description: User's email address.
                 usergroup:
                   type: string
@@ -2035,7 +2302,7 @@ paths:
         required: true
         schema:
           oneOf:
-            - type: number
+            - type: integer
             - type: string
               enum: ['me']
         examples:
@@ -2068,7 +2335,7 @@ paths:
         required: true
         schema:
           oneOf:
-            - type: number
+            - type: integer
             - type: string
               enum: ['me']
         examples:
@@ -2118,7 +2385,7 @@ paths:
         required: true
         schema:
           oneOf:
-            - type: number
+            - type: integer
             - type: string
               enum: ['me']
         examples:
@@ -2133,7 +2400,7 @@ paths:
         description: ID of the notification.
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Notifications']
       summary: Read a notification.
@@ -2174,7 +2441,7 @@ paths:
         description: ID of the entity
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Steps']
       summary: Read all steps of that entity.
@@ -2226,13 +2493,13 @@ paths:
         description: ID of the entity
         required: true
         schema:
-          type: number
+          type: integer
       - name: subid
         in: path
         description: ID of the step
         required: true
         schema:
-          type: number
+          type: integer
     patch:
       tags: ['Steps']
       summary: |
@@ -2244,10 +2511,10 @@ paths:
           application/json:
             schema:
               type: object
+              required: ['action']
               properties:
                 action:
                   type: string
-                  required: true
                   enum: ['finish', 'notif', 'update']
       responses:
         '200':
@@ -2281,7 +2548,7 @@ paths:
         description: ID of the entity
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Tags']
       summary: Read all tags of that entity.
@@ -2333,13 +2600,13 @@ paths:
         description: ID of the entity
         required: true
         schema:
-          type: number
+          type: integer
       - name: subid
         in: path
         description: ID of the tag
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Tags']
       summary: Read a tag.
@@ -2362,10 +2629,10 @@ paths:
           application/json:
             schema:
               type: object
+              required: ['action']
               properties:
                 action:
                   type: string
-                  required: true
                   enum: ['unreference']
       responses:
         '200':
@@ -2399,7 +2666,7 @@ paths:
         description: ID of the entity
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Uploads']
       summary: Read attached files of that entity.
@@ -2453,13 +2720,13 @@ paths:
         description: ID of the entity
         required: true
         schema:
-          type: number
+          type: integer
       - name: subid
         in: path
         description: ID of the upload
         required: true
         schema:
-          type: number
+          type: integer
     get:
       tags: ['Uploads']
       summary: Read an upload.
@@ -2470,7 +2737,7 @@ paths:
           schema:
             type: string
             enum: ['binary', 'json']
-          default: json
+            default: json
           description: |
             To download the file itself, use `binary` format parameter.
           examples:
@@ -2486,6 +2753,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/upload'
             application/octet-stream:
+              schema:
+                type: string
+                format: binary
+            application/zip:
               schema:
                 type: string
                 format: binary
@@ -2519,10 +2790,10 @@ paths:
           application/json:
             schema:
               type: object
+              required: ['action']
               properties:
                 action:
                   type: string
-                  required: true
                   enum: ['update']
       responses:
         '200':

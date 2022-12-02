@@ -72,7 +72,7 @@ if ($App->Request->cookies->has('saml_token')) {
         // log error and show general error message
         $destroySession();  // destroy session anyway
 
-        $App->Log->error('', array('Exception' => $e));
+        $App->Log->info('', array('Exception' => $e));
         $Response = new RedirectResponse('../../login.php');
         $Response->send();
         exit;

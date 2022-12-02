@@ -164,6 +164,7 @@ export function getTinymceBaseConfig(page: string): object {
     charmap_append: [
       [0x2640, 'female sign'],
       [0x2642, 'male sign'],
+      [0x25A1, 'white square'],
     ],
     height: '500',
     mentions: {
@@ -172,8 +173,8 @@ export function getTinymceBaseConfig(page: string): object {
       // get the source from json with get request
       source: function(query: string, process: (data) => void): void {
         // grab experiments and items
-        const expjson = ApiC.getJson(`${EntityType.Experiment}?limit=100?q=${query}`);
-        const itemjson = ApiC.getJson(`${EntityType.Item}?limit=100?q=${query}`);
+        const expjson = ApiC.getJson(`${EntityType.Experiment}?limit=100&q=${query}`);
+        const itemjson = ApiC.getJson(`${EntityType.Item}?limit=100&q=${query}`);
         // and merge them into one
         Promise.all([expjson, itemjson]).then(values => {
           process(values[0].concat(values[1]));
@@ -240,5 +241,6 @@ export function getTinymceBaseConfig(page: string): object {
         },
       },
     ],
+    toolbar_sticky: true,
   };
 }

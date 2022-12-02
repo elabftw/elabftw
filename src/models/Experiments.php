@@ -16,6 +16,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Services\MakeBloxberg;
+use Elabftw\Services\MakeCustomTimestamp;
 use Elabftw\Services\MakeDfnTimestamp;
 use Elabftw\Services\MakeDigicertTimestamp;
 use Elabftw\Services\MakeGlobalSignTimestamp;
@@ -231,6 +232,7 @@ class Experiments extends AbstractConcreteEntity
             'digicert' => new MakeDigicertTimestamp($config, $this),
             'sectigo' => new MakeSectigoTimestamp($config, $this),
             'globalsign' => new MakeGlobalSignTimestamp($config, $this),
+            'custom' => new MakeCustomTimestamp($config, $this),
             default => throw new ImproperActionException('Incorrect timestamp authority configuration.'),
         };
     }

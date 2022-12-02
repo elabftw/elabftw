@@ -273,6 +273,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // IMPORT TPL
     if (el.matches('[data-action="import-template"]')) {
       TemplateC.duplicate(parseInt(el.dataset.id));
+    // TOGGLE TPL PIN
+    } else if (el.matches('[data-action="toggle-pin"]')) {
+      TemplateC.pin(parseInt(el.dataset.id))
+        .then(() => window.location.replace('team.php?tab=3'));
 
     // DESTROY TEMPLATE
     } else if (el.matches('[data-action="destroy-template"]')) {

@@ -52,7 +52,7 @@
       </div>
       <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
         <!-- CREATE EXPERIMENT -->
-        <a data-action='create-entity' data-id="{{ Entity.id }}" href='#' class='dropdown-item'>
+        <a data-action='create-entity' data-tplid="{{ Entity.id }}" href='#' class='dropdown-item'>
           <i class='fas fa-circle-plus fa-fw mr-1'></i>{{ 'Create experiment from template'|trans }}
         </a>
         {% if not Entity.entityData.locked %}
@@ -63,7 +63,7 @@
         {% endif %}
         <!-- PIN -->
         <a data-action='toggle-pin' data-id='{{ Entity.id }}' href='#' class='dropdown-item'>
-          <i class='fas fa-thumbtack fa-fw mr-1'></i>{{ 'Toggle pin'|trans }}
+          <i class='fas fa-thumbtack fa-fw mr-1'></i>{{ 'Toggle pin (add to create button menu)'|trans }}
         </a>
         <!-- LOCK -->
         <a data-action='toggle-lock' data-id="{{ Entity.id }}" href='#' class='dropdown-item'>

@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use DateTime;
+use Elabftw\Enums\Orderby;
+use Elabftw\Enums\Sort;
 use Elabftw\Services\Check;
 use function memory_get_usage;
 use function microtime;
@@ -81,11 +83,11 @@ class TwigFunctions
     public static function getOrderIcon(string $orderBy): string
     {
         $Request = Request::createFromGlobals();
-        if ($orderBy === $Request->query->getAlpha('order')) {
-            switch ($Request->query->getAlpha('sort')) {
-                case 'asc':
+        if (Orderby::tryFrom($orderBy) === Orderby::tryFrom($Request->query->getAlpha('order'))) {
+            switch (Sort::tryFrom($Request->query->getAlpha('sort'))) {
+                case Sort::Asc:
                     return 'fa-sort-up';
-                case 'desc':
+                case Sort::Desc:
                     return 'fa-sort-down';
             }
         }

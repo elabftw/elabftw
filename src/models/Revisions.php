@@ -44,7 +44,7 @@ class Revisions implements DestroyableInterface
         }
         $this->Entity->canOrExplode('write');
 
-        if (!$this->satisfyDeltaConstraint($body) && !$this->satisfyTimeConstraint()) {
+        if (!$this->satisfyDeltaConstraint($body) && !$this->satisfyTimeConstraint() && $this->readCount() > 0) {
             return false;
         }
 

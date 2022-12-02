@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use DateTime;
+use Elabftw\Enums\Orderby;
+use Elabftw\Enums\Sort;
 use Elabftw\Services\Check;
 use function memory_get_usage;
 use function microtime;
@@ -76,5 +78,19 @@ class TwigFunctions
     public static function toDatetime(string $input): string
     {
         return (new DateTime())->modify($input)->format('Y-m-d H:i:s');
+    }
+
+    public static function getSortIcon(string $orderBy): string
+    {
+        $Request = Request::createFromGlobals();
+        if (Orderby::tryFrom($orderBy) === Orderby::tryFrom($Request->query->getAlpha('order'))) {
+            switch (Sort::tryFrom($Request->query->getAlpha('sort'))) {
+                case Sort::Asc:
+                    return 'fa-sort-up';
+                case Sort::Desc:
+                    return 'fa-sort-down';
+            }
+        }
+        return 'fa-sort';
     }
 }

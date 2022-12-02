@@ -122,12 +122,15 @@
 
 <section class='box'>
     <h5><i class='fas fa-users'></i> {{ 'Members'|trans }}</h5>
-    <table id='teamtable' class='table' aria-describedby='pageTitle'>
+    <table id='teamtable' class='table' aria-describedby='pageTitle' data-table-sort='true'>
+      <thead>
         <tr>
             <th>{{ 'Name'|trans }}</th>
             <th>{{ 'Email'|trans }}</th>
             <th>ORCID</th>
         </tr>
+      </thead>
+      <tbody>
         <!-- archived users are hidden on this page -->
         {% for user in App.Users.readAllFromTeam()|filter(u => u.archived == 0) %}
         <tr>
@@ -145,6 +148,7 @@
           <td>{{ user.orcid }}</td>
         </tr>
         {% endfor %}
+      </tbody>
     </table>
 </section>
 

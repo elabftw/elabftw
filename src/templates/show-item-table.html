@@ -1,30 +1,30 @@
       {# dim the experiment a bit if it's not yours #}
       {% set randomId = random() %}
 
-          <!-- here the item-show-{lg-md-xs} is always lg -->
+          {# here the item-show-{lg-md-xs} is always lg #}
           <tr class='item item-show item-show-lg {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='--left-color: #{{ item.color }}'>
 
-            <!-- DATE -->
+            {# DATE #}
             <td class='item-date'>
               <span class='item-date'><i class='far fa-calendar-alt mr-1'></i>{{ item.date|date('Y-m-d') }}</span>
-              <!-- timestamp icon -->
+              {# timestamp icon #}
               {% if item.timestamped %}
                 <i class='far fa-calendar-check'></i>
               {% endif %}
             </td>
 
-            <!-- TITLE -->
+            {# TITLE #}
             <td class='title'>
-              <!-- checkbox -->
+              {# checkbox #}
               <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;' />
-              <!-- lock icon -->
+              {# lock icon #}
               {% if item.locked %}
                 <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
               {% endif %}
               <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
             </td>
 
-            <!-- NEXT STEP -->
+            {# NEXT STEP #}
             <td class='item-next'>
               {% set next = '' %}
               {% if item.next_step|length > 0 %}
@@ -34,12 +34,12 @@
               <span class='item-next-step'>{{ next|raw }}</span>
             </td>
 
-            <!-- CATEGORY -->
+            {# CATEGORY #}
             <td class='item-next'>
               <span class='item-type' style='color:#{{ item.color }}'>{{ item.category }}</span>
             </td>
 
-            <!-- TAGS -->
+            {# TAGS #}
             <td class='tags mathjax-ignore'>
             {% set itemtagsArr = tagsArr[item.id] %}
               {% if itemtagsArr|length > 0 %}
@@ -51,13 +51,13 @@
             {% endif %}
             </td>
 
-            <!-- ACTIONS -->
+            {# ACTIONS #}
             <td class='item-info'>
-              <!-- edit icon -->
+              {# edit icon #}
               {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
                 <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a>
               {% endif %}
-              <!-- toggle body -->
+              {# toggle body #}
               <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
                 <i class='fas fa-plus-circle link-like'></i>
               </span>
@@ -83,14 +83,14 @@
             </td>
 
           </tr>
-          <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
-          <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
+          {# container to hold the body of the entity if it is toggled with the +/- icon #}
+          {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
           <tr style='border-left: 4px solid #{{ item.color }}'>
             <td colspan='100%'>
               <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
             </td>
           </tr>
 
-          <!-- Perhaps not the most elegant solution, but helps keep the even/odd style of the table, which would be tricky in css -->
+          {# Perhaps not the most elegant solution, but helps keep the even/odd style of the table, which would be tricky in css #}
           <tr hidden></tr>
         </div>

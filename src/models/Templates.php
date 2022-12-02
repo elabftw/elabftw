@@ -21,11 +21,11 @@ class Templates extends AbstractTemplateEntity
 {
     use SortableTrait;
 
-    public const defaultBody = "<h1><span style='font-size: 14pt;'>Goal :</span></h1>
+    public const defaultBody = "<h1>Goal:</h1>
     <p>&nbsp;</p>
-    <h1><span style='font-size: 14pt;'>Procedure :</span></h1>
+    <h1>Procedure:</h1>
     <p>&nbsp;</p>
-    <h1><span style='font-size: 14pt;'>Results :<br /></span></h1>
+    <h1>Results:</h1>
     <p>&nbsp;</p>";
 
     public const defaultBodyMd = "# Goal\n\n# Procedure\n\n# Results\n\n";

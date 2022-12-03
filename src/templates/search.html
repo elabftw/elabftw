@@ -12,7 +12,7 @@
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
         <h3>Search terms</h3>
-        <p>The search is performed against the title and the body.<br>
+        <p>The search is performed against title, body, date, and elabid.<br>
             The entire team will be searched unless there is an author fields.</p>
         <dl>
           <dt>Term</dt>
@@ -387,12 +387,12 @@
         <div style='position:relative;'>
           <textarea
             id='extendedArea'
-            name='extended'
+            name='q'
             rows='10'
             class='form-control'
             placeholder='author:"{{ App.Users.userData.fullname|raw }}" status:"Running"'
             spellcheck='false'
-          >{{ App.Request.query.get('extended') ? App.Request.query.get('extended')|trim : 'author:"' ~ App.Users.userData.fullname ~ '" ' }}</textarea>
+          >{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim : 'author:"' ~ App.Users.userData.fullname ~ '" ' }}</textarea>
           <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
 
         </div>

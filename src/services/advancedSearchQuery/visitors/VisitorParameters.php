@@ -12,7 +12,7 @@ namespace Elabftw\Services\AdvancedSearchQuery\Visitors;
 
 class VisitorParameters
 {
-    public function __construct(private string $entityType, private array $visArr, private array $teamGroups, private bool $isQuickSearch = false)
+    public function __construct(private string $entityType, private array $visArr, private array $teamGroups)
     {
     }
 
@@ -29,10 +29,5 @@ class VisitorParameters
     public function getTeamGroups(): array
     {
         return $this->teamGroups;
-    }
-
-    public function isQuickSearch(): bool
-    {
-        return $this->isQuickSearch;
     }
 }

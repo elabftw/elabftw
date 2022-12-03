@@ -104,7 +104,7 @@ class DisplayParams
             $this->offset = $this->Request->query->getInt('offset');
         }
         if (!empty($this->Request->query->get('q'))) {
-            $this->query = (string) $this->Request->query->get('q', '');
+            $this->query = trim((string) $this->Request->query->get('q'));
             $this->searchType = 'query';
         }
         if (!empty($this->Request->query->get('extended'))) {

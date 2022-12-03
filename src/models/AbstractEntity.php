@@ -211,13 +211,9 @@ abstract class AbstractEntity implements RestInterface
      */
     public function readShow(DisplayParams $displayParams, bool $extended = false): array
     {
-        // extended search (this block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
-        if ($displayParams->searchType === 'extended') {
-            $this->processExtendedQuery($displayParams->extendedQuery);
-        }
-        // quick search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
-        if (!empty($displayParams->query)) {
-            $this->processExtendedQuery($displayParams->query, true);
+        // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
+        if (!empty($displayParams->query) or !empty($displayParams->extendedQuery)) {
+            $this->processExtendedQuery(trim($displayParams->query . ' ' . $displayParams->extendedQuery));
         }
 
         $sql = $this->getReadSqlBeforeWhere($extended, $extended, $displayParams->hasMetadataSearch);
@@ -778,13 +774,12 @@ abstract class AbstractEntity implements RestInterface
         }
     }
 
-    private function processExtendedQuery(string $extendedQuery, bool $isQuickSearch = false): void
+    private function processExtendedQuery(string $extendedQuery): void
     {
         $advancedQuery = new AdvancedSearchQuery($extendedQuery, new VisitorParameters(
             $this->type,
             $this->TeamGroups->getVisibilityList(),
             $this->TeamGroups->readGroupsWithUsersFromUser(),
-            $isQuickSearch,
         ));
         $whereClause = $advancedQuery->getWhereClause();
         if ($whereClause) {

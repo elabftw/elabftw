@@ -19,7 +19,7 @@ OrOperand
     return new OrOperand($operand, $tail);
   }
 
-OrOperator '"OR", "|"'
+OrOperator '" OR ", "|"'
   = (_+ 'OR'i _+)
   / (_* '|' _*)
 
@@ -35,7 +35,7 @@ AndOperand
     return new AndOperand($operand, $tail);
   }
 
-AndOperator '"AND", "&"'
+AndOperator 'space, " AND ", "&"'
   = (_+ 'AND'i _+)
   / (_* '&' _*)
   / _+
@@ -46,7 +46,7 @@ NotExpression
     return new NotExpression($expression);
   }
 
-NotOperator '"NOT", "!"'
+NotOperator '"NOT ", "!"'
   = ('NOT'i _+)
   / ('!' _*)
 

@@ -20,7 +20,7 @@ use function trim;
 
 /**
  * This class holds the values for limit, offset, order and sort
- * It is based on user preferences, overriden by request parameters
+ * It is based on user preferences, overridden by request parameters
  */
 class DisplayParams
 {
@@ -104,7 +104,7 @@ class DisplayParams
             $this->offset = $this->Request->query->getInt('offset');
         }
         if (!empty($this->Request->query->get('q'))) {
-            $this->query = $this->Request->query->filter('q', null, FILTER_SANITIZE_STRING);
+            $this->query = trim((string) $this->Request->query->get('q'));
             $this->searchType = 'query';
         }
         if (!empty($this->Request->query->get('extended'))) {

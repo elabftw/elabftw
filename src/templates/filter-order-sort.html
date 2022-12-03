@@ -1,11 +1,12 @@
-{% if not searchPage %}
 <div class='row'>
   <!-- LEFT MENU: FILTER/ORDER/SORT/LIMIT -->
   <!-- we hide this menu for small devices -->
   <div class='col-md-10 hidden-xs {{ searchPage ? 'mt-2' }}'>
     <form>
     <div class='form-group form-inline'>
-      <input type='hidden' name='q' value='{{ DisplayParams.query }}' />
+      {% if not searchPage %}
+        <input type='hidden' name='q' value='{{ DisplayParams.query }}' />
+      {% endif %}
       {% if DisplayParams.searchType == 'related' %}
         <input type='hidden' name='related' value='{{ App.Request.query.get('related')|number_format }}' />
       {% endif %}
@@ -29,25 +30,27 @@
         {% endfor %}
       </select>
 
-      <select name='extended' class='autosubmit mr-1 form-control' aria-label='Filter visibility'>
-        <option value=''>{{ 'Filter visibility'|trans }}</option>
-        {% for vis in visibilityArr %}
-        <option value='visibility:"{{ vis }}"'>
-          {{ vis|raw }}</option>
-        {% endfor %}
-      </select>
-
-      <!-- TEAMGROUP filter -->
-      {% if teamGroupsFromUser %}
-        <select name='extended' class='autosubmit mr-1 form-control' aria-label='Filter team group'>
-          <option value=''>{{ 'Filter team group'|trans }}</option>
-          {% for group in teamGroupsFromUser %}
-          <option value='group:"{{ group.name }}"'>
-            {{ group.name|raw }}</option>
+      {% if not searchPage %}
+        {# VISIBILITY filter #}
+        <select name='extended' class='autosubmit mr-1 form-control' aria-label='Filter visibility'>
+          <option value=''>{{ 'Filter visibility'|trans }}</option>
+          {% for vis in visibilityArr %}
+          <option value='visibility:"{{ vis }}"'{{ App.Request.query.get('extended') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected'}}>
+            {{ vis|raw }}</option>
           {% endfor %}
         </select>
-      {% endif %}
 
+        {# TEAMGROUP filter #}
+        {% if teamGroupsFromUser %}
+          <select name='extended' class='autosubmit mr-1 form-control' aria-label='Filter team group'>
+            <option value=''>{{ 'Filter team group'|trans }}</option>
+            {% for group in teamGroupsFromUser %}
+            <option value='group:"{{ group.name }}"'{{ App.Request.query.get('extended') == 'group:"' ~ group.name|raw ~ '"' ? ' selected'}}>
+              {{ group.name|raw }}</option>
+            {% endfor %}
+          </select>
+        {% endif %}
+      {% endif %}
       <input type='hidden' name='mode' value='show' />
 
       <!-- LIMIT if there is nothing in the query params, take the user configured one -->
@@ -76,4 +79,3 @@
   </div>
   {% include 'create-new.html' %}
 </div>
-{% endif %}

@@ -144,3 +144,27 @@
     </tr>
   </table>
 </div>
+
+{% if includeChangelog %}
+  <h3>{{ 'Changelog'|trans }}</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+          <th>{{ 'Date'|trans }}</th>
+          <th>{{ 'User'|trans }}</th>
+          <th>{{ 'Property changed'|trans }}</th>
+          <th>{{ 'New value'|trans }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for change in changes %}
+      <tr>
+        <td>{{ change.created_at }}</td>
+        <td>{{ change.fullname }}</td>
+        <td>{{ change.target }}</td>
+        <td>{{ change.content }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}

@@ -17,6 +17,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Factories\StorageFactory;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Changelog;
 use Elabftw\Models\Config;
 use Elabftw\Models\Notifications;
 use Elabftw\Models\Users;
@@ -49,6 +50,8 @@ class MakePdf extends AbstractMakePdf
 
     private FileSystem $cacheFs;
 
+    private bool $pdfa;
+
     /**
      * Constructor
      *
@@ -59,6 +62,7 @@ class MakePdf extends AbstractMakePdf
         parent::__construct($mpdfProvider, $entity);
 
         $this->longName = $this->getLongName() . '.pdf';
+        $this->pdfa = $mpdfProvider->isPdfa();
 
         $this->mpdf->SetTitle($this->Entity->entityData['title']);
         $this->mpdf->SetKeywords(str_replace('|', ' ', $this->Entity->entityData['tags'] ?? ''));
@@ -237,13 +241,17 @@ class MakePdf extends AbstractMakePdf
             }
         }
 
+        $Changelog = new Changelog($this->Entity);
+
         $renderArr = array(
             'body' => $this->getBody(),
             'canread' => $this->Entity->getCan($this->Entity->entityData['canread']),
             'canwrite' => $this->Entity->getCan($this->Entity->entityData['canwrite']),
+            'changes' => $Changelog->readAll(),
             'css' => $this->getCss(),
             'date' => $date->format('Y-m-d'),
             'entityData' => $this->Entity->entityData,
+            'includeChangelog' => $this->pdfa,
             'includeFiles' => $this->includeAttachments,
             'locked' => $locked,
             'lockDate' => $lockDate,

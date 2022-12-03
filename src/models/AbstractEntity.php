@@ -11,6 +11,7 @@ namespace Elabftw\Models;
 
 use function array_column;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
@@ -333,7 +334,10 @@ abstract class AbstractEntity implements RestInterface
             Action::UpdateMetadataField => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
-                        $this->updateJsonField((string) $key, (string) $value);
+                        // skip action key
+                        if ($key !== 'action') {
+                            $this->updateJsonField((string) $key, (string) $value);
+                        }
                     }
                 }
             )(),
@@ -590,6 +594,8 @@ abstract class AbstractEntity implements RestInterface
             $Revisions->create((string) $content);
         }
 
+        $Changelog = new Changelog($this);
+        $Changelog->create($params);
         // getColumn cannot be malicious here because of the previous switch
         $sql = 'UPDATE ' . $this->type . ' SET ' . $params->getColumn() . ' = :content, lastchangeby = :userid WHERE id = :id';
         $req = $this->Db->prepare($sql);
@@ -610,6 +616,8 @@ abstract class AbstractEntity implements RestInterface
      */
     private function updateJsonField(string $key, string $value): bool
     {
+        $Changelog = new Changelog($this);
+        $Changelog->create(new ContentParams('metadata_' . $key, $value));
         // build field
         $field = json_encode($key, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
         $field = '$.extra_fields.' . $field . '.value';

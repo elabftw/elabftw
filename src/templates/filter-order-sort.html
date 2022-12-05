@@ -76,5 +76,7 @@
     </div>
     </form>
   </div>
-  {% include 'create-new.html' %}
+  {% if not searchPage %}
+    {% include 'create-new.html' %}
+  {% endif %}
 </div>

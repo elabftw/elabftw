@@ -67,7 +67,7 @@
                   {% if ext matches '/(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
                     <div class='text-center'>
                       <a class='text-break' href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}'
-                        {% if upload.real_name matches '/(jpg|jpeg|png|gif)$/i' %}data-fancybox='group'{% endif %}
+                         {% if upload.real_name matches '/(jpg|jpeg|png|gif)$/i' %}data-fancybox='group' data-caption='{{ upload.real_name }}'{% endif %}
                         {% if upload.comment %}title='{{ upload.comment }}' data-caption='{{ upload.comment }}'{% endif %}
                       >
                   {% endif %}

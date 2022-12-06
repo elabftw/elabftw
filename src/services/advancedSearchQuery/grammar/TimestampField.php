@@ -10,20 +10,27 @@
 
 namespace Elabftw\Services\AdvancedSearchQuery\Grammar;
 
+use Elabftw\Services\AdvancedSearchQuery\Enums\TimestampFields;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Term;
+use Elabftw\Services\AdvancedSearchQuery\Interfaces\TimestampFieldType;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
-class DateField implements Term, Visitable
+class TimestampField implements Term, Visitable, TimestampFieldType
 {
-    public function __construct(private array $dateArr)
+    public function __construct(private string $field, private array $dateArr)
     {
     }
 
     public function accept(Visitor $visitor, VisitorParameters $parameters): mixed
     {
-        return $visitor->visitDateField($this, $parameters);
+        return $visitor->visitTimestampField($this, $parameters);
+    }
+
+    public function getFieldType(): TimestampFields
+    {
+        return TimestampFields::from($this->field);
     }
 
     public function getValue(): string

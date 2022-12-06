@@ -668,6 +668,10 @@ abstract class AbstractEntity implements RestInterface
             if ($includeMetadata) {
                 $select .= 'entity.metadata,';
             }
+            // only include columns (created_at, locked_at, timestamped_at,) if actually searching for it
+            if (!empty(array_column($this->extendedValues, 'additional_columns'))) {
+                $select .= implode(', ', array_unique(array_column($this->extendedValues, 'additional_columns'))) . ',';
+            }
         }
         $select .= "uploads.up_item_id, uploads.has_attachment,
             SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step ORDER BY steps_ordering, steps_id SEPARATOR '|'), '|', 1) AS next_step,

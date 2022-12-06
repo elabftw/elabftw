@@ -66,7 +66,7 @@ class FieldValidatorVisitor implements Visitor
         // MySQL range for TIMESTAMP values is '1970-01-01 00:00:01.000000' to '2038-01-19 03:14:07.999999'
         // We use 1970-01-02 and 2038-01-18 because time 00:00:00 and/or 23:59:59 will be added
         if ((intval($timestampField->getValue(), 10) < 19700102) || (intval($timestampField->getValue(), 10) > 20380118)
-            || ($timestampField->getDateTo() !== '' && ((intval($timestampField->getDateTo(), 10) < 19700102) || (intval($timestampField->getDateTo(), 10) > 20380118)))
+            || ($timestampField->getDateType() === 'range' && ((intval($timestampField->getDateTo(), 10) < 19700102) || (intval($timestampField->getDateTo(), 10) > 20380118)))
         ) {
             $message = sprintf(
                 '%s: Date needs to be between 1970-01-02 and 2038-01-18.',

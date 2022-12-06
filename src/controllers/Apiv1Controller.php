@@ -274,7 +274,7 @@ class Apiv1Controller extends AbstractApiController
      * @apiSuccess {Number} id Id of the experiment
      * @apiSuccess {Number} locked 0 if not locked, 1 if locked
      * @apiSuccess {Number} lockedby 1 User id of the locker
-     * @apiSuccess {DateTime} lockedwhen Time when it was locked
+     * @apiSuccess {DateTime} locked_at Time when it was locked
      * @apiSuccess {String} next_step Next step to execute
      * @apiSuccess {DateTime} recent_comment Date and time of the most recent comment
      * @apiSuccess {String} tags Tags separated by '|'
@@ -282,7 +282,7 @@ class Apiv1Controller extends AbstractApiController
      * @apiSuccess {Number} team Id of the team
      * @apiSuccess {Number} timestamped 0 if not timestamped, 1 if timestamped
      * @apiSuccess {Number} timestampedby User id of the timestamper
-     * @apiSuccess {DateTime} timestampedwhen Date and time of the timestamp
+     * @apiSuccess {DateTime} timestamped_at Date and time of the timestamp
      * @apiSuccess {String} timestampedtoken Full path to the token file
      * @apiSuccess {String} title Title of the experiment
      * @apiSuccess {String} up_item_id Id of the uploaded items
@@ -331,7 +331,7 @@ class Apiv1Controller extends AbstractApiController
      * @apiSuccess {Number} id Id of the experiment
      * @apiSuccess {Number} locked 0 if not locked, 1 if locked
      * @apiSuccess {Number} lockedby 1 User id of the locker
-     * @apiSuccess {DateTime} lockedwhen Time when it was locked
+     * @apiSuccess {DateTime} locked_at Time when it was locked
      * @apiSuccess {String} tags Tags separated by '|'
      * @apiSuccess {String} tags_id Id of the tags separated by ','
      * @apiSuccess {String} title Title of the experiment

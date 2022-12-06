@@ -140,7 +140,7 @@ abstract class AbstractEntity implements RestInterface
      */
     public function getTimestampLastMonth(): int
     {
-        $sql = 'SELECT COUNT(id) FROM experiments WHERE timestamped = 1 AND timestampedwhen > (NOW() - INTERVAL 1 MONTH)';
+        $sql = 'SELECT COUNT(id) FROM experiments WHERE timestamped = 1 AND timestamped_at > (NOW() - INTERVAL 1 MONTH)';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
@@ -173,7 +173,7 @@ abstract class AbstractEntity implements RestInterface
             );
         }
 
-        $sql = 'UPDATE ' . $this->type . ' SET locked = IF(locked = 1, 0, 1), lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id';
+        $sql = 'UPDATE ' . $this->type . ' SET locked = IF(locked = 1, 0, 1), lockedby = :lockedby, locked_at = CURRENT_TIMESTAMP WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':lockedby', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

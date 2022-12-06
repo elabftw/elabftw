@@ -136,7 +136,7 @@ class Experiments extends AbstractConcreteEntity
         $sql = 'UPDATE experiments SET
             timestamped = 1,
             timestampedby = :userid,
-            timestampedwhen = :when
+            timestamped_at = :when
             WHERE id = :id;';
         $req = $this->Db->prepare($sql);
         // the date recorded in the db will match the creation time of the timestamp token

@@ -23,6 +23,7 @@
     "bootstrap-select": "^1.13.18",
     "css-loader": "^6.0.0",
     "css-minimizer-webpack-plugin": "^4.0.0",
+    "diff-match-patch": "^1.0.5",
     "dropzone": "^5.8.0",
     "expose-loader": "^4.0.0",
     "i18next": "^22.0.6",

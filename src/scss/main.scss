@@ -1263,6 +1263,16 @@ input[type='color'] {
     padding: 3px;
 }
 
+/* diff in revisions */
+.diff-added {
+    color: $green;
+}
+
+.diff-removed {
+    color: $lightred;
+    text-decoration-line: line-through;
+}
+
 /* loading spinner */
 .lds-dual-ring::after {
     animation: lds-dual-ring 1.3s linear infinite;

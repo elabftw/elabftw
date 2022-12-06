@@ -16,7 +16,9 @@
     {% if revision.content_type == constant('Elabftw\\Models\\AbstractEntity::CONTENT_MD') %}
       {% set body = revision.body|md2html %}
     {% endif %}
-    {{ body|raw }}
+    <div class='revisionBody'>
+      {{ body|raw }}
+    </div>
   </div>
 {% endfor %}
 

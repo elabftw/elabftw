@@ -188,7 +188,7 @@ export function getTinymceBaseConfig(page: string): object {
         if (selected.type === 'experiments' && (entity.type === EntityType.Experiment || entity.type === EntityType.Item)) {
           ApiC.post(`${entity.type}/${entity.id}/experiments_links/${selected.id}`).then(() => reloadElement('linksExpDiv'));
         }
-        return `<span><a href='${selected.page}.php?mode=view&id=${selected.id}'>${selected.category} - ${selected.title}</a></span>`;
+        return `<span><a href='${selected.page}.php?mode=view&id=${selected.id}'>${selected.type === 'experiments' ? 'Experiment' : selected.category} - ${selected.title}</a></span>`;
       },
     },
     mobile: {

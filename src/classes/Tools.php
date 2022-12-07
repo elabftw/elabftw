@@ -20,7 +20,6 @@ use function mb_strlen;
 use function pathinfo;
 use function random_bytes;
 use function sha1;
-use Symfony\Component\HttpFoundation\Request;
 use function trim;
 
 /**

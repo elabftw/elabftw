@@ -47,7 +47,7 @@ import Prism from 'prismjs';
         'punctuation': /[:.,/-]/,
         'number': /\d+/,
       },
-      pattern: RegExp('\\bdate\\b:(?:' + date + '\\.\\.' + date + '|(?:[<>]=?|!?=)?' + date + ')', 'i'),
+      pattern: RegExp('\\b(?:date|created_at|locked_at|timestamped_at)\\b:(?:' + date + '\\.\\.' + date + '|(?:[<>]=?|!?=)?' + date + ')', 'i'),
     },
     'field-rating': {
       alias: 'keyword',

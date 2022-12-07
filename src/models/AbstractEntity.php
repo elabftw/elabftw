@@ -141,7 +141,7 @@ abstract class AbstractEntity implements RestInterface
      */
     public function getTimestampLastMonth(): int
     {
-        $sql = 'SELECT COUNT(id) FROM experiments WHERE timestamped = 1 AND timestampedwhen > (NOW() - INTERVAL 1 MONTH)';
+        $sql = 'SELECT COUNT(id) FROM experiments WHERE timestamped = 1 AND timestamped_at > (NOW() - INTERVAL 1 MONTH)';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
@@ -174,7 +174,7 @@ abstract class AbstractEntity implements RestInterface
             );
         }
 
-        $sql = 'UPDATE ' . $this->type . ' SET locked = IF(locked = 1, 0, 1), lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id';
+        $sql = 'UPDATE ' . $this->type . ' SET locked = IF(locked = 1, 0, 1), lockedby = :lockedby, locked_at = CURRENT_TIMESTAMP WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':lockedby', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -212,9 +212,9 @@ abstract class AbstractEntity implements RestInterface
      */
     public function readShow(DisplayParams $displayParams, bool $extended = false): array
     {
-        // extended search (this block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
-        if ($displayParams->searchType === 'extended') {
-            $this->processExtendedQuery($displayParams->extendedQuery);
+        // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
+        if (!empty($displayParams->query) or !empty($displayParams->extendedQuery)) {
+            $this->processExtendedQuery(trim($displayParams->query . ' ' . $displayParams->extendedQuery));
         }
 
         $sql = $this->getReadSqlBeforeWhere($extended, $extended, $displayParams->hasMetadataSearch);
@@ -256,14 +256,6 @@ abstract class AbstractEntity implements RestInterface
             $sql .= " OR (entity.canread = $teamgroup)";
         }
         $sql .= ')';
-
-
-        if (!empty($displayParams->query)) {
-            $this->addToExtendedFilter(
-                ' AND (entity.title LIKE :query OR entity.body LIKE :query OR entity.date LIKE :query OR entity.elabid LIKE :query)',
-                array(array('param' => ':query', 'value' => '%' . $displayParams->query . '%', 'type' => PDO::PARAM_STR)),
-            );
-        }
 
         $sqlArr = array(
             $this->extendedFilter,
@@ -684,6 +676,10 @@ abstract class AbstractEntity implements RestInterface
             if ($includeMetadata) {
                 $select .= 'entity.metadata,';
             }
+            // only include columns (created_at, locked_at, timestamped_at,) if actually searching for it
+            if (!empty(array_column($this->extendedValues, 'additional_columns'))) {
+                $select .= implode(', ', array_unique(array_column($this->extendedValues, 'additional_columns'))) . ',';
+            }
         }
         $select .= "uploads.up_item_id, uploads.has_attachment,
             SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step ORDER BY steps_ordering, steps_id SEPARATOR '|'), '|', 1) AS next_step,
@@ -792,7 +788,11 @@ abstract class AbstractEntity implements RestInterface
 
     private function processExtendedQuery(string $extendedQuery): void
     {
-        $advancedQuery = new AdvancedSearchQuery($extendedQuery, new VisitorParameters($this->type, $this->TeamGroups->getVisibilityList(), $this->TeamGroups->readGroupsWithUsersFromUser()));
+        $advancedQuery = new AdvancedSearchQuery($extendedQuery, new VisitorParameters(
+            $this->type,
+            $this->TeamGroups->getVisibilityList(),
+            $this->TeamGroups->readGroupsWithUsersFromUser(),
+        ));
         $whereClause = $advancedQuery->getWhereClause();
         if ($whereClause) {
             $this->addToExtendedFilter($whereClause['where'], $whereClause['bindValues']);

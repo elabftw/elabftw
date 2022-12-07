@@ -37,7 +37,7 @@
 
 {% if Entity.entityData.timestamped %}
 <div class='alert alert-success'><i class='fas fa-info-circle'></i>
-  {{ 'Experiment was timestamped by %s on %s at %s'|trans|format(timestamperFullname, Entity.entityData.timestampedwhen|date('Y-m-d'), Entity.entityData.timestampedwhen|date('H:i:s'))|raw }}
+  {{ 'Experiment was timestamped by %s on %s at %s'|trans|format(timestamperFullname, Entity.entityData.timestamped_at|date('Y-m-d'), Entity.entityData.timestamped_at|date('H:i:s'))|raw }}
 </div>
 {% endif %}
 

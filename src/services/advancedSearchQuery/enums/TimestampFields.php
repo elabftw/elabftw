@@ -8,8 +8,11 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services\AdvancedSearchQuery\Interfaces;
+namespace Elabftw\Services\AdvancedSearchQuery\Enums;
 
-interface Visitor extends VisitOrExpression, VisitOrOperand, VisitAndExpression, VisitAndOperand, VisitNotExpression, VisitSimpleValueWrapper, VisitField, VisitDateField, VisitTimestampField
+enum TimestampFields: string
 {
+    case CreatedAt = 'created_at';
+    case LockedAt = 'locked_at';
+    case TimestampedAt = 'timestamped_at';
 }

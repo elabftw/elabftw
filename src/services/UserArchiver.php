@@ -74,7 +74,7 @@ class UserArchiver
     private function lockExperiments(): bool
     {
         $sql = 'UPDATE experiments
-            SET locked = :locked, lockedby = :userid, lockedwhen = CURRENT_TIMESTAMP WHERE userid = :userid';
+            SET locked = :locked, lockedby = :userid, locked_at = CURRENT_TIMESTAMP WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':locked', 1);
         $req->bindParam(':userid', $this->target->userData['userid'], PDO::PARAM_INT);

@@ -65,6 +65,7 @@ Parenthesis 'expression in parenthesis'
 Fields
   = Field
   / FieldDate
+  / FieldTimestamp
   / FieldBoolean
   / FieldRating
   / FieldAttachment
@@ -73,6 +74,12 @@ Field
   = field:('author'i / 'body'i / 'category'i / 'elabid'i / 'group'i / 'status'i / 'title'i / 'visibility'i) ':' strict:('s:' {return true;})? term:(List / LiteralInField)
   {
     return new Field(strtolower($field), $term, $strict);
+  }
+
+FieldTimestamp
+  = field:('created_at'i / 'locked_at'i / 'timestamped_at'i) ':' date:(DateBetween / DateSimple)
+  {
+    return new TimestampField(strtolower($field), $date);
   }
 
 FieldDate

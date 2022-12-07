@@ -223,7 +223,7 @@ class MakePdf extends AbstractMakePdf
             $lockerName = $Locker->userData['fullname'];
 
             // separate the date and time
-            $ldate = explode(' ', $this->Entity->entityData['lockedwhen']);
+            $ldate = explode(' ', $this->Entity->entityData['locked_at']);
             $lockDate = $ldate[0] . ' at ' . $ldate[1];
         }
 

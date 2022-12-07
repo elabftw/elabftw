@@ -1,4 +1,4 @@
--- schema 104
+-- schema 105
 -- EXPERIMENTS
 CREATE TABLE IF NOT EXISTS `experiments_changelog` (
     `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -59,4 +59,4 @@ ALTER TABLE `items_types_changelog`
   ADD CONSTRAINT `fk_items_types_changelog2items_types_id` FOREIGN KEY (`entity_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_types_changelog2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-UPDATE config SET conf_value = 104 WHERE conf_name = 'schema';
+UPDATE config SET conf_value = 105 WHERE conf_name = 'schema';

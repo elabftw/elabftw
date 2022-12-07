@@ -319,7 +319,7 @@ components:
           type: integer
         timestampedby:
           type: integer
-        timestampedwhen:
+        timestamped_at:
           type: string
         title:
           type: string

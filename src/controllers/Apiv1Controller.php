@@ -164,7 +164,7 @@ class Apiv1Controller extends AbstractApiController
             case 'items':
                 // when creating an item, we don't want to use the id param as the item id, because it is an id of items_types
                 // so the readOne during object init will fail because we might not have permission to read that item id
-                if ($this->Request->getMethod() === Request::METHOD_POST) {
+                if ($this->Request->getMethod() === Request::METHOD_POST && empty($this->Request->getContent())) {
                     $id = null;
                 }
                 // no break

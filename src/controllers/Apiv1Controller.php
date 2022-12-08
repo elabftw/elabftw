@@ -150,6 +150,7 @@ class Apiv1Controller extends AbstractApiController
     protected function parseReq(): array
     {
         $req = parent::parseReq();
+        $id = $this->id;
 
         // load Entity
         // if endpoint is uploads we don't actually care about the entity type
@@ -161,8 +162,14 @@ class Apiv1Controller extends AbstractApiController
                 $this->Entity = new Experiments($this->Users, $this->id);
                 break;
             case 'items':
+                // when creating an item, we don't want to use the id param as the item id, because it is an id of items_types
+                // so the readOne during object init will fail because we might not have permission to read that item id
+                if ($this->Request->getMethod() === Request::METHOD_POST) {
+                    $id = null;
+                }
+                // no break
             case 'bookable':
-                $this->Entity = new Items($this->Users, $this->id);
+                $this->Entity = new Items($this->Users, $id);
                 break;
             case 'templates':
                 $this->Entity = new Templates($this->Users, $this->id);

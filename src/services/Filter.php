@@ -142,8 +142,11 @@ class Filter
             return null;
         }
         $decoded = json_decode($metadata, true, 512, JSON_THROW_ON_ERROR);
+        if (!isset($decoded['extra_fields'])) {
+            return null;
+        }
         foreach ($decoded['extra_fields'] as &$field) {
-            if ($field['blank_value_on_duplicate'] === true) {
+            if (isset($field['blank_value_on_duplicate']) && $field['blank_value_on_duplicate'] === true) {
                 $field['value'] = '';
             }
         }

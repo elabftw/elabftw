@@ -56,6 +56,11 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $query .= ' date:>2020.06,21 date:2020/06-21..20201231';
         $query .= ' group:"Group Name"';
         $query .= ' attachment:"hello world"';
+        $query .= ' timestamped_at:2022.12.01..2022-12-31';
+        $query .= ' timestamped_at:2022/12/09';
+        $query .= ' timestamped_at:!=2022,12,09';
+        $query .= ' created_at:>2022,12.09';
+        $query .= ' locked_at:<20221209';
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
@@ -112,6 +117,9 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $to = '20200101';
         $query = 'visibility:' . $visInput;
         $query .= ' date:' . $from . '..' . $to;
+        $query .= ' timestamped_at:' . $from . '..' . $to;
+        $query .= ' created_at:19700101';
+        $query .= ' locked_at:20221209..20380119';
         $query .= ' group:"does not exist"';
         $query .= ' category:"only works for items"';
 
@@ -123,10 +131,14 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $advancedSearchQuery->getWhereClause();
         $this->assertStringStartsWith('visibility:' . $visInput . '. Valid values are ', $advancedSearchQuery->getException());
         $this->assertStringContainsString('date:' . $from . '..' . $to . '. Second date needs to be equal or greater than first date.', $advancedSearchQuery->getException());
+        $this->assertStringContainsString('timestamped_at:' . $from . '..' . $to . '. Second date needs to be equal or greater than first date.', $advancedSearchQuery->getException());
+        $this->assertStringContainsString('created_at: Date needs to be between 1970-01-02 and 2038-01-18.', $advancedSearchQuery->getException());
+        $this->assertStringContainsString('locked_at: Date needs to be between 1970-01-02 and 2038-01-18.', $advancedSearchQuery->getException());
         $this->assertStringContainsString('group:', $advancedSearchQuery->getException());
         $this->assertStringEndsWith('category: is only allowed when searching in database.', $advancedSearchQuery->getException());
 
         $query = 'timestamped:true';
+        $query .= ' timestamped_at:20221209';
         $query .= ' status:"only works for experiments"';
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
@@ -136,6 +148,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         ));
         $advancedSearchQuery->getWhereClause();
         $this->assertStringStartsWith('timestamped: is only allowed when searching in experiments.', $advancedSearchQuery->getException());
+        $this->assertStringContainsString('timestamped_at: is only allowed when searching in experiments.', $advancedSearchQuery->getException());
         $this->assertStringEndsWith('status: is only allowed when searching in experiments.', $advancedSearchQuery->getException());
     }
 }

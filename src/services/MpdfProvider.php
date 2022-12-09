@@ -25,6 +25,11 @@ class MpdfProvider implements MpdfProviderInterface
     {
     }
 
+    public function isPdfa(): bool
+    {
+        return $this->pdfa;
+    }
+
     public function getInstance(): Mpdf
     {
         $defaultConfig = (new ConfigVariables())->getDefaults();

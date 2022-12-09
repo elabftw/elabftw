@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Changelog;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsTypes;
@@ -65,6 +66,7 @@ abstract class AbstractEntityController implements ControllerInterface
         return match ($this->App->Request->query->getAlpha('mode')) {
             'view' => $this->view(),
             'edit' => $this->edit(),
+            'changelog' => $this->changelog(),
             default => $this->show(),
         };
     }
@@ -243,6 +245,25 @@ abstract class AbstractEntityController implements ControllerInterface
         $Response = new Response();
         $Response->prepare($this->App->Request);
         $Response->setContent($this->App->render('edit.html', $renderArr));
+        return $Response;
+    }
+
+    protected function changelog(): Response
+    {
+        $this->Entity->setId((int) $this->App->Request->query->get('id'));
+        // check permissions
+        $this->Entity->canOrExplode('read');
+
+        $Changelog = new Changelog($this->Entity);
+
+        $renderArr = array(
+            'changes' => $Changelog->readAll(),
+            'Entity' => $this->Entity,
+        );
+
+        $Response = new Response();
+        $Response->prepare($this->App->Request);
+        $Response->setContent($this->App->render('changelog.html', $renderArr));
         return $Response;
     }
 

@@ -263,6 +263,12 @@
 </section>
 
   <div class='maingray text-right d-flex flex-column'>
+    <!-- CHANGELOG -->
+    <div>
+      <i class='fas fa-list mr-1'></i>
+      <a href='?id={{ Entity.id }}&mode=changelog'>{{ 'See changelog'|trans }}</a>
+    </div>
+
     <!-- REVISIONS -->
     {% if revNum > 0 %}
       <div>

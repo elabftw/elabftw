@@ -118,6 +118,20 @@ CREATE TABLE `experiments` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `experiments_changelog`
+--
+
+CREATE TABLE `experiments_changelog` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `entity_id` int(10) unsigned NOT NULL,
+  `users_id` int(10) unsigned NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `target` varchar(255) NOT NULL,
+  `content` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
 -- Table structure for table `experiments_comments`
 --
 
@@ -244,6 +258,19 @@ CREATE TABLE `experiments_templates` (
 --
 
 -- --------------------------------------------------------
+--
+-- Table structure for table `experiments_templates_changelog`
+--
+
+CREATE TABLE `experiments_templates_changelog` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `entity_id` int(10) unsigned NOT NULL,
+  `users_id` int(10) unsigned NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `target` varchar(255) NOT NULL,
+  `content` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Table structure for table `experiments_templates_revisions`
@@ -374,6 +401,19 @@ CREATE TABLE `items` (
 --
 
 -- --------------------------------------------------------
+--
+-- Table structure for table `items_changelog`
+--
+
+CREATE TABLE `items_changelog` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `entity_id` int(10) unsigned NOT NULL,
+  `users_id` int(10) unsigned NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `target` varchar(255) NOT NULL,
+  `content` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Table structure for table `items_comments`
@@ -447,6 +487,20 @@ CREATE TABLE `items_types` (
 --   `team`
 --       `teams` -> `id`
 --
+
+--
+-- Table structure for table `items_types_changelog`
+--
+
+CREATE TABLE `items_types_changelog` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `entity_id` int(10) unsigned NOT NULL,
+  `users_id` int(10) unsigned NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `target` varchar(255) NOT NULL,
+  `content` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Table structure for table `items_types_links`
@@ -913,6 +967,11 @@ ALTER TABLE `experiments_templates`
   ADD KEY `idx_experiments_templates_state` (`state`),
   ADD KEY `fk_experiments_templates_users_userid` (`userid`);
 
+ALTER TABLE `experiments_templates_changelog`
+  ADD KEY `fk_experiments_templates_changelog2experiments_templates_id` (`entity_id`),
+  ADD KEY `fk_experiments_templates_changelog2users_userid` (`users_id`),
+  ADD CONSTRAINT `fk_experiments_templates_changelog2experiments_templates_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_templates_changelog2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 --
 -- Indexes for table `favtags2users`
 --
@@ -929,6 +988,12 @@ ALTER TABLE `items`
   ADD KEY `fk_items_items_types_id` (`category`),
   ADD KEY `fk_items_users_userid` (`userid`);
 
+ALTER TABLE `items_changelog`
+  ADD KEY `fk_items_changelog2items_id` (`entity_id`),
+  ADD KEY `fk_items_changelog2users_userid` (`users_id`),
+  ADD CONSTRAINT `fk_items_changelog2items_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_items_changelog2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
 --
 -- Indexes for table `items_comments`
 --
@@ -943,6 +1008,11 @@ ALTER TABLE `items_types`
   ADD KEY `fk_items_types_teams_id` (`team`),
   ADD KEY `idx_items_types_state` (`state`);
 
+ALTER TABLE `items_types_changelog`
+  ADD KEY `fk_items_types_changelog2items_types_id` (`entity_id`),
+  ADD KEY `fk_items_types_changelog2users_userid` (`users_id`),
+  ADD CONSTRAINT `fk_items_types_changelog2items_types_id` FOREIGN KEY (`entity_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_items_types_changelog2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 --
 -- Indexes for table `items_types_links`
 --
@@ -1025,6 +1095,16 @@ ALTER TABLE `api_keys`
 ALTER TABLE `experiments`
   ADD CONSTRAINT `fk_experiments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_experiments_status_id` FOREIGN KEY (`category`) REFERENCES `status` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `experiments_changelog`
+--
+
+ALTER TABLE `experiments_changelog`
+  ADD KEY `fk_experiments_changelog2experiments_id` (`entity_id`),
+  ADD KEY `fk_experiments_changelog2users_userid` (`users_id`),
+  ADD CONSTRAINT `fk_experiments_changelog2experiments_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_changelog2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `experiments_comments`

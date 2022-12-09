@@ -136,6 +136,20 @@ class Filter
         return str_replace('?', '_', mb_convert_encoding(self::forFilesystem($input), 'ASCII', 'UTF-8'));
     }
 
+    public static function blankExtraFieldsValueOnDuplicate(?string $metadata): ?string
+    {
+        if ($metadata === null) {
+            return null;
+        }
+        $decoded = json_decode($metadata, true, 512, JSON_THROW_ON_ERROR);
+        foreach ($decoded['extra_fields'] as &$field) {
+            if ($field['blank_value_on_duplicate'] === true) {
+                $field['value'] = '';
+            }
+        }
+        return json_encode($decoded, JSON_THROW_ON_ERROR);
+    }
+
     /**
      * Sanitize body with a list of allowed html tags.
      *

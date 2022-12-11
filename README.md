@@ -97,6 +97,18 @@ Thank you for using **eLabFTW**. I hope it will bring happiness to your lab ;)
 
 # Related projects
 
+## API libraries
+
+* [elabftw/elabapi-python](https://github.com/elabftw/elabapi-python/): python library for interacting with APIv2
+* [elabftw/elabapy](https://github.com/elabftw/elabapy): python library for interacting with APIv1
+* [elabftw/elabapi-javascript-example](https://github.com/elabftw/elabapi-javascript-example#readme): example code for interacting with APIv2 through JavaScript
+
+## Communities
+
+* [The ELN Consortium](https://github.com/TheELNConsortium/): a consortium of ELN vendors interested in improving interoperability between ELNs
+
+## Third party libraries
+
 These projects were created by users of eLabFTW, check them out if interested!
 
 * [din14970/elabftwqrprint](https://github.com/din14970/elabftwqrprint): python library to print QR codes from database objects

@@ -130,11 +130,12 @@ class PopulateDatabase extends Command
             $ItemsTypes = new ItemsTypes($user);
             $ItemsTypes->setId($ItemsTypes->create($items_types['name']));
             $ItemsTypes->bypassWritePermission = true;
+            $defaultPermissions = '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}';
             $patch = array(
                 'color' => $items_types['color'],
                 'body' => $items_types['template'],
-                'canread' => 'team',
-                'canwrite' => 'team',
+                'canread' => $defaultPermissions,
+                'canwrite' => $defaultPermissions,
                 'bookable' => $items_types['bookable'],
             );
             $ItemsTypes->patch(Action::Update, $patch);

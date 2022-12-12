@@ -43,11 +43,14 @@ class ItemsTypes extends AbstractTemplateEntity
 
     public function create(string $title): int
     {
+        $defaultPermissions = '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}';
         $title = Filter::title($title);
-        $sql = 'INSERT INTO items_types(title, team) VALUES(:content, :team)';
+        $sql = 'INSERT INTO items_types(title, team, canread, canwrite) VALUES(:content, :team, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $title, PDO::PARAM_STR);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
+        $req->bindParam(':canread', $defaultPermissions, PDO::PARAM_STR);
+        $req->bindParam(':canwrite', $defaultPermissions, PDO::PARAM_STR);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();

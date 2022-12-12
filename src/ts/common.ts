@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#' + el.dataset.rw + '_select_general').val() as string,
         ($('#' + el.dataset.rw + '_select_teams').val() as string[])
           .concat($('#' + el.dataset.rw + '_select_teamgroups').val() as string[])
-          .concat($('#' + el.dataset.rw + '_select_users').val() as string[])
+          .concat($('#' + el.dataset.rw + '_select_users').val() as string[]),
       );
       const entity = getEntity();
       return ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.rw + 'Div'));

@@ -269,7 +269,7 @@ class Teams implements RestInterface
         $ItemsTypes->setId($ItemsTypes->create('Edit me'));
         // we can't patch something that is not in our team!
         $ItemsTypes->bypassWritePermission = true;
-        $defaultPermissions = '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false,"teams": [], "teamgroups": [], "users": []}';
+        $defaultPermissions = '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}';
         $extra = array(
             'color' => '#32a100',
             'body' => '<p>This is the default text of the default category.</p><p>Head to the <a href="admin.php?tab=5">Admin Panel</a> to edit/add more categories for your database!</p>',

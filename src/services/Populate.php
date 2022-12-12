@@ -57,6 +57,14 @@ class Populate
         }
         $categoryArr = $Category->readAll();
 
+        // we will randomly pick from these for canread and canwrite
+        $visibilityArr = array(
+            '{"public": true, "organization": false, "my_teams": false, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}',
+            '{"public": false, "organization": true, "my_teams": false, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}',
+            '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}',
+            '{"public": false, "organization": false, "my_teams": false, "user": true, "useronly": false, "teams": [], "teamgroups": [], "users": []}',
+            '{"public": false, "organization": false, "my_teams": false, "user": false, "useronly": true, "teams": [], "teamgroups": [], "users": []}',
+        );
 
         printf("Generating %s \n", $Entity->type);
         for ($i = 0; $i <= $this->iter; $i++) {
@@ -79,8 +87,8 @@ class Populate
 
             // change the visibility, but not the first ones as they are often used in tests and this could cause permissions issues
             if ($this->faker->randomDigit() > 8 && $i > 10) {
-                $Entity->patch(Action::Update, array('canread' => $this->faker->randomElement(array('organization', 'public', 'user'))));
-                $Entity->patch(Action::Update, array('canwrite' => $this->faker->randomElement(array('organization', 'public', 'user'))));
+                $Entity->patch(Action::Update, array('canread' => $this->faker->randomElement($visibilityArr)));
+                $Entity->patch(Action::Update, array('canwrite' => $this->faker->randomElement($visibilityArr)));
             }
 
             // change the category (status/item type)

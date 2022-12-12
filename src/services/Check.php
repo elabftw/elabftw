@@ -12,9 +12,9 @@ namespace Elabftw\Services;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use JsonException;
-
 use function filter_var;
+
+use JsonException;
 use function mb_strlen;
 
 /**
@@ -27,6 +27,9 @@ class Check
 
     /** cookie is a sha256 sum: 64 chars */
     private const COOKIE_LENGTH = 64;
+
+    /** how deep goes the canread/canwrite json */
+    private const PERMISSIONS_JSON_MAX_DEPTH = 3;
 
     /**
      * Check the number of character of a password
@@ -97,9 +100,9 @@ class Check
     public static function visibility(string $visibility): string
     {
         try {
-            $decoded = json_decode($visibility, true, 512, JSON_THROW_ON_ERROR);
+            $decoded = json_decode($visibility, true, self::PERMISSIONS_JSON_MAX_DEPTH, JSON_THROW_ON_ERROR);
         } catch (JsonException) {
-            throw new ImproperActionException('The visibility parameter is wrong.');
+            throw new ImproperActionException($visibility . ' The visibility parameter is wrong.');
         }
         $boolParams = array('public', 'organization', 'my_teams', 'user', 'useronly');
         foreach ($boolParams as $param) {

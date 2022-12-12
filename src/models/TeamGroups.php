@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use function array_combine;
 use function array_map;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TeamGroupParams;
@@ -100,26 +99,13 @@ class TeamGroups implements RestInterface
      */
     public function getVisibilityList(): array
     {
-        $idArr = array();
-        $nameArr = array();
-
-        $visibilityArr = array(
+        return array(
             'public' => _('Public'),
             'organization' => _('Everyone with an account'),
-            'team' => _('Only the team'),
+            'my_teams' => _('All the teams I am part of'),
             'user' => _('Only me and admins'),
             'useronly' => _('Only me'),
         );
-        $groups = $this->readGroupsFromUser();
-
-        foreach ($groups as $group) {
-            $idArr[] = $group['id'];
-            $nameArr[] = $group['name'];
-        }
-
-        $tgArr = array_combine($idArr, $nameArr);
-
-        return $visibilityArr + $tgArr;
     }
 
     /**

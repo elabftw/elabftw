@@ -12,8 +12,9 @@ namespace Elabftw\Services;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use JsonException;
+
 use function filter_var;
-use function in_array;
 use function mb_strlen;
 
 /**
@@ -95,18 +96,23 @@ class Check
      */
     public static function visibility(string $visibility): string
     {
-        $validArr = array(
-            'public',
-            'organization',
-            'team',
-            'user',
-            'useronly',
-        );
-
-        if (!in_array($visibility, $validArr, true) && self::id((int) $visibility) === false) {
-            throw new IllegalActionException('The visibility parameter is wrong.');
+        try {
+            $decoded = json_decode($visibility, true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            throw new ImproperActionException('The visibility parameter is wrong.');
         }
-
+        $boolParams = array('public', 'organization', 'my_teams', 'user', 'useronly');
+        foreach ($boolParams as $param) {
+            if (!is_bool($decoded[$param])) {
+                throw new ImproperActionException(sprintf('The visibility parameter %s is wrong.', $param));
+            }
+        }
+        $arrayParams = array('teams', 'teamgroups', 'users');
+        foreach ($arrayParams as $param) {
+            if (!is_array($decoded[$param])) {
+                throw new ImproperActionException(sprintf('The visibility parameter %s is wrong.', $param));
+            }
+        }
         return $visibility;
     }
 

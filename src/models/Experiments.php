@@ -52,8 +52,8 @@ class Experiments extends AbstractConcreteEntity
         // defaults
         $title = _('Untitled');
         $body = null;
-        $canread = 'team';
-        $canwrite = 'user';
+        $canread = '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}';
+        $canwrite = '{"public": false, "organization": false, "my_teams": false, "user": true, "useronly": false, "teams": [], "teamgroups": [], "users": []}';
         $metadata = null;
 
         // do we want template ?

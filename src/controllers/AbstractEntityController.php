@@ -116,6 +116,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();
 
+
         $template = 'show.html';
 
         $renderArr = array(
@@ -226,6 +227,7 @@ abstract class AbstractEntityController implements ControllerInterface
             (int) $this->App->Config->configArr['min_delta_revisions'],
             (int) $this->App->Config->configArr['min_days_revisions'],
         );
+        $Teams = new Teams($this->Entity->Users);
 
         $renderArr = array(
             'allTeamUsersArr' => $this->allTeamUsersArr,
@@ -237,8 +239,11 @@ abstract class AbstractEntityController implements ControllerInterface
             'lastModifierFullname' => $lastModifierFullname,
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',
+            'myTeamsArr' => $Teams->readMyTeams(),
+            'myTeamgroupsArr' => $this->teamGroupsFromUser,
             'revNum' => $Revisions->readCount(),
             'templatesArr' => $this->templatesArr,
+            'usersArr' => $this->Entity->Users->readAllFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
 

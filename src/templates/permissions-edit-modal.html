@@ -1,0 +1,53 @@
+<!-- Modal for permission edit -->
+<div class='modal fade' id='permModal-{{ rw }}' tabindex='-1' role='dialog' aria-labelledby='permModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='permModalLabel'><i class='fas fa-fw fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }}'></i> {{ rw == 'canread' ? 'Select who can see this entry'|trans : 'Select who can edit this entry'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <div data-rw={{ rw }}>
+          <label for='{{ rw }}_select_general'>{{ 'General'|trans }}</label>
+          <select id='{{ rw }}_select_general' class='form-control'>
+            {% for key, value in visibilityArr %}
+              <option value='{{ key }}'
+              {{ Entity.entityData.canread|extractJson(key) == key ? ' selected' }}
+              >{{ value|trans }}</option>
+            {% endfor %}
+          </select>
+          <label for='{{ rw }}_select_teams'>{{ 'Teams'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries)'|trans|format('<kbd>', '</kbd>')|raw }}</p>
+          <select id='{{ rw }}_select_teams' multiple class='mt-1 form-control'>
+            {% for team in myTeamsArr %}
+              <option value='team:{{ team.id }}'
+              {{ Entity.entityData.canread|extractJson('todo') == 'nope' ? ' selected' }}
+              >{{ 'Team'|trans }} - {{ team.name }}</option>
+            {% endfor %}
+          </select>
+          <label for='{{ rw }}_select_teamgroups'>{{ 'Teamgroups'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries)'|trans|format('<kbd>', '</kbd>')|raw }}</p>
+          <select id='{{ rw }}_select_teamgroups' multiple class='form-control'>
+            {% for tg in myTeamgroupsArr %}
+              <option value='teamgroup:{{ tg.id }}'
+              {{ Entity.entityData.canread|extractJson('todo') == 'nope' ? ' selected' }}
+              >{{ 'Teamgroup'|trans }} - {{ tg.name }}</option>
+            {% endfor %}
+          </select>
+          <label for='{{ rw }}_select_users'>{{ 'Users'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries)'|trans|format('<kbd>', '</kbd>')|raw }}</p>
+          <select id='{{ rw }}_select_users' multiple class='form-control'>
+            {% for user in usersArr %}
+              <option value='user:{{ user.userid }}'
+              {{ Entity.entityData.canread|extractJson('todo') == 'nope' ? ' selected' }}
+              >{{ 'User'|trans }} - {{ user.fullname }} ({{ user.email }})</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-rw={{ rw }} data-action='save-permissions'>{{ 'Save'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

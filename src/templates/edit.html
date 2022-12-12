@@ -53,6 +53,11 @@
   </div>
 </div>
 
+{% set rw = 'canread' %}
+{% include('permissions-edit-modal.html') %}
+{% set rw = 'canwrite' %}
+{% include('permissions-edit-modal.html') %}
+
 <!-- show message if it was recently modified -->
 {% set lastchangeDiff = 'now'|date('U') - Entity.entityData.modified_at|date('U') %}
 {% if (lastchangeDiff < 600) and not Entity.entityData.lastchangeby is null and Entity.entityData.lastchangeby != Entity.Users.userData.userid %}
@@ -122,29 +127,21 @@
       </fieldset>
     </div>
 
-    <div class='col-md-3 mb-2 form-inline'>
+    <div id='canreadDiv' class='col-md-3 mb-2'>
       <!-- CAN READ -->
-      <i class='fas fa-fw fa-eye' title='Visibility'></i>
-      <label for='canread_select'>{{ 'Visibility'|trans }}</label>
-      <select id='canread_select' class='permissionSelect form-control' data-rw='canread'>
-        {% for key, value in visibilityArr %}
-          <option value='{{ key }}'
-          {{ Entity.entityData.canread == key ? ' selected' }}
-          >{{ value|trans }}</option>
-        {% endfor %}
-      </select>
+      <h5 class='d-inline'><i class='fas fa-fw fa-eye' title='{{ 'Visibility'|trans }}'></i>{{ 'Visibility'|trans }}</h5>
+      <button class='button-small btn btn-primary' data-action='toggle-modal' data-target='permModal-canread'>edit</button>
+      <div>
+      {{ Entity.getCan(Entity.entityData.canread) }}
+      </div>
     </div>
-    <div class='col-md-3 mb-2 form-inline'>
+    <div id='canwriteDiv' class='col-md-3 mb-2'>
       <!-- CAN WRITE -->
-      <i class='fas fa-fw fa-pencil-alt' title='Can write'></i>
-      <label for='canwrite_select'>{{ 'Can write'|trans }}</label>
-      <select id='canwrite_select' class='permissionSelect form-control' data-rw='canwrite'>
-        {% for key, value in visibilityArr %}
-          <option value='{{ key }}'
-          {{ Entity.entityData.canwrite == key ? ' selected' }}
-          >{{ value|trans }}</option>
-        {% endfor %}
-      </select>
+      <h5 class='d-inline'><i class='fas fa-fw fa-pencil-alt' title='{{ 'Can write'|trans }}'></i>{{ 'Can write'|trans }}</h5>
+      <button class='button-small btn btn-primary' data-action='toggle-modal' data-target='permModal-canwrite'>edit</button>
+      <div>
+      {{ Entity.getCan(Entity.entityData.canwrite) }}
+      </div>
     </div>
   </div>
 

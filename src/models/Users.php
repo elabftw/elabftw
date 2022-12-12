@@ -96,6 +96,8 @@ class Users implements RestInterface
             $validated = 1;
         }
 
+        $defaultRead = '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false,"teams": [], "teamgroups": [], "users": []}';
+        $defaultWrite = '{"public": false, "organization": false, "my_teams": false, "user": true, "useronly": false,"teams": [], "teamgroups": [], "users": []}';
 
         $sql = 'INSERT INTO users (
             `email`,
@@ -106,7 +108,9 @@ class Users implements RestInterface
             `register_date`,
             `validated`,
             `lang`,
-            `valid_until`
+            `valid_until`,
+            `default_read`,
+            `default_write`
         ) VALUES (
             :email,
             :password_hash,
@@ -116,7 +120,9 @@ class Users implements RestInterface
             :register_date,
             :validated,
             :lang,
-            :valid_until);';
+            :valid_until,
+            :default_read,
+            :default_write);';
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $email);
@@ -128,6 +134,8 @@ class Users implements RestInterface
         $req->bindParam(':usergroup', $group, PDO::PARAM_INT);
         $req->bindValue(':lang', $Config->configArr['lang']);
         $req->bindValue(':valid_until', $validUntil);
+        $req->bindValue(':default_read', $defaultRead);
+        $req->bindValue(':default_write', $defaultWrite);
         $this->Db->execute($req);
         $userid = $this->Db->lastInsertId();
 

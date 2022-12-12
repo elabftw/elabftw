@@ -9,7 +9,7 @@ import $ from 'jquery';
 import { Api } from './Apiv2.class';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { makeSortableGreatAgain, reloadElement, adjustHiddenState, getEntity } from './misc';
+import { makeSortableGreatAgain, reloadElement, adjustHiddenState, getEntity, permissionsToJson } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { EntityType, Model } from './interfaces';
@@ -166,17 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // CAN READ/WRITE SELECT
-  $(document).on('change', '.permissionSelect', function() {
-    const value = $(this).val();
-    const rw = $(this).data('rw');
-    const params = {};
-    params[rw] = value;
-    const entity = getEntity();
-    return ApiC.patch(`${entity.type}/${entity.id}`, params);
-  });
-
-
   /**
    * MAIN click event listener bound to container
    * this will listen for click events on the container and if the element
@@ -202,6 +191,18 @@ document.addEventListener('DOMContentLoaded', () => {
         top: 0,
         behavior: 'smooth',
       });
+
+    // SAVE PERMISSIONS
+    } else if (el.matches('[data-action="save-permissions"]')) {
+      const params = {};
+      params[el.dataset.rw] = permissionsToJson(
+        $('#' + el.dataset.rw + '_select_general').val() as string,
+        ($('#' + el.dataset.rw + '_select_teams').val() as string[])
+          .concat($('#' + el.dataset.rw + '_select_teamgroups').val() as string[])
+          .concat($('#' + el.dataset.rw + '_select_users').val() as string[])
+      );
+      const entity = getEntity();
+      return ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.rw + 'Div'));
 
     /* TOGGLE NEXT ACTION
      * An element with "toggle-next" as data-action value will appear clickable.

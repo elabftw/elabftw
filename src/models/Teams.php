@@ -127,6 +127,17 @@ class Teams implements RestInterface
         return $req->fetchAll();
     }
 
+    public function readMyTeams(): array
+    {
+        $this->canReadOrExplode();
+        $sql = 'SELECT teams.id, teams.name, teams.orgid FROM teams CROSS JOIN users2teams ON (users2teams.teams_id = teams.id AND users2teams.users_id = :userid) WHERE users2teams.users_id = :userid ORDER BY name ASC';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+    }
+
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
@@ -258,11 +269,12 @@ class Teams implements RestInterface
         $ItemsTypes->setId($ItemsTypes->create('Edit me'));
         // we can't patch something that is not in our team!
         $ItemsTypes->bypassWritePermission = true;
+        $defaultPermissions = '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false,"teams": [], "teamgroups": [], "users": []}';
         $extra = array(
             'color' => '#32a100',
             'body' => '<p>This is the default text of the default category.</p><p>Head to the <a href="admin.php?tab=5">Admin Panel</a> to edit/add more categories for your database!</p>',
-            'canread' => 'team',
-            'canwrite' => 'team',
+            'canread' => $defaultPermissions,
+            'canwrite' => $defaultPermissions,
             'bookable' => '0',
         );
         $ItemsTypes->patch(Action::Update, $extra);

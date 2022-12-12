@@ -27,9 +27,8 @@ use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
-use Elabftw\Services\Check;
-use Elabftw\Services\Transform;
 use Elabftw\Traits\EntityTrait;
+
 use function explode;
 use function implode;
 use function is_bool;
@@ -241,11 +240,11 @@ abstract class AbstractEntity implements RestInterface
             $teamFilter = ' AND users2teams.teams_id = entity.team';
         }
         // add pub/org/team filter
-        $sqlPublicOrg = "((entity.canread = 'public' OR entity.canread = 'organization') AND entity.userid = users2teams.users_id) OR ";
+        $sqlPublicOrg = "((JSON_EXTRACT(entity.canread, '$.public') = true OR JSON_EXTRACT(entity.canread,  '$.organization') = true) AND entity.userid = users2teams.users_id) OR ";
         if ($this->Users->userData['show_public']) {
-            $sqlPublicOrg = "entity.canread = 'public' OR entity.canread = 'organization' OR ";
+            $sqlPublicOrg = "JSON_EXTRACT(entity.canread, '$.public') = true OR JSON_EXTRACT(entity.canread,  '$.organization') = true) OR ";
         }
-        $sql .= ' AND ( ' . $sqlPublicOrg . " (entity.canread = 'team' AND users2teams.users_id = entity.userid" . $teamFilter . ") OR (entity.canread = 'user' ";
+        $sql .= ' AND ( ' . $sqlPublicOrg . " (JSON_EXTRACT(entity.canread, '$.my_teams') = true AND users2teams.users_id = entity.userid" . $teamFilter . ") OR (JSON_EXTRACT(entity.canread, '$.user') = true ";
         // admin will see the experiments with visibility user for user of their team
         if ($this->Users->userData['is_admin']) {
             $sql .= 'AND entity.userid = users2teams.users_id)';
@@ -253,11 +252,13 @@ abstract class AbstractEntity implements RestInterface
             $sql .= 'AND entity.userid = :userid)';
         }
         // add entities in useronly visibility only if we own them
-        $sql .= " OR (entity.canread = 'useronly' AND entity.userid = :userid)";
-        foreach ($teamgroupsOfUser as $teamgroup) {
-            $sql .= " OR (entity.canread = $teamgroup)";
-        }
+        $sql .= " OR (JSON_EXTRACT(entity.canread, '$.useronly') = true AND entity.userid = :userid)";
+        // look for teamgroups
+        $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[' . implode(',', $teamgroupsOfUser) . "]\"), '$.teamgroups'))";
+        // look for users, seems using the :userid placeholder does not work, or at least not in my hands
+        $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[ ' . $this->Users->userData['userid'] . "]\"), '$.users'))";
         $sql .= ')';
+        //var_dump($sql);die;
 
         $sqlArr = array(
             $this->extendedFilter,
@@ -350,17 +351,39 @@ abstract class AbstractEntity implements RestInterface
     /**
      * Get a list of visibility/team groups to display
      *
-     * @param string $permission raw value (public, organization, team, user, useronly)
+     * @param string $permission raw value in json
      * @return string capitalized and translated permission level
      */
     public function getCan(string $permission): string
     {
-        // if it's a number, then lookup the name of the team group
-        if (Check::id((int) $permission) !== false) {
-            $this->TeamGroups->setId((int) $permission);
-            return ucfirst($this->TeamGroups->readOne()['name']);
+        $result = array();
+        $permArr = json_decode($permission, true, 512, JSON_THROW_ON_ERROR);
+        if ($permArr['public'] === true) {
+            $result[] =  _('Public');
         }
-        return Transform::permission($permission);
+        if ($permArr['organization'] === true) {
+            $result[] =  _('Organization');
+        }
+        if ($permArr['my_teams'] === true) {
+            $result[] =  _('All the teams I am part of');
+        }
+        if ($permArr['user'] === true) {
+            $result[] =  _('Only me and admins');
+        }
+        if ($permArr['useronly'] === true) {
+            $result[] =  _('Only me');
+        }
+        foreach ($permArr['teams'] as $id) {
+            $result[] = 'Team: ' . $id;
+        }
+        foreach ($permArr['teamgroups'] as $id) {
+            $this->TeamGroups->setId($id);
+            $result[] = 'Teamgroup: ' . ucfirst($this->TeamGroups->readOne()['name']);
+        }
+        foreach ($permArr['users'] as $id) {
+            $result[] = 'Users: ' . $id;
+        }
+        return implode(', ', $result);
     }
 
     /**

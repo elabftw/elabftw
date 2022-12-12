@@ -393,3 +393,32 @@ export function removeEmpty(params: object): object {
   }
   return params;
 }
+
+export function permissionsToJson(general: string, extra: string[]): string {
+  const base = {
+    'public': false,
+    'organization': false,
+    'my_teams': false,
+    'user': false,
+    'useronly': false,
+    'teams': [],
+    'teamgroups': [],
+    'users': [],
+  };
+
+  base[general] = true;
+
+  extra.forEach(val => {
+    if (val.startsWith('team:')) {
+      base.teams.push(parseInt(val.split(':')[1], 10));
+    }
+    if (val.startsWith('teamgroup:')) {
+      base.teamgroups.push(parseInt(val.split(':')[1], 10));
+    }
+    if (val.startsWith('user:')) {
+      base.users.push(parseInt(val.split(':')[1], 10));
+    }
+  });
+
+  return JSON.stringify(base);
+}

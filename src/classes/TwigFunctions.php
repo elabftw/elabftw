@@ -80,6 +80,15 @@ class TwigFunctions
         return (new DateTime())->modify($input)->format('Y-m-d H:i:s');
     }
 
+    public static function extractJson(string $json, string $key): string|bool|int
+    {
+        $decoded = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        if ($decoded[$key] === true) {
+            return $key;
+        }
+        return false;
+    }
+
     public static function getSortIcon(string $orderBy): string
     {
         $Request = Request::createFromGlobals();

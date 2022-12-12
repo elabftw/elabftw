@@ -136,6 +136,23 @@ class Filter
         return str_replace('?', '_', mb_convert_encoding(self::forFilesystem($input), 'ASCII', 'UTF-8'));
     }
 
+    public static function blankExtraFieldsValueOnDuplicate(?string $metadata): ?string
+    {
+        if ($metadata === null) {
+            return null;
+        }
+        $decoded = json_decode($metadata, true, 512, JSON_THROW_ON_ERROR);
+        if (!isset($decoded['extra_fields'])) {
+            return null;
+        }
+        foreach ($decoded['extra_fields'] as &$field) {
+            if (isset($field['blank_value_on_duplicate']) && $field['blank_value_on_duplicate'] === true) {
+                $field['value'] = '';
+            }
+        }
+        return json_encode($decoded, JSON_THROW_ON_ERROR);
+    }
+
     /**
      * Sanitize body with a list of allowed html tags.
      *
@@ -154,7 +171,7 @@ class Filter
         // create base config for html5
         $config = HTMLPurifier_HTML5Config::createDefault();
         // allow only certain elements
-        $config->set('HTML.Allowed', 'div[class|style],br,p[class|style],sub,img[src|class|style|width|height],sup,strong,b,em,u,a[href],s,span[style],ul,li,ol,dl,dt,dd,blockquote,h1[class|style],h2[class|style],h3[class|style],h4[class|style],h5[class|style],h6[class|style],hr,table[style],tr[style],td[style|colspan|rowspan],th[style|colspan|rowspan],code,video[src|controls],audio[src|controls],pre[class],details,summary,figure,figcaption');
+        $config->set('HTML.Allowed', 'div[class|style],br,p[class|style],sub,img[src|class|style|width|height],sup,strong,b,em,u,a[href],s,span[style],ul,li,ol,dl,dt,dd,blockquote,h1[class|style],h2[class|style],h3[class|style],h4[class|style],h5[class|style],h6[class|style],hr,table[style|data-table-sort],tr[style],td[style|colspan|rowspan],th[style|colspan|rowspan],code,video[src|controls],audio[src|controls],pre[class],details,summary,figure,figcaption');
         $config->set('HTML.TargetBlank', true);
         // configure the cache for htmlpurifier
         $tmpDir = FsTools::getCacheFolder('purifier');
@@ -164,6 +181,10 @@ class Filter
         // allow any image size, see #3800
         $config->set('CSS.MaxImgLength', null);
         $config->set('HTML.MaxImgLength', null);
+        // allow 'data-table-sort' attribute to indicate that a table shall be sortable by js
+        if ($def = $config->maybeGetRawHTMLDefinition()) {
+            $def->addAttribute('table', 'data-table-sort', 'Enum#true');
+        }
 
         $purifier = new HTMLPurifier($config);
         return $purifier->purify($input);

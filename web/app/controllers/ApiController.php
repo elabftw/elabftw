@@ -17,6 +17,7 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -27,6 +28,9 @@ require_once dirname(__DIR__) . '/init.inc.php';
 $canWrite = true;
 // switch between a web request and an api request for auth
 try {
+    if ($App->Request->getMethod() === Request::METHOD_OPTIONS) {
+        return new JsonResponse();
+    }
     if ($App->Request->server->has('HTTP_AUTHORIZATION')) {
         // verify the key and load user info
         $ApiKeys = new ApiKeys(new Users());

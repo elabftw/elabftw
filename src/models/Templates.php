@@ -21,12 +21,12 @@ class Templates extends AbstractTemplateEntity
 {
     use SortableTrait;
 
-    public const defaultBody = "<h1><span style='font-size: 14pt;'>Goal :</span></h1>
+    public const defaultBody = '<h1>Goal:</h1>
     <p>&nbsp;</p>
-    <h1><span style='font-size: 14pt;'>Procedure :</span></h1>
+    <h1>Procedure:</h1>
     <p>&nbsp;</p>
-    <h1><span style='font-size: 14pt;'>Results :<br /></span></h1>
-    <p>&nbsp;</p>";
+    <h1>Results:</h1>
+    <p>&nbsp;</p>';
 
     public const defaultBodyMd = "# Goal\n\n# Procedure\n\n# Results\n\n";
 
@@ -104,7 +104,7 @@ class Templates extends AbstractTemplateEntity
         $sql = "SELECT experiments_templates.id, experiments_templates.title, experiments_templates.body,
             experiments_templates.created_at, experiments_templates.modified_at, experiments_templates.content_type,
             experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
-            experiments_templates.locked, experiments_templates.lockedby, experiments_templates.lockedwhen,
+            experiments_templates.locked, experiments_templates.lockedby, experiments_templates.locked_at,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata, experiments_templates.state,
             users.firstname, users.lastname, users.orcid,
             GROUP_CONCAT(tags.tag SEPARATOR '|') AS tags, GROUP_CONCAT(tags.id) AS tags_id
@@ -154,7 +154,7 @@ class Templates extends AbstractTemplateEntity
 
         $sql = "SELECT DISTINCT experiments_templates.id, experiments_templates.title, experiments_templates.body,
                 experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite, experiments_templates.content_type,
-                experiments_templates.locked, experiments_templates.lockedby, experiments_templates.lockedwhen,
+                experiments_templates.locked, experiments_templates.lockedby, experiments_templates.locked_at,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata,
                 users2teams.teams_id, teams.name AS team_name,
                 (pin_experiments_templates2users.entity_id IS NOT NULL) AS is_pinned,

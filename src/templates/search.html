@@ -12,7 +12,7 @@
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
         <h3>Search terms</h3>
-        <p>The search is performed against the title and the body.<br>
+        <p>The search is performed against title, body, date, and elabid.<br>
             The entire team will be searched unless there is an author fields.</p>
         <dl>
           <dt>Term</dt>
@@ -110,6 +110,8 @@
           <dd>Term or Quoted term</dd>
           <dt><span class='token keyword'>category</span></dt>
           <dd>Term or Quoted term; Only if Database is selected.</dd>
+          <dt><span class='token keyword'>created_at</span></dt>
+          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
           <dt><span class='token keyword'>date</span></dt>
           <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
           <dt><span class='token keyword'>elabid</span></dt>
@@ -122,6 +124,8 @@
               <span class='token number'>1</span> or <span class='token number'>0</span>,
               <span class='token boolean'>on</span> or <span class='token boolean'>off</span>
           </dd>
+          <dt><span class='token keyword'>locked_at</span></dt>
+          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
           <dt><span class='token keyword'>rating</span></dt>
           <dd><span class='token number'>1</span>,
               <span class='token number'>2</span>,
@@ -143,6 +147,8 @@
               <span class='token boolean'>on</span> or
               <span class='token boolean'>off</span>
           </dd>
+          <dt><span class='token keyword'>timestamped_at</span></dt>
+          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
           <dt><span class='token keyword'>title</span></dt>
           <dd>Term or Quoted term</dd>
           <dt><span class='token keyword'>visibility</span></dt>
@@ -177,6 +183,7 @@
             e.g., <em><code><span class='token field-date keyword'>date<span class='token punctuation'>:</span><span class='token number'>20200101</span><span class='token operator'>..</span><span class='token number'>20201231</span></span></code></em>
           </dd>
         </dl>
+        <p>Date fields ending with <span class='token keyword'>_at</span> only accept dates between <em><code><span class='token number'>1970</span><span class='token punctuation'>-</span><span class='token number'>01</span><span class='token punctuation'>-</span><span class='token number'>02</span></em></code> and <em><code><span class='token number'>2038</span><span class='token punctuation'>-</span><span class='token number'>01</span><span class='token punctuation'>-</span><span class='token number'>18</span></em></code>.</p>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
@@ -387,12 +394,12 @@
         <div style='position:relative;'>
           <textarea
             id='extendedArea'
-            name='extended'
+            name='q'
             rows='10'
             class='form-control'
             placeholder='author:"{{ App.Users.userData.fullname|raw }}" status:"Running"'
             spellcheck='false'
-          >{{ App.Request.query.get('extended') ? App.Request.query.get('extended')|trim : 'author:"' ~ App.Users.userData.fullname ~ '" ' }}</textarea>
+          >{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim : 'author:"' ~ App.Users.userData.fullname ~ '" ' }}</textarea>
           <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
 
         </div>

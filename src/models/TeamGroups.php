@@ -239,7 +239,7 @@ class TeamGroups implements RestInterface
             $fullGroups[] = array(
                 'name' => $group['name'],
                 'users' => array_map(
-                    function (string $userid, string $fullname): array {
+                    function (string $userid, ?string $fullname): array {
                         return array(
                             'userid' => $userid,
                             'fullname' => $fullname,

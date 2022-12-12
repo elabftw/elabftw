@@ -21,6 +21,7 @@ use Elabftw\Services\AdvancedSearchQuery\Grammar\NotExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\OrExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\OrOperand;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\SimpleValueWrapper;
+use Elabftw\Services\AdvancedSearchQuery\Grammar\TimestampField;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use PDO;
@@ -38,9 +39,10 @@ class QueryBuilderVisitor implements Visitor
     public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): WhereCollector
     {
         $param = $this->getUniqueID();
+        $query = sprintf('(entity.title LIKE %1$s OR entity.body LIKE %1$s OR entity.date LIKE %1$s OR entity.elabid LIKE %1$s)', $param);
 
         return new WhereCollector(
-            '(entity.body LIKE ' . $param . ' OR entity.title LIKE ' . $param . ')',
+            $query,
             array(array(
                 'param' => $param,
                 'value' => '%' . $simpleValueWrapper->getValue() . '%',
@@ -59,7 +61,7 @@ class QueryBuilderVisitor implements Visitor
 
         if ($dateType === 'simple') {
             $param = $this->getUniqueID();
-            $query = $column . $dateField->getOperator() . $param;
+            $query = $column . ' ' . $dateField->getOperator() . ' ' . $param;
             $bindValues[] = array(
                 'param' => $param,
                 'value' => $dateField->getValue(),
@@ -78,6 +80,85 @@ class QueryBuilderVisitor implements Visitor
                 'param' => $paramMax,
                 'value' => $dateField->getDateTo(),
                 'type' => PDO::PARAM_INT,
+            );
+        }
+        return new WhereCollector($query, $bindValues);
+    }
+
+    public function visitTimestampField(TimestampField $timestampField, VisitorParameters $parameters): WhereCollector
+    {
+        $query = '';
+        $bindValues = array();
+
+        $timeMin = '000000';
+        $timeMax = '235959';
+
+        $column = 'entity.' . $timestampField->getFieldType()->value;
+        $dateType = $timestampField->getDateType();
+
+        // convert date (YYYYMMDD) to timestamp (YYYYMMDDhhmmss) depending on operator
+        // >=   date . '000000'
+        // <    date . '000000'
+        // >    date . '235959'
+        // <=   date . '235959'
+        // !=   < date . '000000' OR > date . '235959'
+        // =    BETWEEN date . '000000' AND date . '235959'
+
+        if ($dateType === 'simple') {
+            if (in_array($timestampField->getOperator(), array('=', '!='), true)) {
+                $paramMin = $this->getUniqueID();
+                $paramMax = $this->getUniqueID();
+                if ($timestampField->getOperator() === '=') {
+                    $query = $column . ' BETWEEN ' . $paramMin . ' AND ' . $paramMax;
+                }
+                if ($timestampField->getOperator() === '!=') {
+                    $query = $column . ' < ' . $paramMin . ' OR ' . $column . ' > ' . $paramMax;
+                }
+                $bindValues[] = array(
+                    'param' => $paramMin,
+                    'value' => $timestampField->getValue() . $timeMin,
+                    'type' => PDO::PARAM_INT,
+                    'additional_columns' => $column,
+                );
+                $bindValues[] = array(
+                    'param' => $paramMax,
+                    'value' => $timestampField->getValue() . $timeMax,
+                    'type' => PDO::PARAM_INT,
+                    'additional_columns' => $column,
+                );
+                return new WhereCollector($query, $bindValues);
+            }
+
+            // operator is >= or <
+            $time = $timeMin;
+            if (in_array($timestampField->getOperator(), array('<=', '>'), true)) {
+                $time = $timeMax;
+            }
+            $param = $this->getUniqueID();
+            $query = $column . ' ' . $timestampField->getOperator() . ' ' . $param;
+            $bindValues[] = array(
+                'param' => $param,
+                'value' => $timestampField->getValue() . $time,
+                'type' => PDO::PARAM_INT,
+                'additional_columns' => $column,
+            );
+            return new WhereCollector($query, $bindValues);
+        }
+        if ($dateType === 'range') {
+            $paramMin = $this->getUniqueID();
+            $paramMax = $this->getUniqueID();
+            $query = $column . ' BETWEEN ' . $paramMin . ' AND ' . $paramMax;
+            $bindValues[] = array(
+                'param' => $paramMin,
+                'value' => $timestampField->getValue() . $timeMin,
+                'type' => PDO::PARAM_INT,
+                'additional_columns' => $column,
+            );
+            $bindValues[] = array(
+                'param' => $paramMax,
+                'value' => $timestampField->getDateTo() . $timeMax,
+                'type' => PDO::PARAM_INT,
+                'additional_columns' => $column,
             );
         }
         return new WhereCollector($query, $bindValues);

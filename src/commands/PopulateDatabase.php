@@ -126,8 +126,7 @@ class PopulateDatabase extends Command
 
         // add more items types
         foreach ($yaml['items_types'] as $items_types) {
-            $user = new Users();
-            $user->team = (int) $items_types['team'];
+            $user = new Users(1, (int) $items_types['team']);
             $ItemsTypes = new ItemsTypes($user);
             $ItemsTypes->setId($ItemsTypes->create($items_types['name']));
             $ItemsTypes->bypassWritePermission = true;

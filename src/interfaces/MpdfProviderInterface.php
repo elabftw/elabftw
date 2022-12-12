@@ -14,4 +14,6 @@ use Mpdf\Mpdf;
 interface MpdfProviderInterface
 {
     public function getInstance(): Mpdf;
+
+    public function isPdfa(): bool;
 }

@@ -15,6 +15,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
+use Elabftw\Services\Filter;
 use Elabftw\Services\MakeBloxberg;
 use Elabftw\Services\MakeCustomTimestamp;
 use Elabftw\Services\MakeDfnTimestamp;
@@ -136,7 +137,7 @@ class Experiments extends AbstractConcreteEntity
         $sql = 'UPDATE experiments SET
             timestamped = 1,
             timestampedby = :userid,
-            timestampedwhen = :when
+            timestamped_at = :when
             WHERE id = :id;';
         $req = $this->Db->prepare($sql);
         // the date recorded in the db will match the creation time of the timestamp token
@@ -160,6 +161,9 @@ class Experiments extends AbstractConcreteEntity
         // capital i looks good enough
         $title = $this->entityData['title'] . ' I';
 
+        // handle the blank_value_on_duplicate attribute on extra fields
+        $metadata = Filter::blankExtraFieldsValueOnDuplicate($this->entityData['metadata']);
+
         $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, userid, metadata, content_type)
             VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, :userid, :metadata, :content_type)';
         $req = $this->Db->prepare($sql);
@@ -169,7 +173,7 @@ class Experiments extends AbstractConcreteEntity
         $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
         $req->bindParam(':canread', $this->entityData['canread'], PDO::PARAM_STR);
         $req->bindParam(':canwrite', $this->entityData['canwrite'], PDO::PARAM_STR);
-        $req->bindParam(':metadata', $this->entityData['metadata'], PDO::PARAM_STR);
+        $req->bindParam(':metadata', $metadata, PDO::PARAM_STR);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':content_type', $this->entityData['content_type'], PDO::PARAM_INT);
         $this->Db->execute($req);

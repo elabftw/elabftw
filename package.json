@@ -25,7 +25,7 @@
     "css-minimizer-webpack-plugin": "^4.0.0",
     "dropzone": "^5.8.0",
     "expose-loader": "^4.0.0",
-    "i18next": "^21.0.2",
+    "i18next": "^22.0.6",
     "jquery": "^3.5.1",
     "jquery-ui": "^1.13.0",
     "jsoneditor": "^9.0.3",
@@ -46,7 +46,7 @@
     "ve-range-utils": "^2.6.3",
     "ve-sequence-utils": "^5.1.6",
     "webpack": "^5.9.0",
-    "webpack-cli": "^4.2.0"
+    "webpack-cli": "^5.0.0"
   },
   "devDependencies": {
     "@types/bootstrap": "^5.0.17",

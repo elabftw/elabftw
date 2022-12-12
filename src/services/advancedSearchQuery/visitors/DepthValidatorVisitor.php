@@ -19,6 +19,7 @@ use Elabftw\Services\AdvancedSearchQuery\Grammar\NotExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\OrExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\OrOperand;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\SimpleValueWrapper;
+use Elabftw\Services\AdvancedSearchQuery\Grammar\TimestampField;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 
@@ -39,6 +40,11 @@ class DepthValidatorVisitor implements Visitor
     }
 
     public function visitDateField(DateField $dateField, VisitorParameters $parameters): int
+    {
+        return 1;
+    }
+
+    public function visitTimestampField(TimestampField $timestampField, VisitorParameters $parameters): int
     {
         return 1;
     }

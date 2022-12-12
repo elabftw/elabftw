@@ -49,7 +49,7 @@ use ValueError;
  */
 class Apiv2Controller extends AbstractApiController
 {
-    private array $allowedMethods = array('GET', 'POST', 'DELETE', 'PATCH', 'PUT');
+    private array $allowedMethods = array('GET', 'POST', 'DELETE', 'PATCH');
 
     private RestInterface $Model;
 

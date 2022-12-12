@@ -34,6 +34,17 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Untitled', Filter::title(''));
     }
 
+    public function testBlankValueOnDuplicate(): void
+    {
+        $json = '{"extra_fields":{"To blank":{"type":"text","value":"some value","position":1,"blank_value_on_duplicate":true}}}';
+        $blankedJson = '{"extra_fields":{"To blank":{"type":"text","value":"","position":1,"blank_value_on_duplicate":true}}}';
+        $this->assertEquals($blankedJson, Filter::blankExtraFieldsValueOnDuplicate($json));
+
+        $json = '{"extra_fields":{"To blank":{"type":"text","value":"some value","position":1}}}';
+        $blankedJson = '{"extra_fields":{"To blank":{"type":"text","value":"some value","position":1}}}';
+        $this->assertEquals($blankedJson, Filter::blankExtraFieldsValueOnDuplicate($json));
+    }
+
     public function testBody(): void
     {
         $this->assertEquals('my body', Filter::body('my body'));

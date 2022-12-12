@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 
@@ -60,6 +61,9 @@ class Items extends AbstractConcreteEntity
     {
         $this->canOrExplode('read');
 
+        // handle the blank_value_on_duplicate attribute on extra fields
+        $metadata = Filter::blankExtraFieldsValueOnDuplicate($this->entityData['metadata']);
+
         $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, category, elabid, metadata, content_type)
             VALUES(:team, :title, CURDATE(), :body, :userid, :canread, :canwrite, :category, :elabid, :metadata, :content_type)';
         $req = $this->Db->prepare($sql);
@@ -72,7 +76,7 @@ class Items extends AbstractConcreteEntity
             'canread' => $this->entityData['canread'],
             'canwrite' => $this->entityData['canwrite'],
             'category' => $this->entityData['category_id'],
-            'metadata' => $this->entityData['metadata'],
+            'metadata' => $metadata,
             'content_type' => $this->entityData['content_type'],
         ));
         $newId = $this->Db->lastInsertId();

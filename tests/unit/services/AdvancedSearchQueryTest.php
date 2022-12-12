@@ -62,7 +62,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         ));
         $whereClause = $advancedSearchQuery->getWhereClause();
         $this->assertIsArray($whereClause);
-        $this->assertStringStartsWith(' AND (((entity.body LIKE :', $whereClause['where']);
+        $this->assertStringStartsWith(' AND (((entity.title LIKE :', $whereClause['where']);
         $this->assertStringEndsWith(')))', $whereClause['where']);
 
         $query = 'category:"only meaningful with items but no error"';

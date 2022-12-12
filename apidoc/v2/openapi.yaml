@@ -319,7 +319,7 @@ components:
           type: integer
         timestampedby:
           type: integer
-        timestampedwhen:
+        timestamped_at:
           type: string
         title:
           type: string
@@ -1090,6 +1090,18 @@ paths:
       tags: ['Items']
       summary: Modify an item
       operationId: patch-item
+      requestBody:
+        description: Parameters for patching an item
+        content:
+          application/json:
+            schema:
+              anyOf:
+                - type: object
+                  properties:
+                    action:
+                      type: string
+                      enum: ['lock', 'pin', 'updatemetadatafield', 'update']
+                - $ref: '#/components/schemas/item'
       responses:
         '200':
           description: The patched item

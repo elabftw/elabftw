@@ -59,21 +59,6 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($out, Tools::showStars(2));
     }
 
-    public function testQFilter(): void
-    {
-        $input = array(
-            'tags' => array('some tag', 'another tag'),
-            'q' => '',
-            'cat' => '2',
-            'mode' => 'show',
-            'sort' => 'asc',
-            'order' => 'date',
-            'limit' => '15',
-        );
-        $output = '&tags[]=some tag&tags[]=another tag&q=&cat=2&mode=show&sort=asc&order=date&limit=15';
-        $this->assertEquals($output, Tools::qFilter($input));
-    }
-
     public function testGetShortElabid(): void
     {
         $this->assertEquals('7995340c', Tools::getShortElabid('20220627-7995340c1921f38fd833c447be50b7101e4f852c'));

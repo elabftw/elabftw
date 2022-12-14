@@ -2,7 +2,7 @@
   <div class='col-md-10'>
     <!-- BACK TO LINK -->
     {% if App.Session.has('lastquery') %}
-      {% set lastquery = App.Session.get('lastquery')|qFilter %}
+      {% set lastquery = App.Session.get('lastquery') %}
     {% else %}
       {% set lastquery = 'mode=show' %}
     {% endif %}

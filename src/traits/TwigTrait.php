@@ -50,7 +50,6 @@ trait TwigTrait
         $starsFilter = new TwigFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
         $bytesFilter = new TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
         $extFilter = new TwigFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
-        $qFilter = new TwigFilter('qFilter', '\Elabftw\Elabftw\Tools::qFilter', $filterOptions);
         $metadataFilter = new TwigFilter('formatMetadata', '\Elabftw\Elabftw\Tools::formatMetadata', $filterOptions);
         $csrfFilter = new TwigFilter('csrf', '\Elabftw\Services\Transform::csrf', $filterOptions);
         $notifWebFilter = new TwigFilter('notifWeb', '\Elabftw\Services\Transform::notif', $filterOptions);
@@ -89,7 +88,6 @@ trait TwigTrait
         $TwigEnvironment->addFilter($starsFilter);
         $TwigEnvironment->addFilter($bytesFilter);
         $TwigEnvironment->addFilter($extFilter);
-        $TwigEnvironment->addFilter($qFilter);
         $TwigEnvironment->addFilter($metadataFilter);
         $TwigEnvironment->addFilter($csrfFilter);
         $TwigEnvironment->addFilter($notifWebFilter);

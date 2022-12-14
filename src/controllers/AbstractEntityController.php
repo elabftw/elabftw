@@ -106,7 +106,7 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         // store the query parameters in the Session
-        $this->App->Session->set('lastquery', $this->App->Request->query->all());
+        $this->App->Session->set('lastquery', $this->App->Request->getQueryString());
 
         // FAVTAGS
         $FavTags = new FavTags($this->App->Users);

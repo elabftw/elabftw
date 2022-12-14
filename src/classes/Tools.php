@@ -248,35 +248,6 @@ class Tools
         return $final;
     }
 
-    /**
-     * Transform a query object in a query string
-     *
-     * @param array<string, mixed> $query the query array given by Request
-     */
-    public static function qFilter(array $query): string
-    {
-        $res = '';
-        foreach ($query as $key => $value) {
-            // tags for instance are arrays
-            if ($key === 'tags') {
-                foreach ($value as $tag) {
-                    $res .= '&tags[]=' . $tag;
-                }
-            } elseif ($key === 'metavalue') {
-                foreach ($value as $metavalue) {
-                    $res .= '&metavalue[]=' . $metavalue;
-                }
-            } else {
-                $res .= '&' . (string) $key . '=' . $value;
-            }
-        }
-        $output = filter_var($res, FILTER_SANITIZE_STRING);
-        if ($output === false) {
-            return '';
-        }
-        return $output;
-    }
-
     public static function getShortElabid(string $elabid): string
     {
         if (empty($elabid)) {

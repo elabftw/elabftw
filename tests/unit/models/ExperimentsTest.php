@@ -88,6 +88,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Experiments->setId(1);
         $this->Experiments->ItemsLinks->setId(1);
+        $this->Experiments->ExperimentsLinks->setId(1);
         $this->Experiments->canOrExplode('read');
         // add some steps and links in there, too
         $this->Experiments->Steps->postAction(Action::Create, array('body' => 'some step'));

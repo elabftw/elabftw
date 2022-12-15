@@ -32,8 +32,8 @@ class LinksTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateReadDestroy(): void
     {
-        $this->Experiments->ItemsLinks->postAction(Action::Create, array());
         $this->Experiments->ItemsLinks->setId(1);
+        $this->Experiments->ItemsLinks->postAction(Action::Create, array());
         $this->Experiments->ItemsLinks->destroy();
 
         $this->Experiments->ExperimentsLinks->setId(3);

@@ -71,40 +71,40 @@ UPDATE items SET canwrite = '{"public": false, "organization": false, "my_teams"
 UPDATE items SET canwrite = '{"public": false, "organization": false, "my_teams": false, "user": false, "useronly": true, "teams": [], "teamgroups": [], "users": []}' WHERE canwrite = 'useronly';
 -- now make it json type
 ALTER TABLE `items` CHANGE `canwrite` `canwrite` JSON NOT NULL;
--- USERS default_canread
+-- USERS default_read
 -- -------------------
--- do the same for default_canread in users table
-ALTER TABLE `users` CHANGE `default_canread` `default_canread` VARCHAR(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'team';
+-- do the same for default_read in users table
+ALTER TABLE `users` CHANGE `default_read` `default_read` VARCHAR(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'team';
 -- change the rows where canread is set to a teamgroup
-UPDATE users SET default_canread = CONCAT('{"public": false, "organization": false, "my_teams": false, "user": false, "useronly": true, "teams": [], "teamgroups": [', CAST(default_canread AS UNSIGNED), '], "users": []}') WHERE default_canread NOT IN ('public', 'organization', 'team', 'user', 'useronly') AND default_canread NOT LIKE "{%";
+UPDATE users SET default_read = CONCAT('{"public": false, "organization": false, "my_teams": false, "user": false, "useronly": true, "teams": [], "teamgroups": [', CAST(default_read AS UNSIGNED), '], "users": []}') WHERE default_read NOT IN ('public', 'organization', 'team', 'user', 'useronly') AND default_read NOT LIKE "{%";
 -- public
-UPDATE users SET default_canread = '{"public": true, "organization": false, "my_teams": false, "user": false, "useronly": false,"teams": [], "teamgroups": [], "users": []}' WHERE default_canread = 'public';
+UPDATE users SET default_read = '{"public": true, "organization": false, "my_teams": false, "user": false, "useronly": false,"teams": [], "teamgroups": [], "users": []}' WHERE default_read = 'public';
 -- organization
-UPDATE users SET default_canread = '{"public": false, "organization": true,  "my_teams": false, "user": false, "useronly": false,"teams": [], "teamgroups": [], "users": []}' WHERE default_canread = 'organization';
+UPDATE users SET default_read = '{"public": false, "organization": true,  "my_teams": false, "user": false, "useronly": false,"teams": [], "teamgroups": [], "users": []}' WHERE default_read = 'organization';
 -- team
-UPDATE users SET default_canread = '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}' WHERE default_canread = 'team';
+UPDATE users SET default_read = '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}' WHERE default_read = 'team';
 -- user+admin
-UPDATE users SET default_canread = '{"public": false, "organization": false, "my_teams": false, "user": true, "useronly": false, "teams": [], "teamgroups": [], "users": []}' WHERE default_canread = 'user';
+UPDATE users SET default_read = '{"public": false, "organization": false, "my_teams": false, "user": true, "useronly": false, "teams": [], "teamgroups": [], "users": []}' WHERE default_read = 'user';
 -- user
-UPDATE users SET default_canread = '{"public": false, "organization": false, "my_teams": false, "user": false, "useronly": true, "teams": [], "teamgroups": [], "users": []}' WHERE default_canread = 'useronly';
+UPDATE users SET default_read = '{"public": false, "organization": false, "my_teams": false, "user": false, "useronly": true, "teams": [], "teamgroups": [], "users": []}' WHERE default_read = 'useronly';
 -- now make it json type
-ALTER TABLE `users` CHANGE `default_canread` `default_canread` JSON NOT NULL;
--- USERS default_canwrite
--- do the same for default_canwrite in users table
-ALTER TABLE `users` CHANGE `default_canwrite` `default_canwrite` VARCHAR(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'team';
+ALTER TABLE `users` CHANGE `default_read` `default_read` JSON NOT NULL;
+-- USERS default_write
+-- do the same for default_write in users table
+ALTER TABLE `users` CHANGE `default_write` `default_write` VARCHAR(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'team';
 -- change the rows where canread is set to a teamgroup
-UPDATE users SET default_canwrite = CONCAT('{"public": false, "organization": false, "my_teams": false, "user": false, "useronly": true, "teams": [], "teamgroups": [', CAST(default_canwrite AS UNSIGNED), '], "users": []}') WHERE default_canwrite NOT IN ('public', 'organization', 'team', 'user', 'useronly') AND default_canwrite NOT LIKE "{%";
+UPDATE users SET default_write = CONCAT('{"public": false, "organization": false, "my_teams": false, "user": false, "useronly": true, "teams": [], "teamgroups": [', CAST(default_write AS UNSIGNED), '], "users": []}') WHERE default_write NOT IN ('public', 'organization', 'team', 'user', 'useronly') AND default_write NOT LIKE "{%";
 -- public
-UPDATE users SET default_canwrite = '{"public": true, "organization": false, "my_teams": false, "user": false, "useronly": false,"teams": [], "teamgroups": [], "users": []}' WHERE default_canwrite = 'public';
+UPDATE users SET default_write = '{"public": true, "organization": false, "my_teams": false, "user": false, "useronly": false,"teams": [], "teamgroups": [], "users": []}' WHERE default_write = 'public';
 -- organization
-UPDATE users SET default_canwrite = '{"public": false, "organization": true,  "my_teams": false, "user": false, "useronly": false,"teams": [], "teamgroups": [], "users": []}' WHERE default_canwrite = 'organization';
+UPDATE users SET default_write = '{"public": false, "organization": true,  "my_teams": false, "user": false, "useronly": false,"teams": [], "teamgroups": [], "users": []}' WHERE default_write = 'organization';
 -- team
-UPDATE users SET default_canwrite = '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}' WHERE default_canwrite = 'team';
+UPDATE users SET default_write = '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}' WHERE default_write = 'team';
 -- user+admin
-UPDATE users SET default_canwrite = '{"public": false, "organization": false, "my_teams": false, "user": true, "useronly": false, "teams": [], "teamgroups": [], "users": []}' WHERE default_canwrite = 'user';
+UPDATE users SET default_write = '{"public": false, "organization": false, "my_teams": false, "user": true, "useronly": false, "teams": [], "teamgroups": [], "users": []}' WHERE default_write = 'user';
 -- user
-UPDATE users SET default_canwrite = '{"public": false, "organization": false, "my_teams": false, "user": false, "useronly": true, "teams": [], "teamgroups": [], "users": []}' WHERE default_canwrite = 'useronly';
+UPDATE users SET default_write = '{"public": false, "organization": false, "my_teams": false, "user": false, "useronly": true, "teams": [], "teamgroups": [], "users": []}' WHERE default_write = 'useronly';
 -- now make it json type
-ALTER TABLE `users` CHANGE `default_canwrite` `default_canwrite` JSON NOT NULL;
+ALTER TABLE `users` CHANGE `default_write` `default_write` JSON NOT NULL;
 
 UPDATE config SET conf_value = 106 WHERE conf_name = 'schema';

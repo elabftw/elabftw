@@ -11,8 +11,8 @@
       </div>
       <div class='modal-body'>
         <div data-rw={{ rw }}>
-          <label for='{{ rw }}_select_general'>{{ 'General'|trans }}</label>
-          <select id='{{ rw }}_select_general' class='form-control'>
+          <label for='{{ rw }}_select_base'>{{ 'Base'|trans }}</label>
+          <select id='{{ rw }}_select_base' class='form-control'>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'
               {{ Entity.entityData.canread|extractJson(key) == key ? ' selected' }}
@@ -23,7 +23,7 @@
           <select id='{{ rw }}_select_teams' multiple class='mt-1 form-control'>
             {% for team in myTeamsArr %}
               <option value='team:{{ team.id }}'
-              {{ Entity.entityData.canread|extractJson('todo') == 'nope' ? ' selected' }}
+              {{ Entity.entityData.canread|extractJson('teams') == 'nope' ? ' selected' }}
               >{{ 'Team'|trans }} - {{ team.name }}</option>
             {% endfor %}
           </select>

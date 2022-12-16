@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="save-permissions"]')) {
       const params = {};
       params[el.dataset.rw] = permissionsToJson(
-        $('#' + el.dataset.rw + '_select_general').val() as string,
+        parseInt(($('#' + el.dataset.rw + '_select_base').val() as string), 10),
         ($('#' + el.dataset.rw + '_select_teams').val() as string[])
           .concat($('#' + el.dataset.rw + '_select_teamgroups').val() as string[])
           .concat($('#' + el.dataset.rw + '_select_users').val() as string[]),

@@ -394,31 +394,27 @@ export function removeEmpty(params: object): object {
   return params;
 }
 
-export function permissionsToJson(general: string, extra: string[]): string {
-  const base = {
-    'public': false,
-    'organization': false,
-    'my_teams': false,
-    'user': false,
-    'useronly': false,
+export function permissionsToJson(base: number, extra: string[]): string {
+  const json = {
+    'base': 0,
     'teams': [],
     'teamgroups': [],
     'users': [],
   };
 
-  base[general] = true;
+  json.base = base;
 
   extra.forEach(val => {
     if (val.startsWith('team:')) {
-      base.teams.push(parseInt(val.split(':')[1], 10));
+      json.teams.push(parseInt(val.split(':')[1], 10));
     }
     if (val.startsWith('teamgroup:')) {
-      base.teamgroups.push(parseInt(val.split(':')[1], 10));
+      json.teamgroups.push(parseInt(val.split(':')[1], 10));
     }
     if (val.startsWith('user:')) {
-      base.users.push(parseInt(val.split(':')[1], 10));
+      json.users.push(parseInt(val.split(':')[1], 10));
     }
   });
 
-  return JSON.stringify(base);
+  return JSON.stringify(json);
 }

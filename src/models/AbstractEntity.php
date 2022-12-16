@@ -17,8 +17,10 @@ use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Permissions;
+use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -240,11 +242,11 @@ abstract class AbstractEntity implements RestInterface
             $teamFilter = ' AND users2teams.teams_id = entity.team';
         }
         // add pub/org/team filter
-        $sqlPublicOrg = "((JSON_EXTRACT(entity.canread, '$.public') = true OR JSON_EXTRACT(entity.canread, '$.organization') = true) AND entity.userid = users2teams.users_id) OR ";
+        $sqlPublicOrg = "((JSON_EXTRACT(entity.canread, '$.base') = " . BasePermissions::Full->value . " OR JSON_EXTRACT(entity.canread, '$.base') = " . BasePermissions::Organization->value . ') AND entity.userid = users2teams.users_id) OR ';
         if ($this->Users->userData['show_public']) {
-            $sqlPublicOrg = "JSON_EXTRACT(entity.canread, '$.public') = true OR JSON_EXTRACT(entity.canread,  '$.organization') = true) OR ";
+            $sqlPublicOrg = "JSON_EXTRACT(entity.canread, '$.base') = " . BasePermissions::Full->value . " OR JSON_EXTRACT(entity.canread, '$.base') = " . BasePermissions::Organization->value . ') OR ';
         }
-        $sql .= ' AND ( ' . $sqlPublicOrg . " (JSON_EXTRACT(entity.canread, '$.my_teams') = true AND users2teams.users_id = entity.userid" . $teamFilter . ") OR (JSON_EXTRACT(entity.canread, '$.user') = true ";
+        $sql .= ' AND ( ' . $sqlPublicOrg . " (JSON_EXTRACT(entity.canread, '$.base') = " . BasePermissions::MyTeams->value . ' AND users2teams.users_id = entity.userid' . $teamFilter . ") OR (JSON_EXTRACT(entity.canread, '$.base') = " . BasePermissions::User->value . ' ';
         // admin will see the experiments with visibility user for user of their team
         if ($this->Users->userData['is_admin']) {
             $sql .= 'AND entity.userid = users2teams.users_id)';
@@ -252,7 +254,7 @@ abstract class AbstractEntity implements RestInterface
             $sql .= 'AND entity.userid = :userid)';
         }
         // add entities in useronly visibility only if we own them
-        $sql .= " OR (JSON_EXTRACT(entity.canread, '$.useronly') = true AND entity.userid = :userid)";
+        $sql .= " OR (JSON_EXTRACT(entity.canread, '$.base') = " . BasePermissions::UserOnly->value . ' AND entity.userid = :userid)';
         // look for teamgroups
         if (!empty($teamgroupsOfUser)) {
             $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[' . implode(',', $teamgroupsOfUser) . "]\"), '$.teamgroups'))";
@@ -351,40 +353,11 @@ abstract class AbstractEntity implements RestInterface
 
     /**
      * Get a list of visibility/team groups to display
-     *
-     * @param string $permission raw value in json
-     * @return string capitalized and translated permission level
      */
-    public function getCan(string $permission): string
+    public function getCan(string $permission): array
     {
-        $result = array();
-        $permArr = json_decode($permission, true, 512, JSON_THROW_ON_ERROR);
-        if ($permArr['public'] === true) {
-            $result[] =  _('Public');
-        }
-        if ($permArr['organization'] === true) {
-            $result[] =  _('Organization');
-        }
-        if ($permArr['my_teams'] === true) {
-            $result[] =  _('All the teams I am part of');
-        }
-        if ($permArr['user'] === true) {
-            $result[] =  _('Only me and admins');
-        }
-        if ($permArr['useronly'] === true) {
-            $result[] =  _('Only me');
-        }
-        foreach ($permArr['teams'] as $id) {
-            $result[] = 'Team: ' . $id;
-        }
-        foreach ($permArr['teamgroups'] as $id) {
-            $this->TeamGroups->setId($id);
-            $result[] = 'Teamgroup: ' . ucfirst($this->TeamGroups->readOne()['name']);
-        }
-        foreach ($permArr['users'] as $id) {
-            $result[] = 'Users: ' . $id;
-        }
-        return implode(', ', $result);
+        $PermissionsHelper = new PermissionsHelper();
+        return $PermissionsHelper->translate($permission);
     }
 
     /**

@@ -465,13 +465,6 @@ github issue #52 */
     color: #000;
 }
 
-/* add some css for details/summary html5 */
-summary::before {
-    color: $elabblue;
-    content: '► ';
-    font-size: 120%;
-}
-
 /* fix for big images uploaded in the text */
 .item .txt {
     overflow: auto;

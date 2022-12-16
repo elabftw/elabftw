@@ -9,9 +9,9 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\PermissionsDefaults;
 use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Experiments;
@@ -60,11 +60,11 @@ class Populate
 
         // we will randomly pick from these for canread and canwrite
         $visibilityArr = array(
-            PermissionsDefaults::PUBLIK,
-            PermissionsDefaults::ORGANIZATION,
-            PermissionsDefaults::MY_TEAMS,
-            PermissionsDefaults::USER,
-            PermissionsDefaults::USERONLY,
+            BasePermissions::Full->value,
+            BasePermissions::Organization->value,
+            BasePermissions::MyTeams->value,
+            BasePermissions::User->value,
+            BasePermissions::UserOnly->value,
         );
 
         printf("Generating %s \n", $Entity->type);

@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Models\AnonymousUser;
 use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\TeamGroups;
@@ -57,7 +58,7 @@ class Permissions
         }
 
         // if it's public, we can read it
-        if ($this->canread['public'] === true) {
+        if ($this->canread['base'] === BasePermissions::Full->value) {
             return array('read' => true, 'write' => $write);
         }
 
@@ -72,12 +73,12 @@ class Permissions
             return array('read' => false, 'write' => false);
         }
 
-        if ($this->canread['organization'] === true && $this->Users instanceof AuthenticatedUser) {
+        if ($this->canread['base'] === BasePermissions::Organization->value && $this->Users instanceof AuthenticatedUser) {
             return array('read' => true, 'write' => $write);
         }
 
         // if the vis. setting is team, check we are in the same team than the $item
-        if ($this->canread['my_teams'] === true) {
+        if ($this->canread['base'] === BasePermissions::MyTeams->value) {
             // items will have a team, make sure it's the same as the one we are logged in
             if (isset($this->item['team']) && ($this->item['team'] === $this->Users->userData['team'])) {
                 return array('read' => true, 'write' => $write);
@@ -89,7 +90,7 @@ class Permissions
         }
 
         // if the setting is 'user' (meaning user + admin(s)) check we are admin
-        if ($this->canread['user'] === true) {
+        if ($this->canread['base'] === BasePermissions::User->value) {
             if ($this->Users->userData['is_admin'] && $this->Teams->hasCommonTeamWithCurrent($this->item['userid'], (int) $this->Users->userData['team'])) {
                 return array('read' => true, 'write' => $write);
             }
@@ -135,7 +136,7 @@ class Permissions
         }
 
         // if anyone can write, we're sure to have access
-        if ($this->canwrite['public'] === true) {
+        if ($this->canwrite['base'] === BasePermissions::Full->value) {
             return true;
         }
 
@@ -145,11 +146,11 @@ class Permissions
         }
 
         // if any logged in user can write, we can as we are not anon
-        if ($this->canwrite['organization'] === true && $this->Users instanceof AuthenticatedUser) {
+        if ($this->canwrite['base'] === BasePermissions::Organization->value && $this->Users instanceof AuthenticatedUser) {
             return true;
         }
 
-        if ($this->canwrite['my_teams'] === true) {
+        if ($this->canwrite['base'] === BasePermissions::MyTeams->value) {
             // items will have a team, make sure it's the same as the one we are logged in
             if (isset($this->item['team']) && ($this->item['team'] === $this->Users->userData['team'])) {
                 return true;

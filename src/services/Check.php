@@ -104,11 +104,9 @@ class Check
         } catch (JsonException) {
             throw new ImproperActionException($visibility . ' The visibility parameter is wrong.');
         }
-        $boolParams = array('public', 'organization', 'my_teams', 'user', 'useronly');
-        foreach ($boolParams as $param) {
-            if (!is_bool($decoded[$param])) {
-                throw new ImproperActionException(sprintf('The visibility parameter %s is wrong.', $param));
-            }
+        $allowedBase = array(10, 20, 30, 40, 50);
+        if (!in_array($decoded['base'], $allowedBase, true)) {
+            throw new ImproperActionException('The base visibility parameter is wrong.');
         }
         $arrayParams = array('teams', 'teamgroups', 'users');
         foreach ($arrayParams as $param) {

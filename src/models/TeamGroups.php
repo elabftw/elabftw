@@ -121,6 +121,15 @@ class TeamGroups implements RestInterface
         return $this->Db->fetch($req);
     }
 
+    public function readNamesFromIds(array $idArr): array
+    {
+        $sql = 'SELECT team_groups.name FROM team_groups WHERE id IN (' . implode(',', $idArr) . ') ORDER BY name ASC';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+    }
+
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();

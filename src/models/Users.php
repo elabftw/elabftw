@@ -243,6 +243,15 @@ class Users implements RestInterface
         return $userData;
     }
 
+    public function readNamesFromIds(array $idArr): array
+    {
+        $sql = "SELECT CONCAT(users.firstname, ' ', users.lastname) AS fullname FROM users WHERE userid IN (" . implode(',', $idArr) . ') ORDER BY fullname ASC';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+    }
+
     public function postAction(Action $action, array $reqBody): int
     {
         $Creator = new UserCreator($this->requester, $reqBody);

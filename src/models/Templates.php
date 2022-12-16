@@ -154,7 +154,7 @@ class Templates extends AbstractTemplateEntity
         $TeamGroups = new TeamGroups($this->Users);
         $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
 
-        $sql = "SELECT DISTINCT experiments_templates.id, experiments_templates.title, experiments_templates.body,
+        $sql = sprintf("SELECT DISTINCT experiments_templates.id, experiments_templates.title, experiments_templates.body,
                 experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite, experiments_templates.content_type,
                 experiments_templates.locked, experiments_templates.lockedby, experiments_templates.locked_at,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata,
@@ -169,11 +169,11 @@ class Templates extends AbstractTemplateEntity
                 LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
                 LEFT JOIN pin_experiments_templates2users ON (experiments_templates.id = pin_experiments_templates2users.entity_id AND pin_experiments_templates2users.users_id = :userid)
                 WHERE experiments_templates.userid != 0 AND experiments_templates.state = :state AND (
-                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = " . BasePermissions::Full->value . ") OR
-                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = " . BasePermissions::Organization->value . ") OR
-                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = " . BasePermissions::MyTeams->value . " AND users2teams.users_id = experiments_templates.userid) OR
-                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = " . BasePermissions::User->value. " AND experiments_templates.userid = :userid) OR
-                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = " . BasePermissions::UserOnly->value . ' AND experiments_templates.userid = :userid)';
+                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d) OR
+                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d) OR
+                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND users2teams.users_id = experiments_templates.userid) OR
+                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND experiments_templates.userid = :userid) OR
+                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND experiments_templates.userid = :userid)", BasePermissions::Full->value, BasePermissions::Organization->value, BasePermissions::MyTeams->value, BasePermissions::User->value, BasePermissions::UserOnly->value);
         // look for teamgroups
         if (!empty($teamgroupsOfUser)) {
             $sql .= ' OR (JSON_CONTAINS(experiments_templates.canread, ("[' . implode(',', $teamgroupsOfUser) . "]\"), '$.teamgroups'))";

@@ -14,6 +14,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TeamGroupParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
@@ -100,11 +101,11 @@ class TeamGroups implements RestInterface
     public function getVisibilityList(): array
     {
         return array(
-            'public' => _('Public'),
-            'organization' => _('Everyone with an account'),
-            'my_teams' => _('All the teams I am part of'),
-            'user' => _('Only me and admins'),
-            'useronly' => _('Only me'),
+            BasePermissions::Full->value => _('Public'),
+            BasePermissions::Organization->value => _('Everyone with an account'),
+            BasePermissions::MyTeams->value => _('All the teams I am part of'),
+            BasePermissions::User->value => _('Only me and admins'),
+            BasePermissions::UserOnly->value => _('Only me'),
         );
     }
 
@@ -123,6 +124,9 @@ class TeamGroups implements RestInterface
 
     public function readNamesFromIds(array $idArr): array
     {
+        if (empty($idArr)) {
+            return array();
+        }
         $sql = 'SELECT team_groups.name FROM team_groups WHERE id IN (' . implode(',', $idArr) . ') ORDER BY name ASC';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);

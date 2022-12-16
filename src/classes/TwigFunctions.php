@@ -82,9 +82,9 @@ class TwigFunctions
 
     public static function extractJson(string $json, string $key): string|bool|int
     {
-        $decoded = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-        if ($decoded[$key] === true) {
-            return $key;
+        $decoded = json_decode($json, true, 3, JSON_THROW_ON_ERROR);
+        if ($decoded[$key]) {
+            return (int) $decoded[$key];
         }
         return false;
     }

@@ -75,7 +75,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->setId(1);
         $matrix = array('canread', 'canwrite');
         foreach ($matrix as $column) {
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => PermissionsDefaults::PUBLIK)));
+            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => PermissionsDefaults::FULL)));
             $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => PermissionsDefaults::ORGANIZATION)));
             $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => PermissionsDefaults::MY_TEAMS)));
             $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => PermissionsDefaults::USER)));

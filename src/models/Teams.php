@@ -141,6 +141,9 @@ class Teams implements RestInterface
 
     public function readNamesFromIds(array $idArr): array
     {
+        if (empty($idArr)) {
+            return array();
+        }
         $sql = 'SELECT teams.name FROM teams WHERE id IN (' . implode(',', $idArr) . ') ORDER BY name ASC';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);

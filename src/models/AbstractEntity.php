@@ -242,11 +242,11 @@ abstract class AbstractEntity implements RestInterface
             $teamFilter = ' AND users2teams.teams_id = entity.team';
         }
         // add pub/org/team filter
-        $sqlPublicOrg = "((JSON_EXTRACT(entity.canread, '$.base') = " . BasePermissions::Full->value . " OR JSON_EXTRACT(entity.canread, '$.base') = " . BasePermissions::Organization->value . ') AND entity.userid = users2teams.users_id) OR ';
+        $sqlPublicOrg = sprintf("((JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d) AND entity.userid = users2teams.users_id) OR ", BasePermissions::Full->value, BasePermissions::Organization->value);
         if ($this->Users->userData['show_public']) {
-            $sqlPublicOrg = "JSON_EXTRACT(entity.canread, '$.base') = " . BasePermissions::Full->value . " OR JSON_EXTRACT(entity.canread, '$.base') = " . BasePermissions::Organization->value . ') OR ';
+            $sqlPublicOrg = sprintf("JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d) OR ", BasePermissions::Full->value, BasePermissions::Organization->value);
         }
-        $sql .= ' AND ( ' . $sqlPublicOrg . " (JSON_EXTRACT(entity.canread, '$.base') = " . BasePermissions::MyTeams->value . ' AND users2teams.users_id = entity.userid' . $teamFilter . ") OR (JSON_EXTRACT(entity.canread, '$.base') = " . BasePermissions::User->value . ' ';
+        $sql .= sprintf(" AND ( %s (JSON_EXTRACT(entity.canread, '$.base') = %d AND users2teams.users_id = entity.userid %s) OR (JSON_EXTRACT(entity.canread, '$.base') = %d ", $sqlPublicOrg, BasePermissions::MyTeams->value, $teamFilter, BasePermissions::User->value);
         // admin will see the experiments with visibility user for user of their team
         if ($this->Users->userData['is_admin']) {
             $sql .= 'AND entity.userid = users2teams.users_id)';
@@ -254,7 +254,7 @@ abstract class AbstractEntity implements RestInterface
             $sql .= 'AND entity.userid = :userid)';
         }
         // add entities in useronly visibility only if we own them
-        $sql .= " OR (JSON_EXTRACT(entity.canread, '$.base') = " . BasePermissions::UserOnly->value . ' AND entity.userid = :userid)';
+        $sql .= sprintf(" OR (JSON_EXTRACT(entity.canread, '$.base') = %d AND entity.userid = :userid)", BasePermissions::UserOnly->value);
         // look for teamgroups
         if (!empty($teamgroupsOfUser)) {
             $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[' . implode(',', $teamgroupsOfUser) . "]\"), '$.teamgroups'))";

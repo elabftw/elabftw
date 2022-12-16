@@ -12,6 +12,7 @@ namespace Elabftw\Controllers;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
@@ -88,7 +89,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // only show public to anon
         if ($this->App->Session->get('is_anon')) {
-            $this->Entity->addFilter(FilterableColumn::Canread->value, 'public');
+            $this->Entity->addFilter(FilterableColumn::Canread->value, BasePermissions::Full->value);
         }
 
         $itemsArr = $this->getItemsArr();

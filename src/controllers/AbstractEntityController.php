@@ -42,18 +42,11 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $teamGroupsFromUser = array();
 
-    // all the users from the current team
-    protected array $allTeamUsersArr = array();
-
     public function __construct(protected App $App, protected AbstractEntity $Entity)
     {
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $this->visibilityArr = $TeamGroups->getVisibilityList();
         $this->teamGroupsFromUser = $TeamGroups->readGroupsFromUser();
-        // only take active users
-        $this->allTeamUsersArr = array_filter($this->App->Users->readAllFromTeam(), function ($u) {
-            return $u['archived'] === 0;
-        });
         // items don't need to show the templates in create new menu, so save a sql call here
         if ($this->Entity instanceof Experiments) {
             $Templates = new Templates($this->Entity->Users);
@@ -120,7 +113,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $template = 'show.html';
 
         $renderArr = array(
-            'allTeamUsersArr' => $this->allTeamUsersArr,
             'DisplayParams' => $DisplayParams,
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
@@ -137,6 +129,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'tagsArrForSelect' => $TeamTags->readAll(),
             'teamGroupsFromUser' => $this->teamGroupsFromUser,
             'templatesArr' => $this->templatesArr,
+            'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
         $Response = new Response();
@@ -172,7 +165,6 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // the mode parameter is for the uploads tpl
         $renderArr = array(
-            'allTeamUsersArr' => $this->allTeamUsersArr,
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
             'itemsCategoryArr' => $itemsCategoryArr,
@@ -180,6 +172,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'revNum' => $Revisions->readCount(),
             'templatesArr' => $this->templatesArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
+            'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
 
@@ -230,7 +223,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $Teams = new Teams($this->Entity->Users);
 
         $renderArr = array(
-            'allTeamUsersArr' => $this->allTeamUsersArr,
             'Entity' => $this->Entity,
             'entityData' => $this->Entity->entityData,
             'categoryArr' => $this->categoryArr,
@@ -243,7 +235,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'myTeamgroupsArr' => $this->teamGroupsFromUser,
             'revNum' => $Revisions->readCount(),
             'templatesArr' => $this->templatesArr,
-            'usersArr' => $this->Entity->Users->readAllFromTeam(),
+            'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
 

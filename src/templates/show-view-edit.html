@@ -41,7 +41,7 @@
             {% endfor %}
             <option disabled>{{ 'Import in experiments'|trans }}</option>
             {# if we are admin we can import in other users experiments, otherwise just for ourself #}
-            {% for user in allTeamUsersArr|filter(u => App.Users.userData.is_admin ? true : u.userid == App.Users.userData.userid ? u) %}
+            {% for user in usersArr|filter(u => App.Users.userData.is_admin ? true : u.userid == App.Users.userData.userid ? u) %}
               <option value='experiments:{{ user.userid }}'>{{ user.fullname|raw }}</option>
             {% endfor %}
           </select>

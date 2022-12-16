@@ -30,7 +30,7 @@
   {% if Entity.entityData %}
   <div id='templatesDiv'>
   <!-- MORE OPTIONS DROPDOWN MENU (···) -->
-  <div class='d-flex'>
+  <div class='d-flex align-items-center'>
     <!-- NAME OF TPL AND OWNER -->
     <div class='mr-auto'>
       <h2>
@@ -44,6 +44,27 @@
         {{ Entity.entityData.fullname|raw }} - {{ Entity.entityData.title|raw }}
       </h2>
     </div>
+    <div id='canreadDiv' class='col-md-3 mb-2'>
+      <!-- CAN READ -->
+      <h5 class='d-inline'><i class='fas fa-fw fa-eye' title='{{ 'Visibility'|trans }}'></i>{{ 'Visibility'|trans }}</h5>
+      {% if not Entity.entityData.locked %}
+        <button class='button-small btn btn-primary' data-action='toggle-modal' data-target='permModal-canread'>edit</button>
+      {% endif %}
+      <div>
+      {{ Entity.getCan(Entity.entityData.canread) }}
+      </div>
+    </div>
+    <div id='canwriteDiv' class='col-md-3 mb-2'>
+      <!-- CAN WRITE -->
+      <h5 class='d-inline'><i class='fas fa-fw fa-pencil-alt' title='{{ 'Can write'|trans }}'></i>{{ 'Can write'|trans }}</h5>
+      {% if not Entity.entityData.locked %}
+        <button class='button-small btn btn-primary' data-action='toggle-modal' data-target='permModal-canwrite'>edit</button>
+      {% endif %}
+      <div>
+      {{ Entity.getCan(Entity.entityData.canwrite) }}
+      </div>
+    </div>
+
 
     <!-- MORE OPTIONS MENU (...) -->
     <div class='dropdown'>
@@ -55,12 +76,6 @@
         <a data-action='create-entity' data-tplid="{{ Entity.id }}" href='#' class='dropdown-item'>
           <i class='fas fa-circle-plus fa-fw mr-1'></i>{{ 'Create experiment from template'|trans }}
         </a>
-        {% if not Entity.entityData.locked %}
-          <!-- MANAGE PERMISSIONS -->
-          <a href='#' class='dropdown-item' data-action='toggle-modal' data-target='permModal' data-read='{{ Entity.entityData.canread }}' data-write='{{ Entity.entityData.canwrite }}'>
-            <i class='fas fa-share-alt fa-fw mr-1'></i>{{ 'Manage Permissions'|trans }}
-          </a>
-        {% endif %}
         <!-- PIN -->
         <a data-action='toggle-pin' data-id='{{ Entity.id }}' href='#' class='dropdown-item'>
           <i class='fas fa-thumbtack fa-fw mr-1'></i>{{ 'Toggle pin (add to create button menu)'|trans }}

@@ -124,7 +124,7 @@
             <div class='input-group-append'>
               <select id='addLinkOwnerFilter' class='brl-none form-control'>
                 <option selected value=''>{{ 'Any author'|trans }}</option>
-                {% for user in allTeamUsersArr %}
+                {% for user in usersArr %}
                   <option value='{{ user.userid }}'>{{ user.fullname }}</option>
                 {% endfor %}
               </select>

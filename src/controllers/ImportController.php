@@ -10,6 +10,7 @@
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\PermissionsDefaults;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\StorageFactory;
 use Elabftw\Interfaces\ControllerInterface;
@@ -58,8 +59,8 @@ class ImportController implements ControllerInterface
                 return new ImportEln(
                     $this->app->Users,
                     (string) $this->request->request->get('target'),
-                    $this->request->request->getAlnum('canread'),
-                    $this->request->request->getAlnum('canwrite'),
+                    (string) ($this->request->request->get('canread') ?? PermissionsDefaults::MY_TEAMS),
+                    (string) ($this->request->request->get('canwrite') ?? PermissionsDefaults::USER),
                     $uploadedFile,
                     (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs(),
                 );
@@ -67,8 +68,8 @@ class ImportController implements ControllerInterface
                 return new ImportZip(
                     $this->app->Users,
                     (string) $this->request->request->get('target'),
-                    $this->request->request->getAlnum('canread'),
-                    $this->request->request->getAlnum('canwrite'),
+                    (string) $this->request->request->get('canread'),
+                    (string) $this->request->request->get('canwrite'),
                     $uploadedFile,
                     (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs(),
                 );
@@ -76,8 +77,8 @@ class ImportController implements ControllerInterface
                 return new ImportCsv(
                     $this->app->Users,
                     (string) $this->request->request->get('target'),
-                    $this->request->request->getAlnum('canread'),
-                    $this->request->request->getAlnum('canwrite'),
+                    (string) $this->request->request->get('canread'),
+                    (string) $this->request->request->get('canwrite'),
                     $uploadedFile,
                 );
             default:

@@ -1,3 +1,8 @@
+{% set rw = 'canread' %}
+{% include('permissions-edit-modal.html') %}
+{% set rw = 'canwrite' %}
+{% include('permissions-edit-modal.html') %}
+
 <div class='row' style='line-height: 160%'>
   <div class='col col-md-12'>
 
@@ -26,6 +31,7 @@
 <label for='title_input'>{{ 'Title'|trans }}</label>
 <input id='title_input' class='form-control' data-id='{{ Entity.id }}' value='{{ Entity.entityData.title|raw }}' />
 {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
+
 <label for='e{{ Entity.entityData.id }}'>{{ 'Template content'|trans }}</label>
 {% if editor == 'md' %}
   <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' style='height:500px;' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>

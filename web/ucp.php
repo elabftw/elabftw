@@ -18,6 +18,7 @@ use Elabftw\Models\ApiKeys;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,8 +37,8 @@ try {
     $ApiKeys = new ApiKeys($App->Users);
     $apiKeysArr = $ApiKeys->readAll();
 
+    $Teams = new Teams($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
-    $teamGroupsArr = $TeamGroups->readAll();
 
     $Templates = new Templates($App->Users);
     $templatesArr = $Templates->getWriteableTemplatesList();
@@ -98,9 +99,11 @@ try {
         'langsArr' => Language::getAllHuman(),
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
+        'myTeamsArr' => $Teams->readMyTeams(),
+        'myTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
         'notificationsSettings' => $notificationsSettings,
-        'teamGroupsArr' => $teamGroupsArr,
         'templatesArr' => $templatesArr,
+        'usersArr' => $App->Users->readAllActiveFromTeam(),
         'visibilityArr' => $visibilityArr,
         'revNum' => isset($Revisions) ? $Revisions->readCount() : 0,
     );

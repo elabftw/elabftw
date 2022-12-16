@@ -208,6 +208,13 @@ class Users implements RestInterface
         return $this->readFromQuery('', $this->userData['team']);
     }
 
+    public function readAllActiveFromTeam(): array
+    {
+        return array_filter($this->readAllFromTeam(), function ($u) {
+            return $u['archived'] === 0;
+        });
+    }
+
     /**
      * This can be called from api and only contains "safe" values
      */

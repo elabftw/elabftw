@@ -11,6 +11,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\PermissionsDefaults;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Action;
@@ -96,8 +97,8 @@ class Users implements RestInterface
             $validated = 1;
         }
 
-        $defaultRead = '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false,"teams": [], "teamgroups": [], "users": []}';
-        $defaultWrite = '{"public": false, "organization": false, "my_teams": false, "user": true, "useronly": false,"teams": [], "teamgroups": [], "users": []}';
+        $defaultRead = PermissionsDefaults::MY_TEAMS;
+        $defaultWrite = PermissionsDefaults::USER;
 
         $sql = 'INSERT INTO users (
             `email`,

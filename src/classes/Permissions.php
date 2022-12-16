@@ -15,7 +15,6 @@ use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
-use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

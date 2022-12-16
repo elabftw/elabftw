@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\PermissionsDefaults;
 use Elabftw\Enums\State;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
@@ -44,8 +45,8 @@ class Templates extends AbstractTemplateEntity
     public function create(string $title): int
     {
         $title = Filter::title($title);
-        $canread = 'team';
-        $canwrite = 'user';
+        $canread = PermissionsDefaults::MY_TEAMS;
+        $canwrite = PermissionsDefaults::USER;
 
         if (isset($this->Users->userData['default_read'])) {
             $canread = $this->Users->userData['default_read'];
@@ -134,12 +135,12 @@ class Templates extends AbstractTemplateEntity
         $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
 
         return array_filter($this->readAll(), function ($t) use ($teamgroupsOfUser) {
-            return $t['canwrite'] === 'public' || $t['canwrite'] === 'organization' ||
-                ($t['canwrite'] === 'team' && ((int) $t['teams_id'] === $this->Users->userData['team'])) ||
-                ($t['canwrite'] === 'user' && $t['userid'] === $this->Users->userData['userid']) ||
-                ($t['canwrite'] === 'useronly' && $t['userid'] === $this->Users->userData['userid']) ||
-                // cast to int is necessary because canwrite column is a string
-                (in_array((int) $t['canwrite'], $teamgroupsOfUser, true));
+            $canwrite = json_decode($t['canwrite'], true, 3, JSON_THROW_ON_ERROR);
+            return $canwrite['public'] === true || $canwrite['organization'] === true ||
+                ($canwrite['my_teams'] === true && ((int) $t['teams_id'] === $this->Users->userData['team'])) ||
+                ($canwrite['user'] === true && $t['userid'] === $this->Users->userData['userid']) ||
+                ($canwrite['useronly'] === true && $t['userid'] === $this->Users->userData['userid']) ||
+                (in_array($canwrite['teamgroups'], $teamgroupsOfUser, true));
         });
     }
 
@@ -167,14 +168,17 @@ class Templates extends AbstractTemplateEntity
                 LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
                 LEFT JOIN pin_experiments_templates2users ON (experiments_templates.id = pin_experiments_templates2users.entity_id AND pin_experiments_templates2users.users_id = :userid)
                 WHERE experiments_templates.userid != 0 AND experiments_templates.state = :state AND (
-                    experiments_templates.canread = 'public' OR
-                    experiments_templates.canread = 'organization' OR
-                    (experiments_templates.canread = 'team' AND users2teams.users_id = experiments_templates.userid) OR
-                    (experiments_templates.canread = 'user' AND experiments_templates.userid = :userid) OR
-                    (experiments_templates.canread = 'useronly' AND experiments_templates.userid = :userid)";
-        foreach ($teamgroupsOfUser as $teamgroup) {
-            $sql .= " OR (experiments_templates.canread = $teamgroup)";
+                    (JSON_EXTRACT(experiments_templates.canread, '$.public') = true) OR
+                    (JSON_EXTRACT(experiments_templates.canread, '$.organization') = true) OR
+                    (JSON_EXTRACT(experiments_templates.canread, '$.my_teams') = true AND users2teams.users_id = experiments_templates.userid) OR
+                    (JSON_EXTRACT(experiments_templates.canread, '$.user') = true AND experiments_templates.userid = :userid) OR
+                    (JSON_EXTRACT(experiments_templates.canread, '$.useronly') = true AND experiments_templates.userid = :userid)";
+        // look for teamgroups
+        if (!empty($teamgroupsOfUser)) {
+            $sql .= ' OR (JSON_CONTAINS(experiments_templates.canread, ("[' . implode(',', $teamgroupsOfUser) . "]\"), '$.teamgroups'))";
         }
+        // look for users, seems using the :userid placeholder does not work, or at least not in my hands
+        $sql .= ' OR (JSON_CONTAINS(experiments_templates.canread, ("[ ' . $this->Users->userData['userid'] . "]\"), '$.users'))";
         $sql .= ')';
 
         $sql .= $this->filterSql;

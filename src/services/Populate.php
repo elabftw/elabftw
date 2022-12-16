@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\PermissionsDefaults;
 use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
@@ -59,11 +60,11 @@ class Populate
 
         // we will randomly pick from these for canread and canwrite
         $visibilityArr = array(
-            '{"public": true, "organization": false, "my_teams": false, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}',
-            '{"public": false, "organization": true, "my_teams": false, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}',
-            '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}',
-            '{"public": false, "organization": false, "my_teams": false, "user": true, "useronly": false, "teams": [], "teamgroups": [], "users": []}',
-            '{"public": false, "organization": false, "my_teams": false, "user": false, "useronly": true, "teams": [], "teamgroups": [], "users": []}',
+            PermissionsDefaults::PUBLIK,
+            PermissionsDefaults::ORGANIZATION,
+            PermissionsDefaults::MY_TEAMS,
+            PermissionsDefaults::USER,
+            PermissionsDefaults::USERONLY,
         );
 
         printf("Generating %s \n", $Entity->type);
@@ -146,7 +147,9 @@ class Populate
         if ($user['create_templates'] ?? false) {
             $Templates = new Templates($Users);
             for ($i = 0; $i < $this->iter; $i++) {
-                $Templates->create($this->faker->sentence());
+                $id = $Templates->create($this->faker->sentence());
+                $Templates->setId($id);
+                $Templates->patch(Action::Update, array('body' => $this->faker->realText(1000)));
             }
         }
     }

@@ -240,7 +240,7 @@ abstract class AbstractEntity implements RestInterface
             $teamFilter = ' AND users2teams.teams_id = entity.team';
         }
         // add pub/org/team filter
-        $sqlPublicOrg = "((JSON_EXTRACT(entity.canread, '$.public') = true OR JSON_EXTRACT(entity.canread,  '$.organization') = true) AND entity.userid = users2teams.users_id) OR ";
+        $sqlPublicOrg = "((JSON_EXTRACT(entity.canread, '$.public') = true OR JSON_EXTRACT(entity.canread, '$.organization') = true) AND entity.userid = users2teams.users_id) OR ";
         if ($this->Users->userData['show_public']) {
             $sqlPublicOrg = "JSON_EXTRACT(entity.canread, '$.public') = true OR JSON_EXTRACT(entity.canread,  '$.organization') = true) OR ";
         }
@@ -254,11 +254,12 @@ abstract class AbstractEntity implements RestInterface
         // add entities in useronly visibility only if we own them
         $sql .= " OR (JSON_EXTRACT(entity.canread, '$.useronly') = true AND entity.userid = :userid)";
         // look for teamgroups
-        $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[' . implode(',', $teamgroupsOfUser) . "]\"), '$.teamgroups'))";
+        if (!empty($teamgroupsOfUser)) {
+            $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[' . implode(',', $teamgroupsOfUser) . "]\"), '$.teamgroups'))";
+        }
         // look for users, seems using the :userid placeholder does not work, or at least not in my hands
         $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[ ' . $this->Users->userData['userid'] . "]\"), '$.users'))";
         $sql .= ')';
-        //var_dump($sql);die;
 
         $sqlArr = array(
             $this->extendedFilter,

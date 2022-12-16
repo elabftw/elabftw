@@ -11,6 +11,7 @@ namespace Elabftw\Models;
 
 use function array_diff;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\PermissionsDefaults;
 use Elabftw\Elabftw\TeamParam;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
@@ -247,13 +248,15 @@ class Teams implements RestInterface
     {
         $name = Filter::title($name);
 
-        $sql = 'INSERT INTO teams (name, common_template, common_template_md, link_name, link_href) VALUES (:name, :common_template, :common_template_md, :link_name, :link_href)';
+        $sql = 'INSERT INTO teams (name, common_template, common_template_md, link_name, link_href, force_canread, force_canwrite) VALUES (:name, :common_template, :common_template_md, :link_name, :link_href, :force_canread, :force_canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindValue(':common_template', Templates::defaultBody);
         $req->bindValue(':common_template_md', Templates::defaultBodyMd);
         $req->bindValue(':link_name', 'Documentation');
         $req->bindValue(':link_href', 'https://doc.elabftw.net');
+        $req->bindValue(':force_canread', PermissionsDefaults::MY_TEAMS);
+        $req->bindValue(':force_canwrite', PermissionsDefaults::USER);
         $this->Db->execute($req);
         // grab the team ID
         $newId = $this->Db->lastInsertId();
@@ -269,7 +272,7 @@ class Teams implements RestInterface
         $ItemsTypes->setId($ItemsTypes->create('Edit me'));
         // we can't patch something that is not in our team!
         $ItemsTypes->bypassWritePermission = true;
-        $defaultPermissions = '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}';
+        $defaultPermissions = PermissionsDefaults::MY_TEAMS;
         $extra = array(
             'color' => '#32a100',
             'body' => '<p>This is the default text of the default category.</p><p>Head to the <a href="admin.php?tab=5">Admin Panel</a> to edit/add more categories for your database!</p>',

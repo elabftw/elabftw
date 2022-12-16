@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\PermissionsDefaults;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use League\Flysystem\Filesystem;
@@ -42,8 +43,8 @@ class ImportElnTest extends \PHPUnit\Framework\TestCase
         new ImportEln(
             new Users(1, 1),
             'items:1',
-            'team',
-            'team',
+            PermissionsDefaults::MY_TEAMS,
+            PermissionsDefaults::MY_TEAMS,
             $uploadedFile,
             $this->fs,
         );
@@ -62,8 +63,8 @@ class ImportElnTest extends \PHPUnit\Framework\TestCase
         new ImportEln(
             new Users(1, 1),
             'items:1',
-            'team',
-            'team',
+            PermissionsDefaults::MY_TEAMS,
+            PermissionsDefaults::MY_TEAMS,
             $uploadedFile,
             $this->fs,
         );
@@ -82,8 +83,8 @@ class ImportElnTest extends \PHPUnit\Framework\TestCase
         $Import = new ImportEln(
             new Users(1, 1),
             'experiments:1',
-            'team',
-            'team',
+            PermissionsDefaults::MY_TEAMS,
+            PermissionsDefaults::MY_TEAMS,
             $uploadedFile,
             $this->fs,
         );
@@ -104,8 +105,8 @@ class ImportElnTest extends \PHPUnit\Framework\TestCase
         $Import = new ImportEln(
             new Users(1, 1),
             'experiments:1',
-            'team',
-            'team',
+            PermissionsDefaults::MY_TEAMS,
+            PermissionsDefaults::MY_TEAMS,
             $uploadedFile,
             $this->fs,
         );
@@ -126,8 +127,8 @@ class ImportElnTest extends \PHPUnit\Framework\TestCase
         $Import = new ImportEln(
             new Users(1, 1),
             'items:1',
-            'team',
-            'team',
+            PermissionsDefaults::MY_TEAMS,
+            PermissionsDefaults::MY_TEAMS,
             $uploadedFile,
             $this->fs,
         );
@@ -148,8 +149,8 @@ class ImportElnTest extends \PHPUnit\Framework\TestCase
         $Import = new ImportEln(
             new Users(1, 1),
             'items:1',
-            'team',
-            'team',
+            PermissionsDefaults::MY_TEAMS,
+            PermissionsDefaults::MY_TEAMS,
             $uploadedFile,
             $this->fs,
         );
@@ -170,8 +171,8 @@ class ImportElnTest extends \PHPUnit\Framework\TestCase
         $Import = new ImportEln(
             new Users(1, 1),
             'items:1',
-            'team',
-            'team',
+            PermissionsDefaults::MY_TEAMS,
+            PermissionsDefaults::MY_TEAMS,
             $uploadedFile,
             $this->fs,
         );

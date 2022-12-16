@@ -106,5 +106,41 @@ UPDATE users SET default_write = '{"public": false, "organization": false, "my_t
 UPDATE users SET default_write = '{"public": false, "organization": false, "my_teams": false, "user": false, "useronly": true, "teams": [], "teamgroups": [], "users": []}' WHERE default_write = 'useronly';
 -- now make it json type
 ALTER TABLE `users` CHANGE `default_write` `default_write` JSON NOT NULL;
+-- EXPERIMENTS TEMPLATES CANREAD
+-- -------------------
+-- start by increasing the column size so the new value will fit
+ALTER TABLE `experiments_templates` CHANGE `canread` `canread` VARCHAR(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'team';
+-- change the rows where canread is set to a teamgroup
+UPDATE experiments_templates SET canread = CONCAT('{"public": false, "organization": false, "my_teams": false, "user": false, "useronly": true, "teams": [], "teamgroups": [', CAST(canread AS UNSIGNED), '], "users": []}') WHERE canread NOT IN ('public', 'organization', 'team', 'user', 'useronly') AND canread NOT LIKE "{%";
+-- public
+UPDATE experiments_templates SET canread = '{"public": true, "organization": false, "my_teams": false, "user": false, "useronly": false,"teams": [], "teamgroups": [], "users": []}' WHERE canread = 'public';
+-- organization
+UPDATE experiments_templates SET canread = '{"public": false, "organization": true,  "my_teams": false, "user": false, "useronly": false,"teams": [], "teamgroups": [], "users": []}' WHERE canread = 'organization';
+-- team
+UPDATE experiments_templates SET canread = '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}' WHERE canread = 'team';
+-- user+admin
+UPDATE experiments_templates SET canread = '{"public": false, "organization": false, "my_teams": false, "user": true, "useronly": false, "teams": [], "teamgroups": [], "users": []}' WHERE canread = 'user';
+-- user
+UPDATE experiments_templates SET canread = '{"public": false, "organization": false, "my_teams": false, "user": false, "useronly": true, "teams": [], "teamgroups": [], "users": []}' WHERE canread = 'useronly';
+-- now make it json type
+ALTER TABLE `experiments_templates` CHANGE `canread` `canread` JSON NOT NULL;
+-- experiments_templates canwrite
+-- -------------------
+-- start by increasing the column size so the new value will fit
+ALTER TABLE `experiments_templates` CHANGE `canwrite` `canwrite` VARCHAR(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'team';
+-- change the rows where canwrite is set to a teamgroup
+UPDATE experiments_templates SET canwrite = CONCAT('{"public": false, "organization": false, "my_teams": false, "user": false, "useronly": true, "teams": [], "teamgroups": [', CAST(canwrite AS UNSIGNED), '], "users": []}') WHERE canwrite NOT IN ('public', 'organization', 'team', 'user', 'useronly') AND canwrite NOT LIKE "{%";
+-- public
+UPDATE experiments_templates SET canwrite = '{"public": true, "organization": false, "my_teams": false, "user": false, "useronly": false,"teams": [], "teamgroups": [], "users": []}' WHERE canwrite = 'public';
+-- organization
+UPDATE experiments_templates SET canwrite = '{"public": false, "organization": true,  "my_teams": false, "user": false, "useronly": false,"teams": [], "teamgroups": [], "users": []}' WHERE canwrite = 'organization';
+-- team
+UPDATE experiments_templates SET canwrite = '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}' WHERE canwrite = 'team';
+-- user+admin
+UPDATE experiments_templates SET canwrite = '{"public": false, "organization": false, "my_teams": false, "user": true, "useronly": false, "teams": [], "teamgroups": [], "users": []}' WHERE canwrite = 'user';
+-- user
+UPDATE experiments_templates SET canwrite = '{"public": false, "organization": false, "my_teams": false, "user": false, "useronly": true, "teams": [], "teamgroups": [], "users": []}' WHERE canwrite = 'useronly';
+-- now make it json type
+ALTER TABLE `experiments_templates` CHANGE `canwrite` `canwrite` JSON NOT NULL;
 
 UPDATE config SET conf_value = 106 WHERE conf_name = 'schema';

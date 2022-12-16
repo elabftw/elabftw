@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\PermissionsDefaults;
 use Elabftw\Enums\Action;
 
 class ItemsTypesTest extends \PHPUnit\Framework\TestCase
@@ -25,8 +26,8 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
         $extra = array(
             'color' => '#faaccc',
             'body' => 'body',
-            'canread' => 'team',
-            'canwrite' => 'team',
+            'canread' => PermissionsDefaults::MY_TEAMS,
+            'canwrite' => PermissionsDefaults::MY_TEAMS,
             'bookable' => '0',
         );
         $this->ItemsTypes->setId($this->ItemsTypes->create('new'));

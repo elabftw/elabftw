@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\PermissionsDefaults;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -52,8 +53,8 @@ class Experiments extends AbstractConcreteEntity
         // defaults
         $title = _('Untitled');
         $body = null;
-        $canread = '{"public": false, "organization": false, "my_teams": true, "user": false, "useronly": false, "teams": [], "teamgroups": [], "users": []}';
-        $canwrite = '{"public": false, "organization": false, "my_teams": false, "user": true, "useronly": false, "teams": [], "teamgroups": [], "users": []}';
+        $canread = PermissionsDefaults::MY_TEAMS;
+        $canwrite = PermissionsDefaults::USER;
         $metadata = null;
 
         // do we want template ?

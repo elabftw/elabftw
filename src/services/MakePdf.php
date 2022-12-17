@@ -292,6 +292,20 @@ class MakePdf extends AbstractMakePdf
         return $this->mpdf;
     }
 
+    // This part of the code will look for links to experiments or database made with the # autocompletion and thus relative.
+    // We need to make them absolute or they will end up wrong.
+    private function fixLocalLinks(string $body): string
+    {
+        $matches = array();
+        preg_match_all('/href="(experiments|database).php/', $body, $matches);
+        $i = 0;
+        foreach ($matches[0] as $match) {
+            $body = str_replace($match, 'href="' . SITE_URL . '/' . $matches[1][$i] . '.php', $body);
+            $i += 1;
+        }
+        return $body;
+    }
+
     private function getBody(): string
     {
         $body = $this->Entity->entityData['body'] ?? '';
@@ -329,6 +343,7 @@ class MakePdf extends AbstractMakePdf
             $this->mpdf->imageVars[$res['f']] = $storageFs->read($res['f']);
             $body = str_replace($src, 'var:' . $res['f'], $body);
         }
-        return $body;
+
+        return $this->fixLocalLinks($body);
     }
 }

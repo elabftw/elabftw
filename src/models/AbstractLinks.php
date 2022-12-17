@@ -35,7 +35,7 @@ abstract class AbstractLinks implements RestInterface
 
     public function getPage(): string
     {
-        return $this->Entity->getPage();
+        return sprintf('%s%d/%s/', $this->Entity->getPage(), $this->Entity->id ?? '', $this->getTable());
     }
 
     public function patch(Action $action, array $params): array
@@ -197,7 +197,9 @@ abstract class AbstractLinks implements RestInterface
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
 
-        return (int) $this->Db->execute($req);
+        $this->Db->execute($req);
+
+        return $this->id;
     }
 
     /**

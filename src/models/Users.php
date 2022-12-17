@@ -11,10 +11,10 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\PermissionsDefaults;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
@@ -97,8 +97,8 @@ class Users implements RestInterface
             $validated = 1;
         }
 
-        $defaultRead = PermissionsDefaults::MY_TEAMS;
-        $defaultWrite = PermissionsDefaults::USER;
+        $defaultRead = BasePermissions::MyTeams->toJson();
+        $defaultWrite = BasePermissions::User->toJson();
 
         $sql = 'INSERT INTO users (
             `email`,

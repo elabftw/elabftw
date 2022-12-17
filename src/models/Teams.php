@@ -11,9 +11,9 @@ namespace Elabftw\Models;
 
 use function array_diff;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\PermissionsDefaults;
 use Elabftw\Elabftw\TeamParam;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
@@ -267,8 +267,8 @@ class Teams implements RestInterface
         $req->bindValue(':common_template_md', Templates::defaultBodyMd);
         $req->bindValue(':link_name', 'Documentation');
         $req->bindValue(':link_href', 'https://doc.elabftw.net');
-        $req->bindValue(':force_canread', PermissionsDefaults::MY_TEAMS);
-        $req->bindValue(':force_canwrite', PermissionsDefaults::USER);
+        $req->bindValue(':force_canread', BasePermissions::MyTeams->toJson());
+        $req->bindValue(':force_canwrite', BasePermissions::MyTeams->toJson());
         $this->Db->execute($req);
         // grab the team ID
         $newId = $this->Db->lastInsertId();
@@ -284,7 +284,7 @@ class Teams implements RestInterface
         $ItemsTypes->setId($ItemsTypes->create('Edit me'));
         // we can't patch something that is not in our team!
         $ItemsTypes->bypassWritePermission = true;
-        $defaultPermissions = PermissionsDefaults::MY_TEAMS;
+        $defaultPermissions = BasePermissions::MyTeams->toJson();
         $extra = array(
             'color' => '#32a100',
             'body' => '<p>This is the default text of the default category.</p><p>Head to the <a href="admin.php?tab=5">Admin Panel</a> to edit/add more categories for your database!</p>',

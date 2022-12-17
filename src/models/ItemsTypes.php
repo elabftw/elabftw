@@ -10,7 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\PermissionsDefaults;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
@@ -44,7 +44,7 @@ class ItemsTypes extends AbstractTemplateEntity
 
     public function create(string $title): int
     {
-        $defaultPermissions = PermissionsDefaults::MY_TEAMS;
+        $defaultPermissions = BasePermissions::MyTeams->toJson();
         $title = Filter::title($title);
         $sql = 'INSERT INTO items_types(title, team, canread, canwrite) VALUES(:content, :team, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);

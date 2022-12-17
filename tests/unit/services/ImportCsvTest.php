@@ -9,7 +9,7 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\PermissionsDefaults;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -30,8 +30,8 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
         $Import = new ImportCsv(
             new Users(1, 1),
             'items:1',
-            PermissionsDefaults::MY_TEAMS,
-            PermissionsDefaults::MY_TEAMS,
+            BasePermissions::MyTeams->toJson(),
+            BasePermissions::MyTeams->toJson(),
             $uploadedFile,
         );
         $Import->import();
@@ -52,8 +52,8 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
         $Import = new ImportCsv(
             new Users(1, 1),
             'items:1',
-            PermissionsDefaults::MY_TEAMS,
-            PermissionsDefaults::MY_TEAMS,
+            BasePermissions::MyTeams->toJson(),
+            BasePermissions::MyTeams->toJson(),
             $uploadedFile,
         );
         $Import->import();
@@ -73,8 +73,8 @@ class ImportCsvTest extends \PHPUnit\Framework\TestCase
         $Import = new ImportCsv(
             new Users(1, 1),
             'items:1',
-            PermissionsDefaults::MY_TEAMS,
-            PermissionsDefaults::MY_TEAMS,
+            BasePermissions::MyTeams->toJson(),
+            BasePermissions::MyTeams->toJson(),
             $uploadedFile,
         );
         $this->expectException(ImproperActionException::class);

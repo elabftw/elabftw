@@ -30,4 +30,9 @@ enum BasePermissions: int
             default => throw new ImproperActionException('Invalid base parameter for permissions'),
         };
     }
+
+    public function toJson(): string
+    {
+        return sprintf('{"base": %d, "teams": [], "teamgroups": [], "users": []}', $this->value);
+    }
 }

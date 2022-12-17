@@ -10,7 +10,7 @@
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\PermissionsDefaults;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\StorageFactory;
 use Elabftw\Interfaces\ControllerInterface;
@@ -59,8 +59,8 @@ class ImportController implements ControllerInterface
                 return new ImportEln(
                     $this->app->Users,
                     (string) $this->request->request->get('target'),
-                    (string) ($this->request->request->get('canread') ?? PermissionsDefaults::MY_TEAMS),
-                    (string) ($this->request->request->get('canwrite') ?? PermissionsDefaults::USER),
+                    (string) ($this->request->request->get('canread') ?? BasePermissions::MyTeams->toJson()),
+                    (string) ($this->request->request->get('canwrite') ?? BasePermissions::User->toJson()),
                     $uploadedFile,
                     (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs(),
                 );

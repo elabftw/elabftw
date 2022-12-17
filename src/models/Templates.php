@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\PermissionsDefaults;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
 use Elabftw\Services\Filter;
@@ -46,8 +45,8 @@ class Templates extends AbstractTemplateEntity
     public function create(string $title): int
     {
         $title = Filter::title($title);
-        $canread = PermissionsDefaults::MY_TEAMS;
-        $canwrite = PermissionsDefaults::USER;
+        $canread = BasePermissions::MyTeams->toJson();
+        $canwrite = BasePermissions::User->toJson();
 
         if (isset($this->Users->userData['default_read'])) {
             $canread = $this->Users->userData['default_read'];

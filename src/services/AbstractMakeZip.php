@@ -50,7 +50,8 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
         return sprintf(
             '%s - %s - %s',
             $prefix,
-            Filter::forFilesystem($this->Entity->entityData['title']),
+            // prevent a zip name with too much characters from the title, see #3966
+            substr(Filter::forFilesystem($this->Entity->entityData['title']), 0, 100),
             Tools::getShortElabid($this->Entity->entityData['elabid'] ?? ''),
         );
     }

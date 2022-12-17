@@ -30,6 +30,12 @@ class Items extends AbstractConcreteEntity
         parent::__construct($users, $id);
     }
 
+    // special case for items where the page property is not the correct endpoint
+    public function getPage(): string
+    {
+        return sprintf('api/v2/%s/', parent::TYPE_ITEMS);
+    }
+
     public function create(int $template, array $tags = array()): int
     {
         $ItemsTypes = new ItemsTypes($this->Users, $template);

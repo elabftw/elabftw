@@ -164,9 +164,15 @@
           {% if Entity.entityData.rating > 0 %}
             {{ Entity.entityData.rating|stars|raw }}
           {% endif %}
-        <i aria-hidden='true' class='fas fa-eye ml-2' title='{{ 'Visibility'|trans }}'></i> {{ Entity.getCan(Entity.entityData.canread) }}
-        <i aria-hidden='true' class='fas fa-pencil-alt ml-2' title='{{ 'Edit'|trans }}'></i> {{ Entity.getCan(Entity.entityData.canwrite) }}
       </p>
+    </div>
+    <div class='col-md-3'>
+      <i aria-hidden='true' class='fas fa-eye ml-2' title='{{ 'Visibility'|trans }}'></i> {% set can = Entity.getCan(Entity.entityData.canread) %}
+      {% include('view-permissions.html') %}
+    </div>
+    <div class='col-md-3'>
+      <i aria-hidden='true' class='fas fa-pencil-alt ml-2' title='{{ 'Edit'|trans }}'></i> {% set can = Entity.getCan(Entity.entityData.canwrite) %}
+      {% include('view-permissions.html') %}
     </div>
   </div>
 

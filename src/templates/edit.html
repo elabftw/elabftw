@@ -132,61 +132,15 @@
       <!-- CAN READ -->
       <h5 class='d-inline'><i class='fas fa-fw fa-eye' title='{{ 'Visibility'|trans }}'></i>{{ 'Visibility'|trans }}</h5>
       <button class='button-small btn btn-primary' data-action='toggle-modal' data-target='permModal-canread'>edit</button>
-      <div>
-      {% set canread = Entity.getCan(Entity.entityData.canread) %}
-      {{ canread.base }}
-      {% if canread.teams %}
-        <details><summary>{{ 'Teams'|trans }}</summary>
-          {% for team in canread.teams %}
-            {{ team.name }}
-          {% endfor %}
-        </details>
-      {% endif %}
-      {% if canread.teamgroups %}
-        <details><summary>{{ 'Groups'|trans }}</summary>
-          {% for group in canread.teamgroups %}
-            {{ group.name }}
-          {% endfor %}
-        </details>
-      {% endif %}
-      {% if canread.users %}
-        <details><summary>{{ 'Users'|trans }}</summary>
-          {% for user in canread.users %}
-            {{ user.fullname }}
-          {% endfor %}
-        </details>
-      {% endif %}
-      </div>
+      {% set can = Entity.getCan(Entity.entityData.canread) %}
+      {% include('view-permissions.html') %}
     </div>
     <div id='canwriteDiv'>
       <!-- CAN WRITE -->
       <h5 class='d-inline'><i class='fas fa-fw fa-pencil-alt' title='{{ 'Can write'|trans }}'></i>{{ 'Can write'|trans }}</h5>
       <button class='button-small btn btn-primary' data-action='toggle-modal' data-target='permModal-canwrite'>edit</button>
-      <div>
-      {% set canwrite = Entity.getCan(Entity.entityData.canwrite) %}
-      {{ canwrite.base }}
-      {% if canwrite.teams %}
-        <details><summary>{{ 'Teams'|trans }}</summary>
-          {% for team in canwrite.teams %}
-            {{ team.name }}
-          {% endfor %}
-        </details>
-      {% endif %}
-      {% if canwrite.teamgroups %}
-        <details><summary>{{ 'Groups'|trans }}</summary>
-          {% for group in canwrite.teamgroups %}
-            {{ group.name }}
-          {% endfor %}
-        </details>
-      {% endif %}
-      {% if canwrite.users %}
-        <details><summary>{{ 'Users'|trans }}</summary>
-          {% for user in canwrite.users %}
-            {{ user.fullname }}
-          {% endfor %}
-        </details>
-      {% endif %}
-      </div>
+      {% set can = Entity.getCan(Entity.entityData.canwrite) %}
+      {% include('view-permissions.html') %}
     </div>
   </div>
   </div>

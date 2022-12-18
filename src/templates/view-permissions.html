@@ -1,0 +1,25 @@
+{# required vars: can: coming from canread or canwrite with getCan() #}
+<div>
+{{ can.base }}
+{% if can.teams %}
+  <details><summary>{{ 'Teams'|trans }}</summary>
+    {% for team in can.teams %}
+      {{ team.name }}
+    {% endfor %}
+  </details>
+{% endif %}
+{% if can.teamgroups %}
+  <details><summary>{{ 'Groups'|trans }}</summary>
+    {% for group in can.teamgroups %}
+      {{ group.name }}
+    {% endfor %}
+  </details>
+{% endif %}
+{% if can.users %}
+  <details><summary>{{ 'Users'|trans }}</summary>
+    {% for user in can.users %}
+      {{ user.fullname }}
+    {% endfor %}
+  </details>
+{% endif %}
+</div>

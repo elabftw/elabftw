@@ -164,12 +164,16 @@ abstract class AbstractEntityController implements ControllerInterface
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();
 
+        $Teams = new Teams($this->Entity->Users);
+
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
+            'myTeamsArr' => $Teams->readMyTeams(),
+            'myTeamgroupsArr' => $this->teamGroupsFromUser,
             'revNum' => $Revisions->readCount(),
             'templatesArr' => $this->templatesArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),

@@ -16,6 +16,7 @@ use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
+use Elabftw\Services\UsersHelper;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -93,6 +94,17 @@ class Permissions
         if ($this->canread['base'] === BasePermissions::User->value) {
             if ($this->Users->userData['is_admin'] && $this->Teams->hasCommonTeamWithCurrent($this->item['userid'], (int) $this->Users->userData['team'])) {
                 return array('read' => true, 'write' => $write);
+            }
+        }
+
+        // check for teams
+        if (!empty($this->canread['teams'])) {
+            $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
+            $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
+            foreach ($this->canread['teams'] as $team) {
+                if (in_array($team, $teamsOfUser, true)) {
+                    return array('read' => true, 'write' => $write);
+                }
             }
         }
 

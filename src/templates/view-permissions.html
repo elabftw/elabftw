@@ -1,25 +1,32 @@
-{# required vars: can: coming from canread or canwrite with getCan() #}
-<div>
-{{ can.base }}
-{% if can.teams %}
-  <details><summary>{{ 'Teams'|trans }}</summary>
-    {% for team in can.teams %}
-      {{ team.name }}
-    {% endfor %}
-  </details>
-{% endif %}
-{% if can.teamgroups %}
-  <details><summary>{{ 'Groups'|trans }}</summary>
-    {% for group in can.teamgroups %}
-      {{ group.name }}
-    {% endfor %}
-  </details>
-{% endif %}
-{% if can.users %}
-  <details><summary>{{ 'Users'|trans }}</summary>
-    {% for user in can.users %}
-      {{ user.fullname }}
-    {% endfor %}
-  </details>
-{% endif %}
+{# required vars: rw, can: coming from canread or canwrite with getCan() #}
+{% include('permissions-edit-modal.html') %}
+<div id='{{ rw }}Div' style='line-height: 100% !important'>
+  <h5 class='d-inline'><i class='fas fa-fw fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }}' title='{{ rw == 'canread' ? 'Visibility'|trans : 'Can write'|trans }}'></i>{{ rw == 'canread' ? 'Visibility'|trans : 'Can write'|trans }}</h5>
+  {% if not Entity.isReadOnly %}
+    <button class='button-small btn btn-primary align-top' data-action='toggle-modal' data-target='permModal-{{ rw }}'>{{ 'edit'|trans }}</button>
+  {% endif %}
+  <div>
+  {{ can.base }}
+  {% if can.teams %}
+    <details><summary>{{ 'Teams'|trans }}</summary>
+      {% for team in can.teams %}
+        {{ team.name }}
+      {% endfor %}
+    </details>
+  {% endif %}
+  {% if can.teamgroups %}
+    <details><summary>{{ 'Groups'|trans }}</summary>
+      {% for group in can.teamgroups %}
+        {{ group.name }}
+      {% endfor %}
+    </details>
+  {% endif %}
+  {% if can.users %}
+    <details><summary>{{ 'Users'|trans }}</summary>
+      {% for user in can.users %}
+        {{ user.fullname }}
+      {% endfor %}
+    </details>
+  {% endif %}
+  </div>
 </div>

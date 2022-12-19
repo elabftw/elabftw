@@ -142,6 +142,29 @@
 
   </div>
 
+  <!-- CATEGORY, RATING AND CANREAD/CANWRITE ROW -->
+  <div class='row'>
+    <div class='col-6'>
+      <p>
+        <i aria-hidden='true' class='fas fa-clipboard-{{ Entity.type == 'experiments' ? 'check' : 'list' }}'></i>
+        <span class='malleableCategory hl-hover-gray rounded p-1'>{{ Entity.entityData.category }}</span>
+          {% if Entity.entityData.rating > 0 %}
+            {{ Entity.entityData.rating|stars|raw }}
+          {% endif %}
+      </p>
+    </div>
+    <div class='d-flex align-items-start justify-content-around col-md-6'>
+      <!-- CAN READ -->
+      {% set rw = 'canread' %}
+      {% set can = Entity.getCan(Entity.entityData.canread) %}
+      {% include('view-permissions.html') %}
+      <!-- CAN WRITE -->
+      {% set rw = 'canwrite' %}
+      {% set can = Entity.getCan(Entity.entityData.canwrite) %}
+      {% include('view-permissions.html') %}
+    </div>
+  </div>
+
   <!-- build the tag array -->
   {% if Entity.entityData.tags|length > 0 %}
     <span class='tags mathjax-ignore'>
@@ -155,26 +178,6 @@
     </span>
   {% endif %}
 
-  <!-- CATEGORY, RATING AND CANREAD/CANWRITE ROW -->
-  <div class='row'>
-    <div class='col-6'>
-      <p>
-        <i aria-hidden='true' class='fas fa-clipboard-{{ Entity.type == 'experiments' ? 'check' : 'list' }}'></i>
-        <span class='malleableCategory hl-hover-gray rounded p-1'>{{ Entity.entityData.category }}</span>
-          {% if Entity.entityData.rating > 0 %}
-            {{ Entity.entityData.rating|stars|raw }}
-          {% endif %}
-      </p>
-    </div>
-    <div class='col-md-3'>
-      <i aria-hidden='true' class='fas fa-eye ml-2' title='{{ 'Visibility'|trans }}'></i> {% set can = Entity.getCan(Entity.entityData.canread) %}
-      {% include('view-permissions.html') %}
-    </div>
-    <div class='col-md-3'>
-      <i aria-hidden='true' class='fas fa-pencil-alt ml-2' title='{{ 'Edit'|trans }}'></i> {% set can = Entity.getCan(Entity.entityData.canwrite) %}
-      {% include('view-permissions.html') %}
-    </div>
-  </div>
 
   <!-- TITLE : click on it to go to edit mode only if we are not in read only mode -->
   {% set isEditable = not Entity.isReadOnly and not Entity.entityData.locked %}

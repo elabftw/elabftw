@@ -29,6 +29,7 @@ use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\EntityTrait;
 
 use function explode;
@@ -255,6 +256,10 @@ abstract class AbstractEntity implements RestInterface
         }
         // add entities in useronly visibility only if we own them
         $sql .= sprintf(" OR (JSON_EXTRACT(entity.canread, '$.base') = %d AND entity.userid = :userid)", BasePermissions::UserOnly->value);
+        // look for teams
+        $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
+        $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
+        $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[' . implode(',', $teamsOfUser) . "]\"), '$.teams'))";
         // look for teamgroups
         if (!empty($teamgroupsOfUser)) {
             $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[' . implode(',', $teamgroupsOfUser) . "]\"), '$.teamgroups'))";

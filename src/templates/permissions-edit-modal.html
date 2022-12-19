@@ -54,6 +54,12 @@
             </div>
           </div>
         </div>
+        {% if rw == 'canread' %}
+        <div>
+          <hr>
+          <input type='checkbox' id='readAccessInput'> <label for='readAccessInput'>{{ 'Allow read access for anonymous users.'|trans }}</label>
+        </div>
+        {% endif %}
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>

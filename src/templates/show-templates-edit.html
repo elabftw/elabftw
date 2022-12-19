@@ -44,25 +44,19 @@
         {{ Entity.entityData.fullname|raw }} - {{ Entity.entityData.title|raw }}
       </h2>
     </div>
-    <div id='canreadDiv' class='col-md-3 mb-2'>
-      <!-- CAN READ -->
+    <!-- CANREAD -->
+    <div class='col-md-3'>
       <h5 class='d-inline'><i class='fas fa-fw fa-eye' title='{{ 'Visibility'|trans }}'></i>{{ 'Visibility'|trans }}</h5>
-      {% if not Entity.entityData.locked %}
-        <button class='button-small btn btn-primary' data-action='toggle-modal' data-target='permModal-canread'>edit</button>
-      {% endif %}
-      <div>
-      {{ Entity.getCan(Entity.entityData.canread) }}
-      </div>
+      <button class='button-small btn btn-primary' data-action='toggle-modal' data-target='permModal-canread'>edit</button>
+      {% set can = Entity.getCan(Entity.entityData.canread) %}
+      {% include('view-permissions.html') %}
     </div>
-    <div id='canwriteDiv' class='col-md-3 mb-2'>
-      <!-- CAN WRITE -->
+    <!-- CANWRITE -->
+    <div class='col-md-3'>
       <h5 class='d-inline'><i class='fas fa-fw fa-pencil-alt' title='{{ 'Can write'|trans }}'></i>{{ 'Can write'|trans }}</h5>
-      {% if not Entity.entityData.locked %}
-        <button class='button-small btn btn-primary' data-action='toggle-modal' data-target='permModal-canwrite'>edit</button>
-      {% endif %}
-      <div>
-      {{ Entity.getCan(Entity.entityData.canwrite) }}
-      </div>
+      <button class='button-small btn btn-primary' data-action='toggle-modal' data-target='permModal-canwrite'>edit</button>
+      {% set can = Entity.getCan(Entity.entityData.canwrite) %}
+      {% include('view-permissions.html') %}
     </div>
 
 

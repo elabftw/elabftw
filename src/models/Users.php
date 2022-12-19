@@ -221,11 +221,7 @@ class Users implements RestInterface
     public function readAll(): array
     {
         $Request = Request::createFromGlobals();
-        // allow admins to query users from other teams so they can be added to team groups
-        if ($this->requester->userData['is_sysadmin'] === 1 || $this->requester->userData['is_admin'] === 1) {
-            return $this->readFromQuerySafe($Request->query->getAlnum('q'), 0);
-        }
-        throw new IllegalActionException('Normal users cannot read other users.');
+        return $this->readFromQuerySafe($Request->query->getAlnum('q'), 0);
     }
 
     /**

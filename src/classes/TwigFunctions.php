@@ -89,6 +89,15 @@ class TwigFunctions
         return false;
     }
 
+    public static function isInJsonArray(string $json, string $key, int $target): bool
+    {
+        $decoded = json_decode($json, true, 3, JSON_THROW_ON_ERROR);
+        if (in_array($target, $decoded[$key], true)) {
+            return true;
+        }
+        return false;
+    }
+
     public static function getSortIcon(string $orderBy): string
     {
         $Request = Request::createFromGlobals();

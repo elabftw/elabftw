@@ -32,23 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // and for md
   (new MdEditor()).init();
 
-  // AUTOCOMPLETE user list for team groups
-  $(document).on('focus', '.addUserToGroup', function() {
-    if (!$(this).data('autocomplete')) {
-      $(this).autocomplete({
-        source: function(request: Record<string, string>, response: (data) => void): void {
-          ApiC.getJson(`${Model.User}/?q=${request.term}`).then(json => {
-            const res = [];
-            json.forEach(user=> {
-              res.push(`${user.userid} - ${user.fullname} (${user.email})`);
-            });
-            response(res);
-          });
-        },
-      });
-    }
-  });
-
   $('#teamGroupCreateBtn').on('click', function() {
     const input = (document.getElementById('teamGroupCreate') as HTMLInputElement);
     ApiC.post(`${Model.Team}/${input.dataset.teamid}/${Model.TeamGroup}`, {'name': input.value}).then(() => {
@@ -63,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  $('#team_groups_div').on('keypress blur', '.addUserToGroup', function(e) {
+  $('#team_groups_div').on('keypress blur', '.autocompleteUsers', function(e) {
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
       const user = parseInt($(this).val() as string, 10);

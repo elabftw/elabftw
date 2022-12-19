@@ -103,7 +103,6 @@ try {
         'myTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
         'notificationsSettings' => $notificationsSettings,
         'templatesArr' => $templatesArr,
-        'usersArr' => $App->Users->readAllActiveFromTeam(),
         'visibilityArr' => $visibilityArr,
         'revNum' => isset($Revisions) ? $Revisions->readCount() : 0,
     );

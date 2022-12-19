@@ -9,7 +9,7 @@ import $ from 'jquery';
 import { Api } from './Apiv2.class';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { makeSortableGreatAgain, reloadElement, adjustHiddenState, getEntity, permissionsToJson } from './misc';
+import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, permissionsToJson } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { EntityType, Model } from './interfaces';
@@ -146,6 +146,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // AUTOCOMPLETE input with users
+  $(document).on('focus', '.autocompleteUsers', function() {
+    if (!$(this).data('autocomplete')) {
+      $(this).autocomplete({
+        // necessary or the autocomplete will get under the modal
+        appendTo: '.autocompleteUsersDiv',
+        source: function(request: Record<string, string>, response: (data) => void): void {
+          ApiC.getJson(`${Model.User}/?q=${request.term}`).then(json => {
+            const res = [];
+            json.forEach(user => {
+              res.push(`${user.userid} - ${user.fullname} (${user.email})`);
+            });
+            response(res);
+          });
+        },
+      });
+    }
+  });
+
   /**
    * Make sure the icon for toggle-next is correct depending on the stored state in localStorage
    */
@@ -192,14 +211,64 @@ document.addEventListener('DOMContentLoaded', () => {
         behavior: 'smooth',
       });
 
+    // ADD USER TO PERMISSIONS
+    // create a new li element in the list of existing users, so it is collected at Save action
+    } else if (el.matches('[data-action="add-user-to-permissions"]')) {
+      // collect userid + name + email from input
+      const addUserPermissionsInput = (document.getElementById(`${el.dataset.rw}_select_users`) as HTMLInputElement);
+      const userid = parseInt(addUserPermissionsInput.value, 10);
+      if (isNaN(userid)) {
+        notifError(new Error('Use the autocompletion menu to add users.'));
+        return;
+      }
+      const userName = addUserPermissionsInput.value.split(' - ')[1];
+
+      // create li element
+      const li = document.createElement('li');
+      li.classList.add('list-group-item');
+      li.dataset.id = String(userid);
+
+      // eye or pencil icon
+      const rwIcon = document.createElement('i');
+      rwIcon.classList.add('fas');
+      const iconClass = el.dataset.rw === 'canread' ? 'eye' : 'pencil-alt';
+      rwIcon.classList.add(`fa-${iconClass}`);
+
+      // delete icon
+      const deleteSpan = document.createElement('span');
+      deleteSpan.dataset.action = 'remove-parent';
+      deleteSpan.classList.add('hover-danger');
+      const xIcon = document.createElement('i');
+      xIcon.classList.add('fas');
+      xIcon.classList.add('fa-xmark');
+      deleteSpan.insertAdjacentElement('afterbegin', xIcon);
+
+      // construct the li element with all its content
+      li.insertAdjacentElement('afterbegin', rwIcon);
+      li.insertAdjacentText('beforeend', ' ' + userName + ' ');
+      li.insertAdjacentElement('beforeend', deleteSpan);
+
+      // and insert it into the list
+      document.getElementById(`${el.dataset.rw}_list_users`).appendChild(li);
+
+      // clear input
+      addUserPermissionsInput.value = '';
+
+    } else if (el.matches('[data-action="remove-parent"]')) {
+      el.parentElement.remove();
+
     // SAVE PERMISSIONS
     } else if (el.matches('[data-action="save-permissions"]')) {
       const params = {};
+      // collect existing users listed in ul->li, and store them in a string[] with user:<userid>
+      const existingUsers = Array.from(document.getElementById(`${el.dataset.rw}_list_users`).children)
+        .map(u => `user:${(u as HTMLElement).dataset.id}`);
+
       params[el.dataset.rw] = permissionsToJson(
         parseInt(($('#' + el.dataset.rw + '_select_base').val() as string), 10),
         ($('#' + el.dataset.rw + '_select_teams').val() as string[])
           .concat($('#' + el.dataset.rw + '_select_teamgroups').val() as string[])
-          .concat($('#' + el.dataset.rw + '_select_users').val() as string[]),
+          .concat(existingUsers),
       );
       const entity = getEntity();
       return ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.rw + 'Div'));

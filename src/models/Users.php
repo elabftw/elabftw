@@ -248,7 +248,7 @@ class Users implements RestInterface
         if (empty($idArr)) {
             return array();
         }
-        $sql = "SELECT CONCAT(users.firstname, ' ', users.lastname) AS fullname FROM users WHERE userid IN (" . implode(',', $idArr) . ') ORDER BY fullname ASC';
+        $sql = "SELECT CONCAT(users.firstname, ' ', users.lastname) AS fullname, userid, email FROM users WHERE userid IN (" . implode(',', $idArr) . ') ORDER BY fullname ASC';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 

@@ -95,6 +95,16 @@ class TeamGroups implements RestInterface
         return $fullGroups;
     }
 
+    public function readAllSimple(): array
+    {
+        $sql = 'SELECT team_groups.id, team_groups.name
+            FROM team_groups WHERE team_groups.team = :team ORDER BY team_groups.name ASC';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchAll();
+    }
+
     /**
      * When we need to build a select menu with visibility + team groups
      */

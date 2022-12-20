@@ -11,9 +11,8 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import i18next from 'i18next';
 import { MdEditor } from './Editor.class';
-import ItemsTypes from './ItemsTypes.class';
 import { Api } from './Apiv2.class';
-import { Model, Action } from './interfaces';
+import { EntityType, Model, Action } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
@@ -87,11 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
     malleableGroupname.listen();
   }).observe(document.getElementById('team_groups_div'), {childList: true});
 
-  // ITEMS TYPES
-  const ItemTypeC = new ItemsTypes();
-
   // UPDATE
-  function itemsTypesUpdate(id: number): void {
+  function itemsTypesUpdate(id: number): Promise<Response> {
     const nameInput = (document.getElementById('itemsTypesName') as HTMLInputElement);
     const name = nameInput.value;
     if (name === '') {
@@ -107,10 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
       bookable = 1;
     }
 
-    const canread = (document.getElementById('itemsTypesCanread') as HTMLSelectElement).value;
-    const canwrite = (document.getElementById('itemsTypesCanwrite') as HTMLSelectElement).value;
-    const template = tinymce.get('itemsTypesBody').getContent();
-    ItemTypeC.updateAll(id, name, color, bookable, template, canread, canwrite);
+    const body = tinymce.get('itemsTypesBody').getContent();
+    const params = {'title': name, 'color': color, 'bookable': bookable, 'body': body};
+    return ApiC.patch(`${EntityType.ItemType}/${id}`, params);
   }
   // END ITEMS TYPES
 
@@ -126,14 +121,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const title = prompt(i18next.t('template-title'));
       if (title) {
         // no body on template creation
-        ItemTypeC.create(title).then(resp => window.location.href = resp.headers.get('location'));
+        ApiC.post(EntityType.ItemType, {'title': title}).then(resp => window.location.href = resp.headers.get('location'));
       }
     // UPDATE ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-update"]')) {
       itemsTypesUpdate(parseInt(el.dataset.id, 10));
     // DESTROY ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-destroy"]')) {
-      ItemTypeC.destroy(parseInt(el.dataset.id, 10)).then(() => window.location.href = '?tab=5');
+      ApiC.delete(`${EntityType.ItemType}/${el.dataset.id}`).then(() => window.location.href = '?tab=5');
     // CREATE STATUS
     } else if (el.matches('[data-action="create-status"]')) {
       const content = (document.getElementById('statusName') as HTMLInputElement).value;

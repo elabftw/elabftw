@@ -157,4 +157,43 @@ UPDATE experiments_templates SET canwrite = '{"base": 10, "teams": [], "teamgrou
 -- now make it json type
 ALTER TABLE `experiments_templates` CHANGE `canwrite` `canwrite` JSON NOT NULL;
 
+-- ------------------
+-- ITEMS_TYPES CANREAD
+-- -------------------
+-- start by increasing the column size so the new value will fit
+ALTER TABLE `items_types` CHANGE `canread` `canread` VARCHAR(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'team';
+-- change the rows where canread is set to a teamgroup
+UPDATE items_types SET canread = CONCAT('{"base": 10, "teams": [], "teamgroups": [', CAST(canread AS UNSIGNED), '], "users": []}') WHERE canread NOT IN ('public', 'organization', 'team', 'user', 'useronly') AND canread NOT LIKE "{%";
+-- public
+UPDATE items_types SET canread = '{"base": 50, "teams": [], "teamgroups": [], "users": []}' WHERE canread = 'public';
+-- organization
+UPDATE items_types SET canread = '{"base": 40, "teams": [], "teamgroups": [], "users": []}' WHERE canread = 'organization';
+-- team
+UPDATE items_types SET canread = '{"base": 30, "teams": [], "teamgroups": [], "users": []}' WHERE canread = 'team';
+-- user+admin
+UPDATE items_types SET canread = '{"base": 20, "teams": [], "teamgroups": [], "users": []}' WHERE canread = 'user';
+-- user
+UPDATE items_types SET canread = '{"base": 10, "teams": [], "teamgroups": [], "users": []}' WHERE canread = 'useronly';
+-- now make it json type
+ALTER TABLE `items_types` CHANGE `canread` `canread` JSON NOT NULL;
+-- ------------------
+-- ITEMS_TYPES canwrite
+-- -------------------
+-- start by increasing the column size so the new value will fit
+ALTER TABLE `items_types` CHANGE `canwrite` `canwrite` VARCHAR(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'team';
+-- change the rows where canwrite is set to a teamgroup
+UPDATE items_types SET canwrite = CONCAT('{"base": 10, "teams": [], "teamgroups": [', CAST(canwrite AS UNSIGNED), '], "users": []}') WHERE canwrite NOT IN ('public', 'organization', 'team', 'user', 'useronly') AND canwrite NOT LIKE "{%";
+-- public
+UPDATE items_types SET canwrite = '{"base": 50, "teams": [], "teamgroups": [], "users": []}' WHERE canwrite = 'public';
+-- organization
+UPDATE items_types SET canwrite = '{"base": 40, "teams": [], "teamgroups": [], "users": []}' WHERE canwrite = 'organization';
+-- team
+UPDATE items_types SET canwrite = '{"base": 30, "teams": [], "teamgroups": [], "users": []}' WHERE canwrite = 'team';
+-- user+admin
+UPDATE items_types SET canwrite = '{"base": 20, "teams": [], "teamgroups": [], "users": []}' WHERE canwrite = 'user';
+-- user
+UPDATE items_types SET canwrite = '{"base": 10, "teams": [], "teamgroups": [], "users": []}' WHERE canwrite = 'useronly';
+-- now make it json type
+ALTER TABLE `items_types` CHANGE `canwrite` `canwrite` JSON NOT NULL;
+
 UPDATE config SET conf_value = 106 WHERE conf_name = 'schema';

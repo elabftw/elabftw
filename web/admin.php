@@ -85,6 +85,8 @@ try {
         'tagsArr' => $tagsArr,
         'isSearching' => $isSearching,
         'itemsCategoryArr' => $itemsCategoryArr,
+        'myTeamsArr' => $Teams->readMyTeams(),
+        'myTeamgroupsArr' => $TeamGroups->readAllSimple(),
         'statusArr' => $statusArr,
         'teamConfigArr' => $teamConfigArr,
         'teamGroupsArr' => $teamGroupsArr,

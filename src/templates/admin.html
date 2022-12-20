@@ -277,27 +277,20 @@
           <label for='itemsTypesBookable'>{{ 'Bookable'|trans }}</label>
         </li>
 
-        <li class='list-inline-item'>
-          <label for='itemsTypesCanread'>{{ 'Visibility'|trans }}</label>
-          <select id='itemsTypesCanread' class='form-control'>
-            {% for key, value in visibilityArr %}
-              <option value='{{ key }}'
-              {{ key == Entity.entityData.canread ? ' selected' }}
-              >{{ value|trans }}</option>
-            {% endfor %}
-          </select>
-        </li>
+        <div class='list-inline-item'>
+          <!-- CAN READ -->
+          {% set rw = 'canread' %}
+          {% set can = Entity.getCan(Entity.entityData.canread) %}
+          {% include('view-permissions.html') %}
+        </div>
 
-        <li class='list-inline-item'>
-          <label for='itemsTypesCanwrite'>{{ 'Can write'|trans }}</label>
-          <select id='itemsTypesCanwrite' class='form-control'>
-            {% for key, value in visibilityArr %}
-              <option value='{{ key }}'
-              {{ key == Entity.entityData.canwrite ? ' selected' }}
-              >{{ value|trans }}</option>
-            {% endfor %}
-          </select>
-        </li>
+        <div class='list-inline-item'>
+          <!-- CAN WRITE -->
+          {% set rw = 'canwrite' %}
+          {% set can = Entity.getCan(Entity.entityData.canwrite) %}
+          {% include('view-permissions.html') %}
+        </div>
+
       </ul>
 
       <div>

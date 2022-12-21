@@ -60,11 +60,11 @@ class Populate
 
         // we will randomly pick from these for canread and canwrite
         $visibilityArr = array(
-            BasePermissions::Full->value,
-            BasePermissions::Organization->value,
-            BasePermissions::MyTeams->value,
-            BasePermissions::User->value,
-            BasePermissions::UserOnly->value,
+            BasePermissions::Full->toJson(),
+            BasePermissions::Organization->toJson(),
+            BasePermissions::MyTeams->toJson(),
+            BasePermissions::User->toJson(),
+            BasePermissions::UserOnly->toJson(),
         );
 
         printf("Generating %s \n", $Entity->type);

@@ -39,7 +39,7 @@
           </select>
           <!-- USERS -->
           <label for='{{ rw }}_select_users'>{{ 'Users'|trans }}</label> <p class='smallgray d-inline'>{{ 'Allow individual users to access this entry.' }}</p>
-          <ul class='list-group' id='{{ rw }}_list_users'>
+          <ul class='list-group mb-1' id='{{ rw }}_list_users'>
             {% for user in Entity.getCan(Entity.entityData[rw]).users %}
               <li class='list-group-item w-100' data-id='{{ user.userid }}'>
                 <i class='fas fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }}'></i> {{ user.fullname }} ({{ user.email }}) <span data-action='remove-parent' class='hover-danger'><i class='fas fa-xmark'></i></span>
@@ -47,10 +47,10 @@
             {% endfor %}
           </ul>
           <!-- add user to permissions input -->
-          <div class='autocompleteUsersDiv input-group mt-1'>
-            <input id='{{ rw }}_select_users' class='form-control mt-1 autocompleteUsers autocompleteUsersPermissions' placeholder='{{ 'Add user'|trans }}' autocomplete='off'>
+          <div class='autocompleteUsersDiv input-group'>
+            <input id='{{ rw }}_select_users' class='form-control autocompleteUsers autocompleteUsersPermissions' placeholder='{{ 'Add user'|trans }}' autocomplete='off'>
             <div class='input-group-append'>
-              <button class='btn button-small btn-primary' data-rw='{{ rw }}' data-action='add-user-to-permissions'>{{ 'Add'|trans }}</button>
+              <button class='btn btn-primary' data-rw='{{ rw }}' data-action='add-user-to-permissions'>{{ 'Add'|trans }}</button>
             </div>
           </div>
         </div>

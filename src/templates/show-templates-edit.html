@@ -32,7 +32,7 @@
   <!-- MORE OPTIONS DROPDOWN MENU (···) -->
   <div class='d-flex align-items-center'>
     <!-- NAME OF TPL AND OWNER -->
-    <div class='mr-auto'>
+    <div class='d-flex mr-auto'>
       <h2>
         <!-- lock icon -->
         {% if entityData.locked %}
@@ -44,17 +44,14 @@
         {{ Entity.entityData.fullname|raw }} - {{ Entity.entityData.title|raw }}
       </h2>
     </div>
-    <!-- CANREAD -->
-    <div id='canreadDiv' class='col-md-3'>
-      <h5 class='d-inline'><i class='fas fa-fw fa-eye' title='{{ 'Visibility'|trans }}'></i>{{ 'Visibility'|trans }}</h5>
-      <button class='button-small btn btn-primary' data-action='toggle-modal' data-target='permModal-canread'>edit</button>
+
+    <div class='d-flex align-items-start justify-content-around col-md-6'>
+      <!-- CAN READ -->
+      {% set rw = 'canread' %}
       {% set can = Entity.getCan(Entity.entityData.canread) %}
       {% include('view-permissions.html') %}
-    </div>
-    <!-- CANWRITE -->
-    <div id='canwriteDiv' class='col-md-3'>
-      <h5 class='d-inline'><i class='fas fa-fw fa-pencil-alt' title='{{ 'Can write'|trans }}'></i>{{ 'Can write'|trans }}</h5>
-      <button class='button-small btn btn-primary' data-action='toggle-modal' data-target='permModal-canwrite'>edit</button>
+      <!-- CAN WRITE -->
+      {% set rw = 'canwrite' %}
       {% set can = Entity.getCan(Entity.entityData.canwrite) %}
       {% include('view-permissions.html') %}
     </div>

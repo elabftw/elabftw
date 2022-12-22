@@ -11,6 +11,10 @@ code {
     display: inline-block;
 }
 
+.viewer-ove {
+    overflow: hidden;
+}
+
 .preview-mode-container {
     .bp3-button.bp3-intent-primary {
         background-color: $elabblue !important;
@@ -31,6 +35,10 @@ code {
 
     .bp3-button-group.preview-mode-view-fullscreen:hover {
         background: none !important;
+    }
+
+    .preview-mode-simple-sequence-view {
+        padding: 40px 0 10px !important;
     }
 }
 

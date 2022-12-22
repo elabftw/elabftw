@@ -15,7 +15,7 @@ use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Config;
 use Elabftw\Services\AnonAuth;
 use Elabftw\Services\CookieAuth;
-use Elabftw\Services\ElabidFinder;
+use Elabftw\Services\TeamFinder;
 use function in_array;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -47,10 +47,10 @@ class Auth implements AuthInterface
     {
         // try to login with the elabid for an entity in view mode
         $page = basename($this->Request->getScriptName());
-        if ($this->Request->query->has('elabid')
+        if ($this->Request->query->has('access_key')
             && ($page === 'experiments.php' || $page === 'database.php')
             && $this->Request->query->get('mode') === 'view') {
-            return 'elabid';
+            return 'access_key';
         }
 
         // try to login with the cookie if we have one in the request
@@ -71,10 +71,10 @@ class Auth implements AuthInterface
             // AUTH WITH COOKIE
             case 'cookie':
                 return new CookieAuth((string) $this->Request->cookies->get('token'), $this->Request->cookies->getDigits('token_team'));
-            case 'elabid':
+            case 'access_key':
                 // now we need to know in which team we autologin the user
-                $ElabidFinder = new ElabidFinder($this->Request->getScriptName(), (string) ($this->Request->query->get('elabid') ?? ''));
-                $team = $ElabidFinder->findTeam();
+                $TeamFinder = new TeamFinder($this->Request->getScriptName(), (string) ($this->Request->query->get('access_key') ?? ''));
+                $team = $TeamFinder->findTeam();
 
                 if ($team === 0) {
                     throw new UnauthorizedException();

@@ -14,18 +14,17 @@ use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 
 /**
- * Find a team from an elabid!
+ * Find a team from an access_key
  */
-class ElabidFinder
+class TeamFinder
 {
-    private string $elabid;
+    private string $ak;
 
     private Db $Db;
 
-    public function __construct(private string $page, string $elabid)
+    public function __construct(private string $page, string $ak)
     {
-        // TODO Check::elabid
-        $this->elabid = Filter::sanitize($elabid);
+        $this->ak = Check::accessKey($ak);
         $this->Db = Db::getConnection();
     }
 
@@ -42,9 +41,9 @@ class ElabidFinder
     {
         $sql = 'SELECT users2teams.teams_id FROM ' . $entity . ' AS entity
             CROSS JOIN users2teams ON (users2teams.users_id = entity.userid)
-            WHERE entity.elabid = :elabid';
+            WHERE entity.access_key = :ak';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':elabid', $this->elabid, PDO::PARAM_STR);
+        $req->bindParam(':ak', $this->ak, PDO::PARAM_STR);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }

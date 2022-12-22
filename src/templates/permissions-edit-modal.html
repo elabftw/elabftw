@@ -21,7 +21,7 @@
           </select>
           <!-- TEAMS -->
           <label for='{{ rw }}_select_teams'>{{ 'Teams'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries)'|trans|format('<kbd>', '</kbd>')|raw }}</p>
-          <select id='{{ rw }}_select_teams' multiple class='mt-1 form-control'>
+          <select id='{{ rw }}_select_teams' multiple class='mt-1 form-control' autocomplete='off'>
             {% for team in myTeamsArr %}
               <option value='team:{{ team.id }}'
               {{ Entity.entityData.canread|isInJsonArray('teams', team.id) ? ' selected' }}
@@ -30,7 +30,7 @@
           </select>
           <!-- TEAMGROUPS -->
           <label for='{{ rw }}_select_teamgroups'>{{ 'Teamgroups'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries)'|trans|format('<kbd>', '</kbd>')|raw }}</p>
-          <select id='{{ rw }}_select_teamgroups' multiple class='form-control'>
+          <select id='{{ rw }}_select_teamgroups' multiple class='form-control' autocomplete='off'>
             {% for tg in myTeamgroupsArr %}
               <option value='teamgroup:{{ tg.id }}'
               {{ Entity.entityData.canread|isInJsonArray('teamgroups', tg.id) == ('teamgroup:' ~ tg.id) ? ' selected' }}
@@ -54,11 +54,21 @@
             </div>
           </div>
         </div>
-        {% if rw == 'canread' %}
-        <div>
+        {% if rw == 'canread' and App.Config.configArr.anon_users %}
           <hr>
-          <input type='checkbox' id='readAccessInput'> <label for='readAccessInput'>{{ 'Allow read access for anonymous users.'|trans }}</label>
-        </div>
+          <div class='custom-control custom-checkbox'>
+            <input type='checkbox' class='custom-control-input' id='readAccessCheckbox' data-action='toggle-anonymous-access' autocomplete='off' {{ Entity.entityData.access_key ? 'checked' }}>
+            <label class='custom-control-label' for='readAccessCheckbox'>{{ 'Allow read access for anonymous users'|trans }}</label>
+          </div>
+          <div {{ not Entity.entityData.access_key ? 'hidden' }} id='anonymousAccessUrlDiv' class='mt-2'>
+            <div class='input-group'>
+              <div class='input-group-prepend'>
+                <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='anonymousAccessUrlInput'><i class='fas fa-clone'></i></button>
+              </div>
+              <input type='url' class='form-control' readonly id='anonymousAccessUrlInput' value='{{ Entity.entityData.sharelink }}'>
+            </div>
+            <p class='smallgray'>{{ 'Anyone following this link can access this entry.'|trans }}</p>
+          </div>
         {% endif %}
       </div>
       <div class='modal-footer'>

@@ -196,4 +196,11 @@ UPDATE items_types SET canwrite = '{"base": 10, "teams": [], "teamgroups": [], "
 -- now make it json type
 ALTER TABLE `items_types` CHANGE `canwrite` `canwrite` JSON NOT NULL;
 
+-- ----------
+-- ACCESS KEY
+-- ----------
+ALTER TABLE `experiments` ADD `access_key` VARCHAR(36) NULL DEFAULT NULL;
+ALTER TABLE `items` ADD `access_key` VARCHAR(36) NULL DEFAULT NULL;
+ALTER TABLE `experiments_templates` ADD `access_key` VARCHAR(36) NULL DEFAULT NULL;
+ALTER TABLE `items_types` ADD `access_key` VARCHAR(36) NULL DEFAULT NULL;
 UPDATE config SET conf_value = 106 WHERE conf_name = 'schema';

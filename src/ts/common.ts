@@ -12,7 +12,7 @@ import 'bootstrap/js/src/modal.js';
 import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, permissionsToJson } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
-import { EntityType, Model } from './interfaces';
+import { Action, EntityType, Model } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
@@ -409,6 +409,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // DOWNLOAD TEMPLATE
     } else if (el.matches('[data-action="download-template"]')) {
       window.location.href = `make.php?format=eln&type=experiments_templates&id=${el.dataset.id}`;
+    // TOGGLE ANONYMOUS READ ACCESS
+    } else if (el.matches('[data-action="toggle-anonymous-access"]')) {
+      const entity = getEntity();
+      ApiC.patch(`${entity.type}/${entity.id}`, {'action': Action.AccessKey}).then(response => response.json()).then(json => {
+        document.getElementById('anonymousAccessUrlDiv').toggleAttribute('hidden');
+        (document.getElementById('anonymousAccessUrlInput') as HTMLInputElement).value = json.sharelink;
+      });
+
+    // COPY TO CLIPBOARD
+    } else if (el.matches('[data-action="copy-to-clipboard"]')) {
+      navigator.clipboard.writeText((document.getElementById(el.dataset.target) as HTMLInputElement).value);
+      // indicate that the data was copied by changing the icon into text and back into the icon
+      const previousHTML = el.innerHTML;
+      window.setTimeout(function() {
+        el.innerHTML = previousHTML;
+      }, 1337);
+      el.innerText = 'Copied!';
+
     // TOGGLE BODY
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;

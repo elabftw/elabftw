@@ -56,6 +56,7 @@ enum Action {
   Update = 'update',
   Destroy = 'destroy',
 
+  AccessKey = 'accesskey',
   Add = 'add',
   Bloxberg = 'bloxberg',
   Deduplicate = 'deduplicate',

@@ -20,7 +20,7 @@ class TeamFinderTest extends \PHPUnit\Framework\TestCase
         $Entity = new Experiments(new Users(1, 1));
         $id = $Entity->create(-1);
         $Entity->setId($id);
-        $Entity->toggleAccessKey();
+        (new AccessKeyHelper($Entity))->toggleAccessKey();
         $ak = $Entity->entityData['access_key'];
         $finder = new TeamFinder('/experiments.php', $ak);
         $this->assertEquals(1, $finder->findTeam());
@@ -31,7 +31,7 @@ class TeamFinderTest extends \PHPUnit\Framework\TestCase
         $Entity = new Items(new Users(1, 1));
         $id = $Entity->create(1);
         $Entity->setId($id);
-        $Entity->toggleAccessKey();
+        (new AccessKeyHelper($Entity))->toggleAccessKey();
         $ak = $Entity->entityData['access_key'];
         $finder = new TeamFinder('/database.php', $ak);
         $this->assertEquals(1, $finder->findTeam());

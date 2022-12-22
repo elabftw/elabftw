@@ -27,6 +27,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\UsersHelper;
@@ -146,15 +147,6 @@ abstract class AbstractEntity implements RestInterface
     {
         $sql = 'SELECT COUNT(id) FROM experiments WHERE timestamped = 1 AND timestamped_at > (NOW() - INTERVAL 1 MONTH)';
         $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-        return (int) $req->fetchColumn();
-    }
-
-    public function getIdFromAccessKey(string $ak): int
-    {
-        $sql = 'SELECT id FROM ' . $this->type . ' WHERE access_key = :ak';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':ak', $ak, PDO::PARAM_STR);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }
@@ -334,22 +326,6 @@ abstract class AbstractEntity implements RestInterface
         return $allTags;
     }
 
-    public function toggleAccessKey(): ?string
-    {
-        $ak = $this->getAccessKey();
-        $uuidOrNull = 'NULL';
-        if ($ak === null) {
-            $uuidOrNull = 'UUID()';
-        }
-        $sql = 'UPDATE ' . $this->type . ' SET access_key = ' . $uuidOrNull . ' WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $ak = $this->getAccessKey();
-        $this->entityData['access_key'] = $ak;
-        return $ak;
-    }
-
     public function patch(Action $action, array $params): array
     {
         // the toggle pin action doesn't require write access to the entity
@@ -357,7 +333,7 @@ abstract class AbstractEntity implements RestInterface
             $this->canOrExplode('write');
         }
         match ($action) {
-            Action::AccessKey => $this->toggleAccessKey(),
+            Action::AccessKey => (new AccessKeyHelper($this))->toggleAccessKey(),
             Action::Lock => $this->toggleLock(),
             Action::Pin => $this->Pins->togglePin(),
             Action::UpdateMetadataField => (
@@ -626,20 +602,6 @@ abstract class AbstractEntity implements RestInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    // TODO in 8.2, use ?string|false
-    private function getAccessKey(): ?string
-    {
-        $sql = 'SELECT access_key FROM ' . $this->type . ' WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->fetchColumn();
-        if ($res === false || is_int($res)) {
-            return null;
-        }
-        return $res;
     }
 
     private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void

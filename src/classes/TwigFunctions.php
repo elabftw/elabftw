@@ -101,14 +101,10 @@ class TwigFunctions
     public static function getSortIcon(string $orderBy): string
     {
         $Request = Request::createFromGlobals();
+        $sort = null;
         if (Orderby::tryFrom($orderBy) === Orderby::tryFrom($Request->query->getAlpha('order'))) {
-            switch (Sort::tryFrom($Request->query->getAlpha('sort'))) {
-                case Sort::Asc:
-                    return 'fa-sort-up';
-                case Sort::Desc:
-                    return 'fa-sort-down';
-            }
+            $sort = Sort::tryFrom($Request->query->getAlpha('sort'));
         }
-        return 'fa-sort';
+        return $sort === null ? 'fa-sort' : $sort->toFa();
     }
 }

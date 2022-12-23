@@ -13,4 +13,13 @@ enum Sort: string
 {
     case Asc = 'asc';
     case Desc = 'desc';
+
+    // get the font awesome css class
+    public function toFa(): string
+    {
+        return match ($this) {
+            self::Asc => 'fa-sort-up',
+            default => 'fa-sort-down',
+        };
+    }
 }

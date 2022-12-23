@@ -144,8 +144,8 @@
 </div>
 
 {% if includeChangelog %}
-  <h3>{{ 'Changelog'|trans }}</h3>
-  <table class='table'>
+  <h3 id='changelogHeader'>{{ 'Changelog'|trans }}</h3>
+  <table class='table' aria-labelledby='changelogHeader'>
     <thead>
       <tr>
           <th>{{ 'Date'|trans }}</th>

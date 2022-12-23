@@ -160,7 +160,6 @@ abstract class AbstractLinks implements RestInterface
         };
     }
 
-    // make params parameter optional so we don't break the interface
     public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');

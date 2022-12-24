@@ -258,7 +258,7 @@ class Uploads implements RestInterface
     {
         $this->canWriteOrExplode();
         // check that the filename is not in the body. see #432
-        if (strpos($this->Entity->entityData['body'], $this->uploadData['long_name'])) {
+        if (strpos($this->Entity->entityData['body'] ?? '', $this->uploadData['long_name'])) {
             throw new ImproperActionException(_('Please make sure to remove any reference to this file in the body!'));
         }
         return $this->nuke();

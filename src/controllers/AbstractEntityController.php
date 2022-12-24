@@ -172,8 +172,9 @@ abstract class AbstractEntityController implements ControllerInterface
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'allTeamUsersArr' => $this->allTeamUsersArr,
-            'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
+            'Entity' => $this->Entity,
+            'hideBody' => $this->hasHideBody(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
             'revNum' => $Revisions->readCount(),
@@ -229,10 +230,11 @@ abstract class AbstractEntityController implements ControllerInterface
 
         $renderArr = array(
             'allTeamUsersArr' => $this->allTeamUsersArr,
-            'Entity' => $this->Entity,
-            'entityData' => $this->Entity->entityData,
             'categoryArr' => $this->categoryArr,
             'deletableXp' => $this->getDeletableXp(),
+            'Entity' => $this->Entity,
+            'entityData' => $this->Entity->entityData,
+            'hideBody' => $this->hasHideBody(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'lastModifierFullname' => $lastModifierFullname,
             'maxUploadSize' => Tools::getMaxUploadSize(),
@@ -284,5 +286,20 @@ abstract class AbstractEntityController implements ControllerInterface
             $deletableXp = true;
         }
         return $deletableXp;
+    }
+
+    private function hasHideBody(): bool
+    {
+        $hideBody = false;
+
+        // if metadata contains {"eLabFTW_hide_body": true, ... } hide the body
+        $metadata = json_decode($this->Entity->entityData['metadata'] ?? '{}', true);
+
+        $key = 'eLabFTW_hide_body';
+        if (array_key_exists($key, $metadata)) {
+            $hideBody = $metadata[$key] === true;
+        }
+
+        return $hideBody;
     }
 }

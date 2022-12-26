@@ -373,7 +373,10 @@ document.addEventListener('DOMContentLoaded', () => {
       (new EntityClass(entityType)).read(entityId).then(json => {
         // do we display the body
         const metadata = JSON.parse(json.metadata || '{}');
-        if (Object.prototype.hasOwnProperty.call(metadata, 'eLabFTW_hide_body') && metadata.eLabFTW_hide_body) {
+        if (Object.prototype.hasOwnProperty.call(metadata, 'elabftw')
+          && Object.prototype.hasOwnProperty.call(metadata.elabftw, 'display_main_text')
+          && !metadata.elabftw.display_main_text
+        ) {
           // add extra fields elements from metadata json
           const MetadataC = new Metadata({type: entityType, id: entityId});
           MetadataC.metadataDiv = bodyDiv;

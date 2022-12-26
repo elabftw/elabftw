@@ -174,7 +174,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'allTeamUsersArr' => $this->allTeamUsersArr,
             'categoryArr' => $this->categoryArr,
             'Entity' => $this->Entity,
-            'hideBody' => $this->hasHideBody(),
+            'displayMainText' => $this->displayMainText(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
             'revNum' => $Revisions->readCount(),
@@ -234,7 +234,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'deletableXp' => $this->getDeletableXp(),
             'Entity' => $this->Entity,
             'entityData' => $this->Entity->entityData,
-            'hideBody' => $this->hasHideBody(),
+            'displayMainText' => $this->displayMainText(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'lastModifierFullname' => $lastModifierFullname,
             'maxUploadSize' => Tools::getMaxUploadSize(),
@@ -288,18 +288,21 @@ abstract class AbstractEntityController implements ControllerInterface
         return $deletableXp;
     }
 
-    private function hasHideBody(): bool
+    private function displayMainText(): bool
     {
-        $hideBody = false;
+        $displayMainText = true;
 
-        // if metadata contains {"eLabFTW_hide_body": true, ... } hide the body
+        // if metadata contains {"elabftw": {"display_main_text": false}} hide the body
         $metadata = json_decode($this->Entity->entityData['metadata'] ?? '{}', true);
 
-        $key = 'eLabFTW_hide_body';
-        if (array_key_exists($key, $metadata)) {
-            $hideBody = $metadata[$key] === true;
+        $namespace = 'elabftw';
+        $key = 'display_main_text';
+        if (array_key_exists($namespace, $metadata)
+            && array_key_exists($key, $metadata[$namespace])
+        ) {
+            $displayMainText = $metadata[$namespace][$key] === false;
         }
 
-        return $hideBody;
+        return $displayMainText;
     }
 }

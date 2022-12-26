@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!$(this).data('autocomplete')) {
       $(this).autocomplete({
         // necessary or the autocomplete will get under the modal
-        appendTo: '.autocompleteUsersDiv',
+        appendTo: '#autocompleteUsersDiv' + $(this).data('rw'),
         source: function(request: Record<string, string>, response: (data) => void): void {
           ApiC.getJson(`${Model.User}/?q=${request.term}`).then(json => {
             const res = [];

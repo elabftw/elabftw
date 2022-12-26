@@ -51,8 +51,8 @@
             {% endfor %}
           </ul>
           <!-- add user to permissions input -->
-          <div class='autocompleteUsersDiv input-group'>
-            <input id='{{ rw }}_select_users' class='form-control autocompleteUsers autocompleteUsersPermissions' placeholder='{{ 'Add user'|trans }}' autocomplete='off'>
+          <div id='autocompleteUsersDiv{{ rw }}' class='input-group'>
+            <input id='{{ rw }}_select_users' data-rw='{{ rw }}' class='form-control autocompleteUsers autocompleteUsersPermissions' placeholder='{{ 'Add user'|trans }}' autocomplete='off'>
             <div class='input-group-append'>
               <button class='btn btn-primary' data-rw='{{ rw }}' data-action='add-user-to-permissions'>{{ 'Add'|trans }}</button>
             </div>

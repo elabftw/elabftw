@@ -64,7 +64,13 @@ class Templates extends AbstractTemplateEntity
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
         $req->execute();
-        return $this->Db->lastInsertId();
+        $id = $this->Db->lastInsertId();
+
+        // now pin the newly created template so it directly appears in Create menu
+        $this->setId($id);
+        $Pins = new Pins($this);
+        $Pins->togglePin();
+        return $id;
     }
 
     /**

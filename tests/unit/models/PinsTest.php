@@ -40,10 +40,11 @@ class PinsTest extends \PHPUnit\Framework\TestCase
         $this->Items->Pins->togglePin();
         $this->assertCount(0, $this->Items->Pins->readAll());
 
-        $this->Templates->Pins->togglePin();
         $this->assertTrue($this->Templates->Pins->isPinned());
-        $this->assertCount(1, $this->Templates->Pins->readAll());
+        // There is already one template from TemplatesTest
+        $this->assertTrue(count($this->Templates->Pins->readAll()) > 1);
         $this->Templates->Pins->togglePin();
-        $this->assertCount(0, $this->Templates->Pins->readAll());
+        $this->assertFalse($this->Templates->Pins->isPinned());
+        $this->assertTrue(count($this->Templates->Pins->readAll()) > 1);
     }
 }

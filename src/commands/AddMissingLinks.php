@@ -14,6 +14,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\EntityFactory;
+use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\Users;
 use Elabftw\Services\TeamsHelper;
@@ -41,11 +42,11 @@ class AddMissingLinks extends Command
     {
         $this
             // the short description shown while running "php bin/console list"
-            ->setDescription('Make sure links in body are also properly added as "Linked items" and "Linked experiments"')
+            ->setDescription('Make sure links in body are also properly added as "Linked items" and "Linked experiments".')
 
             // the full command description shown when running the command with
             // the "--help" option
-            ->setHelp('Find links to items and experiments in the body of entities and add them to the "Linked items" and "Linked experiments" of that entity. Templates and ItemsTypes can only have links to items');
+            ->setHelp('Find links to items and experiments in the body of entities and add them to the "Linked items" and "Linked experiments" of that entity. Templates and ItemsTypes can only have links to items.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -55,9 +56,19 @@ class AddMissingLinks extends Command
         $queryItemsOrExperiment = "SELECT DISTINCT `id`, `body`, `userid`
             FROM `table`
             WHERE `body` LIKE '%database.php?mode=view&amp;id=%'
-            OR `body` LIKE '%experiments.php?mode=view&amp;id=%';";
-        $queryTemplates = "SELECT `id`, `body`, `userid` FROM `table` WHERE `body` LIKE '%database.php?mode=view&amp;id=%';";
-        $queryItemsTypes = "SELECT `id`, `body`, `team` FROM `table` WHERE `body` LIKE '%database.php?mode=view&amp;id=%';";
+              OR `body` LIKE '%database.php?mode=edit&amp;id=%'
+              OR `body` LIKE '%experiments.php?mode=view&amp;id=%'
+              OR `body` LIKE '%experiments.php?mode=edit&amp;id=%';";
+
+        $queryTemplates = "SELECT `id`, `body`, `userid`
+            FROM `table`
+            WHERE `body` LIKE '%database.php?mode=view&amp;id=%'
+              OR `body` LIKE '%database.php?mode=edit&amp;id=%';";
+
+        $queryItemsTypes = "SELECT `id`, `body`, `team`
+            FROM `table`
+            WHERE `body` LIKE '%database.php?mode=view&amp;id=%'
+              OR `body` LIKE '%database.php?mode=edit&amp;id=%';";
 
         $tables = array(
             'experiments' => $queryItemsOrExperiment,
@@ -66,8 +77,8 @@ class AddMissingLinks extends Command
             'items_types' => $queryItemsTypes,
         );
 
-        $patternItemsOrExperiment = '/(?<target>database|experiments)\.php\?mode=view&amp;id=(?<id>[0-9]+)/';
-        $patternTemplates = '/(?<target>database)\.php\?mode=view&amp;id=(?<id>[0-9]+)/';
+        $patternItemsOrExperiment = '/(?<target>database|experiments)\.php\?mode=(?:view|edit)&amp;id=(?<id>[0-9]+)/';
+        $patternTemplates = '/(?<target>database)\.php\?mode=(?:view|edit)&amp;id=(?<id>[0-9]+)/';
         $patterns = array(
             'experiments' => $patternItemsOrExperiment,
             'items' => $patternItemsOrExperiment,
@@ -83,16 +94,17 @@ class AddMissingLinks extends Command
             $res = $req->fetchAll();
 
             if (!empty($res)) {
-                printf('Found %d entries with ids:%s', count($res), PHP_EOL);
+                $count = count($res);
+                printf('Found %d entr%s with id%s:%s', $count, $count === 1 ? 'y' : 'ies', $count === 1 ? '' : 's', PHP_EOL);
                 $count = 0;
                 foreach ($res as $data) {
-                    printf('- %d%s', $data['id'], PHP_EOL);
+                    printf('  - %d', $data['id']);
 
-                    // ItemsTypes entries have no user only a team but we need a admin to create a link
+                    // ItemsTypes entries have no user only a team but we need an admin to create a link
                     // -> get an admin from that team
                     if ($table === 'items_types') {
                         $adminOfTeam = (new TeamsHelper($data['team']))->getAllAdminsUserid()[0];
-                        $User = new Users($adminOfTeam);
+                        $User = new Users($adminOfTeam, $data['team']);
                     } else {
                         $User = new Users($data['userid']);
                     }
@@ -104,25 +116,35 @@ class AddMissingLinks extends Command
                     // make sure we can access all entries with write access
                     $entity->bypassWritePermission = true;
                     $entity->setId($data['id']);
-                    $links = new ItemsLinks($entity);
 
+                    $itemsLinks = new ItemsLinks($entity);
+                    $experimentsLinks = new ExperimentsLinks($entity);
+
+                    $countSmall = 0;
                     // look for links to items and experiments in the body and create links
                     // for Templates and ItemsTypes links to experiments will not be added
                     preg_match_all($patterns[$table], $data['body'], $matches, PREG_SET_ORDER);
                     foreach ($matches as $match) {
                         try {
-                            $targetEntity = $match['target'] === 'experiments' ? 'experiments' : 'items';
-                            if ($links->postAction(Action::Create, array('target_entity' => $targetEntity))) {
+                            $links = $itemsLinks;
+                            if (($table === 'experiments' || $table === 'items') && $match['target'] === 'experiments') {
+                                $links = $experimentsLinks;
+                            }
+
+                            $links->setId((int) $match['id']);
+                            if ($links->postAction(Action::Create, array())) {
+                                $countSmall++;
                                 $count++;
                             }
                         } catch (IllegalActionException | ImproperActionException $e) {
-                            // maybe the db item doesn't exist anymore or we no longer have access to it
+                            // maybe the db item or experiment doesn't exist anymore or we no longer have access to it
                             // so just skip that one
                             continue;
                         }
                     }
+                    printf('; (re-)added %d link%s%s', $countSmall, $countSmall === 1 ? '' : 's', PHP_EOL);
                 }
-                printf('Added %d links.%2$s%2$s', $count, PHP_EOL);
+                printf('total links: %d %2$s%2$s', $count, PHP_EOL);
             }
         }
         return 0;

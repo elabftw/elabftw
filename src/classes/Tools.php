@@ -11,6 +11,7 @@ namespace Elabftw\Elabftw;
 
 use function bin2hex;
 use function date;
+use Elabftw\Enums\Metadata;
 use function filter_var;
 use function implode;
 use function json_decode;
@@ -241,7 +242,7 @@ class Tools
     {
         $final = '';
         $full = json_decode($json, true);
-        $extraFields = $full['extra_fields'];
+        $extraFields = $full[Metadata::ExtraFields->value];
         foreach ($extraFields as $key => $value) {
             $final .= '<h4>' . $key . '</h4><p>' . $value['value'] . '</p>';
         }

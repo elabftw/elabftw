@@ -13,6 +13,7 @@ use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\FilterableColumn;
+use Elabftw\Enums\Metadata;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
@@ -288,19 +289,21 @@ abstract class AbstractEntityController implements ControllerInterface
         return $deletableXp;
     }
 
+    /**
+     * Do we display the main body of a concrete entity?
+     * Get the information from the metadata: {"elabftw": {"display_main_text": false}}
+     * Default is true
+     */
     private function displayMainText(): bool
     {
         $displayMainText = true;
 
-        // if metadata contains {"elabftw": {"display_main_text": false}} hide the body
         $metadata = json_decode($this->Entity->entityData['metadata'] ?? '{}', true);
 
-        $namespace = 'elabftw';
-        $key = 'display_main_text';
-        if (array_key_exists($namespace, $metadata)
-            && array_key_exists($key, $metadata[$namespace])
+        if (array_key_exists(Metadata::Elabftw->value, $metadata)
+            && array_key_exists(Metadata::DisplayMainText->value, $metadata[Metadata::Elabftw->value])
         ) {
-            $displayMainText = $metadata[$namespace][$key] === false;
+            $displayMainText = $metadata[Metadata::Elabftw->value][Metadata::DisplayMainText->value] === false ? false : true;
         }
 
         return $displayMainText;

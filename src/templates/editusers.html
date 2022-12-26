@@ -91,7 +91,7 @@
                   <!-- RESET PASSWORD -->
                   <li class='list-inline-item'>
                     <label for='usersUpdatePassword_{{ user.userid }}'>{{ 'Reset user password'|trans }}
-                      <span class='smallgray'>({{ minPasswordLength() }} {{ 'characters minimum'|trans }})</span>
+                      <p class='smallgray'>({{ minPasswordLength() }} {{ 'characters minimum'|trans }})</p>
                     </label>
                     <!-- add empty input to prevent FF from putting password in field because autocomplete doesn't work. from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox -->
                     <!-- chrome will continue to behave badly. See crbug.com/468153 and crbug.com/587466 -->

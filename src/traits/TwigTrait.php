@@ -64,6 +64,7 @@ trait TwigTrait
         $toDatetimeFilter = new TwigFilter('toDatetime', '\Elabftw\Elabftw\TwigFunctions::toDatetime', $filterOptions);
         $extractJson = new TwigFilter('extractJson', '\Elabftw\Elabftw\TwigFunctions::extractJson', $filterOptions);
         $isInJsonArray = new TwigFilter('isInJsonArray', '\Elabftw\Elabftw\TwigFunctions::isInJsonArray', $filterOptions);
+        $canToHuman = new TwigFilter('canToHuman', '\Elabftw\Elabftw\TwigFunctions::canToHuman', $filterOptions);
 
         // custom twig functions
         $limitOptions = new TwigFunction('limitOptions', '\Elabftw\Elabftw\TwigFunctions::getLimitOptions');
@@ -97,6 +98,7 @@ trait TwigTrait
         $TwigEnvironment->addFilter($toDatetimeFilter);
         $TwigEnvironment->addFilter($extractJson);
         $TwigEnvironment->addFilter($isInJsonArray);
+        $TwigEnvironment->addFilter($canToHuman);
         // functions
         $TwigEnvironment->addFunction($limitOptions);
         $TwigEnvironment->addFunction($generationTime);

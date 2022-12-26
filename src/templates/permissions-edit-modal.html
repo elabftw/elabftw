@@ -40,7 +40,8 @@
           <!-- USERS -->
           <label for='{{ rw }}_select_users'>{{ 'Users'|trans }}</label> <p class='smallgray d-inline'>{{ 'Allow individual users to access this entry.' }}</p>
           <ul class='list-group mb-1' id='{{ rw }}_list_users'>
-            {% for user in Entity.getCan(Entity.entityData[rw]).users %}
+            {% set humanCan = Entity.entityData[rw]|canToHuman %}
+            {% for user in humanCan.users %}
               <li class='list-group-item w-100' data-id='{{ user.userid }}'>
                 <i class='fas fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }}'></i> {{ user.fullname }} ({{ user.email }}) <span data-action='remove-parent' class='hover-danger'><i class='fas fa-xmark'></i></span>
               </li>

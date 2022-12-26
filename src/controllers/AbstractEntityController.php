@@ -11,6 +11,7 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
+use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FilterableColumn;
@@ -47,7 +48,8 @@ abstract class AbstractEntityController implements ControllerInterface
     public function __construct(protected App $App, protected AbstractEntity $Entity)
     {
         $TeamGroups = new TeamGroups($this->Entity->Users);
-        $this->visibilityArr = $TeamGroups->getVisibilityList();
+        $PermissionsHelper = new PermissionsHelper();
+        $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
         $this->teamGroupsFromUser = $TeamGroups->readGroupsFromUser();
         // items don't need to show the templates in create new menu, so save a sql call here
         if ($this->Entity instanceof Experiments) {

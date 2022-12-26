@@ -34,7 +34,6 @@ class VisibilityFieldHelper
     public function getArr(): array
     {
         // Convert team groups names to the corresponding IDs for SQL query.
-        // $visArr is injected TeamGroups::getVisibilityList()
         $visArrFlipped = array_flip(array_map('strtolower', $this->visArr));
         $onlyStringsArr = array_filter($visArrFlipped, 'is_string');
         $searchArr = $visArrFlipped + array_combine($onlyStringsArr, $onlyStringsArr);

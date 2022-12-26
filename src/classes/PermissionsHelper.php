@@ -11,40 +11,49 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Config;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Users;
 
 /**
  * Help with translation of permission json into meaningful data
  */
 final class PermissionsHelper
 {
-    protected Db $Db;
-
-    protected Users $Users;
-
-    protected TeamGroups $TeamGroups;
-
-    public function __construct()
-    {
-        $this->Db = Db::getConnection();
-        $this->Users = new Users();
-        $this->TeamGroups = new TeamGroups($this->Users);
-    }
-
-    public function translate(string $json): array
+    /**
+     * Make the permissions json string an array with human readable content, translate the ids
+     */
+    public function translate(Teams $Teams, TeamGroups $TeamGroups, string $json): array
     {
         $permArr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-        $Teams = new Teams($this->Users);
         $result = array();
 
         $base = BasePermissions::tryFrom($permArr['base']) ?? throw new ImproperActionException('Invalid base parameter for permissions');
-        $result['base'] = BasePermissions::toHuman($base);
+        $result['base'] = $base->toHuman();
         $result['teams'] = $Teams->readNamesFromIds($permArr['teams']);
-        $result['teamgroups'] = $this->TeamGroups->readNamesFromIds($permArr['teamgroups']);
-        $result['users'] = $this->Users->readNamesFromIds($permArr['users']);
+        $result['teamgroups'] = $TeamGroups->readNamesFromIds($permArr['teamgroups']);
+        $result['users'] = $Teams->Users->readNamesFromIds($permArr['users']);
 
         return $result;
+    }
+
+    /**
+     * When we need to build a select menu with the base entries
+     */
+    public function getAssociativeArray(): array
+    {
+        $base = array(
+            BasePermissions::Full->value => BasePermissions::Full->toHuman(),
+            BasePermissions::Organization->value => BasePermissions::Organization->toHuman(),
+            BasePermissions::MyTeams->value => BasePermissions::MyTeams->toHuman(),
+            BasePermissions::User->value => BasePermissions::User->toHuman(),
+        );
+
+        // add the only me setting only if it is allowed by main config
+        $Config = Config::getConfig();
+        if ($Config->configArr['allow_useronly'] === '1') {
+            $base[BasePermissions::UserOnly->value] = BasePermissions::UserOnly->toHuman();
+        }
+        return $base;
     }
 }

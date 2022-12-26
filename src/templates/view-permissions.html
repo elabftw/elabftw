@@ -1,4 +1,4 @@
-{# required vars: rw, can: coming from canread or canwrite with getCan() #}
+{# required vars: rw, can: coming from canread or canwrite with canToHuman filter #}
 {% include('permissions-edit-modal.html') %}
 <div id='{{ rw }}Div' style='line-height: 100% !important'>
   <h5 class='d-inline'><i class='fas fa-fw fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }}' title='{{ rw == 'canread' ? 'Visibility'|trans : 'Can write'|trans }}'></i>{{ rw == 'canread' ? 'Visibility'|trans : 'Can write'|trans }}</h5>

@@ -93,6 +93,12 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           </select>
           <p class='smallgray'>{{ 'Setting this to «no» will completely remove the ability to delete experiments for everyone.'|trans }}</p>
 
+          <label for='allow_useronly'>{{ 'Allow the base permission setting «Only me»'|trans }}</label>
+          <select id='allow_useronly' name='allow_useronly' class='form-control col-md-4'>
+              <option {{ App.Config.configArr.allow_useronly == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
+              <option {{ App.Config.configArr.allow_useronly == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
+          </select>
+
           <label for='max_revisions'>{{ 'Maximum number of stored revisions per entry:'|trans }}</label>
           <input class='form-control col-md-4' type='number' min='0' max='999' value='{{ App.Config.configArr.max_revisions }}' name='max_revisions' id='max_revisions' />
           <p class='smallgray'>{{ 'Setting this to a low value will help keeping the database size small. Setting this to 0 will allow infinite number of revisions stored.'|trans }}</p>

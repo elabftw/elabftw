@@ -10,6 +10,7 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\Action;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users;
@@ -32,7 +33,8 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $this->TeamGroups->setId($this->groupId);
         $this->TeamGroups->patch(Action::Update, array('userid' => 1, 'how' => Action::Add->value));
 
-        $this->visibilityList = $this->TeamGroups->getVisibilityList();
+        $PermissionsHelper = new PermissionsHelper();
+        $this->visibilityList = $PermissionsHelper->getAssociativeArray();
         $this->groups = $this->TeamGroups->readGroupsWithUsersFromUser();
     }
 

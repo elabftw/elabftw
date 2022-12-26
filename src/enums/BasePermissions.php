@@ -19,14 +19,14 @@ enum BasePermissions: int
     case User = 20;
     case UserOnly = 10;
 
-    public static function toHuman(self $value): string
+    public function toHuman(): string
     {
-        return match ($value) {
-            self::Full => _('Public'),
-            self::Organization => _('Organization'),
-            self::MyTeams => _('All the teams I am part of'),
-            self::User  => _('Only me and admins'),
-            self::UserOnly => _('Only me'),
+        return match ($this) {
+            $this::Full => _('Public'),
+            $this::Organization => _('Organization'),
+            $this::MyTeams => _('All the teams I am part of'),
+            $this::User  => _('Only me and admins'),
+            $this::UserOnly => _('Only me'),
             default => throw new ImproperActionException('Invalid base parameter for permissions'),
         };
     }

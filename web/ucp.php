@@ -56,7 +56,7 @@ try {
 
     // TEAM GROUPS
     $TeamGroups = new TeamGroups($App->Users);
-    $visibilityArr = $TeamGroups->getVisibilityList();
+    $PermissionsHelper = new PermissionsHelper();
 
     // the items categoryArr for add link input
     $ItemsTypes = new ItemsTypes($App->Users);
@@ -103,7 +103,7 @@ try {
         'myTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
         'notificationsSettings' => $notificationsSettings,
         'templatesArr' => $templatesArr,
-        'visibilityArr' => $visibilityArr,
+        'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'revNum' => isset($Revisions) ? $Revisions->readCount() : 0,
     );
 } catch (ImproperActionException $e) {

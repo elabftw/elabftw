@@ -359,15 +359,6 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
-     * Get a list of visibility/team groups to display
-     */
-    public function getCan(string $permission): array
-    {
-        $PermissionsHelper = new PermissionsHelper();
-        return $PermissionsHelper->translate($permission);
-    }
-
-    /**
      * Check if we have the permission to read/write or throw an exception
      *
      * @param string $rw read or write
@@ -658,9 +649,10 @@ abstract class AbstractEntity implements RestInterface
 
     private function processExtendedQuery(string $extendedQuery): void
     {
+        $PermissionsHelper = new PermissionsHelper();
         $advancedQuery = new AdvancedSearchQuery($extendedQuery, new VisitorParameters(
             $this->type,
-            $this->TeamGroups->getVisibilityList(),
+            $PermissionsHelper->getAssociativeArray(),
             $this->TeamGroups->readGroupsWithUsersFromUser(),
         ));
         $whereClause = $advancedQuery->getWhereClause();

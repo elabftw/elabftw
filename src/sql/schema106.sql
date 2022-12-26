@@ -203,4 +203,7 @@ ALTER TABLE `experiments` ADD `access_key` VARCHAR(36) NULL DEFAULT NULL;
 ALTER TABLE `items` ADD `access_key` VARCHAR(36) NULL DEFAULT NULL;
 ALTER TABLE `experiments_templates` ADD `access_key` VARCHAR(36) NULL DEFAULT NULL;
 ALTER TABLE `items_types` ADD `access_key` VARCHAR(36) NULL DEFAULT NULL;
+-- config for onlyme allow
+INSERT INTO config (conf_name, conf_value) VALUES ('allow_useronly', '1');
+
 UPDATE config SET conf_value = 106 WHERE conf_name = 'schema';

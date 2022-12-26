@@ -13,6 +13,9 @@ namespace Elabftw\Elabftw;
 use DateTime;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
+use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Teams;
+use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use function memory_get_usage;
 use function microtime;
@@ -96,6 +99,13 @@ class TwigFunctions
             return true;
         }
         return false;
+    }
+
+    public static function canToHuman(string $json): array
+    {
+        $PermissionsHelper = new PermissionsHelper();
+        $Users = new Users();
+        return $PermissionsHelper->translate(new Teams($Users), new TeamGroups($Users), $json);
     }
 
     public static function getSortIcon(string $orderBy): string

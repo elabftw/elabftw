@@ -14,7 +14,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TeamGroupParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
@@ -103,20 +102,6 @@ class TeamGroups implements RestInterface
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
-    }
-
-    /**
-     * When we need to build a select menu with visibility + team groups
-     */
-    public function getVisibilityList(): array
-    {
-        return array(
-            BasePermissions::Full->value => _('Public'),
-            BasePermissions::Organization->value => _('Everyone with an account'),
-            BasePermissions::MyTeams->value => _('All the teams I am part of'),
-            BasePermissions::User->value => _('Only me and admins'),
-            BasePermissions::UserOnly->value => _('Only me'),
-        );
     }
 
     /**

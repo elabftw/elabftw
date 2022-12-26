@@ -41,7 +41,7 @@ if ($App->Request->query->get('type') !== 'experiments') {
 // TEAM GROUPS
 $TeamGroups = new TeamGroups($App->Users);
 $teamGroupsArr = $TeamGroups->readGroupsWithUsersFromUser();
-$visibilityArr = $TeamGroups->getVisibilityList();
+$PermissionsHelper = new PermissionsHelper();
 
 $usersArr = $App->Users->readAllFromTeam();
 
@@ -62,7 +62,7 @@ $renderArr = array(
     'tagsArr' => $Tags->readAll(),
     'statusArr' => $statusArr,
     'usersArr' => $usersArr,
-    'visibilityArr' => $visibilityArr,
+    'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
     'teamGroups' => array_column($teamGroupsArr, 'name'),
 );
 echo $App->render('search.html', $renderArr);

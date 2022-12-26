@@ -280,14 +280,14 @@
         <div class='list-inline-item'>
           <!-- CAN READ -->
           {% set rw = 'canread' %}
-          {% set can = Entity.getCan(Entity.entityData.canread) %}
+          {% set can = Entity.entityData.canread|canToHuman %}
           {% include('view-permissions.html') %}
         </div>
 
         <div class='list-inline-item'>
           <!-- CAN WRITE -->
           {% set rw = 'canwrite' %}
-          {% set can = Entity.getCan(Entity.entityData.canwrite) %}
+          {% set can = Entity.entityData.canwrite|canToHuman %}
           {% include('view-permissions.html') %}
         </div>
 

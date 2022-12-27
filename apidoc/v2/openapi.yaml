@@ -4,10 +4,10 @@ info:
   description: Some description of the api.
   version: 2.0.0
 servers:
-  - url: https://eln.example.org/api/v2
-    description: Example base URL
   - url: https://elab.local:3148/api/v2
     description: Local dev server
+  - url: https://eln.example.org/api/v2
+    description: Example base URL
 components:
   securitySchemes:
     token:
@@ -2751,7 +2751,7 @@ paths:
             enum: ['binary', 'json']
             default: json
           description: |
-            To download the file itself, use `binary` format parameter.
+            To download the file itself, use `binary` format parameter. In python library, when downloading a file content, make sure to add ` _preload_content=False` into the call to `read_upload()`.
           examples:
             first:
               summary: Get the attached file

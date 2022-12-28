@@ -9,11 +9,11 @@ import $ from 'jquery';
 import { Api } from './Apiv2.class';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { makeSortableGreatAgain, reloadElement, adjustHiddenState, getEntity, generateMetadataLink } from './misc';
+import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, generateMetadataLink, permissionsToJson } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { Metadata } from './Metadata.class';
-import { EntityType, Model } from './interfaces';
+import { Action, EntityType, Model } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
@@ -147,6 +147,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // AUTOCOMPLETE input with users
+  $(document).on('focus', '.autocompleteUsers', function() {
+    if (!$(this).data('autocomplete')) {
+      $(this).autocomplete({
+        // necessary or the autocomplete will get under the modal
+        appendTo: '#autocompleteUsersDiv' + $(this).data('rw'),
+        source: function(request: Record<string, string>, response: (data) => void): void {
+          ApiC.getJson(`${Model.User}/?q=${request.term}`).then(json => {
+            const res = [];
+            json.forEach(user => {
+              res.push(`${user.userid} - ${user.fullname} (${user.email})`);
+            });
+            response(res);
+          });
+        },
+      });
+    }
+  });
+
   /**
    * Make sure the icon for toggle-next is correct depending on the stored state in localStorage
    */
@@ -166,17 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
       iconEl.classList.remove('fa-chevron-circle-right');
     }
   });
-
-  // CAN READ/WRITE SELECT
-  $(document).on('change', '.permissionSelect', function() {
-    const value = $(this).val();
-    const rw = $(this).data('rw');
-    const params = {};
-    params[rw] = value;
-    const entity = getEntity();
-    return ApiC.patch(`${entity.type}/${entity.id}`, params);
-  });
-
 
   /**
    * MAIN click event listener bound to container
@@ -203,6 +211,68 @@ document.addEventListener('DOMContentLoaded', () => {
         top: 0,
         behavior: 'smooth',
       });
+
+    // ADD USER TO PERMISSIONS
+    // create a new li element in the list of existing users, so it is collected at Save action
+    } else if (el.matches('[data-action="add-user-to-permissions"]')) {
+      // collect userid + name + email from input
+      const addUserPermissionsInput = (document.getElementById(`${el.dataset.rw}_select_users`) as HTMLInputElement);
+      const userid = parseInt(addUserPermissionsInput.value, 10);
+      if (isNaN(userid)) {
+        notifError(new Error('Use the autocompletion menu to add users.'));
+        return;
+      }
+      const userName = addUserPermissionsInput.value.split(' - ')[1];
+
+      // create li element
+      const li = document.createElement('li');
+      li.classList.add('list-group-item');
+      li.dataset.id = String(userid);
+
+      // eye or pencil icon
+      const rwIcon = document.createElement('i');
+      rwIcon.classList.add('fas');
+      const iconClass = el.dataset.rw === 'canread' ? 'eye' : 'pencil-alt';
+      rwIcon.classList.add(`fa-${iconClass}`);
+
+      // delete icon
+      const deleteSpan = document.createElement('span');
+      deleteSpan.dataset.action = 'remove-parent';
+      deleteSpan.classList.add('hover-danger');
+      const xIcon = document.createElement('i');
+      xIcon.classList.add('fas');
+      xIcon.classList.add('fa-xmark');
+      deleteSpan.insertAdjacentElement('afterbegin', xIcon);
+
+      // construct the li element with all its content
+      li.insertAdjacentElement('afterbegin', rwIcon);
+      li.insertAdjacentText('beforeend', ' ' + userName + ' ');
+      li.insertAdjacentElement('beforeend', deleteSpan);
+
+      // and insert it into the list
+      document.getElementById(`${el.dataset.rw}_list_users`).appendChild(li);
+
+      // clear input
+      addUserPermissionsInput.value = '';
+
+    } else if (el.matches('[data-action="remove-parent"]')) {
+      el.parentElement.remove();
+
+    // SAVE PERMISSIONS
+    } else if (el.matches('[data-action="save-permissions"]')) {
+      const params = {};
+      // collect existing users listed in ul->li, and store them in a string[] with user:<userid>
+      const existingUsers = Array.from(document.getElementById(`${el.dataset.rw}_list_users`).children)
+        .map(u => `user:${(u as HTMLElement).dataset.id}`);
+
+      params[el.dataset.rw] = permissionsToJson(
+        parseInt(($('#' + el.dataset.rw + '_select_base').val() as string), 10),
+        ($('#' + el.dataset.rw + '_select_teams').val() as string[])
+          .concat($('#' + el.dataset.rw + '_select_teamgroups').val() as string[])
+          .concat(existingUsers),
+      );
+      const entity = getEntity();
+      return ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.rw + 'Div'));
 
     /* TOGGLE NEXT ACTION
      * An element with "toggle-next" as data-action value will appear clickable.
@@ -248,11 +318,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="toggle-modal"]')) {
       // TODO this requires jquery for now. Not in BS5.
       ($('#' + el.dataset.target) as JQuery<HTMLDivElement>).modal('toggle');
-      // special code to select the existing permissions for templates on ucp/templates-edit page
-      if (window.location.pathname === '/ucp.php') {
-        (document.querySelector(`#canread_select option[value="${el.dataset.read}"]`) as HTMLOptionElement).selected = true;
-        (document.querySelector(`#canwrite_select option[value="${el.dataset.write}"]`) as HTMLOptionElement).selected = true;
-      }
 
     // PASSWORD VISIBILITY TOGGLE
     } else if (el.matches('[data-action="toggle-password"]')) {
@@ -345,6 +410,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // DOWNLOAD TEMPLATE
     } else if (el.matches('[data-action="download-template"]')) {
       window.location.href = `make.php?format=eln&type=experiments_templates&id=${el.dataset.id}`;
+    // TOGGLE ANONYMOUS READ ACCESS
+    } else if (el.matches('[data-action="toggle-anonymous-access"]')) {
+      const entity = getEntity();
+      ApiC.patch(`${entity.type}/${entity.id}`, {'action': Action.AccessKey}).then(response => response.json()).then(json => {
+        document.getElementById('anonymousAccessUrlDiv').toggleAttribute('hidden');
+        (document.getElementById('anonymousAccessUrlInput') as HTMLInputElement).value = json.sharelink;
+      });
+
+    // COPY TO CLIPBOARD
+    } else if (el.matches('[data-action="copy-to-clipboard"]')) {
+      navigator.clipboard.writeText((document.getElementById(el.dataset.target) as HTMLInputElement).value);
+      // indicate that the data was copied by changing the icon into text and back into the icon
+      const previousHTML = el.innerHTML;
+      window.setTimeout(function() {
+        el.innerHTML = previousHTML;
+      }, 1337);
+      el.innerText = 'Copied!';
+
     // TOGGLE BODY
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;

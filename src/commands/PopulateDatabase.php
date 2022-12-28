@@ -13,6 +13,7 @@ use const DB_NAME;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
@@ -130,11 +131,12 @@ class PopulateDatabase extends Command
             $ItemsTypes = new ItemsTypes($user);
             $ItemsTypes->setId($ItemsTypes->create($items_types['name']));
             $ItemsTypes->bypassWritePermission = true;
+            $defaultPermissions = BasePermissions::MyTeams->toJson();
             $patch = array(
                 'color' => $items_types['color'],
                 'body' => $items_types['template'],
-                'canread' => 'team',
-                'canwrite' => 'team',
+                'canread' => $defaultPermissions,
+                'canwrite' => $defaultPermissions,
                 'bookable' => $items_types['bookable'],
             );
             $ItemsTypes->patch(Action::Update, $patch);

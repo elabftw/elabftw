@@ -13,7 +13,8 @@ namespace Elabftw\Services;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use function filter_var;
-use function in_array;
+
+use JsonException;
 use function mb_strlen;
 
 /**
@@ -26,6 +27,9 @@ class Check
 
     /** cookie is a sha256 sum: 64 chars */
     private const COOKIE_LENGTH = 64;
+
+    /** how deep goes the canread/canwrite json */
+    private const PERMISSIONS_JSON_MAX_DEPTH = 3;
 
     /**
      * Check the number of character of a password
@@ -95,18 +99,22 @@ class Check
      */
     public static function visibility(string $visibility): string
     {
-        $validArr = array(
-            'public',
-            'organization',
-            'team',
-            'user',
-            'useronly',
-        );
-
-        if (!in_array($visibility, $validArr, true) && self::id((int) $visibility) === false) {
-            throw new IllegalActionException('The visibility parameter is wrong.');
+        try {
+            $decoded = json_decode($visibility, true, self::PERMISSIONS_JSON_MAX_DEPTH, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            throw new ImproperActionException($visibility . ' The visibility parameter is wrong.');
         }
-
+        // Note: if we want to server-side check for useronly disabled, it would be here, by removing 10
+        $allowedBase = array(10, 20, 30, 40, 50);
+        if (!in_array($decoded['base'], $allowedBase, true)) {
+            throw new ImproperActionException('The base visibility parameter is wrong.');
+        }
+        $arrayParams = array('teams', 'teamgroups', 'users');
+        foreach ($arrayParams as $param) {
+            if (!is_array($decoded[$param])) {
+                throw new ImproperActionException(sprintf('The visibility parameter %s is wrong.', $param));
+            }
+        }
         return $visibility;
     }
 
@@ -127,6 +135,14 @@ class Check
             return $orcid;
         }
         // note: the input field should prevent any incorrect value from being submitted in the first place
-        throw new ImproperActionException('Incorrect value for orcid');
+        throw new ImproperActionException('Incorrect value for orcid!');
+    }
+
+    public static function accessKey(string $ak): string
+    {
+        if (preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-1[0-9A-F]{3}-[0-9A-F]{4}-[0-9A-F]{12}$/i', $ak) === 1) {
+            return $ak;
+        }
+        throw new ImproperActionException('Incorrect value for access key!');
     }
 }

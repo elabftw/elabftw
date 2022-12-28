@@ -96,14 +96,15 @@ CREATE TABLE `experiments` (
   `timestamped` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `timestampedby` int(11) NULL DEFAULT NULL,
   `timestamped_at` timestamp NULL DEFAULT NULL,
-  `canread` varchar(255) NOT NULL DEFAULT 'team',
-  `canwrite` varchar(255) NOT NULL DEFAULT 'user',
+  `canread` JSON NOT NULL,
+  `canwrite` JSON NOT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
+  `access_key` varchar(36) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -237,8 +238,8 @@ CREATE TABLE `experiments_templates` (
   `locked` tinyint UNSIGNED DEFAULT NULL,
   `lockedby` int(10) UNSIGNED DEFAULT NULL,
   `locked_at` timestamp NULL DEFAULT NULL,
-  `canread` varchar(255) NOT NULL,
-  `canwrite` varchar(255) NOT NULL,
+  `canread` JSON NOT NULL,
+  `canwrite` JSON NOT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -246,6 +247,7 @@ CREATE TABLE `experiments_templates` (
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
+  `access_key` varchar(36) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -379,14 +381,15 @@ CREATE TABLE `items` (
   `lockedby` int(10) UNSIGNED DEFAULT NULL,
   `locked_at` timestamp NULL DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
-  `canread` varchar(255) NOT NULL DEFAULT 'team',
-  `canwrite` varchar(255) NOT NULL DEFAULT 'team',
+  `canread` JSON NOT NULL,
+  `canwrite` JSON NOT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
   `available` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
+  `access_key` varchar(36) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -473,12 +476,13 @@ CREATE TABLE `items_types` (
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
   `bookable` tinyint UNSIGNED DEFAULT 0,
-  `canread` varchar(255) NOT NULL DEFAULT 'team',
-  `canwrite` varchar(255) NOT NULL DEFAULT 'team',
+  `canread` JSON NOT NULL,
+  `canwrite` JSON NOT NULL,
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
+  `access_key` varchar(36) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -670,8 +674,8 @@ CREATE TABLE `teams` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `orgid` varchar(255) DEFAULT NULL,
   `public_db` tinyint UNSIGNED NOT NULL DEFAULT 0,
-  `force_canread` varchar(255) NOT NULL DEFAULT 'team',
-  `force_canwrite` varchar(255) NOT NULL DEFAULT 'user',
+  `force_canread` JSON NOT NULL,
+  `force_canwrite` JSON NOT NULL,
   `do_force_canread` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `do_force_canwrite` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `visible` tinyint UNSIGNED NOT NULL DEFAULT 1,
@@ -808,8 +812,8 @@ CREATE TABLE `users` (
   `uploads_layout` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `validated` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `lang` varchar(5) NOT NULL DEFAULT 'en_GB',
-  `default_read` varchar(255) NULL DEFAULT 'team',
-  `default_write` varchar(255) NULL DEFAULT 'user',
+  `default_read` JSON NOT NULL,
+  `default_write` JSON NOT NULL,
   `single_column_layout` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `cjk_fonts` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `orderby` varchar(255) NOT NULL DEFAULT 'date',

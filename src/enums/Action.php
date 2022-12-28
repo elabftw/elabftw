@@ -11,6 +11,7 @@ namespace Elabftw\Enums;
 
 enum Action: string
 {
+    case AccessKey = 'accesskey';
     case Add = 'add';
     case Archive = 'archive';
     case Bloxberg = 'bloxberg';

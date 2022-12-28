@@ -23,7 +23,7 @@
       {# OWNER filter #}
       <select name='owner' class='autosubmit mr-1 form-control' aria-label='Filter owner'>
         <option value=''>{{ 'Filter owner'|trans }}</option>
-        {% for user in allTeamUsersArr %}
+        {% for user in usersArr %}
           <option value='{{ user.userid }}'{{ App.Request.query.get('owner') == user.userid ? ' selected'}}>
           {{ user.fullname|raw }}</option>
         {% endfor %}

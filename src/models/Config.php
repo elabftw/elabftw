@@ -135,6 +135,7 @@ final class Config implements RestInterface
             ('saml_sync_teams', 0),
             ('support_url', 'https://github.com/elabftw/elabftw/issues'),
             ('deletable_xp', 1),
+            ('allow_useronly', 1),
             ('max_revisions', 10),
             ('min_delta_revisions', 100),
             ('min_days_revisions', 23),

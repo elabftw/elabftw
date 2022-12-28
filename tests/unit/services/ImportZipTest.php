@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use League\Flysystem\Filesystem;
@@ -42,8 +43,8 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
         new ImportZip(
             new Users(1, 1),
             'items:1',
-            'team',
-            'team',
+            BasePermissions::MyTeams->toJson(),
+            BasePermissions::MyTeams->toJson(),
             $uploadedFile,
             $this->fs,
         );
@@ -62,8 +63,8 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
         new ImportZip(
             new Users(1, 1),
             'items:1',
-            'team',
-            'team',
+            BasePermissions::MyTeams->toJson(),
+            BasePermissions::MyTeams->toJson(),
             $uploadedFile,
             $this->fs,
         );
@@ -82,8 +83,8 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
         $Import = new ImportZip(
             new Users(1, 1),
             'experiments:1',
-            'team',
-            'team',
+            BasePermissions::MyTeams->toJson(),
+            BasePermissions::MyTeams->toJson(),
             $uploadedFile,
             $this->fs,
         );
@@ -104,8 +105,8 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
         $Import = new ImportZip(
             new Users(1, 1),
             'experiments:1',
-            'team',
-            'team',
+            BasePermissions::MyTeams->toJson(),
+            BasePermissions::MyTeams->toJson(),
             $uploadedFile,
             $this->fs,
         );
@@ -126,8 +127,8 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
         $Import = new ImportZip(
             new Users(1, 1),
             'items:1',
-            'team',
-            'team',
+            BasePermissions::MyTeams->toJson(),
+            BasePermissions::MyTeams->toJson(),
             $uploadedFile,
             $this->fs,
         );
@@ -148,8 +149,8 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
         $Import = new ImportZip(
             new Users(1, 1),
             'items:1',
-            'team',
-            'team',
+            BasePermissions::MyTeams->toJson(),
+            BasePermissions::MyTeams->toJson(),
             $uploadedFile,
             $this->fs,
         );

@@ -13,6 +13,9 @@ namespace Elabftw\Elabftw;
 use DateTime;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
+use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Teams;
+use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use function memory_get_usage;
 use function microtime;
@@ -80,17 +83,38 @@ class TwigFunctions
         return (new DateTime())->modify($input)->format('Y-m-d H:i:s');
     }
 
+    public static function extractJson(string $json, string $key): string|bool|int
+    {
+        $decoded = json_decode($json, true, 3, JSON_THROW_ON_ERROR);
+        if ($decoded[$key]) {
+            return (int) $decoded[$key];
+        }
+        return false;
+    }
+
+    public static function isInJsonArray(string $json, string $key, int $target): bool
+    {
+        $decoded = json_decode($json, true, 3, JSON_THROW_ON_ERROR);
+        if (in_array($target, $decoded[$key], true)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function canToHuman(string $json): array
+    {
+        $PermissionsHelper = new PermissionsHelper();
+        $Users = new Users();
+        return $PermissionsHelper->translate(new Teams($Users), new TeamGroups($Users), $json);
+    }
+
     public static function getSortIcon(string $orderBy): string
     {
         $Request = Request::createFromGlobals();
+        $sort = null;
         if (Orderby::tryFrom($orderBy) === Orderby::tryFrom($Request->query->getAlpha('order'))) {
-            switch (Sort::tryFrom($Request->query->getAlpha('sort'))) {
-                case Sort::Asc:
-                    return 'fa-sort-up';
-                case Sort::Desc:
-                    return 'fa-sort-down';
-            }
+            $sort = Sort::tryFrom($Request->query->getAlpha('sort'));
         }
-        return 'fa-sort';
+        return $sort === null ? 'fa-sort' : $sort->toFa();
     }
 }

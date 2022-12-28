@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
@@ -52,8 +53,8 @@ class Experiments extends AbstractConcreteEntity
         // defaults
         $title = _('Untitled');
         $body = null;
-        $canread = 'team';
-        $canwrite = 'user';
+        $canread = BasePermissions::MyTeams->toJson();
+        $canwrite = BasePermissions::User->toJson();
         $metadata = null;
 
         // do we want template ?

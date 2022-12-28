@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -106,7 +107,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'show_team' => 'on',
             'lang' => 'en_GB',
             'pdf_format' => 'A4',
-            'default_read' => 'organization',
+            'default_read' => BasePermissions::Organization->toJson(),
             'display_size' => 'lg',
             'display_mode' => 'it',
             'sort' => 'date',
@@ -196,6 +197,11 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Target = new Users(5, 2, $Users);
         $res = $Target->patch(Action::Update, array('usergroup' => '4'));
         $this->assertEquals(4, $res['usergroup']);
+    }
+
+    public function testReadAllActiveFromTeam(): void
+    {
+        $this->assertCount(4, $this->Users->readAllActiveFromTeam());
     }
 
     public function testDestroy(): void

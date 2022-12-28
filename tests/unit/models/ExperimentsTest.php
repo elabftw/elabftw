@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Check;
 
@@ -72,10 +73,14 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     public function testUpdateVisibility(): void
     {
         $this->Experiments->setId(1);
-        $this->assertIsArray($this->Experiments->patch(Action::Update, array('canread' => 'public')));
-        $this->assertIsArray($this->Experiments->patch(Action::Update, array('canread' => 'organization')));
-        $this->assertIsArray($this->Experiments->patch(Action::Update, array('canwrite' => 'team')));
-        $this->assertIsArray($this->Experiments->patch(Action::Update, array('canwrite' => 'public')));
+        $matrix = array('canread', 'canwrite');
+        foreach ($matrix as $column) {
+            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Full->toJson())));
+            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Organization->toJson())));
+            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::MyTeams->toJson())));
+            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::User->toJson())));
+            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::UserOnly->toJson())));
+        }
     }
 
     public function testUpdateCategory(): void

@@ -420,6 +420,16 @@ label {
     text-transform: uppercase;
 }
 
+.button-small {
+    border-radius: 25px;
+    color: #fff;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 5px 10px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
 button:disabled {
     cursor: not-allowed;
 }
@@ -453,13 +463,6 @@ button:disabled {
 github issue #52 */
 #body_view p {
     color: #000;
-}
-
-/* add some css for details/summary html5 */
-summary::before {
-    color: $elabblue;
-    content: '► ';
-    font-size: 120%;
 }
 
 /* fix for big images uploaded in the text */
@@ -615,8 +618,6 @@ tr:nth-child(odd) {
     border: 1px solid $bordersgray;
     border-left: 6px solid var(--left-color);
     border-radius: 5px;
-    /* fix tooltip larger than parent div */
-    line-height: 200%;
     margin: 5px auto;
     min-width: 100%;
     opacity: var(--opacity);
@@ -868,7 +869,6 @@ the form-control fails to do that so we do the border ourselves */
 
 .smallgray {
     color: $lightgray;
-    display: block;
     font-size: 80%;
 }
 

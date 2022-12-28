@@ -6,24 +6,6 @@
   {% endfor %}
 {% endif %}
 
-<div class='mt-2'>
-  {% if entityData.canread > 0 %}
-    {% for teamGroup in teamGroupsArr|filter(teamGroup => teamGroup.id == entityData.canread) %}
-      <i class='fas fa-eye'></i> {{ teamGroup.name }}
-    {% endfor %}
-  {% else %}
-    <i class='fas fa-eye'></i> {{ entityData.canread }}
-  {% endif %}
-
-  {% if entityData.canwrite > 0 %}
-    {% for teamGroup in teamGroupsArr|filter(teamGroup =>  teamGroup.id == entityData.canwrite) %}
-      <i class='fas fa-pencil-alt'></i> {{ teamGroup.name }}
-    {% endfor %}
-  {% else %}
-    <i class='fas fa-pencil-alt'></i> {{ entityData.canwrite }}
-  {% endif %}
-</div>
-
 {% if (Entity.entityData.content_type == constant('Elabftw\\Models\\AbstractEntity::CONTENT_MD')) and Entity.entityData.body is not null %}
   {% set body = Entity.entityData.body|md2html %}
 {% else %}

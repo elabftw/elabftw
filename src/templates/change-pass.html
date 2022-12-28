@@ -6,7 +6,7 @@
   <form method='post' class='form-group' action='app/controllers/ResetPasswordController.php'>
     {{ App.Session.get('csrf')|csrf }}
 
-    <span class='smallgray'>{{ minPasswordLength() }} {{ 'characters minimum'|trans }}</span>
+    <p class='smallgray'>{{ minPasswordLength() }} {{ 'characters minimum'|trans }}</p>
     <!-- output the key and userid as hidden fields -->
     <input type="hidden" name="key" value="{{ key|e }}" />
     <input type="hidden" name="userid" value="{{ userid|e }}" />

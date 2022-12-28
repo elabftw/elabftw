@@ -10,6 +10,8 @@
 namespace Elabftw\Services;
 
 use function bin2hex;
+
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use function hash;
@@ -61,8 +63,8 @@ class CheckTest extends \PHPUnit\Framework\TestCase
 
     public function testVisibility(): void
     {
-        $this->assertEquals('team', Check::visibility('team'));
-        $this->expectException(IllegalActionException::class);
+        $this->assertEquals(BasePermissions::MyTeams->toJson(), Check::visibility(BasePermissions::MyTeams->toJson()));
+        $this->expectException(ImproperActionException::class);
         Check::visibility('pwet');
     }
 

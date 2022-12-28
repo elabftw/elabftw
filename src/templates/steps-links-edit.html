@@ -105,7 +105,7 @@
             <div class='input-group-append' style='max-width:33%;'>
               <select id='addLinkExpCatFilter' class='brl-none form-control'>
                 <option selected value=''>{{ 'Any author'|trans }}</option>
-                {% for user in allTeamUsersArr %}
+                {% for user in usersArr %}
                   <option value='{{ user.userid }}'>{{ user.fullname }}</option>
                 {% endfor %}
               </select>

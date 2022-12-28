@@ -85,6 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
           fieldValue = (document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement).value === 'checked' ? 'on' : '';
         }
         field['value'] = fieldValue;
+        // deal with the blank_on_value
+        if ((document.getElementById('newFieldBlankOnDuplicate') as HTMLInputElement).checked) {
+          field['blank_value_on_duplicate'] = true;
+        }
         json['extra_fields'][fieldKey] = field;
         MetadataC.update(json).then(() => { document.location.reload(); });
       });

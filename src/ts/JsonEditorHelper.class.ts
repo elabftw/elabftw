@@ -98,6 +98,7 @@ export default class JsonEditorHelper {
     this.currentFilename = name;
     this.editorDiv.dataset.what = 'file';
     document.getElementById('jsonEditorMetadataLoadButton').removeAttribute('disabled');
+    document.getElementById('jsonEditorAddFieldButton').toggleAttribute('hidden', true);
   }
 
   loadMetadata(): void {
@@ -108,6 +109,7 @@ export default class JsonEditorHelper {
     this.editorDiv.dataset.what = 'metadata';
     // disable the load metadata button
     document.getElementById('jsonEditorMetadataLoadButton').toggleAttribute('disabled', true);
+    document.getElementById('jsonEditorAddFieldButton').removeAttribute('hidden');
   }
 
   loadMetadataFromId(entity: Entity): void {

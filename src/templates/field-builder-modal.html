@@ -1,0 +1,65 @@
+<!-- Modal for field builder -->
+<div class='modal fade' id='fieldBuilderModal' tabindex='-1' role='dialog' aria-labelledby='fieldBuilderLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <form id='newFieldForm'>
+        <div class='modal-header'>
+          <h5 class='modal-title' id='fieldBuilderLabel'><i class='fas fa-fw fa-trowel'></i> {{ 'Add an extra field'|trans }}</h5>
+          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </div>
+        <div class='modal-body'>
+            <label for='newFieldTypeSelect'>{{ 'Field type'|trans }}</label>
+            <select id='newFieldTypeSelect' class='form-control' autocomplete='off'>
+              <option value='text'>{{ 'Text'|trans }}</option>
+              <option value='select'>{{ 'Dropdown menu'|trans }}</option>
+              <option value='radio'>{{ 'Radio buttons'|trans }}</option>
+              <option value='date'>{{ 'Date'|trans }}</option>
+              <option value='checkbox'>{{ 'Checkbox'|trans }}</option>
+              <option value='number'>{{ 'Number'|trans }}</option>
+              <option value='url'>URL</option>
+            </select>
+
+            <!-- NAME -->
+            <label for='newFieldKeyInput'>{{ 'Name'|trans }}</label>
+            <input type='text' autocomplete='off' required placeholder='{{ 'Name'|trans }}' id='newFieldKeyInput' class='form-control'>
+            <!-- TEXT, URL, NUMBER, DATE -->
+            <div id='newFieldContentDiv_classic'>
+              <label for='newFieldValueInput'>{{ 'Default value'|trans }}</label>
+              <input type='text' autocomplete='off' placeholder='{{ 'Default value'|trans }}' id='newFieldValueInput' class='form-control'>
+              <div class='separator'></div>
+              <div class='custom-control custom-checkbox'>
+                <input type='checkbox' class='custom-control-input' id='newFieldBlankOnDuplicate'>
+                <label class='custom-control-label' for='newFieldBlankOnDuplicate'>{{ 'Blank value on duplicate?'|trans }}</label>
+              </div>
+            </div>
+
+            <!-- SELECT, RADIO -->
+            <div id='newFieldContentDiv_selectradio' hidden>
+              <label>{{ 'Choices'|trans }}</label>
+              <div id='choicesInputDiv'>
+                <input type='text' class='form-control mb-1 newFieldOption' autocomplete='off'>
+                <input type='text' class='form-control mb-1 newFieldOption' autocomplete='off'>
+              </div>
+              <button type='button' class='btn btn-secondary button-small' data-action='new-field-add-option'>{{ 'Add another choice'|trans }}</button>
+            </div>
+
+            <!-- CHECKBOX -->
+            <div id='newFieldContentDiv_checkbox' hidden>
+              <label for='newFieldCheckboxDefaultSelect'>{{ 'Default value'|trans }}</label>
+              <select autocomplete='off' id='newFieldCheckboxDefaultSelect' class='form-control'>
+                <option value='unchecked'>{{ 'Unchecked'|trans }}</option>
+                <option value='checked'>{{ 'Checked'|trans }}</option>
+              </select>
+            </div>
+
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+          <button type='button' class='btn btn-primary' data-action='save-new-field'>{{ 'Save'|trans }}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

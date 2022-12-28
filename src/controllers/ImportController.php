@@ -53,14 +53,18 @@ class ImportController implements ControllerInterface
         $uploadedFile = $this->request->files->get('file');
         $allowedExtensions = array('.eln', '.zip', '.csv');
 
+        // the import menu only allows basic permission to be set, so translate this in proper json
+        $canread = BasePermissions::tryFrom($this->request->request->getInt('canread')) ?? BasePermissions::MyTeams;
+        $canwrite = BasePermissions::tryFrom($this->request->request->getInt('canwrite')) ?? BasePermissions::User;
+
         // figure out the filetype depending on file extension
         switch ($uploadedFile->getClientOriginalExtension()) {
             case 'eln':
                 return new ImportEln(
                     $this->app->Users,
                     (string) $this->request->request->get('target'),
-                    (string) ($this->request->request->get('canread') ?? BasePermissions::MyTeams->toJson()),
-                    (string) ($this->request->request->get('canwrite') ?? BasePermissions::User->toJson()),
+                    $canread->toJson(),
+                    $canwrite->toJson(),
                     $uploadedFile,
                     (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs(),
                 );
@@ -68,8 +72,8 @@ class ImportController implements ControllerInterface
                 return new ImportZip(
                     $this->app->Users,
                     (string) $this->request->request->get('target'),
-                    (string) $this->request->request->get('canread'),
-                    (string) $this->request->request->get('canwrite'),
+                    $canread->toJson(),
+                    $canwrite->toJson(),
                     $uploadedFile,
                     (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs(),
                 );
@@ -77,8 +81,8 @@ class ImportController implements ControllerInterface
                 return new ImportCsv(
                     $this->app->Users,
                     (string) $this->request->request->get('target'),
-                    (string) $this->request->request->get('canread'),
-                    (string) $this->request->request->get('canwrite'),
+                    $canread->toJson(),
+                    $canwrite->toJson(),
                     $uploadedFile,
                 );
             default:

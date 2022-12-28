@@ -74,7 +74,9 @@
                   {% set thumb_name = upload.long_name ~ '_th.jpg' %}
                   {# old timestamp pdf don't have a thumbnail, so don't try to display one for them #}
                   {% if ext matches '/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
-                    <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ thumb_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}' alt='thumbnail' />
+                    <div class='text-center'>
+                      <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ thumb_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}' alt='thumbnail' />
+                    </div>
                   {% else %}
                     <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block text-center'></i>
                   {% endif %}

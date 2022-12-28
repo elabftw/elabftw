@@ -1016,36 +1016,7 @@ the form-control fails to do that so we do the border ourselves */
     z-index: 10;
 }
 
-// overwrite some default open-vector-editor settings
-// this is only working for the circular preview (single svg element)
-// the linear preview unfortunately is made from individual svg elements
-.viewer-ove {
-    .preview-mode-container {
-        display: block;
-        width: auto !important;
-
-        div {
-            box-shadow: none !important;
-        }
-    }
-
-    .veCircularView { /* stylelint-disable-line */
-        height: auto !important;
-        width: auto !important;
-    }
-
-    .circularViewSvg { /* stylelint-disable-line */
-        height: 100% !important;
-        width: 100% !important;
-    }
-
-    .ve-propertiesPanel .bp3-tab-list { /* stylelint-disable-line */
-        overflow: auto !important;
-    }
-}
-
 /* eye overlay for uploaded file icons */
-
 .eye-overlay {
     display: block;
     position: relative;

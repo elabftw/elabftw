@@ -11,10 +11,6 @@ code {
     display: inline-block;
 }
 
-.viewer-ove {
-    overflow: hidden;
-}
-
 .preview-mode-container {
     .bp3-button.bp3-intent-primary {
         background-color: $elabblue !important;
@@ -36,10 +32,6 @@ code {
     .bp3-button-group.preview-mode-view-fullscreen:hover {
         background: none !important;
     }
-
-    .preview-mode-simple-sequence-view {
-        padding: 40px 0 10px !important;
-    }
 }
 
 /* stylelint-disable-next-line selector-class-pattern */
@@ -47,5 +39,35 @@ code {
     .bp3-button[class*='bp3-intent-'] .bp3-icon {
         //$elabblue does not look as great here IMHO, it's to light
         color: #20878f !important;
+    }
+}
+
+// overwrite some default open-vector-editor settings
+// this is only working for the circular preview (single svg element)
+// the linear preview unfortunately is made from individual svg elements
+.viewer-ove {
+    overflow: hidden;
+
+    .preview-mode-container {
+        display: block;
+        width: auto !important;
+
+        div {
+            box-shadow: none !important;
+        }
+    }
+
+    .veCircularView { /* stylelint-disable-line */
+        height: auto !important;
+        width: auto !important;
+    }
+
+    .circularViewSvg { /* stylelint-disable-line */
+        height: 100% !important;
+        width: 100% !important;
+    }
+
+    .ve-propertiesPanel .bp3-tab-list { /* stylelint-disable-line */
+        overflow: auto !important;
     }
 }

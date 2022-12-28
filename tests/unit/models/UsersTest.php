@@ -199,6 +199,11 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(4, $res['usergroup']);
     }
 
+    public function testReadAllActiveFromTeam(): void
+    {
+        $this->assertCount(4, $this->Users->readAllActiveFromTeam());
+    }
+
     public function testDestroy(): void
     {
         $Admin = new Users(4, 2);

@@ -418,3 +418,14 @@ export function permissionsToJson(base: number, extra: string[]): string {
 
   return JSON.stringify(json);
 }
+
+// go over all the type: url elements and create a link dynamically
+export function generateMetadataLink(): void {
+  document.querySelectorAll('[data-gen-link="true"]').forEach(el => {
+    const link = document.createElement('a');
+    const url = (el as HTMLSpanElement).innerText;
+    link.href = url;
+    link.text = url;
+    el.replaceWith(link);
+  });
+}

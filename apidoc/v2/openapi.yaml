@@ -4,10 +4,10 @@ info:
   description: Some description of the api.
   version: 2.0.0
 servers:
-  - url: https://eln.example.org/api/v2
-    description: Example base URL
   - url: https://elab.local:3148/api/v2
     description: Local dev server
+  - url: https://eln.example.org/api/v2
+    description: Example base URL
 components:
   securitySchemes:
     token:

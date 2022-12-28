@@ -21,6 +21,7 @@ use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\Metadata;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -610,7 +611,7 @@ abstract class AbstractEntity implements RestInterface
         $Changelog->create(new ContentParams('metadata_' . $key, $value));
         // build field
         $field = json_encode($key, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
-        $field = '$.extra_fields.' . $field . '.value';
+        $field = '$.' . Metadata::ExtraFields->value . '.' . $field . '.value';
         $sql = 'UPDATE ' . $this->type . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':field', $field);

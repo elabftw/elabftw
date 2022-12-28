@@ -9,9 +9,10 @@ import $ from 'jquery';
 import { Api } from './Apiv2.class';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, permissionsToJson } from './misc';
+import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, generateMetadataLink, permissionsToJson } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
+import { Metadata } from './Metadata.class';
 import { Action, EntityType, Model } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
@@ -451,18 +452,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // prepare the get request
       const entityType = el.dataset.type === 'experiments' ? EntityType.Experiment : EntityType.Item;
-      (new EntityClass(entityType)).read(parseInt(el.dataset.id, 10)).then(json => {
-        // add html content and adjust the width of the children
-        bodyDiv.innerHTML = json.body_html;
-        // get the width of the parent. The -30 is to make it smaller than parent even with the margins
-        const width = document.getElementById('parent_' + randId).clientWidth - 30;
-        bodyDiv.style.width = String(width);
+      const entityId = parseInt(el.dataset.id, 10);
+      (new EntityClass(entityType)).read(entityId).then(json => {
+        // do we display the body
+        const metadata = JSON.parse(json.metadata || '{}');
+        if (Object.prototype.hasOwnProperty.call(metadata, 'elabftw')
+          && Object.prototype.hasOwnProperty.call(metadata.elabftw, 'display_main_text')
+          && !metadata.elabftw.display_main_text
+        ) {
+          // add extra fields elements from metadata json
+          const MetadataC = new Metadata({type: entityType, id: entityId});
+          MetadataC.metadataDiv = bodyDiv;
+          MetadataC.display('view').then(() => {
+            bodyDiv.classList.remove('col-md-12');
+            bodyDiv.style.border = '0';
+            bodyDiv.style.padding = '0 20px';
+            bodyDiv.firstChild.remove();
+
+            // go over all the type: url elements and create a link dynamically
+            generateMetadataLink();
+          });
+        } else {
+          // add html content
+          bodyDiv.innerHTML = json.body_html;
+
+          // adjust the width of the children
+          // get the width of the parent. The -30 is to make it smaller than parent even with the margins
+          const width = document.getElementById('parent_' + randId).clientWidth - 30;
+          bodyDiv.style.width = String(width);
+
+          // ask mathjax to reparse the page
+          MathJax.typeset();
+
+          TableSortingC.init();
+        }
+
         bodyDiv.toggleAttribute('hidden');
         bodyDiv.dataset.bodyLoaded = '1';
-        // ask mathjax to reparse the page
-        MathJax.typeset();
-
-        TableSortingC.init();
       });
     }
   });

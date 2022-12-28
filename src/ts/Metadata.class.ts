@@ -254,8 +254,7 @@ export class Metadata {
         return;
       }
       this.metadataDiv.append(this.getHeaderDiv());
-      this.metadataDiv.classList.add('col-md-12');
-      this.metadataDiv.classList.add('box');
+      this.metadataDiv.classList.add('col-md-12', 'box');
       // the input elements that will be created from the extra fields
       const elements = [];
       for (const [name, description] of Object.entries(json.extra_fields)) {
@@ -300,6 +299,7 @@ export class Metadata {
         rowDiv.classList.add('row');
         this.metadataDiv.append(rowDiv);
         const label = document.createElement('label');
+        label.style.marginRight = '10px';
         label.htmlFor = element.element.id;
         label.innerText = element.name as string;
         if (element.element.type === 'checkbox') {

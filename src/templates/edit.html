@@ -174,15 +174,18 @@
 
   <!-- BODY -->
   {% if editor == 'md' %}
-  <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
+  <div {{ not displayMainText ? 'hidden' }}>
+    <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
+  </div>
   {% else %}
-  <div><!-- << this div is added around the textarea to fix an issue on mobile editor. See #3107 -->
+  {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
+  <div {{ not displayMainText ? 'hidden' }}>{# << this div is added around the textarea to fix an issue on mobile editor. See #3107 #}
     <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body' rows='15' cols='80'>{{ Entity.entityData.body }}</textarea>
   </div>
   {% endif %}
 
   <div class='mt-4 text-center'>
-    <button data-action='update-entity-body' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+    <button {{ not displayMainText ? 'hidden' }} data-action='update-entity-body' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     <button data-action='update-entity-body' data-redirect='view' class='button btn btn-primary'>{{ 'Save and go back'|trans }}</button>
   </div>
 

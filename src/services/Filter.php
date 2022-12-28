@@ -11,6 +11,7 @@ namespace Elabftw\Services;
 
 use function checkdate;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Enums\Metadata;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use function filter_var;
@@ -142,10 +143,10 @@ class Filter
             return null;
         }
         $decoded = json_decode($metadata, true, 512, JSON_THROW_ON_ERROR);
-        if (!isset($decoded['extra_fields'])) {
+        if (!isset($decoded[Metadata::ExtraFields->value])) {
             return null;
         }
-        foreach ($decoded['extra_fields'] as &$field) {
+        foreach ($decoded[Metadata::ExtraFields->value] as &$field) {
             if (isset($field['blank_value_on_duplicate']) && $field['blank_value_on_duplicate'] === true) {
                 $field['value'] = '';
             }

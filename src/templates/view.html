@@ -213,7 +213,7 @@
           {% set body = Entity.entityData.body %}
       {% endif %}
       {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
-      <div id='body_view' class='pt-2'{{ displayMainText == false ? ' style="display:none;"' : ''}}>{{ body|raw }}</div>
+      <div id='body_view' class='pt-2' {{ not displayMainText ? 'hidden' }}>{{ body|raw }}</div>
   {% endif %}
 
   <div id='metadataDiv' class='col-md-6'></div>

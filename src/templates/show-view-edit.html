@@ -50,7 +50,7 @@
           <select class='form-control' id='import_modal_canread' autocomplete='off' name='canread'>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'
-              {{ 'team' == key ? ' selected' }}
+              {{ 30 == key ? ' selected' }}
               >{{ value|trans }}</option>
               {% endfor %}
           </select>
@@ -59,7 +59,7 @@
           <select class='form-control' id='import_modal_canwrite' autocomplete='off' name='canwrite'>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'
-              {{ 'team' == key ? ' selected' }}
+              {{ 20 == key ? ' selected' }}
               >{{ value|trans }}</option>
             {% endfor %}
           </select>
@@ -67,7 +67,7 @@
           <label class='d-block' for='import_modal_file_input'>{{ '3. Select a file to import:'|trans }}</label>
           <input id='import_modal_file_input' required name='file' type='file' accept='.eln,.zip,.csv' />
           <input name='type' type='hidden' value='archive' />
-          <span class='smallgray'>{{ 'Allowed extensions: .eln, .zip, .csv'|trans }}</span>
+          <p class='smallgray'>{{ 'Allowed extensions: .eln, .zip, .csv'|trans }}</p>
 
           <div class='mt-4 text-center'>
             <button type='submit' class='button btn btn-primary'>{{ 'Import'|trans }}</button>

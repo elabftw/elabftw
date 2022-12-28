@@ -229,7 +229,7 @@
         <label for='default-read-select'>{{ 'Default visibility for new experiments'|trans }}</label>
         <select id='default-read-select' name='default_read'>
           {% for key, value in visibilityArr %}
-            <option value='{{ key }}' {{ App.Users.userData.default_read == key ? " selected='selected'" }}>{{ value|trans }}</option>
+            <option value='{{ key }}' {{ App.Users.userData.default_read|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
           {% endfor %}
         </select>
         </p>
@@ -237,7 +237,7 @@
         <label for='default-write-select'>{{ 'Default write permission for new experiments'|trans }}</label>
         <select id='default-write-select' name='default_write'>
           {% for key, value in visibilityArr %}
-            <option value='{{ key }}' {{ App.Users.userData.default_write == key ? " selected='selected'" }}>{{ value|trans }}</option>
+            <option value='{{ key }}' {{ App.Users.userData.default_write|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
           {% endfor %}
         </select>
         </p>

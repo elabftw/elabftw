@@ -10,6 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\FilterableColumn;
+use Elabftw\Enums\Metadata;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
 use Elabftw\Models\Users;
@@ -84,7 +85,7 @@ class DisplayParams
         $this->hasMetadataSearch = true;
         $i = count($this->metadataKey);
         // Note: the key is double quoted so spaces are not an issue
-        $key = '$.extra_fields."' . Filter::sanitize($key) . '"';
+        $key = '$.' . Metadata::ExtraFields->value . '."' . Filter::sanitize($key) . '"';
         $this->metadataKey[] = $key;
         $this->metadataValuePath[] = $key . '.value';
         $this->metadataValue[] = Filter::sanitize($value);

@@ -26,6 +26,11 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($this->TeamGroups->postAction(Action::Create, array('name' => 'Group Name')));
     }
 
+    public function testGetPage(): void
+    {
+        $this->assertEquals('api/v2/teamgroups/', $this->TeamGroups->getPage());
+    }
+
     public function testReadOne(): void
     {
         $id = $this->TeamGroups->postAction(Action::Create, array('name' => 'Group Name'));

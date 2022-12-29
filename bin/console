@@ -32,6 +32,7 @@ $Application->add(new PruneRevisions());
 $Application->add(new MfaCode());
 $Application->add(new AddMissingLinks());
 $Application->add(new SendNotifications());
+$Application->add(new TagsTeamsSync());
 $Application->add(new PruneUploads());
 $Application->add(new MigrateUploads());
 $Application->add(new PruneItems());

@@ -40,9 +40,34 @@ class TeamTags implements RestInterface
         return 'api/v2/tags/';
     }
 
+    /**
+     * Create a new tag in that team
+     */
     public function postAction(Action $action, array $reqBody): int
     {
-        return 0;
+        if ($action !== Action::Create) {
+            throw new ImproperActionException('Invalid action');
+        }
+        $tag = $reqBody['tag'] ?? throw new ImproperActionException('Missing required tag key!');
+        $inserted = 0;
+
+        // look if the tag exists already
+        $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->id, PDO::PARAM_INT);
+        $req->bindValue(':tag', $tag, PDO::PARAM_STR);
+        $this->Db->execute($req);
+        $res = $req->fetch();
+        // insert the tag if it doesn't exist
+        if ($res === false) {
+            $inserted = 1;
+            $sql = 'INSERT INTO tags (tag, team) VALUES(:tag,  :team)';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':team', $this->id, PDO::PARAM_INT);
+            $req->bindValue(':tag', $tag, PDO::PARAM_STR);
+            $this->Db->execute($req);
+        }
+        return $inserted;
     }
 
     public function readOne(): array

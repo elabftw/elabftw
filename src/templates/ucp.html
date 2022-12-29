@@ -22,43 +22,6 @@
   <div class='lds-dual-ring'></div>
 </div>
 
-<!-- Modal for edit permissions -->
-<div class='modal fade' id='permModal' tabindex='-1' role='dialog' aria-labelledby='permModalLabel' aria-hidden='true'>
-  <div class='modal-dialog' role='document'>
-    <div class='modal-content'>
-      <div class='modal-header'>
-        <h5 class='modal-title' id='permModalLabel'>{{ 'Edit permissions'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
-          <span aria-hidden='true'>&times;</span>
-        </button>
-      </div>
-      <div class='modal-body'>
-        <!-- CAN READ -->
-        <div class='form-group'>
-          <i class='fas fa-eye' title='Visibility'></i>
-          <label for='canread_select'>{{ 'Visibility'|trans }}</label>
-          <select id='canread_select' class='permissionSelect form-control' data-rw='canread'>
-            {% for key, value in visibilityArr %}
-            <option value='{{ key }}'>{{ value|trans }}</option>
-            {% endfor %}
-          </select>
-          <!-- CAN WRITE -->
-          <i class='fas fa-pencil-alt' title='Can write'></i>
-          <label for='canwrite_select'>{{ 'Can write'|trans }}</label>
-          <select id='canwrite_select' class='permissionSelect form-control' data-rw='canwrite'>
-            {% for key, value in visibilityArr %}
-            <option value='{{ key }}'>{{ value|trans }}</option>
-            {% endfor %}
-          </select>
-        </div>
-      </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- TAB 1 - USER PREFERENCES -->
 <div data-tabcontent='1' hidden>
   <!-- The checkbox inputs are duplicated with a 0 value hidden input above because otherwise it is not sent to the controller -->

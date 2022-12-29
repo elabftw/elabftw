@@ -82,11 +82,12 @@ class Revisions implements DestroyableInterface
      */
     public function readAll(): array
     {
+        // we limit to 42 until some pagination/offset is properly implemented
         $sql = 'SELECT ' . $this->Entity->type . "_revisions.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname
             FROM " . $this->Entity->type . '_revisions
             LEFT JOIN users ON (users.userid = ' . $this->Entity->type . '_revisions.userid)
-            WHERE item_id = :item_id ORDER BY savedate DESC';
+            WHERE item_id = :item_id ORDER BY savedate DESC LIMIT 42';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);

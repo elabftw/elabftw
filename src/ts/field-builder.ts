@@ -71,9 +71,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (metadata) {
           json = metadata;
         }
-        // make sure we have an extra_fields
-        if (! ('extra_fields' in json)) {
-          json['extra_fields'] = {};
+        // Destructuring assignment with default value for jsonPath if extra_fields does not exist yet
+        const { hasExtraFields, jsonPath = '$.elabftw.extra_fields' } = MetadataC.getExtraFields(json);
+        // make sure we have extra_fields
+        if (!hasExtraFields) {
+          json['elabftw'] = {};
+          json['elabftw']['extra_fields'] = {};
         }
         // build the new field
         const field = {};
@@ -100,11 +103,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((document.getElementById('newFieldBlankOnDuplicate') as HTMLInputElement).checked) {
           field['blank_value_on_duplicate'] = true;
         }
+
         // deal with the multi select
         if ((document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked) {
           field['allow_multi_values'] = true;
         }
-        json['extra_fields'][fieldKey] = field;
+
+        if (jsonPath === '$.elabftw.extra_fields') {
+          json['elabftw']['extra_fields'][fieldKey] = field;
+        } else if (jsonPath === '$.extra_fields') {
+          json['extra_fields'][fieldKey] = field;
+        }
         MetadataC.update(json).then(() => { document.location.reload(); });
       });
     // ADD OPTION FOR SELECT OR RADIO

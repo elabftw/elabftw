@@ -11,11 +11,11 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
+use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FilterableColumn;
-use Elabftw\Enums\Metadata;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
@@ -179,13 +179,16 @@ abstract class AbstractEntityController implements ControllerInterface
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();
 
+        // Do we display the main body of a concrete entity? Default is true
+        $displayMainText = (new Metadata($this->Entity->entityData['metadata']))->displayMainText;
+
         $Teams = new Teams($this->Entity->Users);
 
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
             'Entity' => $this->Entity,
-            'displayMainText' => $this->displayMainText(),
+            'displayMainText' => $displayMainText,
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
             'myTeamsArr' => $Teams->readMyTeams(),
@@ -243,12 +246,16 @@ abstract class AbstractEntityController implements ControllerInterface
         );
         $Teams = new Teams($this->Entity->Users);
 
+
+        // Do we display the main body of a concrete entity? Default is true
+        $displayMainText = (new Metadata($this->Entity->entityData['metadata']))->displayMainText;
+
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
             'deletableXp' => $this->getDeletableXp(),
             'Entity' => $this->Entity,
             'entityData' => $this->Entity->entityData,
-            'displayMainText' => $this->displayMainText(),
+            'displayMainText' => $displayMainText,
             'itemsCategoryArr' => $itemsCategoryArr,
             'lastModifierFullname' => $lastModifierFullname,
             'maxUploadSize' => Tools::getMaxUploadSize(),
@@ -303,25 +310,5 @@ abstract class AbstractEntityController implements ControllerInterface
             $deletableXp = true;
         }
         return $deletableXp;
-    }
-
-    /**
-     * Do we display the main body of a concrete entity?
-     * Get the information from the metadata: {"elabftw": {"display_main_text": false}}
-     * Default is true
-     */
-    private function displayMainText(): bool
-    {
-        $displayMainText = true;
-
-        $metadata = json_decode($this->Entity->entityData['metadata'] ?? '{}', true);
-
-        if (array_key_exists(Metadata::Elabftw->value, $metadata)
-            && array_key_exists(Metadata::DisplayMainText->value, $metadata[Metadata::Elabftw->value])
-        ) {
-            $displayMainText = $metadata[Metadata::Elabftw->value][Metadata::DisplayMainText->value] === false ? false : true;
-        }
-
-        return $displayMainText;
     }
 }

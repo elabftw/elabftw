@@ -275,15 +275,16 @@ export class Metadata {
    */
   view(): Promise<void> {
     return this.read().then(json => {
+      const [extraFields, hasExtraFields] = Object.values(this.getExtraFields(json));
       // do nothing more if there is no extra_fields in our json
-      if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
+      if (!hasExtraFields) {
         return;
       }
       this.metadataDiv.append(this.getHeaderDiv());
       this.metadataDiv.classList.add('col-md-12', 'box');
       // the input elements that will be created from the extra fields
       const elements = [];
-      for (const [name, properties] of Object.entries(json.extra_fields)) {
+      for (const [name, properties] of Object.entries(extraFields)) {
         elements.push({
           name: name,
           description: properties.description,
@@ -316,14 +317,15 @@ export class Metadata {
    */
   edit(): Promise<void> {
     return this.read().then(json => {
+      const [extraFields, hasExtraFields] = Object.values(this.getExtraFields(json));
       // do nothing more if there is no extra_fields in our json
-      if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
+      if (!hasExtraFields) {
         return;
       }
       this.metadataDiv.append(this.getHeaderDiv());
       // the input elements that will be created from the extra fields
       const elements = [];
-      for (const [name, properties] of Object.entries(json.extra_fields)) {
+      for (const [name, properties] of Object.entries(extraFields)) {
         elements.push({
           name: name,
           description: properties.description,
@@ -363,5 +365,35 @@ export class Metadata {
         }
       }
     });
+  }
+
+  /*
+   * Are there any extra fields either in root or in elabftw namespace
+   */
+  getExtraFields(json): {extraFields: object; hasExtraFields: boolean, jsonPath: string|undefined} {
+    // extra_fields in elabftw namespace have precedence over extra_fields at root
+    if (Object.prototype.hasOwnProperty.call(json, 'elabftw')
+      && Object.prototype.hasOwnProperty.call(json.elabftw, 'extra_fields')
+    ) {
+      return {
+        extraFields: json.elabftw.extra_fields,
+        hasExtraFields: true,
+        jsonPath: '$.elabftw.extra_fields',
+      };
+    }
+
+    if (Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
+      return {
+        extraFields: json.extra_fields,
+        hasExtraFields: true,
+        jsonPath: '$.extra_fields',
+      };
+    }
+    
+    return {
+      extraFields: undefined,
+      hasExtraFields: false,
+      jsonPath: undefined,
+    };
   }
 }

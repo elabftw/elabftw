@@ -11,7 +11,6 @@ namespace Elabftw\Services;
 
 use function checkdate;
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Enums\Metadata;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use function filter_var;
@@ -135,23 +134,6 @@ class Filter
     {
         // mb_convert_encoding will replace invalid characters with ?, but we want _ instead
         return str_replace('?', '_', mb_convert_encoding(self::forFilesystem($input), 'ASCII', 'UTF-8'));
-    }
-
-    public static function blankExtraFieldsValueOnDuplicate(?string $metadata): ?string
-    {
-        if ($metadata === null) {
-            return null;
-        }
-        $decoded = json_decode($metadata, true, 512, JSON_THROW_ON_ERROR);
-        if (!isset($decoded[Metadata::ExtraFields->value])) {
-            return null;
-        }
-        foreach ($decoded[Metadata::ExtraFields->value] as &$field) {
-            if (isset($field['blank_value_on_duplicate']) && $field['blank_value_on_duplicate'] === true) {
-                $field['value'] = '';
-            }
-        }
-        return json_encode($decoded, JSON_THROW_ON_ERROR);
     }
 
     /**

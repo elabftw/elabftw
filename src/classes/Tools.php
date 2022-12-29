@@ -11,10 +11,8 @@ namespace Elabftw\Elabftw;
 
 use function bin2hex;
 use function date;
-use Elabftw\Enums\Metadata;
 use function filter_var;
 use function implode;
-use function json_decode;
 use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 use function mb_strlen;
@@ -240,17 +238,7 @@ class Tools
      */
     public static function formatMetadata(string $json): string
     {
-        $final = '';
-        $full = json_decode($json, true);
-        $extraFields = $full[Metadata::ExtraFields->value];
-        foreach ($extraFields as $key => $properties) {
-            $final .= '<h4>' . $key . '</h4>';
-            if (isset($properties['description'])) {
-                $final .= '<h5>' . $properties['description'] . '</h5>';
-            }
-            $final .= '<p>' . $properties['value'] . '</p>';
-        }
-        return $final;
+        return (new Metadata($json))->getFormated();
     }
 
     public static function getShortElabid(string $elabid): string

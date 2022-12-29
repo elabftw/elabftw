@@ -14,6 +14,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use Elabftw\Models\ItemsTypes;
 use League\Csv\Info as CsvInfo;
 use League\Csv\Reader;
 
@@ -57,18 +58,33 @@ class ImportCsv extends AbstractImport
                 VALUES(:title, CURDATE(), :body, :userid, :canread, :canwrite, :category, :elabid, :metadata)';
         }
         $req = $this->Db->prepare($sql);
-
+        $metadataTemplate = array();
+        if ($this->Entity instanceof Items) {
+            $ItemsTypes = new ItemsTypes($this->Users, $this->targetNumber);
+            $itemTemplate = $ItemsTypes->readOne();
+            $metadataTemplate = json_decode($itemTemplate['metadata'], true, 512) ?? array();
+        }
         // now loop the rows and do the import
         foreach ($rows as $row) {
             if (empty($row['title'])) {
                 throw new ImproperActionException('Could not find the title column!');
             }
-            $body = $this->getBodyFromRow($row);
+            $body = $this->getBodyFromRow($row, $metadataTemplate);
             $metadata = null;
             if (isset($row['metadata']) && !empty($row['metadata'])) {
                 $metadata = $row['metadata'];
-            }
+            } else {
+                $metadataArray = $metadataTemplate;
+                if (isset($metadataArray['extra_fields'])) {
+                    foreach (array_keys($metadataArray['extra_fields']) as $fieldName) {
+                        if (isset($row[$fieldName])) {
+                            $metadataArray['extra_fields'][$fieldName]['value'] = $row[$fieldName];
+                        }
+                    }
+                }
+                $metadata = json_encode($metadataArray);
 
+            }
             if ($this->Entity instanceof Items) {
                 $req->bindParam(':team', $this->Users->userData['team']);
             }
@@ -96,8 +112,9 @@ class ImportCsv extends AbstractImport
      * Generate a body from a row. Add column name and content after that.
      *
      * @param array<string, string> $row row from the csv
+     * @param array<string, array> $metadataTemplate the metadata from the repective ItemType (or an empty array)
      */
-    private function getBodyFromRow(array $row): string
+    private function getBodyFromRow(array $row, array $metadataTemplate): string
     {
         // get rid of the title
         unset($row['title']);
@@ -107,6 +124,12 @@ class ImportCsv extends AbstractImport
         unset($row['metadata']);
         // deal with the rest of the columns
         $body = '';
+        // don't include columns that are in the metadata template
+        if (isset($metadataTemplate['extra_fields'])) {
+            foreach (array_keys($metadataTemplate['extra_fields']) as $fieldName) {
+                unset($row[$fieldName]);
+            }
+        }
         foreach ($row as $subheader => $content) {
             // translate urls into links
             if (filter_var($content, FILTER_VALIDATE_URL)) {

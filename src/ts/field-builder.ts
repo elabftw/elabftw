@@ -85,6 +85,11 @@ document.addEventListener('DOMContentLoaded', () => {
           fieldValue = (document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement).value === 'checked' ? 'on' : '';
         }
         field['value'] = fieldValue;
+        // get the description
+        if ((document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value) {
+          field['description'] = (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value;
+        }
+
         // deal with the blank_on_value
         if ((document.getElementById('newFieldBlankOnDuplicate') as HTMLInputElement).checked) {
           field['blank_value_on_duplicate'] = true;

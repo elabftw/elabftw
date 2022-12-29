@@ -22,12 +22,16 @@
             </select>
 
             <!-- NAME -->
-            <label for='newFieldKeyInput'>{{ 'Name'|trans }}</label>
+            <label for='newFieldKeyInput'>{{ 'Name'|trans }} <span class='smallgray'>({{ 'required'|trans }})</span></label>
             <input type='text' autocomplete='off' required placeholder='{{ 'Name'|trans }}' id='newFieldKeyInput' class='form-control'>
+
+            <!-- DESCRIPTION -->
+            <label for='newFieldDescriptionInput'>{{ 'Description'|trans }}</label>
+            <input type='text' autocomplete='off' placeholder='{{ 'Enter a description for this field'|trans }}' id='newFieldDescriptionInput' class='form-control'>
             <!-- TEXT, URL, NUMBER, DATE -->
             <div id='newFieldContentDiv_classic'>
               <label for='newFieldValueInput'>{{ 'Default value'|trans }}</label>
-              <input type='text' autocomplete='off' placeholder='{{ 'Default value'|trans }}' id='newFieldValueInput' class='form-control'>
+              <input type='text' autocomplete='off' placeholder='{{ 'Enter a default value'|trans }}' id='newFieldValueInput' class='form-control'>
               <div class='separator'></div>
               <div class='custom-control custom-checkbox'>
                 <input type='checkbox' class='custom-control-input' id='newFieldBlankOnDuplicate'>

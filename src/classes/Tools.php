@@ -243,8 +243,12 @@ class Tools
         $final = '';
         $full = json_decode($json, true);
         $extraFields = $full[Metadata::ExtraFields->value];
-        foreach ($extraFields as $key => $value) {
-            $final .= '<h4>' . $key . '</h4><p>' . $value['value'] . '</p>';
+        foreach ($extraFields as $key => $properties) {
+            $final .= '<h4>' . $key . '</h4>';
+            if (isset($properties['description'])) {
+                $final .= '<h5>' . $properties['description'] . '</h5>';
+            }
+            $final .= '<p>' . $properties['value'] . '</p>';
         }
         return $final;
     }

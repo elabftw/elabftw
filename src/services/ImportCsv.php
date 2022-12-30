@@ -62,7 +62,7 @@ class ImportCsv extends AbstractImport
         if ($this->Entity instanceof Items) {
             $ItemsTypes = new ItemsTypes($this->Users, $this->targetNumber);
             $itemTemplate = $ItemsTypes->readOne();
-            $metadataTemplate = json_decode($itemTemplate['metadata'], true, 512) ?? array();
+            $metadataTemplate = json_decode($itemTemplate['metadata'], true, 512, JSON_THROW_ON_ERROR) ?? array();
         }
         // now loop the rows and do the import
         foreach ($rows as $row) {

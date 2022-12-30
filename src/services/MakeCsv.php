@@ -83,9 +83,9 @@ class MakeCsv extends AbstractMakeCsv
        $this->populateEntitiesAndMetadata();
        $standardColumns = array('id', 'date', 'title', 'content', 'category', 'elabid', 'rating', 'url', 'metadata');
        // in case of conflicting column names, add "metadata_" prefix to metadata columns
-       $metadataColumns = array_map(fn($column) =>
-           in_array($column, $standardColumns) ?  "metadata_$column" : $column, $this->metadataColumns);
-       return  array_merge($standardColumns, $metadataColumns);
+       return  array_merge($standardColumns,
+                  array_map(fn($column) => in_array($column, $standardColumns) ?  "metadata_$column" : $column,
+                            $this->metadataColumns));
     }
 
     /**

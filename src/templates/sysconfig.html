@@ -841,6 +841,9 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           <option value='0'{{ App.Config.configArr.ldap_use_tls == '0' ? ' selected' }}>{{ 'No'|trans }}</option>
         </select>
 
+        <label for='ldap_search_attr'>By which LDAP attribute the user will be found (default is 'mail')</label>
+        <input class='form-control col-md-4' type='text' placeholder='mail' value='{{ App.Config.configArr.ldap_search_attr }}' name='ldap_search_attr' id='ldap_search_attr' />
+
         <label for='ldap-team'>What attribute to look for the team name:</label>
         <input class='form-control col-md-4' type='text' id='ldap-team' name='ldap_team' value='{{ App.Config.configArr.ldap_team }}' />
 

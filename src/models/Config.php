@@ -146,6 +146,7 @@ final class Config implements RestInterface
             ('extauth_teams', ''),
             ('logout_url', ''),
             ('ldap_toggle', '0'),
+            ('ldap_search_attr', 'mail'),
             ('ldap_host', ''),
             ('ldap_port', '389'),
             ('ldap_base_dn', ''),

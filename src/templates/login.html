@@ -105,8 +105,8 @@
         <h1 class='mt-4'>{{ 'Login to your account'|trans }}</h1>
         <br>
         <div class='col-md-4 mx-auto text-left form-group'>
-          <label for='email'>{{ 'Email'|trans }}</label>
-          <input class='form-control mb-4' id='email' name='email' type='email' value='{{ App.Session.has('email') ? App.Session.get('email') }}' autocomplete='email' required />
+          <label for='email'>{{ App.Config.configArr.ldap_search_attr == 'mail' ? 'Email'|trans : 'Login'|trans }}</label>
+          <input class='form-control mb-4' id='email' name='email' type='{{ App.Config.configArr.ldap_search_attr == 'mail' ? 'email' : 'text' }}' value='{{ App.Session.has('email') ? App.Session.get('email') }}' autocomplete='email' required />
           <label for='password'>{{ 'Password'|trans }}</label>
           <!-- add tabindex=-1 to the forget password so we can switch from login to password with tab -->
           {% if showLocal %}

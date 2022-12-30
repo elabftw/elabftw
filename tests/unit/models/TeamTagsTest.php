@@ -23,7 +23,7 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Users = new Users(1, 1);
-        $this->TeamTags = new TeamTags($this->Users);
+        $this->TeamTags = new TeamTags($this->Users, 1);
         $this->Tags = new Tags(new Experiments($this->Users, 1));
     }
 
@@ -34,7 +34,7 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
-        $this->assertEquals(0, $this->TeamTags->postAction(Action::Create, array()));
+        $this->assertEquals(1, $this->TeamTags->postAction(Action::Create, array('tag' => 'microscopy')));
     }
 
     public function testReadAll(): void

@@ -23,6 +23,7 @@ class LdapAuthTest extends \PHPUnit\Framework\TestCase
         $configArr = array(
             'ldap_base_dn' => 'cn=User,dc=local,dc=com',
             'ldap_email' => 'mail',
+            'ldap_search_attr' => 'mail',
             'ldap_firstname' => 'givenname',
             'ldap_lastname' => 'sn',
             'ldap_team' => 'ou',

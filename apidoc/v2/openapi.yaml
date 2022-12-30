@@ -88,6 +88,8 @@ components:
           type: string
         ldap_base_dn:
           type: string
+        ldap_search_attr:
+          type: string
         ldap_email:
           type: string
         ldap_firstname:

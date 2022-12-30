@@ -247,7 +247,7 @@ abstract class AbstractEntity implements RestInterface
         // add pub/org/team filter
         $sqlPublicOrg = sprintf("((JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d) AND entity.userid = users2teams.users_id) OR ", BasePermissions::Full->value, BasePermissions::Organization->value);
         if ($this->Users->userData['show_public']) {
-            $sqlPublicOrg = sprintf("JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d) OR ", BasePermissions::Full->value, BasePermissions::Organization->value);
+            $sqlPublicOrg = sprintf("(JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d) OR ", BasePermissions::Full->value, BasePermissions::Organization->value);
         }
         $sql .= sprintf(" AND ( %s (JSON_EXTRACT(entity.canread, '$.base') = %d AND users2teams.users_id = entity.userid %s) OR (JSON_EXTRACT(entity.canread, '$.base') = %d ", $sqlPublicOrg, BasePermissions::MyTeams->value, $teamFilter, BasePermissions::User->value);
         // admin will see the experiments with visibility user for user of their team

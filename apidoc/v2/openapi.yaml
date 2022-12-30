@@ -2764,11 +2764,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/upload'
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
-            application/zip:
+            '*/*':
               schema:
                 type: string
                 format: binary

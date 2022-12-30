@@ -57,7 +57,7 @@ class MakeCsv extends AbstractMakeCsv
                $entityData['url'] = $this->getUrl();
                $metadataValues = array();
                if ($entityData['metadata']) {
-                   $decoded = json_decode($entityData['metadata'], true, 512);
+                   $decoded = json_decode($entityData['metadata'], true, 512, JSON_THROW_ON_ERROR);
                    if ($decoded && isset($decoded['extra_fields'])) {
                        foreach ($decoded['extra_fields'] as $field => $details) {
                            $mdPositions[$field] = intval($details['position']);
@@ -81,10 +81,11 @@ class MakeCsv extends AbstractMakeCsv
     protected function getHeader(): array
     {
        $this->populateEntitiesAndMetadata();
-       return  array_merge(
-            array('id', 'date', 'title', 'content', 'category', 'elabid', 'rating', 'url', 'metadata'),
-            $this->metadataColumns);
-        
+       $standardColumns = array('id', 'date', 'title', 'content', 'category', 'elabid', 'rating', 'url', 'metadata');
+       // in case of conflicting column names, add "metadata_" prefix to metadata columns
+       $metadataColumns = array_map(fn($column) =>
+           in_array($column, $standardColumns) ?  "metadata_$column" : $column, $this->metadataColumns);
+       return  array_merge($standardColumns, $metadataColumns);
     }
 
     /**

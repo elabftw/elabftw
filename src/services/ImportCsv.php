@@ -70,10 +70,8 @@ class ImportCsv extends AbstractImport
                 throw new ImproperActionException('Could not find the title column!');
             }
             $body = $this->getBodyFromRow($row, $metadataTemplate);
-            $metadata = null;
-            if (isset($row['metadata']) && !empty($row['metadata'])) {
-                $metadata = $row['metadata'];
-            } else {
+            $metadata = $row['metadata'];
+            if (empty($metadata)) {
                 $metadataArray = $metadataTemplate;
                 if (isset($metadataArray['extra_fields'])) {
                     foreach (array_keys($metadataArray['extra_fields']) as $fieldName) {

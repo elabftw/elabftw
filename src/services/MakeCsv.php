@@ -58,7 +58,7 @@ class MakeCsv extends AbstractMakeCsv
                $metadataValues = array();
                if ($entityData['metadata']) {
                    $decoded = json_decode($entityData['metadata'], true, 512, JSON_THROW_ON_ERROR);
-                   if ($decoded && isset($decoded['extra_fields'])) {
+                   if ($decoded && isset($decoded['extra_fields']) && is_array($decoded['extra_fields'])) {
                        foreach ($decoded['extra_fields'] as $field => $details) {
                            $mdPositions[$field] = intval($details['position']);
                            $metadataValues[$field] = $details['value'] ?? '';

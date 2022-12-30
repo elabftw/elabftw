@@ -73,7 +73,7 @@ class ImportCsv extends AbstractImport
             $metadata = $row['metadata'];
             if (empty($metadata)) {
                 $metadataArray = $metadataTemplate;
-                if (isset($metadataArray['extra_fields'])) {
+                if (isset($metadataArray['extra_fields']) && is_array($metadataArray['extra_fields'])) {
                     foreach (array_keys($metadataArray['extra_fields']) as $fieldName) {
                         if (isset($row[$fieldName])) {
                             $metadataArray['extra_fields'][$fieldName]['value'] = $row[$fieldName];

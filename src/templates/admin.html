@@ -391,9 +391,14 @@
   <div class='box'>
     <h3>{{ 'Manage tags of the team'|trans }}</h3>
     <hr>
-    <p>{{ 'From here you can edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags.'|trans }}</p>
-    <button class='button btn btn-primary' data-action='deduplicate-tag'><i class='fas fa-clone mr-1 text-white'></i>{{ 'Deduplicate'|trans }}</button>
+    <p>{{ 'From here you can add, edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags.'|trans }}</p>
+    <div class='form-group'>
+    <label for='adminAddTagInput'>{{ 'Add a tag'|trans }}</label>
+    <input class='form-control col-md-4 custom-control-inline' id='adminAddTagInput'>
+    <button class='button btn btn-primary' data-teamid='{{ App.Users.userData.team }}' data-action='admin-add-tag'>{{ 'Save'|trans }}</button>
+    </div>
     <hr>
+    <button class='button btn btn-primary' data-action='deduplicate-tag'><i class='fas fa-clone mr-1 text-white'></i>{{ 'Deduplicate'|trans }}</button>
     <div class='mt-2' id='tagMgrDiv'>
       {% for tag in tagsArr %}
         <p>

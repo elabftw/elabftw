@@ -153,6 +153,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const format = (document.getElementById('categoryExportFormat') as HTMLSelectElement).value;
       window.location.href = `make.php?format=${format}&category=${source}&type=items`;
 
+    // ADD TAG
+    } else if (el.matches('[data-action="admin-add-tag"]')) {
+      const tagInput = (document.getElementById('adminAddTagInput') as HTMLInputElement);
+      ApiC.post(`${Model.TeamTags}/${el.dataset.teamid}`, {'tag': tagInput.value}).then(() => {
+        tagInput.value = '';
+        reloadElement('tagMgrDiv');
+      });
     } else if (el.matches('[data-action="patch-team-admin"]')) {
       const params = collectForm(el.closest('div.form-group'));
       // the tinymce won't get collected

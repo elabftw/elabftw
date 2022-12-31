@@ -51,10 +51,16 @@ export class Metadata {
    * Only save a single field value after a change
    */
   handleEvent(event): Promise<Response> {
+    // by default the value is simply the value of the input, which is the event target
     let value = event.target.value;
     // special case for checkboxes
     if (event.target.type === 'checkbox') {
       value = event.target.checked ? 'on': 'off';
+    }
+    // special case for multiselect
+    if (event.target.hasAttribute('multiple')) {
+      // collect all the selected options, and the value will be an array
+      value = [...event.target.selectedOptions].map(option => option.value);
     }
     const params = {};
     params['action'] = Action.UpdateMetadataField;
@@ -164,10 +170,16 @@ export class Metadata {
       break;
     case 'select':
       element = document.createElement('select');
+      if (description.allow_multi_values === true) {
+        element.toggleAttribute('multiple');
+      }
       // add options to select element
       for (const option of description.options as Array<string>) {
         const optionEl = document.createElement('option');
         optionEl.text = option;
+        if (description.allow_multi_values === true && (description.value as Array<string>).includes(option)) {
+          optionEl.setAttribute('selected', '');
+        }
         element.add(optionEl);
       }
       break;
@@ -197,7 +209,9 @@ export class Metadata {
       if (element.type === 'checkbox') {
         (element as HTMLInputElement).checked = description.value === 'on' ? true : false;
       }
-      element.value = description.value as string;
+      if (description.allow_multi_values !== true) {
+        element.value = description.value as string;
+      }
     }
 
     if (Object.prototype.hasOwnProperty.call(description, 'required')) {

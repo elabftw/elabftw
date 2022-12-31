@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('newFieldTypeSelect').addEventListener('change', event => {
     const fieldType = (event.target as HTMLSelectElement).value;
     const valueInput = document.getElementById('newFieldValueInput');
+    // start by hiding this one, which is only shown for select
+    document.getElementById('newFieldContentDiv_select').toggleAttribute('hidden', true);
+
     switch (fieldType) {
     case 'text':
     case 'date':
@@ -35,6 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleContentDiv('classic');
       break;
     case 'select':
+      document.getElementById('newFieldContentDiv_select').removeAttribute('hidden');
+      toggleContentDiv('selectradio');
+      break;
     case 'radio':
       toggleContentDiv('selectradio');
       break;
@@ -93,6 +99,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // deal with the blank_on_value
         if ((document.getElementById('newFieldBlankOnDuplicate') as HTMLInputElement).checked) {
           field['blank_value_on_duplicate'] = true;
+        }
+        // deal with the multi select
+        if ((document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked) {
+          field['allow_multi_values'] = true;
         }
         json['extra_fields'][fieldKey] = field;
         MetadataC.update(json).then(() => { document.location.reload(); });

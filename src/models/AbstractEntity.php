@@ -342,7 +342,7 @@ abstract class AbstractEntity implements RestInterface
                     foreach ($params as $key => $value) {
                         // skip action key
                         if ($key !== 'action') {
-                            $this->updateJsonField((string) $key, (string) $value);
+                            $this->updateJsonField((string) $key, $value);
                         }
                     }
                 }
@@ -605,14 +605,18 @@ abstract class AbstractEntity implements RestInterface
     /**
      * Update only one field in the metadata json
      */
-    private function updateJsonField(string $key, string $value): bool
+    private function updateJsonField(string $key, string|array $value): bool
     {
+        $value = json_encode($value, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
+
         $Changelog = new Changelog($this);
         $Changelog->create(new ContentParams('metadata_' . $key, $value));
+
         // build field
         $field = json_encode($key, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
         $field = '$.' . Metadata::ExtraFields->value . '.' . $field . '.value';
-        $sql = 'UPDATE ' . $this->type . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
+        // the CAST as json is necessary to avoid double encoding
+        $sql = 'UPDATE ' . $this->type . ' SET metadata = JSON_SET(metadata, :field, CAST(:value AS JSON)) WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':field', $field);
         $req->bindValue(':value', $value);

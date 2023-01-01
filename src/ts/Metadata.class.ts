@@ -75,7 +75,6 @@ export class Metadata {
     return this.api.patch(`${this.entity.type}/${this.entity.id}`, {'metadata': JSON.stringify(metadata)}).then(() => this.display('edit'));
   }
 
-  
   /**
    * Migrate extra_fields from root into elabftw namespace
    */
@@ -418,7 +417,7 @@ export class Metadata {
         jsonPath: '$.extra_fields',
       };
     }
-    
+
     return {
       extraFields: undefined,
       hasExtraFields: false,

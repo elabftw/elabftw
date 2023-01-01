@@ -85,7 +85,7 @@
       </div>
       {% endif %}
 
-      {% if not App.Session.has('is_anon') and App.Config.configArr.anon_users %}
+      {% if not App.Session.has('is_anon') and App.Config.configArr.anon_users and Entity.entityData.access_key %}
         <div class='hl-hover-gray d-inline p-2 rounded'>
           <a class='elab-tooltip' href='#' data-action='share'>
             <span>{{ 'Share'|trans }}</span>

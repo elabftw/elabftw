@@ -46,7 +46,7 @@
     "ve-range-utils": "^2.6.3",
     "ve-sequence-utils": "^5.1.6",
     "webpack": "^5.9.0",
-    "webpack-cli": "^5.0.0"
+    "webpack-cli": "^5.0.1"
   },
   "devDependencies": {
     "@types/bootstrap": "^5.0.17",

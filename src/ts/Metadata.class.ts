@@ -75,6 +75,25 @@ export class Metadata {
     return this.api.patch(`${this.entity.type}/${this.entity.id}`, {'metadata': JSON.stringify(metadata)}).then(() => this.display('edit'));
   }
 
+  
+  /**
+   * Migrate extra_fields from root into elabftw namespace
+   */
+  extraFieldsToNamespace(): void {
+    this.read().then(json => {
+      const [extraFields, jsonPath] = Object.values(this.getExtraFields(json));
+      // do nothing if there are no extra_fields or they are already in elabftw namespace
+      if (jsonPath !== '$.extra_fields') {
+        return;
+      }
+      json.elabftw = {'extra_fields': extraFields};
+      delete json.extra_fields;
+      return this.update(json);
+    }).then(() => {
+      location.reload();
+    });
+  }
+
   /**
    * For radio we need a special build workflow
    */
@@ -317,12 +336,22 @@ export class Metadata {
    */
   edit(): Promise<void> {
     return this.read().then(json => {
-      const [extraFields, hasExtraFields] = Object.values(this.getExtraFields(json));
+      const [extraFields, hasExtraFields, jsonPath] = Object.values(this.getExtraFields(json));
       // do nothing more if there is no extra_fields in our json
       if (!hasExtraFields) {
         return;
       }
       this.metadataDiv.append(this.getHeaderDiv());
+      // add alert to migrate extra_fileds into elabftw namespace
+      if (jsonPath === '$.extra_fields') {
+        const notice = document.createElement('div');
+        notice.classList.add('alert', 'alert-primary', 'my-0');
+        notice.innerHTML = '<i class="fas fa-chevron-right"></i> '
+          + i18next.t('extra-fields-to-namespace')
+          + ' <a href="#" data-action="extra-fields-to-namespace"><i class="fas fa-check"></i></a>'
+          + ' <a href="#" data-dismiss="alert"><i class="fas fa-times"></i></a>';
+        this.metadataDiv.append(notice);
+      }
       // the input elements that will be created from the extra fields
       const elements = [];
       for (const [name, properties] of Object.entries(extraFields)) {

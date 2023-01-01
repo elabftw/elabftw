@@ -280,6 +280,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // wrap in pre element to retain whitespace, html encode '<' and '>'
         editor.setContent('<pre>' + fileContent.replace(/[<>]/g, char => specialChars[char]) + '</pre>');
       });
+    // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT
+    } else if (el.matches('[data-action="extra-fields-to-namespace"]')) {
+      MetadataC.extraFieldsToNamespace();
     }
   });
 

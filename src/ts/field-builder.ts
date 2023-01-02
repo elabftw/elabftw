@@ -75,8 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const { hasExtraFields, jsonPath = '$.elabftw.extra_fields' } = MetadataC.getExtraFields(json);
         // make sure we have extra_fields
         if (!hasExtraFields) {
-          json['elabftw'] = {};
-          json['elabftw']['extra_fields'] = {};
+          json['elabftw'] = {'extra_fields': {}};
         }
         // build the new field
         const field = {};

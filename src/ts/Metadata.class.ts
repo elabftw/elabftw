@@ -395,7 +395,7 @@ export class Metadata {
     });
   }
 
-  /*
+  /**
    * Are there any extra fields either in root or in elabftw namespace
    */
   getExtraFields(json): {extraFields: object; hasExtraFields: boolean, jsonPath: string|undefined} {

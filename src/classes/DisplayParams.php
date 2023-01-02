@@ -93,7 +93,7 @@ class DisplayParams
         // search extra_fields in root and in elabftw namespace
         $extraFieldsPaths = array(
             $i => MetadataEnum::ExtraFields->value,
-            $i+1 => MetadataEnum::Elabftw->value . '.' . MetadataEnum::ExtraFields->value,
+            ++$i => MetadataEnum::Elabftw->value . '.' . MetadataEnum::ExtraFields->value,
         );
 
         $metadataFilter = array();

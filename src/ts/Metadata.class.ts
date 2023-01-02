@@ -76,24 +76,6 @@ export class Metadata {
   }
 
   /**
-   * Migrate extra_fields from root into elabftw namespace
-   */
-  extraFieldsToNamespace(): void {
-    this.read().then(json => {
-      const [extraFields, jsonPath] = Object.values(this.getExtraFields(json));
-      // do nothing if there are no extra_fields or they are already in elabftw namespace
-      if (jsonPath !== '$.extra_fields') {
-        return;
-      }
-      json.elabftw = {'extra_fields': extraFields};
-      delete json.extra_fields;
-      return this.update(json);
-    }).then(() => {
-      location.reload();
-    });
-  }
-
-  /**
    * For radio we need a special build workflow
    */
   buildRadio(name: string, description: Record<string, ExtraFieldProperty>): Element { // eslint-disable-line
@@ -293,16 +275,15 @@ export class Metadata {
    */
   view(): Promise<void> {
     return this.read().then(json => {
-      const [extraFields, hasExtraFields] = Object.values(this.getExtraFields(json));
       // do nothing more if there is no extra_fields in our json
-      if (!hasExtraFields) {
+      if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
         return;
       }
       this.metadataDiv.append(this.getHeaderDiv());
       this.metadataDiv.classList.add('col-md-12', 'box');
       // the input elements that will be created from the extra fields
       const elements = [];
-      for (const [name, properties] of Object.entries(extraFields)) {
+      for (const [name, properties] of Object.entries(json.extra_fields)) {
         elements.push({
           name: name,
           description: properties.description,
@@ -335,25 +316,14 @@ export class Metadata {
    */
   edit(): Promise<void> {
     return this.read().then(json => {
-      const [extraFields, hasExtraFields, jsonPath] = Object.values(this.getExtraFields(json));
       // do nothing more if there is no extra_fields in our json
-      if (!hasExtraFields) {
+      if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
         return;
       }
       this.metadataDiv.append(this.getHeaderDiv());
-      // add alert to migrate extra_fileds into elabftw namespace
-      if (jsonPath === '$.extra_fields') {
-        const notice = document.createElement('div');
-        notice.classList.add('alert', 'alert-primary', 'my-0');
-        notice.innerHTML = '<i class="fas fa-chevron-right"></i> '
-          + i18next.t('extra-fields-to-namespace')
-          + ' <a href="#" data-action="extra-fields-to-namespace"><i class="fas fa-check"></i></a>'
-          + ' <a href="#" data-dismiss="alert"><i class="fas fa-times"></i></a>';
-        this.metadataDiv.append(notice);
-      }
       // the input elements that will be created from the extra fields
       const elements = [];
-      for (const [name, properties] of Object.entries(extraFields)) {
+      for (const [name, properties] of Object.entries(json.extra_fields)) {
         elements.push({
           name: name,
           description: properties.description,
@@ -393,35 +363,5 @@ export class Metadata {
         }
       }
     });
-  }
-
-  /**
-   * Are there any extra fields either in root or in elabftw namespace
-   */
-  getExtraFields(json): {extraFields: object; hasExtraFields: boolean, jsonPath: string|undefined} {
-    // extra_fields in elabftw namespace have precedence over extra_fields at root
-    if (Object.prototype.hasOwnProperty.call(json, 'elabftw')
-      && Object.prototype.hasOwnProperty.call(json.elabftw, 'extra_fields')
-    ) {
-      return {
-        extraFields: json.elabftw.extra_fields,
-        hasExtraFields: true,
-        jsonPath: '$.elabftw.extra_fields',
-      };
-    }
-
-    if (Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
-      return {
-        extraFields: json.extra_fields,
-        hasExtraFields: true,
-        jsonPath: '$.extra_fields',
-      };
-    }
-
-    return {
-      extraFields: undefined,
-      hasExtraFields: false,
-      jsonPath: undefined,
-    };
   }
 }

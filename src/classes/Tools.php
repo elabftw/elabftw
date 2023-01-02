@@ -30,41 +30,6 @@ class Tools
     private const DEFAULT_UPLOAD_SIZE = 2;
 
     /**
-     * For displaying messages using bootstrap alerts
-     *
-     * @param string $message The message to display
-     * @param string $type Can be 'ok', 'ko' or 'warning'
-     * @param bool $cross do we display a cross or not?
-     * @return string the HTML of the message
-     */
-    public static function displayMessage(string $message, string $type, bool $cross = true): string
-    {
-        $icon = 'fa-info-circle';
-        $alert = 'success';
-
-        if ($type === 'ko') {
-            $icon = 'fa-exclamation-triangle';
-            $alert = 'danger';
-        } elseif ($type === 'warning') {
-            $icon = 'fa-chevron-right';
-            $alert = $type;
-        }
-
-        $crossLink = '';
-
-        if ($cross) {
-            $crossLink = "<a href='#' class='close' data-dismiss='alert'>&times;</a>";
-        }
-
-        $begin = "<div class='alert alert-" . $alert .
-            "'><i class='fas " . $icon .
-            "'></i>";
-        $end = '</div>';
-
-        return $begin . $crossLink . ' ' . $message . $end;
-    }
-
-    /**
      * Convert markdown to html
      */
     public static function md2html(string $md): string
@@ -211,34 +176,12 @@ class Tools
         return $html . '</ul>';
     }
 
-    /**
-     * Display the stars rating for an entity
-     *
-     * @param int $rating The number of stars to display
-     * @return string HTML of the stars
-     */
-    public static function showStars(int $rating): string
-    {
-        $green = "<i style='color:#54aa08' class='fas fa-star' title='☻'></i>";
-        $gray = "<i style='color:gray' class='fas fa-star' title='☺'></i>";
-
-        return str_repeat($green, $rating) . str_repeat($gray, 5 - $rating);
-    }
-
     public static function getIdFilterSql(array $idArr): string
     {
         if (!empty($idArr)) {
             return ' AND entity.id IN (' . implode(',', $idArr) . ')';
         }
         return ' AND entity.id IN (0)';
-    }
-
-    /**
-     * Process the metadata json string into a displayable array
-     */
-    public static function formatMetadata(string $json): string
-    {
-        return (new Metadata($json))->getFormated();
     }
 
     public static function getShortElabid(string $elabid): string

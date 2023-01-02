@@ -12,7 +12,7 @@ namespace Elabftw\Enums;
 enum Metadata: string
 {
     case Elabftw = 'elabftw'; // namespace in metadata root
-    case ExtraFields = 'extra_fields'; // can be located in root or in elabftw namespace. ToDo: Move extra_fields into elabftw namespace
+    case ExtraFields = 'extra_fields'; // holds the extra fields
     case DisplayMainText = 'display_main_text'; // key in elabftw namespace
     case Type = 'type'; // the type of an extra field
     case Description = 'description';

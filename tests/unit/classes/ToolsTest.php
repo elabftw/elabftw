@@ -53,12 +53,6 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($out, Tools::printArr($arr));
     }
 
-    public function testShowStar(): void
-    {
-        $out = "<i style='color:#54aa08' class='fas fa-star' title='☻'></i><i style='color:#54aa08' class='fas fa-star' title='☻'></i><i style='color:gray' class='fas fa-star' title='☺'></i><i style='color:gray' class='fas fa-star' title='☺'></i><i style='color:gray' class='fas fa-star' title='☺'></i>";
-        $this->assertEquals($out, Tools::showStars(2));
-    }
-
     public function testGetShortElabid(): void
     {
         $this->assertEquals('7995340c', Tools::getShortElabid('20220627-7995340c1921f38fd833c447be50b7101e4f852c'));

@@ -179,16 +179,14 @@ abstract class AbstractEntityController implements ControllerInterface
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();
 
-        // Do we display the main body of a concrete entity? Default is true
-        $displayMainText = (new Metadata($this->Entity->entityData['metadata']))->displayMainText;
-
         $Teams = new Teams($this->Entity->Users);
 
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
             'Entity' => $this->Entity,
-            'displayMainText' => $displayMainText,
+            // Do we display the main body of a concrete entity? Default is true
+            'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
             'myTeamsArr' => $Teams->readMyTeams(),
@@ -246,16 +244,13 @@ abstract class AbstractEntityController implements ControllerInterface
         );
         $Teams = new Teams($this->Entity->Users);
 
-
-        // Do we display the main body of a concrete entity? Default is true
-        $displayMainText = (new Metadata($this->Entity->entityData['metadata']))->displayMainText;
-
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
             'deletableXp' => $this->getDeletableXp(),
             'Entity' => $this->Entity,
             'entityData' => $this->Entity->entityData,
-            'displayMainText' => $displayMainText,
+            // Do we display the main body of a concrete entity? Default is true
+            'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'lastModifierFullname' => $lastModifierFullname,
             'maxUploadSize' => Tools::getMaxUploadSize(),

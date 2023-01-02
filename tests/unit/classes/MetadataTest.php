@@ -15,41 +15,20 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
     public function testNoMetadata(): void
     {
         $metadata = new Metadata(null);
-        $this->assertFalse($metadata->hasExtraFields);
-        $this->assertFalse($metadata->extraFieldsInElabftwNamespace);
-        $this->assertTrue($metadata->displayMainText);
-        $this->assertNull($metadata->getExtraFieldsJsonPath());
+        $this->assertNull($metadata->getExtraFields());
+        $this->assertTrue($metadata->getDisplayMainText());
     }
 
-    public function testDisplayMainText(): void
-    {
-        $metadata = new Metadata('{"elabftw":{"display_main_text":false}}');
-        $this->assertFalse($metadata->extraFieldsInElabftwNamespace);
-        $this->assertFalse($metadata->displayMainText);
-        $this->assertNull($metadata->getExtraFieldsJsonPath());
-    }
-
-    public function testExtraFieldsElabftwNamespace(): void
-    {
-        $metadata = new Metadata('{"elabftw":{"extra_fields":{"foo":{"type":"text","value":"bar"}}}}');
-        $this->assertTrue($metadata->extraFieldsInElabftwNamespace);
-        $this->assertTrue($metadata->hasExtraFields);
-        $this->assertEquals('$.elabftw.extra_fields', $metadata->getExtraFieldsJsonPath());
-    }
-
-    public function testExtraFieldsRoot(): void
+    public function testWithExtraFields(): void
     {
         $metadata = new Metadata('{"extra_fields":{"foo":{"type":"text","value":"bar"}}}');
-        $this->assertFalse($metadata->extraFieldsInElabftwNamespace);
-        $this->assertTrue($metadata->hasExtraFields);
-        $this->assertEquals('$.extra_fields', $metadata->getExtraFieldsJsonPath());
+        $this->assertIsArray($metadata->getExtraFields());
     }
 
-    public function testGetFormated(): void
+    public function testGetDisplayMainText(): void
     {
-        $metadata = new Metadata('{"extra_fields":{"foo":{"type":"text","value":"bar","description":"buzz"}}}');
-        $expected = '<h4>foo</h4><h5>buzz</h5><p>bar</p>';
-        $this->assertEquals($expected, $metadata->getFormated());
+        $metadata = new Metadata('{"elabftw": {"display_main_text": false}}');
+        $this->assertFalse($metadata->getDisplayMainText());
     }
 
     public function testBlankValueOnDuplicate(): void
@@ -59,7 +38,8 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($blankedJson, (new Metadata($json))->blankExtraFieldsValueOnDuplicate());
 
         $json = '{"extra_fields":{"To blank":{"type":"text","value":"some value","position":1}}}';
-        $blankedJson = '{"extra_fields":{"To blank":{"type":"text","value":"some value","position":1}}}';
-        $this->assertEquals($blankedJson, (new Metadata($json))->blankExtraFieldsValueOnDuplicate());
+        $this->assertEquals($json, (new Metadata($json))->blankExtraFieldsValueOnDuplicate());
+
+        $this->assertNull((new Metadata(null))->blankExtraFieldsValueOnDuplicate());
     }
 }

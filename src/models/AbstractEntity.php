@@ -11,18 +11,17 @@ namespace Elabftw\Models;
 
 use function array_column;
 use function array_merge;
-
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
-use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -32,9 +31,9 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\EntityTrait;
-
 use function explode;
 use function implode;
 use function is_bool;
@@ -610,11 +609,6 @@ abstract class AbstractEntity implements RestInterface
      */
     private function updateJsonField(string $key, string|array $value): bool
     {
-        $extraFieldsJsonPath = (new Metadata($this->entityData['metadata']))->getExtraFieldsJsonPath();
-        if (null === $extraFieldsJsonPath) {
-            throw new ImproperActionException(sprintf(_('There are no extra fields. Cannot update field %s.'), $key));
-        }
-
         $value = json_encode($value, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
 
         $Changelog = new Changelog($this);
@@ -622,8 +616,8 @@ abstract class AbstractEntity implements RestInterface
 
         // build jsonPath to field
         $field = sprintf(
-            '%s.%s.value',
-            $extraFieldsJsonPath,
+            '$.%s.%s.value',
+            MetadataEnum::ExtraFields->value,
             json_encode($key, JSON_HEX_APOS | JSON_THROW_ON_ERROR)
         );
 

@@ -90,28 +90,20 @@ class DisplayParams
         $this->hasMetadataSearch = true;
         $i = count($this->metadataKey);
 
-        // search extra_fields in root and in elabftw namespace
-        $extraFieldsPaths = array(
-            $i => MetadataEnum::ExtraFields->value,
-            $i+1 => MetadataEnum::Elabftw->value . '.' . MetadataEnum::ExtraFields->value,
-        );
-
         $metadataFilter = array();
         $metadataHaving = array();
-        foreach ($extraFieldsPaths as $keyId => $extraFieldsPath) {
-            $jsonPath = sprintf(
-                '$.%s.%s',
-                $extraFieldsPath,
-                // Note: the extraFieldKey gets double quoted so spaces are not an issue
-                json_encode(Filter::sanitize($extraFieldKey), JSON_HEX_APOS | JSON_THROW_ON_ERROR)
-            );
-            $this->metadataKey[] = $jsonPath;
-            $this->metadataValuePath[] = $jsonPath . '.value';
-            $this->metadataValue[] = Filter::sanitize($searchTerm);
+        $jsonPath = sprintf(
+            '$.%s.%s',
+            MetadataEnum::ExtraFields->value,
+            // Note: the extraFieldKey gets double quoted so spaces are not an issue
+            json_encode(Filter::sanitize($extraFieldKey), JSON_HEX_APOS | JSON_THROW_ON_ERROR)
+        );
+        $this->metadataKey[] = $jsonPath;
+        $this->metadataValuePath[] = $jsonPath . '.value';
+        $this->metadataValue[] = Filter::sanitize($searchTerm);
 
-            $metadataFilter[] = sprintf("JSON_CONTAINS_PATH(entity.metadata, 'one', :metadata_key_%d)", $keyId);
-            $metadataHaving[] = sprintf('JSON_UNQUOTE(JSON_EXTRACT(entity.metadata, :metadata_value_path_%1$d)) LIKE :metadata_value_%1$d', $keyId);
-        }
+        $metadataFilter[] = sprintf("JSON_CONTAINS_PATH(entity.metadata, 'one', :metadata_key_%d)", $i);
+        $metadataHaving[] = sprintf('JSON_UNQUOTE(JSON_EXTRACT(entity.metadata, :metadata_value_path_%1$d)) LIKE :metadata_value_%1$d', $i);
         $this->metadataFilter[] = ' AND (' . implode(' OR ', $metadataFilter) . ') ';
         $this->metadataHaving[] = '(' . implode(' OR ', $metadataHaving) . ')';
     }

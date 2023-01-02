@@ -126,11 +126,11 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Experiments->setId(1);
         // set some metadata, spaces after colons and commas are important as this is how metadata gets return from MySQL
-        $metadata = '{"elabftw": {"extra_fields": {"test": {"type": "text", "value": "%s"}}}}';
+        $metadata = '{"extra_fields": {"test": {"type": "text", "value": "%s"}}}';
         $res = $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
         $this->assertEquals($metadata, $res['metadata']);
         // update the field
-        $res = $this->Experiments->patch(Action::UpdateMetadataField, array('test' => 'some text'));
+        $res = $this->Experiments->patch(Action::UpdateMetadataField, array('action' => Action::UpdateMetadataField->value, 'test' => 'some text'));
         $this->assertEquals(sprintf($metadata, 'some text'), $res['metadata']);
     }
 
@@ -143,5 +143,6 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         ));
         $displayParams = new DisplayParams($this->Users, $request);
         $res = $this->Experiments->readShow($displayParams);
+        $this->assertEquals(1, $res[0]['id']);
     }
 }

@@ -84,7 +84,7 @@ if ($App->Request->query->count() > 0) {
             $Controller = new SearchController($App, $Entity);
             echo $Controller->show(true)->getContent();
         } catch (ImproperActionException $e) {
-            echo Tools::displayMessage($e->getMessage(), 'ko', false);
+            echo TwigFilters::displayMessage($e->getMessage(), 'ko', false);
         }
     }
 } else {

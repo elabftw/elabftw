@@ -91,9 +91,9 @@ class DisplayParams
         $i = count($this->metadataKey);
 
         // search extra_fields in root and in elabftw namespace
-        /** @psalm-suppress UnusedVariable */
         $extraFieldsPaths = array(
             $i => MetadataEnum::ExtraFields->value,
+            /** @psalm-suppress UnusedVariable */
             ++$i => MetadataEnum::Elabftw->value . '.' . MetadataEnum::ExtraFields->value,
         );
 

@@ -4,7 +4,7 @@ FROM elabftw/elabimg:hypernext
 
 # Set versions of used tools
 ARG PHPSTAN_VERSION=1.8.5
-ARG PSALM_VERSION=4.30.0
+ARG PSALM_VERSION=4.27.0
 ARG PHAN_VERSION=5.4.1
 
 # phpStan

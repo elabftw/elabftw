@@ -9,10 +9,12 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Check;
+use Symfony\Component\HttpFoundation\Request;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -118,5 +120,28 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     public function testGetTimestampThisMonth(): void
     {
         $this->assertEquals(0, $this->Experiments->getTimestampLastMonth());
+    }
+
+    public function testUpdateJsonField(): void
+    {
+        $this->Experiments->setId(1);
+        // set some metadata, spaces after colons and commas are important as this is how metadata gets return from MySQL
+        $metadata = '{"elabftw": {"extra_fields": {"test": {"type": "text", "value": "%s"}}}}';
+        $res = $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+        $this->assertEquals($metadata, $res['metadata']);
+        // update the field
+        $res = $this->Experiments->patch(Action::UpdateMetadataField, array('test' => 'some text'));
+        $this->assertEquals(sprintf($metadata, 'some text'), $res['metadata']);
+    }
+
+    public function testExtraFieldsSearch(): void
+    {
+        $request = Request::createFromGlobals();
+        $request->query->add(array(
+            'metakey' => array('test'),
+            'metavalue' => array('some text'),
+        ));
+        $displayParams = new DisplayParams($this->Users, $request);
+        $res = $this->Experiments->readShow($displayParams);
     }
 }

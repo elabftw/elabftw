@@ -16,14 +16,16 @@ use function json_encode;
 
 class Metadata
 {
+    private const JSON_MAX_DEPTH = 42;
+
     private array $metadata = array();
 
-    public function __construct(protected ?string $json)
+    public function __construct(?string $json)
     {
         if ($json === null) {
             return;
         }
-        $this->metadata = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        $this->metadata = json_decode($json, true, self::JSON_MAX_DEPTH, JSON_THROW_ON_ERROR);
     }
 
     public function getExtraFields(): ?array

@@ -10,7 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\FilterableColumn;
-use Elabftw\Enums\Metadata;
+use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
 use Elabftw\Models\Users;
@@ -92,8 +92,8 @@ class DisplayParams
 
         // search extra_fields in root and in elabftw namespace
         $extraFieldsPaths = array(
-            $i => Metadata::ExtraFields->value,
-            $i+1 => Metadata::Elabftw->value . '.' . Metadata::ExtraFields->value,
+            $i => MetadataEnum::ExtraFields->value,
+            $i+1 => MetadataEnum::Elabftw->value . '.' . MetadataEnum::ExtraFields->value,
         );
 
         $metadataFilter = array();

@@ -20,16 +20,14 @@ class Metadata
     // do we display the main body of a concrete entity? {"elabftw": {"display_main_text": false}}
     public bool $displayMainText = true;
 
-    public bool $hasElabftwNamespace = false;
-    
     public bool $extraFieldsInElabftwNamespace = false;
 
     public bool $hasExtraFields = false;
-    
+
     protected array $metadata = array();
-    
+
     protected array $extraFields = array();
-    
+
     public function __construct(protected ?string $json)
     {
         if ($json === null) {
@@ -107,8 +105,6 @@ class Metadata
     protected function checkElabftwNamespace(): void
     {
         if (isset($this->metadata[MetadataEnum::Elabftw->value])) {
-            $this->hasElabftwNamespace = true;
-
             $this->checkDisplayMainText();
             $this->checkExtraFieldsElabftw();
         }

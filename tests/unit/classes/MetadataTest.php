@@ -15,7 +15,6 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
     public function testNoMetadata(): void
     {
         $metadata = new Metadata(null);
-        $this->assertFalse($metadata->hasElabftwNamespace);
         $this->assertFalse($metadata->hasExtraFields);
         $this->assertFalse($metadata->extraFieldsInElabftwNamespace);
         $this->assertTrue($metadata->displayMainText);
@@ -25,7 +24,6 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
     public function testDisplayMainText(): void
     {
         $metadata = new Metadata('{"elabftw":{"display_main_text":false}}');
-        $this->assertTrue($metadata->hasElabftwNamespace);
         $this->assertFalse($metadata->extraFieldsInElabftwNamespace);
         $this->assertFalse($metadata->displayMainText);
         $this->assertNull($metadata->getExtraFieldsJsonPath());
@@ -34,7 +32,6 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
     public function testExtraFieldsElabftwNamespace(): void
     {
         $metadata = new Metadata('{"elabftw":{"extra_fields":{"foo":{"type":"text","value":"bar"}}}}');
-        $this->assertTrue($metadata->hasElabftwNamespace);
         $this->assertTrue($metadata->extraFieldsInElabftwNamespace);
         $this->assertTrue($metadata->hasExtraFields);
         $this->assertEquals('$.elabftw.extra_fields', $metadata->getExtraFieldsJsonPath());
@@ -43,7 +40,6 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
     public function testExtraFieldsRoot(): void
     {
         $metadata = new Metadata('{"extra_fields":{"foo":{"type":"text","value":"bar"}}}');
-        $this->assertFalse($metadata->hasElabftwNamespace);
         $this->assertFalse($metadata->extraFieldsInElabftwNamespace);
         $this->assertTrue($metadata->hasExtraFields);
         $this->assertEquals('$.extra_fields', $metadata->getExtraFieldsJsonPath());

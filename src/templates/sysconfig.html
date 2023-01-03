@@ -76,7 +76,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           <input type='hidden' name='updateConfig' value='true' />
           <label for='lang'>{{ 'Language:'|trans }}</label>
           <select id='lang' name='lang' class='form-control col-md-4' autocomplete='off'>
-              {% for lang, text in langsArr %}
+              {% for lang, text in langsArr|sort %}
               <option {{ App.Config.configArr.lang == lang ? ' selected' }} value='{{ lang }}'>{{ text }}</option>
               {% endfor %}
           </select>

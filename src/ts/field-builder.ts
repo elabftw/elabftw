@@ -71,8 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (metadata) {
           json = metadata;
         }
-        // make sure we have an extra_fields
-        if (! ('extra_fields' in json)) {
+        if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
           json['extra_fields'] = {};
         }
         // build the new field
@@ -95,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value) {
           field['description'] = (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value;
         }
-
         // deal with the blank_on_value
         if ((document.getElementById('newFieldBlankOnDuplicate') as HTMLInputElement).checked) {
           field['blank_value_on_duplicate'] = true;
@@ -104,7 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked) {
           field['allow_multi_values'] = true;
         }
+
         json['extra_fields'][fieldKey] = field;
+
         MetadataC.update(json).then(() => { document.location.reload(); });
       });
     // ADD OPTION FOR SELECT OR RADIO

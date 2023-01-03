@@ -10,7 +10,7 @@
 namespace Elabftw\Models;
 
 use function array_column;
-
+use function array_merge;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
@@ -21,7 +21,7 @@ use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Enums\Metadata;
+use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -31,17 +31,19 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\EntityTrait;
-
 use function explode;
 use function implode;
 use function is_bool;
+use function json_encode;
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
 use PDO;
 use PDOStatement;
 use const SITE_URL;
+use function sprintf;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -612,9 +614,13 @@ abstract class AbstractEntity implements RestInterface
         $Changelog = new Changelog($this);
         $Changelog->create(new ContentParams('metadata_' . $key, $value));
 
-        // build field
-        $field = json_encode($key, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
-        $field = '$.' . Metadata::ExtraFields->value . '.' . $field . '.value';
+        // build jsonPath to field
+        $field = sprintf(
+            '$.%s.%s.value',
+            MetadataEnum::ExtraFields->value,
+            json_encode($key, JSON_HEX_APOS | JSON_THROW_ON_ERROR)
+        );
+
         // the CAST as json is necessary to avoid double encoding
         $sql = 'UPDATE ' . $this->type . ' SET metadata = JSON_SET(metadata, :field, CAST(:value AS JSON)) WHERE id = :id';
         $req = $this->Db->prepare($sql);

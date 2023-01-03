@@ -10,12 +10,17 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\FilterableColumn;
-use Elabftw\Enums\Metadata;
+use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
+use function implode;
+use function json_encode;
+use const JSON_HEX_APOS;
+use const JSON_THROW_ON_ERROR;
+use function sprintf;
 use Symfony\Component\HttpFoundation\Request;
 use function trim;
 
@@ -80,17 +85,27 @@ class DisplayParams
         return '';
     }
 
-    private function addMetadataFilter(string $key, string $value): void
+    private function addMetadataFilter(string $extraFieldKey, string $searchTerm): void
     {
         $this->hasMetadataSearch = true;
         $i = count($this->metadataKey);
-        // Note: the key is double quoted so spaces are not an issue
-        $key = '$.' . Metadata::ExtraFields->value . '."' . Filter::sanitize($key) . '"';
-        $this->metadataKey[] = $key;
-        $this->metadataValuePath[] = $key . '.value';
-        $this->metadataValue[] = Filter::sanitize($value);
-        $this->metadataFilter[] = sprintf(" AND JSON_CONTAINS_PATH(entity.metadata, 'one', :metadata_key_%d) ", $i);
-        $this->metadataHaving[] = sprintf(' JSON_UNQUOTE(JSON_EXTRACT(entity.metadata, :metadata_value_path_%d)) LIKE :metadata_value_%d', $i, $i);
+
+        $metadataFilter = array();
+        $metadataHaving = array();
+        $jsonPath = sprintf(
+            '$.%s.%s',
+            MetadataEnum::ExtraFields->value,
+            // Note: the extraFieldKey gets double quoted so spaces are not an issue
+            json_encode(Filter::sanitize($extraFieldKey), JSON_HEX_APOS | JSON_THROW_ON_ERROR)
+        );
+        $this->metadataKey[] = $jsonPath;
+        $this->metadataValuePath[] = $jsonPath . '.value';
+        $this->metadataValue[] = Filter::sanitize($searchTerm);
+
+        $metadataFilter[] = sprintf("JSON_CONTAINS_PATH(entity.metadata, 'one', :metadata_key_%d)", $i);
+        $metadataHaving[] = sprintf('JSON_UNQUOTE(JSON_EXTRACT(entity.metadata, :metadata_value_path_%1$d)) LIKE :metadata_value_%1$d', $i);
+        $this->metadataFilter[] = ' AND (' . implode(' OR ', $metadataFilter) . ') ';
+        $this->metadataHaving[] = '(' . implode(' OR ', $metadataHaving) . ')';
     }
 
     /**

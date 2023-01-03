@@ -11,10 +11,8 @@ namespace Elabftw\Elabftw;
 
 use function bin2hex;
 use function date;
-use Elabftw\Enums\Metadata;
 use function filter_var;
 use function implode;
-use function json_decode;
 use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 use function mb_strlen;
@@ -30,41 +28,6 @@ class Tools
 {
     /** @var int DEFAULT_UPLOAD_SIZE max size of uploaded file if we cannot find in in ini file */
     private const DEFAULT_UPLOAD_SIZE = 2;
-
-    /**
-     * For displaying messages using bootstrap alerts
-     *
-     * @param string $message The message to display
-     * @param string $type Can be 'ok', 'ko' or 'warning'
-     * @param bool $cross do we display a cross or not?
-     * @return string the HTML of the message
-     */
-    public static function displayMessage(string $message, string $type, bool $cross = true): string
-    {
-        $icon = 'fa-info-circle';
-        $alert = 'success';
-
-        if ($type === 'ko') {
-            $icon = 'fa-exclamation-triangle';
-            $alert = 'danger';
-        } elseif ($type === 'warning') {
-            $icon = 'fa-chevron-right';
-            $alert = $type;
-        }
-
-        $crossLink = '';
-
-        if ($cross) {
-            $crossLink = "<a href='#' class='close' data-dismiss='alert'>&times;</a>";
-        }
-
-        $begin = "<div class='alert alert-" . $alert .
-            "'><i class='fas " . $icon .
-            "'></i>";
-        $end = '</div>';
-
-        return $begin . $crossLink . ' ' . $message . $end;
-    }
 
     /**
      * Convert markdown to html
@@ -213,44 +176,12 @@ class Tools
         return $html . '</ul>';
     }
 
-    /**
-     * Display the stars rating for an entity
-     *
-     * @param int $rating The number of stars to display
-     * @return string HTML of the stars
-     */
-    public static function showStars(int $rating): string
-    {
-        $green = "<i style='color:#54aa08' class='fas fa-star' title='☻'></i>";
-        $gray = "<i style='color:gray' class='fas fa-star' title='☺'></i>";
-
-        return str_repeat($green, $rating) . str_repeat($gray, 5 - $rating);
-    }
-
     public static function getIdFilterSql(array $idArr): string
     {
         if (!empty($idArr)) {
             return ' AND entity.id IN (' . implode(',', $idArr) . ')';
         }
         return ' AND entity.id IN (0)';
-    }
-
-    /**
-     * Process the metadata json string into a displayable array
-     */
-    public static function formatMetadata(string $json): string
-    {
-        $final = '';
-        $full = json_decode($json, true);
-        $extraFields = $full[Metadata::ExtraFields->value];
-        foreach ($extraFields as $key => $properties) {
-            $final .= '<h4>' . $key . '</h4>';
-            if (isset($properties['description'])) {
-                $final .= '<h5>' . $properties['description'] . '</h5>';
-            }
-            $final .= '<p>' . $properties['value'] . '</p>';
-        }
-        return $final;
     }
 
     public static function getShortElabid(string $elabid): string

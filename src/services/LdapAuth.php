@@ -26,13 +26,14 @@ use LdapRecord\Query\ObjectNotFoundException;
  */
 class LdapAuth implements AuthInterface
 {
-    private string $email = '';
+    // the login string, email or uid or else
+    private string $login = '';
 
     private AuthResponse $AuthResponse;
 
-    public function __construct(private Connection $connection, private array $configArr, string $email, private string $password)
+    public function __construct(private Connection $connection, private array $configArr, string $login, private string $password)
     {
-        $this->email = Filter::sanitize($email);
+        $this->login = Filter::sanitize($login);
         $this->AuthResponse = new AuthResponse();
     }
 
@@ -40,7 +41,8 @@ class LdapAuth implements AuthInterface
     {
         $query = $this->connection->query()->setDn($this->configArr['ldap_base_dn']);
         try {
-            $record = $query->findbyOrFail('mail', $this->email);
+            /** @var array $record */
+            $record = $query->findbyOrFail($this->configArr['ldap_search_attr'], $this->login);
         } catch (ObjectNotFoundException) {
             throw new InvalidCredentialsException(0);
         }
@@ -52,8 +54,11 @@ class LdapAuth implements AuthInterface
         if (!$this->connection->auth()->attempt($dn, $this->password)) {
             throw new InvalidCredentialsException(0);
         }
+
+        // this->login can also be uid
+        $email = $this->getEmailFromRecord($record);
         try {
-            $Users = ExistingUser::fromEmail($this->email);
+            $Users = ExistingUser::fromEmail($email);
         } catch (ResourceNotFoundException) {
             // the user doesn't exist yet in the db
             // what do we do? Lookup the config setting for that case
@@ -78,7 +83,7 @@ class LdapAuth implements AuthInterface
                     $this->AuthResponse->userid = 0;
                     $this->AuthResponse->initTeamRequired = true;
                     $this->AuthResponse->initTeamUserInfo = array(
-                        'email' => $this->email,
+                        'email' => $email,
                         'firstname' => $firstname,
                         'lastname' => $lastname,
                     );
@@ -98,7 +103,7 @@ class LdapAuth implements AuthInterface
             // ldap might return a "count" key, so we remove it or it will be interpreted as a team ID
             unset($teamFromLdap['count']);
             // CREATE USER (and force validation of user)
-            $Users = ValidatedUser::fromExternal($this->email, $teamFromLdap, $firstname, $lastname);
+            $Users = ValidatedUser::fromExternal($email, $teamFromLdap, $firstname, $lastname);
         }
 
         $this->AuthResponse->userid = (int) $Users->userData['userid'];
@@ -106,5 +111,18 @@ class LdapAuth implements AuthInterface
         $this->AuthResponse->setTeams();
 
         return $this->AuthResponse;
+    }
+
+    private function getEmailFromRecord(array $record): string
+    {
+        // if the login input is the email, we have it already
+        if ($this->configArr['ldap_search_attr'] === 'mail') {
+            return $this->login;
+        }
+        $email = $record[$this->configArr['ldap_email']];
+        if (is_array($email)) {
+            return $email[0];
+        }
+        return $email;
     }
 }

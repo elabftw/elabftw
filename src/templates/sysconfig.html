@@ -76,7 +76,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           <input type='hidden' name='updateConfig' value='true' />
           <label for='lang'>{{ 'Language:'|trans }}</label>
           <select id='lang' name='lang' class='form-control col-md-4' autocomplete='off'>
-              {% for lang, text in langsArr %}
+              {% for lang, text in langsArr|sort %}
               <option {{ App.Config.configArr.lang == lang ? ' selected' }} value='{{ lang }}'>{{ text }}</option>
               {% endfor %}
           </select>
@@ -92,6 +92,12 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
               <option {{ App.Config.configArr.deletable_xp == 0 ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
           </select>
           <p class='smallgray'>{{ 'Setting this to «no» will completely remove the ability to delete experiments for everyone.'|trans }}</p>
+
+          <label for='allow_useronly'>{{ 'Allow the base permission setting «Only me»'|trans }}</label>
+          <select id='allow_useronly' name='allow_useronly' class='form-control col-md-4'>
+              <option {{ App.Config.configArr.allow_useronly == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
+              <option {{ App.Config.configArr.allow_useronly == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
+          </select>
 
           <label for='max_revisions'>{{ 'Maximum number of stored revisions per entry:'|trans }}</label>
           <input class='form-control col-md-4' type='number' min='0' max='999' value='{{ App.Config.configArr.max_revisions }}' name='max_revisions' id='max_revisions' />
@@ -834,6 +840,9 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           <option value='1'{{ App.Config.configArr.ldap_use_tls == '1' ? ' selected' }}>{{ 'Yes'|trans }}</option>
           <option value='0'{{ App.Config.configArr.ldap_use_tls == '0' ? ' selected' }}>{{ 'No'|trans }}</option>
         </select>
+
+        <label for='ldap_search_attr'>By which LDAP attribute the user will be found (default is 'mail')</label>
+        <input class='form-control col-md-4' type='text' placeholder='mail' value='{{ App.Config.configArr.ldap_search_attr }}' name='ldap_search_attr' id='ldap_search_attr' />
 
         <label for='ldap-team'>What attribute to look for the team name:</label>
         <input class='form-control col-md-4' type='text' id='ldap-team' name='ldap_team' value='{{ App.Config.configArr.ldap_team }}' />

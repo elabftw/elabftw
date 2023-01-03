@@ -9,13 +9,14 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
-use Elabftw\Services\Filter;
 use Elabftw\Services\MakeBloxberg;
 use Elabftw\Services\MakeCustomTimestamp;
 use Elabftw\Services\MakeDfnTimestamp;
@@ -52,8 +53,8 @@ class Experiments extends AbstractConcreteEntity
         // defaults
         $title = _('Untitled');
         $body = null;
-        $canread = 'team';
-        $canwrite = 'user';
+        $canread = BasePermissions::MyTeams->toJson();
+        $canwrite = BasePermissions::User->toJson();
         $metadata = null;
 
         // do we want template ?
@@ -162,7 +163,7 @@ class Experiments extends AbstractConcreteEntity
         $title = $this->entityData['title'] . ' I';
 
         // handle the blank_value_on_duplicate attribute on extra fields
-        $metadata = Filter::blankExtraFieldsValueOnDuplicate($this->entityData['metadata']);
+        $metadata = (new Metadata($this->entityData['metadata']))->blankExtraFieldsValueOnDuplicate();
 
         $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, userid, metadata, content_type)
             VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, :userid, :metadata, :content_type)';

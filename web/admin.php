@@ -45,6 +45,7 @@ try {
     $Status = new Status($Teams);
     $Tags = new TeamTags($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
+    $PermissionsHelper = new PermissionsHelper();
 
     $itemsCategoryArr = $ItemsTypes->readAll();
     if ($Request->query->has('templateid')) {
@@ -85,10 +86,12 @@ try {
         'tagsArr' => $tagsArr,
         'isSearching' => $isSearching,
         'itemsCategoryArr' => $itemsCategoryArr,
+        'myTeamsArr' => $Teams->readMyTeams(),
+        'myTeamgroupsArr' => $TeamGroups->readAllSimple(),
         'statusArr' => $statusArr,
         'teamConfigArr' => $teamConfigArr,
         'teamGroupsArr' => $teamGroupsArr,
-        'visibilityArr' => $TeamGroups->getVisibilityList(),
+        'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'teamsArr' => $teamsArr,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,

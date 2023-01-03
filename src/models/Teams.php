@@ -13,6 +13,7 @@ use function array_diff;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TeamParam;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
@@ -121,6 +122,29 @@ class Teams implements RestInterface
     {
         $this->canReadOrExplode();
         $sql = 'SELECT * FROM teams ORDER BY name ASC';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+    }
+
+    public function readMyTeams(): array
+    {
+        $this->canReadOrExplode();
+        $sql = 'SELECT teams.id, teams.name, teams.orgid FROM teams CROSS JOIN users2teams ON (users2teams.teams_id = teams.id AND users2teams.users_id = :userid) WHERE users2teams.users_id = :userid ORDER BY name ASC';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+    }
+
+    public function readNamesFromIds(array $idArr): array
+    {
+        if (empty($idArr)) {
+            return array();
+        }
+        $sql = 'SELECT teams.name FROM teams WHERE id IN (' . implode(',', $idArr) . ') ORDER BY name ASC';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 
@@ -236,13 +260,15 @@ class Teams implements RestInterface
     {
         $name = Filter::title($name);
 
-        $sql = 'INSERT INTO teams (name, common_template, common_template_md, link_name, link_href) VALUES (:name, :common_template, :common_template_md, :link_name, :link_href)';
+        $sql = 'INSERT INTO teams (name, common_template, common_template_md, link_name, link_href, force_canread, force_canwrite) VALUES (:name, :common_template, :common_template_md, :link_name, :link_href, :force_canread, :force_canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindValue(':common_template', Templates::defaultBody);
         $req->bindValue(':common_template_md', Templates::defaultBodyMd);
         $req->bindValue(':link_name', 'Documentation');
         $req->bindValue(':link_href', 'https://doc.elabftw.net');
+        $req->bindValue(':force_canread', BasePermissions::MyTeams->toJson());
+        $req->bindValue(':force_canwrite', BasePermissions::MyTeams->toJson());
         $this->Db->execute($req);
         // grab the team ID
         $newId = $this->Db->lastInsertId();
@@ -258,11 +284,12 @@ class Teams implements RestInterface
         $ItemsTypes->setId($ItemsTypes->create('Edit me'));
         // we can't patch something that is not in our team!
         $ItemsTypes->bypassWritePermission = true;
+        $defaultPermissions = BasePermissions::MyTeams->toJson();
         $extra = array(
             'color' => '#32a100',
             'body' => '<p>This is the default text of the default category.</p><p>Head to the <a href="admin.php?tab=5">Admin Panel</a> to edit/add more categories for your database!</p>',
-            'canread' => 'team',
-            'canwrite' => 'team',
+            'canread' => $defaultPermissions,
+            'canwrite' => $defaultPermissions,
             'bookable' => '0',
         );
         $ItemsTypes->patch(Action::Update, $extra);

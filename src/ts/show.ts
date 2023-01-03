@@ -6,7 +6,7 @@
  * @package elabftw
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-import { getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement } from './misc';
+import { getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement, permissionsToJson } from './misc';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // loop on it and update the status/item type
       checked.forEach(chk => {
-        ajaxs.push(ApiC.patch(`${about.type}/${chk.id}`, {'canread': el.value}));
+        ajaxs.push(ApiC.patch(`${about.type}/${chk.id}`, {'canread': permissionsToJson(parseInt(el.value, 10), [])}));
       });
       // reload the page once it's done
       // a simple reload would not work here

@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
@@ -44,8 +45,8 @@ class Templates extends AbstractTemplateEntity
     public function create(string $title): int
     {
         $title = Filter::title($title);
-        $canread = 'team';
-        $canwrite = 'user';
+        $canread = BasePermissions::MyTeams->toJson();
+        $canwrite = BasePermissions::User->toJson();
 
         if (isset($this->Users->userData['default_read'])) {
             $canread = $this->Users->userData['default_read'];
@@ -140,12 +141,12 @@ class Templates extends AbstractTemplateEntity
         $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
 
         return array_filter($this->readAll(), function ($t) use ($teamgroupsOfUser) {
-            return $t['canwrite'] === 'public' || $t['canwrite'] === 'organization' ||
-                ($t['canwrite'] === 'team' && ((int) $t['teams_id'] === $this->Users->userData['team'])) ||
-                ($t['canwrite'] === 'user' && $t['userid'] === $this->Users->userData['userid']) ||
-                ($t['canwrite'] === 'useronly' && $t['userid'] === $this->Users->userData['userid']) ||
-                // cast to int is necessary because canwrite column is a string
-                (in_array((int) $t['canwrite'], $teamgroupsOfUser, true));
+            $canwrite = json_decode($t['canwrite'], true, 3, JSON_THROW_ON_ERROR);
+            return $canwrite['base'] === BasePermissions::Full->value || $canwrite['base'] === BasePermissions::Organization->value ||
+                ($canwrite['base'] === BasePermissions::MyTeams->value && ((int) $t['teams_id'] === $this->Users->userData['team'])) ||
+                ($canwrite['base'] === BasePermissions::User->value && $t['userid'] === $this->Users->userData['userid']) ||
+                ($canwrite['base'] === BasePermissions::UserOnly->value && $t['userid'] === $this->Users->userData['userid']) ||
+                (in_array($canwrite['teamgroups'], $teamgroupsOfUser, true));
         });
     }
 
@@ -158,7 +159,7 @@ class Templates extends AbstractTemplateEntity
         $TeamGroups = new TeamGroups($this->Users);
         $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
 
-        $sql = "SELECT DISTINCT experiments_templates.id, experiments_templates.title, experiments_templates.body,
+        $sql = sprintf("SELECT DISTINCT experiments_templates.id, experiments_templates.title, experiments_templates.body,
                 experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite, experiments_templates.content_type,
                 experiments_templates.locked, experiments_templates.lockedby, experiments_templates.locked_at,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata,
@@ -173,14 +174,17 @@ class Templates extends AbstractTemplateEntity
                 LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
                 LEFT JOIN pin_experiments_templates2users ON (experiments_templates.id = pin_experiments_templates2users.entity_id AND pin_experiments_templates2users.users_id = :userid)
                 WHERE experiments_templates.userid != 0 AND experiments_templates.state = :state AND (
-                    experiments_templates.canread = 'public' OR
-                    experiments_templates.canread = 'organization' OR
-                    (experiments_templates.canread = 'team' AND users2teams.users_id = experiments_templates.userid) OR
-                    (experiments_templates.canread = 'user' AND experiments_templates.userid = :userid) OR
-                    (experiments_templates.canread = 'useronly' AND experiments_templates.userid = :userid)";
-        foreach ($teamgroupsOfUser as $teamgroup) {
-            $sql .= " OR (experiments_templates.canread = $teamgroup)";
+                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d) OR
+                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d) OR
+                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND users2teams.users_id = experiments_templates.userid) OR
+                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND experiments_templates.userid = :userid) OR
+                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND experiments_templates.userid = :userid)", BasePermissions::Full->value, BasePermissions::Organization->value, BasePermissions::MyTeams->value, BasePermissions::User->value, BasePermissions::UserOnly->value);
+        // look for teamgroups
+        if (!empty($teamgroupsOfUser)) {
+            $sql .= ' OR (JSON_CONTAINS(experiments_templates.canread, ("[' . implode(',', $teamgroupsOfUser) . "]\"), '$.teamgroups'))";
         }
+        // look for users, seems using the :userid placeholder does not work, or at least not in my hands
+        $sql .= ' OR (JSON_CONTAINS(experiments_templates.canread, ("[ ' . $this->Users->userData['userid'] . "]\"), '$.users'))";
         $sql .= ')';
 
         $sql .= $this->filterSql;

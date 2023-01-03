@@ -11,7 +11,10 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
+use Elabftw\Elabftw\Metadata;
+use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
@@ -27,6 +30,7 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
+use Elabftw\Services\AccessKeyHelper;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -42,18 +46,12 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $teamGroupsFromUser = array();
 
-    // all the users from the current team
-    protected array $allTeamUsersArr = array();
-
     public function __construct(protected App $App, protected AbstractEntity $Entity)
     {
         $TeamGroups = new TeamGroups($this->Entity->Users);
-        $this->visibilityArr = $TeamGroups->getVisibilityList();
+        $PermissionsHelper = new PermissionsHelper();
+        $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
         $this->teamGroupsFromUser = $TeamGroups->readGroupsFromUser();
-        // only take active users
-        $this->allTeamUsersArr = array_filter($this->App->Users->readAllFromTeam(), function ($u) {
-            return $u['archived'] === 0;
-        });
         // items don't need to show the templates in create new menu, so save a sql call here
         if ($this->Entity instanceof Experiments) {
             $Templates = new Templates($this->Entity->Users);
@@ -95,7 +93,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // only show public to anon
         if ($this->App->Session->get('is_anon')) {
-            $this->Entity->addFilter(FilterableColumn::Canread->value, 'public');
+            $this->Entity->addFilter(FilterableColumn::Canread->value, BasePermissions::Full->value);
         }
 
         $itemsArr = $this->getItemsArr();
@@ -116,10 +114,10 @@ abstract class AbstractEntityController implements ControllerInterface
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();
 
+
         $template = 'show.html';
 
         $renderArr = array(
-            'allTeamUsersArr' => $this->allTeamUsersArr,
             'DisplayParams' => $DisplayParams,
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
@@ -136,6 +134,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'tagsArrForSelect' => $TeamTags->readAll(),
             'teamGroupsFromUser' => $this->teamGroupsFromUser,
             'templatesArr' => $this->templatesArr,
+            'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
         $Response = new Response();
@@ -155,7 +154,18 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     protected function view(): Response
     {
-        $this->Entity->setId($this->App->Request->query->getInt('id'));
+        // by default the id is taken from the URL
+        $id = $this->App->Request->query->getInt('id');
+        // but if we have an access_key we might be able to bypass read permissions
+        if ($this->App->Request->query->has('access_key') && $this->App->Request->query->get('access_key') !== $this->Entity->entityData['access_key']) {
+            // for that we fetch the id not from the id param but from the access_key, so we will get a valid id that corresponds to an entity
+            // with this access_key
+            $id = (new AccessKeyHelper($this->Entity))->getIdFromAccessKey((string) $this->App->Request->query->get('access_key'));
+            if ($id > 0) {
+                $this->Entity->bypassReadPermission = true;
+            }
+        }
+        $this->Entity->setId($id);
 
         // REVISIONS
         $Revisions = new Revisions(
@@ -169,16 +179,22 @@ abstract class AbstractEntityController implements ControllerInterface
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();
 
+        $Teams = new Teams($this->Entity->Users);
+
         // the mode parameter is for the uploads tpl
         $renderArr = array(
-            'allTeamUsersArr' => $this->allTeamUsersArr,
-            'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
+            'Entity' => $this->Entity,
+            // Do we display the main body of a concrete entity? Default is true
+            'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
+            'myTeamsArr' => $Teams->readMyTeams(),
+            'myTeamgroupsArr' => $this->teamGroupsFromUser,
             'revNum' => $Revisions->readCount(),
             'templatesArr' => $this->templatesArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
+            'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
 
@@ -226,19 +242,24 @@ abstract class AbstractEntityController implements ControllerInterface
             (int) $this->App->Config->configArr['min_delta_revisions'],
             (int) $this->App->Config->configArr['min_days_revisions'],
         );
+        $Teams = new Teams($this->Entity->Users);
 
         $renderArr = array(
-            'allTeamUsersArr' => $this->allTeamUsersArr,
-            'Entity' => $this->Entity,
-            'entityData' => $this->Entity->entityData,
             'categoryArr' => $this->categoryArr,
             'deletableXp' => $this->getDeletableXp(),
+            'Entity' => $this->Entity,
+            'entityData' => $this->Entity->entityData,
+            // Do we display the main body of a concrete entity? Default is true
+            'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'lastModifierFullname' => $lastModifierFullname,
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',
+            'myTeamsArr' => $Teams->readMyTeams(),
+            'myTeamgroupsArr' => $this->teamGroupsFromUser,
             'revNum' => $Revisions->readCount(),
             'templatesArr' => $this->templatesArr,
+            'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
 

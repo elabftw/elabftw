@@ -245,8 +245,6 @@ class MakePdf extends AbstractMakePdf
 
         $renderArr = array(
             'body' => $this->getBody(),
-            'canread' => $this->Entity->getCan($this->Entity->entityData['canread']),
-            'canwrite' => $this->Entity->getCan($this->Entity->entityData['canwrite']),
             'changes' => $Changelog->readAll(),
             'css' => $this->getCss(),
             'date' => $date->format('Y-m-d'),

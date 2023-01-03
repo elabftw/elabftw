@@ -9,10 +9,10 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 
@@ -68,7 +68,7 @@ class Items extends AbstractConcreteEntity
         $this->canOrExplode('read');
 
         // handle the blank_value_on_duplicate attribute on extra fields
-        $metadata = Filter::blankExtraFieldsValueOnDuplicate($this->entityData['metadata']);
+        $metadata = (new Metadata($this->entityData['metadata']))->blankExtraFieldsValueOnDuplicate();
 
         $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, category, elabid, metadata, content_type)
             VALUES(:team, :title, CURDATE(), :body, :userid, :canread, :canwrite, :category, :elabid, :metadata, :content_type)';

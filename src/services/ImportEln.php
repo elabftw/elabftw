@@ -17,7 +17,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
 use function hash_file;
 use function json_decode;
 use League\Flysystem\UnableToReadFile;
@@ -53,7 +52,7 @@ class ImportEln extends AbstractImportZip
         $file = '/ro-crate-metadata.json';
         try {
             $content = $this->fs->read($this->root . $file);
-        } catch (UnableToReadFile $e) {
+        } catch (UnableToReadFile) {
             throw new ImproperActionException(sprintf(_('Error: could not read archive file properly! (missing %s)'), $file));
         }
         $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);

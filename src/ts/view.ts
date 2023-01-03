@@ -9,7 +9,7 @@ import i18next from 'i18next';
 import { InputType, Malle } from '@deltablot/malle';
 import { Metadata } from './Metadata.class';
 import { Api } from './Apiv2.class';
-import { getEntity, updateCategory, relativeMoment, reloadElement, showContentPlainText } from './misc';
+import { getEntity, updateCategory, relativeMoment, reloadElement, showContentPlainText, generateMetadataLink } from './misc';
 import { EntityType, Action, Model } from './interfaces';
 import { DateTime } from 'luxon';
 import EntityClass from './Entity.class';
@@ -39,13 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const MetadataC = new Metadata(entity);
   MetadataC.display('view').then(() => {
     // go over all the type: url elements and create a link dynamically
-    document.querySelectorAll('[data-gen-link="true"]').forEach(el => {
-      const link = document.createElement('a');
-      const url = (el as HTMLSpanElement).innerText;
-      link.href = url;
-      link.text = url;
-      el.replaceWith(link);
-    });
+    generateMetadataLink();
   });
 
   // EDIT SHORTCUT

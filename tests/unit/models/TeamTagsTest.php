@@ -23,18 +23,18 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Users = new Users(1, 1);
-        $this->TeamTags = new TeamTags($this->Users);
+        $this->TeamTags = new TeamTags($this->Users, 1);
         $this->Tags = new Tags(new Experiments($this->Users, 1));
     }
 
     public function testGetPage(): void
     {
-        $this->assertEquals('api/v2/tags/', $this->TeamTags->getPage());
+        $this->assertEquals('api/v2/team_tags/', $this->TeamTags->getPage());
     }
 
     public function testCreate(): void
     {
-        $this->assertEquals(0, $this->TeamTags->postAction(Action::Create, array()));
+        $this->assertIsInt($this->TeamTags->postAction(Action::Create, array('tag' => 'microscopy')));
     }
 
     public function testReadAll(): void

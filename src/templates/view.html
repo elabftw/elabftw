@@ -41,134 +41,155 @@
 </div>
 {% endif %}
 
-<section class='item' id='main_section' style='padding:15px;border-left: 6px solid #{{ Entity.entityData.color }}'>
-  <p class='float-right d-inline'>
-    <a class='elab-tooltip ml-2' data-action='toggle-pin' href='#'>
-      <span>{{ 'Toggle pin'|trans }}</span>
-      <i title='{{ 'Toggle pin'|trans }}' id='toggle-pin-icon' class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }} fa-2x'></i>
-    </a>
-  </p>
-
-  <div>
-    {% if not (Entity.isReadOnly or Entity.entityData.locked) %}
-    <div class='hl-hover-gray d-inline p-2 rounded'>
-      <a class='elab-tooltip' href='#' data-action='edit'>
-        <span>{{ 'Edit'|trans }}</span>
-        <i title='{{ 'Edit'|trans }}' class='fas fa-pencil-alt fa-2x' style='color:#29AEB9'></i>
-      </a>
-    </div>
-    {% endif %}
-
-    {% if not App.Session.has('is_anon') %}
+    <div class='mb-2'>
+      {% if not (Entity.isReadOnly or Entity.entityData.locked) %}
       <div class='hl-hover-gray d-inline p-2 rounded'>
-        <a class='elab-tooltip' href='#' data-action='duplicate-entity'>
-          <span>{{ 'Duplicate'|trans }}</span>
-          <i title='{{ 'Duplicate'|trans }}' class='far fa-copy fa-2x'></i>
+        <a class='elab-tooltip' href='#' data-action='edit'>
+          <span>{{ 'Edit'|trans }}</span>
+          <i title='{{ 'Edit'|trans }}' class='fas fa-pencil-alt fa-2x' style='color:#29AEB9'></i>
         </a>
       </div>
+      {% endif %}
 
-    {% if Entity.type == 'items' %}
-      {% if Entity.entityData.bookable %}
+      {% if not App.Session.has('is_anon') %}
         <div class='hl-hover-gray d-inline p-2 rounded'>
-          <a class='elab-tooltip' href='team.php?item={{ Entity.id }}'>
-            <span>{{ 'Book item'|trans }}</span>
-            <i title='{{ 'Book item'|trans }}' class='fas fa-calendar-plus fa-2x'></i>
+          <a class='elab-tooltip' href='#' data-action='duplicate-entity'>
+            <span>{{ 'Duplicate'|trans }}</span>
+            <i title='{{ 'Duplicate'|trans }}' class='far fa-copy fa-2x'></i>
+          </a>
+        </div>
+
+      {% if Entity.type == 'items' %}
+        {% if Entity.entityData.bookable %}
+          <div class='hl-hover-gray d-inline p-2 rounded'>
+            <a class='elab-tooltip' href='team.php?item={{ Entity.id }}'>
+              <span>{{ 'Book item'|trans }}</span>
+              <i title='{{ 'Book item'|trans }}' class='fas fa-calendar-plus fa-2x'></i>
+            </a>
+          </div>
+        {% endif %}
+      {% endif %}
+
+      <!-- LOCK -->
+      {% set lockIcon = 'fa-lock-open' %}
+      {% set alt = 'Lock/Unlock item'|trans %}
+      {% if Entity.entityData.locked %}
+          {% set lockIcon = 'fa-lock' %}
+          {% set alt = Entity.entityData.lockedwhen %}
+      {% endif %}
+      <div class='hl-hover-gray d-inline p-2 rounded'>
+        <a class='elab-tooltip' href='#' data-action='lock-entity'>
+            <span>{{ alt }}</span>
+            <i title='{{ alt }}' class='fas {{lockIcon}} fa-2x'></i>
+        </a>
+      </div>
+      {% endif %}
+
+      {% if not App.Session.has('is_anon') and App.Config.configArr.anon_users and Entity.entityData.access_key %}
+        <div class='hl-hover-gray d-inline p-2 rounded'>
+          <a class='elab-tooltip' href='#' data-action='share'>
+            <span>{{ 'Share'|trans }}</span>
+            <i title='{{ 'Share'|trans }}' class='fas fa-share-alt fa-2x'></i>
+          </a>
+          <input type='text' class='form-control' aria-label='{{ 'Share'|trans }}' id='shareLinkInput' value='' hidden />
+        </div>
+      {% endif %}
+
+      <!-- show timestamp button -->
+      {% if Entity.type == 'experiments' and not App.Session.has('is_anon') %}
+        <div class='hl-hover-gray d-inline p-2 rounded'>
+          <a href='#' class='elab-tooltip' data-action='toggle-modal' data-target='timestampModal'>
+            <span>{{ 'Timestamp Experiment'|trans }}</span>
+            <i title='{{ 'Timestamp Experiment'|trans }}' class='far fa-calendar-check fa-2x'></i>
           </a>
         </div>
       {% endif %}
-    {% endif %}
 
-    <!-- LOCK -->
-    {% set lockIcon = 'fa-lock-open' %}
-    {% set alt = 'Lock/Unlock item'|trans %}
-    {% if Entity.entityData.locked %}
-        {% set lockIcon = 'fa-lock' %}
-        {% set alt = Entity.entityData.lockedwhen %}
-    {% endif %}
-    <div class='hl-hover-gray d-inline p-2 rounded'>
-      <a class='elab-tooltip' href='#' data-action='lock-entity'>
-          <span>{{ alt }}</span>
-          <i title='{{ alt }}' class='fas {{lockIcon}} fa-2x'></i>
-      </a>
-    </div>
-    {% endif %}
+      <!-- BLOXBERG BUTTON -->
+      {% if not Entity.isReadOnly and App.Config.configArr.blox_enabled %}
+        <div class='hl-hover-gray d-inline p-2 rounded'>
+          <a href='#' class='elab-tooltip' data-action='bloxberg'>
+            <span>{{ 'Add to blockchain'|trans }}</span>
+            <i title='{{ 'Add to blockchain'|trans }}' class='fas fa-cubes fa-2x'></i>
+          </a>
+        </div>
+      {% endif %}
 
-    {% if not App.Session.has('is_anon') and App.Config.configArr.anon_users %}
+      <!-- Download / Export menu -->
       <div class='hl-hover-gray d-inline p-2 rounded'>
-        <a class='elab-tooltip' href='#' data-action='share'>
-          <span>{{ 'Share'|trans }}</span>
-          <i title='{{ 'Share'|trans }}' class='fas fa-share-alt fa-2x'></i>
-        </a>
-        <input type='text' class='form-control' aria-label='{{ 'Share'|trans }}' id='shareLinkInput' value='' hidden />
-      </div>
-    {% endif %}
-
-    <!-- show timestamp button -->
-    {% if Entity.type == 'experiments' and not App.Session.has('is_anon') %}
-      <div class='hl-hover-gray d-inline p-2 rounded'>
-        <a href='#' class='elab-tooltip' data-action='toggle-modal' data-target='timestampModal'>
-          <span>{{ 'Timestamp Experiment'|trans }}</span>
-          <i title='{{ 'Timestamp Experiment'|trans }}' class='far fa-calendar-check fa-2x'></i>
-        </a>
-      </div>
-    {% endif %}
-
-    <!-- BLOXBERG BUTTON -->
-    {% if not Entity.isReadOnly and App.Config.configArr.blox_enabled %}
-      <div class='hl-hover-gray d-inline p-2 rounded'>
-        <a href='#' class='elab-tooltip' data-action='bloxberg'>
-          <span>{{ 'Add to blockchain'|trans }}</span>
-          <i title='{{ 'Add to blockchain'|trans }}' class='fas fa-cubes fa-2x'></i>
-        </a>
-      </div>
-    {% endif %}
-
-    <!-- Download / Export menu -->
-    <div class='hl-hover-gray d-inline p-2 rounded'>
-      <div class='dropdown d-inline'>
-        <a data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'Export'|trans }}' aria-label='{{ 'Export'|trans }}' role='button'>
-          <i class='fas fa-download fa-2x'></i>
-        </a>
-        <div class='dropdown-menu' aria-label='{{ 'Export'|trans }}'>
-          <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdf'><i class='fas fa-file-pdf fa-fw'></i> {{ 'PDF File'|trans }}</a>
-          <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdfa'><i class='fas fa-file-pdf fa-fw'></i> {{ 'Long term storage PDF'|trans }}</a>
-          <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=zip'><i class='fas fa-file-archive fa-fw'></i> {{ 'ZIP Archive'|trans }}</a>
-          <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=zipa'><i class='fas fa-file-archive fa-fw'></i> {{ 'Long term storage ZIP'|trans }}</a>
-          <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=eln'><i class='fas fa-box-archive fa-fw'></i> {{ 'ELN Archive'|trans }}</a>
-          <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=csv'><i class='fas fa-file-csv fa-fw'></i> {{ 'CSV File'|trans }}</a>
+        <div class='dropdown d-inline'>
+          <a data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'Export'|trans }}' aria-label='{{ 'Export'|trans }}' role='button'>
+            <i class='fas fa-download fa-2x'></i>
+          </a>
+          <span class='dropdown-menu' aria-label='{{ 'Export'|trans }}'>
+            <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdf'><i class='fas fa-file-pdf fa-fw'></i> {{ 'PDF File'|trans }}</a>
+            <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdfa'><i class='fas fa-file-pdf fa-fw'></i> {{ 'Long term storage PDF'|trans }}</a>
+            <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=zip'><i class='fas fa-file-archive fa-fw'></i> {{ 'ZIP Archive'|trans }}</a>
+            <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=zipa'><i class='fas fa-file-archive fa-fw'></i> {{ 'Long term storage ZIP'|trans }}</a>
+            <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=eln'><i class='fas fa-box-archive fa-fw'></i> {{ 'ELN Archive'|trans }}</a>
+            <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=csv'><i class='fas fa-file-csv fa-fw'></i> {{ 'CSV File'|trans }}</a>
+          </span>
         </div>
       </div>
     </div>
 
-  </div>
+<section class='item' id='main_section' style='padding:15px;border-left: 6px solid #{{ Entity.entityData.color }}'>
+  <div class='d-flex'>
 
-  <!-- build the tag array -->
-  {% if Entity.entityData.tags|length > 0 %}
-    <span class='tags mathjax-ignore'>
-      <i class='fas fa-tags mr-2'></i>
-      {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
-      {% set tagsValueArr = Entity.entityData.tags|split('|') %}
-      {% for key, tag in tagsValueArr %}
-        {# the key allows to get the id stored in tagsIdArr #}
-        <a class='tag' href='?mode=show&tags%5B%5D={{ tag|url_encode }}'>{{ tag|raw }}</a>
-      {% endfor %}
-    </span>
-  {% endif %}
 
-  <!-- CATEGORY, RATING AND CANREAD/CANWRITE ROW -->
-  <div class='row'>
-    <div class='col-6'>
-      <p>
+
+    <div class='mr-auto'>
+      <!-- CATEGORY AND RATING -->
+      <div>
         <i aria-hidden='true' class='fas fa-clipboard-{{ Entity.type == 'experiments' ? 'check' : 'list' }}'></i>
         <span class='malleableCategory hl-hover-gray rounded p-1'>{{ Entity.entityData.category }}</span>
           {% if Entity.entityData.rating > 0 %}
             {{ Entity.entityData.rating|stars|raw }}
           {% endif %}
-        <i aria-hidden='true' class='fas fa-eye ml-2' title='{{ 'Visibility'|trans }}'></i> {{ Entity.getCan(Entity.entityData.canread) }}
-        <i aria-hidden='true' class='fas fa-pencil-alt ml-2' title='{{ 'Edit'|trans }}'></i> {{ Entity.getCan(Entity.entityData.canwrite) }}
+        <!-- build the tag array -->
+        {% if Entity.entityData.tags|length > 0 %}
+          <span class='tags mathjax-ignore'>
+            <i class='fas fa-tags mr-2'></i>
+            {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
+            {% set tagsValueArr = Entity.entityData.tags|split('|') %}
+            {% for key, tag in tagsValueArr %}
+              {# the key allows to get the id stored in tagsIdArr #}
+              <a class='tag' href='?mode=show&tags%5B%5D={{ tag|url_encode }}'>{{ tag|raw }}</a>
+            {% endfor %}
+          </span>
+        {% endif %}
+        <!-- DATE -->
+        <div>
+          <i aria-hidden='true' class='far fa-calendar-alt mr-1'></i>{{ 'Started on'|trans }} {{ Entity.entityData.date|date('Y-m-d') }}
+        </div>
+      </div>
+    </div>
+
+    <div class=''>
+      <!-- CAN READ -->
+      {% set rw = 'canread' %}
+      {% set can = Entity.entityData.canread|canToHuman %}
+      {% include('view-permissions.html') %}
+    </div>
+
+    <div class=''>
+      <!-- CAN WRITE -->
+      {% set rw = 'canwrite' %}
+      {% set can = Entity.entityData.canwrite|canToHuman %}
+      {% include('view-permissions.html') %}
+    </div>
+
+    <div>
+      <!-- TOGGLE PIN -->
+      <p class='float-right d-inline'>
+        <a class='elab-tooltip ml-2' data-action='toggle-pin' href='#'>
+          <span>{{ 'Toggle pin'|trans }}</span>
+          <i title='{{ 'Toggle pin'|trans }}' id='toggle-pin-icon' class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }} fa-2x'></i>
+        </a>
       </p>
     </div>
   </div>
+
 
   <!-- TITLE : click on it to go to edit mode only if we are not in read only mode -->
   {% set isEditable = not Entity.isReadOnly and not Entity.entityData.locked %}
@@ -178,11 +199,6 @@
       {% endif %}
       {{ Entity.entityData.title|raw }}
   </h1>
-
-  <!-- DATE -->
-  <div>
-    <i aria-hidden='true' class='far fa-calendar-alt mr-1'></i>{{ 'Started on'|trans }} {{ Entity.entityData.date|date('Y-m-d') }}
-  </div>
 
   <!-- SHOW EVENTS -->
   {% if Entity.entityData.is_bound %}<i class='far fa-calendar-alt'></i>
@@ -212,7 +228,8 @@
       {% if body|trim == '' %}
           {% set body = Entity.entityData.body %}
       {% endif %}
-      <div id='body_view' class='pt-2'>{{ body|raw }}</div>
+      {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
+      <div id='body_view' class='pt-2' {{ not displayMainText ? 'hidden' }}>{{ body|raw }}</div>
   {% endif %}
 
   <div id='metadataDiv' class='col-md-6'></div>

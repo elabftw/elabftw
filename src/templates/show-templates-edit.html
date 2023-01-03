@@ -30,9 +30,9 @@
   {% if Entity.entityData %}
   <div id='templatesDiv'>
   <!-- MORE OPTIONS DROPDOWN MENU (···) -->
-  <div class='d-flex'>
+  <div class='d-flex align-items-center'>
     <!-- NAME OF TPL AND OWNER -->
-    <div class='mr-auto'>
+    <div class='d-flex mr-auto'>
       <h2>
         <!-- lock icon -->
         {% if entityData.locked %}
@@ -45,6 +45,18 @@
       </h2>
     </div>
 
+    <div class='d-flex align-items-start justify-content-around col-md-6'>
+      <!-- CAN READ -->
+      {% set rw = 'canread' %}
+      {% set can = Entity.entityData.canread|canToHuman %}
+      {% include('view-permissions.html') %}
+      <!-- CAN WRITE -->
+      {% set rw = 'canwrite' %}
+      {% set can = Entity.entityData.canwrite|canToHuman %}
+      {% include('view-permissions.html') %}
+    </div>
+
+
     <!-- MORE OPTIONS MENU (...) -->
     <div class='dropdown'>
       <div data-toggle='dropdown' aria-haspopup='true' class='button-on-hover' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
@@ -55,12 +67,6 @@
         <a data-action='create-entity' data-tplid="{{ Entity.id }}" href='#' class='dropdown-item'>
           <i class='fas fa-circle-plus fa-fw mr-1'></i>{{ 'Create experiment from template'|trans }}
         </a>
-        {% if not Entity.entityData.locked %}
-          <!-- MANAGE PERMISSIONS -->
-          <a href='#' class='dropdown-item' data-action='toggle-modal' data-target='permModal' data-read='{{ Entity.entityData.canread }}' data-write='{{ Entity.entityData.canwrite }}'>
-            <i class='fas fa-share-alt fa-fw mr-1'></i>{{ 'Manage Permissions'|trans }}
-          </a>
-        {% endif %}
         <!-- PIN -->
         <a data-action='toggle-pin' data-id='{{ Entity.id }}' href='#' class='dropdown-item'>
           <i class='fas fa-thumbtack fa-fw mr-1'></i>{{ 'Toggle pin (add to create button menu)'|trans }}

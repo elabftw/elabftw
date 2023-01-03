@@ -20,6 +20,7 @@ module.exports = {
   entry: {
     main: [
       './src/ts/common.ts',
+      './src/ts/field-builder.ts',
       './src/ts/i18n.ts',
       './src/ts/steps-links.ts',
       './src/ts/tags.ts',

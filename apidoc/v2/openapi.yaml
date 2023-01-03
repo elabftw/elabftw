@@ -88,6 +88,8 @@ components:
           type: string
         ldap_base_dn:
           type: string
+        ldap_search_attr:
+          type: string
         ldap_email:
           type: string
         ldap_firstname:
@@ -1760,6 +1762,28 @@ paths:
                     type: string
                   id:
                     type: integer
+    post:
+      tags: ['Team tags']
+      summary: Create a tag in the team.
+      operationId: post-team_tag
+      requestBody:
+        description: Parameters for adding a tag in the team.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tag:
+                  type: string
+                  description: Tag to add
+      responses:
+        '201':
+          description: The tag has been added.
+          headers:
+            location:
+              description: An URL ending with 0 if the tag was already here, or an URL to the newly created tag.
+              schema:
+                type: string
     patch:
       tags: ['Team tags']
       summary: |
@@ -2764,11 +2788,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/upload'
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
-            application/zip:
+            '*/*':
               schema:
                 type: string
                 format: binary

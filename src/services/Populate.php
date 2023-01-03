@@ -11,6 +11,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Experiments;
@@ -57,6 +58,14 @@ class Populate
         }
         $categoryArr = $Category->readAll();
 
+        // we will randomly pick from these for canread and canwrite
+        $visibilityArr = array(
+            BasePermissions::Full->toJson(),
+            BasePermissions::Organization->toJson(),
+            BasePermissions::MyTeams->toJson(),
+            BasePermissions::User->toJson(),
+            BasePermissions::UserOnly->toJson(),
+        );
 
         printf("Generating %s \n", $Entity->type);
         for ($i = 0; $i <= $this->iter; $i++) {
@@ -79,8 +88,8 @@ class Populate
 
             // change the visibility, but not the first ones as they are often used in tests and this could cause permissions issues
             if ($this->faker->randomDigit() > 8 && $i > 10) {
-                $Entity->patch(Action::Update, array('canread' => $this->faker->randomElement(array('organization', 'public', 'user'))));
-                $Entity->patch(Action::Update, array('canwrite' => $this->faker->randomElement(array('organization', 'public', 'user'))));
+                $Entity->patch(Action::Update, array('canread' => $this->faker->randomElement($visibilityArr)));
+                $Entity->patch(Action::Update, array('canwrite' => $this->faker->randomElement($visibilityArr)));
             }
 
             // change the category (status/item type)
@@ -138,7 +147,9 @@ class Populate
         if ($user['create_templates'] ?? false) {
             $Templates = new Templates($Users);
             for ($i = 0; $i < $this->iter; $i++) {
-                $Templates->create($this->faker->sentence());
+                $id = $Templates->create($this->faker->sentence());
+                $Templates->setId($id);
+                $Templates->patch(Action::Update, array('body' => $this->faker->realText(1000)));
             }
         }
     }

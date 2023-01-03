@@ -393,3 +393,39 @@ export function removeEmpty(params: object): object {
   }
   return params;
 }
+
+export function permissionsToJson(base: number, extra: string[]): string {
+  const json = {
+    'base': 0,
+    'teams': [],
+    'teamgroups': [],
+    'users': [],
+  };
+
+  json.base = base;
+
+  extra.forEach(val => {
+    if (val.startsWith('team:')) {
+      json.teams.push(parseInt(val.split(':')[1], 10));
+    }
+    if (val.startsWith('teamgroup:')) {
+      json.teamgroups.push(parseInt(val.split(':')[1], 10));
+    }
+    if (val.startsWith('user:')) {
+      json.users.push(parseInt(val.split(':')[1], 10));
+    }
+  });
+
+  return JSON.stringify(json);
+}
+
+// go over all the type: url elements and create a link dynamically
+export function generateMetadataLink(): void {
+  document.querySelectorAll('[data-gen-link="true"]').forEach(el => {
+    const link = document.createElement('a');
+    const url = (el as HTMLSpanElement).innerText;
+    link.href = url;
+    link.text = url;
+    el.replaceWith(link);
+  });
+}

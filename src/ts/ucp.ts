@@ -138,16 +138,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // input to upload an ELN archive
   document.getElementById('import_tpl').addEventListener('change', (event) => {
-    const el = (event.target as HTMLInputElement);
-    const AjaxC = new Ajax();
     const params = {
       'type': 'archive',
-      'file': el.files[0],
+      'file': (event.target as HTMLInputElement).files[0],
       'target': 'experiments_templates:0',
-      'canread': 'team',
-      'canwrite': 'user',
     };
-    AjaxC.postForm('app/controllers/ImportController.php', params).then(() => {
+    (new Ajax()).postForm('app/controllers/ImportController.php', params).then(() => {
       window.location.reload();
     });
   });

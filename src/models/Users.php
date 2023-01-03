@@ -14,6 +14,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
@@ -96,6 +97,8 @@ class Users implements RestInterface
             $validated = 1;
         }
 
+        $defaultRead = BasePermissions::MyTeams->toJson();
+        $defaultWrite = BasePermissions::User->toJson();
 
         $sql = 'INSERT INTO users (
             `email`,
@@ -106,7 +109,9 @@ class Users implements RestInterface
             `register_date`,
             `validated`,
             `lang`,
-            `valid_until`
+            `valid_until`,
+            `default_read`,
+            `default_write`
         ) VALUES (
             :email,
             :password_hash,
@@ -116,7 +121,9 @@ class Users implements RestInterface
             :register_date,
             :validated,
             :lang,
-            :valid_until);';
+            :valid_until,
+            :default_read,
+            :default_write);';
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $email);
@@ -128,6 +135,8 @@ class Users implements RestInterface
         $req->bindParam(':usergroup', $group, PDO::PARAM_INT);
         $req->bindValue(':lang', $Config->configArr['lang']);
         $req->bindValue(':valid_until', $validUntil);
+        $req->bindValue(':default_read', $defaultRead);
+        $req->bindValue(':default_write', $defaultWrite);
         $this->Db->execute($req);
         $userid = $this->Db->lastInsertId();
 
@@ -199,17 +208,20 @@ class Users implements RestInterface
         return $this->readFromQuery('', $this->userData['team']);
     }
 
+    public function readAllActiveFromTeam(): array
+    {
+        return array_filter($this->readAllFromTeam(), function ($u) {
+            return $u['archived'] === 0;
+        });
+    }
+
     /**
      * This can be called from api and only contains "safe" values
      */
     public function readAll(): array
     {
         $Request = Request::createFromGlobals();
-        // allow admins to query users from other teams so they can be added to team groups
-        if ($this->requester->userData['is_sysadmin'] === 1 || $this->requester->userData['is_admin'] === 1) {
-            return $this->readFromQuerySafe($Request->query->getAlnum('q'), 0);
-        }
-        throw new IllegalActionException('Normal users cannot read other users.');
+        return $this->readFromQuerySafe($Request->query->getAlnum('q'), 0);
     }
 
     /**
@@ -225,6 +237,18 @@ class Users implements RestInterface
         unset($userData['mfa_secret']);
         unset($userData['token']);
         return $userData;
+    }
+
+    public function readNamesFromIds(array $idArr): array
+    {
+        if (empty($idArr)) {
+            return array();
+        }
+        $sql = "SELECT CONCAT(users.firstname, ' ', users.lastname) AS fullname, userid, email FROM users WHERE userid IN (" . implode(',', $idArr) . ') ORDER BY fullname ASC';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
     }
 
     public function postAction(Action $action, array $reqBody): int

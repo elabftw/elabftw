@@ -55,37 +55,41 @@ class FieldValidatorVisitor implements Visitor
 
     public function visitTimestampField(TimestampField $timestampField, VisitorParameters $parameters): InvalidFieldCollector
     {
+        $messages = array();
+
         if ($parameters->getEntityType() !== 'experiments'
             && $timestampField->getFieldType() === TimestampFields::TimestampedAt
         ) {
-            return new InvalidFieldCollector(array(
-                sprintf('%s: is only allowed when searching in experiments.', TimestampFields::TimestampedAt->value),
-            ));
+            $messages[] = sprintf(
+                '%s: is only allowed when searching in experiments.',
+                TimestampFields::TimestampedAt->value,
+            );
         }
 
         // MySQL range for TIMESTAMP values is '1970-01-01 00:00:01.000000' to '2038-01-19 03:14:07.999999'
         // We use 1970-01-02 and 2038-01-18 because time 00:00:00 and/or 23:59:59 will be added
-        if ((intval($timestampField->getValue(), 10) < 19700102) || (intval($timestampField->getValue(), 10) > 20380118)
-            || ($timestampField->getDateType() === 'range' && ((intval($timestampField->getDateTo(), 10) < 19700102) || (intval($timestampField->getDateTo(), 10) > 20380118)))
+        $DateMin = 19700102;
+        $DateMax = 20380118;
+
+        if ((intval($timestampField->getValue(), 10) < $DateMin) || (intval($timestampField->getValue(), 10) > $DateMax)
+            || ($timestampField->getDateType() === 'range' && ((intval($timestampField->getDateTo(), 10) < $DateMin) || (intval($timestampField->getDateTo(), 10) > $DateMax)))
         ) {
-            $message = sprintf(
+            $messages[] = sprintf(
                 '%s: Date needs to be between 1970-01-02 and 2038-01-18.',
                 $timestampField->getFieldType()->value,
             );
-            return new InvalidFieldCollector(array($message));
         }
 
         if ($timestampField->getDateType() === 'range' && $timestampField->getValue() > $timestampField->getDateTo()) {
-            $message = sprintf(
+            $messages[] = sprintf(
                 '%s:%s..%s. Second date needs to be equal or greater than first date.',
                 $timestampField->getFieldType()->value,
                 $timestampField->getValue(),
                 $timestampField->getDateTo(),
             );
-            return new InvalidFieldCollector(array($message));
         }
 
-        return new InvalidFieldCollector();
+        return new InvalidFieldCollector($messages);
     }
 
     public function visitField(Field $field, VisitorParameters $parameters): InvalidFieldCollector

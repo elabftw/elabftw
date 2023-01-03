@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use function array_combine;
 use function array_map;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TeamGroupParams;
@@ -95,31 +94,14 @@ class TeamGroups implements RestInterface
         return $fullGroups;
     }
 
-    /**
-     * When we need to build a select menu with visibility + team groups
-     */
-    public function getVisibilityList(): array
+    public function readAllSimple(): array
     {
-        $idArr = array();
-        $nameArr = array();
-
-        $visibilityArr = array(
-            'public' => _('Public'),
-            'organization' => _('Everyone with an account'),
-            'team' => _('Only the team'),
-            'user' => _('Only me and admins'),
-            'useronly' => _('Only me'),
-        );
-        $groups = $this->readGroupsFromUser();
-
-        foreach ($groups as $group) {
-            $idArr[] = $group['id'];
-            $nameArr[] = $group['name'];
-        }
-
-        $tgArr = array_combine($idArr, $nameArr);
-
-        return $visibilityArr + $tgArr;
+        $sql = 'SELECT team_groups.id, team_groups.name
+            FROM team_groups WHERE team_groups.team = :team ORDER BY team_groups.name ASC';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchAll();
     }
 
     /**
@@ -133,6 +115,18 @@ class TeamGroups implements RestInterface
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);
+    }
+
+    public function readNamesFromIds(array $idArr): array
+    {
+        if (empty($idArr)) {
+            return array();
+        }
+        $sql = 'SELECT team_groups.name FROM team_groups WHERE id IN (' . implode(',', $idArr) . ') ORDER BY name ASC';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
     }
 
     public function patch(Action $action, array $params): array

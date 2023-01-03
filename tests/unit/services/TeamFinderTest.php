@@ -13,15 +13,16 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 
-class ElabidFinderTest extends \PHPUnit\Framework\TestCase
+class TeamFinderTest extends \PHPUnit\Framework\TestCase
 {
     public function testFindInExperiments(): void
     {
         $Entity = new Experiments(new Users(1, 1));
         $id = $Entity->create(-1);
         $Entity->setId($id);
-        $elabid = $Entity->entityData['elabid'];
-        $finder = new ElabidFinder('/experiments.php', $elabid);
+        (new AccessKeyHelper($Entity))->toggleAccessKey();
+        $ak = $Entity->entityData['access_key'];
+        $finder = new TeamFinder('/experiments.php', $ak);
         $this->assertEquals(1, $finder->findTeam());
     }
 
@@ -30,8 +31,9 @@ class ElabidFinderTest extends \PHPUnit\Framework\TestCase
         $Entity = new Items(new Users(1, 1));
         $id = $Entity->create(1);
         $Entity->setId($id);
-        $elabid = $Entity->entityData['elabid'];
-        $finder = new ElabidFinder('/database.php', $elabid);
+        (new AccessKeyHelper($Entity))->toggleAccessKey();
+        $ak = $Entity->entityData['access_key'];
+        $finder = new TeamFinder('/database.php', $ak);
         $this->assertEquals(1, $finder->findTeam());
     }
 }

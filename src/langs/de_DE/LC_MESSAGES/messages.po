@@ -17,13 +17,14 @@ msgstr ""
 #: src/templates/admin.html:70 src/templates/admin.html:82
 #: src/templates/admin.html:98 src/templates/editusers.html:113
 #: src/templates/search.html:282 src/templates/search.html:293
-#: src/templates/sysconfig.html:91 src/templates/sysconfig.html:112
-#: src/templates/sysconfig.html:119 src/templates/sysconfig.html:134
+#: src/templates/sysconfig.html:91 src/templates/sysconfig.html:98
+#: src/templates/sysconfig.html:118 src/templates/sysconfig.html:125
 #: src/templates/sysconfig.html:140 src/templates/sysconfig.html:146
-#: src/templates/sysconfig.html:224 src/templates/sysconfig.html:267
-#: src/templates/sysconfig.html:273 src/templates/sysconfig.html:288
-#: src/templates/sysconfig.html:633 src/templates/sysconfig.html:697
-#: src/templates/sysconfig.html:834 src/templates/ucp.html:292
+#: src/templates/sysconfig.html:152 src/templates/sysconfig.html:230
+#: src/templates/sysconfig.html:273 src/templates/sysconfig.html:279
+#: src/templates/sysconfig.html:294 src/templates/sysconfig.html:639
+#: src/templates/sysconfig.html:703 src/templates/sysconfig.html:840
+#: src/templates/ucp.html:255
 msgid "Yes"
 msgstr "Ja"
 
@@ -32,13 +33,14 @@ msgstr "Ja"
 #: src/templates/admin.html:71 src/templates/admin.html:83
 #: src/templates/admin.html:99 src/templates/editusers.html:114
 #: src/templates/search.html:283 src/templates/search.html:294
-#: src/templates/sysconfig.html:92 src/templates/sysconfig.html:113
-#: src/templates/sysconfig.html:120 src/templates/sysconfig.html:135
+#: src/templates/sysconfig.html:92 src/templates/sysconfig.html:99
+#: src/templates/sysconfig.html:119 src/templates/sysconfig.html:126
 #: src/templates/sysconfig.html:141 src/templates/sysconfig.html:147
-#: src/templates/sysconfig.html:225 src/templates/sysconfig.html:268
-#: src/templates/sysconfig.html:274 src/templates/sysconfig.html:289
-#: src/templates/sysconfig.html:634 src/templates/sysconfig.html:698
-#: src/templates/sysconfig.html:835 src/templates/ucp.html:293
+#: src/templates/sysconfig.html:153 src/templates/sysconfig.html:231
+#: src/templates/sysconfig.html:274 src/templates/sysconfig.html:280
+#: src/templates/sysconfig.html:295 src/templates/sysconfig.html:640
+#: src/templates/sysconfig.html:704 src/templates/sysconfig.html:841
+#: src/templates/ucp.html:256
 msgid "No"
 msgstr "Nein"
 
@@ -47,33 +49,33 @@ msgid "A mandatory field is missing!"
 msgstr "Ein Pflichtfeld fehlt!"
 
 #: src/templates/login.html:110 src/templates/register.html:64
-#: src/templates/sysconfig.html:817
+#: src/templates/sysconfig.html:823
 msgid "Password"
 msgstr "Passwort"
 
 #: src/templates/editusers.html:65 src/templates/editusers.html:178
 #: src/templates/login.html:58 src/templates/register.html:75
-#: src/templates/sysconfig.html:742 src/templates/ucp.html:308
+#: src/templates/sysconfig.html:748 src/templates/ucp.html:271
 msgid "Firstname"
 msgstr "Vorname"
 
 #: src/templates/editusers.html:71 src/templates/editusers.html:184
 #: src/templates/login.html:61 src/templates/register.html:81
-#: src/templates/sysconfig.html:745 src/templates/ucp.html:313
+#: src/templates/sysconfig.html:751 src/templates/ucp.html:276
 msgid "Lastname"
 msgstr "Nachname"
 
 #: src/templates/editusers.html:77 src/templates/editusers.html:172
 #: src/templates/login.html:108 src/templates/register.html:53
-#: src/templates/sysconfig.html:25 src/templates/sysconfig.html:748
+#: src/templates/sysconfig.html:25 src/templates/sysconfig.html:754
 #: src/templates/team.html:8 src/templates/team.html:129
-#: src/templates/ucp.html:271 src/templates/ucp.html:384
+#: src/templates/ucp.html:234 src/templates/ucp.html:347
 msgid "Email"
 msgstr "E-Mail"
 
 #: web/experiments.php:25 src/templates/head.html:66
 #: src/templates/profile.html:41 src/templates/search.html:204
-#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:238
+#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:244
 #: src/templates/team.html:120 src/templates/todolist-panel.html:42
 msgid "Experiment"
 msgid_plural "Experiments"
@@ -84,27 +86,25 @@ msgstr[1] "Experimente"
 msgid "Database"
 msgstr "Datenbank"
 
-#: src/services/Transform.php:33 web/team.php:30 src/templates/admin.html:22
-#: src/templates/admin.html:91 src/templates/admin.html:107
-#: src/templates/editusers.html:162 src/templates/head.html:72
+#: web/team.php:30 src/templates/admin.html:22 src/templates/admin.html:91
+#: src/templates/admin.html:107 src/templates/editusers.html:162
+#: src/templates/head.html:72 src/templates/permissions-edit-modal.html:30
 #: src/templates/register.html:42 src/templates/todolist-panel.html:36
 msgid "Team"
 msgstr "Team"
 
-#: src/templates/changelog.html:17 src/templates/pdf.html:28
-#: src/templates/pdf.html:153 src/templates/show.html:166
-#: src/templates/ucp.html:104
+#: src/templates/changelog.html:17 src/templates/field-builder-modal.html:18
+#: src/templates/pdf.html:28 src/templates/pdf.html:151
+#: src/templates/show.html:166 src/templates/ucp.html:67
 msgid "Date"
 msgstr "Datum"
 
-#: src/templates/edit.html:152 src/templates/show.html:169
-#: src/templates/templates-edit.html:26 src/templates/ucp.html:105
+#: src/templates/edit.html:138 src/templates/show.html:169
+#: src/templates/templates-edit.html:26 src/templates/ucp.html:68
 msgid "Title"
 msgstr "Titel"
 
-#: src/templates/admin.html:281 src/templates/edit.html:128
-#: src/templates/pdf.html:37 src/templates/ucp.html:39
-#: src/templates/view.html:167
+#: src/templates/view-permissions.html:4
 msgid "Visibility"
 msgstr "Sichtbarkeit"
 
@@ -114,27 +114,28 @@ msgid_plural "Status"
 msgstr[0] "Status"
 msgstr[1] "Status"
 
-#: src/templates/show-item.html:46 src/templates/sysconfig.html:361
-#: src/templates/sysconfig.html:827 src/templates/ucp.html:138
-#: src/templates/view.html:56 src/templates/view.html:57
-#: src/templates/view.html:168
+#: src/templates/show-item.html:46 src/templates/sysconfig.html:367
+#: src/templates/sysconfig.html:833 src/templates/ucp.html:101
+#: src/templates/view.html:48 src/templates/view.html:49
 msgid "Edit"
 msgstr "Bearbeiten"
 
 #: src/templates/admin.html:125 src/templates/admin.html:185
-#: src/templates/admin.html:214 src/templates/admin.html:313
-#: src/templates/edit.html:185 src/templates/edit.html:230
-#: src/templates/editusers.html:126 src/templates/json-editor.html:13
+#: src/templates/admin.html:214 src/templates/admin.html:307
+#: src/templates/admin.html:398 src/templates/edit.html:174
+#: src/templates/edit.html:219 src/templates/editusers.html:126
+#: src/templates/field-builder-modal.html:64 src/templates/json-editor.html:16
+#: src/templates/permissions-edit-modal.html:80
 #: src/templates/steps-links-edit.html:66 src/templates/sysconfig.html:55
-#: src/templates/sysconfig.html:66 src/templates/sysconfig.html:155
-#: src/templates/sysconfig.html:185 src/templates/sysconfig.html:231
-#: src/templates/sysconfig.html:308 src/templates/sysconfig.html:367
-#: src/templates/sysconfig.html:569 src/templates/sysconfig.html:637
-#: src/templates/sysconfig.html:702 src/templates/sysconfig.html:723
-#: src/templates/sysconfig.html:780 src/templates/sysconfig.html:872
-#: src/templates/sysconfig.html:901 src/templates/templates-edit.html:38
-#: src/templates/ucp.html:248 src/templates/ucp.html:298
-#: src/templates/ucp.html:325 src/templates/view.html:258
+#: src/templates/sysconfig.html:66 src/templates/sysconfig.html:161
+#: src/templates/sysconfig.html:191 src/templates/sysconfig.html:237
+#: src/templates/sysconfig.html:314 src/templates/sysconfig.html:373
+#: src/templates/sysconfig.html:575 src/templates/sysconfig.html:643
+#: src/templates/sysconfig.html:708 src/templates/sysconfig.html:729
+#: src/templates/sysconfig.html:786 src/templates/sysconfig.html:881
+#: src/templates/sysconfig.html:910 src/templates/templates-edit.html:39
+#: src/templates/ucp.html:211 src/templates/ucp.html:261
+#: src/templates/ucp.html:288 src/templates/view.html:275
 msgid "Save"
 msgstr "Speichern"
 
@@ -143,7 +144,7 @@ msgstr "Speichern"
 #: web/app/controllers/SortableAjaxController.php:38
 #: web/app/controllers/SysconfigAjaxController.php:32
 #: web/app/controllers/SysconfigController.php:63
-#: web/app/controllers/UcpController.php:92
+#: web/app/controllers/UcpController.php:95
 msgid "Saved"
 msgstr "Gespeichert"
 
@@ -152,31 +153,32 @@ msgstr "Gespeichert"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/templates/ucp.html:131 src/templates/ucp.html:360
+#: src/templates/ucp.html:94 src/templates/ucp.html:323
 msgid "Action"
 msgstr "Aktion"
 
-#: src/templates/ucp.html:132
+#: src/templates/ucp.html:95
 msgid "Shortcut"
 msgstr "Abkürzung"
 
 #: src/templates/admin.html:139 src/templates/admin.html:241
 #: src/templates/create-new.html:38 src/templates/show-templates-edit.html:21
-#: src/templates/ucp.html:134
+#: src/templates/ucp.html:97
 msgid "Create"
 msgstr "Erstellen"
 
-#: src/templates/ucp.html:142
+#: src/templates/ucp.html:105
 msgid "Submit"
 msgstr "Abschicken"
 
-#: src/templates/ucp.html:146
+#: src/templates/ucp.html:109
 msgid "TODO list"
 msgstr "TODO-Liste"
 
 #: src/templates/admin.html:175 src/templates/admin.html:199
-#: src/templates/admin.html:266 src/templates/team.html:128
-#: src/templates/ucp.html:342 src/templates/ucp.html:357
+#: src/templates/admin.html:266 src/templates/field-builder-modal.html:25
+#: src/templates/field-builder-modal.html:26 src/templates/team.html:128
+#: src/templates/ucp.html:305 src/templates/ucp.html:320
 msgid "Name"
 msgstr "Name"
 
@@ -184,8 +186,9 @@ msgstr "Name"
 msgid "There are users waiting for validation of their account:"
 msgstr "Benutzer warten auf Überprüfung ihres Kontos:"
 
-#: src/templates/admin.html:24 src/templates/search.html:237
-#: src/templates/sysconfig.html:22
+#: src/templates/admin.html:24 src/templates/permissions-edit-modal.html:44
+#: src/templates/search.html:237 src/templates/sysconfig.html:22
+#: src/templates/view-permissions.html:29
 msgid "Users"
 msgstr "Benutzer"
 
@@ -217,7 +220,7 @@ msgstr "Alle Experimente mit diesem Status vor dem Löschen dieses Status entfer
 msgid "Default status"
 msgstr "Standardstatus"
 
-#: src/models/ItemsTypes.php:108
+#: src/models/ItemsTypes.php:112
 msgid "Remove all database items with this type before deleting this type."
 msgstr "Lösche alle Datenbankelemente dieses Typs bevor der Typ gelöscht wird."
 
@@ -230,19 +233,20 @@ msgid "Save new password"
 msgstr "Neues Passwort speichern"
 
 #: src/langs/js-strings.php:15 src/models/AbstractTemplateEntity.php:24
-#: src/models/Experiments.php:53 src/models/Items.php:42
+#: src/models/Experiments.php:54 src/models/Items.php:48
 #: src/models/Scheduler.php:76 src/models/Status.php:53
-#: src/models/TeamGroups.php:43 src/services/Filter.php:106
-#: src/services/ImportEln.php:85
+#: src/models/TeamGroups.php:42 src/services/Filter.php:107
+#: src/services/ImportEln.php:84
 msgid "Untitled"
 msgstr "Unbenannt"
 
-#: src/models/AbstractEntity.php:158
+#: src/models/AbstractEntity.php:162
 msgid "You don't have the rights to lock/unlock this."
 msgstr "Sie verfügen nicht über die Rechte zum Sperren / Entsperren."
 
-#: web/login.php:31 src/templates/login.html:87 src/templates/login.html:146
-#: src/templates/login.html:177 src/templates/login.html:201
+#: web/login.php:31 src/templates/login.html:87 src/templates/login.html:108
+#: src/templates/login.html:146 src/templates/login.html:177
+#: src/templates/login.html:201
 msgid "Login"
 msgstr "Anmelden"
 
@@ -320,17 +324,17 @@ msgstr "Zeitstempel"
 msgid "Security"
 msgstr "Sicherheit"
 
-#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:236
+#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:242
 #: src/templates/team.html:120 src/templates/team.html:124
 msgid "Members"
 msgstr "Mitglieder"
 
-#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:242
+#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:248
 #: src/templates/team.html:120 src/templates/todolist-panel.html:49
 msgid "Items"
 msgstr "Elemente"
 
-#: src/templates/sysconfig.html:242
+#: src/templates/sysconfig.html:248
 msgid "Created"
 msgstr "Erstellt"
 
@@ -342,39 +346,39 @@ msgstr "Benutzername für externen Zeitstempeldienst:"
 msgid "Password for external timestamping service:"
 msgstr "Passwort für externen Zeitstempeldienst:"
 
-#: src/templates/sysconfig.html:286
+#: src/templates/sysconfig.html:292
 msgid "Users need validation by admin after registration:"
 msgstr "Benutzer müssen nach der Anmeldung von einem Administrator bestätigt werden:"
 
-#: src/templates/sysconfig.html:291
+#: src/templates/sysconfig.html:297
 msgid "Set to yes for added security."
 msgstr "Auf \"Ja\" stellen für zusätzliche Sicherheit."
 
-#: src/templates/sysconfig.html:298
+#: src/templates/sysconfig.html:304
 msgid "Number of allowed login attempts:"
 msgstr "Anzahl der zulässigen Login-Versuche:"
 
-#: src/templates/sysconfig.html:300
+#: src/templates/sysconfig.html:306
 msgid "3 might be too few. See for yourself :)"
 msgstr "3 könnte zu wenig sein. Überzeugen Sie sich selbst :)"
 
-#: src/templates/sysconfig.html:342
+#: src/templates/sysconfig.html:348
 msgid "Address of the SMTP server:"
 msgstr "Adresse des SMTP-Servers:"
 
-#: src/templates/sysconfig.html:345
+#: src/templates/sysconfig.html:351
 msgid "SMTP Port:"
 msgstr "SMTP-Port:"
 
-#: src/templates/sysconfig.html:347
+#: src/templates/sysconfig.html:353
 msgid "Default is 587."
 msgstr "Der Standardwert ist 587."
 
-#: src/templates/sysconfig.html:349
+#: src/templates/sysconfig.html:355
 msgid "SMTP username:"
 msgstr "SMTP-Benutzername:"
 
-#: src/templates/sysconfig.html:351
+#: src/templates/sysconfig.html:357
 msgid "SMTP password"
 msgstr "SMTP-Passwort"
 
@@ -388,7 +392,7 @@ msgstr "Benutzerdefinierte Tastenkürzel stehen zur Verfügung (%sKontrollzentru
 
 #: src/templates/head.html:199
 msgid "You can duplicate experiments in one click."
-msgstr "Sie können Experimente mit einem Klick zu duplizieren."
+msgstr "Sie können Experimente mit einem Klick duplizieren."
 
 #: src/templates/head.html:202
 msgid "Click a tag to list all items with this tag."
@@ -410,23 +414,23 @@ msgstr "Einstellungen"
 msgid "Templates"
 msgstr "Vorlagen"
 
-#: src/templates/ucp.html:263
+#: src/templates/ucp.html:226
 msgid "Modify your personal informations"
 msgstr "Ändern Sie Ihre persönlichen Informationen"
 
-#: src/templates/ucp.html:303
+#: src/templates/ucp.html:266
 msgid "Modify your identity"
 msgstr "Ändern Sie Ihre Identität"
 
-#: src/templates/ucp.html:275
+#: src/templates/ucp.html:238
 msgid "Modify your password"
 msgstr "Ändern Sie Ihr Passwort"
 
-#: src/templates/change-pass.html:20 src/templates/ucp.html:276
+#: src/templates/change-pass.html:20 src/templates/ucp.html:239
 msgid "New password"
 msgstr "Neues Passwort"
 
-#: src/templates/ucp.html:85
+#: src/templates/ucp.html:48
 msgid "Items per page:"
 msgstr "Elemente pro Seite:"
 
@@ -434,19 +438,19 @@ msgstr "Elemente pro Seite:"
 msgid "Create new"
 msgstr "Neu erstellen"
 
-#: src/templates/ucp.html:69
+#: src/templates/ucp.html:32
 msgid "Language"
 msgstr "Sprache"
 
-#: src/templates/pdf.html:138 src/templates/view.html:288
+#: src/templates/pdf.html:136 src/templates/view.html:305
 msgid "Unique eLabID:"
 msgstr "Einzigartige eLabID:"
 
-#: src/templates/view.html:234
+#: src/templates/view.html:251
 msgid "Comments"
 msgstr "Kommentare"
 
-#: src/templates/view.html:256
+#: src/templates/view.html:273
 msgid "Add a comment"
 msgstr "Einen Kommentar hinzufügen"
 
@@ -466,18 +470,18 @@ msgstr "Keine Statistik vorhanden."
 msgid "Filter status"
 msgstr "Filterstatus"
 
-#: src/templates/edit.html:158 src/templates/filter-order-sort.html:68
+#: src/templates/edit.html:144 src/templates/filter-order-sort.html:68
 #: src/templates/pdf.html:31 src/templates/show.html:178
 #: src/templates/templates-edit.html:6
 msgid "Tags"
 msgstr "Tags"
 
-#: src/templates/edit.html:170 src/templates/show.html:106
-#: src/templates/templates-edit.html:21
+#: src/templates/admin.html:396 src/templates/edit.html:156
+#: src/templates/show.html:106 src/templates/templates-edit.html:21
 msgid "Add a tag"
 msgstr "Tag hinzufügen"
 
-#: src/models/TeamGroups.php:111
+#: src/enums/BasePermissions.php:29
 msgid "Only me"
 msgstr "Nur ich"
 
@@ -533,8 +537,9 @@ msgstr "Wenn Sie Strg+Umschalt+D im Editor drücken, wird das Datum unter dem Cu
 msgid "Go to user control panel"
 msgstr "Gehe zu Benutzereinstellungen"
 
-#: src/templates/sysconfig.html:21 src/templates/sysconfig.html:44
-#: src/templates/sysconfig.html:751
+#: src/templates/permissions-edit-modal.html:24 src/templates/sysconfig.html:21
+#: src/templates/sysconfig.html:44 src/templates/sysconfig.html:757
+#: src/templates/view-permissions.html:11
 msgid "Teams"
 msgstr "Teams"
 
@@ -546,13 +551,13 @@ msgstr "URL des externen Zeitstempeldienstes:"
 msgid "Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done."
 msgstr "Registrierung erfolgreich :)<br>Ihr Zugang muss nun durch einen Administrator aktiviert werden.<br>Sie werden eine E-Mail erhalten, sobald dies geschehen ist."
 
-#: src/templates/pdf.html:96 src/templates/uploads.html:28
+#: src/templates/pdf.html:94 src/templates/uploads.html:28
 msgid "Attached file"
 msgid_plural "Attached files"
 msgstr[0] "Angehängte Datei"
 msgstr[1] "Angehängte Dateien"
 
-#: src/templates/edit.html:196
+#: src/templates/edit.html:185
 msgid "Attach a file"
 msgstr "Datei anhängen"
 
@@ -560,7 +565,7 @@ msgstr "Datei anhängen"
 msgid "Drop files here to upload"
 msgstr "Dateien zum Hochladen hier fallen lassen"
 
-#: src/models/Revisions.php:104
+#: src/models/Revisions.php:105
 msgid "You cannot restore a revision of a locked item!"
 msgstr "Sie können keine Revision eines gesperrten Elementes wiederherstellen!"
 
@@ -572,7 +577,7 @@ msgstr "Mit dem Tag"
 msgid "This should be the URL used for %sRFC 3161%s-compliant timestamping requests."
 msgstr "URL für %sRFC 3161%s-konforme Zeitstempelanfragen."
 
-#: src/controllers/ImportController.php:40
+#: src/controllers/ImportController.php:41
 msgid "item imported successfully."
 msgid_plural "items imported successfully."
 msgstr[0] "Element erfolgreich importiert."
@@ -582,7 +587,7 @@ msgstr[1] "Elemente erfolgreich importiert."
 msgid "Installed version:"
 msgstr "Installierte Version:"
 
-#: src/templates/ucp.html:195
+#: src/templates/ucp.html:158
 msgid "Miscellaneous"
 msgstr "Verschiedenes"
 
@@ -606,15 +611,15 @@ msgstr "Anmeldung merken"
 msgid "New password inserted. You can now login."
 msgstr "Das neue Password wurde eingefügt. Sie können sich jetzt anmelden."
 
-#: src/templates/show-templates-edit.html:70 src/templates/view.html:83
+#: src/templates/show-templates-edit.html:76 src/templates/view.html:75
 msgid "Lock/Unlock item"
 msgstr "Sperren/entsperren des Elements"
 
-#: src/templates/sysconfig.html:374
+#: src/templates/sysconfig.html:380
 msgid "Send a test email"
 msgstr "Test-E-Mail versenden"
 
-#: src/templates/sysconfig.html:377 src/templates/sysconfig.html:391
+#: src/templates/sysconfig.html:383 src/templates/sysconfig.html:397
 #: src/templates/team.html:178
 msgid "Send"
 msgstr "Versenden"
@@ -624,7 +629,7 @@ msgid "Filter by type"
 msgstr "Sortiere nach Typ"
 
 #: src/templates/edit.html:105 src/templates/show.html:30
-#: src/templates/show.html:175 src/templates/ucp.html:103
+#: src/templates/show.html:175 src/templates/ucp.html:66
 msgid "Category"
 msgstr "Kategorie"
 
@@ -633,11 +638,11 @@ msgstr "Kategorie"
 msgid "Rating"
 msgstr "Bewertung"
 
-#: src/templates/ucp.html:114
+#: src/templates/ucp.html:77
 msgid "DESC"
 msgstr "Absteigend"
 
-#: src/templates/ucp.html:113
+#: src/templates/ucp.html:76
 msgid "ASC"
 msgstr "Aufsteigend"
 
@@ -646,7 +651,7 @@ msgid "Add a New Status"
 msgstr "Neuen Status hinzufügen"
 
 #: src/templates/admin.html:180 src/templates/admin.html:204
-#: src/templates/admin.html:271 src/templates/edit.html:220
+#: src/templates/admin.html:271 src/templates/edit.html:209
 msgid "Color"
 msgstr "Farbe"
 
@@ -655,13 +660,13 @@ msgid "Edit an Existing Status"
 msgstr "Einen existierenden Status bearbeiten"
 
 #: src/templates/admin.html:148 src/templates/admin.html:153
-#: src/templates/admin.html:218 src/templates/admin.html:314
-#: src/templates/admin.html:412 src/templates/edit.html:80
+#: src/templates/admin.html:218 src/templates/admin.html:308
+#: src/templates/admin.html:411 src/templates/edit.html:80
 #: src/templates/show.html:139 src/templates/steps-links-edit.html:136
-#: src/templates/steps-links-edit.html:194 src/templates/sysconfig.html:211
-#: src/templates/sysconfig.html:583 src/templates/team.html:69
-#: src/templates/ucp.html:370 src/templates/upload-dropdown-menu.html:70
-#: src/templates/view.html:245
+#: src/templates/steps-links-edit.html:194 src/templates/sysconfig.html:217
+#: src/templates/sysconfig.html:589 src/templates/team.html:69
+#: src/templates/ucp.html:333 src/templates/upload-dropdown-menu.html:70
+#: src/templates/view.html:262
 msgid "Delete"
 msgstr "Löschen"
 
@@ -673,39 +678,39 @@ msgstr "Buchbar"
 msgid "Database Items Types"
 msgstr "Datenbank Element Typen"
 
-#: src/templates/sysconfig.html:182
+#: src/templates/sysconfig.html:188
 msgid "Add a New Team"
 msgstr "Neues Team hinzufügen"
 
-#: src/templates/sysconfig.html:190
+#: src/templates/sysconfig.html:196
 msgid "Edit Existing Teams"
 msgstr "Bestehende Teams bearbeiten"
 
-#: src/templates/sysconfig.html:383
+#: src/templates/sysconfig.html:389
 msgid "Send a Mass Email"
 msgstr "Gruppen-E-Mail versenden"
 
-#: src/templates/sysconfig.html:385
+#: src/templates/sysconfig.html:391
 msgid "Email Subject"
 msgstr "E-Mail Betreff"
 
-#: src/templates/sysconfig.html:388
+#: src/templates/sysconfig.html:394
 msgid "Email Body"
 msgstr "E-Mail Text"
 
-#: src/classes/Tools.php:189
+#: src/classes/Tools.php:190
 msgid "This section is out of your reach!"
 msgstr "Dieser Bereich ist ausserhalb Ihrer Zuständigkeit!"
 
-#: src/classes/Tools.php:191
+#: src/classes/Tools.php:192
 msgid "An error occurred!"
 msgstr "Ein Fehler ist aufgetreten!"
 
-#: src/templates/uploads.html:118
+#: src/templates/uploads.html:120
 msgid "Stick"
 msgstr "Stab"
 
-#: src/templates/uploads.html:100
+#: src/templates/uploads.html:102
 msgid "Style"
 msgstr "Stil"
 
@@ -729,11 +734,11 @@ msgstr "Keine buchbaren Elemente."
 msgid "Select an equipment"
 msgstr "Wähle ein Gerät aus"
 
-#: src/templates/ucp.html:83
+#: src/templates/ucp.html:46
 msgid "Display"
 msgstr "Bildschirm"
 
-#: src/templates/ucp.html:128
+#: src/templates/ucp.html:91
 msgid "Keyboard Shortcuts"
 msgstr "Tastenkürzel"
 
@@ -747,7 +752,7 @@ msgid "Validate"
 msgstr "Bestätigen"
 
 #: src/templates/admin.html:23 src/templates/profile.html:17
-#: src/templates/search.html:242
+#: src/templates/search.html:242 src/templates/view-permissions.html:20
 msgid "Groups"
 msgstr "Gruppen"
 
@@ -783,6 +788,7 @@ msgstr "Verwalte Benutzergruppen"
 msgid "Create a group"
 msgstr "Erstelle eine Gruppe"
 
+#: src/templates/permissions-edit-modal.html:57
 #: src/templates/todolist-panel.html:10 src/templates/todolist-panel.html:12
 #: src/templates/todolist-panel.html:13
 msgid "Add"
@@ -800,35 +806,35 @@ msgstr "Benutzerstatistik"
 msgid "Address of the Proxy:"
 msgstr "Adresse des Proxy:"
 
-#: src/templates/sysconfig.html:164
+#: src/templates/sysconfig.html:170
 msgid "Operating System"
 msgstr "Betriebssystem"
 
-#: src/templates/sysconfig.html:165
+#: src/templates/sysconfig.html:171
 msgid "PHP Version"
 msgstr "PHP Version"
 
-#: src/templates/sysconfig.html:167
+#: src/templates/sysconfig.html:173
 msgid "Largest integer supported"
 msgstr "Größte unterstütze Ganzahl (integer)"
 
-#: src/templates/sysconfig.html:168
+#: src/templates/sysconfig.html:174
 msgid "PHP configuration directory"
 msgstr "PHP Konfigurationsverzeichnis"
 
-#: src/templates/sysconfig.html:259
+#: src/templates/sysconfig.html:265
 msgid "Timestamping Configuration"
 msgstr "Zeitstempeleinstellungen"
 
-#: src/templates/sysconfig.html:280
+#: src/templates/sysconfig.html:286
 msgid "Security Settings"
 msgstr "Sicherheits Einstellungen"
 
-#: src/templates/sysconfig.html:332
+#: src/templates/sysconfig.html:338
 msgid "E-mail Settings"
 msgstr "E-Mail-Einstellungen"
 
-#: src/templates/sysconfig.html:339
+#: src/templates/sysconfig.html:345
 msgid "Sender address:"
 msgstr "Absender:"
 
@@ -848,7 +854,7 @@ msgstr "Und die Sichtbarkeit ist:"
 msgid "Select visibility"
 msgstr "Sichtbarkeit wählen"
 
-#: src/services/Transform.php:32 src/templates/admin.html:90
+#: src/enums/BasePermissions.php:26 src/templates/admin.html:90
 #: src/templates/admin.html:106
 msgid "Organization"
 msgstr "Organisation"
@@ -865,11 +871,11 @@ msgstr "Bytes"
 msgid "Login through your institution"
 msgstr "Über Ihre Institution anmelden"
 
-#: src/templates/ucp.html:349
+#: src/templates/ucp.html:312
 msgid "Generate an API Key"
 msgstr "Erstelle API-Schlüssel"
 
-#: src/templates/view.html:65 src/templates/view.html:66
+#: src/templates/view.html:57 src/templates/view.html:58
 msgid "Duplicate"
 msgstr "Duplizieren"
 
@@ -878,13 +884,13 @@ msgstr "Duplizieren"
 msgid "Show related"
 msgstr "Verwandte anzeigen"
 
-#: src/templates/view.html:10 src/templates/view.html:110
-#: src/templates/view.html:111
+#: src/templates/view.html:10 src/templates/view.html:102
+#: src/templates/view.html:103
 msgid "Timestamp Experiment"
 msgstr "Experiment zeitstempeln"
 
 #: src/templates/show-item.html:37 src/templates/show.html:172
-#: src/templates/view.html:199
+#: src/templates/view.html:215
 msgid "Next step"
 msgstr "Nächster Schritt"
 
@@ -893,62 +899,62 @@ msgstr "Nächster Schritt"
 msgid "Add a step"
 msgstr "Einen Schritt hinzufügen"
 
-#: src/templates/edit.html:206
+#: src/templates/edit.html:195
 msgid "Draw something"
 msgstr "Etwas zeichnen"
 
-#: src/templates/edit.html:229 src/templates/json-editor.html:6
-#: src/templates/json-editor.html:29 src/templates/sysconfig.html:56
-#: src/templates/sysconfig.html:67 src/templates/sysconfig.html:317
-#: src/templates/sysconfig.html:323 src/templates/sysconfig.html:724
+#: src/templates/edit.html:218 src/templates/json-editor.html:9
+#: src/templates/json-editor.html:32 src/templates/sysconfig.html:56
+#: src/templates/sysconfig.html:67 src/templates/sysconfig.html:323
+#: src/templates/sysconfig.html:329 src/templates/sysconfig.html:730
 msgid "Clear"
 msgstr "Zurücksetzen"
 
-#: src/templates/sysconfig.html:356 src/templates/sysconfig.html:822
+#: src/templates/sysconfig.html:362 src/templates/sysconfig.html:828
 msgid "A password is already set."
 msgstr "Ein Passwort wurde bereits festgelegt."
 
-#: src/templates/sysconfig.html:357 src/templates/sysconfig.html:823
+#: src/templates/sysconfig.html:363 src/templates/sysconfig.html:829
 msgid "%sClear it%s or change it below:"
 msgstr "%sLeeren %s oder ändern Sie es weiter unten:"
 
-#: src/templates/ucp.html:101
+#: src/templates/ucp.html:64
 msgid "Order by:"
 msgstr "Sortieren nach:"
 
-#: src/templates/ucp.html:112
+#: src/templates/ucp.html:75
 msgid "Use default"
 msgstr "Benutze Vorgabe"
 
-#: src/templates/pdf.html:120 src/templates/ucp.html:106
+#: src/templates/pdf.html:118 src/templates/ucp.html:69
 msgid "Comment"
 msgid_plural "Comments"
 msgstr[0] "Kommentar"
 msgstr[1] "Kommentare"
 
-#: src/templates/ucp.html:110
+#: src/templates/ucp.html:73
 msgid "Sort:"
 msgstr "Sortieren:"
 
-#: src/templates/ucp.html:129
+#: src/templates/ucp.html:92
 msgid "Only lowercase letters are allowed."
 msgstr "Nur Kleinbuchstaben sind erlaubt."
 
-#: src/templates/ucp.html:219
+#: src/templates/ucp.html:182
 msgid "Disable the rich text editor and write Markdown directly"
 msgstr "Deaktiviere visuellen Texteditor und aktiviere direkte Verwendung von Markdown-Syntax"
 
-#: src/templates/ucp.html:229
+#: src/templates/ucp.html:192
 msgid "Default visibility for new experiments"
 msgstr "Vorgegebene Sichtbarkeit neuer Experimente"
 
 #: src/templates/admin.html:92 src/templates/admin.html:108
-#: src/templates/changelog.html:18 src/templates/pdf.html:154
+#: src/templates/changelog.html:18 src/templates/pdf.html:152
 #: src/templates/todolist-panel.html:29
 msgid "User"
 msgstr "Benutzer"
 
-#: src/templates/templates-edit.html:29
+#: src/templates/templates-edit.html:30
 msgid "Template content"
 msgstr "Vorlageninhalt"
 
@@ -956,7 +962,7 @@ msgstr "Vorlageninhalt"
 msgid "Please finalize install: %slink to documentation%s."
 msgstr "Bitte schließen Sie die Installation ab: %sLink zur Dokumentation%s."
 
-#: src/templates/sysconfig.html:215
+#: src/templates/sysconfig.html:221
 msgid "Archive"
 msgstr "Archiv"
 
@@ -964,15 +970,15 @@ msgstr "Archiv"
 msgid "If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128"
 msgstr "Falls Sie sich hinter einer Firewall/einem Proxy befinden, geben Sie hier dessen Adresse ein. Beispiel: http://proxy.beispiel.de:3128"
 
-#: src/templates/sysconfig.html:132
+#: src/templates/sysconfig.html:138
 msgid "Enable local account creation:"
 msgstr "Aktiviere die Erstellung lokaler Benutzerzugänge:"
 
-#: src/templates/sysconfig.html:144
+#: src/templates/sysconfig.html:150
 msgid "Show local login form:"
 msgstr "Zeige lokales Anmeldeformular:"
 
-#: src/templates/sysconfig.html:149
+#: src/templates/sysconfig.html:155
 msgid "You can still show the local login form by appending ?letmein to the login page URL."
 msgstr "Sie können die lokale Anmeldeseite immer anzeigen, indem Sie ?letmein an die Adresse der Anmeldeseite anhängen."
 
@@ -1049,23 +1055,23 @@ msgstr "Import in Ihr Profil"
 msgid "Anonymous visitors can see database items:"
 msgstr "Anonyme Besucher können Elemente aus der Datenbank sehen:"
 
-#: src/templates/ucp.html:154
+#: src/templates/ucp.html:117
 msgid "PDF configuration"
 msgstr "PDF Konfiguration"
 
-#: src/templates/ucp.html:157
+#: src/templates/ucp.html:120
 msgid "Select paper format for PDF"
 msgstr "Auswahl des Papierformat für PDF"
 
-#: src/templates/ucp.html:175
+#: src/templates/ucp.html:138
 msgid "Add attached files summary to the pdf"
 msgstr "Übersicht der angehängten Dateien dem PDF hinzufügen"
 
-#: src/templates/ucp.html:201
+#: src/templates/ucp.html:164
 msgid "Show experiments from the team on the Experiments page"
 msgstr "Experimente des Teams auf der Experimente-Seite anzeigen"
 
-#: src/templates/sysconfig.html:110
+#: src/templates/sysconfig.html:116
 msgid "Allow anonymous visitors to login and see Public experiments:"
 msgstr "Login und Ansicht öffentlicher Experimente für anonyme Besucher erlauben:"
 
@@ -1085,36 +1091,36 @@ msgstr "Nächste Seite"
 msgid "Upload a new version of this file"
 msgstr "Neue Version dieser Datei hochladen"
 
-#: src/templates/uploads.html:106
+#: src/templates/uploads.html:108
 msgid "Cartoon (proteins only)"
 msgstr "Cartoon (nur für Proteine)"
 
-#: src/templates/uploads.html:109
+#: src/templates/uploads.html:111
 msgid "Cross"
 msgstr "Kreuzen"
 
-#: src/templates/uploads.html:112
+#: src/templates/uploads.html:114
 msgid "Line"
 msgstr "Zeile"
 
-#: src/templates/uploads.html:115
+#: src/templates/uploads.html:117
 msgid "Sphere"
 msgstr "Sphäre"
 
-#: src/templates/sysconfig.html:169
+#: src/templates/sysconfig.html:175
 msgid "Maximum file size for uploaded files"
 msgstr "Maximale Größe für hochgeladene Dateien"
 
-#: src/templates/sysconfig.html:171
+#: src/templates/sysconfig.html:177
 msgid "Timezone"
 msgstr "Zeitzone"
 
-#: src/templates/sysconfig.html:161 src/templates/team.html:6
+#: src/templates/sysconfig.html:167 src/templates/team.html:6
 msgid "Information"
 msgstr "Information"
 
-#: src/templates/edit.html:76 src/templates/show-templates-edit.html:80
-#: src/templates/view.html:277
+#: src/templates/edit.html:76 src/templates/show-templates-edit.html:86
+#: src/templates/view.html:294
 msgid "revision available"
 msgid_plural "revisions available"
 msgstr[0] "Revision verfügbar"
@@ -1125,15 +1131,16 @@ msgstr[1] "Revisionen verfügbar"
 msgid "completed"
 msgstr "abgeschlossen"
 
-#: src/templates/view.html:239
+#: src/templates/view.html:256
 msgid "commented"
 msgstr "kommentiert"
 
 #: src/templates/edit.html:50 src/templates/favtags-panel.html:3
-#: src/templates/footer.html:87 src/templates/head.html:210
-#: src/templates/login.html:24 src/templates/register.html:22
+#: src/templates/field-builder-modal.html:63 src/templates/footer.html:87
+#: src/templates/head.html:210 src/templates/login.html:24
+#: src/templates/permissions-edit-modal.html:79 src/templates/register.html:22
 #: src/templates/search.html:189 src/templates/todolist-panel.html:2
-#: src/templates/ucp.html:56 src/templates/uploads.html:16
+#: src/templates/uploads.html:16
 msgid "Close"
 msgstr "Schließen"
 
@@ -1141,7 +1148,7 @@ msgstr "Schließen"
 msgid "Todolist"
 msgstr "To-do-Liste"
 
-#: src/templates/ucp.html:169
+#: src/templates/ucp.html:132
 msgid "Enable Chinese, Japanese and Korean fonts in PDF generation (WARNING: this will dramatically increase the file size unless you disable PDF/A)"
 msgstr "Aktiviere chinesische, japanische und koreanische Schriftarten in der PDF-Erstellung (WARNUNG: Diese Einstellung wird die Dateigröße drastisch erhöhen, sofern PDF/A nicht deaktiviert wird)"
 
@@ -1154,7 +1161,7 @@ msgstr "Import"
 msgid "Tag manager"
 msgstr "Tag Manager"
 
-#: src/templates/admin.html:398
+#: src/templates/admin.html:392
 msgid "Manage tags of the team"
 msgstr "Tags des Teams verwalten"
 
@@ -1193,35 +1200,35 @@ msgstr "Bericht generieren"
 msgid "Language:"
 msgstr "Sprache:"
 
-#: src/templates/sysconfig.html:115
+#: src/templates/sysconfig.html:121
 msgid "This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible."
 msgstr "Auf diese Weise können sich Benutzer ohne Konto in ein Team einloggen und die Experimente öffentlich anzeigen. Die Administratoren jedes Teams können auswählen, ob Datenbankelemente angezeigt werden sollen oder nicht."
 
-#: src/templates/sysconfig.html:117
+#: src/templates/sysconfig.html:123
 msgid "Switch this instance in open science mode:"
 msgstr "Schalten Sie diese Instanz in den offenen Wissenschaftsmodus:"
 
-#: src/templates/sysconfig.html:122
+#: src/templates/sysconfig.html:128
 msgid "This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team."
 msgstr "Dadurch können Suchmaschinen die Website crawlen. Besucher werden automatisch in das angegebene Team eingeloggt."
 
-#: src/templates/sysconfig.html:124
+#: src/templates/sysconfig.html:130
 msgid "Select which team will be open to the world in open science mode:"
 msgstr "Wählen Sie aus, welches Team im Open Science-Modus für die Welt offen sein soll:"
 
-#: src/templates/sysconfig.html:130
+#: src/templates/sysconfig.html:136
 msgid "This has no effect if open science mode is disabled."
 msgstr "Dies hat keine Auswirkung, wenn der offene Wissenschaftsmodus deaktiviert ist."
 
-#: src/templates/sysconfig.html:337
+#: src/templates/sysconfig.html:343
 msgid "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific %ssmtp2go.com%s account and add the information here."
 msgstr "Ohne eine gültige Methode zum Senden von E-Mails können Benutzer ihr Passwort nicht zurücksetzen. Es wird empfohlen, ein bestimmtes %ssmtp2go.com%s -Konto zu erstellen und die Informationen hier hinzuzufügen."
 
-#: src/templates/sysconfig.html:713
+#: src/templates/sysconfig.html:719
 msgid "Adjust your privacy policy notice"
 msgstr "Passen Sie Ihre Datenschutzerklärung an"
 
-#: src/templates/sysconfig.html:716
+#: src/templates/sysconfig.html:722
 msgid "Note: the text below is a template and must be edited and saved."
 msgstr "Hinweis: Der folgende Text ist eine Vorlage und muss bearbeitet und gespeichert werden."
 
@@ -1261,15 +1268,15 @@ msgstr "von"
 msgid "Experiment was timestamped by %s on %s at %s"
 msgstr "Das Experiment wurde von %s am %s um %s mit einem Zeitstempel versehen"
 
-#: src/templates/view.html:74 src/templates/view.html:75
+#: src/templates/view.html:66 src/templates/view.html:67
 msgid "Book item"
 msgstr "Element reservieren"
 
-#: src/templates/ucp.html:122
+#: src/templates/ucp.html:85
 msgid "Use single column layout"
 msgstr "Verwenden Sie ein einspaltiges Layout"
 
-#: src/templates/ucp.html:264
+#: src/templates/ucp.html:227
 msgid "Enter your password to edit your profile."
 msgstr "Geben Sie Ihr Passwort ein, um Ihr Profil zu bearbeiten."
 
@@ -1277,31 +1284,31 @@ msgstr "Geben Sie Ihr Passwort ein, um Ihr Profil zu bearbeiten."
 msgid "Info"
 msgstr "Info"
 
-#: src/templates/ucp.html:16 src/templates/ucp.html:337
+#: src/templates/ucp.html:16 src/templates/ucp.html:300
 msgid "API keys"
 msgstr "API-Schlüssel"
 
-#: src/templates/ucp.html:352
+#: src/templates/ucp.html:315
 msgid "Existing keys"
 msgstr "Bestehende Schlüssel"
 
-#: src/templates/ucp.html:344 src/templates/ucp.html:358
+#: src/templates/ucp.html:307 src/templates/ucp.html:321
 msgid "Permissions"
 msgstr "Berechtigungen"
 
-#: src/templates/ucp.html:359
+#: src/templates/ucp.html:322
 msgid "Creation date"
 msgstr "Erstellungsdatum"
 
-#: src/templates/ucp.html:347 src/templates/ucp.html:368
+#: src/templates/ucp.html:310 src/templates/ucp.html:331
 msgid "Read/Write"
 msgstr "Lesen/Schreiben"
 
-#: src/templates/ucp.html:346 src/templates/ucp.html:368
+#: src/templates/ucp.html:309 src/templates/ucp.html:331
 msgid "Read Only"
 msgstr "Schreibgeschützt"
 
-#: src/templates/ucp.html:340
+#: src/templates/ucp.html:303
 msgid "Create new key"
 msgstr "Neuen Schlüssel erstellen"
 
@@ -1345,7 +1352,7 @@ msgstr "Die angegebene E-Mail-Adresse ist ungültig."
 msgid "Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: "
 msgstr "Hallo. Ihr Konto bei eLabFTW wurde von einem Administrator validiert. Folgen Sie diesem Link, um sich anzumelden: "
 
-#: src/controllers/AbstractEntityController.php:208
+#: src/controllers/AbstractEntityController.php:223
 msgid "This item is locked. You cannot edit it!"
 msgstr "Dieses Element ist gesperrt. Sie können es nicht bearbeiten!"
 
@@ -1354,20 +1361,12 @@ msgstr "Dieses Element ist gesperrt. Sie können es nicht bearbeiten!"
 msgid "Input is too short! (minimum: %d)"
 msgstr "Die Eingabe ist zu kurz! (minimum: %d)"
 
-#: src/models/TeamGroups.php:107 src/services/Transform.php:31
-#: src/templates/admin.html:89 src/templates/admin.html:105
+#: src/enums/BasePermissions.php:25 src/templates/admin.html:89
+#: src/templates/admin.html:105
 msgid "Public"
 msgstr "Öffentlich"
 
-#: src/models/TeamGroups.php:108
-msgid "Everyone with an account"
-msgstr "Jeder mit einem Account"
-
-#: src/models/TeamGroups.php:109
-msgid "Only the team"
-msgstr "Nur das Team"
-
-#: src/models/AbstractEntity.php:174
+#: src/models/AbstractEntity.php:178
 msgid "This experiment was locked by %s. You don't have the rights to unlock this."
 msgstr "Dieses Experiment wurde von %s gesperrt. Sie haben nicht das Recht, dies freizuschalten."
 
@@ -1379,12 +1378,12 @@ msgstr "Benutzer aus dem Archiv entfernen"
 msgid "Annotate this image"
 msgstr "Kommentieren Sie dieses Bild"
 
-#: src/templates/edit.html:244 src/templates/upload-dropdown-menu.html:39
+#: src/templates/edit.html:233 src/templates/upload-dropdown-menu.html:39
 msgid "Save as image"
 msgstr "Als Bild speichern"
 
-#: src/templates/view.html:99 src/templates/view.html:100
-#: src/templates/view.html:102
+#: src/templates/view.html:91 src/templates/view.html:92
+#: src/templates/view.html:94
 msgid "Share"
 msgstr "Teilen"
 
@@ -1402,9 +1401,9 @@ msgstr "Administratoren können jederzeit Experimente löschen:"
 
 #: src/templates/sysconfig.html:94
 msgid "Setting this to «no» will completely remove the ability to delete experiments for everyone."
-msgstr "Wenn Sie diese Option auf «Nein» setzen, wird die Möglichkeit zum Löschen von Experimenten für alle Benutzer vollständig verhindert."
+msgstr "Wenn Sie diese Option auf \"Nein\" setzen, wird die Möglichkeit zum Löschen von Experimenten für alle Benutzer vollständig verhindert."
 
-#: src/templates/pdf.html:84 src/templates/steps-links-edit.html:4
+#: src/templates/pdf.html:82 src/templates/steps-links-edit.html:4
 #: src/templates/steps-links-view.html:5
 msgid "Steps"
 msgstr "Schritte"
@@ -1413,11 +1412,11 @@ msgstr "Schritte"
 msgid "Results per page"
 msgstr "Ergebnisse pro Seite"
 
-#: src/templates/edit.html:215
+#: src/templates/edit.html:204
 msgid "Stroke width"
 msgstr "Strichbreite"
 
-#: src/templates/edit.html:225
+#: src/templates/edit.html:214
 msgid "Eraser"
 msgstr "Radiergummi"
 
@@ -1429,21 +1428,20 @@ msgstr "Diesen Schritt löschen?"
 msgid "Delete this link?"
 msgstr "Diesen Link löschen?"
 
-#: src/templates/admin.html:292 src/templates/edit.html:140
-#: src/templates/pdf.html:38 src/templates/ucp.html:47
+#: src/templates/view-permissions.html:4
 msgid "Can write"
 msgstr "Darf schreiben"
 
-#: src/templates/json-editor.html:4
+#: src/templates/json-editor.html:5
 msgid "JSON Editor"
 msgstr "JSON Editor"
 
-#: src/templates/show-templates-edit.html:56
+#: src/templates/show-templates-edit.html:68
 #: src/templates/show-templates-view.html:27
 msgid "Create experiment from template"
 msgstr "Erstelle Experiment aus Vorlage"
 
-#: src/templates/admin.html:155
+#: src/templates/admin.html:155 src/templates/permissions-edit-modal.html:55
 msgid "Add user"
 msgstr "Benutzer hinzufügen"
 
@@ -1459,11 +1457,11 @@ msgstr "Alles ausklappen"
 msgid "Clear all"
 msgstr "Alles bereinigen"
 
-#: src/templates/sysconfig.html:293
+#: src/templates/sysconfig.html:299
 msgid "Enforce a domain name for emails"
 msgstr "Erzwinge einen Domain Namen für E-Mails"
 
-#: src/templates/sysconfig.html:295
+#: src/templates/sysconfig.html:301
 msgid "Only email addresses at this domain will be allowed to register an account."
 msgstr "Es ist nur E-Mail Adressen dieser Domain gestattet, Benutzer zu registrieren."
 
@@ -1491,11 +1489,11 @@ msgstr "Anfügen"
 msgid "Delete this event"
 msgstr "Lösche dieses Ereignis"
 
-#: src/templates/uploads.html:172
+#: src/templates/uploads.html:174
 msgid "Load into JSON Editor"
 msgstr "In JSON Editor laden"
 
-#: src/templates/ucp.html:237
+#: src/templates/ucp.html:200
 msgid "Default write permission for new experiments"
 msgstr "Standard Schreibrechte für neue Experimente"
 
@@ -1507,40 +1505,36 @@ msgstr "Nur Mailadressen die mit @%s enden ist es gestattet sich zu registrieren
 msgid "Collapse all"
 msgstr "Alles zusammenfassen"
 
-#: src/services/Check.php:36
+#: src/services/Check.php:40
 msgid "Password must contain at least %d characters."
 msgstr "Das Passwort muss mindestes %d Buchstaben enthalten."
 
-#: src/templates/ucp.html:88
+#: src/templates/ucp.html:51
 msgid "Display size:"
 msgstr "Bildschirmgröße:"
 
-#: src/templates/ucp.html:90
+#: src/templates/ucp.html:53
 msgid "Large (default)"
 msgstr "Groß (Standard)"
 
-#: src/templates/ucp.html:91
+#: src/templates/ucp.html:54
 msgid "Medium"
 msgstr "Mittel"
 
-#: src/templates/ucp.html:92
+#: src/templates/ucp.html:55
 msgid "Small"
 msgstr "Klein"
 
-#: src/templates/ucp.html:30
-msgid "Edit permissions"
-msgstr "Bearbeite Berechtigungen"
-
 #: src/templates/edit.html:64 src/templates/edit.html:67
-#: src/templates/show-templates-edit.html:50
-#: src/templates/show-templates-edit.html:53
+#: src/templates/show-templates-edit.html:62
+#: src/templates/show-templates-edit.html:65
 #: src/templates/show-templates-view.html:16
 #: src/templates/upload-dropdown-menu.html:3
 #: src/templates/upload-dropdown-menu.html:7
 msgid "More options"
 msgstr "Mehr"
 
-#: src/templates/edit.html:70 src/templates/show-templates-edit.html:61
+#: src/templates/edit.html:70
 msgid "Manage Permissions"
 msgstr "Verwalte Berechtigungen"
 
@@ -1548,7 +1542,7 @@ msgstr "Verwalte Berechtigungen"
 msgid "Team(s)"
 msgstr "Team(s)"
 
-#: src/templates/ucp.html:78
+#: src/templates/ucp.html:41
 msgid "Help us to translate eLabFTW!"
 msgstr "Hilf uns eLabFTW zu übersetzen!"
 
@@ -1571,10 +1565,6 @@ msgstr "Passwort vergessen?"
 #: src/templates/login.html:149
 msgid "Don't have an account? %sRegister%s now!"
 msgstr "Noch keinen Benutzerkonto? Jetzt %sregistrieren%s!"
-
-#: src/templates/admin.html:400
-msgid "From here you can edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags."
-msgstr "Lösche oder Bearbeite Tags deines Teams. Klicke auf den Tag um es zu bearbeiten. Klicke abschließend auf den Deduplizieren Knopf um gleiche Tags zusammenzufassen."
 
 #: src/templates/login.html:80
 msgid "Your account is linked to several teams. Select in which team you want to log in"
@@ -1613,22 +1603,22 @@ msgstr "Unbestätigte Benutzer"
 msgid "Member of:"
 msgstr "Mitglied von:"
 
-#: src/templates/sysconfig.html:108
+#: src/templates/sysconfig.html:114
 msgid "Registration and authentication configuration"
 msgstr "Registrierungs- und Authentifizierungseinstellungen"
 
-#: src/templates/sysconfig.html:199
+#: src/templates/sysconfig.html:205
 msgid "Team Name"
 msgstr "Teamname"
 
-#: src/templates/sysconfig.html:204
+#: src/templates/sysconfig.html:210
 msgid "Team Organisation ID"
 msgstr "Organisationskennung des Teams"
 
-#: web/make.php:27 src/templates/admin.html:27 src/templates/admin.html:356
-#: src/templates/admin.html:379 src/templates/admin.html:390
+#: web/make.php:27 src/templates/admin.html:27 src/templates/admin.html:350
+#: src/templates/admin.html:373 src/templates/admin.html:384
 #: src/templates/profile.html:76 src/templates/show.html:96
-#: src/templates/view.html:129 src/templates/view.html:132
+#: src/templates/view.html:121 src/templates/view.html:124
 msgid "Export"
 msgstr "Exportieren"
 
@@ -1652,7 +1642,7 @@ msgstr "Lokale Kontoerstellung ist nicht gestattet!"
 msgid "Profile"
 msgstr "Profil"
 
-#: web/ucp.php:29
+#: web/ucp.php:30
 msgid "User Control Panel"
 msgstr "Benutzereinstellungen"
 
@@ -1664,7 +1654,7 @@ msgstr "eLabFTW-Konfiguration"
 msgid "Revisions"
 msgstr "Revisionen"
 
-#: src/templates/ucp.html:107
+#: src/templates/ucp.html:70
 msgid "Last modified"
 msgstr "Zuletzt geändert"
 
@@ -1676,7 +1666,7 @@ msgstr "Ich stimme der %sDatenschutzerklärung%s zu"
 msgid "User panel"
 msgstr "Benutzerseite"
 
-#: src/templates/edit.html:73 src/templates/show-templates-edit.html:77
+#: src/templates/edit.html:73 src/templates/show-templates-edit.html:83
 msgid "Switch editor"
 msgstr "Editor umschalten"
 
@@ -1708,23 +1698,23 @@ msgstr "Inhalt umschalten"
 msgid "External auth"
 msgstr "Externe Authentifizierung"
 
-#: src/templates/sysconfig.html:96
+#: src/templates/sysconfig.html:102
 msgid "Maximum number of stored revisions per entry:"
 msgstr "Maximale Anzahl an gespeicherten Revisionen pro Eintrag:"
 
-#: src/templates/sysconfig.html:98
+#: src/templates/sysconfig.html:104
 msgid "Setting this to a low value will help keeping the database size small. Setting this to 0 will allow infinite number of revisions stored."
 msgstr "Das Setzen eines niedrigen Wertes hilft, die Datenbankgröße klein zu halten. Das Setzen des Wertes auf 0 ermöglich, dass unendlich viele Revisionen gespeichert werden können."
 
-#: src/templates/sysconfig.html:733
+#: src/templates/sysconfig.html:739
 msgid "External authentication mapping"
 msgstr "Abbildung der externen Authentifizierung"
 
-#: src/templates/sysconfig.html:737
+#: src/templates/sysconfig.html:743
 msgid "If the server manages authentication, then you can provide here the environment variables names for user information."
 msgstr "Wenn der Server die Authentifizierung verwaltet, dann können Sie hier die Namen der Umgebungsvariablen für Benutzerinformationen angeben."
 
-#: src/templates/ucp.html:207
+#: src/templates/ucp.html:170
 msgid "Show templates from the team on the Templates page and in the menus"
 msgstr "Vorlagen des Teams auf der Seite Vorlagen und in den Menüs anzeigen"
 
@@ -1741,17 +1731,17 @@ msgstr "Erstelle JSON"
 #: src/templates/steps-links-view.html:91
 #: src/templates/steps-links-view.html:115 src/templates/todolist-panel.html:6
 #: src/templates/todolist-panel.html:42 src/templates/todolist-panel.html:49
-#: src/templates/uploads.html:28 src/templates/view.html:234
+#: src/templates/uploads.html:28 src/templates/view.html:251
 msgid "Toggle visibility"
 msgstr "Sichtbarkeit umschalten"
 
 #: src/templates/edit.html:85 src/templates/edit.html:86
-#: src/templates/show-item.html:19 src/templates/view.html:47
-#: src/templates/view.html:48
+#: src/templates/show-item.html:19 src/templates/view.html:186
+#: src/templates/view.html:187
 msgid "Toggle pin"
 msgstr "Pin umschalten"
 
-#: src/templates/view.html:283
+#: src/templates/view.html:300
 msgid "Last modified on %s"
 msgstr "Zuletzt verändert am %s"
 
@@ -1767,28 +1757,28 @@ msgstr "Hallo. Ihr Benutzerkonto wurde erstellt, ist aber zur Zeit inaktiv (sie 
 msgid "Note: new user will need to use the \"Forgot password\" button on the login page to set a password."
 msgstr "Hinweis: Der neue Benutzer muss den \"Passwort vergessen\" Knopf auf der Anmeldeseite betätigen um ein Passwort zu erstellen."
 
-#: src/templates/sysconfig.html:222
+#: src/templates/sysconfig.html:228
 msgid "Visible on registration page"
 msgstr "Sichtbar auf der Registrierungsseite"
 
-#: src/templates/sysconfig.html:296
+#: src/templates/sysconfig.html:302
 msgid "You can add several domains by separating them with a comma."
 msgstr "Sie können mehrere Domains (Komma getrennt) hinzufügen."
 
-#: src/templates/sysconfig.html:739
+#: src/templates/sysconfig.html:745
 msgid "Remote user"
 msgstr "Fern-Benutzer"
 
-#: src/templates/sysconfig.html:754
+#: src/templates/sysconfig.html:760
 msgid "Logout URL"
 msgstr "URL der Abmeldeseite"
 
-#: src/templates/show-templates-edit.html:74
+#: src/templates/show-templates-edit.html:80
 #: src/templates/show-templates-view.html:29
 msgid "Download template"
 msgstr "Vorlage herunterladen"
 
-#: src/templates/show-templates-edit.html:86
+#: src/templates/show-templates-edit.html:92
 #: src/templates/show-templates-view.html:33
 msgid "Destroy template"
 msgstr "Vorlage löschen"
@@ -1835,7 +1825,7 @@ msgstr "Los"
 msgid "Unfinished steps"
 msgstr "Unerledigte Schritte"
 
-#: src/models/AbstractEntity.php:639
+#: src/models/AbstractEntity.php:635
 msgid "Read permissions enforced by admin. Aborting change."
 msgstr "Leserechte vom Administrator vorgegeben. Änderung abbrechen."
 
@@ -1856,7 +1846,7 @@ msgstr "Aus Datei importieren"
 msgid "Reorder templates"
 msgstr "Vorlagen neu anordnen"
 
-#: src/templates/json-editor.html:16
+#: src/templates/json-editor.html:19
 msgid "Toggle JSON editor save menu"
 msgstr "Menü zum Speichern des JSON-Editors umschalten"
 
@@ -1884,7 +1874,7 @@ msgstr "Besitzer ist %s"
 msgid "Deduplicate"
 msgstr "De­du­pli­zie­ren"
 
-#: web/login.php:52 src/templates/mfa.html:7 src/templates/ucp.html:287
+#: web/login.php:52 src/templates/mfa.html:7 src/templates/ucp.html:250
 msgid "Two Factor Authentication"
 msgstr "Zwei-Faktor-Authentifizierung"
 
@@ -1908,55 +1898,55 @@ msgstr "Öffnen Sie die Authentifizierungs-App auf Ihrem Gerät, um Ihren Authen
 msgid "Verify"
 msgstr "Überprüfen"
 
-#: src/templates/ucp.html:95
+#: src/templates/ucp.html:58
 msgid "Display mode:"
 msgstr "Anzeigemodus:"
 
-#: src/templates/ucp.html:97
+#: src/templates/ucp.html:60
 msgid "Item list (default)"
 msgstr "Liste der Elemente (Voreinstellung)"
 
-#: src/templates/ucp.html:98
+#: src/templates/ucp.html:61
 msgid "Tabular"
 msgstr "Tabellarisch"
 
-#: src/templates/ucp.html:290
+#: src/templates/ucp.html:253
 msgid "Use two-factor authentication?"
 msgstr "Zwei-Faktor-Authentifizierung verwenden?"
 
-#: src/templates/sysconfig.html:791
+#: src/templates/sysconfig.html:797
 msgid "LDAP configuration"
 msgstr "LDAP-Konfiguration"
 
-#: src/templates/sysconfig.html:795
+#: src/templates/sysconfig.html:801
 msgid "This page allows you to configure LDAP authentication."
 msgstr "Auf dieser Seite können Sie die LDAP-Authentifizierung konfigurieren."
 
-#: src/templates/sysconfig.html:797
+#: src/templates/sysconfig.html:803
 msgid "Toggle LDAP login"
 msgstr "LDAP-Anmeldung einschalten"
 
-#: src/templates/sysconfig.html:803
+#: src/templates/sysconfig.html:809
 msgid "LDAP Host"
 msgstr "LDAP-Host"
 
-#: src/templates/sysconfig.html:805
+#: src/templates/sysconfig.html:811
 msgid "Domain name or IP address"
 msgstr "Domänenname oder IP-Adresse"
 
-#: src/templates/sysconfig.html:807
+#: src/templates/sysconfig.html:813
 msgid "LDAP Port"
 msgstr "LDAP-Port"
 
-#: src/templates/sysconfig.html:809
+#: src/templates/sysconfig.html:815
 msgid "Default: 389 LDAPS: 636"
 msgstr "Voreinstellung: 389 LDAPS: 636"
 
-#: src/templates/sysconfig.html:814
+#: src/templates/sysconfig.html:820
 msgid "Username"
 msgstr "Benutzername"
 
-#: src/templates/sysconfig.html:832
+#: src/templates/sysconfig.html:838
 msgid "Use TLS"
 msgstr "TLS nutzen"
 
@@ -2013,31 +2003,31 @@ msgstr "Nichts ausgewählt!"
 msgid "Do you want to replace the file on the server with this edit?"
 msgstr "Möchten Sie die Datei auf dem Server durch diese Bearbeitung ersetzen?"
 
-#: src/templates/json-editor.html:6
+#: src/templates/json-editor.html:7
 msgid "Load metadata"
 msgstr "Metadaten laden"
 
-#: src/templates/json-editor.html:19
+#: src/templates/json-editor.html:22
 msgid "Save as file"
 msgstr "Als Datei speichern"
 
-#: src/templates/json-editor.html:20 src/templates/json-editor.html:28
+#: src/templates/json-editor.html:23 src/templates/json-editor.html:31
 msgid "Save as metadata"
 msgstr "Als Metadaten speichern"
 
-#: src/templates/sysconfig.html:100
+#: src/templates/sysconfig.html:106
 msgid "Minimum number of characters that need to be changed in order to create a new revision per entry:"
 msgstr "Mindestanzahl der Zeichen, die geändert werden müssen, um eine neue Revision pro Eintrag zu erstellen:"
 
-#: src/templates/sysconfig.html:102
+#: src/templates/sysconfig.html:108
 msgid "Setting this to a high value will help keeping the database size small."
 msgstr "Diese Einstellung auf einen hohen Wert zu setzen hilft die Datenbankgröße klein halten."
 
-#: src/templates/sysconfig.html:302
+#: src/templates/sysconfig.html:308
 msgid "Time after which inactive sessions are invalidated (force logout) (in seconds):"
 msgstr "Zeit, nach der inaktive Sitzungen ungültig gemacht werden (Abmeldung erzwingen) (in Sekunden):"
 
-#: src/templates/sysconfig.html:305
+#: src/templates/sysconfig.html:311
 msgid "Set to 0 to disable this feature."
 msgstr "Den Wert auf 0 setzen, um diese Funktion zu deaktivieren."
 
@@ -2045,7 +2035,7 @@ msgstr "Den Wert auf 0 setzen, um diese Funktion zu deaktivieren."
 msgid "Created by"
 msgstr "Erstellt von"
 
-#: src/templates/pdf.html:54
+#: src/templates/pdf.html:52
 msgid "Linked item"
 msgid_plural "Linked items"
 msgstr[0] "Verknüpftes Element"
@@ -2059,7 +2049,7 @@ msgstr "Diese E-Mail-Domäne ist nicht zugelassen. Erlaubte Domänen: %s"
 msgid "Editing metadata"
 msgstr "Bearbeiten von Metadaten"
 
-#: src/langs/js-strings.php:21 src/templates/pdf.html:46
+#: src/langs/js-strings.php:21 src/templates/pdf.html:44
 msgid "Extra fields"
 msgstr "Zusätzliche Felder"
 
@@ -2067,15 +2057,15 @@ msgstr "Zusätzliche Felder"
 msgid "Template title"
 msgstr "Titel der Vorlage"
 
-#: src/templates/ucp.html:213
+#: src/templates/ucp.html:176
 msgid "Show experiments/database items from outside the team"
 msgstr "Zeige Experimente/Datenbankelemente von außerhalb des Teams"
 
-#: src/templates/edit.html:92 src/templates/view.html:184
+#: src/templates/edit.html:92 src/templates/view.html:163
 msgid "Started on"
 msgstr "Begonnen am"
 
-#: src/templates/view.html:120 src/templates/view.html:121
+#: src/templates/view.html:112 src/templates/view.html:113
 msgid "Add to blockchain"
 msgstr "Zur Blockchain hinzufügen"
 
@@ -2112,15 +2102,7 @@ msgstr "Dateinamen anpassen"
 msgid "Sent from eLabFTW"
 msgstr "Gesendet von eLabFTW"
 
-#: src/services/Transform.php:34
-msgid "Owner + Admin(s)"
-msgstr "Besitzer + Admin(s)"
-
-#: src/services/Transform.php:35
-msgid "Owner only"
-msgstr "Nur Besitzer"
-
-#: src/models/Items.php:100
+#: src/models/Items.php:106
 msgid "Users cannot delete items."
 msgstr "Benutzer dürfen keine Elemente löschen."
 
@@ -2128,15 +2110,15 @@ msgstr "Benutzer dürfen keine Elemente löschen."
 msgid "Users cannot create tags."
 msgstr "Benutzer dürfen keine Tags erstellen."
 
-#: src/models/TeamGroups.php:110
+#: src/enums/BasePermissions.php:28
 msgid "Only me and admins"
 msgstr "Nur ich und Admins"
 
-#: src/templates/ucp.html:181
+#: src/templates/ucp.html:144
 msgid "Append attached PDFs to exported pdf"
 msgstr "Hinzugefügte PDFs an exportierte PDFs anhängen"
 
-#: src/templates/ucp.html:225
+#: src/templates/ucp.html:188
 msgid "Use ISO datetime in the text editor instead of localized one"
 msgstr "ISO Zeitformat im Texteditor anstelle des lokalen verwenden"
 
@@ -2148,8 +2130,8 @@ msgstr "Eigentümerschaft übertragen"
 msgid "New owner"
 msgstr "Neuer Besitzer"
 
-#: src/templates/edit.html:177 src/templates/edit.html:180
-#: src/templates/templates-edit.html:31
+#: src/templates/edit.html:164 src/templates/edit.html:169
+#: src/templates/templates-edit.html:32
 msgid "Main content"
 msgstr "Hauptinhalt"
 
@@ -2166,7 +2148,7 @@ msgstr "Benutzermenü"
 msgid "Make sure to read the %suser guide%s."
 msgstr "Lesen Sie bitte das %sBenutzerhandbuch%s."
 
-#: src/templates/sysconfig.html:138
+#: src/templates/sysconfig.html:144
 msgid "Admins can create local accounts:"
 msgstr "Administratoren können lokale Konten erstellen:"
 
@@ -2182,7 +2164,7 @@ msgstr "Administrator"
 msgid "Owner"
 msgstr "Besitzer"
 
-#: src/templates/edit.html:186
+#: src/templates/edit.html:175
 msgid "Save and go back"
 msgstr "Speichern und zurückgehen"
 
@@ -2198,23 +2180,23 @@ msgstr "OK"
 msgid "Force experiment template use:"
 msgstr "Benutzung von Vorlagen für Experimente erzwingen:"
 
-#: src/templates/sysconfig.html:104
+#: src/templates/sysconfig.html:110
 msgid "Number of days between changes to automatically create a revision:"
 msgstr "Anzahl der Tage zwischen Änderungen für eine automatische Revision:"
 
-#: src/templates/sysconfig.html:106
+#: src/templates/sysconfig.html:112
 msgid "If the last change is at least this days old, a revision will be created regardless of the minimum characters setting."
 msgstr "Eine Revision wird unabhängig von der \"Mindestanzahl der Zeichen\" Einstellung erstellt, wenn die letzte Änderung mindestens so viele Tage alt ist."
 
-#: src/templates/sysconfig.html:316
+#: src/templates/sysconfig.html:322
 msgid "%d users are currently prevented from logging in from unknown devices."
 msgstr "%d Benutzern wird momentan die Anmeldung von unbekannten Geräten verweigert."
 
-#: src/templates/sysconfig.html:322
+#: src/templates/sysconfig.html:328
 msgid "%d devices are currently denied authentication."
 msgstr "%d Geräten wird momentan die Authentifizierung verweigert."
 
-#: src/templates/ucp.html:104
+#: src/templates/ucp.html:67
 msgid "(default)"
 msgstr "(Voreinstellung)"
 
@@ -2239,7 +2221,7 @@ msgstr "Dieser Link ist abgelaufen! Links zum Zurücksetzen des Passworts sind n
 msgid "This browser cannot login anymore because of too many failed attempts."
 msgstr "Von diesem Browser sind keine weiten Loginversuche möglich. Es gab zu viele fehlgeschlagene Versuche."
 
-#: src/models/Experiments.php:74
+#: src/models/Experiments.php:75
 msgid "Experiments must use a template!"
 msgstr "Experimente müssen eine Vorlage nutzen!"
 
@@ -2263,19 +2245,19 @@ msgstr "Name des Feldes"
 msgid "Value"
 msgstr "Wert"
 
-#: src/templates/admin.html:322
+#: src/templates/admin.html:316
 msgid "Sort items types"
 msgstr "Sortiere Gegenstandstypen"
 
-#: src/templates/admin.html:336
+#: src/templates/admin.html:330
 msgid "Export database items"
 msgstr "Exportiere Gegenstände der Datenbank"
 
-#: src/templates/admin.html:338
+#: src/templates/admin.html:332
 msgid "Select what to export:"
 msgstr "Wähle was exportiert werden soll:"
 
-#: src/templates/admin.html:344 src/templates/admin.html:367
+#: src/templates/admin.html:338 src/templates/admin.html:361
 #: src/templates/profile.html:66
 msgid "Select export format:"
 msgstr "Exportformat auswählen:"
@@ -2349,7 +2331,7 @@ msgid "New comment posted"
 msgstr "Neuer Kommentar veröffentlicht"
 
 #: src/services/EmailNotifications.php:119
-#: src/services/EmailNotifications.php:128 src/services/Transform.php:77
+#: src/services/EmailNotifications.php:128 src/services/Transform.php:56
 msgid "New user added to your team"
 msgstr "Ein neuer Benutzer wurde Ihrem Team hinzugefügt"
 
@@ -2373,23 +2355,23 @@ msgstr "Die Deadline für einen Schritt nähert sich"
 msgid "Hello. A step deadline is approaching: "
 msgstr "Hallo. Der Stichtag eines Schrittes steht bevor: "
 
-#: src/services/Transform.php:61
+#: src/services/Transform.php:40
 msgid "New comment on your experiment."
 msgstr "Neuer Kommentar zu Ihrem Experiment."
 
-#: src/services/Transform.php:84
+#: src/services/Transform.php:63
 msgid "A user needs account validation."
 msgstr "Ein Benutzer benötigt eine Kontofreischaltung."
 
-#: src/services/Transform.php:91
+#: src/services/Transform.php:70
 msgid "There was a problem during PDF creation."
 msgstr "Es gab ein Problem bei der PDF Erstellung."
 
-#: src/services/Transform.php:100
+#: src/services/Transform.php:79
 msgid "Tex rendering failed during PDF generation. The raw tex commands are retained but you might want to carefully check the generated PDF."
 msgstr "Das Tex-Rendern in der PDF-Erstellung ist fehlgeschlagen. Die Tex-Befehle wurden beibehalten, aber es wird empfohlen, dass Sie das PDF sorgfältig überprüfen."
 
-#: src/services/Transform.php:109
+#: src/services/Transform.php:88
 msgid "Some attached PDFs could not be appended."
 msgstr "Manche PDFs konnten nicht angehängt werden."
 
@@ -2397,27 +2379,27 @@ msgstr "Manche PDFs konnten nicht angehängt werden."
 msgid "Query is too complex!"
 msgstr "Die Anfrage ist zu Komplex!"
 
-#: web/ucp.php:67
+#: web/ucp.php:68
 msgid "New comment notification"
 msgstr "Benachrichtigung für Kommentare"
 
-#: web/ucp.php:71
+#: web/ucp.php:72
 msgid "Step deadline"
 msgstr "Deadline für Schritt"
 
-#: web/ucp.php:79
+#: web/ucp.php:80
 msgid "New user created"
 msgstr "Neuer Benutzer erstellt"
 
-#: web/ucp.php:84
+#: web/ucp.php:85
 msgid "New user need validation"
 msgstr "Neuer Benutzer benötigt Freischaltung"
 
-#: src/templates/admin.html:359
+#: src/templates/admin.html:353
 msgid "Export experiments of user"
 msgstr "Experimente eines Benutzers exportieren"
 
-#: src/templates/admin.html:361
+#: src/templates/admin.html:355
 msgid "Select user:"
 msgstr "Benutzer auswählen:"
 
@@ -2430,7 +2412,7 @@ msgstr "Benachrichtigungen"
 msgid "No new notifications to show."
 msgstr "Keine neuen Benachrichtigungen."
 
-#: src/templates/head.html:103 src/templates/ucp.html:379
+#: src/templates/head.html:103 src/templates/ucp.html:342
 msgid "Notifications settings"
 msgstr "Benachrichtigungseinstellungen"
 
@@ -2466,7 +2448,7 @@ msgstr "Suchhelfer"
 msgid "Select author"
 msgstr "Autor auswählen"
 
-#: src/templates/admin.html:384 src/templates/search.html:256
+#: src/templates/admin.html:378 src/templates/search.html:256
 msgid "Date from"
 msgstr "Von Datum"
 
@@ -2572,39 +2554,39 @@ msgstr "Verlinkte Elemente anzeigen"
 msgid "Uploads"
 msgstr "Uploads"
 
-#: src/templates/sysconfig.html:263
+#: src/templates/sysconfig.html:269
 msgid "Blockchain timestamp configuration"
 msgstr "Blockchain Zeitstempleneinstellungen"
 
-#: src/templates/sysconfig.html:265
+#: src/templates/sysconfig.html:271
 msgid "Enable blockchain timestamping with Bloxberg:"
 msgstr "Blockchain Zeitstemplen mit Bloxberg aktivieren:"
 
-#: src/templates/sysconfig.html:271
+#: src/templates/sysconfig.html:277
 msgid "Anonymize author for GDPR compliance:"
 msgstr "Anonymisierung der Autoren zur DSGVO Konformität:"
 
-#: src/templates/sysconfig.html:881
+#: src/templates/sysconfig.html:890
 msgid "Where user uploaded files are stored:"
 msgstr "Speicherort für von Benutzern hochgeladenen Dateien:"
 
-#: src/templates/sysconfig.html:883 src/templates/upload-more-info.html:3
+#: src/templates/sysconfig.html:892 src/templates/upload-more-info.html:3
 msgid "Local filesystem"
 msgstr "Lokales Dateisystem"
 
-#: src/templates/sysconfig.html:884
+#: src/templates/sysconfig.html:893
 msgid "S3 bucket"
 msgstr "S3 bucket"
 
-#: src/templates/sysconfig.html:886
+#: src/templates/sysconfig.html:895
 msgid "You can select where uploaded files will be stored. The default is local storage but you can configure any S3 compatible object storage."
 msgstr "Sie können auswählen, wo hochgeladene Dateien gespeichert werden. Der Standard ist der lokale Speicher, aber Sie können jeden S3-kompatiblen Objektspeicher verwenden."
 
-#: src/templates/ucp.html:382
+#: src/templates/ucp.html:345
 msgid "Notification category"
 msgstr "Benachrichtigungskategorie"
 
-#: src/templates/ucp.html:383
+#: src/templates/ucp.html:346
 msgid "Web"
 msgstr "Web"
 
@@ -2624,7 +2606,7 @@ msgstr "Abhängig von Ihrer Konfiguration kann das Zeitstempeln Kosten verursach
 msgid "Creation/modification of events in the past is not allowed!"
 msgstr "Die Erstellung/Veränderung von Ereignissen in der Vergangenheit ist nicht erlaubt!"
 
-#: src/services/EmailNotifications.php:113 src/services/Transform.php:69
+#: src/services/EmailNotifications.php:113 src/services/Transform.php:48
 msgid "A booked slot was deleted from the scheduler."
 msgstr "Ein gebuchter Slot wurde aus dem Terminplaner gelöscht."
 
@@ -2632,15 +2614,15 @@ msgstr "Ein gebuchter Slot wurde aus dem Terminplaner gelöscht."
 msgid "Hi. %s (%s). See item: %s. It was booked from %s to %s."
 msgstr "Hallo. %s (%s). Siehe Eintrag: %s. Es wurde von %s bis %s gebucht."
 
-#: web/ucp.php:89
+#: web/ucp.php:90
 msgid "Booking event cancelled"
 msgstr "Buchung wurde storniert"
 
-#: src/templates/admin.html:382
+#: src/templates/admin.html:376
 msgid "Export bookings"
 msgstr "Buchungen exportieren"
 
-#: src/templates/admin.html:386
+#: src/templates/admin.html:380
 msgid "Date to"
 msgstr "Datum bis"
 
@@ -2681,23 +2663,23 @@ msgstr "Anzahl der Zeitstempel im vergangenen Monat hat Limit erreicht!"
 msgid "2b. Select write access:"
 msgstr "2b. Schreibzugriff auswählen:"
 
-#: src/templates/admin.html:406
+#: src/templates/admin.html:405
 msgid "Show tagged experiments"
 msgstr "Zeige getaggte Experimente"
 
-#: src/templates/admin.html:409
+#: src/templates/admin.html:408
 msgid "Show tagged items"
 msgstr "Zeige getaggte Elemente"
 
-#: src/templates/edit.html:232
+#: src/templates/edit.html:221
 msgid "Use %sCtrl%s + click to add text"
 msgstr "Benutzen Sie %sCtrl%s + Klick um Text hinzuzufügen"
 
-#: src/templates/json-editor.html:7
+#: src/templates/json-editor.html:10
 msgid "See documentation about extra fields."
 msgstr "Siehe Dokumentation für extra Felder."
 
-#: src/templates/sysconfig.html:166
+#: src/templates/sysconfig.html:172
 msgid "MySQL Version"
 msgstr "MySQL Version"
 
@@ -2705,11 +2687,11 @@ msgstr "MySQL Version"
 msgid "Number of allowed timestamps per month (0 means no limit):"
 msgstr "Anzahl erlaubter Zeitstempel pro Monat (0 bedeutet kein Limit):"
 
-#: src/controllers/ImportController.php:84
+#: src/controllers/ImportController.php:89
 msgid "Error: invalid file extension for import. Allowed extensions: %s."
 msgstr "Fehler: Ungültige Dateiendung für Import. Erlaubte Dateiendungen: %s."
 
-#: src/models/AbstractEntity.php:643
+#: src/models/AbstractEntity.php:639
 msgid "Write permissions enforced by admin. Aborting change."
 msgstr "Schreibrechte durch Administrator vorgegeben. Änderung verworfen."
 
@@ -2733,11 +2715,11 @@ msgstr "Fehlgeschlagen"
 msgid "Timestamp archive by %s"
 msgstr "Zeitstempel-Archiv von %s"
 
-#: src/services/ImportEln.php:57 src/services/ImportZip.php:40
+#: src/services/ImportEln.php:56 src/services/ImportZip.php:40
 msgid "Error: could not read archive file properly! (missing %s)"
 msgstr "Fehler: Archivdatei konnte nicht richtig gelesen werden! (Es fehlt %s)"
 
-#: src/services/ImportEln.php:107
+#: src/services/ImportEln.php:106
 msgid "Links"
 msgstr "Links"
 
@@ -2745,32 +2727,32 @@ msgstr "Links"
 msgid "Your account has expired. Contact your team Admin to extend its validity."
 msgstr "Ihr Benutzerkonto ist abgelaufen. Kontaktieren Sie einen Administrator ihres Teams, um Ihr Benutzerkonto zu reaktivieren."
 
-#: src/templates/admin.html:346 src/templates/admin.html:369
-#: src/templates/show.html:97 src/templates/view.html:137
+#: src/templates/admin.html:340 src/templates/admin.html:363
+#: src/templates/show.html:97 src/templates/view.html:129
 msgid "ELN Archive"
 msgstr "ELN Archiv"
 
-#: src/templates/admin.html:347 src/templates/admin.html:370
-#: src/templates/show.html:98 src/templates/view.html:135
+#: src/templates/admin.html:341 src/templates/admin.html:364
+#: src/templates/show.html:98 src/templates/view.html:127
 msgid "ZIP Archive"
 msgstr "ZIP Archiv"
 
-#: src/templates/admin.html:348 src/templates/admin.html:371
-#: src/templates/show.html:99 src/templates/view.html:138
+#: src/templates/admin.html:342 src/templates/admin.html:365
+#: src/templates/show.html:99 src/templates/view.html:130
 msgid "CSV File"
 msgstr "CSV Datei"
 
-#: src/templates/admin.html:349 src/templates/admin.html:372
-#: src/templates/show.html:100 src/templates/view.html:133
+#: src/templates/admin.html:343 src/templates/admin.html:366
+#: src/templates/show.html:100 src/templates/view.html:125
 msgid "PDF File"
 msgstr "PDF Datei"
 
-#: src/templates/admin.html:350 src/templates/admin.html:373
+#: src/templates/admin.html:344 src/templates/admin.html:367
 #: src/templates/show.html:101
 msgid "QR codes PDF"
 msgstr "QR-Code PDF"
 
-#: src/templates/admin.html:351 src/templates/admin.html:374
+#: src/templates/admin.html:345 src/templates/admin.html:368
 #: src/templates/show.html:102
 msgid "JSON"
 msgstr "JSON"
@@ -2783,7 +2765,7 @@ msgstr "Experimentvorlagen"
 msgid "No pinned templates found"
 msgstr "Keine angehefteten Vorlagen gefunden"
 
-#: src/templates/edit.html:243
+#: src/templates/edit.html:232
 msgid "Save as JSON"
 msgstr "Als JSON speichern"
 
@@ -2859,7 +2841,7 @@ msgstr "Mein Profil"
 msgid "Your account has been created and is now active. Try logging in again."
 msgstr "Ihr Benutzerkonto wurde erstellt und ist jetzt aktiviert. Versuchen Sie sich erneut einzuloggen."
 
-#: src/templates/pdf.html:69 src/templates/steps-links-edit.html:95
+#: src/templates/pdf.html:67 src/templates/steps-links-edit.html:95
 #: src/templates/steps-links-view.html:33
 msgid "Linked experiment"
 msgid_plural "Linked experiments"
@@ -2962,7 +2944,7 @@ msgstr "Alle Autoren"
 msgid "to an experiment"
 msgstr "zu einem Experiment"
 
-#: src/templates/sysconfig.html:151
+#: src/templates/sysconfig.html:157
 msgid "URL where the Support menu entry from Help dropdown points:"
 msgstr "URL die für den \"Unterstützung\"-Verweis im Hilfe-Menü verwendet wird:"
 
@@ -2978,7 +2960,7 @@ msgstr "Endzeit"
 msgid "Number of timestamps over the last 30 days: %d"
 msgstr "Anzahl der Zeitstempel in den letzten 30 Tagen: %d"
 
-#: src/templates/ucp.html:187
+#: src/templates/ucp.html:150
 msgid "Enable french style signature block in pdf export"
 msgstr "Aktiviere Unterschriftenbereich französischer Art für PDF-Export"
 
@@ -2986,7 +2968,7 @@ msgstr "Aktiviere Unterschriftenbereich französischer Art für PDF-Export"
 msgid "Click to add a comment"
 msgstr "Klicken, um einen Kommentar hinzuzufügen"
 
-#: src/templates/upload-dropdown-menu.html:53 src/templates/uploads.html:184
+#: src/templates/upload-dropdown-menu.html:53 src/templates/uploads.html:186
 msgid "Show content of file"
 msgstr "Inhalt der Datei anzeigen"
 
@@ -3002,19 +2984,19 @@ msgstr "Erstellt am %s"
 msgid "File content"
 msgstr "Dateiinhalt"
 
-#: src/templates/view.html:189
+#: src/templates/view.html:205
 msgid "See bookings"
 msgstr "Siehe Buchungen"
 
-#: src/templates/view.html:242
+#: src/templates/view.html:259
 msgid "edited"
 msgstr "bearbeitet"
 
-#: src/services/Transform.php:119
+#: src/services/Transform.php:98
 msgid "A step deadline is approaching."
 msgstr "Die Deadline für einen Schritt nähert sich."
 
-#: src/templates/edit.html:240
+#: src/templates/edit.html:229
 msgid "Molecule editor"
 msgstr "Moleküleditor"
 
@@ -3030,11 +3012,11 @@ msgstr "Link zu Schritt an Cursorposition einfügen"
 msgid "Open in NMRium"
 msgstr "Mit NMRium öffnen"
 
-#: src/templates/view.html:134
+#: src/templates/view.html:126
 msgid "Long term storage PDF"
 msgstr "Langzeitspeicher PDF"
 
-#: src/templates/view.html:136
+#: src/templates/view.html:128
 msgid "Long term storage ZIP"
 msgstr "Langzeitspeicher ZIP"
 
@@ -3042,19 +3024,19 @@ msgstr "Langzeitspeicher ZIP"
 msgid "Could not find tag. Please enter an existing tag."
 msgstr "Konnte Tag nicht finden. Bitte einen existierenden Tag eingeben."
 
-#: src/templates/changelog.html:13 src/templates/pdf.html:149
+#: src/templates/changelog.html:13 src/templates/pdf.html:147
 msgid "Changelog"
 msgstr "Änderungsprotokoll"
 
-#: src/templates/changelog.html:19 src/templates/pdf.html:155
+#: src/templates/changelog.html:19 src/templates/pdf.html:153
 msgid "Property changed"
 msgstr "Geänderte Eigenschaft"
 
-#: src/templates/changelog.html:20 src/templates/pdf.html:156
+#: src/templates/changelog.html:20 src/templates/pdf.html:154
 msgid "New value"
 msgstr "Neuer Wert"
 
-#: src/templates/show-templates-edit.html:66
+#: src/templates/show-templates-edit.html:72
 #: src/templates/show-templates-view.html:24
 msgid "Toggle pin (add to create button menu)"
 msgstr "Vorlage zum Menü des \"Erstellen\"-Knopfes hinzufügen"
@@ -3063,10 +3045,149 @@ msgstr "Vorlage zum Menü des \"Erstellen\"-Knopfes hinzufügen"
 msgid "Latest stable version:"
 msgstr "Aktuelle stabile Version:"
 
-#: src/templates/ucp.html:338
+#: src/templates/ucp.html:301
 msgid "Link to documentation"
 msgstr "Link zur Dokumentation"
 
-#: src/templates/view.html:269
+#: src/templates/view.html:286
 msgid "See changelog"
 msgstr "Siehe Änderungsprotokoll"
+
+#: src/enums/BasePermissions.php:27
+msgid "All the teams I am part of"
+msgstr "Alle Teams zu denen ich gehöre"
+
+#: src/templates/admin.html:394
+msgid "From here you can add, edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags."
+msgstr "Von hier aus kannst du Tags für dein Team hinzufügen, ändern oder löschen. Klick auf den Tag um ihn zu ändern. Dann klicke auf den Duplikate löschen Button um ähnliche Tags zu vereinigen."
+
+#: src/templates/field-builder-modal.html:7
+msgid "Add an extra field"
+msgstr "Extra Feld hinzufügen"
+
+#: src/templates/field-builder-modal.html:13
+msgid "Field type"
+msgstr "Feld typ"
+
+#: src/templates/field-builder-modal.html:15
+msgid "Text"
+msgstr "Text"
+
+#: src/templates/field-builder-modal.html:16
+msgid "Dropdown menu"
+msgstr "Dropdown-Menü"
+
+#: src/templates/field-builder-modal.html:17
+msgid "Radio buttons"
+msgstr "Optionsfeld"
+
+#: src/templates/field-builder-modal.html:19
+msgid "Checkbox"
+msgstr "Auswahlkasten"
+
+#: src/templates/field-builder-modal.html:20
+msgid "Number"
+msgstr "Nummer"
+
+#: src/templates/field-builder-modal.html:25
+msgid "required"
+msgstr "notwendig"
+
+#: src/templates/field-builder-modal.html:29
+msgid "Description"
+msgstr "Beschreibung"
+
+#: src/templates/field-builder-modal.html:30
+msgid "Enter a description for this field"
+msgstr "Gebe eine Beschreibung für dieses Feld ein"
+
+#: src/templates/field-builder-modal.html:33
+#: src/templates/field-builder-modal.html:54
+msgid "Default value"
+msgstr "Standardwert"
+
+#: src/templates/field-builder-modal.html:34
+msgid "Enter a default value"
+msgstr "Bitte gebe einen Standardwert ein"
+
+#: src/templates/field-builder-modal.html:38
+msgid "Blank value on duplicate?"
+msgstr "Leerer Wert bei Du­pli­ka­ti­on?"
+
+#: src/templates/field-builder-modal.html:44
+msgid "Choices"
+msgstr "Auswahlmöglichkeiten"
+
+#: src/templates/field-builder-modal.html:49
+msgid "Add another choice"
+msgstr "Füge eine weitere Auswahlmöglichkeit hinzu"
+
+#: src/templates/field-builder-modal.html:56
+msgid "Unchecked"
+msgstr "Nicht ausgewählt"
+
+#: src/templates/field-builder-modal.html:57
+msgid "Checked"
+msgstr "Ausgewählt"
+
+#: src/templates/json-editor.html:8
+msgid "Add field"
+msgstr "Feld hinzufügen"
+
+#: src/templates/permissions-edit-modal.html:7
+msgid "Select who can see this entry"
+msgstr "Wähle aus wer diesen Eintrag sehen kann"
+
+#: src/templates/permissions-edit-modal.html:7
+msgid "Select who can edit this entry"
+msgstr "Wähle aus wer diesen Eintrag bearbeiten kann"
+
+#. Strongly depends on context. 'Base' could be a possible translation
+#: src/templates/permissions-edit-modal.html:14
+msgid "Base"
+msgstr "Basis"
+
+#: src/templates/permissions-edit-modal.html:15
+msgid "This setting sets a baseline upon which you can add more permissions by selecting teams, teamgroups or users below."
+msgstr "Diese Einstellung bewirkt eine Basis Berechtigung zu der weitere Berechtigungen durch nachfolgende Auswahl von Teams, Team-Gruppen und Benutzern hinzugefügt werden können."
+
+#: src/templates/permissions-edit-modal.html:24
+#: src/templates/permissions-edit-modal.html:34
+msgid "(hold %sctrl%s key to select multiple entries)"
+msgstr "(halte die %sctrl%s Taste gedrückt um mehrere Einträge auszuwählen)"
+
+#: src/templates/permissions-edit-modal.html:25
+msgid "Selecting a team here will give access to all members of this team."
+msgstr "Auswahl eines Teams gibt allen Usern aus diesem Team Zugriff."
+
+#: src/templates/permissions-edit-modal.html:34
+msgid "Teamgroups"
+msgstr "Teamgruppen"
+
+#: src/templates/permissions-edit-modal.html:35
+msgid "Selecting a teamgroup here will give access to all users part of this teamgroup."
+msgstr "Auswahl einer Teamgruppe gibt allen Usern aus dieser Gruppe Zugriff."
+
+#: src/templates/permissions-edit-modal.html:40
+msgid "Teamgroup"
+msgstr "Teamgruppe"
+
+#: src/templates/permissions-edit-modal.html:65
+msgid "Allow read access for anonymous users"
+msgstr "Erlaube das Lesen durch anonyme Nutzer"
+
+#: src/templates/permissions-edit-modal.html:70
+msgid "Copy to clipboard"
+msgstr "In Zwischenablage kopieren"
+
+#: src/templates/permissions-edit-modal.html:74
+msgid "Anyone following this link can access this entry."
+msgstr "Jeder der diesem Link folgt kann auf diesen Eintrag zugreifen."
+
+#: src/templates/sysconfig.html:96
+msgid "Allow the base permission setting «Only me»"
+msgstr "\"Nur Ich\" Basis Berechtigungs-Einstellung erlauben"
+
+#: src/templates/view-permissions.html:6
+msgid "edit"
+msgstr "bearbeiten"

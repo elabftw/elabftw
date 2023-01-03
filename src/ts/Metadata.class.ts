@@ -9,6 +9,11 @@ import { Action, Entity, EntityType } from './interfaces';
 import { Api } from './Apiv2.class';
 import i18next from 'i18next';
 
+type ExtraFieldProperty =
+  | string
+  | boolean
+  | number
+  | Array<string>;
 
 export function ResourceNotFoundException(message: string): void {
   this.message = message;
@@ -46,10 +51,16 @@ export class Metadata {
    * Only save a single field value after a change
    */
   handleEvent(event): Promise<Response> {
+    // by default the value is simply the value of the input, which is the event target
     let value = event.target.value;
     // special case for checkboxes
     if (event.target.type === 'checkbox') {
       value = event.target.checked ? 'on': 'off';
+    }
+    // special case for multiselect
+    if (event.target.hasAttribute('multiple')) {
+      // collect all the selected options, and the value will be an array
+      value = [...event.target.selectedOptions].map(option => option.value);
     }
     const params = {};
     params['action'] = Action.UpdateMetadataField;
@@ -67,14 +78,14 @@ export class Metadata {
   /**
    * For radio we need a special build workflow
    */
-  buildRadio(name: string, description: Record<string, any>): Element {
+  buildRadio(name: string, description: Record<string, ExtraFieldProperty>): Element { // eslint-disable-line
     // a div to hold the different elements so we can return a single Element
     const element = document.createElement('div');
     element.dataset.purpose = 'radio-holder';
 
     const radioInputs = [];
     const radiosName = this.getRandomId();
-    for (const option of description.options) {
+    for (const option of (description.options as Array<string>)) {
       const radioInput = document.createElement('input');
       radioInput.classList.add('form-check-input');
       radioInput.type = 'radio';
@@ -110,37 +121,44 @@ export class Metadata {
   /**
    * Generate a non editable view of the extra fields
    */
-  generateElement(name: string, description: Record<string, any>): Element {
-    const element = document.createElement('div');
+  generateElement(name: string, properties: Record<string, ExtraFieldProperty>): Element {
+    const wrapperDiv = document.createElement('div');
+    // name
+    const nameEl = document.createElement('h5');
+    nameEl.classList.add('m-0');
+    nameEl.innerText = name;
+
     let valueEl: HTMLElement;
     // checkbox is special case
-    if (description.type === 'checkbox') {
+    if (properties.type === 'checkbox') {
       valueEl = document.createElement('input');
       valueEl.setAttribute('type', 'checkbox');
+      valueEl.classList.add('d-block');
       (valueEl as HTMLInputElement).disabled = true;
-      if (description.value === 'on') {
+      if (properties.value === 'on') {
         (valueEl as HTMLInputElement).checked = true;
       }
     } else {
-      valueEl = document.createElement('span');
-      valueEl.innerText = description.value;
+      valueEl = document.createElement('p');
+      valueEl.innerText = properties.value as string;
       // the link is generated with javascript so we can still use innerText and
       // not innerHTML with manual "<a href...>" which implicates security considerations
-      if (description.type === 'url') {
+      if (properties.type === 'url') {
         valueEl.dataset.genLink = 'true';
       }
     }
-    element.innerText = name + ': ';
-    element.append(valueEl);
-    return element;
+    wrapperDiv.append(nameEl);
+    wrapperDiv.append(this.getDescriptionSpan(properties));
+    wrapperDiv.append(valueEl);
+    return wrapperDiv;
   }
 
   /**
    * Take the json description of the field and build an input element to be injected
    */
-  generateInput(name: string, description: Record<string, any>): Element {
+  generateInput(name: string, description: Record<string, ExtraFieldProperty>): Element {
     // we don't know yet which kind of element it will be
-    let element;
+    let element: HTMLInputElement|HTMLSelectElement;
     // generate a unique id for the element so we can associate the label properly
     const uniqid = this.getRandomId();
 
@@ -152,10 +170,16 @@ export class Metadata {
       break;
     case 'select':
       element = document.createElement('select');
+      if (description.allow_multi_values === true) {
+        element.toggleAttribute('multiple');
+      }
       // add options to select element
-      for (const option of description.options) {
+      for (const option of description.options as Array<string>) {
         const optionEl = document.createElement('option');
         optionEl.text = option;
+        if (description.allow_multi_values === true && (description.value as Array<string>).includes(option)) {
+          optionEl.setAttribute('selected', '');
+        }
         element.add(optionEl);
       }
       break;
@@ -183,9 +207,11 @@ export class Metadata {
 
     if (Object.prototype.hasOwnProperty.call(description, 'value')) {
       if (element.type === 'checkbox') {
-        element.checked = description.value === 'on' ? true : false;
+        (element as HTMLInputElement).checked = description.value === 'on' ? true : false;
       }
-      element.value = description.value;
+      if (description.allow_multi_values !== true) {
+        element.value = description.value as string;
+      }
     }
 
     if (Object.prototype.hasOwnProperty.call(description, 'required')) {
@@ -254,15 +280,15 @@ export class Metadata {
         return;
       }
       this.metadataDiv.append(this.getHeaderDiv());
-      this.metadataDiv.classList.add('col-md-12');
-      this.metadataDiv.classList.add('box');
+      this.metadataDiv.classList.add('col-md-12', 'box');
       // the input elements that will be created from the extra fields
       const elements = [];
-      for (const [name, description] of Object.entries(json.extra_fields)) {
+      for (const [name, properties] of Object.entries(json.extra_fields)) {
         elements.push({
           name: name,
-          element: this.generateElement(name, description),
-          position: parseInt(description.position, 10) || 99999,
+          description: properties.description,
+          element: this.generateElement(name, properties),
+          position: parseInt(properties.position, 10) || 99999,
         });
       }
       // now display the names/values from extra_fields
@@ -273,6 +299,16 @@ export class Metadata {
         rowDiv.append(element.element);
       }
     });
+  }
+
+  // build a description span element
+  getDescriptionSpan(properties: Record<string, ExtraFieldProperty>): HTMLSpanElement {
+    const descriptionSpan = document.createElement('span');
+    if (properties.description) {
+      descriptionSpan.classList.add('smallgray');
+      descriptionSpan.innerText = properties.description as string;
+    }
+    return descriptionSpan;
   }
 
   /**
@@ -287,25 +323,28 @@ export class Metadata {
       this.metadataDiv.append(this.getHeaderDiv());
       // the input elements that will be created from the extra fields
       const elements = [];
-      for (const [name, description] of Object.entries(json.extra_fields)) {
+      for (const [name, properties] of Object.entries(json.extra_fields)) {
         elements.push({
           name: name,
-          element: this.generateInput(name, description),
-          position: parseInt(description.position, 10) || 99999,
+          description: properties.description,
+          element: this.generateInput(name, properties),
+          position: parseInt(properties.position, 10) || 99999,
         });
       }
       // now display the inputs from extra_fields
       for (const element of elements.sort((a, b) => a.position - b.position)) {
         const rowDiv = document.createElement('div');
-        rowDiv.classList.add('row');
+        rowDiv.classList.add('row', 'flex-column');
+        //rowDiv.classList.add('flex-column');
         this.metadataDiv.append(rowDiv);
         const label = document.createElement('label');
+        label.style.marginRight = '10px';
         label.htmlFor = element.element.id;
         label.innerText = element.name as string;
+
         if (element.element.type === 'checkbox') {
-          label.classList.add('form-check-label');
-          // fix the checkbox text being all constrained
-          label.classList.add('d-inline');
+          // d-inline to fix the checkbox text being all constrained
+          label.classList.add('form-check-label', 'd-inline');
         }
         // for checkboxes the label comes second
         if (element.element.type === 'checkbox') {
@@ -316,8 +355,10 @@ export class Metadata {
           // add some spacing between the checkbox and the label
           label.classList.add('ml-1');
           wrapperDiv.append(label);
+          wrapperDiv.append(this.getDescriptionSpan(element));
         } else {
           rowDiv.append(label);
+          rowDiv.append(this.getDescriptionSpan(element));
           rowDiv.append(element.element);
         }
       }

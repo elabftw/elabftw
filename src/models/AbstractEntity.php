@@ -10,34 +10,40 @@
 namespace Elabftw\Models;
 
 use function array_column;
-
+use function array_merge;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Permissions;
+use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
-use Elabftw\Services\Check;
-use Elabftw\Services\Transform;
+
+use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\EntityTrait;
 use function explode;
 use function implode;
 use function is_bool;
+use function json_encode;
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
 use PDO;
 use PDOStatement;
 use const SITE_URL;
+use function sprintf;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -241,11 +247,11 @@ abstract class AbstractEntity implements RestInterface
             $teamFilter = ' AND users2teams.teams_id = entity.team';
         }
         // add pub/org/team filter
-        $sqlPublicOrg = "((entity.canread = 'public' OR entity.canread = 'organization') AND entity.userid = users2teams.users_id) OR ";
+        $sqlPublicOrg = sprintf("((JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d) AND entity.userid = users2teams.users_id) OR ", BasePermissions::Full->value, BasePermissions::Organization->value);
         if ($this->Users->userData['show_public']) {
-            $sqlPublicOrg = "entity.canread = 'public' OR entity.canread = 'organization' OR ";
+            $sqlPublicOrg = sprintf("(JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d) OR ", BasePermissions::Full->value, BasePermissions::Organization->value);
         }
-        $sql .= ' AND ( ' . $sqlPublicOrg . " (entity.canread = 'team' AND users2teams.users_id = entity.userid" . $teamFilter . ") OR (entity.canread = 'user' ";
+        $sql .= sprintf(" AND ( %s (JSON_EXTRACT(entity.canread, '$.base') = %d AND users2teams.users_id = entity.userid %s) OR (JSON_EXTRACT(entity.canread, '$.base') = %d ", $sqlPublicOrg, BasePermissions::MyTeams->value, $teamFilter, BasePermissions::User->value);
         // admin will see the experiments with visibility user for user of their team
         if ($this->Users->userData['is_admin']) {
             $sql .= 'AND entity.userid = users2teams.users_id)';
@@ -253,10 +259,17 @@ abstract class AbstractEntity implements RestInterface
             $sql .= 'AND entity.userid = :userid)';
         }
         // add entities in useronly visibility only if we own them
-        $sql .= " OR (entity.canread = 'useronly' AND entity.userid = :userid)";
-        foreach ($teamgroupsOfUser as $teamgroup) {
-            $sql .= " OR (entity.canread = $teamgroup)";
+        $sql .= sprintf(" OR (JSON_EXTRACT(entity.canread, '$.base') = %d AND entity.userid = :userid)", BasePermissions::UserOnly->value);
+        // look for teams
+        $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
+        $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
+        $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[' . implode(',', $teamsOfUser) . "]\"), '$.teams'))";
+        // look for teamgroups
+        if (!empty($teamgroupsOfUser)) {
+            $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[' . implode(',', $teamgroupsOfUser) . "]\"), '$.teamgroups'))";
         }
+        // look for users, seems using the :userid placeholder does not work, or at least not in my hands
+        $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[ ' . $this->Users->userData['userid'] . "]\"), '$.users'))";
         $sql .= ')';
 
         $sqlArr = array(
@@ -323,6 +336,7 @@ abstract class AbstractEntity implements RestInterface
             $this->canOrExplode('write');
         }
         match ($action) {
+            Action::AccessKey => (new AccessKeyHelper($this))->toggleAccessKey(),
             Action::Lock => $this->toggleLock(),
             Action::Pin => $this->Pins->togglePin(),
             Action::UpdateMetadataField => (
@@ -330,7 +344,7 @@ abstract class AbstractEntity implements RestInterface
                     foreach ($params as $key => $value) {
                         // skip action key
                         if ($key !== 'action') {
-                            $this->updateJsonField((string) $key, (string) $value);
+                            $this->updateJsonField((string) $key, $value);
                         }
                     }
                 }
@@ -345,22 +359,6 @@ abstract class AbstractEntity implements RestInterface
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
         return $this->readOne();
-    }
-
-    /**
-     * Get a list of visibility/team groups to display
-     *
-     * @param string $permission raw value (public, organization, team, user, useronly)
-     * @return string capitalized and translated permission level
-     */
-    public function getCan(string $permission): string
-    {
-        // if it's a number, then lookup the name of the team group
-        if (Check::id((int) $permission) !== false) {
-            $this->TeamGroups->setId((int) $permission);
-            return ucfirst($this->TeamGroups->readOne()['name']);
-        }
-        return Transform::permission($permission);
     }
 
     /**
@@ -548,7 +546,7 @@ abstract class AbstractEntity implements RestInterface
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = $this->page;
         // add a share link
-        $this->entityData['sharelink'] = sprintf('%s/%s.php?mode=view&id=%d&elabid=%s', SITE_URL, $this->page, $this->id, $this->entityData['elabid']);
+        $this->entityData['sharelink'] = sprintf('%s/%s.php?mode=view&id=%d&access_key=%s', SITE_URL, $this->page, $this->id, $this->entityData['access_key'] ?? '');
         // add the body as html
         $this->entityData['body_html'] = $this->entityData['body'];
         // convert from markdown only if necessary
@@ -609,14 +607,22 @@ abstract class AbstractEntity implements RestInterface
     /**
      * Update only one field in the metadata json
      */
-    private function updateJsonField(string $key, string $value): bool
+    private function updateJsonField(string $key, string|array $value): bool
     {
+        $value = json_encode($value, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
+
         $Changelog = new Changelog($this);
         $Changelog->create(new ContentParams('metadata_' . $key, $value));
-        // build field
-        $field = json_encode($key, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
-        $field = '$.extra_fields.' . $field . '.value';
-        $sql = 'UPDATE ' . $this->type . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
+
+        // build jsonPath to field
+        $field = sprintf(
+            '$.%s.%s.value',
+            MetadataEnum::ExtraFields->value,
+            json_encode($key, JSON_HEX_APOS | JSON_THROW_ON_ERROR)
+        );
+
+        // the CAST as json is necessary to avoid double encoding
+        $sql = 'UPDATE ' . $this->type . ' SET metadata = JSON_SET(metadata, :field, CAST(:value AS JSON)) WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':field', $field);
         $req->bindValue(':value', $value);
@@ -654,9 +660,10 @@ abstract class AbstractEntity implements RestInterface
 
     private function processExtendedQuery(string $extendedQuery): void
     {
+        $PermissionsHelper = new PermissionsHelper();
         $advancedQuery = new AdvancedSearchQuery($extendedQuery, new VisitorParameters(
             $this->type,
-            $this->TeamGroups->getVisibilityList(),
+            $PermissionsHelper->getAssociativeArray(),
             $this->TeamGroups->readGroupsWithUsersFromUser(),
         ));
         $whereClause = $advancedQuery->getWhereClause();

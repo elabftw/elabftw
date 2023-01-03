@@ -45,12 +45,12 @@ trait TwigTrait
 
         // custom twig filters
         $filterOptions = array('is_safe' => array('html'));
-        $msgFilter = new TwigFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
+        $msgFilter = new TwigFilter('msg', '\Elabftw\Elabftw\TwigFilters::displayMessage', $filterOptions);
         $mdFilter = new TwigFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
-        $starsFilter = new TwigFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
+        $starsFilter = new TwigFilter('stars', '\Elabftw\Elabftw\TwigFilters::showStars', $filterOptions);
         $bytesFilter = new TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
         $extFilter = new TwigFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
-        $metadataFilter = new TwigFilter('formatMetadata', '\Elabftw\Elabftw\Tools::formatMetadata', $filterOptions);
+        $metadataFilter = new TwigFilter('formatMetadata', '\Elabftw\Elabftw\TwigFilters::formatMetadata', $filterOptions);
         $csrfFilter = new TwigFilter('csrf', '\Elabftw\Services\Transform::csrf', $filterOptions);
         $notifWebFilter = new TwigFilter('notifWeb', '\Elabftw\Services\Transform::notif', $filterOptions);
         // |trans filter
@@ -62,6 +62,9 @@ trait TwigTrait
             array('needs_context' => true)
         );
         $toDatetimeFilter = new TwigFilter('toDatetime', '\Elabftw\Elabftw\TwigFunctions::toDatetime', $filterOptions);
+        $extractJson = new TwigFilter('extractJson', '\Elabftw\Elabftw\TwigFunctions::extractJson', $filterOptions);
+        $isInJsonArray = new TwigFilter('isInJsonArray', '\Elabftw\Elabftw\TwigFunctions::isInJsonArray', $filterOptions);
+        $canToHuman = new TwigFilter('canToHuman', '\Elabftw\Elabftw\TwigFunctions::canToHuman', $filterOptions);
 
         // custom twig functions
         $limitOptions = new TwigFunction('limitOptions', '\Elabftw\Elabftw\TwigFunctions::getLimitOptions');
@@ -93,6 +96,9 @@ trait TwigTrait
         $TwigEnvironment->addFilter($notifWebFilter);
         $TwigEnvironment->addFilter($transFilter);
         $TwigEnvironment->addFilter($toDatetimeFilter);
+        $TwigEnvironment->addFilter($extractJson);
+        $TwigEnvironment->addFilter($isInJsonArray);
+        $TwigEnvironment->addFilter($canToHuman);
         // functions
         $TwigEnvironment->addFunction($limitOptions);
         $TwigEnvironment->addFunction($generationTime);

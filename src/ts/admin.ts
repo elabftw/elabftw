@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ADD TAG
     } else if (el.matches('[data-action="admin-add-tag"]')) {
       const tagInput = (document.getElementById('adminAddTagInput') as HTMLInputElement);
-      ApiC.post(`${Model.TeamTags}/${el.dataset.teamid}`, {'tag': tagInput.value}).then(() => {
+      ApiC.post(`${Model.TeamTags}`, {'tag': tagInput.value}).then(() => {
         tagInput.value = '';
         reloadElement('tagMgrDiv');
       });

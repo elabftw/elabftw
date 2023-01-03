@@ -1762,6 +1762,28 @@ paths:
                     type: string
                   id:
                     type: integer
+    post:
+      tags: ['Team tags']
+      summary: Create a tag in the team.
+      operationId: post-team_tag
+      requestBody:
+        description: Parameters for adding a tag in the team.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tag:
+                  type: string
+                  description: Tag to add
+      responses:
+        '201':
+          description: The tag has been added.
+          headers:
+            location:
+              description: An URL ending with 1 if the tag was created or 0 if it was already present.
+              schema:
+                type: string
     patch:
       tags: ['Team tags']
       summary: |

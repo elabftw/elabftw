@@ -90,8 +90,6 @@ class DisplayParams
         $this->hasMetadataSearch = true;
         $i = count($this->metadataKey);
 
-        $metadataFilter = array();
-        $metadataHaving = array();
         $jsonPath = sprintf(
             '$.%s.%s',
             MetadataEnum::ExtraFields->value,
@@ -102,10 +100,8 @@ class DisplayParams
         $this->metadataValuePath[] = $jsonPath . '.value';
         $this->metadataValue[] = Filter::sanitize($searchTerm);
 
-        $metadataFilter[] = sprintf("JSON_CONTAINS_PATH(entity.metadata, 'one', :metadata_key_%d)", $i);
-        $metadataHaving[] = sprintf('JSON_UNQUOTE(JSON_EXTRACT(entity.metadata, :metadata_value_path_%1$d)) LIKE :metadata_value_%1$d', $i);
-        $this->metadataFilter[] = ' AND (' . implode(' OR ', $metadataFilter) . ') ';
-        $this->metadataHaving[] = '(' . implode(' OR ', $metadataHaving) . ')';
+        $this->metadataFilter[] = sprintf(" AND JSON_CONTAINS_PATH(entity.metadata, 'one', :metadata_key_%d) ", $i);
+        $this->metadataHaving[] = sprintf('JSON_UNQUOTE(JSON_EXTRACT(entity.metadata, :metadata_value_path_%1$d)) LIKE :metadata_value_%1$d', $i);
     }
 
     /**

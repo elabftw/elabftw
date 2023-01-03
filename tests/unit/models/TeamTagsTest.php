@@ -29,12 +29,12 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPage(): void
     {
-        $this->assertEquals('api/v2/tags/', $this->TeamTags->getPage());
+        $this->assertEquals('api/v2/team_tags/', $this->TeamTags->getPage());
     }
 
     public function testCreate(): void
     {
-        $this->assertEquals(1, $this->TeamTags->postAction(Action::Create, array('tag' => 'microscopy')));
+        $this->assertIsInt($this->TeamTags->postAction(Action::Create, array('tag' => 'microscopy')));
     }
 
     public function testReadAll(): void

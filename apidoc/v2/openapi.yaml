@@ -1781,7 +1781,7 @@ paths:
           description: The tag has been added.
           headers:
             location:
-              description: An URL ending with 1 if the tag was created or 0 if it was already present.
+              description: An URL ending with 0 if the tag was already here, or an URL to the newly created tag.
               schema:
                 type: string
     patch:

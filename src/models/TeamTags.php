@@ -37,7 +37,7 @@ class TeamTags implements RestInterface
 
     public function getPage(): string
     {
-        return 'api/v2/tags/';
+        return 'api/v2/team_tags/';
     }
 
     /**
@@ -49,7 +49,6 @@ class TeamTags implements RestInterface
             throw new ImproperActionException('Invalid action');
         }
         $tag = $reqBody['tag'] ?? throw new ImproperActionException('Missing required tag key!');
-        $inserted = 0;
 
         // look if the tag exists already
         $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
@@ -60,14 +59,14 @@ class TeamTags implements RestInterface
         $res = $req->fetch();
         // insert the tag if it doesn't exist
         if ($res === false) {
-            $inserted = 1;
             $sql = 'INSERT INTO tags (tag, team) VALUES(:tag,  :team)';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
             $req->bindValue(':tag', $tag, PDO::PARAM_STR);
             $this->Db->execute($req);
+            return $this->Db->lastInsertId();
         }
-        return $inserted;
+        return 0;
     }
 
     public function readOne(): array

@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\ValidatedUser;
+use function explode;
 use function is_array;
 use LdapRecord\Connection;
 use LdapRecord\Query\ObjectNotFoundException;
@@ -39,13 +40,7 @@ class LdapAuth implements AuthInterface
 
     public function tryAuth(): AuthResponse
     {
-        $query = $this->connection->query()->setDn($this->configArr['ldap_base_dn']);
-        try {
-            /** @var array $record */
-            $record = $query->findbyOrFail($this->configArr['ldap_search_attr'], $this->login);
-        } catch (ObjectNotFoundException) {
-            throw new InvalidCredentialsException(0);
-        }
+        $record = $this->getRecord();
         $dn = $record['distinguishedname'] ?? $record['dn'];
         // sometimes it might be an array, make sure we give a string to auth
         if (is_array($dn)) {
@@ -111,6 +106,30 @@ class LdapAuth implements AuthInterface
         $this->AuthResponse->setTeams();
 
         return $this->AuthResponse;
+    }
+
+    // split the search attributes and search the user with them
+    private function getRecord(): array
+    {
+        $attributes = explode(',', $this->configArr['ldap_search_attr']);
+        foreach ($attributes as $attribute) {
+            $record = $this->findUserByAttribute($attribute);
+            if ($record !== null) {
+                return $record;
+            }
+        }
+        throw new InvalidCredentialsException(0);
+    }
+
+    private function findUserByAttribute(string $attribute): ?array
+    {
+        $query = $this->connection->query()->setDn($this->configArr['ldap_base_dn']);
+        try {
+            /** @var array */
+            return $query->findbyOrFail(trim($attribute), $this->login);
+        } catch (ObjectNotFoundException) {
+            return null;
+        }
     }
 
     private function getEmailFromRecord(array $record): string

@@ -186,6 +186,11 @@ abstract class AbstractEntity implements RestInterface
         $req->bindParam(':lockedby', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
+
+        // record this action in the changelog
+        $Changelog = new Changelog($this);
+        $Changelog->create(new ContentParams('locked', $locked === 1 ? 'Unlocked' : 'Locked'));
+
         return $this->readOne();
     }
 

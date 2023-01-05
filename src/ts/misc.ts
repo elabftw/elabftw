@@ -363,7 +363,10 @@ export function updateCategory(entity: Entity, value: string): string {
       // first : get what is the color of the new status
       const css = '6px solid #' + json.color;
       $('#main_section').css('border-left', css);
-      // TODO only in view mode reloadElement('main_section');
+      const params = new URLSearchParams(document.location.search);
+      if (params.get('mode') === 'view') {
+        reloadElement('main_section');
+      }
     });
   });
   return value;

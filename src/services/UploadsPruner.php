@@ -29,7 +29,7 @@ class UploadsPruner implements CleanerInterface
 
     /**
      * Remove uploads with deleted state from database and filesystem
-     * This is a global function and should only be called by uploads:prune command
+     * This is a global function and should only be called by prune:uploads command
      */
     public function cleanup(): int
     {

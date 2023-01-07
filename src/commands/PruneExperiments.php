@@ -16,36 +16,36 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * To remove deleted items completely
+ * To remove deleted files completely
  */
-class PruneItems extends Command
+class PruneExperiments extends Command
 {
     // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'prune:items';
+    protected static $defaultName = 'prune:experiments';
 
     protected function configure(): void
     {
         $this
             // the short description shown while running "php bin/console list"
-            ->setDescription('Remove deleted items')
+            ->setDescription('Remove deleted experiments definitively')
 
             // the full command description shown when running the command with
             // the "--help" option
-            ->setHelp('Remove items from the database marked as deleted');
+            ->setHelp('Remove experiments marked as deleted from the database');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($output->isVerbose()) {
             $output->writeln(array(
-                'Pruning items',
-                '=============',
+                'Pruning experiments',
+                '===================',
             ));
         }
-        $Cleaner = new EntityPruner(AbstractEntity::TYPE_ITEMS);
+        $Cleaner = new EntityPruner(AbstractEntity::TYPE_EXPERIMENTS);
         $cleanedNumber = $Cleaner->cleanup();
         if ($output->isVerbose()) {
-            $output->writeln(sprintf('Removed %d items', $cleanedNumber));
+            $output->writeln(sprintf('Removed %d experiments', $cleanedNumber));
         }
         return 0;
     }

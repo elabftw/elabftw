@@ -15,24 +15,24 @@ use Elabftw\Interfaces\CleanerInterface;
 use PDO;
 
 /**
- * Remove deleted items
+ * Remove deleted experiments/items
  */
-class ItemsPruner implements CleanerInterface
+class EntityPruner implements CleanerInterface
 {
     private Db $Db;
 
-    public function __construct()
+    public function __construct(private string $type)
     {
         $this->Db = Db::getConnection();
     }
 
     /**
-     * Remove items with deleted state from database
-     * This is a global function and should only be called by items:prune command
+     * Remove entity with deleted state from database
+     * This is a global function and should only be called by prune:items|experiments command
      */
     public function cleanup(): int
     {
-        $sql = 'SELECT id FROM items WHERE state = :state';
+        $sql = 'SELECT id FROM ' . $this->type . ' WHERE state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -45,29 +45,19 @@ class ItemsPruner implements CleanerInterface
             $req2 = $this->Db->prepare($sql);
             $req2->bindParam(':link_id', $item['id'], PDO::PARAM_INT);
             $this->Db->execute($req2);
-            $sql = 'DELETE FROM pin2users WHERE entity_id = :entity_id AND type = :type';
+            $sql = 'DELETE FROM pin_' . $this->type . '2users WHERE entity_id = :entity_id';
             $req3 = $this->Db->prepare($sql);
             $req3->bindParam(':entity_id', $item['id'], PDO::PARAM_INT);
-            $req3->bindValue(':type', 'items');
             $this->Db->execute($req3);
-            // mark all uploads related to that item as deleted
-            $sql = 'UPDATE uploads SET state = :state WHERE item_id = :entity_id AND type = :type';
-            $req4 = $this->Db->prepare($sql);
-            $req4->bindParam(':entity_id', $item['id'], PDO::PARAM_INT);
-            $req4->bindValue(':type', 'items');
-            $req4->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
-            $this->Db->execute($req4);
         }
         $this->deleteFromDb();
-
-        //
 
         return $req->rowCount();
     }
 
     private function deleteFromDb(): bool
     {
-        $sql = 'DELETE FROM items WHERE state = :state';
+        $sql = 'DELETE FROM ' . $this->type . ' WHERE state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
         return $this->Db->execute($req);

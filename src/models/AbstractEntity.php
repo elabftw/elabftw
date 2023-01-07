@@ -268,13 +268,19 @@ abstract class AbstractEntity implements RestInterface
         // look for teams
         $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
-        $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[' . implode(',', $teamsOfUser) . "]\"), '$.teams'))";
-        // look for teamgroups
-        if (!empty($teamgroupsOfUser)) {
-            $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[' . implode(',', $teamgroupsOfUser) . "]\"), '$.teamgroups'))";
+        foreach ($teamsOfUser as $team) {
+            $sql .= sprintf(' OR (%d MEMBER OF (entity.canread->>"$.teams"))', $team);
         }
-        // look for users, seems using the :userid placeholder does not work, or at least not in my hands
-        $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[ ' . $this->Users->userData['userid'] . "]\"), '$.users'))";
+        // look for teamgroups
+        // Note: could not find a way to only have one bit of sql to search: [4,5,6] member of [2,6] for instance, and the 6 would match
+        // Only when the search is an AND between searched values we can have it (also with json_contains), so it is necessary to build a query with multiple OR ()
+        if (!empty($teamgroupsOfUser)) {
+            foreach ($teamgroupsOfUser as $teamgroup) {
+                $sql .= sprintf(' OR (%d MEMBER OF (entity.canread->>"$.teamgroups"))', $teamgroup);
+            }
+        }
+        // look for our userid in users part of the json
+        $sql .= ' OR (:userid MEMBER OF (entity.canread->>"$.users"))';
         $sql .= ')';
 
         $sqlArr = array(

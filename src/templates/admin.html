@@ -86,10 +86,9 @@
 
     <label for='force_canread'>{{ 'Enforced read permissions on experiments'|trans }}</label>
     <select class='form-control col-md-4' name='force_canread' id='force_canread'>
-      <option value='public'{{ teamConfigArr.force_canread == 'public' ? " selected='selected'" }}>{{ 'Public'|trans }}</option>
-      <option value='organization'{{ teamConfigArr.force_canread == 'organization' ? " selected='selected'" }}>{{ 'Organization'|trans }}</option>
-      <option value='team'{{ teamConfigArr.force_canread == 'team' ? " selected='selected'" }}>{{ 'Team'|trans }}</option>
-      <option value='user'{{ teamConfigArr.force_canread == 'user' ? " selected='selected'" }}>{{ 'User'|trans }}</option>
+      {% for key, value in visibilityArr %}
+        <option value='{{ key }}' {{ teamConfigArr.force_canread|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
+      {% endfor %}
     </select>
     <p class='smallgray'>{{ 'Enforce the read permission for all experiments of users in this team.'|trans }}</p>
 
@@ -102,10 +101,9 @@
 
     <label for='force_canwrite'>{{ 'Enforced write permissions on experiments'|trans }}</label>
     <select class='form-control col-md-4' name='force_canwrite' id='force_canwrite'>
-      <option value='public'{{ teamConfigArr.force_canwrite == 'public' ? " selected='selected'" }}>{{ 'Public'|trans }}</option>
-      <option value='organization'{{ teamConfigArr.force_canwrite == 'organization' ? " selected='selected'" }}>{{ 'Organization'|trans }}</option>
-      <option value='team'{{ teamConfigArr.force_canwrite == 'team' ? " selected='selected'" }}>{{ 'Team'|trans }}</option>
-      <option value='user'{{ teamConfigArr.force_canwrite == 'user' ? " selected='selected'" }}>{{ 'User'|trans }}</option>
+      {% for key, value in visibilityArr %}
+        <option value='{{ key }}' {{ teamConfigArr.force_canwrite|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
+      {% endfor %}
     </select>
     <p class='smallgray'>{{ 'Enforce the write permission for all experiments of users in this team.'|trans }}</p>
 

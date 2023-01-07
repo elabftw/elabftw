@@ -1242,7 +1242,7 @@ ALTER TABLE `todolist`
 -- Constraints for table `uploads`
 --
 ALTER TABLE `uploads`
-  ADD KEY `fk_uploads_item_id_type` (`item_id`, `type`),
+  ADD KEY `idx_uploads_item_id_type` (`item_id`, `type`),
   ADD KEY `fk_uploads_users_userid` (`userid`),
   ADD CONSTRAINT `fk_uploads_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 

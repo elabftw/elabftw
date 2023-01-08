@@ -30,6 +30,10 @@ class UploadsMigrator
 
     public function migrate(): int
     {
+        $sql = 'UPDATE uploads SET storage = :storage WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':storage', StorageFactory::S3);
+
         $localFiles = $this->findLocal();
         foreach ($localFiles as $upload) {
             $this->targetFs->writeStream($upload['long_name'], $this->sourceFs->readStream($upload['long_name']));
@@ -37,9 +41,6 @@ class UploadsMigrator
             if ($this->sourceFs->fileExists($upload['long_name'] . '_th.jpg')) {
                 $this->targetFs->writeStream($upload['long_name'] . '_th.jpg', $this->sourceFs->readStream($upload['long_name'] . '_th.jpg'));
             }
-            $sql = 'UPDATE uploads SET storage = :storage WHERE id = :id';
-            $req = $this->Db->prepare($sql);
-            $req->bindValue(':storage', StorageFactory::S3);
             $req->bindParam(':id', $upload['id'], PDO::PARAM_INT);
             $this->Db->execute($req);
         }

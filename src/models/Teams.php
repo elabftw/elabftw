@@ -50,9 +50,9 @@ class Teams implements RestInterface
     public function getTeamsFromIdOrNameOrOrgidArray(array $input): array
     {
         $res = array();
+        $sql = 'SELECT id, name FROM teams WHERE id = :query OR name = :query OR orgid = :query';
+        $req = $this->Db->prepare($sql);
         foreach ($input as $query) {
-            $sql = 'SELECT id, name FROM teams WHERE id = :query OR name = :query OR orgid = :query';
-            $req = $this->Db->prepare($sql);
             $req->bindParam(':query', $query);
             $this->Db->execute($req);
             $team = $req->fetch();

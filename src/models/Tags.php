@@ -69,7 +69,7 @@ class Tags implements RestInterface
     public function copyTags(int $newId, bool $toExperiments = false): void
     {
         $tags = $this->readAll();
-        $insertSql = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
+        $insertSql = 'INSERT IGNORE INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
         $insertReq = $this->Db->prepare($insertSql);
         $type = $this->Entity->type;
         // an experiment template transforms into an experiment
@@ -142,7 +142,7 @@ class Tags implements RestInterface
     {
         $this->Entity->canOrExplode('write');
 
-        $insertSql2 = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
+        $insertSql2 = 'INSERT IGNORE INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
         $insertReq2 = $this->Db->prepare($insertSql2);
         // check if the tag doesn't exist already for the team
         $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';

@@ -1218,6 +1218,12 @@ ALTER TABLE `tags`
   ADD CONSTRAINT `fk_tags_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `tags2entity`
+--
+ALTER TABLE `tags2entity`
+  ADD CONSTRAINT `fk_tags2entity_tags_id` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `team_events`
 --
 ALTER TABLE `team_events`

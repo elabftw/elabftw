@@ -115,20 +115,14 @@ class TeamTags implements RestInterface
     }
 
     /**
-     * Destroy a tag completely. Unreference it from everywhere and then delete it
+     * Destroy a tag completely.
      */
     public function destroy(): bool
     {
         if ($this->Users->userData['is_admin'] !== 1) {
             throw new IllegalActionException('Only an admin can delete a tag!');
         }
-        // first unreference the tag
-        $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
 
-        // now delete it from the tags table
         $sql = 'DELETE FROM tags WHERE id = :tag_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);

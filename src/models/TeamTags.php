@@ -169,14 +169,14 @@ class TeamTags implements RestInterface
         // IGNORE avoids errors due to duplicate-key conflicts
         // it does not matter that the entry is not updated as it already exists
         // the unchanged entry will be deleted due to the fk constraints (tags2entity.tag_id <-> tags.id)
-        $updateSql = 'UPDATE IGNORE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id';
-        $updateReq = $this->Db->prepare($updateSql);
-        $deleteSql = 'DELETE FROM tags WHERE id = :id';
-        $deleteReq = $this->Db->prepare($deleteSql);
+        $sql = 'UPDATE IGNORE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id';
+        $updateReq = $this->Db->prepare($sql);
+        $updateReq->bindParam(':target_tag_id', $idToKeep, PDO::PARAM_INT);
+        $sql = 'DELETE FROM tags WHERE id = :id';
+        $deleteReq = $this->Db->prepare($sql);
 
         foreach ($idsArr as $id) {
             // update the references with the id that we keep
-            $updateReq->bindParam(':target_tag_id', $idToKeep, PDO::PARAM_INT);
             $updateReq->bindParam(':tag_id', $id, PDO::PARAM_INT);
             $this->Db->execute($updateReq);
 

@@ -101,10 +101,10 @@ class Steps implements RestInterface
         $stepreq->bindParam(':id', $id, PDO::PARAM_INT);
         $this->Db->execute($stepreq);
 
+        $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :body, :ordering)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $newId, PDO::PARAM_INT);
         while ($steps = $stepreq->fetch()) {
-            $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :body, :ordering)';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':item_id', $newId, PDO::PARAM_INT);
             $req->bindParam(':body', $steps['body'], PDO::PARAM_STR);
             $req->bindParam(':ordering', $steps['ordering'], PDO::PARAM_INT);
             $this->Db->execute($req);

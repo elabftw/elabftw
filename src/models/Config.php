@@ -220,10 +220,11 @@ final class Config implements RestInterface
             }
         }
 
+        $sql = 'UPDATE config SET conf_value = :value WHERE conf_name = :name';
+        $req = $this->Db->prepare($sql);
+
         // loop the array and update config
         foreach ($params as $name => $value) {
-            $sql = 'UPDATE config SET conf_value = :value WHERE conf_name = :name';
-            $req = $this->Db->prepare($sql);
             $req->bindParam(':value', $value);
             $req->bindParam(':name', $name);
             $this->Db->execute($req);

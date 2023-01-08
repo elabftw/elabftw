@@ -166,7 +166,10 @@ class TeamTags implements RestInterface
         $idToKeep = array_pop($idsArr);
 
         // prepare the sql queries
-        $updateSql = 'UPDATE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id';
+        // IGNORE avoids errors due to duplicate-key conflicts
+        // it does not matter that the entry is not updated as it already exists
+        // the unchanged entry will be deleted due to the fk constraints (tags2entity.tag_id <-> tags.id)
+        $updateSql = 'UPDATE IGNORE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id';
         $updateReq = $this->Db->prepare($updateSql);
         $deleteSql = 'DELETE FROM tags WHERE id = :id';
         $deleteReq = $this->Db->prepare($deleteSql);

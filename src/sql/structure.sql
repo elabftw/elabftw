@@ -641,11 +641,10 @@ CREATE TABLE `tags` (
 --
 
 CREATE TABLE `tags2entity` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `item_id` int(10) UNSIGNED NOT NULL,
   `tag_id` int(10) UNSIGNED NOT NULL,
   `item_type` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`item_id`, `tag_id`, `item_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --

@@ -91,7 +91,7 @@ class TeamTags implements RestInterface
         // TODO move this out of here
         $Request = Request::createFromGlobals();
         $query = Filter::sanitize((string) $Request->query->get('q'));
-        $sql = 'SELECT tag, tags.id, COUNT(tags2entity.id) AS item_count
+        $sql = 'SELECT tag, tags.id, COUNT(distinct tags2entity.tag_id, tags2entity.item_id, tags2entity.item_type) AS item_count
             FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
             WHERE team = :team AND tags.tag LIKE :query GROUP BY tags.id ORDER BY item_count DESC';
         $req = $this->Db->prepare($sql);

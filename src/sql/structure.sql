@@ -377,7 +377,7 @@ CREATE TABLE `items` (
   `elabid` varchar(255) NOT NULL,
   `rating` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `category` int(255) UNSIGNED NOT NULL,
-  `locked` tinyint UNSIGNED DEFAULT NULL,
+  `locked` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `lockedby` int(10) UNSIGNED DEFAULT NULL,
   `locked_at` timestamp NULL DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,

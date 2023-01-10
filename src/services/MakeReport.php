@@ -53,6 +53,7 @@ class MakeReport extends AbstractMakeCsv
             'usergroup',
             'archived',
             'last_login',
+            'valid_until',
             'full_name',
             'team(s)',
             'diskusage_in_bytes',
@@ -80,6 +81,7 @@ class MakeReport extends AbstractMakeCsv
             $unusedColumns = array(
                 'mfa_secret',
                 'orcid',
+                'auth_service',
                 'token',
                 'auth_lock_time',
             );

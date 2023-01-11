@@ -674,7 +674,7 @@ abstract class AbstractEntity implements RestInterface
         $PermissionsHelper = new PermissionsHelper();
         $advancedQuery = new AdvancedSearchQuery($extendedQuery, new VisitorParameters(
             $this->type,
-            $PermissionsHelper->getAssociativeArray(),
+            $PermissionsHelper->getExtendedSearchAssociativeArray(),
             $this->TeamGroups->readGroupsWithUsersFromUser(),
         ));
         $whereClause = $advancedQuery->getWhereClause();

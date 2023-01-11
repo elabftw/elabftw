@@ -174,8 +174,8 @@ class Permissions
         }
 
         // check for teamgroups
-        if (!empty($this->canread['teamgroups'])) {
-            foreach ($this->canread['teamgroups'] as $teamgroup) {
+        if (!empty($this->canwrite['teamgroups'])) {
+            foreach ($this->canwrite['teamgroups'] as $teamgroup) {
                 if ($this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $teamgroup)) {
                     return true;
                 }
@@ -183,7 +183,7 @@ class Permissions
         }
 
         // check for users
-        if (in_array((int) $this->Users->userData['userid'], $this->canread['users'], true)) {
+        if (in_array((int) $this->Users->userData['userid'], $this->canwrite['users'], true)) {
             return true;
         }
 

@@ -122,14 +122,18 @@ class UnfinishedSteps implements RestInterface
         // look for teams
         $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
-        $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[' . implode(',', $teamsOfUser) . "]\"), '$.teams'))";
+        foreach ($teamsOfUser as $team) {
+            $sql .= sprintf(' OR (%d MEMBER OF (entity.canread->>"$.teams"))', $team);
+        }
         // look for teamgroups
         $teamgroupsOfUser = array_column((new TeamGroups($this->Users))->readGroupsFromUser(), 'id');
         if (!empty($teamgroupsOfUser)) {
-            $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[' . implode(',', $teamgroupsOfUser) . "]\"), '$.teamgroups'))";
+            foreach ($teamgroupsOfUser as $teamgroup) {
+                $sql .= sprintf(' OR (%d MEMBER OF (entity.canread->>"$.teamgroups"))', $teamgroup);
+            }
         }
-        // look for users, seems using the :userid placeholder does not work, or at least not in my hands
-        $sql .= ' OR (JSON_CONTAINS(entity.canread, ("[ ' . $this->Users->userData['userid'] . "]\"), '$.users'))";
+        // look for our userid in users part of the json
+        $sql .= ' OR (:userid MEMBER OF (entity.canread->>"$.users"))';
         $sql .= ')';
 
         return $sql;

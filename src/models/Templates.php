@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
 use Elabftw\Services\Filter;
+use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
@@ -179,12 +180,20 @@ class Templates extends AbstractTemplateEntity
                     (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND users2teams.users_id = experiments_templates.userid) OR
                     (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND experiments_templates.userid = :userid) OR
                     (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND experiments_templates.userid = :userid)", BasePermissions::Full->value, BasePermissions::Organization->value, BasePermissions::MyTeams->value, BasePermissions::User->value, BasePermissions::UserOnly->value);
+        // look for teams
+        $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
+        $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
+        foreach ($teamsOfUser as $team) {
+            $sql .= sprintf(' OR (%d MEMBER OF (experiments_templates.canread->>"$.teams"))', $team);
+        }
         // look for teamgroups
         if (!empty($teamgroupsOfUser)) {
-            $sql .= ' OR (JSON_CONTAINS(experiments_templates.canread, ("[' . implode(',', $teamgroupsOfUser) . "]\"), '$.teamgroups'))";
+            foreach ($teamgroupsOfUser as $teamgroup) {
+                $sql .= sprintf(' OR (%d MEMBER OF (experiments_templates.canread->>"$.teamgroups"))', $teamgroup);
+            }
         }
-        // look for users, seems using the :userid placeholder does not work, or at least not in my hands
-        $sql .= ' OR (JSON_CONTAINS(experiments_templates.canread, ("[ ' . $this->Users->userData['userid'] . "]\"), '$.users'))";
+        // look for our userid in users part of the json
+        $sql .= ' OR (:userid MEMBER OF (experiments_templates.canread->>"$.users"))';
         $sql .= ')';
 
         $sql .= $this->filterSql;

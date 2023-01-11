@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, notifError, reloadElement, collectForm } from './misc';
+import { notif, notifError, reloadElement, collectForm, permissionsToJson } from './misc';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
@@ -162,6 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     } else if (el.matches('[data-action="patch-team-admin"]')) {
       const params = collectForm(el.closest('div.form-group'));
+      params['force_canread'] = permissionsToJson(parseInt(params['force_canread'], 10), []);
+      params['force_canwrite'] = permissionsToJson(parseInt(params['force_canwrite'], 10), []);
       // the tinymce won't get collected
       params['common_template'] = tinymce.get('common_template').getContent();
       params['common_template_md'] = (document.getElementById('common_template_md') as HTMLTextAreaElement).value;

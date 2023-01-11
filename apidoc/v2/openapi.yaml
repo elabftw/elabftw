@@ -265,7 +265,7 @@ components:
           type: string
         events_item_id:
           type: string
-        firtname:
+        firstname:
           type: string
         fullname:
           type: string

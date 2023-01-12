@@ -46,6 +46,13 @@ class UserStats
         $Status = new Status(new Teams($this->Users, $this->Users->team));
         $statusArr = $Status->readAll();
 
+        $sql = 'SELECT COUNT(id)
+            FROM experiments
+            WHERE userid = :userid
+            AND category = :category';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+
         // populate arrays
         foreach ($statusArr as $status) {
             $statusArr = array();
@@ -54,12 +61,6 @@ class UserStats
             $statusArr['color'] = '#' . $status['color'];
 
             // now get the count
-            $sql = 'SELECT COUNT(id)
-                FROM experiments
-                WHERE userid = :userid
-                AND category = :category';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':category', $status['category_id'], PDO::PARAM_INT);
             $req->execute();
             $statusArr['count'] = $req->fetchColumn();

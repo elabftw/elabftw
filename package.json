@@ -29,7 +29,7 @@
     "jquery": "^3.5.1",
     "jquery-ui": "^1.13.0",
     "jsoneditor": "^9.0.3",
-    "luxon": "^3.0.1",
+    "luxon": "^3.2.1",
     "marked": "^4.0.10",
     "mathjax-full": "^3.2.0",
     "mini-css-extract-plugin": "^2.1.0",

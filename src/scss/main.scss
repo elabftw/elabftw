@@ -755,6 +755,14 @@ tr:nth-child(odd) {
     margin: 0 10px 0 0;
 }
 
+#plainTextArea,
+#mdPreview {
+    height: calc(100vh - 300px);
+    max-height: calc(100vh - 300px);
+    overflow-y: auto;
+    resize: none;
+}
+
 /* stylelint-disable-next-line selector-no-qualifying-type */
 input[type='checkbox'] {
     position: relative;

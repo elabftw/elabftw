@@ -14,6 +14,7 @@ import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
+import { marked } from 'marked';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -378,6 +379,16 @@ export function showContentPlainText(el: HTMLElement): void {
     return response.text();
   }).then(fileContent => {
     (document.getElementById('plainTextArea') as HTMLTextAreaElement).value = fileContent;
+    const mdPreviewWrapper = document.getElementById('mdPreviewWrapper') as HTMLDivElement;
+    mdPreviewWrapper.classList.add('d-none');
+    const modalDialog = (document.getElementById('plainTextModal') as HTMLDivElement).firstElementChild;
+    modalDialog.classList.remove('modal-lg');
+    if (el.dataset.ext === 'md') {
+      mdPreviewWrapper.classList.remove('d-none');
+      modalDialog.classList.add('modal-lg');
+      const mdPreview = document.getElementById('mdPreview') as HTMLDivElement;
+      mdPreview.innerHTML = marked(fileContent);
+    }
     $('#plainTextModal').modal();
   });
 }

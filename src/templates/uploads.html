@@ -8,9 +8,15 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body'>
-        <label for='plainTextArea' id='plainTextAreaLabel'>Filename</label>
-        <textarea class='form-control' name='plainTextArea' id='plainTextArea' rows='10' readonly></textarea>
+      <div class='modal-body row'>
+        <div class='col'>
+          <label for='plainTextArea' id='plainTextAreaLabel'>Filename</label>
+          <textarea class='form-control' name='plainTextArea' id='plainTextArea' readonly></textarea>
+        </div>
+        <div id='mdPreviewWrapper' class='col'>
+          <label>{{ 'Preview'|trans }}</label>
+          <div id='mdPreview' class='border rounded p-2'></div>
+        </div>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
@@ -144,7 +150,8 @@
                     data-action='show-plain-text'
                     data-storage='{{ upload.storage }}'
                     data-path='{{ upload.long_name }}'
-                    data-name='{{ upload.real_name }}'>
+                    data-name='{{ upload.real_name }}'
+                    data-ext='{{ ext|raw }}'>
                     <i class='fas fa-file-alt thumb rounded mx-auto d-block text-center'></i>
                   </span>
 

@@ -131,7 +131,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'searchType' => $isSearchPage ? 'something' : $DisplayParams->searchType,
             'tagsArr' => $tagsArr,
             // get all the tags for the top search bar
-            'tagsArrForSelect' => $TeamTags->readAll(),
+            'tagsArrForSelect' => $TeamTags->readFull(),
             'teamGroupsFromUser' => $this->teamGroupsFromUser,
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),

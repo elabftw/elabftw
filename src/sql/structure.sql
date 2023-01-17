@@ -235,7 +235,7 @@ CREATE TABLE `experiments_templates` (
   `body` text,
   `title` varchar(255) NOT NULL,
   `userid` int(10) UNSIGNED DEFAULT NULL,
-  `locked` tinyint UNSIGNED DEFAULT NULL,
+  `locked` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `lockedby` int(10) UNSIGNED DEFAULT NULL,
   `locked_at` timestamp NULL DEFAULT NULL,
   `canread` JSON NOT NULL,

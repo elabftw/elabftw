@@ -76,9 +76,6 @@
       "Elabftw\\Enums\\": [
         "src/enums"
       ],
-      "Elabftw\\Factories\\": [
-        "src/factories"
-      ],
       "Elabftw\\Interfaces\\": [
         "src/interfaces"
       ],

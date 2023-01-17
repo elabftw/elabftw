@@ -14,7 +14,7 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Factories\StorageFactory;
+use Elabftw\Enums\Storage;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
@@ -72,7 +72,7 @@ class MakePdf extends AbstractMakePdf
         // 5cbaff4303604247f698afc6b13a51987a58f5bc#commitcomment-23217652
         error_reporting(E_ERROR);
 
-        $this->cacheFs = (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs();
+        $this->cacheFs = Storage::CACHE->getStorage()->getFs();
         if ($this->includeAttachments === false && $this->Entity->Users->userData['inc_files_pdf']) {
             $this->includeAttachments = true;
         }
@@ -146,7 +146,7 @@ class MakePdf extends AbstractMakePdf
         }
 
         foreach ($uploadsArr as $upload) {
-            $storageFs = (new StorageFactory((int) $upload['storage']))->getStorage()->getFs();
+            $storageFs = Storage::from((int) $upload['storage'])->getStorage()->getFs();
             if ($storageFs->fileExists($upload['long_name']) && strtolower(Tools::getExt($upload['real_name'])) === 'pdf') {
                 // the real_name is used in case of error appending it
                 // the content is stored in a temporary file so it can be read with appendPdfs()
@@ -233,7 +233,7 @@ class MakePdf extends AbstractMakePdf
 
         // read the content of the thumbnail here to feed the template
         foreach ($this->Entity->entityData['uploads'] as $key => $upload) {
-            $storageFs = (new StorageFactory((int) $upload['storage']))->getStorage()->getFs();
+            $storageFs = Storage::from((int) $upload['storage'])->getStorage()->getFs();
             $thumbnail = $upload['long_name'] . '_th.jpg';
             // no need to filter on extension, just insert the thumbnail if it exists
             if ($storageFs->fileExists($thumbnail)) {
@@ -335,7 +335,7 @@ class MakePdf extends AbstractMakePdf
             parse_str($query, $res);
             // there might be no storage value. In this case get it from the uploads table via the long name
             $storage = (int) ($res['amp;storage'] ?? $this->Entity->Uploads->getStorageFromLongname($res['f']));
-            $storageFs = (new StorageFactory($storage))->getStorage()->getFs();
+            $storageFs = Storage::from($storage)->getStorage()->getFs();
             // pass image data to mpdf via variable. See https://mpdf.github.io/what-else-can-i-do/images.html#image-data-as-a-variable
             // avoid using data URLs (data:...) because it adds too many characters to $body, see https://github.com/elabftw/elabftw/issues/3627
             $this->mpdf->imageVars[$res['f']] = $storageFs->read($res['f']);

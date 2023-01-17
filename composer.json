@@ -51,7 +51,7 @@
     "codeception/codeception": "^5.0.1",
     "pyrech/composer-changelogs": "^1.8.0",
     "friendsofphp/php-cs-fixer": "^3.0.0",
-    "codeception/module-db": "^3.0.0",
+    "codeception/module-db": "^3.1.0",
     "codeception/module-asserts": "^3.0.0",
     "codeception/module-rest": "^3.2.0",
     "codeception/module-phpbrowser": "^3.0",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "67ba4997cd79b4008c3c071bd8551d4a",
+    "content-hash": "d71a1d5ebd2c0116b69046d5ebb73093",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -5784,16 +5784,16 @@
         },
         {
             "name": "codeception/module-db",
-            "version": "3.0.1",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/module-db.git",
-                "reference": "4ec1208d6d5f546b72decd733a94bf4488683a74"
+                "reference": "0ff358215efef8513869d407bb3bb850187975a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/module-db/zipball/4ec1208d6d5f546b72decd733a94bf4488683a74",
-                "reference": "4ec1208d6d5f546b72decd733a94bf4488683a74",
+                "url": "https://api.github.com/repos/Codeception/module-db/zipball/0ff358215efef8513869d407bb3bb850187975a3",
+                "reference": "0ff358215efef8513869d407bb3bb850187975a3",
                 "shasum": ""
             },
             "require": {
@@ -5832,9 +5832,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeception/module-db/issues",
-                "source": "https://github.com/Codeception/module-db/tree/3.0.1"
+                "source": "https://github.com/Codeception/module-db/tree/3.1.0"
             },
-            "time": "2022-03-05T19:26:44+00:00"
+            "time": "2022-12-03T09:57:03+00:00"
         },
         {
             "name": "codeception/module-phpbrowser",

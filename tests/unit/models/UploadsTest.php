@@ -14,9 +14,9 @@ use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Factories\StorageFactory;
 use RuntimeException;
 
 class UploadsTest extends \PHPUnit\Framework\TestCase
@@ -36,11 +36,11 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         // and this corresponds to the temporary file created after upload
         $tmpFilePath = '/tmp/phpELABFTW';
         $params->method('getFilePath')->willReturn($tmpFilePath);
-        $fs = (new StorageFactory(StorageFactory::MEMORY))->getStorage()->getFs();
+        $fs = Storage::MEMORY->getStorage()->getFs();
         // write our temporary file as if it was uploaded by a user
         $fs->createDirectory('tmp');
         // a txt file was failing the mime type, so use a png
-        $fixturesFs = (new StorageFactory(StorageFactory::FIXTURES))->getStorage()->getFs();
+        $fixturesFs = Storage::FIXTURES->getStorage()->getFs();
         $fs->write(basename($tmpFilePath), $fixturesFs->read('example.png'));
         // we use the same fs for source and storage because it's all in memory anyway
         $params->method('getSourceFs')->willReturn($fs);
@@ -58,7 +58,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         // and this corresponds to the temporary file created after upload
         $tmpFilePath = '/tmp/phpELABFTW';
         $params->method('getFilePath')->willReturn($tmpFilePath);
-        $fs = (new StorageFactory(StorageFactory::MEMORY))->getStorage()->getFs();
+        $fs = Storage::MEMORY->getStorage()->getFs();
         // write our temporary file as if it was uploaded by a user
         $fs->createDirectory('tmp');
         $fs->write(basename($tmpFilePath), 'blah');

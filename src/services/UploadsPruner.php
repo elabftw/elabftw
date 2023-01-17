@@ -11,7 +11,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\State;
-use Elabftw\Factories\StorageFactory;
+use Elabftw\Enums\Storage;
 use Elabftw\Interfaces\CleanerInterface;
 use PDO;
 
@@ -38,7 +38,7 @@ class UploadsPruner implements CleanerInterface
         $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         foreach ($req->fetchAll() as $upload) {
-            $storageFs = (new StorageFactory((int) $upload['storage']))->getStorage()->getFs();
+            $storageFs = Storage::from((int) $upload['storage'])->getStorage()->getFs();
             $storageFs->delete($upload['long_name']);
             // also delete an hypothetical thumbnail
             // this won't throw any error if the file doesn't exist

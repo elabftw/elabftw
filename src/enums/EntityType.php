@@ -26,10 +26,10 @@ enum EntityType: string
     public function toInstance(Users $users, ?int $entityId = null): AbstractEntity
     {
         return match ($this) {
-            EntityType::Experiments => new Experiments($users, $entityId),
-            EntityType::Items => new Items($users, $entityId),
-            EntityType::Templates => new Templates($users, $entityId),
-            EntityType::ItemsTypes => new ItemsTypes($users, $entityId),
+            $this::Experiments => new Experiments($users, $entityId),
+            $this::Items => new Items($users, $entityId),
+            $this::Templates => new Templates($users, $entityId),
+            $this::ItemsTypes => new ItemsTypes($users, $entityId),
         };
     }
 }

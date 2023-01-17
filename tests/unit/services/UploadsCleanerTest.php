@@ -9,14 +9,14 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Factories\StorageFactory;
+use Elabftw\Enums\Storage;
 
 class UploadsCleanerTest extends \PHPUnit\Framework\TestCase
 {
     public function testCleanup(): void
     {
         // create a non-persistant filesystem stored in memory
-        $fs = (new StorageFactory(StorageFactory::MEMORY))->getStorage()->getFs();
+        $fs = Storage::MEMORY->getStorage()->getFs();
         // add a file to our filesystem so we can test removing it
         $fs->write('blah.txt', 'blih');
         // also add a thumbnail file that should not be removed

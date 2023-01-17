@@ -5395,22 +5395,22 @@
         },
         {
             "name": "codeception/codeception",
-            "version": "5.0.5",
+            "version": "5.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/Codeception.git",
-                "reference": "35a105e0b26ded1c251ab28ae49235bd2164a69b"
+                "reference": "9c0bc32bd05cfa3b43dc04c6880489398b99436a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/Codeception/zipball/35a105e0b26ded1c251ab28ae49235bd2164a69b",
-                "reference": "35a105e0b26ded1c251ab28ae49235bd2164a69b",
+                "url": "https://api.github.com/repos/Codeception/Codeception/zipball/9c0bc32bd05cfa3b43dc04c6880489398b99436a",
+                "reference": "9c0bc32bd05cfa3b43dc04c6880489398b99436a",
                 "shasum": ""
             },
             "require": {
                 "behat/gherkin": "^4.6.2",
                 "codeception/lib-asserts": "2.0.*@dev",
-                "codeception/stub": "^3.7 | ^4.0",
+                "codeception/stub": "^4.1",
                 "ext-curl": "*",
                 "ext-json": "*",
                 "ext-mbstring": "*",
@@ -5418,7 +5418,7 @@
                 "phpunit/php-code-coverage": "^9.2",
                 "phpunit/php-text-template": "^2.0",
                 "phpunit/php-timer": "^5.0.3",
-                "phpunit/phpunit": "^9.5",
+                "phpunit/phpunit": "^9.5.20",
                 "psy/psysh": "^0.11.2",
                 "sebastian/comparator": "^4.0.5",
                 "sebastian/diff": "^4.0.3",
@@ -5499,7 +5499,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeception/Codeception/issues",
-                "source": "https://github.com/Codeception/Codeception/tree/5.0.5"
+                "source": "https://github.com/Codeception/Codeception/tree/5.0.7"
             },
             "funding": [
                 {
@@ -5507,7 +5507,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2022-11-20T11:29:07+00:00"
+            "time": "2023-01-14T20:02:13+00:00"
         },
         {
             "name": "codeception/lib-asserts",
@@ -5966,21 +5966,24 @@
         },
         {
             "name": "codeception/stub",
-            "version": "4.0.2",
+            "version": "4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/Stub.git",
-                "reference": "18a148dacd293fc7b044042f5aa63a82b08bff5d"
+                "reference": "58751aed08a68ae960a952fd3fe74ee9a56cdb1b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/Stub/zipball/18a148dacd293fc7b044042f5aa63a82b08bff5d",
-                "reference": "18a148dacd293fc7b044042f5aa63a82b08bff5d",
+                "url": "https://api.github.com/repos/Codeception/Stub/zipball/58751aed08a68ae960a952fd3fe74ee9a56cdb1b",
+                "reference": "58751aed08a68ae960a952fd3fe74ee9a56cdb1b",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4 | ^8.0",
                 "phpunit/phpunit": "^8.4 | ^9.0 | ^10.0 | 10.0.x-dev"
+            },
+            "conflict": {
+                "codeception/codeception": "<5.0.6"
             },
             "require-dev": {
                 "consolidation/robo": "^3.0"
@@ -5998,9 +6001,9 @@
             "description": "Flexible Stub wrapper for PHPUnit's Mock Builder",
             "support": {
                 "issues": "https://github.com/Codeception/Stub/issues",
-                "source": "https://github.com/Codeception/Stub/tree/4.0.2"
+                "source": "https://github.com/Codeception/Stub/tree/4.1.0"
             },
-            "time": "2022-01-31T19:25:15+00:00"
+            "time": "2022-12-27T18:41:43+00:00"
         },
         {
             "name": "composer/pcre",

@@ -13,7 +13,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Factories\EntityFactory;
 use Elabftw\Interfaces\ImportInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users;
@@ -46,7 +45,7 @@ abstract class AbstractImport implements ImportInterface
         [$type, $id] = explode(':', $target);
         $this->targetNumber = (int) $id;
         $this->setTargetUsers($type);
-        $this->Entity = (new EntityFactory($this->Users, EntityType::from($type)))->getEntity();
+        $this->Entity = EntityType::from($type)->toInstance($this->Users);
         $this->canread = Check::visibility($canread);
         $this->canwrite = Check::visibility($canwrite);
         if ($this->UploadedFile->getError()) {

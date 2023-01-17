@@ -14,7 +14,6 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Factories\EntityFactory;
 use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\Users;
@@ -112,7 +111,7 @@ class AddMissingLinks extends Command
 
                     // don't set entity id yet, user has userData['team'] == 0 at this point
                     // this will result in permission issues during setId -> readOne -> canOrExplode('read') -> hasCommonTeamWithCurrent()
-                    $entity = (new EntityFactory($User, EntityType::from($table)))->getEntity();
+                    $entity = EntityType::from($table)->toInstance($User);
 
                     // make sure we can access all entries with write access
                     $entity->bypassWritePermission = true;

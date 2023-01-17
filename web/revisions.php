@@ -14,7 +14,6 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Factories\EntityFactory;
 use Elabftw\Models\Revisions;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +30,7 @@ $Response = new Response();
 $Response->prepare($App->Request);
 
 try {
-    $Entity = (new EntityFactory($App->Users, EntityType::from((string) $App->Request->query->get('type'))))->getEntity();
+    $Entity = EntityType::from((string) $App->Request->query->get('type'))->toInstance($App->Users);
     $Entity->setId($App->Request->query->getInt('item_id'));
     $Entity->canOrExplode('read');
 

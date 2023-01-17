@@ -16,7 +16,6 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Factories\EntityFactory;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Check;
@@ -31,7 +30,7 @@ require_once dirname(__DIR__) . '/init.inc.php';
 $Response = new RedirectResponse('../../experiments.php');
 
 try {
-    $Entity = (new EntityFactory($App->Users, EntityType::from((string) $Request->query->get('type'))))->getEntity();
+    $Entity = EntityType::from((string) $Request->query->get('type'))->toInstance($App->Users);
     $entityId = $Request->query->getInt('item_id');
     $Entity->setId($entityId);
     $Entity->canOrExplode('write');

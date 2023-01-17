@@ -9,10 +9,27 @@
 
 namespace Elabftw\Enums;
 
+use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\Templates;
+use Elabftw\Models\Items;
+use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Users;
+
 enum EntityType: string
 {
     case Experiments = 'experiments';
     case Templates = 'experiments_templates';
     case Items = 'items';
     case ItemsTypes = 'items_types';
+
+    public function toInstance(Users $users, ?int $entityId = null): AbstractEntity
+    {
+        return match ($this) {
+            EntityType::Experiments => new Experiments($users, $entityId),
+            EntityType::Items => new Items($users, $entityId),
+            EntityType::Templates => new Templates($users, $entityId),
+            EntityType::ItemsTypes => new ItemsTypes($users, $entityId),
+        };
+    }
 }

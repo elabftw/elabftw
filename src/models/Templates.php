@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
@@ -34,7 +35,7 @@ class Templates extends AbstractTemplateEntity
 
     public function __construct(Users $users, ?int $id = null)
     {
-        $this->type = parent::TYPE_TEMPLATES;
+        $this->type = EntityType::Templates->value;
         parent::__construct($users, $id);
     }
 

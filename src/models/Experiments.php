@@ -14,6 +14,7 @@ use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
@@ -39,8 +40,8 @@ class Experiments extends AbstractConcreteEntity
 
     public function __construct(Users $users, ?int $id = null)
     {
-        $this->page = parent::TYPE_EXPERIMENTS;
-        $this->type = parent::TYPE_EXPERIMENTS;
+        $this->page = EntityType::Experiments->value;
+        $this->type = EntityType::Experiments->value;
         parent::__construct($users, $id);
     }
 

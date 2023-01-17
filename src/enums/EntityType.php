@@ -11,9 +11,9 @@ namespace Elabftw\Enums;
 
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Templates;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
 
 enum EntityType: string
